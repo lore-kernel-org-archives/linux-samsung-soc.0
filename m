@@ -1,93 +1,57 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 1/5] clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag
- for the sysreg clock
-Date: Thu, 12 Dec 2013 10:06:36 +0530
-Message-ID: <CAM4voanSSqqAzRqrNrRc+HYh4vtq3zgNeGQYCVG6sE6nB_eWGA@mail.gmail.com>
-References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
-	<1386763029-8516-2-git-send-email-a.kesavan@samsung.com>
-	<CAD=FV=WK-zgcNvF6qtnsRky3RbEvBOW+1uNiUR-fyp2257gPPw@mail.gmail.com>
-	<CA+Ln22EQnpLfjcCOAY7U-tpc--XFy=dnwUr7K577x_ker4KuHw@mail.gmail.com>
-	<CAD=FV=XG+5n+SW_bDiFtQB7ieViAxVAO5E12+y-DgY34maT6DQ@mail.gmail.com>
+From: Mohit KUMAR DCG <Mohit.KUMAR@st.com>
+Subject: RE: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 13:06:16 +0800
+Message-ID: <2CC2A0A4A178534D93D5159BF3BCB66189F95F642F@EAPEX1MAIL1.st.com>
+References: <20131211183237.GI4699@google.com>
+ <20131211184321.GJ4699@google.com>
+ <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:47481 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086Ab3LLEgh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 23:36:37 -0500
-Received: by mail-qc0-f174.google.com with SMTP id n7so5727418qcx.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 20:36:36 -0800 (PST)
-In-Reply-To: <CAD=FV=XG+5n+SW_bDiFtQB7ieViAxVAO5E12+y-DgY34maT6DQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Jason Cooper' <jason@lakedaemon.net>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Simon Horman' <horms@verge.net.au>, 'Magnus Damm' <magnus.damm@gmail.com>, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, Pratyush ANAND <pratyush.anand@st.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, jonghwa3.lee@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Tomasz and Doug,
+> -----Original Message-----
+> From: Jingoo Han [mailto:jg1.han@samsung.com]
+> Sent: Thursday, December 12, 2013 3:55 AM
+> To: 'Bjorn Helgaas'; linux-pci@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linux-tegra@vger.kernel.org; linux-sh@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; 'Shawn Guo'; 'Jason Cooper'; 'Thierry Reding'; 'Simon
+> Horman'; 'Magnus Damm'; 'Valentine Barshak'; 'Wei Yongjun'; 'Wei Yongjun';
+> 'Kuninori Morimoto'; Mohit KUMAR DCG; Pratyush ANAND; 'Jingoo Han'
+> Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car
+> PCI host maintainers
+> 
+> On Thursday, December 12, 2013 3:43 AM, Bjorn Helgaas wrote:
+> > On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> > > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> >
+> > And I see Mohit's patch [1] to update the DesignWare entry:
+> >
+> > +PCIE DRIVER FOR SYNOPSIS DESIGNWARE CONTROLLER
+> > +M:	Mohit Kumar <mohit.kumar@st.com>
+> > +M:	Jingoo Han <jg1.han@samsung.com>
+> > +L:	linux-pci@vger.kernel.org
+> > +S:	Maintained
+> > +F:	drivers/pci/host/pcie-designware.c
+> >
+> > I can fold in that update too if Jingoo acks it.
+> >
+> > [1] http://patchwork.ozlabs.org/patch/299905/
+> 
+> Hi Bjorn,
+> 
+> I agree with this. :-)
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> 
+- Thanks Bjorn and Jingoo. I will remove this patch from my v2 patches.
 
-Thanks for the review.
-On Thu, Dec 12, 2013 at 6:00 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Tomasz,
->
-> On Wed, Dec 11, 2013 at 4:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> 2013/12/12 Doug Anderson <dianders@chromium.org>:
->>> This does match what's done in exynos4 and exynos5420 and it's not
->>> terrible.  I'm always a fan of actually specifying clocks properly and
->>> that's more possible now using the syscon stuff (see Leela Krishna's
->>> watchdog patches).  You'd have to extend that to add a clock, but that
->>> wouldn't be too hard.
->>
->> Leela's patches are about PMU, not sysreg, but that's not an issue, I guess,
->> as it's about adding a clock to the generic syscon driver.
->
-> Right.  I was proposing doing something similar to his, but for the
-> separate "sysreg" address range.  ...then adding a clock to the
-> generic syscon driver.
->
-> I _think_ the syscon clock doesn't really need to be always on--it
-> only needs to be on during the access of these registers, right?  I
-> make this statement based on the fact that exynos5250 boards currently
-> bootup and are very functional, but this clock is currently off.
-I see USB2 currently using sysreg at boot-up, so I would assume that
-it would fail if we have this clock turned off by the firmware. Have
-not tested yet.
->
->
->> Still, I discussed about such cases as this with Sylwester a bit today and
->> maybe a bit different approach would be better. There is a number of clocks
->> that need to be always on, such as PMU (but also a lot of currently undefined
->> ones). IMHO it would be nice to make sure they are enabled at boot time
->> and do one of following:
->> 1) claim and enable them directly from the clock controller driver
->> 2) define them with CLK_IGNORE_UNUSED flag and enable them directly from
->>    the clock controller driver (without increasing the refcount, so users could
->>    possibly disable them later),
->> 3) add a generic flag, such as CLK_BOOT_ENABLE (or something), that would
->>    make the CCF enable such clock at bootup (in addition to implying
->>    CLK_IGNORE_UNUSED).
->>
->> For me, the most sensible option would be 2) as it doesn't bloat the CCF with
->> yet another flag and doesn't encourage people to leave clocks always on
->> just because of laziness stopping them from implementing proper clock
->> support in drivers.
->
-> Right, we're using #2 for this now, but one problem is that it's
-> possible that the firmware may turn off one of these misc-type clocks.
->  On exynos5250-snow we ran into this.  The firmware actually gates the
-> clock needed for accessing the chip_id, though perhaps that's not one
-> of the clocks that needs to be on all the time.
-
-Yes, If the firmware gates sysreg then we should see failures at
-boot-up or later.
-Is this patch OK for now ? How would you guys like me to proceed on this ?
->
-> -Doug
-
-Regards,
-Abhilash
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards
+Mohit
