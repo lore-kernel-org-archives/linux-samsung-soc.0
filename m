@@ -1,84 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v11 1/2] [media] exynos5-is: Adds DT binding documentation
-Date: Thu, 12 Dec 2013 16:32:14 +0100
-Message-ID: <52A9D6FE.30302@samsung.com>
-References: <1383650355-28838-1-git-send-email-arun.kk@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed
+ HUBs
+Date: Thu, 12 Dec 2013 11:05:04 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1312121103580.929-100000@iolanthe.rowland.org>
+References: <CAODwPW8GqOcUadYD_jXdyFxJ0cdeLLRi6hs9jFODkQ1KuUr5FQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1383650355-28838-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: shaik.ameer@samsung.com, arunkk.samsung@gmail.com, Mark Rutland <Mark.Rutland@arm.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAODwPW8GqOcUadYD_jXdyFxJ0cdeLLRi6hs9jFODkQ1KuUr5FQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Lan Tianyu <tianyu.lan@intel.com>, Ksenia Ragiadakou <burzalodowa@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Douglas Anderson <dianders@chromium.org>, Felipe Balbi <balbi@ti.com>, sunil joshi <joshi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Arun,
+On Wed, 11 Dec 2013, Julius Werner wrote:
 
-(Adding Mark and Mauro to Cc)
-
-On 05/11/13 12:19, Arun Kumar K wrote:
-> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> >> ...although, the spec says that it does not wait for the port resets
+> >> to complete.  As far as I can see re-issuing a warm reset and waiting
+> >> is the only way to guarantee the core times the recovery.  Presumably
+> >> the portstatus debounce in hub_activate() mitigates this, but that
+> >> 100ms is less than a full reset timeout.
 > 
-> The patch adds the DT binding doc for exynos5 SoC camera
-> subsystem.
+> It's definitely not just a timing issue for us. I can't reproduce all
+> the same cases as Vikas, but when I attach a USB analyzer to the ones
+> I do see the host controller doesn't even start sending a reset.
 > 
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  .../bindings/media/exynos5250-camera.txt           |  126 ++++++++++++++++++++
->  1 file changed, 126 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> >>> The xHCI spec requires that when the xHCI host is reset, a USB reset is
+> >>> driven down the USB 3.0 ports.  If hot reset fails, the port may migrate
+> >>> to warm reset.  See table 32 in the xHCI spec, in the definition of
+> >>> HCRST.  It sounds like this host doesn't drive a USB reset down USB 3.0
+> >>> ports at all on host controller reset?
 > 
-> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> new file mode 100644
-> index 0000000..09420ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> @@ -0,0 +1,126 @@
-> +Samsung EXYNOS5 SoC Camera Subsystem
-> +------------------------------------
-> +
-> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
-> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
-> +MIPI CSIS and FIMC-IS.
-> +
-> +The sub-device nodes are referenced using phandles in the common 'camera' node
-> +which also includes common properties of the whole subsystem not really
-> +specific to any single sub-device, like common camera port pins or the common
-> +camera bus clocks.
-> +
-> +Common 'camera' node
-> +--------------------
-> +
-> +Required properties:
-> +
-> +- compatible		: must be "samsung,exynos5250-fimc"
-> +- clocks		: list of clock specifiers, corresponding to entries in
-> +                          the clock-names property
-> +- clock-names		: must contain "sclk_bayer" entry
-> +- samsung,csis		: list of phandles to the mipi-csis device nodes
-> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
-> +- samsung,fimc-is	: phandle to the fimc-is device node
-> +
-> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-> +to define a required pinctrl state named "default".
-> +
-> +'parallel-ports' node
-> +---------------------
-> +
-> +This node should contain child 'port' nodes specifying active parallel video
-> +input ports. It includes camera A, camera B and RGB bay inputs.
-> +'reg' property in the port nodes specifies the input type:
-> + 1 - parallel camport A
-> + 2 - parallel camport B
-> + 5 - RGB camera bay
-> +
-> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
+> Oh, interesting, I hadn't seen that yet. So I guess the spec itself is
+> fine if it were followed to the letter.
+> 
+> I did some more tests about this on my Exynos machine: when I put a
+> device to autosuspend (U3) and manually poke the xHC reset bit, I do
+> see an automatic warm reset on the analyzer and the ports manage to
+> retrain to U0. But after a system suspend/resume which calls
+> xhci_reset() in the process, there is no reset on the wire. I also
+> noticed that it doesn't drive a reset (even after manual poking) when
+> there is no device connected on the other end of the analyzer.
+> 
+> So this might be our problem: maybe these host controllers (Synopsys
+> DesignWare) issue the spec-mandated warm reset only on ports where
+> they think there is a device attached. But after a system
+> suspend/resume (where the whole IP block on the SoC was powered down),
+> the host controller cannot know that there is still a device with an
+> active power session attached, and therefore doesn't drive the reset
+> on its own.
+> 
+> Even though this is a host controller bug, we still have to deal with
+> it somehow. I guess we could move the code into xhci_plat_resume() and
+> hide it behind a quirk to lessen the impact. But since reset_resume is
+> not a common case for most host controllers, it's hard to say if this
+> is DesignWare specific or a more widespread implementation mistake.
 
-Was there posted a version of this patch with Mark's comments addressed:
-http://www.spinics.net/lists/devicetree/msg11550.html ? I couldn't find it.
+I was going to suggest something along these lines too.  This seems to 
+be a bug in xHCI.  Therefore the fix belongs in xhci-hcd, not in the 
+hub driver.
 
--- 
-Thanks,
-Sylwester
+Alan Stern
