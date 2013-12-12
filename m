@@ -1,53 +1,65 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH CFT] ARM:S5P64X0: Enable ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR by default
-Date: Thu, 12 Dec 2013 10:47:58 +0100
-Message-ID: <26167386.hX5eWUjT6T@flatron>
-References: <1386825152-398-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+Subject: Re: [PATCH 1/5] clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg clock
+Date: Thu, 12 Dec 2013 10:53:52 +0100
+Message-ID: <57785646.ACHYxksEZV@flatron>
+References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com> <CAD=FV=XG+5n+SW_bDiFtQB7ieViAxVAO5E12+y-DgY34maT6DQ@mail.gmail.com> <CAM4voanSSqqAzRqrNrRc+HYh4vtq3zgNeGQYCVG6sE6nB_eWGA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:53115 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120Ab3LLJsG (ORCPT
+Received: from mail-ea0-f171.google.com ([209.85.215.171]:60458 "EHLO
+	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751396Ab3LLJx7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 04:48:06 -0500
-In-Reply-To: <1386825152-398-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+	Thu, 12 Dec 2013 04:53:59 -0500
+Received: by mail-ea0-f171.google.com with SMTP id h10so94680eak.30
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Dec 2013 01:53:58 -0800 (PST)
+In-Reply-To: <CAM4voanSSqqAzRqrNrRc+HYh4vtq3zgNeGQYCVG6sE6nB_eWGA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: panchaxari <panchaxari.prasannamurthy@linaro.org>, kgene.kim@samsung.com
-Cc: patches@linaro.org, linaro-kernel@lists.linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, jonghwa3.lee@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi panchaxari,
-
-On Thursday 12 of December 2013 10:42:32 panchaxari wrote:
-> ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR have been enabled as default configs
-> to S5P64X0 platforms.
+On Thursday 12 of December 2013 10:06:36 Abhilash Kesavan wrote:
+> Hi Tomasz and Doug,
 > 
-> Introduction of PHYS_VIRT config as default would enable phy-to-virt and
-> virt-to-phy translation function at boot and module loading time
-> and enforce dynamic reallocation of memory. AUTO_ZRELADDR config would
-> enable calculation of kernel load address at run time.
+> Thanks for the review.
+> On Thu, Dec 12, 2013 at 6:00 AM, Doug Anderson <dianders@chromium.org> wrote:
+> > Tomasz,
+> >
+> > On Wed, Dec 11, 2013 at 4:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+[snip]
+> >> Still, I discussed about such cases as this with Sylwester a bit today and
+> >> maybe a bit different approach would be better. There is a number of clocks
+> >> that need to be always on, such as PMU (but also a lot of currently undefined
+> >> ones). IMHO it would be nice to make sure they are enabled at boot time
+> >> and do one of following:
+> >> 1) claim and enable them directly from the clock controller driver
+> >> 2) define them with CLK_IGNORE_UNUSED flag and enable them directly from
+> >>    the clock controller driver (without increasing the refcount, so users could
+> >>    possibly disable them later),
+> >> 3) add a generic flag, such as CLK_BOOT_ENABLE (or something), that would
+> >>    make the CCF enable such clock at bootup (in addition to implying
+> >>    CLK_IGNORE_UNUSED).
+> >>
+> >> For me, the most sensible option would be 2) as it doesn't bloat the CCF with
+> >> yet another flag and doesn't encourage people to leave clocks always on
+> >> just because of laziness stopping them from implementing proper clock
+> >> support in drivers.
+> >
+> > Right, we're using #2 for this now, but one problem is that it's
+> > possible that the firmware may turn off one of these misc-type clocks.
+> >  On exynos5250-snow we ran into this.  The firmware actually gates the
+> > clock needed for accessing the chip_id, though perhaps that's not one
+> > of the clocks that needs to be on all the time.
 > 
-> PHYS_VIRT config is mutually exclusive to XIP_KERNEL, XIP_KERNEL is used in
-> systems with NOR flash devices, and ZRELADDR config is mutually exclusive
-> to ZBOOT_ROM.
-> 
-> CFT::Call For Testing
-> 
-> Requesting maintainers of S5P64X0 platforms to evaluate the changes on the
-> board and comment, as I dont have the board for testing and also requesting
-> an ACK
+> Yes, If the firmware gates sysreg then we should see failures at
+> boot-up or later.
+> Is this patch OK for now ? How would you guys like me to proceed on this ?
 
-Could you explain the purpose of this change on S5P64x0?
-
-This is actually quite a poor platform choice. As of today, the kernel
-is stuck with supporting just SMDK6440/6450 boards, which are proprietary
-development boards and it doesn't look like any further boards will show
-up in future. Kukjin has actually proposed removing support for this
-platform at all and I consider this reasonable.
-
-Kukjin, should we proceed with removal?
+Yes, as I wrote in my original reply, for now your patch is fine as we
+don't have the infrastructure for handling such clocks in a stricter
+way yet.
 
 Best regards,
 Tomasz
