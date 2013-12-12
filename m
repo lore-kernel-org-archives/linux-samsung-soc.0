@@ -1,96 +1,46 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 6/8] clk: max77686: Refactor driver data handling
-Date: Thu, 12 Dec 2013 17:07:19 +0100
-Message-ID: <1386864441-19561-7-git-send-email-t.figa@samsung.com>
-References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1386864441-19561-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v3 0/6] Exynos device tree clean-up for 3.14
+Date: Thu, 12 Dec 2013 17:12:12 +0100
+Message-ID: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:52967 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751497Ab3LLQMi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Dec 2013 11:12:38 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-As a prerequisite for further patch adding OF clock provider support to
-the driver, this patch changes the driver to store an array of struct
-clk * as driver data.
+This series intends to fix small problems with Exynos device tree sources
+that I spotted during my work on other things. The fixes are mostly
+stylistic, without any funtional changes introduced.
 
-Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/clk/clk-max77686.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+Changes sinve v2:
+ - Moved MSHC patches to separate series.
+ - Rebased onto current linux-next.
+Changes since v1:
+ - Addressed Stephen Warren's comments about MCT binding documentation.
 
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 81b3680..3cf38dc 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -137,12 +137,13 @@ static struct clk *max77686_clk_register(struct device *dev,
- static int max77686_clk_probe(struct platform_device *pdev)
- {
- 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct max77686_clk **max77686_clks;
-+	struct max77686_clk *max77686_clks[MAX77686_CLKS_NUM];
-+	struct clk **clocks;
- 	int i, ret;
- 
--	max77686_clks = devm_kzalloc(&pdev->dev, sizeof(struct max77686_clk *)
-+	clocks = devm_kzalloc(&pdev->dev, sizeof(struct clk *)
- 					* MAX77686_CLKS_NUM, GFP_KERNEL);
--	if (!max77686_clks)
-+	if (!clocks)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
-@@ -153,22 +154,20 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
--		struct clk *clk;
--
- 		max77686_clks[i]->iodev = iodev;
- 		max77686_clks[i]->mask = 1 << i;
- 		max77686_clks[i]->hw.init = &max77686_clks_init[i];
- 
--		clk = max77686_clk_register(&pdev->dev, max77686_clks[i]);
--		if (IS_ERR(clk)) {
--			ret = PTR_ERR(clk);
-+		clocks[i] = max77686_clk_register(&pdev->dev, max77686_clks[i]);
-+		if (IS_ERR(clocks[i])) {
-+			ret = PTR_ERR(clocks[i]);
- 			dev_err(&pdev->dev, "failed to register %s\n",
- 				max77686_clks[i]->hw.init->name);
- 			goto err_clocks;
- 		}
- 	}
- 
--	platform_set_drvdata(pdev, max77686_clks);
-+	platform_set_drvdata(pdev, clocks);
- 
- 	return 0;
- 
-@@ -183,12 +182,15 @@ err_clocks:
- 
- static int max77686_clk_remove(struct platform_device *pdev)
- {
--	struct max77686_clk **max77686_clks = platform_get_drvdata(pdev);
-+	struct clk **clocks = platform_get_drvdata(pdev);
- 	int i;
- 
- 	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
--		clkdev_drop(max77686_clks[i]->lookup);
--		clk_unregister(max77686_clks[i]->hw.clk);
-+		struct clk_hw *hw = __clk_get_hw(clocks[i]);
-+		struct max77686_clk *max77686 = to_max77686_clk(hw);
-+
-+		clkdev_drop(max77686->lookup);
-+		clk_unregister(clocks[i]);
- 	}
- 	return 0;
- }
+Tomasz Figa (6):
+  Documentation: devicetree: Update Exynos MCT bindings description
+  ARM: dts: exynos4: Drop interrupt controller properties from MCT nodes
+  ARM: dts: exynos4x12: Move MCT node to exynos4x12.dtsi
+  ARM: dts: exynos4: Simplify MCT interrupt map
+  ARM: dts: exynos: Fix missing spaces after labels
+  ARM: dts: exynos4: Add missing unit-address of sysreg node
+
+ .../bindings/timer/samsung,exynos4210-mct.txt      | 54 +++++++++++++++-------
+ arch/arm/boot/dts/exynos4.dtsi                     |  6 +--
+ arch/arm/boot/dts/exynos4210.dtsi                  | 23 ++++-----
+ arch/arm/boot/dts/exynos4212.dtsi                  | 24 +---------
+ arch/arm/boot/dts/exynos4412.dtsi                  | 28 +----------
+ arch/arm/boot/dts/exynos4x12.dtsi                  | 20 ++++++++
+ arch/arm/boot/dts/exynos5.dtsi                     |  4 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  6 +--
+ arch/arm/boot/dts/exynos5440.dtsi                  |  2 +-
+ 9 files changed, 78 insertions(+), 89 deletions(-)
+
 -- 
 1.8.4.3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
