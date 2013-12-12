@@ -1,50 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] mmc: sdhci-s3c: Check if clk_set_rate() succeeds
-Date: Thu, 12 Dec 2013 11:21:06 +0000
-Message-ID: <1386847266-2131-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-mmc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Thu, 12 Dec 2013 20:32:24 +0900
+Message-ID: <CAL1wa8eMenw_iS=qXLkEfZ0hWvE7u0vgnhoWDW6YJ7j4Kc=C_A@mail.gmail.com>
+References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
+ <1386308868-30264-2-git-send-email-l.krishna@samsung.com> <52A207D8.3030206@gmail.com>
+ <8302228.6iSJIFqj3A@flatron> <52A39F3B.5070806@gmail.com> <CAL1wa8fTuOMk9=G3JhdpNOE8=FPTfMSJ_mB-7jo1pNF1cAavgg@mail.gmail.com>
+ <CAD=FV=WZNmWdxTWzHCEtkCo7O1RZ7YDNkmNBD4wwpDc-=O1LCQ@mail.gmail.com> <CA+Ln22GysOQPQwbb-Ak=SYVpLP5zzMhecUw_pp+qv7CkAcC3=g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f169.google.com ([74.125.82.169]:42543 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751423Ab3LLLcp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Dec 2013 06:32:45 -0500
+In-Reply-To: <CA+Ln22GysOQPQwbb-Ak=SYVpLP5zzMhecUw_pp+qv7CkAcC3=g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Wim Van Sebroeck <wim@iguana.be>
+Cc: Doug Anderson <dianders@chromium.org>, Leela Krishna Amudala <l.krishna@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
-From: Mark Brown <broonie@linaro.org>
+Hi,
 
-It is possible that we may fail to set the clock rate, if we do so then
-log the failure and don't bother reprogramming the IP.
+On Thu, Dec 12, 2013 at 8:57 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> 2013/12/11 Doug Anderson <dianders@chromium.org>:
+>> Leela Krishna,
+>>
+>> On Wed, Dec 11, 2013 at 4:22 AM, Leela Krishna Amudala
+>> <l.krishna@samsung.com> wrote:
+>>> Hi,
+>>>
+>>> As I was in travel not accessed my mails.
+>>>
+>>> I'll try to post next version of this series tomorrow addressing
+>>> Sylwester's comments.
+>>
+>> It's completely up to you (and Wim), of course.  ...but if it were me
+>> I wouldn't spin the patch at this point.  Your existing version has
+>> Guenter's Ack and his indication that he thinks that v12 is good
+>> enough to land without future spins.  You could spin with Tomasz /
+>> Sylwester's suggestions but remember that it is not mandatory.
+>
+> As I said, at this point the comments are just nitpicks that it would be
+> nice to have them addressed, but this might be done as well in incremental
+> patch(es).
+>
+> So if it's not a problem for you and you can find time for it, a re-spin would
+> be nice, but it's not a necessity (unless Wim decides otherwise).
+>
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
----
- drivers/mmc/host/sdhci-s3c.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Okay, Then I'll drop my plan to post next version of this series.
+Anyways I don't have code repository and hardware with me now to
+re-base and test.
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 6debda952155..5c20f827d828 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -295,6 +295,7 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
- 	struct device *dev = &ourhost->pdev->dev;
- 	unsigned long timeout;
- 	u16 clk = 0;
-+	int ret;
- 
- 	/* If the clock is going off, set to 0 at clock control register */
- 	if (clock == 0) {
-@@ -305,7 +306,12 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
- 
- 	sdhci_s3c_set_clock(host, clock);
- 
--	clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
-+	ret = clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
-+	if (ret != 0) {
-+		dev_err(dev, "%s: failed to set clock rate %uHz\n",
-+			mmc_hostname(host->mmc), clock);
-+		return;
-+	}
- 
- 	host->clock = clock;
- 
--- 
-1.8.5.1
+Hello Wim,
+Can you kindly look into this series and take necessary action..?
 
+Best Wishes,
+Leela Krishna.
+
+
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
