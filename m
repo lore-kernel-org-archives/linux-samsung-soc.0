@@ -1,8 +1,7 @@
 From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 4/8] clk: max77686: Make max77686_clk_register() return
- struct clk *
-Date: Thu, 12 Dec 2013 17:07:17 +0100
-Message-ID: <1386864441-19561-5-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 6/8] clk: max77686: Refactor driver data handling
+Date: Thu, 12 Dec 2013 17:07:19 +0100
+Message-ID: <1386864441-19561-7-git-send-email-t.figa@samsung.com>
 References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1386864441-19561-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -11,71 +10,83 @@ To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As a preparation for further patches, this patch modifies the clock
-registration helper function to return a pointer to the newly registered
-clock. No functional change is done to the driver.
+As a prerequisite for further patch adding OF clock provider support to
+the driver, this patch changes the driver to store an array of struct
+clk * as driver data.
 
 Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clk/clk-max77686.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/clk/clk-max77686.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 5d78460..2e6ba0e 100644
+index 81b3680..3cf38dc 100644
 --- a/drivers/clk/clk-max77686.c
 +++ b/drivers/clk/clk-max77686.c
-@@ -112,27 +112,26 @@ static struct clk_init_data max77686_clks_init[MAX77686_CLKS_NUM] = {
- 	},
- };
- 
--static int max77686_clk_register(struct device *dev,
-+static struct clk *max77686_clk_register(struct device *dev,
- 				struct max77686_clk *max77686)
- {
- 	struct clk *clk;
- 	struct clk_hw *hw = &max77686->hw;
- 
- 	clk = clk_register(dev, hw);
--
- 	if (IS_ERR(clk))
--		return -ENOMEM;
-+		return clk;
- 
- 	max77686->lookup = kzalloc(sizeof(struct clk_lookup), GFP_KERNEL);
- 	if (!max77686->lookup)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	max77686->lookup->con_id = hw->init->name;
- 	max77686->lookup->clk = clk;
- 
- 	clkdev_add(max77686->lookup);
- 
--	return 0;
-+	return clk;
- }
- 
+@@ -137,12 +137,13 @@ static struct clk *max77686_clk_register(struct device *dev,
  static int max77686_clk_probe(struct platform_device *pdev)
-@@ -154,12 +153,16 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ {
+ 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max77686_clk **max77686_clks;
++	struct max77686_clk *max77686_clks[MAX77686_CLKS_NUM];
++	struct clk **clocks;
+ 	int i, ret;
+ 
+-	max77686_clks = devm_kzalloc(&pdev->dev, sizeof(struct max77686_clk *)
++	clocks = devm_kzalloc(&pdev->dev, sizeof(struct clk *)
+ 					* MAX77686_CLKS_NUM, GFP_KERNEL);
+-	if (!max77686_clks)
++	if (!clocks)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
+@@ -153,22 +154,20 @@ static int max77686_clk_probe(struct platform_device *pdev)
  	}
  
  	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
-+		struct clk *clk;
-+
+-		struct clk *clk;
+-
  		max77686_clks[i]->iodev = iodev;
  		max77686_clks[i]->mask = 1 << i;
  		max77686_clks[i]->hw.init = &max77686_clks_init[i];
  
--		ret = max77686_clk_register(&pdev->dev, max77686_clks[i]);
--		if (ret) {
-+		clk = max77686_clk_register(&pdev->dev, max77686_clks[i]);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
+-		clk = max77686_clk_register(&pdev->dev, max77686_clks[i]);
+-		if (IS_ERR(clk)) {
+-			ret = PTR_ERR(clk);
++		clocks[i] = max77686_clk_register(&pdev->dev, max77686_clks[i]);
++		if (IS_ERR(clocks[i])) {
++			ret = PTR_ERR(clocks[i]);
+ 			dev_err(&pdev->dev, "failed to register %s\n",
+ 				max77686_clks[i]->hw.init->name);
+ 			goto err_clocks;
+ 		}
+ 	}
+ 
+-	platform_set_drvdata(pdev, max77686_clks);
++	platform_set_drvdata(pdev, clocks);
+ 
+ 	return 0;
+ 
+@@ -183,12 +182,15 @@ err_clocks:
+ 
+ static int max77686_clk_remove(struct platform_device *pdev)
+ {
+-	struct max77686_clk **max77686_clks = platform_get_drvdata(pdev);
++	struct clk **clocks = platform_get_drvdata(pdev);
+ 	int i;
+ 
+ 	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
+-		clkdev_drop(max77686_clks[i]->lookup);
+-		clk_unregister(max77686_clks[i]->hw.clk);
++		struct clk_hw *hw = __clk_get_hw(clocks[i]);
++		struct max77686_clk *max77686 = to_max77686_clk(hw);
 +
- 			switch (i) {
- 			case MAX77686_CLK_AP:
- 				dev_err(&pdev->dev, "Fail to register CLK_AP\n");
++		clkdev_drop(max77686->lookup);
++		clk_unregister(clocks[i]);
+ 	}
+ 	return 0;
+ }
 -- 
 1.8.4.3
 
