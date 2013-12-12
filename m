@@ -1,39 +1,64 @@
-From: Panchaxari Prasannamurthy Tumkur
-	<panchaxari.prasannamurthy@linaro.org>
-Subject: Re: [PATCH CFT] ARM:S5P64X0: Enable ARM_PATCH_PHYS_VIRT and
- AUTO_ZRELADDR by default
-Date: Thu, 12 Dec 2013 16:33:46 +0530
-Message-ID: <CAAunhULO5n3rf5_Q+HwExd=kadsPC_rTz9oP8kXKM7krBetbdQ@mail.gmail.com>
-References: <1386825152-398-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
-	<26167386.hX5eWUjT6T@flatron>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 12:15:57 +0100
+Message-ID: <20131212111556.GB11524@ulmo.nvidia.com>
+References: <20131211183237.GI4699@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <26167386.hX5eWUjT6T@flatron>
+Content-Disposition: inline
+In-Reply-To: <20131211183237.GI4699@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz
 
-> Could you explain the purpose of this change on S5P64x0?
->
-> This is actually quite a poor platform choice. As of today, the kernel
-> is stuck with supporting just SMDK6440/6450 boards, which are proprietary
-> development boards and it doesn't look like any further boards will show
-> up in future. Kukjin has actually proposed removing support for this
-> platform at all and I consider this reasonable.
->
-> Kukjin, should we proceed with removal?
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The purpose of this patch is with the greater intent of consolidating
-ARM-32 kernel. Which means a generic kernel for ARM-32 processors.
+On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+>=20
+> Bjorn
+>=20
+>=20
+> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
+>=20
+> Add entries for PCI host controller drivers in drivers/pci/host/.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 
-Hence these platform supported configs are introduced as default for
-that particular platform.
+Looks good to me:
 
-I hope i answered your question. Else please mail me with further queries.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-thanks
-Panchaxari
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSqZrsAAoJEN0jrNd/PrOhoGAP/Rwv5Hl1kzl2/sl6eHcZ5ejn
+weIUFpPMDI9nlrXDrB6WLC7AeUa2ZiK6VIyg2gn+ORxqtSxlzb9o4X0CQmqvhK91
+RK8cXNasIqNUp5cTzihzvRvPlPmYhElSmqgoAV35BHh14hhaVNxtbnKqTNGUjQUR
+JX+0SWNllb2wG6Bc2kA/mIk2HU4OugQmIIFsZ+Kh8rFNKFYW/gh2b76fkZwAi9Ra
+ncRoXec7XZkC9cVgxiCQwlifwgzNzMzbmTz1LvqUkxN5shBebaBvRJbcfST9ILEg
+JoVTDzJCmhtRt5ugJX7nAXvJmIdwZaTGl1rUtDKWs5fFPT3LPDCqcdUl+nyBIuSL
+wZ4z9S5ya2hYdOUQzvDzY91n6BCiquNVqoJNEPMj23A8EqrrpfDPfn4wChwLJtxK
+QyxCbfQwchhLVQeZBrOtEaTMJaZXl14zbM4YzkPCBndyoOzDc0jD3paf21wilVo/
+ogBUcVdeQcgm3H+EFueJSBlhVsmwmJHGKbgmLJp0F6wpeAFeBph/0mKTf2yyD0TJ
+WJ3Xs9y1E4DxcaUPnx9VSuijo4OEkGrXZKd+2AtXjjRNV6ZU4tbYlts9ecYZ3A6V
+dmZZKg0hhyVkT2H5VkPCkb3PuZVpMEuvN6jofe34/KmD0vtyGj4ZguZvmW8EAzAN
+6wY+t8q6F2A6ZfhotLqG
+=Y3ls
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
