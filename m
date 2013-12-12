@@ -1,109 +1,77 @@
 From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 2/5] ARM: EXYNOS5: Fix PMU register configuration for
- local power blocks
-Date: Thu, 12 Dec 2013 08:13:23 +0530
-Message-ID: <CAM4voamk2j1XEt6Pbt1DtNcY+UrFcK4XsAW2OwYgaXLSpLDOnw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] clk: max77686: Replace is_enabled() with is_prepared call-back
+Date: Thu, 12 Dec 2013 08:17:07 +0530
+Message-ID: <CAM4voaniTiCZhCT+AV=u1FNd2xyCdv9JYd4o3UYvHWucYyA_jg@mail.gmail.com>
 References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
-	<1386763029-8516-3-git-send-email-a.kesavan@samsung.com>
-	<1555673.59jhB0RKpX@amdc1227>
+	<1386763029-8516-4-git-send-email-a.kesavan@samsung.com>
+	<20396343.nNtkmZyqTH@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:37183 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab3LLCnY (ORCPT
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:46774 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab3LLCrI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 21:43:24 -0500
-Received: by mail-qc0-f179.google.com with SMTP id i8so5837830qcq.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 18:43:23 -0800 (PST)
-In-Reply-To: <1555673.59jhB0RKpX@amdc1227>
+	Wed, 11 Dec 2013 21:47:08 -0500
+Received: by mail-qa0-f42.google.com with SMTP id k4so5421598qaq.15
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 18:47:07 -0800 (PST)
+In-Reply-To: <20396343.nNtkmZyqTH@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, jonghwa3.lee@samsung.com, Douglas Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, devicetree-discuss@lists.ozlabs.org, jonghwa3.lee@samsung.com, Douglas Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
 Hi Tomasz,
 
-On Wed, Dec 11, 2013 at 5:59 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+On Wed, Dec 11, 2013 at 5:54 PM, Tomasz Figa <t.figa@samsung.com> wrote:
 > Hi Abhilash,
 >
-> [dropping invalid address of DT mailing list]
->
-> Please see my comments inline.
->
-> On Wednesday 11 of December 2013 17:27:06 Abhilash Kesavan wrote:
->> For the six local power blocks - MFC, DISP1, GSC, MAU, G3D and ISP
->> the respective CMU_RESET, CMU_SYSCLK and CMU_CLKSTOP registers need
->> to be low initially for normal mode on Exynos5250.
->> Also fix the corresponding AFTR and LPA configurations.
+> On Wednesday 11 of December 2013 17:27:07 Abhilash Kesavan wrote:
+>> Following messages are observed when unused PMIC clocks are being
+>> disabled during boot-up:
+>> [ 2921.969560] BUG: scheduling while atomic: swapper/0/1/0x00000002
+>> [ 2921.974080] Modules linked in:
+>> [ 2921.977120] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.13.0-rc1-00018-g8465d57 #27
+>> [ 2921.984772] [<c0013c80>] (unwind_backtrace+0x0/0xf8) from [<c00110cc>] (show_stack+0x10/0x14)
+>> [ 2921.993269] [<c00110cc>] (show_stack+0x10/0x14) from [<c032c10c>] (dump_stack+0x64/0xa4)
+>> [ 2922.001340] [<c032c10c>] (dump_stack+0x64/0xa4) from [<c0329b00>] (__schedule_bug+0x48/0x60)
+>> [ 2922.009758] [<c0329b00>] (__schedule_bug+0x48/0x60) from [<c032d414>] (__schedule+0x468/0x504)
+>> [ 2922.018351] [<c032d414>] (__schedule+0x468/0x504) from [<c032caac>] (schedule_timeout+0x114/0x19c)
+>> [ 2922.027294] [<c032caac>] (schedule_timeout+0x114/0x19c) from [<c0255c00>] (s3c24xx_i2c_xfer+0x1cc/0x320)
+>> [ 2922.036754] [<c0255c00>] (s3c24xx_i2c_xfer+0x1cc/0x320) from [<c0252e08>] (__i2c_transfer+0x44/0x7c)
+>> [ 2922.045868] [<c0252e08>] (__i2c_transfer+0x44/0x7c) from [<c025416c>] (i2c_transfer+0x74/0x98)
+>> [ 2922.054462] [<c025416c>] (i2c_transfer+0x74/0x98) from [<c021ed38>] (regmap_i2c_read+0x48/0x64)
+>> [ 2922.063142] [<c021ed38>] (regmap_i2c_read+0x48/0x64) from [<c021b41c>] (_regmap_raw_read+0xa8/0xfc)
+>> [ 2922.072168] [<c021b41c>] (_regmap_raw_read+0xa8/0xfc) from [<c021b780>] (_regmap_bus_read+0x28/0x48)
+>> [ 2922.081281] [<c021b780>] (_regmap_bus_read+0x28/0x48) from [<c0219d30>] (_regmap_read+0x5c/0xc4)
+>> [ 2922.090048] [<c0219d30>] (_regmap_read+0x5c/0xc4) from [<c0219ddc>] (regmap_read+0x44/0x5c)
+>> [ 2922.098383] [<c0219ddc>] (regmap_read+0x44/0x5c) from [<c0290bdc>] (max77686_clk_is_enabled+0x20/0x3c)
+>> [ 2922.107670] [<c0290bdc>] (max77686_clk_is_enabled+0x20/0x3c) from [<c028cfdc>] (clk_disable_unused_subtree+0x6c/0xa8)
+>> [ 2922.118258] [<c028cfdc>] (clk_disable_unused_subtree+0x6c/0xa8) from [<c028dc90>] (clk_disable_unused+0x30/0xd8)
+>> [ 2922.128414] [<c028dc90>] (clk_disable_unused+0x30/0xd8) from [<c00087a8>] (do_one_initcall+0x38/0x160)
+>>
+>> Fix it by replacing is_enabled call-back with is_prepared as the i2c driver may
+>> sleep during a transfer.
 >>
 >> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 >> ---
->>  arch/arm/mach-exynos/pmu.c |   66 ++++++++++++++++++++++++++++++++------------
->>  1 file changed, 48 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
->> index 97d6885..5f4d26b 100644
->> --- a/arch/arm/mach-exynos/pmu.c
->> +++ b/arch/arm/mach-exynos/pmu.c
->> @@ -296,24 +296,24 @@ static struct exynos_pmu_conf exynos5250_pmu_config[] = {
->>       { EXYNOS5_G3D_SYS_PWR_REG,                      { 0x7, 0x0, 0x0} },
->>       { EXYNOS5_DISP1_SYS_PWR_REG,                    { 0x7, 0x0, 0x0} },
->>       { EXYNOS5_MAU_SYS_PWR_REG,                      { 0x7, 0x7, 0x0} },
->> -     { EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,         { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,          { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,          { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,          { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_CLKSTOP_DISP1_SYS_PWR_REG,        { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_CLKSTOP_MAU_SYS_PWR_REG,          { 0x1, 0x1, 0x0} },
->> -     { EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,          { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,           { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,           { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,           { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_SYSCLK_DISP1_SYS_PWR_REG,         { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_SYSCLK_MAU_SYS_PWR_REG,           { 0x1, 0x1, 0x0} },
->> -     { EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,           { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,            { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,            { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,            { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_RESET_DISP1_SYS_PWR_REG,          { 0x1, 0x0, 0x0} },
->> -     { EXYNOS5_CMU_RESET_MAU_SYS_PWR_REG,            { 0x1, 0x1, 0x0} },
->> +     { EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,         { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,          { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,          { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,          { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_CLKSTOP_DISP1_SYS_PWR_REG,        { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_CLKSTOP_MAU_SYS_PWR_REG,          { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,          { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,           { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,           { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,           { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_SYSCLK_DISP1_SYS_PWR_REG,         { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_SYSCLK_MAU_SYS_PWR_REG,           { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,           { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,            { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,            { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,            { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_RESET_DISP1_SYS_PWR_REG,          { 0x0, 0x0, 0x0} },
->> +     { EXYNOS5_CMU_RESET_MAU_SYS_PWR_REG,            { 0x0, 0x0, 0x0} },
->>       { PMU_TABLE_END,},
->>  };
->>
->> @@ -337,6 +337,27 @@ static void __iomem *exynos5_list_diable_wfi_wfe[] = {
->>       EXYNOS5_ISP_ARM_OPTION,
->>  };
->>
->> +void __iomem *exynos5_list_disable_pmu_reg[] = {
+>>  drivers/clk/clk-max77686.c |    4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> static void __iomem * const exynos5_list_disable_pmu_reg[] = {
+> This has been already fixed as a part of series I sent a while ago to
+> fix max77686 clock driver. Unfortunately nobody seems to have applied
+> it.
+>
+> Please refer to following thread:
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/24153
+>
+> I plan to rebase and resent the series soon.
 
-Will fix and re-post.
+Great, your patchset also adds OF support which was what I was looking
+to do next. I'll wait for the rebased patchset.
 >
 > Best regards,
 > Tomasz
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+Thanks,
+Abhilash
