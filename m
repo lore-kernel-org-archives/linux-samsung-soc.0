@@ -1,43 +1,42 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v3 6/6] ARM: dts: exynos4: Add missing unit-address of sysreg
- node
-Date: Thu, 12 Dec 2013 17:12:18 +0100
-Message-ID: <1386864738-19829-7-git-send-email-t.figa@samsung.com>
-References: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 0/3] DW-MSHC support on Exynos4412-TRATS2 board
+Date: Thu, 12 Dec 2013 17:18:00 +0100
+Message-ID: <1386865083-20082-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:51833 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751879Ab3LLQMl (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53010 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751466Ab3LLQS2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 11:12:41 -0500
-In-reply-to: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
+	Thu, 12 Dec 2013 11:18:28 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MXP00CN2BYQIR60@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Dec 2013 16:18:26 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-The node contains reg property, so unit-address suffix should be present
-in its name.
+This series fixes spotted issues with DW-MSHC support on Exynos4x12
+SoCs and then enables DW-MSHC controller to handle eMMC memory on
+Exynos4412-TRATS2 board. As opposed to using sdhci-s3c for eMMC,
+MMC 4.4 extensions can be used and in general performance is improved.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on Exynos4412-TRATS2 board.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 4fed2ad..ee173fe 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -99,7 +99,7 @@
- 		reg = <0x10440000 0x1000>;
- 	};
- 
--	sys_reg: sysreg {
-+	sys_reg: sysreg@10010000 {
- 		compatible = "samsung,exynos4-sysreg", "syscon";
- 		reg = <0x10010000 0x400>;
- 	};
+Tomasz Figa (3):
+  clk: samsung: exynos4: Fix definition of div_mmc_pre4 divider
+  ARM: dts: exynos4x12: Fix definition of MSHC device tree nodes
+  ARM: dts: exynos4412-trats2: Use MSHC controller for eMMC memory
+
+ arch/arm/boot/dts/exynos4412-odroidx.dts |  5 +----
+ arch/arm/boot/dts/exynos4412-origen.dts  |  5 +----
+ arch/arm/boot/dts/exynos4412-trats2.dts  | 20 ++++++++++++++++----
+ arch/arm/boot/dts/exynos4412.dtsi        |  8 --------
+ arch/arm/boot/dts/exynos4x12.dtsi        | 13 +++++++++++++
+ drivers/clk/samsung/clk-exynos4.c        |  3 ++-
+ 6 files changed, 33 insertions(+), 21 deletions(-)
+
 -- 
 1.8.4.3
