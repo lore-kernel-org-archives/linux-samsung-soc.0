@@ -1,37 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: s3c24xx: get rid of custom <mach/gpio.h>
-Date: Fri, 13 Dec 2013 09:20:39 +0100
-Message-ID: <CACRpkdaHy8BDmj+noGqhOm=c0UmSn6pKb9WbGEPtP7M-KwYxLA@mail.gmail.com>
-References: <1386857210-4944-1-git-send-email-linus.walleij@linaro.org>
-	<201312130857.23890.heiko@sntech.de>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Fri, 13 Dec 2013 09:42:03 +0100
+Message-ID: <201312130942.03674.heiko@sntech.de>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt> <52AA6909.8050200@inov.pt> <CACRpkdbBqqbkp3ap3Y=C5zC3Cq9jd+dL4iPZ9-2-Fd81GLAPBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:38138 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750830Ab3LMIUk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 03:20:40 -0500
-Received: by mail-ob0-f178.google.com with SMTP id uz6so1642064obc.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 00:20:39 -0800 (PST)
-In-Reply-To: <201312130857.23890.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbBqqbkp3ap3Y=C5zC3Cq9jd+dL4iPZ9-2-Fd81GLAPBA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?iso-8859-1?q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Fri, Dec 13, 2013 at 8:57 AM, Heiko St=FCbner <heiko@sntech.de> wrot=
-e:
+Am Freitag, 13. Dezember 2013, 09:12:52 schrieb Linus Walleij:
+> On Fri, Dec 13, 2013 at 2:55 AM, Jos=E9 Miguel Gon=E7alves
+>=20
+> <jose.goncalves@inov.pt> wrote:
+> > On 27-09-2013 15:17, Linus Walleij wrote:
+> >> On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
+> >>=20
+> >> <jose.goncalves@inov.pt> wrote:
+> >>> Some GPIO line limits are incorrectly set which, for instance,
+> >>> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+> >>>=20
+> >>> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
+> >>> ---
+> >>>=20
+> >>>   arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
+>=20
+> (...)
+>=20
+> > Was this patch forgotten?
+>=20
+> Not by me, I just never got an ACK from the Samsung maintainers,
+> so I can't apply it to the GPIO tree.
+>=20
+> Ben, Kukjin: can one of you ACK this so I can take it through the
+> GPIO tree?
 
-> I'm not the maintainer of s3c24xx,
+again not the maintainer :-), but I've looked through the manuals of s3=
+c24xx=20
+socs and the new values look correct [I had looked up the patch content=
+ in the=20
+list archive], so
 
-Maybe you should be. I have a hard time getting the generic
-Samsung maintainers' attention to S3C patches...
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-> but this looks nice ;-)
 
-Do you think you can test it on hardware?
+But Jose, you should really really look into moving to devicetree with =
+your=20
+platform, if you're not already doing so. Pinctrl support is already pr=
+esent,=20
+and I'm hopefull the move to the common clock framework I posted a few =
+days=20
+ago might make it too.
 
-Yours,
-Linus Walleij
+
+Heiko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
