@@ -1,102 +1,81 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 7/7] usb: dwc3: exynos: add pm_runtime support
-Date: Fri, 13 Dec 2013 13:56:18 -0600
-Message-ID: <20131213195618.GG5292@saruman.home>
-References: <1386884325-11440-1-git-send-email-balbi@ti.com>
- <1386884325-11440-8-git-send-email-balbi@ti.com>
- <000301cef7c0$640c1ce0$2c2456a0$%tikhomirov@samsung.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YH9Qf6Fh2G5kB/85"
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double clock initialization
+Date: Fri, 13 Dec 2013 20:59:39 +0100
+Message-ID: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:41382 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752538Ab3LMT5P (ORCPT
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:50628 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607Ab3LMT74 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 14:57:15 -0500
-Content-Disposition: inline
-In-Reply-To: <000301cef7c0$640c1ce0$2c2456a0$%tikhomirov@samsung.com>
+	Fri, 13 Dec 2013 14:59:56 -0500
+Received: by mail-ee0-f52.google.com with SMTP id d17so1061196eek.25
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 11:59:55 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anton Tikhomirov <av.tikhomirov@samsung.com>
-Cc: 'Felipe Balbi' <balbi@ti.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, 'Linux ARM Kernel Mailing List' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, 'Linux OMAP Mailing List' <linux-omap@vger.kernel.org>, w-kwok2@ti.com, 'Santosh Shilimkar' <santosh.shilimkar@ti.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
---YH9Qf6Fh2G5kB/85
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit
 
-On Fri, Dec 13, 2013 at 02:01:32PM +0900, Anton Tikhomirov wrote:
-> Hi Felipe,
->=20
-> > -static int dwc3_exynos_suspend(struct device *dev)
-> > +static int __dwc3_exynos_suspend(struct dwc3_exynos *exynos)
-> >  {
-> > -	struct dwc3_exynos *exynos =3D dev_get_drvdata(dev);
-> > -
-> >  	clk_disable(exynos->clk);
-> >=20
-> >  	return 0;
-> >  }
-> >=20
-> > +static int __dwc3_exynos_resume(struct dwc3_exynos *exynos)
-> > +{
-> > +	return clk_enable(exynos->clk);
-> > +}
-> > +
-> > +static int dwc3_exynos_suspend(struct device *dev)
-> > +{
-> > +	struct dwc3_exynos *exynos =3D dev_get_drvdata(dev);
-> > +
-> > +	return __dwc3_exynos_suspend(exynos);
->=20
-> If dwc3-exynos is runtime suspended, the clock will be disabled
-> second time here (unbalanced clk_enable/clk_disable).
+4178bac ARM: call of_clk_init from default time_init handler
 
-I don't get what you mean but there is something that probably needs
-fixing, I guess below makes it better:
+added implicit call to of_clk_init() from default time_init callback,
+but it did not change platforms calling it from other callbacks, despite
+of not having custom time_init callbacks. This caused double clock
+initialization on such platforms, leading to boot failures. An example
+of such platform is mach-s3c64xx.
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index c93919a..1e5720a 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -218,6 +218,9 @@ static int dwc3_exynos_suspend(struct device *dev)
- {
- 	struct dwc3_exynos *exynos =3D dev_get_drvdata(dev);
-=20
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
- 	return __dwc3_exynos_suspend(exynos);
+This patch fixes boot failure on s3c64xx by dropping custom init_irq
+callback, which had a call to of_clk_init() and moving system reset
+initialization to init_machine callback. This allows us to have
+clocks initialized properly without a need to have custom init_time or
+init_irq callbacks.
+
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+NOTE: This is a critical boot regression fix for mach-s3c64xx that
+should be merged for next 3.13-rc release.
+
+diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+index 7eb9a10..2fddf38 100644
+--- a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
++++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+@@ -8,8 +8,6 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/clk-provider.h>
+-#include <linux/irqchip.h>
+ #include <linux/of_platform.h>
+ 
+ #include <asm/mach/arch.h>
+@@ -48,15 +46,9 @@ static void __init s3c64xx_dt_map_io(void)
+ 		panic("SoC is not S3C64xx!");
  }
-=20
-
-Is that what you meant ?
-
---=20
-balbi
-
---YH9Qf6Fh2G5kB/85
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSq2ZiAAoJEIaOsuA1yqREYz0P/A13JjQgvKviMCxABNmxA/Ax
-7c8jy717JmFktBBlnzeyK34CZ05V4UEg133C6OBNARnEDgfa17UUbvRwvOAF45dw
-JV8ipQq1is4EyxWO3x6wyHHrx+UPL7ZAtow93xlUZ0qFQ6xx5uVxKBXI9POpDeKE
-fb0uZNA87pLkOdG9PfaXBvFKGkACIDY9dOkbN21Qa1LTGAoKM0xI3V0PRxlMd/Ye
-ctKs7HfyacWC9+Zl11E8JwsArbA7m2HKj2U+dUN5sUC/tYY1E5R/Sk0PEhxWvkbx
-K0VaNoTyV+evIzQtAiAUE+bghPBVMwXJBPbyTWUnhLBGr2bOVuv5GiFESAxoVKE1
-d1FD6SuWz5dLkEyz4nFDaoOdzZ5fqHQI6xlADl1980RCy1FU29aXhEU6f6FXG7HS
-o+NnEmByFyQ0RPF25NJXsfhV+hXkyBGhA8wUhIpLbu/9xv5PBSoQ1rPgGEnz16nJ
-Vsue6mtTVjJHslHpTktVMCGbxErHnOjRBkrAgMWvxPjQy0oHIz0eoyv0svpJ3Gnb
-e4fnRb+oev95+/dtFrXRd+2jbjPirkn3HIoSwBQ2xpyhaxkR3iQwJ3d0G39prC7q
-4tFuA3hD2iUHs2BOauCpTNwcQn/PCcldtRsygpJ8w/PveCnIqPSpKlJQL5+9L37t
-A080d4GwnaSkvfs3Ua/t
-=Sk3T
------END PGP SIGNATURE-----
-
---YH9Qf6Fh2G5kB/85--
+ 
+-static void __init s3c64xx_dt_init_irq(void)
+-{
+-	of_clk_init(NULL);
+-	samsung_wdt_reset_of_init();
+-	irqchip_init();
+-};
+-
+ static void __init s3c64xx_dt_init_machine(void)
+ {
++	samsung_wdt_reset_of_init();
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+@@ -79,7 +71,6 @@ DT_MACHINE_START(S3C6400_DT, "Samsung S3C64xx (Flattened Device Tree)")
+ 	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
+ 	.dt_compat	= s3c64xx_dt_compat,
+ 	.map_io		= s3c64xx_dt_map_io,
+-	.init_irq	= s3c64xx_dt_init_irq,
+ 	.init_machine	= s3c64xx_dt_init_machine,
+ 	.restart        = s3c64xx_dt_restart,
+ MACHINE_END
+-- 
+1.8.5.1
