@@ -1,111 +1,68 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 7/7] usb: dwc3: exynos: add pm_runtime support
-Date: Fri, 13 Dec 2013 14:18:31 -0600
-Message-ID: <20131213201831.GJ5292@saruman.home>
-References: <1386884325-11440-1-git-send-email-balbi@ti.com>
- <1386884325-11440-8-git-send-email-balbi@ti.com>
- <000301cef7c0$640c1ce0$2c2456a0$%tikhomirov@samsung.com>
- <20131213195618.GG5292@saruman.home>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/0U0QBNx7JIUZLHm"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131213195618.GG5292@saruman.home>
-Sender: linux-omap-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Anton Tikhomirov <av.tikhomirov@samsung.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, 'Linux ARM Kernel Mailing List' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, 'Linux OMAP Mailing List' <linux-omap@vger.kernel.org>, w-kwok2@ti.com, 'Santosh Shilimkar' <santosh.shilimkar@ti.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
+Date: Fri, 13 Dec 2013 21:19:44 +0100
+Message-ID: <1386965984-16028-1-git-send-email-tomasz.figa@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f170.google.com ([209.85.215.170]:39004 "EHLO
+	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752796Ab3LMUT4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Dec 2013 15:19:56 -0500
+Received: by mail-ea0-f170.google.com with SMTP id k10so1099086eaj.29
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 12:19:55 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>
 
---/0U0QBNx7JIUZLHm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+According to board schematics, for HSMMC1 a GPIO line is used to detect
+card presence, while currently it is being configured for internal card
+detect line, which is multiplexed with card detect line of HSMMC0 and
+thus breaking it.
 
-On Fri, Dec 13, 2013 at 01:56:18PM -0600, Felipe Balbi wrote:
-> On Fri, Dec 13, 2013 at 02:01:32PM +0900, Anton Tikhomirov wrote:
-> > Hi Felipe,
-> >=20
-> > > -static int dwc3_exynos_suspend(struct device *dev)
-> > > +static int __dwc3_exynos_suspend(struct dwc3_exynos *exynos)
-> > >  {
-> > > -	struct dwc3_exynos *exynos =3D dev_get_drvdata(dev);
-> > > -
-> > >  	clk_disable(exynos->clk);
-> > >=20
-> > >  	return 0;
-> > >  }
-> > >=20
-> > > +static int __dwc3_exynos_resume(struct dwc3_exynos *exynos)
-> > > +{
-> > > +	return clk_enable(exynos->clk);
-> > > +}
-> > > +
-> > > +static int dwc3_exynos_suspend(struct device *dev)
-> > > +{
-> > > +	struct dwc3_exynos *exynos =3D dev_get_drvdata(dev);
-> > > +
-> > > +	return __dwc3_exynos_suspend(exynos);
-> >=20
-> > If dwc3-exynos is runtime suspended, the clock will be disabled
-> > second time here (unbalanced clk_enable/clk_disable).
->=20
-> I don't get what you mean but there is something that probably needs
-> fixing, I guess below makes it better:
->=20
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exyno=
-s.c
-> index c93919a..1e5720a 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -218,6 +218,9 @@ static int dwc3_exynos_suspend(struct device *dev)
->  {
->  	struct dwc3_exynos *exynos =3D dev_get_drvdata(dev);
-> =20
-> +	if (pm_runtime_suspended(dev))
-> +		return 0;
-> +
->  	return __dwc3_exynos_suspend(exynos);
->  }
-> =20
->=20
-> Is that what you meant ?
+This patch adds proper sdhci platform data setting card detect type to
+external GPIO and fixing operation of HSMMC0.
 
-note, however, that this is *not* a case where we would fall today. See
-that we pm_runtime_get() in probe and only pm_runtime_put() during
-remove. So there would never be a case where we would try system suspend
-while device was already runtime suspended.
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-I have fixed all patches in my testing/next branch anyway, just to make
-sure we're "idiot-proof" when it comes to implementing real runtime pm
-later on :-)
-
-cheers
-
---=20
-balbi
-
---/0U0QBNx7JIUZLHm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSq2uXAAoJEIaOsuA1yqREqH8P/Rny+20i268VWDejKoA6iw7t
-jpDtGP85v05bxSPsnIytVgLyhb4HQTm+5OY5BhEC7pBVu4TCKMxbp5zVnpmmVDWK
-69AWI0+7+6FgD3RBxuuS/h3kV942GuHstIFqwBAHqU5PlpYLf8efstGzrvTDZdrX
-+gscjl4W4BEV21QD7yYtBJmFqUZs8eW5tEr4Rnz63mTAw7tN5/895QhbcCpH/z8g
-yiGtwUJyeZPwao8svUhiz8JCjLF1wslf2eH76++jtMVMnRoTtVqfmBvtyEcWlQar
-yjEiJErfZFdMkvH/gkAfXM4VH7PrpUqDdXDH+aXgS1K0ORneRLnULp0ZxEqfK1o9
-pNaUdjW6igJmij5aYWTGE8PrMai0U2E2XHHscCkMuTPm/N591zK2FYrTgCzlAOmh
-VaDA7yHImMgPLl89AYhbZv9qeCNijQJZ9CDYAeLo8AJC+1x7teOI9M375K0iarBW
-Xut6HhcLiENV2r+b1xp0Ow2TOj/8zesu0nx12NlwGZKUT6MLSNt5y9aQCFfFizmQ
-YrP+8Ku4vdbA2CENMhYgvSh7/cJU1cenSxRSS8iHBRs9LutsMHTJ2vbIY+DreTyU
-M4ODWASTd0V2RoW/wlI1lO3gDXXz5N3StCjprrnx8w5VlJ/yAOQai3aQcVDxfQgr
-bjTPoCmk00nHjJo7623e
-=yFsK
------END PGP SIGNATURE-----
-
---/0U0QBNx7JIUZLHm--
+diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+index 58d46a3..97ae470 100644
+--- a/arch/arm/mach-s3c64xx/mach-mini6410.c
++++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+@@ -36,7 +36,9 @@
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/mmc-sdhci-s3c.h>
+ #include <plat/regs-serial.h>
++#include <plat/sdhci.h>
+ #include <linux/platform_data/touchscreen-s3c2410.h>
+ 
+ #include <video/platform_lcd.h>
+@@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev = {
+ 	.dev.platform_data	= &mini6410_lcd_power_data,
+ };
+ 
++static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
++	.max_width		= 4,
++	.cd_type		= S3C_SDHCI_CD_GPIO,
++	.ext_cd_gpio		= S3C64XX_GPN(10),
++	.ext_cd_gpio_invert	= true,
++};
++
+ static struct platform_device *mini6410_devices[] __initdata = {
+ 	&mini6410_device_eth,
+ 	&s3c_device_hsmmc0,
+@@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
+ 
+ 	s3c_nand_set_platdata(&mini6410_nand_info);
+ 	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
++	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
+ 	s3c24xx_ts_set_platdata(NULL);
+ 
+ 	/* configure nCS1 width to 16 bits */
+-- 
+1.8.5.1
