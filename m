@@ -1,68 +1,110 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
-Date: Fri, 13 Dec 2013 21:19:44 +0100
-Message-ID: <1386965984-16028-1-git-send-email-tomasz.figa@gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
+Date: Fri, 13 Dec 2013 14:22:40 -0600
+Message-ID: <20131213202240.GK5292@saruman.home>
+References: <20131212214306.GS1939@saruman.home>
+ <1386884755-12366-1-git-send-email-balbi@ti.com>
+ <52AA54E4.5000606@ti.com>
+ <230CBA6E4B6B6B418E8730AC28E6FC7E0415C786@DFLE11.ent.ti.com>
+ <20131213195431.GF5292@saruman.home>
+ <230CBA6E4B6B6B418E8730AC28E6FC7E0415C84D@DFLE11.ent.ti.com>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OOq1TgGhe8eTwFBO"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:39004 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752796Ab3LMUT4 (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:49261 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752378Ab3LMUXi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 15:19:56 -0500
-Received: by mail-ea0-f170.google.com with SMTP id k10so1099086eaj.29
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 12:19:55 -0800 (PST)
+	Fri, 13 Dec 2013 15:23:38 -0500
+Content-Disposition: inline
+In-Reply-To: <230CBA6E4B6B6B418E8730AC28E6FC7E0415C84D@DFLE11.ent.ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>
+To: "Kwok, WingMan" <w-kwok2@ti.com>
+Cc: "Balbi, Felipe" <balbi@ti.com>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
 
-According to board schematics, for HSMMC1 a GPIO line is used to detect
-card presence, while currently it is being configured for internal card
-detect line, which is multiplexed with card detect line of HSMMC0 and
-thus breaking it.
+--OOq1TgGhe8eTwFBO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds proper sdhci platform data setting card detect type to
-external GPIO and fixing operation of HSMMC0.
+On Fri, Dec 13, 2013 at 02:18:42PM -0600, Kwok, WingMan wrote:
+>=20
+> > -----Original Message-----
+> > From: Balbi, Felipe
+> > Sent: Friday, December 13, 2013 2:55 PM
+> > To: Kwok, WingMan
+> > Cc: Shilimkar, Santosh; Balbi, Felipe; Linux USB Mailing List;
+> > kgene.kim@samsung.com; Linux ARM Kernel Mailing List; linux-samsung-
+> > soc@vger.kernel.org; Linux OMAP Mailing List
+> > Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
+> >=20
+> > On Fri, Dec 13, 2013 at 10:04:38AM -0600, Kwok, WingMan wrote:
+> > > Hello
+> > >
+> > > > -----Original Message-----
+> > > > From: Shilimkar, Santosh
+> > > > Sent: Thursday, December 12, 2013 7:29 PM
+> > > > To: Balbi, Felipe
+> > > > Cc: Linux USB Mailing List; kgene.kim@samsung.com; Linux ARM Kernel
+> > > > Mailing List; linux-samsung-soc@vger.kernel.org; Linux OMAP Mailing
+> > > > List; Kwok, WingMan
+> > > > Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM
+> > > > support
+> > > >
+> > > > On Thursday 12 December 2013 04:45 PM, Felipe Balbi wrote:
+> > > > > A bare-minimum PM implementation which will server as building
+> > > > > block for more complex
+> > > > s/server/serve ;-)
+> > > > > PM implementation in the future.
+> > > > >
+> > > > > At the least will not leave clocks on unnecessarily when e.g.  a
+> > > > > user write mem to /sys/power/state.
+> > > > >
+> > > > > Signed-off-by: Felipe Balbi <balbi@ti.com>
+> > > > > ---
+> > > > >
+> > > > > improve error path a little bit.
+> > > > >
+> > > > We will test this out. Thanks for the patch Felipe.
+> > > >
+> > >
+> > > I have tested the patch and the keystone usb driver continues to
+> > > function, though I can't test suspend at this time as the rest of the
+> > > system does not that functionality yet.
+> >=20
+> > Thanks, should I add your Tested-by ?
+>=20
+> Yes please.
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+you need to reply with Tested-by: Your Name <your.email@domain.com> just
+to make it all official. Sorry
 
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 58d46a3..97ae470 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -36,7 +36,9 @@
- #include <plat/devs.h>
- #include <plat/fb.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
-+#include <linux/platform_data/mmc-sdhci-s3c.h>
- #include <plat/regs-serial.h>
-+#include <plat/sdhci.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
- 
- #include <video/platform_lcd.h>
-@@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev = {
- 	.dev.platform_data	= &mini6410_lcd_power_data,
- };
- 
-+static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
-+	.max_width		= 4,
-+	.cd_type		= S3C_SDHCI_CD_GPIO,
-+	.ext_cd_gpio		= S3C64XX_GPN(10),
-+	.ext_cd_gpio_invert	= true,
-+};
-+
- static struct platform_device *mini6410_devices[] __initdata = {
- 	&mini6410_device_eth,
- 	&s3c_device_hsmmc0,
-@@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
- 
- 	s3c_nand_set_platdata(&mini6410_nand_info);
- 	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
-+	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
- 	s3c24xx_ts_set_platdata(NULL);
- 
- 	/* configure nCS1 width to 16 bits */
--- 
-1.8.5.1
+--=20
+balbi
+
+--OOq1TgGhe8eTwFBO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSq2yQAAoJEIaOsuA1yqREEzIP/3swrNy/QvdqqO1ReEJWy8UI
+fjYY145DzNmFUjjJ3iWTxTsYEnaDS12Y4fxDxPToIxZnOI2V1kT7ohgk2dJTWi8d
+CqqFGsaxdMcvGNhImxUZxqvBXQUvwZO/+MVcG/uZcUmIhOcLwFeEOkUEcSdpDEoY
+5oosERi1viRtY60/4dEvQPoA7wXPN4KjFfakO8fG2zdQl1Aa/xYPO1JSiQYUnwDo
+kizowxikejceXdbBiIy8zhcvjZqtUYCpXSNAb3R6gHr0nP8xVqkaRC3L7Z6ciiEd
+sgBxL4YIKwBeHpbEBDWrUWCl7gVU7JmuR97Ez+wF8w4U5UapoDbIJJENrtOdkmGy
+P1enUOFEWJqOF9yTewveskAidPRgcMzLmtt4m+FKFhBjBE7yCvRHwkQ8sRdI6Cqo
+nBaOqwNAyfCo+AObJuQmuobd8U9ytzQ2EvCLvA5tTzySfsZarHFqKkNMciTpkPht
++Nm+Ul1N9cJc7R57O0oqGdqxWsvDJ+rl/LjqpPVpDAqyXZBSciVrdTotpxk/9PkJ
+6A4flz1Jz42AdZyRMO8jwlazvQNzDTjfPvkBNkeo7Xq3vzMjeWq84uK9woiHO8wB
+/U3cJFHAlpyW3Y5wcRZKHKFU6iglcFZT6Xn1FpcjO7rKHxcNd2c6ePXRdafw9dpj
+BSRJ8Hnrge/lfd+pAMLR
+=M4aF
+-----END PGP SIGNATURE-----
+
+--OOq1TgGhe8eTwFBO--
