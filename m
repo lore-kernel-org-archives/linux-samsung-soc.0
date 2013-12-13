@@ -1,93 +1,71 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v11 1/2] [media] exynos5-is: Adds DT binding documentation
-Date: Fri, 13 Dec 2013 08:38:27 +0530
-Message-ID: <CALt3h7982XtWv_EesvVD+hOPG-7BitKS5niYwC4H+nqGUEm01A@mail.gmail.com>
-References: <1383650355-28838-1-git-send-email-arun.kk@samsung.com>
-	<52A9D6FE.30302@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 3/7] usb: dwc3: pci: add pm_runtime support
+Date: Thu, 12 Dec 2013 22:17:19 -0600
+Message-ID: <20131213041719.GB867@saruman.home>
+References: <1386884325-11440-1-git-send-email-balbi@ti.com>
+ <1386884325-11440-4-git-send-email-balbi@ti.com>
+ <20131213015605.GC29964@psi-dev26.jf.intel.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <52A9D6FE.30302@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:45258 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751797Ab3LMESQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Dec 2013 23:18:16 -0500
+Content-Disposition: inline
+In-Reply-To: <20131213015605.GC29964@psi-dev26.jf.intel.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, w-kwok2@ti.com, Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-Hi Sylwester,
+--4SFOXa2GPu3tIq4H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2013 at 9:02 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Hi Arun,
->
-> (Adding Mark and Mauro to Cc)
->
-> On 05/11/13 12:19, Arun Kumar K wrote:
->> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>
->> The patch adds the DT binding doc for exynos5 SoC camera
->> subsystem.
->>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->>  .../bindings/media/exynos5250-camera.txt           |  126 ++++++++++++++++++++
->>  1 file changed, 126 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
->>
->> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
->> new file mode 100644
->> index 0000000..09420ba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
->> @@ -0,0 +1,126 @@
->> +Samsung EXYNOS5 SoC Camera Subsystem
->> +------------------------------------
->> +
->> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
->> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
->> +MIPI CSIS and FIMC-IS.
->> +
->> +The sub-device nodes are referenced using phandles in the common 'camera' node
->> +which also includes common properties of the whole subsystem not really
->> +specific to any single sub-device, like common camera port pins or the common
->> +camera bus clocks.
->> +
->> +Common 'camera' node
->> +--------------------
->> +
->> +Required properties:
->> +
->> +- compatible         : must be "samsung,exynos5250-fimc"
->> +- clocks             : list of clock specifiers, corresponding to entries in
->> +                          the clock-names property
->> +- clock-names                : must contain "sclk_bayer" entry
->> +- samsung,csis               : list of phandles to the mipi-csis device nodes
->> +- samsung,fimc-lite  : list of phandles to the fimc-lite device nodes
->> +- samsung,fimc-is    : phandle to the fimc-is device node
->> +
->> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
->> +to define a required pinctrl state named "default".
->> +
->> +'parallel-ports' node
->> +---------------------
->> +
->> +This node should contain child 'port' nodes specifying active parallel video
->> +input ports. It includes camera A, camera B and RGB bay inputs.
->> +'reg' property in the port nodes specifies the input type:
->> + 1 - parallel camport A
->> + 2 - parallel camport B
->> + 5 - RGB camera bay
->> +
->> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
->
-> Was there posted a version of this patch with Mark's comments addressed:
-> http://www.spinics.net/lists/devicetree/msg11550.html ? I couldn't find it.
->
+On Thu, Dec 12, 2013 at 05:56:05PM -0800, David Cohen wrote:
+> On Thu, Dec 12, 2013 at 03:38:41PM -0600, Felipe Balbi wrote:
+> > teach the PCI glue about pm_runtime so that
+> > it's easier to teach dwc3 core about it
+> > later.
+> >=20
+> > No functional changes otherwise.
+> >=20
+> > Signed-off-by: Felipe Balbi <balbi@ti.com>
+>=20
+> I was able to test this one with Intel Merrifield:
+> Acked-by: David Cohen <david.a.cohen@linux.intel.com>
 
+cool, thanks. Although that'd be a Tested-by. Is it ok to add your name
+as Tested-by instead ?
 
-I think it is missed as I also couldn't find it. I can quickly send an
-updated patch
-with these reviews addressed.
+--=20
+balbi
 
-Regards
-Arun
+--4SFOXa2GPu3tIq4H
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSqopPAAoJEIaOsuA1yqREfMkP/jaJkuIoUMW1dlhN6waE6i3K
+KNCan+rOwnGPD/T3YNjpeW6mxBW4wbIzsyWwfdNc13xyEQ56hAvPtNphqqvQjGeF
+Qlqr/c0KyRQQ+fXM1mxCNM7WPMNBJoFWMbuQnmxSd974yOVHMo5/mygN7VN8Lgme
+zatCQVcZCYFb0mOqy84fBti4sX8AEZ8g86wiDIgouTaI12kdVdvW1luZe6kxB2y2
+3LAWwUv4RkKklYDYkkGJyXBZwa/OxZHwFc0qkOZqN2mneN3cxulj65TOYDCeKid2
+3ut45maSQax8EJrZ3qLmyhfnTvEpwxs5S1qqG3i5Z0abQObW04hW1h7cucvERH9X
+GJ0rod6+bBRgga3KNEEcBjWoSAPfGtT6McneiI55YZxeCmwdn0Y8GgjHo5HRA3EN
+xXFaolPI1jz7Q2rPxG4M2pnSKW+rkXe9bY9rIZBXXhQskCwZIBlVowrKAT6xqx2L
+9lHMZySZg2UO0ndRJHyHq3gSiHTwaJYTycIiHks9uR8oaA35oI/6SvRawb/YiJMm
+GD8STev8CM70aZWup9Bkgbep8zQAyR87N5DCJ5ISduMGYtEYZGFmN4SutL5E6G9a
+DoiObppDIqkbjTxNHObQ8GmfcR+zi/kkY86KGt670v5xvanNaqP/VFkb+aJuUkfx
+FeIhsU640qXdauyXrSKP
+=k6+C
+-----END PGP SIGNATURE-----
+
+--4SFOXa2GPu3tIq4H--
