@@ -1,86 +1,97 @@
-From: panchaxari <panchaxari.prasannamurthy@linaro.org>
-Subject: [PATCH CFT] ARM:S3C64XX: Enable ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR by default
-Date: Fri, 13 Dec 2013 17:25:57 +0530
-Message-ID: <1386935757-24125-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH CFT] ARM:S3C24XX: Enable ARM_PATCH_PHYS_VIRT and
+ AUTO_ZRELADDR by default
+Date: Fri, 13 Dec 2013 14:57:08 +0300
+Message-ID: <CA+E=qVcZVpWTYfL_MYbn-ue3V4LTcEowx2Fnzj7fdm7_YbB5dA@mail.gmail.com>
+References: <1386934105-23392-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:49547 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752244Ab3LML4S (ORCPT
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34175 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752583Ab3LML52 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 06:56:18 -0500
-Received: by mail-pb0-f47.google.com with SMTP id um1so2455676pbc.34
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 03:56:18 -0800 (PST)
+	Fri, 13 Dec 2013 06:57:28 -0500
+In-Reply-To: <1386934105-23392-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tomasz.figa@gmail.com
-Cc: patches@linaro.org, linaro-kernel@lists.linaro.org, panchaxari.prasannamurthy@linaro.org, Mark Brown <broonie@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: panchaxari <panchaxari.prasannamurthy@linaro.org>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, arm-linux <linux-arm-kernel@lists.infradead.org>
 
-Configs ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR are enabled as default
-to S3C64XX platform
+On Fri, Dec 13, 2013 at 2:28 PM, panchaxari
+<panchaxari.prasannamurthy@linaro.org> wrote:
+> Configs ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR are enabled as default
+> to platform S3C24XX.
+>
+> Introduction of PHYS_VIRT config as default would enable phy-to-virt and
+> virt-to-phy translation function at boot and module loading time
+> and enforce dynamic reallocation of memory. AUTO_ZRELADDR config would
+> enable calculation of kernel load address at run time.
+>
+> PHYS_VIRT config is mutually exclusive to XIP_KERNEL, XIP_KERNEL is used in
+> systems with NOR flash devices, and ZRELADDR config is mutually exclusive
+> to ZBOOT_ROM.
+>
+> CFT::Call For Testing
+>
+> Requesting maintainers of S3C24XX  platforms to evaluate the changes on the
+> board and comment, as I dont have the board for testing and also requesting
+> an ACK the changes.
 
-Introduction of PHYS_VIRT config as default would enable phy-to-virt and
-virt-to-phy translation function at boot and module loading time
-and enforce dynamic reallocation of memory. AUTO_ZRELADDR config would
-enable calculation of kernel load address at run time.
+Hi,
 
-PHYS_VIRT config is mutually exclusive to XIP_KERNEL, XIP_KERNEL is used in
-systems with NOR flash devices, and ZRELADDR config is mutually exclusive
-to ZBOOT_ROM.
+I guess AUTO_ZRELADDR will break S2RAM on h1940/rx1950 and rx3715
+machines. Those machines require reservation of 4k at 0x30003000 and
+4k at 0x30081000, because bootloader
+will corrupt these areas on resume. See .reserve callback in
+arch/arm/mach-s3c24xx/mach-{h1940,rx1950,rx3715}
 
-CFT::Call For Testing
+Regards
+Vasily
 
-Requesting maintainers of S3C64XX  platforms to evaluate the changes on the
-board and comment, as I dont have the board for testing and also requesting
-an ACK the changes.
-
-Signed-off-by: panchaxari <panchaxari.prasannamurthy@linaro.org>
-Cc: Mark Brown <broonie@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
----
-This is basically a Samsung SOC with ARM1176JZF-S instruction set, and has
-an operating frquency of 667MHz, it also has 64bit AXI bus. It supports
-WinCE, Linux, Android and Ubuntu.
-
-This platform has two variants of CPU, S3C6400 and S3C6410.
-
-This SOC is an Integrated system for Mobile Internet Device, Notebook,
-handheld/3G mobile devices.
-
-Supports various types of ROM for booting (NOR/NAND Flash, OneNand, SD-card
-and others).
-
-Below lkml link is a quoting by Russell which clears the concept of PHYS_VIRT
-and ZRELADDR
----------------------------------------------------
-
-https://lkml.org/lkml/2011/10/14/434
-
--------------------------------------------------
----
- arch/arm/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7c6247b..ec1faea 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -731,7 +731,9 @@ config ARCH_S3C64XX
- 	bool "Samsung S3C64XX"
- 	select ARCH_HAS_CPUFREQ
- 	select ARCH_REQUIRE_GPIOLIB
-+	select ARM_PATCH_PHYS_VIRT
- 	select ARM_VIC
-+	select AUTO_ZRELADDR
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_SAMSUNG_PWM
- 	select COMMON_CLK
--- 
-1.7.10.4
+>
+> Signed-off-by: panchaxari <panchaxari.prasannamurthy@linaro.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+>
+> ---
+> S3C24XX is basically a Samsung SOC with ARM920T instruction set, and has
+> an operating frquency of 203MHz, it also has enhanced MMU architecture
+> to support WinCE, EPOC 32 and Linux.
+>
+> This SOC is an Integrated system for hand-held devices and general
+> embedded systems.
+>
+> Supports various types of ROM for booting (NOR/NAND Flash, EEPROM, and others).
+> Supports 8 memory banks, 128M for each bank, with a total of 1GB.
+> ---
+>  arch/arm/Kconfig |    2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 32acacb..ec1faea 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -708,6 +708,8 @@ config ARCH_S3C24XX
+>         bool "Samsung S3C24XX SoCs"
+>         select ARCH_HAS_CPUFREQ
+>         select ARCH_REQUIRE_GPIOLIB
+> +       select ARM_PATCH_PHYS_VIRT
+> +       select AUTO_ZRELADDR
+>         select CLKDEV_LOOKUP
+>         select CLKSRC_SAMSUNG_PWM
+>         select GENERIC_CLOCKEVENTS
+> --
+> 1.7.10.4
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
