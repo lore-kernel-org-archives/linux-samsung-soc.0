@@ -1,103 +1,58 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v11 5/7] Documentation:cpufreq:boost: Update BOOST documentation
-Date: Fri, 13 Dec 2013 17:38:35 +0100
-Message-ID: <1386952717-30947-6-git-send-email-l.majewski@samsung.com>
-References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
- <1386952717-30947-1-git-send-email-l.majewski@samsung.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: exynos-drm 1024x768 HDMI output
+Date: Fri, 13 Dec 2013 10:45:09 -0600
+Message-ID: <CAD8Lp47G_eyAi_gUC47HQqE_pnORs+kq5vt4Kp1LVsPF7MSVpA@mail.gmail.com>
+References: <CAD8Lp47ya+nX5S2aZOYVzg+Qx11jhcnf+hvVONpBtGVdKHtwfA@mail.gmail.com>
+	<CAOw6vb+58XZFzxkzfBRfRFObfY5+q29Yk9_qkesGg+kqSYYB+w@mail.gmail.com>
+	<CAD8Lp47N_E-ANOA4QH4UaDyeDJE59XdHH1K9shKQREegaeTnPw@mail.gmail.com>
+	<CAD8Lp46m5VqNNbM2rSEFsOxUT1XW=35FUo6We_u0f8jNP+=dag@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39206 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753101Ab3LMQjQ (ORCPT
+Received: from mail-we0-f180.google.com ([74.125.82.180]:64521 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752318Ab3LMQpK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 11:39:16 -0500
-In-reply-to: <1386952717-30947-1-git-send-email-l.majewski@samsung.com>
+	Fri, 13 Dec 2013 11:45:10 -0500
+Received: by mail-we0-f180.google.com with SMTP id t61so2129957wes.39
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 08:45:09 -0800 (PST)
+In-Reply-To: <CAD8Lp46m5VqNNbM2rSEFsOxUT1XW=35FUo6We_u0f8jNP+=dag@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-Since the support for software and hardware controlled boosting has been
-added, the corresponding Documentation entry had been updated.
+On Fri, Dec 13, 2013 at 9:46 AM, Daniel Drake <drake@endlessm.com> wrote:
+> Lets just accept the fact that the first line of the output image is
+> rendered badly. Specifically, it has 257 black pixels added onto the
+> end of it. The following rows do not exhibit that problem.
+>
+> To accept and ignore this oddity, I want to make the device start
+> outputting the image exactly 1024+257 pixels too early. i.e. I want
+> 1281 junk pixels before the image starts.
+>
+> Then, I want to adjust the timing parameters appropriately so that
+> those junk pixels do not appear on the display. I want those 1281 junk
+> pixels to be sent to the display during the horizontal scans that
+> happen before the top left visible pixel is clocked. I think I'm
+> saying: I want to adjust the field of view so that those 1281 junk
+> pixels are rendered inside the vertical back porch.
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Nearly got something working along these lines:
 
----
-Changes for v11:
-- None
+tg->vact_st -= 1
+tg->vact_sz += 1
 
-Changes for v10:
-- None
+Now the 257 bad pixels start at the top left of my display (rather
+than on the second row of visible pixels), and that causes the
+annoying horizontal wrap that I wrote about in my first mail.
+So add from earlier:
+tg->hact_st -= 257
+tg->hact_sz + 257
 
-Changes for v9:
-- None
+Now the displayed image looks good.
 
-Changes for v8:
-- None
+But looking closer, I am missing the first horizontal row of pixels,
+and the rightmost vertical column of pixels.
 
-Changes for v7:
-- None
-
-Changes for v6:
-- None
-
-Changes for v5:
-- New patch
-
- Documentation/cpu-freq/boost.txt |   26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/cpu-freq/boost.txt b/Documentation/cpu-freq/boost.txt
-index 9b4edfc..dd62e13 100644
---- a/Documentation/cpu-freq/boost.txt
-+++ b/Documentation/cpu-freq/boost.txt
-@@ -17,8 +17,8 @@ Introduction
- Some CPUs support a functionality to raise the operating frequency of
- some cores in a multi-core package if certain conditions apply, mostly
- if the whole chip is not fully utilized and below it's intended thermal
--budget. This is done without operating system control by a combination
--of hardware and firmware.
-+budget. The decision about boost disable/enable is made either at hardware
-+(e.g. x86) or software (e.g ARM).
- On Intel CPUs this is called "Turbo Boost", AMD calls it "Turbo-Core",
- in technical documentation "Core performance boost". In Linux we use
- the term "boost" for convenience.
-@@ -48,24 +48,24 @@ be desirable:
- User controlled switch
- ----------------------
- 
--To allow the user to toggle the boosting functionality, the acpi-cpufreq
--driver exports a sysfs knob to disable it. There is a file:
-+To allow the user to toggle the boosting functionality, the cpufreq core
-+driver exports a sysfs knob to enable or disable it. There is a file:
- /sys/devices/system/cpu/cpufreq/boost
- which can either read "0" (boosting disabled) or "1" (boosting enabled).
--Reading the file is always supported, even if the processor does not
--support boosting. In this case the file will be read-only and always
--reads as "0". Explicitly changing the permissions and writing to that
--file anyway will return EINVAL.
-+The file is exported only when cpufreq driver supports boosting.
-+Explicitly changing the permissions and writing to that file anyway will
-+return EINVAL.
- 
- On supported CPUs one can write either a "0" or a "1" into this file.
- This will either disable the boost functionality on all cores in the
--whole system (0) or will allow the hardware to boost at will (1).
-+whole system (0) or will allow the software or hardware to boost at will
-+(1).
- 
- Writing a "1" does not explicitly boost the system, but just allows the
--CPU (and the firmware) to boost at their discretion. Some implementations
--take external factors like the chip's temperature into account, so
--boosting once does not necessarily mean that it will occur every time
--even using the exact same software setup.
-+CPU to boost at their discretion. Some implementations take external
-+factors like the chip's temperature into account, so boosting once does
-+not necessarily mean that it will occur every time even using the exact
-+same software setup.
- 
- 
- AMD legacy cpb switch
--- 
-1.7.10.4
+Daniel
