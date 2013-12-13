@@ -1,39 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
-Date: Fri, 13 Dec 2013 10:37:25 +0100
-Message-ID: <CACRpkdbQNEj83fnDX0ppPNJYgu1cMGxbk6n6M05wVNK9LEvDKw@mail.gmail.com>
-References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
-	<CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
-	<52AA6909.8050200@inov.pt>
-	<0bc301cef7e5$319ac0c0$94d04240$@kernel.org>
+From: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on
+ S3C24XX.
+Date: Fri, 13 Dec 2013 09:38:35 +0000
+Message-ID: <52AAD59B.7070203@inov.pt>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt> <52AA6909.8050200@inov.pt> <CACRpkdbBqqbkp3ap3Y=C5zC3Cq9jd+dL4iPZ9-2-Fd81GLAPBA@mail.gmail.com> <201312130942.03674.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <0bc301cef7e5$319ac0c0$94d04240$@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lmv.inov.pt ([146.193.64.2]:47151 "EHLO lmv.inov.pt"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752217Ab3LMJj0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Dec 2013 04:39:26 -0500
+In-Reply-To: <201312130942.03674.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 13, 2013 at 10:24 AM,  <kgene@kernel.org> wrote:
-> Jos=E9 Miguel Gon=E7alves wrote:
-(..)
->> Was this patch forgotten?
->>
-> Hi Jose,
+Hi Heiko,
+
+On 13-12-2013 08:42, Heiko St=FCbner wrote:
 >
-> Sorry about missing your patch. It's my fault :( and as you know, at =
-this
-> moment the file will be removed by Linus' patch...
+> But Jose, you should really really look into moving to devicetree wit=
+h your
+> platform, if you're not already doing so. Pinctrl support is already =
+present,
+> and I'm hopefull the move to the common clock framework I posted a fe=
+w days
+> ago might make it too.
+>
 
-Oh I can certainly rebase the patch onto my tree if I just
-get an ACK for it...
+I'm currently maintaining a deployed equipment whose development starte=
+d=20
+some time ago, so I still need to use a 3.9 kernel with the traditional=
+=20
+hardware initialization. But, of course, for any new developments based=
+=20
+on the same S3C24XX platform, I will look in migrating to the device tr=
+ee.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Jos=E9 Gon=E7alves
