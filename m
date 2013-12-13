@@ -1,9 +1,11 @@
 From: Unknown <unknown@unknown.invalid>
-Subject: [PATCH v2 1/2] phy: core: Add an exported of_phy_get function
-Date: Fri, 13 Dec 2013 14:56:17 +0100
-Message-ID: <1386942978-28362-1-git-send-email-k.debski@samsung.com>
+Subject: [PATCH v2 2/2] phy: core: Add devm_of_phy_get to phy-core
+Date: Fri, 13 Dec 2013 14:56:18 +0100
+Message-ID: <1386942978-28362-2-git-send-email-k.debski@samsung.com>
+References: <1386942978-28362-1-git-send-email-k.debski@samsung.com>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 From: <>
+In-reply-to: <1386942978-28362-1-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
@@ -11,113 +13,70 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Previously the of_phy_get function took a struct device * and
-was declared static. It was impossible to call it from
-another driver and thus it was impossible to get phy defined
-for a given node. The old function was renamed to _of_phy_get
-and was left for internal use. of_phy_get function was added
-and it was exported. The function enables to get a phy for
-a given device tree node.
+Adding devm_of_phy_get will allow to get phys by supplying the
+device_node instead of by name.
 
 Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++---------
- include/linux/phy/phy.h |    1 +
- 2 files changed, 33 insertions(+), 9 deletions(-)
+ drivers/phy/phy-core.c  |   31 +++++++++++++++++++++++++++++++
+ include/linux/phy/phy.h |    2 ++
+ 2 files changed, 33 insertions(+)
 
 diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 03cf8fb..f0dbd42 100644
+index f0dbd42..661f7ab 100644
 --- a/drivers/phy/phy-core.c
 +++ b/drivers/phy/phy-core.c
-@@ -240,8 +240,8 @@ out:
- EXPORT_SYMBOL_GPL(phy_power_off);
+@@ -446,6 +446,37 @@ struct phy *devm_phy_get(struct device *dev, const char *string)
+ EXPORT_SYMBOL_GPL(devm_phy_get);
  
  /**
-- * of_phy_get() - lookup and obtain a reference to a phy by phandle
-- * @dev: device that requests this phy
-+ * _of_phy_get() - lookup and obtain a reference to a phy by phandle
-+ * @np: device_node for which to get the phy
-  * @index: the index of the phy
-  *
-  * Returns the phy associated with the given phandle value,
-@@ -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
-  * not yet loaded. This function uses of_xlate call back function provided
-  * while registering the phy_provider to find the phy instance.
-  */
--static struct phy *of_phy_get(struct device *dev, int index)
-+static struct phy *_of_phy_get(struct device_node *np, int index)
- {
- 	int ret;
- 	struct phy_provider *phy_provider;
- 	struct phy *phy = NULL;
- 	struct of_phandle_args args;
- 
--	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
-+	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
- 		index, &args);
--	if (ret) {
--		dev_dbg(dev, "failed to get phy in %s node\n",
--			dev->of_node->full_name);
-+	if (ret)
- 		return ERR_PTR(-ENODEV);
--	}
- 
- 	mutex_lock(&phy_provider_mutex);
- 	phy_provider = of_phy_provider_lookup(args.np);
-@@ -283,6 +280,32 @@ err0:
- }
- 
- /**
-+ * of_phy_get() - lookup and obtain a reference to a phy using a device_node.
-+ * @np: device_node for which to get the phy
++ * devm_of_phy_get() - lookup and obtain a reference to a phy.
++ * @dev: device that requests this phy
++ * @np: node containing the phy
 + * @index: the index of the phy
 + *
-+ * Returns the phy driver, after getting a refcount to it; or
-+ * -ENODEV if there is no such phy.  The caller is responsible for
-+ * calling phy_put() to release that count.
++ * Gets the phy using phy_get(), and associates a device with it using
++ * devres. On driver detach, release function is invoked on the devres data,
++ * then, devres data is freed.
 + */
-+struct phy *of_phy_get(struct device_node *np, int index)
++struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
++			    int index)
 +{
-+	struct phy *phy = NULL;
++	struct phy **ptr, *phy;
 +
-+	phy = _of_phy_get(np, index);
-+	if (IS_ERR(phy))
-+		return phy;
++	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
 +
-+	if (!try_module_get(phy->ops->owner))
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	get_device(&phy->dev);
++	phy = of_phy_get(np, index);
++	if (!IS_ERR(phy)) {
++		*ptr = phy;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
 +
 +	return phy;
 +}
-+EXPORT_SYMBOL_GPL(of_phy_get);
++EXPORT_SYMBOL_GPL(devm_of_phy_get);
 +
 +/**
-  * phy_put() - release the PHY
-  * @phy: the phy returned by phy_get()
-  *
-@@ -370,7 +393,7 @@ struct phy *phy_get(struct device *dev, const char *string)
- 	if (dev->of_node) {
- 		index = of_property_match_string(dev->of_node, "phy-names",
- 			string);
--		phy = of_phy_get(dev, index);
-+		phy = _of_phy_get(dev->of_node, index);
- 		if (IS_ERR(phy)) {
- 			dev_err(dev, "unable to find phy\n");
- 			return phy;
+  * phy_create() - create a new phy
+  * @dev: device that is creating the new phy
+  * @ops: function pointers for performing phy operations
 diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 6d72269..169f572 100644
+index 169f572..db36d81 100644
 --- a/include/linux/phy/phy.h
 +++ b/include/linux/phy/phy.h
-@@ -131,6 +131,7 @@ struct phy *phy_get(struct device *dev, const char *string);
+@@ -129,6 +129,8 @@ int phy_power_on(struct phy *phy);
+ int phy_power_off(struct phy *phy);
+ struct phy *phy_get(struct device *dev, const char *string);
  struct phy *devm_phy_get(struct device *dev, const char *string);
++struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
++			    int index);
  void phy_put(struct phy *phy);
  void devm_phy_put(struct device *dev, struct phy *phy);
-+struct phy *of_phy_get(struct device_node *np, int index);
- struct phy *of_phy_simple_xlate(struct device *dev,
- 	struct of_phandle_args *args);
- struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
+ struct phy *of_phy_get(struct device_node *np, int index);
 -- 
 1.7.9.5
 
