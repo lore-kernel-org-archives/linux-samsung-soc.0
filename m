@@ -1,79 +1,102 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming
- SuperSpeed HUBs
-Date: Fri, 13 Dec 2013 10:00:28 -0800
-Message-ID: <20131213180028.GA7863@psi-dev26.jf.intel.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed HUBs
+Date: Fri, 13 Dec 2013 09:57:59 -0800
+Message-ID: <CAPcyv4jvh_3ech7iCCcHyjwUjO=ki5oZo_bT-odt6_765oTi8Q@mail.gmail.com>
 References: <CAODwPW8GqOcUadYD_jXdyFxJ0cdeLLRi6hs9jFODkQ1KuUr5FQ@mail.gmail.com>
- <Pine.LNX.4.44L0.1312121103580.929-100000@iolanthe.rowland.org>
- <20131213174815.GA10727@xanatos>
+	<Pine.LNX.4.44L0.1312121103580.929-100000@iolanthe.rowland.org>
+	<20131213174815.GA10727@xanatos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f53.google.com ([209.85.214.53]:46811 "EHLO
+	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752797Ab3LMR6B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Dec 2013 12:58:01 -0500
+Received: by mail-bk0-f53.google.com with SMTP id na10so1486242bkb.40
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 09:58:00 -0800 (PST)
 In-Reply-To: <20131213174815.GA10727@xanatos>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, Dan Williams <dan.j.williams@intel.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Lan Tianyu <tianyu.lan@intel.com>, Ksenia Ragiadakou <burzalodowa@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Douglas Anderson <dianders@chromium.org>, Felipe Balbi <balbi@ti.com>, sunil joshi <joshi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Lan Tianyu <tianyu.lan@intel.com>, Ksenia Ragiadakou <burzalodowa@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Douglas Anderson <dianders@chromium.org>, Felipe Balbi <balbi@ti.com>, sunil joshi <joshi@samsung.com>
 
-Hi Sarah,
-
-On Fri, Dec 13, 2013 at 09:48:15AM -0800, Sarah Sharp wrote:
+On Fri, Dec 13, 2013 at 9:48 AM, Sarah Sharp
+<sarah.a.sharp@linux.intel.com> wrote:
 > On Thu, Dec 12, 2013 at 11:05:04AM -0500, Alan Stern wrote:
-> > On Wed, 11 Dec 2013, Julius Werner wrote:
-> > 
-> > > >> ...although, the spec says that it does not wait for the port resets
-> > > >> to complete.  As far as I can see re-issuing a warm reset and waiting
-> > > >> is the only way to guarantee the core times the recovery.  Presumably
-> > > >> the portstatus debounce in hub_activate() mitigates this, but that
-> > > >> 100ms is less than a full reset timeout.
-> > > 
-> > > It's definitely not just a timing issue for us. I can't reproduce all
-> > > the same cases as Vikas, but when I attach a USB analyzer to the ones
-> > > I do see the host controller doesn't even start sending a reset.
-> > > 
-> > > >>> The xHCI spec requires that when the xHCI host is reset, a USB reset is
-> > > >>> driven down the USB 3.0 ports.  If hot reset fails, the port may migrate
-> > > >>> to warm reset.  See table 32 in the xHCI spec, in the definition of
-> > > >>> HCRST.  It sounds like this host doesn't drive a USB reset down USB 3.0
-> > > >>> ports at all on host controller reset?
-> > > 
-> > > Oh, interesting, I hadn't seen that yet. So I guess the spec itself is
-> > > fine if it were followed to the letter.
-> > > 
-> > > I did some more tests about this on my Exynos machine: when I put a
-> > > device to autosuspend (U3) and manually poke the xHC reset bit, I do
-> > > see an automatic warm reset on the analyzer and the ports manage to
-> > > retrain to U0. But after a system suspend/resume which calls
-> > > xhci_reset() in the process, there is no reset on the wire. I also
-> > > noticed that it doesn't drive a reset (even after manual poking) when
-> > > there is no device connected on the other end of the analyzer.
-> > > 
-> > > So this might be our problem: maybe these host controllers (Synopsys
-> > > DesignWare) issue the spec-mandated warm reset only on ports where
-> > > they think there is a device attached. But after a system
-> > > suspend/resume (where the whole IP block on the SoC was powered down),
-> > > the host controller cannot know that there is still a device with an
-> > > active power session attached, and therefore doesn't drive the reset
-> > > on its own.
-> 
+>> On Wed, 11 Dec 2013, Julius Werner wrote:
+>>
+>> > >> ...although, the spec says that it does not wait for the port resets
+>> > >> to complete.  As far as I can see re-issuing a warm reset and waiting
+>> > >> is the only way to guarantee the core times the recovery.  Presumably
+>> > >> the portstatus debounce in hub_activate() mitigates this, but that
+>> > >> 100ms is less than a full reset timeout.
+>> >
+>> > It's definitely not just a timing issue for us. I can't reproduce all
+>> > the same cases as Vikas, but when I attach a USB analyzer to the ones
+>> > I do see the host controller doesn't even start sending a reset.
+>> >
+>> > >>> The xHCI spec requires that when the xHCI host is reset, a USB reset is
+>> > >>> driven down the USB 3.0 ports.  If hot reset fails, the port may migrate
+>> > >>> to warm reset.  See table 32 in the xHCI spec, in the definition of
+>> > >>> HCRST.  It sounds like this host doesn't drive a USB reset down USB 3.0
+>> > >>> ports at all on host controller reset?
+>> >
+>> > Oh, interesting, I hadn't seen that yet. So I guess the spec itself is
+>> > fine if it were followed to the letter.
+>> >
+>> > I did some more tests about this on my Exynos machine: when I put a
+>> > device to autosuspend (U3) and manually poke the xHC reset bit, I do
+>> > see an automatic warm reset on the analyzer and the ports manage to
+>> > retrain to U0. But after a system suspend/resume which calls
+>> > xhci_reset() in the process, there is no reset on the wire. I also
+>> > noticed that it doesn't drive a reset (even after manual poking) when
+>> > there is no device connected on the other end of the analyzer.
+>> >
+>> > So this might be our problem: maybe these host controllers (Synopsys
+>> > DesignWare) issue the spec-mandated warm reset only on ports where
+>> > they think there is a device attached. But after a system
+>> > suspend/resume (where the whole IP block on the SoC was powered down),
+>> > the host controller cannot know that there is still a device with an
+>> > active power session attached, and therefore doesn't drive the reset
+>> > on its own.
+>
 > Ok, that makes some sense.  I could see why host controllers wouldn't
 > want to drive reset on an unconnected port.
-> 
-> > > Even though this is a host controller bug, we still have to deal with
-> > > it somehow. I guess we could move the code into xhci_plat_resume() and
-> > > hide it behind a quirk to lessen the impact. But since reset_resume is
-> > > not a common case for most host controllers, it's hard to say if this
-> > > is DesignWare specific or a more widespread implementation mistake.
-> > 
-> > I was going to suggest something along these lines too.  This seems to 
-> > be a bug in xHCI.  Therefore the fix belongs in xhci-hcd, not in the 
-> > hub driver.
-> 
+>
+>> > Even though this is a host controller bug, we still have to deal with
+>> > it somehow. I guess we could move the code into xhci_plat_resume() and
+>> > hide it behind a quirk to lessen the impact. But since reset_resume is
+>> > not a common case for most host controllers, it's hard to say if this
+>> > is DesignWare specific or a more widespread implementation mistake.
+>>
+>> I was going to suggest something along these lines too.  This seems to
+>> be a bug in xHCI.  Therefore the fix belongs in xhci-hcd, not in the
+>> hub driver.
+>
 > I agree.  Is there a chance that the Synopsys DesignWare will be a PCI
 > device instead of a platform device?  If so, it would be better to put
 > the code into xhci_resume instead of xhci_plat_resume.  That also allows
+> you to only issue the warm reset when the register restore state command
+> fails, after the xhci_reset call.
+>
+> Also, I assume that other systems with the Synopsys DesignWare IP will
+> experience this issue?  I know of at least two other chipsets that will
+> include that IP, and it would be good to find a way to trigger on the
+> Synopsys IP, rather than off xHCI PCI vendor and device ID.  Otherwise
+> we'll be adding PCI IDs to the xHCI driver quirks for many many kernels
+> to come.
+>
+> I'm actually leaning towards enabling the check for warm reset broadly.
+> It seems like it wouldn't hurt to issue a warm reset on the USB 3.0
+> ports if they're in compliance, poll, or rx.detect.  So, let's enable
+> this broadly in xhci_resume, mark the patch for stable, but ask for the
+> backport to be delayed until 3.13.3 is out, to allow for more testing.
+> If anyone complains of xHCI behavior changes, we'll change the code to
+> add a quirk.
 
-DWC3 on Intel Baytrail and Merrifield is PCI device.
-
-Br, David
+Is there a clean way to make this per-port rather than globally at
+xhci_resume()?  I am looking to hook into this for port power recovery
+as Tianyu's testing encountered "warm reset required" conditions at
+runtime_resume.  I'm still on the hunt for a solid reproducer, but it
+indicates this is a more general quirk with power session recovery.
