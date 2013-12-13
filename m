@@ -1,76 +1,201 @@
-From: kgene@kernel.org
-Subject: RE: [PATCH 1/2] ARM: s3c24xx: get rid of custom <mach/gpio.h>
-Date: Fri, 13 Dec 2013 18:18:12 +0900
-Message-ID: <0bc201cef7e4$3f2cae20$bd860a60$@kernel.org>
-References: <1386857210-4944-1-git-send-email-linus.walleij@linaro.org>
- <201312130857.23890.heiko@sntech.de>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH V2] i2c: s3c2410 : Add polling mode support
+Date: Fri, 13 Dec 2013 14:51:13 +0530
+Message-ID: <CAKuRcOJojN46P2SfGfOQatbFWYuhV9DB6Y7tHNtZXgRzNcB+cA@mail.gmail.com>
+References: <1384168820-2986-1-git-send-email-yuvaraj.cd@samsung.com>
+	<CAKuRcOK3gJiPr3PC2-Vf6w0xeQEuEw6N2c7d0sYZYLuesJC_kQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58090 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752005Ab3LMJSP convert rfc822-to-8bit (ORCPT
+Received: from mail-qe0-f44.google.com ([209.85.128.44]:47246 "EHLO
+	mail-qe0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752370Ab3LMJVO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 04:18:15 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXQ004WIN6DJLA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Dec 2013 18:18:13 +0900 (KST)
-In-reply-to: <201312130857.23890.heiko@sntech.de>
-Content-language: ko
+	Fri, 13 Dec 2013 04:21:14 -0500
+In-Reply-To: <CAKuRcOK3gJiPr3PC2-Vf6w0xeQEuEw6N2c7d0sYZYLuesJC_kQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+To: wsa@the-dreams.de, ben-linux@fluff.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, "ks.giri@samsung.com" <ks.giri@samsung.com>, aditya.ps@samsung.com
+Cc: Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Vasanth Ananthan <vasanthananthan@gmail.com>, Vasanth Ananthan <vasanth.a@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Heiko St=FCbner wrote:
->=20
-> Am Donnerstag, 12. Dezember 2013, 15:06:50 schrieb Linus Walleij:
-> > This isolates the custom S3C24xx GPIO definition table to
-> > <linux/platform_data/gpio-samsung-s3x24xx.h> as this is
-> > used in a few different places in the kernel, removing the
-> > need to depend on the implicit inclusion of <mach/gpio.h>
-> > from <linux/gpio.h> and thus getting rid of a few nasty
-> > cross-dependencies.
-> >
-> > We also delete the nifty CONFIG_S3C24XX_GPIO_EXTRA stuff.
-> > The biggest this can ever be for the S3C24XX is
-> > CONFIG_S3C24XX_GPIO_EXTRA =3D 128, and then for CPU_S3C2443 or
-> > CPU_S3C2416 32*12 GPIOs are added, so 32*12+128 =3D 512
-> > is the absolute roof value on this platform. So we set
-> > the size of ARCH_NR_GPIO to this and the GPIOs array will
-> > fit any S3C24XX platform, as per pattern from other archs.
-> >
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> > Cc: Ben Dooks <ben-linux@fluff.org>
-> > Cc: Kukjin Kim <kgene.kim@samsung.com>
+Dear Wolfram,
+ Can you take this into your tree?
 
-=46or this whole series:
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > ChangeLog v1->v2:
-> > - Added an #ifdef ARCH_S3C24XX around the header inclusion
-> >   in drivers/gpio/gpio-samsung.c as we would otherwise
-> >   have colliding definitions when compiling S3C64XX.
-> > - Rename inclusion guard in the header file.
-> >
-> > If one of the maintainers give me an ACK for this I will
-> > take it through the GPIO tree.
-> > ---
->=20
-> I'm not the maintainer of s3c24xx, but this looks nice ;-)
->=20
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
-
-Linus, please take this series with my ack.
-
-Thanks,
-Kukjin
+On Fri, Nov 22, 2013 at 11:32 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
+> Any comments on this patch?
+>
+> On Mon, Nov 11, 2013 at 4:50 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>> From: Vasanth Ananthan <vasanthananthan@gmail.com>
+>>
+>> This patch adds polling mode support for i2c-s3c2410 driver.The
+>> SATA PHY controller's CMU and TRSV block's are of I2C register
+>> map in exynos5250.These blocks can be configured using i2c.
+>>
+>> But i2c controller instance on which these block's sits lacks an
+>> interrupt line.Also the current i2c-s3c2410 driver is only interrupt
+>> driven, thus a polling mode support is required in the driver for
+>> supporting this controller. This patch adds this support to the driver.
+>>
+>> Changes from V1:
+>>         1.Changed the is_ack() to have even period b/w polls and
+>>           used usleep_range() instead of udelay().
+>>
+>> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> ---
+>>  .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    2 +
+>>  drivers/i2c/busses/i2c-s3c2410.c                   |   66 +++++++++++++++++---
+>>  2 files changed, 58 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+>> index 296eb45..278de8e 100644
+>> --- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+>> +++ b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+>> @@ -10,6 +10,8 @@ Required properties:
+>>            inside HDMIPHY block found on several samsung SoCs
+>>        (d) "samsung, exynos5440-i2c", for s3c2440-like i2c used
+>>            on EXYNOS5440 which does not need GPIO configuration.
+>> +      (e) "samsung, exynos5-sata-phy-i2c", for s3c2440-like i2c used as
+>> +          a host to SATA PHY controller on an internal bus.
+>>    - reg: physical base address of the controller and length of memory mapped
+>>      region.
+>>    - interrupts: interrupt number to the cpu.
+>> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+>> index 3747b9b..08ed126 100644
+>> --- a/drivers/i2c/busses/i2c-s3c2410.c
+>> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+>> @@ -85,6 +85,7 @@
+>>  #define QUIRK_S3C2440          (1 << 0)
+>>  #define QUIRK_HDMIPHY          (1 << 1)
+>>  #define QUIRK_NO_GPIO          (1 << 2)
+>> +#define QUIRK_POLL             (1 << 3)
+>>
+>>  /* Max time to wait for bus to become idle after a xfer (in us) */
+>>  #define S3C2410_IDLE_TIMEOUT   5000
+>> @@ -141,6 +142,8 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
+>>  };
+>>  MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+>>
+>> +static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat);
+>> +
+>>  #ifdef CONFIG_OF
+>>  static const struct of_device_id s3c24xx_i2c_match[] = {
+>>         { .compatible = "samsung,s3c2410-i2c", .data = (void *)0 },
+>> @@ -149,6 +152,8 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
+>>           .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
+>>         { .compatible = "samsung,exynos5440-i2c",
+>>           .data = (void *)(QUIRK_S3C2440 | QUIRK_NO_GPIO) },
+>> +       { .compatible = "samsung,exynos5-sata-phy-i2c",
+>> +         .data = (void *)(QUIRK_S3C2440 | QUIRK_POLL | QUIRK_NO_GPIO) },
+>>         {},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+>> @@ -187,7 +192,8 @@ static inline void s3c24xx_i2c_master_complete(struct s3c24xx_i2c *i2c, int ret)
+>>         if (ret)
+>>                 i2c->msg_idx = ret;
+>>
+>> -       wake_up(&i2c->wait);
+>> +       if (!(i2c->quirks & QUIRK_POLL))
+>> +               wake_up(&i2c->wait);
+>>  }
+>>
+>>  static inline void s3c24xx_i2c_disable_ack(struct s3c24xx_i2c *i2c)
+>> @@ -224,6 +230,22 @@ static inline void s3c24xx_i2c_enable_irq(struct s3c24xx_i2c *i2c)
+>>         writel(tmp | S3C2410_IICCON_IRQEN, i2c->regs + S3C2410_IICCON);
+>>  }
+>>
+>> +static bool is_ack(struct s3c24xx_i2c *i2c)
+>> +{
+>> +       int tries;
+>> +
+>> +       for (tries = 50; tries; --tries) {
+>> +               if (readl(i2c->regs + S3C2410_IICCON)
+>> +                       & S3C2410_IICCON_IRQPEND) {
+>> +                       if (!(readl(i2c->regs + S3C2410_IICSTAT)
+>> +                               & S3C2410_IICSTAT_LASTBIT))
+>> +                               return true;
+>> +               }
+>> +               usleep_range(1000, 2000);
+>> +       }
+>> +       dev_err(i2c->dev, "ack was not recieved\n");
+>> +       return false;
+>> +}
+>>
+>>  /* s3c24xx_i2c_message_start
+>>   *
+>> @@ -268,6 +290,16 @@ static void s3c24xx_i2c_message_start(struct s3c24xx_i2c *i2c,
+>>
+>>         stat |= S3C2410_IICSTAT_START;
+>>         writel(stat, i2c->regs + S3C2410_IICSTAT);
+>> +
+>> +       if (i2c->quirks & QUIRK_POLL) {
+>> +               while ((i2c->msg_num != 0) && is_ack(i2c)) {
+>> +                       i2c_s3c_irq_nextbyte(i2c, stat);
+>> +                       stat = readl(i2c->regs + S3C2410_IICSTAT);
+>> +
+>> +                       if (stat & S3C2410_IICSTAT_ARBITR)
+>> +                               dev_err(i2c->dev, "deal with arbitration loss\n");
+>> +               }
+>> +       }
+>>  }
+>>
+>>  static inline void s3c24xx_i2c_stop(struct s3c24xx_i2c *i2c, int ret)
+>> @@ -675,6 +707,15 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+>>         s3c24xx_i2c_enable_irq(i2c);
+>>         s3c24xx_i2c_message_start(i2c, msgs);
+>>
+>> +       if (i2c->quirks & QUIRK_POLL) {
+>> +               ret = i2c->msg_idx;
+>> +
+>> +               if (ret != num)
+>> +                       dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
+>> +
+>> +               goto out;
+>> +       }
+>> +
+>>         timeout = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
+>>
+>>         ret = i2c->msg_idx;
+>> @@ -820,6 +861,9 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
+>>         if (div1 == 512)
+>>                 iiccon |= S3C2410_IICCON_TXDIV_512;
+>>
+>> +       if (i2c->quirks & QUIRK_POLL)
+>> +               iiccon |= S3C2410_IICCON_SCALE(2);
+>> +
+>>         writel(iiccon, i2c->regs + S3C2410_IICCON);
+>>
+>>         if (i2c->quirks & QUIRK_S3C2440) {
+>> @@ -1117,18 +1161,20 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>>          * ensure no current IRQs pending
+>>          */
+>>
+>> -       i2c->irq = ret = platform_get_irq(pdev, 0);
+>> -       if (ret <= 0) {
+>> -               dev_err(&pdev->dev, "cannot find IRQ\n");
+>> -               return ret;
+>> -       }
+>> +       if (!(i2c->quirks & QUIRK_POLL)) {
+>> +               i2c->irq = ret = platform_get_irq(pdev, 0);
+>> +               if (ret <= 0) {
+>> +                       dev_err(&pdev->dev, "cannot find IRQ\n");
+>> +                       return ret;
+>> +               }
+>>
+>>         ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+>> -                              dev_name(&pdev->dev), i2c);
+>> +                               dev_name(&pdev->dev), i2c);
+>>
+>> -       if (ret != 0) {
+>> -               dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+>> -               return ret;
+>> +               if (ret != 0) {
+>> +                       dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+>> +                       return ret;
+>> +               }
+>>         }
+>>
+>>         ret = s3c24xx_i2c_register_cpufreq(i2c);
+>> --
+>> 1.7.9.5
+>>
