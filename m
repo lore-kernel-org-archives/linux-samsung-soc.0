@@ -1,125 +1,59 @@
-From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH RESEND v2 1/2] phy: core: Add an exported of_phy_get
- function
-Date: Fri, 13 Dec 2013 16:26:28 +0100
-Message-ID: <008a01cef817$b24844e0$16d8cea0$%debski@samsung.com>
-References: <1386943380-28596-1-git-send-email-k.debski@samsung.com>
- <52AB1D75.4030207@ti.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: exynos-drm 1024x768 HDMI output
+Date: Fri, 13 Dec 2013 09:46:52 -0600
+Message-ID: <CAD8Lp46m5VqNNbM2rSEFsOxUT1XW=35FUo6We_u0f8jNP+=dag@mail.gmail.com>
+References: <CAD8Lp47ya+nX5S2aZOYVzg+Qx11jhcnf+hvVONpBtGVdKHtwfA@mail.gmail.com>
+	<CAOw6vb+58XZFzxkzfBRfRFObfY5+q29Yk9_qkesGg+kqSYYB+w@mail.gmail.com>
+	<CAD8Lp47N_E-ANOA4QH4UaDyeDJE59XdHH1K9shKQREegaeTnPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <52AB1D75.4030207-l0cyMroinI0@public.gmane.org>
-Content-language: pl
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAD8Lp47N_E-ANOA4QH4UaDyeDJE59XdHH1K9shKQREegaeTnPw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon,
+On Thu, Dec 12, 2013 at 4:46 PM, Daniel Drake <drake@endlessm.com> wrote:
+> What I feel we are missing here is an explanation for why the first
+> row of pixels is treated differently from the rest. Every value that I
+> tweak seems to have an effect on the first line (which was rendered
+> OK) as well as all the others (which were bad). If it were just a
+> matter of tweaking e.g. h_fsz then I would expect *all* rows of pixels
+> to have been rendered badly in the first place.
+>
+> Nevertheless, I'm happy to continue throwing values at the variables
+> if that is our best option... We need to find a way of making a change
+> that effects the only first line, or all the lines except the first.
 
-> From: Kishon Vijay Abraham I [mailto:kishon-l0cyMroinI0@public.gmane.org]
-> Sent: Friday, December 13, 2013 3:45 PM
-> 
-> Hi,
-> 
-> On Friday 13 December 2013 07:32 PM, Kamil Debski wrote:
-> > Previously the of_phy_get function took a struct device * and was
-> > declared static. It was impossible to call it from another driver and
-> > thus it was impossible to get phy defined for a given node. The old
-> > function was renamed to _of_phy_get and was left for internal use.
-> > of_phy_get function was added and it was exported. The function
-> > enables to get a phy for a given device tree node.
-> >
-> > Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> > It seems that my git send-email is playing up and sent the previous
-> > emails without from. This is a resend. Sorry for any confusion.
-> > ---
-> >  drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++-----
-> ----
-> >  include/linux/phy/phy.h |    1 +
-> >  2 files changed, 33 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c index
-> > 03cf8fb..f0dbd42 100644
-> > --- a/drivers/phy/phy-core.c
-> > +++ b/drivers/phy/phy-core.c
-> > @@ -240,8 +240,8 @@ out:
-> >  EXPORT_SYMBOL_GPL(phy_power_off);
-> >
-> >  /**
-> > - * of_phy_get() - lookup and obtain a reference to a phy by phandle
-> > - * @dev: device that requests this phy
-> > + * _of_phy_get() - lookup and obtain a reference to a phy by phandle
-> > + * @np: device_node for which to get the phy
-> >   * @index: the index of the phy
-> >   *
-> >   * Returns the phy associated with the given phandle value, @@
-> > -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
-> >   * not yet loaded. This function uses of_xlate call back function
-> provided
-> >   * while registering the phy_provider to find the phy instance.
-> >   */
-> > -static struct phy *of_phy_get(struct device *dev, int index)
-> > +static struct phy *_of_phy_get(struct device_node *np, int index)
-> >  {
-> >  	int ret;
-> >  	struct phy_provider *phy_provider;
-> >  	struct phy *phy = NULL;
-> >  	struct of_phandle_args args;
-> >
-> > -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-
-> cells",
-> > +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
-> >  		index, &args);
-> > -	if (ret) {
-> > -		dev_dbg(dev, "failed to get phy in %s node\n",
-> > -			dev->of_node->full_name);
-> > +	if (ret)
-> >  		return ERR_PTR(-ENODEV);
-> > -	}
-> >
-> >  	mutex_lock(&phy_provider_mutex);
-> >  	phy_provider = of_phy_provider_lookup(args.np); @@ -283,6 +280,32
-> @@
-> > err0:
-> >  }
-> >
-> >  /**
-> > + * of_phy_get() - lookup and obtain a reference to a phy using a
-> device_node.
-> > + * @np: device_node for which to get the phy
-> > + * @index: the index of the phy
-> 
-> Would be better if the user can get the PHY by string instead of index.
+I have an idea, but my understanding of CRT timings isn't quite strong
+enough to tell me exactly how to implement it. Maybe you can help
+suggest what variables to tweak in order to try this experiment:
 
-Ok, this sounds doable. I will add of_phy_get_by_name analogous to the clk
-framework.
+Lets just accept the fact that the first line of the output image is
+rendered badly. Specifically, it has 257 black pixels added onto the
+end of it. The following rows do not exhibit that problem.
 
-> > + *
-> > + * Returns the phy driver, after getting a refcount to it; or
-> > + * -ENODEV if there is no such phy.  The caller is responsible for
-> > + * calling phy_put() to release that count.
-> > + */
-> > +struct phy *of_phy_get(struct device_node *np, int index) {
-> > +	struct phy *phy = NULL;
-> > +
-> > +	phy = _of_phy_get(np, index);
-> > +	if (IS_ERR(phy))
-> dev_err here?
+To accept and ignore this oddity, I want to make the device start
+outputting the image exactly 1024+257 pixels too early. i.e. I want
+1281 junk pixels before the image starts.
 
-dev_err requires a dev, so it is not possible with the arguments used.
-And we do not want to add any extra parameters to keep the function call
-analogous to other of_*_get (as for example of_clk_get).
+Then, I want to adjust the timing parameters appropriately so that
+those junk pixels do not appear on the display. I want those 1281 junk
+pixels to be sent to the display during the horizontal scans that
+happen before the top left visible pixel is clocked. I think I'm
+saying: I want to adjust the field of view so that those 1281 junk
+pixels are rendered inside the vertical back porch.
 
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+Does that make any sense?
 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Daniel
