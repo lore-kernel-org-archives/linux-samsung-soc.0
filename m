@@ -1,56 +1,86 @@
-From: "Kwok, WingMan" <w-kwok2-l0cyMroinI0@public.gmane.org>
-Subject: RE: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
-Date: Fri, 13 Dec 2013 16:04:38 +0000
-Message-ID: <230CBA6E4B6B6B418E8730AC28E6FC7E0415C786@DFLE11.ent.ti.com>
-References: <20131212214306.GS1939@saruman.home>
- <1386884755-12366-1-git-send-email-balbi@ti.com> <52AA54E4.5000606@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52AA54E4.5000606-l0cyMroinI0@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Shilimkar, Santosh" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "Balbi, Felipe" <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel Mailing List <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux OMAP Mailing List <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH v11 0/7] cpufreq:boost: CPU Boost mode support
+Date: Fri, 13 Dec 2013 17:38:30 +0100
+Message-ID: <1386952717-30947-1-git-send-email-l.majewski@samsung.com>
+References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello
+This patch series introduces support for CPU overclocking technique
+called Boost.
 
-> -----Original Message-----
-> From: Shilimkar, Santosh
-> Sent: Thursday, December 12, 2013 7:29 PM
-> To: Balbi, Felipe
-> Cc: Linux USB Mailing List; kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; Linux ARM Kernel
-> Mailing List; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Linux OMAP Mailing List;
-> Kwok, WingMan
-> Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
-> 
-> On Thursday 12 December 2013 04:45 PM, Felipe Balbi wrote:
-> > A bare-minimum PM implementation which will server as building block
-> > for more complex
-> s/server/serve ;-)
-> > PM implementation in the future.
-> >
-> > At the least will not leave clocks on unnecessarily when e.g.  a user
-> > write mem to /sys/power/state.
-> >
-> > Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-> > ---
-> >
-> > improve error path a little bit.
-> >
-> We will test this out. Thanks for the
-> patch Felipe.
-> 
+It is a follow up of a LAB governor proposal. Boost is a LAB component:
+http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
 
-I have tested the patch and the keystone usb driver continues to function,
-though I can't test suspend at this time as the rest of the system does
-not that functionality yet.
+Boost unifies hardware based solution (e.g. Intel Nehalem) with
+software oriented one (like the one done at Exynos).
+For this reason cpufreq/freq_table code has been reorganized to include
+common code.
 
-Thanks
-WingMan
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Important design decisions:
+- Boost related code is compiled-in unconditionally to cpufreq core and
+  disabled by default. The cpufreq_driver is responsibile for setting
+  boost_supported flag and providing set_boost callback(if HW support
+  is needed). For software managed boost, special Kconfig flag -
+  CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be selected only
+  when a target platform has thermal framework properly configured.
+
+- struct cpufreq_driver has been extended with boost related fields:
+        -- boost_supported - when driver supports boosting
+        -- boost_enabled - boost state
+        -- set_boost - callback to function, which is necessary to
+           enable/disable boost
+
+- Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is visible
+  _only_ when cpufreq driver supports Boost.
+
+- No special spin_lock for Boost was created. The one from cpufreq core
+  was reused.
+
+- The Boost code doesn't rely on any policy. When boost state is changed,
+  then the policy list is iterated and proper adjustements are done.
+
+- To improve safety level, the thermal framework is also extended to disable
+  software boosting, when thermal trip point is reached. After cooling down
+  the boost can be enabled again. This emulates behaviour similar to HW
+  managed boost (like x86)
+
+Tested at HW:
+       Exynos 4412 3.13-rc3 Linux
+       Intel Core i7-3770 3.13-rc3 Linux
+
+Above patches were posted on top of kernel_pm/bleeding-edge
+(SHA1: 2e4bc4515a6143c8c2af037236199eb95f834b40)
+
+
+Lukasz Majewski (7):
+  cpufreq: Add boost frequency support in core
+  cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with common
+    boost solution
+  cpufreq:boost:Kconfig: Provide support for software managed BOOST
+  cpufreq:exynos:Extend Exynos cpufreq driver to support boost
+    framework
+  Documentation:cpufreq:boost: Update BOOST documentation
+  cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
+  thermal:exynos:boost: Automatic enable/disable of BOOST feature (at
+    Exynos4412)
+
+ Documentation/cpu-freq/boost.txt          |   26 +++----
+ drivers/cpufreq/Kconfig                   |    4 +
+ drivers/cpufreq/Kconfig.arm               |   15 ++++
+ drivers/cpufreq/acpi-cpufreq.c            |   86 +++++++--------------
+ drivers/cpufreq/cpufreq.c                 |  118 ++++++++++++++++++++++++++++-
+ drivers/cpufreq/exynos-cpufreq.c          |    3 +
+ drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
+ drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
+ drivers/thermal/samsung/exynos_tmu_data.c |   12 +--
+ include/linux/cpufreq.h                   |   24 ++++++
+ 10 files changed, 261 insertions(+), 85 deletions(-)
+
+-- 
+1.7.10.4
+
