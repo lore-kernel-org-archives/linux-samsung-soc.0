@@ -1,103 +1,59 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH RESEND v2 1/2] phy: core: Add an exported of_phy_get function
-Date: Fri, 13 Dec 2013 20:15:09 +0530
-Message-ID: <52AB1D75.4030207@ti.com>
-References: <1386943380-28596-1-git-send-email-k.debski@samsung.com>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH CFT] ARM:S3C24XX: Enable ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR by default
+Date: Fri, 13 Dec 2013 16:14:49 +0100
+Message-ID: <201312131614.50060.heiko@sntech.de>
+References: <1386934105-23392-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:36276 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753155Ab3LMOpS (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:39703 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753413Ab3LMPPF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 09:45:18 -0500
-In-Reply-To: <1386943380-28596-1-git-send-email-k.debski@samsung.com>
+	Fri, 13 Dec 2013 10:15:05 -0500
+In-Reply-To: <1386934105-23392-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: t.figa@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, matt.porter@linaro.org
+To: panchaxari <panchaxari.prasannamurthy@linaro.org>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-
-On Friday 13 December 2013 07:32 PM, Kamil Debski wrote:
-> Previously the of_phy_get function took a struct device * and
-> was declared static. It was impossible to call it from
-> another driver and thus it was impossible to get phy defined
-> for a given node. The old function was renamed to _of_phy_get
-> and was left for internal use. of_phy_get function was added
-> and it was exported. The function enables to get a phy for
-> a given device tree node.
+Am Freitag, 13. Dezember 2013, 12:28:25 schrieb panchaxari:
+> Configs ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR are enabled as default
+> to platform S3C24XX.
 > 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> ---
-> It seems that my git send-email is playing up and sent the previous emails
-> without from. This is a resend. Sorry for any confusion.
-> ---
->  drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++---------
->  include/linux/phy/phy.h |    1 +
->  2 files changed, 33 insertions(+), 9 deletions(-)
+> Introduction of PHYS_VIRT config as default would enable phy-to-virt and
+> virt-to-phy translation function at boot and module loading time
+> and enforce dynamic reallocation of memory. AUTO_ZRELADDR config would
+> enable calculation of kernel load address at run time.
 > 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 03cf8fb..f0dbd42 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -240,8 +240,8 @@ out:
->  EXPORT_SYMBOL_GPL(phy_power_off);
->  
->  /**
-> - * of_phy_get() - lookup and obtain a reference to a phy by phandle
-> - * @dev: device that requests this phy
-> + * _of_phy_get() - lookup and obtain a reference to a phy by phandle
-> + * @np: device_node for which to get the phy
->   * @index: the index of the phy
->   *
->   * Returns the phy associated with the given phandle value,
-> @@ -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
->   * not yet loaded. This function uses of_xlate call back function provided
->   * while registering the phy_provider to find the phy instance.
->   */
-> -static struct phy *of_phy_get(struct device *dev, int index)
-> +static struct phy *_of_phy_get(struct device_node *np, int index)
->  {
->  	int ret;
->  	struct phy_provider *phy_provider;
->  	struct phy *phy = NULL;
->  	struct of_phandle_args args;
->  
-> -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
-> +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
->  		index, &args);
-> -	if (ret) {
-> -		dev_dbg(dev, "failed to get phy in %s node\n",
-> -			dev->of_node->full_name);
-> +	if (ret)
->  		return ERR_PTR(-ENODEV);
-> -	}
->  
->  	mutex_lock(&phy_provider_mutex);
->  	phy_provider = of_phy_provider_lookup(args.np);
-> @@ -283,6 +280,32 @@ err0:
->  }
->  
->  /**
-> + * of_phy_get() - lookup and obtain a reference to a phy using a device_node.
-> + * @np: device_node for which to get the phy
-> + * @index: the index of the phy
+> PHYS_VIRT config is mutually exclusive to XIP_KERNEL, XIP_KERNEL is used in
+> systems with NOR flash devices, and ZRELADDR config is mutually exclusive
+> to ZBOOT_ROM.
+> 
+> CFT::Call For Testing
+> 
+> Requesting maintainers of S3C24XX  platforms to evaluate the changes on the
+> board and comment, as I dont have the board for testing and also requesting
+> an ACK the changes.
+> 
+> Signed-off-by: panchaxari <panchaxari.prasannamurthy@linaro.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 
-Would be better if the user can get the PHY by string instead of index.
-> + *
-> + * Returns the phy driver, after getting a refcount to it; or
-> + * -ENODEV if there is no such phy.  The caller is responsible for
-> + * calling phy_put() to release that count.
-> + */
-> +struct phy *of_phy_get(struct device_node *np, int index)
-> +{
-> +	struct phy *phy = NULL;
-> +
-> +	phy = _of_phy_get(np, index);
-> +	if (IS_ERR(phy))
-dev_err here?
+apart from the possible issue Vasily pointed out, my current kernels for 
+s3c2442 and s3c2416 seem to work flawlessly with AUTO_ZRELADDR and 
+ARM_PATCH_PHYS_VIRT.
 
-Thanks
-Kishon
+I just checked the configs and it seems these options get automatically 
+selected and must be specially deselected by the user.
+
+
+Heiko
