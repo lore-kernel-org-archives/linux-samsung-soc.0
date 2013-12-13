@@ -1,54 +1,74 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH] phy: Add exynos-phy driver
-Date: Fri, 13 Dec 2013 16:52:53 +0530
-Message-ID: <52AAEE0D.7010203@ti.com>
-References: <1385558788-10880-1-git-send-email-t.stanislaws@samsung.com> <52A8364B.5020204@ti.com> <52A83B87.205@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: panchaxari <panchaxari.prasannamurthy@linaro.org>
+Subject: [PATCH CFT] ARM:S3C24XX: Enable ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR by default
+Date: Fri, 13 Dec 2013 16:58:25 +0530
+Message-ID: <1386934105-23392-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:51041 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752215Ab3LMLXZ (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:61368 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752211Ab3LML2r (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 06:23:25 -0500
-In-Reply-To: <52A83B87.205@samsung.com>
+	Fri, 13 Dec 2013 06:28:47 -0500
+Received: by mail-pb0-f42.google.com with SMTP id uo5so2434542pbc.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 03:28:47 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: t.figa@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, sylvester.nawrocki@gmail.com, kyungmin.park@samsung.com
+To: heiko@sntech.de
+Cc: panchaxari.prasannamurthy@linaro.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+Configs ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR are enabled as default
+to platform S3C24XX.
 
-On Wednesday 11 December 2013 03:46 PM, Sylwester Nawrocki wrote:
-> On 11/12/13 10:54, Kishon Vijay Abraham I wrote:
->> On Wednesday 27 November 2013 06:56 PM, Tomasz Stanislawski wrote:
->>>> Hello everyone,
->>>> The Samsung SoCs from Exynos family are enhanced with a bunch of switches
->>>> dedicated for IP blocks. Those switches are called PHYs in Exynos
->>>> specification. They are usually controlled by a single bit in a single
->>>> one-word-long register.
->>
->> So only enabling this switch is enough for the controller or some other actual
->> PHY IP is needed along with this switch?
->>
->> However I'm not sure if the switch should be modelled as PHY as it is not a PHY
->> in the real sense.
-> 
-> These are ordinary PHY devices embedded in an SoC. I wouldn't really call
-> them "switches", as they indeed provide the physical layer functionality 
-> for various interfaces, like USB, HDMI, MIPI CSI/DSI, etc. Their control 
+Introduction of PHYS_VIRT config as default would enable phy-to-virt and
+virt-to-phy translation function at boot and module loading time
+and enforce dynamic reallocation of memory. AUTO_ZRELADDR config would
+enable calculation of kernel load address at run time.
 
-Are they used along with the phy IPs for which Kamil and others have sent
-patches or this is used in different SoCs from what Kamil uses?
+PHYS_VIRT config is mutually exclusive to XIP_KERNEL, XIP_KERNEL is used in
+systems with NOR flash devices, and ZRELADDR config is mutually exclusive
+to ZBOOT_ROM.
 
-Thanks
-Kishon
+CFT::Call For Testing
 
-> interface is often very simple - usually only an enable and a reset 
-> control bit. But that can't change the fact they are real PHY devices,
-> so let's not call them switches, that's just untrue.
-> 
-> Regards,
-> Sylwester
-> 
+Requesting maintainers of S3C24XX  platforms to evaluate the changes on the
+board and comment, as I dont have the board for testing and also requesting
+an ACK the changes.
+
+Signed-off-by: panchaxari <panchaxari.prasannamurthy@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+S3C24XX is basically a Samsung SOC with ARM920T instruction set, and has
+an operating frquency of 203MHz, it also has enhanced MMU architecture
+to support WinCE, EPOC 32 and Linux.
+
+This SOC is an Integrated system for hand-held devices and general
+embedded systems.
+
+Supports various types of ROM for booting (NOR/NAND Flash, EEPROM, and others).
+Supports 8 memory banks, 128M for each bank, with a total of 1GB.
+---
+ arch/arm/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 32acacb..ec1faea 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -708,6 +708,8 @@ config ARCH_S3C24XX
+ 	bool "Samsung S3C24XX SoCs"
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_REQUIRE_GPIOLIB
++	select ARM_PATCH_PHYS_VIRT
++	select AUTO_ZRELADDR
+ 	select CLKDEV_LOOKUP
+ 	select CLKSRC_SAMSUNG_PWM
+ 	select GENERIC_CLOCKEVENTS
+-- 
+1.7.10.4
