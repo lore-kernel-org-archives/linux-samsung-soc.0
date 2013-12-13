@@ -1,50 +1,93 @@
-From: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
-Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on
- S3C24XX.
-Date: Fri, 13 Dec 2013 01:55:21 +0000
-Message-ID: <52AA6909.8050200@inov.pt>
-References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt> <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v11 1/2] [media] exynos5-is: Adds DT binding documentation
+Date: Fri, 13 Dec 2013 08:38:27 +0530
+Message-ID: <CALt3h7982XtWv_EesvVD+hOPG-7BitKS5niYwC4H+nqGUEm01A@mail.gmail.com>
+References: <1383650355-28838-1-git-send-email-arun.kk@samsung.com>
+	<52A9D6FE.30302@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <52A9D6FE.30302@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 27-09-2013 15:17, Linus Walleij wrote:
-> On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
-> <jose.goncalves@inov.pt> wrote:
+Hi Sylwester,
+
+On Thu, Dec 12, 2013 at 9:02 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Arun,
 >
->> Some GPIO line limits are incorrectly set which, for instance,
->> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+> (Adding Mark and Mauro to Cc)
+>
+> On 05/11/13 12:19, Arun Kumar K wrote:
+>> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
 >>
->> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
+>> The patch adds the DT binding doc for exynos5 SoC camera
+>> subsystem.
+>>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 >> ---
->>   arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
-> OK but grrrr!
+>>  .../bindings/media/exynos5250-camera.txt           |  126 ++++++++++++++++++++
+>>  1 file changed, 126 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+>> new file mode 100644
+>> index 0000000..09420ba
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+>> @@ -0,0 +1,126 @@
+>> +Samsung EXYNOS5 SoC Camera Subsystem
+>> +------------------------------------
+>> +
+>> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
+>> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
+>> +MIPI CSIS and FIMC-IS.
+>> +
+>> +The sub-device nodes are referenced using phandles in the common 'camera' node
+>> +which also includes common properties of the whole subsystem not really
+>> +specific to any single sub-device, like common camera port pins or the common
+>> +camera bus clocks.
+>> +
+>> +Common 'camera' node
+>> +--------------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible         : must be "samsung,exynos5250-fimc"
+>> +- clocks             : list of clock specifiers, corresponding to entries in
+>> +                          the clock-names property
+>> +- clock-names                : must contain "sclk_bayer" entry
+>> +- samsung,csis               : list of phandles to the mipi-csis device nodes
+>> +- samsung,fimc-lite  : list of phandles to the fimc-lite device nodes
+>> +- samsung,fimc-is    : phandle to the fimc-is device node
+>> +
+>> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
+>> +to define a required pinctrl state named "default".
+>> +
+>> +'parallel-ports' node
+>> +---------------------
+>> +
+>> +This node should contain child 'port' nodes specifying active parallel video
+>> +input ports. It includes camera A, camera B and RGB bay inputs.
+>> +'reg' property in the port nodes specifies the input type:
+>> + 1 - parallel camport A
+>> + 2 - parallel camport B
+>> + 5 - RGB camera bay
+>> +
+>> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
 >
-> What needs to happen to the s3c24xx is to get rid of this file.
->
-> - Define ARCH_NR_GPIOS in arch/arm/Kconfig entry
->    ARCH_NR_GPIO like everyone else
->
-> - Get rid of the config symbol NEED_MACH_GPIO_H
->
-> -  Move this file down into arch/arm/mach-s3c24xx/s3c24xx-gpio.h
->    or whatever and make it local...
->
-> I will try to do this myself if noone else helps out, so I'd like to
-> carry this patch in the GPIO tree provided I can get an ACK from
-> the S3C24xx maintainer. Tomasz, is that you or Kukjin?
->
-> (BTW the above maybe goes for S3c64xx as well .. and S5P
-> oh well I will get to it.)
+> Was there posted a version of this patch with Mark's comments addressed:
+> http://www.spinics.net/lists/devicetree/msg11550.html ? I couldn't find it.
 >
 
-Was this patch forgotten?
 
-Jos=E9 Gon=E7alves
+I think it is missed as I also couldn't find it. I can quickly send an
+updated patch
+with these reviews addressed.
+
+Regards
+Arun
