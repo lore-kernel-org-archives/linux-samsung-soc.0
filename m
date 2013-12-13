@@ -1,39 +1,68 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
-Date: Thu, 12 Dec 2013 19:29:24 -0500
-Message-ID: <52AA54E4.5000606@ti.com>
-References: <20131212214306.GS1939@saruman.home> <1386884755-12366-1-git-send-email-balbi@ti.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v5 0/3] Exynos 5410 support
+Date: Thu, 12 Dec 2013 16:32:46 -0800
+Message-ID: <87haad615d.fsf@linaro.org>
+References: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
+	<87ppp48xrs.fsf@linaro.org> <52A836C9.9020405@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:35556 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751606Ab3LMA3u (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 19:29:50 -0500
-In-Reply-To: <1386884755-12366-1-git-send-email-balbi@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52A836C9.9020405@samsung.com> (Tarek Dakhran's message of "Wed,
+	11 Dec 2013 13:56:25 +0400")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tarek Dakhran <t.dakhran@samsung.com>
+Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, w-kwok2@ti.com
 
-On Thursday 12 December 2013 04:45 PM, Felipe Balbi wrote:
-> A bare-minimum PM implementation which will
-> server as building block for more complex
-s/server/serve ;-)
-> PM implementation in the future.
-> 
-> At the least will not leave clocks on unnecessarily
-> when e.g.  a user write mem to /sys/power/state.
-> 
-> Signed-off-by: Felipe Balbi <balbi@ti.com>
-> ---
-> 
-> improve error path a little bit.
-> 
-We will test this out. Thanks for the
-patch Felipe.
+Tarek Dakhran <t.dakhran@samsung.com> writes:
 
-Regards,
-Santosh
+> On 12/10/2013 08:40 PM, Kevin Hilman wrote:
+>> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
+>>
+>>> The series of patches represent support of Exynos 5410 SoC
+>>>
+>>> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
+>>>
+>>> Patches add new platform description, support of clock controller and device
+>>> tree for Exynos 5410.
+>>>
+>>> Dual cluster support for Exynos 5410 (EDCS) has been removed from this series
+>>> This patches is activating only the big cluster (all A15 cores)
+>> Testing this series on top of v3.13-rc3, plus a couple of other
+>> necessary changes (which should've probably been noted in the changelog):
+>>
+>> 1) change CONFIG_NR_CPUS=8 in .config
+>> 2) add the exynos combiner patch from Chander:
+>>     [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
+>>
+>> I'm still only seeing 2 out of 4 cores come up on my odroid-xu:
+>>
+>> [    0.045000] CPU: Testing write buffer coherency: ok
+>> [    0.045000] CPU0: update cpu_power 1024
+>> [    0.045000] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+>> [    0.045000] Setting up static identity map for 0x403717d8 - 0x40371830
+>> [    0.045000] CPU1: Booted secondary processor
+>> [    0.065000] CPU1: update cpu_power 1024
+>> [    0.065000] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+>> [    1.075000] CPU2: failed to boot: -38
+>> [    2.075000] CPU3: failed to boot: -38
+>> [    2.075000] Brought up 2 CPUs
+>> [    2.075000] SMP: Total of 2 processors activated.
+>> [    2.075000] CPU: All CPU(s) started in SVC mode.
+>>
+> Hi Kevin,
+>
+> EDCS(exynos dual cluster support) moved to separate patch now.
+> This patches introduce only base SoC support  (2xA15).
+
+Thanks for the clarification
+
+I thought there were 4 A15s, and the changelog mentioned this patch
+enabled "all A15s".
+
+Kevin
+
+> Patches tested on samsung smdk5410 board.
+>
+> Next version of EDCS patches will be available soon.
+> They allow power on and boot all 8 cores.
