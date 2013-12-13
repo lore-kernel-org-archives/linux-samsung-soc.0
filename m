@@ -1,68 +1,98 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH v5 0/3] Exynos 5410 support
-Date: Thu, 12 Dec 2013 16:32:46 -0800
-Message-ID: <87haad615d.fsf@linaro.org>
-References: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
-	<87ppp48xrs.fsf@linaro.org> <52A836C9.9020405@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
+Date: Thu, 12 Dec 2013 18:43:37 -0600
+Message-ID: <20131213004337.GA31622@saruman.home>
+References: <20131212214306.GS1939@saruman.home>
+ <1386884755-12366-1-git-send-email-balbi@ti.com>
+ <52AA54E4.5000606@ti.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52A836C9.9020405@samsung.com> (Tarek Dakhran's message of "Wed,
-	11 Dec 2013 13:56:25 +0400")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@samsung.com>
-Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
+Content-Type: multipart/mixed; boundary="===============7925730510994812129=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <52AA54E4.5000606@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: kgene.kim@samsung.com, w-kwok2@ti.com, Linux USB Mailing List <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, linux-samsung-soc@vger.kernel.org, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tarek Dakhran <t.dakhran@samsung.com> writes:
+--===============7925730510994812129==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
 
-> On 12/10/2013 08:40 PM, Kevin Hilman wrote:
->> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
->>
->>> The series of patches represent support of Exynos 5410 SoC
->>>
->>> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
->>>
->>> Patches add new platform description, support of clock controller and device
->>> tree for Exynos 5410.
->>>
->>> Dual cluster support for Exynos 5410 (EDCS) has been removed from this series
->>> This patches is activating only the big cluster (all A15 cores)
->> Testing this series on top of v3.13-rc3, plus a couple of other
->> necessary changes (which should've probably been noted in the changelog):
->>
->> 1) change CONFIG_NR_CPUS=8 in .config
->> 2) add the exynos combiner patch from Chander:
->>     [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
->>
->> I'm still only seeing 2 out of 4 cores come up on my odroid-xu:
->>
->> [    0.045000] CPU: Testing write buffer coherency: ok
->> [    0.045000] CPU0: update cpu_power 1024
->> [    0.045000] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
->> [    0.045000] Setting up static identity map for 0x403717d8 - 0x40371830
->> [    0.045000] CPU1: Booted secondary processor
->> [    0.065000] CPU1: update cpu_power 1024
->> [    0.065000] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
->> [    1.075000] CPU2: failed to boot: -38
->> [    2.075000] CPU3: failed to boot: -38
->> [    2.075000] Brought up 2 CPUs
->> [    2.075000] SMP: Total of 2 processors activated.
->> [    2.075000] CPU: All CPU(s) started in SVC mode.
->>
-> Hi Kevin,
->
-> EDCS(exynos dual cluster support) moved to separate patch now.
-> This patches introduce only base SoC support  (2xA15).
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the clarification
+On Thu, Dec 12, 2013 at 07:29:24PM -0500, Santosh Shilimkar wrote:
+> On Thursday 12 December 2013 04:45 PM, Felipe Balbi wrote:
+> > A bare-minimum PM implementation which will
+> > server as building block for more complex
+> s/server/serve ;-)
 
-I thought there were 4 A15s, and the changelog mentioned this patch
-enabled "all A15s".
+hah! :-) will fix in my branch.
 
-Kevin
+> > PM implementation in the future.
+> >=20
+> > At the least will not leave clocks on unnecessarily
+> > when e.g.  a user write mem to /sys/power/state.
+> >=20
+> > Signed-off-by: Felipe Balbi <balbi@ti.com>
+> > ---
+> >=20
+> > improve error path a little bit.
+> >=20
+> We will test this out. Thanks for the
+> patch Felipe.
 
-> Patches tested on samsung smdk5410 board.
->
-> Next version of EDCS patches will be available soon.
-> They allow power on and boot all 8 cores.
+thanks.
+
+--=20
+balbi
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSqlg5AAoJEIaOsuA1yqRE+fAP/i2RxpvgdyheMjCsssmyaADO
+Gb+PY9x1ZPQsoAUuX72erdEfdTF27uJoSKOrxVIjEO23Ahn5CB3/5XxAxo5xPHeM
+KiXXp6loqprlvMwNs56Fb1HRNR26PGJ6hYIPZ4KFEm2s9VJAdCbmMKjUIYoIZZSb
+dAyo3RO/2nikVADJqltpXpDuXuksOuLzZ/2k3S3f0HLBCiGphR3ZWBh7vwmgWOgp
+OmrpZbEaOd2YgrLOAqhO3JX2S6S3sokjEkssDiC/Ge52MFNNBazj2SfaEey+X7LX
+35HnoV1pY6Qg6dOA+ONUUgZPo2iOWEkko/1gBXy5PiB9fhAkCzMCPTNNQaSHfOTK
+8pOo9me+IstU3HriGnIgytmSZ5EqyXDS38v7LodGi4D5yrCisfcKtxaiOjUjtpad
+CNyjA6AEgfaYNtE5+lVd+8VPRzFHo/6cgmCt+WRjzacevHJgG8uVQxBThAI5uiud
+WaiQPZStDFxNwmqKiHhgfm/b2RZxLMZeB87MpfeEm53Dop+wmIoqQD0Hq193nfe+
+Ho2AOS11SqsgyRRmAc7uF2XKQlDR3fT2OM2/6EzdNvmooz+zXZsVOd42atVfMtgy
+NEJuPmf/rJtTxpNNELCpTBf0YQKNVshNijgK7knbAwvElfaWYNPOeRa8Uig9W+Sp
+o2lvEE9TYDtNcMLyEZK+
+=GDcV
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
+
+
+--===============7925730510994812129==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7925730510994812129==--
