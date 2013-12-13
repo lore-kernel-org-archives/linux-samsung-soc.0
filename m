@@ -1,92 +1,103 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH 1/9] phy: core: Change the way of_phy_get is called
-Date: Fri, 13 Dec 2013 15:20:59 +0100
-Message-ID: <008901cef80e$8cac3650$a604a2f0$%debski@samsung.com>
-References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
- <1386246579-25141-2-git-send-email-k.debski@samsung.com>
- <52A16104.3080704@ti.com> <009901cef271$3c40d0b0$b4c27210$%debski@samsung.com>
- <52A56FC0.8020001@ti.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH RESEND v2 1/2] phy: core: Add an exported of_phy_get function
+Date: Fri, 13 Dec 2013 20:15:09 +0530
+Message-ID: <52AB1D75.4030207@ti.com>
+References: <1386943380-28596-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <52A56FC0.8020001@ti.com>
-Content-language: pl
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:36276 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753155Ab3LMOpS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Dec 2013 09:45:18 -0500
+In-Reply-To: <1386943380-28596-1-git-send-email-k.debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: t.figa@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, matt.porter@linaro.org
 
-Hi, 
+Hi,
 
-> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
-> Sent: Monday, December 09, 2013 8:23 AM
+On Friday 13 December 2013 07:32 PM, Kamil Debski wrote:
+> Previously the of_phy_get function took a struct device * and
+> was declared static. It was impossible to call it from
+> another driver and thus it was impossible to get phy defined
+> for a given node. The old function was renamed to _of_phy_get
+> and was left for internal use. of_phy_get function was added
+> and it was exported. The function enables to get a phy for
+> a given device tree node.
 > 
-> On Friday 06 December 2013 04:22 PM, Kamil Debski wrote:
-> > Hi,
-> >
-> >> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
-> >> Sent: Friday, December 06, 2013 6:31 AM
-> >>
-> >> Hi,
-> >>
-> >> On Thursday 05 December 2013 05:59 PM, Kamil Debski wrote:
-> >>> Previously the of_phy_get function took a struct device * and was
-> >>> declared static. It was impossible to call it from another driver
-> >>> and thus it was impossible to get phy defined
-> >>
-> >> It was never intended to be called from other drivers. What's up
-> with
-> >> the wrapper of of_phy_get, phy_get()/devm_phy_get()? Why isn't that
-> >> enough?
-> >
-> > Implementing support for multiple phys in the ehci driver is a bit
-> tricky.
-> > Especially when we want to do it right. Please have a look at this
-> > part of the dts file:
-> >
-> > +    ehci@12580000 {
-> > +        compatible = "samsung,exynos4210-ehci";
-> > +        reg = <0x12580000 0x20000>;
-> > +        interrupts = <0 70 0>;
-> > +        clocks = <&clock 304>, <&clock 305>;
-> > +        clock-names = "usbhost", "otg";
-> > +        status = "disabled";
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +        port@0 {
-> > +            reg = <0>;
-> > +            phys = <&usb2phy 1>;
-> > +            phy-names = "host";
-> > +            status = "disabled";
-> > +        };
-> > +        port@1 {
-> > +            reg = <1>;
-> > +            phys = <&usb2phy 2>;
-> > +            phy-names = "hsic0";
-> > +            status = "disabled";
-> > +        };
-> > +        port@2 {
-> > +            reg = <2>;
-> > +            phys = <&usb2phy 3>;
-> > +            phy-names = "hsic1";
-> > +            status = "disabled";
-> > +        };
-> > +    };
-> >
-> > With the above we have a clear specification of ports and their
-> > respective phys. But to do this properly the ehci driver has to
-> > iterate over port nodes. It is much easier to use devm_of_phy_get by
-> > giving the node as its argument.
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> ---
+> It seems that my git send-email is playing up and sent the previous emails
+> without from. This is a resend. Sorry for any confusion.
+> ---
+>  drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++---------
+>  include/linux/phy/phy.h |    1 +
+>  2 files changed, 33 insertions(+), 9 deletions(-)
 > 
-> I see. There are a couple of more things we do in the wrapper that gets
-> missed while exporting of_phy_get (get_device and try_module_get). You
-> might want to re-work that one.
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 03cf8fb..f0dbd42 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -240,8 +240,8 @@ out:
+>  EXPORT_SYMBOL_GPL(phy_power_off);
+>  
+>  /**
+> - * of_phy_get() - lookup and obtain a reference to a phy by phandle
+> - * @dev: device that requests this phy
+> + * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+> + * @np: device_node for which to get the phy
+>   * @index: the index of the phy
+>   *
+>   * Returns the phy associated with the given phandle value,
+> @@ -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
+>   * not yet loaded. This function uses of_xlate call back function provided
+>   * while registering the phy_provider to find the phy instance.
+>   */
+> -static struct phy *of_phy_get(struct device *dev, int index)
+> +static struct phy *_of_phy_get(struct device_node *np, int index)
+>  {
+>  	int ret;
+>  	struct phy_provider *phy_provider;
+>  	struct phy *phy = NULL;
+>  	struct of_phandle_args args;
+>  
+> -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
+> +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
+>  		index, &args);
+> -	if (ret) {
+> -		dev_dbg(dev, "failed to get phy in %s node\n",
+> -			dev->of_node->full_name);
+> +	if (ret)
+>  		return ERR_PTR(-ENODEV);
+> -	}
+>  
+>  	mutex_lock(&phy_provider_mutex);
+>  	phy_provider = of_phy_provider_lookup(args.np);
+> @@ -283,6 +280,32 @@ err0:
+>  }
+>  
+>  /**
+> + * of_phy_get() - lookup and obtain a reference to a phy using a device_node.
+> + * @np: device_node for which to get the phy
+> + * @index: the index of the phy
 
-Thank you for the review. I have just sent an updated version of the core
-patches.
+Would be better if the user can get the PHY by string instead of index.
+> + *
+> + * Returns the phy driver, after getting a refcount to it; or
+> + * -ENODEV if there is no such phy.  The caller is responsible for
+> + * calling phy_put() to release that count.
+> + */
+> +struct phy *of_phy_get(struct device_node *np, int index)
+> +{
+> +	struct phy *phy = NULL;
+> +
+> +	phy = _of_phy_get(np, index);
+> +	if (IS_ERR(phy))
+dev_err here?
 
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+Thanks
+Kishon
