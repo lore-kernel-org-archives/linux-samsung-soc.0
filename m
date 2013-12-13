@@ -1,65 +1,88 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/2 v2] ARM: s3c64xx: get rid of custom <mach/gpio.h>
-Date: Fri, 13 Dec 2013 20:38:18 +0100
-Message-ID: <10670376.uQQ4Oy6gZV@flatron>
-References: <1386939234-12828-1-git-send-email-linus.walleij@linaro.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
+Date: Fri, 13 Dec 2013 13:54:31 -0600
+Message-ID: <20131213195431.GF5292@saruman.home>
+References: <20131212214306.GS1939@saruman.home>
+ <1386884755-12366-1-git-send-email-balbi@ti.com>
+ <52AA54E4.5000606@ti.com>
+ <230CBA6E4B6B6B418E8730AC28E6FC7E0415C786@DFLE11.ent.ti.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:44935 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752918Ab3LMTiY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 14:38:24 -0500
-Received: by mail-ee0-f53.google.com with SMTP id b57so1073219eek.40
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 11:38:23 -0800 (PST)
-In-Reply-To: <1386939234-12828-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4f28nU6agdXSinmL"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <230CBA6E4B6B6B418E8730AC28E6FC7E0415C786@DFLE11.ent.ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: "Kwok, WingMan" <w-kwok2@ti.com>
+Cc: "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, "Balbi, Felipe" <balbi@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@kernel.org>
 
-Hi Linus,
+--4f28nU6agdXSinmL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 13 of December 2013 13:53:54 Linus Walleij wrote:
-> This isolates the custom S3C64xx GPIO definition table to
-> <linux/platform_data/gpio-samsung-s3x64xx.h> as this is
-> used in a few different places in the kernel, removing the
-> need to depend on the implicit inclusion of <mach/gpio.h>
-> from <linux/gpio.h> and thus getting rid of a few nasty
-> cross-dependencies.
-> 
-> Also delete the CONFIG_SAMSUNG_GPIO_EXTRA stuff. Instead
-> roof the number of GPIOs for this platform:
-> First sum up all the GPIO banks from A to Q: 187 GPIOs.
-> Add the 16 "board GPIOs" and the roof for SAMSUNG_GPIO_EXTRA,
-> 128, so in total maximum 187+16+128 = 331 GPIOs, so let's
-> take the same roof as for S3C24XX: 512. This way we can do
-> away with the GPIO calculation macros for GPIO_BOARD_START,
-> BOARD_NR_GPIOS and the definition of ARCH_NR_GPIOS.
-> 
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Move the movement of the actual gpio.h file into this
->   patch after mistakenly having it end up in the S3C24xx
->   patch.
-> - Add a missing ifdef for the pm-gpio.c code in
->   plat-samsung.
-> 
-> This patch depends on
-> "ARM: s3c24xx: get rid of custom <mach/gpio.h>"
-> 
-> I will take this through the GPIO tree.
+On Fri, Dec 13, 2013 at 10:04:38AM -0600, Kwok, WingMan wrote:
+> Hello
+>=20
+> > -----Original Message-----
+> > From: Shilimkar, Santosh
+> > Sent: Thursday, December 12, 2013 7:29 PM
+> > To: Balbi, Felipe
+> > Cc: Linux USB Mailing List; kgene.kim@samsung.com; Linux ARM Kernel
+> > Mailing List; linux-samsung-soc@vger.kernel.org; Linux OMAP Mailing Lis=
+t;
+> > Kwok, WingMan
+> > Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
+> >=20
+> > On Thursday 12 December 2013 04:45 PM, Felipe Balbi wrote:
+> > > A bare-minimum PM implementation which will server as building block
+> > > for more complex
+> > s/server/serve ;-)
+> > > PM implementation in the future.
+> > >
+> > > At the least will not leave clocks on unnecessarily when e.g.  a user
+> > > write mem to /sys/power/state.
+> > >
+> > > Signed-off-by: Felipe Balbi <balbi@ti.com>
+> > > ---
+> > >
+> > > improve error path a little bit.
+> > >
+> > We will test this out. Thanks for the
+> > patch Felipe.
+> >=20
+>=20
+> I have tested the patch and the keystone usb driver continues to function,
+> though I can't test suspend at this time as the rest of the system does
+> not that functionality yet.
 
-[on Mini6410 board]
-Tested-by: Tomasz Figa <t.figa@samsung.com>
-[for changes in mach-s3c64xx]
-Acked-by: Tomasz Figa <t.figa@samsung.com>
+Thanks, should I add your Tested-by ?
 
-Best regards,
-Tomasz
+--=20
+balbi
+
+--4f28nU6agdXSinmL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSq2X3AAoJEIaOsuA1yqREADAP/1jTut0bkrOALf/F8WuN6q5o
+tYjjBgaFeiKhmuD0cweEk6ftROlSIggIxmEoxovcCARVjnPdb2bxpGuFlFEd+NdB
+ljvU2nL8xLHvmhHhAjUegvWs1UwYO9xJb4l/Dlco//30lVm6uSKwpOgcGVYY1l2K
+oASStflYavHYyPfAbg6yzNGYaZwFGs5MuAz2cDDogQWD8AJa0OZ3gZYNjwzhbePC
+8P3IPfm0K6GakkSvKBHweZDFFq0Xqtv2BIV+OrYHsQLlbedySiwBqFFpiHrFA5be
+yN9TiFNhFPpuPZkHic2YfLMj1GE82dSzTbrH7JYbAVoN61Q1HBxKhP5cyUNIzpUK
+3nsgmyNBNTAzIBdMcLnjwRCicOJpq3MBMWOvzPJhsAL5GdS6KwoeWxDAy1kqf8RW
+eY0XOfDGiGXmaUjQpmYERxNjMfZtTu95dKyMGa59U9kh5Y0B6A7ncvTJGEr0sD/F
+mFh4AQrqbxL6Dbjijx3LM67qmVcqYHgf1tBy7ze8ZwNAkkjXJl98kAPHDpnDg8w/
+H+gCMN/vOXQZXlWOPKQZmfKwqCDIaJMYgSFmaZFy8c6IJfTFKfDVgEnCBgU6qzgO
+w0SpYQumUOspcaKP80haY6CdOsPQf2471WE07dXLZbM+1NPNmhk+sVDwQFxiqBkI
+nHpOw3pghiid9V6vnNtx
+=7dy4
+-----END PGP SIGNATURE-----
+
+--4f28nU6agdXSinmL--
