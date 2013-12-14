@@ -1,97 +1,45 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [exynos4412]How to test a pwm device, is there a test program?
-Date: Sat, 14 Dec 2013 14:05:57 +0100
-Message-ID: <1611879.darQQ1Xxis@flatron>
-References: <BLU0-SMTP2611DD3F4485EEE457F4920ADD00@phx.gbl> <BLU0-SMTP4320E405FB7D782DEAD759ADDC0@phx.gbl> <20131214124408.GG17467@mithrandir>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/1] ARM: dts: Add missing clocks for exynos4412 dwmmc node
+Date: Sat, 14 Dec 2013 14:24:23 +0100
+Message-ID: <6057819.pWzq25qpVf@flatron>
+References: <1386998490-19456-1-git-send-email-kasimling@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20131214124408.GG17467@mithrandir>
-Sender: linux-pwm-owner@vger.kernel.org
-To: randy <lxr1234@hotmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386998490-19456-1-git-send-email-kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Ling <kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thierry, Ayaka,
+Hi Alex,
 
-On Saturday 14 of December 2013 13:44:09 Thierry Reding wrote:
-> On Thu, Dec 12, 2013 at 10:27:04PM +0800, randy wrote:
-> > -----BEGIN PGP SIGNED MESSAGE-----
-> > Hash: SHA1
-> >=20
-> > =E4=BA=8E 2013=E5=B9=B412=E6=9C=8812=E6=97=A5 20:22, Thierry Reding=
- =E5=86=99=E9=81=93:
-> > > On Mon, Dec 09, 2013 at 09:06:37PM +0800, randy wrote:
-> > >> -----BEGIN PGP SIGNED MESSAGE----- Hash: SHA1
-> > >>=20
-> > >> =E4=BA=8E 2013=E5=B9=B412=E6=9C=8809=E6=97=A5 19:55, Thierry Red=
-ing =E5=86=99=E9=81=93:
-> > >>> On Mon, Dec 09, 2013 at 07:04:12PM +0800, randy wrote: [...]
-> > >>>> Actually, I don't know whether the pwm works or not. In
-> > >>>> dmesg, I saw: [  853.690000] samsung-pwm 139d0000.pwm: tried
-> > >>>> to request PWM channel 0 without output [  876.930000]
-> > >>>> samsung-pwm 139d0000.pwm: tried to request PWM channel 0
-> > >>>> without output [ 879.615000] samsung-pwm 139d0000.pwm: tried
-> > >>>> to request PWM channel 1 without output
-> > >>>>=20
-> > >>>> in my dts, I only add =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
-> > >>>> pwm@139D0000 { status =3D "okay";
-> > >> I added samsung,pwm-outputs =3D <0>;
-> > >>>> }; =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D is it enough to make pwm
-> > >>>>  work, if the driver in kernel has been correct.
-> > >>>=20
-> > >>> It seems like you're missing the samsung,pwm-outputs property
-> > >>> (see Documentation/devicetree/bindings/pwm/pwm-samsung.txt).
-> > >>>=20
-> > >>> Thierry
-> > >>=20
-> > >> Well I have make it output to channel 0 now. But it doesn't work
-> > >> with the config below. As it is a buzzer, I change your config.=20
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D r=
-oot@mifu:~# cat
-> > >> /sys/class/pwm/pwmchip0/pwm0/enable
-> > >>=20
-> > >> 1 root@mifu:~# cat /sys/class/pwm/pwmchip0/pwm0/period 1000000=20
-> > >> root@mifu:~# cat /sys/class/pwm/pwmchip0/pwm0/duty_cycle 500000=20
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
- I have used a
-> > >> function generator with Vpp=3D2.2, it works.
-> > >=20
-> > > Are you sure the function generator runs at the same frequency? D=
-o
-> > > you
-> > Yes, I am sure.
-> > > have the possibility to check the PWM output with a scope to see =
-if
-> > > it outputs anything?
-> > I have used a oscillograph to capture, nothing(althought it show so=
-me
-> > waves, but it is nosie single captured by autoset). I have a scope =
-but
-> > I don't think there is any different.
-> > >=20
-> > > Thierry
-> > Ayaka
-> > Thank you
->=20
-> I don't know what else you could try, so I'm Cc'ing a couple of peopl=
-e
-> who have worked with this driver before, perhaps they can help resolv=
-e
-> this.
+On Saturday 14 of December 2013 13:21:30 Alex Ling wrote:
+> This patch adds "biu" and "ciu" clocks for exynos4412 dwmmc
+> node. Without this patch, dwmmc host driver will skip enabling the
+> two clocks and it will break dwmmc host function on exynos4412.
+> Tested on FriendlyARM TINY4412 board.
+> 
+> Signed-off-by: Alex Ling <kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Changes for v2:
+>    - Fix patch description as Mark Rutland suggested
+> 
+>  arch/arm/boot/dts/exynos4412.dtsi |    2 ++
+>  1 file changed, 2 insertions(+)
 
-I suspect invalid hardware configuration here.
+The patch is correct, but unfortunately it's not the only thing that
+is wrong with MSHC device tree node for Exynos4x12.
 
-Ayaka, could you post your board dts file with PWM enabled?
-
-Btw. For topics related to Samsung's platforms, it's good to always CC
-linux-samsung-soc ML.
+Please refer to my series fixing DW-MSHC support on Exynos4x12 (and
+enabling it on TRATS2 board):
+http://www.spinics.net/lists/arm-kernel/msg293652.html
 
 Best regards,
 Tomasz
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
