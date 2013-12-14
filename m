@@ -1,53 +1,69 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double
- clock initialization
-Date: Sat, 14 Dec 2013 12:30:24 -0500
-Message-ID: <52AC95B0.7090303@ti.com>
-References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
- <201312140400.16794.arnd@arndb.de> <52AC4568.7030201@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
+Date: Sat, 14 Dec 2013 19:57:06 +0100
+Message-ID: <23915888.rvPOtSbknd@flatron>
+References: <1384520969-2450-1-git-send-email-kasimling@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <52AC4568.7030201@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, linux-samsung-soc@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1384520969-2450-1-git-send-email-kasimling@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alex Ling <kasimling@gmail.com>
+Cc: rob.herring@calxeda.com, mark.rutland@arm.com, linux@arm.linux.org.uk, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Saturday 14 December 2013 06:47 AM, Sebastian Hesselbarth wrote:
+Hi Alex,
 
-[..]
+On Friday 15 of November 2013 21:09:29 Alex Ling wrote:
+> Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
+> TINY4412 board. This patch including adds the node to support
+> peripherals like UART, SD card on SDMMC2 port, and this patch
+> adds GPIO connected LEDS and configure its properties like
+> following:
+> LED1: use 'heartbeat' trigger, blinking while the board is running.
+> LED4: use 'mmc0' trigger, on when mmc0 is accessing.
+> LED2 and LED3 can be controlled from userspace.
 
-> From 4ef4720c0d7ca9be57b06dc7ab1483c77a5ada1d Mon Sep 17 00:00:00 2001
-> From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Date: Sat, 14 Dec 2013 12:21:01 +0100
-> Subject: [PATCH] ARM: keystone: remove call to of_clk_init
-> 
-> Commit
-> 
-> 4178bac ARM: call of_clk_init from default time_init handler
-> 
-> added implicit call to of_clk_init(NULL) from default time_init callback.
-> This causes double clock initialization on keystone, leading to boot
-> failures.
-> 
-> This patch fixes boot failure on keystone by dropping the call to
-> of_clk_init(NULL) in keystone_pm_runtime_init(), which is set as
-> subsys_initcall and therefore called after arch-wide .init_time callback.
-> 
-> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> ---
-I already have a patch [1] for this in my queue. Thanks
+Well, all the LEDs can be controlled from userspace. The default trigger
+is just the initial setting, which can be changed later by userspace.
+It's just a general comment, not an issue with the patch, though.
 
-Regards,
-Santosh
-[1] http://www.spinics.net/lists/arm-kernel/msg288578.html
+Anyway, you don't need such detailed patch description, as you can see
+most of the things directly from the code. In case of this patch, just the
+list of supported peripherals is fine, without going into minor details,
+such as LED triggers.
+
+Also, please see my comments inline.
+
+[snip]
+> diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+> new file mode 100644
+> index 0000000..78ace14
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+[snip]
+> +	leds {
+> +		compatible = "gpio-leds";
+
+style: A blank line should be separating properties from nodes.
+
+> +		led1 {
+> +			label = "led1:heart";
+
+Are the labels for this and the LEDs below related to the hardware?
+I mean, the label should preferrably come from the board documentation,
+or a label on the PCB next to the LED. Also they shouldn't represent
+any particular use case, so you should remove the ":heart" suffix.
+
+> +			gpios = <&gpm4 0 1>;
+> +			default-state = "off";
+> +			linux,default-trigger = "heartbeat";
+> +		};
+
+style: Subnodes should be separated with blank lines.
+
+Otherwise the patch looks fine.
+
+Best regards,
+Tomasz
