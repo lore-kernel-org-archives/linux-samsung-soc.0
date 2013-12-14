@@ -1,162 +1,63 @@
-From: Alex Ling <kasimling@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add board dts file for EXYNOS4412 based
- TINY4412 board
-Date: Sat, 14 Dec 2013 13:34:13 +0800
-Message-ID: <CAHaF_kh0Oo8BOju1V6TBuLsq1iRTU-DtfFAAk2NvA+i8ttzJ=Q@mail.gmail.com>
-References: <1384520969-2450-1-git-send-email-kasimling@gmail.com> <CAHaF_kicLSUUenX-Ks-PyEX-pySPquQhDYrm2wbeq7DwoLDs=g@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double
+ clock initialization
+Date: Fri, 13 Dec 2013 21:50:29 -0800
+Message-ID: <CAOesGMgj1mOp+TnazcEd98NPdTQ=Mm-zbD4jMuAeZfx8V9MPzQ@mail.gmail.com>
+References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
+	<201312140400.16794.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:58801 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751088Ab3LNFee (ORCPT
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:51291 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751088Ab3LNFua (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Dec 2013 00:34:34 -0500
-In-Reply-To: <CAHaF_kicLSUUenX-Ks-PyEX-pySPquQhDYrm2wbeq7DwoLDs=g@mail.gmail.com>
+	Sat, 14 Dec 2013 00:50:30 -0500
+Received: by mail-qc0-f174.google.com with SMTP id n7so2199824qcx.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2013 21:50:29 -0800 (PST)
+In-Reply-To: <201312140400.16794.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, ijc+devicetree@hellion.org.uk, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Alex Ling <kasimling@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Hi, Kukjin,
-Could you please review this patch? Thanks!
-
-
-Regards,
-Alex
-
-On Fri, Nov 15, 2013 at 9:13 PM, kasim ling <kasimling@gmail.com> wrote:
-> The board compatible string will be documented after the coresponding
-> documentation is specified.
->
->
-> Regards,
-> Alex
->
-> On Fri, Nov 15, 2013 at 9:09 PM, Alex Ling <kasimling@gmail.com> wrote:
->> Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
->> TINY4412 board. This patch including adds the node to support
->> peripherals like UART, SD card on SDMMC2 port, and this patch
->> adds GPIO connected LEDS and configure its properties like
->> following:
->> LED1: use 'heartbeat' trigger, blinking while the board is running.
->> LED4: use 'mmc0' trigger, on when mmc0 is accessing.
->> LED2 and LED3 can be controlled from userspace.
+On Fri, Dec 13, 2013 at 7:00 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 13 December 2013, Tomasz Figa wrote:
+>> Commit
 >>
->> Signed-off-by: Alex Ling <kasimling@gmail.com>
->> ---
->>  arch/arm/boot/dts/Makefile                |    1 +
->>  arch/arm/boot/dts/exynos4412-tiny4412.dts |   89 +++++++++++++++++++++++++++++
->>  2 files changed, 90 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/exynos4412-tiny4412.dts
+>> 4178bac ARM: call of_clk_init from default time_init handler
 >>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 802720e..91671a2 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->>         exynos4412-odroidx.dtb \
->>         exynos4412-origen.dtb \
->>         exynos4412-smdk4412.dtb \
->> +       exynos4412-tiny4412.dtb \
->>         exynos4412-trats2.dtb \
->>         exynos5250-arndale.dtb \
->>         exynos5250-smdk5250.dtb \
->> diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
->> new file mode 100644
->> index 0000000..78ace14
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
->> @@ -0,0 +1,89 @@
->> +/*
->> + * FriendlyARM's Exynos4412 based TINY4412 board device tree source
->> + *
->> + * Copyright (c) 2013 Alex Ling <kasimling@gmail.com>
->> + *
->> + * Device tree source file for FriendlyARM's TINY4412 board which is based on
->> + * Samsung's Exynos4412 SoC.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +/dts-v1/;
->> +#include "exynos4412.dtsi"
->> +
->> +/ {
->> +       model = "FriendlyARM TINY4412 board based on Exynos4412";
->> +       compatible = "friendlyarm,tiny4412", "samsung,exynos4412";
->> +
->> +       memory {
->> +               reg = <0x40000000 0x40000000>;
->> +       };
->> +
->> +       leds {
->> +               compatible = "gpio-leds";
->> +               led1 {
->> +                       label = "led1:heart";
->> +                       gpios = <&gpm4 0 1>;
->> +                       default-state = "off";
->> +                       linux,default-trigger = "heartbeat";
->> +               };
->> +               led2 {
->> +                       label = "led2";
->> +                       gpios = <&gpm4 1 1>;
->> +                       default-state = "off";
->> +               };
->> +               led3 {
->> +                       label = "led3";
->> +                       gpios = <&gpm4 2 1>;
->> +                       default-state = "off";
->> +               };
->> +               led4 {
->> +                       label = "led4:mmc0";
->> +                       gpios = <&gpm4 3 1>;
->> +                       default-state = "off";
->> +                       linux,default-trigger = "mmc0";
->> +               };
->> +       };
->> +
->> +       rtc@10070000 {
->> +               status = "okay";
->> +       };
->> +
->> +       sdhci@12530000 {
->> +               bus-width = <4>;
->> +               pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->> +               pinctrl-names = "default";
->> +               status = "okay";
->> +       };
->> +
->> +       serial@13800000 {
->> +               status = "okay";
->> +       };
->> +
->> +       serial@13810000 {
->> +               status = "okay";
->> +       };
->> +
->> +       serial@13820000 {
->> +               status = "okay";
->> +       };
->> +
->> +       serial@13830000 {
->> +               status = "okay";
->> +       };
->> +
->> +       fixed-rate-clocks {
->> +               xxti {
->> +                       compatible = "samsung,clock-xxti";
->> +                       clock-frequency = <0>;
->> +               };
->> +
->> +               xusbxti {
->> +                       compatible = "samsung,clock-xusbxti";
->> +                       clock-frequency = <24000000>;
->> +               };
->> +       };
->> +};
->> --
->> 1.7.9.5
+>> added implicit call to of_clk_init() from default time_init callback,
+>> but it did not change platforms calling it from other callbacks, despite
+>> of not having custom time_init callbacks. This caused double clock
+>> initialization on such platforms, leading to boot failures. An example
+>> of such platform is mach-s3c64xx.
 >>
+>> This patch fixes boot failure on s3c64xx by dropping custom init_irq
+>> callback, which had a call to of_clk_init() and moving system reset
+>> initialization to init_machine callback. This allows us to have
+>> clocks initialized properly without a need to have custom init_time or
+>> init_irq callbacks.
+>>
+>> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>
+> I see of_clk_init(NULL) getting called on two other ARM platforms:
+>
+> $ git grep -w of_clk_init arch/arm
+> arch/arm/kernel/time.c:         of_clk_init(NULL);
+> arch/arm/mach-keystone/pm_domain.c:     of_clk_init(NULL);
+> arch/arm/mach-mvebu/armada-370-xp.c:    of_clk_init(NULL);
+> arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:        of_clk_init(NULL);
+>
+> Are the other two platforms ok here?
+>
+> I assume that mvebu is fine since Sebastian would have noticed breaking
+> that one and it has a custom init_time function, but keystone seems
+> broken in the same way as s3c64xx. Santosh, can you have a look?
+
+Yeah, and Free Electrons also sent two systems to Kevin so he has them
+in his boot test setup, and they're still happy there. Keystone lacks
+such coverage though, so Santosh will need to check.
+
+
+-Olof
