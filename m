@@ -1,86 +1,37 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double clock initialization
-Date: Sat, 14 Dec 2013 04:00:16 +0100
-Message-ID: <201312140400.16794.arnd@arndb.de>
-References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:62549 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753166Ab3LNDBB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Dec 2013 22:01:01 -0500
-In-Reply-To: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alex Ling <kasimling@gmail.com>
+Subject: [PATCH v2 1/1] ARM: dts: Add missing clocks for exynos4412 dwmmc node
+Date: Sat, 14 Dec 2013 13:21:30 +0800
+Message-ID: <1386998490-19456-1-git-send-email-kasimling@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ben-linux@fluff.org, kgene.kim@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alex Ling <kasimling@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Friday 13 December 2013, Tomasz Figa wrote:
-> Commit
-> 
-> 4178bac ARM: call of_clk_init from default time_init handler
-> 
-> added implicit call to of_clk_init() from default time_init callback,
-> but it did not change platforms calling it from other callbacks, despite
-> of not having custom time_init callbacks. This caused double clock
-> initialization on such platforms, leading to boot failures. An example
-> of such platform is mach-s3c64xx.
-> 
-> This patch fixes boot failure on s3c64xx by dropping custom init_irq
-> callback, which had a call to of_clk_init() and moving system reset
-> initialization to init_machine callback. This allows us to have
-> clocks initialized properly without a need to have custom init_time or
-> init_irq callbacks.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+This patch adds "biu" and "ciu" clocks for exynos4412 dwmmc
+node. Without this patch, dwmmc host driver will skip enabling the
+two clocks and it will break dwmmc host function on exynos4412.
+Tested on FriendlyARM TINY4412 board.
 
-I see of_clk_init(NULL) getting called on two other ARM platforms:
+Signed-off-by: Alex Ling <kasimling@gmail.com>
+---
+Changes for v2:
+   - Fix patch description as Mark Rutland suggested
 
-$ git grep -w of_clk_init arch/arm
-arch/arm/kernel/time.c:         of_clk_init(NULL);
-arch/arm/mach-keystone/pm_domain.c:     of_clk_init(NULL);
-arch/arm/mach-mvebu/armada-370-xp.c:    of_clk_init(NULL);
-arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:        of_clk_init(NULL);
+ arch/arm/boot/dts/exynos4412.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Are the other two platforms ok here?
-
-I assume that mvebu is fine since Sebastian would have noticed breaking
-that one and it has a custom init_time function, but keystone seems
-broken in the same way as s3c64xx. Santosh, can you have a look?
-
-	Arnd
-
-> diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
-> index 7eb9a10..2fddf38 100644
-> --- a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
-> +++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
-
-> @@ -48,15 +46,9 @@ static void __init s3c64xx_dt_map_io(void)
->  		panic("SoC is not S3C64xx!");
->  }
->  
-> -static void __init s3c64xx_dt_init_irq(void)
-> -{
-> -	of_clk_init(NULL);
-> -	samsung_wdt_reset_of_init();
-> -	irqchip_init();
-> -};
-> -
->  static void __init s3c64xx_dt_init_machine(void)
->  {
-> +	samsung_wdt_reset_of_init();
->  	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
->  }
->  
-> @@ -79,7 +71,6 @@ DT_MACHINE_START(S3C6400_DT, "Samsung S3C64xx (Flattened Device Tree)")
->  	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
->  	.dt_compat	= s3c64xx_dt_compat,
->  	.map_io		= s3c64xx_dt_map_io,
-> -	.init_irq	= s3c64xx_dt_init_irq,
->  	.init_machine	= s3c64xx_dt_init_machine,
->  	.restart        = s3c64xx_dt_restart,
->  MACHINE_END
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index e743e67..67bef99 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -67,5 +67,7 @@
+ 		interrupts = <0 77 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		clocks = <&clock 301>, <&clock 149>;
++		clock-names = "biu", "ciu";
+ 	};
+ };
+-- 
+1.7.9.5
