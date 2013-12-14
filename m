@@ -1,115 +1,64 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double
- clock initialization
-Date: Sat, 14 Dec 2013 12:47:52 +0100
-Message-ID: <52AC4568.7030201@gmail.com>
-References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com> <201312140400.16794.arnd@arndb.de>
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double clock initialization
+Date: Sat, 14 Dec 2013 04:41:06 -0800 (PST)
+Message-ID: <1500417.9RFCmzklxv@flatron>
+References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com> <CAOesGMifjnTDUcsweOwsw9fFgsE7b4q3wsASfP8YL-uMH5KiPA@mail.gmail.com> <CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:52353 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752794Ab3LNLr6 (ORCPT
+Received: from mail-ea0-f171.google.com ([209.85.215.171]:57955 "EHLO
+	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752879Ab3LNMlI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Dec 2013 06:47:58 -0500
-Received: by mail-ea0-f174.google.com with SMTP id b10so1320370eae.33
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2013 03:47:56 -0800 (PST)
-In-Reply-To: <201312140400.16794.arnd@arndb.de>
+	Sat, 14 Dec 2013 07:41:08 -0500
+Received: by mail-ea0-f171.google.com with SMTP id h10so1350890eak.30
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2013 04:41:07 -0800 (PST)
+In-Reply-To: <CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
+To: hua dillon <dillonhua@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Mark Brown <broonie@kernel.org>
 
-On 12/14/2013 04:00 AM, Arnd Bergmann wrote:
-> On Friday 13 December 2013, Tomasz Figa wrote:
->> Commit
->>
->> 4178bac ARM: call of_clk_init from default time_init handler
->>
->> added implicit call to of_clk_init() from default time_init callback,
->> but it did not change platforms calling it from other callbacks, despite
->> of not having custom time_init callbacks. This caused double clock
->> initialization on such platforms, leading to boot failures. An example
->> of such platform is mach-s3c64xx.
->>
->> This patch fixes boot failure on s3c64xx by dropping custom init_irq
->> callback, which had a call to of_clk_init() and moving system reset
->> initialization to init_machine callback. This allows us to have
->> clocks initialized properly without a need to have custom init_time or
->> init_irq callbacks.
->>
->> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+On Saturday 14 of December 2013 16:19:05 hua dillon wrote:
+> hi olof:
+> 
+>   i think mini6410 from china is the board you want .
 
-Thomas,
+There were several cheap boards with S3C6410 available, but I'm not sure
+how many of them are still on the market.
 
-thanks for catching this and sorry for the inconvenience. Either I
-simply missed s3c64xx or it went in with that global of_clk_init
-patch.
+I guess Mini6410/Tiny6410 are, as I can at least see their prices there:
+http://www.andahammer.com/mini6410-sdk/
+http://www.andahammer.com/t6410sdk/
 
-> I see of_clk_init(NULL) getting called on two other ARM platforms:
->
-> $ git grep -w of_clk_init arch/arm
-> arch/arm/kernel/time.c:         of_clk_init(NULL);
-> arch/arm/mach-keystone/pm_domain.c:     of_clk_init(NULL);
-> arch/arm/mach-mvebu/armada-370-xp.c:    of_clk_init(NULL);
-> arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:        of_clk_init(NULL);
->
-> Are the other two platforms ok here?
+They are almost fully compatible, so they should be thought as just
+a single Mini6410 board, but in different form factors. I do most of
+my testing on the latter.
 
-mvebu is fine as long as it has its own .init_time callback (which it
-has).
+>From other boards supported in mainline, there are:
 
-> I assume that mvebu is fine since Sebastian would have noticed breaking
-> that one and it has a custom init_time function, but keystone seems
-> broken in the same way as s3c64xx. Santosh, can you have a look?
+ - A&W6410 (mach-anw6410) - I couldn't find any information on it
+   anywhere,
 
-I also had a look at keystone and guess it is broken, too.
-of_clk_init(NULL) is called in keystone_pm_runtime_init() which is
-set as subsys_initcall. Simply removing the extra of_clk_init call
-in keystone_pm_runtime_init should be enough here:
+ - Wolfson Cragganmore 6410 - Mark Brown (copied) is using it for some
+   testing of audio codec AFAIK, but I'm not sure if you can get that
+   anywhere.
 
- From 4ef4720c0d7ca9be57b06dc7ab1483c77a5ada1d Mon Sep 17 00:00:00 2001
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Date: Sat, 14 Dec 2013 12:21:01 +0100
-Subject: [PATCH] ARM: keystone: remove call to of_clk_init
+ - HMT (mach-hmt), SmartQ 5/7 (mach-smartq*) - they are supposed to be
+   some tablet-like products, but again I'm not sure if you can still
+   get them,
 
-Commit
+ - SMDK6400/SMDK6410 are Samsung's official development boards for
+   S3C6400/S3C6410 - I have access to one at the office; no idea if
+   you can get one anywhere,
 
-4178bac ARM: call of_clk_init from default time_init handler
+ - NCP - an abandoned Samsung's development board - you definitely
+   can't get that anywhere; in fact I'd say that there is no more such
+   board alive over the world and it just should be dropped from mainline.
 
-added implicit call to of_clk_init(NULL) from default time_init callback.
-This causes double clock initialization on keystone, leading to boot
-failures.
+That's all I can find at the moment. Anyway, I have copied Ben, maybe he
+knows more than that.
 
-This patch fixes boot failure on keystone by dropping the call to
-of_clk_init(NULL) in keystone_pm_runtime_init(), which is set as
-subsys_initcall and therefore called after arch-wide .init_time callback.
-
-Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
----
-  arch/arm/mach-keystone/pm_domain.c | 2 --
-  1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/mach-keystone/pm_domain.c 
-b/arch/arm/mach-keystone/pm_domain.c
-index 2962523..3f17e16 100644
---- a/arch/arm/mach-keystone/pm_domain.c
-+++ b/arch/arm/mach-keystone/pm_domain.c
-@@ -16,7 +16,6 @@
-  #include <linux/pm_runtime.h>
-  #include <linux/pm_clock.h>
-  #include <linux/platform_device.h>
--#include <linux/clk-provider.h>
-  #include <linux/of.h>
-
-  #ifdef CONFIG_PM_RUNTIME
-@@ -74,7 +73,6 @@ int __init keystone_pm_runtime_init(void)
-  	if (!np)
-  		return 0;
-
--	of_clk_init(NULL);
-  	pm_clk_add_notifier(&platform_bus_type, &platform_domain_notifier);
-
-  	return 0;
--- 
-1.8.4.rc3
+Best regards,
+Tomasz
