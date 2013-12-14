@@ -1,64 +1,97 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double clock initialization
-Date: Sat, 14 Dec 2013 04:41:06 -0800 (PST)
-Message-ID: <1500417.9RFCmzklxv@flatron>
-References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com> <CAOesGMifjnTDUcsweOwsw9fFgsE7b4q3wsASfP8YL-uMH5KiPA@mail.gmail.com> <CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
+Subject: Re: [exynos4412]How to test a pwm device, is there a test program?
+Date: Sat, 14 Dec 2013 14:05:57 +0100
+Message-ID: <1611879.darQQ1Xxis@flatron>
+References: <BLU0-SMTP2611DD3F4485EEE457F4920ADD00@phx.gbl> <BLU0-SMTP4320E405FB7D782DEAD759ADDC0@phx.gbl> <20131214124408.GG17467@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:57955 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752879Ab3LNMlI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Dec 2013 07:41:08 -0500
-Received: by mail-ea0-f171.google.com with SMTP id h10so1350890eak.30
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2013 04:41:07 -0800 (PST)
-In-Reply-To: <CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <20131214124408.GG17467@mithrandir>
+Sender: linux-pwm-owner@vger.kernel.org
+To: randy <lxr1234@hotmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: hua dillon <dillonhua@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Mark Brown <broonie@kernel.org>
 
-On Saturday 14 of December 2013 16:19:05 hua dillon wrote:
-> hi olof:
-> 
->   i think mini6410 from china is the board you want .
+Hi Thierry, Ayaka,
 
-There were several cheap boards with S3C6410 available, but I'm not sure
-how many of them are still on the market.
+On Saturday 14 of December 2013 13:44:09 Thierry Reding wrote:
+> On Thu, Dec 12, 2013 at 10:27:04PM +0800, randy wrote:
+> > -----BEGIN PGP SIGNED MESSAGE-----
+> > Hash: SHA1
+> >=20
+> > =E4=BA=8E 2013=E5=B9=B412=E6=9C=8812=E6=97=A5 20:22, Thierry Reding=
+ =E5=86=99=E9=81=93:
+> > > On Mon, Dec 09, 2013 at 09:06:37PM +0800, randy wrote:
+> > >> -----BEGIN PGP SIGNED MESSAGE----- Hash: SHA1
+> > >>=20
+> > >> =E4=BA=8E 2013=E5=B9=B412=E6=9C=8809=E6=97=A5 19:55, Thierry Red=
+ing =E5=86=99=E9=81=93:
+> > >>> On Mon, Dec 09, 2013 at 07:04:12PM +0800, randy wrote: [...]
+> > >>>> Actually, I don't know whether the pwm works or not. In
+> > >>>> dmesg, I saw: [  853.690000] samsung-pwm 139d0000.pwm: tried
+> > >>>> to request PWM channel 0 without output [  876.930000]
+> > >>>> samsung-pwm 139d0000.pwm: tried to request PWM channel 0
+> > >>>> without output [ 879.615000] samsung-pwm 139d0000.pwm: tried
+> > >>>> to request PWM channel 1 without output
+> > >>>>=20
+> > >>>> in my dts, I only add =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+> > >>>> pwm@139D0000 { status =3D "okay";
+> > >> I added samsung,pwm-outputs =3D <0>;
+> > >>>> }; =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D is it enough to make pwm
+> > >>>>  work, if the driver in kernel has been correct.
+> > >>>=20
+> > >>> It seems like you're missing the samsung,pwm-outputs property
+> > >>> (see Documentation/devicetree/bindings/pwm/pwm-samsung.txt).
+> > >>>=20
+> > >>> Thierry
+> > >>=20
+> > >> Well I have make it output to channel 0 now. But it doesn't work
+> > >> with the config below. As it is a buzzer, I change your config.=20
+> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D r=
+oot@mifu:~# cat
+> > >> /sys/class/pwm/pwmchip0/pwm0/enable
+> > >>=20
+> > >> 1 root@mifu:~# cat /sys/class/pwm/pwmchip0/pwm0/period 1000000=20
+> > >> root@mifu:~# cat /sys/class/pwm/pwmchip0/pwm0/duty_cycle 500000=20
+> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+ I have used a
+> > >> function generator with Vpp=3D2.2, it works.
+> > >=20
+> > > Are you sure the function generator runs at the same frequency? D=
+o
+> > > you
+> > Yes, I am sure.
+> > > have the possibility to check the PWM output with a scope to see =
+if
+> > > it outputs anything?
+> > I have used a oscillograph to capture, nothing(althought it show so=
+me
+> > waves, but it is nosie single captured by autoset). I have a scope =
+but
+> > I don't think there is any different.
+> > >=20
+> > > Thierry
+> > Ayaka
+> > Thank you
+>=20
+> I don't know what else you could try, so I'm Cc'ing a couple of peopl=
+e
+> who have worked with this driver before, perhaps they can help resolv=
+e
+> this.
 
-I guess Mini6410/Tiny6410 are, as I can at least see their prices there:
-http://www.andahammer.com/mini6410-sdk/
-http://www.andahammer.com/t6410sdk/
+I suspect invalid hardware configuration here.
 
-They are almost fully compatible, so they should be thought as just
-a single Mini6410 board, but in different form factors. I do most of
-my testing on the latter.
+Ayaka, could you post your board dts file with PWM enabled?
 
->From other boards supported in mainline, there are:
-
- - A&W6410 (mach-anw6410) - I couldn't find any information on it
-   anywhere,
-
- - Wolfson Cragganmore 6410 - Mark Brown (copied) is using it for some
-   testing of audio codec AFAIK, but I'm not sure if you can get that
-   anywhere.
-
- - HMT (mach-hmt), SmartQ 5/7 (mach-smartq*) - they are supposed to be
-   some tablet-like products, but again I'm not sure if you can still
-   get them,
-
- - SMDK6400/SMDK6410 are Samsung's official development boards for
-   S3C6400/S3C6410 - I have access to one at the office; no idea if
-   you can get one anywhere,
-
- - NCP - an abandoned Samsung's development board - you definitely
-   can't get that anywhere; in fact I'd say that there is no more such
-   board alive over the world and it just should be dropped from mainline.
-
-That's all I can find at the moment. Anyway, I have copied Ben, maybe he
-knows more than that.
+Btw. For topics related to Samsung's platforms, it's good to always CC
+linux-samsung-soc ML.
 
 Best regards,
 Tomasz
+
