@@ -1,51 +1,86 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH v2 1/7] usb: dwc3: keystone: add basic PM support
-Date: Fri, 13 Dec 2013 18:15:15 -0500
-Message-ID: <52AB9503.2090801@ti.com>
-References: <20131212214306.GS1939@saruman.home>
- <1386884755-12366-1-git-send-email-balbi@ti.com> <52AA54E4.5000606@ti.com>
- <20131213004337.GA31622@saruman.home>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double clock initialization
+Date: Sat, 14 Dec 2013 04:00:16 +0100
+Message-ID: <201312140400.16794.arnd@arndb.de>
+References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20131213004337.GA31622@saruman.home>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: balbi@ti.com
-Cc: kgene.kim@samsung.com, w-kwok2@ti.com, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.10]:62549 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753166Ab3LNDBB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Dec 2013 22:01:01 -0500
+In-Reply-To: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Thursday 12 December 2013 07:43 PM, Felipe Balbi wrote:
-> On Thu, Dec 12, 2013 at 07:29:24PM -0500, Santosh Shilimkar wrote:
->> On Thursday 12 December 2013 04:45 PM, Felipe Balbi wrote:
->>> A bare-minimum PM implementation which will
->>> server as building block for more complex
->> s/server/serve ;-)
+On Friday 13 December 2013, Tomasz Figa wrote:
+> Commit
 > 
-> hah! :-) will fix in my branch.
+> 4178bac ARM: call of_clk_init from default time_init handler
 > 
->>> PM implementation in the future.
->>>
->>> At the least will not leave clocks on unnecessarily
->>> when e.g.  a user write mem to /sys/power/state.
->>>
->>> Signed-off-by: Felipe Balbi <balbi@ti.com>
->>> ---
->>>
->>> improve error path a little bit.
->>>
->> We will test this out. Thanks for the
->> patch Felipe.
+> added implicit call to of_clk_init() from default time_init callback,
+> but it did not change platforms calling it from other callbacks, despite
+> of not having custom time_init callbacks. This caused double clock
+> initialization on such platforms, leading to boot failures. An example
+> of such platform is mach-s3c64xx.
 > 
-I see Wingman already tested the patch.
-Feel free add, my ack if you need one...
+> This patch fixes boot failure on s3c64xx by dropping custom init_irq
+> callback, which had a call to of_clk_init() and moving system reset
+> initialization to init_machine callback. This allows us to have
+> clocks initialized properly without a need to have custom init_time or
+> init_irq callbacks.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+I see of_clk_init(NULL) getting called on two other ARM platforms:
+
+$ git grep -w of_clk_init arch/arm
+arch/arm/kernel/time.c:         of_clk_init(NULL);
+arch/arm/mach-keystone/pm_domain.c:     of_clk_init(NULL);
+arch/arm/mach-mvebu/armada-370-xp.c:    of_clk_init(NULL);
+arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:        of_clk_init(NULL);
+
+Are the other two platforms ok here?
+
+I assume that mvebu is fine since Sebastian would have noticed breaking
+that one and it has a custom init_time function, but keystone seems
+broken in the same way as s3c64xx. Santosh, can you have a look?
+
+	Arnd
+
+> diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+> index 7eb9a10..2fddf38 100644
+> --- a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+> +++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+
+> @@ -48,15 +46,9 @@ static void __init s3c64xx_dt_map_io(void)
+>  		panic("SoC is not S3C64xx!");
+>  }
+>  
+> -static void __init s3c64xx_dt_init_irq(void)
+> -{
+> -	of_clk_init(NULL);
+> -	samsung_wdt_reset_of_init();
+> -	irqchip_init();
+> -};
+> -
+>  static void __init s3c64xx_dt_init_machine(void)
+>  {
+> +	samsung_wdt_reset_of_init();
+>  	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+>  }
+>  
+> @@ -79,7 +71,6 @@ DT_MACHINE_START(S3C6400_DT, "Samsung S3C64xx (Flattened Device Tree)")
+>  	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
+>  	.dt_compat	= s3c64xx_dt_compat,
+>  	.map_io		= s3c64xx_dt_map_io,
+> -	.init_irq	= s3c64xx_dt_init_irq,
+>  	.init_machine	= s3c64xx_dt_init_machine,
+>  	.restart        = s3c64xx_dt_restart,
+>  MACHINE_END
