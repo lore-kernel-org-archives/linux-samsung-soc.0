@@ -1,49 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: s3c64xx: Do not select both CPU_V6 and CPU_V6K at
- the same time
-Date: Mon, 16 Dec 2013 04:59:17 +0900
-Message-ID: <52AE0A15.5040503@samsung.com>
-References: <1386965752-15954-1-git-send-email-tomasz.figa@gmail.com>
+Subject: [GIT PULL 1/7] Samsung fixes for v3.14
+Date: Mon, 16 Dec 2013 05:21:21 +0900
+Message-ID: <52AE0F41.7050706@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:52317 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751631Ab3LOT72 (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:43285 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751829Ab3LOUV3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Dec 2013 14:59:28 -0500
-Received: by mail-pb0-f52.google.com with SMTP id uo5so4599621pbc.39
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Dec 2013 11:59:27 -0800 (PST)
-In-Reply-To: <1386965752-15954-1-git-send-email-tomasz.figa@gmail.com>
+	Sun, 15 Dec 2013 15:21:29 -0500
+Received: by mail-pd0-f174.google.com with SMTP id y13so4433280pdi.5
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Dec 2013 12:21:28 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 12/14/13 05:15, Tomasz Figa wrote:
-> To use V6K extensions, these symbols must not be selected at the same
-> time, so this patch keeps only CPU_V6K selected for S3C64XX.
->
-> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
-> ---
->   arch/arm/Kconfig | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index b64a8ef..4df191b 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -731,7 +731,6 @@ config ARCH_S3C64XX
->   	select CLKDEV_LOOKUP
->   	select CLKSRC_SAMSUNG_PWM
->   	select COMMON_CLK
-> -	select CPU_V6
->   	select CPU_V6K
->   	select GENERIC_CLOCKEVENTS
->   	select GPIO_SAMSUNG
+The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
 
-Squashed with previous patch for CPU_V6K.
+   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
 
-Thanks,
-Kukjin
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-fixes
+
+for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
+
+   ARM: dts: Update display clock frequency for Origen-4412 (2013-12-16 
+04:41:57 +0900)
+
+----------------------------------------------------------------
+Samsung non-critical fixes for v3.14
+- Switch FIFO mode for arch_enable_uart_fifo()
+- Add missing op_mode for PMIC on exynos5250-arndale
+- Add missing clock-frequency for CPU on exynos5250
+- Fix typo samaung to samsung for exynos5420-pinctrl
+- Fix display clock-frequency for exynos4210/exynos4412-origen
+
+----------------------------------------------------------------
+Alexander Shiyan (1):
+       ARM: SAMSUNG: Fix switching FIFO in arch_enable_uart_fifo function
+
+Sachin Kamat (4):
+       ARM: dts: Add missing op_mode property to PMIC on Arndale
+       ARM: dts: Add missing frequency property to exynos5250
+       ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
+       ARM: dts: Update display clock frequency for Origen-4412
+
+Tushar Behera (1):
+       ARM: dts: Update display clock frequency for Origen-4210
+
+  arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
+  arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
+  arch/arm/boot/dts/exynos5250-arndale.dts        | 2 ++
+  arch/arm/boot/dts/exynos5250.dtsi               | 2 ++
+  arch/arm/boot/dts/exynos5420-pinctrl.dtsi       | 2 +-
+  arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
+  6 files changed, 9 insertions(+), 3 deletions(-)
