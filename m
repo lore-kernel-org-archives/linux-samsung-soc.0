@@ -1,18 +1,18 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/7] Samsung cleanup for v3.14
-Date: Mon, 16 Dec 2013 05:21:34 +0900
-Message-ID: <52AE0F4E.5070309@samsung.com>
+Subject: [GIT PULL 3/7] Samsung defconfig for v3.14
+Date: Mon, 16 Dec 2013 05:21:44 +0900
+Message-ID: <52AE0F58.1060401@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:48459 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751829Ab3LOUVj (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:63851 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751829Ab3LOUVu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Dec 2013 15:21:39 -0500
-Received: by mail-pa0-f49.google.com with SMTP id kx10so2038210pab.8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Dec 2013 12:21:39 -0800 (PST)
+	Sun, 15 Dec 2013 15:21:50 -0500
+Received: by mail-pd0-f182.google.com with SMTP id v10so4521063pde.27
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Dec 2013 12:21:49 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
@@ -25,36 +25,20 @@ The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
 are available in the git repository at:
 
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-cleanup
+tags/samsung-defconfig
 
-for you to fetch changes up to 7c394e7be4d267c02eaaac8fa197a7c1b023c99b:
+for you to fetch changes up to 54b56e62d20ac0de6e8e12b7efdaf3a1b9b6541c:
 
-   ARM: EXYNOS: Constify clksrc immutable register restore tables 
-(2013-12-12 07:09:33 +0900)
-
-----------------------------------------------------------------
-Samsung cleanup for v3.14
-- remove unused SAMSUNG_GPIOLIB_4BIT and IRQF_DISABLED
-- constify immutable PMU data table and PM clksrc register
-- make const struct for sleep_save
+   ARM: exynos_defconfig: increase CONFIG_NR_CPUS value to 8 (2013-12-02 
+07:33:38 +0900)
 
 ----------------------------------------------------------------
-Daniel Kurtz (3):
-       ARM: EXYNOS: Constify data tables for pmu
-       ARM: SAMSUNG: Let s3c_pm_do_restore_*() take const sleep_save
-       ARM: EXYNOS: Constify clksrc immutable register restore tables
+exynos_defconfig updates for v3.14
+- increase number of CPU to 8 for EXYNOS SoCs
 
-Michael Opdenacker (2):
-       ARM: SAMSUNG: remove unused SAMSUNG_GPIOLIB_4BIT Kconfig parameter
-       ARM: SAMSUNG: remove IRQF_DISABLED
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (1):
+       ARM: exynos_defconfig: increase CONFIG_NR_CPUS value to 8
 
-  arch/arm/Kconfig                        |  1 -
-  arch/arm/mach-exynos/pm.c               |  4 ++--
-  arch/arm/mach-exynos/pmu.c              | 14 +++++++-------
-  arch/arm/mach-s3c24xx/dma.c             |  2 +-
-  arch/arm/mach-s3c24xx/simtec-usb.c      |  3 +--
-  arch/arm/mach-s3c64xx/mach-smartq.c     |  2 +-
-  arch/arm/plat-samsung/Kconfig           |  8 --------
-  arch/arm/plat-samsung/include/plat/pm.h |  4 ++--
-  arch/arm/plat-samsung/pm.c              |  4 ++--
-  9 files changed, 16 insertions(+), 26 deletions(-)
+  arch/arm/configs/exynos_defconfig | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
