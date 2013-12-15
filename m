@@ -1,178 +1,171 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v10 1/2] [media] exynos5-is: Adds DT binding documentation
-Date: Sun, 15 Dec 2013 12:46:54 +0100
-Message-ID: <52AD96AE.4090205@gmail.com>
-References: <1386911563-26236-1-git-send-email-arun.kk@samsung.com> <1386911563-26236-2-git-send-email-arun.kk@samsung.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [RFC v2 1/4] power: asv: Add common ASV support for Samsung SoCs
+Date: Sun, 15 Dec 2013 22:30:13 +0900
+Message-ID: <CAKew6eVSOQaHjYj3JRhJKnozY26OkeUGhvC2usadfUqW9hyu2Q@mail.gmail.com>
+References: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
+ <1384515691-26299-2-git-send-email-sachin.kamat@linaro.org>
+ <4229773.U5JovcREjb@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1386911563-26236-2-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, mark.rutland@arm.com
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, shaik.ameer@samsung.com, arunkk.samsung@gmail.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4229773.U5JovcREjb@amdc1227>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Andrew Bresticker <abrestic@google.com>, Kukjin Kim <kgene.kim@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Doug Anderson <dianders@google.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/13/2013 06:12 AM, Arun Kumar K wrote:
-> From: Shaik Ameer Basha<shaik.ameer@samsung.com>
+Hi Tomasz,
+
+Thanks for your thorough review and nice suggestions.
+
+[snip]
+>> +}
+>> +
+>> +static struct asv_member *asv_get_mem(enum asv_type_id asv_type)
 >
-> The patch adds the DT binding doc for exynos5 SoC camera
-> subsystem.
+> I don't really like this enum based look-up. It's hard to define an enum
+> that covers any possible existing and future platforms that would not be
+> bloated with single platform specific entries. IMHO something string based
+> could be more scalable.
 >
-> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
-> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
-> ---
->   .../bindings/media/exynos5250-camera.txt           |  136 ++++++++++++++++++++
->   1 file changed, 136 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+
+Yes, I also agree string based look-up will be better. I was thinking
+to convert to it,
+after initial discussion over the APIs.
+
+>> +{
+>> +     struct asv_member *asv_mem;
+>> +     struct asv_info *asv_info;
+>> +
+>> +     list_for_each_entry(asv_mem, &asv_list, node) {
+>> +             asv_info = asv_mem->asv_info;
+>> +             if (asv_type == asv_info->type)
+>> +                     return asv_mem;
+>> +     }
 >
-> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> new file mode 100644
-> index 0000000..0c36bc4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> @@ -0,0 +1,136 @@
-> +Samsung EXYNOS5 SoC Camera Subsystem
-> +------------------------------------
-> +
-> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
-> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
-> +MIPI CSIS and FIMC-IS.
-> +
-> +The sub-device nodes are referenced using phandles in the common 'camera' node
-> +which also includes common properties of the whole subsystem not really
-> +specific to any single sub-device, like common camera port pins or the common
-> +camera bus clocks.
-> +
-> +Common 'camera' node
-> +--------------------
-> +
-> +Required properties:
-> +
-> +- compatible		: must be "samsung,exynos5250-fimc"
-> +- clocks		: list of phandles and clock specifiers, corresponding
-> +			  to entries in the clock-names property
-> +- clock-names		: must contain "sclk_bayer" entry
-> +- samsung,csis		: list of phandles to the mipi-csis device nodes
-> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
-> +- samsung,fimc-is	: phandle to the fimc-is device node
-> +
-> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-> +to define a required pinctrl state named "default".
-> +
-> +'parallel-ports' node
-> +---------------------
-> +
-> +This node should contain child 'port' nodes specifying active parallel video
-> +input ports. It includes camera A, camera B and RGB bay inputs.
-> +'reg' property in the port nodes specifies the input type:
-> + 1 - parallel camport A
-> + 2 - parallel camport B
-> + 5 - RGB camera bay
-> +
-> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
-> +
-> +Required properties:
-> +
-> +For describing the input type in the child nodes, the following properties
-> +have to be present in the parallel-ports node:
-> +- #address-cells: Must be 1
-> +- #size-cells: Must be 0
-> +
-> +Image sensor nodes
-> +------------------
-> +
-> +The sensor device nodes should be added to their control bus controller (e.g.
-> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
-> +using the common video interfaces bindings, defined in video-interfaces.txt.
+> Don't you need any kind of locking here? A mutex in add_asv_member()
+> suggests that read access to the list should be protected as well.
+>
 
-Hi Mark,
+hmmm, yes should be their for completeness of code.
 
-Could you have a look again at this binding ? Perhaps we could
-get your Ack now so it can be merged through the media tree ?
+>> +
+>> +     return NULL;
+>> +}
+>> +
+>> +unsigned int asv_get_volt(enum asv_type_id target_type,
+>> +                                             unsigned int target_freq)
+>
+> Do you need this function at all? I believe this is all about populating
+> device's OPP array with frequencies and voltages according to its ASV
+> level. Users will be able to query for required voltage using standard OPP
+> calls then, without a need for ASV specific functions like this one.
+>
 
-Thanks,
-Sylwester
+Yes, I had put a comment in initial version after commit message :
+"Hopefully asv_get_volt() can go out in future, once all users start using OPP
+library." , which seems to be missed in this version.
+I had kept it for the time being in initial version, to keep it
+usable(for testing) with
+existing cpufreq drivers, which need to reworked and may take time.
 
-> +Example:
-> +
-> +	aliases {
-> +		fimc-lite0 =&fimc_lite_0
-> +	};
-> +
-> +	/* Parallel bus IF sensor */
-> +	i2c_0: i2c@13860000 {
-> +		s5k6aa: sensor@3c {
-> +			compatible = "samsung,s5k6aafx";
-> +			reg =<0x3c>;
-> +			vddio-supply =<...>;
-> +
-> +			clock-frequency =<24000000>;
-> +			clocks =<...>;
-> +			clock-names = "mclk";
-> +
-> +			port {
-> +				s5k6aa_ep: endpoint {
-> +					remote-endpoint =<&fimc0_ep>;
-> +					bus-width =<8>;
-> +					hsync-active =<0>;
-> +					vsync-active =<1>;
-> +					pclk-sample =<1>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	/* MIPI CSI-2 bus IF sensor */
-> +	s5c73m3: sensor@1a {
-> +		compatible = "samsung,s5c73m3";
-> +		reg =<0x1a>;
-> +		vddio-supply =<...>;
-> +
-> +		clock-frequency =<24000000>;
-> +		clocks =<...>;
-> +		clock-names = "mclk";
-> +
-> +		port {
-> +			s5c73m3_1: endpoint {
-> +				data-lanes =<1 2 3 4>;
-> +				remote-endpoint =<&csis0_ep>;
-> +			};
-> +		};
-> +	};
-> +
-> +	camera {
-> +		compatible = "samsung,exynos5250-fimc";
-> +		#address-cells =<1>;
-> +		#size-cells =<1>;
-> +		status = "okay";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 =<&cam_port_a_clk_active>;
-> +
-> +		samsung,csis =<&csis_0>,<&csis_1>;
-> +		samsung,fimc-lite =<&fimc_lite_0>,<&fimc_lite_1>,<&fimc_lite_2>;
-> +		samsung,fimc-is =<&fimc_is>;
-> +
-> +		/* parallel camera ports */
-> +		parallel-ports {
-> +			#address-cells =<1>;
-> +			#size-cells =<0>;
-> +
-> +			/* camera A input */
-> +			port@1 {
-> +				reg =<1>;
-> +				camport_a_ep: endpoint {
-> +					remote-endpoint =<&s5k6aa_ep>;
-> +					bus-width =<8>;
-> +					hsync-active =<0>;
-> +					vsync-active =<1>;
-> +					pclk-sample =<1>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt, FIMC-LITE
-> +device binding is defined in exynos-fimc-lite.txt and FIMC-IS binding
-> +is defined in exynos5-fimc-is.txt.
+[snip]
+>> +
+>> +     for (i = 0; i < asv_info->nr_dvfs_level; i++) {
+>> +             if (dev_pm_opp_add(dev, dvfs_table[i].freq * 1000,
+>> +                     dvfs_table[i].volt)) {
+>> +                     dev_warn(dev, "Failed to add OPP %d\n",
+>> +                              dvfs_table[i].freq);
+>
+> Hmm, shouldn't it be considered a failure instead?
+>
+
+hmm, not really always. Theoretically system with some less(failed to add)
+levels can work. Moreover I had prefered to keep it only warning, just to
+keep the behaviour of  asv_init_opp_table() similar to that of its
+counter part of_init_opp_table().
+
+>> +                     continue;
+>> +             }
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static struct asv_member *asv_init_member(struct asv_info *asv_info)
+>> +{
+>> +     struct asv_member *asv_mem;
+>> +     int ret = 0;
+>> +
+>> +     if (!asv_info) {
+>> +             pr_err("No ASV info provided\n");
+>> +             return NULL;
+>
+> I'd suggest adopting the ERR_PTR() convention, which allows returning more
+> information about the error.
+>
+
+Will it be really usefull here?, as we are not checking return value
+of any function.
+Bur for some cases below, i will also like to get it used.
+
+>> +     }
+>> +
+>> +     asv_mem = kzalloc(sizeof(*asv_mem), GFP_KERNEL);
+>> +     if (!asv_mem) {
+>> +             pr_err("Allocation failed for member: %s\n", asv_info->name);
+>> +             return NULL;
+>> +     }
+
+[snip]
+>
+> Hmm, I don't see a point of these three separate callbacks above.
+>
+> In general, I'd suggest a different architecture. I'd see this more as:
+>
+> 1) Platform code registers static platform device to instantiate SoC ASV
+>    driver.
+> 2) SoC specific ASV driver probes, reads group ID from hardware register,
+>    calls register_asv_member() with appropriate DVFS table for detected
+>    group.
+> 3) Driver using ASV calls asv_init_opp_table() with its struct device and
+>    ASV member name, which causes the ASV code to fill device's operating
+>    point using OPP calls.
+>
+> Now client driver has all the information it needs and the work of ASV
+> subsystem is done. The control flow between drivers would be much simpler
+> and no callbacks would have to be called.
+>
+
+Architecture stated above seems to be a subset(one possible way of use),
+of the proposed architecture. If someone really have nothing much to do,
+he can adopt the above stated approach using this framework also,
+callbacks are not mandatory.
+
+Since we usually have more things to do other than only reading
+fused group value and simply parsing a table index, so in drivers we have to
+implement functions to segregate stuff and different people do it in
+different way. Its an attempt to provide a way to keep structure(functions)
+similar for easy understanding and factoring out of common code.
+
+Moreover, I feels need of callbacks if we have to do something depending
+upon(specific) the user/instance of  ASV member. One thing came
+in my mind was dev_node may be required if we may think of parsing
+ASV table from DT and may be more things in future.
+
+
+I would like to get rectified, other nit/suggestions stated by you in
+next version.
+
+
+Thanks & Regards,
+ Yadwinder
