@@ -1,83 +1,178 @@
-From: Alex Ling <kasimling@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add board dts file for EXYNOS4412 based
- TINY4412 board
-Date: Sun, 15 Dec 2013 10:38:04 +0800
-Message-ID: <CAHaF_khsrAkaepHX8yObxKQx6aq9oagzRgAx=J6G6R2fCUN7wg@mail.gmail.com>
-References: <1384520969-2450-1-git-send-email-kasimling@gmail.com> <23915888.rvPOtSbknd@flatron>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v10 1/2] [media] exynos5-is: Adds DT binding documentation
+Date: Sun, 15 Dec 2013 12:46:54 +0100
+Message-ID: <52AD96AE.4090205@gmail.com>
+References: <1386911563-26236-1-git-send-email-arun.kk@samsung.com> <1386911563-26236-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:44066 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753596Ab3LOCiZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Dec 2013 21:38:25 -0500
-In-Reply-To: <23915888.rvPOtSbknd@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1386911563-26236-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>, mark.rutland@arm.com
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, shaik.ameer@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, ijc+devicetree@hellion.org.uk, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Tomasz,
-Thanks for reviewing. I'll fix the patch description and style problems.
+On 12/13/2013 06:12 AM, Arun Kumar K wrote:
+> From: Shaik Ameer Basha<shaik.ameer@samsung.com>
+>
+> The patch adds the DT binding doc for exynos5 SoC camera
+> subsystem.
+>
+> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
+> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> ---
+>   .../bindings/media/exynos5250-camera.txt           |  136 ++++++++++++++++++++
+>   1 file changed, 136 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> new file mode 100644
+> index 0000000..0c36bc4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> @@ -0,0 +1,136 @@
+> +Samsung EXYNOS5 SoC Camera Subsystem
+> +------------------------------------
+> +
+> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
+> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
+> +MIPI CSIS and FIMC-IS.
+> +
+> +The sub-device nodes are referenced using phandles in the common 'camera' node
+> +which also includes common properties of the whole subsystem not really
+> +specific to any single sub-device, like common camera port pins or the common
+> +camera bus clocks.
+> +
+> +Common 'camera' node
+> +--------------------
+> +
+> +Required properties:
+> +
+> +- compatible		: must be "samsung,exynos5250-fimc"
+> +- clocks		: list of phandles and clock specifiers, corresponding
+> +			  to entries in the clock-names property
+> +- clock-names		: must contain "sclk_bayer" entry
+> +- samsung,csis		: list of phandles to the mipi-csis device nodes
+> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
+> +- samsung,fimc-is	: phandle to the fimc-is device node
+> +
+> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
+> +to define a required pinctrl state named "default".
+> +
+> +'parallel-ports' node
+> +---------------------
+> +
+> +This node should contain child 'port' nodes specifying active parallel video
+> +input ports. It includes camera A, camera B and RGB bay inputs.
+> +'reg' property in the port nodes specifies the input type:
+> + 1 - parallel camport A
+> + 2 - parallel camport B
+> + 5 - RGB camera bay
+> +
+> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
+> +
+> +Required properties:
+> +
+> +For describing the input type in the child nodes, the following properties
+> +have to be present in the parallel-ports node:
+> +- #address-cells: Must be 1
+> +- #size-cells: Must be 0
+> +
+> +Image sensor nodes
+> +------------------
+> +
+> +The sensor device nodes should be added to their control bus controller (e.g.
+> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
+> +using the common video interfaces bindings, defined in video-interfaces.txt.
 
+Hi Mark,
 
-Regards,
-Alex
+Could you have a look again at this binding ? Perhaps we could
+get your Ack now so it can be merged through the media tree ?
 
-On Sun, Dec 15, 2013 at 2:57 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Alex,
->
-> On Friday 15 of November 2013 21:09:29 Alex Ling wrote:
->> Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
->> TINY4412 board. This patch including adds the node to support
->> peripherals like UART, SD card on SDMMC2 port, and this patch
->> adds GPIO connected LEDS and configure its properties like
->> following:
->> LED1: use 'heartbeat' trigger, blinking while the board is running.
->> LED4: use 'mmc0' trigger, on when mmc0 is accessing.
->> LED2 and LED3 can be controlled from userspace.
->
-> Well, all the LEDs can be controlled from userspace. The default trigger
-> is just the initial setting, which can be changed later by userspace.
-> It's just a general comment, not an issue with the patch, though.
->
-> Anyway, you don't need such detailed patch description, as you can see
-> most of the things directly from the code. In case of this patch, just the
-> list of supported peripherals is fine, without going into minor details,
-> such as LED triggers.
->
-> Also, please see my comments inline.
->
-> [snip]
->> diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
->> new file mode 100644
->> index 0000000..78ace14
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-> [snip]
->> +     leds {
->> +             compatible = "gpio-leds";
->
-> style: A blank line should be separating properties from nodes.
->
->> +             led1 {
->> +                     label = "led1:heart";
->
-> Are the labels for this and the LEDs below related to the hardware?
-> I mean, the label should preferrably come from the board documentation,
-> or a label on the PCB next to the LED. Also they shouldn't represent
-> any particular use case, so you should remove the ":heart" suffix.
->
->> +                     gpios = <&gpm4 0 1>;
->> +                     default-state = "off";
->> +                     linux,default-trigger = "heartbeat";
->> +             };
->
-> style: Subnodes should be separated with blank lines.
->
-> Otherwise the patch looks fine.
->
-> Best regards,
-> Tomasz
->
+Thanks,
+Sylwester
+
+> +Example:
+> +
+> +	aliases {
+> +		fimc-lite0 =&fimc_lite_0
+> +	};
+> +
+> +	/* Parallel bus IF sensor */
+> +	i2c_0: i2c@13860000 {
+> +		s5k6aa: sensor@3c {
+> +			compatible = "samsung,s5k6aafx";
+> +			reg =<0x3c>;
+> +			vddio-supply =<...>;
+> +
+> +			clock-frequency =<24000000>;
+> +			clocks =<...>;
+> +			clock-names = "mclk";
+> +
+> +			port {
+> +				s5k6aa_ep: endpoint {
+> +					remote-endpoint =<&fimc0_ep>;
+> +					bus-width =<8>;
+> +					hsync-active =<0>;
+> +					vsync-active =<1>;
+> +					pclk-sample =<1>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	/* MIPI CSI-2 bus IF sensor */
+> +	s5c73m3: sensor@1a {
+> +		compatible = "samsung,s5c73m3";
+> +		reg =<0x1a>;
+> +		vddio-supply =<...>;
+> +
+> +		clock-frequency =<24000000>;
+> +		clocks =<...>;
+> +		clock-names = "mclk";
+> +
+> +		port {
+> +			s5c73m3_1: endpoint {
+> +				data-lanes =<1 2 3 4>;
+> +				remote-endpoint =<&csis0_ep>;
+> +			};
+> +		};
+> +	};
+> +
+> +	camera {
+> +		compatible = "samsung,exynos5250-fimc";
+> +		#address-cells =<1>;
+> +		#size-cells =<1>;
+> +		status = "okay";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 =<&cam_port_a_clk_active>;
+> +
+> +		samsung,csis =<&csis_0>,<&csis_1>;
+> +		samsung,fimc-lite =<&fimc_lite_0>,<&fimc_lite_1>,<&fimc_lite_2>;
+> +		samsung,fimc-is =<&fimc_is>;
+> +
+> +		/* parallel camera ports */
+> +		parallel-ports {
+> +			#address-cells =<1>;
+> +			#size-cells =<0>;
+> +
+> +			/* camera A input */
+> +			port@1 {
+> +				reg =<1>;
+> +				camport_a_ep: endpoint {
+> +					remote-endpoint =<&s5k6aa_ep>;
+> +					bus-width =<8>;
+> +					hsync-active =<0>;
+> +					vsync-active =<1>;
+> +					pclk-sample =<1>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt, FIMC-LITE
+> +device binding is defined in exynos-fimc-lite.txt and FIMC-IS binding
+> +is defined in exynos5-fimc-is.txt.
