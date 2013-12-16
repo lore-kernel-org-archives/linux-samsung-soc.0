@@ -1,68 +1,128 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
-Date: Mon, 16 Dec 2013 13:48:33 +0100
-Message-ID: <2459303.277Jr8aotM@amdc1032>
-References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55293 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752742Ab3LPMsx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Dec 2013 07:48:53 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MXW00C1EGXG46C0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Dec 2013 21:48:52 +0900 (KST)
-In-reply-to: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 1/2] phy: core: Add an exported of_phy_get function
+Date: Mon, 16 Dec 2013 13:52:17 +0100
+Message-ID: <1387198338-10556-1-git-send-email-k.debski@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, olof@lixom.net, dianders@chromium.org
 
+Previously the of_phy_get function took a struct device * and
+was declared static. It was impossible to call it from
+another driver and thus it was impossible to get phy defined
+for a given node. The old function was renamed to _of_phy_get
+and was left for internal use. of_phy_get function was added
+and it was exported. The function enables to get a phy for
+a given device tree node.
 
-Hi,
+Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/phy/phy-core.c  |   45 ++++++++++++++++++++++++++++++++++++---------
+ include/linux/phy/phy.h |    1 +
+ 2 files changed, 37 insertions(+), 9 deletions(-)
 
-On Monday, December 16, 2013 05:31:10 PM Abhilash Kesavan wrote:
-> Add PMU configuration table for various low power modes - AFTR/LPA/SLEEP.
-> Also, add core s2r support for Exynos5420.
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> ---
-> This patch depends on "ARM: EXYNOS5: Add PMU settings for exynos5420"
-> http://www.spinics.net/lists/linux-samsung-soc/msg24902.html
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 03cf8fb..0107f71 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -240,8 +240,8 @@ out:
+ EXPORT_SYMBOL_GPL(phy_power_off);
+ 
+ /**
+- * of_phy_get() - lookup and obtain a reference to a phy by phandle
+- * @dev: device that requests this phy
++ * _of_phy_get() - lookup and obtain a reference to a phy by phandle
++ * @np: device_node for which to get the phy
+  * @index: the index of the phy
+  *
+  * Returns the phy associated with the given phandle value,
+@@ -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
+  * not yet loaded. This function uses of_xlate call back function provided
+  * while registering the phy_provider to find the phy instance.
+  */
+-static struct phy *of_phy_get(struct device *dev, int index)
++static struct phy *_of_phy_get(struct device_node *np, int index)
+ {
+ 	int ret;
+ 	struct phy_provider *phy_provider;
+ 	struct phy *phy = NULL;
+ 	struct of_phandle_args args;
+ 
+-	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
++	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
+ 		index, &args);
+-	if (ret) {
+-		dev_dbg(dev, "failed to get phy in %s node\n",
+-			dev->of_node->full_name);
++	if (ret)
+ 		return ERR_PTR(-ENODEV);
+-	}
+ 
+ 	mutex_lock(&phy_provider_mutex);
+ 	phy_provider = of_phy_provider_lookup(args.np);
+@@ -283,6 +280,36 @@ err0:
+ }
+ 
+ /**
++ * of_phy_get() - lookup and obtain a reference to a phy using a device_node.
++ * @np: device_node for which to get the phy
++ * @con_id: name of the phy from device's point of view
++ *
++ * Returns the phy driver, after getting a refcount to it; or
++ * -ENODEV if there is no such phy.  The caller is responsible for
++ * calling phy_put() to release that count.
++ */
++struct phy *of_phy_get(struct device_node *np, const char *con_id)
++{
++	struct phy *phy = NULL;
++	int index = 0;
++
++	if (con_id)
++		index = of_property_match_string(np, "phy-names", con_id);
++
++	phy = _of_phy_get(np, index);
++	if (IS_ERR(phy))
++		return phy;
++
++	if (!try_module_get(phy->ops->owner))
++		return ERR_PTR(-EPROBE_DEFER);
++
++	get_device(&phy->dev);
++
++	return phy;
++}
++EXPORT_SYMBOL_GPL(of_phy_get);
++
++/**
+  * phy_put() - release the PHY
+  * @phy: the phy returned by phy_get()
+  *
+@@ -370,7 +397,7 @@ struct phy *phy_get(struct device *dev, const char *string)
+ 	if (dev->of_node) {
+ 		index = of_property_match_string(dev->of_node, "phy-names",
+ 			string);
+-		phy = of_phy_get(dev, index);
++		phy = _of_phy_get(dev->of_node, index);
+ 		if (IS_ERR(phy)) {
+ 			dev_err(dev, "unable to find phy\n");
+ 			return phy;
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 6d72269..bcb6274 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -131,6 +131,7 @@ struct phy *phy_get(struct device *dev, const char *string);
+ struct phy *devm_phy_get(struct device *dev, const char *string);
+ void phy_put(struct phy *phy);
+ void devm_phy_put(struct device *dev, struct phy *phy);
++struct phy *of_phy_get(struct device_node *np, const char *con_id);
+ struct phy *of_phy_simple_xlate(struct device *dev,
+ 	struct of_phandle_args *args);
+ struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
+-- 
+1.7.9.5
 
-[...]
-
-> @@ -253,10 +316,20 @@ static int exynos_pm_suspend(void)
->  
->  	/* Setting SEQ_OPTION register */
->  
-> -	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-> -	__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-> +	if (soc_is_exynos5420()) {
-> +		cluster_id = (read_cpuid(CPUID_MPIDR) >> 8) & 0xf;
-> +		if (!cluster_id)
-> +			__raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
-> +				     S5P_CENTRAL_SEQ_OPTION);
-> +		else
-> +			__raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
-> +				     S5P_CENTRAL_SEQ_OPTION);
-> +	} else if (soc_is_exynos5250()) {
-
-Adding a check here for EXYNOS5250 doesn't look correct
-(the old code behavior for older EXYNOYS SoCs should be
-preserved).
-
-> +		tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-> +		__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-> +	}
-
-Best regards,
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
