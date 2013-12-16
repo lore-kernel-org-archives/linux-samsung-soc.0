@@ -1,75 +1,60 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 7/7] Samsung SoC for v3.14
-Date: Mon, 16 Dec 2013 05:23:01 +0900
-Message-ID: <52AE0FA5.3090804@samsung.com>
+Subject: RE: [PATCH v3 0/6] Exynos device tree clean-up for 3.14
+Date: Mon, 16 Dec 2013 09:42:26 +0900
+Message-ID: <0dba01cef9f7$b1379010$13a6b030$@samsung.com>
+References: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:40756 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751605Ab3LOUXJ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:61385 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752098Ab3LPAm2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Dec 2013 15:23:09 -0500
-Received: by mail-pb0-f52.google.com with SMTP id uo5so4628277pbc.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Dec 2013 12:23:09 -0800 (PST)
+	Sun, 15 Dec 2013 19:42:28 -0500
+In-reply-to: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Stephen Warren' <swarren@wwwdotorg.org>
 
-The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+Tomasz Figa wrote:
+> 
+> This series intends to fix small problems with Exynos device tree sources
+> that I spotted during my work on other things. The fixes are mostly
+> stylistic, without any funtional changes introduced.
+> 
+> Changes sinve v2:
+>  - Moved MSHC patches to separate series.
+>  - Rebased onto current linux-next.
+> Changes since v1:
+>  - Addressed Stephen Warren's comments about MCT binding documentation.
+> 
+> Tomasz Figa (6):
+>   Documentation: devicetree: Update Exynos MCT bindings description
+>   ARM: dts: exynos4: Drop interrupt controller properties from MCT nodes
+>   ARM: dts: exynos4x12: Move MCT node to exynos4x12.dtsi
+>   ARM: dts: exynos4: Simplify MCT interrupt map
+>   ARM: dts: exynos: Fix missing spaces after labels
+>   ARM: dts: exynos4: Add missing unit-address of sysreg node
+> 
+>  .../bindings/timer/samsung,exynos4210-mct.txt      | 54
++++++++++++++++---
+> ----
+>  arch/arm/boot/dts/exynos4.dtsi                     |  6 +--
+>  arch/arm/boot/dts/exynos4210.dtsi                  | 23 ++++-----
+>  arch/arm/boot/dts/exynos4212.dtsi                  | 24 +---------
+>  arch/arm/boot/dts/exynos4412.dtsi                  | 28 +----------
+>  arch/arm/boot/dts/exynos4x12.dtsi                  | 20 ++++++++
+>  arch/arm/boot/dts/exynos5.dtsi                     |  4 +-
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |  6 +--
+>  arch/arm/boot/dts/exynos5440.dtsi                  |  2 +-
+>  9 files changed, 78 insertions(+), 89 deletions(-)
+> 
+> --
+> 1.8.4.3
 
-   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+Nice cleanup series. Thanks and will apply.
 
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-soc
-
-for you to fetch changes up to 538cfbb4c40ab59688236484138133b8e3e89220:
-
-   ARM: dts: Add initial support for Arndale Octa board (2013-12-16 
-05:05:43 +0900)
-
-----------------------------------------------------------------
-Samsung SoC updates for v3.14
-- Add exynos5410 SoC and smdk5410 board support
-   : add supporting SoC and board DT files
-   : add clk-exynos5410 with using CCF
-- Add exynos5420-arndale-octa board support
-   : basic supporting for Arndale Octa board
-
-----------------------------------------------------------------
-Sachin Kamat (1):
-       ARM: dts: Add initial support for Arndale Octa board
-
-Tarek Dakhran (3):
-       ARM: EXYNOS: Add support for EXYNOS5410 SoC
-       clk: exynos5410: register clocks using common clock framework
-       ARM: dts: Add initial device tree support for EXYNOS5410
-
-  .../devicetree/bindings/clock/exynos5410-clock.txt |  54 +++++
-  arch/arm/boot/dts/Makefile                         |   2 +
-  arch/arm/boot/dts/exynos5410-smdk5410.dts          |  72 +++++++
-  arch/arm/boot/dts/exynos5410.dtsi                  | 145 +++++++++++++
-  arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  66 ++++++
-  arch/arm/mach-exynos/Kconfig                       |  10 +
-  arch/arm/mach-exynos/common.c                      |  18 ++
-  arch/arm/mach-exynos/include/mach/map.h            |   1 +
-  arch/arm/mach-exynos/mach-exynos5-dt.c             |   1 +
-  arch/arm/mach-exynos/platsmp.c                     |   2 +
-  arch/arm/plat-samsung/include/plat/cpu.h           |   8 +
-  arch/arm/plat-samsung/include/plat/map-s5p.h       |   3 +
-  drivers/clk/samsung/Makefile                       |   1 +
-  drivers/clk/samsung/clk-exynos5410.c               | 239 
-+++++++++++++++++++++
-  include/dt-bindings/clock/exynos5410.h             |  32 +++
-  15 files changed, 654 insertions(+)
-  create mode 100644 
-Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-  create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
-  create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
-  create mode 100644 arch/arm/boot/dts/exynos5420-arndale-octa.dts
-  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
-  create mode 100644 include/dt-bindings/clock/exynos5410.h
+- Kukjin
