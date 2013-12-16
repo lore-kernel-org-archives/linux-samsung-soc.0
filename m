@@ -1,128 +1,146 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH RESEND v2 1/2] phy: core: Add an exported of_phy_get function
-Date: Mon, 16 Dec 2013 14:30:53 +0530
-Message-ID: <52AEC145.6070208@ti.com>
-References: <1386943380-28596-1-git-send-email-k.debski@samsung.com> <52AB1D75.4030207@ti.com> <008a01cef817$b24844e0$16d8cea0$%debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v2] [media] s5p-mfc: Add controls to set vp8 enc profile
+Date: Mon, 16 Dec 2013 15:10:42 +0530
+Message-ID: <1387186842-18658-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:42531 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751906Ab3LPJBE (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:60487 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753042Ab3LPJky (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Dec 2013 04:01:04 -0500
-In-Reply-To: <008a01cef817$b24844e0$16d8cea0$%debski@samsung.com>
+	Mon, 16 Dec 2013 04:40:54 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, matt.porter@linaro.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, hverkuil@xs4all.nl, avnd.kiran@samsung.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-On Friday 13 December 2013 08:56 PM, Kamil Debski wrote:
-> Hi Kishon,
-> 
->> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
->> Sent: Friday, December 13, 2013 3:45 PM
->>
->> Hi,
->>
->> On Friday 13 December 2013 07:32 PM, Kamil Debski wrote:
->>> Previously the of_phy_get function took a struct device * and was
->>> declared static. It was impossible to call it from another driver and
->>> thus it was impossible to get phy defined for a given node. The old
->>> function was renamed to _of_phy_get and was left for internal use.
->>> of_phy_get function was added and it was exported. The function
->>> enables to get a phy for a given device tree node.
->>>
->>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
->>> ---
->>> It seems that my git send-email is playing up and sent the previous
->>> emails without from. This is a resend. Sorry for any confusion.
->>> ---
->>>  drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++-----
->> ----
->>>  include/linux/phy/phy.h |    1 +
->>>  2 files changed, 33 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c index
->>> 03cf8fb..f0dbd42 100644
->>> --- a/drivers/phy/phy-core.c
->>> +++ b/drivers/phy/phy-core.c
->>> @@ -240,8 +240,8 @@ out:
->>>  EXPORT_SYMBOL_GPL(phy_power_off);
->>>
->>>  /**
->>> - * of_phy_get() - lookup and obtain a reference to a phy by phandle
->>> - * @dev: device that requests this phy
->>> + * _of_phy_get() - lookup and obtain a reference to a phy by phandle
->>> + * @np: device_node for which to get the phy
->>>   * @index: the index of the phy
->>>   *
->>>   * Returns the phy associated with the given phandle value, @@
->>> -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
->>>   * not yet loaded. This function uses of_xlate call back function
->> provided
->>>   * while registering the phy_provider to find the phy instance.
->>>   */
->>> -static struct phy *of_phy_get(struct device *dev, int index)
->>> +static struct phy *_of_phy_get(struct device_node *np, int index)
->>>  {
->>>  	int ret;
->>>  	struct phy_provider *phy_provider;
->>>  	struct phy *phy = NULL;
->>>  	struct of_phandle_args args;
->>>
->>> -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-
->> cells",
->>> +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
->>>  		index, &args);
->>> -	if (ret) {
->>> -		dev_dbg(dev, "failed to get phy in %s node\n",
->>> -			dev->of_node->full_name);
->>> +	if (ret)
->>>  		return ERR_PTR(-ENODEV);
->>> -	}
->>>
->>>  	mutex_lock(&phy_provider_mutex);
->>>  	phy_provider = of_phy_provider_lookup(args.np); @@ -283,6 +280,32
->> @@
->>> err0:
->>>  }
->>>
->>>  /**
->>> + * of_phy_get() - lookup and obtain a reference to a phy using a
->> device_node.
->>> + * @np: device_node for which to get the phy
->>> + * @index: the index of the phy
->>
->> Would be better if the user can get the PHY by string instead of index.
-> 
-> Ok, this sounds doable. I will add of_phy_get_by_name analogous to the clk
-> framework.
+From: Kiran AVND <avnd.kiran@samsung.com>
 
-Nope. It was decided initially to have minimal no of APIs exported to get PHYs.
-So you can just get string as argument instead of index and leave the name of
-the API to just of_phy_get.
+Add v4l2 controls to set desired profile for VP8 encoder.
+Acceptable levels for VP8 encoder are
+0: Version 0
+1: Version 1
+2: Version 2
+3: Version 3
 
-Thanks
-Kishon
+Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
+Signed-off-by: Pawel Osciak <posciak@chromium.org>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+Changes from v1
+---------------
+- Addressed review comments from Hans and Pawel
+https://www.mail-archive.com/linux-media@vger.kernel.org/msg68970.html
+https://www.mail-archive.com/linux-media@vger.kernel.org/msg68990.html
+---
+ Documentation/DocBook/media/v4l/controls.xml    |    9 +++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   11 +++++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    6 ++----
+ drivers/media/v4l2-core/v4l2-ctrls.c            |    1 +
+ include/uapi/linux/v4l2-controls.h              |    1 +
+ 6 files changed, 25 insertions(+), 4 deletions(-)
 
-> 
->>> + *
->>> + * Returns the phy driver, after getting a refcount to it; or
->>> + * -ENODEV if there is no such phy.  The caller is responsible for
->>> + * calling phy_put() to release that count.
->>> + */
->>> +struct phy *of_phy_get(struct device_node *np, int index) {
->>> +	struct phy *phy = NULL;
->>> +
->>> +	phy = _of_phy_get(np, index);
->>> +	if (IS_ERR(phy))
->> dev_err here?
-> 
-> dev_err requires a dev, so it is not possible with the arguments used.
-> And we do not want to add any extra parameters to keep the function call
-> analogous to other of_*_get (as for example of_clk_get).
-> 
-> Best wishes,
-> 
+diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+index e4db4ac..a5a3188 100644
+--- a/Documentation/DocBook/media/v4l/controls.xml
++++ b/Documentation/DocBook/media/v4l/controls.xml
+@@ -3193,6 +3193,15 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD as a golden frame.</entry>
+ 	      <row><entry spanname="descr">Quantization parameter for a P frame for VP8.</entry>
+ 	      </row>
+ 
++	      <row><entry></entry></row>
++	      <row>
++		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_PROFILE</constant>&nbsp;</entry>
++		<entry>integer</entry>
++	      </row>
++	      <row><entry spanname="descr">Select the desired profile for VPx encoder.
++Acceptable values are 0, 1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.</entry>
++	      </row>
++
+           <row><entry></entry></row>
+         </tbody>
+       </tgroup>
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index d91f757..797e61d 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -426,6 +426,7 @@ struct s5p_mfc_vp8_enc_params {
+ 	u8 rc_max_qp;
+ 	u8 rc_frame_qp;
+ 	u8 rc_p_frame_qp;
++	u8 profile;
+ };
+ 
+ /**
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+index 33e8ae3..d4eecae 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+@@ -650,6 +650,14 @@ static struct mfc_control controls[] = {
+ 		.step = 1,
+ 		.default_value = 10,
+ 	},
++	{
++		.id = V4L2_CID_MPEG_VIDEO_VPX_PROFILE,
++		.type = V4L2_CTRL_TYPE_INTEGER,
++		.minimum = 0,
++		.maximum = 3,
++		.step = 1,
++		.default_value = 0,
++	},
+ };
+ 
+ #define NUM_CTRLS ARRAY_SIZE(controls)
+@@ -1601,6 +1609,9 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:
+ 		p->codec.vp8.rc_p_frame_qp = ctrl->val;
+ 		break;
++	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
++		p->codec.vp8.profile = ctrl->val;
++		break;
+ 	default:
+ 		v4l2_err(&dev->v4l2_dev, "Invalid control, id=%d, val=%d\n",
+ 							ctrl->id, ctrl->val);
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+index b4886d6..f6ff2db 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -1197,10 +1197,8 @@ static int s5p_mfc_set_enc_params_vp8(struct s5p_mfc_ctx *ctx)
+ 	reg |= ((p->num_b_frame & 0x3) << 16);
+ 	WRITEL(reg, S5P_FIMV_E_GOP_CONFIG_V6);
+ 
+-	/* profile & level */
+-	reg = 0;
+-	/** profile */
+-	reg |= (0x1 << 4);
++	/* profile - 0 ~ 3 */
++	reg = p_vp8->profile & 0x3;
+ 	WRITEL(reg, S5P_FIMV_E_PICTURE_PROFILE_V6);
+ 
+ 	/* rate control config. */
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 20840df..6ff002b 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -749,6 +749,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_MPEG_VIDEO_VPX_MAX_QP:			return "VPX Maximum QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
++	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:			return "VPX Profile";
+ 
+ 	/* CAMERA controls */
+ 	/* Keep the order of the 'case's the same as in videodev2.h! */
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 5b9dfc8..9970a9d 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -558,6 +558,7 @@ enum v4l2_vp8_golden_frame_sel {
+ #define V4L2_CID_MPEG_VIDEO_VPX_MAX_QP			(V4L2_CID_MPEG_BASE+508)
+ #define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP		(V4L2_CID_MPEG_BASE+509)
+ #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
++#define V4L2_CID_MPEG_VIDEO_VPX_PROFILE			(V4L2_CID_MPEG_BASE+511)
+ 
+ /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
+ #define V4L2_CID_MPEG_CX2341X_BASE 				(V4L2_CTRL_CLASS_MPEG | 0x1000)
+-- 
+1.7.9.5
