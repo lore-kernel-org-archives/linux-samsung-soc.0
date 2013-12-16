@@ -1,70 +1,126 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to
- double clock initialization
-Date: Mon, 16 Dec 2013 21:09:15 +0000
-Message-ID: <20131216210915.GD3185@sirena.org.uk>
-References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
- <CAOesGMifjnTDUcsweOwsw9fFgsE7b4q3wsASfP8YL-uMH5KiPA@mail.gmail.com>
- <CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
- <1500417.9RFCmzklxv@flatron>
+From: Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 5/9] usb: s3c-hsotg: Use the new Exynos USB phy driver
+ with the generic phy framework
+Date: Mon, 16 Dec 2013 16:40:12 -0500
+Message-ID: <20131216214012.GB15814@beef>
+References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+ <1386246579-25141-6-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TIEGfCGDzZzDroj5"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49892 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751636Ab3LPVJk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Dec 2013 16:09:40 -0500
-Content-Disposition: inline
-In-Reply-To: <1500417.9RFCmzklxv@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: hua dillon <dillonhua@gmail.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-
-
---TIEGfCGDzZzDroj5
 Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <1386246579-25141-6-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Dec 14, 2013 at 04:41:06AM -0800, Tomasz Figa wrote:
+On Thu, Dec 05, 2013 at 01:29:35PM +0100, Kamil Debski wrote:
+> Change the used phy driver to the new Exynos USB phy driver that uses the
+> generic phy framework.
+> 
+> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 ++++
+>  drivers/usb/gadget/s3c-hsotg.c                     |   11 ++++++-----
+>  2 files changed, 10 insertions(+), 5 deletions(-)
 
->  - Wolfson Cragganmore 6410 - Mark Brown (copied) is using it for some
->    testing of audio codec AFAIK, but I'm not sure if you can get that
->    anywhere.
+Kamil,
 
-Essentially no, though you could try asking nicely.  It's not suitable
-for a test farm anyway without a SD mux as the only bootloader supported
-is Qi which only boots from flash.
+Can we separate this patch out of this series? My bcm281xx series is
+ready to go except for this dependency. Felipe has noted that there's
+only a week until he locks his tree down for 3.14 [1]. I'm willing to
+update this versus the comment Kishon made on fixing the example if
+you don't have time before then. Let me know.
 
->  - SMDK6400/SMDK6410 are Samsung's official development boards for
->    S3C6400/S3C6410 - I have access to one at the office; no idea if
->    you can get one anywhere,
+[1] https://lkml.org/lkml/2013/12/16/555
 
-I believe they're no longer available though ICBW.  The cost for low
-volume orders is likely to be a bit high too.
+Thanks,
+Matt
 
---TIEGfCGDzZzDroj5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSr2v4AAoJELSic+t+oim9HVIP/Rpgu9Jr/HZ2QAV0Z1B3GDpN
-jeX5HvOv8Uax6XEkvjEX7i7VSdYLz6lIyqUZ8ngXSVcBsjROwS3jV6KnwnW8JOOA
-L4pCa7UWOO39FJ7qel2AzSLxdDgaiZcgWPSjg1qRWXUY6dRG4+crJ38wef/Bnz8d
-vvqTwSj2jsVm3mYRCMKEsa832UFy9kCnyeIXruSP5su1SJveOiW2oOTcc7LwwejN
-bBAu7XKt5g6t8HGK8w8aIgdqGI0wG7Y8R988jg/eQoOzgvLJ4+RjjV0Ww9LDPnaY
-f2HXIAKUyxM1uydlZKeP2XNL3CbUVYr7bIdzihirW1xjfIZwwK4UrB5ReZJeffNU
-aKJgusFgHYdR3mLemmEipdo+KdI4kkrUaKoQb+ZVx8Ylgfh/z+lVBlQQtKqG3Y7A
-F5Mlk9r9hkPH7K7aqyZqQIlCzyrd4sEOg/fMup4UTrUj0DJ1ReOWyWFBPcSQb/AK
-NHyPKAi7r0IFbN6gicTFuyEYWL+fJ0GXlS4VrnSblwyK7AdYZ0kVZCpmILzk4wpg
-5oXLsK+OPyv+AbMBsmoYX+547rPjI4Yze8ieGWy4dXW4RyTu9KIgKf24bEtAu/vG
-Bb9RGWTfghMhl5aGZ36bTYmxxxVO0Kopyhp3e+U4Ta4F32ir+6iAnNYrnoNGJFyN
-DzIcVLAotQ94CC5MqZCK
-=xBeJ
------END PGP SIGNATURE-----
-
---TIEGfCGDzZzDroj5--
+> diff --git a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> index b83d428..9340d06 100644
+> --- a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> +++ b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> @@ -24,6 +24,8 @@ Required properties:
+>      - first entry: must be "otg"
+>  - vusb_d-supply: phandle to voltage regulator of digital section,
+>  - vusb_a-supply: phandle to voltage regulator of analog section.
+> +- phys: from general PHY binding: phandle to the PHY device
+> +- phy-names: from general PHY binding: should be "usb2-phy"
+>  
+>  Example
+>  -----
+> @@ -36,5 +38,7 @@ Example
+>  		clock-names = "otg";
+>  		vusb_d-supply = <&vusb_reg>;
+>  		vusb_a-supply = <&vusbdac_reg>;
+> +		phys = <&usb2phy 0>;
+> +		phy-names = "device";
+>  	};
+>  
+> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+> index eccb147..db096fd 100644
+> --- a/drivers/usb/gadget/s3c-hsotg.c
+> +++ b/drivers/usb/gadget/s3c-hsotg.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+> +#include <linux/phy/phy.h>
+>  
+>  #include <linux/usb/ch9.h>
+>  #include <linux/usb/gadget.h>
+> @@ -162,7 +163,7 @@ struct s3c_hsotg_ep {
+>  struct s3c_hsotg {
+>  	struct device		 *dev;
+>  	struct usb_gadget_driver *driver;
+> -	struct usb_phy		*phy;
+> +	struct phy		 *phy;
+>  	struct s3c_hsotg_plat	 *plat;
+>  
+>  	spinlock_t              lock;
+> @@ -2905,7 +2906,7 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
+>  	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
+>  
+>  	if (hsotg->phy)
+> -		usb_phy_init(hsotg->phy);
+> +		phy_power_on(hsotg->phy);
+>  	else if (hsotg->plat->phy_init)
+>  		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
+>  }
+> @@ -2922,7 +2923,7 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
+>  	struct platform_device *pdev = to_platform_device(hsotg->dev);
+>  
+>  	if (hsotg->phy)
+> -		usb_phy_shutdown(hsotg->phy);
+> +		phy_power_off(hsotg->phy);
+>  	else if (hsotg->plat->phy_exit)
+>  		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
+>  }
+> @@ -3529,7 +3530,7 @@ static void s3c_hsotg_delete_debug(struct s3c_hsotg *hsotg)
+>  static int s3c_hsotg_probe(struct platform_device *pdev)
+>  {
+>  	struct s3c_hsotg_plat *plat = dev_get_platdata(&pdev->dev);
+> -	struct usb_phy *phy;
+> +	struct phy *phy;
+>  	struct device *dev = &pdev->dev;
+>  	struct s3c_hsotg_ep *eps;
+>  	struct s3c_hsotg *hsotg;
+> @@ -3544,7 +3545,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> +	phy = devm_phy_get(&pdev->dev, "usb2-phy");
+>  	if (IS_ERR(phy)) {
+>  		/* Fallback for pdata */
+>  		plat = dev_get_platdata(&pdev->dev);
+> -- 
+> 1.7.9.5
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
