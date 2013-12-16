@@ -1,96 +1,128 @@
-From: Anton Tikhomirov <av.tikhomirov@samsung.com>
-Subject: RE: [PATCH 7/7] usb: dwc3: exynos: add pm_runtime support
-Date: Mon, 16 Dec 2013 11:47:12 +0900
-Message-ID: <00a701cefa09$1f26f6e0$5d74e4a0$%tikhomirov@samsung.com>
-References: <1386884325-11440-1-git-send-email-balbi@ti.com>
- <1386884325-11440-8-git-send-email-balbi@ti.com>
- <000301cef7c0$640c1ce0$2c2456a0$%tikhomirov@samsung.com>
- <20131213195618.GG5292@saruman.home> <20131213201831.GJ5292@saruman.home>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH RESEND v2 1/2] phy: core: Add an exported of_phy_get function
+Date: Mon, 16 Dec 2013 14:30:53 +0530
+Message-ID: <52AEC145.6070208@ti.com>
+References: <1386943380-28596-1-git-send-email-k.debski@samsung.com> <52AB1D75.4030207@ti.com> <008a01cef817$b24844e0$16d8cea0$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:8464 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180Ab3LPCrO (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:42531 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751906Ab3LPJBE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Dec 2013 21:47:14 -0500
-In-reply-to: <20131213201831.GJ5292@saruman.home>
-Content-language: en-us
+	Mon, 16 Dec 2013 04:01:04 -0500
+In-Reply-To: <008a01cef817$b24844e0$16d8cea0$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, 'Linux ARM Kernel Mailing List' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, 'Linux OMAP Mailing List' <linux-omap@vger.kernel.org>, w-kwok2@ti.com, 'Santosh Shilimkar' <santosh.shilimkar@ti.com>
+To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, matt.porter@linaro.org
 
-Hi Felipe,
-
-> On Fri, Dec 13, 2013 at 01:56:18PM -0600, Felipe Balbi wrote:
-> > On Fri, Dec 13, 2013 at 02:01:32PM +0900, Anton Tikhomirov wrote:
-> > > Hi Felipe,
-> > >
-> > > > -static int dwc3_exynos_suspend(struct device *dev)
-> > > > +static int __dwc3_exynos_suspend(struct dwc3_exynos *exynos)
-> > > >  {
-> > > > -	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
-> > > > -
-> > > >  	clk_disable(exynos->clk);
-> > > >
-> > > >  	return 0;
-> > > >  }
-> > > >
-> > > > +static int __dwc3_exynos_resume(struct dwc3_exynos *exynos)
-> > > > +{
-> > > > +	return clk_enable(exynos->clk);
-> > > > +}
-> > > > +
-> > > > +static int dwc3_exynos_suspend(struct device *dev)
-> > > > +{
-> > > > +	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
-> > > > +
-> > > > +	return __dwc3_exynos_suspend(exynos);
-> > >
-> > > If dwc3-exynos is runtime suspended, the clock will be disabled
-> > > second time here (unbalanced clk_enable/clk_disable).
-> >
-> > I don't get what you mean but there is something that probably needs
-> > fixing, I guess below makes it better:
-> >
-> > diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
-> exynos.c
-> > index c93919a..1e5720a 100644
-> > --- a/drivers/usb/dwc3/dwc3-exynos.c
-> > +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> > @@ -218,6 +218,9 @@ static int dwc3_exynos_suspend(struct device *dev)
-> >  {
-> >  	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
-> >
-> > +	if (pm_runtime_suspended(dev))
-> > +		return 0;
-> > +
-> >  	return __dwc3_exynos_suspend(exynos);
-> >  }
-> >
-> >
-> > Is that what you meant ?
+On Friday 13 December 2013 08:56 PM, Kamil Debski wrote:
+> Hi Kishon,
 > 
-> note, however, that this is *not* a case where we would fall today. See
-> that we pm_runtime_get() in probe and only pm_runtime_put() during
-> remove. So there would never be a case where we would try system
-> suspend 
-> while device was already runtime suspended.
+>> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
+>> Sent: Friday, December 13, 2013 3:45 PM
+>>
+>> Hi,
+>>
+>> On Friday 13 December 2013 07:32 PM, Kamil Debski wrote:
+>>> Previously the of_phy_get function took a struct device * and was
+>>> declared static. It was impossible to call it from another driver and
+>>> thus it was impossible to get phy defined for a given node. The old
+>>> function was renamed to _of_phy_get and was left for internal use.
+>>> of_phy_get function was added and it was exported. The function
+>>> enables to get a phy for a given device tree node.
+>>>
+>>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+>>> ---
+>>> It seems that my git send-email is playing up and sent the previous
+>>> emails without from. This is a resend. Sorry for any confusion.
+>>> ---
+>>>  drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++-----
+>> ----
+>>>  include/linux/phy/phy.h |    1 +
+>>>  2 files changed, 33 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c index
+>>> 03cf8fb..f0dbd42 100644
+>>> --- a/drivers/phy/phy-core.c
+>>> +++ b/drivers/phy/phy-core.c
+>>> @@ -240,8 +240,8 @@ out:
+>>>  EXPORT_SYMBOL_GPL(phy_power_off);
+>>>
+>>>  /**
+>>> - * of_phy_get() - lookup and obtain a reference to a phy by phandle
+>>> - * @dev: device that requests this phy
+>>> + * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+>>> + * @np: device_node for which to get the phy
+>>>   * @index: the index of the phy
+>>>   *
+>>>   * Returns the phy associated with the given phandle value, @@
+>>> -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
+>>>   * not yet loaded. This function uses of_xlate call back function
+>> provided
+>>>   * while registering the phy_provider to find the phy instance.
+>>>   */
+>>> -static struct phy *of_phy_get(struct device *dev, int index)
+>>> +static struct phy *_of_phy_get(struct device_node *np, int index)
+>>>  {
+>>>  	int ret;
+>>>  	struct phy_provider *phy_provider;
+>>>  	struct phy *phy = NULL;
+>>>  	struct of_phandle_args args;
+>>>
+>>> -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-
+>> cells",
+>>> +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
+>>>  		index, &args);
+>>> -	if (ret) {
+>>> -		dev_dbg(dev, "failed to get phy in %s node\n",
+>>> -			dev->of_node->full_name);
+>>> +	if (ret)
+>>>  		return ERR_PTR(-ENODEV);
+>>> -	}
+>>>
+>>>  	mutex_lock(&phy_provider_mutex);
+>>>  	phy_provider = of_phy_provider_lookup(args.np); @@ -283,6 +280,32
+>> @@
+>>> err0:
+>>>  }
+>>>
+>>>  /**
+>>> + * of_phy_get() - lookup and obtain a reference to a phy using a
+>> device_node.
+>>> + * @np: device_node for which to get the phy
+>>> + * @index: the index of the phy
+>>
+>> Would be better if the user can get the PHY by string instead of index.
+> 
+> Ok, this sounds doable. I will add of_phy_get_by_name analogous to the clk
+> framework.
 
-You are right, while runtime PM is blocked by get_sync() in probe, this
-check
-doesn't matter.
+Nope. It was decided initially to have minimal no of APIs exported to get PHYs.
+So you can just get string as argument instead of index and leave the name of
+the API to just of_phy_get.
+
+Thanks
+Kishon
 
 > 
-> I have fixed all patches in my testing/next branch anyway, just to make
-> sure we're "idiot-proof" when it comes to implementing real runtime pm
-> later on :-)
+>>> + *
+>>> + * Returns the phy driver, after getting a refcount to it; or
+>>> + * -ENODEV if there is no such phy.  The caller is responsible for
+>>> + * calling phy_put() to release that count.
+>>> + */
+>>> +struct phy *of_phy_get(struct device_node *np, int index) {
+>>> +	struct phy *phy = NULL;
+>>> +
+>>> +	phy = _of_phy_get(np, index);
+>>> +	if (IS_ERR(phy))
+>> dev_err here?
 > 
-> cheers
+> dev_err requires a dev, so it is not possible with the arguments used.
+> And we do not want to add any extra parameters to keep the function call
+> analogous to other of_*_get (as for example of_clk_get).
 > 
-> --
-> balbi
-
-Thank you
+> Best wishes,
+> 
