@@ -1,80 +1,58 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH 4/5] arm: omap3: twl: use the new lookup method with usb
- phy
-Date: Mon, 16 Dec 2013 16:43:14 +0200
-Message-ID: <20131216144314.GB22944@xps8300>
-References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com>
- <1386601737-8735-5-git-send-email-heikki.krogerus@linux.intel.com>
- <52AEDE43.8030005@ti.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
+Date: Mon, 16 Dec 2013 17:15:08 +0100
+Message-ID: <1470279.CK35gJZeX3@amdc1227>
+References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
+ <CANacCWx7YV45mVK=7BJjc95cSgm6ck1qSMRsfW3oeGxLC1LC5w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <52AEDE43.8030005@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48765 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754466Ab3LPQPZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Dec 2013 11:15:25 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MXW00I8FQHNOIB0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 Dec 2013 16:15:23 +0000 (GMT)
+In-reply-to: <CANacCWx7YV45mVK=7BJjc95cSgm6ck1qSMRsfW3oeGxLC1LC5w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vaibhav Bedia <vaibhav.bedia@gmail.com>
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>, kgene.kim@samsung.com, tomasz.figa@gmail.com, Linux ARM Kernel List <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, olof@lixom.net, dianders@chromium.org
 
 Hi,
 
-On Mon, Dec 16, 2013 at 04:34:35PM +0530, Kishon Vijay Abraham I wrote:
-> On Monday 09 December 2013 08:38 PM, Heikki Krogerus wrote:
-> > Provide a complete association for the phy and it's user
-> > (musb) with the new phy_lookup_table.
-> > 
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > ---
-> >  arch/arm/mach-omap2/twl-common.c | 15 ++++++---------
-> >  1 file changed, 6 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-omap2/twl-common.c b/arch/arm/mach-omap2/twl-common.c
-> > index b0d54da..972430b 100644
-> > --- a/arch/arm/mach-omap2/twl-common.c
-> > +++ b/arch/arm/mach-omap2/twl-common.c
-> > @@ -91,18 +91,13 @@ void __init omap_pmic_late_init(void)
-> >  }
-> >  
-> >  #if defined(CONFIG_ARCH_OMAP3)
-> > -struct phy_consumer consumers[] = {
-> > -	PHY_CONSUMER("musb-hdrc.0", "usb"),
-> > -};
-> > -
-> > -struct phy_init_data init_data = {
-> > -	.consumers = consumers,
-> > -	.num_consumers = ARRAY_SIZE(consumers),
-> > +static struct phy_lookup_table twl4030_usb_lookup = {
-> > +	.dev_id = "musb-hdrc.0",
-> > +	.table = PHY_LOOKUP("phy-twl4030_usb.0", NULL),
-> >  };
+On Monday 16 of December 2013 08:27:17 Vaibhav Bedia wrote:
+> Hi,
 > 
-> had a similar approach during the initial version of phy framework [1] (see
-> phy_bind) but changed it later [2] . Here you should know the device names of
-> two devices and even if one of them started using DEVID_AUTO, it'll start
-> breaking. Such an approach needs to reviewed carefully.
+> On Mon, Dec 16, 2013 at 7:01 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+[snip]
+> > +       { EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,                   { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,                    { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,                    { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,                    { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5420_CMU_RESET_DISP1_SYS_PWR_REG,               { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5420_CMU_RESET_MAU_SYS_PWR_REG,                 { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5420_CMU_RESET_G2D_SYS_PWR_REG,                 { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5420_CMU_RESET_MSC_SYS_PWR_REG,                 { 0x0, 0x0, 0x0} },
+> > +       { EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG,                { 0x0, 0x0, 0x0} },
+> > +       { PMU_TABLE_END,},
+> > +};
+> > +
+> 
+> Looking at a rather long list of register defines and soc_is_* checks here
+> makes me wonder how this is any different from the static data that the
+> other SoC vendors (TI) are trying very hard to move out of arch/arm...
 
-If somebody creates a regression by changing something like the
-platform device id without checking all the users, he deserves to get
-into big trouble. I don't see why an individual framework should
-provide protection against such cases.
+Well, this data will eventually get moved to a PMU driver once
+drivers/syslib (as discussed on KS in Edinburgh) infrastructure shows up.
 
-In any case, having two device names to deal with does not add any
-more risk. These associations should always be made in the place where
-the phy device is created so you will always know it's device name.
-Normally the platform code creates these associations in the same
-place it creates the platform devices, so you definitely know what the
-device names will be.
+We can't get rid of these data from kernel sources, since there is no
+other place where they would fit. (No, DT is not such place.)
 
-In this case it's actually created in drivers/mfd/twl-core.c, so I do
-need to update this and move the lookup table there. We can still
-deliver the user name as platform data, though I believe it's always
-"musb". Maybe we could actually skip that and just hard code the name?
-The name of the phy we will of course know as the platform device is
-created there and then, so the two device names don't create any more
-risk even in this case.
-
-
-Thanks,
-
--- 
-heikki
+Best regards,
+Tomasz
