@@ -1,88 +1,70 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [GIT PULL 1/7] Samsung fixes for v3.14
-Date: Mon, 16 Dec 2013 18:24:33 +0100
-Message-ID: <3351204.WyoCcrrZ3X@amdc1227>
-References: <52AE0F41.7050706@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to
+ double clock initialization
+Date: Mon, 16 Dec 2013 21:09:15 +0000
+Message-ID: <20131216210915.GD3185@sirena.org.uk>
+References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
+ <CAOesGMifjnTDUcsweOwsw9fFgsE7b4q3wsASfP8YL-uMH5KiPA@mail.gmail.com>
+ <CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
+ <1500417.9RFCmzklxv@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TIEGfCGDzZzDroj5"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:51243 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754884Ab3LPRYu (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:49892 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751636Ab3LPVJk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Dec 2013 12:24:50 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MXW00IBMTPCXJC0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Dec 2013 17:24:48 +0000 (GMT)
-In-reply-to: <52AE0F41.7050706@samsung.com>
+	Mon, 16 Dec 2013 16:09:40 -0500
+Content-Disposition: inline
+In-Reply-To: <1500417.9RFCmzklxv@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: hua dillon <dillonhua@gmail.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
 
-Hi Kukjin,
 
-On Monday 16 of December 2013 05:21:21 Kukjin Kim wrote:
-> The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> 
->    Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> 
-> are available in the git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> tags/samsung-fixes
-> 
-> for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
-> 
->    ARM: dts: Update display clock frequency for Origen-4412 (2013-12-16 
-> 04:41:57 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung non-critical fixes for v3.14
-> - Switch FIFO mode for arch_enable_uart_fifo()
-> - Add missing op_mode for PMIC on exynos5250-arndale
-> - Add missing clock-frequency for CPU on exynos5250
-> - Fix typo samaung to samsung for exynos5420-pinctrl
-> - Fix display clock-frequency for exynos4210/exynos4412-origen
-> 
-> ----------------------------------------------------------------
-> Alexander Shiyan (1):
->        ARM: SAMSUNG: Fix switching FIFO in arch_enable_uart_fifo function
-> 
-> Sachin Kamat (4):
->        ARM: dts: Add missing op_mode property to PMIC on Arndale
->        ARM: dts: Add missing frequency property to exynos5250
->        ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
->        ARM: dts: Update display clock frequency for Origen-4412
-> 
-> Tushar Behera (1):
->        ARM: dts: Update display clock frequency for Origen-4210
-> 
->   arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
->   arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
->   arch/arm/boot/dts/exynos5250-arndale.dts        | 2 ++
->   arch/arm/boot/dts/exynos5250.dtsi               | 2 ++
->   arch/arm/boot/dts/exynos5420-pinctrl.dtsi       | 2 +-
->   arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
->   6 files changed, 9 insertions(+), 3 deletions(-)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--TIEGfCGDzZzDroj5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I've sent a patch to fix up MMC0 on mini6410 board, when using board file
-to boot the system:
+On Sat, Dec 14, 2013 at 04:41:06AM -0800, Tomasz Figa wrote:
 
-[PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
+>  - Wolfson Cragganmore 6410 - Mark Brown (copied) is using it for some
+>    testing of audio codec AFAIK, but I'm not sure if you can get that
+>    anywhere.
 
-Could we get this patch merged?
+Essentially no, though you could try asking nicely.  It's not suitable
+for a test farm anyway without a SD mux as the only bootloader supported
+is Qi which only boots from flash.
 
-I know we are moving to DT, but until all boards get converted, board
-files must be supported too and this bug makes it impossible to test
-non-DT s3c64xx support on Mini6410, without extra out of tree patches.
+>  - SMDK6400/SMDK6410 are Samsung's official development boards for
+>    S3C6400/S3C6410 - I have access to one at the office; no idea if
+>    you can get one anywhere,
 
-Best regards,
-Tomasz
+I believe they're no longer available though ICBW.  The cost for low
+volume orders is likely to be a bit high too.
+
+--TIEGfCGDzZzDroj5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSr2v4AAoJELSic+t+oim9HVIP/Rpgu9Jr/HZ2QAV0Z1B3GDpN
+jeX5HvOv8Uax6XEkvjEX7i7VSdYLz6lIyqUZ8ngXSVcBsjROwS3jV6KnwnW8JOOA
+L4pCa7UWOO39FJ7qel2AzSLxdDgaiZcgWPSjg1qRWXUY6dRG4+crJ38wef/Bnz8d
+vvqTwSj2jsVm3mYRCMKEsa832UFy9kCnyeIXruSP5su1SJveOiW2oOTcc7LwwejN
+bBAu7XKt5g6t8HGK8w8aIgdqGI0wG7Y8R988jg/eQoOzgvLJ4+RjjV0Ww9LDPnaY
+f2HXIAKUyxM1uydlZKeP2XNL3CbUVYr7bIdzihirW1xjfIZwwK4UrB5ReZJeffNU
+aKJgusFgHYdR3mLemmEipdo+KdI4kkrUaKoQb+ZVx8Ylgfh/z+lVBlQQtKqG3Y7A
+F5Mlk9r9hkPH7K7aqyZqQIlCzyrd4sEOg/fMup4UTrUj0DJ1ReOWyWFBPcSQb/AK
+NHyPKAi7r0IFbN6gicTFuyEYWL+fJ0GXlS4VrnSblwyK7AdYZ0kVZCpmILzk4wpg
+5oXLsK+OPyv+AbMBsmoYX+547rPjI4Yze8ieGWy4dXW4RyTu9KIgKf24bEtAu/vG
+Bb9RGWTfghMhl5aGZ36bTYmxxxVO0Kopyhp3e+U4Ta4F32ir+6iAnNYrnoNGJFyN
+DzIcVLAotQ94CC5MqZCK
+=xBeJ
+-----END PGP SIGNATURE-----
+
+--TIEGfCGDzZzDroj5--
