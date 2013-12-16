@@ -1,60 +1,77 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 0/6] Exynos device tree clean-up for 3.14
-Date: Mon, 16 Dec 2013 09:42:26 +0900
-Message-ID: <0dba01cef9f7$b1379010$13a6b030$@samsung.com>
-References: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
+From: Anton Tikhomirov <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH 7/7] usb: dwc3: exynos: add pm_runtime support
+Date: Mon, 16 Dec 2013 11:31:50 +0900
+Message-ID: <00a001cefa06$f9ab3d60$ed01b820$%tikhomirov@samsung.com>
+References: <1386884325-11440-1-git-send-email-balbi@ti.com>
+ <1386884325-11440-8-git-send-email-balbi@ti.com>
+ <000301cef7c0$640c1ce0$2c2456a0$%tikhomirov@samsung.com>
+ <20131213195618.GG5292@saruman.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=Windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:61385 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752098Ab3LPAm2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Dec 2013 19:42:28 -0500
-In-reply-to: <1386864738-19829-1-git-send-email-t.figa@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20131213195618.GG5292-HgARHv6XitL9zxVx7UNMDg@public.gmane.org>
+Content-language: en-us
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: 'Linux USB Mailing List' <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Linux ARM Kernel Mailing List' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Linux OMAP Mailing List' <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, w-kwok2-l0cyMroinI0@public.gmane.org, 'Santosh Shilimkar' <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Stephen Warren' <swarren@wwwdotorg.org>
 
-Tomasz Figa wrote:
-> 
-> This series intends to fix small problems with Exynos device tree sources
-> that I spotted during my work on other things. The fixes are mostly
-> stylistic, without any funtional changes introduced.
-> 
-> Changes sinve v2:
->  - Moved MSHC patches to separate series.
->  - Rebased onto current linux-next.
-> Changes since v1:
->  - Addressed Stephen Warren's comments about MCT binding documentation.
-> 
-> Tomasz Figa (6):
->   Documentation: devicetree: Update Exynos MCT bindings description
->   ARM: dts: exynos4: Drop interrupt controller properties from MCT nodes
->   ARM: dts: exynos4x12: Move MCT node to exynos4x12.dtsi
->   ARM: dts: exynos4: Simplify MCT interrupt map
->   ARM: dts: exynos: Fix missing spaces after labels
->   ARM: dts: exynos4: Add missing unit-address of sysreg node
-> 
->  .../bindings/timer/samsung,exynos4210-mct.txt      | 54
-+++++++++++++++---
-> ----
->  arch/arm/boot/dts/exynos4.dtsi                     |  6 +--
->  arch/arm/boot/dts/exynos4210.dtsi                  | 23 ++++-----
->  arch/arm/boot/dts/exynos4212.dtsi                  | 24 +---------
->  arch/arm/boot/dts/exynos4412.dtsi                  | 28 +----------
->  arch/arm/boot/dts/exynos4x12.dtsi                  | 20 ++++++++
->  arch/arm/boot/dts/exynos5.dtsi                     |  4 +-
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |  6 +--
->  arch/arm/boot/dts/exynos5440.dtsi                  |  2 +-
->  9 files changed, 78 insertions(+), 89 deletions(-)
-> 
-> --
-> 1.8.4.3
+Hi Felipe,
 
-Nice cleanup series. Thanks and will apply.
+> On Fri, Dec 13, 2013 at 02:01:32PM +0900, Anton Tikhomirov wrote:
+> > Hi Felipe,
+> >
+> > > -static int dwc3_exynos_suspend(struct device *dev)
+> > > +static int __dwc3_exynos_suspend(struct dwc3_exynos *exynos)
+> > >  {
+> > > -	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
+> > > -
+> > >  	clk_disable(exynos->clk);
+> > >
+> > >  	return 0;
+> > >  }
+> > >
+> > > +static int __dwc3_exynos_resume(struct dwc3_exynos *exynos)
+> > > +{
+> > > +	return clk_enable(exynos->clk);
+> > > +}
+> > > +
+> > > +static int dwc3_exynos_suspend(struct device *dev)
+> > > +{
+> > > +	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
+> > > +
+> > > +	return __dwc3_exynos_suspend(exynos);
+> >
+> > If dwc3-exynos is runtime suspended, the clock will be disabled
+> > second time here (unbalanced clk_enable/clk_disable).
+> 
+> I don't get what you mean but there is something that probably needs
+> fixing, I guess below makes it better:
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
+> exynos.c
+> index c93919a..1e5720a 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -218,6 +218,9 @@ static int dwc3_exynos_suspend(struct device *dev)
+>  {
+>  	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
+> 
+> +	if (pm_runtime_suspended(dev))
+> +		return 0;
+> +
+>  	return __dwc3_exynos_suspend(exynos);
+>  }
+> 
+> 
+> Is that what you meant ?
 
-- Kukjin
+Yes, this is exactly what I meant.
+
+Thanks.
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
