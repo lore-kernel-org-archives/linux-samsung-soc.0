@@ -1,146 +1,179 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v2] [media] s5p-mfc: Add controls to set vp8 enc profile
-Date: Mon, 16 Dec 2013 15:10:42 +0530
-Message-ID: <1387186842-18658-1-git-send-email-arun.kk@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 2/5] phy: add support for indexed lookup
+Date: Mon, 16 Dec 2013 16:32:58 +0530
+Message-ID: <52AEDDE2.8060406@ti.com>
+References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com> <1386601737-8735-3-git-send-email-heikki.krogerus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:60487 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753042Ab3LPJky (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:34287 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753159Ab3LPLDZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Dec 2013 04:40:54 -0500
+	Mon, 16 Dec 2013 06:03:25 -0500
+In-Reply-To: <1386601737-8735-3-git-send-email-heikki.krogerus@linux.intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, hverkuil@xs4all.nl, avnd.kiran@samsung.com, posciak@chromium.org, arunkk.samsung@gmail.com
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-From: Kiran AVND <avnd.kiran@samsung.com>
+Hi,
 
-Add v4l2 controls to set desired profile for VP8 encoder.
-Acceptable levels for VP8 encoder are
-0: Version 0
-1: Version 1
-2: Version 2
-3: Version 3
+On Monday 09 December 2013 08:38 PM, Heikki Krogerus wrote:
+> Removes the need for the consumer drivers requesting the
+> phys to provide name for the phy. This should ease the use
+> of the framework considerable when using only one phy, which
+> is usually the case when except with USB, but it can also
+> be useful with multiple phys.
 
-Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
-Changes from v1
----------------
-- Addressed review comments from Hans and Pawel
-https://www.mail-archive.com/linux-media@vger.kernel.org/msg68970.html
-https://www.mail-archive.com/linux-media@vger.kernel.org/msg68990.html
----
- Documentation/DocBook/media/v4l/controls.xml    |    9 +++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   11 +++++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    6 ++----
- drivers/media/v4l2-core/v4l2-ctrls.c            |    1 +
- include/uapi/linux/v4l2-controls.h              |    1 +
- 6 files changed, 25 insertions(+), 4 deletions(-)
+If index has to be used with multiple PHYs, the controller should be aware of
+the order in which it is populated in dt data. That's not good.
+> This will also reduce noise from the framework when there is
+> no phy by changing warnings to debug messages.
+> 
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> ---
+>  drivers/phy/phy-core.c  | 106 ++++++++++++++++++++++++++++++++++--------------
+>  include/linux/phy/phy.h |  14 +++++++
+>  2 files changed, 89 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 1102aef..99dc046 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -53,7 +53,8 @@ static int devm_phy_match(struct device *dev, void *res, void *match_data)
+>  	return res == match_data;
+>  }
+>  
+> -static struct phy *phy_lookup(struct device *device, const char *con_id)
+> +static struct phy *phy_lookup(struct device *device, const char *con_id,
+> +			      unsigned int idx)
+>  {
+>  	unsigned int count;
+>  	struct phy *phy;
+> @@ -67,6 +68,10 @@ static struct phy *phy_lookup(struct device *device, const char *con_id)
+>  		count = phy->init_data->num_consumers;
+>  		consumers = phy->init_data->consumers;
+>  		while (count--) {
+> +			/* index must always match exactly */
+> +			if (!con_id)
+> +				if (idx != count)
+> +					continue;
+>  			if (!strcmp(consumers->dev_name, dev_name(device)) &&
+>  					!strcmp(consumers->port, con_id)) {
+>  				class_dev_iter_exit(&iter);
+> @@ -242,7 +247,8 @@ EXPORT_SYMBOL_GPL(phy_power_off);
+>  /**
+>   * of_phy_get() - lookup and obtain a reference to a phy by phandle
+>   * @dev: device that requests this phy
+> - * @index: the index of the phy
+> + * @con_id: name of the phy from device's point of view
+> + * @idx: the index of the phy if name is not used
+>   *
+>   * Returns the phy associated with the given phandle value,
+>   * after getting a refcount to it or -ENODEV if there is no such phy or
+> @@ -250,12 +256,20 @@ EXPORT_SYMBOL_GPL(phy_power_off);
+>   * not yet loaded. This function uses of_xlate call back function provided
+>   * while registering the phy_provider to find the phy instance.
+>   */
+> -static struct phy *of_phy_get(struct device *dev, int index)
+> +static struct phy *of_phy_get(struct device *dev, const char *con_id,
+> +			      unsigned int idx)
+>  {
+>  	int ret;
+>  	struct phy_provider *phy_provider;
+>  	struct phy *phy = NULL;
+>  	struct of_phandle_args args;
+> +	int index;
+> +
+> +	if (!con_id)
+> +		index = idx;
+> +	else
+> +		index = of_property_match_string(dev->of_node, "phy-names",
+> +						 con_id);
+>  
+>  	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
+>  		index, &args);
+> @@ -348,38 +362,36 @@ struct phy *of_phy_simple_xlate(struct device *dev, struct of_phandle_args
+>  EXPORT_SYMBOL_GPL(of_phy_simple_xlate);
+>  
+>  /**
+> - * phy_get() - lookup and obtain a reference to a phy.
+> + * phy_get_index() - obtain a phy based on index
 
-diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
-index e4db4ac..a5a3188 100644
---- a/Documentation/DocBook/media/v4l/controls.xml
-+++ b/Documentation/DocBook/media/v4l/controls.xml
-@@ -3193,6 +3193,15 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD as a golden frame.</entry>
- 	      <row><entry spanname="descr">Quantization parameter for a P frame for VP8.</entry>
- 	      </row>
- 
-+	      <row><entry></entry></row>
-+	      <row>
-+		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_PROFILE</constant>&nbsp;</entry>
-+		<entry>integer</entry>
-+	      </row>
-+	      <row><entry spanname="descr">Select the desired profile for VPx encoder.
-+Acceptable values are 0, 1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.</entry>
-+	      </row>
-+
-           <row><entry></entry></row>
-         </tbody>
-       </tgroup>
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index d91f757..797e61d 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -426,6 +426,7 @@ struct s5p_mfc_vp8_enc_params {
- 	u8 rc_max_qp;
- 	u8 rc_frame_qp;
- 	u8 rc_p_frame_qp;
-+	u8 profile;
- };
- 
- /**
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index 33e8ae3..d4eecae 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -650,6 +650,14 @@ static struct mfc_control controls[] = {
- 		.step = 1,
- 		.default_value = 10,
- 	},
-+	{
-+		.id = V4L2_CID_MPEG_VIDEO_VPX_PROFILE,
-+		.type = V4L2_CTRL_TYPE_INTEGER,
-+		.minimum = 0,
-+		.maximum = 3,
-+		.step = 1,
-+		.default_value = 0,
-+	},
- };
- 
- #define NUM_CTRLS ARRAY_SIZE(controls)
-@@ -1601,6 +1609,9 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:
- 		p->codec.vp8.rc_p_frame_qp = ctrl->val;
- 		break;
-+	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
-+		p->codec.vp8.profile = ctrl->val;
-+		break;
- 	default:
- 		v4l2_err(&dev->v4l2_dev, "Invalid control, id=%d, val=%d\n",
- 							ctrl->id, ctrl->val);
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index b4886d6..f6ff2db 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -1197,10 +1197,8 @@ static int s5p_mfc_set_enc_params_vp8(struct s5p_mfc_ctx *ctx)
- 	reg |= ((p->num_b_frame & 0x3) << 16);
- 	WRITEL(reg, S5P_FIMV_E_GOP_CONFIG_V6);
- 
--	/* profile & level */
--	reg = 0;
--	/** profile */
--	reg |= (0x1 << 4);
-+	/* profile - 0 ~ 3 */
-+	reg = p_vp8->profile & 0x3;
- 	WRITEL(reg, S5P_FIMV_E_PICTURE_PROFILE_V6);
- 
- 	/* rate control config. */
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 20840df..6ff002b 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -749,6 +749,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_MPEG_VIDEO_VPX_MAX_QP:			return "VPX Maximum QP Value";
- 	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
-+	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:			return "VPX Profile";
- 
- 	/* CAMERA controls */
- 	/* Keep the order of the 'case's the same as in videodev2.h! */
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 5b9dfc8..9970a9d 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -558,6 +558,7 @@ enum v4l2_vp8_golden_frame_sel {
- #define V4L2_CID_MPEG_VIDEO_VPX_MAX_QP			(V4L2_CID_MPEG_BASE+508)
- #define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP		(V4L2_CID_MPEG_BASE+509)
- #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
-+#define V4L2_CID_MPEG_VIDEO_VPX_PROFILE			(V4L2_CID_MPEG_BASE+511)
- 
- /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
- #define V4L2_CID_MPEG_CX2341X_BASE 				(V4L2_CTRL_CLASS_MPEG | 0x1000)
--- 
-1.7.9.5
+NAK. It still takes a 'char' argument and the name is misleading.
+Btw are you replacing phy_get() or adding a new API in addition to phy_get()?
+>   * @dev: device that requests this phy
+>   * @con_id: name of the phy from device's point of view
+> + * @idx: index of the phy to obtain in the consumer
+>   *
+> - * Returns the phy driver, after getting a refcount to it; or
+> - * -ENODEV if there is no such phy.  The caller is responsible for
+> - * calling phy_put() to release that count.
+> + * This variant of phy_get() allows to access PHYs other than the first
+> + * defined one for functions that define several PHYs.
+>   */
+> -struct phy *phy_get(struct device *dev, const char *con_id)
+> +struct phy *phy_get_index(struct device *dev, const char *con_id,
+> +			  unsigned int idx)
+>  {
+> -	int index = 0;
+>  	struct phy *phy = NULL;
+>  
+> -	if (con_id == NULL) {
+> -		dev_WARN(dev, "missing string\n");
+> -		return ERR_PTR(-EINVAL);
+> +	if (dev->of_node) {
+> +		dev_dbg(dev, "using device tree for PHY lookup\n");
+> +		phy = of_phy_get(dev, con_id, idx);
+>  	}
+>  
+> -	if (dev->of_node) {
+> -		index = of_property_match_string(dev->of_node, "phy-names",
+> -						 con_id);
+> -		phy = of_phy_get(dev, index);
+> -		if (IS_ERR(phy)) {
+> -			dev_err(dev, "unable to find phy\n");
+> -			return phy;
+> -		}
+> -	} else {
+> -		phy = phy_lookup(dev, con_id);
+> -		if (IS_ERR(phy)) {
+> -			dev_err(dev, "unable to find phy\n");
+> -			return phy;
+> -		}
+> +	/**
+> +	 * Either we are not using DT, or their lookup did not return
+> +	 * a result. In that case, use platform lookup as a fallback.
+> +	 */
+
+In a dt boot, if it has not returned a result how will platform lookup help
+since there wouldn't be be any board file in the case of dt boot (to populate
+PHY consumers). Maybe your later patch will handle that.
+> +	if (!phy || IS_ERR(phy)) {
+> +		dev_dbg(dev, "using lookup tables for PHY lookup");
+> +		phy = phy_lookup(dev, con_id, idx);
+> +	}
+> +
+> +	if (IS_ERR(phy)) {
+> +		dev_dbg(dev, "unable to find phy\n");
+> +		return phy;
+>  	}
+>  
+>  	if (!try_module_get(phy->ops->owner))
+> @@ -389,18 +401,20 @@ struct phy *phy_get(struct device *dev, const char *con_id)
+>  
+>  	return phy;
+>  }
+> -EXPORT_SYMBOL_GPL(phy_get);
+> +EXPORT_SYMBOL_GPL(phy_get_index);
+>  
+>  /**
+> - * devm_phy_get() - lookup and obtain a reference to a phy.
+> + * devm_phy_get_index() - obtain a phy based on index
+
+I don't see the need of these 2 APIs.
+
+Thanks
+Kishon
