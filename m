@@ -1,147 +1,88 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH RESEND v2 1/2] phy: core: Add an exported of_phy_get
- function
-Date: Mon, 16 Dec 2013 13:55:34 +0100
-Message-ID: <023f01cefa5e$1cbe81c0$563b8540$%debski@samsung.com>
-References: <1386943380-28596-1-git-send-email-k.debski@samsung.com>
- <52AB1D75.4030207@ti.com> <008a01cef817$b24844e0$16d8cea0$%debski@samsung.com>
- <52AEC145.6070208@ti.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v3 2/2] phy: core: Add devm_of_phy_get to phy-core
+Date: Mon, 16 Dec 2013 18:55:53 +0530
+Message-ID: <52AEFF61.2030609@ti.com>
+References: <1387198338-10556-1-git-send-email-k.debski@samsung.com> <1387198338-10556-2-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <52AEC145.6070208@ti.com>
-Content-language: pl
+In-Reply-To: <1387198338-10556-2-git-send-email-k.debski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, matt.porter@linaro.org
+To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: t.figa@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, matt.porter@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
-> Sent: Monday, December 16, 2013 10:01 AM
+On Monday 16 December 2013 06:22 PM, Kamil Debski wrote:
+> Adding devm_of_phy_get will allow to get phys by supplying the
+> device_node instead of by name.
 > 
-> On Friday 13 December 2013 08:56 PM, Kamil Debski wrote:
-> > Hi Kishon,
-> >
-> >> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
-> >> Sent: Friday, December 13, 2013 3:45 PM
-> >>
-> >> Hi,
-> >>
-> >> On Friday 13 December 2013 07:32 PM, Kamil Debski wrote:
-> >>> Previously the of_phy_get function took a struct device * and was
-> >>> declared static. It was impossible to call it from another driver
-> >>> and thus it was impossible to get phy defined for a given node. The
-> >>> old function was renamed to _of_phy_get and was left for internal
-> use.
-> >>> of_phy_get function was added and it was exported. The function
-> >>> enables to get a phy for a given device tree node.
-> >>>
-> >>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> >>> ---
-> >>> It seems that my git send-email is playing up and sent the previous
-> >>> emails without from. This is a resend. Sorry for any confusion.
-> >>> ---
-> >>>  drivers/phy/phy-core.c  |   41 ++++++++++++++++++++++++++++++++---
-> --
-> >> ----
-> >>>  include/linux/phy/phy.h |    1 +
-> >>>  2 files changed, 33 insertions(+), 9 deletions(-)
-> >>>
-> >>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c index
-> >>> 03cf8fb..f0dbd42 100644
-> >>> --- a/drivers/phy/phy-core.c
-> >>> +++ b/drivers/phy/phy-core.c
-> >>> @@ -240,8 +240,8 @@ out:
-> >>>  EXPORT_SYMBOL_GPL(phy_power_off);
-> >>>
-> >>>  /**
-> >>> - * of_phy_get() - lookup and obtain a reference to a phy by
-> phandle
-> >>> - * @dev: device that requests this phy
-> >>> + * _of_phy_get() - lookup and obtain a reference to a phy by
-> >>> + phandle
-> >>> + * @np: device_node for which to get the phy
-> >>>   * @index: the index of the phy
-> >>>   *
-> >>>   * Returns the phy associated with the given phandle value, @@
-> >>> -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
-> >>>   * not yet loaded. This function uses of_xlate call back function
-> >> provided
-> >>>   * while registering the phy_provider to find the phy instance.
-> >>>   */
-> >>> -static struct phy *of_phy_get(struct device *dev, int index)
-> >>> +static struct phy *_of_phy_get(struct device_node *np, int index)
-> >>>  {
-> >>>  	int ret;
-> >>>  	struct phy_provider *phy_provider;
-> >>>  	struct phy *phy = NULL;
-> >>>  	struct of_phandle_args args;
-> >>>
-> >>> -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-
-> >> cells",
-> >>> +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
-> >>>  		index, &args);
-> >>> -	if (ret) {
-> >>> -		dev_dbg(dev, "failed to get phy in %s node\n",
-> >>> -			dev->of_node->full_name);
-> >>> +	if (ret)
-> >>>  		return ERR_PTR(-ENODEV);
-> >>> -	}
-> >>>
-> >>>  	mutex_lock(&phy_provider_mutex);
-> >>>  	phy_provider = of_phy_provider_lookup(args.np); @@ -283,6 +280,32
-> >> @@
-> >>> err0:
-> >>>  }
-> >>>
-> >>>  /**
-> >>> + * of_phy_get() - lookup and obtain a reference to a phy using a
-> >> device_node.
-> >>> + * @np: device_node for which to get the phy
-> >>> + * @index: the index of the phy
-> >>
-> >> Would be better if the user can get the PHY by string instead of
-> index.
-> >
-> > Ok, this sounds doable. I will add of_phy_get_by_name analogous to
-> the
-> > clk framework.
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> ---
+>  drivers/phy/phy-core.c  |   31 +++++++++++++++++++++++++++++++
+>  include/linux/phy/phy.h |    2 ++
+>  2 files changed, 33 insertions(+)
 > 
-> Nope. It was decided initially to have minimal no of APIs exported to
-> get PHYs.
-> So you can just get string as argument instead of index and leave the
-> name of the API to just of_phy_get.
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 0107f71..d45ad87 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -450,6 +450,37 @@ struct phy *devm_phy_get(struct device *dev, const char *string)
+>  EXPORT_SYMBOL_GPL(devm_phy_get);
+>  
+>  /**
+> + * devm_of_phy_get() - lookup and obtain a reference to a phy.
+> + * @dev: device that requests this phy
+> + * @np: node containing the phy
+> + * @con_id: name of the phy from device's point of view
+> + *
+> + * Gets the phy using phy_get(), and associates a device with it using
 
-If you say so. I just sent a new version taking a string id instead of
-an index. I hope you find it satisfying.
+%s/phy_get/of_phy_get
+> + * devres. On driver detach, release function is invoked on the devres data,
+> + * then, devres data is freed.
+> + */
+> +struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
+> +			    const char *con_id)
+> +{
+> +	struct phy **ptr, *phy;
+> +
+> +	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	phy = of_phy_get(np, con_id);
+> +	if (!IS_ERR(phy)) {
+> +		*ptr = phy;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return phy;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_of_phy_get);
+> +
+> +/**
+>   * phy_create() - create a new phy
+>   * @dev: device that is creating the new phy
+>   * @ops: function pointers for performing phy operations
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index bcb6274..864914c 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -129,6 +129,8 @@ int phy_power_on(struct phy *phy);
+>  int phy_power_off(struct phy *phy);
+>  struct phy *phy_get(struct device *dev, const char *string);
+>  struct phy *devm_phy_get(struct device *dev, const char *string);
+> +struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
+> +			    const char *con_id);
+>  void phy_put(struct phy *phy);
+>  void devm_phy_put(struct device *dev, struct phy *phy);
+>  struct phy *of_phy_get(struct device_node *np, const char *con_id);
 
-> Thanks
-> Kishon
+Apart from that one minor comment, this patch series can go in.
+
+Thanks
+Kishon
 > 
-> >
-> >>> + *
-> >>> + * Returns the phy driver, after getting a refcount to it; or
-> >>> + * -ENODEV if there is no such phy.  The caller is responsible for
-> >>> + * calling phy_put() to release that count.
-> >>> + */
-> >>> +struct phy *of_phy_get(struct device_node *np, int index) {
-> >>> +	struct phy *phy = NULL;
-> >>> +
-> >>> +	phy = _of_phy_get(np, index);
-> >>> +	if (IS_ERR(phy))
-> >> dev_err here?
-> >
-> > dev_err requires a dev, so it is not possible with the arguments used.
-> > And we do not want to add any extra parameters to keep the function
-> > call analogous to other of_*_get (as for example of_clk_get).
-> >
-> > Best wishes,
-> >
-
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
