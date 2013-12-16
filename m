@@ -1,53 +1,136 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Add node for GPIO keys on SMDK5420
-Date: Mon, 16 Dec 2013 17:31:11 +0530
-Message-ID: <1387195271-3613-2-git-send-email-a.kesavan@samsung.com>
-References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH] ARM: exynos: Allow wake-up using GIC interrupts
+Date: Mon, 16 Dec 2013 17:30:48 +0530
+Message-ID: <CAM4voakHDrEOyxVJ4bhUwjU3vwUHYfzkVonen3D5-g0287DfbA@mail.gmail.com>
+References: <1381855370-7500-1-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51366 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753285Ab3LPMAk (ORCPT
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:62176 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753285Ab3LPMAs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Dec 2013 07:00:40 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXW00CP6EP3P490@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Dec 2013 21:00:39 +0900 (KST)
-In-reply-to: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
+	Mon, 16 Dec 2013 07:00:48 -0500
+Received: by mail-qc0-f169.google.com with SMTP id r5so3611891qcx.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2013 04:00:48 -0800 (PST)
+In-Reply-To: <1381855370-7500-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: dianders@chromium.org, olof@lixom.net, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Kyungmin Park <kyungmin.park@samsung.com>, Olof Johansson <olof@lixom.net>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Add support for the suspend/resume button (SW7) on SMDK5420 using
-gpio-keys driver.
+Hi Tomasz,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm/boot/dts/exynos5420-smdk5420.dts |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Tue, Oct 15, 2013 at 10:12 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> This patch restores the ability to receive wake-up events from internal
+> GIC interrupts, e.g. RTC tick or alarm interrupts.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/include/mach/pm-core.h |  1 -
+>  arch/arm/mach-exynos/pm.c                   | 55 +++++++++++++++++++++++++++++
+>  2 files changed, 55 insertions(+), 1 deletion(-)
+>
 
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index fb5a1e2..015e8b7 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -120,4 +120,15 @@
- 			reg = <0x50>;
- 		};
- 	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		wakeup {
-+			label = "SW7";
-+			gpios = <&gpx0 0 1>;
-+			linux,code = <143>;	/* KEY_WAKEUP */
-+			gpio-key,wakeup;
-+		};
-+	};
- };
--- 
-1.7.9.5
+I don't see this patch in kgene's tree or linux-next. Was this handled
+some other way ? I have been testing s2r with this patch on exynos5250
+and it works fine.
+
+> diff --git a/arch/arm/mach-exynos/include/mach/pm-core.h b/arch/arm/mach-exynos/include/mach/pm-core.h
+> index 2b00833..be112ce 100644
+> --- a/arch/arm/mach-exynos/include/mach/pm-core.h
+> +++ b/arch/arm/mach-exynos/include/mach/pm-core.h
+> @@ -66,7 +66,6 @@ static inline void samsung_pm_saved_gpios(void)
+>
+>  /* Compatibility definitions to make plat-samsung/pm.c compile */
+>  #define IRQ_EINT_BIT(x)                1
+> -#define s3c_irqwake_intallow   0
+>  #define s3c_irqwake_eintallow  0
+>
+>  #endif /* __ASM_ARCH_PM_CORE_H */
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index c679db5..1f24e7f 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -212,14 +212,69 @@ static struct subsys_interface exynos_pm_interface = {
+>         .add_dev        = exynos_pm_add,
+>  };
+>
+> +struct exynos_wkup_irq {
+> +       unsigned int hwirq;
+> +       u32 mask;
+> +};
+> +
+> +static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
+> +       { 76, BIT(1) }, /* RTC alarm */
+> +       { 77, BIT(2) }, /* RTC tick */
+> +       { /* sentinel */ },
+> +};
+> +
+> +static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+> +       { 75, BIT(1) }, /* RTC alarm */
+> +       { 76, BIT(2) }, /* RTC tick */
+> +       { /* sentinel */ },
+> +};
+> +
+> +unsigned long s3c_irqwake_intallow;
+> +
+> +int s3c_irq_wake(struct irq_data *data, unsigned int state)
+> +{
+> +       const struct exynos_wkup_irq *wkup_irq;
+> +
+> +       if (soc_is_exynos5250())
+> +               wkup_irq = exynos5250_wkup_irq;
+> +       else
+> +               wkup_irq = exynos4_wkup_irq;
+> +
+> +       while (wkup_irq->mask) {
+> +               if (wkup_irq->hwirq == data->hwirq) {
+> +                       if (!state)
+> +                               s3c_irqwake_intmask |= wkup_irq->mask;
+> +                       else
+> +                               s3c_irqwake_intmask &= ~wkup_irq->mask;
+> +                       return 0;
+> +               }
+> +               ++wkup_irq;
+> +       }
+> +
+> +       return -ENOENT;
+> +}
+> +
+>  static __init int exynos_pm_drvinit(void)
+>  {
+> +       const struct exynos_wkup_irq *wkup_irq;
+>         struct clk *pll_base;
+>         unsigned int tmp;
+>
+>         if (soc_is_exynos5440())
+>                 return 0;
+>
+> +       if (soc_is_exynos5250())
+> +               wkup_irq = exynos5250_wkup_irq;
+> +       else
+> +               wkup_irq = exynos4_wkup_irq;
+> +
+> +       while (wkup_irq->mask) {
+> +               s3c_irqwake_intallow |= wkup_irq->mask;
+> +               ++wkup_irq;
+> +       }
+> +
+> +       gic_arch_extn.irq_set_wake = s3c_irq_wake;
+> +
+>         s3c_pm_init();
+>
+>         /* All wakeup disable */
+> --
+> 1.8.3.2
+
+Regards,
+Abhilash
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
