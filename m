@@ -1,75 +1,99 @@
 From: kgene@kernel.org
-Subject: [PATCH 00/11] ARM: EXYNOS: cleanup <mach/regs-xxx.h>
-Date: Tue, 17 Dec 2013 20:58:57 +0900
-Message-ID: <116a01cefb1f$5d841be0$188c53a0$@kernel.org>
+Subject: RE: [GIT PULL 1/7] Samsung fixes for v3.14
+Date: Tue, 17 Dec 2013 21:23:46 +0900
+Message-ID: <117101cefb22$d5378b10$7fa6a130$@kernel.org>
+References: <52AE0F41.7050706@samsung.com> <3351204.WyoCcrrZ3X@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65501 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:10439 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751369Ab3LQL66 (ORCPT
+	with ESMTP id S1751072Ab3LQMXs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Dec 2013 06:58:58 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
+	Tue, 17 Dec 2013 07:23:48 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
  by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXY0003T9A9P160@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Dec 2013 20:58:57 +0900 (KST)
+ with ESMTP id <0MXY001L5AFM2560@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Dec 2013 21:23:46 +0900 (KST)
+In-reply-to: <3351204.WyoCcrrZ3X@amdc1227>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This is cleanup for <mach/regs-xxx.h>.
+Tomasz Figa wrote:
+> 
+> Hi Kukjin,
+> 
+Hi,
 
-My e-mail client is used for submitting them instead of git send-email
-because of firewall :-( so looks strange format...sorry about that but it
-should be fine when I take them :-)
+> On Monday 16 of December 2013 05:21:21 Kukjin Kim wrote:
+> > The following changes since commit
+> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+> >
+> >    Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+> >
+> > are available in the git repository at:
+> >
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > tags/samsung-fixes
+> >
+> > for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
+> >
+> >    ARM: dts: Update display clock frequency for Origen-4412 (2013-12-16
+> > 04:41:57 +0900)
+> >
+> > ----------------------------------------------------------------
+> > Samsung non-critical fixes for v3.14
+> > - Switch FIFO mode for arch_enable_uart_fifo()
+> > - Add missing op_mode for PMIC on exynos5250-arndale
+> > - Add missing clock-frequency for CPU on exynos5250
+> > - Fix typo samaung to samsung for exynos5420-pinctrl
+> > - Fix display clock-frequency for exynos4210/exynos4412-origen
+> >
+> > ----------------------------------------------------------------
+> > Alexander Shiyan (1):
+> >        ARM: SAMSUNG: Fix switching FIFO in arch_enable_uart_fifo
+function
+> >
+> > Sachin Kamat (4):
+> >        ARM: dts: Add missing op_mode property to PMIC on Arndale
+> >        ARM: dts: Add missing frequency property to exynos5250
+> >        ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
+> >        ARM: dts: Update display clock frequency for Origen-4412
+> >
+> > Tushar Behera (1):
+> >        ARM: dts: Update display clock frequency for Origen-4210
+> >
+> >   arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
+> >   arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
+> >   arch/arm/boot/dts/exynos5250-arndale.dts        | 2 ++
+> >   arch/arm/boot/dts/exynos5250.dtsi               | 2 ++
+> >   arch/arm/boot/dts/exynos5420-pinctrl.dtsi       | 2 +-
+> >   arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
+> >   6 files changed, 9 insertions(+), 3 deletions(-)
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+> soc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> I've sent a patch to fix up MMC0 on mini6410 board, when using board file
+> to boot the system:
+> 
+> [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
+> 
+> Could we get this patch merged?
+> 
+> I know we are moving to DT, but until all boards get converted, board
+> files must be supported too and this bug makes it impossible to test
+> non-DT s3c64xx support on Mini6410, without extra out of tree patches.
+> 
+OK, I see. Let me take that in next round maybe this weekend.
 
-Kukjin Kim (11):
-      ARM: EXYNOS: cleanup <mach/regs-pmu.h>
-      ARM: EXYNOS: remove inclusion <mach/regs-pmu.h> into another headers
-      ARM: EXYNOS: local regs-pmu.h header file
-      ARM: EXYNOS: cleanup <mach/regs-irq.h>
-      ARM: EXYNOS: cleanup <mach/regs-clock.h>
-      PM / devfreq: move definitions for exynos4_bus into drivers/devfreq
-      ARM: EXYNOS: local definitions for pm.c into mach-exynos dir
-      cpufreq: exynos: move definitions for exynos-cpufreq into
-drivers/cpufreq/
-      ARM: EXYNOS: local definitions for cpuidle.c into mach-exynos dir
-      ARM: EXYNOS: remove <mach/regs-clock.h> for exynos
-      PM / devfreq: use inclusion <mach/map.h> instead of <plat/map-s5p.h>
-
- arch/arm/mach-exynos/common.c                      |    5 +-
- arch/arm/mach-exynos/cpuidle.c                     |   25 +++++-
- arch/arm/mach-exynos/hotplug.c                     |    2 +-
- arch/arm/mach-exynos/include/mach/pm-core.h        |    5 +-
- arch/arm/mach-exynos/include/mach/regs-clock.h     |  372
-----------------------------------------------------------------------------
--
- arch/arm/mach-exynos/include/mach/regs-irq.h       |   19 ----
- arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
- arch/arm/mach-exynos/platsmp.c                     |    3 +-
- arch/arm/mach-exynos/pm.c                          |   29 +++++-
- arch/arm/mach-exynos/pm_domains.c                  |    3 +-
- arch/arm/mach-exynos/pmu.c                         |    3 +-
- arch/arm/mach-exynos/{include/mach => }/regs-pmu.h |   53 -----------
- arch/arm/plat-samsung/pm.c                         |    2 +
- arch/arm/plat-samsung/s5p-irq-pm.c                 |    3 +
- drivers/cpufreq/exynos-cpufreq.h                   |   22 +++++
- drivers/cpufreq/exynos4210-cpufreq.c               |    2 -
- drivers/cpufreq/exynos4x12-cpufreq.c               |    2 -
- drivers/cpufreq/exynos5250-cpufreq.c               |    1 -
- drivers/devfreq/exynos/exynos4_bus.c               |    4 +-
- drivers/devfreq/exynos/exynos4_bus.h               |  110
-+++++++++++++++++++++++
- 20 files changed, 201 insertions(+), 466 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-clock.h
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-irq.h
- rename arch/arm/mach-exynos/{include/mach => }/regs-pmu.h (88%)
- create mode 100644 drivers/devfreq/exynos/exynos4_bus.h
-
-Thanks.
-K-Gene.
+Thanks,
+Kukjin
