@@ -1,90 +1,164 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 3/3] cpufreq: exynos: Add exynos5420 cpufreq driver
-Date: Tue, 17 Dec 2013 10:09:56 +0100
-Message-ID: <20131217100956.6fa5b7e6@amdc2363>
-References: <1386323284-15646-1-git-send-email-arun.kk@samsung.com>
- <1386323284-15646-4-git-send-email-arun.kk@samsung.com>
- <CAKohpo=vkZRSQ5Xk-Tsm9QVy8h2F5Ehpm4Y8JWi5xjx0OD72tw@mail.gmail.com>
- <20131217090005.1e04ff7b@amdc2363>
- <CALt3h79iuOnmeCBxHjPN3qAoiuwHYBXAp_eSTDewxc96zqSOOg@mail.gmail.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH v4 5/9] usb: s3c-hsotg: Use the new Exynos USB phy driver
+ with the generic phy framework
+Date: Tue, 17 Dec 2013 10:41:56 +0100
+Message-ID: <02bb01cefb0c$3ad4d890$b07e89b0$%debski@samsung.com>
+References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+ <1386246579-25141-6-git-send-email-k.debski@samsung.com>
+ <20131216214012.GB15814@beef>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50303 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750966Ab3LQJKG (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:9318 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072Ab3LQJmB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Dec 2013 04:10:06 -0500
-In-reply-to: <CALt3h79iuOnmeCBxHjPN3qAoiuwHYBXAp_eSTDewxc96zqSOOg@mail.gmail.com>
+	Tue, 17 Dec 2013 04:42:01 -0500
+In-reply-to: <20131216214012.GB15814@beef>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Kgene Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, abrestic@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa <tomasz.figa@gmail.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arjun.kv@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: 'Matt Porter' <mporter@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, 'Felipe Balbi' <balbi@ti.com>
 
-Hi Arun,
+Hi Matt,
 
-> Hi Lukasz,
-> 
-> On Tue, Dec 17, 2013 at 1:30 PM, Lukasz Majewski
-> <l.majewski@samsung.com> wrote:
-> > Hi Viresh,
-> >
-> >> On 6 December 2013 15:18, Arun Kumar K <arun.kk@samsung.com> wrote:
-> >> > From: "Arjun.K.V" <arjun.kv@samsung.com>
-> >> >
-> >> > The patch adds cpufreq driver for exynos5420.
-> >> >
-> >> > Signed-off-by: Arjun.K.V <arjun.kv@samsung.com>
-> >> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> >> > ---
-> >> >  drivers/cpufreq/Kconfig.arm          |   11 ++
-> >> >  drivers/cpufreq/Makefile             |    1 +
-> >> >  drivers/cpufreq/exynos-cpufreq.c     |    2 +
-> >> >  drivers/cpufreq/exynos-cpufreq.h     |    8 +
-> >> >  drivers/cpufreq/exynos5420-cpufreq.c |  346
-> >> > ++++++++++++++++++++++++++++++++++ 5 files changed, 368
-> >> > insertions(+) create mode 100644
-> >> > drivers/cpufreq/exynos5420-cpufreq.c
-> >>
-> >> Hmm.. That's the second big LITTLE SoC after TC2..
-> >> And we already have a generic enough driver for all big LITTLE
-> >> platforms: arm_big_little.c
-> >>
-> >> Please use that with a glue clk and regulator driver if required.
-> >> We don't want to get any new driver for big LITTLE unless there is
-> >> a real limitation.
-> >>
-> >> Also, the generic big LITTLE driver supports IKS (In Kernel
-> >> Switcher) which may or maynot be used by Exynos.
-> >>
-> >> @Lukasz: We can't use cpu0 driver here as we have multiple clusters
-> >> here A7 and A15, and so there are two clock domains instead of one.
-> >> That's why we have written big LITTLE driver.
-> >
-> > When I first looked into the patch - it was almost identical to the
-> > exynos4210-cpufreq.c or exynos4x12-cpufreq.c files.
-> >
-> > Also I didn't spot the code characteristic to IKS. It seems like the
-> > code in this file is not aware if it runs on A7 or A15.
-> >
-> 
-> This initial version was only for A15s and I was planning for an
-> incremental patch for A7s along with common code for the  same. Now
-> that is not needed with the generic implementation in place.
+I am afraid it is not possible. This patch cannot go in without the 
+new  phy driver. It would break Exynos USB functionality. This
+is because it changes s3c-hsotg to use the new phy driver.
 
-Ok. I see.
+I am working on an updated patch series addressing all the comments.
+time permitting I want to post an alternative version - integrating
+as much as possible in a single file. This way it would be possible
+to have a hands-on comparison of the two approaches we were
+discussing with Kishon. 
 
-> 
-> Regards
-> Arun
+I estimate that I post it this week.
 
-
-
+Best wishes,
 -- 
-Best regards,
+Kamil Debski
+Samsung R&D Institute Poland
 
-Lukasz Majewski
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+> -----Original Message-----
+> From: Matt Porter [mailto:mporter@linaro.org]
+> Sent: Monday, December 16, 2013 10:40 PM
+> To: Kamil Debski
+> Cc: linux-kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
+> linux-usb@vger.kernel.org; devicetree@vger.kernel.org;
+> kyungmin.park@samsung.com; kishon@ti.com; t.figa@samsung.com;
+> s.nawrocki@samsung.com; m.szyprowski@samsung.com;
+> gautam.vivek@samsung.com; mat.krawczuk@gmail.com;
+> yulgon.kim@samsung.com; p.paneri@samsung.com; av.tikhomirov@samsung.com;
+> jg1.han@samsung.com; galak@codeaurora.org; Felipe Balbi
+> Subject: Re: [PATCH v4 5/9] usb: s3c-hsotg: Use the new Exynos USB phy
+> driver with the generic phy framework
+> 
+> On Thu, Dec 05, 2013 at 01:29:35PM +0100, Kamil Debski wrote:
+> > Change the used phy driver to the new Exynos USB phy driver that uses
+> > the generic phy framework.
+> >
+> > Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 ++++
+> >  drivers/usb/gadget/s3c-hsotg.c                     |   11 ++++++----
+> -
+> >  2 files changed, 10 insertions(+), 5 deletions(-)
+> 
+> Kamil,
+> 
+> Can we separate this patch out of this series? My bcm281xx series is
+> ready to go except for this dependency. Felipe has noted that there's
+> only a week until he locks his tree down for 3.14 [1]. I'm willing to
+> update this versus the comment Kishon made on fixing the example if you
+> don't have time before then. Let me know.
+> 
+> [1] https://lkml.org/lkml/2013/12/16/555
+> 
+> Thanks,
+> Matt
+> 
+> > diff --git a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> > b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> > index b83d428..9340d06 100644
+> > --- a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> > +++ b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+> > @@ -24,6 +24,8 @@ Required properties:
+> >      - first entry: must be "otg"
+> >  - vusb_d-supply: phandle to voltage regulator of digital section,
+> >  - vusb_a-supply: phandle to voltage regulator of analog section.
+> > +- phys: from general PHY binding: phandle to the PHY device
+> > +- phy-names: from general PHY binding: should be "usb2-phy"
+> >
+> >  Example
+> >  -----
+> > @@ -36,5 +38,7 @@ Example
+> >  		clock-names = "otg";
+> >  		vusb_d-supply = <&vusb_reg>;
+> >  		vusb_a-supply = <&vusbdac_reg>;
+> > +		phys = <&usb2phy 0>;
+> > +		phy-names = "device";
+> >  	};
+> >
+> > diff --git a/drivers/usb/gadget/s3c-hsotg.c
+> > b/drivers/usb/gadget/s3c-hsotg.c index eccb147..db096fd 100644
+> > --- a/drivers/usb/gadget/s3c-hsotg.c
+> > +++ b/drivers/usb/gadget/s3c-hsotg.c
+> > @@ -31,6 +31,7 @@
+> >  #include <linux/regulator/consumer.h>  #include <linux/of.h>
+> > #include <linux/of_platform.h>
+> > +#include <linux/phy/phy.h>
+> >
+> >  #include <linux/usb/ch9.h>
+> >  #include <linux/usb/gadget.h>
+> > @@ -162,7 +163,7 @@ struct s3c_hsotg_ep {  struct s3c_hsotg {
+> >  	struct device		 *dev;
+> >  	struct usb_gadget_driver *driver;
+> > -	struct usb_phy		*phy;
+> > +	struct phy		 *phy;
+> >  	struct s3c_hsotg_plat	 *plat;
+> >
+> >  	spinlock_t              lock;
+> > @@ -2905,7 +2906,7 @@ static void s3c_hsotg_phy_enable(struct
+> s3c_hsotg *hsotg)
+> >  	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
+> >
+> >  	if (hsotg->phy)
+> > -		usb_phy_init(hsotg->phy);
+> > +		phy_power_on(hsotg->phy);
+> >  	else if (hsotg->plat->phy_init)
+> >  		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);  } @@ -
+> 2922,7
+> > +2923,7 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
+> >  	struct platform_device *pdev = to_platform_device(hsotg->dev);
+> >
+> >  	if (hsotg->phy)
+> > -		usb_phy_shutdown(hsotg->phy);
+> > +		phy_power_off(hsotg->phy);
+> >  	else if (hsotg->plat->phy_exit)
+> >  		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);  } @@ -
+> 3529,7
+> > +3530,7 @@ static void s3c_hsotg_delete_debug(struct s3c_hsotg *hsotg)
+> > static int s3c_hsotg_probe(struct platform_device *pdev)  {
+> >  	struct s3c_hsotg_plat *plat = dev_get_platdata(&pdev->dev);
+> > -	struct usb_phy *phy;
+> > +	struct phy *phy;
+> >  	struct device *dev = &pdev->dev;
+> >  	struct s3c_hsotg_ep *eps;
+> >  	struct s3c_hsotg *hsotg;
+> > @@ -3544,7 +3545,7 @@ static int s3c_hsotg_probe(struct
+> platform_device *pdev)
+> >  		return -ENOMEM;
+> >  	}
+> >
+> > -	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> > +	phy = devm_phy_get(&pdev->dev, "usb2-phy");
+> >  	if (IS_ERR(phy)) {
+> >  		/* Fallback for pdata */
+> >  		plat = dev_get_platdata(&pdev->dev);
+> > --
+> > 1.7.9.5
+> >
