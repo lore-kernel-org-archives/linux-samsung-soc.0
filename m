@@ -1,102 +1,75 @@
 From: kgene@kernel.org
-Subject: [PATCH 10/11] ARM: EXYNOS: remove <mach/regs-clock.h> for exynos
-Date: Tue, 17 Dec 2013 20:53:07 +0900
-Message-ID: <116801cefb1e$8d3d5280$a7b7f780$@kernel.org>
+Subject: [PATCH 00/11] ARM: EXYNOS: cleanup <mach/regs-xxx.h>
+Date: Tue, 17 Dec 2013 20:58:57 +0900
+Message-ID: <116a01cefb1f$5d841be0$188c53a0$@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64962 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:65501 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752786Ab3LQLxI (ORCPT
+	with ESMTP id S1751369Ab3LQL66 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Dec 2013 06:53:08 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
+	Tue, 17 Dec 2013 06:58:58 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
  by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXY000VV90JP150@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Dec 2013 20:53:08 +0900 (KST)
+ with ESMTP id <0MXY0003T9A9P160@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Dec 2013 20:58:57 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Kukjin Kim <kgene.kim@samsung.com>
+This is cleanup for <mach/regs-xxx.h>.
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos/include/mach/regs-clock.h |   19 -------------------
- arch/arm/mach-exynos/platsmp.c                 |    1 -
- arch/arm/mach-exynos/pmu.c                     |    2 +-
- arch/arm/plat-samsung/pm.c                     |    2 +-
- 4 files changed, 2 insertions(+), 22 deletions(-)
+My e-mail client is used for submitting them instead of git send-email
+because of firewall :-( so looks strange format...sorry about that but it
+should be fine when I take them :-)
+
+Kukjin Kim (11):
+      ARM: EXYNOS: cleanup <mach/regs-pmu.h>
+      ARM: EXYNOS: remove inclusion <mach/regs-pmu.h> into another headers
+      ARM: EXYNOS: local regs-pmu.h header file
+      ARM: EXYNOS: cleanup <mach/regs-irq.h>
+      ARM: EXYNOS: cleanup <mach/regs-clock.h>
+      PM / devfreq: move definitions for exynos4_bus into drivers/devfreq
+      ARM: EXYNOS: local definitions for pm.c into mach-exynos dir
+      cpufreq: exynos: move definitions for exynos-cpufreq into
+drivers/cpufreq/
+      ARM: EXYNOS: local definitions for cpuidle.c into mach-exynos dir
+      ARM: EXYNOS: remove <mach/regs-clock.h> for exynos
+      PM / devfreq: use inclusion <mach/map.h> instead of <plat/map-s5p.h>
+
+ arch/arm/mach-exynos/common.c                      |    5 +-
+ arch/arm/mach-exynos/cpuidle.c                     |   25 +++++-
+ arch/arm/mach-exynos/hotplug.c                     |    2 +-
+ arch/arm/mach-exynos/include/mach/pm-core.h        |    5 +-
+ arch/arm/mach-exynos/include/mach/regs-clock.h     |  372
+----------------------------------------------------------------------------
+-
+ arch/arm/mach-exynos/include/mach/regs-irq.h       |   19 ----
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
+ arch/arm/mach-exynos/platsmp.c                     |    3 +-
+ arch/arm/mach-exynos/pm.c                          |   29 +++++-
+ arch/arm/mach-exynos/pm_domains.c                  |    3 +-
+ arch/arm/mach-exynos/pmu.c                         |    3 +-
+ arch/arm/mach-exynos/{include/mach => }/regs-pmu.h |   53 -----------
+ arch/arm/plat-samsung/pm.c                         |    2 +
+ arch/arm/plat-samsung/s5p-irq-pm.c                 |    3 +
+ drivers/cpufreq/exynos-cpufreq.h                   |   22 +++++
+ drivers/cpufreq/exynos4210-cpufreq.c               |    2 -
+ drivers/cpufreq/exynos4x12-cpufreq.c               |    2 -
+ drivers/cpufreq/exynos5250-cpufreq.c               |    1 -
+ drivers/devfreq/exynos/exynos4_bus.c               |    4 +-
+ drivers/devfreq/exynos/exynos4_bus.h               |  110
++++++++++++++++++++++++
+ 20 files changed, 201 insertions(+), 466 deletions(-)
  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-clock.h
+ delete mode 100644 arch/arm/mach-exynos/include/mach/regs-irq.h
+ rename arch/arm/mach-exynos/{include/mach => }/regs-pmu.h (88%)
+ create mode 100644 drivers/devfreq/exynos/exynos4_bus.h
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h
-b/arch/arm/mach-exynos/include/mach/regs-clock.h
-deleted file mode 100644
-index cc121a5..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/* linux/arch/arm/mach-exynos4/include/mach/regs-clock.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS4 - Clock register definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_REGS_CLOCK_H
--#define __ASM_ARCH_REGS_CLOCK_H __FILE__
--
--#include <plat/cpu.h>
--#include <mach/map.h>
--
--#endif /* __ASM_ARCH_REGS_CLOCK_H */
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index b5b34f8..474432f 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -27,7 +27,6 @@
- #include <asm/firmware.h>
- 
- #include <mach/hardware.h>
--#include <mach/regs-clock.h>
- 
- #include <plat/cpu.h>
- 
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 0116d5b..7f8c5ee 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -13,7 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/bug.h>
- 
--#include <mach/regs-clock.h>
-+#include <plat/cpu.h>
- 
- #include "common.h"
- #include "regs-pmu.h"
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 47ec54b..5f2add9 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -28,8 +28,8 @@
- #ifdef CONFIG_SAMSUNG_ATAGS
- #include <mach/hardware.h>
- #include <mach/map.h>
--#include <mach/regs-clock.h>
- #ifndef CONFIG_ARCH_EXYNOS
-+#include <mach/regs-clock.h>
- #include <mach/regs-irq.h>
- #endif
- #include <mach/irqs.h>
--- 
-1.7.10.4
+Thanks.
+K-Gene.
