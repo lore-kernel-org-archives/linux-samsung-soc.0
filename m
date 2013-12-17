@@ -1,69 +1,90 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
 Subject: Re: [PATCH 3/3] cpufreq: exynos: Add exynos5420 cpufreq driver
-Date: Tue, 17 Dec 2013 13:51:13 +0530
-Message-ID: <CALt3h78Zoabm+1kDNrEEyQ_Nshi2yOFd57NwOq6zTnVijfngJA@mail.gmail.com>
+Date: Tue, 17 Dec 2013 10:09:56 +0100
+Message-ID: <20131217100956.6fa5b7e6@amdc2363>
 References: <1386323284-15646-1-git-send-email-arun.kk@samsung.com>
-	<1386323284-15646-4-git-send-email-arun.kk@samsung.com>
-	<20131209092324.1f8b6502@amdc2363>
-	<CALt3h7-25_mW5SnnTbZWjoF0pOZxsU5Gg6FqOdoz1MgdH7gm5w@mail.gmail.com>
-	<20131210173208.5083aa1f@amdc2363>
-	<CABb+yY0C50va5UAgv5QKGKK6qE1wiDwcUmn54CC7PVQ8vpoEmg@mail.gmail.com>
-	<20131217091456.1af748c3@amdc2363>
+ <1386323284-15646-4-git-send-email-arun.kk@samsung.com>
+ <CAKohpo=vkZRSQ5Xk-Tsm9QVy8h2F5Ehpm4Y8JWi5xjx0OD72tw@mail.gmail.com>
+ <20131217090005.1e04ff7b@amdc2363>
+ <CALt3h79iuOnmeCBxHjPN3qAoiuwHYBXAp_eSTDewxc96zqSOOg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20131217091456.1af748c3@amdc2363>
-Sender: cpufreq-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, abrestic@chromium.org, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa <tomasz.figa@gmail.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arjun.kv@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:50303 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750966Ab3LQJKG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Dec 2013 04:10:06 -0500
+In-reply-to: <CALt3h79iuOnmeCBxHjPN3qAoiuwHYBXAp_eSTDewxc96zqSOOg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Kgene Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, abrestic@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa <tomasz.figa@gmail.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arjun.kv@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Lukasz,
+Hi Arun,
 
-On Tue, Dec 17, 2013 at 1:44 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Hi Jassi,
->
->> On Tue, Dec 10, 2013 at 10:02 PM, Lukasz Majewski
->> <l.majewski@samsung.com> wrote:
->> >>
->> >> Actually these values are not for PLL, but for the dividers.
->> >> If you see below, the PLL rate setting is done through
->> >> clk_set_rate() going via CCF. But I found an issue if the divider
->> >> values are set via clk_set_rate API.
->> >> What I found is, the system goes into freeze if all the divider
->> >> values are not set in one shot. So we cannot call multiple
->> >> clk_set_rate()'s on each divider. Thats why I continued with
->> >> non-CCF way of setting the divider.
->> >
->> > I see. I'm not an expert on common clock framework (CCF), but for me
->> > conceptually clock dividers setting shall be handled by CCF.
->> >
->> > However, I've poked a bit at CCF. There isn't any out of the box
->> > solutions available.
->> >
->> > A "virtual" clock can be defined and inside its implementation we
->> > can atomically set dividers. Another solution would be to hack the
->> > current CCF to provide atomic clock operations
->> >
->> CCF isn't only for clocks that have single divider or gate control
->> register. One could define a clock that manipulates more than one
->> divider/gate in one CCF callback. It is already abstract enough. So
->> implementing a virtual clock is the solution, imho.
->
-> Thanks for sharing your experience.
->
->>  BTW, on my platform linux needs to send a 'non-atomic' IPC message to
->> a master co-processor to scale up/down cpufreq. I just define a
->> virtual clock and use the generic bL cpufreq driver
->> drivers/cpufreq/arm_big_little.c
->
-> My use case is simpler - cpufreq-cpu0.c or arm_bit_little.c (for bL)
-> driver with maybe two virtual clocks to handle divider's update.
->
+> Hi Lukasz,
+> 
+> On Tue, Dec 17, 2013 at 1:30 PM, Lukasz Majewski
+> <l.majewski@samsung.com> wrote:
+> > Hi Viresh,
+> >
+> >> On 6 December 2013 15:18, Arun Kumar K <arun.kk@samsung.com> wrote:
+> >> > From: "Arjun.K.V" <arjun.kv@samsung.com>
+> >> >
+> >> > The patch adds cpufreq driver for exynos5420.
+> >> >
+> >> > Signed-off-by: Arjun.K.V <arjun.kv@samsung.com>
+> >> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> >> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> >> > ---
+> >> >  drivers/cpufreq/Kconfig.arm          |   11 ++
+> >> >  drivers/cpufreq/Makefile             |    1 +
+> >> >  drivers/cpufreq/exynos-cpufreq.c     |    2 +
+> >> >  drivers/cpufreq/exynos-cpufreq.h     |    8 +
+> >> >  drivers/cpufreq/exynos5420-cpufreq.c |  346
+> >> > ++++++++++++++++++++++++++++++++++ 5 files changed, 368
+> >> > insertions(+) create mode 100644
+> >> > drivers/cpufreq/exynos5420-cpufreq.c
+> >>
+> >> Hmm.. That's the second big LITTLE SoC after TC2..
+> >> And we already have a generic enough driver for all big LITTLE
+> >> platforms: arm_big_little.c
+> >>
+> >> Please use that with a glue clk and regulator driver if required.
+> >> We don't want to get any new driver for big LITTLE unless there is
+> >> a real limitation.
+> >>
+> >> Also, the generic big LITTLE driver supports IKS (In Kernel
+> >> Switcher) which may or maynot be used by Exynos.
+> >>
+> >> @Lukasz: We can't use cpu0 driver here as we have multiple clusters
+> >> here A7 and A15, and so there are two clock domains instead of one.
+> >> That's why we have written big LITTLE driver.
+> >
+> > When I first looked into the patch - it was almost identical to the
+> > exynos4210-cpufreq.c or exynos4x12-cpufreq.c files.
+> >
+> > Also I didn't spot the code characteristic to IKS. It seems like the
+> > code in this file is not aware if it runs on A7 or A15.
+> >
+> 
+> This initial version was only for A15s and I was planning for an
+> incremental patch for A7s along with common code for the  same. Now
+> that is not needed with the generic implementation in place.
 
-Is it very simple where 5 different dividers with different divider ratios have
-to be set in one shot. Our clk_set_rate() API as such takes only one freq rate
-argument. How do you think to combine say 5 divider rates?
+Ok. I see.
 
-Regards
-Arun
+> 
+> Regards
+> Arun
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
