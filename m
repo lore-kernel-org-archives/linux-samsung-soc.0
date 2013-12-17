@@ -1,97 +1,63 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [GIT PULL 1/7] Samsung fixes for v3.14
-Date: Tue, 17 Dec 2013 13:27:39 +0100
-Message-ID: <7379738.rMmWN95Wqt@flatron>
-References: <52AE0F41.7050706@samsung.com> <3351204.WyoCcrrZ3X@amdc1227> <117101cefb22$d5378b10$7fa6a130$@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL 6/7] Samsung DT for v3.14
+Date: Tue, 17 Dec 2013 12:32:24 +0000
+Message-ID: <20131217123224.GU3185@sirena.org.uk>
+References: <52AE0F9A.3010407@samsung.com>
+ <20131216171645.GJ3185@sirena.org.uk>
+ <117501cefb23$42739020$c75ab060$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xdFnWCcMW4kMaGnb"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:54945 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753246Ab3LQM1r (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:48964 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753277Ab3LQMca (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Dec 2013 07:27:47 -0500
-Received: by mail-bk0-f52.google.com with SMTP id u14so2763242bkz.25
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2013 04:27:46 -0800 (PST)
-In-Reply-To: <117101cefb22$d5378b10$7fa6a130$@kernel.org>
+	Tue, 17 Dec 2013 07:32:30 -0500
+Content-Disposition: inline
+In-Reply-To: <117501cefb23$42739020$c75ab060$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: kgene@kernel.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>
+To: kgene@kernel.org
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tuesday 17 of December 2013 21:23:46 kgene@kernel.org wrote:
-> Tomasz Figa wrote:
-> > 
-> > Hi Kukjin,
-> > 
-> Hi,
-> 
-> > On Monday 16 of December 2013 05:21:21 Kukjin Kim wrote:
-> > > The following changes since commit
-> > 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> > >
-> > >    Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> > >
-> > > are available in the git repository at:
-> > >
-> > >    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > > tags/samsung-fixes
-> > >
-> > > for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
-> > >
-> > >    ARM: dts: Update display clock frequency for Origen-4412 (2013-12-16
-> > > 04:41:57 +0900)
-> > >
-> > > ----------------------------------------------------------------
-> > > Samsung non-critical fixes for v3.14
-> > > - Switch FIFO mode for arch_enable_uart_fifo()
-> > > - Add missing op_mode for PMIC on exynos5250-arndale
-> > > - Add missing clock-frequency for CPU on exynos5250
-> > > - Fix typo samaung to samsung for exynos5420-pinctrl
-> > > - Fix display clock-frequency for exynos4210/exynos4412-origen
-> > >
-> > > ----------------------------------------------------------------
-> > > Alexander Shiyan (1):
-> > >        ARM: SAMSUNG: Fix switching FIFO in arch_enable_uart_fifo
-> function
-> > >
-> > > Sachin Kamat (4):
-> > >        ARM: dts: Add missing op_mode property to PMIC on Arndale
-> > >        ARM: dts: Add missing frequency property to exynos5250
-> > >        ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
-> > >        ARM: dts: Update display clock frequency for Origen-4412
-> > >
-> > > Tushar Behera (1):
-> > >        ARM: dts: Update display clock frequency for Origen-4210
-> > >
-> > >   arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
-> > >   arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
-> > >   arch/arm/boot/dts/exynos5250-arndale.dts        | 2 ++
-> > >   arch/arm/boot/dts/exynos5250.dtsi               | 2 ++
-> > >   arch/arm/boot/dts/exynos5420-pinctrl.dtsi       | 2 +-
-> > >   arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
-> > >   6 files changed, 9 insertions(+), 3 deletions(-)
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe linux-samsung-
-> > soc" in
-> > > the body of a message to majordomo@vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> > I've sent a patch to fix up MMC0 on mini6410 board, when using board file
-> > to boot the system:
-> > 
-> > [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
-> > 
-> > Could we get this patch merged?
-> > 
-> > I know we are moving to DT, but until all boards get converted, board
-> > files must be supported too and this bug makes it impossible to test
-> > non-DT s3c64xx support on Mini6410, without extra out of tree patches.
-> > 
-> OK, I see. Let me take that in next round maybe this weekend.
 
-Thanks.
+--xdFnWCcMW4kMaGnb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Tomasz
+On Tue, Dec 17, 2013 at 09:26:49PM +0900, kgene@kernel.org wrote:
+> Mark Brown wrote:
+
+> > I've been sending updates to disable the I2C and SPI devices by default
+> > on 5250 for some time now - is there any chance of getting them
+> > included?
+
+> Probably, yes and I will send out 2nd round for v3.14 in this weekend before
+> rc5 release ;-)
+
+Excellent, thanks!
+
+--xdFnWCcMW4kMaGnb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSsERVAAoJELSic+t+oim9DFUQAIDj4A978iq3UoS2/cwX3xGt
+NSqTFLWpxPVf9EFGvjLVIPN2GVhx4joQidqqO0/nFrA9aCL4ez71QOAgusrYUofK
+nkVAXMViik3kGAmSJ74IzSgMMuNz5ugHP1I7BUaSapKDm2N1/kR/1OZzn6CjH0B2
+EH5WleNwR3IiKhES9XtdxsDigb5dMuse7B0q+JHwlSM6nIEyUUh0f2fEIFJWJEn8
+kw1q+g5qdgXl0ao244FHGHhQtnx9Do/HNZGef4xJZCGIY5F/N3QtWmPlDEFw2s3V
+kgthumjzH3YeCLl7xhodCpjimbHAxQKrPdauxog0Pafoc00kuzuVg8fZRnQiju8l
+/TXDu1OMbetuA7MumU3TsrM73CVQRc1KjWJIQ8uk4r/ye8V6WUaNpTRZE/mE8Ayj
+CUdvfQ1TFuCIZy6UEwwc9YH4Lp/YSlBxNZsMPAKPnRzHJb4vzzWqigMJ9GNLbFf7
+GCBm204Yseu+yD+cfwVcdtHX8K4DIZrBrvaz7qNDY/0KHF88ucc31dp4tRy47jfI
+S6yndbc5dXqypcZchODxG7R7EgQOLZAFdMR6IPoEln1T7YrjLLdZH/WnUwW4IzDc
+3sQYhSCor6mxv3efbKyyJcWkNbBz05hrUKP+zQcY4jiNd74Hs8WpNHp5ARIYVjeK
+AEj/7SBDo8Z11Cam/X75
+=8fT6
+-----END PGP SIGNATURE-----
+
+--xdFnWCcMW4kMaGnb--
