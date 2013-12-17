@@ -1,52 +1,48 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
 Subject: Re: [PATCH 3/3] cpufreq: exynos: Add exynos5420 cpufreq driver
-Date: Tue, 17 Dec 2013 11:42:58 +0530
-Message-ID: <CAKohpo=vkZRSQ5Xk-Tsm9QVy8h2F5Ehpm4Y8JWi5xjx0OD72tw@mail.gmail.com>
+Date: Tue, 17 Dec 2013 12:37:04 +0530
+Message-ID: <CABb+yY0C50va5UAgv5QKGKK6qE1wiDwcUmn54CC7PVQ8vpoEmg@mail.gmail.com>
 References: <1386323284-15646-1-git-send-email-arun.kk@samsung.com>
 	<1386323284-15646-4-git-send-email-arun.kk@samsung.com>
+	<20131209092324.1f8b6502@amdc2363>
+	<CALt3h7-25_mW5SnnTbZWjoF0pOZxsU5Gg6FqOdoz1MgdH7gm5w@mail.gmail.com>
+	<20131210173208.5083aa1f@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1386323284-15646-4-git-send-email-arun.kk@samsung.com>
+In-Reply-To: <20131210173208.5083aa1f@amdc2363>
 Sender: cpufreq-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kgene Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa <tomasz.figa@gmail.com>, arjun.kv@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com, Lukasz Majewski <l.majewski@samsung.com>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Arun Kumar K <arunkk.samsung@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, abrestic@chromium.org, Viresh Kumar <viresh.kumar@linaro.org>, rjw@rjwysocki.net, Tomasz Figa <tomasz.figa@gmail.com>, cpufreq@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arjun.kv@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 6 December 2013 15:18, Arun Kumar K <arun.kk@samsung.com> wrote:
-> From: "Arjun.K.V" <arjun.kv@samsung.com>
+On Tue, Dec 10, 2013 at 10:02 PM, Lukasz Majewski
+<l.majewski@samsung.com> wrote:
+>>
+>> Actually these values are not for PLL, but for the dividers.
+>> If you see below, the PLL rate setting is done through clk_set_rate()
+>> going via CCF. But I found an issue if the divider values are set via
+>> clk_set_rate API.
+>> What I found is, the system goes into freeze if all the divider
+>> values are not set in one shot. So we cannot call multiple
+>> clk_set_rate()'s on each divider. Thats why I continued with non-CCF
+>> way of setting the divider.
 >
-> The patch adds cpufreq driver for exynos5420.
+> I see. I'm not an expert on common clock framework (CCF), but for me
+> conceptually clock dividers setting shall be handled by CCF.
 >
-> Signed-off-by: Arjun.K.V <arjun.kv@samsung.com>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  drivers/cpufreq/Kconfig.arm          |   11 ++
->  drivers/cpufreq/Makefile             |    1 +
->  drivers/cpufreq/exynos-cpufreq.c     |    2 +
->  drivers/cpufreq/exynos-cpufreq.h     |    8 +
->  drivers/cpufreq/exynos5420-cpufreq.c |  346 ++++++++++++++++++++++++++++++++++
->  5 files changed, 368 insertions(+)
->  create mode 100644 drivers/cpufreq/exynos5420-cpufreq.c
-
-Hmm.. That's the second big LITTLE SoC after TC2..
-And we already have a generic enough driver for all big LITTLE platforms:
-arm_big_little.c
-
-Please use that with a glue clk and regulator driver if required. We don't
-want to get any new driver for big LITTLE unless there is a real limitation.
-
-Also, the generic big LITTLE driver supports IKS (In Kernel Switcher)
-which may or maynot be used by Exynos.
-
-@Lukasz: We can't use cpu0 driver here as we have multiple clusters here
-A7 and A15, and so there are two clock domains instead of one. That's why
-we have written big LITTLE driver.
-
-@Arun: And you logs must be a bit enhanced as well.. I knew 5420 is big
-LITTLE but others may not.. And hence please provide a summary of your
-platform whenever you add new drivers..
-
---
-viresh
+> However, I've poked a bit at CCF. There isn't any out of the box
+> solutions available.
+>
+> A "virtual" clock can be defined and inside its implementation we can
+> atomically set dividers. Another solution would be to hack the current
+> CCF to provide atomic clock operations
+>
+CCF isn't only for clocks that have single divider or gate control
+register. One could define a clock that manipulates more than one
+divider/gate in one CCF callback. It is already abstract enough. So
+implementing a virtual clock is the solution, imho.
+ BTW, on my platform linux needs to send a 'non-atomic' IPC message to
+a master co-processor to scale up/down cpufreq. I just define a
+virtual clock and use the generic bL cpufreq driver
+drivers/cpufreq/arm_big_little.c
