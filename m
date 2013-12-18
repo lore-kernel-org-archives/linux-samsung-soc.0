@@ -1,79 +1,181 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 0/7] usb: dwc3: pm_runtime implementation
-Date: Wed, 18 Dec 2013 09:40:21 -0600
-Message-ID: <20131218154021.GC1593@saruman.home>
-References: <1386884325-11440-1-git-send-email-balbi@ti.com>
- <20131217233140.GA21267@psi-dev26.jf.intel.com>
- <20131217233554.GB21267@psi-dev26.jf.intel.com>
- <20131218153614.GB1593@saruman.home>
-Reply-To: <balbi@ti.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v11 3/4] thermal: samsung: Add TMU support for Exynos5420
+ SoCs
+Date: Wed, 18 Dec 2013 16:50:17 +0100
+Message-ID: <1498725.3K8LHaD3Qd@amdc1227>
+References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com>
+ <1386657745-21602-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131218153614.GB1593@saruman.home>
-Sender: linux-omap-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: David Cohen <david.a.cohen@linux.intel.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, w-kwok2@ti.com, Santosh Shilimkar <santosh.shilimkar@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1386657745-21602-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
---jy6Sn24JjFx/iggw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Naveen,
 
-On Wed, Dec 18, 2013 at 09:36:14AM -0600, Felipe Balbi wrote:
-> Hi,
->=20
-> On Tue, Dec 17, 2013 at 03:35:54PM -0800, David Cohen wrote:
-> > On Tue, Dec 17, 2013 at 03:31:40PM -0800, David Cohen wrote:
-> > > On Thu, Dec 12, 2013 at 03:38:38PM -0600, Felipe Balbi wrote:
-> > > > hi all,
-> > > >=20
-> > > > these patches add pm_runtime support for all glue layers.
-> > > >=20
-> > > > I plan to add pm_runtime support for dwc3 after these
-> > > > patches are merged upstream.
-> > > >=20
-> > > > Please test.
-> > >=20
-> > > At first time I failed to notice you were removing #ifdef's around pm
-> > > callback functions. Instead of saying DWC3 will start to have warnings
-> > > when CONFIG_PM is not selected, I'd say your patch set is now a
-> > > dependence of my RFC :)
-> >=20
-> > I guess I said it in wrong order :P
-> > Your patch set depends on my RFC.
->=20
-> Or I just modify my patchset a little bit for now ;-)
+On Tuesday 10 of December 2013 12:12:25 Naveen Krishna Chatradhi wrote:
+> Exynos5420 has 5 TMU channels, the TRIMINFO register is
+> misplaced for TMU channels 2, 3 and 4
+> TRIMINFO at 0x1006c000 contains data for TMU channel 3
+> TRIMINFO at 0x100a0000 contains data for TMU channel 4
+> TRIMINFO at 0x10068000 contains data for TMU channel 2
+[snip]
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> index a1aa602..a3e78c0 100644
+> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> @@ -6,6 +6,9 @@
+>  	       "samsung,exynos4412-tmu"
+>  	       "samsung,exynos4210-tmu"
+>  	       "samsung,exynos5250-tmu"
+> +	       "samsung,exynos5420-tmu" for TMU channel 0, 1 on Exynos5420
+> +	       "samsung,exynos5420-tmu-ext-triminfo" for TMU channels 2, 3 and 4
+> +			Exynos5420 (Must pass triminfo base and triminfo clock)
 
-nah, it looks horrible with all those ifdefs around. I'll delay my
-patch series.
+Exact clock names must be specified in description of clock-names property.
 
---=20
-balbi
+>  	       "samsung,exynos5440-tmu"
+>  - interrupt-parent : The phandle for the interrupt controller
+>  - reg : Address range of the thermal registers. For soc's which has multiple
+> @@ -13,6 +16,16 @@
+>  	interrupt related then 2 set of register has to supplied. First set
+>  	belongs	to register set of TMU instance and second set belongs to
+>  	registers shared with the TMU instance.
+> +
+> +  NOTE: On Exynos5420, the TRIMINFO register is misplaced for TMU
+> +	channels 2, 3 and 4
+> +	Use "samsung,exynos5420-tmu-ext-triminfo" in cases, there is a misplaced
+> +	register, also provide clock to access that base.
+> +
+> +	TRIMINFO at 0x1006c000 contains data for TMU channel 3
+> +	TRIMINFO at 0x100a0000 contains data for TMU channel 4
+> +	TRIMINFO at 0x10068000 contains data for TMU channel 2
+> +
+>  - interrupts : Should contain interrupt for thermal system
+>  - clocks : The main clock for TMU device
+>  - clock-names : Thermal system clock name
+> @@ -43,6 +56,31 @@ Example 2):
+>  		clock-names = "tmu_apbif";
+>  	};
+>  
+> +Example 3): (In case of Exynos5420 "with misplaced TRIMINFO register")
+> +	tmu_cpu2: tmu@10068000 {
+> +		compatible = "samsung,exynos5420-tmu-ext-triminfo";
+> +		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
+> +		interrupts = <0 184 0>;
+> +		clocks = <&clock 318>, <&clock 318>;
+> +		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
 
---jy6Sn24JjFx/iggw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Here you have "tmu_triminfo_apbif" clock, but in the driver you call
+clk_get() with "tmu_apbif_triminfo".
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
+> +	};
+> +
+[snip]
+>  
+> +	data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_triminfo");
 
-iQIcBAEBAgAGBQJSscHlAAoJEIaOsuA1yqREYqkQAJQ+hA19XxDmBOP9VagIcuVF
-RA6X/UoKVHyx5M6g8I2w8sJt/ClZlWvEIpuglnjPWRPA0JqHi/Y7xtYwL0oF4fGk
-q+W7dxwRMrq54Kb6l/BIpvKIYIpuGia4+yUoTYHOhdXPS80Yo/p4LFjvFgWzc5kZ
-BfYnj7JiL1zqGYLk6RFU43bjc3jODYxoYNGNEo5olKtK/9KrDaxQqPw0CNc9P5qb
-iQsALnDJIEB5RmcU3sA3JUIvSSZEB98UjVseQBi5ubvyGVGttWbrkjtFQiv5KnXz
-ffI1ruyDxDB4a3IgJN1cDtnJUEOf2lIW7cA9G00GvB6pDyWDgvfe51xcsp6u/XvP
-Vs1k29Eh5ttPVU1ruYybCOekCjbnmRCGhNTJ1F3XygbNsXoxbPxkBJMi1cIZmq+c
-3nanL6MTiiULgNnYsq7xQRsT+9d3GdkIdM07TqJikEreSs7EaH0v5cZha0vQZ3hE
-+wsxYaTCOEjD95ooKVAiQhmuDi0ExZudVoY9cjWAXo/78QGmuk7cPYqDEfiz5mZc
-KeJix6qzt2pDtWCut/52zFbFwSzy+ABeVB3KI1t9YmUuw0zziWophsSPMa6sWQpC
-Wd3yqTMpsjI4I3+fvUTUVXn4CPEBCx2vRRgqSbEtPeJSF/+aE2uTiC2oFTcdgUMs
-ddCQTHpR6A7ekGyJ8olN
-=Ba4m
------END PGP SIGNATURE-----
+Here you try to get "tmu_apbif_triminfo" clock, but in binding
+documentation you have "tmu_triminfo_apbif" in example.
 
---jy6Sn24JjFx/iggw--
+> +	if (IS_ERR(data->clk_sec)) {
+> +		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
+> +			dev_err(&pdev->dev, "Failed to get triminfo clock\n");
+> +			return PTR_ERR(data->clk_sec);
+> +		}
+> +	} else {
+> +		ret = clk_prepare(data->clk_sec);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Failed to get clock\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	ret = clk_prepare(data->clk);
+> -	if (ret)
+> -		return ret;
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to get clock\n");
+> +		goto err_clk_sec;
+> +	}
+>  
+>  	if (pdata->type == SOC_ARCH_EXYNOS4210 ||
+>  	    pdata->type == SOC_ARCH_EXYNOS4412 ||
+>  	    pdata->type == SOC_ARCH_EXYNOS5250 ||
+> +	    pdata->type == SOC_ARCH_EXYNOS5420_TRIMINFO ||
+
+Don't you also need SOC_ARCH_EXYNOS5420 here?
+
+>  	    pdata->type == SOC_ARCH_EXYNOS5440)
+>  		data->soc = pdata->type;
+>  	else {
+> @@ -703,6 +742,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  	return 0;
+>  err_clk:
+>  	clk_unprepare(data->clk);
+> +err_clk_sec:
+> +	if (!IS_ERR(data->clk_sec))
+> +		clk_unprepare(data->clk_sec);
+>  	return ret;
+>  }
+>  
+> @@ -715,6 +757,8 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+>  	exynos_unregister_thermal(data->reg_conf);
+>  
+>  	clk_unprepare(data->clk);
+> +	if (!IS_ERR(data->clk_sec))
+> +		clk_unprepare(data->clk_sec);
+>  
+>  	if (!IS_ERR(data->regulator))
+>  		regulator_disable(data->regulator);
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> index 0d6b32f..60cce28 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -43,6 +43,7 @@ enum soc_type {
+>  	SOC_ARCH_EXYNOS4210 = 1,
+>  	SOC_ARCH_EXYNOS4412,
+>  	SOC_ARCH_EXYNOS5250,
+> +	SOC_ARCH_EXYNOS5420_TRIMINFO,
+
+Here as well.
+
+>  	SOC_ARCH_EXYNOS5440,
+>  };
+>  
+[snip]
+> +#define EXYNOS5420_TMU_DATA \
+> +	__EXYNOS5420_TMU_DATA \
+> +	.type = SOC_ARCH_EXYNOS5250, \
+> +	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+> +			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+> +			TMU_SUPPORT_EMUL_TIME)
+> +
+> +#define EXYNOS5420_TMU_DATA_SHARED \
+> +	__EXYNOS5420_TMU_DATA \
+> +	.type = SOC_ARCH_EXYNOS5420_TRIMINFO, \
+> +	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+> +			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+> +			TMU_SUPPORT_EMUL_TIME | TMU_SUPPORT_ADDRESS_MULTIPLE)
+> +
+> +struct exynos_tmu_init_data const exynos5420_default_tmu_data = {
+> +	.tmu_data = {
+> +		{ EXYNOS5420_TMU_DATA },
+> +		{ EXYNOS5420_TMU_DATA },
+> +		{ EXYNOS5420_TMU_DATA_SHARED },
+> +		{ EXYNOS5420_TMU_DATA_SHARED },
+> +		{ EXYNOS5420_TMU_DATA_SHARED },
+
+Shouldn't this be inferred from compatible string?
+
+If I understand this code correctly, you can now always use
+EXYNOS5420_TMU_DATA for 5420-tmu compatible string and
+EXYNOS5420_TMU_DATA_SHARED for 5420-tmu-ext-triminfo.
+
+Best regards,
+Tomasz
+
