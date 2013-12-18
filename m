@@ -1,25 +1,25 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [RESEND] [PATCH V3] ARM: dts: Add DMA controller node info on
- Exynos5420.
-Date: Thu, 19 Dec 2013 02:38:04 +0900
-Message-ID: <52B1DD7C.404@samsung.com>
-References: <1381137944-30503-1-git-send-email-l.krishna@samsung.com> <086601cedf98$2cb9f310$862dd930$@org> <CAL1wa8d4TebPjfSw1Q3XMzTmUchO=jCbeUbX+STVEq4TG33kzQ@mail.gmail.com>
+Subject: Re: [RESEND] [PATCH] ARM: dts: exynos5: add pwm DT nodes to Exynos5250
+ and Exynos5420
+Date: Thu, 19 Dec 2013 02:40:11 +0900
+Message-ID: <52B1DDFB.4030104@samsung.com>
+References: <1381383731-4359-1-git-send-email-l.krishna@samsung.com> <CAK9yfHyB=Uqjg1HhMx6BXSihDmwRpmpkeLrm2YgDj2Yyo4ySuA@mail.gmail.com> <CAL1wa8e0e1NwrntEPTnm8=_bSXj3k=Gk+jenphYPEAh8tXKwiA@mail.gmail.com> <086801cedf9b$cef3c450$6cdb4cf0$@org> <CAL1wa8dsNkDj1pPUgrEB+7T378Gh=-AFXAn8CAe90y8aCZ9vHA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:35857 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754301Ab3LRRiL (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:53300 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752104Ab3LRRkR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 12:38:11 -0500
-In-Reply-To: <CAL1wa8d4TebPjfSw1Q3XMzTmUchO=jCbeUbX+STVEq4TG33kzQ@mail.gmail.com>
+	Wed, 18 Dec 2013 12:40:17 -0500
+In-Reply-To: <CAL1wa8dsNkDj1pPUgrEB+7T378Gh=-AFXAn8CAe90y8aCZ9vHA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, broonie@kernel.org, padma venkat <padma.kvr@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, abrestic@chromium.org, olofj@chromium.org
 
-On 12/12/13 20:36, Leela Krishna Amudala wrote:
+On 12/12/13 20:35, Leela Krishna Amudala wrote:
 > Hi Kukjin,
 >
 > Even though you said it is applied, I didn't see this patch in any of
@@ -32,96 +32,64 @@ Kukjin
 > Best Wishes,
 > Leela Krishna.
 >
-> On Tue, Nov 12, 2013 at 8:13 PM, Kukjin Kim<kgene@kernel.org>  wrote:
+> On Tue, Nov 12, 2013 at 8:39 PM, Kukjin Kim<kgene@kernel.org>  wrote:
 >> Leela Krishna Amudala wrote:
 >>>
->> + dt ml.
->>
->>> From: Padmavathi Venna<padma.v@samsung.com>
+>>> Hi Sachin,
 >>>
->>> This patch adds dma controller node info on Exynos5420.
->>> Exynos5420 has adma for audio IPs. As adma clk is dependent
->>> on audss clk provider that will be added later.
->>>
->>> Signed-off-by: Padmavathi Venna<padma.v@samsung.com>
->>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
->>> ---
->>> Change since V2:
->>>        - Removed adma node as adma clock is dependent audss clock provider.
->>>
->>> Changes since V1:
->>>          - In V1, dma node common stuff was added in common exynos5.dtsi
->> file.
->>>            This was removed as per Kukjin comment and added in
->>> exynos5420.dtsi.
->>>
->>>   arch/arm/boot/dts/exynos5420.dtsi |   52
->>> +++++++++++++++++++++++++++++++++++++
->>>   1 file changed, 52 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+>>> On Thu, Oct 10, 2013 at 11:18 AM, Sachin Kamat<sachin.kamat@linaro.org>
+>>> wrote:
+>>>> Hi Leela,
+>>>>
+>>>> On 10 October 2013 11:12, Leela Krishna Amudala<l.krishna@samsung.com>
+>>> wrote:
+>>>>> Add the device-tree binding for the PWM controller to Exynos5250 and
+>>> Exynos5420
+>>>>>
+>>>>> Signed-off-by: Andrew Bresticker<abrestic@chromium.org>
+>>>>> Signed-off-by: Olof Johansson<olofj@chromium.org>
+>>>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
+>>>>> ---
+>>>>>   arch/arm/boot/dts/exynos5250.dtsi |    9 +++++++++
+>>>>>   arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
+>>>>>   2 files changed, 18 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>>> b/arch/arm/boot/dts/exynos5250.dtsi
+>>>>> index 864ae90..99abc72 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>>>> @@ -521,6 +521,15 @@
+>>>>>                  };
+>>>>>          };
+>>>>>
+>>>>> +       pwm: pwm@12dd0000 {
+>>>>> +               compatible = "samsung,exynos4210-pwm";
+>>>>> +               reg =<0x12dd0000 0x100>;
+>>>>> +               samsung,pwm-outputs =<0>,<1>,<2>,<3>;
+>>>>> +               #pwm-cells =<3>;
+>>>>> +               clocks =<&clock 311>;
+>>>>> +               clock-names = "timers";
+>>>>> +       };
+>>>>> +
+>>>>>          amba {
+>>>>>                  #address-cells =<1>;
+>>>>>                  #size-cells =<1>;
+>>>>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
 >>> b/arch/arm/boot/dts/exynos5420.dtsi
->>> index d537cd7..15465f8 100644
->>> --- a/arch/arm/boot/dts/exynos5420.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->>> @@ -186,6 +186,58 @@
->>>                status = "okay";
->>>        };
->>>
->>> +     amba {
->>> +             #address-cells =<1>;
->>> +             #size-cells =<1>;
->>> +             compatible = "arm,amba-bus";
->>> +             interrupt-parent =<&gic>;
->>> +             ranges;
->>> +
->>> +             pdma0: pdma@121A0000 {
->>> +                     compatible = "arm,pl330", "arm,primecell";
->>> +                     reg =<0x121A0000 0x1000>;
->>> +                     interrupts =<0 34 0>;
->>> +                     clocks =<&clock 362>;
->>> +                     clock-names = "apb_pclk";
->>> +                     #dma-cells =<1>;
->>> +                     #dma-channels =<8>;
->>> +                     #dma-requests =<32>;
->>> +             };
->>> +
->>> +             pdma1: pdma@121B0000 {
->>> +                     compatible = "arm,pl330", "arm,primecell";
->>> +                     reg =<0x121B0000 0x1000>;
->>> +                     interrupts =<0 35 0>;
->>> +                     clocks =<&clock 363>;
->>> +                     clock-names = "apb_pclk";
->>> +                     #dma-cells =<1>;
->>> +                     #dma-channels =<8>;
->>> +                     #dma-requests =<32>;
->>> +             };
->>> +
->>> +             mdma0: mdma@10800000 {
->>> +                     compatible = "arm,pl330", "arm,primecell";
->>> +                     reg =<0x10800000 0x1000>;
->>> +                     interrupts =<0 33 0>;
->>> +                     clocks =<&clock 473>;
->>> +                     clock-names = "apb_pclk";
->>> +                     #dma-cells =<1>;
->>> +                     #dma-channels =<8>;
->>> +                     #dma-requests =<1>;
->>> +             };
->>> +
->>> +             mdma1: mdma@11C10000 {
->>> +                     compatible = "arm,pl330", "arm,primecell";
->>> +                     reg =<0x11C10000 0x1000>;
->>> +                     interrupts =<0 124 0>;
->>> +                     clocks =<&clock 442>;
->>> +                     clock-names = "apb_pclk";
->>> +                     #dma-cells =<1>;
->>> +                     #dma-channels =<8>;
->>> +                     #dma-requests =<1>;
->>> +             };
->>> +     };
->>> +
->>>        serial@12C00000 {
->>>                clocks =<&clock 257>,<&clock 128>;
->>>                clock-names = "uart", "clk_uart_baud0";
->>> --
->>> 1.7.10.4
+>>>>> index d537cd7..80afc8b 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>>>>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>>>>> @@ -206,6 +206,15 @@
+>>>>>                  clock-names = "uart", "clk_uart_baud0";
+>>>>>          };
+>>>>>
+>>>>> +       pwm: pwm@12dd0000 {
+>>>>> +               compatible = "samsung,exynos4210-pwm";
+>>>>> +               reg =<0x12dd0000 0x100>;
+>>>>> +               samsung,pwm-outputs =<0>,<1>,<2>,<3>;
+>>>>> +               #pwm-cells =<3>;
+>>>>> +               clocks =<&clock 279>;
+>>>>> +               clock-names = "timers";
+>>>>> +       };
+>>>>> +
