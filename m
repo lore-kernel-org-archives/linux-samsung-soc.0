@@ -1,95 +1,105 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [RESEND] [PATCH] ARM: dts: exynos5: add pwm DT nodes to Exynos5250
- and Exynos5420
-Date: Thu, 19 Dec 2013 02:40:11 +0900
-Message-ID: <52B1DDFB.4030104@samsung.com>
-References: <1381383731-4359-1-git-send-email-l.krishna@samsung.com> <CAK9yfHyB=Uqjg1HhMx6BXSihDmwRpmpkeLrm2YgDj2Yyo4ySuA@mail.gmail.com> <CAL1wa8e0e1NwrntEPTnm8=_bSXj3k=Gk+jenphYPEAh8tXKwiA@mail.gmail.com> <086801cedf9b$cef3c450$6cdb4cf0$@org> <CAL1wa8dsNkDj1pPUgrEB+7T378Gh=-AFXAn8CAe90y8aCZ9vHA@mail.gmail.com>
+Subject: Re: [GIT PULL 1/7] Samsung fixes for v3.14
+Date: Thu, 19 Dec 2013 02:49:50 +0900
+Message-ID: <52B1E03E.5040400@samsung.com>
+References: <52AE0F41.7050706@samsung.com> <3351204.WyoCcrrZ3X@amdc1227> <117101cefb22$d5378b10$7fa6a130$@kernel.org> <7379738.rMmWN95Wqt@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:53300 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752104Ab3LRRkR (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:57555 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752203Ab3LRRt5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 12:40:17 -0500
-In-Reply-To: <CAL1wa8dsNkDj1pPUgrEB+7T378Gh=-AFXAn8CAe90y8aCZ9vHA@mail.gmail.com>
+	Wed, 18 Dec 2013 12:49:57 -0500
+Received: by mail-pa0-f41.google.com with SMTP id lf10so6313179pab.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 09:49:56 -0800 (PST)
+In-Reply-To: <7379738.rMmWN95Wqt@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, abrestic@chromium.org, olofj@chromium.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, kgene@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
 
-On 12/12/13 20:35, Leela Krishna Amudala wrote:
-> Hi Kukjin,
->
-> Even though you said it is applied, I didn't see this patch in any of
-> your trees.
-> Can you kindly look into this patch and take necessary action..?
->
-Applied, thanks.
-Kukjin
 
-> Best Wishes,
-> Leela Krishna.
->
-> On Tue, Nov 12, 2013 at 8:39 PM, Kukjin Kim<kgene@kernel.org>  wrote:
->> Leela Krishna Amudala wrote:
+
+On 12/17/13 21:27, Tomasz Figa wrote:
+> On Tuesday 17 of December 2013 21:23:46 kgene@kernel.org wrote:
+>> Tomasz Figa wrote:
 >>>
->>> Hi Sachin,
+>>> Hi Kukjin,
 >>>
->>> On Thu, Oct 10, 2013 at 11:18 AM, Sachin Kamat<sachin.kamat@linaro.org>
->>> wrote:
->>>> Hi Leela,
+>> Hi,
+>>
+>>> On Monday 16 of December 2013 05:21:21 Kukjin Kim wrote:
+>>>> The following changes since commit
+>>> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
 >>>>
->>>> On 10 October 2013 11:12, Leela Krishna Amudala<l.krishna@samsung.com>
->>> wrote:
->>>>> Add the device-tree binding for the PWM controller to Exynos5250 and
->>> Exynos5420
->>>>>
->>>>> Signed-off-by: Andrew Bresticker<abrestic@chromium.org>
->>>>> Signed-off-by: Olof Johansson<olofj@chromium.org>
->>>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
->>>>> ---
->>>>>   arch/arm/boot/dts/exynos5250.dtsi |    9 +++++++++
->>>>>   arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
->>>>>   2 files changed, 18 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->>> b/arch/arm/boot/dts/exynos5250.dtsi
->>>>> index 864ae90..99abc72 100644
->>>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
->>>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->>>>> @@ -521,6 +521,15 @@
->>>>>                  };
->>>>>          };
->>>>>
->>>>> +       pwm: pwm@12dd0000 {
->>>>> +               compatible = "samsung,exynos4210-pwm";
->>>>> +               reg =<0x12dd0000 0x100>;
->>>>> +               samsung,pwm-outputs =<0>,<1>,<2>,<3>;
->>>>> +               #pwm-cells =<3>;
->>>>> +               clocks =<&clock 311>;
->>>>> +               clock-names = "timers";
->>>>> +       };
->>>>> +
->>>>>          amba {
->>>>>                  #address-cells =<1>;
->>>>>                  #size-cells =<1>;
->>>>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
->>> b/arch/arm/boot/dts/exynos5420.dtsi
->>>>> index d537cd7..80afc8b 100644
->>>>> --- a/arch/arm/boot/dts/exynos5420.dtsi
->>>>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->>>>> @@ -206,6 +206,15 @@
->>>>>                  clock-names = "uart", "clk_uart_baud0";
->>>>>          };
->>>>>
->>>>> +       pwm: pwm@12dd0000 {
->>>>> +               compatible = "samsung,exynos4210-pwm";
->>>>> +               reg =<0x12dd0000 0x100>;
->>>>> +               samsung,pwm-outputs =<0>,<1>,<2>,<3>;
->>>>> +               #pwm-cells =<3>;
->>>>> +               clocks =<&clock 279>;
->>>>> +               clock-names = "timers";
->>>>> +       };
->>>>> +
+>>>>     Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+>>>>
+>>>> are available in the git repository at:
+>>>>
+>>>>     git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>>> tags/samsung-fixes
+>>>>
+>>>> for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
+>>>>
+>>>>     ARM: dts: Update display clock frequency for Origen-4412 (2013-12-16
+>>>> 04:41:57 +0900)
+>>>>
+>>>> ----------------------------------------------------------------
+>>>> Samsung non-critical fixes for v3.14
+>>>> - Switch FIFO mode for arch_enable_uart_fifo()
+>>>> - Add missing op_mode for PMIC on exynos5250-arndale
+>>>> - Add missing clock-frequency for CPU on exynos5250
+>>>> - Fix typo samaung to samsung for exynos5420-pinctrl
+>>>> - Fix display clock-frequency for exynos4210/exynos4412-origen
+>>>>
+>>>> ----------------------------------------------------------------
+>>>> Alexander Shiyan (1):
+>>>>         ARM: SAMSUNG: Fix switching FIFO in arch_enable_uart_fifo
+>> function
+>>>>
+>>>> Sachin Kamat (4):
+>>>>         ARM: dts: Add missing op_mode property to PMIC on Arndale
+>>>>         ARM: dts: Add missing frequency property to exynos5250
+>>>>         ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
+>>>>         ARM: dts: Update display clock frequency for Origen-4412
+>>>>
+>>>> Tushar Behera (1):
+>>>>         ARM: dts: Update display clock frequency for Origen-4210
+>>>>
+>>>>    arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
+>>>>    arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
+>>>>    arch/arm/boot/dts/exynos5250-arndale.dts        | 2 ++
+>>>>    arch/arm/boot/dts/exynos5250.dtsi               | 2 ++
+>>>>    arch/arm/boot/dts/exynos5420-pinctrl.dtsi       | 2 +-
+>>>>    arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
+>>>>    6 files changed, 9 insertions(+), 3 deletions(-)
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+>>> soc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>> I've sent a patch to fix up MMC0 on mini6410 board, when using board file
+>>> to boot the system:
+>>>
+>>> [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
+>>>
+>>> Could we get this patch merged?
+>>>
+>>> I know we are moving to DT, but until all boards get converted, board
+>>> files must be supported too and this bug makes it impossible to test
+>>> non-DT s3c64xx support on Mini6410, without extra out of tree patches.
+>>>
+>> OK, I see. Let me take that in next round maybe this weekend.
+>
+> Thanks.
+>
+
+Tomasz, I've applied it into 2nd fixes for v3.14.
+
+If anything else, please let me know.
+
+Thanks,
+Kukjin
