@@ -1,125 +1,99 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/2] i2c: exynos5: configure fifo_depth based on HSI2C
- module version
-Date: Wed, 18 Dec 2013 16:21:02 +0100
-Message-ID: <2845697.u7ZX4ij9vS@amdc1227>
-References: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com>
- <1739891.MYO4PRtJOt@amdc1227>
- <CAHfPSqCQZiMuH3S1eK2gqKShVjc+-BFZ8kkigTRDQyyETiPkQA@mail.gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 0/7] usb: dwc3: pm_runtime implementation
+Date: Wed, 18 Dec 2013 09:36:14 -0600
+Message-ID: <20131218153614.GB1593@saruman.home>
+References: <1386884325-11440-1-git-send-email-balbi@ti.com>
+ <20131217233140.GA21267@psi-dev26.jf.intel.com>
+ <20131217233554.GB21267@psi-dev26.jf.intel.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16933 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754679Ab3LRPVU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 10:21:20 -0500
-In-reply-to: <CAHfPSqCQZiMuH3S1eK2gqKShVjc+-BFZ8kkigTRDQyyETiPkQA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============3525671993730475100=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131217233554.GB21267@psi-dev26.jf.intel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: kgene.kim@samsung.com, w-kwok2@ti.com, Linux USB Mailing List <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, linux-samsung-soc@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, hs@denx.de, khali@linux-fr.org, Ben Dooks <ben-linux@fluff.org>
 
-On Tuesday 10 of December 2013 10:26:40 Naveen Krishna Ch wrote:
-> Hello Tomasz,
-> 
-> 
-> On 9 December 2013 22:01, Tomasz Figa <t.figa@samsung.com> wrote:
-> >
-> > Hi Naveen,
-> >
-> > On Friday 22 of November 2013 11:44:11 Naveen Krishna Chatradhi wrote:
-> > > fifo_depth of the HSI2C is not constant
-> > > Exynos5420 and Exynos5250 supports fifo_depth of 64bytes
-> > > Exynos5260 supports fifo_depth of 16bytes
-> > >
-> > > This patch configures the fifo_depth based on HSI2C modules version.
-> > > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > > ---
-> > >  drivers/i2c/busses/i2c-exynos5.c |   29 ++++++++++++++++++-----------
-> > >  1 file changed, 18 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> > > index cbb49e2..19277d8 100644
-> > > --- a/drivers/i2c/busses/i2c-exynos5.c
-> > > +++ b/drivers/i2c/busses/i2c-exynos5.c
-> > > @@ -77,12 +77,6 @@
-> > >  #define HSI2C_RXFIFO_TRIGGER_LEVEL(x)                ((x) << 4)
-> > >  #define HSI2C_TXFIFO_TRIGGER_LEVEL(x)                ((x) << 16)
-> > >
-> > > -/* As per user manual FIFO max depth is 64bytes */
-> > > -#define HSI2C_FIFO_MAX                               0x40
-> > > -/* default trigger levels for Tx and Rx FIFOs */
-> > > -#define HSI2C_DEF_TXFIFO_LVL                 (HSI2C_FIFO_MAX - 0x30)
-> > > -#define HSI2C_DEF_RXFIFO_LVL                 (HSI2C_FIFO_MAX - 0x10)
-> > > -
-> > >  /* I2C_TRAILING_CTL Register bits */
-> > >  #define HSI2C_TRAILING_COUNT                 (0xf)
-> > >
-> > > @@ -187,6 +181,9 @@ struct exynos5_i2c {
-> > >
-> > >       /* Version of HS-I2C Hardware */
-> > >       unsigned int            version;
-> > > +
-> > > +     /* FIFO depth */
-> > > +     unsigned int            fifo_depth;
-> > >  };
-> > >
-> > >  enum hsi2c_version {
-> > > @@ -437,7 +434,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
-> > >               fifo_status = readl(i2c->regs + HSI2C_FIFO_STATUS);
-> > >               fifo_level = HSI2C_TX_FIFO_LVL(fifo_status);
-> > >
-> > > -             len = HSI2C_FIFO_MAX - fifo_level;
-> > > +             len = i2c->fifo_depth - fifo_level;
-> > >               if (len > (i2c->msg->len - i2c->msg_ptr))
-> > >                       len = i2c->msg->len - i2c->msg_ptr;
-> > >
-> > > @@ -505,6 +502,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
-> > >       u32 i2c_auto_conf = 0;
-> > >       u32 fifo_ctl;
-> > >       unsigned long flags;
-> > > +     unsigned short trig_lvl;
-> > >
-> > >       i2c_ctl = readl(i2c->regs + HSI2C_CTL);
-> > >       i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
-> > > @@ -515,13 +513,19 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
-> > >
-> > >               i2c_auto_conf = HSI2C_READ_WRITE;
-> > >
-> > > -             fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
-> > > +             trig_lvl = (i2c->msg->len > i2c->fifo_depth) ?
-> > > +                     (i2c->fifo_depth * 3/4) : i2c->msg->len;
-> >
-> > This patch changes the fifo trigger level calculation (it's dependent now
-> > on message length), not just maximum fifo size, as the description says.
-> Actually, message->length need not be involved in this calculation.
-> Involving msg->len
-> will raise another interrupt for every small transactions. It better be avoided.
-> > It should be split into two separate patches, explaining why both changes
-> > are necessary.
-> I will split the fifo_depth configuration code along with comments addressed on
-> https://lkml.org/lkml/2013/11/22/31
+--===============3525671993730475100==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
+Content-Disposition: inline
 
-OK.
+--LyciRD1jyfeSSjG0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I can think of 3 ways to address the h/w version changes
-> 1. Compatible string as i implemented
-> 2. Varient struct
-> 3. Passing the information via device tree
-> How about passing fifo_depth from device tree information.
+Hi,
 
-I believe a combination of 1 and 2 is the recommended option, which is
-a variant struct pointed by an entry in OF match table.
+On Tue, Dec 17, 2013 at 03:35:54PM -0800, David Cohen wrote:
+> On Tue, Dec 17, 2013 at 03:31:40PM -0800, David Cohen wrote:
+> > On Thu, Dec 12, 2013 at 03:38:38PM -0600, Felipe Balbi wrote:
+> > > hi all,
+> > >=20
+> > > these patches add pm_runtime support for all glue layers.
+> > >=20
+> > > I plan to add pm_runtime support for dwc3 after these
+> > > patches are merged upstream.
+> > >=20
+> > > Please test.
+> >=20
+> > At first time I failed to notice you were removing #ifdef's around pm
+> > callback functions. Instead of saying DWC3 will start to have warnings
+> > when CONFIG_PM is not selected, I'd say your patch set is now a
+> > dependence of my RFC :)
+>=20
+> I guess I said it in wrong order :P
+> Your patch set depends on my RFC.
 
-> 
-> Currently, HSI2C Module on Exynso5260 is not another H/W version.
-> It only defer in fifo_depth and init sequence needs a reset.
+Or I just modify my patchset a little bit for now ;-)
 
-Well, this implies that it's another H/W version from kernel point of
-view, as it needs different handling.
+--=20
+balbi
 
-Best regards,
-Tomasz
+--LyciRD1jyfeSSjG0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSscDuAAoJEIaOsuA1yqREumMP/29DtHPYLle6cj0DBD936nqL
+8BHCCqWQNNUQeoZUJRdnbNDr5GATT4y6vop7RjBnmKEURLYmGjk0h6E3XtzRbVh5
+Q7dujpivXAEKkCMcKmNOgR2E5fzcCGQtISAumFoaF9wjDwCPoeHT7Vv1PMiqASN7
+ElBs/0LWZsFYcs65rjkrBiWcVjmiSiGAzUW+uuD0W/K8BWZTW+e18w/txYd/+n8Y
+t47upOIXv5cfxAX5jqo683GvItn/Za80bPPlOm7ZX4W66kRxm7kYkH75aQe/PEps
+EDk6ncr4SWCRmJsrwAKaSKcpdCp8a3tgDib9HSwIKIOHsTR6k2J7qsw0VTzXitXN
+ZJXfG/fo0OKsGp7z3wdX4NdxpNUFZO2p8tN0LYeSPVP8lwt74KAuj/x8jqwgREXg
+Xy6mOzQf1aaw9RLxY47dXVND6eYIukjN+23JX9DnKSP14R5edzsUxo8+Hh172SCA
+PbVAEpwodZmLxyNvJRgxDv6UbyW01LPFk1p5eFeKRTMViCU6oQrNJMTZ8uLQtR5h
+PsHi5/eTkC5Sugy2K+97DzojwcVEDakd+eAlh8rLPm7+TuTOxX9RGJucTBdbFvEb
+We1yjbUaMroKRz1iKbxFuuReiJdV6PluDFtf8CwMSlglt7wTncfy7PfWQZGvjRXU
+/QZ5nBCkm+gvEhPCypun
+=Kmfo
+-----END PGP SIGNATURE-----
+
+--LyciRD1jyfeSSjG0--
+
+
+--===============3525671993730475100==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============3525671993730475100==--
