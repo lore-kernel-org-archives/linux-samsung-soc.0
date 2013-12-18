@@ -1,94 +1,129 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 1/2] ARM: dts: Fix status property of mmc nodes for snow board
-Date: Wed, 18 Dec 2013 10:38:16 -0800
-Message-ID: <CAOesGMha3i+k+aBSivJopRxoi1rxAaF+ktU4KG9vfTf54A8f8Q@mail.gmail.com>
-References: <1386571118-17793-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=WqgGPZaEz46JLJAPymLA5Wzehgre2Z7X4AFAWN9L_Lvg@mail.gmail.com>
-	<52A62E7A.1010006@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Add missing GPIO entries for sd_bus in
+Date: Wed, 18 Dec 2013 19:43:06 +0100
+Message-ID: <CA+Ln22F9nA-NECJjmnPqw6x1rWzJW0Mff4_1z+7XLCBv0JGNvg@mail.gmail.com>
+References: <1382700168-12527-1-git-send-email-sachin.kamat@linaro.org>
+	<085901cedf91$4b24d4c0$e16e7e40$@org>
+	<CAL1wa8fnu-xUu3SZ+e1SMB0ci5n8wenDgbr4L9TGS+NH8qpS2w@mail.gmail.com>
+	<CAK9yfHyRu3WSkQOZKYMgsaWKcvVfNySptQhd91kX2eAdd-A+2Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:58429 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755282Ab3LRSiR (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:40104 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754930Ab3LRSnI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 13:38:17 -0500
-Received: by mail-qa0-f48.google.com with SMTP id w5so705186qac.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 10:38:17 -0800 (PST)
-In-Reply-To: <52A62E7A.1010006@samsung.com>
+	Wed, 18 Dec 2013 13:43:08 -0500
+In-Reply-To: <CAK9yfHyRu3WSkQOZKYMgsaWKcvVfNySptQhd91kX2eAdd-A+2Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Leela Krishna Amudala <leelakrishna.a@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Dec 9, 2013 at 12:56 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 12/10/13 01:16, Doug Anderson wrote:
+Hi Sachin,
+
+2013/11/13 Sachin Kamat <sachin.kamat@linaro.org>:
+> Hi Leela,
+>
+> Thanks for the detailed explanation.
+>
+> On 12 November 2013 17:20, Leela Krishna Amudala
+> <leelakrishna.a@gmail.com> wrote:
+>> Hi Sachin,
 >>
->> Yuvaraj,
+>> On Tue, Nov 12, 2013 at 3:53 PM, Kukjin Kim <kgene@kernel.org> wrote:
+>>> Sachin Kamat wrote:
+>>>>
+>>>
+>>> Following is more clear?
+>>>
+>>> "ARM: dts: Add missing GPIO entries for sd_bus_width4 in exynos5420-pinctrl"
+>>>
+>>>> Adds missing GPIO entries for sd_bus nodes in exynos5420-pinctrl.
+>>>>
 >>
->> On Sun, Dec 8, 2013 at 10:38 PM, Yuvaraj Kumar C D<yuvaraj.cd@gmail.com>
->> wrote:
->>>
->>> Commit 0c3de788 ("ARM: dts: change status property of dwmmc nodes
->>> for exynos5250") missed out handling the exynos5250 snow dts file.
->>>
->>> Signed-off-by : Abhilash Kesavan<a.kesavan@samsung.com>
->>>
->>> Signed-off-by: Yuvaraj Kumar C D<yuvaraj.cd@samsung.com>
->>> ---
->>>   arch/arm/boot/dts/cros5250-common.dtsi |    4 ----
->>>   arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
->>>   2 files changed, 9 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
->>> b/arch/arm/boot/dts/cros5250-common.dtsi
->>> index 6470536..1ceb62e 100644
->>> --- a/arch/arm/boot/dts/cros5250-common.dtsi
->>> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
->>> @@ -247,10 +247,6 @@
->>>                  };
->>>          };
->>>
->>> -       mmc@12210000 {
->>> -               status = "disabled";
->>> -       };
->>> -
->>>          mmc@12220000 {
->>>                  num-slots =<1>;
->>>                  supports-highspeed;
->>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
->>> b/arch/arm/boot/dts/exynos5250-snow.dts
->>> index a9395c4..67484d1 100644
->>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
->>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
->>> @@ -171,11 +171,20 @@
->>>                  };
->>>          };
->>>
->>> +       mmc@12200000 {
->>> +               status = "okay";
->>> +       };
->>> +
->>> +       mmc@12220000 {
->>> +               status = "okay";
->>> +       };
->>> +
+>> This is not a missing stuff, I did this purposefully.
+>> Myself and Doug anderson discussed on this and the objective of doing this is to
+>> eliminate the gpio pin configuration multiple times.
 >>
+>> Please see the below explanation
 >>
->> I probably would have put the 12200000 and 12220000 ones in
->> cros5250-common since that's where all of the other stuff relating to
->> those ports is.  Some of it may need to be moved around once we get
->> the HP Chromebook 11 (exynos5250-spring) in place, but until then it
->> seems best to keep it all together.
+>> The current code in main line kernel shows like
+>>                sd0_bus1: sd0-bus-width1 {
+>>                        samsung,pins = "gpc0-3";
+>>                  };
 >>
->> -Doug
+>>                sd0_bus4: sd0-bus-width4 {
+>>                        samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
+>>                };
+>>
+>>                sd0_bus8: sd0-bus-width8 {
+>>                        samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
+>>                };
+>>
+>> and lets mmc wants to use 8 bit width then node should be like below
+>>
+>> dwmmc0@12200000 {
+>>                 [snip]
+>>                 pinctrl-names = "default";
+>>                 pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+>>
+>> Here it will configure all the 8 pins ("gpc0-3", "gpc0-4", "gpc0-5",
+>> "gpc0-6", "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3")
+>>
+>>                 slot@0 {
+>>                         reg = <0>;
+>>                         bus-width = <8>;
+>>                 };
+>>         };
+>>
+>> Similarly for using 1 bit width the property value should be like below
+>>                pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1>;
+>>
+>> and if other mmc wants to use 4 bit width the property value should be
+>> like below
+>>                pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4>;
+>>
+>> But with the changes you made and if one mmc wants to use 1 bit width
+>> and other wants to use 4 bit width
+>> the pin "gpc0-3" will be configured twice which is wrong.
+>
+> I think this is the case with current code too.
+>
+> From your above example, for 2 slots:
+> For 1 bit width: pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1>;
+> "gpc0-3"
+>
+> For 4 bit width: pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4>;
+> "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6"
+
+No, this way you will have gpc0-3 in two groups - sd0_bus1 and sd0_bus4,
+which probably won't even work as the pinctrl subsystem probably doesn't
+allow claiming one pin twice.
+
 >
 >
-> OK, sounds better, I don't know well about the HP Chromebook though ;-)
+>> So, I strongly feel it is better to change the existing mmc node
+>> instead of changing the "sd0_bus" entries
+>
+> I think this is already taken care of in the mmc nodes.
+> For slot with bus-width of 8,
+> pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>
+> Similarly for slot with bus width of 4,
+> pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
 
-This broke linux-next on snow ever since the original patch went in.
-Please squash the above into the original patch or at the very least
-apply it as soon as possible.
+This is inconsistent:
+- for 1-bit bus you would have to specify just sdX_bus1,
+- for 4-bit just sdX_bus4, but
+- for 8-bit you need to specify both sdX_bus4 and sdX_bus8.
 
+The change Leela mentioned was about making this consistent,
+so you need to always specify all possible working widths on
+given board.
 
--Olof
+Other Exynos SoCs should be changed to use the same
+convention as well.
+
+Best regards,
+Tomasz
