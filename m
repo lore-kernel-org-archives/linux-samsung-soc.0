@@ -1,95 +1,97 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Fix status property of mmc nodes for snow
- board
-Date: Thu, 19 Dec 2013 04:35:33 +0900
-Message-ID: <52B1F905.1060206@samsung.com>
-References: <1386571118-17793-1-git-send-email-yuvaraj.cd@samsung.com>	<CAD=FV=WqgGPZaEz46JLJAPymLA5Wzehgre2Z7X4AFAWN9L_Lvg@mail.gmail.com>	<52A62E7A.1010006@samsung.com> <CAOesGMha3i+k+aBSivJopRxoi1rxAaF+ktU4KG9vfTf54A8f8Q@mail.gmail.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: drm_do_probe_ddc_edid ENXIO check too aggressive?
+Date: Thu, 19 Dec 2013 03:58:41 +0800
+Message-ID: <CAGS+omANxzS99gWyDGud9M-QT7euOv0L9y0i_6W8czyaKuEp3g@mail.gmail.com>
+References: <CAD8Lp44qijfMGtYVcA1xjgzzusA4SaR_mtUqzJiT1rRk+DZVEw@mail.gmail.com>
+	<CAKMK7uFtCYajeHnnbMOe8VaWypj8aKM5O7CVXkROVjxqbk5VzA@mail.gmail.com>
+	<CAD8Lp47DvhV1tg4ntBSvvUefOv29cutcXt17h2Pvp6HjBRLVnA@mail.gmail.com>
+	<CAKMK7uG3tp1qnEUBh4=UKT7s4JjBwS--4kaKGf+4e1yFXmCKYA@mail.gmail.com>
+	<CAD8Lp46aXTRA8uOory2zMrHakcG6pUf9jSxgYjo=_q5mZP3U_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:60532 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751499Ab3LRTfl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 14:35:41 -0500
-In-Reply-To: <CAOesGMha3i+k+aBSivJopRxoi1rxAaF+ktU4KG9vfTf54A8f8Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAD8Lp46aXTRA8uOory2zMrHakcG6pUf9jSxgYjo=_q5mZP3U_A@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, chris@hchris-wilson.co.uk, dri-devel <dri-devel@lists.freedesktop.org>, "Dodonov,
+	Eugeni" <eugeni.dodonov@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On 12/19/13 03:38, Olof Johansson wrote:
-> On Mon, Dec 9, 2013 at 12:56 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->> On 12/10/13 01:16, Doug Anderson wrote:
->>>
->>> Yuvaraj,
->>>
->>> On Sun, Dec 8, 2013 at 10:38 PM, Yuvaraj Kumar C D<yuvaraj.cd@gmail.com>
->>> wrote:
->>>>
->>>> Commit 0c3de788 ("ARM: dts: change status property of dwmmc nodes
->>>> for exynos5250") missed out handling the exynos5250 snow dts file.
->>>>
->>>> Signed-off-by : Abhilash Kesavan<a.kesavan@samsung.com>
->>>>
->>>> Signed-off-by: Yuvaraj Kumar C D<yuvaraj.cd@samsung.com>
->>>> ---
->>>>    arch/arm/boot/dts/cros5250-common.dtsi |    4 ----
->>>>    arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
->>>>    2 files changed, 9 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
->>>> b/arch/arm/boot/dts/cros5250-common.dtsi
->>>> index 6470536..1ceb62e 100644
->>>> --- a/arch/arm/boot/dts/cros5250-common.dtsi
->>>> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
->>>> @@ -247,10 +247,6 @@
->>>>                   };
->>>>           };
->>>>
->>>> -       mmc@12210000 {
->>>> -               status = "disabled";
->>>> -       };
->>>> -
->>>>           mmc@12220000 {
->>>>                   num-slots =<1>;
->>>>                   supports-highspeed;
->>>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
->>>> b/arch/arm/boot/dts/exynos5250-snow.dts
->>>> index a9395c4..67484d1 100644
->>>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
->>>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
->>>> @@ -171,11 +171,20 @@
->>>>                   };
->>>>           };
->>>>
->>>> +       mmc@12200000 {
->>>> +               status = "okay";
->>>> +       };
->>>> +
->>>> +       mmc@12220000 {
->>>> +               status = "okay";
->>>> +       };
->>>> +
->>>
->>>
->>> I probably would have put the 12200000 and 12220000 ones in
->>> cros5250-common since that's where all of the other stuff relating to
->>> those ports is.  Some of it may need to be moved around once we get
->>> the HP Chromebook 11 (exynos5250-spring) in place, but until then it
->>> seems best to keep it all together.
->>>
->>> -Doug
->>
->>
->> OK, sounds better, I don't know well about the HP Chromebook though ;-)
+On Tue, Dec 17, 2013 at 11:12 PM, Daniel Drake <drake@endlessm.com> wrote:
 >
-> This broke linux-next on snow ever since the original patch went in.
-> Please squash the above into the original patch or at the very least
-> apply it as soon as possible.
+> On Mon, Dec 16, 2013 at 5:40 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > Have a bit of logic in the exynos ->detect function to re-try a 2nd
+> > round of edid probing after each hdp interrupt if the first one
+> > returns an -ENXIO. Only tricky part is to be careful with edge
+> > detection so that userspace gets all the hotplug events still.
+> > Presuming you don't have any funkiness with reprobing causing yet
+> > another hpd interrupt and stuff like that (seen it all), as long as
+> > you're using the helpers in drm_crtc_helper.c it should all be working
+> > correctly. So you want a work item which just grabs all modeset locks
+> > and then calls drm_helper_probe_single_connector_modes or something on
+> > the right connector.
 >
-Oops, OK. I've applied this separately just now.
+> Thanks for the tips. Having trouble sticking to those details though.
+> exynos_drm_connector_detect() is actually a long way away from EDID
+> probing so it is hard to detect the ENXIO case there.
+>
+> What happens here is:
+> exynos hdmi_irq_thread() calls drm_helper_hpd_irq_event()
+> That then calls exynos_drm_connector_detect(), which returns a simple
+> "yes, hpd detection says we are connected"
+> Then it calls drm_kms_helper_hotplug_event() for which the call chain is:
+>
+> drm_kms_helper_hotplug_event
+> exynos_drm_output_poll_changed
+> drm_fb_helper_hotplug_event
+> drm_fb_helper_probe_connector_mode
+> exynos_drm_connector_fill_modes
+> drm_helper_probe_single_connector_modes
+> exynos_drm_connector_get_modes
+> drm_get_edid
+> drm_do_get_edid
+> drm_do_probe_ddc_edid <-- ENXIO in here
+>
+> drm_do_probe_ddc_edid actually swallows the ENXIO code and just
+> returns -1, so that particular error is indistinguishable from others.
+>
+> Trying to follow your suggestions, the closest would seem to be something like:
+>
+> 1. Modify exynos_drm_connector_detect to read and cache the EDID right
+> away. If EDID read fails for any reason, report "no connection" and
+> schedule a work item to retry the EDID read. If the later EDID read
+> succeeds, call drm_kms_helper_hotplug_event()
+>
+> 2. Modify exynos_drm_connector_get_modes to return cached EDID
+>
+> Does that sound sensible?
 
-Thanks,
-Kukjin
++seanpaul
+
+I think the problem is that the hdmi irq is really just an undebounced
+gpio interrupt, and thus, it is firing way too soon.
+The chromium kernel adds an excplicit 1.1 second timer to debounce hpd
+between the hdmi hpd-gpio irq and taking any action (ie reading the
+edid).  I believe this will eventually make its way upstream, but is
+still pending some other patches:
+
+http://git.chromium.org/gitweb/?p=chromiumos/third_party/kernel-next.git;a=blob;f=drivers/gpu/drm/exynos/exynos_hdmi.c;h=1258c67e87f360c846c64bb3f04436a68018b4fe;hb=refs/heads/chromeos-3.8#l2647
+
+-Dan
+
+>
+> Thanks
+> Daniel
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
