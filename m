@@ -1,105 +1,58 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL 1/7] Samsung fixes for v3.14
-Date: Thu, 19 Dec 2013 02:49:50 +0900
-Message-ID: <52B1E03E.5040400@samsung.com>
-References: <52AE0F41.7050706@samsung.com> <3351204.WyoCcrrZ3X@amdc1227> <117101cefb22$d5378b10$7fa6a130$@kernel.org> <7379738.rMmWN95Wqt@flatron>
+Subject: Re: [PATCH 06/11] PM / devfreq: move definitions for exynos4_bus
+ into drivers/devfreq
+Date: Thu, 19 Dec 2013 02:54:30 +0900
+Message-ID: <52B1E156.6030904@samsung.com>
+References: <116401cefb1e$75b83440$61289cc0$@kernel.org> <CAJ0PZbTH0kga7Gbb87umJpCF_ih3TQrxKS0xBbofDvJq+_wj5Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:57555 "EHLO
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:57674 "EHLO
 	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752203Ab3LRRt5 (ORCPT
+	with ESMTP id S1755650Ab3LRRyf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 12:49:57 -0500
-Received: by mail-pa0-f41.google.com with SMTP id lf10so6313179pab.28
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 09:49:56 -0800 (PST)
-In-Reply-To: <7379738.rMmWN95Wqt@flatron>
+	Wed, 18 Dec 2013 12:54:35 -0500
+Received: by mail-pa0-f41.google.com with SMTP id lf10so6318647pab.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 09:54:35 -0800 (PST)
+In-Reply-To: <CAJ0PZbTH0kga7Gbb87umJpCF_ih3TQrxKS0xBbofDvJq+_wj5Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, kgene@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+To: myungjoo.ham@gmail.com
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, kgene@kernel.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-
-
-On 12/17/13 21:27, Tomasz Figa wrote:
-> On Tuesday 17 of December 2013 21:23:46 kgene@kernel.org wrote:
->> Tomasz Figa wrote:
->>>
->>> Hi Kukjin,
->>>
->> Hi,
+On 12/18/13 15:11, MyungJoo Ham wrote:
+> On Tue, Dec 17, 2013 at 8:52 PM,<kgene@kernel.org>  wrote:
+>> From: Kukjin Kim<kgene.kim@samsung.com>
 >>
->>> On Monday 16 of December 2013 05:21:21 Kukjin Kim wrote:
->>>> The following changes since commit
->>> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
->>>>
->>>>     Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
->>>>
->>>> are available in the git repository at:
->>>>
->>>>     git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>>> tags/samsung-fixes
->>>>
->>>> for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
->>>>
->>>>     ARM: dts: Update display clock frequency for Origen-4412 (2013-12-16
->>>> 04:41:57 +0900)
->>>>
->>>> ----------------------------------------------------------------
->>>> Samsung non-critical fixes for v3.14
->>>> - Switch FIFO mode for arch_enable_uart_fifo()
->>>> - Add missing op_mode for PMIC on exynos5250-arndale
->>>> - Add missing clock-frequency for CPU on exynos5250
->>>> - Fix typo samaung to samsung for exynos5420-pinctrl
->>>> - Fix display clock-frequency for exynos4210/exynos4412-origen
->>>>
->>>> ----------------------------------------------------------------
->>>> Alexander Shiyan (1):
->>>>         ARM: SAMSUNG: Fix switching FIFO in arch_enable_uart_fifo
->> function
->>>>
->>>> Sachin Kamat (4):
->>>>         ARM: dts: Add missing op_mode property to PMIC on Arndale
->>>>         ARM: dts: Add missing frequency property to exynos5250
->>>>         ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
->>>>         ARM: dts: Update display clock frequency for Origen-4412
->>>>
->>>> Tushar Behera (1):
->>>>         ARM: dts: Update display clock frequency for Origen-4210
->>>>
->>>>    arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
->>>>    arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
->>>>    arch/arm/boot/dts/exynos5250-arndale.dts        | 2 ++
->>>>    arch/arm/boot/dts/exynos5250.dtsi               | 2 ++
->>>>    arch/arm/boot/dts/exynos5420-pinctrl.dtsi       | 2 +-
->>>>    arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
->>>>    6 files changed, 9 insertions(+), 3 deletions(-)
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
->>> soc" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>> I've sent a patch to fix up MMC0 on mini6410 board, when using board file
->>> to boot the system:
->>>
->>> [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
->>>
->>> Could we get this patch merged?
->>>
->>> I know we are moving to DT, but until all boards get converted, board
->>> files must be supported too and this bug makes it impossible to test
->>> non-DT s3c64xx support on Mini6410, without extra out of tree patches.
->>>
->> OK, I see. Let me take that in next round maybe this weekend.
+>> We don't need to keep the definitions for exynos4_bus into
+>> mach-exynos/ so this moves them into drviers/devfreq with
+>> adding header file.
 >
-> Thanks.
+> Acked-by: MyungJoo Ham<myungjoo.ham@samsung.com>
+>
+> However, how are you going to merge this patch?
+> Do you need me to get this handled or are you going to do it yourself
+> with Samsung-SoC tree?
 >
 
-Tomasz, I've applied it into 2nd fixes for v3.14.
+Hi MyungJoo,
 
-If anything else, please let me know.
+Let me take this into Samsung tree with others if you're OK :-)
 
 Thanks,
 Kukjin
+
+> Cheers,
+> MyungJoo.
+>
+>>
+>> Cc: MyungJoo Ham<myungjoo.ham@samsung.com>
+>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+>> ---
+>>   arch/arm/mach-exynos/include/mach/regs-clock.h |   94 --------------------
+>>   drivers/devfreq/exynos/exynos4_bus.c           |    4 +-
+>>   drivers/devfreq/exynos/exynos4_bus.h           |  110
+>> ++++++++++++++++++++++++
+>>   3 files changed, 112 insertions(+), 96 deletions(-)
+>>   create mode 100644 drivers/devfreq/exynos/exynos4_bus.h
