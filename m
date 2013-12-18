@@ -1,70 +1,44 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/3] ARM: EXYNOS: Add IO mapping for non-secure SYSRAM
-Date: Wed, 18 Dec 2013 13:35:33 +0530
-Message-ID: <1387353935-1335-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 3/3] ARM: dts: Add firmware node for secure boot on Arndale-octa
+Date: Wed, 18 Dec 2013 13:35:35 +0530
+Message-ID: <1387353935-1335-3-git-send-email-sachin.kamat@linaro.org>
+References: <1387353935-1335-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:41688 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750905Ab3LRIIt (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:33511 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751017Ab3LRIIz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 03:08:49 -0500
-Received: by mail-pa0-f51.google.com with SMTP id fa1so5608358pad.24
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 00:08:48 -0800 (PST)
+	Wed, 18 Dec 2013 03:08:55 -0500
+Received: by mail-pb0-f42.google.com with SMTP id uo5so8161951pbc.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 00:08:54 -0800 (PST)
+In-Reply-To: <1387353935-1335-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kgene.kim@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org
 
-On trustzone enabled boards non-secure SYSRAM is used for
-secondary CPU boot up.
+Add firmware node for doing secure boot on Arndale-octa board.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/mach-exynos/common.c           |   11 +++++++++++
- arch/arm/mach-exynos/include/mach/map.h |    1 +
- 2 files changed, 12 insertions(+)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index e353a837840b..97aa5b4b079a 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -240,6 +240,15 @@ static struct map_desc exynos5250_iodesc[] __initdata = {
- 	},
- };
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 7340745ff979..ec68b0e89a25 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -24,6 +24,11 @@
+ 		bootargs = "console=ttySAC3,115200";
+ 	};
  
-+static struct map_desc exynos5420_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
-+		.pfn		= __phys_to_pfn(EXYNOS5420_PA_SYSRAM_NS),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	},
-+};
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
 +
- static struct map_desc exynos5_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S3C_VA_SYS,
-@@ -397,6 +406,8 @@ static void __init exynos5_map_io(void)
- 		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
- 	if (soc_is_exynos5410())
- 		iotable_init(exynos5410_iodesc, ARRAY_SIZE(exynos5410_iodesc));
-+	if (soc_is_exynos5420())
-+		iotable_init(exynos5420_iodesc, ARRAY_SIZE(exynos5420_iodesc));
- }
- 
- struct bus_type exynos_subsys = {
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 894f431366a9..75fdc6c1bfcd 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -30,6 +30,7 @@
- #define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
- #define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
- #define EXYNOS5410_PA_SYSRAM_NS		0x02073000
-+#define EXYNOS5420_PA_SYSRAM_NS		0x02073000
- 
- #define EXYNOS_PA_CHIPID		0x10000000
- 
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
 -- 
 1.7.9.5
