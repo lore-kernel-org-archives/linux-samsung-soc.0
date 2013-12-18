@@ -1,77 +1,67 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 11/11] PM / devfreq: use inclusion <mach/map.h> instead of <plat/map-s5p.h>
-Date: Wed, 18 Dec 2013 15:12:42 +0900
-Message-ID: <CAJ0PZbQnm3on8UisiRwGQ2OnE1G8PsKdpofEqv-RgePdG31qLQ@mail.gmail.com>
-References: <116901cefb1e$90f4b530$b2de1f90$@kernel.org>
-Reply-To: myungjoo.ham@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 2/3] ARM: EXYNOS: Add secure firmware support for Exynos5420
+Date: Wed, 18 Dec 2013 13:35:34 +0530
+Message-ID: <1387353935-1335-2-git-send-email-sachin.kamat@linaro.org>
+References: <1387353935-1335-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f49.google.com ([209.85.212.49]:56097 "EHLO
-	mail-vb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751017Ab3LRGMn (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:63601 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750905Ab3LRIIw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 01:12:43 -0500
-Received: by mail-vb0-f49.google.com with SMTP id x11so4686493vbb.22
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2013 22:12:42 -0800 (PST)
-In-Reply-To: <116901cefb1e$90f4b530$b2de1f90$@kernel.org>
+	Wed, 18 Dec 2013 03:08:52 -0500
+Received: by mail-pd0-f175.google.com with SMTP id w10so7914553pde.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 00:08:51 -0800 (PST)
+In-Reply-To: <1387353935-1335-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kgene.kim@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org
 
-On Tue, Dec 17, 2013 at 8:53 PM,  <kgene@kernel.org> wrote:
-> From: Kukjin Kim <kgene.kim@samsung.com>
->
-> This fixes follwoing warning:
-> In file included from drivers/devfreq/exynos/exynos4_bus.h:15:0,
->                  from drivers/devfreq/exynos/exynos4_bus.c:35:
-> arch/arm/mach-exynos/include/mach/map.h:22:0: warning: "S3C_UART_OFFSET"
-> redefined [enabled by default]
-> In file included from drivers/devfreq/exynos/exynos4_bus.c:33:0:
-> arch/arm/plat-samsung/include/plat/map-s5p.h:57:0: note: this is the
-> location of the previous definition
->
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Secure firmware support for booting secondary CPUs on Exynos5420
+based boards with trustzone support.
 
-Thanks!
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/mach-exynos/firmware.c        |    6 +++++-
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-
-
-
-Cheers,
-MyungJoo.
-
-> ---
->  drivers/devfreq/exynos/exynos4_bus.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/devfreq/exynos/exynos4_bus.c
-> b/drivers/devfreq/exynos/exynos4_bus.c
-> index 16eb406..1ab8cdd 100644
-> --- a/drivers/devfreq/exynos/exynos4_bus.c
-> +++ b/drivers/devfreq/exynos/exynos4_bus.c
-> @@ -30,7 +30,7 @@
->  extern unsigned int exynos_result_of_asv;
->  #endif
->
-> -#include <plat/map-s5p.h>
-> +#include <mach/map.h>
->
->  #include "exynos4_bus.h"
->
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 932129ef26c6..4711f29b331d 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -17,6 +17,7 @@
+ #include <asm/firmware.h>
+ 
+ #include <mach/map.h>
++#include <plat/cpu.h>
+ 
+ #include "smc.h"
+ 
+@@ -34,7 +35,10 @@ static int exynos_cpu_boot(int cpu)
+ 
+ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ {
+-	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
++	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
++
++	if (!soc_is_exynos5420())
++		boot_reg += 4 * cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
+ 	return 0;
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index 5bf767fec19d..4c071d50bf35 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -76,6 +76,7 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+ 	.smp		= smp_ops(exynos_smp_ops),
+ 	.map_io		= exynos_init_io,
++	.init_early	= exynos_firmware_init,
+ 	.init_machine	= exynos5_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+ 	.dt_compat	= exynos5_dt_compat,
 -- 
-MyungJoo Ham, Ph.D.
-System S/W Lab, S/W Center, Samsung Electronics
+1.7.9.5
