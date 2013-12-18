@@ -1,270 +1,125 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Add regulator entries to Exynos5420 SMDK board
-Date: Wed, 18 Dec 2013 16:18:22 +0100
-Message-ID: <1476645.Pay9pLa8zo@amdc1227>
-References: <1386236664-27763-1-git-send-email-sachin.kamat@linaro.org>
- <52A635BF.9030102@samsung.com>
+Subject: Re: [PATCH 2/2] i2c: exynos5: configure fifo_depth based on HSI2C
+ module version
+Date: Wed, 18 Dec 2013 16:21:02 +0100
+Message-ID: <2845697.u7ZX4ij9vS@amdc1227>
+References: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com>
+ <1739891.MYO4PRtJOt@amdc1227>
+ <CAHfPSqCQZiMuH3S1eK2gqKShVjc+-BFZ8kkigTRDQyyETiPkQA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16801 "EHLO
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:16933 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755111Ab3LRPSj (ORCPT
+	with ESMTP id S1754679Ab3LRPVU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 10:18:39 -0500
-In-reply-to: <52A635BF.9030102@samsung.com>
+	Wed, 18 Dec 2013 10:21:20 -0500
+In-reply-to: <CAHfPSqCQZiMuH3S1eK2gqKShVjc+-BFZ8kkigTRDQyyETiPkQA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, hs@denx.de, khali@linux-fr.org, Ben Dooks <ben-linux@fluff.org>
 
-Hi Kukjin,
-
-On Tuesday 10 of December 2013 06:27:27 Kukjin Kim wrote:
-> On 12/05/13 18:44, Sachin Kamat wrote:
-> > Added regulator entries to Exynos5420 SMDK board.
-> >
-> > Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> > ---
-> > Changes since v1:
-> > Changed node name
-> > ---
-> >   arch/arm/boot/dts/exynos5420-smdk5420.dts |  216 +++++++++++++++++++++++++++++
-> >   1 file changed, 216 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> > index fb5a1e25c632..62e1ebe4e989 100644
-> > --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> > +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> > @@ -120,4 +120,220 @@
-> >   			reg =<0x50>;
-> >   		};
-> >   	};
-> > +
-> > +	hsi2c_4: i2c@12CA0000 {
-> > +		status = "okay";
-> > +
-> > +		s2mps11_pmic@66 {
-> > +			compatible = "samsung,s2mps11-pmic";
-> > +			reg =<0x66>;
-> > +			s2mps11,buck2-ramp-delay =<12>;
-> > +			s2mps11,buck34-ramp-delay =<12>;
-> > +			s2mps11,buck16-ramp-delay =<12>;
-> > +			s2mps11,buck6-ramp-enable =<1>;
-> > +			s2mps11,buck2-ramp-enable =<1>;
-> > +			s2mps11,buck3-ramp-enable =<1>;
-> > +			s2mps11,buck4-ramp-enable =<1>;
-> > +
-> > +			s2mps11_osc: clocks {
-> > +				#clock-cells =<1>;
-> > +				clock-output-names = "s2mps11_ap",
-> > +						"s2mps11_cp", "s2mps11_bt";
-> > +			};
-> > +
-> > +			regulators {
-> > +				ldo1_reg: LDO1 {
-> > +					regulator-name = "vdd_ldo1";
-> > +					regulator-min-microvolt =<1000000>;
-> > +					regulator-max-microvolt =<1000000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo3_reg: LDO3 {
-> > +					regulator-name = "vdd_ldo3";
-> > +					regulator-min-microvolt =<1800000>;
-> > +					regulator-max-microvolt =<1800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo5_reg: LDO5 {
-> > +					regulator-name = "vdd_ldo5";
-> > +					regulator-min-microvolt =<1800000>;
-> > +					regulator-max-microvolt =<1800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo6_reg: LDO6 {
-> > +					regulator-name = "vdd_ldo6";
-> > +					regulator-min-microvolt =<1000000>;
-> > +					regulator-max-microvolt =<1000000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo7_reg: LDO7 {
-> > +					regulator-name = "vdd_ldo7";
-> > +					regulator-min-microvolt =<1800000>;
-> > +					regulator-max-microvolt =<1800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo8_reg: LDO8 {
-> > +					regulator-name = "vdd_ldo8";
-> > +					regulator-min-microvolt =<1800000>;
-> > +					regulator-max-microvolt =<1800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo9_reg: LDO9 {
-> > +					regulator-name = "vdd_ldo9";
-> > +					regulator-min-microvolt =<3000000>;
-> > +					regulator-max-microvolt =<3000000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo10_reg: LDO10 {
-> > +					regulator-name = "vdd_ldo10";
-> > +					regulator-min-microvolt =<1800000>;
-> > +					regulator-max-microvolt =<1800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo11_reg: LDO11 {
-> > +					regulator-name = "vdd_ldo11";
-> > +					regulator-min-microvolt =<1000000>;
-> > +					regulator-max-microvolt =<1000000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo12_reg: LDO12 {
-> > +					regulator-name = "vdd_ldo12";
-> > +					regulator-min-microvolt =<1800000>;
-> > +					regulator-max-microvolt =<1800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo13_reg: LDO13 {
-> > +					regulator-name = "vdd_ldo13";
-> > +					regulator-min-microvolt =<2800000>;
-> > +					regulator-max-microvolt =<2800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo15_reg: LDO15 {
-> > +					regulator-name = "vdd_ldo15";
-> > +					regulator-min-microvolt =<3100000>;
-> > +					regulator-max-microvolt =<3100000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo16_reg: LDO16 {
-> > +					regulator-name = "vdd_ldo16";
-> > +					regulator-min-microvolt =<2200000>;
-> > +					regulator-max-microvolt =<2200000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo17_reg: LDO17 {
-> > +					regulator-name = "tsp_avdd";
-> > +					regulator-min-microvolt =<3300000>;
-> > +					regulator-max-microvolt =<3300000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo19_reg: LDO19 {
-> > +					regulator-name = "vdd_sd";
-> > +					regulator-min-microvolt =<2800000>;
-> > +					regulator-max-microvolt =<2800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				ldo24_reg: LDO24 {
-> > +					regulator-name = "tsp_io";
-> > +					regulator-min-microvolt =<2800000>;
-> > +					regulator-max-microvolt =<2800000>;
-> > +					regulator-always-on;
-> > +				};
-> > +
-> > +				buck1_reg: BUCK1 {
-> > +					regulator-name = "vdd_mif";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1300000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck2_reg: BUCK2 {
-> > +					regulator-name = "vdd_arm";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1500000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck3_reg: BUCK3 {
-> > +					regulator-name = "vdd_int";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1400000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck4_reg: BUCK4 {
-> > +					regulator-name = "vdd_g3d";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1400000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck5_reg: BUCK5 {
-> > +					regulator-name = "vdd_mem";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1400000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck6_reg: BUCK6 {
-> > +					regulator-name = "vdd_kfc";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1500000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck7_reg: BUCK7 {
-> > +					regulator-name = "vdd_1.0v_ldo";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1500000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck8_reg: BUCK8 {
-> > +					regulator-name = "vdd_1.8v_ldo";
-> > +					regulator-min-microvolt =<800000>;
-> > +					regulator-max-microvolt =<1500000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck9_reg: BUCK9 {
-> > +					regulator-name = "vdd_2.8v_ldo";
-> > +					regulator-min-microvolt =<3000000>;
-> > +					regulator-max-microvolt =<3750000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +
-> > +				buck10_reg: BUCK10 {
-> > +					regulator-name = "vdd_vmem";
-> > +					regulator-min-microvolt =<2850000>;
-> > +					regulator-max-microvolt =<2850000>;
-> > +					regulator-always-on;
-> > +					regulator-boot-on;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> >   };
+On Tuesday 10 of December 2013 10:26:40 Naveen Krishna Ch wrote:
+> Hello Tomasz,
 > 
-> just + DT ml.
+> 
+> On 9 December 2013 22:01, Tomasz Figa <t.figa@samsung.com> wrote:
+> >
+> > Hi Naveen,
+> >
+> > On Friday 22 of November 2013 11:44:11 Naveen Krishna Chatradhi wrote:
+> > > fifo_depth of the HSI2C is not constant
+> > > Exynos5420 and Exynos5250 supports fifo_depth of 64bytes
+> > > Exynos5260 supports fifo_depth of 16bytes
+> > >
+> > > This patch configures the fifo_depth based on HSI2C modules version.
+> > > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> > > ---
+> > >  drivers/i2c/busses/i2c-exynos5.c |   29 ++++++++++++++++++-----------
+> > >  1 file changed, 18 insertions(+), 11 deletions(-)
+> > >
+> > > diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> > > index cbb49e2..19277d8 100644
+> > > --- a/drivers/i2c/busses/i2c-exynos5.c
+> > > +++ b/drivers/i2c/busses/i2c-exynos5.c
+> > > @@ -77,12 +77,6 @@
+> > >  #define HSI2C_RXFIFO_TRIGGER_LEVEL(x)                ((x) << 4)
+> > >  #define HSI2C_TXFIFO_TRIGGER_LEVEL(x)                ((x) << 16)
+> > >
+> > > -/* As per user manual FIFO max depth is 64bytes */
+> > > -#define HSI2C_FIFO_MAX                               0x40
+> > > -/* default trigger levels for Tx and Rx FIFOs */
+> > > -#define HSI2C_DEF_TXFIFO_LVL                 (HSI2C_FIFO_MAX - 0x30)
+> > > -#define HSI2C_DEF_RXFIFO_LVL                 (HSI2C_FIFO_MAX - 0x10)
+> > > -
+> > >  /* I2C_TRAILING_CTL Register bits */
+> > >  #define HSI2C_TRAILING_COUNT                 (0xf)
+> > >
+> > > @@ -187,6 +181,9 @@ struct exynos5_i2c {
+> > >
+> > >       /* Version of HS-I2C Hardware */
+> > >       unsigned int            version;
+> > > +
+> > > +     /* FIFO depth */
+> > > +     unsigned int            fifo_depth;
+> > >  };
+> > >
+> > >  enum hsi2c_version {
+> > > @@ -437,7 +434,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+> > >               fifo_status = readl(i2c->regs + HSI2C_FIFO_STATUS);
+> > >               fifo_level = HSI2C_TX_FIFO_LVL(fifo_status);
+> > >
+> > > -             len = HSI2C_FIFO_MAX - fifo_level;
+> > > +             len = i2c->fifo_depth - fifo_level;
+> > >               if (len > (i2c->msg->len - i2c->msg_ptr))
+> > >                       len = i2c->msg->len - i2c->msg_ptr;
+> > >
+> > > @@ -505,6 +502,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+> > >       u32 i2c_auto_conf = 0;
+> > >       u32 fifo_ctl;
+> > >       unsigned long flags;
+> > > +     unsigned short trig_lvl;
+> > >
+> > >       i2c_ctl = readl(i2c->regs + HSI2C_CTL);
+> > >       i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
+> > > @@ -515,13 +513,19 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+> > >
+> > >               i2c_auto_conf = HSI2C_READ_WRITE;
+> > >
+> > > -             fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
+> > > +             trig_lvl = (i2c->msg->len > i2c->fifo_depth) ?
+> > > +                     (i2c->fifo_depth * 3/4) : i2c->msg->len;
+> >
+> > This patch changes the fifo trigger level calculation (it's dependent now
+> > on message length), not just maximum fifo size, as the description says.
+> Actually, message->length need not be involved in this calculation.
+> Involving msg->len
+> will raise another interrupt for every small transactions. It better be avoided.
+> > It should be split into two separate patches, explaining why both changes
+> > are necessary.
+> I will split the fifo_depth configuration code along with comments addressed on
+> https://lkml.org/lkml/2013/11/22/31
 
-AFAIK, current recommendation after the KS is that changes touching only
-DTS files don't have to be posted on DT ML. Just changes related to DT
-bindings such as Documentation/devicetree and DT parsing code. Full series
-doing both still need to be posted there, though.
+OK.
+
+> 
+> I can think of 3 ways to address the h/w version changes
+> 1. Compatible string as i implemented
+> 2. Varient struct
+> 3. Passing the information via device tree
+> How about passing fifo_depth from device tree information.
+
+I believe a combination of 1 and 2 is the recommended option, which is
+a variant struct pointed by an entry in OF match table.
+
+> 
+> Currently, HSI2C Module on Exynso5260 is not another H/W version.
+> It only defer in fifo_depth and init sequence needs a reset.
+
+Well, this implies that it's another H/W version from kernel point of
+view, as it needs different handling.
 
 Best regards,
 Tomasz
