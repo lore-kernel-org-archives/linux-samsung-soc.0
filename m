@@ -1,59 +1,139 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2 v2] ARM: s3c64xx: get rid of custom <mach/gpio.h>
-Date: Wed, 18 Dec 2013 12:46:35 +0000
-Message-ID: <20131218124635.GN28455@sirena.org.uk>
-References: <1386939234-12828-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TlGginnuNEm5PkhK"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:59974 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752673Ab3LRMql (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 07:46:41 -0500
-Content-Disposition: inline
-In-Reply-To: <1386939234-12828-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alex Ling <kasimling@gmail.com>
+Subject: [PATCH v2 1/1] ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
+Date: Wed, 18 Dec 2013 21:23:59 +0800
+Message-ID: <1387373039-4738-1-git-send-email-kasimling@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rob.herring@calxeda.com, mark.rutland@arm.com, linux@arm.linux.org.uk, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Alex Ling <kasimling@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
+Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
+TINY4412 board. This patch including support peripherals like
+UART, SD card on SDMMC2 port and GPIO connected LEDs.
 
---TlGginnuNEm5PkhK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Alex Ling <kasimling@gmail.com>
+---
+Changes for v2:
+  - Clean up patch description
+  - Fix LED labels as Tomasz's suggested
+  - Fix style issues
 
-On Fri, Dec 13, 2013 at 01:53:54PM +0100, Linus Walleij wrote:
-> This isolates the custom S3C64xx GPIO definition table to
-> <linux/platform_data/gpio-samsung-s3x64xx.h> as this is
-> used in a few different places in the kernel, removing the
-> need to depend on the implicit inclusion of <mach/gpio.h>
-> from <linux/gpio.h> and thus getting rid of a few nasty
-> cross-dependencies.
+ arch/arm/boot/dts/Makefile                |    1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts |   93 +++++++++++++++++++++++++++++
+ 2 files changed, 94 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-tiny4412.dts
 
-Tested-by: Mark Brown <broonie@linaro.org>
-
---TlGginnuNEm5PkhK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSsZkoAAoJELSic+t+oim9olIQAIvpKvtfPHxctphMkw3YdLjB
-4lwX209InI4r3Fq1qxphcxX0PzAO70z+MOfxdZy/uTMrj39N5eGISRsv8VyJONPO
-0owgObvUXIwZyiwOdQHFMEMle2eGGAOMXWRRAUU5CYqFbJs9SfczrSaXD67hrPpv
-AJcVgV/0QCd9IPXuoq0zULvIprdr2T1lxNZo74+5JWF+RH93CtEX4hYaDw3fZtTp
-oF/9cJEZsPkhwbPT31f+5B2ZBN23TgjxTGkHjPE0ZK/Ag4DRKs5af/7qz/8Aa/l3
-npo8EDXuk1xzd8Te8UGseRG/0GZLN1nVIfTUhXUtktN7grR+eZMs0puF5a1SyzNE
-4ZsV/t9IT78liwH0t0ZjC9OBRZJ7PkC+c5/TsiMxX90zT1QGn6UXRUODMC7y+T7P
-DjQo3MQ5lG1AEcIq1drF5pjIoIvHZi8tqiV8FTHU5wtR8YnUC6lsUu6hPoVq+1Es
-VPwD/LH5pfAb6VmBgDU5pKGpdYP53x7bFcATRgggrDvN4FzC4C4izG9GAVCJHHt+
-cnzrFoCeRprTc1la1yK3Fzh7DAKiQYfmD9GP62gqhUtsXAxvr53nxFpK7dY/4JY9
-gEbf8Kq0b/OfCPwTZGmxr6NhOjVKzFFLPuktrvnQTZ6SfNrKJK/8JR9EuLPd93X4
-3rRjyhR2PqPentKw58xA
-=LCi3
------END PGP SIGNATURE-----
-
---TlGginnuNEm5PkhK--
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 50fd70b..cfee1ef 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4412-odroidx.dtb \
+ 	exynos4412-origen.dtb \
+ 	exynos4412-smdk4412.dtb \
++	exynos4412-tiny4412.dtb \
+ 	exynos4412-trats2.dtb \
+ 	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+new file mode 100644
+index 0000000..0a98312
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -0,0 +1,93 @@
++/*
++ * FriendlyARM's Exynos4412 based TINY4412 board device tree source
++ *
++ * Copyright (c) 2013 Alex Ling <kasimling@gmail.com>
++ *
++ * Device tree source file for FriendlyARM's TINY4412 board which is based on
++ * Samsung's Exynos4412 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include "exynos4412.dtsi"
++
++/ {
++	model = "FriendlyARM TINY4412 board based on Exynos4412";
++	compatible = "friendlyarm,tiny4412", "samsung,exynos4412";
++
++	memory {
++		reg = <0x40000000 0x40000000>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led1 {
++			label = "led1";
++			gpios = <&gpm4 0 1>;
++			default-state = "off";
++			linux,default-trigger = "heartbeat";
++		};
++
++		led2 {
++			label = "led2";
++			gpios = <&gpm4 1 1>;
++			default-state = "off";
++		};
++
++		led3 {
++			label = "led3";
++			gpios = <&gpm4 2 1>;
++			default-state = "off";
++		};
++
++		led4 {
++			label = "led4";
++			gpios = <&gpm4 3 1>;
++			default-state = "off";
++			linux,default-trigger = "mmc0";
++		};
++	};
++
++	rtc@10070000 {
++		status = "okay";
++	};
++
++	sdhci@12530000 {
++		bus-width = <4>;
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	serial@13800000 {
++		status = "okay";
++	};
++
++	serial@13810000 {
++		status = "okay";
++	};
++
++	serial@13820000 {
++		status = "okay";
++	};
++
++	serial@13830000 {
++		status = "okay";
++	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti";
++			clock-frequency = <24000000>;
++		};
++	};
++};
+-- 
+1.7.9.5
