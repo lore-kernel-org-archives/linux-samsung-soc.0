@@ -1,105 +1,59 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [RFC 4/5] usb: dwc3-exynos: enable async suspend/resume
-Date: Wed, 18 Dec 2013 10:07:36 -0600
-Message-ID: <20131218160736.GD4970@saruman.home>
-References: <1387363174-25942-1-git-send-email-yuvaraj.cd@samsung.com>
- <1387363174-25942-4-git-send-email-yuvaraj.cd@samsung.com>
-Reply-To: balbi@ti.com
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: drm_do_probe_ddc_edid ENXIO check too aggressive?
+Date: Wed, 18 Dec 2013 10:28:37 -0600
+Message-ID: <CAD8Lp44Bty-zA9SBVqk_XRZPLY9gXXXmOd+kecxxRqF02LH-yw@mail.gmail.com>
+References: <CAD8Lp44qijfMGtYVcA1xjgzzusA4SaR_mtUqzJiT1rRk+DZVEw@mail.gmail.com>
+	<CAKMK7uFtCYajeHnnbMOe8VaWypj8aKM5O7CVXkROVjxqbk5VzA@mail.gmail.com>
+	<CAD8Lp47DvhV1tg4ntBSvvUefOv29cutcXt17h2Pvp6HjBRLVnA@mail.gmail.com>
+	<CAKMK7uG3tp1qnEUBh4=UKT7s4JjBwS--4kaKGf+4e1yFXmCKYA@mail.gmail.com>
+	<CAD8Lp46aXTRA8uOory2zMrHakcG6pUf9jSxgYjo=_q5mZP3U_A@mail.gmail.com>
+	<20131218084313.GD26371@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1344540164359493099=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1387363174-25942-4-git-send-email-yuvaraj.cd@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, kgene.kim@samsung.com, sarah.a.sharp@linux.intel.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, joshi@samsung.com, balbi@ti.com, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, linux-samsung-soc@vger.kernel.org, stern@rowland.harvard.edu, gautam.vivek@samsung.com, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:59974 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753427Ab3LRQ2i (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Dec 2013 11:28:38 -0500
+Received: by mail-wg0-f44.google.com with SMTP id a1so7583996wgh.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 08:28:37 -0800 (PST)
+In-Reply-To: <20131218084313.GD26371@phenom.ffwll.local>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
---===============1344540164359493099==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SNIs70sCzqvszXB4"
-Content-Disposition: inline
+On Wed, Dec 18, 2013 at 2:43 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> I think we can do it simpler. When you get a hpd interrupt you eventually
+> call drm_helper_hpd_irq_event which will update all the state and poke
+> connectors. I'd just create a delay_work which you launch from
+> hdmi_irq_thread with a 1 second delay which again calls
+> drm_helper_hpd_irq_event. That way you won't miss the EDID (presuming the
+> user isn't _really_ careful with pluggin in the cable slowly).
 
---SNIs70sCzqvszXB4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, I like this more simplistic option.
 
-On Wed, Dec 18, 2013 at 04:09:33PM +0530, Yuvaraj Kumar C D wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
->=20
-> In addition to enabling async suspend/resume on the xhci-plat device,
-> we must enable it for the dwc3-exynos platform device in order to make
-> the full USB stack resume asynchronously.  Like the xhci-plat, ehci-s5p,
-> and ohci-exynos drivers, there are no outside dependencies which would
-> make resuming the dwc3-exynos driver asynchronously unsafe.
->=20
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Reviewed-by: Julius Werner <jwerner@chromium.org>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c |    2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exyno=
-s.c
-> index 8b20c70..57431b7 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -155,6 +155,8 @@ static int dwc3_exynos_probe(struct platform_device *=
-pdev)
->  		goto err2;
->  	}
-> =20
-> +	device_enable_async_suspend(dev);
+However, one more pesky detail, if I am understanding your suggestion
+correctly. You are hoping for:
 
-sure that clk_disable() in your ->suspend() callback will cause no
-issues at all ?
+1. I connect the display, causing HPD interrupt
+2. hpd irq handler calls drm_helper_hpd_irq_event() directly. Fails to
+read EDID, no big deal.
+3. hpd irq handles schedules a work item to call
+drm_helper_hpd_irq_event() a second time, 1 second later. Reads EDID
+sucessfully, image gets output to display.
 
---=20
-balbi
+That doesn't quite work. drm_helper_hpd_irq_event() in step 2 notices
+and records the state change (disconnected --> connected). And after
+drm_helper_probe_single_connector_modes() fails to read the EDID, it
+starts outputting an image at 1024x768. When we come to step 3, we
+call drm_helper_hpd_irq_event again, but that just returns without
+doing anything as it does not detect any new state change.
 
---SNIs70sCzqvszXB4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+If we skip step 2, i.e. always delay the call to
+drm_helper_hpd_irq_event by 1 second, the problem is solved. As a
+user, the 1 second delay is not noticable. What do you think about
+just doing this?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSschIAAoJEIaOsuA1yqREYusQAJfVrxxgIcgYQH6bGbXJwFFw
-tq2PyAV1NOPY7pyIAKkovhsObwYQmWbYwCw21sBFR4pDoWmZOS6ev/qkTFJiKRGn
-ChG0YCUg/X24kUlxdMK6m6wJ4p2WEOssG4jneRvDLwFmY6d2aSVj7qipaX+JgzFH
-Nan28Ho6nbxAwLq22gi8BKVm0Eb9j37HYnsB51AY5wAnPNefRPvgNE83ItUoczhy
-37LXrLFw/EQ+qvZ0n1CwMvS04+XqX+VZP5VVI9Ab/b0VV8HuMuKGy6HjFQ42HuIe
-09zXUh5CtGtzx7LhnAO1EpB3qN0+XOpFyhuApdAwPooINnR9iL/IO/crgd6h1+kG
-MOTaHuJSbnuXXY2sM+jwvk381xZ6ITvCQWnESrD5G3hLZgvuvHmT+UE3AbBOksGB
-cKXhHANqrxvbY+F4AxejSySpckpydNiqmn0nAaXojZdghZ4l9Lq9OvG/qzMKVq8w
-KwV4W1YHio3pcXL6Q3rMJxGfhKcIvuWJxxTZBNEyHH6onF591EYPjprKi7pdYYYF
-ZQ0h7DBW+nEg3g5I3tPyrfrsjKrfbeEnCTZoKASB76vENH+qUwVmYEPEzGmXNUAW
-uDsJo85WD/6tQWZU5UMuw+nwSQGr/e1YmQWrSgQ196sdG4kts/RH2uaniNNJlf2R
-RXHzNF4Qd5mV6BkdyROx
-=f4Pp
------END PGP SIGNATURE-----
-
---SNIs70sCzqvszXB4--
-
-
---===============1344540164359493099==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1344540164359493099==--
+Daniel
