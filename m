@@ -1,64 +1,60 @@
 From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
-Date: Wed, 18 Dec 2013 11:24:30 -0800
-Message-ID: <20131218192430.23538.93253@quantum>
-References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
- <1383905648-23733-2-git-send-email-sachin.kamat@linaro.org>
- <2996623.YXg5JqReYS@flatron>
- <CAK9yfHzs+T0g0qy-EALFkrKFybdJDAQ3ZGAoYovZO8PDaWM4QA@mail.gmail.com>
- <CA+Ln22GD5fr4S6aR-+85bdutkeeHmgutLvRWETEQEt1vJX-Y6Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Fix MDMA0 clock number
+Date: Wed, 18 Dec 2013 11:32:03 -0800
+Message-ID: <20131218193203.23538.30551@quantum>
+References: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
+ <1386817322-11265-3-git-send-email-a.kesavan@samsung.com>
+ <2082327.zpbOvCVe5P@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CA+Ln22GD5fr4S6aR-+85bdutkeeHmgutLvRWETEQEt1vJX-Y6Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f180.google.com ([209.85.216.180]:56600 "EHLO
+	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751052Ab3LRTcJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Dec 2013 14:32:09 -0500
+Received: by mail-qc0-f180.google.com with SMTP id w7so87614qcr.25
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 11:32:08 -0800 (PST)
+In-Reply-To: <2082327.zpbOvCVe5P@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>, dianders@chromium.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Quoting Tomasz Figa (2013-12-18 10:28:57)
-> Hi Sachin,
+Quoting Tomasz Figa (2013-12-18 06:49:10)
+> Hi Kukjin,
 > 
-> 2013/12/18 Sachin Kamat <sachin.kamat@linaro.org>:
-> > Hi Tomasz,
-> >
-> > On 10 November 2013 22:38, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> >> Hi Sachin, Andrew,
-> >>
-> >> On Friday 08 of November 2013 15:44:07 Sachin Kamat wrote:
-> >>> From: Andrew Bresticker <abrestic@chromium.org>
-> >>>
-> >>> The gate clocks for the MFC sysmmus appear to be flipped, i.e.
-> >>> GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
-> >>> Fix this so that the MFC will start up.
-> >>
-> >> Wow, this means that there is a mistake in the documentation. Not that
-> >> I'm surprised, though.
-> >>
-> >> I guess you are sure about this, so:
-> >>
-> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >
-> > I believe you are going to take this through your tree along with a
-> > few others which you have already reviewed?
+> On Thursday 12 of December 2013 08:32:02 Abhilash Kesavan wrote:
+> > Fix wrong clock number in mdma0 node.
+> > 
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> > index 9db5047..177becd 100644
+> > --- a/arch/arm/boot/dts/exynos5250.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> > @@ -559,7 +559,7 @@
+> >                       compatible = "arm,pl330", "arm,primecell";
+> >                       reg = <0x10800000 0x1000>;
+> >                       interrupts = <0 33 0>;
+> > -                     clocks = <&clock 271>;
+> > +                     clocks = <&clock 346>;
+> >                       clock-names = "apb_pclk";
+> >                       #dma-cells = <1>;
+> >                       #dma-channels = <8>;
+> > 
 > 
-> Thanks for reminding me about this patch. It's been quite a while
-> since it was posted
-> to the list.
+> Can we have your ack for this patch?
 > 
-> Yes, I will apply it to samsung-clk tree.
+> I'd like to apply the whole series into samsung-clk fixes branch and
+> send a pull request to Mike to get it and one more fix into his tree.
 
-Feel free to add my Ack when you apply it. Will these be sent later as a
-pull request for the clk tree?
+Do these fixes need to go into the current -rc fixes cycle or can they
+go for 3.14?
 
 Regards,
 Mike
@@ -66,3 +62,4 @@ Mike
 > 
 > Best regards,
 > Tomasz
+> 
