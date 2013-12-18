@@ -1,61 +1,40 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [GIT PULL 4/7] Samsung dev for v3.14
-Date: Wed, 18 Dec 2013 11:20:44 +0100
-Message-ID: <201312181120.44544.heiko@sntech.de>
-References: <52AE0F62.80409@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:47258 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752642Ab3LRKVE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 05:21:04 -0500
-In-Reply-To: <52AE0F62.80409@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [RFC 1/5] usb: ohci-exynos: enable async suspend/resume
+Date: Wed, 18 Dec 2013 16:09:30 +0530
+Message-ID: <1387363174-25942-1-git-send-email-yuvaraj.cd@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: stern@rowland.harvard.edu, gregkh@linuxfoundation.org, kgene.kim@samsung.com, linux-usb@vger.kernel.org, sarah.a.sharp@linux.intel.com, balbi@ti.com, gautam.vivek@samsung.com, joshi@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Kukjin,
+From: Andrew Bresticker <abrestic@chromium.org>
 
-Am Sonntag, 15. Dezember 2013, 21:21:54 schrieb Kukjin Kim:
-> The following changes since commit
-> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> 
->    Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> 
-> are available in the git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-dev
-> 
-> for you to fetch changes up to 70bacadbd07248576290de40cc217c06f0f2d3c3:
-> 
->    ARM: S3C64XX: Select CPU_V6K instead of CPU_V6 (2013-12-16 04:08:51
-> +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung updates for v3.14
-> - Skip eint_init() for pinctrl-exynos because of re-executing
-> - Use CPU_V6K for S3C64XX(ARM1176JZF-s) instead of CPU_V6
-> 
-> ----------------------------------------------------------------
-> Mateusz Krawczuk (1):
->        ARM: SAMSUNG: if detected device tree skip irq init for S5P
-> 
-> Tomasz Figa (1):
->        ARM: S3C64XX: Select CPU_V6K instead of CPU_V6
-> 
->   arch/arm/Kconfig                     | 2 +-
->   arch/arm/plat-samsung/s5p-irq-eint.c | 4 ++++
->   2 files changed, 5 insertions(+), 1 deletion(-)
+USB host controllers can take a significant amount of time to suspend
+and resume, adding several hundred miliseconds to the kernel resume
+time. Since the Exynos OHCI controller has no outside dependencies
+(other than clocks, which are suspended late/resumed early), allow it to
+suspend and resume asynchronously.
 
-do you also have time for a look at at least the s3c2416/s3c2443 common clock 
-patches for your second round you wrote about yesterday? :-)
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Reviewed-by: Julius Werner <jwerner@chromium.org>
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ drivers/usb/host/ohci-exynos.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Thanks
-Heiko
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 68588d8..faad2bdc 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -137,6 +137,8 @@ skip_phy:
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+ 
++	device_enable_async_suspend(&pdev->dev);
++
+ 	platform_set_drvdata(pdev, hcd);
+ 
+ 	exynos_ohci_phy_enable(pdev);
+-- 
+1.7.9.5
