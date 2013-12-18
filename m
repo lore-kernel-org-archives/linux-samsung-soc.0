@@ -1,58 +1,52 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: Fix MDMA0 clock number
-Date: Wed, 18 Dec 2013 15:49:10 +0100
-Message-ID: <2082327.zpbOvCVe5P@amdc1227>
-References: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
- <1386817322-11265-3-git-send-email-a.kesavan@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos4: Correct SRC_MFC register
+Date: Wed, 18 Dec 2013 15:54:30 +0100
+Message-ID: <4859492.2SOgx7UbdE@amdc1227>
+References: <1385097668-24620-1-git-send-email-sw0312.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:11946 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754933Ab3LROt2 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:16675 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755189Ab3LROys (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 09:49:28 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
+	Wed, 18 Dec 2013 09:54:48 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MY000JINBUD8O00@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Dec 2013 14:49:25 +0000 (GMT)
-In-reply-to: <1386817322-11265-3-git-send-email-a.kesavan@samsung.com>
+ 17 2011)) with ESMTP id <0MY000HNLC3A0600@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Dec 2013 14:54:46 +0000 (GMT)
+In-reply-to: <1385097668-24620-1-git-send-email-sw0312.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>, dianders@chromium.org, tomasz.figa@gmail.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-Hi Kukjin,
-
-On Thursday 12 of December 2013 08:32:02 Abhilash Kesavan wrote:
-> Fix wrong clock number in mdma0 node.
+On Friday 22 of November 2013 14:21:08 Seung-Woo Kim wrote:
+> The SRC_MFC register was incorrect. This patch corrects it.
 > 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/samsung/clk-exynos4.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 9db5047..177becd 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -559,7 +559,7 @@
->  			compatible = "arm,pl330", "arm,primecell";
->  			reg = <0x10800000 0x1000>;
->  			interrupts = <0 33 0>;
-> -			clocks = <&clock 271>;
-> +			clocks = <&clock 346>;
->  			clock-names = "apb_pclk";
->  			#dma-cells = <1>;
->  			#dma-channels = <8>;
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index ad5ff50..1a7c1b9 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -39,7 +39,7 @@
+>  #define SRC_TOP1		0xc214
+>  #define SRC_CAM			0xc220
+>  #define SRC_TV			0xc224
+> -#define SRC_MFC			0xcc28
+> +#define SRC_MFC			0xc228
+>  #define SRC_G3D			0xc22c
+>  #define E4210_SRC_IMAGE		0xc230
+>  #define SRC_LCD0		0xc234
 > 
 
-Can we have your ack for this patch?
-
-I'd like to apply the whole series into samsung-clk fixes branch and
-send a pull request to Mike to get it and one more fix into his tree.
+Applied into samsung-clk fixes branch.
 
 Best regards,
 Tomasz
