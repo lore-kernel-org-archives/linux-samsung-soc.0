@@ -1,139 +1,58 @@
-From: Alex Ling <kasimling@gmail.com>
-Subject: [PATCH v2 1/1] ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
-Date: Wed, 18 Dec 2013 21:23:59 +0800
-Message-ID: <1387373039-4738-1-git-send-email-kasimling@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rob.herring@calxeda.com, mark.rutland@arm.com, linux@arm.linux.org.uk, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Alex Ling <kasimling@gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Fix MDMA0 clock number
+Date: Wed, 18 Dec 2013 15:49:10 +0100
+Message-ID: <2082327.zpbOvCVe5P@amdc1227>
+References: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
+ <1386817322-11265-3-git-send-email-a.kesavan@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:11946 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754933Ab3LROt2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Dec 2013 09:49:28 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MY000JINBUD8O00@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Dec 2013 14:49:25 +0000 (GMT)
+In-reply-to: <1386817322-11265-3-git-send-email-a.kesavan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>, dianders@chromium.org, tomasz.figa@gmail.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
-TINY4412 board. This patch including support peripherals like
-UART, SD card on SDMMC2 port and GPIO connected LEDs.
+Hi Kukjin,
 
-Signed-off-by: Alex Ling <kasimling@gmail.com>
----
-Changes for v2:
-  - Clean up patch description
-  - Fix LED labels as Tomasz's suggested
-  - Fix style issues
+On Thursday 12 of December 2013 08:32:02 Abhilash Kesavan wrote:
+> Fix wrong clock number in mdma0 node.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 9db5047..177becd 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -559,7 +559,7 @@
+>  			compatible = "arm,pl330", "arm,primecell";
+>  			reg = <0x10800000 0x1000>;
+>  			interrupts = <0 33 0>;
+> -			clocks = <&clock 271>;
+> +			clocks = <&clock 346>;
+>  			clock-names = "apb_pclk";
+>  			#dma-cells = <1>;
+>  			#dma-channels = <8>;
+> 
 
- arch/arm/boot/dts/Makefile                |    1 +
- arch/arm/boot/dts/exynos4412-tiny4412.dts |   93 +++++++++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4412-tiny4412.dts
+Can we have your ack for this patch?
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 50fd70b..cfee1ef 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos4412-odroidx.dtb \
- 	exynos4412-origen.dtb \
- 	exynos4412-smdk4412.dtb \
-+	exynos4412-tiny4412.dtb \
- 	exynos4412-trats2.dtb \
- 	exynos5250-arndale.dtb \
- 	exynos5250-smdk5250.dtb \
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-new file mode 100644
-index 0000000..0a98312
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -0,0 +1,93 @@
-+/*
-+ * FriendlyARM's Exynos4412 based TINY4412 board device tree source
-+ *
-+ * Copyright (c) 2013 Alex Ling <kasimling@gmail.com>
-+ *
-+ * Device tree source file for FriendlyARM's TINY4412 board which is based on
-+ * Samsung's Exynos4412 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos4412.dtsi"
-+
-+/ {
-+	model = "FriendlyARM TINY4412 board based on Exynos4412";
-+	compatible = "friendlyarm,tiny4412", "samsung,exynos4412";
-+
-+	memory {
-+		reg = <0x40000000 0x40000000>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			label = "led1";
-+			gpios = <&gpm4 0 1>;
-+			default-state = "off";
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led2 {
-+			label = "led2";
-+			gpios = <&gpm4 1 1>;
-+			default-state = "off";
-+		};
-+
-+		led3 {
-+			label = "led3";
-+			gpios = <&gpm4 2 1>;
-+			default-state = "off";
-+		};
-+
-+		led4 {
-+			label = "led4";
-+			gpios = <&gpm4 3 1>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc0";
-+		};
-+	};
-+
-+	rtc@10070000 {
-+		status = "okay";
-+	};
-+
-+	sdhci@12530000 {
-+		bus-width = <4>;
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
-+
-+	serial@13800000 {
-+		status = "okay";
-+	};
-+
-+	serial@13810000 {
-+		status = "okay";
-+	};
-+
-+	serial@13820000 {
-+		status = "okay";
-+	};
-+
-+	serial@13830000 {
-+		status = "okay";
-+	};
-+
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible = "samsung,clock-xxti";
-+			clock-frequency = <0>;
-+		};
-+
-+		xusbxti {
-+			compatible = "samsung,clock-xusbxti";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+};
--- 
-1.7.9.5
+I'd like to apply the whole series into samsung-clk fixes branch and
+send a pull request to Mike to get it and one more fix into his tree.
+
+Best regards,
+Tomasz
