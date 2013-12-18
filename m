@@ -1,134 +1,127 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add SPI nodes to the exynos5420 device tree
- file
-Date: Thu, 19 Dec 2013 02:37:07 +0900
-Message-ID: <52B1DD43.9020401@samsung.com>
-References: <1377856637-7595-1-git-send-email-l.krishna@samsung.com> <086701cedf98$ab9d9f60$02d8de20$@org> <CAL1wa8cP_nrHxdF-abpL-M-arb5SdVCAmgqipVAgZEGzXpbrDw@mail.gmail.com> <CAL1wa8c+pLd1bG9te7KLXrbANiu8mdH1qzaEd-T6A=01+1-ZBg@mail.gmail.com>
+Subject: Re: [RESEND] [PATCH V3] ARM: dts: Add DMA controller node info on
+ Exynos5420.
+Date: Thu, 19 Dec 2013 02:38:04 +0900
+Message-ID: <52B1DD7C.404@samsung.com>
+References: <1381137944-30503-1-git-send-email-l.krishna@samsung.com> <086601cedf98$2cb9f310$862dd930$@org> <CAL1wa8d4TebPjfSw1Q3XMzTmUchO=jCbeUbX+STVEq4TG33kzQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:34764 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751718Ab3LRRhR (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:35857 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754301Ab3LRRiL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 12:37:17 -0500
-In-Reply-To: <CAL1wa8c+pLd1bG9te7KLXrbANiu8mdH1qzaEd-T6A=01+1-ZBg@mail.gmail.com>
+	Wed, 18 Dec 2013 12:38:11 -0500
+In-Reply-To: <CAL1wa8d4TebPjfSw1Q3XMzTmUchO=jCbeUbX+STVEq4TG33kzQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, abrestic@chromium.org, Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, broonie@kernel.org, padma venkat <padma.kvr@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 12/12/13 20:34, Leela Krishna Amudala wrote:
+On 12/12/13 20:36, Leela Krishna Amudala wrote:
 > Hi Kukjin,
 >
+> Even though you said it is applied, I didn't see this patch in any of
+> your trees.
 > Can you kindly look into this patch and take necessary action..?
 >
+Applied, thanks.
+Kukjin
+
 > Best Wishes,
 > Leela Krishna.
 >
-> On Tue, Nov 12, 2013 at 9:02 PM, Leela Krishna Amudala
-> <l.krishna@samsung.com>  wrote:
->> Hi Kukjin,
->>
->> Thanks for reviewing the patch.
->>
->> On Tue, Nov 12, 2013 at 4:46 PM, Kukjin Kim<kgene@kernel.org>  wrote:
->>> Leela Krishna Amudala  wrote:
->>>>
->>>> Add SPI device tree nodes to Exynos5420 SoC
->>>>
->>>> Signed-off-by: Doug Anderson<dianders@chromium.org>
->>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
->>>> Reviewed-by: Andrew Bresticker<abrestic@chromium.org>
->>>> ---
->>>> Note: This patch is rebased on Kgene's for-next branch and is dependent on
->>>> [V3] ARM: dts: Add DMA controller node info on Exynos5420.
->>>> https://patchwork.kernel.org/patch/2851790/
->>>>
->>>>   arch/arm/boot/dts/exynos5420.dtsi |   51
->>>> +++++++++++++++++++++++++++++++++++++
->>>>   1 file changed, 51 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
->>>> b/arch/arm/boot/dts/exynos5420.dtsi
->>>> index 15465f8..8d9e980 100644
->>>> --- a/arch/arm/boot/dts/exynos5420.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->>>> @@ -27,6 +27,9 @@
->>>>                pinctrl2 =&pinctrl_2;
->>>>                pinctrl3 =&pinctrl_3;
->>>>                pinctrl4 =&pinctrl_4;
->>>> +             spi0 =&spi_0;
->>>> +             spi1 =&spi_1;
->>>> +             spi2 =&spi_2;
->>>>        };
->>>>
->>>>        cpus {
->>>> @@ -238,6 +241,54 @@
->>>>                };
->>>>        };
->>>>
->>>> +     spi_0: spi@12d20000 {
->>>> +             compatible = "samsung,exynos4210-spi";
->>>> +             reg =<0x12d20000 0x100>;
->>>> +             interrupts =<0 66 0>;
->>>> +             dmas =<&pdma0 5
->>>> +&pdma0 4>;
->>>> +             dma-names = "tx", "rx";
->>>> +             #address-cells =<1>;
->>>> +             #size-cells =<0>;
->>>> +             pinctrl-names = "default";
->>>> +             pinctrl-0 =<&spi0_bus>;
->>>> +             clocks =<&clock 271>,<&clock 135>;
->>>> +             clock-names = "spi", "spi_busclk0";
->>>> +             status = "disabled";
->>>> +     };
->>>> +
->>>> +     spi_1: spi@12d30000 {
->>>> +             compatible = "samsung,exynos4210-spi";
->>>> +             reg =<0x12d30000 0x100>;
->>>> +             interrupts =<0 67 0>;
->>>> +             dmas =<&pdma1 5
->>>> +&pdma1 4>;
->>>> +             dma-names = "tx", "rx";
->>>> +             #address-cells =<1>;
->>>> +             #size-cells =<0>;
->>>> +             pinctrl-names = "default";
->>>> +             pinctrl-0 =<&spi1_bus>;
->>>> +             clocks =<&clock 272>,<&clock 136>;
->>>> +             clock-names = "spi", "spi_busclk0";
->>>> +             status = "disabled";
->>>> +     };
->>>> +
->>>> +     spi_2: spi@12d40000 {
->>>> +             compatible = "samsung,exynos4210-spi";
->>>> +             reg =<0x12d40000 0x100>;
->>>> +             interrupts =<0 68 0>;
->>>> +             dmas =<&pdma0 7
->>>> +&pdma0 6>;
->>>> +             dma-names = "tx", "rx";
->>>> +             #address-cells =<1>;
->>>> +             #size-cells =<0>;
->>>> +             pinctrl-names = "default";
->>>> +             pinctrl-0 =<&spi2_bus>;
->>>> +             clocks =<&clock 273>,<&clock 137>;
->>>> +             clock-names = "spi", "spi_busclk0";
->>>> +             status = "disabled";
->>>> +     };
->>>> +
->>>>        serial@12C00000 {
->>>>                clocks =<&clock 257>,<&clock 128>;
->>>>                clock-names = "uart", "clk_uart_baud0";
->>>> --
->>>> 1.7.10.4
+> On Tue, Nov 12, 2013 at 8:13 PM, Kukjin Kim<kgene@kernel.org>  wrote:
+>> Leela Krishna Amudala wrote:
 >>>
->>> Leela, do you still want to keep the status 'disabled' for SPIs?
+>> + dt ml.
+>>
+>>> From: Padmavathi Venna<padma.v@samsung.com>
 >>>
->>
->> Yes, the SPI client nodes will make status = "okay" in board file.
->>
-OK, applied.
-
-Thanks,
-Kukjin
+>>> This patch adds dma controller node info on Exynos5420.
+>>> Exynos5420 has adma for audio IPs. As adma clk is dependent
+>>> on audss clk provider that will be added later.
+>>>
+>>> Signed-off-by: Padmavathi Venna<padma.v@samsung.com>
+>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
+>>> ---
+>>> Change since V2:
+>>>        - Removed adma node as adma clock is dependent audss clock provider.
+>>>
+>>> Changes since V1:
+>>>          - In V1, dma node common stuff was added in common exynos5.dtsi
+>> file.
+>>>            This was removed as per Kukjin comment and added in
+>>> exynos5420.dtsi.
+>>>
+>>>   arch/arm/boot/dts/exynos5420.dtsi |   52
+>>> +++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 52 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+>>> b/arch/arm/boot/dts/exynos5420.dtsi
+>>> index d537cd7..15465f8 100644
+>>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>>> @@ -186,6 +186,58 @@
+>>>                status = "okay";
+>>>        };
+>>>
+>>> +     amba {
+>>> +             #address-cells =<1>;
+>>> +             #size-cells =<1>;
+>>> +             compatible = "arm,amba-bus";
+>>> +             interrupt-parent =<&gic>;
+>>> +             ranges;
+>>> +
+>>> +             pdma0: pdma@121A0000 {
+>>> +                     compatible = "arm,pl330", "arm,primecell";
+>>> +                     reg =<0x121A0000 0x1000>;
+>>> +                     interrupts =<0 34 0>;
+>>> +                     clocks =<&clock 362>;
+>>> +                     clock-names = "apb_pclk";
+>>> +                     #dma-cells =<1>;
+>>> +                     #dma-channels =<8>;
+>>> +                     #dma-requests =<32>;
+>>> +             };
+>>> +
+>>> +             pdma1: pdma@121B0000 {
+>>> +                     compatible = "arm,pl330", "arm,primecell";
+>>> +                     reg =<0x121B0000 0x1000>;
+>>> +                     interrupts =<0 35 0>;
+>>> +                     clocks =<&clock 363>;
+>>> +                     clock-names = "apb_pclk";
+>>> +                     #dma-cells =<1>;
+>>> +                     #dma-channels =<8>;
+>>> +                     #dma-requests =<32>;
+>>> +             };
+>>> +
+>>> +             mdma0: mdma@10800000 {
+>>> +                     compatible = "arm,pl330", "arm,primecell";
+>>> +                     reg =<0x10800000 0x1000>;
+>>> +                     interrupts =<0 33 0>;
+>>> +                     clocks =<&clock 473>;
+>>> +                     clock-names = "apb_pclk";
+>>> +                     #dma-cells =<1>;
+>>> +                     #dma-channels =<8>;
+>>> +                     #dma-requests =<1>;
+>>> +             };
+>>> +
+>>> +             mdma1: mdma@11C10000 {
+>>> +                     compatible = "arm,pl330", "arm,primecell";
+>>> +                     reg =<0x11C10000 0x1000>;
+>>> +                     interrupts =<0 124 0>;
+>>> +                     clocks =<&clock 442>;
+>>> +                     clock-names = "apb_pclk";
+>>> +                     #dma-cells =<1>;
+>>> +                     #dma-channels =<8>;
+>>> +                     #dma-requests =<1>;
+>>> +             };
+>>> +     };
+>>> +
+>>>        serial@12C00000 {
+>>>                clocks =<&clock 257>,<&clock 128>;
+>>>                clock-names = "uart", "clk_uart_baud0";
+>>> --
+>>> 1.7.10.4
