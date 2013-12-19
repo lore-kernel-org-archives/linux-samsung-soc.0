@@ -1,87 +1,73 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v12 4/4] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Thu, 19 Dec 2013 11:37:02 +0530
-Message-ID: <1387433222-7893-1-git-send-email-ch.naveen@samsung.com>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
+From: MyungJoo Ham <myungjoo.ham@gmail.com>
+Subject: Re: [PATCH 06/11] PM / devfreq: move definitions for exynos4_bus into drivers/devfreq
+Date: Thu, 19 Dec 2013 16:29:03 +0900
+Message-ID: <CAJ0PZbSQaDy13BO=nrorMt1O16X7VEqAfs_h6dAeF+Gekgrfdw@mail.gmail.com>
+References: <116401cefb1e$75b83440$61289cc0$@kernel.org>
+	<CAJ0PZbTH0kga7Gbb87umJpCF_ih3TQrxKS0xBbofDvJq+_wj5Q@mail.gmail.com>
+	<52B1E156.6030904@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f48.google.com ([209.85.212.48]:65037 "EHLO
+	mail-vb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951Ab3LSH3E (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Dec 2013 02:29:04 -0500
+Received: by mail-vb0-f48.google.com with SMTP id f13so413701vbg.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 23:29:03 -0800 (PST)
+In-Reply-To: <52B1E156.6030904@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: kgene@kernel.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Exynos5420 SoC has per core thermal management unit.
-5 TMU channels 4 for CPUs and 5th for GPU.
+On Thu, Dec 19, 2013 at 2:54 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 12/18/13 15:11, MyungJoo Ham wrote:
+>>
+>> On Tue, Dec 17, 2013 at 8:52 PM,<kgene@kernel.org>  wrote:
+>>>
+>>> From: Kukjin Kim<kgene.kim@samsung.com>
+>>>
+>>> We don't need to keep the definitions for exynos4_bus into
+>>> mach-exynos/ so this moves them into drviers/devfreq with
+>>> adding header file.
+>>
+>>
+>> Acked-by: MyungJoo Ham<myungjoo.ham@samsung.com>
+>>
+>> However, how are you going to merge this patch?
+>> Do you need me to get this handled or are you going to do it yourself
+>> with Samsung-SoC tree?
+>>
+>
+> Hi MyungJoo,
+>
+> Let me take this into Samsung tree with others if you're OK :-)
 
-This patch adds the device tree nodes to the DT device list.
+Yes, Ok. Please go ahead.
 
-Nodes carry the misplaced second base address and the second
-clock to access the misplaced base address.
+>
+> Thanks,
+> Kukjin
+>
+>
+>> Cheers,
+>> MyungJoo.
+>>
+>>>
+>>> Cc: MyungJoo Ham<myungjoo.ham@samsung.com>
+>>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+>>> ---
+>>>   arch/arm/mach-exynos/include/mach/regs-clock.h |   94
+>>> --------------------
+>>>   drivers/devfreq/exynos/exynos4_bus.c           |    4 +-
+>>>   drivers/devfreq/exynos/exynos4_bus.h           |  110
+>>> ++++++++++++++++++++++++
+>>>   3 files changed, 112 insertions(+), 96 deletions(-)
+>>>   create mode 100644 drivers/devfreq/exynos/exynos4_bus.h
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
----
-Changes since v11:
-  changed the secondary clock name to "tmu_triminfo_apbif"
-from "tmu_apbif_triminfo"
 
-Changes since previous version:
-1. used lables instead of comment lines
-2. pass the same clock as trimfo_apbif clock for TMU channel 2
 
- arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index b1fa334..c62cde6 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -402,4 +402,44 @@
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
- 	};
-+
-+	tmu_cpu0:tmu@10060000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu1:tmu@10064000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10064000 0x100>;
-+		interrupts = <0 183 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu2:tmu@10068000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+		interrupts = <0 184 0>;
-+		clocks = <&clock 318>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+	tmu_cpu3:tmu@1006c000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+		interrupts = <0 185 0>;
-+		clocks = <&clock 318>, <&clock 319>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+	tmu_gpu:tmu@100a0000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-+		interrupts = <0 215 0>;
-+		clocks = <&clock 319>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
- };
 -- 
-1.7.10.4
-
+MyungJoo Ham, Ph.D.
+System S/W Lab, S/W Center, Samsung Electronics
