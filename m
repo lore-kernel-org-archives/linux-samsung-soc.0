@@ -1,72 +1,60 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: dts: Re-organize RTC status for 5420
-Date: Thu, 19 Dec 2013 16:27:53 +0530
-Message-ID: <1387450673-331-1-git-send-email-sachin.kamat@linaro.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v12 3/4] thermal: samsung: Add TMU support for Exynos5420
+ SoCs
+Date: Thu, 19 Dec 2013 12:34:03 +0100
+Message-ID: <3663519.7JfYNffMTG@amdc1227>
+References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com>
+ <1387433191-7861-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:46119 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751455Ab3LSLBG (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:53966 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753058Ab3LSLeV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Dec 2013 06:01:06 -0500
-Received: by mail-pb0-f43.google.com with SMTP id rq2so1009619pbb.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2013 03:01:05 -0800 (PST)
+	Thu, 19 Dec 2013 06:34:21 -0500
+In-reply-to: <1387433191-7861-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
 
-Some boards might not have RTC xtal, so RTC shouldn't really be
-enabled by default. Enable it in the required board files.
+On Thursday 19 of December 2013 11:36:31 Naveen Krishna Chatradhi wrote:
+> Exynos5420 has 5 TMU channels, the TRIMINFO register is
+> misplaced for TMU channels 2, 3 and 4
+> TRIMINFO at 0x1006c000 contains data for TMU channel 3
+> TRIMINFO at 0x100a0000 contains data for TMU channel 4
+> TRIMINFO at 0x10068000 contains data for TMU channel 2
+> 
+> This patch
+> 1 Adds the neccessary register changes and arch information
+>    to support Exynos5420 SoCs.
+> 2. Handles the gate clock for misplaced TRIMINFO register
+> 3. Updates the Documentation at
+>    Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> Changes since v11:
+> 1. Added description for clocks in the Documentation
+> 2. corrected the clock name in clk_get() function as per description
+> 
+> Changes since v10:
+> 1. using renamed compatible "samsung,exynos5420-tmu-ext-triminfo"
+>    and passing same clock as triminfo_apbif clock for channel 2
+> 2. removed the "exynos5420-tmu-triminfo-clk" compatible
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |   45 ++++++++-
+>  drivers/thermal/samsung/exynos_tmu.c               |   52 +++++++++-
+>  drivers/thermal/samsung/exynos_tmu.h               |    1 +
+>  drivers/thermal/samsung/exynos_tmu_data.c          |   99 ++++++++++++++++++++
+>  drivers/thermal/samsung/exynos_tmu_data.h          |    8 ++
+>  5 files changed, 200 insertions(+), 5 deletions(-)
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/boot/dts/exynos5420-arndale-octa.dts |    4 ++++
- arch/arm/boot/dts/exynos5420-smdk5420.dts     |    4 ++++
- arch/arm/boot/dts/exynos5420.dtsi             |    2 +-
- 3 files changed, 9 insertions(+), 1 deletion(-)
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 9f3a3231158b..090117d595cb 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -38,6 +38,10 @@
- 		};
- 	};
- 
-+	rtc@101E0000 {
-+		status = "okay";
-+	};
-+
- 	mmc@12200000 {
- 		status = "okay";
- 		broken-cd;
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 62e1ebe4e989..edb4926f17d6 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -31,6 +31,10 @@
- 		};
- 	};
- 
-+	rtc@101E0000 {
-+		status = "okay";
-+	};
-+
- 	mmc@12200000 {
- 		status = "okay";
- 		broken-cd;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 1c1a6a0db252..0b4bb87ae5f9 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -271,7 +271,7 @@
- 	rtc@101E0000 {
- 		clocks = <&clock 317>;
- 		clock-names = "rtc";
--		status = "okay";
-+		status = "disabled";
- 	};
- 
- 	amba {
--- 
-1.7.9.5
+Best regards,
+Tomasz
