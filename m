@@ -1,42 +1,55 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v10 1/2] s5k5baf: add camera sensor driver
-Date: Thu, 19 Dec 2013 19:33:44 +0100
-Message-ID: <2100889.mqgrGv2fsV@avalon>
-References: <1386243520-17117-1-git-send-email-a.hajda@samsung.com> <1386243520-17117-2-git-send-email-a.hajda@samsung.com> <52B2FAA4.2070904@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH Resend 1/1] clk: exynos5250: Add CLK_SET_RATE_PARENT flag to
+ mout_apll
+Date: Thu, 19 Dec 2013 11:37:08 -0800
+Message-ID: <20131219193708.18119.53403@quantum>
+References: <1387442019-2445-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <52B2FAA4.2070904@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f48.google.com ([209.85.216.48]:59470 "EHLO
+	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753884Ab3LSThN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Dec 2013 14:37:13 -0500
+Received: by mail-qa0-f48.google.com with SMTP id w5so1876356qac.14
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2013 11:37:12 -0800 (PST)
+In-Reply-To: <1387442019-2445-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, sachin.kamat@linaro.org
 
-Hi Sylwester,
-
-On Thursday 19 December 2013 14:54:44 Sylwester Nawrocki wrote:
-> On 05/12/13 12:38, Andrzej Hajda wrote:
-> > Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
-> > with embedded SoC ISP.
-> > The driver exposes the sensor as two V4L2 subdevices:
-> > - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
-> >   no controls.
-> > - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
-> >   pre/post ISP cropping, downscaling via selection API, controls.
-> > 
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Quoting Sachin Kamat (2013-12-19 00:33:39)
+> Add CLK_SET_RATE_PARENT flag to mout_apll clock. This will let us set the
+> clock rate in the cpufreq driver.
 > 
-> Hi Laurent,
-> 
-> Does this driver look sane to you, at its 10'th version? :)
-> If so I could send a pull request including it this week.
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 
-Yes, it does. Sorry for the delay. Please send the pull request.
+Ack.
 
--- 
 Regards,
+Mike
 
-Laurent Pinchart
+> ---
+>  drivers/clk/samsung/clk-exynos5250.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index 80f652053cb5..11178b1ad735 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -303,7 +303,8 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+>         /*
+>          * CMU_CPU
+>          */
+> -       MUX_A(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1, "mout_apll"),
+> +       MUX_FA(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> +                                       CLK_SET_RATE_PARENT, 0, "mout_apll"),
+>         MUX_A(none, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1, "mout_cpu"),
+>  
+>         /*
+> -- 
+> 1.7.9.5
+> 
