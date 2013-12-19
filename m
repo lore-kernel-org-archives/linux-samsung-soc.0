@@ -1,59 +1,88 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: samsung: exynos4: Correct SRC_MFC register
-Date: Wed, 18 Dec 2013 20:23:10 -0800
-Message-ID: <20131219042310.23538.98799@quantum>
-References: <1385097668-24620-1-git-send-email-sw0312.kim@samsung.com>
- <4859492.2SOgx7UbdE@amdc1227>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2] ARM: dts: Add regulator entries to Exynos5420 SMDK board
+Date: Thu, 19 Dec 2013 10:05:52 +0530
+Message-ID: <CAK9yfHy8iKr8n5OVLm3QbiO3cL_hx-kr8f=gZ2VsBmuXLgHvgg@mail.gmail.com>
+References: <1386236664-27763-1-git-send-email-sachin.kamat@linaro.org>
+	<6615089.743e1d93MS@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gg0-f182.google.com ([209.85.161.182]:38626 "EHLO
-	mail-gg0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751008Ab3LSEXP convert rfc822-to-8bit (ORCPT
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:54361 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750866Ab3LSEfx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Dec 2013 23:23:15 -0500
-Received: by mail-gg0-f182.google.com with SMTP id d2so180970ggn.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 20:23:15 -0800 (PST)
-In-Reply-To: <4859492.2SOgx7UbdE@amdc1227>
+	Wed, 18 Dec 2013 23:35:53 -0500
+Received: by mail-ob0-f179.google.com with SMTP id wm4so658607obc.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 20:35:52 -0800 (PST)
+In-Reply-To: <6615089.743e1d93MS@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Quoting Tomasz Figa (2013-12-18 06:54:30)
-> On Friday 22 of November 2013 14:21:08 Seung-Woo Kim wrote:
-> > The SRC_MFC register was incorrect. This patch corrects it.
-> > 
-> > Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos4.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> > index ad5ff50..1a7c1b9 100644
-> > --- a/drivers/clk/samsung/clk-exynos4.c
-> > +++ b/drivers/clk/samsung/clk-exynos4.c
-> > @@ -39,7 +39,7 @@
-> >  #define SRC_TOP1             0xc214
-> >  #define SRC_CAM                      0xc220
-> >  #define SRC_TV                       0xc224
-> > -#define SRC_MFC                      0xcc28
-> > +#define SRC_MFC                      0xc228
-> >  #define SRC_G3D                      0xc22c
-> >  #define E4210_SRC_IMAGE              0xc230
-> >  #define SRC_LCD0             0xc234
-> > 
-> 
-> Applied into samsung-clk fixes branch.
+Hi Tomasz,
 
-It's always nice when a fix for the -rc cycle includes a description of
-the user-visible regression that it fixes.
+On 18 December 2013 20:46, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Sachin,
+>
+> On Thursday 05 of December 2013 15:14:24 Sachin Kamat wrote:
+>> Added regulator entries to Exynos5420 SMDK board.
+>>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>> Changes since v1:
+>> Changed node name
+>> ---
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts |  216 +++++++++++++++++++++++++++++
+>>  1 file changed, 216 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index fb5a1e25c632..62e1ebe4e989 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -120,4 +120,220 @@
+>>                       reg = <0x50>;
+>>               };
+>>       };
+>> +
+>> +     hsi2c_4: i2c@12CA0000 {
+>> +             status = "okay";
+>> +
+>> +             s2mps11_pmic@66 {
+>
+> Just pmic@66 is enough.
 
-Regards,
-Mike
+Please see my comment below.
 
-> 
-> Best regards,
-> Tomasz
-> 
+>
+>> +                     compatible = "samsung,s2mps11-pmic";
+>> +                     reg = <0x66>;
+>> +                     s2mps11,buck2-ramp-delay = <12>;
+>> +                     s2mps11,buck34-ramp-delay = <12>;
+>> +                     s2mps11,buck16-ramp-delay = <12>;
+>> +                     s2mps11,buck6-ramp-enable = <1>;
+>> +                     s2mps11,buck2-ramp-enable = <1>;
+>> +                     s2mps11,buck3-ramp-enable = <1>;
+>> +                     s2mps11,buck4-ramp-enable = <1>;
+>> +
+>> +                     s2mps11_osc: clocks {
+>> +                             #clock-cells = <1>;
+>> +                             clock-output-names = "s2mps11_ap",
+>> +                                             "s2mps11_cp", "s2mps11_bt";
+>> +                     };
+>> +
+>> +                     regulators {
+>> +                             ldo1_reg: LDO1 {
+>> +                                     regulator-name = "vdd_ldo1";
+>
+> Is this the name as written on the PCB or board schematics?
+> + the same for all regulators below.
+
+Yes, the schematic refers to these just as above (with no specific names).
+Unless you have strong objections or a re-spin of this patch becomes
+necessary, I
+wouldn't want to change the name you pointed above. :)
+
+-- 
+With warm regards,
+Sachin
