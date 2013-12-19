@@ -1,51 +1,67 @@
-From: Levente Kurusa <levex@linux.com>
-Subject: [PATCH 10/38] arm: exynos: add missing put_device call
-Date: Thu, 19 Dec 2013 16:03:21 +0100
-Message-ID: <1387465429-3568-11-git-send-email-levex@linux.com>
-References: <1387465429-3568-2-git-send-email-levex@linux.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
+Date: Thu, 19 Dec 2013 21:05:09 +0530
+Message-ID: <CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
+References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
+	<2996623.YXg5JqReYS@flatron>
+	<CAK9yfHzs+T0g0qy-EALFkrKFybdJDAQ3ZGAoYovZO8PDaWM4QA@mail.gmail.com>
+	<3552349.yKrGzNhczA@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1387465429-3568-2-git-send-email-levex@linux.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Levente Kurusa <levex@linux.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:54110 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750817Ab3LSPfK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Dec 2013 10:35:10 -0500
+Received: by mail-ob0-f169.google.com with SMTP id wm4so1332351obc.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2013 07:35:09 -0800 (PST)
+In-Reply-To: <3552349.yKrGzNhczA@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
 
-This is required so that we give up the last reference to the device.
+Hi Tomasz,
 
-Signed-off-by: Levente Kurusa <levex@linux.com>
----
- arch/arm/mach-exynos/common.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+On 19 December 2013 19:40, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Sachin, Andrew,
+>
+> On Wednesday 18 of December 2013 23:39:58 Sachin Kamat wrote:
+>> Hi Tomasz,
+>>
+>> On 10 November 2013 22:38, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> > Hi Sachin, Andrew,
+>> >
+>> > On Friday 08 of November 2013 15:44:07 Sachin Kamat wrote:
+>> >> From: Andrew Bresticker <abrestic@chromium.org>
+>> >>
+>> >> The gate clocks for the MFC sysmmus appear to be flipped, i.e.
+>> >> GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
+>> >> Fix this so that the MFC will start up.
+>> >
+>> > Wow, this means that there is a mistake in the documentation. Not that
+>> > I'm surprised, though.
+>> >
+>> > I guess you are sure about this, so:
+>> >
+>> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>>
+>> I believe you are going to take this through your tree along with a
+>> few others which you have already reviewed?
+>
+> This patch seems to depend on my Exynos 5250 clock clean-up series, which
+> will be merged for 3.14. Are you okay with this patch being merged for
+> 3.14 as well or this fix is needed for earlier kernel versions too?
+> (It is not a regression introduced in 3.13, though.)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 61d2906..8b58829 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -407,7 +407,13 @@ early_initcall(exynos4_l2x0_cache_init);
- 
- static int __init exynos_init(void)
- {
-+	int rc = 0;
-+
- 	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
- 
--	return device_register(&exynos4_dev);
-+	rc = device_register(&exynos4_dev);
-+	if (rc)
-+		put_device(&exynos4_dev);
-+	
-+	return rc;
- }
+Yes, I did rebase it on top of your series along with other patches.
+Though not a regression introduced in 3.13, I think it makes sense to have this
+sent as a fix during this release (3.13) itself. Let me know if you
+want me to base it
+on top of 3.13-rc4 and re-send.
+
+
 -- 
-1.8.3.1
+With warm regards,
+Sachin
