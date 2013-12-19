@@ -1,67 +1,42 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
-Date: Thu, 19 Dec 2013 21:05:09 +0530
-Message-ID: <CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
-References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
-	<2996623.YXg5JqReYS@flatron>
-	<CAK9yfHzs+T0g0qy-EALFkrKFybdJDAQ3ZGAoYovZO8PDaWM4QA@mail.gmail.com>
-	<3552349.yKrGzNhczA@amdc1227>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v10 1/2] s5k5baf: add camera sensor driver
+Date: Thu, 19 Dec 2013 19:33:44 +0100
+Message-ID: <2100889.mqgrGv2fsV@avalon>
+References: <1386243520-17117-1-git-send-email-a.hajda@samsung.com> <1386243520-17117-2-git-send-email-a.hajda@samsung.com> <52B2FAA4.2070904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:54110 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750817Ab3LSPfK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Dec 2013 10:35:10 -0500
-Received: by mail-ob0-f169.google.com with SMTP id wm4so1332351obc.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2013 07:35:09 -0800 (PST)
-In-Reply-To: <3552349.yKrGzNhczA@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <52B2FAA4.2070904@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
 
-Hi Tomasz,
+Hi Sylwester,
 
-On 19 December 2013 19:40, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Sachin, Andrew,
->
-> On Wednesday 18 of December 2013 23:39:58 Sachin Kamat wrote:
->> Hi Tomasz,
->>
->> On 10 November 2013 22:38, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> > Hi Sachin, Andrew,
->> >
->> > On Friday 08 of November 2013 15:44:07 Sachin Kamat wrote:
->> >> From: Andrew Bresticker <abrestic@chromium.org>
->> >>
->> >> The gate clocks for the MFC sysmmus appear to be flipped, i.e.
->> >> GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
->> >> Fix this so that the MFC will start up.
->> >
->> > Wow, this means that there is a mistake in the documentation. Not that
->> > I'm surprised, though.
->> >
->> > I guess you are sure about this, so:
->> >
->> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>
->> I believe you are going to take this through your tree along with a
->> few others which you have already reviewed?
->
-> This patch seems to depend on my Exynos 5250 clock clean-up series, which
-> will be merged for 3.14. Are you okay with this patch being merged for
-> 3.14 as well or this fix is needed for earlier kernel versions too?
-> (It is not a regression introduced in 3.13, though.)
+On Thursday 19 December 2013 14:54:44 Sylwester Nawrocki wrote:
+> On 05/12/13 12:38, Andrzej Hajda wrote:
+> > Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
+> > with embedded SoC ISP.
+> > The driver exposes the sensor as two V4L2 subdevices:
+> > - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
+> >   no controls.
+> > - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
+> >   pre/post ISP cropping, downscaling via selection API, controls.
+> > 
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Hi Laurent,
+> 
+> Does this driver look sane to you, at its 10'th version? :)
+> If so I could send a pull request including it this week.
 
-Yes, I did rebase it on top of your series along with other patches.
-Though not a regression introduced in 3.13, I think it makes sense to have this
-sent as a fix during this release (3.13) itself. Let me know if you
-want me to base it
-on top of 3.13-rc4 and re-send.
-
+Yes, it does. Sorry for the delay. Please send the pull request.
 
 -- 
-With warm regards,
-Sachin
+Regards,
+
+Laurent Pinchart
