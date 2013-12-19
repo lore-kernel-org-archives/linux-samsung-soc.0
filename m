@@ -1,73 +1,64 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH 06/11] PM / devfreq: move definitions for exynos4_bus into drivers/devfreq
-Date: Thu, 19 Dec 2013 16:29:03 +0900
-Message-ID: <CAJ0PZbSQaDy13BO=nrorMt1O16X7VEqAfs_h6dAeF+Gekgrfdw@mail.gmail.com>
-References: <116401cefb1e$75b83440$61289cc0$@kernel.org>
-	<CAJ0PZbTH0kga7Gbb87umJpCF_ih3TQrxKS0xBbofDvJq+_wj5Q@mail.gmail.com>
-	<52B1E156.6030904@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: exynos: File scope reg_save array should depend on PM_SLEEP
+Date: Wed, 18 Dec 2013 23:55:10 -0800
+Message-ID: <20131219075510.18119.67210@quantum>
+References: <1387274199-470-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f48.google.com ([209.85.212.48]:65037 "EHLO
-	mail-vb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951Ab3LSH3E (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Dec 2013 02:29:04 -0500
-Received: by mail-vb0-f48.google.com with SMTP id f13so413701vbg.21
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2013 23:29:03 -0800 (PST)
-In-Reply-To: <52B1E156.6030904@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1387274199-470-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@nvidia.com>, Tomasz Figa <t.figa@samsung.com>Krzysztof Kozlowski <k.kozlowski@samsung.com>, James Hogan <james.hogan@imgtec.com>, Padmavathi Venna <padma.v@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: kgene@kernel.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Dec 19, 2013 at 2:54 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 12/18/13 15:11, MyungJoo Ham wrote:
->>
->> On Tue, Dec 17, 2013 at 8:52 PM,<kgene@kernel.org>  wrote:
->>>
->>> From: Kukjin Kim<kgene.kim@samsung.com>
->>>
->>> We don't need to keep the definitions for exynos4_bus into
->>> mach-exynos/ so this moves them into drviers/devfreq with
->>> adding header file.
->>
->>
->> Acked-by: MyungJoo Ham<myungjoo.ham@samsung.com>
->>
->> However, how are you going to merge this patch?
->> Do you need me to get this handled or are you going to do it yourself
->> with Samsung-SoC tree?
->>
->
-> Hi MyungJoo,
->
-> Let me take this into Samsung tree with others if you're OK :-)
+Quoting Krzysztof Kozlowski (2013-12-17 01:56:39)
+> Move reg_save[] into CONFIG_PM_SLEEP dependency block as it is used o=
+nly
+> by suspend and resume functions.
+>=20
+> This fixes the warning on CONFIG_PM_SLEEP=3Dn:
+> drivers/clk/samsung/clk-exynos-audss.c:29:22: warning: =E2=80=98reg_s=
+ave=E2=80=99 defined but not used [-Wunused-variable]
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Yes, Ok. Please go ahead.
+Acked-by: Mike Turquette <mturquette@linaro.org>
 
->
-> Thanks,
-> Kukjin
->
->
->> Cheers,
->> MyungJoo.
->>
->>>
->>> Cc: MyungJoo Ham<myungjoo.ham@samsung.com>
->>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->>> ---
->>>   arch/arm/mach-exynos/include/mach/regs-clock.h |   94
->>> --------------------
->>>   drivers/devfreq/exynos/exynos4_bus.c           |    4 +-
->>>   drivers/devfreq/exynos/exynos4_bus.h           |  110
->>> ++++++++++++++++++++++++
->>>   3 files changed, 112 insertions(+), 96 deletions(-)
->>>   create mode 100644 drivers/devfreq/exynos/exynos4_bus.h
-
-
-
--- 
-MyungJoo Ham, Ph.D.
-System S/W Lab, S/W Center, Samsung Electronics
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/sam=
+sung/clk-exynos-audss.c
+> index 39b40aaede2b..68e515d093d8 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -26,17 +26,17 @@ static struct clk_onecell_data clk_data;
+>  #define ASS_CLK_DIV 0x4
+>  #define ASS_CLK_GATE 0x8
+> =20
+> +/* list of all parent clock list */
+> +static const char *mout_audss_p[] =3D { "fin_pll", "fout_epll" };
+> +static const char *mout_i2s_p[] =3D { "mout_audss", "cdclk0", "sclk_=
+audio0" };
+> +
+> +#ifdef CONFIG_PM_SLEEP
+>  static unsigned long reg_save[][2] =3D {
+>         {ASS_CLK_SRC,  0},
+>         {ASS_CLK_DIV,  0},
+>         {ASS_CLK_GATE, 0},
+>  };
+> =20
+> -/* list of all parent clock list */
+> -static const char *mout_audss_p[] =3D { "fin_pll", "fout_epll" };
+> -static const char *mout_i2s_p[] =3D { "mout_audss", "cdclk0", "sclk_=
+audio0" };
+> -
+> -#ifdef CONFIG_PM_SLEEP
+>  static int exynos_audss_clk_suspend(void)
+>  {
+>         int i;
+> --=20
+> 1.7.9.5
+>=20
