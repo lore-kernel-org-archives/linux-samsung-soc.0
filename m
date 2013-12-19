@@ -1,32 +1,37 @@
-From: Shirish S <s.shirish-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/4] ARM: dts: arndale: Add hdmi phy settings
-Date: Thu, 19 Dec 2013 17:42:26 +0530
-Message-ID: <1387455148-22999-3-git-send-email-s.shirish@samsung.com>
+From: Shirish S <s.shirish@samsung.com>
+Subject: [PATCH 1/4] ARM: dts: smdk5250: Add hdmi phy settings
+Date: Thu, 19 Dec 2013 17:42:25 +0530
+Message-ID: <1387455148-22999-2-git-send-email-s.shirish@samsung.com>
 References: <1387455148-22999-1-git-send-email-s.shirish@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1387455148-22999-1-git-send-email-s.shirish-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, shirish-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shirish S <s.shirish-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:22142 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756594Ab3LSMJy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Dec 2013 07:09:54 -0500
+In-reply-to: <1387455148-22999-1-git-send-email-s.shirish@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, devicetree@vger.kernel.org, t.figa@samsung.com
+Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com, shirish@chromium.org, linux-samsung-soc@vger.kernel.org, Shirish S <s.shirish@samsung.com>
 
-This patch moves the hdmi phy setting to arndale dts,
-as its more of a per board configuration and also
-shall be easier for supporting future chipsets.
+This patch moves the hdmi phy setting to smdk5250
+dts,as its more of a per board configuration and
+also shall be easier for supporting future chipsets.
 
-Signed-off-by: Shirish S <s.shirish-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Shirish S <s.shirish@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts |   74 ++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   74 +++++++++++++++++++++++++++++
  1 file changed, 74 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index cee55fa..6bc562c 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -475,6 +475,80 @@
- 		vdd_osc-supply = <&ldo10_reg>;
- 		vdd_pll-supply = <&ldo8_reg>;
- 		vdd-supply = <&ldo8_reg>;
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 2538b32..10da02f 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -220,6 +220,80 @@
+ 
+ 	hdmi {
+ 		hpd-gpio = <&gpx3 7 0>;
 +		hdmiphy-configs {
 +			/*
 +			* Eye diagram test passed for:
@@ -103,11 +108,6 @@ index cee55fa..6bc562c 100644
 +		};
  	};
  
- 	regulators {
+ 	codec@11000000 {
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
