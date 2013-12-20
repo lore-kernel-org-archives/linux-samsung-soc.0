@@ -1,58 +1,55 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add clock provider for mshc node for Exynos4412 SOC
-Date: Fri, 20 Dec 2013 22:08:38 +0100
-Message-ID: <1610394.o1Af0FOyXz@flatron>
-References: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org> <000201cefd7f$d8b7c840$8a2758c0$%jun@samsung.com> <52B4AC28.3070404@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Add the missing "\" key in non-US keyboards
+ for exynos5250-snow
+Date: Sat, 21 Dec 2013 06:08:51 +0900
+Message-ID: <52B4B1E3.2020108@samsung.com>
+References: <1387492578-22068-1-git-send-email-dianders@chromium.org> <1387492578-22068-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:34448 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751514Ab3LTVIl (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:61228 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752629Ab3LTVI4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:08:41 -0500
-Received: by mail-ea0-f170.google.com with SMTP id k10so1285869eaj.15
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:08:39 -0800 (PST)
-In-Reply-To: <52B4AC28.3070404@samsung.com>
+	Fri, 20 Dec 2013 16:08:56 -0500
+In-Reply-To: <1387492578-22068-2-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Simon Glass <sjg@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kukjin,
+On 12/20/13 07:36, Doug Anderson wrote:
+> When the exynos5250 device tree was sent upstream the keyboard mapping
+> was missing the 2nd instance of the "\" key.  There are two copies of
+> the "\" because it simply has a different row and column on US and
+> non-US keyboards.
+>
+> For more details, see the previous patch in this series: (mkbp: Fix
+> problems with backslash).
+>
+> Signed-off-by: Doug Anderson<dianders@chromium.org>
+> ---
+>   arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index fd711e2..28fe2e2 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -130,6 +130,7 @@
+>   							0x04060024	/* J */
+>   							0x04080027	/* ; */
+>   							0x04090026	/* L */
+> +							0x040a002b	/* \ */
+>   							0x040b001c	/* ENTER */
+>
+>   							0x0501002c	/* Z */
 
-On Saturday 21 of December 2013 05:44:24 Kukjin Kim wrote:
-> On 12/20/13 21:34, Seungwon Jeon wrote:
-> > Clock lookup information is required as driver can manipulate
-> > clock rate properly.
-> >
-> > Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
-> > ---
-> >   arch/arm/boot/dts/exynos4412.dtsi |    2 ++
-> >   1 files changed, 2 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> > index ec1b166..9cbe59a 100644
-> > --- a/arch/arm/boot/dts/exynos4412.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> > @@ -41,5 +41,7 @@
-> >   		interrupts =<0 77 0>;
-> >   		#address-cells =<1>;
-> >   		#size-cells =<0>;
-> > +		clocks =<&clock 301>,<&clock 149>;
-> > +		clock-name = "biu", "ciu";
-> >   	};
-> >   };
-> 
-> Applied, thanks.
+OK, Applied this(2/3) and next one(3/3) into fixes for v3.14.
 
-I'm afraid you should not have applied this patch. More than this is
-needed for correct support of DW-MSHC on Exynos 4x12 and I already
-posted a series doing so more than a week ago.
+If these patches should be sent for 3.13 or before, please let me know.
 
-Please refer to this thread:
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/25493
+Thanks and Merry Christmas ;-)
 
-Best regards,
-Tomasz
+- Kukjin
