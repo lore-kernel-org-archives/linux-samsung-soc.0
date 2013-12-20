@@ -1,40 +1,88 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH -next] spi: spi-s3c24xx: remove redundant return value
- check of platform_get_resource()
-Date: Fri, 20 Dec 2013 11:33:07 +0900
-Message-ID: <002f01cefd2b$d1512460$73f36d20$%han@samsung.com>
-References: <CAPgLHd_Dii+mu4GmSUWjxTwy55Xxe6Qoq=TN73jQR1_NQUnAbA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAPgLHd_Dii+mu4GmSUWjxTwy55Xxe6Qoq=TN73jQR1_NQUnAbA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-language: ko
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Wei Yongjun' <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v12 4/4] ARM: dts: Exynos5420: Add device nodes for TMU blocks
+Date: Fri, 20 Dec 2013 10:41:21 +0530
+Message-ID: <1387516281-10273-1-git-send-email-ch.naveen@samsung.com>
+References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, December 20, 2013 11:22 AM, Wei Yongjun wrote:
-> 
-> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-> 
-> Remove unneeded error handling on the result of a call
-> to platform_get_resource() when the value is passed to
-> devm_ioremap_resource().
-> 
-> Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+Exynos5420 SoC has per core thermal management unit.
+5 TMU channels 4 for CPUs and 5th for GPU.
 
-Reviewed-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+This patch adds the device tree nodes to the DT device list.
 
-Best regards,
-Jingoo Han
+Nodes carry the misplaced second base address and the second
+clock to access the misplaced base address.
 
-> ---
->  drivers/spi/spi-s3c24xx.c | 7 -------
->  1 file changed, 7 deletions(-)
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+---
+Changes since v11:
+  changed the secondary clock name to "tmu_triminfo_apbif"
+from "tmu_apbif_triminfo"
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes since previous version:
+1. used lables instead of comment lines
+2. pass the same clock as trimfo_apbif clock for TMU channel 2
+3. Fixed a coding style problem pointed by Tomasz
+
+ arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index b1fa334..c62cde6 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -402,4 +402,44 @@
+ 		clock-names = "gscl";
+ 		samsung,power-domain = <&gsc_pd>;
+ 	};
++
++	tmu_cpu0: tmu@10060000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10060000 0x100>;
++		interrupts = <0 65 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	tmu_cpu1: tmu@10064000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10064000 0x100>;
++		interrupts = <0 183 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	tmu_cpu2: tmu@10068000 {
++		compatible = "samsung,exynos5420-tmu-ext-triminfo";
++		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
++		interrupts = <0 184 0>;
++		clocks = <&clock 318>, <&clock 318>;
++		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
++	};
++
++	tmu_cpu3: tmu@1006c000 {
++		compatible = "samsung,exynos5420-tmu-ext-triminfo";
++		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
++		interrupts = <0 185 0>;
++		clocks = <&clock 318>, <&clock 319>;
++		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
++	};
++
++	tmu_gpu: tmu@100a0000 {
++		compatible = "samsung,exynos5420-tmu-ext-triminfo";
++		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
++		interrupts = <0 215 0>;
++		clocks = <&clock 319>, <&clock 318>;
++		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
++	};
+ };
+-- 
+1.7.10.4
+
