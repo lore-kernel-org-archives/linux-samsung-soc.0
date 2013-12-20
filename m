@@ -1,66 +1,76 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2 6/9] intel_idle: do C1E promotion disable quirk for
- hotplugged CPUs
-Date: Fri, 20 Dec 2013 22:52:35 +0100
-Message-ID: <52B4BC23.4080102@linaro.org>
-References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com> <1387565251-7051-7-git-send-email-b.zolnierkie@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
+Date: Fri, 20 Dec 2013 22:53:13 +0100
+Message-ID: <4034332.29qpdhiElM@flatron>
+References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com> <346894265.CPBN0v9Elj@flatron> <CAOesGMi7cGZyHLBMpc7UTBbQkiRBij6rDyuA+E+9tUmsb131zw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:43967 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751463Ab3LTVwd (ORCPT
+Received: from mail-ea0-f177.google.com ([209.85.215.177]:46026 "EHLO
+	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755309Ab3LTVxP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:52:33 -0500
-Received: by mail-wg0-f44.google.com with SMTP id a1so2993766wgh.23
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:52:32 -0800 (PST)
-In-Reply-To: <1387565251-7051-7-git-send-email-b.zolnierkie@samsung.com>
+	Fri, 20 Dec 2013 16:53:15 -0500
+Received: by mail-ea0-f177.google.com with SMTP id n15so1313512ead.36
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:53:14 -0800 (PST)
+In-Reply-To: <CAOesGMi7cGZyHLBMpc7UTBbQkiRBij6rDyuA+E+9tUmsb131zw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, rjw@rjwysocki.net
-Cc: lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com
+To: Olof Johansson <olof@lixom.net>
+Cc: sunil joshi <sjoshi.open@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>
 
-On 12/20/2013 07:47 PM, Bartlomiej Zolnierkiewicz wrote:
-> If the system is booted with some CPUs offline C1E promotion disable =
-quirk
-> won't be applied because on_each_cpu() in intel_idle_cpuidle_driver_i=
-nit()
-> operates only on online CPUs. Fix it by adding the C1E promotion disa=
-ble
-> handling to intel_idle_cpu_init() (which is also called during CPU_ON=
-LINE
-> operation).
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Len Brown <lenb@kernel.org>
+On Friday 20 of December 2013 13:37:36 Olof Johansson wrote:
+> On Fri, Dec 20, 2013 at 1:19 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> > Hi,
+> >
+> > On Friday 20 of December 2013 15:56:38 sunil joshi wrote:
+> >> Hi Abhilash,
+> >> I saw another patch in chrome tree ..by Andrew Bresticker
+> >> which may be relevant here ..
+> >>
+> >> Just wondering if you missed adding this ? or this is not needed ?
+> >> You did not face any issue in getting core to suspend ?
+> >>
+> >> ------------------------------------------------------------------------------------------
+> >> commit 95402d816b9f1a05ce633f7ff64b4c939c142482
+> >> Author: Andrew Bresticker <abrestic@chromium.org>
+> >> Date:   Mon Jul 15 13:14:36 2013 -0700
+> >>
+> >>     arm: exynos: disable all interrupts on Exynos5420 before suspend
+> >>
+> >>     Disable all interrupts from the GIC before entering suspend on
+> >>     Exynos5420 as is done on Exynos5250.  If interrupts are enabled, we
+> >>     may receive an interrupt after entering WFI but before the PMU has
+> >>     suspended the system, causing suspend to fail.
+> >>
+> >>     BUG=chrome-os-partner:20523
+> >>     TEST=Run suspend_stress_test on Pit and observe that entering suspend
+> >>     no longer occasionally fails with the "Failed to suspend the system"
+> >>     error in exynos_cpu_suspend().
+> >
+> > A question about this for Chromium and LSI guys:
+> >
+> > If you find out that there is already a pending interrupt before you enter
+> > the sleep mode, isn't it more reasonable to cancel the process ASAP and
+> > handle the event instead of entering the sleep just to leave it?
+> >
+> > I believe this should be both more efficient with respect to power usage
+> > and latency, because sleep-wakeup transition takes time and power.
+> >
+> > Do you have any reason to think the opposite?
+> 
+> If it's expected to be a rare or very rare event, it's not a given
+> that the added complexity of dealing with the aborted suspend that
+> late is worth it.
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+I think that the code to support this is already in place, just printing
+an unfortunate message about "suspend failures". It doesn't add any
+significant complexity too.
 
-> ---
->   drivers/idle/intel_idle.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 92d1206..38da3fb 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -683,6 +683,9 @@ static int intel_idle_cpu_init(int cpu)
->   	if (icpu->auto_demotion_disable_flags)
->   		smp_call_function_single(cpu, auto_demotion_disable, NULL, 1);
->
-> +	if (icpu->disable_promotion_to_c1e)
-> +		smp_call_function_single(cpu, c1e_promotion_disable, NULL, 1);
-> +
->   	return 0;
->   }
+I'm not sure about the frequency of such events, though, and any real
+effect of this or the other behavior in such case and so there is my
+question about this.
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Best regards,
+Tomasz
