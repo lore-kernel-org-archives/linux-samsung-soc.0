@@ -1,96 +1,129 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 1/8] ARM: Convert boot_lock to raw_lock [exynos]
-Date: Fri, 20 Dec 2013 10:47:39 +0100
-Message-ID: <1387532866-22601-2-git-send-email-bigeasy@linutronix.de>
-References: <1387532866-22601-1-git-send-email-bigeasy@linutronix.de>
+From: sunil joshi <sjoshi.open@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
+Date: Fri, 20 Dec 2013 15:56:38 +0530
+Message-ID: <CANruHrS1D8d_y43xa-2OGduTvAGWfdeY1REVzZ6YJHjhzLg+hw@mail.gmail.com>
+References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
+	<2459303.277Jr8aotM@amdc1032>
+	<CAM4voamU5hc7uC5MTOA7OtYuqpsis7cTX3sx0UrmpdZx7_TpzA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:59782 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755718Ab3LTJsB (ORCPT
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:38752 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756369Ab3LTK0j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 04:48:01 -0500
-In-Reply-To: <1387532866-22601-1-git-send-email-bigeasy@linutronix.de>
+	Fri, 20 Dec 2013 05:26:39 -0500
+Received: by mail-ob0-f175.google.com with SMTP id uz6so2467726obc.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 02:26:38 -0800 (PST)
+In-Reply-To: <CAM4voamU5hc7uC5MTOA7OtYuqpsis7cTX3sx0UrmpdZx7_TpzA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Frank Rowand <frank.rowand@am.sony.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Frank Rowand <frank.rowand@sonymobile.com>, Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, abrestic@chromium.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Frank Rowand <frank.rowand@am.sony.com>
+Hi Abhilash,
+I saw another patch in chrome tree ..by Andrew Bresticker
+which may be relevant here ..
 
-The arm boot_lock is used by the secondary processor startup code.  The locking
-task is the idle thread, which has idle->sched_class == &idle_sched_class.
-idle_sched_class->enqueue_task == NULL, so if the idle task blocks on the
-lock, the attempt to wake it when the lock becomes available will fail:
+Just wondering if you missed adding this ? or this is not needed ?
+You did not face any issue in getting core to suspend ?
 
-try_to_wake_up()
-   ...
-      activate_task()
-         enqueue_task()
-            p->sched_class->enqueue_task(rq, p, flags)
+------------------------------------------------------------------------------------------
+commit 95402d816b9f1a05ce633f7ff64b4c939c142482
+Author: Andrew Bresticker <abrestic@chromium.org>
+Date:   Mon Jul 15 13:14:36 2013 -0700
 
-Fix by converting boot_lock to a raw spin lock.
+    arm: exynos: disable all interrupts on Exynos5420 before suspend
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Frank Rowand <frank.rowand@sonymobile.com>
-Signed-off-by: Frank Rowand <frank.rowand@am.sony.com>
-Link: http://lkml.kernel.org/r/4E77B952.3010606@am.sony.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/arm/mach-exynos/platsmp.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+    Disable all interrupts from the GIC before entering suspend on
+    Exynos5420 as is done on Exynos5250.  If interrupts are enabled, we
+    may receive an interrupt after entering WFI but before the PMU has
+    suspended the system, causing suspend to fail.
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 58b43e6..f56f767 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -73,7 +73,7 @@ static void __iomem *scu_base_addr(void)
- 	return (void __iomem *)(S5P_VA_SCU);
- }
- 
--static DEFINE_SPINLOCK(boot_lock);
-+static DEFINE_RAW_SPINLOCK(boot_lock);
- 
- static void exynos_secondary_init(unsigned int cpu)
- {
-@@ -86,8 +86,8 @@ static void exynos_secondary_init(unsigned int cpu)
- 	/*
- 	 * Synchronise with the boot thread.
- 	 */
--	spin_lock(&boot_lock);
--	spin_unlock(&boot_lock);
-+	raw_spin_lock(&boot_lock);
-+	raw_spin_unlock(&boot_lock);
- }
- 
- static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
-@@ -99,7 +99,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * Set synchronisation state between this boot processor
- 	 * and the secondary one
- 	 */
--	spin_lock(&boot_lock);
-+	raw_spin_lock(&boot_lock);
- 
- 	/*
- 	 * The secondary processor is waiting to be released from
-@@ -128,7 +128,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- 		if (timeout == 0) {
- 			printk(KERN_ERR "cpu1 power enable failed");
--			spin_unlock(&boot_lock);
-+			raw_spin_unlock(&boot_lock);
- 			return -ETIMEDOUT;
- 		}
- 	}
-@@ -167,7 +167,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * now the secondary core is starting up let it run its
- 	 * calibrations, then wait for it to finish
- 	 */
--	spin_unlock(&boot_lock);
-+	raw_spin_unlock(&boot_lock);
- 
- 	return pen_release != -1 ? -ENOSYS : 0;
- }
--- 
-1.8.5.1
+    BUG=chrome-os-partner:20523
+    TEST=Run suspend_stress_test on Pit and observe that entering suspend
+    no longer occasionally fails with the "Failed to suspend the system"
+    error in exynos_cpu_suspend().
+
+    Change-Id: Ia2d963191f4e5485beb295b28f128f2ce256f987
+    Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+    Reviewed-on: https://gerrit.chromium.org/gerrit/61948
+    Reviewed-by: Simon Glass <sjg@chromium.org>
+
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 537051d..9fdb8bc 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -126,7 +126,7 @@ static int exynos_cpu_suspend(unsigned long arg)
+         * Disable all interrupts.  eints will still be active during
+         * suspend so its ok to mask everything here
+         */
+-       if (soc_is_exynos5250())
++       if (soc_is_exynos5250() || soc_is_exynos5420())
+                __raw_writel(0x0, S5P_VA_GIC_DIST + GIC_DIST_CTRL);
+
+On Tue, Dec 17, 2013 at 8:40 AM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Bartlomiej,
+>
+> On Mon, Dec 16, 2013 at 6:18 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+>>
+>> Hi,
+>>
+>> On Monday, December 16, 2013 05:31:10 PM Abhilash Kesavan wrote:
+>>> Add PMU configuration table for various low power modes - AFTR/LPA/SLEEP.
+>>> Also, add core s2r support for Exynos5420.
+>>>
+>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>> ---
+>>> This patch depends on "ARM: EXYNOS5: Add PMU settings for exynos5420"
+>>> http://www.spinics.net/lists/linux-samsung-soc/msg24902.html
+>>
+>> [...]
+>>
+>>> @@ -253,10 +316,20 @@ static int exynos_pm_suspend(void)
+>>>
+>>>       /* Setting SEQ_OPTION register */
+>>>
+>>> -     tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+>>> -     __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>>> +     if (soc_is_exynos5420()) {
+>>> +             cluster_id = (read_cpuid(CPUID_MPIDR) >> 8) & 0xf;
+>>> +             if (!cluster_id)
+>>> +                     __raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
+>>> +                                  S5P_CENTRAL_SEQ_OPTION);
+>>> +             else
+>>> +                     __raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
+>>> +                                  S5P_CENTRAL_SEQ_OPTION);
+>>> +     } else if (soc_is_exynos5250()) {
+>>
+>> Adding a check here for EXYNOS5250 doesn't look correct
+>> (the old code behavior for older EXYNOYS SoCs should be
+>> preserved).
+>
+> Yes, will fix this in the next version.
+>
+>>
+>>> +             tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+>>> +             __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>>> +     }
+>>
+>> Best regards,
+>> --
+>> Bartlomiej Zolnierkiewicz
+>> Samsung R&D Institute Poland
+>> Samsung Electronics
+>>
+>>
+>
+> Thanks,
+> Abhilash
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
