@@ -1,47 +1,102 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/3] DW-MSHC support on Exynos4412-TRATS2 board
-Date: Sat, 21 Dec 2013 07:16:14 +0900
-Message-ID: <52B4C1AE.4000506@samsung.com>
-References: <1386865083-20082-1-git-send-email-t.figa@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Kill exynos_pm_late_initcall()
+Date: Fri, 20 Dec 2013 23:23:11 +0100
+Message-ID: <52B4C34F.10207@gmail.com>
+References: <1387574758-28489-1-git-send-email-s.nawrocki@samsung.com> <52B4B861.2050506@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:59176 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754175Ab3LTWQU (ORCPT
+Received: from mail-we0-f179.google.com ([74.125.82.179]:60095 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751581Ab3LTWXP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 17:16:20 -0500
-Received: by mail-pb0-f48.google.com with SMTP id md12so3152585pbc.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 14:16:19 -0800 (PST)
-In-Reply-To: <1386865083-20082-1-git-send-email-t.figa@samsung.com>
+	Fri, 20 Dec 2013 17:23:15 -0500
+Received: by mail-we0-f179.google.com with SMTP id q59so3042704wes.38
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 14:23:14 -0800 (PST)
+In-Reply-To: <52B4B861.2050506@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 12/13/13 01:18, Tomasz Figa wrote:
-> This series fixes spotted issues with DW-MSHC support on Exynos4x12
-> SoCs and then enables DW-MSHC controller to handle eMMC memory on
-> Exynos4412-TRATS2 board. As opposed to using sdhci-s3c for eMMC,
-> MMC 4.4 extensions can be used and in general performance is improved.
+On 12/20/2013 10:36 PM, Kukjin Kim wrote:
+> On 12/21/13 06:25, Sylwester Nawrocki wrote:
+>> The only thing exynos_pm_late_initcall() does is calling
+>> pm_genpd_poweroff_unused(), which is already stubbed when
+>> CONFIG_PM_GENERIC_DOMAINS is not enabled. So replace
+>> exynos_pm_late_initcall() with a direct call to
+>> pm_genpd_poweroff_unused().
+>>
+>> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> ---
+>> arch/arm/mach-exynos/common.c | 3 ++-
+>> arch/arm/mach-exynos/common.h | 6 ------
+>> arch/arm/mach-exynos/pm_domains.c | 6 ------
+>> 3 files changed, 2 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/common.c
+>> b/arch/arm/mach-exynos/common.c
+>> index 8ae4797..09e6898 100644
+>> --- a/arch/arm/mach-exynos/common.c
+>> +++ b/arch/arm/mach-exynos/common.c
+>> @@ -23,6 +23,7 @@
+>> #include<linux/of.h>
+>> #include<linux/of_fdt.h>
+>> #include<linux/of_irq.h>
+>> +#include<linux/pm_domain.h>
+>> #include<linux/export.h>
+>> #include<linux/irqdomain.h>
+>> #include<linux/of_address.h>
+>> @@ -324,7 +325,7 @@ void __init exynos_init_late(void)
+>> /* to be supported later */
+>> return;
+>>
+>> - exynos_pm_late_initcall();
+>> + pm_genpd_poweroff_unused();
+>> }
+>>
+>> static int __init exynos_fdt_map_chipid(unsigned long node, const char
+>> *uname,
+>> diff --git a/arch/arm/mach-exynos/common.h
+>> b/arch/arm/mach-exynos/common.h
+>> index ff9b6a9..0c31b34 100644
+>> --- a/arch/arm/mach-exynos/common.h
+>> +++ b/arch/arm/mach-exynos/common.h
+>> @@ -26,12 +26,6 @@ void exynos_init_late(void);
+>>
+>> void exynos_firmware_init(void);
+>>
+>> -#ifdef CONFIG_PM_GENERIC_DOMAINS
+>> -int exynos_pm_late_initcall(void);
+>> -#else
+>> -static inline int exynos_pm_late_initcall(void) { return 0; }
+>> -#endif
+>> -
+>> extern struct smp_operations exynos_smp_ops;
+>>
+>> extern void exynos_cpu_die(unsigned int cpu);
+>> diff --git a/arch/arm/mach-exynos/pm_domains.c
+>> b/arch/arm/mach-exynos/pm_domains.c
+>> index ff50836..8fd2488 100644
+>> --- a/arch/arm/mach-exynos/pm_domains.c
+>> +++ b/arch/arm/mach-exynos/pm_domains.c
+>> @@ -184,9 +184,3 @@ static __init int exynos4_pm_init_power_domain(void)
+>> return 0;
+>> }
+>> arch_initcall(exynos4_pm_init_power_domain);
+>> -
+>> -int __init exynos_pm_late_initcall(void)
+>> -{
+>> - pm_genpd_poweroff_unused();
+>> - return 0;
+>> -}
 >
-> Tested on Exynos4412-TRATS2 board.
->
-> Tomasz Figa (3):
->    clk: samsung: exynos4: Fix definition of div_mmc_pre4 divider
->    ARM: dts: exynos4x12: Fix definition of MSHC device tree nodes
->    ARM: dts: exynos4412-trats2: Use MSHC controller for eMMC memory
->
->   arch/arm/boot/dts/exynos4412-odroidx.dts |  5 +----
->   arch/arm/boot/dts/exynos4412-origen.dts  |  5 +----
->   arch/arm/boot/dts/exynos4412-trats2.dts  | 20 ++++++++++++++++----
->   arch/arm/boot/dts/exynos4412.dtsi        |  8 --------
->   arch/arm/boot/dts/exynos4x12.dtsi        | 13 +++++++++++++
->   drivers/clk/samsung/clk-exynos4.c        |  3 ++-
->   6 files changed, 33 insertions(+), 21 deletions(-)
->
-Looks good to me, applied.
+> Yes, right. Applied BTW, how about same thing in mach-s3c64xx? ;-)
 
-Thanks,
-Kukjin
+Good point, unfortunately I don't have time for it neither possibility to
+test.  Hopefully someone else can handle that.
+
+> Thanks and Merry Christmas.
+
+Thank you for quick response.  Merry Christmas and Happy New Year.
