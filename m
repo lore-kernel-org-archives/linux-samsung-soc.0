@@ -1,73 +1,63 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL 4/7] Samsung dev for v3.14
-Date: Sat, 21 Dec 2013 07:53:57 +0900
-Message-ID: <52B4CA85.2080106@samsung.com>
-References: <52AE0F62.80409@samsung.com> <201312181120.44544.heiko@sntech.de>
+Subject: Re: [PATCH 3/3] ARM: dts: Rename Exynos5250 ChromeOS common file
+ to have exynos prefix
+Date: Sat, 21 Dec 2013 08:09:36 +0900
+Message-ID: <52B4CE30.6030205@samsung.com>
+References: <1385381710-5212-1-git-send-email-broonie@kernel.org> <1385381710-5212-3-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:57573 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954Ab3LTWyE (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:44337 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751463Ab3LTXJm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 17:54:04 -0500
-Received: by mail-pd0-f173.google.com with SMTP id p10so3071185pdj.18
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 14:54:03 -0800 (PST)
-In-Reply-To: <201312181120.44544.heiko@sntech.de>
+	Fri, 20 Dec 2013 18:09:42 -0500
+Received: by mail-pa0-f41.google.com with SMTP id lf10so3259232pab.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 15:09:42 -0800 (PST)
+In-Reply-To: <1385381710-5212-3-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>
 
-On 12/18/13 19:20, Heiko St=FCbner wrote:
-> Hi Kukjin,
+On 11/25/13 21:15, Mark Brown wrote:
+> From: Mark Brown<broonie@linaro.org>
 >
-> Am Sonntag, 15. Dezember 2013, 21:21:54 schrieb Kukjin Kim:
->> The following changes since commit
->> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
->>
->>     Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
->>
->> are available in the git repository at:
->>
->>     git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsun=
-g.git
->> tags/samsung-dev
->>
->> for you to fetch changes up to 70bacadbd07248576290de40cc217c06f0f2d=
-3c3:
->>
->>     ARM: S3C64XX: Select CPU_V6K instead of CPU_V6 (2013-12-16 04:08=
-:51
->> +0900)
->>
->> ----------------------------------------------------------------
->> Samsung updates for v3.14
->> - Skip eint_init() for pinctrl-exynos because of re-executing
->> - Use CPU_V6K for S3C64XX(ARM1176JZF-s) instead of CPU_V6
->>
->> ----------------------------------------------------------------
->> Mateusz Krawczuk (1):
->>         ARM: SAMSUNG: if detected device tree skip irq init for S5P
->>
->> Tomasz Figa (1):
->>         ARM: S3C64XX: Select CPU_V6K instead of CPU_V6
->>
->>    arch/arm/Kconfig                     | 2 +-
->>    arch/arm/plat-samsung/s5p-irq-eint.c | 4 ++++
->>    2 files changed, 5 insertions(+), 1 deletion(-)
+> Make it easier to notice the common file for ChromeOS devices based on
+> the Exynos5250 by giving it the exynos5250 prefix that the boards have.
 >
-> do you also have time for a look at at least the s3c2416/s3c2443 comm=
-on clock
-> patches for your second round you wrote about yesterday? :-)
+> Signed-off-by: Mark Brown<broonie@linaro.org>
+> Acked-by: Tomasz Figa<t.figa@samsung.com>
+> ---
+>   arch/arm/boot/dts/{cros5250-common.dtsi =>  exynos5250-cros-common.dtsi} | 0
+>   arch/arm/boot/dts/exynos5250-snow.dts                                   | 2 +-
+>   2 files changed, 1 insertion(+), 1 deletion(-)
+>   rename arch/arm/boot/dts/{cros5250-common.dtsi =>  exynos5250-cros-common.dtsi} (100%)
 >
+> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+> similarity index 100%
+> rename from arch/arm/boot/dts/cros5250-common.dtsi
+> rename to arch/arm/boot/dts/exynos5250-cros-common.dtsi
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index fd711e245e8d..7e2669c6f7f5 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -10,7 +10,7 @@
 >
-Hi Heiko,
+>   /dts-v1/;
+>   #include "exynos5250.dtsi"
+> -#include "cros5250-common.dtsi"
+> +#include "exynos5250-cros-common.dtsi"
+>
+>   / {
+>   	model = "Google Snow";
 
-I couldn't yet but I will do...
++ Doug and Olof.
 
-Thanks for your gentle reminder :-)
+Doug and Olof,
 
-- Kukjin
+I need your ack on this. How do you think?
+
+Thanks,
+Kukjin
