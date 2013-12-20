@@ -1,48 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: add clock provider for mshc node for Exynos4412
- SOC
-Date: Sat, 21 Dec 2013 05:44:24 +0900
-Message-ID: <52B4AC28.3070404@samsung.com>
-References: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org> <000201cefd7f$d8b7c840$8a2758c0$%jun@samsung.com>
+Subject: Re: [PATCH v2 1/9] ARM: EXYNOS: cpuidle: fix AFTR mode check
+Date: Sat, 21 Dec 2013 05:47:41 +0900
+Message-ID: <52B4ACED.2010007@samsung.com>
+References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com> <1387565251-7051-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:64035 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750938Ab3LTUo3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 15:44:29 -0500
-Received: by mail-pd0-f177.google.com with SMTP id q10so2943579pdj.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 12:44:29 -0800 (PST)
-In-Reply-To: <000201cefd7f$d8b7c840$8a2758c0$%jun@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1387565251-7051-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: rjw@rjwysocki.net, daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, jh80.chung@samsung.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On 12/20/13 21:34, Seungwon Jeon wrote:
-> Clock lookup information is required as driver can manipulate
-> clock rate properly.
+On 12/21/13 03:47, Bartlomiej Zolnierkiewicz wrote:
+> The EXYNOS cpuidle driver code assumes that cpuidle core will handle
+> dev->state_count smaller than drv->state_count but currently this is
+> untrue (dev->state_count is used only for handling cpuidle state sysfs
+> entries and drv->state_count is used for all other cases) and will not
+> be fixed in the future as dev->state_count is planned to be removed.
 >
-> Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
+> Fix the issue by checking for the max supported idle state in AFTR
+> state's ->enter handler (exynos4_enter_lowpower()) and entering AFTR
+> mode only when cores other than CPU0 are offline.
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> Acked-by: Daniel Lezcano<daniel.lezcano@linaro.org>
+> Cc: Kukjin Kim<kgene.kim@samsung.com>
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Thanks,
+Kukjin
+
 > ---
->   arch/arm/boot/dts/exynos4412.dtsi |    2 ++
->   1 files changed, 2 insertions(+), 0 deletions(-)
+>   arch/arm/mach-exynos/cpuidle.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
 >
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index ec1b166..9cbe59a 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -41,5 +41,7 @@
->   		interrupts =<0 77 0>;
->   		#address-cells =<1>;
->   		#size-cells =<0>;
-> +		clocks =<&clock 301>,<&clock 149>;
-> +		clock-name = "biu", "ciu";
->   	};
->   };
-
-Applied, thanks.
-
-- Kukjin
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index da65b03..f57cb91 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -172,8 +172,8 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+>   {
+>   	int new_index = index;
+>
+> -	/* This mode only can be entered when other core's are offline */
+> -	if (num_online_cpus()>  1)
+> +	/* AFTR can only be entered when cores other than CPU0 are offline */
+> +	if (num_online_cpus()>  1 || dev->cpu != 0)
+>   		new_index = drv->safe_state_index;
+>
+>   	if (new_index == 0)
+> @@ -235,10 +235,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
+>   		device =&per_cpu(exynos4_cpuidle_device, cpu_id);
+>   		device->cpu = cpu_id;
+>
+> -		/* Support IDLE only */
+> -		if (cpu_id != 0)
+> -			device->state_count = 1;
+> -
+>   		ret = cpuidle_register_device(device);
+>   		if (ret) {
+>   			dev_err(&pdev->dev, "failed to register cpuidle device\n");
