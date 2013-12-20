@@ -1,88 +1,47 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v12 4/4] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Fri, 20 Dec 2013 10:41:21 +0530
-Message-ID: <1387516281-10273-1-git-send-email-ch.naveen@samsung.com>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH] [media] exynos-gsc: swap cb/cr only for 3 plane formats
+Date: Fri, 20 Dec 2013 14:29:33 +0530
+Message-ID: <1387529973-6123-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, k.debski@samsung.com, prathyush.k@samsung.com, s.shirish@samsung.com, arun.m@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos5420 SoC has per core thermal management unit.
-5 TMU channels 4 for CPUs and 5th for GPU.
+From: Prathyush K <prathyush.k@samsung.com>
 
-This patch adds the device tree nodes to the DT device list.
+The address for cb/cr needs to be swapped for 3 plane formats like
+YVU420 and YVU420M. If these address gets swapped for other formats like
+NV21, it results in passing a NULL dma address to gscalar (which will
+result in a PAGE FAULT if sysmmu is enabled).
 
-Nodes carry the misplaced second base address and the second
-clock to access the misplaced base address.
+E.g. For NV21, the dma_address are (Y, CbCr, 0) and we swap them (Y, 0,
+CbCr) which is incorrect.
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Shirish S <s.shirish@samsung.com>
+Signed-off-by: Arun Mankuzhi <arun.m@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
-Changes since v11:
-  changed the secondary clock name to "tmu_triminfo_apbif"
-from "tmu_apbif_triminfo"
+ drivers/media/platform/exynos-gsc/gsc-core.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Changes since previous version:
-1. used lables instead of comment lines
-2. pass the same clock as trimfo_apbif clock for TMU channel 2
-3. Fixed a coding style problem pointed by Tomasz
-
- arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index b1fa334..c62cde6 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -402,4 +402,44 @@
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
- 	};
-+
-+	tmu_cpu0: tmu@10060000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu1: tmu@10064000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10064000 0x100>;
-+		interrupts = <0 183 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu2: tmu@10068000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+		interrupts = <0 184 0>;
-+		clocks = <&clock 318>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+	tmu_cpu3: tmu@1006c000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+		interrupts = <0 185 0>;
-+		clocks = <&clock 318>, <&clock 319>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+	tmu_gpu: tmu@100a0000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-+		interrupts = <0 215 0>;
-+		clocks = <&clock 319>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
- };
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 9d0cc04..ff851fc 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -844,11 +844,7 @@ int gsc_prepare_addr(struct gsc_ctx *ctx, struct vb2_buffer *vb,
+ 			addr->cr = vb2_dma_contig_plane_dma_addr(vb, 2);
+ 	}
+ 
+-	if ((frame->fmt->pixelformat == V4L2_PIX_FMT_VYUY) ||
+-		(frame->fmt->pixelformat == V4L2_PIX_FMT_YVYU) ||
+-		(frame->fmt->pixelformat == V4L2_PIX_FMT_NV61) ||
+-		(frame->fmt->pixelformat == V4L2_PIX_FMT_YVU420) ||
+-		(frame->fmt->pixelformat == V4L2_PIX_FMT_NV21) ||
++	if ((frame->fmt->pixelformat == V4L2_PIX_FMT_YVU420) ||
+ 		(frame->fmt->pixelformat == V4L2_PIX_FMT_YVU420M))
+ 		swap(addr->cb, addr->cr);
+ 
 -- 
-1.7.10.4
-
+1.7.9.5
