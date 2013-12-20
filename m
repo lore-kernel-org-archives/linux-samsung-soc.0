@@ -1,66 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 1/9] ARM: EXYNOS: cpuidle: fix AFTR mode check
-Date: Sat, 21 Dec 2013 05:47:41 +0900
-Message-ID: <52B4ACED.2010007@samsung.com>
-References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com> <1387565251-7051-2-git-send-email-b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on
+ S3C24XX.
+Date: Sat, 21 Dec 2013 05:57:39 +0900
+Message-ID: <52B4AF43.8070608@samsung.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>	<CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>	<52AA6909.8050200@inov.pt>	<0bc301cef7e5$319ac0c0$94d04240$@kernel.org>	<CACRpkdbQNEj83fnDX0ppPNJYgu1cMGxbk6n6M05wVNK9LEvDKw@mail.gmail.com> <CACRpkda5e-1ndyZzdZX+KZB=mCV6RM5nJ-nv_-yt1UEv_GhLLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1387565251-7051-2-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: rjw@rjwysocki.net, daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkda5e-1ndyZzdZX+KZB=mCV6RM5nJ-nv_-yt1UEv_GhLLw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7?= =?ISO-8859-1?Q?alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/21/13 03:47, Bartlomiej Zolnierkiewicz wrote:
-> The EXYNOS cpuidle driver code assumes that cpuidle core will handle
-> dev->state_count smaller than drv->state_count but currently this is
-> untrue (dev->state_count is used only for handling cpuidle state sysfs
-> entries and drv->state_count is used for all other cases) and will not
-> be fixed in the future as dev->state_count is planned to be removed.
+On 12/20/13 18:12, Linus Walleij wrote:
+> On Fri, Dec 13, 2013 at 10:37 AM, Linus Walleij
+> <linus.walleij@linaro.org>  wrote:
+>> On Fri, Dec 13, 2013 at 10:24 AM,<kgene@kernel.org>  wrote:
+>>> Jos=E9 Miguel Gon=E7alves wrote:
+>> (..)
+>>>> Was this patch forgotten?
+>>>>
+>>> Hi Jose,
+>>>
+>>> Sorry about missing your patch. It's my fault :( and as you know, a=
+t this
+>>> moment the file will be removed by Linus' patch...
+>>
+>> Oh I can certainly rebase the patch onto my tree if I just
+>> get an ACK for it...
 >
-> Fix the issue by checking for the max supported idle state in AFTR
-> state's ->enter handler (exynos4_enter_lowpower()) and entering AFTR
-> mode only when cores other than CPU0 are offline.
+> Kukjin, can I have your ACK for this patch?
 >
-> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> Acked-by: Daniel Lezcano<daniel.lezcano@linaro.org>
-> Cc: Kukjin Kim<kgene.kim@samsung.com>
+
+Sure, please go ahead with my ack.
 
 Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Thanks,
-Kukjin
+Thanks and Merry Christmas :-)
 
-> ---
->   arch/arm/mach-exynos/cpuidle.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index da65b03..f57cb91 100644
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -172,8 +172,8 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
->   {
->   	int new_index = index;
->
-> -	/* This mode only can be entered when other core's are offline */
-> -	if (num_online_cpus()>  1)
-> +	/* AFTR can only be entered when cores other than CPU0 are offline */
-> +	if (num_online_cpus()>  1 || dev->cpu != 0)
->   		new_index = drv->safe_state_index;
->
->   	if (new_index == 0)
-> @@ -235,10 +235,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
->   		device =&per_cpu(exynos4_cpuidle_device, cpu_id);
->   		device->cpu = cpu_id;
->
-> -		/* Support IDLE only */
-> -		if (cpu_id != 0)
-> -			device->state_count = 1;
-> -
->   		ret = cpuidle_register_device(device);
->   		if (ret) {
->   			dev_err(&pdev->dev, "failed to register cpuidle device\n");
+- Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
