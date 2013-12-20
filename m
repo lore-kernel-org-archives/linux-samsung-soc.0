@@ -1,37 +1,63 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH 6/6] exynos4-is: Remove dependency on PM_RUNTIME from Kconfig
-Date: Fri, 20 Dec 2013 23:23:27 +0100
-Message-ID: <1387578207-17625-7-git-send-email-s.nawrocki@samsung.com>
-References: <1387578207-17625-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1387578207-17625-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add CODEC MCLK for SMDK5250
+Date: Sat, 21 Dec 2013 07:25:14 +0900
+Message-ID: <52B4C3CA.5040904@samsung.com>
+References: <1386797978-12394-1-git-send-email-broonie@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:49307 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751810Ab3LTWZT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Dec 2013 17:25:19 -0500
+Received: by mail-pb0-f44.google.com with SMTP id rq2so3148840pbb.31
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 14:25:18 -0800 (PST)
+In-Reply-To: <1386797978-12394-1-git-send-email-broonie@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>
 
-Now when the sub-drivers are fixed to work with runtime PM disabled
-this erroneous dependency can be removed.
-The CAM and ISP power domains should be left in active state by the
-platform if runtime PM is not used.
+On 12/12/13 06:39, Mark Brown wrote:
+> From: Mark Brown<broonie@linaro.org>
+>
+> There is a 16.934MHz fixed rate clock connected to MCLK1 on the CODEC, add
+> this to the device tree bindings.
+>
+> Signed-off-by: Mark Brown<broonie@linaro.org>
+> ---
+>   arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index aaacfc833ccc..00b57faf977e 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -79,6 +79,9 @@
+>   			gpio-controller;
+>   			#gpio-cells =<2>;
+>
+> +			clocks =<&codec_mclk>;
+> +			clock-names = "MCLK1";
+> +
+>   			AVDD2-supply =<&vdd>;
+>   			CPVDD-supply =<&vdd>;
+>   			DBVDD-supply =<&dbvdd>;
+> @@ -250,5 +253,11 @@
+>   			compatible = "samsung,clock-xxti";
+>   			clock-frequency =<24000000>;
+>   		};
+> +
+> +		codec_mclk: codec-mclk {
+> +			compatible = "fixed-clock";
+> +			#clock-cells =<0>;
+> +			clock-frequency =<16934000>;
+> +		};
+>   	};
+>   };
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/media/platform/exynos4-is/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Applied, thanks.
 
-diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-index d2d3b4b..01ed1ec 100644
---- a/drivers/media/platform/exynos4-is/Kconfig
-+++ b/drivers/media/platform/exynos4-is/Kconfig
-@@ -1,7 +1,7 @@
- 
- config VIDEO_SAMSUNG_EXYNOS4_IS
- 	bool "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && PM_RUNTIME
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on (PLAT_S5P || ARCH_EXYNOS)
- 	help
- 	  Say Y here to enable camera host interface devices for
--- 
-1.7.4.1
+- Kukjin
