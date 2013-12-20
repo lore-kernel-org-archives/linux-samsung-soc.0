@@ -1,47 +1,48 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 2/9] POWERPC: pseries: cpuidle: remove superfluous
- dev->state_count initialization
-Date: Fri, 20 Dec 2013 19:47:24 +0100
-Message-ID: <1387565251-7051-3-git-send-email-b.zolnierkie@samsung.com>
-References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net
-Cc: daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: add clock provider for mshc node for Exynos4412
+ SOC
+Date: Sat, 21 Dec 2013 05:44:24 +0900
+Message-ID: <52B4AC28.3070404@samsung.com>
+References: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org> <000201cefd7f$d8b7c840$8a2758c0$%jun@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:64035 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750938Ab3LTUo3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Dec 2013 15:44:29 -0500
+Received: by mail-pd0-f177.google.com with SMTP id q10so2943579pdj.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 12:44:29 -0800 (PST)
+In-Reply-To: <000201cefd7f$d8b7c840$8a2758c0$%jun@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, jh80.chung@samsung.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-pseries cpuidle driver sets dev->state_count to drv->state_count so
-the default dev->state_count initialization in cpuidle_enable_device()
-(called from cpuidle_register_device()) can be used instead.
+On 12/20/13 21:34, Seungwon Jeon wrote:
+> Clock lookup information is required as driver can manipulate
+> clock rate properly.
+>
+> Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos4412.dtsi |    2 ++
+>   1 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index ec1b166..9cbe59a 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -41,5 +41,7 @@
+>   		interrupts =<0 77 0>;
+>   		#address-cells =<1>;
+>   		#size-cells =<0>;
+> +		clocks =<&clock 301>,<&clock 149>;
+> +		clock-name = "biu", "ciu";
+>   	};
+>   };
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
----
- arch/powerpc/platforms/pseries/processor_idle.c | 2 --
- 1 file changed, 2 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/powerpc/platforms/pseries/processor_idle.c b/arch/powerpc/platforms/pseries/processor_idle.c
-index a166e38..8aa8c40 100644
---- a/arch/powerpc/platforms/pseries/processor_idle.c
-+++ b/arch/powerpc/platforms/pseries/processor_idle.c
-@@ -271,7 +271,6 @@ static void pseries_idle_devices_uninit(void)
- static int pseries_idle_devices_init(void)
- {
- 	int i;
--	struct cpuidle_driver *drv = &pseries_idle_driver;
- 	struct cpuidle_device *dev;
- 
- 	pseries_cpuidle_devices = alloc_percpu(struct cpuidle_device);
-@@ -280,7 +279,6 @@ static int pseries_idle_devices_init(void)
- 
- 	for_each_possible_cpu(i) {
- 		dev = per_cpu_ptr(pseries_cpuidle_devices, i);
--		dev->state_count = drv->state_count;
- 		dev->cpu = i;
- 		if (cpuidle_register_device(dev)) {
- 			printk(KERN_DEBUG \
--- 
-1.8.2.3
+- Kukjin
