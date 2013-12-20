@@ -1,129 +1,77 @@
-From: sunil joshi <sjoshi.open@gmail.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
 Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
-Date: Fri, 20 Dec 2013 15:56:38 +0530
-Message-ID: <CANruHrS1D8d_y43xa-2OGduTvAGWfdeY1REVzZ6YJHjhzLg+hw@mail.gmail.com>
+Date: Fri, 20 Dec 2013 17:08:48 +0530
+Message-ID: <CAM4voamD4Cj594fbkciNS32U7PSkByxakZmjPnhFo0mpCj8hug@mail.gmail.com>
 References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
 	<2459303.277Jr8aotM@amdc1032>
 	<CAM4voamU5hc7uC5MTOA7OtYuqpsis7cTX3sx0UrmpdZx7_TpzA@mail.gmail.com>
+	<CANruHrS1D8d_y43xa-2OGduTvAGWfdeY1REVzZ6YJHjhzLg+hw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:38752 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756369Ab3LTK0j (ORCPT
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:48121 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755820Ab3LTLis (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 05:26:39 -0500
-Received: by mail-ob0-f175.google.com with SMTP id uz6so2467726obc.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 02:26:38 -0800 (PST)
-In-Reply-To: <CAM4voamU5hc7uC5MTOA7OtYuqpsis7cTX3sx0UrmpdZx7_TpzA@mail.gmail.com>
+	Fri, 20 Dec 2013 06:38:48 -0500
+Received: by mail-qc0-f178.google.com with SMTP id i17so2084194qcy.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 03:38:48 -0800 (PST)
+In-Reply-To: <CANruHrS1D8d_y43xa-2OGduTvAGWfdeY1REVzZ6YJHjhzLg+hw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, abrestic@chromium.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
+To: sunil joshi <sjoshi.open@gmail.com>
+Cc: abrestic@chromium.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Abhilash,
-I saw another patch in chrome tree ..by Andrew Bresticker
-which may be relevant here ..
+Hi Sunil,
 
-Just wondering if you missed adding this ? or this is not needed ?
-You did not face any issue in getting core to suspend ?
-
-------------------------------------------------------------------------------------------
-commit 95402d816b9f1a05ce633f7ff64b4c939c142482
-Author: Andrew Bresticker <abrestic@chromium.org>
-Date:   Mon Jul 15 13:14:36 2013 -0700
-
-    arm: exynos: disable all interrupts on Exynos5420 before suspend
-
-    Disable all interrupts from the GIC before entering suspend on
-    Exynos5420 as is done on Exynos5250.  If interrupts are enabled, we
-    may receive an interrupt after entering WFI but before the PMU has
-    suspended the system, causing suspend to fail.
-
-    BUG=chrome-os-partner:20523
-    TEST=Run suspend_stress_test on Pit and observe that entering suspend
-    no longer occasionally fails with the "Failed to suspend the system"
-    error in exynos_cpu_suspend().
-
-    Change-Id: Ia2d963191f4e5485beb295b28f128f2ce256f987
-    Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-    Reviewed-on: https://gerrit.chromium.org/gerrit/61948
-    Reviewed-by: Simon Glass <sjg@chromium.org>
-
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 537051d..9fdb8bc 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -126,7 +126,7 @@ static int exynos_cpu_suspend(unsigned long arg)
-         * Disable all interrupts.  eints will still be active during
-         * suspend so its ok to mask everything here
-         */
--       if (soc_is_exynos5250())
-+       if (soc_is_exynos5250() || soc_is_exynos5420())
-                __raw_writel(0x0, S5P_VA_GIC_DIST + GIC_DIST_CTRL);
-
-On Tue, Dec 17, 2013 at 8:40 AM, Abhilash Kesavan
-<kesavan.abhilash@gmail.com> wrote:
-> Hi Bartlomiej,
+On Fri, Dec 20, 2013 at 3:56 PM, sunil joshi <sjoshi.open@gmail.com> wrote:
+> Hi Abhilash,
+> I saw another patch in chrome tree ..by Andrew Bresticker
+> which may be relevant here ..
 >
-> On Mon, Dec 16, 2013 at 6:18 PM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->>
->> Hi,
->>
->> On Monday, December 16, 2013 05:31:10 PM Abhilash Kesavan wrote:
->>> Add PMU configuration table for various low power modes - AFTR/LPA/SLEEP.
->>> Also, add core s2r support for Exynos5420.
->>>
->>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>> ---
->>> This patch depends on "ARM: EXYNOS5: Add PMU settings for exynos5420"
->>> http://www.spinics.net/lists/linux-samsung-soc/msg24902.html
->>
->> [...]
->>
->>> @@ -253,10 +316,20 @@ static int exynos_pm_suspend(void)
->>>
->>>       /* Setting SEQ_OPTION register */
->>>
->>> -     tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
->>> -     __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
->>> +     if (soc_is_exynos5420()) {
->>> +             cluster_id = (read_cpuid(CPUID_MPIDR) >> 8) & 0xf;
->>> +             if (!cluster_id)
->>> +                     __raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
->>> +                                  S5P_CENTRAL_SEQ_OPTION);
->>> +             else
->>> +                     __raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
->>> +                                  S5P_CENTRAL_SEQ_OPTION);
->>> +     } else if (soc_is_exynos5250()) {
->>
->> Adding a check here for EXYNOS5250 doesn't look correct
->> (the old code behavior for older EXYNOYS SoCs should be
->> preserved).
+> Just wondering if you missed adding this ? or this is not needed ?
+> You did not face any issue in getting core to suspend ?
+
+This has not been added for Exynos5250 in mainline yet. We did notice
+that the system would fail to suspend on the rare occasion (~1% of the
+time on exynos5250) when we repeatedly suspended and resumed the
+system.
+
+I have not run s2r stress tests, but have had no issues suspending the
+system in my limited testing. We can probably let this be for now as
+the system would resume fine even on a failed suspend. I will do some
+stress testing and then post if needed.
 >
-> Yes, will fix this in the next version.
+> ------------------------------------------------------------------------------------------
+> commit 95402d816b9f1a05ce633f7ff64b4c939c142482
+> Author: Andrew Bresticker <abrestic@chromium.org>
+> Date:   Mon Jul 15 13:14:36 2013 -0700
 >
->>
->>> +             tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
->>> +             __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
->>> +     }
->>
->> Best regards,
+>     arm: exynos: disable all interrupts on Exynos5420 before suspend
+>
+>     Disable all interrupts from the GIC before entering suspend on
+>     Exynos5420 as is done on Exynos5250.  If interrupts are enabled, we
+>     may receive an interrupt after entering WFI but before the PMU has
+>     suspended the system, causing suspend to fail.
+>
+>     BUG=chrome-os-partner:20523
+>     TEST=Run suspend_stress_test on Pit and observe that entering suspend
+>     no longer occasionally fails with the "Failed to suspend the system"
+>     error in exynos_cpu_suspend().
+>
+>     Change-Id: Ia2d963191f4e5485beb295b28f128f2ce256f987
+>     Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>     Reviewed-on: https://gerrit.chromium.org/gerrit/61948
+>     Reviewed-by: Simon Glass <sjg@chromium.org>
+>
+
+Regards,
+Abhilash
+_______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 >> --
->> Bartlomiej Zolnierkiewicz
->> Samsung R&D Institute Poland
->> Samsung Electronics
->>
->>
->
-> Thanks,
-> Abhilash
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
