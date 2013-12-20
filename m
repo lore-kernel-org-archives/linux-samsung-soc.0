@@ -1,45 +1,77 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH 4/6] exynos4-is: Correct clean up sequence on error path in fimc_is_probe()
-Date: Fri, 20 Dec 2013 23:23:25 +0100
-Message-ID: <1387578207-17625-5-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 3/6] exynos4-is: Enable FIMC-LITE clock if runtime PM is not used
+Date: Fri, 20 Dec 2013 23:23:24 +0100
+Message-ID: <1387578207-17625-4-git-send-email-s.nawrocki@samsung.com>
 References: <1387578207-17625-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:42435 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752636Ab3LTWYW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 17:24:22 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1387578207-17625-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The memory allocator is being initialized before registering the subdevs
-so reverse the cleanup sequence to avoid trying unregister not registered
-subdevs.
+Ensure the device also works when runtime PM is disabled.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-is.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-lite.c |   24 +++++++++++++-----------
+ 1 files changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 9770fa9..8cb70c2 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -867,10 +867,10 @@ static int fimc_is_probe(struct platform_device *pdev)
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index d3b32b6..1234734 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1549,38 +1549,40 @@ static int fimc_lite_probe(struct platform_device *pdev)
+ 			       0, dev_name(dev), fimc);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to install irq (%d)\n", ret);
+-		goto err_clk;
++		goto err_clk_put;
+ 	}
  
- err_dfs:
- 	fimc_is_debugfs_remove(is);
--err_vb:
--	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
+ 	/* The video node will be created within the subdev's registered() op */
+ 	ret = fimc_lite_create_capture_subdev(fimc);
+ 	if (ret)
+-		goto err_clk;
++		goto err_clk_put;
+ 
+ 	platform_set_drvdata(pdev, fimc);
+ 	pm_runtime_enable(dev);
+-	ret = pm_runtime_get_sync(dev);
+-	if (ret < 0)
+-		goto err_sd;
++
++	if (!pm_runtime_enabled(dev)) {
++		ret = clk_enable(fimc->clock);
++		if (ret < 0)
++			goto err_clk_put;
++	}
+ 
+ 	fimc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+ 	if (IS_ERR(fimc->alloc_ctx)) {
+ 		ret = PTR_ERR(fimc->alloc_ctx);
+-		goto err_pm;
++		goto err_clk_dis;
+ 	}
+ 
+-	pm_runtime_put(dev);
+-
+ 	fimc_lite_set_default_config(fimc);
+ 
+ 	dev_dbg(dev, "FIMC-LITE.%d registered successfully\n",
+ 		fimc->index);
+ 	return 0;
+-err_pm:
+-	pm_runtime_put(dev);
++
++err_clk_dis:
++	clk_disable(fimc->clock);
  err_sd:
- 	fimc_is_unregister_subdevs(is);
-+err_vb:
-+	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
- err_irq:
- 	free_irq(is->irq, is);
- err_clk:
+ 	fimc_lite_unregister_capture_subdev(fimc);
+-err_clk:
++err_clk_put:
+ 	fimc_lite_clk_put(fimc);
+ 	return ret;
+ }
 -- 
 1.7.4.1
