@@ -1,48 +1,248 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable S2MPS11 voltage regulator
-Date: Sat, 21 Dec 2013 06:41:36 +0900
-Message-ID: <52B4B990.3020709@samsung.com>
-References: <1386657521-30924-1-git-send-email-sachin.kamat@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 8/9] intel_idle: use the common cpuidle_[un]register()
+ routines
+Date: Fri, 20 Dec 2013 22:42:33 +0100
+Message-ID: <52B4B9C9.3030603@linaro.org>
+References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com> <1387565251-7051-9-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:47446 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752852Ab3LTVll (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:41:41 -0500
-Received: by mail-pa0-f41.google.com with SMTP id lf10so3166151pab.14
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:41:40 -0800 (PST)
-In-Reply-To: <1386657521-30924-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1387565251-7051-9-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, rjw@rjwysocki.net
+Cc: lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 12/10/13 15:38, Sachin Kamat wrote:
-> S2MPS11 voltage regulator is commonly used on the latest Exynos
-> boards like SMDK5420, Arndale-Octa, etc. Hence it makes sense to
-> enable it like S5M8767A voltage regulator.
->
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+On 12/20/2013 07:47 PM, Bartlomiej Zolnierkiewicz wrote:
+> It is now possible to use the common cpuidle_[un]register() routines
+> (instead of open-coding them) so do it.
+
+Just an addition:
+
+The cpuidle_register common routine calls cpuidle_register_driver which=
+=20
+initialize the driver's cpumask to cpu_possible_mask if not set (which=20
+is the default on most platform) and right after it uses this mask to=20
+register the cpuidle devices. That's why the cpu hotplug does not need=20
+to register the device unlike before this patch where the cpumask was=20
+cpu_online_mask. So we can't fall in the "Some systems can hotplug a cp=
+u=20
+at runtime after the kernel has booted" case.
+
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Len Brown <lenb@kernel.org>
 > ---
->   arch/arm/configs/exynos_defconfig |    1 +
->   1 file changed, 1 insertion(+)
+>   drivers/idle/intel_idle.c | 114 ++++++++++++-----------------------=
+-----------
+>   1 file changed, 29 insertions(+), 85 deletions(-)
 >
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index aec8a3ea1436..dbe1f1c47bb0 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -79,6 +79,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
->   CONFIG_REGULATOR_GPIO=y
->   CONFIG_REGULATOR_MAX8997=y
->   CONFIG_REGULATOR_MAX77686=y
-> +CONFIG_REGULATOR_S2MPS11=y
->   CONFIG_REGULATOR_S5M8767=y
->   CONFIG_REGULATOR_TPS65090=y
->   CONFIG_FB=y
+> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+> index 524d07b..a1a4dbd 100644
+> --- a/drivers/idle/intel_idle.c
+> +++ b/drivers/idle/intel_idle.c
+> @@ -93,10 +93,8 @@ struct idle_cpu {
+>   };
+>
+>   static const struct idle_cpu *icpu;
+> -static struct cpuidle_device __percpu *intel_idle_cpuidle_devices;
+>   static int intel_idle(struct cpuidle_device *dev,
+>   			struct cpuidle_driver *drv, int index);
+> -static int intel_idle_cpu_init(int cpu);
+>
+>   static struct cpuidle_state *cpuidle_state_table;
+>
+> @@ -400,11 +398,27 @@ static void __setup_broadcast_timer(void *arg)
+>   	clockevents_notify(reason, &cpu);
+>   }
+>
+> +static void auto_demotion_disable(void *dummy)
+> +{
+> +	unsigned long long msr_bits;
+> +
+> +	rdmsrl(MSR_NHM_SNB_PKG_CST_CFG_CTL, msr_bits);
+> +	msr_bits &=3D ~(icpu->auto_demotion_disable_flags);
+> +	wrmsrl(MSR_NHM_SNB_PKG_CST_CFG_CTL, msr_bits);
+> +}
+> +static void c1e_promotion_disable(void *dummy)
+> +{
+> +	unsigned long long msr_bits;
+> +
+> +	rdmsrl(MSR_IA32_POWER_CTL, msr_bits);
+> +	msr_bits &=3D ~0x2;
+> +	wrmsrl(MSR_IA32_POWER_CTL, msr_bits);
+> +}
+> +
+>   static int cpu_hotplug_notify(struct notifier_block *n,
+>   			      unsigned long action, void *hcpu)
+>   {
+>   	int hotcpu =3D (unsigned long)hcpu;
+> -	struct cpuidle_device *dev;
+>
+>   	switch (action & ~CPU_TASKS_FROZEN) {
+>   	case CPU_ONLINE:
+> @@ -416,11 +430,15 @@ static int cpu_hotplug_notify(struct notifier_b=
+lock *n,
+>   		/*
+>   		 * Some systems can hotplug a cpu at runtime after
+>   		 * the kernel has booted, we have to initialize the
+> -		 * driver in this case
+> +		 * hardware in this case.
+>   		 */
+> -		dev =3D per_cpu_ptr(intel_idle_cpuidle_devices, hotcpu);
+> -		if (!dev->registered)
+> -			intel_idle_cpu_init(hotcpu);
+> +		if (icpu->auto_demotion_disable_flags)
+> +			smp_call_function_single(hotcpu, auto_demotion_disable,
+> +						NULL, 1);
+> +
+> +		if (icpu->disable_promotion_to_c1e)
+> +			smp_call_function_single(hotcpu, c1e_promotion_disable,
+> +						NULL, 1);
+>
+>   		break;
+>   	}
+> @@ -431,23 +449,6 @@ static struct notifier_block cpu_hotplug_notifie=
+r =3D {
+>   	.notifier_call =3D cpu_hotplug_notify,
+>   };
+>
+> -static void auto_demotion_disable(void *dummy)
+> -{
+> -	unsigned long long msr_bits;
+> -
+> -	rdmsrl(MSR_NHM_SNB_PKG_CST_CFG_CTL, msr_bits);
+> -	msr_bits &=3D ~(icpu->auto_demotion_disable_flags);
+> -	wrmsrl(MSR_NHM_SNB_PKG_CST_CFG_CTL, msr_bits);
+> -}
+> -static void c1e_promotion_disable(void *dummy)
+> -{
+> -	unsigned long long msr_bits;
+> -
+> -	rdmsrl(MSR_IA32_POWER_CTL, msr_bits);
+> -	msr_bits &=3D ~0x2;
+> -	wrmsrl(MSR_IA32_POWER_CTL, msr_bits);
+> -}
+> -
+>   static const struct idle_cpu idle_cpu_nehalem =3D {
+>   	.state_table =3D nehalem_cstates,
+>   	.auto_demotion_disable_flags =3D NHM_C1_AUTO_DEMOTE | NHM_C3_AUTO_=
+DEMOTE,
+> @@ -560,23 +561,6 @@ static int __init intel_idle_probe(void)
+>   }
+>
+>   /*
+> - * intel_idle_cpuidle_devices_uninit()
+> - * unregister, free cpuidle_devices
+> - */
+> -static void intel_idle_cpuidle_devices_uninit(void)
+> -{
+> -	int i;
+> -	struct cpuidle_device *dev;
+> -
+> -	for_each_online_cpu(i) {
+> -		dev =3D per_cpu_ptr(intel_idle_cpuidle_devices, i);
+> -		cpuidle_unregister_device(dev);
+> -	}
+> -
+> -	free_percpu(intel_idle_cpuidle_devices);
+> -	return;
+> -}
+> -/*
+>    * intel_idle_cpuidle_driver_init()
+>    * allocate, initialize cpuidle_states
+>    */
+> @@ -632,37 +616,9 @@ static int __init intel_idle_cpuidle_driver_init=
+(void)
+>   }
+>
+>
+> -/*
+> - * intel_idle_cpu_init()
+> - * allocate, initialize, register cpuidle_devices
+> - * @cpu: cpu/core to initialize
+> - */
+> -static int intel_idle_cpu_init(int cpu)
+> -{
+> -	struct cpuidle_device *dev;
+> -
+> -	dev =3D per_cpu_ptr(intel_idle_cpuidle_devices, cpu);
+> -
+> -	dev->cpu =3D cpu;
+> -
+> -	if (cpuidle_register_device(dev)) {
+> -		pr_debug(PREFIX "cpuidle_register_device %d failed!\n", cpu);
+> -		intel_idle_cpuidle_devices_uninit();
+> -		return -EIO;
+> -	}
+> -
+> -	if (icpu->auto_demotion_disable_flags)
+> -		smp_call_function_single(cpu, auto_demotion_disable, NULL, 1);
+> -
+> -	if (icpu->disable_promotion_to_c1e)
+> -		smp_call_function_single(cpu, c1e_promotion_disable, NULL, 1);
+> -
+> -	return 0;
+> -}
+> -
+>   static int __init intel_idle_init(void)
+>   {
+> -	int retval, i;
+> +	int retval;
+>
+>   	/* Do not load intel_idle at all for now if idle=3D is passed */
+>   	if (boot_option_idle_override !=3D IDLE_NO_OVERRIDE)
+> @@ -673,7 +629,8 @@ static int __init intel_idle_init(void)
+>   		return retval;
+>
+>   	intel_idle_cpuidle_driver_init();
+> -	retval =3D cpuidle_register_driver(&intel_idle_driver);
+> +
+> +	retval =3D cpuidle_register(&intel_idle_driver, NULL);
+>   	if (retval) {
+>   		struct cpuidle_driver *drv =3D cpuidle_get_driver();
+>   		printk(KERN_DEBUG PREFIX "intel_idle yielding to %s",
+> @@ -681,17 +638,6 @@ static int __init intel_idle_init(void)
+>   		return retval;
+>   	}
+>
+> -	intel_idle_cpuidle_devices =3D alloc_percpu(struct cpuidle_device);
+> -	if (intel_idle_cpuidle_devices =3D=3D NULL)
+> -		return -ENOMEM;
+> -
+> -	for_each_online_cpu(i) {
+> -		retval =3D intel_idle_cpu_init(i);
+> -		if (retval) {
+> -			cpuidle_unregister_driver(&intel_idle_driver);
+> -			return retval;
+> -		}
+> -	}
+>   	register_cpu_notifier(&cpu_hotplug_notifier);
+>
+>   	return 0;
+> @@ -699,9 +645,7 @@ static int __init intel_idle_init(void)
+>
+>   static void __exit intel_idle_exit(void)
+>   {
+> -	intel_idle_cpuidle_devices_uninit();
+> -	cpuidle_unregister_driver(&intel_idle_driver);
+> -
+> +	cpuidle_unregister(&intel_idle_driver);
+>
+>   	if (lapic_timer_reliable_states !=3D LAPIC_TIMER_ALWAYS_RELIABLE)
+>   		on_each_cpu(__setup_broadcast_timer, (void *)false, 1);
+>
 
-Applied, thanks.
 
-- Kukjin
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
