@@ -1,68 +1,64 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS: Add exynos5 CPU clock divider offsets
-Date: Sat, 21 Dec 2013 06:23:44 +0900
-Message-ID: <52B4B560.6030001@samsung.com>
-References: <1386323284-15646-1-git-send-email-arun.kk@samsung.com> <1386323284-15646-2-git-send-email-arun.kk@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1386323284-15646-2-git-send-email-arun.kk@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, abrestic@chromium.org, viresh.kumar@linaro.org, arunkk.samsung@gmail.com, rjw@rjwysocki.net, tomasz.figa@gmail.com, arjun.kv@samsung.com
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: [PATCH] ARM: EXYNOS: Consolidate selection of PM_GENERIC_DOMAINS for Exynos4
+Date: Fri, 20 Dec 2013 22:24:56 +0100
+Message-ID: <1387574696-26366-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:53621 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832Ab3LTVZG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Dec 2013 16:25:06 -0500
+Received: by mail-wi0-f172.google.com with SMTP id en1so8974673wid.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:25:05 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 12/06/13 18:48, Arun Kumar K wrote:
-> Adds the CPU clock divider shifts and masks for Exynos5 SoC.
-> These defines will be used in cpufreq driver.
->
-> Signed-off-by: Arjun.K.V<arjun.kv@samsung.com>
-> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
-> ---
->   arch/arm/mach-exynos/include/mach/regs-clock.h |   24 ++++++++++++++++++++++++
->   1 file changed, 24 insertions(+)
->
-> diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-> index d36ad76..d0186d3 100644
-> --- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-> +++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-> @@ -347,6 +347,30 @@
->
->   #define EXYNOS5_EPLLCON0_LOCKED_SHIFT		(29)
->
-> +/* CLK_DIV_CPU0 */
-> +#define EXYNOS5_CLKDIV_CPU0_CORE_SHIFT		0
-> +#define EXYNOS5_CLKDIV_CPU0_CORE_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU0_CORE_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU0_CPUD_SHIFT		4
-> +#define EXYNOS5_CLKDIV_CPU0_CPUD_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU0_CPUD_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU0_ACP_SHIFT		8
-> +#define EXYNOS5_CLKDIV_CPU0_ACP_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU0_ACP_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU0_ATB_SHIFT		16
-> +#define EXYNOS5_CLKDIV_CPU0_ATB_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU0_ATB_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU0_PCLKDBG_SHIFT	20
-> +#define EXYNOS5_CLKDIV_CPU0_PCLKDBG_MASK	(0x7<<  EXYNOS5_CLKDIV_CPU0_PCLKDBG_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU0_APLL_SHIFT		24
-> +#define EXYNOS5_CLKDIV_CPU0_APLL_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU0_APLL_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU0_CORE2_SHIFT		28
-> +#define EXYNOS5_CLKDIV_CPU0_CORE2_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU0_CORE2_SHIFT)
-> +
-> +/* CLK_DIV_CPU1 */
-> +#define EXYNOS5_CLKDIV_CPU1_COPY_SHIFT		0
-> +#define EXYNOS5_CLKDIV_CPU1_COPY_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU1_COPY_SHIFT)
-> +#define EXYNOS5_CLKDIV_CPU1_HPM_SHIFT		4
-> +#define EXYNOS5_CLKDIV_CPU1_HPM_MASK		(0x7<<  EXYNOS5_CLKDIV_CPU1_HPM_SHIFT)
-> +#define EXYNOS5_CLKSRC_CPU_MUXCORE_SHIFT	16
-> +#define EXYNOS5_CLKMUX_STATCPU_MUXCORE_MASK	(0x7<<  EXYNOS5_CLKSRC_CPU_MUXCORE_SHIFT)
-> +
->   #define PWR_CTRL1_CORE2_DOWN_RATIO		(7<<  28)
->   #define PWR_CTRL1_CORE1_DOWN_RATIO		(7<<  16)
->   #define PWR_CTRL1_DIV2_DOWN_EN			(1<<  9)
+Instead of repeating "select PM_GENERIC_DOMAINS" for all Exynos4
+variants add relevant entry in the Kconfig section common to the
+SoC series.
 
-Hi Arun,
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-Above definitions should be moved into regarding driver not into arch. 
-Please see my current for-next, there is no <mach/regs-clock.h>.
-
-Thanks,
-Kukjin
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 1414bc6..35c335d 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -24,6 +24,7 @@ config ARCH_EXYNOS4
+ 	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
+ 	select PINCTRL
++	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_DEV_MFC
+ 	help
+ 	  Samsung EXYNOS4 SoCs based systems
+@@ -48,7 +49,6 @@ config CPU_EXYNOS4210
+ 	select ARCH_HAS_BANDGAP
+ 	select ARM_CPU_SUSPEND if PM
+ 	select PINCTRL_EXYNOS
+-	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select SAMSUNG_DMADEV
+@@ -61,7 +61,6 @@ config SOC_EXYNOS4212
+ 	depends on ARCH_EXYNOS4
+ 	select ARCH_HAS_BANDGAP
+ 	select PINCTRL_EXYNOS
+-	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select SAMSUNG_DMADEV
+@@ -74,7 +73,6 @@ config SOC_EXYNOS4412
+ 	depends on ARCH_EXYNOS4
+ 	select ARCH_HAS_BANDGAP
+ 	select PINCTRL_EXYNOS
+-	select PM_GENERIC_DOMAINS if PM
+ 	select SAMSUNG_DMADEV
+ 	help
+ 	  Enable EXYNOS4412 SoC support
+-- 
+1.7.4.1
