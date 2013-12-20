@@ -1,85 +1,59 @@
-From: sunil joshi <sjoshi.open@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
-Date: Fri, 20 Dec 2013 17:23:27 +0530
-Message-ID: <CANruHrSeNym+y=3iBBRZ9vxTdsGAApe304N2z6CK40SOaiXbfQ@mail.gmail.com>
-References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
-	<2459303.277Jr8aotM@amdc1032>
-	<CAM4voamU5hc7uC5MTOA7OtYuqpsis7cTX3sx0UrmpdZx7_TpzA@mail.gmail.com>
-	<CANruHrS1D8d_y43xa-2OGduTvAGWfdeY1REVzZ6YJHjhzLg+hw@mail.gmail.com>
-	<CAM4voamD4Cj594fbkciNS32U7PSkByxakZmjPnhFo0mpCj8hug@mail.gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH -next] spi: spi-s3c24xx: remove redundant return value
+ check of platform_get_resource()
+Date: Fri, 20 Dec 2013 12:01:19 +0000
+Message-ID: <20131220120119.GU31886@sirena.org.uk>
+References: <CAPgLHd_Dii+mu4GmSUWjxTwy55Xxe6Qoq=TN73jQR1_NQUnAbA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:40126 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932232Ab3LTLx2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 06:53:28 -0500
-Received: by mail-oa0-f46.google.com with SMTP id o6so2704971oag.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 03:53:28 -0800 (PST)
-In-Reply-To: <CAM4voamD4Cj594fbkciNS32U7PSkByxakZmjPnhFo0mpCj8hug@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Jp4gq2voFtVFKZdE"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAPgLHd_Dii+mu4GmSUWjxTwy55Xxe6Qoq=TN73jQR1_NQUnAbA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: abrestic@chromium.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Abhilash,
 
-On Fri, Dec 20, 2013 at 5:08 PM, Abhilash Kesavan
-<kesavan.abhilash@gmail.com> wrote:
-> Hi Sunil,
->
-> On Fri, Dec 20, 2013 at 3:56 PM, sunil joshi <sjoshi.open@gmail.com> wrote:
->> Hi Abhilash,
->> I saw another patch in chrome tree ..by Andrew Bresticker
->> which may be relevant here ..
->>
->> Just wondering if you missed adding this ? or this is not needed ?
->> You did not face any issue in getting core to suspend ?
->
-> This has not been added for Exynos5250 in mainline yet. We did notice
-> that the system would fail to suspend on the rare occasion (~1% of the
-> time on exynos5250) when we repeatedly suspended and resumed the
-> system.
->
-> I have not run s2r stress tests, but have had no issues suspending the
-> system in my limited testing. We can probably let this be for now as
-> the system would resume fine even on a failed suspend. I will do some
-> stress testing and then post if needed.
->>
+--Jp4gq2voFtVFKZdE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok. Sure .. Thanks for details !
+On Fri, Dec 20, 2013 at 10:22:20AM +0800, Wei Yongjun wrote:
+> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+>=20
+> Remove unneeded error handling on the result of a call
+> to platform_get_resource() when the value is passed to
+> devm_ioremap_resource().
 
->> ------------------------------------------------------------------------------------------
->> commit 95402d816b9f1a05ce633f7ff64b4c939c142482
->> Author: Andrew Bresticker <abrestic@chromium.org>
->> Date:   Mon Jul 15 13:14:36 2013 -0700
->>
->>     arm: exynos: disable all interrupts on Exynos5420 before suspend
->>
->>     Disable all interrupts from the GIC before entering suspend on
->>     Exynos5420 as is done on Exynos5250.  If interrupts are enabled, we
->>     may receive an interrupt after entering WFI but before the PMU has
->>     suspended the system, causing suspend to fail.
->>
->>     BUG=chrome-os-partner:20523
->>     TEST=Run suspend_stress_test on Pit and observe that entering suspend
->>     no longer occasionally fails with the "Failed to suspend the system"
->>     error in exynos_cpu_suspend().
->>
->>     Change-Id: Ia2d963191f4e5485beb295b28f128f2ce256f987
->>     Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->>     Reviewed-on: https://gerrit.chromium.org/gerrit/61948
->>     Reviewed-by: Simon Glass <sjg@chromium.org>
->>
->
-> Regards,
-> Abhilash
-> _______________________________________________
->>>> linux-arm-kernel mailing list
->>>> linux-arm-kernel@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied, thanks.
+
+--Jp4gq2voFtVFKZdE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJStDGMAAoJELSic+t+oim9ZKgP/3OW5yPL9bKG2n1saL4ZMc+S
+j+HMbuSKAtwphtD6FFNKV1NILW86tOeE/ymJWeAwpH33aPPbvqirfAPQZjACbsEV
+oZ2Cxw7RwOfza/VOHmhLNKcXe1dmvgjRuNkUvzryWWI0GH7JgXIpfMCA/zMXuq2I
+aGC8tx8hCk6cVrKklWAEVMbmqjvtzywMJJP6yT/DIubtI3H0X5aaN26DCAu3Sk0o
+iWZn0Eze6iJ39ueVX7PqAPoEj/DgsV8y0r9lLdPUHUy4h/FCAutj4DzW1LxmvAOU
+e8XLlIx1z+ddaC+Fwt3fA6AiL4AVPSrUtbsBNUExF3b5lj8ovYbxiF8hdfw9Wnx7
+MD3UZJnzzJRY6BqnMWmu5qick8TtzRYQ3qLxIeND+X7KbddGDkfgRopy+HwqOzmF
+BKTShANNwEGVJLndvgQiTxS3nBIPlfVJJe2htGNWTe95kSXMp1ny9UlzKkZVScGQ
+Uw10euNslvLBomVCENcayReXsVhPC3tCwP46ovp3XEKzpDjO6/JI7IOMjA85eRuB
+4Hhs53u+XYqmZHaYtZCPLR9yEDkvW8WhKef9jzV3B1mPWT+s6rygenGa1PjRC8qw
+ju57EyzEVOGm6WHJpBxU9+JfnP1+Vy1Dl2Zaogz6y9xcptTu80WCA06TnIQE1trj
+iuqvosdSOz+I9A43EtcW
+=nDIo
+-----END PGP SIGNATURE-----
+
+--Jp4gq2voFtVFKZdE--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
