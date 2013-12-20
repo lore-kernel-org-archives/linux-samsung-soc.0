@@ -1,42 +1,66 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: dts: Re-organize RTC status for 5420
-Date: Fri, 20 Dec 2013 22:12:54 +0100
-Message-ID: <1941342.TJqfbb7DVG@flatron>
-References: <1387450673-331-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
+Date: Fri, 20 Dec 2013 22:14:28 +0100
+Message-ID: <1644725.nymfPqUWVu@flatron>
+References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org> <3552349.yKrGzNhczA@amdc1227> <CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:37211 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754124Ab3LTVM4 (ORCPT
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:37133 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751514Ab3LTVOb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:12:56 -0500
-Received: by mail-ee0-f43.google.com with SMTP id c13so1274305eek.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:12:55 -0800 (PST)
-In-Reply-To: <1387450673-331-1-git-send-email-sachin.kamat@linaro.org>
+	Fri, 20 Dec 2013 16:14:31 -0500
+Received: by mail-ee0-f48.google.com with SMTP id e49so1271543eek.35
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:14:30 -0800 (PST)
+In-Reply-To: <CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+Cc: Tomasz Figa <t.figa@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
 
-Hi Sachin,
-
-On Thursday 19 of December 2013 16:27:53 Sachin Kamat wrote:
-> Some boards might not have RTC xtal, so RTC shouldn't really be
-> enabled by default. Enable it in the required board files.
+On Thursday 19 of December 2013 21:05:09 Sachin Kamat wrote:
+> Hi Tomasz,
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    4 ++++
->  arch/arm/boot/dts/exynos5420-smdk5420.dts     |    4 ++++
->  arch/arm/boot/dts/exynos5420.dtsi             |    2 +-
->  3 files changed, 9 insertions(+), 1 deletion(-)
+> On 19 December 2013 19:40, Tomasz Figa <t.figa@samsung.com> wrote:
+> > Hi Sachin, Andrew,
+> >
+> > On Wednesday 18 of December 2013 23:39:58 Sachin Kamat wrote:
+> >> Hi Tomasz,
+> >>
+> >> On 10 November 2013 22:38, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> >> > Hi Sachin, Andrew,
+> >> >
+> >> > On Friday 08 of November 2013 15:44:07 Sachin Kamat wrote:
+> >> >> From: Andrew Bresticker <abrestic@chromium.org>
+> >> >>
+> >> >> The gate clocks for the MFC sysmmus appear to be flipped, i.e.
+> >> >> GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
+> >> >> Fix this so that the MFC will start up.
+> >> >
+> >> > Wow, this means that there is a mistake in the documentation. Not that
+> >> > I'm surprised, though.
+> >> >
+> >> > I guess you are sure about this, so:
+> >> >
+> >> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> >>
+> >> I believe you are going to take this through your tree along with a
+> >> few others which you have already reviewed?
+> >
+> > This patch seems to depend on my Exynos 5250 clock clean-up series, which
+> > will be merged for 3.14. Are you okay with this patch being merged for
+> > 3.14 as well or this fix is needed for earlier kernel versions too?
+> > (It is not a regression introduced in 3.13, though.)
+> 
+> Yes, I did rebase it on top of your series along with other patches.
+> Though not a regression introduced in 3.13, I think it makes sense to have this
+> sent as a fix during this release (3.13) itself. Let me know if you
+> want me to base it
+> on top of 3.13-rc4 and re-send.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-By the way, can we expect a patch like this for Exynos 5250 to make all
-Exynos SoCs consistent about this?
+Since this is just a trivial fix, let me do it myself when applying.
 
 Best regards,
 Tomasz
