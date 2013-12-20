@@ -1,125 +1,71 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v12 7/7] thermal:exynos:boost: Automatic enable/disable of
- BOOST feature (at Exynos4412)
-Date: Fri, 20 Dec 2013 15:24:55 +0100
-Message-ID: <1387549495-809-8-git-send-email-l.majewski@samsung.com>
-References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
- <1387549495-809-1-git-send-email-l.majewski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/9] cpuidle: rework device state count handling
+Date: Fri, 20 Dec 2013 19:47:22 +0100
+Message-ID: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1387549495-809-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org
+To: rjw@rjwysocki.net
+Cc: daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch provides auto disable/enable operation for boost. It uses already
-present thermal infrastructure to provide BOOST hysteresis.
-The TMU data has been modified to work properly with or without BOOST.
-Hence, the two first trip points with corresponding clip frequencies were
-adjusted.
+Hi,
 
-The first one was reduced from 85 to 70 degrees and clip frequency was
-increased to 1.4 GHz from 800 MHz. This trip point is in fact responsible
-for providing BOOST hysteresis. When temperature exceeds 70 deg, the maximal
-non BOOST frequency for Exynos4412 is imposed.
+Some cpuidle drivers assume that cpuidle core will handle cases where
+device->state_count is smaller than driver->state_count, unfortunately
+currently this is untrue (device->state_count is used only for handling
+cpuidle state sysfs entries and driver->state_count is used for all
+other cases) and will not be fixed in the future as device->state_count
+is planned to be removed [1].
 
-Since the first trigger level has been "stolen" for BOOST, the second one
-needs to be a compromise for the previously used two for non BOOST
-configuration. The 95 deg with modified clip freq (to 400 MHz) shall provide
-a good balance between cooling down the overheated device and throughput on
-an acceptable level.
+This patchset fixes such drivers (ARM EXYNOS cpuidle driver and ACPI
+cpuidle driver), removes superflous device->state_count initialization
+from drivers for which device->state_count equals driver->state_count
+(POWERPC pseries cpuidle driver and intel_idle driver) and finally
+removes state_count field from struct cpuidle_device.
 
-Two last trigger levels were not modified since, they cause platform shutdown
-on emergency overheat situation.
-Third trip point passage results in SW managed shut down of the system.
-If the last trip point is crossed, the PMU HW generates the power off
-signal.
+Additionaly (while at it) this patchset fixes C1E promotion disable
+quirk handling (in intel_idle driver) and converts cpuidle drivers code
+to use the common cpuidle_[un]register() routines (in POWERPC pseries
+cpuidle driver and intel_idle driver).
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+[1] http://permalink.gmane.org/gmane.linux.power-management.general/36908
 
----
-Changes for v12:
-    - More verbose patch description to explain new TMU temperature assignment
-      for Exynos4412
+Reference to v1:
+	http://comments.gmane.org/gmane.linux.power-management.general/37390
 
-Changes for v11:
-    - Use only one thermal data set
-    - Adjust Exynos4412 thermal data to work with or without BOOST
+Changes since v1:
+- synced patch series with next-20131220
+- added ACKs from Daniel Lezcano
 
-Changes for v10:
-    - Remove boost related code from thermal_core.c
-    - Use already present thermal infrastructure to provide thermal hysteresis
-    - Introduce special set of TMU data for BOOST
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Changes for v9:
-    - None
 
-Changes for v8:
-    - Move cpufreq_boost_* stub functions definition (needed when cpufreq
-      is not compiled in) to cpufreq.h at cpufreq core support commit
+Bartlomiej Zolnierkiewicz (9):
+  ARM: EXYNOS: cpuidle: fix AFTR mode check
+  POWERPC: pseries: cpuidle: remove superfluous dev->state_count
+    initialization
+  POWERPC: pseries: cpuidle: use the common cpuidle_[un]register()
+    routines
+  ACPI / cpuidle: fix max idle state handling with hotplug CPU support
+  ACPI / cpuidle: remove dev->state_count setting
+  intel_idle: do C1E promotion disable quirk for hotplugged CPUs
+  intel_idle: remove superfluous dev->state_count initialization
+  intel_idle: use the common cpuidle_[un]register() routines
+  cpuidle: remove state_count field from struct cpuidle_device
 
-Changes for v7:
-    - None
+ arch/arm/mach-exynos/cpuidle.c                  |   8 +-
+ arch/powerpc/platforms/pseries/processor_idle.c |  59 +---------
+ drivers/acpi/processor_idle.c                   |  29 +++--
+ drivers/cpuidle/cpuidle.c                       |   3 -
+ drivers/cpuidle/sysfs.c                         |   5 +-
+ drivers/idle/intel_idle.c                       | 140 +++++-------------------
+ include/linux/cpuidle.h                         |   1 -
+ 7 files changed, 51 insertions(+), 194 deletions(-)
 
-Changes for v6:
-    - Disable boost only when supported and enabled
-    - Protect boost related thermal_zone_device struct fields with mutex
-    - Evaluate temperature trend during boost enable decision
-    - Create separate methods to handle boost enable/disable
-      (thermal_boost_{enable|disable}) operations
-    - Boost is disabled at any trip point passage (not only the non critical one)
-    - Add stub definitions for cpufreq boost functions used when
-      CONFIG_CPU_FREQ is NOT defined.
-
-Changes for v5:
-    - Move boost disable code from cpu_cooling.c to thermal_core.c
-      (to handle_non_critical_trips)
-    - Extent struct thermal_zone_device by adding overheated bool flag
-    - Implement auto enable of boost after device cools down
-    - Introduce boost_polling flag, which indicates if thermal uses it's predefined
-      pool delay or has woken up thermal workqueue only to wait until device
-      cools down.
-
-Changes for v4:
-    - New patch
-
- drivers/thermal/samsung/exynos_tmu_data.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index 073c292..476b768 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -131,8 +131,8 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 
- #define EXYNOS4412_TMU_DATA \
- 	.threshold_falling = 10, \
--	.trigger_levels[0] = 85, \
--	.trigger_levels[1] = 103, \
-+	.trigger_levels[0] = 70, \
-+	.trigger_levels[1] = 95, \
- 	.trigger_levels[2] = 110, \
- 	.trigger_levels[3] = 120, \
- 	.trigger_enable[0] = true, \
-@@ -155,12 +155,12 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 	.second_point_trim = 85, \
- 	.default_temp_offset = 50, \
- 	.freq_tab[0] = { \
--		.freq_clip_max = 800 * 1000, \
--		.temp_level = 85, \
-+		.freq_clip_max = 1400 * 1000, \
-+		.temp_level = 70, \
- 	}, \
- 	.freq_tab[1] = { \
--		.freq_clip_max = 200 * 1000, \
--		.temp_level = 103, \
-+		.freq_clip_max = 400 * 1000, \
-+		.temp_level = 95, \
- 	}, \
- 	.freq_tab_count = 2, \
- 	.registers = &exynos4412_tmu_registers, \
 -- 
-1.7.10.4
+1.8.2.3
 
