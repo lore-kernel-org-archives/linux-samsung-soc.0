@@ -1,49 +1,43 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH] ARM: dts: add clock provider for mshc node for Exynos4412 SOC
-Date: Fri, 20 Dec 2013 21:34:37 +0900
-Message-ID: <000201cefd7f$d8b7c840$8a2758c0$%jun@samsung.com>
-References: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 0/3] exynos5420: clock file cleanup
+Date: Fri, 20 Dec 2013 18:27:23 +0530
+Message-ID: <1387544246-31658-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16881 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:18513 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756837Ab3LTMej (ORCPT
+	with ESMTP id S932526Ab3LTMy4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 07:34:39 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MY30012BUXQE560@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Dec 2013 21:34:38 +0900 (KST)
-In-reply-to: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Fri, 20 Dec 2013 07:54:56 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jh80.chung@samsung.com
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Clock lookup information is required as driver can manipulate
-clock rate properly.
+Many changes/fixes have been identified for clock file for exynos5420.
+These include correct parents, bit fields, new clocks etc. Existing
+files needs some correction in terms of names of the clock and
+indentation. These issues are addressed in this patch series. It also
+replaces the usage of enums with macro as clock ids.
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- arch/arm/boot/dts/exynos4412.dtsi |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+This series is based on linux-next, Kukjin's for-next and
+Mike's clk-for-linus-3.13 branches.
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index ec1b166..9cbe59a 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -41,5 +41,7 @@
- 		interrupts = <0 77 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		clocks = <&clock 301>, <&clock 149>;
-+		clock-name = "biu", "ciu";
- 	};
- };
+This patch is also dependent on the following two series from
+Tomasz Figa <t.figa@samsung.com>:
+http://www.spinics.net/lists/arm-kernel/msg280223.html
+and
+http://www.spinics.net/lists/arm-kernel/msg291988.html.
+
+Rahul Sharma (3):
+  clk/exynos5420: cleanup clock file
+  ARM: dts: replace clock numbers with macros for exynos5420
+  clk/exynos5420: replace enums with macros as clock ids
+
+ arch/arm/boot/dts/exynos5420.dtsi        |   47 +-
+ drivers/clk/samsung/clk-exynos5420.c     | 1200 ++++++++++++++++++------------
+ include/dt-bindings/clk/exynos5420-clk.h |  236 ++++++
+ 3 files changed, 1004 insertions(+), 479 deletions(-)
+ create mode 100644 include/dt-bindings/clk/exynos5420-clk.h
+
 -- 
-1.7.0.4
+1.7.10.4
