@@ -1,68 +1,84 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
-Date: Fri, 20 Dec 2013 22:25:57 +0100
-Message-ID: <13091007.x8XNyHi4Oy@flatron>
-References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com> <1591935.tG52kkhDHl@flatron> <CAOesGMjv_BcXCbA49b=s1hxAdSJLLjFno==0Yvc4xgMeYwy-ng@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: [PATCH] ARM: EXYNOS: Kill exynos_pm_late_initcall()
+Date: Fri, 20 Dec 2013 22:25:58 +0100
+Message-ID: <1387574758-28489-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f178.google.com ([209.85.215.178]:47099 "EHLO
-	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753529Ab3LTV0A (ORCPT
+Received: from mail-we0-f171.google.com ([74.125.82.171]:36247 "EHLO
+	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832Ab3LTV0I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:26:00 -0500
-Received: by mail-ea0-f178.google.com with SMTP id d10so1280224eaj.37
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:25:59 -0800 (PST)
-In-Reply-To: <CAOesGMjv_BcXCbA49b=s1hxAdSJLLjFno==0Yvc4xgMeYwy-ng@mail.gmail.com>
+	Fri, 20 Dec 2013 16:26:08 -0500
+Received: by mail-we0-f171.google.com with SMTP id q58so3050018wes.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:26:06 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, sunil joshi <sjoshi.open@gmail.com>, abrestic@chromium.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Friday 20 of December 2013 13:25:06 Olof Johansson wrote:
-> On Fri, Dec 20, 2013 at 1:23 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> > On Friday 20 of December 2013 13:22:06 Olof Johansson wrote:
-> >> On Fri, Dec 20, 2013 at 3:38 AM, Abhilash Kesavan
-> >> <kesavan.abhilash@gmail.com> wrote:
-> >> > Hi Sunil,
-> >> >
-> >> > On Fri, Dec 20, 2013 at 3:56 PM, sunil joshi <sjoshi.open@gmail.com> wrote:
-> >> >> Hi Abhilash,
-> >> >> I saw another patch in chrome tree ..by Andrew Bresticker
-> >> >> which may be relevant here ..
-> >> >>
-> >> >> Just wondering if you missed adding this ? or this is not needed ?
-> >> >> You did not face any issue in getting core to suspend ?
-> >> >
-> >> > This has not been added for Exynos5250 in mainline yet. We did notice
-> >> > that the system would fail to suspend on the rare occasion (~1% of the
-> >> > time on exynos5250) when we repeatedly suspended and resumed the
-> >> > system.
-> >> >
-> >> > I have not run s2r stress tests, but have had no issues suspending the
-> >> > system in my limited testing. We can probably let this be for now as
-> >> > the system would resume fine even on a failed suspend. I will do some
-> >> > stress testing and then post if needed.
-> >>
-> >> Hold on, you're claiming that this patch you've posted has only seen
-> >> very limited testing, and that you are aware of failures?
-> >>
-> >> Don't merge known-broken code into the mainline kernel.
-> >
-> > I'm afraid that a "failed suspend" does not really mean a failure here,
-> > but let me wait for clarification of things I asked in another part of
-> > this thread.
-> 
-> Fair enough.
-> 
-> Still, I expect code that enters the kernel to actually be tested.
-> We've got way too much code just sitting there in broken state because
-> whomever posted it didn't care about it working at the time, and
-> nobody knows better because you can't actually use the code/driver on
-> any real hardware with a mainline kernel.
+The only thing exynos_pm_late_initcall() does is calling
+pm_genpd_poweroff_unused(), which is already stubbed when
+CONFIG_PM_GENERIC_DOMAINS is not enabled. So replace
+exynos_pm_late_initcall() with a direct call to
+pm_genpd_poweroff_unused().
 
-Agreed.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/mach-exynos/common.c     |    3 ++-
+ arch/arm/mach-exynos/common.h     |    6 ------
+ arch/arm/mach-exynos/pm_domains.c |    6 ------
+ 3 files changed, 2 insertions(+), 13 deletions(-)
 
-Best regards,
-Tomasz
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 8ae4797..09e6898 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -23,6 +23,7 @@
+ #include <linux/of.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_irq.h>
++#include <linux/pm_domain.h>
+ #include <linux/export.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
+@@ -324,7 +325,7 @@ void __init exynos_init_late(void)
+ 		/* to be supported later */
+ 		return;
+ 
+-	exynos_pm_late_initcall();
++	pm_genpd_poweroff_unused();
+ }
+ 
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index ff9b6a9..0c31b34 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -26,12 +26,6 @@ void exynos_init_late(void);
+ 
+ void exynos_firmware_init(void);
+ 
+-#ifdef CONFIG_PM_GENERIC_DOMAINS
+-int exynos_pm_late_initcall(void);
+-#else
+-static inline int exynos_pm_late_initcall(void) { return 0; }
+-#endif
+-
+ extern struct smp_operations exynos_smp_ops;
+ 
+ extern void exynos_cpu_die(unsigned int cpu);
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index ff50836..8fd2488 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -184,9 +184,3 @@ static __init int exynos4_pm_init_power_domain(void)
+ 	return 0;
+ }
+ arch_initcall(exynos4_pm_init_power_domain);
+-
+-int __init exynos_pm_late_initcall(void)
+-{
+-	pm_genpd_poweroff_unused();
+-	return 0;
+-}
+-- 
+1.7.4.1
