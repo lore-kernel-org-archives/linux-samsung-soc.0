@@ -1,64 +1,67 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH] ARM: EXYNOS: Consolidate selection of PM_GENERIC_DOMAINS for Exynos4
-Date: Fri, 20 Dec 2013 22:24:56 +0100
-Message-ID: <1387574696-26366-1-git-send-email-s.nawrocki@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Support Suspend-to-RAM on EXYNOS5420
+Date: Fri, 20 Dec 2013 13:25:06 -0800
+Message-ID: <CAOesGMjv_BcXCbA49b=s1hxAdSJLLjFno==0Yvc4xgMeYwy-ng@mail.gmail.com>
+References: <1387195271-3613-1-git-send-email-a.kesavan@samsung.com>
+	<CAM4voamD4Cj594fbkciNS32U7PSkByxakZmjPnhFo0mpCj8hug@mail.gmail.com>
+	<CAOesGMjfcTki4qqD-ZP2zt3ERLRF9DX5_K5rfJXfx1KGa5bG-g@mail.gmail.com>
+	<1591935.tG52kkhDHl@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:53621 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751832Ab3LTVZG (ORCPT
+Received: from mail-qc0-f179.google.com ([209.85.216.179]:54859 "EHLO
+	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752314Ab3LTVZH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:25:06 -0500
-Received: by mail-wi0-f172.google.com with SMTP id en1so8974673wid.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:25:05 -0800 (PST)
+	Fri, 20 Dec 2013 16:25:07 -0500
+Received: by mail-qc0-f179.google.com with SMTP id i8so2743030qcq.24
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:25:06 -0800 (PST)
+In-Reply-To: <1591935.tG52kkhDHl@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, sunil joshi <sjoshi.open@gmail.com>, abrestic@chromium.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Instead of repeating "select PM_GENERIC_DOMAINS" for all Exynos4
-variants add relevant entry in the Kconfig section common to the
-SoC series.
+On Fri, Dec 20, 2013 at 1:23 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Friday 20 of December 2013 13:22:06 Olof Johansson wrote:
+>> On Fri, Dec 20, 2013 at 3:38 AM, Abhilash Kesavan
+>> <kesavan.abhilash@gmail.com> wrote:
+>> > Hi Sunil,
+>> >
+>> > On Fri, Dec 20, 2013 at 3:56 PM, sunil joshi <sjoshi.open@gmail.com> wrote:
+>> >> Hi Abhilash,
+>> >> I saw another patch in chrome tree ..by Andrew Bresticker
+>> >> which may be relevant here ..
+>> >>
+>> >> Just wondering if you missed adding this ? or this is not needed ?
+>> >> You did not face any issue in getting core to suspend ?
+>> >
+>> > This has not been added for Exynos5250 in mainline yet. We did notice
+>> > that the system would fail to suspend on the rare occasion (~1% of the
+>> > time on exynos5250) when we repeatedly suspended and resumed the
+>> > system.
+>> >
+>> > I have not run s2r stress tests, but have had no issues suspending the
+>> > system in my limited testing. We can probably let this be for now as
+>> > the system would resume fine even on a failed suspend. I will do some
+>> > stress testing and then post if needed.
+>>
+>> Hold on, you're claiming that this patch you've posted has only seen
+>> very limited testing, and that you are aware of failures?
+>>
+>> Don't merge known-broken code into the mainline kernel.
+>
+> I'm afraid that a "failed suspend" does not really mean a failure here,
+> but let me wait for clarification of things I asked in another part of
+> this thread.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/mach-exynos/Kconfig |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+Fair enough.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 1414bc6..35c335d 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -24,6 +24,7 @@ config ARCH_EXYNOS4
- 	select HAVE_SMP
- 	select MIGHT_HAVE_CACHE_L2X0
- 	select PINCTRL
-+	select PM_GENERIC_DOMAINS if PM
- 	select S5P_DEV_MFC
- 	help
- 	  Samsung EXYNOS4 SoCs based systems
-@@ -48,7 +49,6 @@ config CPU_EXYNOS4210
- 	select ARCH_HAS_BANDGAP
- 	select ARM_CPU_SUSPEND if PM
- 	select PINCTRL_EXYNOS
--	select PM_GENERIC_DOMAINS if PM
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select SAMSUNG_DMADEV
-@@ -61,7 +61,6 @@ config SOC_EXYNOS4212
- 	depends on ARCH_EXYNOS4
- 	select ARCH_HAS_BANDGAP
- 	select PINCTRL_EXYNOS
--	select PM_GENERIC_DOMAINS if PM
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select SAMSUNG_DMADEV
-@@ -74,7 +73,6 @@ config SOC_EXYNOS4412
- 	depends on ARCH_EXYNOS4
- 	select ARCH_HAS_BANDGAP
- 	select PINCTRL_EXYNOS
--	select PM_GENERIC_DOMAINS if PM
- 	select SAMSUNG_DMADEV
- 	help
- 	  Enable EXYNOS4412 SoC support
--- 
-1.7.4.1
+Still, I expect code that enters the kernel to actually be tested.
+We've got way too much code just sitting there in broken state because
+whomever posted it didn't care about it working at the time, and
+nobody knows better because you can't actually use the code/driver on
+any real hardware with a mainline kernel.
+
+
+-Olof
