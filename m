@@ -1,66 +1,85 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
-Date: Fri, 20 Dec 2013 22:14:28 +0100
-Message-ID: <1644725.nymfPqUWVu@flatron>
-References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org> <3552349.yKrGzNhczA@amdc1227> <CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 1/9] ARM: EXYNOS: cpuidle: fix AFTR mode check
+Date: Fri, 20 Dec 2013 22:16:12 +0100
+Message-ID: <52B4B39C.2010202@linaro.org>
+References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com> <1387565251-7051-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f48.google.com ([74.125.83.48]:37133 "EHLO
-	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751514Ab3LTVOb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 16:14:31 -0500
-Received: by mail-ee0-f48.google.com with SMTP id e49so1271543eek.35
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 13:14:30 -0800 (PST)
-In-Reply-To: <CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1387565251-7051-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, rjw@rjwysocki.net
+Cc: lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
 
-On Thursday 19 of December 2013 21:05:09 Sachin Kamat wrote:
-> Hi Tomasz,
-> 
-> On 19 December 2013 19:40, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Sachin, Andrew,
-> >
-> > On Wednesday 18 of December 2013 23:39:58 Sachin Kamat wrote:
-> >> Hi Tomasz,
-> >>
-> >> On 10 November 2013 22:38, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> >> > Hi Sachin, Andrew,
-> >> >
-> >> > On Friday 08 of November 2013 15:44:07 Sachin Kamat wrote:
-> >> >> From: Andrew Bresticker <abrestic@chromium.org>
-> >> >>
-> >> >> The gate clocks for the MFC sysmmus appear to be flipped, i.e.
-> >> >> GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
-> >> >> Fix this so that the MFC will start up.
-> >> >
-> >> > Wow, this means that there is a mistake in the documentation. Not that
-> >> > I'm surprised, though.
-> >> >
-> >> > I guess you are sure about this, so:
-> >> >
-> >> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >>
-> >> I believe you are going to take this through your tree along with a
-> >> few others which you have already reviewed?
-> >
-> > This patch seems to depend on my Exynos 5250 clock clean-up series, which
-> > will be merged for 3.14. Are you okay with this patch being merged for
-> > 3.14 as well or this fix is needed for earlier kernel versions too?
-> > (It is not a regression introduced in 3.13, though.)
-> 
-> Yes, I did rebase it on top of your series along with other patches.
-> Though not a regression introduced in 3.13, I think it makes sense to have this
-> sent as a fix during this release (3.13) itself. Let me know if you
-> want me to base it
-> on top of 3.13-rc4 and re-send.
+On 12/20/2013 07:47 PM, Bartlomiej Zolnierkiewicz wrote:
+> The EXYNOS cpuidle driver code assumes that cpuidle core will handle
+> dev->state_count smaller than drv->state_count but currently this is
+> untrue (dev->state_count is used only for handling cpuidle state sysf=
+s
+> entries and drv->state_count is used for all other cases) and will no=
+t
+> be fixed in the future as dev->state_count is planned to be removed.
+>
+> Fix the issue by checking for the max supported idle state in AFTR
+> state's ->enter handler (exynos4_enter_lowpower()) and entering AFTR
+> mode only when cores other than CPU0 are offline.
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>   arch/arm/mach-exynos/cpuidle.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cp=
+uidle.c
+> index da65b03..f57cb91 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -172,8 +172,8 @@ static int exynos4_enter_lowpower(struct cpuidle_=
+device *dev,
+>   {
+>   	int new_index =3D index;
+>
+> -	/* This mode only can be entered when other core's are offline */
+> -	if (num_online_cpus() > 1)
+> +	/* AFTR can only be entered when cores other than CPU0 are offline =
+*/
+> +	if (num_online_cpus() > 1 || dev->cpu !=3D 0)
+>   		new_index =3D drv->safe_state_index;
+>
+>   	if (new_index =3D=3D 0)
+> @@ -235,10 +235,6 @@ static int exynos_cpuidle_probe(struct platform_=
+device *pdev)
+>   		device =3D &per_cpu(exynos4_cpuidle_device, cpu_id);
+>   		device->cpu =3D cpu_id;
+>
+> -		/* Support IDLE only */
+> -		if (cpu_id !=3D 0)
+> -			device->state_count =3D 1;
+> -
+>   		ret =3D cpuidle_register_device(device);
+>   		if (ret) {
+>   			dev_err(&pdev->dev, "failed to register cpuidle device\n");
+>
 
-Since this is just a trivial fix, let me do it myself when applying.
+Hi Bartlomiej,
 
-Best regards,
-Tomasz
+thanks for this cleanup. May be you can also add another patch to switc=
+h=20
+to the generic cpuidle_register function ?
+
+Thanks
+   -- Daniel
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
