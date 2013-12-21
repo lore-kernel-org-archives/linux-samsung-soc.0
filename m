@@ -1,171 +1,149 @@
-From: Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH] dma-buf: avoid using IS_ERR_OR_NULL
-Date: Sat, 21 Dec 2013 07:42:17 -0500
-Message-ID: <CAF6AEGuQSWOw6KWVo-uorJ+8M3-kLzYHdOOfdHWUDi=SkzUUVA@mail.gmail.com>
-References: <1387586630-1954-1-git-send-email-ccross@android.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 2nd 0/5] Samsung updates for v3.14
+Date: Sun, 22 Dec 2013 03:23:13 +0900
+Message-ID: <52B5DC91.90505@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1387586630-1954-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Colin Cross <ccross@android.com>
-Cc: "open list:DMA BUFFER SHARIN..." <linaro-mm-sig@lists.linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:DMA BUFFER SHARIN..." <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:DMA BUFFER SHARIN..." <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:56405 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754509Ab3LUSXS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 21 Dec 2013 13:23:18 -0500
+Received: by mail-pb0-f45.google.com with SMTP id rp16so3873379pbb.18
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Dec 2013 10:23:18 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Fri, Dec 20, 2013 at 7:43 PM, Colin Cross <ccross@android.com> wrote:
-> dma_buf_map_attachment and dma_buf_vmap can return NULL or
-> ERR_PTR on a error.  This encourages a common buggy pattern in
-> callers:
->         sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
->         if (IS_ERR_OR_NULL(sgt))
->                 return PTR_ERR(sgt);
->
-> This causes the caller to return 0 on an error.  IS_ERR_OR_NULL
-> is almost always a sign of poorly-defined error handling.
->
-> This patch converts dma_buf_map_attachment to always return
-> ERR_PTR, and fixes the callers that incorrectly handled NULL.
-> There are a few more callers that were not checking for NULL
-> at all, which would have dereferenced a NULL pointer later.
-> There are also a few more callers that correctly handled NULL
-> and ERR_PTR differently, I left those alone but they could also
-> be modified to delete the NULL check.
->
-> This patch also converts dma_buf_vmap to always return NULL.
-> All the callers to dma_buf_vmap only check for NULL, and would
-> have dereferenced an ERR_PTR and panic'd if one was ever
-> returned. This is not consistent with the rest of the dma buf
-> APIs, but matches the expectations of all of the callers.
->
-> Signed-off-by: Colin Cross <ccross@android.com>
-> ---
->  drivers/base/dma-buf.c                         | 18 +++++++++++-------
->  drivers/gpu/drm/drm_prime.c                    |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_dmabuf.c     |  2 +-
->  drivers/media/v4l2-core/videobuf2-dma-contig.c |  2 +-
->  4 files changed, 14 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/base/dma-buf.c b/drivers/base/dma-buf.c
-> index 1e16cbd61da2..cfe1d8bc7bb8 100644
-> --- a/drivers/base/dma-buf.c
-> +++ b/drivers/base/dma-buf.c
-> @@ -251,9 +251,8 @@ EXPORT_SYMBOL_GPL(dma_buf_put);
->   * @dmabuf:    [in]    buffer to attach device to.
->   * @dev:       [in]    device to be attached.
->   *
-> - * Returns struct dma_buf_attachment * for this attachment; may return negative
-> - * error codes.
-> - *
-> + * Returns struct dma_buf_attachment * for this attachment; returns ERR_PTR on
-> + * error.
->   */
->  struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
->                                           struct device *dev)
-> @@ -319,9 +318,8 @@ EXPORT_SYMBOL_GPL(dma_buf_detach);
->   * @attach:    [in]    attachment whose scatterlist is to be returned
->   * @direction: [in]    direction of DMA transfer
->   *
-> - * Returns sg_table containing the scatterlist to be returned; may return NULL
-> - * or ERR_PTR.
-> - *
-> + * Returns sg_table containing the scatterlist to be returned; returns ERR_PTR
-> + * on error.
->   */
->  struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
->                                         enum dma_data_direction direction)
-> @@ -334,6 +332,8 @@ struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
->                 return ERR_PTR(-EINVAL);
->
->         sg_table = attach->dmabuf->ops->map_dma_buf(attach, direction);
-> +       if (!sg_table)
-> +               sg_table = ERR_PTR(-ENOMEM);
->
->         return sg_table;
->  }
-> @@ -544,6 +544,8 @@ EXPORT_SYMBOL_GPL(dma_buf_mmap);
->   * These calls are optional in drivers. The intended use for them
->   * is for mapping objects linear in kernel space for high use objects.
->   * Please attempt to use kmap/kunmap before thinking about these interfaces.
-> + *
-> + * Returns NULL on error.
->   */
->  void *dma_buf_vmap(struct dma_buf *dmabuf)
->  {
-> @@ -566,7 +568,9 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
->         BUG_ON(dmabuf->vmap_ptr);
->
->         ptr = dmabuf->ops->vmap(dmabuf);
-> -       if (IS_ERR_OR_NULL(ptr))
-> +       if (WARN_ON_ONCE(IS_ERR(ptr)))
+Hi Arnd, Olof and Kevin
 
-since vmap is optional, the WARN_ON might be a bit strong..  although
-it would be a bit strange for an exporter to supply a vmap fxn which
-always returned NULL, not sure about that.  Just thought I'd mention
-it in case anyone else had an opinion about that.
+Here are 2nd round request for v3.14, previous my request is not pulled 
+yet though because -rc5 is close. If any problems on my previous 
+request, please kindly let me know.
 
-But either way:
+In this round, Most of them are for exynos stuff, mainly cleanup 
+<mach/regs-xxx.h>, MCT updates, fixes regarding MSHC, key map for 
+exynos5250-snow and add exynos4412-tiny4412 DT board.
 
-Reviewed-by: Rob Clark <robdclark@gmail.com>
+Note that, for multiplatform exynos patches will be submitted in Jan 
+before upcoming merge window and since it will be small so I hope 
+arm-soc takes them directly at that time, of course after some tests.
 
+Thanks and Merry Christmas :-)
+- Kukjin
 
-> +               ptr = NULL;
-> +       if (!ptr)
->                 goto out_unlock;
->
->         dmabuf->vmap_ptr = ptr;
-> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-> index 56805c39c906..bb516fdd195d 100644
-> --- a/drivers/gpu/drm/drm_prime.c
-> +++ b/drivers/gpu/drm/drm_prime.c
-> @@ -471,7 +471,7 @@ struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
->         get_dma_buf(dma_buf);
->
->         sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
-> -       if (IS_ERR_OR_NULL(sgt)) {
-> +       if (IS_ERR(sgt)) {
->                 ret = PTR_ERR(sgt);
->                 goto fail_detach;
->         }
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> index 59827cc5e770..c786cd4f457b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> @@ -224,7 +224,7 @@ struct drm_gem_object *exynos_dmabuf_prime_import(struct drm_device *drm_dev,
->         get_dma_buf(dma_buf);
->
->         sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
-> -       if (IS_ERR_OR_NULL(sgt)) {
-> +       if (IS_ERR(sgt)) {
->                 ret = PTR_ERR(sgt);
->                 goto err_buf_detach;
->         }
-> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> index 33d3871d1e13..880be0782dd9 100644
-> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
-> @@ -719,7 +719,7 @@ static int vb2_dc_map_dmabuf(void *mem_priv)
->
->         /* get the associated scatterlist for this buffer */
->         sgt = dma_buf_map_attachment(buf->db_attach, buf->dma_dir);
-> -       if (IS_ERR_OR_NULL(sgt)) {
-> +       if (IS_ERR(sgt)) {
->                 pr_err("Error getting dmabuf scatterlist\n");
->                 return -EINVAL;
->         }
-> --
-> 1.8.5.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+---------------
+
+Alex Ling (1):
+       ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
+
+Doug Anderson (2):
+       ARM: dts: Add the missing "\" key in non-US keyboards for 
+exynos5250-snow
+       ARM: dts: Fix exynos5250-snow's search key to be L_META
+
+Kukjin Kim (11):
+       ARM: EXYNOS: cleanup <mach/regs-pmu.h>
+       ARM: EXYNOS: remove inclusion <mach/regs-pmu.h> into another headers
+       ARM: EXYNOS: local regs-pmu.h header file
+       ARM: EXYNOS: cleanup <mach/regs-irq.h>
+       ARM: EXYNOS: cleanup <mach/regs-clock.h>
+       PM / devfreq: move definitions for exynos4_bus into drivers/devfreq
+       ARM: EXYNOS: local definitions for pm.c into mach-exynos dir
+       cpufreq: exynos: move definitions for exynos-cpufreq into 
+drivers/cpufreq/
+       ARM: EXYNOS: local definitions for cpuidle.c into mach-exynos dir
+       ARM: EXYNOS: remove <mach/regs-clock.h> for exynos
+       PM / devfreq: use inclusion <mach/map.h> instead of <plat/map-s5p.h>
+
+Leela Krishna Amudala (2):
+       ARM: dts: Add SPI nodes to the exynos5420 device tree file
+       ARM: dts: add pwm DT nodes to Exynos5250 and Exynos5420
+
+Mark Brown (4):
+       ARM: dts: Add CODEC MCLK for SMDK5250
+       ARM: dts: Leave Exynos5250 SPI controller disabled by default
+       ARM: dts: Disable I2C controllers by default on Exynos5250
+       ARM: dts: Rename Exynos5250 ChromeOS common file to have exynos 
+prefix
+
+Naveen Krishna Chatradhi (1):
+       ARM: dts: Add device nodes for TMU blocks for exynos5420
+
+Padmavathi Venna (1):
+       ARM: dts: Add DMA controller node info on Exynos5420
+
+Sachin Kamat (1):
+       ARM: exynos_defconfig: Enable S2MPS11 voltage regulator
+
+Seungwon Jeon (1):
+       ARM: dts: add clock provider for mshc node for Exynos4412 SOC
+
+Sylwester Nawrocki (2):
+       ARM: EXYNOS: Consolidate selection of PM_GENERIC_DOMAINS for Exynos4
+       ARM: EXYNOS: Kill exynos_pm_late_initcall()
+
+Tomasz Figa (9):
+       ARM: S3C64XX: Correct card detect type for HSMMC1 for MINI6410
+       clk: samsung: exynos4: Fix definition of div_mmc_pre4 divider
+       ARM: dts: Fix definition of MSHC device tree nodes for exynos4x12
+       ARM: dts: Use MSHC controller for eMMC memory for exynos4412-trats2
+       Documentation: devicetree: Update Exynos MCT bindings description
+       ARM: dts: Drop interrupt controller properties from MCT nodes for 
+exynos4 SoCs
+       ARM: dts: Move MCT node to exynos4x12.dtsi
+       ARM: dts: Simplify MCT interrupt map for exynos4 SoCs
+       ARM: dts: Fix missing spaces after labels for exynos
+
+Yuvaraj Kumar C D (1):
+       ARM: dts: Fix status property of mmc nodes for snow board
+
+  .../bindings/timer/samsung,exynos4210-mct.txt      |  54 ++-
+  arch/arm/boot/dts/Makefile                         |   1 +
+  arch/arm/boot/dts/exynos4.dtsi                     |   4 +-
+  arch/arm/boot/dts/exynos4210.dtsi                  |  23 +-
+  arch/arm/boot/dts/exynos4212.dtsi                  |  24 +-
+  arch/arm/boot/dts/exynos4412-odroidx.dts           |   5 +-
+  arch/arm/boot/dts/exynos4412-origen.dts            |   5 +-
+  arch/arm/boot/dts/exynos4412-tiny4412.dts          |  93 ++++++
+  arch/arm/boot/dts/exynos4412-trats2.dts            |  20 +-
+  arch/arm/boot/dts/exynos4412.dtsi                  |  35 +-
+  arch/arm/boot/dts/exynos4x12.dtsi                  |  33 ++
+  arch/arm/boot/dts/exynos5.dtsi                     |   4 +-
+  arch/arm/boot/dts/exynos5250-arndale.dts           |  44 +--
+  ...250-common.dtsi => exynos5250-cros-common.dtsi} |  25 +-
+  arch/arm/boot/dts/exynos5250-smdk5250.dts          |  46 ++-
+  arch/arm/boot/dts/exynos5250-snow.dts              |  14 +-
+  arch/arm/boot/dts/exynos5250.dtsi                  |  22 ++
+  arch/arm/boot/dts/exynos5420.dtsi                  | 152 +++++++++
+  arch/arm/boot/dts/exynos5440.dtsi                  |   2 +-
+  arch/arm/configs/exynos_defconfig                  |   1 +
+  arch/arm/mach-exynos/Kconfig                       |   4 +-
+  arch/arm/mach-exynos/common.c                      |   8 +-
+  arch/arm/mach-exynos/common.h                      |   6 -
+  arch/arm/mach-exynos/cpuidle.c                     |  25 +-
+  arch/arm/mach-exynos/hotplug.c                     |   2 +-
+  arch/arm/mach-exynos/include/mach/pm-core.h        |   5 +-
+  arch/arm/mach-exynos/include/mach/regs-clock.h     | 372 
+---------------------
+  arch/arm/mach-exynos/include/mach/regs-irq.h       |  19 --
+  arch/arm/mach-exynos/mach-exynos5-dt.c             |   2 +-
+  arch/arm/mach-exynos/platsmp.c                     |   3 +-
+  arch/arm/mach-exynos/pm.c                          |  29 +-
+  arch/arm/mach-exynos/pm_domains.c                  |   9 +-
+  arch/arm/mach-exynos/pmu.c                         |   3 +-
+  arch/arm/mach-exynos/{include/mach => }/regs-pmu.h |  53 ---
+  arch/arm/mach-s3c64xx/mach-mini6410.c              |  10 +
+  arch/arm/plat-samsung/pm.c                         |   2 +
+  arch/arm/plat-samsung/s5p-irq-pm.c                 |   3 +
+  drivers/clk/samsung/clk-exynos4.c                  |   3 +-
+  drivers/cpufreq/exynos-cpufreq.h                   |  22 ++
+  drivers/cpufreq/exynos4210-cpufreq.c               |   2 -
+  drivers/cpufreq/exynos4x12-cpufreq.c               |   2 -
+  drivers/cpufreq/exynos5250-cpufreq.c               |   1 -
+  drivers/devfreq/exynos/exynos4_bus.c               |   4 +-
+  drivers/devfreq/exynos/exynos4_bus.h               | 110 ++++++
+  44 files changed, 638 insertions(+), 668 deletions(-)
