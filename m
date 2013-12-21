@@ -1,73 +1,90 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
-Date: Sat, 21 Dec 2013 09:37:06 +0530
-Message-ID: <CAK9yfHxiyZpDZzw64n-cUwXLKMBPVQeSdWfgFMnm4A42cAdCPw@mail.gmail.com>
-References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
-	<3552349.yKrGzNhczA@amdc1227>
-	<CAK9yfHxuNxqJR7MV0vb+ThD3pQi6OPUfGv=Tg2KGZfzJwKm3eQ@mail.gmail.com>
-	<1644725.nymfPqUWVu@flatron>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH 1/1] ARM: dts: Re-organize RTC status for 5250
+Date: Sat, 21 Dec 2013 10:19:59 +0530
+Message-ID: <1387601399-31991-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:53765 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753099Ab3LUEHH (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:51226 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753560Ab3LUExR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Dec 2013 23:07:07 -0500
-Received: by mail-ob0-f176.google.com with SMTP id vb8so3554690obc.7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 20:07:06 -0800 (PST)
-In-Reply-To: <1644725.nymfPqUWVu@flatron>
+	Fri, 20 Dec 2013 23:53:17 -0500
+Received: by mail-pa0-f43.google.com with SMTP id bj1so3445792pad.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2013 20:53:17 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-On 21 December 2013 02:44, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Thursday 19 of December 2013 21:05:09 Sachin Kamat wrote:
->> Hi Tomasz,
->>
->> On 19 December 2013 19:40, Tomasz Figa <t.figa@samsung.com> wrote:
->> > Hi Sachin, Andrew,
->> >
->> > On Wednesday 18 of December 2013 23:39:58 Sachin Kamat wrote:
->> >> Hi Tomasz,
->> >>
->> >> On 10 November 2013 22:38, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> >> > Hi Sachin, Andrew,
->> >> >
->> >> > On Friday 08 of November 2013 15:44:07 Sachin Kamat wrote:
->> >> >> From: Andrew Bresticker <abrestic@chromium.org>
->> >> >>
->> >> >> The gate clocks for the MFC sysmmus appear to be flipped, i.e.
->> >> >> GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
->> >> >> Fix this so that the MFC will start up.
->> >> >
->> >> > Wow, this means that there is a mistake in the documentation. Not that
->> >> > I'm surprised, though.
->> >> >
->> >> > I guess you are sure about this, so:
->> >> >
->> >> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> >>
->> >> I believe you are going to take this through your tree along with a
->> >> few others which you have already reviewed?
->> >
->> > This patch seems to depend on my Exynos 5250 clock clean-up series, which
->> > will be merged for 3.14. Are you okay with this patch being merged for
->> > 3.14 as well or this fix is needed for earlier kernel versions too?
->> > (It is not a regression introduced in 3.13, though.)
->>
->> Yes, I did rebase it on top of your series along with other patches.
->> Though not a regression introduced in 3.13, I think it makes sense to have this
->> sent as a fix during this release (3.13) itself. Let me know if you
->> want me to base it
->> on top of 3.13-rc4 and re-send.
->
-> Since this is just a trivial fix, let me do it myself when applying.
->
+Some boards might not have RTC xtal, so RTC shouldn't really be
+enabled by default. Enable it in the required board files. For
+now enable it for all board files to maintain the enabled status
+exisitng prior to this patch.
 
-Thanks Tomasz.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos5250-arndale.dts  |    4 ++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    4 ++++
+ arch/arm/boot/dts/exynos5250-snow.dts     |    4 ++++
+ arch/arm/boot/dts/exynos5250.dtsi         |    2 +-
+ 4 files changed, 13 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index b42e658..56c4078 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -25,6 +25,10 @@
+ 		bootargs = "console=ttySAC2,115200";
+ 	};
+ 
++	rtc@101E0000 {
++		status = "okay";
++	};
++
+ 	codec@11000000 {
+ 		samsung,mfc-r = <0x43000000 0x800000>;
+ 		samsung,mfc-l = <0x51000000 0x800000>;
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 3e69837..0837dd8 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -27,6 +27,10 @@
+ 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+ 	};
+ 
++	rtc@101E0000 {
++		status = "okay";
++	};
++
+ 	i2c@12C60000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 7e45eea..b13bf49 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -20,6 +20,10 @@
+ 		i2c104 = &i2c_104;
+ 	};
+ 
++	rtc@101E0000 {
++		status = "okay";
++	};
++
+ 	pinctrl@11400000 {
+ 		sd3_clk: sd3-clk {
+ 			samsung,pin-drv = <0>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index c341e55..077e531 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -190,7 +190,7 @@
+ 	rtc@101E0000 {
+ 		clocks = <&clock 337>;
+ 		clock-names = "rtc";
+-		status = "okay";
++		status = "disabled";
+ 	};
+ 
+ 	tmu@10060000 {
 -- 
-With warm regards,
-Sachin
+1.7.9.5
