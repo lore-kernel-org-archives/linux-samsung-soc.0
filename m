@@ -1,78 +1,42 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] V4L: s5k6a3: Add DT binding documentation
-Date: Sun, 22 Dec 2013 22:27:00 +0100
-Message-ID: <1387747620-24676-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
-Cc: m.chehab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/7] Samsung fixes for v3.14
+Date: Sun, 22 Dec 2013 14:01:54 -0800
+Message-ID: <20131222220154.GA13365@quad.lixom.net>
+References: <52AE0F41.7050706@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:37377 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751227Ab3LVWED (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 22 Dec 2013 17:04:03 -0500
+Received: by mail-pb0-f52.google.com with SMTP id uo5so4640743pbc.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Dec 2013 14:04:02 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <52AE0F41.7050706@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-This patch adds DT binding documentation for the Samsung S5K6A3(YX)
-raw image sensor.
+On Mon, Dec 16, 2013 at 05:21:21AM +0900, Kukjin Kim wrote:
+> The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+> 
+>   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+> 
+> are available in the git repository at:
+> 
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
-This patch adds missing documentation [1] for the "samsung,s5k6a3"
-compatible. Rob, can you please merge it through your tree if it 
-looks OK ?
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-fixes
+> 
+> for you to fetch changes up to 236940d2c951a84735fdd7b958b5159eaf501784:
+> 
+>   ARM: dts: Update display clock frequency for Origen-4412
+> (2013-12-16 04:41:57 +0900)
 
-Thanks,
-Sylwester
+Pulled into next/fixes-non-critical.
 
-[1] http://www.spinics.net/lists/devicetree/msg10693.html
 
-Changes since v3 (https://linuxtv.org/patch/20429):
- - rephrased 'clocks' and 'clock-names' properties' description.
----
- .../devicetree/bindings/media/samsung-s5k6a3.txt   |   33 ++++++++++++++++++++
- 1 files changed, 33 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-
-diff --git a/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-new file mode 100644
-index 0000000..cce01e8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-@@ -0,0 +1,33 @@
-+Samsung S5K6A3(YX) raw image sensor
-+---------------------------------
-+
-+S5K6A3(YX) is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
-+and CCI (I2C compatible) control bus.
-+
-+Required properties:
-+
-+- compatible	: "samsung,s5k6a3";
-+- reg		: I2C slave address of the sensor;
-+- svdda-supply	: core voltage supply;
-+- svddio-supply	: I/O voltage supply;
-+- afvdd-supply	: AF (actuator) voltage supply;
-+- gpios		: specifier of a GPIO connected to the RESET pin;
-+- clocks	: should contain list of phandle and clock specifier pairs
-+		  according to common clock bindings for the clocks described
-+		  in the clock-names property;
-+- clock-names	: should contain "extclk" entry for the sensor's EXTCLK clock;
-+
-+Optional properties:
-+
-+- clock-frequency : the frequency at which the "extclk" clock should be
-+		    configured to operate, in Hz; if this property is not
-+		    specified default 24 MHz value will be used.
-+
-+The common video interfaces bindings (see video-interfaces.txt) should be
-+used to specify link to the image data receiver. The S5K6A3(YX) device
-+node should contain one 'port' child node with an 'endpoint' subnode.
-+
-+Following properties are valid for the endpoint node:
-+
-+- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-+  video-interfaces.txt.  The sensor supports only one data lane.
--- 
-1.7.4.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Olof
