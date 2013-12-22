@@ -1,73 +1,78 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: [PATCH] mfd: max8997: Use "IS_ENABLED(CONFIG_OF)" for DT code.
-Date: Sun, 22 Dec 2013 23:18:49 +0530
-Message-ID: <1387734529-15622-1-git-send-email-badarkhe.manish@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:51360 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754163Ab3LVRt1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Dec 2013 12:49:27 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] V4L: s5k6a3: Add DT binding documentation
+Date: Sun, 22 Dec 2013 22:27:00 +0100
+Message-ID: <1387747620-24676-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
+Cc: m.chehab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: sameo@linux.intel.com, lee.jones@linaro.org, badarkhe.manish@gmail.com
 
-Instead of "#if define CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
-option for DT code to avoid if-deffery in code.
+This patch adds DT binding documentation for the Samsung S5K6A3(YX)
+raw image sensor.
 
-Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
-:100644 100644 791aea3... be9a8b0... M	drivers/mfd/max8997.c
- drivers/mfd/max8997.c |   14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+This patch adds missing documentation [1] for the "samsung,s5k6a3"
+compatible. Rob, can you please merge it through your tree if it 
+looks OK ?
 
-diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
-index 791aea3..be9a8b0 100644
---- a/drivers/mfd/max8997.c
-+++ b/drivers/mfd/max8997.c
-@@ -133,7 +133,6 @@ int max8997_update_reg(struct i2c_client *i2c, u8 reg, u8 val, u8 mask)
- }
- EXPORT_SYMBOL_GPL(max8997_update_reg);
- 
--#ifdef CONFIG_OF
- /*
-  * Only the common platform data elements for max8997 are parsed here from the
-  * device tree. Other sub-modules of max8997 such as pmic, rtc and others have
-@@ -164,24 +163,15 @@ static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
- 
- 	return pd;
- }
--#else
--static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
--					struct device *dev)
--{
--	return 0;
--}
--#endif
- 
- static inline int max8997_i2c_get_driver_data(struct i2c_client *i2c,
- 						const struct i2c_device_id *id)
- {
--#ifdef CONFIG_OF
--	if (i2c->dev.of_node) {
-+	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node) {
- 		const struct of_device_id *match;
- 		match = of_match_node(max8997_pmic_dt_match, i2c->dev.of_node);
- 		return (int)match->data;
- 	}
--#endif
- 	return (int)id->driver_data;
- }
- 
-@@ -203,7 +193,7 @@ static int max8997_i2c_probe(struct i2c_client *i2c,
- 	max8997->type = max8997_i2c_get_driver_data(i2c, id);
- 	max8997->irq = i2c->irq;
- 
--	if (max8997->dev->of_node) {
-+	if (IS_ENABLED(CONFIG_OF) && max8997->dev->of_node) {
- 		pdata = max8997_i2c_parse_dt_pdata(max8997->dev);
- 		if (IS_ERR(pdata))
- 			return PTR_ERR(pdata);
+Thanks,
+Sylwester
+
+[1] http://www.spinics.net/lists/devicetree/msg10693.html
+
+Changes since v3 (https://linuxtv.org/patch/20429):
+ - rephrased 'clocks' and 'clock-names' properties' description.
+---
+ .../devicetree/bindings/media/samsung-s5k6a3.txt   |   33 ++++++++++++++++++++
+ 1 files changed, 33 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+
+diff --git a/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+new file mode 100644
+index 0000000..cce01e8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+@@ -0,0 +1,33 @@
++Samsung S5K6A3(YX) raw image sensor
++---------------------------------
++
++S5K6A3(YX) is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
++and CCI (I2C compatible) control bus.
++
++Required properties:
++
++- compatible	: "samsung,s5k6a3";
++- reg		: I2C slave address of the sensor;
++- svdda-supply	: core voltage supply;
++- svddio-supply	: I/O voltage supply;
++- afvdd-supply	: AF (actuator) voltage supply;
++- gpios		: specifier of a GPIO connected to the RESET pin;
++- clocks	: should contain list of phandle and clock specifier pairs
++		  according to common clock bindings for the clocks described
++		  in the clock-names property;
++- clock-names	: should contain "extclk" entry for the sensor's EXTCLK clock;
++
++Optional properties:
++
++- clock-frequency : the frequency at which the "extclk" clock should be
++		    configured to operate, in Hz; if this property is not
++		    specified default 24 MHz value will be used.
++
++The common video interfaces bindings (see video-interfaces.txt) should be
++used to specify link to the image data receiver. The S5K6A3(YX) device
++node should contain one 'port' child node with an 'endpoint' subnode.
++
++Following properties are valid for the endpoint node:
++
++- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
++  video-interfaces.txt.  The sensor supports only one data lane.
 -- 
-1.7.10.4
+1.7.4.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
