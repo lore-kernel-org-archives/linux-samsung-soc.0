@@ -1,108 +1,101 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [GIT PULL 7/7] Samsung SoC for v3.14
-Date: Mon, 23 Dec 2013 10:36:18 +0100
-Message-ID: <20131223103618.5815379e@amdc2363>
-References: <52AE0FA5.3090804@samsung.com>
- <20131222221141.GF13365@quad.lixom.net> <1566886.jecinlyiQ0@flatron>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v4 0/7] ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+Date: Mon, 23 Dec 2013 14:11:34 +0100
+Message-ID: <201312231411.35417.heiko@sntech.de>
+References: <201312101614.29781.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49185 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756983Ab3LWJg2 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:60948 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757262Ab3LWNLj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Dec 2013 04:36:28 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MY900I846OQBUD0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 23 Dec 2013 18:36:26 +0900 (KST)
-In-reply-to: <1566886.jecinlyiQ0@flatron>
+	Mon, 23 Dec 2013 08:11:39 -0500
+In-Reply-To: <201312101614.29781.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Arun Kumar K <arunkk.samsung@gmail.com>, Jassi Brar <jassisinghbrar@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
 
-Hi Tomasz,
+Hi Kukjin,
 
-> Hi Olof,
-> 
-> On Sunday 22 of December 2013 14:11:41 Olof Johansson wrote:
-> > On Mon, Dec 16, 2013 at 05:23:01AM +0900, Kukjin Kim wrote:
-> > > The following changes since commit
-> > > 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> > > 
-> > >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > 
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > > tags/samsung-soc
-> > > 
-> > > for you to fetch changes up to
-> > > 538cfbb4c40ab59688236484138133b8e3e89220:
-> > > 
-> > >   ARM: dts: Add initial support for Arndale Octa board (2013-12-16
-> > > 05:05:43 +0900)
-> > 
-> > Hi,
-> > 
-> > I'm not going to pull this.
-> > 
-> > I've asked you for about 6 months now (ever since Arnd went on
-> > leave) to please finish his multiplatform work for Exynos. Nothing
-> > has happened.
-> > 
-> > I'm not going to merge any more platform or SoC enablement code
-> > for Samsung platforms until Exynos has been converted over to
-> > multiplatform. Sorry.
-> 
-> Well, it's hard to disagree with you on this. Keeping adding new
-> things constantly definitely does not make us closer to multiplatform
-> support, as it only increases codebase of code that needs to be
-> cleaned up and made multiplatform aware.
-> 
-> However it's not that we're not doing anything towards mutliplatform
-> support. We're slowly getting there. A bit too slowly, but I'm afraid
-> this is due to the fact that we have definitely too little manpower
-> working on mainline support of Samsung SoCs.
-> 
-> As for good news, I already have a series cleaning up PM/sleep support
-> and making it multiplatform friendly and I'm going to post it
-> tomorrow. The bad news is that it depends on other series and I'm not
-> sure if we can get it merged in this release. I'll try to do whatever
-> possible to merge things as soon as possible, though.
-> 
-> From smaller things, we still need to sort out Exynos cpufreq driver
-> that has dependencies on headers in plat-samsung/ and mach-exynos/.
-> Unfortunately I don't have so much time to work on all the things at
-> the same time, so I hope that someone else could pick this task up.
-> Marek, Lukasz, what do you think?
+it seems you didn't have the time for this series during your 2nd round=
+=2E
 
-Regarding the cpufreq for Exynos, we do need to clean things up.
+I'm not sure what your plans/time constraint are, but according to the =
+-rc5=20
+release mail from Linus [0], 3.13 will at least reach -rc8 so it seems =
+as if=20
+there is still a bit of time to for 3.14 stuff.
 
-It shall be possible to reuse generic cpufreq-cpu0.c and
-arm_big_little.c code instead of several copy pasted
-exynos[4|5]xxx-cpufreq.c ones.
-
-This change will require some "virtual" clocks implementation for atomic
-clocks dividers change.
-
-I've already committed myself to fix this code. When all goes smooth, I
-shall deliver some RFC code after new year.
+This series would really be a nice base for not only the other ccf-conv=
+ersions=20
+(the already submitted s3c2410 and the s3c2412 which I'm currently work=
+ing on)=20
+but also for broadening the dt-support, with the auxdata gone from the =
+dt-
+board file.
 
 
-> 
-> Best regards,
-> Tomasz
-> 
+Thanks
+Heiko
 
 
--- 
-Best regards,
 
-Lukasz Majewski
+[0] https://lkml.org/lkml/2013/12/22/70
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Am Dienstag, 10. Dezember 2013, 16:14:29 schrieb Heiko St=C3=BCbner:
+> Next try, this time with less time between submissions.
+>=20
+> Tested on both non-dt and dt s3c2416.
+>=20
+> Changes since v3:
+> - address comments from Tomasz Figa (binding documentation, etc)
+> - prevent conflicts with unconverted s3c24xx socs
+> Changes since v2
+> - address comments from Tomasz Figa
+> - use new pll registration mechanism
+> - use fixed-rate clocks for xti etc
+>=20
+> Heiko Stuebner (7):
+>   clk: samsung: add pll_6552 variant for s3c2416
+>   clk: samsung: add plls used by the s3c2443
+>   dt-bindings: add binding for clock-controller of s3c2443 and follow=
+ing
+>   clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
+>   ARM: S3C24XX: prevent conflicts between ccf and non-ccf s3c24xx-soc=
+s
+>   ARM: dt: add clock data for s3c2416
+>   ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+>=20
+>  .../bindings/clock/samsung,s3c2443-clock.txt       |   56 ++
+>  arch/arm/boot/dts/s3c2416-smdk2416.dts             |   13 +
+>  arch/arm/boot/dts/s3c2416.dtsi                     |   42 ++
+>  arch/arm/mach-s3c24xx/Kconfig                      |   18 +-
+>  arch/arm/mach-s3c24xx/Makefile                     |    5 +-
+>  arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
+>  arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
+>  arch/arm/mach-s3c24xx/common-s3c2443.c             |  675
+> -------------------- arch/arm/mach-s3c24xx/common.c                  =
+   |=20
+>  18 +-
+>  arch/arm/mach-s3c24xx/common.h                     |    6 +
+>  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   39 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
+>  drivers/clk/samsung/Makefile                       |    1 +
+>  drivers/clk/samsung/clk-pll.c                      |   84 ++-
+>  drivers/clk/samsung/clk-pll.h                      |    3 +
+>  drivers/clk/samsung/clk-s3c2443.c                  |  417 ++++++++++=
+++
+>  include/dt-bindings/clock/samsung,s3c2443-clock.h  |   92 +++
+>  18 files changed, 756 insertions(+), 1114 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt del=
+ete
+> mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
+>  create mode 100644 drivers/clk/samsung/clk-s3c2443.c
+>  create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock.h
