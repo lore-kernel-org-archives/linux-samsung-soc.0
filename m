@@ -1,88 +1,108 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 23 Dec 2013 10:48:58 -0600
-Message-ID: <20131223164828.GF28679@saruman.home>
-References: <1386151747-3209-1-git-send-email-gautam.vivek@samsung.com>
- <1386151747-3209-2-git-send-email-gautam.vivek@samsung.com>
- <CAFp+6iF+15barZ=H_0h2VfNWSyxEr=MJy7Mtfn90PqWwXFFMSA@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 1/7] clk: samsung: add pll_6552 variant for s3c2416
+Date: Mon, 23 Dec 2013 12:07:44 -0800
+Message-ID: <20131223200744.25490.94481@quantum>
+References: <201312101614.29781.heiko@sntech.de> <201312101615.10927.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3xoW37o/FfUZJwQG"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iF+15barZ=H_0h2VfNWSyxEr=MJy7Mtfn90PqWwXFFMSA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, kishon <kishon@ti.com>, Jingoo Han <jg1.han@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Julius Werner <jwerner@chromium.org>, Kamil Debski <k.debski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f50.google.com ([209.85.213.50]:49872 "EHLO
+	mail-yh0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757897Ab3LWUHr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Dec 2013 15:07:47 -0500
+Received: by mail-yh0-f50.google.com with SMTP id b6so1301916yha.37
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2013 12:07:47 -0800 (PST)
+In-Reply-To: <201312101615.10927.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
 
---3xoW37o/FfUZJwQG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Mon, Dec 23, 2013 at 02:41:15PM +0530, Vivek Gautam wrote:
-> On Wed, Dec 4, 2013 at 3:39 PM, Vivek Gautam <gautam.vivek@samsung.com> w=
-rote:
-> > Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
-> > The new driver uses the generic PHY framework and will interact
-> > with DWC3 controller present on Exynos5 series of SoCs.
-> > Thereby, removing old phy-samsung-usb3 driver and related code
-> > used untill now which was based on usb/phy framework.
-> >
-> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> > ---
+Quoting Heiko St=C3=BCbner (2013-12-10 07:15:10)
+> According to the manual s3c2416 and s3c2450 use a pll 6552 and 6553
+> and while the pll_6553 matches exactly the one already implemented
+> the pll_6552 differs to the one from the s3c64xx series.
 >=20
-> a humble ping !! :-)
-> Any comments on this patch ?
+> The change is solely in the bit locations of the mdiv and pdiv values=
+=2E
+> All calculations are the same for both implementatons and even the
+> proposed divider-values for specific frequencies in the manuals are
+> the same.
+>=20
+> Therefore implement a variant that simply uses the changed bit
+> locations if necessary.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Tomasz Figa <t.figa@samsung.com>
 
-This is Kishon's domain. I think he's on vacations by now...
+Acked-by: Mike Turquette <mturquette@linaro.org>
 
-> > diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> > index a344f3d..67e9045 100644
-> > --- a/drivers/phy/Kconfig
-> > +++ b/drivers/phy/Kconfig
-> > @@ -51,4 +51,12 @@ config PHY_EXYNOS_DP_VIDEO
-> >         help
-> >           Support for Display Port PHY found on Samsung EXYNOS SoCs.
-> >
-> > +config PHY_EXYNOS5_USB3
-> > +       tristate "Exynos5 SoC series USB 3.0 PHY driver"
-> > +       depends on ARCH_EXYNOS5
-
-I would add || COMPILE_TEST here and make sure this builds on other
-arches too.
-
-The rest of the driver looks all right to my eyes.
-
-Reviewed-by: Felipe Balbi <balbi@ti.com>
-
---=20
-balbi
-
---3xoW37o/FfUZJwQG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSuGl6AAoJEIaOsuA1yqREy+gP/0XbDqsxXTFCyx67Dv2CRiS7
-mCiLqvRy5sN1ctLE+UH3rfG5ZdjVJ7mTEbcKBDysAjr0GjtliBI1HIyZaYWX2meh
-t8YNDNjB8ZduqXr/xS4DbMSRjVgwUg4Vbtpi/uMtEYitTa+KEd0qvlgZ2CIHJKoe
-OuSXz3xogdxoR+FqSB6Ys/SVYoWals+46kTpI0k+SKhpG8R2cEIANCZcyRjMC4LR
-aVUZzlKywwo07CqM+DdM9woBa3EIiG+n3YeatZoL7CIvZkD8qFBkPlkVM0gE3s2e
-jCfNkp+PtDZqfdbeqtschTZArldKBR+jif22FkL0NQcwKF8ZrhwLayvE8bR1dOfT
-S26zOq1sugpdSvrWuWMw14Vf/VXuaCvjlvjw4MFnb9Ns7IWLSeoXEs6ymIcvhAU2
-ipcWrQnXluynN1/ypoMS0ADLfP7akUyV226w/bEEXUsjosKyjTWfjSJIFFQDGa8T
-/HUKSmO9rfp/DO826m8xxb7jgtKfdQKz1yQHeER4rQMyztvQ+JjMAl5uv0KqYXeg
-LYY4NNvkQXmVW4ryL9Byo+MxGPlNdoSQDrw7Jr8K/Sia54fsXouF1AyXQiIIjxPK
-Ic/I9C55vRc4oHcK7LPu+nRirr9QDy5DlTFoc8iPvViJbzlX1g+5zkFZHkeAyJYW
-y9PPyRqFzbdHkApCEZD1
-=CED7
------END PGP SIGNATURE-----
-
---3xoW37o/FfUZJwQG--
+> ---
+>  drivers/clk/samsung/clk-pll.c |   12 ++++++++++--
+>  drivers/clk/samsung/clk-pll.h |    1 +
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-=
+pll.c
+> index 529e11d..c37d033 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -564,7 +564,9 @@ static const struct clk_ops samsung_pll46xx_clk_m=
+in_ops =3D {
+>  #define PLL6552_PDIV_MASK      0x3f
+>  #define PLL6552_SDIV_MASK      0x7
+>  #define PLL6552_MDIV_SHIFT     16
+> +#define PLL6552_MDIV_SHIFT_2416        14
+>  #define PLL6552_PDIV_SHIFT     8
+> +#define PLL6552_PDIV_SHIFT_2416        5
+>  #define PLL6552_SDIV_SHIFT     0
+> =20
+>  static unsigned long samsung_pll6552_recalc_rate(struct clk_hw *hw,
+> @@ -575,8 +577,13 @@ static unsigned long samsung_pll6552_recalc_rate=
+(struct clk_hw *hw,
+>         u64 fvco =3D parent_rate;
+> =20
+>         pll_con =3D __raw_readl(pll->con_reg);
+> -       mdiv =3D (pll_con >> PLL6552_MDIV_SHIFT) & PLL6552_MDIV_MASK;
+> -       pdiv =3D (pll_con >> PLL6552_PDIV_SHIFT) & PLL6552_PDIV_MASK;
+> +       if (pll->type =3D=3D pll_6552_s3c2416) {
+> +               mdiv =3D (pll_con >> PLL6552_MDIV_SHIFT_2416) & PLL65=
+52_MDIV_MASK;
+> +               pdiv =3D (pll_con >> PLL6552_PDIV_SHIFT_2416) & PLL65=
+52_PDIV_MASK;
+> +       } else {
+> +               mdiv =3D (pll_con >> PLL6552_MDIV_SHIFT) & PLL6552_MD=
+IV_MASK;
+> +               pdiv =3D (pll_con >> PLL6552_PDIV_SHIFT) & PLL6552_PD=
+IV_MASK;
+> +       }
+>         sdiv =3D (pll_con >> PLL6552_SDIV_SHIFT) & PLL6552_SDIV_MASK;
+> =20
+>         fvco *=3D mdiv;
+> @@ -773,6 +780,7 @@ static void __init _samsung_clk_register_pll(stru=
+ct samsung_pll_clock *pll_clk,
+>                         init.ops =3D &samsung_pll36xx_clk_ops;
+>                 break;
+>         case pll_6552:
+> +       case pll_6552_s3c2416:
+>                 init.ops =3D &samsung_pll6552_clk_ops;
+>                 break;
+>         case pll_6553:
+> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-=
+pll.h
+> index 6c39030..ddf9029 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -24,6 +24,7 @@ enum samsung_pll_type {
+>         pll_4650,
+>         pll_4650c,
+>         pll_6552,
+> +       pll_6552_s3c2416,
+>         pll_6553,
+>  };
+> =20
+> --=20
+> 1.7.10.4
+>=20
