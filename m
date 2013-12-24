@@ -1,281 +1,137 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH RFC 06/11] ARM: SAMSUNG: Move common save/restore helpers to
- separate file
-Date: Tue, 24 Dec 2013 15:14:29 +0100
-Message-ID: <1387894474-14428-6-git-send-email-t.figa@samsung.com>
+Subject: [PATCH RFC 09/11] ARM: EXYNOS: Remove PM initcalls and useless
+ indirection
+Date: Tue, 24 Dec 2013 15:14:32 +0100
+Message-ID: <1387894474-14428-9-git-send-email-t.figa@samsung.com>
 References: <1387894474-14428-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36077 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752392Ab3LXOPM (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43383 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752349Ab3LXOPL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Dec 2013 09:15:12 -0500
+	Tue, 24 Dec 2013 09:15:11 -0500
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MYB00C7EE97MU60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Dec 2013 14:15:07 +0000 (GMT)
+ 17 2011)) with ESMTP id <0MYB00DAVE99LA60@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Dec 2013 14:15:09 +0000 (GMT)
 In-reply-to: <1387894474-14428-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>
 
-To separate legacy PM code from generic helpers, this patch moves the
-generic register save/restore helpers to a new file called pm-common.c
-that is compiled always when CONFIG_PM_SLEEP is enabled, to allow
-platforms that do not want to use the legacy PM code use the generic
-helpers.
+This patch simplifies Exynos PM initialization and makes it
+multiplatform friendly by replacing initcalls used originally to invoke
+all the initialization code with explicit function calls.
+
+In addition, an useless subsys_interface is removed, as all its .add_dev
+callback did was setting two function pointers.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/plat-samsung/Makefile                 |  1 +
- arch/arm/plat-samsung/include/plat/pm-common.h | 26 +++++++++
- arch/arm/plat-samsung/include/plat/pm.h        | 25 ---------
- arch/arm/plat-samsung/pm-common.c              | 75 ++++++++++++++++++++++++++
- arch/arm/plat-samsung/pm.c                     | 56 -------------------
- 5 files changed, 102 insertions(+), 81 deletions(-)
- create mode 100644 arch/arm/plat-samsung/pm-common.c
+ arch/arm/mach-exynos/common.c |  1 +
+ arch/arm/mach-exynos/common.h |  6 ++++++
+ arch/arm/mach-exynos/pm.c     | 50 +++++++++++--------------------------------
+ 3 files changed, 19 insertions(+), 38 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index ba30a16..25c826e 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_SAMSUNG_DMADEV)	+= dma-ops.o
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 61d2906..0e3f371 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -310,6 +310,7 @@ void __init exynos_init_late(void)
+ 		return;
  
- # PM support
- 
-+obj-$(CONFIG_PM_SLEEP)		+= pm-common.o
- obj-$(CONFIG_SAMSUNG_PM)	+= pm.o
- obj-$(CONFIG_SAMSUNG_PM_GPIO)	+= pm-gpio.o
- obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
-diff --git a/arch/arm/plat-samsung/include/plat/pm-common.h b/arch/arm/plat-samsung/include/plat/pm-common.h
-index 79f66ef..2268db6 100644
---- a/arch/arm/plat-samsung/include/plat/pm-common.h
-+++ b/arch/arm/plat-samsung/include/plat/pm-common.h
-@@ -13,6 +13,32 @@
- #ifndef __PLAT_SAMSUNG_PM_COMMON_H
- #define __PLAT_SAMSUNG_PM_COMMON_H __FILE__
- 
-+#include <linux/irq.h>
-+
-+/* sleep save info */
-+
-+/**
-+ * struct sleep_save - save information for shared peripherals.
-+ * @reg: Pointer to the register to save.
-+ * @val: Holder for the value saved from reg.
-+ *
-+ * This describes a list of registers which is used by the pm core and
-+ * other subsystem to save and restore register values over suspend.
-+ */
-+struct sleep_save {
-+	void __iomem	*reg;
-+	unsigned long	val;
-+};
-+
-+#define SAVE_ITEM(x) \
-+	{ .reg = (x) }
-+
-+/* helper functions to save/restore lists of registers. */
-+
-+extern void s3c_pm_do_save(struct sleep_save *ptr, int count);
-+extern void s3c_pm_do_restore(struct sleep_save *ptr, int count);
-+extern void s3c_pm_do_restore_core(struct sleep_save *ptr, int count);
-+
- /* PM debug functions */
- 
- /**
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 3648e05..4099e8d 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -15,7 +15,6 @@
-  * management
- */
- 
--#include <linux/irq.h>
- #include <plat/pm-common.h>
- 
- struct device;
-@@ -59,30 +58,6 @@ extern unsigned long s3c_pm_flags;
- 
- extern int s3c2410_cpu_suspend(unsigned long);
- 
--/* sleep save info */
--
--/**
-- * struct sleep_save - save information for shared peripherals.
-- * @reg: Pointer to the register to save.
-- * @val: Holder for the value saved from reg.
-- *
-- * This describes a list of registers which is used by the pm core and
-- * other subsystem to save and restore register values over suspend.
-- */
--struct sleep_save {
--	void __iomem	*reg;
--	unsigned long	val;
--};
--
--#define SAVE_ITEM(x) \
--	{ .reg = (x) }
--
--/* helper functions to save/restore lists of registers. */
--
--extern void s3c_pm_do_save(struct sleep_save *ptr, int count);
--extern void s3c_pm_do_restore(struct sleep_save *ptr, int count);
--extern void s3c_pm_do_restore_core(struct sleep_save *ptr, int count);
--
- #ifdef CONFIG_SAMSUNG_PM
- extern int s3c_irq_wake(struct irq_data *data, unsigned int state);
- extern int s3c_irqext_wake(struct irq_data *data, unsigned int state);
-diff --git a/arch/arm/plat-samsung/pm-common.c b/arch/arm/plat-samsung/pm-common.c
-new file mode 100644
-index 0000000..4ef3114
---- /dev/null
-+++ b/arch/arm/plat-samsung/pm-common.c
-@@ -0,0 +1,75 @@
-+/*
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ *	Tomasz Figa <t.figa@samsung.com>
-+ * Copyright (C) 2008 Openmoko, Inc.
-+ * Copyright (C) 2004-2008 Simtec Electronics
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *	http://armlinux.simtec.co.uk/
-+ *
-+ * Samsung common power management helper functions.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+
-+#include <plat/pm-common.h>
-+
-+/* helper functions to save and restore register state */
-+
-+/**
-+ * s3c_pm_do_save() - save a set of registers for restoration on resume.
-+ * @ptr: Pointer to an array of registers.
-+ * @count: Size of the ptr array.
-+ *
-+ * Run through the list of registers given, saving their contents in the
-+ * array for later restoration when we wakeup.
-+ */
-+void s3c_pm_do_save(struct sleep_save *ptr, int count)
-+{
-+	for (; count > 0; count--, ptr++) {
-+		ptr->val = __raw_readl(ptr->reg);
-+		S3C_PMDBG("saved %p value %08lx\n", ptr->reg, ptr->val);
-+	}
-+}
-+
-+/**
-+ * s3c_pm_do_restore() - restore register values from the save list.
-+ * @ptr: Pointer to an array of registers.
-+ * @count: Size of the ptr array.
-+ *
-+ * Restore the register values saved from s3c_pm_do_save().
-+ *
-+ * Note, we do not use S3C_PMDBG() in here, as the system may not have
-+ * restore the UARTs state yet
-+*/
-+
-+void s3c_pm_do_restore(struct sleep_save *ptr, int count)
-+{
-+	for (; count > 0; count--, ptr++) {
-+		pr_debug("restore %p (restore %08lx, was %08x)\n",
-+				ptr->reg, ptr->val, __raw_readl(ptr->reg));
-+
-+		__raw_writel(ptr->val, ptr->reg);
-+	}
-+}
-+
-+/**
-+ * s3c_pm_do_restore_core() - early restore register values from save list.
-+ *
-+ * This is similar to s3c_pm_do_restore() except we try and minimise the
-+ * side effects of the function in case registers that hardware might need
-+ * to work has been restored.
-+ *
-+ * WARNING: Do not put any debug in here that may effect memory or use
-+ * peripherals, as things may be changing!
-+*/
-+
-+void s3c_pm_do_restore_core(struct sleep_save *ptr, int count)
-+{
-+	for (; count > 0; count--, ptr++)
-+		__raw_writel(ptr->val, ptr->reg);
-+}
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 0d19391..6b16c52 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -63,62 +63,6 @@ int s3c_irqext_wake(struct irq_data *data, unsigned int state)
- 	return 0;
+ 	exynos_pm_late_initcall();
++	exynos_pm_init();
  }
  
--/* helper functions to save and restore register state */
--
--/**
-- * s3c_pm_do_save() - save a set of registers for restoration on resume.
-- * @ptr: Pointer to an array of registers.
-- * @count: Size of the ptr array.
-- *
-- * Run through the list of registers given, saving their contents in the
-- * array for later restoration when we wakeup.
-- */
--void s3c_pm_do_save(struct sleep_save *ptr, int count)
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index ff9b6a9..f2d1892 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -32,6 +32,12 @@ int exynos_pm_late_initcall(void);
+ static inline int exynos_pm_late_initcall(void) { return 0; }
+ #endif
+ 
++#ifdef CONFIG_PM_SLEEP
++extern void __init exynos_pm_init(void);
++#else
++static inline void exynos_pm_init(void) {}
++#endif
++
+ extern struct smp_operations exynos_smp_ops;
+ 
+ extern void exynos_cpu_die(unsigned int cpu);
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 78a22bf..8cdb000 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -92,39 +92,6 @@ static void exynos_pm_prepare(void)
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), S5P_INFORM0);
+ }
+ 
+-static int exynos_pm_add(struct device *dev, struct subsys_interface *sif)
 -{
--	for (; count > 0; count--, ptr++) {
--		ptr->val = __raw_readl(ptr->reg);
--		S3C_PMDBG("saved %p value %08lx\n", ptr->reg, ptr->val);
--	}
+-	pm_cpu_prep = exynos_pm_prepare;
+-	pm_cpu_sleep = exynos_cpu_suspend;
+-
+-	return 0;
 -}
 -
--/**
-- * s3c_pm_do_restore() - restore register values from the save list.
-- * @ptr: Pointer to an array of registers.
-- * @count: Size of the ptr array.
-- *
-- * Restore the register values saved from s3c_pm_do_save().
-- *
-- * Note, we do not use S3C_PMDBG() in here, as the system may not have
-- * restore the UARTs state yet
--*/
+-static struct subsys_interface exynos_pm_interface = {
+-	.name		= "exynos_pm",
+-	.subsys		= &exynos_subsys,
+-	.add_dev	= exynos_pm_add,
+-};
 -
--void s3c_pm_do_restore(struct sleep_save *ptr, int count)
+-static __init int exynos_pm_drvinit(void)
 -{
--	for (; count > 0; count--, ptr++) {
--		printk(KERN_DEBUG "restore %p (restore %08lx, was %08x)\n",
--		       ptr->reg, ptr->val, __raw_readl(ptr->reg));
+-	unsigned int tmp;
 -
--		__raw_writel(ptr->val, ptr->reg);
--	}
+-	if (soc_is_exynos5440())
+-		return 0;
+-
+-	s3c_pm_init();
+-
+-	/* All wakeup disable */
+-
+-	tmp = __raw_readl(S5P_WAKEUP_MASK);
+-	tmp |= ((0xFF << 8) | (0x1F << 1));
+-	__raw_writel(tmp, S5P_WAKEUP_MASK);
+-
+-	return subsys_interface_register(&exynos_pm_interface);
 -}
+-arch_initcall(exynos_pm_drvinit);
 -
--/**
-- * s3c_pm_do_restore_core() - early restore register values from save list.
-- *
-- * This is similar to s3c_pm_do_restore() except we try and minimise the
-- * side effects of the function in case registers that hardware might need
-- * to work has been restored.
-- *
-- * WARNING: Do not put any debug in here that may effect memory or use
-- * peripherals, as things may be changing!
--*/
--
--void s3c_pm_do_restore_core(struct sleep_save *ptr, int count)
--{
--	for (; count > 0; count--, ptr++)
--		__raw_writel(ptr->val, ptr->reg);
--}
--
- /* s3c2410_pm_show_resume_irqs
-  *
-  * print any IRQs asserted at resume time (ie, we woke from)
+ static int exynos_pm_suspend(void)
+ {
+ 	unsigned long tmp;
+@@ -220,12 +187,19 @@ static struct syscore_ops exynos_pm_syscore_ops = {
+ 	.resume		= exynos_pm_resume,
+ };
+ 
+-static __init int exynos_pm_syscore_init(void)
++void __init exynos_pm_init(void)
+ {
+-	if (soc_is_exynos5440())
+-		return 0;
++	u32 tmp;
++
++	pm_cpu_prep = exynos_pm_prepare;
++	pm_cpu_sleep = exynos_cpu_suspend;
++
++	s3c_pm_init();
++
++	/* All wakeup disable */
++	tmp = __raw_readl(S5P_WAKEUP_MASK);
++	tmp |= ((0xFF << 8) | (0x1F << 1));
++	__raw_writel(tmp, S5P_WAKEUP_MASK);
+ 
+ 	register_syscore_ops(&exynos_pm_syscore_ops);
+-	return 0;
+ }
+-arch_initcall(exynos_pm_syscore_init);
 -- 
 1.8.4.3
