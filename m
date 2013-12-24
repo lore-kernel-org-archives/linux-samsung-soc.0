@@ -1,73 +1,64 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 0/4] Add support for clocks in S5M8767
-Date: Tue, 24 Dec 2013 14:27:02 +0530
-Message-ID: <CAHbNUh1HchzsM_4Jq2NkgwyWf9t6sYJNdbKY1quEb75GapHitA@mail.gmail.com>
-References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
- <18704605.0nz1OWeNy9@flatron>
- <CAHbNUh2-WTc2myFbzYDmV=aSYUvO03pj3ZwNAen3j_GiGsRJkg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v4 0/7] ARM: S3C24XX: Convert s3c2416 and s3c2443 to
+ common clock framework
+Date: Tue, 24 Dec 2013 15:50:00 +0530
+Message-ID: <CAK9yfHy6bEGB0eX7-+fKeB+Q9FxmT9ykmeiuucvWHN8EjOMMPw@mail.gmail.com>
+References: <201312101614.29781.heiko@sntech.de>
+	<201312231411.35417.heiko@sntech.de>
+	<1af701cf0048$b175b3c0$14611b40$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAHbNUh2-WTc2myFbzYDmV=aSYUvO03pj3ZwNAen3j_GiGsRJkg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, lkml <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:44525 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751539Ab3LXKUA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Dec 2013 05:20:00 -0500
+Received: by mail-oa0-f42.google.com with SMTP id i4so6818119oah.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Dec 2013 02:20:00 -0800 (PST)
+In-Reply-To: <1af701cf0048$b175b3c0$14611b40$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-On 11 November 2013 08:28, Tushar Behera <tushar.behera@linaro.org> wrote:
-> On 10 November 2013 18:04, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Tushar,
->>
->> On Thursday 31 of October 2013 12:18:40 Tushar Behera wrote:
->>> S5M8767 chip has 3 crystal oscillators which are operated in the same
->>> as the crystal oscillators in S2MPS11. Extend s2mps11-clk driver to
->>> support clocks in S5M8767.
->>>
->>> The patches are based on next-20131030.
->>>
->>> Tushar Behera (4):
->>>   clk: clk-s2mps11: Refactor for including support for other MFD clocks
->>>   clk: clk-s2mps11: Add support for clocks in S5M8767 MFD
->>>   mfd: sec-core: Add cells for S5M8767-clocks
->>>   ARM: dts: Add S5M8767 clock nodes on Arndale board
->>>
->>>  arch/arm/boot/dts/exynos5250-arndale.dts |    7 +++++++
->>>  drivers/clk/Kconfig                      |    6 ++++--
->>>  drivers/clk/clk-s2mps11.c                |   25
->>> +++++++++++++++++++++---- drivers/mfd/sec-core.c                   |
->>> 4 +++-
->>>  4 files changed, 35 insertions(+), 7 deletions(-)
->>
->> For the whole series:
->>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>
->> Best regards,
->> Tomasz
->>
->
-> Thanks Tomasz.
->
-> Mike,
->
-> Would you please pick up patches 1 and 2? Lee would pick up patch 3
-> after these patches are merged.
->
-> --
-> Tushar Behera
+Hi Kukjin,
 
-Mike,
+On 24 December 2013 07:07, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Heiko St=FCbner wrote:
+>>
+>> Hi Kukjin,
+>>
+> Hi,
+>
+>> it seems you didn't have the time for this series during your 2nd ro=
+und.
+>>
+>> I'm not sure what your plans/time constraint are, but according to t=
+he -
+>> rc5
+>> release mail from Linus [0], 3.13 will at least reach -rc8 so it see=
+ms as
+>> if
+>> there is still a bit of time to for 3.14 stuff.
+>>
+> Good news to us :-)
+>
+>> This series would really be a nice base for not only the other ccf-
+>> conversions
+>> (the already submitted s3c2410 and the s3c2412 which I'm currently w=
+orking
+>> on)
+>> but also for broadening the dt-support, with the auxdata gone from t=
+he dt-
+>> board file.
+>>
+> I agreed, let me try to send one more pull-request for 3.14 after fin=
+ishing review of your patches.
 
-Would you please take patches 1 and 2 during this merge window?
+While at it please also try to send the remaining pending patches.
 
--- 
-Tushar Behera
+--=20
+With warm regards,
+Sachin
