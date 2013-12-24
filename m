@@ -1,64 +1,66 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v4 0/7] ARM: S3C24XX: Convert s3c2416 and s3c2443 to
- common clock framework
-Date: Tue, 24 Dec 2013 15:50:00 +0530
-Message-ID: <CAK9yfHy6bEGB0eX7-+fKeB+Q9FxmT9ykmeiuucvWHN8EjOMMPw@mail.gmail.com>
-References: <201312101614.29781.heiko@sntech.de>
-	<201312231411.35417.heiko@sntech.de>
-	<1af701cf0048$b175b3c0$14611b40$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH RFC 01/11] ARM: SAMSUNG: Add soc_is_s3c2410() helper
+Date: Tue, 24 Dec 2013 15:14:24 +0100
+Message-ID: <1387894474-14428-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:44525 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751539Ab3LXKUA convert rfc822-to-8bit (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43383 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752085Ab3LXOPJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Dec 2013 05:20:00 -0500
-Received: by mail-oa0-f42.google.com with SMTP id i4so6818119oah.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Dec 2013 02:20:00 -0800 (PST)
-In-Reply-To: <1af701cf0048$b175b3c0$14611b40$@samsung.com>
+	Tue, 24 Dec 2013 09:15:09 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MYB00F6QE976L60@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Dec 2013 14:15:07 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>
 
-Hi Kukjin,
+Due to the S3C2410 SoC being quite different from other S3C24xx SoCs
+in some aspects, such as availability of DIVSLOT register in its UART
+blocks, there is a need sometimes to check whether we are running on
+this SoC, not just the S3C24xx series. This patch adds soc_is_s3c2410()
+helper function for this purpose.
 
-On 24 December 2013 07:07, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Heiko St=FCbner wrote:
->>
->> Hi Kukjin,
->>
-> Hi,
->
->> it seems you didn't have the time for this series during your 2nd ro=
-und.
->>
->> I'm not sure what your plans/time constraint are, but according to t=
-he -
->> rc5
->> release mail from Linus [0], 3.13 will at least reach -rc8 so it see=
-ms as
->> if
->> there is still a bit of time to for 3.14 stuff.
->>
-> Good news to us :-)
->
->> This series would really be a nice base for not only the other ccf-
->> conversions
->> (the already submitted s3c2410 and the s3c2412 which I'm currently w=
-orking
->> on)
->> but also for broadening the dt-support, with the auxdata gone from t=
-he dt-
->> board file.
->>
-> I agreed, let me try to send one more pull-request for 3.14 after fin=
-ishing review of your patches.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/cpu.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-While at it please also try to send the remaining pending patches.
-
---=20
-With warm regards,
-Sachin
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 335beb3..6bf86f6 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -20,6 +20,9 @@
+ 
+ extern unsigned long samsung_cpu_id;
+ 
++#define S3C2410_CPU_ID		0x32410000
++#define S3C2410_CPU_MASK	0xFFFFFFFF
++
+ #define S3C24XX_CPU_ID		0x32400000
+ #define S3C24XX_CPU_MASK	0xFFF00000
+ 
+@@ -56,6 +59,7 @@ static inline int is_samsung_##name(void)	\
+ 	return ((samsung_cpu_id & mask) == (id & mask));	\
+ }
+ 
++IS_SAMSUNG_CPU(s3c2410, S3C2410_CPU_ID, S3C2410_CPU_MASK)
+ IS_SAMSUNG_CPU(s3c24xx, S3C24XX_CPU_ID, S3C24XX_CPU_MASK)
+ IS_SAMSUNG_CPU(s3c2412, S3C2412_CPU_ID, S3C2412_CPU_MASK)
+ IS_SAMSUNG_CPU(s3c6400, S3C6400_CPU_ID, S3C64XX_CPU_MASK)
+@@ -76,8 +80,10 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+     defined(CONFIG_CPU_S3C2442) || defined(CONFIG_CPU_S3C244X) || \
+     defined(CONFIG_CPU_S3C2443)
+ # define soc_is_s3c24xx()	is_samsung_s3c24xx()
++# define soc_is_s3c2410()	is_samsung_s3c2410()
+ #else
+ # define soc_is_s3c24xx()	0
++# define soc_is_s3c2410()	0
+ #endif
+ 
+ #if defined(CONFIG_CPU_S3C2412)
+-- 
+1.8.4.3
