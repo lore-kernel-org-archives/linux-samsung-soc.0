@@ -1,97 +1,137 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH RFC 07/11] ARM: SAMSUNG: pm: Move s3c_pm_check_* prototypes to
- plat/pm-common.h
-Date: Tue, 24 Dec 2013 15:14:30 +0100
-Message-ID: <1387894474-14428-7-git-send-email-t.figa@samsung.com>
-References: <1387894474-14428-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36077 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752281Ab3LXOPN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Dec 2013 09:15:13 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MYB00D5ZE97FE60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Dec 2013 14:15:07 +0000 (GMT)
-In-reply-to: <1387894474-14428-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Tue, 24 Dec 2013 23:15:34 +0530
+Message-ID: <52B9C83E.6070502@ti.com>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
+ <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
+ <527744B2.4090303@ti.com>
+ <030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
+ <52779D28.9000905@ti.com>
+ <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
+ <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+ <000001ceda17$f41c2030$dc546090$%han@samsung.com>
+ <000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com>
+ <CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com>
+ <000301ceda84$1d648bf0$582da3d0$%han@samsung.com> <5280BB65.5040305@ti.com>
+ <CAFp+6iGKpzOHjwnSMvSgTehzPLQMB8madoYqMk5JPSAZfSGSTg@mail.gmail.com>
+ <528C7B0E.3080401@ti.com>
+ <CAFp+6iF3UnV-w2pYQE2THQZBGma8xpp6pqSuwXzjUN3emJnftQ@mail.gmail.com>
+ <528CD8EC.9050403@ti.com> <529F3C1C.2050509@ti.com>
+ <CAFp+6iF+N+eMOd=B-J3oS_u0TEse+5V2gHkcNxN0OS+YbV_Y9g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAFp+6iF+N+eMOd=B-J3oS_u0TEse+5V2gHkcNxN0OS+YbV_Y9g@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Julius Werner <jwerner@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>
 
-To allow using Samsung PM memory check helpers on platforms that do not
-use the legacy Samsung PM core, this patch moves prototypes of relevant
-functions to plat/pm-common.h header.
+Hi,
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/plat-samsung/include/plat/pm-common.h | 14 ++++++++++++++
- arch/arm/plat-samsung/include/plat/pm.h        | 14 --------------
- arch/arm/plat-samsung/pm-check.c               |  2 +-
- 3 files changed, 15 insertions(+), 15 deletions(-)
+On Thursday 05 December 2013 01:44 PM, Vivek Gautam wrote:
+> Hi Kishon,
+>
+>
+> On Wed, Dec 4, 2013 at 7:58 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>> Hi Vivek,
+>>
+>> On Wednesday 20 November 2013 09:14 PM, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Wednesday 20 November 2013 03:02 PM, Vivek Gautam wrote:
+>>>> On Wed, Nov 20, 2013 at 2:34 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>>>> On Wednesday 20 November 2013 02:27 PM, Vivek Gautam wrote:
+>>>>>> Hi Kishon,
+>>>>>>
+>>>>>>
+>>>>>> On Mon, Nov 11, 2013 at 4:41 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>>>>>> Hi,
+>>>>>> sorry for the delayed response.
+>>>>>>
+>>>>>>>
+>>>>>>> On Wednesday 06 November 2013 05:37 AM, Jingoo Han wrote:
+>>>>>>>> On Wednesday, November 06, 2013 2:58 AM, Vivek Gautam wrote:
+>>>>>>>>> On Tue, Nov 5, 2013 at 5:33 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+>>>>>>>>
+>>>>>>>> [.....]
+>>>>>>>>
+>>>>>>>>>> USB3.0 PHY consists of two blocks such as 3.0 block and 2.0 block.
+>>>>>>>>>> This USB3.0 PHY can support UTMI+ and PIPE3 interface for 3.0 block
+>>>>>>>>>> and 2.0 block, respectively.
+>>>>>>>>>>
+>>>>>>>>>> Conclusion:
+>>>>>>>>>>
+>>>>>>>>>>     1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
+>>>>>>>>>>                         Base address: 0x1213 0000
+>>>>>>>>>>
+>>>>>>>>>>     2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
+>>>>>>>>>>                         Base address: 0x1210 0000
+>>>>>>>>>>                         2.0 block(UTMI+) & 3.0 block(PIPE3)
+>>>>>>>>>
+>>>>>>>>> And this is of course the PHY used by DWC3 controller, which works at
+>>>>>>>>> both High speed as well as Super Speed.
+>>>>>>>>> Right ?
+>>>>>>>>
+>>>>>>>> Right.
+>>>>>>>>
+>>>>>>>> While 3.0 block(PIPE3) can be used for Super Speed, 2.0 block(UTMI+)
+>>>>>>>> can be used for High speed.
+>>>>>>>
+>>>>>>> It should then come under *single IP muliple PHY* category similar to what
+>>>>>>> Sylwester has done.
+>>>>>>
+>>>>>> Do you mean that i should be including PHY IDs for UTMI+ phy and PIPE3
+>>>>>> phy present in this PHY block ?
+>>>>>> AFAICS the two phys (UTMI+ and PIPE3) do not really have separate
+>>>>>> registers to program, and that's the reason
+>>>>>> we program the entire PHY in a shot.
+>>>>>
+>>>>> you mean you program the same set of bits for UTMI+ and PIPE3?
+>>>>
+>>>> No, looking closely into PHY datasheet as well as Exynos5250 manual, i
+>>>> can see that UTMI+ and PIPE3
+>>>> phys have separate bit settings. So i think we should be able to
+>>>> segregate the two PHYs (UTMI+ and PIPE3).
+>>>> Pardon me for my earlier observations.
+>>>
+>>> no problem..
+>>>> Let me clarify more with our h/w team also on this and then i will
+>>>> confirm with this.
+>>
+>> Did you get more information on this?
+>
+> Yes, i have been in contact with our hardware team.
+> The functionality of setting up UTMI+ and PIPE3 phys separately, and
+> thereby using only one functionality of the two
+> at some point of time (either high speed or super speed) hasn't been
+> tested so far.
 
-diff --git a/arch/arm/plat-samsung/include/plat/pm-common.h b/arch/arm/plat-samsung/include/plat/pm-common.h
-index 2268db6..997b10a 100644
---- a/arch/arm/plat-samsung/include/plat/pm-common.h
-+++ b/arch/arm/plat-samsung/include/plat/pm-common.h
-@@ -93,4 +93,18 @@ static inline void s3c_pm_save_uarts(void) { }
- static inline void s3c_pm_restore_uarts(void) { }
- #endif
- 
-+/* suspend memory checking */
-+
-+#ifdef CONFIG_SAMSUNG_PM_CHECK
-+extern void s3c_pm_check_prepare(void);
-+extern void s3c_pm_check_restore(void);
-+extern void s3c_pm_check_cleanup(void);
-+extern void s3c_pm_check_store(void);
-+#else
-+#define s3c_pm_check_prepare() do { } while(0)
-+#define s3c_pm_check_restore() do { } while(0)
-+#define s3c_pm_check_cleanup() do { } while(0)
-+#define s3c_pm_check_store()   do { } while(0)
-+#endif
-+
- #endif
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 4099e8d..e17d871 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -80,20 +80,6 @@ extern void s3c_pm_debug_smdkled(u32 set, u32 clear);
- static inline void s3c_pm_debug_smdkled(u32 set, u32 clear) { }
- #endif /* CONFIG_S3C_PM_DEBUG_LED_SMDK */
- 
--/* suspend memory checking */
--
--#ifdef CONFIG_SAMSUNG_PM_CHECK
--extern void s3c_pm_check_prepare(void);
--extern void s3c_pm_check_restore(void);
--extern void s3c_pm_check_cleanup(void);
--extern void s3c_pm_check_store(void);
--#else
--#define s3c_pm_check_prepare() do { } while(0)
--#define s3c_pm_check_restore() do { } while(0)
--#define s3c_pm_check_cleanup() do { } while(0)
--#define s3c_pm_check_store()   do { } while(0)
--#endif
--
- /**
-  * s3c_pm_configure_extint() - ensure pins are correctly set for IRQ
-  *
-diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
-index 3cbd626..04aff2c 100644
---- a/arch/arm/plat-samsung/pm-check.c
-+++ b/arch/arm/plat-samsung/pm-check.c
-@@ -19,7 +19,7 @@
- #include <linux/ioport.h>
- #include <linux/slab.h>
- 
--#include <plat/pm.h>
-+#include <plat/pm-common.h>
- 
- #if CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE < 1
- #error CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE must be a positive non-zero value
--- 
-1.8.4.3
+Irrespective of whether we are able to test the functionality separately 
+or not, we should model it as multiple PHYs since you have separate bit 
+settings for UTMI+ and PIPE3.
+
+(I'll review your next patch version shortly).
+
+Cheers
+Kishon
+
+> So i will be looking into this and try to find out proper init
+> sequences for the two available PHYs
+> separately and as soon as i get a working solution for this, i will update.
+>
+>>
+>> Thanks
+>> Kishon
+>
+>
+>
