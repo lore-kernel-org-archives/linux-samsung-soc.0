@@ -1,139 +1,152 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 7/7] Samsung SoC for v3.14
-Date: Mon, 23 Dec 2013 19:09:59 -0800
-Message-ID: <20131224030959.GB27387@quad.lixom.net>
-References: <52AE0FA5.3090804@samsung.com>
- <20131222221141.GF13365@quad.lixom.net>
- <1566886.jecinlyiQ0@flatron>
- <20131223103618.5815379e@amdc2363>
- <20131223213809.GA23509@quad.lixom.net>
- <1af601cf0048$695ad700$3c108500$@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: dts: Fix status property of mmc nodes for snow
+ board
+Date: Tue, 24 Dec 2013 12:12:27 +0900
+Message-ID: <1b0b01cf0055$f9d15720$ed740560$@samsung.com>
+References: <1386571118-17793-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAD=FV=WqgGPZaEz46JLJAPymLA5Wzehgre2Z7X4AFAWN9L_Lvg@mail.gmail.com>
+ <52A62E7A.1010006@samsung.com>
+ <CAOesGMha3i+k+aBSivJopRxoi1rxAaF+ktU4KG9vfTf54A8f8Q@mail.gmail.com>
+ <52B1F905.1060206@samsung.com>
+ <CAOesGMhBMh6+DJTXSDcmQWk8EAPJG1O0ZWwGJuNC_A8k6fgegw@mail.gmail.com>
+ <1af501cf0047$3362ba60$9a282f20$@samsung.com>
+ <CAOesGMhuvTBUBwg64eRXz0Dpzp8MNMdncCt-ipQXjixGKFONoQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:46636 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753737Ab3LXDMI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:35937 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753737Ab3LXDMb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Dec 2013 22:12:08 -0500
-Received: by mail-pa0-f48.google.com with SMTP id rd3so5984284pab.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2013 19:12:08 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1af601cf0048$695ad700$3c108500$@samsung.com>
+	Mon, 23 Dec 2013 22:12:31 -0500
+In-reply-to: <CAOesGMhuvTBUBwg64eRXz0Dpzp8MNMdncCt-ipQXjixGKFONoQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Lukasz Majewski' <l.majewski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Arun Kumar K' <arunkk.samsung@gmail.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Ian Campbell' <ian.campbell@citrix.com>, devicetree@vger.kernel.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Sonny Rao' <sonnyrao@chromium.org>, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-On Tue, Dec 24, 2013 at 10:35:22AM +0900, Kukjin Kim wrote:
-> Olof Johansson wrote:
-> > 
-> > On Mon, Dec 23, 2013 at 10:36:18AM +0100, Lukasz Majewski wrote:
-> > > Hi Tomasz,
-> > >
-> > > > Hi Olof,
-> > > >
-> > > > On Sunday 22 of December 2013 14:11:41 Olof Johansson wrote:
-> > > > > On Mon, Dec 16, 2013 at 05:23:01AM +0900, Kukjin Kim wrote:
-> > > > > > The following changes since commit
-> > > > > > 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> > > > > >
-> > > > > >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> > > > > >
-> > > > > > are available in the git repository at:
-> > > > > >
-> > > > >
-> > > > > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-
-> > samsung.git
-> > > > > > tags/samsung-soc
-> > > > > >
-> > > > > > for you to fetch changes up to
-> > > > > > 538cfbb4c40ab59688236484138133b8e3e89220:
-> > > > > >
-> > > > > >   ARM: dts: Add initial support for Arndale Octa board (2013-12-16
-> > > > > > 05:05:43 +0900)
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > I'm not going to pull this.
-> > > > >
-> > > > > I've asked you for about 6 months now (ever since Arnd went on
-> > > > > leave) to please finish his multiplatform work for Exynos. Nothing
-> > > > > has happened.
-> > > > >
-> > > > > I'm not going to merge any more platform or SoC enablement code
-> > > > > for Samsung platforms until Exynos has been converted over to
-> > > > > multiplatform. Sorry.
-> > > >
-> > > > Well, it's hard to disagree with you on this. Keeping adding new
-> > > > things constantly definitely does not make us closer to multiplatform
-> > > > support, as it only increases codebase of code that needs to be
-> > > > cleaned up and made multiplatform aware.
-> > > >
+Olof Johansson wrote:
 > 
-> Well, I don't know why this will hurt multiplatform, even you requested that
-> long time ago. I thought I could finish that by end of this year but it will
-> be done in Jan. Of course, I'm not sure it could be merged in 3.14, because
-> it's up to arm-soc tree, it could be sent to before merge window though.
+> On Mon, Dec 23, 2013 at 5:26 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Olof Johansson wrote:
+> >>
+> >> On Wed, Dec 18, 2013 at 11:35 AM, Kukjin Kim <kgene.kim@samsung.com>
+> > wrote:
+> >> > On 12/19/13 03:38, Olof Johansson wrote:
+> >> >>
+> >> >> On Mon, Dec 9, 2013 at 12:56 PM, Kukjin Kim<kgene.kim@samsung.com>
+> >> wrote:
+> >> >>>
+> >> >>> On 12/10/13 01:16, Doug Anderson wrote:
+> >> >>>>
+> >> >>>>
+> >> >>>> Yuvaraj,
+> >> >>>>
+> >> >>>> On Sun, Dec 8, 2013 at 10:38 PM, Yuvaraj Kumar C
+> >> D<yuvaraj.cd@gmail.com>
+> >> >>>> wrote:
+> >> >>>>>
+> >> >>>>>
+> >> >>>>> Commit 0c3de788 ("ARM: dts: change status property of dwmmc nodes
+> >> >>>>> for exynos5250") missed out handling the exynos5250 snow dts
+file.
+> >> >>>>>
+> >> >>>>> Signed-off-by : Abhilash Kesavan<a.kesavan@samsung.com>
+> >> >>>>>
+> >> >>>>> Signed-off-by: Yuvaraj Kumar C D<yuvaraj.cd@samsung.com>
+> >> >>>>> ---
+> >> >>>>>    arch/arm/boot/dts/cros5250-common.dtsi |    4 ----
+> >> >>>>>    arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
+> >> >>>>>    2 files changed, 9 insertions(+), 4 deletions(-)
+> >> >>>>>
+> >> >>>>> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
+> >> >>>>> b/arch/arm/boot/dts/cros5250-common.dtsi
+> >> >>>>> index 6470536..1ceb62e 100644
+> >> >>>>> --- a/arch/arm/boot/dts/cros5250-common.dtsi
+> >> >>>>> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
+> >> >>>>> @@ -247,10 +247,6 @@
+> >> >>>>>                   };
+> >> >>>>>           };
+> >> >>>>>
+> >> >>>>> -       mmc@12210000 {
+> >> >>>>> -               status = "disabled";
+> >> >>>>> -       };
+> >> >>>>> -
+> >> >>>>>           mmc@12220000 {
+> >> >>>>>                   num-slots =<1>;
+> >> >>>>>                   supports-highspeed;
+> >> >>>>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
+> >> >>>>> b/arch/arm/boot/dts/exynos5250-snow.dts
+> >> >>>>> index a9395c4..67484d1 100644
+> >> >>>>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> >> >>>>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> >> >>>>> @@ -171,11 +171,20 @@
+> >> >>>>>                   };
+> >> >>>>>           };
+> >> >>>>>
+> >> >>>>> +       mmc@12200000 {
+> >> >>>>> +               status = "okay";
+> >> >>>>> +       };
+> >> >>>>> +
+> >> >>>>> +       mmc@12220000 {
+> >> >>>>> +               status = "okay";
+> >> >>>>> +       };
+> >> >>>>> +
+> >> >>>>
+> >> >>>>
+> >> >>>>
+> >> >>>> I probably would have put the 12200000 and 12220000 ones in
+> >> >>>> cros5250-common since that's where all of the other stuff relating
+> to
+> >> >>>> those ports is.  Some of it may need to be moved around once we
+> get
+> >> >>>> the HP Chromebook 11 (exynos5250-spring) in place, but until then
+> it
+> >> >>>> seems best to keep it all together.
+> >> >>>>
+> >> >>>> -Doug
+> >> >>>
+> >> >>>
+> >> >>>
+> >> >>> OK, sounds better, I don't know well about the HP Chromebook though
+> > ;-)
+> >> >>
+> >> >>
+> >> >> This broke linux-next on snow ever since the original patch went in.
+> >> >> Please squash the above into the original patch or at the very least
+> >> >> apply it as soon as possible.
+> >> >>
+> >> > Oops, OK. I've applied this separately just now.
+> >>
+> >> Since you hadn't applied this to the branch you sent me, I now have an
+> >> arm-soc for-next branch that doesn't boot on Chromebooks.
+> >>
+> > Because 1st pull request already has been sent out to arm-soc when I
+> picked
+> > this into samsung tree after your inform. So I couldn't.
 > 
-> Samsung SoC patches in this pull-request already got review in mailing-list
-> and it's ready to merge in the mainline. I think, multiplatform support
-> issue should be handled separately, it's up to you and arm-soc maintainers
-> though.
+> Ah. A comment on the old pull request to give us a heads up would have
+> been useful.
+> 
+You're right. OK, I will.
 
-Well, multiplatform support _has_ been "handled separately" for 6 months
-already and as a result not much has happened.
+> >> I've picked up the above patch directly into arm-soc. Please drop it
+> >> from your branch.
+> >>
+> > You mean, I need to re-sort out my 2nd pull-request already sent out?
+> IMHO,
+> > would be better to us if you could pull my 2nd pull-request and drop
+> your
+> > picking up...
+> 
+> Ok, I'll look at doing that. It's unfortunate that it's broken across
+> a wider set of changes though, if we ever need to bisect across it for
+> some reason.
+> 
+Agreed, I will look at my branch with more attention.
 
-Btw, this isn't personal -- we're not handling Exynos differently from
-any other vendor out there. For example, we have made agreements with the
-Renesas developers that we will not merge any more non-multiplatform SoC
-support from them, and they are now working on migrating theirs over too. But
-Exynos is one of the last remaining large platforms that have not yet been
-moved over, and it's time to make it a high priority.
+Thanks a lot.
 
-> > > > However it's not that we're not doing anything towards mutliplatform
-> > > > support. We're slowly getting there. A bit too slowly, but I'm afraid
-> > > > this is due to the fact that we have definitely too little manpower
-> > > > working on mainline support of Samsung SoCs.
-> > > >
-> > > > As for good news, I already have a series cleaning up PM/sleep support
-> > > > and making it multiplatform friendly and I'm going to post it
-> > > > tomorrow. The bad news is that it depends on other series and I'm not
-> > > > sure if we can get it merged in this release. I'll try to do whatever
-> > > > possible to merge things as soon as possible, though.
-> > > >
-> > > > From smaller things, we still need to sort out Exynos cpufreq driver
-> > > > that has dependencies on headers in plat-samsung/ and mach-exynos/.
-> > > > Unfortunately I don't have so much time to work on all the things at
-> > > > the same time, so I hope that someone else could pick this task up.
-> > > > Marek, Lukasz, what do you think?
-> > >
-> > > Regarding the cpufreq for Exynos, we do need to clean things up.
-> > >
-> > > It shall be possible to reuse generic cpufreq-cpu0.c and
-> > > arm_big_little.c code instead of several copy pasted
-> > > exynos[4|5]xxx-cpufreq.c ones.
-> > >
-> > > This change will require some "virtual" clocks implementation for atomic
-> > > clocks dividers change.
-> > >
-> > > I've already committed myself to fix this code. When all goes smooth, I
-> > > shall deliver some RFC code after new year.
-> > 
-> > Great!
-> > 
-> > Sounds like if you can start with this after new year that 3.15 will be
-> > a good target for Exynos multiplatform. It's way overdue, and I would
-> > be very happy to see it completed.
-> > 
-> And Thomas P Abraham is working on multiplatform for exynos stuff and I
-> think he could finish in Jan. So I think Samsung folks need to talk
-> internally to avoid duplication efforts, let me talk to Marek in SRPC.
-
-Sounds good.
-
-Do you have a list of things that still need resolution, besides cpufreq and
-resurrecting Arnd's old patches to move things over?
-
-
--Olof
+- Kukjin
