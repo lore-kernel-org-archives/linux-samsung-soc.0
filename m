@@ -1,127 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 0/7] ARM: S3C24XX: Convert s3c2416 and s3c2443 to common
- clock framework
-Date: Tue, 24 Dec 2013 10:37:23 +0900
-Message-ID: <1af701cf0048$b175b3c0$14611b40$@samsung.com>
-References: <201312101614.29781.heiko@sntech.de>
- <201312231411.35417.heiko@sntech.de>
+Subject: RE: [GIT PULL 2/7] Samsung cleanup for v3.14
+Date: Tue, 24 Dec 2013 10:42:56 +0900
+Message-ID: <1af801cf0049$783fe660$68bfb320$@samsung.com>
+References: <52AE0F4E.5070309@samsung.com>
+ <20131222220338.GB13365@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45410 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758087Ab3LXBh0 convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:13694 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757452Ab3LXBm7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Dec 2013 20:37:26 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 23 Dec 2013 20:42:59 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MYA00AHTF6CK100@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Dec 2013 10:37:24 +0900 (KST)
-In-reply-to: <201312231411.35417.heiko@sntech.de>
+ with ESMTP id <0MYA00DXHFFLDO20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Dec 2013 10:42:57 +0900 (KST)
+In-reply-to: <20131222220338.GB13365@quad.lixom.net>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, t.figa@samsung.com
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> Hi Kukjin,
->=20
-Hi,
-
-> it seems you didn't have the time for this series during your 2nd rou=
-nd.
->=20
-> I'm not sure what your plans/time constraint are, but according to th=
-e -
-> rc5
-> release mail from Linus [0], 3.13 will at least reach -rc8 so it seem=
-s as
-> if
-> there is still a bit of time to for 3.14 stuff.
->=20
-Good news to us :-)
-
-> This series would really be a nice base for not only the other ccf-
-> conversions
-> (the already submitted s3c2410 and the s3c2412 which I'm currently wo=
-rking
-> on)
-> but also for broadening the dt-support, with the auxdata gone from th=
-e dt-
-> board file.
->=20
-I agreed, let me try to send one more pull-request for 3.14 after finis=
-hing review of your patches.
-
-Thanks and Merry Christmas,
-Kukjin
-
->=20
-> Thanks
-> Heiko
->=20
->=20
->=20
-> [0] https://lkml.org/lkml/2013/12/22/70
->=20
-> Am Dienstag, 10. Dezember 2013, 16:14:29 schrieb Heiko St=C3=BCbner:
-> > Next try, this time with less time between submissions.
+Olof Johansson wrote:
+> 
+> On Mon, Dec 16, 2013 at 05:21:34AM +0900, Kukjin Kim wrote:
+> > The following changes since commit
+> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
 > >
-> > Tested on both non-dt and dt s3c2416.
+> >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
 > >
-> > Changes since v3:
-> > - address comments from Tomasz Figa (binding documentation, etc)
-> > - prevent conflicts with unconverted s3c24xx socs
-> > Changes since v2
-> > - address comments from Tomasz Figa
-> > - use new pll registration mechanism
-> > - use fixed-rate clocks for xti etc
+> > are available in the git repository at:
 > >
-> > Heiko Stuebner (7):
-> >   clk: samsung: add pll_6552 variant for s3c2416
-> >   clk: samsung: add plls used by the s3c2443
-> >   dt-bindings: add binding for clock-controller of s3c2443 and foll=
-owing
-> >   clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
-> >   ARM: S3C24XX: prevent conflicts between ccf and non-ccf s3c24xx-s=
-ocs
-> >   ARM: dt: add clock data for s3c2416
-> >   ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framewo=
-rk
+> 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > tags/samsung-cleanup
 > >
-> >  .../bindings/clock/samsung,s3c2443-clock.txt       |   56 ++
-> >  arch/arm/boot/dts/s3c2416-smdk2416.dts             |   13 +
-> >  arch/arm/boot/dts/s3c2416.dtsi                     |   42 ++
-> >  arch/arm/mach-s3c24xx/Kconfig                      |   18 +-
-> >  arch/arm/mach-s3c24xx/Makefile                     |    5 +-
-> >  arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
-> >  arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
-> >  arch/arm/mach-s3c24xx/common-s3c2443.c             |  675
-> > -------------------- arch/arm/mach-s3c24xx/common.c                =
-     |
-> >  18 +-
-> >  arch/arm/mach-s3c24xx/common.h                     |    6 +
-> >  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   39 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
-> >  drivers/clk/samsung/Makefile                       |    1 +
-> >  drivers/clk/samsung/clk-pll.c                      |   84 ++-
-> >  drivers/clk/samsung/clk-pll.h                      |    3 +
-> >  drivers/clk/samsung/clk-s3c2443.c                  |  417 ++++++++=
-++++
-> >  include/dt-bindings/clock/samsung,s3c2443-clock.h  |   92 +++
-> >  18 files changed, 756 insertions(+), 1114 deletions(-)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt d=
-elete
-> > mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
-> >  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
-> >  delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
-> >  create mode 100644 drivers/clk/samsung/clk-s3c2443.c
-> >  create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock=
-=2Eh
+> > for you to fetch changes up to 7c394e7be4d267c02eaaac8fa197a7c1b023c99b:
+> >
+> >   ARM: EXYNOS: Constify clksrc immutable register restore tables
+> > (2013-12-12 07:09:33 +0900)
+> >
+> > ----------------------------------------------------------------
+> > Samsung cleanup for v3.14
+> > - remove unused SAMSUNG_GPIOLIB_4BIT and IRQF_DISABLED
+> > - constify immutable PMU data table and PM clksrc register
+> > - make const struct for sleep_save
+> >
+> > ----------------------------------------------------------------
+> > Daniel Kurtz (3):
+> >       ARM: EXYNOS: Constify data tables for pmu
+> >       ARM: SAMSUNG: Let s3c_pm_do_restore_*() take const sleep_save
+> >       ARM: EXYNOS: Constify clksrc immutable register restore tables
+> >
+> > Michael Opdenacker (2):
+> >       ARM: SAMSUNG: remove unused SAMSUNG_GPIOLIB_4BIT Kconfig parameter
+> >       ARM: SAMSUNG: remove IRQF_DISABLED
+> 
+Hi Olof,
+
+> Pulled into next/cleanup.
+
+Thanks.
+
+> Please be consistent in patch subjects like
+> other platforms, so "ARM: samsung: .." or "ARM: exynos: ...".
+> 
+Well, 'SAMSUNG' and 'EXYNOS' are proper names and they have a habit of
+starting with a capital letter or just using capital letters like 'ARM' in
+the subject. Additionally, we used to use like that.
+
+- Kukjin
