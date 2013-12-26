@@ -1,110 +1,81 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH RESEND 1/4] clk: clk-s2mps11: Refactor for including support
- for other MFD clocks
-Date: Thu, 26 Dec 2013 15:48:58 +0530
-Message-ID: <1388053141-30085-2-git-send-email-tushar.behera@linaro.org>
+Subject: [PATCH RESEND 2/4] clk: clk-s2mps11: Add support for clocks in S5M8767 MFD
+Date: Thu, 26 Dec 2013 15:48:59 +0530
+Message-ID: <1388053141-30085-3-git-send-email-tushar.behera@linaro.org>
 References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
  <1388053141-30085-1-git-send-email-tushar.behera@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:49986 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752335Ab3LZKWj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Dec 2013 05:22:39 -0500
+Received: by mail-pd0-f175.google.com with SMTP id w10so7896446pde.34
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2013 02:22:38 -0800 (PST)
 In-Reply-To: <1388053141-30085-1-git-send-email-tushar.behera@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: lee.jones@linaro.org, kgene.kim@samsung.com, mturquette@linaro.org, patches@linaro.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: mturquette@linaro.org, lee.jones@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
-The clocks in S2MPS11 and S5M8767 are managed in the same way, baring
-a difference in the register offset. It would be better to update
-existing S2MPS11 driver to support the clocks in S5M8767, rather than
-creating an almost duplicate driver altogether.
+Since clock operation within S2MPS11 and S5M8767 are similar, we can
+support both the devices within a single driver.
 
 Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
 CC: Mike Turquette <mturquette@linaro.org>
 ---
- drivers/clk/clk-s2mps11.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/clk/Kconfig       |    6 ++++--
+ drivers/clk/clk-s2mps11.c |    5 +++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 3089f05..87e6c56 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -75,10 +75,12 @@ config COMMON_CLK_SI570
+ 	  clock generators.
+ 
+ config COMMON_CLK_S2MPS11
+-	tristate "Clock driver for S2MPS11 MFD"
++	tristate "Clock driver for S2MPS11/S5M8767 MFD"
+ 	depends on MFD_SEC_CORE
+ 	---help---
+-	  This driver supports S2MPS11 crystal oscillator clock.
++	  This driver supports S2MPS11/S5M8767 crystal oscillator clock. These
++	  multi-function devices have 3 fixed-rate oscillators, clocked at
++	  32KHz each.
+ 
+ config CLK_TWL6040
+ 	tristate "External McPDM functional clock from twl6040"
 diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 00a3abe..43e25bb 100644
+index 43e25bb..f4c1f08 100644
 --- a/drivers/clk/clk-s2mps11.c
 +++ b/drivers/clk/clk-s2mps11.c
-@@ -48,6 +48,7 @@ struct s2mps11_clk {
- 	struct clk_lookup *lookup;
- 	u32 mask;
- 	bool enabled;
-+	unsigned int reg;
- };
+@@ -27,6 +27,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ #include <linux/mfd/samsung/s2mps11.h>
++#include <linux/mfd/samsung/s5m8767.h>
+ #include <linux/mfd/samsung/core.h>
  
- static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
-@@ -61,7 +62,7 @@ static int s2mps11_clk_prepare(struct clk_hw *hw)
- 	int ret;
- 
- 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
--				S2MPS11_REG_RTC_CTRL,
-+				 s2mps11->reg,
- 				 s2mps11->mask, s2mps11->mask);
- 	if (!ret)
- 		s2mps11->enabled = true;
-@@ -74,7 +75,7 @@ static void s2mps11_clk_unprepare(struct clk_hw *hw)
- 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
- 	int ret;
- 
--	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, S2MPS11_REG_RTC_CTRL,
-+	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
- 			   s2mps11->mask, ~s2mps11->mask);
- 
- 	if (!ret)
-@@ -155,6 +156,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
- 	struct device_node *clk_np = NULL;
-+	unsigned int s2mps11_reg;
- 	int i, ret = 0;
- 	u32 val;
- 
-@@ -169,13 +171,23 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk_np))
- 		return PTR_ERR(clk_np);
- 
-+	switch(platform_get_device_id(pdev)->driver_data) {
-+	case S2MPS11X:
-+		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+ #define s2mps11_name(a) (a->hw.init->name)
+@@ -175,6 +176,9 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	case S2MPS11X:
+ 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+ 		break;
++	case S5M8767X:
++		s2mps11_reg = S5M8767_REG_CTRL1;
 +		break;
-+	default:
-+		dev_err(&pdev->dev, "Invalid device type\n");
-+		return -EINVAL;
-+	};
-+
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
- 		s2mps11_clk->iodev = iodev;
- 		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
- 		s2mps11_clk->mask = 1 << i;
-+		s2mps11_clk->reg = s2mps11_reg;
- 
- 		ret = regmap_read(s2mps11_clk->iodev->regmap_pmic,
--				  S2MPS11_REG_RTC_CTRL, &val);
-+				  s2mps11_clk->reg, &val);
- 		if (ret < 0)
- 			goto err_reg;
- 
-@@ -241,7 +253,7 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
- }
+ 	default:
+ 		dev_err(&pdev->dev, "Invalid device type\n");
+ 		return -EINVAL;
+@@ -254,6 +258,7 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
  
  static const struct platform_device_id s2mps11_clk_id[] = {
--	{ "s2mps11-clk", 0},
-+	{ "s2mps11-clk", S2MPS11X},
+ 	{ "s2mps11-clk", S2MPS11X},
++	{ "s5m8767-clk", S5M8767X},
  	{ },
  };
  MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
