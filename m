@@ -1,241 +1,146 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 9/9] dts: Add usb2phy to Exynos 5250
-Date: Thu, 26 Dec 2013 16:02:09 +0530
-Message-ID: <CAFp+6iH9AGP9J5regd7Z5XM8kP=PiFhvqxrV9qRf7rzmBSu9uQ@mail.gmail.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com>
-	<1387545857-9472-10-git-send-email-k.debski@samsung.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [RFC v2 1/4] power: asv: Add common ASV support for Samsung SoCs
+Date: Fri, 27 Dec 2013 01:28:06 +0900
+Message-ID: <CAKew6eUn0PNE0Jig5Nyf0f_deK0OX0q6chOGyRKR2AbsjXYUvw@mail.gmail.com>
+References: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
+ <4229773.U5JovcREjb@amdc1227>
+ <CAKew6eVSOQaHjYj3JRhJKnozY26OkeUGhvC2usadfUqW9hyu2Q@mail.gmail.com>
+ <11098201.47kElN2vGm@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387545857-9472-10-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mateusz Krawczuk <mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <11098201.47kElN2vGm@flatron>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@google.com>, Andrew Bresticker <abrestic@google.com>, Kukjin Kim <kgene.kim@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kamil,
+Hi Tomasz,
+
+Sorry for being late.
+
+On Sun, Dec 15, 2013 at 10:51 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Sunday 15 of December 2013 22:30:13 Yadwinder Singh Brar wrote:
+> [snip]
+>> >> +
+>> >> +     return NULL;
+>> >> +}
+>> >> +
+>> >> +unsigned int asv_get_volt(enum asv_type_id target_type,
+>> >> +                                             unsigned int target_freq)
+>> >
+>> > Do you need this function at all? I believe this is all about populating
+>> > device's OPP array with frequencies and voltages according to its ASV
+>> > level. Users will be able to query for required voltage using standard OPP
+>> > calls then, without a need for ASV specific functions like this one.
+>> >
+>>
+>> Yes, I had put a comment in initial version after commit message :
+>> "Hopefully asv_get_volt() can go out in future, once all users start using OPP
+>> library." , which seems to be missed in this version.
+>> I had kept it for the time being in initial version, to keep it
+>> usable(for testing) with
+>> existing cpufreq drivers, which need to reworked and may take time.
+>
+> Hmm, at the moment none of cpufreq drivers use ASV, so they need to be
+> reworked anyway to use it either by the means of a private get_volt
+> function or OPP framework. I agree that OPP may require more work,
+> though.
+>
+> If we decide to keep this function in final version, a comment should be
+> added saying that its usage is deprecated in favor of generic OPP helpers.
+>
+
+yes.
+
+>>
+>> [snip]
+>> >> +
+>> >> +     for (i = 0; i < asv_info->nr_dvfs_level; i++) {
+>> >> +             if (dev_pm_opp_add(dev, dvfs_table[i].freq * 1000,
+>> >> +                     dvfs_table[i].volt)) {
+>> >> +                     dev_warn(dev, "Failed to add OPP %d\n",
+>> >> +                              dvfs_table[i].freq);
+>> >
+>> > Hmm, shouldn't it be considered a failure instead?
+>> >
+>>
+>> hmm, not really always. Theoretically system with some less(failed to add)
+>> levels can work. Moreover I had prefered to keep it only warning, just to
+>> keep the behaviour of  asv_init_opp_table() similar to that of its
+>> counter part of_init_opp_table().
+>
+> I'm not quite convinced about it. If dev_pm_opp_add() fails, doesn't it mean
+> that something broke seriously in upper layer and we should propagate the
+> error down? Especially when looking at opp_add(), the only failure
+> conditions I can find are memory allocation errors which mean that the
+> system is unlikely to operate correctly anyway.
+>
+
+yes, for the time being i had prefered to keep it similar to
+of_init_opp_table() behaviour wise.
+If required both should be fixed.
 
 
-On Fri, Dec 20, 2013 at 6:54 PM, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Add support to PHY of USB2 of the Exynos 5250 SoC.
+>> [snip]
+>> >
+>> > Hmm, I don't see a point of these three separate callbacks above.
+>> >
+>> > In general, I'd suggest a different architecture. I'd see this more as:
+>> >
+>> > 1) Platform code registers static platform device to instantiate SoC ASV
+>> >    driver.
+>> > 2) SoC specific ASV driver probes, reads group ID from hardware register,
+>> >    calls register_asv_member() with appropriate DVFS table for detected
+>> >    group.
+>> > 3) Driver using ASV calls asv_init_opp_table() with its struct device and
+>> >    ASV member name, which causes the ASV code to fill device's operating
+>> >    point using OPP calls.
+>> >
+>> > Now client driver has all the information it needs and the work of ASV
+>> > subsystem is done. The control flow between drivers would be much simpler
+>> > and no callbacks would have to be called.
+>> >
+>>
+>> Architecture stated above seems to be a subset(one possible way of use),
+>> of the proposed architecture. If someone really have nothing much to do,
+>> he can adopt the above stated approach using this framework also,
+>> callbacks are not mandatory.
 >
-> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |   33 ++++++++++++-------
->  drivers/phy/phy-exynos5250-usb2.c |   64 +++++++++++++++++++++++++++++++++----
->  2 files changed, 78 insertions(+), 19 deletions(-)
+> I believe that kernel design principles are to first start with something
+> simple and then if a real need for an extension shows up then extend
+> existing code base with missing features.
 >
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 2f264ad..922e0ed 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -163,6 +163,11 @@
->                 interrupts = <0 47 0>;
->         };
->
-> +       sys_syscon: syscon@10040000 {
-> +               compatible = "samsung,exynos5250-sys", "syscon";
-> +               reg = <0x10050000 0x5000>;
-> +       };
-> +
->         pmu_syscon: syscon@10040000 {
->                 compatible = "samsung,exynos5250-pmu", "syscon";
->                 reg = <0x10040000 0x5000>;
-> @@ -505,6 +510,14 @@
->
->                 clocks = <&clock 285>;
->                 clock-names = "usbhost";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               port@0 {
-> +                       reg = <0>;
-> +                       phys = <&usb2_phy 1>;
-> +                       phy-names = "host";
-> +                       status = "ok";
-> +               };
->         };
->
->         usb@12120000 {
-> @@ -516,19 +529,15 @@
->                 clock-names = "usbhost";
->         };
->
-> -       usb2_phy: usbphy@12130000 {
-> -               compatible = "samsung,exynos5250-usb2phy";
-> +       usb2_phy: phy@12130000 {
-> +               compatible = "samsung,exynos5250-usb2-phy";
->                 reg = <0x12130000 0x100>;
-> -               clocks = <&clock 1>, <&clock 285>;
-> -               clock-names = "ext_xtal", "usbhost";
-> -               #address-cells = <1>;
-> -               #size-cells = <1>;
-> -               ranges;
-> -
-> -               usbphy-sys {
-> -                       reg = <0x10040704 0x8>,
-> -                             <0x10050230 0x4>;
-> -               };
-> +               clocks = <&clock 285>, <&clock 1>, <&clock 1>, <&clock 1>,
-> +                                                               <&clock 1>;
-> +               clock-names = "phy", "device", "host", "hsic0", "hsic1";
-> +               #phy-cells = <1>;
-> +               samsung,sysreg-phandle = <&sys_syscon>;
-> +               samsung,pmureg-phandle = <&pmu_syscon>;
->         };
->
->         amba {
-> diff --git a/drivers/phy/phy-exynos5250-usb2.c b/drivers/phy/phy-exynos5250-usb2.c
-> index b9b3b98..337bf82 100644
-> --- a/drivers/phy/phy-exynos5250-usb2.c
-> +++ b/drivers/phy/phy-exynos5250-usb2.c
 
-Separate patches for dt and driver ?
-I think you wanted to move these changes to :
-[PATCH v5 7/9] phy: Add Exynos 5250 support to the Exynos USB 2.0 PHY driver
+Sorry, I can't see it complex as with architecture stated above
+also we have to implement similar structure in drivers as we are already
+doing now individually in each soc driver.
 
-> @@ -58,7 +58,13 @@
->  #define EXYNOS_5250_HOSTPHYCTRL2                       0x20
+>>
+>> Since we usually have more things to do other than only reading
+>> fused group value and simply parsing a table index, so in drivers we have to
+>> implement functions to segregate stuff and different people do it in
+>> different way. Its an attempt to provide a way to keep structure(functions)
+>> similar for easy understanding and factoring out of common code.
+>
+> I fail to see those more things. Could you elaborate a bit about them?
 
-Shouldn't we leave the naming as EXYNOS_5250_HSICPHYCTRL2 instead of
-EXYNOS_5250_HOSTPHYCTRL2 ? That will go in sync with the user-manual too.
-and similar for EXYNOS_5250_HOSTPHYCTRL1 and below bit definitions too ?
-
->
->  #define EXYNOS_5250_HOSTPHYCTRLX_REFCLKSEL_MASK                (0x3 << 23)
-> +#define EXYNOS_5250_HOSTPHYCTRLX_REFCLKSEL_DEFAULT     (0x2 << 23)
->  #define EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_MASK                (0x7f << 16)
-> +#define EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_12          (0x24 << 16)
-> +#define EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_15          (0x1c << 16)
-> +#define EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_16          (0x1a << 16)
-> +#define EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_19_2                (0x15 << 16)
-> +#define EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_20          (0x14 << 16)
->  #define EXYNOS_5250_HOSTPHYCTRLX_SIDDQ                 BIT(6)
->  #define EXYNOS_5250_HOSTPHYCTRLX_FORCESLEEP            BIT(5)
->  #define EXYNOS_5250_HOSTPHYCTRLX_FORCESUSPEND          BIT(4)
-> @@ -191,13 +197,14 @@ static void exynos5250_isol(struct samsung_usb2_phy_instance *inst, bool on)
->         regmap_update_bits(drv->reg_pmu, offset, mask, on ? 0 : mask);
->  }
->
-> -static void exynos5250_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
-> +static int exynos5250_power_on(struct samsung_usb2_phy_instance *inst)
-
-void ? we really don't have much to return in this function.
-
->  {
->         struct samsung_usb2_phy_driver *drv = inst->drv;
->         u32 ctrl0;
->         u32 otg;
->         u32 ehci;
->         u32 ohci;
-> +       u32 hsic;
->
->         switch (inst->cfg->id) {
->         case EXYNOS5250_DEVICE:
-> @@ -234,6 +241,8 @@ static void exynos5250_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
->
->                 break;
->         case EXYNOS5250_HOST:
-> +       case EXYNOS5250_HSIC0:
-> +       case EXYNOS5250_HSIC1:
->                 /* Host registers configuration */
->                 ctrl0 = readl(drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL0);
->                 /* The clock */
-> @@ -279,6 +288,18 @@ static void exynos5250_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
->                         EXYNOS_5250_USBOTGSYS_LINK_SW_RST_UOTG |
->                         EXYNOS_5250_USBOTGSYS_PHYLINK_SW_RESET);
->
-> +               /* HSIC phy configuration */
-> +               hsic = (EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_12 |
-> +                               EXYNOS_5250_HOSTPHYCTRLX_REFCLKSEL_DEFAULT |
-> +                               EXYNOS_5250_HOSTPHYCTRLX_PHYSWRST);
-> +               writel(hsic, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL1);
-> +               writel(hsic, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL2);
-> +               udelay(10);
-> +               hsic &= ~EXYNOS_5250_HOSTPHYCTRLX_PHYSWRST;
-> +               writel(hsic, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL1);
-> +               writel(hsic, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL2);
-> +               udelay(80);
-> +
->                 /* Enable EHCI DMA burst */
->                 ehci = readl(drv->reg_phy + EXYNOS_5250_HOSTEHCICTRL);
->                 ehci |= EXYNOS_5250_HOSTEHCICTRL_ENAINCRXALIGN |
-> @@ -295,12 +316,7 @@ static void exynos5250_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
->
->                 break;
->         }
-> -}
-> -
-> -static int exynos5250_power_on(struct samsung_usb2_phy_instance *inst)
-> -{
->         inst->enabled = 1;
-> -       exynos5250_phy_pwr(inst, 1);
->         exynos5250_isol(inst, 0);
->
->         return 0;
-> @@ -308,9 +324,43 @@ static int exynos5250_power_on(struct samsung_usb2_phy_instance *inst)
->
->  static int exynos5250_power_off(struct samsung_usb2_phy_instance *inst)
-
-ditto
-
->  {
-> +       struct samsung_usb2_phy_driver *drv = inst->drv;
-> +       u32 ctrl0;
-> +       u32 otg;
-> +       u32 hsic;
-> +
->         inst->enabled = 0;
->         exynos5250_isol(inst, 1);
-> -       exynos5250_phy_pwr(inst, 0);
-> +
-> +       switch (inst->cfg->id) {
-> +       case EXYNOS5250_DEVICE:
-> +               otg = readl(drv->reg_phy + EXYNOS_5250_USBOTGSYS);
-> +               otg |= (EXYNOS_5250_USBOTGSYS_FORCE_SUSPEND |
-> +                       EXYNOS_5250_USBOTGSYS_SIDDQ_UOTG |
-> +                       EXYNOS_5250_USBOTGSYS_FORCE_SLEEP);
-> +               writel(otg, drv->reg_phy + EXYNOS_5250_USBOTGSYS);
-> +               break;
-> +       case EXYNOS5250_HOST:
-> +               ctrl0 = readl(drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL0);
-> +               ctrl0 |= (EXYNOS_5250_HOSTPHYCTRL0_SIDDQ |
-> +                               EXYNOS_5250_HOSTPHYCTRL0_FORCESUSPEND |
-> +                               EXYNOS_5250_HOSTPHYCTRL0_FORCESLEEP |
-> +                               EXYNOS_5250_HOSTPHYCTRL0_PHYSWRST |
-> +                               EXYNOS_5250_HOSTPHYCTRL0_PHYSWRSTALL);
-> +               writel(ctrl0, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL0);
-> +               break;
-> +       case EXYNOS5250_HSIC0:
-> +       case EXYNOS5250_HSIC1:
-> +               hsic = (EXYNOS_5250_HOSTPHYCTRLX_REFCLKDIV_12 |
-> +                               EXYNOS_5250_HOSTPHYCTRLX_REFCLKSEL_DEFAULT |
-> +                               EXYNOS_5250_HOSTPHYCTRLX_SIDDQ |
-> +                               EXYNOS_5250_HOSTPHYCTRLX_FORCESLEEP |
-> +                               EXYNOS_5250_HOSTPHYCTRLX_FORCESUSPEND
-> +                               );
-> +               writel(hsic, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL1);
-> +               writel(hsic, drv->reg_phy + EXYNOS_5250_HOSTPHYCTRL2);
-> +               break;
-> +       }
->
->         return 0;
->  }
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Usually we need to implement functions in drivers clearly demarking following :
+1- Reading chip info (which can be done at probe time only once for all).
+2- Parse/Calculate(modify) ASV group.
+3- Any Group specific one time setting. eg ABB settings.
+4- Parsing and modifying table ( implementing Voltage locking, if
+required based on locking info bits).
 
 
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards,
+Yadwinder
