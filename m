@@ -1,104 +1,297 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/1] ASoC: Samsung: Trivial cleanups in header files
-Date: Thu, 26 Dec 2013 17:29:36 +0900
-Message-ID: <000a01cf0214$9c84e3f0$d58eabd0$%han@samsung.com>
-References: <1388038289-8953-1-git-send-email-sachin.kamat@linaro.org>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v5 4/9] usb: ehci-s5p: Change to use phy provided by the
+ generic phy framework
+Date: Thu, 26 Dec 2013 15:43:38 +0530
+Message-ID: <CAFp+6iHd12a8Aqg2BjixzokohPEuYsK9gPu+fkQ1u3-5uw2L=g@mail.gmail.com>
+References: <1387545857-9472-1-git-send-email-k.debski@samsung.com>
+	<1387545857-9472-5-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8541 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751381Ab3LZI3i (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:64676 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752186Ab3LZKNk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Dec 2013 03:29:38 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MYE0025MNLDDY30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Dec 2013 17:29:37 +0900 (KST)
-In-reply-to: <1388038289-8953-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Thu, 26 Dec 2013 05:13:40 -0500
+In-Reply-To: <1387545857-9472-5-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Kamil Debski <k.debski@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, kishon <kishon@ti.com>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mateusz Krawczuk <mat.krawczuk@gmail.com>, yulgon.kim@samsung.com, Praveen Paneri <p.paneri@samsung.com>, av.tikhomirov@samsung.com, Jingoo Han <jg1.han@samsung.com>, Kumar Gala <galak@codeaurora.org>, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, Alan Stern <stern@rowland.harvard.edu>
 
-On Thursday, December 26, 2013 3:11 PM, Sachin Kamat wrote:
-> 
-> commit 5d229ce569be ("ASoC: samsung: move plat/ headers to local directory")
-> moved the header files but forgot to clean the pointers to their old locaton.
-> Remove them now.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Hi Kamil,
 
-It looks good.
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-Best regards,
-Jingoo Han
+On Fri, Dec 20, 2013 at 6:54 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Change the phy provider used from the old one using the USB phy
+> framework to a new one using the Generic phy framework.
+>
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+Commit title:
+s/ehci-s5p/ehci-exynos
 
 > ---
->  sound/soc/samsung/regs-ac97.h |    9 ++++-----
->  sound/soc/samsung/regs-iis.h  |    9 ++++-----
->  2 files changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/sound/soc/samsung/regs-ac97.h b/sound/soc/samsung/regs-ac97.h
-> index c3878f7acb83..a71be45bbffc 100644
-> --- a/sound/soc/samsung/regs-ac97.h
-> +++ b/sound/soc/samsung/regs-ac97.h
-> @@ -1,5 +1,4 @@
-> -/* arch/arm/mach-s3c2410/include/mach/regs-ac97.h
-> - *
-> +/*
->   * Copyright (c) 2006 Simtec Electronics <linux@simtec.co.uk>
->   *		http://www.simtec.co.uk/products/SWLINUX/
->   *
-> @@ -10,8 +9,8 @@
->   * S3C2440 AC97 Controller
->  */
-> 
-> -#ifndef __ASM_ARCH_REGS_AC97_H
-> -#define __ASM_ARCH_REGS_AC97_H __FILE__
-> +#ifndef __SAMSUNG_REGS_AC97_H__
-> +#define __SAMSUNG_REGS_AC97_H__
-> 
->  #define S3C_AC97_GLBCTRL				(0x00)
-> 
-> @@ -64,4 +63,4 @@
->  #define S3C_AC97_PCM_DATA				(0x18)
->  #define S3C_AC97_MIC_DATA				(0x1C)
-> 
-> -#endif /* __ASM_ARCH_REGS_AC97_H */
-> +#endif /* __SAMSUNG_REGS_AC97_H__ */
-> diff --git a/sound/soc/samsung/regs-iis.h b/sound/soc/samsung/regs-iis.h
-> index a18d35e7a735..dc6cbbe9c4f0 100644
-> --- a/sound/soc/samsung/regs-iis.h
-> +++ b/sound/soc/samsung/regs-iis.h
-> @@ -1,5 +1,4 @@
-> -/* arch/arm/plat-samsung/include/plat/regs-iis.h
-> - *
-> +/*
->   * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
->   *		      http://www.simtec.co.uk/products/SWLINUX/
->   *
-> @@ -10,8 +9,8 @@
->   * S3C2410 IIS register definition
->  */
-> 
-> -#ifndef __ASM_ARCH_REGS_IIS_H
-> -#define __ASM_ARCH_REGS_IIS_H
-> +#ifndef __SAMSUNG_REGS_IIS_H__
-> +#define __SAMSUNG_REGS_IIS_H__
-> 
->  #define S3C2410_IISCON			(0x00)
-> 
-> @@ -67,4 +66,4 @@
-> 
->  #define S3C2410_IISFIFO			(0x10)
-> 
-> -#endif /* __ASM_ARCH_REGS_IIS_H */
-> +#endif /* __SAMSUNG_REGS_IIS_H__ */
+>  Documentation/devicetree/bindings/usb/usb-ehci.txt |   35 +++++++
+>  drivers/usb/host/ehci-exynos.c                     |   97 +++++++++++++-------
+>  2 files changed, 98 insertions(+), 34 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/usb/usb-ehci.txt b/Documentation/devicetree/bindings/usb/usb-ehci.txt
+> index fa18612..413f7cd 100644
+> --- a/Documentation/devicetree/bindings/usb/usb-ehci.txt
+> +++ b/Documentation/devicetree/bindings/usb/usb-ehci.txt
+> @@ -14,6 +14,10 @@ If controller implementation operates with big endian descriptors,
+>  If both big endian registers and descriptors are used by the controller
+>  implementation, "big-endian" property can be specified instead of having
+>  both "big-endian-regs" and "big-endian-desc".
+> +  - port: if in the SoC there are EHCI phys, they should be listed here.
+> +One phy per port. Each port should have its reg entry with a consecutive
+> +number. Also it should contain phys and phy-names entries specifying the
+> +phy used by the port.
+>
+>  Example (Sequoia 440EPx):
+>      ehci@e0000300 {
+> @@ -23,3 +27,34 @@ Example (Sequoia 440EPx):
+>            reg = <0 e0000300 90 0 e0000390 70>;
+>            big-endian;
+>     };
+> +
+> +Example (Exynos 4212):
+> +    ehci@12580000 {
+> +        compatible = "samsung,exynos4210-ehci";
+> +        reg = <0x12580000 0x20000>;
+> +        interrupts = <0 70 0>;
+> +        clocks = <&clock 304>, <&clock 305>;
+> +        clock-names = "usbhost", "otg";
+> +        status = "disabled";
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        port@0 {
+> +            reg = <0>;
+> +            phys = <&usb2phy 1>;
+> +            phy-names = "host";
+> +            status = "disabled";
+> +        };
+> +        port@1 {
+> +            reg = <1>;
+> +            phys = <&usb2phy 2>;
+> +            phy-names = "hsic0";
+> +            status = "disabled";
+> +        };
+> +        port@2 {
+> +            reg = <2>;
+> +            phys = <&usb2phy 3>;
+> +            phy-names = "hsic1";
+> +            status = "disabled";
+> +        };
+> +    };
+
+Should we place above documentation in
+"Documentation/devicetree/bindings/usb/exynos-usb.txt" ?
+or is it something that i am missing.
+
+> +
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index d1d8c47..7c35501 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -19,12 +19,12 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_gpio.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/usb/phy.h>
+>  #include <linux/usb/samsung_usb_phy.h>
+>  #include <linux/usb.h>
+>  #include <linux/usb/hcd.h>
+> -#include <linux/usb/otg.h>
+>
+>  #include "ehci.h"
+>
+> @@ -42,10 +42,10 @@
+>  static const char hcd_name[] = "ehci-exynos";
+>  static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+>
+> +#define PHY_NUMBER 3
+>  struct exynos_ehci_hcd {
+>         struct clk *clk;
+> -       struct usb_phy *phy;
+> -       struct usb_otg *otg;
+> +       struct phy *phy[PHY_NUMBER];
+>  };
+>
+>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+> @@ -69,13 +69,43 @@ static void exynos_setup_vbus_gpio(struct platform_device *pdev)
+>                 dev_err(dev, "can't request ehci vbus gpio %d", gpio);
+>  }
+>
+> +static int exynos_phys_on(struct phy *p[])
+> +{
+> +       int i;
+> +       int ret = 0;
+> +
+> +       for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+> +               if (p[i])
+> +                       ret = phy_power_on(p[i]);
+> +       if (ret)
+> +               for (i--; i > 0; i--)
+> +                       if (p[i])
+> +                               phy_power_off(p[i]);
+
+So we are turning off, say, port0 phy in case port1 phy power_on fails;
+can't we still leave a usb2.0 phy(a normal host phy) 'on' in case the
+HSIC phy fails ?
+
+> +
+> +       return ret;
+> +}
+> +
+> +static int exynos_phys_off(struct phy *p[])
+> +{
+> +       int i;
+> +       int ret = 0;
+> +
+> +       for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+> +               if (p[i])
+> +                       ret = phy_power_off(p[i]);
+> +
+> +       return ret;
+> +}
+> +
+>  static int exynos_ehci_probe(struct platform_device *pdev)
+>  {
+>         struct exynos_ehci_hcd *exynos_ehci;
+>         struct usb_hcd *hcd;
+>         struct ehci_hcd *ehci;
+>         struct resource *res;
+> -       struct usb_phy *phy;
+> +       struct phy *phy;
+> +       struct device_node *child;
+> +       int phy_number;
+>         int irq;
+>         int err;
+>
+> @@ -102,14 +132,26 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>                                         "samsung,exynos5440-ehci"))
+>                 goto skip_phy;
+>
+> -       phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+> -       if (IS_ERR(phy)) {
+> -               usb_put_hcd(hcd);
+> -               dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
+> -               return -EPROBE_DEFER;
+> -       } else {
+> -               exynos_ehci->phy = phy;
+> -               exynos_ehci->otg = phy->otg;
+> +       for_each_available_child_of_node(pdev->dev.of_node, child) {
+> +               err = of_property_read_u32(child, "reg", &phy_number);
+> +               if (err) {
+> +                       dev_err(&pdev->dev, "Failed to parse device tree\n");
+> +                       of_node_put(child);
+> +                       return err;
+> +               }
+> +               if (phy_number >= PHY_NUMBER) {
+> +                       dev_err(&pdev->dev, "Failed to parse device tree - number out of range\n");
+> +                       of_node_put(child);
+> +                       return -EINVAL;
+> +               }
+> +               phy = devm_of_phy_get(&pdev->dev, child, 0);
+> +               of_node_put(child);
+> +               if (IS_ERR(phy)) {
+> +                       dev_err(&pdev->dev, "Failed to get phy number %d",
+> +                                                               phy_number);
+> +                       return PTR_ERR(phy);
+> +               }
+> +               exynos_ehci->phy[phy_number] = phy;
+>         }
+>
+>  skip_phy:
+> @@ -149,11 +191,11 @@ skip_phy:
+>                 goto fail_io;
+>         }
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+> -       if (exynos_ehci->phy)
+> -               usb_phy_init(exynos_ehci->phy);
+> +       err = exynos_phys_on(exynos_ehci->phy);
+> +       if (err) {
+> +               dev_err(&pdev->dev, "Failed to enabled phys\n");
+> +               goto fail_io;
+> +       }
+>
+>         ehci = hcd_to_ehci(hcd);
+>         ehci->caps = hcd->regs;
+> @@ -173,8 +215,7 @@ skip_phy:
+>         return 0;
+>
+>  fail_add_hcd:
+> -       if (exynos_ehci->phy)
+> -               usb_phy_shutdown(exynos_ehci->phy);
+> +       exynos_phys_off(exynos_ehci->phy);
+>  fail_io:
+>         clk_disable_unprepare(exynos_ehci->clk);
+>  fail_clk:
+> @@ -189,11 +230,7 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+>
+>         usb_remove_hcd(hcd);
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+> -       if (exynos_ehci->phy)
+> -               usb_phy_shutdown(exynos_ehci->phy);
+> +       exynos_phys_off(exynos_ehci->phy);
+>
+>         clk_disable_unprepare(exynos_ehci->clk);
+>
+> @@ -213,11 +250,7 @@ static int exynos_ehci_suspend(struct device *dev)
+>
+>         rc = ehci_suspend(hcd, do_wakeup);
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+> -       if (exynos_ehci->phy)
+> -               usb_phy_shutdown(exynos_ehci->phy);
+> +       exynos_phys_off(exynos_ehci->phy);
+>
+>         clk_disable_unprepare(exynos_ehci->clk);
+>
+> @@ -231,11 +264,7 @@ static int exynos_ehci_resume(struct device *dev)
+>
+>         clk_prepare_enable(exynos_ehci->clk);
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+> -       if (exynos_ehci->phy)
+> -               usb_phy_init(exynos_ehci->phy);
+> +       exynos_phys_on(exynos_ehci->phy);
+>
+>         /* DMA burst Enable */
+>         writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
 > --
+
+Rest all looks good. :-)
+I tested this patch along with other patches in the series on smdk5250.
+
+Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+
 > 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
