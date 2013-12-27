@@ -1,52 +1,73 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 3/3] ARM: SAMSUNG: Remove Exynos specific code from pm-gpio.c
-Date: Fri, 27 Dec 2013 11:59:55 +0530
-Message-ID: <1388125795-30418-4-git-send-email-tushar.behera@linaro.org>
-References: <1388125795-30418-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:59512 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752662Ab3L0Gdd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Dec 2013 01:33:33 -0500
-Received: by mail-pa0-f43.google.com with SMTP id bj1so9004898pad.30
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2013 22:33:32 -0800 (PST)
-In-Reply-To: <1388125795-30418-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] serial: samsung: Remove hard-coded major/minor numbers
+Date: Thu, 26 Dec 2013 22:38:43 -0800
+Message-ID: <20131227063843.GA3310@kroah.com>
+References: <1388120848-15879-1-git-send-email-tushar.behera@linaro.org>
+ <20131227051843.GA840@kroah.com>
+ <CAHbNUh27ZZ5UxuLMPvv6weNOSG4XKV9ZRrmTB9F0RvgQxufGDQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-serial-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHbNUh27ZZ5UxuLMPvv6weNOSG4XKV9ZRrmTB9F0RvgQxufGDQ@mail.gmail.com>
+Sender: linux-serial-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-serial <linux-serial@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, jslaby <jslaby@suse.cz>, Patch Tracking <patches@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
 
-This file is only compiled when SAMSUNG_ATAGS is enabled, hence not
-for Exynos platform.
+On Fri, Dec 27, 2013 at 12:00:20PM +0530, Tushar Behera wrote:
+> On 27 December 2013 10:48, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > On Fri, Dec 27, 2013 at 10:37:28AM +0530, Tushar Behera wrote:
+> >> The hard-coded values clash with the values set for amba-pl011 serial
+> >> driver. Because of this there is no serial output on Samsung boards
+> >> if amba-pl011 is enabled alongwith samsung-serial driver.
+> >>
+> >> Remove the hardcoded values and let the framework decide on
+> >> appropriate major/minor number. This is required for multi-platform
+> >> development work on Exynos platform.
+> >>
+> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> >> ---
+> >>  drivers/tty/serial/samsung.c |    4 ----
+> >>  1 file changed, 4 deletions(-)
+> >>
+> >> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> >> index c1af04d..9c20543 100644
+> >> --- a/drivers/tty/serial/samsung.c
+> >> +++ b/drivers/tty/serial/samsung.c
+> >> @@ -56,8 +56,6 @@
+> >>  /* UART name and device definitions */
+> >>
+> >>  #define S3C24XX_SERIAL_NAME  "ttySAC"
+> >> -#define S3C24XX_SERIAL_MAJOR 204
+> >> -#define S3C24XX_SERIAL_MINOR 64
+> >>
+> >>  /* macros to change one thing to another */
+> >>
+> >> @@ -951,8 +949,6 @@ static struct uart_driver s3c24xx_uart_drv = {
+> >>       .nr             = CONFIG_SERIAL_SAMSUNG_UARTS,
+> >>       .cons           = S3C24XX_SERIAL_CONSOLE,
+> >>       .dev_name       = S3C24XX_SERIAL_NAME,
+> >> -     .major          = S3C24XX_SERIAL_MAJOR,
+> >> -     .minor          = S3C24XX_SERIAL_MINOR,
+> >
+> > Doesn't this break existing systems and configurations that are
+> > expecting 204:64 as the location of this serial port?
+> >
+> 
+> I tested this on Exynos4210-Origen, Exynos5250-Arndale board, it works
+> fine there. I haven't tested on any older boards.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/plat-samsung/pm-gpio.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+How did it work?  You are relying on some userspace tools to do this
+properly, right?  What about systems without those specific tools?
 
-diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
-index c4efa1c..81b0a20 100644
---- a/arch/arm/plat-samsung/pm-gpio.c
-+++ b/arch/arm/plat-samsung/pm-gpio.c
-@@ -198,8 +198,7 @@ struct samsung_gpio_pm samsung_gpio_pm_2bit = {
- 	.resume = samsung_gpio_pm_2bit_resume,
- };
- 
--#if defined(CONFIG_ARCH_S3C64XX) || defined(CONFIG_PLAT_S5P) \
--	|| defined(CONFIG_ARCH_EXYNOS)
-+#if defined(CONFIG_ARCH_S3C64XX) || defined(CONFIG_PLAT_S5P)
- static void samsung_gpio_pm_4bit_save(struct samsung_gpio_chip *chip)
- {
- 	chip->pm_save[1] = __raw_readl(chip->base + OFFS_CON);
-@@ -309,7 +308,7 @@ struct samsung_gpio_pm samsung_gpio_pm_4bit = {
- 	.save	= samsung_gpio_pm_4bit_save,
- 	.resume = samsung_gpio_pm_4bit_resume,
- };
--#endif /* CONFIG_ARCH_S3C64XX || CONFIG_PLAT_S5P || CONFIG_ARCH_EXYNOS */
-+#endif /* CONFIG_ARCH_S3C64XX || CONFIG_PLAT_S5P */
- 
- /**
-  * samsung_pm_save_gpio() - save gpio chip data for suspend
--- 
-1.7.9.5
+> > Why change this one and not the amba-pl011 driver?
+> >
+> 
+> I could only test this driver, so thought of changing this rather than
+> modifying amba-pl011 driver. I don't have any other reason.
+
+Please get the samsung driver maintainer to agree with this and sign off
+on it before trying to get it merged again.
+
+greg k-h
