@@ -1,146 +1,69 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [RFC v2 1/4] power: asv: Add common ASV support for Samsung SoCs
-Date: Fri, 27 Dec 2013 01:28:06 +0900
-Message-ID: <CAKew6eUn0PNE0Jig5Nyf0f_deK0OX0q6chOGyRKR2AbsjXYUvw@mail.gmail.com>
-References: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
- <4229773.U5JovcREjb@amdc1227>
- <CAKew6eVSOQaHjYj3JRhJKnozY26OkeUGhvC2usadfUqW9hyu2Q@mail.gmail.com>
- <11098201.47kElN2vGm@flatron>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] serial: samsung: Remove hard-coded major/minor numbers
+Date: Fri, 27 Dec 2013 12:00:20 +0530
+Message-ID: <CAHbNUh27ZZ5UxuLMPvv6weNOSG4XKV9ZRrmTB9F0RvgQxufGDQ@mail.gmail.com>
+References: <1388120848-15879-1-git-send-email-tushar.behera@linaro.org>
+	<20131227051843.GA840@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <11098201.47kElN2vGm@flatron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@google.com>, Andrew Bresticker <abrestic@google.com>, Kukjin Kim <kgene.kim@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <20131227051843.GA840@kroah.com>
+Sender: linux-serial-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-serial <linux-serial@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, jslaby <jslaby@suse.cz>, Patch Tracking <patches@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
-
-Sorry for being late.
-
-On Sun, Dec 15, 2013 at 10:51 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Sunday 15 of December 2013 22:30:13 Yadwinder Singh Brar wrote:
-> [snip]
->> >> +
->> >> +     return NULL;
->> >> +}
->> >> +
->> >> +unsigned int asv_get_volt(enum asv_type_id target_type,
->> >> +                                             unsigned int target_freq)
->> >
->> > Do you need this function at all? I believe this is all about populating
->> > device's OPP array with frequencies and voltages according to its ASV
->> > level. Users will be able to query for required voltage using standard OPP
->> > calls then, without a need for ASV specific functions like this one.
->> >
+On 27 December 2013 10:48, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Fri, Dec 27, 2013 at 10:37:28AM +0530, Tushar Behera wrote:
+>> The hard-coded values clash with the values set for amba-pl011 serial
+>> driver. Because of this there is no serial output on Samsung boards
+>> if amba-pl011 is enabled alongwith samsung-serial driver.
 >>
->> Yes, I had put a comment in initial version after commit message :
->> "Hopefully asv_get_volt() can go out in future, once all users start using OPP
->> library." , which seems to be missed in this version.
->> I had kept it for the time being in initial version, to keep it
->> usable(for testing) with
->> existing cpufreq drivers, which need to reworked and may take time.
->
-> Hmm, at the moment none of cpufreq drivers use ASV, so they need to be
-> reworked anyway to use it either by the means of a private get_volt
-> function or OPP framework. I agree that OPP may require more work,
-> though.
->
-> If we decide to keep this function in final version, a comment should be
-> added saying that its usage is deprecated in favor of generic OPP helpers.
->
-
-yes.
-
+>> Remove the hardcoded values and let the framework decide on
+>> appropriate major/minor number. This is required for multi-platform
+>> development work on Exynos platform.
 >>
->> [snip]
->> >> +
->> >> +     for (i = 0; i < asv_info->nr_dvfs_level; i++) {
->> >> +             if (dev_pm_opp_add(dev, dvfs_table[i].freq * 1000,
->> >> +                     dvfs_table[i].volt)) {
->> >> +                     dev_warn(dev, "Failed to add OPP %d\n",
->> >> +                              dvfs_table[i].freq);
->> >
->> > Hmm, shouldn't it be considered a failure instead?
->> >
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> ---
+>>  drivers/tty/serial/samsung.c |    4 ----
+>>  1 file changed, 4 deletions(-)
 >>
->> hmm, not really always. Theoretically system with some less(failed to add)
->> levels can work. Moreover I had prefered to keep it only warning, just to
->> keep the behaviour of  asv_init_opp_table() similar to that of its
->> counter part of_init_opp_table().
->
-> I'm not quite convinced about it. If dev_pm_opp_add() fails, doesn't it mean
-> that something broke seriously in upper layer and we should propagate the
-> error down? Especially when looking at opp_add(), the only failure
-> conditions I can find are memory allocation errors which mean that the
-> system is unlikely to operate correctly anyway.
->
-
-yes, for the time being i had prefered to keep it similar to
-of_init_opp_table() behaviour wise.
-If required both should be fixed.
-
-
->> [snip]
->> >
->> > Hmm, I don't see a point of these three separate callbacks above.
->> >
->> > In general, I'd suggest a different architecture. I'd see this more as:
->> >
->> > 1) Platform code registers static platform device to instantiate SoC ASV
->> >    driver.
->> > 2) SoC specific ASV driver probes, reads group ID from hardware register,
->> >    calls register_asv_member() with appropriate DVFS table for detected
->> >    group.
->> > 3) Driver using ASV calls asv_init_opp_table() with its struct device and
->> >    ASV member name, which causes the ASV code to fill device's operating
->> >    point using OPP calls.
->> >
->> > Now client driver has all the information it needs and the work of ASV
->> > subsystem is done. The control flow between drivers would be much simpler
->> > and no callbacks would have to be called.
->> >
+>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+>> index c1af04d..9c20543 100644
+>> --- a/drivers/tty/serial/samsung.c
+>> +++ b/drivers/tty/serial/samsung.c
+>> @@ -56,8 +56,6 @@
+>>  /* UART name and device definitions */
 >>
->> Architecture stated above seems to be a subset(one possible way of use),
->> of the proposed architecture. If someone really have nothing much to do,
->> he can adopt the above stated approach using this framework also,
->> callbacks are not mandatory.
->
-> I believe that kernel design principles are to first start with something
-> simple and then if a real need for an extension shows up then extend
-> existing code base with missing features.
->
-
-Sorry, I can't see it complex as with architecture stated above
-also we have to implement similar structure in drivers as we are already
-doing now individually in each soc driver.
-
+>>  #define S3C24XX_SERIAL_NAME  "ttySAC"
+>> -#define S3C24XX_SERIAL_MAJOR 204
+>> -#define S3C24XX_SERIAL_MINOR 64
 >>
->> Since we usually have more things to do other than only reading
->> fused group value and simply parsing a table index, so in drivers we have to
->> implement functions to segregate stuff and different people do it in
->> different way. Its an attempt to provide a way to keep structure(functions)
->> similar for easy understanding and factoring out of common code.
+>>  /* macros to change one thing to another */
+>>
+>> @@ -951,8 +949,6 @@ static struct uart_driver s3c24xx_uart_drv = {
+>>       .nr             = CONFIG_SERIAL_SAMSUNG_UARTS,
+>>       .cons           = S3C24XX_SERIAL_CONSOLE,
+>>       .dev_name       = S3C24XX_SERIAL_NAME,
+>> -     .major          = S3C24XX_SERIAL_MAJOR,
+>> -     .minor          = S3C24XX_SERIAL_MINOR,
 >
-> I fail to see those more things. Could you elaborate a bit about them?
+> Doesn't this break existing systems and configurations that are
+> expecting 204:64 as the location of this serial port?
+>
 
-Usually we need to implement functions in drivers clearly demarking following :
-1- Reading chip info (which can be done at probe time only once for all).
-2- Parse/Calculate(modify) ASV group.
-3- Any Group specific one time setting. eg ABB settings.
-4- Parsing and modifying table ( implementing Voltage locking, if
-required based on locking info bits).
+I tested this on Exynos4210-Origen, Exynos5250-Arndale board, it works
+fine there. I haven't tested on any older boards.
+
+> Why change this one and not the amba-pl011 driver?
+>
+
+I could only test this driver, so thought of changing this rather than
+modifying amba-pl011 driver. I don't have any other reason.
+
+> greg k-h
 
 
-Best Regards,
-Yadwinder
+Thanks for reviewing.
+-- 
+Tushar Behera
