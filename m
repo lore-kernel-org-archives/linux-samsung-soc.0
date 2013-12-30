@@ -1,174 +1,111 @@
-From: Amit Grover <amit.grover@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: Add Horizontal and Vertical search range for
- Video Macro Blocks
-Date: Mon, 30 Dec 2013 16:13:06 +0530
-Message-ID: <1388400186-22045-1-git-send-email-amit.grover@samsung.com>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: m.chehab@samsung.com, linux-media@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob@landley.net, kyungmin.park@samsung.com, k.debski@samsung.com, jtp.park@samsung.com
-Cc: hans.verkuil@cisco.com, andrew.smirnov@gmail.com, s.nawrocki@samsung.com, arun.kk@samsung.com, anatol.pomozov@gmail.com, jmccrohan@gmail.com, austin.lobo@samsung.com, Swami Nathan <swaminath.p@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: S3C24XX: Move rtc-core.h from plat to mach
+Date: Mon, 30 Dec 2013 16:10:08 +0530
+Message-ID: <1388400008-9113-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:60377 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754645Ab3L3Knp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Dec 2013 05:43:45 -0500
+Received: by mail-pa0-f50.google.com with SMTP id kp14so9587134pab.23
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2013 02:43:45 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Heiko Stuebner <heiko@sntech.de>
 
-This patch adds Controls to set Horizontal and Vertical search range
-for Motion Estimation block for Samsung MFC video Encoders.
+plat/rtc-core.h is only referenced from mach-s3c24xx. Hence
+move it there to de-populate the plat directory. While at it
+also do some cleanup of the header file.
 
-Signed-off-by: Swami Nathan <swaminath.p@samsung.com>
-Signed-off-by: Amit Grover <amit.grover@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
 ---
- Documentation/DocBook/media/v4l/controls.xml    |   14 +++++++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   24 +++++++++++++++++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    8 ++------
- drivers/media/v4l2-core/v4l2-ctrls.c            |   14 +++++++++++++
- include/uapi/linux/v4l2-controls.h              |    2 ++
- 6 files changed, 58 insertions(+), 6 deletions(-)
+ .../plat => mach-s3c24xx/include/mach}/rtc-core.h  |   13 ++++++-------
+ arch/arm/mach-s3c24xx/s3c2416.c                    |    2 +-
+ arch/arm/mach-s3c24xx/s3c2443.c                    |    2 +-
+ 3 files changed, 8 insertions(+), 9 deletions(-)
+ rename arch/arm/{plat-samsung/include/plat => mach-s3c24xx/include/mach}/rtc-core.h (69%)
 
-diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
-index 7a3b49b..70a0f6f 100644
---- a/Documentation/DocBook/media/v4l/controls.xml
-+++ b/Documentation/DocBook/media/v4l/controls.xml
-@@ -2258,6 +2258,20 @@ Applicable to the MPEG1, MPEG2, MPEG4 encoders.</entry>
- VBV buffer control.</entry>
- 	      </row>
+diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h b/arch/arm/mach-s3c24xx/include/mach/rtc-core.h
+similarity index 69%
+rename from arch/arm/plat-samsung/include/plat/rtc-core.h
+rename to arch/arm/mach-s3c24xx/include/mach/rtc-core.h
+index 7b542f7b7938..4d5f5768f700 100644
+--- a/arch/arm/plat-samsung/include/plat/rtc-core.h
++++ b/arch/arm/mach-s3c24xx/include/mach/rtc-core.h
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-samsung/include/plat/rtc-core.h
+- *
++/*
+  * Copyright (c) 2011 Heiko Stuebner <heiko@sntech.de>
+  *
+  * Samsung RTC Controller core functions
+@@ -9,19 +8,19 @@
+  * published by the Free Software Foundation.
+ */
  
-+		  <row><entry></entry></row>
-+	      <row id="v4l2-mpeg-video-horz-search-range">
-+		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE</constant>&nbsp;</entry>
-+		<entry>integer</entry>
-+	      </row><row><entry spanname="descr">Sets the Horizontal search range for Video Macro blocks.</entry>
-+	      </row>
+-#ifndef __ASM_PLAT_RTC_CORE_H
+-#define __ASM_PLAT_RTC_CORE_H __FILE__
++#ifndef __RTC_CORE_H
++#define __RTC_CORE_H __FILE__
+ 
+ /* These functions are only for use with the core support code, such as
+  * the cpu specific initialisation code
+  */
+ 
++extern struct platform_device s3c_device_rtc;
 +
-+		 <row><entry></entry></row>
-+	      <row id="v4l2-mpeg-video-vert-search-range">
-+		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE</constant>&nbsp;</entry>
-+		<entry>integer</entry>
-+	      </row><row><entry spanname="descr">Sets the Vertical search range for Video Macro blocks.</entry>
-+	      </row>
-+
- 	      <row><entry></entry></row>
- 	      <row>
- 		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_H264_CPB_SIZE</constant>&nbsp;</entry>
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 6920b54..f2c13c3 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -430,6 +430,8 @@ struct s5p_mfc_vp8_enc_params {
- struct s5p_mfc_enc_params {
- 	u16 width;
- 	u16 height;
-+	u32 horz_range;
-+	u32 vert_range;
+ /* re-define device name depending on support. */
+ static inline void s3c_rtc_setname(char *name)
+ {
+-#if defined(CONFIG_S3C_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
+ 	s3c_device_rtc.name = name;
+-#endif
+ }
  
- 	u16 gop_size;
- 	enum v4l2_mpeg_video_multi_slice_mode slice_mode;
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index 4ff3b6c..a02e7b8 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -208,6 +208,24 @@ static struct mfc_control controls[] = {
- 		.default_value = 0,
- 	},
- 	{
-+		.id = V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE,
-+		.type = V4L2_CTRL_TYPE_INTEGER,
-+		.name = "horizontal search range of video macro block",
-+		.minimum = 16,
-+		.maximum = 128,
-+		.step = 16,
-+		.default_value = 32,
-+	},
-+	{
-+		.id = V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE,
-+		.type = V4L2_CTRL_TYPE_INTEGER,
-+		.name = "vertical search range of video macro block",
-+		.minimum = 16,
-+		.maximum = 128,
-+		.step = 16,
-+		.default_value = 32,
-+	},
-+	{
- 		.id = V4L2_CID_MPEG_VIDEO_H264_CPB_SIZE,
- 		.type = V4L2_CTRL_TYPE_INTEGER,
- 		.minimum = 0,
-@@ -1377,6 +1395,12 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_MPEG_VIDEO_VBV_SIZE:
- 		p->vbv_size = ctrl->val;
- 		break;
-+	case V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE:
-+		p->horz_range = ctrl->val;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE:
-+		p->vert_range = ctrl->val;
-+		break;
- 	case V4L2_CID_MPEG_VIDEO_H264_CPB_SIZE:
- 		p->codec.h264.cpb_size = ctrl->val;
- 		break;
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index 461358c..47e1807 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -727,14 +727,10 @@ static int s5p_mfc_set_enc_params(struct s5p_mfc_ctx *ctx)
- 	WRITEL(reg, S5P_FIMV_E_RC_CONFIG_V6);
+-#endif /* __ASM_PLAT_RTC_CORE_H */
++#endif /* __RTC_CORE_H */
+diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
+index cb77880029f7..a0b787505c02 100644
+--- a/arch/arm/mach-s3c24xx/s3c2416.c
++++ b/arch/arm/mach-s3c24xx/s3c2416.c
+@@ -48,6 +48,7 @@
+ #include <asm/system_misc.h>
  
- 	/* setting for MV range [16, 256] */
--	reg = 0;
--	reg &= ~(0x3FFF);
--	reg = 256;
-+	reg = (p->horz_range & 0x3fff);	/* conditional check in app */
- 	WRITEL(reg, S5P_FIMV_E_MV_HOR_RANGE_V6);
+ #include <mach/regs-s3c2443-clock.h>
++#include <mach/rtc-core.h>
  
--	reg = 0;
--	reg &= ~(0x3FFF);
--	reg = 256;
-+	reg = (p->vert_range & 0x3fff);	/* conditional check in app */
- 	WRITEL(reg, S5P_FIMV_E_MV_VER_RANGE_V6);
+ #include <plat/gpio-core.h>
+ #include <plat/gpio-cfg.h>
+@@ -61,7 +62,6 @@
+ #include <plat/fb-core.h>
+ #include <plat/nand-core.h>
+ #include <plat/adc-core.h>
+-#include <plat/rtc-core.h>
+ #include <plat/spi-core.h>
  
- 	WRITEL(0x0, S5P_FIMV_E_FRAME_INSERTION_V6);
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index fb46790..7cf23d5 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -735,6 +735,8 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_MPEG_VIDEO_DEC_PTS:			return "Video Decoder PTS";
- 	case V4L2_CID_MPEG_VIDEO_DEC_FRAME:			return "Video Decoder Frame Count";
- 	case V4L2_CID_MPEG_VIDEO_VBV_DELAY:			return "Initial Delay for VBV Control";
-+	case V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE:		return "hor search range of video MB";
-+	case V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE:		return "vert search range of video MB";
- 	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
+ #include "common.h"
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index faa1086924c4..4af858457b2f 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -34,6 +34,7 @@
+ #include <asm/system_misc.h>
  
- 	/* VPX controls */
-@@ -905,6 +907,18 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 		*min = 0;
- 		*max = *step = 1;
- 		break;
-+	case V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE:
-+		*type = V4L2_CTRL_TYPE_INTEGER;
-+		*min = 16;
-+		*max = 128;
-+		*step = 16;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE:
-+		*type = V4L2_CTRL_TYPE_INTEGER;
-+		*min = 16;
-+		*max = 128;
-+		*step = 16;
-+		break;
- 	case V4L2_CID_PAN_RESET:
- 	case V4L2_CID_TILT_RESET:
- 	case V4L2_CID_FLASH_STROBE:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 1666aab..bcce536 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -372,6 +372,8 @@ enum v4l2_mpeg_video_multi_slice_mode {
- #define V4L2_CID_MPEG_VIDEO_DEC_FRAME			(V4L2_CID_MPEG_BASE+224)
- #define V4L2_CID_MPEG_VIDEO_VBV_DELAY			(V4L2_CID_MPEG_BASE+225)
- #define V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER		(V4L2_CID_MPEG_BASE+226)
-+#define V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE		(V4L2_CID_MPEG_BASE+227)
-+#define V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE		(V4L2_CID_MPEG_BASE+228)
+ #include <mach/regs-s3c2443-clock.h>
++#include <mach/rtc-core.h>
  
- #define V4L2_CID_MPEG_VIDEO_H263_I_FRAME_QP		(V4L2_CID_MPEG_BASE+300)
- #define V4L2_CID_MPEG_VIDEO_H263_P_FRAME_QP		(V4L2_CID_MPEG_BASE+301)
+ #include <plat/gpio-core.h>
+ #include <plat/gpio-cfg.h>
+@@ -43,7 +44,6 @@
+ #include <plat/fb-core.h>
+ #include <plat/nand-core.h>
+ #include <plat/adc-core.h>
+-#include <plat/rtc-core.h>
+ #include <plat/spi-core.h>
+ 
+ static struct map_desc s3c2443_iodesc[] __initdata = {
 -- 
 1.7.9.5
-
