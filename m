@@ -1,328 +1,72 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v5 4/9] usb: ehci-s5p: Change to use phy provided by the
- generic phy framework
-Date: Mon, 30 Dec 2013 14:43:02 +0100
-Message-ID: <028601cf0565$10b496a0$321dc3e0$%debski@samsung.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com>
- <1387545857-9472-5-git-send-email-k.debski@samsung.com>
- <CAFp+6iHd12a8Aqg2BjixzokohPEuYsK9gPu+fkQ1u3-5uw2L=g@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Fix MDMA0 clock number
+Date: Mon, 30 Dec 2013 15:32:32 +0100
+Message-ID: <19574645.fFapTcOjJm@amdc1227>
+References: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
+ <2082327.zpbOvCVe5P@amdc1227> <20131218193203.23538.30551@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16561 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755907Ab3L3NnI (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:18904 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755956Ab3L3Oc6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Dec 2013 08:43:08 -0500
-In-reply-to: <CAFp+6iHd12a8Aqg2BjixzokohPEuYsK9gPu+fkQ1u3-5uw2L=g@mail.gmail.com>
-Content-language: pl
+	Mon, 30 Dec 2013 09:32:58 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MYM0092AJ2VMSB0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Dec 2013 14:32:55 +0000 (GMT)
+In-reply-to: <20131218193203.23538.30551@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautamvivek1987@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, devicetree@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'kishon' <kishon@ti.com>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Mateusz Krawczuk' <mat.krawczuk@gmail.com>, yulgon.kim@samsung.com, 'Praveen Paneri' <p.paneri@samsung.com>, av.tikhomirov@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>, 'Kumar Gala' <galak@codeaurora.org>, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, 'Alan Stern' <stern@rowland.harvard.edu>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: kgene.kim@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>, dianders@chromium.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Vivek,
+Hi Mike,
 
-> From: Vivek Gautam [mailto:gautamvivek1987@gmail.com]
-> Sent: Thursday, December 26, 2013 11:14 AM
+On Wednesday 18 of December 2013 11:32:03 Mike Turquette wrote:
+> Quoting Tomasz Figa (2013-12-18 06:49:10)
+> > Hi Kukjin,
+> > 
+> > On Thursday 12 of December 2013 08:32:02 Abhilash Kesavan wrote:
+> > > Fix wrong clock number in mdma0 node.
+> > > 
+> > > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > > ---
+> > >  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> > > index 9db5047..177becd 100644
+> > > --- a/arch/arm/boot/dts/exynos5250.dtsi
+> > > +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> > > @@ -559,7 +559,7 @@
+> > >                       compatible = "arm,pl330", "arm,primecell";
+> > >                       reg = <0x10800000 0x1000>;
+> > >                       interrupts = <0 33 0>;
+> > > -                     clocks = <&clock 271>;
+> > > +                     clocks = <&clock 346>;
+> > >                       clock-names = "apb_pclk";
+> > >                       #dma-cells = <1>;
+> > >                       #dma-channels = <8>;
+> > > 
+> > 
+> > Can we have your ack for this patch?
+> > 
+> > I'd like to apply the whole series into samsung-clk fixes branch and
+> > send a pull request to Mike to get it and one more fix into his tree.
 > 
-> Hi Kamil,
-> 
-> 
-> On Fri, Dec 20, 2013 at 6:54 PM, Kamil Debski <k.debski@samsung.com>
-> wrote:
-> > Change the phy provider used from the old one using the USB phy
-> > framework to a new one using the Generic phy framework.
-> >
-> > Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> Commit title:
-> s/ehci-s5p/ehci-exynos
+> Do these fixes need to go into the current -rc fixes cycle or can they
+> go for 3.14?
 
-Thank you for spotting this.
+I'd say that this should go as an -rc fix, because on some systems on
+which the firmware may leave the mdma0 clock disabled by default,
+trying to initialize MDMA0 by PL330 driver might cause booting failure.
 
-> 
-> > ---
-> >  Documentation/devicetree/bindings/usb/usb-ehci.txt |   35 +++++++
-> >  drivers/usb/host/ehci-exynos.c                     |   97
-> +++++++++++++-------
-> >  2 files changed, 98 insertions(+), 34 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/usb-ehci.txt
-> > b/Documentation/devicetree/bindings/usb/usb-ehci.txt
-> > index fa18612..413f7cd 100644
-> > --- a/Documentation/devicetree/bindings/usb/usb-ehci.txt
-> > +++ b/Documentation/devicetree/bindings/usb/usb-ehci.txt
-> > @@ -14,6 +14,10 @@ If controller implementation operates with big
-> > endian descriptors,  If both big endian registers and descriptors are
-> > used by the controller  implementation, "big-endian" property can be
-> > specified instead of having  both "big-endian-regs" and "big-endian-
-> desc".
-> > +  - port: if in the SoC there are EHCI phys, they should be listed
-> here.
-> > +One phy per port. Each port should have its reg entry with a
-> > +consecutive number. Also it should contain phys and phy-names
-> entries
-> > +specifying the phy used by the port.
-> >
-> >  Example (Sequoia 440EPx):
-> >      ehci@e0000300 {
-> > @@ -23,3 +27,34 @@ Example (Sequoia 440EPx):
-> >            reg = <0 e0000300 90 0 e0000390 70>;
-> >            big-endian;
-> >     };
-> > +
-> > +Example (Exynos 4212):
-> > +    ehci@12580000 {
-> > +        compatible = "samsung,exynos4210-ehci";
-> > +        reg = <0x12580000 0x20000>;
-> > +        interrupts = <0 70 0>;
-> > +        clocks = <&clock 304>, <&clock 305>;
-> > +        clock-names = "usbhost", "otg";
-> > +        status = "disabled";
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +        port@0 {
-> > +            reg = <0>;
-> > +            phys = <&usb2phy 1>;
-> > +            phy-names = "host";
-> > +            status = "disabled";
-> > +        };
-> > +        port@1 {
-> > +            reg = <1>;
-> > +            phys = <&usb2phy 2>;
-> > +            phy-names = "hsic0";
-> > +            status = "disabled";
-> > +        };
-> > +        port@2 {
-> > +            reg = <2>;
-> > +            phys = <&usb2phy 3>;
-> > +            phy-names = "hsic1";
-> > +            status = "disabled";
-> > +        };
-> > +    };
-> 
-> Should we place above documentation in
-> "Documentation/devicetree/bindings/usb/exynos-usb.txt" ?
-> or is it something that i am missing. 
+Can we get your ack on this, so I could apply this and send you a pull
+request with all fixes?
 
-Indeed, this should go to exynos-usb.txt instead of usb-ehci.txt.
-Thanks!
-
-> > +
-> > diff --git a/drivers/usb/host/ehci-exynos.c
-> > b/drivers/usb/host/ehci-exynos.c index d1d8c47..7c35501 100644
-> > --- a/drivers/usb/host/ehci-exynos.c
-> > +++ b/drivers/usb/host/ehci-exynos.c
-> > @@ -19,12 +19,12 @@
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_gpio.h>
-> > +#include <linux/phy/phy.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/usb/phy.h>
-> >  #include <linux/usb/samsung_usb_phy.h>  #include <linux/usb.h>
-> > #include <linux/usb/hcd.h> -#include <linux/usb/otg.h>
-> >
-> >  #include "ehci.h"
-> >
-> > @@ -42,10 +42,10 @@
-> >  static const char hcd_name[] = "ehci-exynos";  static struct
-> > hc_driver __read_mostly exynos_ehci_hc_driver;
-> >
-> > +#define PHY_NUMBER 3
-> >  struct exynos_ehci_hcd {
-> >         struct clk *clk;
-> > -       struct usb_phy *phy;
-> > -       struct usb_otg *otg;
-> > +       struct phy *phy[PHY_NUMBER];
-> >  };
-> >
-> >  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd
-> > *)(hcd_to_ehci(hcd)->priv) @@ -69,13 +69,43 @@ static void
-> exynos_setup_vbus_gpio(struct platform_device *pdev)
-> >                 dev_err(dev, "can't request ehci vbus gpio %d",
-> gpio);
-> > }
-> >
-> > +static int exynos_phys_on(struct phy *p[]) {
-> > +       int i;
-> > +       int ret = 0;
-> > +
-> > +       for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
-> > +               if (p[i])
-> > +                       ret = phy_power_on(p[i]);
-> > +       if (ret)
-> > +               for (i--; i > 0; i--)
-> > +                       if (p[i])
-> > +                               phy_power_off(p[i]);
-> 
-> So we are turning off, say, port0 phy in case port1 phy power_on fails;
-> can't we still leave a usb2.0 phy(a normal host phy) 'on' in case the
-> HSIC phy fails ?
-
-Currently all phys are can be either switched on or off. So if powering on
-one phy fails (and exynos_phy_on returns an error code), I would expect
-that no phy is switched on. I think that doing otherwise could leave
-the phys in strange state - some phys are on, some are off and the power_on
-call returned an error.
-
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int exynos_phys_off(struct phy *p[]) {
-> > +       int i;
-> > +       int ret = 0;
-> > +
-> > +       for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
-> > +               if (p[i])
-> > +                       ret = phy_power_off(p[i]);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> >  static int exynos_ehci_probe(struct platform_device *pdev)  {
-> >         struct exynos_ehci_hcd *exynos_ehci;
-> >         struct usb_hcd *hcd;
-> >         struct ehci_hcd *ehci;
-> >         struct resource *res;
-> > -       struct usb_phy *phy;
-> > +       struct phy *phy;
-> > +       struct device_node *child;
-> > +       int phy_number;
-> >         int irq;
-> >         int err;
-> >
-> > @@ -102,14 +132,26 @@ static int exynos_ehci_probe(struct
-> platform_device *pdev)
-> >                                         "samsung,exynos5440-ehci"))
-> >                 goto skip_phy;
-> >
-> > -       phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> > -       if (IS_ERR(phy)) {
-> > -               usb_put_hcd(hcd);
-> > -               dev_warn(&pdev->dev, "no platform data or transceiver
-> defined\n");
-> > -               return -EPROBE_DEFER;
-> > -       } else {
-> > -               exynos_ehci->phy = phy;
-> > -               exynos_ehci->otg = phy->otg;
-> > +       for_each_available_child_of_node(pdev->dev.of_node, child) {
-> > +               err = of_property_read_u32(child, "reg",
-> &phy_number);
-> > +               if (err) {
-> > +                       dev_err(&pdev->dev, "Failed to parse device
-> tree\n");
-> > +                       of_node_put(child);
-> > +                       return err;
-> > +               }
-> > +               if (phy_number >= PHY_NUMBER) {
-> > +                       dev_err(&pdev->dev, "Failed to parse device
-> tree - number out of range\n");
-> > +                       of_node_put(child);
-> > +                       return -EINVAL;
-> > +               }
-> > +               phy = devm_of_phy_get(&pdev->dev, child, 0);
-> > +               of_node_put(child);
-> > +               if (IS_ERR(phy)) {
-> > +                       dev_err(&pdev->dev, "Failed to get phy number
-> %d",
-> > +
-> phy_number);
-> > +                       return PTR_ERR(phy);
-> > +               }
-> > +               exynos_ehci->phy[phy_number] = phy;
-> >         }
-> >
-> >  skip_phy:
-> > @@ -149,11 +191,11 @@ skip_phy:
-> >                 goto fail_io;
-> >         }
-> >
-> > -       if (exynos_ehci->otg)
-> > -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd-
-> >self);
-> > -
-> > -       if (exynos_ehci->phy)
-> > -               usb_phy_init(exynos_ehci->phy);
-> > +       err = exynos_phys_on(exynos_ehci->phy);
-> > +       if (err) {
-> > +               dev_err(&pdev->dev, "Failed to enabled phys\n");
-> > +               goto fail_io;
-> > +       }
-> >
-> >         ehci = hcd_to_ehci(hcd);
-> >         ehci->caps = hcd->regs;
-> > @@ -173,8 +215,7 @@ skip_phy:
-> >         return 0;
-> >
-> >  fail_add_hcd:
-> > -       if (exynos_ehci->phy)
-> > -               usb_phy_shutdown(exynos_ehci->phy);
-> > +       exynos_phys_off(exynos_ehci->phy);
-> >  fail_io:
-> >         clk_disable_unprepare(exynos_ehci->clk);
-> >  fail_clk:
-> > @@ -189,11 +230,7 @@ static int exynos_ehci_remove(struct
-> > platform_device *pdev)
-> >
-> >         usb_remove_hcd(hcd);
-> >
-> > -       if (exynos_ehci->otg)
-> > -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd-
-> >self);
-> > -
-> > -       if (exynos_ehci->phy)
-> > -               usb_phy_shutdown(exynos_ehci->phy);
-> > +       exynos_phys_off(exynos_ehci->phy);
-> >
-> >         clk_disable_unprepare(exynos_ehci->clk);
-> >
-> > @@ -213,11 +250,7 @@ static int exynos_ehci_suspend(struct device
-> > *dev)
-> >
-> >         rc = ehci_suspend(hcd, do_wakeup);
-> >
-> > -       if (exynos_ehci->otg)
-> > -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd-
-> >self);
-> > -
-> > -       if (exynos_ehci->phy)
-> > -               usb_phy_shutdown(exynos_ehci->phy);
-> > +       exynos_phys_off(exynos_ehci->phy);
-> >
-> >         clk_disable_unprepare(exynos_ehci->clk);
-> >
-> > @@ -231,11 +264,7 @@ static int exynos_ehci_resume(struct device
-> *dev)
-> >
-> >         clk_prepare_enable(exynos_ehci->clk);
-> >
-> > -       if (exynos_ehci->otg)
-> > -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd-
-> >self);
-> > -
-> > -       if (exynos_ehci->phy)
-> > -               usb_phy_init(exynos_ehci->phy);
-> > +       exynos_phys_on(exynos_ehci->phy);
-> >
-> >         /* DMA burst Enable */
-> >         writel(EHCI_INSNREG00_ENABLE_DMA_BURST,
-> > EHCI_INSNREG00(hcd->regs));
-> > --
-> 
-> Rest all looks good. :-)
-> I tested this patch along with other patches in the series on smdk5250.
-
-Thank you :)
-
-> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
-> 
-
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+Best regards,
+Tomasz
