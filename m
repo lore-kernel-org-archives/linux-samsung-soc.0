@@ -1,58 +1,58 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 0/8] clk: max77686: Clock provider implementation fixes
-Date: Mon, 30 Dec 2013 18:41:11 +0100
-Message-ID: <3255941.gbDAOmmA0C@amdc1227>
-References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH 1/5] clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag
+ for the sysreg clock
+Date: Mon, 30 Dec 2013 18:49:04 +0100
+Message-ID: <3286403.zKhpGDqJO8@amdc1227>
+References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+ <1386763029-8516-2-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22597 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755634Ab3L3Rlh (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:14113 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755634Ab3L3Rt3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Dec 2013 12:41:37 -0500
-In-reply-to: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
+	Mon, 30 Dec 2013 12:49:29 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MYM00JK8S6DUH10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Dec 2013 17:49:26 +0000 (GMT)
+In-reply-to: <1386763029-8516-2-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Lee Jones <lee.jones@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: dianders@chromium.org, olof@lixom.net, kgene.kim@samsung.com, jonghwa3.lee@samsung.com, yadi.brar@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-On Thursday 12 of December 2013 17:07:13 Tomasz Figa wrote:
-> This series intends to improve clock provider impementation of max77686
-> PMIC driver. First two patches are simple fixes of current implementation
-> to allow correct control of provided clocks. Further patches refactor
-> the driver to make the code cleaner and prepare for further patches. Then
-> last two patches add registration of OF clock provider and adjust device
-> tree nodes of boards containing max77686 chip to contain properties
-> required by clock provider.
+On Wednesday 11 of December 2013 17:27:05 Abhilash Kesavan wrote:
+> The sysreg (system register) generates control signals for various blocks
+> like disp1blk, i2c, mipi etc. However, it gets disabled as an unused clock
+> at boot-up.
 > 
-> Tested on Exynos4412-based Trats2 board, with additional patches adding
-> driver being a consumer of one of max77686 clocks.
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5250.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Changes since v1:
->  - rebased on top of current clk-next (no functional changes)
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index adf3234..0833501 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -406,7 +406,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+>  	GATE(hsi2c2, "hsi2c2", "aclk66", GATE_IP_PERIC, 30, 0, 0),
+>  	GATE(hsi2c3, "hsi2c3", "aclk66", GATE_IP_PERIC, 31, 0, 0),
+>  	GATE(chipid, "chipid", "aclk66", GATE_IP_PERIS, 0, 0, 0),
+> -	GATE(sysreg, "sysreg", "aclk66", GATE_IP_PERIS, 1, 0, 0),
+> +	GATE(sysreg, "sysreg", "aclk66",
+> +			GATE_IP_PERIS, 1, CLK_IGNORE_UNUSED, 0),
+>  	GATE(pmu, "pmu", "aclk66", GATE_IP_PERIS, 2, CLK_IGNORE_UNUSED, 0),
+>  	GATE(tzpc0, "tzpc0", "aclk66", GATE_IP_PERIS, 6, 0, 0),
+>  	GATE(tzpc1, "tzpc1", "aclk66", GATE_IP_PERIS, 7, 0, 0),
 > 
-> Tomasz Figa (8):
->   clk: max77686: Correct callback used for checking clock status
->   clk: max77686: Provide .recalc_rate() operation
->   clk: max77686: Refactor successful exit of probe function
->   clk: max77686: Make max77686_clk_register() return struct clk *
->   clk: max77686: Fix clean-up in error and remove paths
->   clk: max77686: Refactor driver data handling
->   clk: max77686: Register OF clock provider
->   ARM: dts: Add clock provider specific properties to max77686 node
-> 
->  .../devicetree/bindings/clock/maxim,max77686.txt   | 38 +++++++++
->  Documentation/devicetree/bindings/mfd/max77686.txt |  3 +
->  arch/arm/boot/dts/cros5250-common.dtsi             |  1 +
->  arch/arm/boot/dts/exynos4412-odroidx.dts           |  1 +
->  arch/arm/boot/dts/exynos4412-trats2.dts            |  1 +
->  drivers/clk/clk-max77686.c                         | 97 +++++++++++++---------
->  6 files changed, 104 insertions(+), 37 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.txt
 
-Ping.
+Applied to samsung-clk tree, since this patch seems not to depend or be
+a dependency of other patches.
 
 Best regards,
 Tomasz
