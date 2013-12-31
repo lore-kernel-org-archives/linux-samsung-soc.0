@@ -1,66 +1,57 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/9] ARM: SAMSUNG: Remove platform dependency from
- samsung.S
-Date: Tue, 31 Dec 2013 15:38:26 +0000
-Message-ID: <20131231153826.GD31886@sirena.org.uk>
+Subject: Re: [PATCH 3/9] ARM: S3C64XX: Replace inclusion of
+ plat/regs-serial.h header file
+Date: Tue, 31 Dec 2013 15:39:24 +0000
+Message-ID: <20131231153924.GE31886@sirena.org.uk>
 References: <1388397640-720-1-git-send-email-tushar.behera@linaro.org>
- <1388397640-720-2-git-send-email-tushar.behera@linaro.org>
+ <1388397640-720-4-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dds9jO4idXToq0wP"
+	protocol="application/pgp-signature"; boundary="pEX2GA8pip5RjAtK"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:51180 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:51192 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752842Ab3LaPit (ORCPT
+	with ESMTP id S1752842Ab3LaPjp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Dec 2013 10:38:49 -0500
+	Tue, 31 Dec 2013 10:39:45 -0500
 Content-Disposition: inline
-In-Reply-To: <1388397640-720-2-git-send-email-tushar.behera@linaro.org>
+In-Reply-To: <1388397640-720-4-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
 
---dds9jO4idXToq0wP
+--pEX2GA8pip5RjAtK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 30, 2013 at 03:30:32PM +0530, Tushar Behera wrote:
-> From: Sachin Kamat <sachin.kamat@linaro.org>
->=20
-> regs-serial.h only includes linux/serial_s3c.h. Include this
-> header directly in samsung.S to remove unnecessary platform
-> dependency.
->=20
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+On Mon, Dec 30, 2013 at 03:30:34PM +0530, Tushar Behera wrote:
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > ---
 
-If you're forwarding on a patch from someone else you need to add your
-Signed-off-by to it - that's important for the whole goal of tracking
-licensing.
+Acked-by: Mark Brown <broonie@linaro.org>
 
---dds9jO4idXToq0wP
+--pEX2GA8pip5RjAtK
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSwuTvAAoJELSic+t+oim9qYUP/1RNzBqScZlUrQuJJEYhkpbH
-074xAO6HlDIzJK8zgkbL9qLljZQHGsaf6yfkJ8WJDK7UV9UEebDWfV/kvWyIvHvb
-dKYlE5Z6IgOk8raf68DzpjN4sxwhToNyCRl1JuQs0aJ9/yQJHraJ3FA6X8KSPUoM
-YSJPbuMr0PkEF9QB7wZBDQF6OnQS/5HXmVNnFpvAvAm8JqtyftRCi7u1ujqxzhud
-6IYDjdM3ace3nCtzbOyhfHgJftl5hcCBYL4raUKcSn11Fagz83hKA6JNau/p0SfC
-YoWe8z34DVquQTbJxKq5atsfWgR6xK8lllNGwFmnxSgdkFA73NZ2D5Rv/bj85Nm+
-wQe6nm2vrLp3rN7QUYfRk3LxXqjTHWmYvO6VlizaZZAllWMilevQVwVxrubulA+K
-afQL01p4F2yu/kLd688fNPoOc290tqiM5KarjB6AkFmROr143skP5TcpdPC/1q0m
-9zUKr63WQxXI+6gFLJ5RuKsQ2Bkrjdz4kiH0I6x0K2mxdIdSS48zrqWU8WYmvNmx
-5f5u3iZf86eHMixO9ZUFQ1r9ymKueH25il7aw6R7LXhanF1UaMzhGYRkUIDjq0ry
-QPzW0tnmHOxDpLXmeP5CqimhIsWkyVqozODDLb3jsWjv8UC12IBHozfNVvgVJsE7
-WpV8vXNXohUOxgzWiN8q
-=q5hL
+iQIcBAEBAgAGBQJSwuUpAAoJELSic+t+oim912EP/jURTyXQO9HsKhLdmuCsKjXE
+rHDhCvY/JbG0A3YndzjZaiDxsk3KFHNMBoMbQnf0+uCe58ocLkmB8He/w6aLDq6u
+UQcgqyK8wyShglyZK8i0kbMjYj8fSUPm2tgNtO1duTdhKu/f/mvRMKXfo3GnjjKh
+swYbD2xIL3/bXcPQoDR84CbADN5+/aC3qMgTYYZ3ezFZPJgm6tOOeEtdDxU/vsy/
+WL+LmLOYgWc/ohfLhCR5kVUiPcNW1hCSfHqtcopQBOCSGhffKmqeaCdZnHhEolrr
+q5vaoOKWR3Wwm/mCZalbdd1sqcBQv5PEin1IV1U5JZiWVN4M/vrMcyTQL35vdt/r
+Kri6rUDha2OyI3geAvuHLRMAM8x2Zxt8n6t9onBBdXOzdvXxbif3syTpmlLl82rg
+av5+hGzPblOORy73HvTunpkl3UN8/FTnEQOoUYHZiJIi+pN+UCGXQuP8UgKz5ZF2
+NpEB2lymfq4PHAFJWgQcc4gcK2aA2QORMsxW3Sec+4kyQwfhGbB2Nlibw/SjObz/
+gWU5NwcyrqA/9dKR0WBiKyNzTVJfr0WCP6qS9Mj2kBongCVJW7QxFJ95ZILaAYFk
+7aPveTFfzBS8D8ixKPqTqMHsVflyCjKR4syWUQrpNMPaUqwxa5f/JBwpSL1EXauP
+455mD7YdbNYaldwOjlDJ
+=gFrh
 -----END PGP SIGNATURE-----
 
---dds9jO4idXToq0wP--
+--pEX2GA8pip5RjAtK--
