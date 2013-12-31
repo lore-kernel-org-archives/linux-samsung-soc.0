@@ -1,44 +1,56 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH Resend 1/1] clk: exynos5250: Add CLK_SET_RATE_PARENT flag
- to mout_apll
-Date: Tue, 31 Dec 2013 08:24:02 +0530
-Message-ID: <CAK9yfHxu0f-ZSkM76HWYOpRRXvzYR2Gu2zc3-sgzMPp+_1JvWQ@mail.gmail.com>
-References: <1387442019-2445-1-git-send-email-sachin.kamat@linaro.org>
-	<20131219193708.18119.53403@quantum>
-	<3616477.6ZBKa1KffA@amdc1227>
+Subject: Re: [PATCH 3/3] clk: exynos5250: register APLL rate table
+Date: Tue, 31 Dec 2013 08:46:14 +0530
+Message-ID: <CAK9yfHxRmiUmWjxZx2Uoy37uuYjw03Z2Y=SxaB17Uc-3j1CH_A@mail.gmail.com>
+References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
+	<1383905648-23733-3-git-send-email-sachin.kamat@linaro.org>
+	<1713728.JoffI8rva3@flatron>
+	<CAK9yfHwTgKW55-ChHNToLGZZ-frd4OJF5Zi5Djt5NzxhOZvcrg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:56410 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752559Ab3LaCyC (ORCPT
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:51348 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708Ab3LaDQO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Dec 2013 21:54:02 -0500
-Received: by mail-oa0-f41.google.com with SMTP id j17so12771093oag.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2013 18:54:02 -0800 (PST)
-In-Reply-To: <3616477.6ZBKa1KffA@amdc1227>
+	Mon, 30 Dec 2013 22:16:14 -0500
+Received: by mail-oa0-f45.google.com with SMTP id o6so12776064oag.32
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2013 19:16:14 -0800 (PST)
+In-Reply-To: <CAK9yfHwTgKW55-ChHNToLGZZ-frd4OJF5Zi5Djt5NzxhOZvcrg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
 
-On 30 December 2013 23:21, Tomasz Figa <t.figa@samsung.com> wrote:
-> On Thursday 19 of December 2013 11:37:08 Mike Turquette wrote:
->> Quoting Sachin Kamat (2013-12-19 00:33:39)
->> > Add CLK_SET_RATE_PARENT flag to mout_apll clock. This will let us set the
->> > clock rate in the cpufreq driver.
->> >
->> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->>
->> Ack.
+On 19 December 2013 09:14, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Tomasz,
 >
-> Applied onto next branch.
+> On 10 November 2013 22:44, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Sachin, Andrew,
+>>
+>> On Friday 08 of November 2013 15:44:08 Sachin Kamat wrote:
+>>> From: Andrew Bresticker <abrestic@chromium.org>
+>>>
+>>> Register the APLL rate table so that we can set the APLL rate from
+>>> the cpufreq driver.
+>>>
+>>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>> ---
+>>>  drivers/clk/samsung/clk-exynos5250.c |   25 ++++++++++++++++++++++++-
+>>>  1 file changed, 24 insertions(+), 1 deletion(-)
+>>
+>> You know that you still need to fix the cpufreq driver to use these,
+>> don't you? Anyway:
+>>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>
+> This one too needs to be applied to your tree.
 
-Thanks Tomasz. But did not find this branch in your tree [1].
-Also, please consider adding your tree to linux-next.
+Ping Tomasz.
 
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git
 
----
+
+-- 
 With warm regards,
 Sachin
