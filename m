@@ -1,78 +1,74 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] mtd: s3c2410: Move plat/regs-nand.h to drivers/mtd
-Date: Tue, 31 Dec 2013 10:41:30 +0530
-Message-ID: <1388466690-16435-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ata: pata_samsung_cf: Move plat/regs-ata.h to drivers/ata
+Date: Tue, 31 Dec 2013 10:59:13 +0530
+Message-ID: <1388467753-24431-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:37951 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751152Ab3LaFPK (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:46463 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750746Ab3LaFcx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Dec 2013 00:15:10 -0500
-Received: by mail-pa0-f43.google.com with SMTP id bj1so12371955pad.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2013 21:15:09 -0800 (PST)
+	Tue, 31 Dec 2013 00:32:53 -0500
+Received: by mail-pa0-f52.google.com with SMTP id ld10so12394530pab.39
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2013 21:32:53 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mtd@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, computersforpeace@gmail.com, sachin.kamat@linaro.org, patches@linaro.org
+To: linux-ide@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tj@kernel.org, sachin.kamat@linaro.org, patches@linaro.org
 
-plat/regs-nand.h is used only by s3c2410 nand driver.
+plat/regs-ata.h is used only by Samsung PATA driver.
 Move this file to the drivers folder to remove platform
-dependency.
+dependency required for multiplatform support.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- drivers/mtd/nand/s3c2410.c                         |    2 +-
- .../plat/regs-nand.h => drivers/mtd/nand/s3c2410.h |   11 ++++-------
- 2 files changed, 5 insertions(+), 8 deletions(-)
- rename arch/arm/plat-samsung/include/plat/regs-nand.h => drivers/mtd/nand/s3c2410.h (96%)
+ drivers/ata/pata_samsung_cf.c                      |    2 +-
+ .../regs-ata.h => drivers/ata/pata_samsung_cf.h    |    9 ++++-----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/regs-ata.h => drivers/ata/pata_samsung_cf.h (91%)
 
-diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-index d65cbe903d40..83fb4feb7556 100644
---- a/drivers/mtd/nand/s3c2410.c
-+++ b/drivers/mtd/nand/s3c2410.c
-@@ -46,8 +46,8 @@
- #include <linux/mtd/nand_ecc.h>
- #include <linux/mtd/partitions.h>
+diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+index 898e544a7ae8..e04d70b7ce76 100644
+--- a/drivers/ata/pata_samsung_cf.c
++++ b/drivers/ata/pata_samsung_cf.c
+@@ -24,7 +24,7 @@
+ #include <linux/slab.h>
  
--#include <plat/regs-nand.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
-+#include "s3c2410.h"
+ #include <linux/platform_data/ata-samsung_cf.h>
+-#include <plat/regs-ata.h>
++#include "pata_samsung_cf.h"
  
- /* new oob placement block for use with hardware ecc generation
-  */
-diff --git a/arch/arm/plat-samsung/include/plat/regs-nand.h b/drivers/mtd/nand/s3c2410.h
-similarity index 96%
-rename from arch/arm/plat-samsung/include/plat/regs-nand.h
-rename to drivers/mtd/nand/s3c2410.h
-index 238efea7b9e4..f3b82d7053a0 100644
---- a/arch/arm/plat-samsung/include/plat/regs-nand.h
-+++ b/drivers/mtd/nand/s3c2410.h
+ #define DRV_NAME "pata_samsung_cf"
+ #define DRV_VERSION "0.1"
+diff --git a/arch/arm/plat-samsung/include/plat/regs-ata.h b/drivers/ata/pata_samsung_cf.h
+similarity index 91%
+rename from arch/arm/plat-samsung/include/plat/regs-ata.h
+rename to drivers/ata/pata_samsung_cf.h
+index f5df92fdae26..eeefe2e0cdc6 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-ata.h
++++ b/drivers/ata/pata_samsung_cf.h
 @@ -1,5 +1,4 @@
--/* arch/arm/mach-s3c2410/include/mach/regs-nand.h
+-/* linux/arch/arm/plat-samsung/include/plat/regs-ata.h
 - *
 +/*
-  * Copyright (c) 2004-2005 Simtec Electronics <linux@simtec.co.uk>
-  *	http://www.simtec.co.uk/products/SWLINUX/
+  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
   *
 @@ -10,8 +9,8 @@
-  * S3C2410 NAND register definitions
+  * published by the Free Software Foundation.
  */
  
--#ifndef __ASM_ARM_REGS_NAND
--#define __ASM_ARM_REGS_NAND
-+#ifndef __S3C2410_NAND_H
-+#define __S3C2410_NAND_H
+-#ifndef __ASM_PLAT_REGS_ATA_H
+-#define __ASM_PLAT_REGS_ATA_H __FILE__
++#ifndef __PATA_SAMSUNG_CF_H
++#define __PATA_SAMSUNG_CF_H
  
+ #define S3C_CFATA_REG(x)	(x)
  
- #define S3C2410_NFREG(x) (x)
-@@ -117,7 +116,5 @@
- #define S3C2412_NFECCERR_MULTIBIT	(2)
- #define S3C2412_NFECCERR_ECCAREA	(3)
+@@ -53,4 +52,4 @@
+ #define S3C_ATA_CFG_SWAP	0x40
+ #define S3C_ATA_CFG_IORDYEN	0x02
  
--
--
--#endif /* __ASM_ARM_REGS_NAND */
-+#endif /* __S3C2410_NAND_H */
- 
+-#endif /* __ASM_PLAT_REGS_ATA_H */
++#endif /* __PATA_SAMSUNG_CF_H */
 -- 
 1.7.9.5
