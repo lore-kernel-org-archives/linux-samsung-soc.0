@@ -1,57 +1,77 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RESEND 1/4] clk: clk-s2mps11: Refactor for including
- support for other MFD clocks
-Date: Tue, 31 Dec 2013 16:09:16 +0000
-Message-ID: <20131231160916.GG31886@sirena.org.uk>
-References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
- <1388053141-30085-1-git-send-email-tushar.behera@linaro.org>
- <1388053141-30085-2-git-send-email-tushar.behera@linaro.org>
- <20131229221723.12054.40917@quantum>
- <CAHbNUh0tJHXv52bA9hBDZMH0Pi+x9uC=LojcvgS=ONnCgEmVTA@mail.gmail.com>
+Subject: Re: [GIT PULL 2nd 3/5] Samsung defconfig update for v3.14
+Date: Tue, 31 Dec 2013 16:17:43 +0000
+Message-ID: <20131231161743.GH31886@sirena.org.uk>
+References: <52B5DCAB.204@samsung.com>
+ <20131228231531.GB22753@quad.lixom.net>
+ <CAOesGMj38JPgFic+ByShH3nHXWe0j=rzcdQzEiTGJ18OKfR6zw@mail.gmail.com>
+ <CAOesGMh-ptLF_fvJ2X_7_WZVnB3oUkO2QUPxPENb4e+aDUb6iQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nkinyqrdwMuqz198"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="GH2w3bbsGmSMo31z"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52157 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753749Ab3LaQSR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 31 Dec 2013 11:18:17 -0500
 Content-Disposition: inline
-In-Reply-To: <CAHbNUh0tJHXv52bA9hBDZMH0Pi+x9uC=LojcvgS=ONnCgEmVTA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>, lkml <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>
+In-Reply-To: <CAOesGMh-ptLF_fvJ2X_7_WZVnB3oUkO2QUPxPENb4e+aDUb6iQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
 
---nkinyqrdwMuqz198
+--GH2w3bbsGmSMo31z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Dec 30, 2013 at 09:33:50AM +0530, Tushar Behera wrote:
+On Sat, Dec 28, 2013 at 07:48:26PM -0800, Olof Johansson wrote:
+> On Sat, Dec 28, 2013 at 7:44 PM, Olof Johansson <olof@lixom.net> wrote:
 
-> Commit 1b1ccee1e821 "mfd: s2mps11: Fix build after regmap field rename
-> in sec-core.c" is also touching this file, which is in Mark's tree
-> right now. If I rebase
+> > The regulator driver causes build breaks. Really, nobody checks these
+> > things before sending patches or merge requests?
 
-It's been in Linus' tree for a while now.
+> > Having exynos_defconfig broken in arm-soc isn't an alternative. So I
+> > dropped this branch again. If the regulator driver gets fixed in -rc
+> > then we can probably merge it before the merge window, otherwise we'll
+> > have to merge the defconfig change after the regulator fix goes in for
+> > the 3.14 merge window.
 
---nkinyqrdwMuqz198
+> Ah, I guess the fix went in after -rc4, which is the latest -rc that
+> we have in for-next today. I'll bring for-next forward and merge this
+> in.
+
+> Still, it's odd that you were able to test your branch before sending it in.
+
+The build breakage was only introduced in -rc4 - a MFD/RTC change went
+in via Andrew's tree so it got no exposure in -next before it showed up
+in Linus' tree which wasn't good.  The fix was in by -rc5, looking at
+the date on the pull request I expect that any testing against -next (as
+opposed to arm-soc) would've been OK and since the branch is based on
+-rc1 it'd have tested out by itself as well.
+
+--GH2w3bbsGmSMo31z
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSwuwpAAoJELSic+t+oim9XuQQAInHRRJf0L8pTVXq5Oy8bIAt
-/ErX7ZJdqEH4pQASFZjYFg4RYR1zncbdzOLbto0f3OseBflj85R53EUWv/G0ERjD
-o6cAj+CdisQC4G6FxfczXE5rDznOxPXPl8VJkfmZfjNKFi29TVItLzS27LR7+h4S
-/lJ0+ZtR0Dzi8lx1hmnoY5DToUB/pC27OR8qXnsOc489fKG2V35TaK5slN6oSDd/
-7ZiFKDO5FlbYVcOxREIPuILpIu16sN9HJOpKlW6YdJhbR0SFbc4EAn2HIX0C4AzG
-vIVPDer9+vYUkj70tyM5lMEcC/T8WlgaIgJUYwjs1y1oRVHzT6PBIc5PIr3w3RZt
-MutN8BfxN21QORvL9VIMrBBdVEXjMobPnFwlvb/2sEDwa7kpbCbQXQiGN+NCb4yC
-WOE8sRY8HDDn2/gV32hIDqNJ+InZapFPu+bgc/lYIEZemjtkTmck6cpDJ52orrQQ
-CY2Qmk+AsYG6egyOA82Wd3pCRBkzZPGGIxGZT6Hvdh7VLh1YNgvAU4siTj+NsXgF
-1SQChOP551+FKEnloU+w6og1iiDrmqvhxaVfVs7XKVv286FpsWiXXu4Qk7dNvXQm
-ILTAiWp8PNK2K3muC+/k/6+/OcGx0UGysKdaFFt36D1MTyX+BnzN2TPpl2aTvNGZ
-xmXCnf6s3JdrFRZrNzWU
-=6ur0
+iQIcBAEBAgAGBQJSwu4kAAoJELSic+t+oim9ZE0P/0x5jE60RIlBGENSJzXZAV3h
+7AVdjujomJtMvAK2VvHkqZGhk5ZJemYb7FvV+AdRJ/UMdPAhF59FznsdQ9xVxic2
+e76Q0YC9BpS8cfg9OyPt+Hvd3kHXrewZXEejEqXrQx+fJD6jT+UxGC9XKyw383il
+QRk983+wj5Tl6/+xhrMbtHDtOHBg8IgMQLeWgGHZv5Et8+zhctItPg1vgo0GDyqC
+l1YcN88jag4+b1QU0we7WU6kgBGPeKMyy69PetzezyBYj65L8UesqevIL7GPrsJd
+rQu1o9hyXn+z6pk5Z54wWvZtYn+qx32LvXBfaJFs1d1ngdlP9MR2BeKPBUDle8tj
+kFJIMQ11yKq9E9ZIGI2AfKJg6sWOo1e9b87hhaAQwJLZFPqBPAI3lCCjMT+R9Q8r
+wjYyg70XsHIQaQSSZQTEy4n3ybi+BhooaRnTT1H94FTszzan81nGp67WLnMNuXTW
+CiR8n73xkhQVjAcfyjoyRRSu/zT/BnFl4tkSOx6RfC4mI7waeWrpoM/TCKIVzGV9
+hKFtmOcuYlOK94TTGNr5lcJUDuwUjIx1Bn9sD+Sz8Ko8TvJ1PMtwt5nFby6ztyrJ
+dDh0+M+60Qbs1Jgyj6661EmB6nZDrUWwKIXXrT3xb+T15luQyH2twOGhOShDnuT3
+jaJsMfo6Oy3uglY6fRuM
+=Jq9X
 -----END PGP SIGNATURE-----
 
---nkinyqrdwMuqz198--
+--GH2w3bbsGmSMo31z--
