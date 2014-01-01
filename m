@@ -1,29 +1,61 @@
-From: m silverstri <michael.j.silverstri@gmail.com>
-Subject: Looking for example to use samsung jpeg v4l2 mem2mem driver
-Date: Tue, 31 Dec 2013 15:39:34 -0800
-Message-ID: <CABMudhTUQ1mBLTHnm50dWrZaOhRciTc8J_jET1xLho8pm8iC7Q@mail.gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/3] ARM: S3C24XX: convert s3c2412 to common clock framework
+Date: Wed, 01 Jan 2014 14:41:54 +0100
+Message-ID: <1418190.fUL06mDNi6@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:51350 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756560Ab3LaXjf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Dec 2013 18:39:35 -0500
-Received: by mail-ob0-f170.google.com with SMTP id wp18so13314078obc.29
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Dec 2013 15:39:34 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-Hi,
+This series concludes the move of s3c24xx to the common clock framework
+by converting the only remaining cpu-type s3c2412/s3c2413.
 
-I am looking for an example which uses samsung jpeg v4l2 mem2mem driver.
-For example the 'Exynos4 JPEG codec v4l2 driver' described here
-http://lwn.net/Articles/468547
+The plls are the same as on the s3c2440/s3c2442 so no new types need to
+be introduced.
 
+As before the conversion is done by a mix of datasheet data and the
+pre-existing clock code and as this time I have no hardware of this type,
+it is compile-tested only. So hopefully somebody with s3c2412 hw
+will be able to test it for real.
 
-I am new to linux v4l2 driver. I am looking for example to pass an
-input image to hardware accelerated encoder/decoder.
+The only thing left now is to grab a broom and remove the now unused
+remnants of the legacy clock from s3c24xx.
 
-Thank you.
+Heiko Stuebner (3):
+  dt-bindings: add documentation for s3c2412 clock controller
+  clk: samsung: add clock controller driver for s3c2412
+  ARM: S3C24XX: convert s3c2412 to common clock framework
+
+ .../bindings/clock/samsung,s3c2412-clock.txt       |   51 ++
+ arch/arm/mach-s3c24xx/Kconfig                      |    8 +-
+ arch/arm/mach-s3c24xx/Makefile                     |    2 +-
+ arch/arm/mach-s3c24xx/clock-s3c2412.c              |  761 --------------------
+ arch/arm/mach-s3c24xx/common.c                     |    9 +-
+ arch/arm/mach-s3c24xx/common.h                     |    4 +
+ arch/arm/mach-s3c24xx/mach-jive.c                  |    9 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c              |    9 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c                 |    9 +-
+ arch/arm/mach-s3c24xx/s3c2412.c                    |   43 --
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-s3c2412.c                  |  221 ++++++
+ include/dt-bindings/clock/samsung,s3c2412-clock.h  |   73 ++
+ 13 files changed, 386 insertions(+), 814 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2412-clock.txt
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2412.c
+ create mode 100644 drivers/clk/samsung/clk-s3c2412.c
+ create mode 100644 include/dt-bindings/clock/samsung,s3c2412-clock.h
+
+-- 
+1.7.10.4
