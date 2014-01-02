@@ -1,102 +1,221 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [GIT PULL] Samsung Clock fixes for v3.13
-Date: Thu, 02 Jan 2014 17:14:41 +0100
-Message-ID: <3900474.uee5rn6pUr@amdc1227>
+From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v5 0/9] phy: Add new Exynos USB 2.0 PHY driver
+Date: Thu, 02 Jan 2014 17:20:12 +0100
+Message-ID: <02e201cf07d6$84110f20$8c332d60$%debski@samsung.com>
+References: <1387545857-9472-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:35626 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751372AbaABQOp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jan 2014 11:14:45 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MYS00FMR7SJNS70@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Jan 2014 16:14:43 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1387545857-9472-1-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-language: pl
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Kamil Debski' <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: mturquette@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Mike,
+Hi Kishon,
 
-Please consider the following Samsung Clock fixes for v3.13.
+I wanted to ask about your comments to this patchset. As I mentioned 
+there are two alternative version where the Exynos 4210 and 4212
+support is merged in one file.
 
-The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+I would be grateful if you had some time to look at the patchset
+and share your comments.
 
-  Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+Best wishes and happy new year!
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/samsung-clk-fixes
+> From: Kamil Debski [mailto:k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> Sent: Friday, December 20, 2013 2:24 PM
+> 
+> Hi,
+> 
+> This is the fifth version of the patchset. It adds a new Exynos USB 2.0
+> PHY driver. The driver uses the Generic PHY Framework.
+> 
+> I would like to thank everyone who contributed with comments and took
+> the time to read through the patches in the previous versions of this
+> patchset.
+> We had a lengthy discussion with Kishon about how the driver should
+> look like.
+> This patchset contains the updated version of my original idea, where
+> support for Exynos 4210 and 4212 is done in separate files. Kishon's
+> idea is to join these two into a single file. I have prepared two
+> alternative version which I will send soon after this patchset.
+> 
+> Just like the fourth version this patch depends on:
+> [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+> exynos5420 dtsi files [1].
+> 
+> Best wishes,
+> Kamil Debski
+> 
+> [1] - http://www.spinics.net/lists/linux-samsung-soc/msg24528.html
+> 
+> ----------------
+> Changes from v4:
+> 1) phy: core: Add an exported of_phy_get function
+> - the new exported function of_phy_get was changed to take the phy's
+> name as a
+>   parameter instead of the index
+> 2) phy: core: Add devm_of_phy_get to phy-core
+> - fixes made in the comments to devm_of_phy_get
+> 3) phy: Add new Exynos USB PHY driver
+> - move the documentation from a new to an existing file - samsung-
+> phy.txt
+> - fix typos and uppercase hex addresses
+> - add more explanations to Kconfig (checkpatch still complains, but I
+> find it
+>   hard to think what else could I add)
+> - add selects MFD_SYSCON as the driver needs it (Thank you, Tobias!)
+> - cleanup included headers in both *.c and .h files
+> - use BIT(x) macro instead of (1 << x)
+> - replaced HOST and DEV with PHY0 and PHY1 in phy-exynos4212-usb2.c,
+> the
+>   registers are described as PHYx in the documentation hence the
+> decision to
+>   leave the PHYx naming
+> - fixed typo in exynos4210_rate_to_clk reg -> *reg
+> - change hax_mode_switch and enabled type to bool
+> 4) usb: ehci-s5p: Change to use phy provided by the generic phy
+> framework
+> - Put the issue of phy->otg in order - since the new phy driver does
+> not provide
+>   this field. With the new driver the switch between host and device is
+> done in
+>   power_on of the respective host and device phys.
+> 5) usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
+> phy
+>    framework
+> - fixed the example in the documentation
+> 6) phy: Add support for S5PV210 to the Exynos USB PHY driver
+> - include files cleanup
+> - use BIT(x) macro instead of (1 << x)
+> 7) phy: Add Exynos 5250 support to the Exynos USB 2.0 PHY driver
+> - include files cleanup
+> - use BIT(x) macro instead of (1 << x)
+> 8) dts: Add usb2phy to Exynos 4
+> - no changes
+> 9) dts: Add usb2phy to Exynos 5250
+> - no changes
+> 
+> ----------------
+> Changes from v3:
+> - using PMU and system registers indirectly via syscon
+> - change labelling
+> - change Kconfig name
+> - fixed typos/stray whitespace
+> - move of_phy_provider_register() to the end of probe
+> - add a regular error return code to the rate_to_clk functions
+> - cleanup code and remove unused code
+> - change struct names to avoid collisions
+> - add mechanism to support multiple phys by the ehci driver
+> 
+> ----------------
+> Changes from v2:
+> - rebase all patches to the usb-next branch
+> - fixes in the documentation file
+>   - remove wrong entries in the phy node (ranges, and #address- &
+> #size-cells)
+>   - add clocks and clock-names as required properites
+>   - rephrase a few sentences
+> - fixes in the ehci-exynos.c file
+>   - move phy_name variable next to phy in exynos_ehci_hcd
+>   - remove otg from exynos_ehci_hcd as it was no longer used
+>   - move devm_phy_get after the Exynos5440 skip_phy check
+> - fixes in the s3c-hsotg.c file
+>   - cosmetic fixes (remove empty line that was wrongfully added)
+> - fixes in the main driver
+>   - remove cpu_type in favour for a boolean flag matched with the
+> compatible
+>     value
+>   - rename files, structures, variables and Kconfig entires - change
+> from simple
+>     "uphy" to "usb2_phy"
+>   - fix multiline comments style
+>   - simplify #ifdefs in of_device_id
+>   - fix Kconfig description
+>   - change dev_info to dev_dbg where reasonable
+>   - cosmetic changes (remove wrongful blank lines)
+>   - remove unnecessary reference counting
+> 
+> ----------------
+> Changes from v1:
+> - the changes include minor fixes of the hardware initialization of the
+> PHY
+>   module
+> - some other minor fixes were introduced
+> 
+> ----------------------
+> Original cover letter:
+> 
+> Hi,
+> 
+> This patch adds a new drive for USB PHYs for Samsung SoCs. The driver
+> is using the Generic PHY Framework created by Kishon Vijay Abrahan I.
+> It can be found here https://lkml.org/lkml/2013/8/21/29. This patch
+> adds support to Exynos4 family of SoCs. Support for Exynos3 and Exynos5
+> is planned to be added in the near future.
+> 
+> I welcome your comments.
+> 
+> ----------------------
+> 
+> [1] https://lkml.org/lkml/2013/8/21/29
+> 
+> Kamil Debski (8):
+>   phy: core: Add an exported of_phy_get function
+>   phy: core: Add devm_of_phy_get to phy-core
+>   phy: Add new Exynos USB PHY driver
+>   usb: ehci-s5p: Change to use phy provided by the generic phy
+>     framework
+>   usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
+>     phy framework
+>   phy: Add Exynos 5250 support to the Exynos USB 2.0 PHY driver
+>   dts: Add usb2phy to Exynos 4
+>   dts: Add usb2phy to Exynos 5250
+> 
+> Mateusz Krawczuk (1):
+>   phy: Add support for S5PV210 to the Exynos USB PHY driver
+> 
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |    2 +
+>  .../devicetree/bindings/phy/samsung-phy.txt        |   57 +++
+>  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 +
+>  Documentation/devicetree/bindings/usb/usb-ehci.txt |   35 ++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   31 ++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   17 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   17 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   33 +-
+>  drivers/phy/Kconfig                                |   50 +++
+>  drivers/phy/Makefile                               |    5 +
+>  drivers/phy/phy-core.c                             |   76 +++-
+>  drivers/phy/phy-exynos4210-usb2.c                  |  257
+> +++++++++++++
+>  drivers/phy/phy-exynos4212-usb2.c                  |  306
+> +++++++++++++++
+>  drivers/phy/phy-exynos5250-usb2.c                  |  406
+> ++++++++++++++++++++
+>  drivers/phy/phy-s5pv210-usb2.c                     |  199 ++++++++++
+>  drivers/phy/phy-samsung-usb2.c                     |  238 ++++++++++++
+>  drivers/phy/phy-samsung-usb2.h                     |   69 ++++
+>  drivers/usb/gadget/s3c-hsotg.c                     |   11 +-
+>  drivers/usb/host/ehci-exynos.c                     |   97 +++--
+>  include/linux/phy/phy.h                            |    3 +
+>  20 files changed, 1853 insertions(+), 60 deletions(-)  create mode
+> 100644 drivers/phy/phy-exynos4210-usb2.c  create mode 100644
+> drivers/phy/phy-exynos4212-usb2.c  create mode 100644 drivers/phy/phy-
+> exynos5250-usb2.c  create mode 100644 drivers/phy/phy-s5pv210-usb2.c
+> create mode 100644 drivers/phy/phy-samsung-usb2.c  create mode 100644
+> drivers/phy/phy-samsung-usb2.h
+> 
+> --
+> 1.7.9.5
 
-for you to fetch changes up to 3fd68c99f3026f4fe3a1b7b6fb75e5638b2032fd:
-
-  clk: exynos: File scope reg_save array should depend on PM_SLEEP (2013-12-30 18:01:09 +0100)
-
-----------------------------------------------------------------
-Samsung Clock fixes for v3.13-rc7
-
-* Several patches fixing up incorrectly defined register addresses and
-  bitfield offsets that could lead to undefined operation when accessing
-  respective registers or bitfields.
-
- 1) clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
-
- 2a) clk: samsung: exynos5250: Fix ACP gate register offset
- 2b) clk: samsung: exynos5250: Add MDMA0 clocks
- 2c) ARM: dts: exynos5250: Fix MDMA0 clock number
-
- 3) clk: samsung: exynos4: Correct SRC_MFC register
-
-   All three issues have been present since Exynos5250 and Exynos4 clock
-   drivers were added by commits 6e3ad26816b72 ("clk: exynos5250:
-   register clocks using common clock framework") and e062b571777f5
-   ("clk: exynos4: register clocks using common clock framework")
-   respectively.
-
-* Patch to fix automatic disabling of Exynos5250 sysreg clock that could
-  cause undefined operation of several peripherals, such as USB, I2C,
-  MIPI or display block.
-
- 4) clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg
-    clock
-
-   Present since Exynos5250 clock drivers was added by commits
-   6e3ad26816b72 ("clk: exynos5250: register clocks using common clock
-   framework").
-
-* Patch fixing compilation warning in clk-exynos-audss driver when
-  CONFIG_PM_SLEEP is disabled.
-
- 5) clk: exynos: File scope reg_save array should depend on PM_SLEEP
-
-   Present since the driver was added by commit 1241ef94ccc3 ("clk:
-   samsung: register audio subsystem clocks using common clock
-   framework").
-
-----------------------------------------------------------------
-Abhilash Kesavan (4):
-      clk: samsung: exynos5250: Fix ACP gate register offset
-      clk: samsung: exynos5250: Add MDMA0 clocks
-      ARM: dts: exynos5250: Fix MDMA0 clock number
-      clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg clock
-
-Andrew Bresticker (1):
-      clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
-
-Krzysztof Kozlowski (1):
-      clk: exynos: File scope reg_save array should depend on PM_SLEEP
-
-Seung-Woo Kim (1):
-      clk: samsung: exynos4: Correct SRC_MFC register
-
- .../devicetree/bindings/clock/exynos5250-clock.txt         |  2 ++
- arch/arm/boot/dts/exynos5250.dtsi                          |  2 +-
- drivers/clk/samsung/clk-exynos-audss.c                     | 10 +++++-----
- drivers/clk/samsung/clk-exynos4.c                          |  2 +-
- drivers/clk/samsung/clk-exynos5250.c                       | 14 +++++++++-----
- 5 files changed, 18 insertions(+), 12 deletions(-)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
