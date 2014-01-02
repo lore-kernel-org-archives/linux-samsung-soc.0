@@ -1,42 +1,29 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v5 0/9] phy: Add new Exynos USB 2.0 PHY driver
-Date: Thu, 2 Jan 2014 22:01:14 +0530
-Message-ID: <52C59452.4010405@ti.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com> <02e201cf07d6$84110f20$8c332d60$%debski@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: add clock provider for mshc in Exynos4412
+Date: Thu, 02 Jan 2014 17:48:28 +0100
+Message-ID: <27795108.u6MRg8vUSW@amdc1227>
+References: <1388679706-29265-1-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:60136 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751136AbaABQbg (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:36635 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750917AbaABQsc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jan 2014 11:31:36 -0500
-In-Reply-To: <02e201cf07d6$84110f20$8c332d60$%debski@samsung.com>
+	Thu, 2 Jan 2014 11:48:32 -0500
+In-reply-to: <1388679706-29265-1-git-send-email-tobetter@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, p.paneri@samsung.com, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kamil,
+Hi Dongjin,
 
-On Thursday 02 January 2014 09:50 PM, Kamil Debski wrote:
-> Hi Kishon,
->
-> I wanted to ask about your comments to this patchset. As I mentioned
-> there are two alternative version where the Exynos 4210 and 4212
-> support is merged in one file.
->
-> I would be grateful if you had some time to look at the patchset
-> and share your comments.
->
-> Best wishes and happy new year!
+On Friday 03 of January 2014 01:21:46 Dongjin Kim wrote:
+> Add clock lookup information for mshc in Exynos4412.
 
-Thanks for doing that :-). I'll review your patches once I'm back to 
-work on Monday.
+Thanks for the patch. However this is already fixed in linux-next.
 
-Wish you also a happy new year :-)
-
-Cheers
-Kishon
->
+Best regards,
+Tomasz
