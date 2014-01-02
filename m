@@ -1,340 +1,784 @@
 From: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Subject: Re: [PATCH v3 4/6] exynos4-is: Add clock provider for the external
- clocks
-Date: Thu, 02 Jan 2014 17:58:56 -0200
-Message-ID: <20140102175856.36f57ffb@samsung.com>
-References: <1382033211-32329-1-git-send-email-s.nawrocki@samsung.com>
- <1382033211-32329-5-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 1/4] [media] exynos-scaler: Add new driver for Exynos5
+ SCALER
+Date: Thu, 02 Jan 2014 18:18:52 -0200
+Message-ID: <20140102181852.4d0e279c@samsung.com>
+References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
+ <1380889594-10448-2-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w2.samsung.com ([211.189.100.11]:18512 "EHLO
-	usmailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136AbaABT7D (ORCPT
+Received: from mailout4.w2.samsung.com ([211.189.100.14]:23905 "EHLO
+	usmailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136AbaABUTA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jan 2014 14:59:03 -0500
-In-reply-to: <1382033211-32329-5-git-send-email-s.nawrocki@samsung.com>
+	Thu, 2 Jan 2014 15:19:00 -0500
+In-reply-to: <1380889594-10448-2-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl
 
-Em Thu, 17 Oct 2013 20:06:49 +0200
-Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
+Em Fri,  4 Oct 2013 17:56:31 +0530
+Shaik Ameer Basha <shaik.ameer@samsung.com> escreveu:
 
-> This patch adds clock provider to expose the sclk_cam0/1 clocks
-> for external image sensor devices.
+> This patch adds support for SCALER device which is a new device
+> for scaling, blending, color fill  and color space conversion
+> on EXYNOS5410 and EXYNOS5420 SoCs.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> Changes since v2:
->  - use 'camera' DT node drirectly as clock provider node, rather than
->   creating additional clock-controller child node.
-> ---
->  .../devicetree/bindings/media/samsung-fimc.txt     |   15 ++-
->  drivers/media/platform/exynos4-is/media-dev.c      |  108 ++++++++++++++++++++
->  drivers/media/platform/exynos4-is/media-dev.h      |   18 +++-
->  3 files changed, 137 insertions(+), 4 deletions(-)
+> This device supports the followings as key feature.
+>     input image format
+>         - YCbCr420 2P(UV/VU), 3P
+>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>         - YCbCr444 2P(UV,VU), 3P
+>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>         - Pre-multiplexed ARGB8888, L8A8 and L8
+>     output image format
+>         - YCbCr420 2P(UV/VU), 3P
+>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>         - YCbCr444 2P(UV,VU), 3P
+>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>         - Pre-multiplexed ARGB8888
+>     input rotation
+>         - 0/90/180/270 degree, X/Y/XY Flip
+>     scale ratio
+>         - 1/4 scale down to 16 scale up
+>     color space conversion
+>         - RGB to YUV / YUV to RGB
+>     Size - Exynos5420
+>         - Input : 16x16 to 8192x8192
+>         - Output:   4x4 to 8192x8192
+>     Size - Exynos5410
+>         - Input/Output: 4x4 to 4096x4096
+>     alpha blending, color fill
 > 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> index 96312f6..968e065 100644
-> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> @@ -32,6 +32,15 @@ way around.
->  
->  The 'camera' node must include at least one 'fimc' child node.
->  
-> +Optional properties:
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> ---
+>  drivers/media/platform/exynos-scaler/scaler-regs.c |  336 ++++++++++++++++++++
+>  drivers/media/platform/exynos-scaler/scaler-regs.h |  331 +++++++++++++++++++
+>  2 files changed, 667 insertions(+)
+>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.c
+>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.h
+> 
+> diff --git a/drivers/media/platform/exynos-scaler/scaler-regs.c b/drivers/media/platform/exynos-scaler/scaler-regs.c
+> new file mode 100644
+> index 0000000..ae4a548
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos-scaler/scaler-regs.c
+> @@ -0,0 +1,336 @@
+> +/*
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Samsung EXYNOS5 SoC series SCALER driver
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
 > +
-> +- #clock-cells: from the common clock bindings (../clock/clock-bindings.txt),
-> +  must be 1. A clock provider is associated with the camera node and it should
-> +  be referenced by external sensors that use clocks provided by the SoC on
-> +  CAM_*_CLKOUT pins. The second cell of the clock specifier is a clock's index.
-> +  The indexes are 0, 1 for CAM_A_CLKOUT, CAM_B_CLKOUT clocks respectively.
+> +#include <linux/delay.h>
+> +#include <linux/platform_device.h>
 > +
+> +#include "scaler-regs.h"
 > +
->  'fimc' device nodes
->  -------------------
->  
-> @@ -114,7 +123,7 @@ Example:
->  			vddio-supply = <...>;
->  
->  			clock-frequency = <24000000>;
-> -			clocks = <...>;
-> +			clocks = <&camera 1>;
->  			clock-names = "mclk";
->  
->  			port {
-> @@ -135,7 +144,7 @@ Example:
->  			vddio-supply = <...>;
->  
->  			clock-frequency = <24000000>;
-> -			clocks = <...>;
-> +			clocks = <&camera 0>;
->  			clock-names = "mclk";
->  
->  			port {
-> @@ -151,8 +160,8 @@ Example:
->  		compatible = "samsung,fimc", "simple-bus";
->  		#address-cells = <1>;
->  		#size-cells = <1>;
-> +		#clock-cells = <1>;
->  		status = "okay";
-> -
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&cam_port_a_clk_active>;
-
-I didn't see the above on the patch series you sent me on your git pull
-request. Where is it?
-
->  
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index a835112..d78e3da 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -11,6 +11,8 @@
->   */
->  
->  #include <linux/bug.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/errno.h>
->  #include <linux/i2c.h>
-> @@ -1437,6 +1439,101 @@ static int fimc_md_get_pinctrl(struct fimc_md *fmd)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_OF
-> +static int cam_clk_prepare(struct clk_hw *hw)
+> +/* Scaler reset timeout in milliseconds */
+> +#define SCALER_RESET_TIMEOUT	50
+> +
+> +void scaler_hw_set_sw_reset(struct scaler_dev *dev)
 > +{
-> +	struct cam_clk *camclk = to_cam_clk(hw);
-> +	int ret;
+> +	u32 cfg;
 > +
-> +	if (camclk->fmd->pmf == NULL)
-> +		return -ENODEV;
+> +	cfg = scaler_read(dev, SCALER_CFG);
+> +	cfg |= SCALER_CFG_SOFT_RESET;
 > +
-> +	ret = pm_runtime_get_sync(camclk->fmd->pmf);
-> +	return ret < 0 ? ret : 0;
+> +	scaler_write(dev, SCALER_CFG, cfg);
 > +}
 > +
-> +static void cam_clk_unprepare(struct clk_hw *hw)
+> +int scaler_wait_reset(struct scaler_dev *dev)
 > +{
-> +	struct cam_clk *camclk = to_cam_clk(hw);
+> +	unsigned long end = jiffies + msecs_to_jiffies(SCALER_RESET_TIMEOUT);
+> +	u32 cfg, reset_done = 0;
 > +
-> +	if (camclk->fmd->pmf == NULL)
+> +	while (time_before(jiffies, end)) {
+> +		cfg = scaler_read(dev, SCALER_CFG);
+> +		if (!(cfg & SCALER_CFG_SOFT_RESET)) {
+> +			reset_done = 1;
+> +			break;
+> +		}
+> +		usleep_range(10, 20);
+
+Hmm... that doesn't seem right... the timeout can take up to 50,000 us, and
+you're sleeping from 10 to 20us... that means that this loop can have up to
+5000 interactions... It seems that you're wasting power here without need.
+
+I suspect that you should consider sleeping for a longer time here.
+
+Btw, instead of using time_before(jiffies, end), you could do:
+	time_is_after_jiffies(end)
+
+As, from jiffies.h:
+	/* time_is_after_jiffies(a) return true if a is after jiffies */
+	#define time_is_after_jiffies(a) time_before(jiffies, a)
+
+> +	}
+> +
+> +	/*
+> +	 * Write any value to read/write register and read it back.
+> +	 * If the written and read value matches, then the reset process is
+> +	 * succeeded.
+> +	 */
+> +	while (reset_done) {
+
+This is tricky. If the reset fail, it will return busy. Otherwise, it
+can loop forever here. Worse than that, you're don't even sleeping
+before retries, again wasting power.
+
+Why don't you just change it to something similar to:
+
+	if (!reset_done)
+		return -EBUSY;
+
+	end = jiffies + msecs_to_jiffies(SCALER_RESET_TIMEOUT);
+	while (time_is_after_jiffies(end)) {
+		scaler_write(dev, SCALER_CFG_SOFT_RESET_CHECK_REG,
+				SCALER_CFG_SOFT_RESET_CHECK_VAL);
+		if (SCALER_CFG_SOFT_RESET_CHECK_VAL ==
+			scaler_read(dev, SCALER_CFG_SOFT_RESET_CHECK_REG))
+			return 0;
+		msleep(10);
+	}
+
+> +
+> +		/*
+> +		 * TODO: need to define number of tries before returning
+> +		 * -EBUSY to the caller
+> +		 */
+> +
+> +		scaler_write(dev, SCALER_CFG_SOFT_RESET_CHECK_REG,
+> +				SCALER_CFG_SOFT_RESET_CHECK_VAL);
+> +		if (SCALER_CFG_SOFT_RESET_CHECK_VAL ==
+> +			scaler_read(dev, SCALER_CFG_SOFT_RESET_CHECK_REG))
+> +			return 0;
+> +	}
+> +
+> +	return -EBUSY;
+> +}
+> +
+> +void scaler_hw_set_irq(struct scaler_dev *dev, int irq_num, bool enable)
+> +{
+> +	u32 cfg;
+> +
+> +	if ((irq_num < SCALER_INT_FRAME_END) ||
+> +	    (irq_num > SCALER_INT_TIMEOUT))
 > +		return;
 > +
-> +	pm_runtime_put_sync(camclk->fmd->pmf);
+> +	cfg = scaler_read(dev, SCALER_INT_EN);
+> +	if (enable)
+> +		cfg |= (1 << irq_num);
+
+Why do you need parenthesis here?
+
+> +	else
+> +		cfg &= ~(1 << irq_num);
+
+
+> +	scaler_write(dev, SCALER_INT_EN, cfg);
 > +}
 > +
-> +static const struct clk_ops cam_clk_ops = {
-> +	.prepare = cam_clk_prepare,
-> +	.unprepare = cam_clk_unprepare,
-> +};
-> +
-> +static const char *cam_clk_p_names[] = { "sclk_cam0", "sclk_cam1" };
-> +
-> +static void fimc_md_unregister_clk_provider(struct fimc_md *fmd)
+> +void scaler_hw_set_input_addr(struct scaler_dev *dev, struct scaler_addr *addr)
 > +{
-> +	struct cam_clk_provider *cp = &fmd->clk_provider;
-> +	unsigned int i;
-> +
-> +	if (cp->of_node)
-> +		of_clk_del_provider(cp->of_node);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(cp->clks); i++)
-> +		if (!IS_ERR(cp->clks[i]))
-> +			clk_unregister(cp->clks[i]);
-
-Huh? Why to initialize an array with an error code??? Does it make sense to
-have one of the clocks with an error and the others ok, and to store the
-error code? The code below doesn't seem to allow that.
-
-Just initialize cp->clks with zero and test it with:
-
-	if (cp->clks[i])
-		clk_unregister(cp->clks[i]);
-
-That makes it easier to understand and review.
-
+> +	scaler_dbg(dev, "src_buf: 0x%x, cb: 0x%x, cr: 0x%x",
+> +				addr->y, addr->cb, addr->cr);
+> +	scaler_write(dev, SCALER_SRC_Y_BASE, addr->y);
+> +	scaler_write(dev, SCALER_SRC_CB_BASE, addr->cb);
+> +	scaler_write(dev, SCALER_SRC_CR_BASE, addr->cr);
 > +}
 > +
-> +static int fimc_md_register_clk_provider(struct fimc_md *fmd)
+> +void scaler_hw_set_output_addr(struct scaler_dev *dev,
+> +			     struct scaler_addr *addr)
 > +{
-> +	struct cam_clk_provider *cp = &fmd->clk_provider;
-> +	struct device *dev = &fmd->pdev->dev;
-> +	int i, ret;
+> +	scaler_dbg(dev, "dst_buf: 0x%x, cb: 0x%x, cr: 0x%x",
+> +			addr->y, addr->cb, addr->cr);
+> +	scaler_write(dev, SCALER_DST_Y_BASE, addr->y);
+> +	scaler_write(dev, SCALER_DST_CB_BASE, addr->cb);
+> +	scaler_write(dev, SCALER_DST_CR_BASE, addr->cr);
+> +}
 > +
-> +	for (i = 0; i < ARRAY_SIZE(cp->clks); i++)
-> +		cp->clks[i] = ERR_PTR(-EINVAL);
-
-That looks weird for me, due to several reasons:
-
-1) ARRAY_SIZE(cp->clks) is equal to FIMC_MAX_CAMCLKS. Why are you using
-different syntaxes on the first loop and on the next one? Just to loose
-more time from reviewers to double check what number is bigger?
-
-2) Why don't you just do:
-
-	memset(cp->clks, ARRAY_SIZE(cp->clks), 0).
-
-or initialize struct fimc_md with kzalloc()?
-
+> +void scaler_hw_set_in_size(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->s_frame;
+> +	u32 cfg;
 > +
-> +	for (i = 0; i < FIMC_MAX_CAMCLKS; i++) {
-> +		struct cam_clk *camclk = &cp->camclk[i];
-> +		struct clk_init_data init;
-> +		char clk_name[16];
-> +		struct clk *clk;
+> +	/* set input pixel offset */
+> +	cfg = (frame->selection.left & SCALER_SRC_YH_POS_MASK) <<
+> +				  SCALER_SRC_YH_POS_SHIFT;
+> +	cfg |= ((frame->selection.top & SCALER_SRC_YV_POS_MASK) <<
+> +				   SCALER_SRC_YV_POS_SHIFT);
+> +	scaler_write(dev, SCALER_SRC_Y_POS, cfg);
 > +
-> +		snprintf(clk_name, sizeof(clk_name), "cam_clkout%d", i);
+> +	/* TODO: calculate 'C' plane h/v offset using 'Y' plane h/v offset */
 > +
-> +		init.name = clk_name;
-> +		init.ops = &cam_clk_ops;
-> +		init.flags = CLK_SET_RATE_PARENT;
-> +		init.parent_names = &cam_clk_p_names[i];
-> +		init.num_parents = 1;
-> +		camclk->hw.init = &init;
-> +		camclk->fmd = fmd;
+> +	/* Set input span */
+> +	cfg = (frame->f_width & SCALER_SRC_Y_SPAN_MASK) <<
+> +				SCALER_SRC_Y_SPAN_SHIFT;
+> +	if (is_yuv420_2p(frame->fmt))
+> +		cfg |= ((frame->f_width & SCALER_SRC_C_SPAN_MASK) <<
+> +					  SCALER_SRC_C_SPAN_SHIFT);
+> +	else /* TODO: Verify */
+> +		cfg |= ((frame->f_width & SCALER_SRC_C_SPAN_MASK) <<
+> +					  SCALER_SRC_C_SPAN_SHIFT);
 > +
-> +		clk = clk_register(dev, &camclk->hw);
-> +		if (IS_ERR(clk)) {
-> +			dev_err(dev, "failed to register clock: %s (%ld)\n",
-> +						clk_name, PTR_ERR(clk));
-> +			ret = PTR_ERR(clk);
-> +			goto err;
+> +	scaler_write(dev, SCALER_SRC_SPAN, cfg);
+> +
+> +	/* Set input cropped size */
+> +	cfg = (frame->selection.width & SCALER_SRC_WIDTH_MASK) <<
+> +				   SCALER_SRC_WIDTH_SHIFT;
+> +	cfg |= ((frame->selection.height & SCALER_SRC_HEIGHT_MASK) <<
+> +				      SCALER_SRC_HEIGHT_SHIFT);
+> +	scaler_write(dev, SCALER_SRC_WH, cfg);
+> +
+> +	scaler_dbg(dev, "src: posx: %d, posY: %d, spanY: %d, spanC: %d, cropX: %d, cropY: %d\n",
+> +		frame->selection.left, frame->selection.top,
+> +		frame->f_width, frame->f_width, frame->selection.width,
+> +		frame->selection.height);
+> +}
+> +
+> +void scaler_hw_set_in_image_format(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->s_frame;
+> +	u32 cfg;
+> +
+> +	cfg = scaler_read(dev, SCALER_SRC_CFG);
+> +	cfg &= ~(SCALER_SRC_COLOR_FORMAT_MASK << SCALER_SRC_COLOR_FORMAT_SHIFT);
+> +	cfg |= ((frame->fmt->scaler_color & SCALER_SRC_COLOR_FORMAT_MASK) <<
+> +					   SCALER_SRC_COLOR_FORMAT_SHIFT);
+> +
+> +	/* Setting tiled/linear format */
+> +	if (is_tiled_fmt(frame->fmt))
+> +		cfg |= SCALER_SRC_TILE_EN;
+> +	else
+> +		cfg &= ~SCALER_SRC_TILE_EN;
+> +
+> +	scaler_write(dev, SCALER_SRC_CFG, cfg);
+> +}
+> +
+> +void scaler_hw_set_out_size(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->d_frame;
+> +	u32 cfg;
+> +
+> +	/* Set output pixel offset */
+> +	cfg = (frame->selection.left & SCALER_DST_H_POS_MASK) <<
+> +				  SCALER_DST_H_POS_SHIFT;
+> +	cfg |= (frame->selection.top & SCALER_DST_V_POS_MASK) <<
+> +				  SCALER_DST_V_POS_SHIFT;
+> +	scaler_write(dev, SCALER_DST_POS, cfg);
+> +
+> +	/* Set output span */
+> +	cfg = (frame->f_width & SCALER_DST_Y_SPAN_MASK) <<
+> +				SCALER_DST_Y_SPAN_SHIFT;
+> +	if (is_yuv420_2p(frame->fmt))
+> +		cfg |= (((frame->f_width / 2) & SCALER_DST_C_SPAN_MASK) <<
+> +					     SCALER_DST_C_SPAN_SHIFT);
+> +	else
+> +		cfg |= (((frame->f_width) & SCALER_DST_C_SPAN_MASK) <<
+> +					     SCALER_DST_C_SPAN_SHIFT);
+> +	scaler_write(dev, SCALER_DST_SPAN, cfg);
+> +
+> +	/* Set output scaled size */
+> +	cfg = (frame->selection.width & SCALER_DST_WIDTH_MASK) <<
+> +				   SCALER_DST_WIDTH_SHIFT;
+> +	cfg |= (frame->selection.height & SCALER_DST_HEIGHT_MASK) <<
+> +				     SCALER_DST_HEIGHT_SHIFT;
+> +	scaler_write(dev, SCALER_DST_WH, cfg);
+> +
+> +	scaler_dbg(dev, "dst: pos X: %d, pos Y: %d, span Y: %d, span C: %d, crop X: %d, crop Y: %d\n",
+> +		frame->selection.left, frame->selection.top,
+> +		frame->f_width, frame->f_width, frame->selection.width,
+> +		frame->selection.height);
+> +}
+> +
+> +void scaler_hw_set_out_image_format(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->d_frame;
+> +	u32 cfg;
+> +
+> +	cfg = scaler_read(dev, SCALER_DST_CFG);
+> +	cfg &= ~SCALER_DST_COLOR_FORMAT_MASK;
+> +	cfg |= (frame->fmt->scaler_color & SCALER_DST_COLOR_FORMAT_MASK);
+> +
+> +	scaler_write(dev, SCALER_DST_CFG, cfg);
+> +}
+> +
+> +void scaler_hw_set_scaler_ratio(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_scaler *sc = &ctx->scaler;
+> +	u32 cfg;
+> +
+> +	cfg = (sc->hratio & SCALER_H_RATIO_MASK) << SCALER_H_RATIO_SHIFT;
+> +	scaler_write(dev, SCALER_H_RATIO, cfg);
+> +
+> +	cfg = (sc->vratio & SCALER_V_RATIO_MASK) << SCALER_V_RATIO_SHIFT;
+> +	scaler_write(dev, SCALER_V_RATIO, cfg);
+> +}
+> +
+> +void scaler_hw_set_rotation(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	u32 cfg = 0;
+> +
+> +	cfg = ((ctx->ctrls_scaler.rotate->val / 90) & SCALER_ROTMODE_MASK) <<
+> +						      SCALER_ROTMODE_SHIFT;
+> +
+> +	if (ctx->ctrls_scaler.hflip->val)
+> +		cfg |= SCALER_FLIP_X_EN;
+> +
+> +	if (ctx->ctrls_scaler.vflip->val)
+> +		cfg |= SCALER_FLIP_Y_EN;
+> +
+> +	scaler_write(dev, SCALER_ROT_CFG, cfg);
+> +}
+> +
+> +void scaler_hw_set_csc_coeff(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	enum scaler_csc_coeff type;
+> +	u32 cfg = 0;
+> +	int i, j;
+> +	static const u32 csc_coeff[SCALER_CSC_COEFF_MAX][3][3] = {
+> +		{ /* YCbCr to RGB */
+> +			{0x254, 0x000, 0x331},
+> +			{0x254, 0xec8, 0xFA0},
+> +			{0x254, 0x409, 0x000}
+> +		},
+> +		{ /* RGB to YCbCr */
+> +			{0x084, 0x102, 0x032},
+> +			{0xe4c, 0xe95, 0x0e1},
+> +			{0x0e1, 0xebc, 0xe24}
+> +		} };
+> +
+> +	/* TODO: add check for BT.601,BT.709 narrow/wide ranges */
+> +	if (is_rgb(ctx->s_frame.fmt) == is_rgb(ctx->d_frame.fmt)) {
+> +		type = SCALER_CSC_COEFF_NONE;
+> +	} else if (is_rgb(ctx->d_frame.fmt)) {
+> +		type = SCALER_CSC_COEFF_YCBCR_TO_RGB;
+> +		scaler_hw_src_y_offset_en(ctx->scaler_dev, true);
+> +	} else {
+> +		type = SCALER_CSC_COEFF_RGB_TO_YCBCR;
+> +		scaler_hw_src_y_offset_en(ctx->scaler_dev, true);
+> +	}
+> +
+> +	if (type == ctx->scaler_dev->coeff_type || type >= SCALER_CSC_COEFF_MAX)
+> +		return;
+> +
+> +	for (i = 0; i < 3; i++) {
+> +		for (j = 0; j < 3; j++) {
+> +			cfg = csc_coeff[type][i][j];
+> +			scaler_write(dev, SCALER_CSC_COEF(i, j), cfg);
 > +		}
-> +		cp->clks[i] = clk;
 > +	}
 > +
-> +	cp->clk_data.clks = cp->clks;
-> +	cp->clk_data.clk_num = i;
-> +	cp->of_node = dev->of_node;
-> +
-> +	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
-> +				  &cp->clk_data);
-> +	if (!ret)
-> +		return 0;
-> +err:
-> +	fimc_md_unregister_clk_provider(fmd);
-> +	return ret;
+> +	ctx->scaler_dev->coeff_type = type;
 > +}
-> +#else
-> +#define fimc_md_register_clk_provider(fmd) (0)
-> +#define fimc_md_unregister_clk_provider(fmd) (0)
-> +#endif
 > +
->  static int fimc_md_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1464,16 +1561,24 @@ static int fimc_md_probe(struct platform_device *pdev)
->  
->  	fmd->use_isp = fimc_md_is_isp_available(dev->of_node);
->  
-> +	ret = fimc_md_register_clk_provider(fmd);
-> +	if (ret < 0) {
-> +		v4l2_err(v4l2_dev, "clock provider registration failed\n");
-> +		return ret;
-> +	}
+> +void scaler_hw_src_y_offset_en(struct scaler_dev *dev, bool on)
+> +{
+> +	u32 cfg;
 > +
->  	ret = v4l2_device_register(dev, &fmd->v4l2_dev);
->  	if (ret < 0) {
->  		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
->  		return ret;
->  	}
+> +	cfg = scaler_read(dev, SCALER_CFG);
+> +	if (on)
+> +		cfg |= SCALER_CFG_CSC_Y_OFFSET_SRC_EN;
+> +	else
+> +		cfg &= ~SCALER_CFG_CSC_Y_OFFSET_SRC_EN;
 > +
->  	ret = media_device_register(&fmd->media_dev);
->  	if (ret < 0) {
->  		v4l2_err(v4l2_dev, "Failed to register media device: %d\n", ret);
->  		goto err_md;
->  	}
+> +	scaler_write(dev, SCALER_CFG, cfg);
+> +}
 > +
->  	ret = fimc_md_get_clocks(fmd);
->  	if (ret)
->  		goto err_clk;
-> @@ -1507,6 +1612,7 @@ static int fimc_md_probe(struct platform_device *pdev)
->  	ret = fimc_md_create_links(fmd);
->  	if (ret)
->  		goto err_unlock;
+> +void scaler_hw_dst_y_offset_en(struct scaler_dev *dev, bool on)
+> +{
+> +	u32 cfg;
 > +
->  	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
->  	if (ret)
->  		goto err_unlock;
-> @@ -1527,6 +1633,7 @@ err_clk:
->  	media_device_unregister(&fmd->media_dev);
->  err_md:
->  	v4l2_device_unregister(&fmd->v4l2_dev);
-> +	fimc_md_unregister_clk_provider(fmd);
->  	return ret;
->  }
->  
-> @@ -1537,6 +1644,7 @@ static int fimc_md_remove(struct platform_device *pdev)
->  	if (!fmd)
->  		return 0;
->  
-> +	fimc_md_unregister_clk_provider(fmd);
->  	v4l2_device_unregister(&fmd->v4l2_dev);
->  	device_remove_file(&pdev->dev, &dev_attr_subdev_conf_mode);
->  	fimc_md_unregister_entities(fmd);
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-> index 62599fd..240ca71 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.h
-> +++ b/drivers/media/platform/exynos4-is/media-dev.h
-> @@ -10,6 +10,7 @@
->  #define FIMC_MDEVICE_H_
->  
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/platform_device.h>
->  #include <linux/mutex.h>
->  #include <linux/of.h>
-> @@ -89,6 +90,12 @@ struct fimc_sensor_info {
->  	struct fimc_dev *host;
->  };
->  
-> +struct cam_clk {
-> +	struct clk_hw hw;
-> +	struct fimc_md *fmd;
+> +	cfg = scaler_read(dev, SCALER_CFG);
+> +	if (on)
+> +		cfg |= SCALER_CFG_CSC_Y_OFFSET_DST_EN;
+> +	else
+> +		cfg &= ~SCALER_CFG_CSC_Y_OFFSET_DST_EN;
+> +
+> +	scaler_write(dev, SCALER_CFG, cfg);
+> +}
+> +
+> +void scaler_hw_enable_control(struct scaler_dev *dev, bool on)
+> +{
+> +	u32 cfg;
+> +
+> +	if (on)
+> +		scaler_write(dev, SCALER_INT_EN, 0xffffffff);
+> +
+> +	cfg = scaler_read(dev, SCALER_CFG);
+> +	cfg |= SCALER_CFG_16_BURST_MODE;
+> +	if (on)
+> +		cfg |= SCALER_CFG_START_CMD;
+> +	else
+> +		cfg &= ~SCALER_CFG_START_CMD;
+> +
+> +	scaler_dbg(dev, "%s: SCALER_CFG:0x%x\n", __func__, cfg);
+> +
+> +	scaler_write(dev, SCALER_CFG, cfg);
+> +}
+> +
+> +unsigned int scaler_hw_get_irq_status(struct scaler_dev *dev)
+> +{
+> +	return scaler_read(dev, SCALER_INT_STATUS);
+> +}
+> +
+> +void scaler_hw_clear_irq(struct scaler_dev *dev, unsigned int irq)
+> +{
+> +	scaler_write(dev, SCALER_INT_STATUS, irq);
+> +}
+> diff --git a/drivers/media/platform/exynos-scaler/scaler-regs.h b/drivers/media/platform/exynos-scaler/scaler-regs.h
+> new file mode 100644
+> index 0000000..2170df5
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos-scaler/scaler-regs.h
+> @@ -0,0 +1,331 @@
+> +/*
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Samsung EXYNOS5 SoC series SCALER driver
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef REGS_SCALER_H_
+> +#define REGS_SCALER_H_
+> +
+> +#include "scaler.h"
+> +
+> +/* SCALER status */
+> +#define SCALER_STATUS				0x00
+> +#define SCALER_STATUS_RUNNING			(1 << 1)
+> +#define SCALER_STATUS_READY_CLK_DOWN		(1 << 0)
+> +
+> +/* SCALER config */
+> +#define SCALER_CFG				0x04
+> +#define SCALER_CFG_FILL_EN			(1 << 24)
+> +#define SCALER_CFG_BLEND_CLR_DIV_ALPHA_EN	(1 << 17)
+> +#define SCALER_CFG_BLEND_EN			(1 << 16)
+> +#define SCALER_CFG_CSC_Y_OFFSET_SRC_EN		(1 << 10)
+> +#define SCALER_CFG_CSC_Y_OFFSET_DST_EN		(1 << 9)
+> +#define SCALER_CFG_16_BURST_MODE		(1 << 8)
+> +#define SCALER_CFG_SOFT_RESET			(1 << 1)
+> +#define SCALER_CFG_START_CMD			(1 << 0)
+> +
+> +/* SCALER interrupts */
+> +#define SCALER_INT_TIMEOUT			31
+> +#define SCALER_INT_ILLEGAL_BLEND		24
+> +#define SCALER_INT_ILLEGAL_RATIO		23
+> +#define SCALER_INT_ILLEGAL_DST_HEIGHT		22
+> +#define SCALER_INT_ILLEGAL_DST_WIDTH		21
+> +#define SCALER_INT_ILLEGAL_DST_V_POS		20
+> +#define SCALER_INT_ILLEGAL_DST_H_POS		19
+> +#define SCALER_INT_ILLEGAL_DST_C_SPAN		18
+> +#define SCALER_INT_ILLEGAL_DST_Y_SPAN		17
+> +#define SCALER_INT_ILLEGAL_DST_CR_BASE		16
+> +#define SCALER_INT_ILLEGAL_DST_CB_BASE		15
+> +#define SCALER_INT_ILLEGAL_DST_Y_BASE		14
+> +#define SCALER_INT_ILLEGAL_DST_COLOR		13
+> +#define SCALER_INT_ILLEGAL_SRC_HEIGHT		12
+> +#define SCALER_INT_ILLEGAL_SRC_WIDTH		11
+> +#define SCALER_INT_ILLEGAL_SRC_CV_POS		10
+> +#define SCALER_INT_ILLEGAL_SRC_CH_POS		9
+> +#define SCALER_INT_ILLEGAL_SRC_YV_POS		8
+> +#define SCALER_INT_ILLEGAL_SRC_YH_POS		7
+> +#define SCALER_INT_ILLEGAL_SRC_C_SPAN		6
+> +#define SCALER_INT_ILLEGAL_SRC_Y_SPAN		5
+> +#define SCALER_INT_ILLEGAL_SRC_CR_BASE		4
+> +#define SCALER_INT_ILLEGAL_SRC_CB_BASE		3
+> +#define SCALER_INT_ILLEGAL_SRC_Y_BASE		2
+> +#define SCALER_INT_ILLEGAL_SRC_COLOR		1
+> +#define SCALER_INT_FRAME_END			0
+> +
+> +/* SCALER interrupt enable */
+> +#define SCALER_INT_EN				0x08
+> +#define SCALER_INT_EN_DEFAULT			0x81ffffff
+> +
+> +/* SCALER interrupt status */
+> +#define SCALER_INT_STATUS			0x0c
+> +#define SCALER_INT_STATUS_CLEAR			0xffffffff
+> +#define SCALER_INT_STATUS_ERROR			0x81fffffe
+> +
+> +/* SCALER source format configuration */
+> +#define SCALER_SRC_CFG				0x10
+> +#define SCALER_SRC_TILE_EN			(0x1 << 10)
+> +#define SCALER_SRC_BYTE_SWAP_MASK		0x3
+> +#define SCALER_SRC_BYTE_SWAP_SHIFT		5
+> +#define SCALER_SRC_COLOR_FORMAT_MASK		0xf
+> +#define SCALER_SRC_COLOR_FORMAT_SHIFT		0
+> +
+> +/* SCALER source y-base */
+> +#define SCALER_SRC_Y_BASE			0x14
+> +
+> +/* SCALER source cb-base */
+> +#define SCALER_SRC_CB_BASE			0x18
+> +
+> +/* SCALER source cr-base */
+> +#define SCALER_SRC_CR_BASE			0x294
+> +
+> +/* SCALER source span */
+> +#define SCALER_SRC_SPAN				0x1c
+> +#define SCALER_SRC_C_SPAN_MASK			0x3fff
+> +#define SCALER_SRC_C_SPAN_SHIFT			16
+> +#define SCALER_SRC_Y_SPAN_MASK			0x3fff
+> +#define SCALER_SRC_Y_SPAN_SHIFT			0
+> +
+> +/*
+> + * SCALER source y-position
+> + * 14.2 fixed-point format
+> + *      - 14 bits at the MSB are for the integer part.
+> + *      - 2 bits at LSB are for fractional part and always has to be set to 0.
+> + */
+> +#define SCALER_SRC_Y_POS			0x20
+> +#define SCALER_SRC_YH_POS_MASK			0xfffc
+> +#define SCALER_SRC_YH_POS_SHIFT			16
+> +#define SCALER_SRC_YV_POS_MASK			0xfffc
+> +#define SCALER_SRC_YV_POS_SHIFT			0
+> +
+> +/* SCALER source width/height */
+> +#define SCALER_SRC_WH				0x24
+> +#define SCALER_SRC_WIDTH_MASK			0x3fff
+> +#define SCALER_SRC_WIDTH_SHIFT			16
+> +#define SCALER_SRC_HEIGHT_MASK			0x3fff
+> +#define SCALER_SRC_HEIGHT_SHIFT			0
+> +
+> +/*
+> + * SCALER source c-position
+> + * 14.2 fixed-point format
+> + *      - 14 bits at the MSB are for the integer part.
+> + *      - 2 bits at LSB are for fractional part and always has to be set to 0.
+> + */
+> +#define SCALER_SRC_C_POS			0x28
+> +#define SCALER_SRC_CH_POS_MASK			0xfffc
+> +#define SCALER_SRC_CH_POS_SHIFT			16
+> +#define SCALER_SRC_CV_POS_MASK			0xfffc
+> +#define SCALER_SRC_CV_POS_SHIFT			0
+> +
+> +/* SCALER destination format configuration */
+> +#define SCALER_DST_CFG				0x30
+> +#define SCALER_DST_BYTE_SWAP_MASK		0x3
+> +#define SCALER_DST_BYTE_SWAP_SHIFT		5
+> +#define SCALER_DST_COLOR_FORMAT_MASK		0xf
+> +
+> +/* SCALER destination y-base */
+> +#define SCALER_DST_Y_BASE			0x34
+> +
+> +/* SCALER destination cb-base */
+> +#define SCALER_DST_CB_BASE			0x38
+> +
+> +/* SCALER destination cr-base */
+> +#define SCALER_DST_CR_BASE			0x298
+> +
+> +/* SCALER destination span */
+> +#define SCALER_DST_SPAN				0x3c
+> +#define SCALER_DST_C_SPAN_MASK			0x3fff
+> +#define SCALER_DST_C_SPAN_SHIFT			16
+> +#define SCALER_DST_Y_SPAN_MASK			0x3fff
+> +#define SCALER_DST_Y_SPAN_SHIFT			0
+> +
+> +/* SCALER destination width/height */
+> +#define SCALER_DST_WH				0x40
+> +#define SCALER_DST_WIDTH_MASK			0x3fff
+> +#define SCALER_DST_WIDTH_SHIFT			16
+> +#define SCALER_DST_HEIGHT_MASK			0x3fff
+> +#define SCALER_DST_HEIGHT_SHIFT			0
+> +
+> +/* SCALER destination position */
+> +#define SCALER_DST_POS				0x44
+> +#define SCALER_DST_H_POS_MASK			0x3fff
+> +#define SCALER_DST_H_POS_SHIFT			16
+> +#define SCALER_DST_V_POS_MASK			0x3fff
+> +#define SCALER_DST_V_POS_SHIFT			0
+> +
+> +/* SCALER horizontal scale ratio */
+> +#define SCALER_H_RATIO				0x50
+> +#define SCALER_H_RATIO_MASK			0x7ffff
+> +#define SCALER_H_RATIO_SHIFT			0
+> +
+> +/* SCALER vertical scale ratio */
+> +#define SCALER_V_RATIO				0x54
+> +#define SCALER_V_RATIO_MASK			0x7ffff
+> +#define SCALER_V_RATIO_SHIFT			0
+> +
+> +/* SCALER rotation config */
+> +#define SCALER_ROT_CFG				0x58
+> +#define SCALER_FLIP_X_EN			(1 << 3)
+> +#define SCALER_FLIP_Y_EN			(1 << 2)
+> +#define SCALER_ROTMODE_MASK			0x3
+> +#define SCALER_ROTMODE_SHIFT			0
+> +
+> +/* SCALER csc coefficients */
+> +#define SCALER_CSC_COEF(x, y)			(0x220 + ((x * 12) + (y * 4)))
+> +
+> +/* SCALER dither config */
+> +#define SCALER_DITH_CFG				0x250
+> +#define SCALER_DITHER_R_TYPE_MASK		0x7
+> +#define SCALER_DITHER_R_TYPE_SHIFT		6
+> +#define SCALER_DITHER_G_TYPE_MASK		0x7
+> +#define SCALER_DITHER_G_TYPE_SHIFT		3
+> +#define SCALER_DITHER_B_TYPE_MASK		0x7
+> +#define SCALER_DITHER_B_TYPE_SHIFT		0
+> +
+> +/* SCALER src blend color */
+> +#define SCALER_SRC_BLEND_COLOR			0x280
+> +#define SCALER_SRC_COLOR_SEL_INV		(1 << 31)
+> +#define SCALER_SRC_COLOR_SEL_MASK		0x3
+> +#define SCALER_SRC_COLOR_SEL_SHIFT		29
+> +#define SCALER_SRC_COLOR_OP_SEL_INV		(1 << 28)
+> +#define SCALER_SRC_COLOR_OP_SEL_MASK		0xf
+> +#define SCALER_SRC_COLOR_OP_SEL_SHIFT		24
+> +#define SCALER_SRC_GLOBAL_COLOR0_MASK		0xff
+> +#define SCALER_SRC_GLOBAL_COLOR0_SHIFT		16
+> +#define SCALER_SRC_GLOBAL_COLOR1_MASK		0xff
+> +#define SCALER_SRC_GLOBAL_COLOR1_SHIFT		8
+> +#define SCALER_SRC_GLOBAL_COLOR2_MASK		0xff
+> +#define SCALER_SRC_GLOBAL_COLOR2_SHIFT		0
+> +
+> +/* SCALER src blend alpha */
+> +#define SCALER_SRC_BLEND_ALPHA			0x284
+> +#define SCALER_SRC_ALPHA_SEL_INV		(1 << 31)
+> +#define SCALER_SRC_ALPHA_SEL_MASK		0x3
+> +#define SCALER_SRC_ALPHA_SEL_SHIFT		29
+> +#define SCALER_SRC_ALPHA_OP_SEL_INV		(1 << 28)
+> +#define SCALER_SRC_ALPHA_OP_SEL_MASK		0xf
+> +#define SCALER_SRC_ALPHA_OP_SEL_SHIFT		24
+> +#define SCALER_SRC_GLOBAL_ALPHA_MASK		0xff
+> +#define SCALER_SRC_GLOBAL_ALPHA_SHIFT		0
+> +
+> +/* SCALER dst blend color */
+> +#define SCALER_DST_BLEND_COLOR			0x288
+> +#define SCALER_DST_COLOR_SEL_INV		(1 << 31)
+> +#define SCALER_DST_COLOR_SEL_MASK		0x3
+> +#define SCALER_DST_COLOR_SEL_SHIFT		29
+> +#define SCALER_DST_COLOR_OP_SEL_INV		(1 << 28)
+> +#define SCALER_DST_COLOR_OP_SEL_MASK		0xf
+> +#define SCALER_DST_COLOR_OP_SEL_SHIFT		24
+> +#define SCALER_DST_GLOBAL_COLOR0_MASK		0xff
+> +#define SCALER_DST_GLOBAL_COLOR0_SHIFT		16
+> +#define SCALER_DST_GLOBAL_COLOR1_MASK		0xff
+> +#define SCALER_DST_GLOBAL_COLOR1_SHIFT		8
+> +#define SCALER_DST_GLOBAL_COLOR2_MASK		0xff
+> +#define SCALER_DST_GLOBAL_COLOR2_SHIFT		0
+> +
+> +/* SCALER dst blend alpha */
+> +#define SCALER_DST_BLEND_ALPHA			0x28c
+> +#define SCALER_DST_ALPHA_SEL_INV		(1 << 31)
+> +#define SCALER_DST_ALPHA_SEL_MASK		0x3
+> +#define SCALER_DST_ALPHA_SEL_SHIFT		29
+> +#define SCALER_DST_ALPHA_OP_SEL_INV		(1 << 28)
+> +#define SCALER_DST_ALPHA_OP_SEL_MASK		0xf
+> +#define SCALER_DST_ALPHA_OP_SEL_SHIFT		24
+> +#define SCALER_DST_GLOBAL_ALPHA_MASK		0xff
+> +#define SCALER_DST_GLOBAL_ALPHA_SHIFT		0
+> +
+> +/* SCALER fill color */
+> +#define SCALER_FILL_COLOR			0x290
+> +#define SCALER_FILL_ALPHA_MASK			0xff
+> +#define SCALER_FILL_ALPHA_SHIFT			24
+> +#define SCALER_FILL_COLOR0_MASK			0xff
+> +#define SCALER_FILL_COLOR0_SHIFT		16
+> +#define SCALER_FILL_COLOR1_MASK			0xff
+> +#define SCALER_FILL_COLOR1_SHIFT		8
+> +#define SCALER_FILL_COLOR2_MASK			0xff
+> +#define SCALER_FILL_COLOR2_SHIFT		0
+> +
+> +/* SCALER address queue config */
+> +#define SCALER_ADDR_QUEUE_CONFIG		0x2a0
+> +#define SCALER_ADDR_QUEUE_RST			0x1
+> +
+> +/* Arbitrary R/W register and value to check if soft reset succeeded */
+> +#define SCALER_CFG_SOFT_RESET_CHECK_REG		SCALER_SRC_CFG
+> +#define SCALER_CFG_SOFT_RESET_CHECK_VAL		0x3
+> +
+> +struct scaler_error {
+> +	u32 irq_num;
+> +	const char * const name;
 > +};
-> +#define to_cam_clk(_hw) container_of(_hw, struct cam_clk, hw)
 > +
->  /**
->   * struct fimc_md - fimc media device information
->   * @csis: MIPI CSIS subdevs data
-> @@ -105,6 +112,7 @@ struct fimc_sensor_info {
->   * @pinctrl: camera port pinctrl handle
->   * @state_default: pinctrl default state handle
->   * @state_idle: pinctrl idle state handle
-> + * @cam_clk_provider: CAMCLK clock provider structure
->   * @user_subdev_api: true if subdevs are not configured by the host driver
->   * @slock: spinlock protecting @sensor array
->   */
-> @@ -122,13 +130,21 @@ struct fimc_md {
->  	struct media_device media_dev;
->  	struct v4l2_device v4l2_dev;
->  	struct platform_device *pdev;
+> +static const struct scaler_error scaler_errors[] = {
+> +	{SCALER_INT_TIMEOUT,			"Timeout"},
+> +	{SCALER_INT_ILLEGAL_BLEND,		"Illegal Blend setting"},
+> +	{SCALER_INT_ILLEGAL_RATIO,		"Illegal Scale ratio setting"},
+> +	{SCALER_INT_ILLEGAL_DST_HEIGHT,		"Illegal Dst Height"},
+> +	{SCALER_INT_ILLEGAL_DST_WIDTH,		"Illegal Dst Width"},
+> +	{SCALER_INT_ILLEGAL_DST_V_POS,		"Illegal Dst V-Pos"},
+> +	{SCALER_INT_ILLEGAL_DST_H_POS,		"Illegal Dst H-Pos"},
+> +	{SCALER_INT_ILLEGAL_DST_C_SPAN,		"Illegal Dst C-Span"},
+> +	{SCALER_INT_ILLEGAL_DST_Y_SPAN,		"Illegal Dst Y-span"},
+> +	{SCALER_INT_ILLEGAL_DST_CR_BASE,	"Illegal Dst Cr-base"},
+> +	{SCALER_INT_ILLEGAL_DST_CB_BASE,	"Illegal Dst Cb-base"},
+> +	{SCALER_INT_ILLEGAL_DST_Y_BASE,		"Illegal Dst Y-base"},
+> +	{SCALER_INT_ILLEGAL_DST_COLOR,		"Illegal Dst Color"},
+> +	{SCALER_INT_ILLEGAL_SRC_HEIGHT,		"Illegal Src Height"},
+> +	{SCALER_INT_ILLEGAL_SRC_WIDTH,		"Illegal Src Width"},
+> +	{SCALER_INT_ILLEGAL_SRC_CV_POS,		"Illegal Src Chroma V-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_CH_POS,		"Illegal Src Chroma H-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_YV_POS,		"Illegal Src Luma V-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_YH_POS,		"Illegal Src Luma H-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_C_SPAN,		"Illegal Src C-span"},
+> +	{SCALER_INT_ILLEGAL_SRC_Y_SPAN,		"Illegal Src Y-span"},
+> +	{SCALER_INT_ILLEGAL_SRC_CR_BASE,	"Illegal Src Cr-base"},
+> +	{SCALER_INT_ILLEGAL_SRC_CB_BASE,	"Illegal Src Cb-base"},
+> +	{SCALER_INT_ILLEGAL_SRC_Y_BASE,		"Illegal Src Y-base"},
+> +	{SCALER_INT_ILLEGAL_SRC_COLOR,		"Illegal Src Color setting"},
+> +};
 > +
->  	struct fimc_pinctrl {
->  		struct pinctrl *pinctrl;
->  		struct pinctrl_state *state_default;
->  		struct pinctrl_state *state_idle;
->  	} pinctl;
-> -	bool user_subdev_api;
->  
-> +	struct cam_clk_provider {
-> +		struct clk *clks[FIMC_MAX_CAMCLKS];
-> +		struct clk_onecell_data clk_data;
-> +		struct device_node *of_node;
-> +		struct cam_clk camclk[FIMC_MAX_CAMCLKS];
-> +	} clk_provider;
+> +#define SCALER_NUM_ERRORS	ARRAY_SIZE(scaler_errors)
 > +
-> +	bool user_subdev_api;
->  	spinlock_t slock;
->  	struct list_head pipelines;
->  };
+> +static inline u32 scaler_read(struct scaler_dev *dev, u32 offset)
+> +{
+> +	return readl(dev->regs + offset);
+> +}
+> +
+> +static inline void scaler_write(struct scaler_dev *dev, u32 offset, u32 value)
+> +{
+> +	writel(value, dev->regs + offset);
+> +}
+> +
+> +static inline void scaler_hw_address_queue_reset(struct scaler_ctx *ctx)
+> +{
+> +	scaler_write(ctx->scaler_dev, SCALER_ADDR_QUEUE_CONFIG,
+> +					SCALER_ADDR_QUEUE_RST);
+> +}
+> +
+> +void scaler_hw_set_sw_reset(struct scaler_dev *dev);
+> +int scaler_wait_reset(struct scaler_dev *dev);
+> +void scaler_hw_set_irq(struct scaler_dev *dev, int interrupt, bool mask);
+> +void scaler_hw_set_input_addr(struct scaler_dev *dev, struct scaler_addr *addr);
+> +void scaler_hw_set_output_addr(struct scaler_dev *dev,
+> +				struct scaler_addr *addr);
+> +void scaler_hw_set_in_size(struct scaler_ctx *ctx);
+> +void scaler_hw_set_in_image_format(struct scaler_ctx *ctx);
+> +void scaler_hw_set_out_size(struct scaler_ctx *ctx);
+> +void scaler_hw_set_out_image_format(struct scaler_ctx *ctx);
+> +void scaler_hw_set_scaler_ratio(struct scaler_ctx *ctx);
+> +void scaler_hw_set_rotation(struct scaler_ctx *ctx);
+> +void scaler_hw_set_csc_coeff(struct scaler_ctx *ctx);
+> +void scaler_hw_src_y_offset_en(struct scaler_dev *dev, bool on);
+> +void scaler_hw_dst_y_offset_en(struct scaler_dev *dev, bool on);
+> +void scaler_hw_enable_control(struct scaler_dev *dev, bool on);
+> +unsigned int scaler_hw_get_irq_status(struct scaler_dev *dev);
+> +void scaler_hw_clear_irq(struct scaler_dev *dev, unsigned int irq);
+> +
+> +#endif /* REGS_SCALER_H_ */
 
 
 -- 
