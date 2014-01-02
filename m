@@ -1,129 +1,203 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH] thermal: exynos: handle gate clock for misplaced
- TRIMINFO register
-Date: Thu, 02 Jan 2014 14:07:00 +0800
-Message-ID: <1388642820.3739.80.camel@rzhang1-mobl4>
-References: <1383828154-428-1-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1383828154-428-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/5] ARM: SAMSUNG: Remove incorrect file references
+Date: Thu,  2 Jan 2014 14:24:14 +0530
+Message-ID: <1388652858-25337-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:60440 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751388AbaABI6D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jan 2014 03:58:03 -0500
+Received: by mail-pb0-f51.google.com with SMTP id up15so14143327pbc.24
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jan 2014 00:58:02 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On Thu, 2013-11-07 at 18:12 +0530, Naveen Krishna Chatradhi wrote:
-> On Exynos5420 the TMU(4) for GPU has a seperate clock enable bit from
-> the other TMU channels(0 ~ 3). Hence, accessing TRIMINFO for base_second
-> should be acompanied by enabling the respective clock.
-> 
-> This patch which allow for a "clk_sec" clock to be specified in the
-> device-tree which will be ungated when accessing the TRIMINFO register.
-> 
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+The incorrect references are as a result of file/folder movements/renaming.
+Since the references do not convey any useful information, remove them
+altogether rather than fixing to ease future maintenance.
 
-Eduardo,
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/plat-samsung/clock.c                      |    3 +--
+ arch/arm/plat-samsung/include/plat/clock.h         |    3 +--
+ arch/arm/plat-samsung/include/plat/dma-core.h      |    3 +--
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h      |    3 +--
+ arch/arm/plat-samsung/include/plat/gpio-core.h     |    3 +--
+ arch/arm/plat-samsung/include/plat/iic-core.h      |    5 ++---
+ arch/arm/plat-samsung/include/plat/regs-adc.h      |    3 +--
+ arch/arm/plat-samsung/include/plat/regs-irqtype.h  |    3 +--
+ .../plat-samsung/include/plat/regs-usb-hsotg-phy.h |    3 +--
+ .../arm/plat-samsung/include/plat/watchdog-reset.h |    3 +--
+ arch/arm/plat-samsung/init.c                       |    3 +--
+ arch/arm/plat-samsung/pm-check.c                   |    4 +---
+ arch/arm/plat-samsung/pm-gpio.c                    |    4 +---
+ arch/arm/plat-samsung/pm.c                         |    3 +--
+ 14 files changed, 15 insertions(+), 31 deletions(-)
 
-what do you think of this patch?
-
-thanks,
-rui
-> ---
->  drivers/thermal/samsung/exynos_tmu.c |   24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index b54825a..33edd1a 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -47,6 +47,7 @@
->   * @irq_work: pointer to the irq work structure.
->   * @lock: lock to implement synchronization.
->   * @clk: pointer to the clock structure.
-> + * @clk_sec: pointer to the clock structure for accessing the base_second.
->   * @temp_error1: fused value of the first point trim.
->   * @temp_error2: fused value of the second point trim.
->   * @regulator: pointer to the TMU regulator structure.
-> @@ -61,7 +62,7 @@ struct exynos_tmu_data {
->  	enum soc_type soc;
->  	struct work_struct irq_work;
->  	struct mutex lock;
-> -	struct clk *clk;
-> +	struct clk *clk, *clk_sec;
->  	u8 temp_error1, temp_error2;
->  	struct regulator *regulator;
->  	struct thermal_sensor_conf *reg_conf;
-> @@ -152,6 +153,8 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> +	if (!IS_ERR(data->clk_sec))
-> +		clk_enable(data->clk_sec);
->  
->  	if (TMU_SUPPORTS(pdata, READY_STATUS)) {
->  		status = readb(data->base + reg->tmu_status);
-> @@ -306,6 +309,8 @@ skip_calib_data:
->  out:
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
-> +	if (!IS_ERR(data->clk_sec))
-> +		clk_disable(data->clk_sec);
->  
->  	return ret;
->  }
-> @@ -457,12 +462,16 @@ static void exynos_tmu_work(struct work_struct *work)
->  	const struct exynos_tmu_registers *reg = pdata->registers;
->  	unsigned int val_irq, val_type;
->  
-> +	if (!IS_ERR(data->clk_sec))
-> +		clk_enable(data->clk_sec);
->  	/* Find which sensor generated this interrupt */
->  	if (reg->tmu_irqstatus) {
->  		val_type = readl(data->base_second + reg->tmu_irqstatus);
->  		if (!((val_type >> data->id) & 0x1))
->  			goto out;
->  	}
-> +	if (!IS_ERR(data->clk_sec))
-> +		clk_disable(data->clk_sec);
->  
->  	exynos_report_trigger(data->reg_conf);
->  	mutex_lock(&data->lock);
-> @@ -641,6 +650,15 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
-> +	if (!IS_ERR(data->clk_sec)) {
-> +		ret = clk_prepare(data->clk_sec);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Failed to get clock\n");
-> +			return  PTR_ERR(data->clk_sec);
-> +		}
-> +	}
-> +
->  	if (pdata->type == SOC_ARCH_EXYNOS4210 ||
->  	    pdata->type == SOC_ARCH_EXYNOS4412 ||
->  	    pdata->type == SOC_ARCH_EXYNOS5250 ||
-> @@ -713,6 +731,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  	return 0;
->  err_clk:
->  	clk_unprepare(data->clk);
-> +	if (!IS_ERR(data->clk_sec))
-> +		clk_unprepare(data->clk_sec);
->  	return ret;
->  }
->  
-> @@ -725,6 +745,8 @@ static int exynos_tmu_remove(struct platform_device *pdev)
->  	exynos_unregister_thermal(data->reg_conf);
->  
->  	clk_unprepare(data->clk);
-> +	if (!IS_ERR(data->clk_sec))
-> +		clk_unprepare(data->clk_sec);
->  
->  	if (!IS_ERR(data->regulator))
->  		regulator_disable(data->regulator);
-
-
+diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+index 47c9fad43f00..494deadb4602 100644
+--- a/arch/arm/plat-samsung/clock.c
++++ b/arch/arm/plat-samsung/clock.c
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-s3c24xx/clock.c
+- *
++/*
+  * Copyright 2004-2005 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+  *
+diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+index 63239f409807..4f19dd1e83e2 100644
+--- a/arch/arm/plat-samsung/include/plat/clock.h
++++ b/arch/arm/plat-samsung/include/plat/clock.h
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-s3c/include/plat/clock.h
+- *
++/*
+  * Copyright (c) 2004-2005 Simtec Electronics
+  *	http://www.simtec.co.uk/products/SWLINUX/
+  *	Written by Ben Dooks, <ben@simtec.co.uk>
+diff --git a/arch/arm/plat-samsung/include/plat/dma-core.h b/arch/arm/plat-samsung/include/plat/dma-core.h
+index 32ff2a92cb3c..6cf5aafb4f64 100644
+--- a/arch/arm/plat-samsung/include/plat/dma-core.h
++++ b/arch/arm/plat-samsung/include/plat/dma-core.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/plat-s3c/include/plat/dma.h
+- *
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+index 08740eed050c..fd41eaf79774 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-s3c/include/plat/gpio-cfg.h
+- *
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h b/arch/arm/plat-samsung/include/plat/gpio-core.h
+index cf5aae5b0975..98cf6b90373a 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-core.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-s3c/include/plat/gpio-core.h
+- *
++/*
+  * Copyright 2008 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
+diff --git a/arch/arm/plat-samsung/include/plat/iic-core.h b/arch/arm/plat-samsung/include/plat/iic-core.h
+index f182669b8e8e..c2825ce0eda0 100644
+--- a/arch/arm/plat-samsung/include/plat/iic-core.h
++++ b/arch/arm/plat-samsung/include/plat/iic-core.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/mach-s3c2410/include/mach/iic-core.h
+- *
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+@@ -39,4 +38,4 @@ static inline void s3c_i2c2_setname(char *name)
+ #endif
+ }
+ 
+-#endif /* __ASM_ARCH_IIC_H */
++#endif /* __ASM_ARCH_IIC_CORE_H */
+diff --git a/arch/arm/plat-samsung/include/plat/regs-adc.h b/arch/arm/plat-samsung/include/plat/regs-adc.h
+index 70612100120f..edf4bab91414 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-adc.h
++++ b/arch/arm/plat-samsung/include/plat/regs-adc.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/mach-s3c2410/include/mach/regs-adc.h
+- *
++/*
+  * Copyright (c) 2004 Shannon Holland <holland@loser.net>
+  *
+  * This program is free software; yosu can redistribute it and/or modify
+diff --git a/arch/arm/plat-samsung/include/plat/regs-irqtype.h b/arch/arm/plat-samsung/include/plat/regs-irqtype.h
+index c63cd3fc5ad3..12dfa6f8603e 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-irqtype.h
++++ b/arch/arm/plat-samsung/include/plat/regs-irqtype.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/plat-s3c/include/plat/regs-irqtype.h
+- *
++/*
+  * Copyright 2008 Simtec Electronics
+  *      Ben Dooks <ben@simtec.co.uk>
+  *      http://armlinux.simtec.co.uk/
+diff --git a/arch/arm/plat-samsung/include/plat/regs-usb-hsotg-phy.h b/arch/arm/plat-samsung/include/plat/regs-usb-hsotg-phy.h
+index fcf279662067..eae3c311e590 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-usb-hsotg-phy.h
++++ b/arch/arm/plat-samsung/include/plat/regs-usb-hsotg-phy.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/plat-s3c/include/plat/regs-usb-hsotg-phy.h
+- *
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+  *      http://armlinux.simtec.co.uk/
+diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+index 0386b8f76623..42707dfbda9c 100644
+--- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
++++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/plat-s3c/include/plat/watchdog-reset.h
+- *
++/*
+  * Copyright (c) 2008 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+  *
+diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+index aa9511b6914a..e63e3cea9dac 100644
+--- a/arch/arm/plat-samsung/init.c
++++ b/arch/arm/plat-samsung/init.c
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-s3c/init.c
+- *
++/*
+  * Copyright (c) 2008 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+  *	http://armlinux.simtec.co.uk/
+diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
+index 3cbd62666b1e..a81c7a0d3c7e 100644
+--- a/arch/arm/plat-samsung/pm-check.c
++++ b/arch/arm/plat-samsung/pm-check.c
+@@ -1,6 +1,4 @@
+-/* linux/arch/arm/plat-s3c/pm-check.c
+- *  originally in linux/arch/arm/plat-s3c24xx/pm.c
+- *
++/*
+  * Copyright (c) 2004-2008 Simtec Electronics
+  *	http://armlinux.simtec.co.uk
+  *	Ben Dooks <ben@simtec.co.uk>
+diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
+index 81b0a207fefb..133b9ee2af69 100644
+--- a/arch/arm/plat-samsung/pm-gpio.c
++++ b/arch/arm/plat-samsung/pm-gpio.c
+@@ -1,6 +1,4 @@
+-
+-/* linux/arch/arm/plat-s3c/pm-gpio.c
+- *
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+index e5b0f2c2d884..72e8e8f234f4 100644
+--- a/arch/arm/plat-samsung/pm.c
++++ b/arch/arm/plat-samsung/pm.c
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-s3c/pm.c
+- *
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2004-2008 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+-- 
+1.7.9.5
