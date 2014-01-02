@@ -1,53 +1,32 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 5/5] ARM: S5PC100: Remove incorrect file references
-Date: Thu,  2 Jan 2014 14:24:18 +0530
-Message-ID: <1388652858-25337-5-git-send-email-sachin.kamat@linaro.org>
-References: <1388652858-25337-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:62142 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751432AbaABI6N (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jan 2014 03:58:13 -0500
-Received: by mail-pb0-f44.google.com with SMTP id rq2so14178444pbb.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jan 2014 00:58:12 -0800 (PST)
-In-Reply-To: <1388652858-25337-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Thu, 2 Jan 2014 13:53:02 +0100
+Message-ID: <CACRpkdY+aLA6OG3jjgwtLoH=O-SS-W_A5Ps9WZY70ogQN2RySg@mail.gmail.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+Sender: linux-gpio-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-The incorrect references are as a result of file/folder movements/renaming.
-Since the references do not convey any useful information, remove them
-altogether rather than fixing to ease future maintenance.
+On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
+<jose.goncalves@inov.pt> wrote:
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    3 +--
- arch/arm/mach-s5pc100/setup-sdhci-gpio.c       |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+> Some GPIO line limits are incorrectly set which, for instance,
+> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+>
+> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
 
-diff --git a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-index 0bf73209ec7b..40ec82ed105d 100644
---- a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-s5pc100/include/plat/regs-gpio.h
-- *
-+/*
-  * Copyright 2009 Samsung Electronics Co.
-  *      Byungho Min <bhmin@samsung.com>
-  *
-diff --git a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-index 6010c0310cb5..ad90c1a19d1f 100644
---- a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-s5pc100/setup-sdhci-gpio.c
-- *
-+/*
-  * Copyright 2009 Samsung Eletronics
-  *
-  * S5PC100 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
--- 
-1.7.9.5
+Patch applied with Kukjin's ACK and Heiko's review tag.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
