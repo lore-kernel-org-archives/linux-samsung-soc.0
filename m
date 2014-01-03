@@ -1,99 +1,75 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: Boot hang on Origen with (!SMP && CPU_IDLE)
-Date: Fri, 03 Jan 2014 14:58:05 +0100
-Message-ID: <2428340.zXRbG18t7N@amdc1227>
-References: <CAHbNUh1LF9+v1en==t8znAL518ERWE2LffTDykAEb2HST+WKTw@mail.gmail.com>
- <201401031437.10624.arnd@arndb.de>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH V2] i2c: s3c2410 : Add polling mode support
+Date: Fri, 3 Jan 2014 17:10:12 +0100
+Message-ID: <20140103161012.GH7132@katana>
+References: <1384168820-2986-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59213 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751242AbaACN6L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jan 2014 08:58:11 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MYT00HNKW4XJT80@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Jan 2014 13:58:09 +0000 (GMT)
-In-reply-to: <201401031437.10624.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LiQwW4YX+w4axhAx"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1384168820-2986-1-git-send-email-yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, aditya.ps-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vasanth Ananthan <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vasanth Ananthan <vasanth.a-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tushar Behera <tushar.behera@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Friday 03 of January 2014 14:37:10 Arnd Bergmann wrote:
-> On Friday 03 January 2014, Tushar Behera wrote:
-> > Hi,
-> > 
-> > We are getting boot-time system hang on Exynos4210-based Origen board
-> > if the kernel (right now testing v3.13-rc6) is built using
-> > exynos_defconfig, disabling SMP support and enabling CPU_IDLE support.
-> > The boot log can be found here[1].
-> > 
-> > Git bisect points to following commit.
-> > 
-> > commit 87107d89052bcec1fe91b309631de4ed294a5171
-> > Author: Arnd Bergmann <arnd@arndb.de>
-> > Date:   Wed Jun 19 01:36:52 2013 +0900
-> > 
-> >     ARM: EXYNOS: Remove legacy L2X0 initialization
-> > 
-> >     Since Exynos is now supporting only DT-based boot, the old L2X0
-> >     initialization code is not needed anymore, so exynos4_l2x0_cache_init()
-> >     can be greatly simplified.
-> > 
-> >     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >     Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> >     Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > 
-> > Reverting the changes, the kernel boots up.
-> > 
-> > Any idea what else we might be missing?
-> > 
-> > [1] http://pastebin.com/0mP6ML4y
-> 
-> Hmm, the boot log contains no message about the l2 cache controller getting
-> initialized, which means that l2x0_of_init probably failed before calling
-> l2x0_init. It also seems that the dts files distributed with the kernel
-> are lacking nodes for the l2x0 device, which is indeed a perfectly good
-> explanation although it doesn't explain at all why it ever worked on
-> any system with my patch.
-> 
-> Can you check if there is a correct cache controller node in your device
-> tree, and whether it works when you add one? If so, we should probably
-> add a couple of stable backport patches to the dts files. It would also
-> be a good time to get rid of the L2_AUX_VAL and L2_AUX_MASK defines and
-> just read the respective settings from DT.
 
-Tushar, do you maybe also have CONFIG_CACHE_L2X0 enabled?
+--LiQwW4YX+w4axhAx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Generally I can see two different issues here:
+Hi,
 
-1) Broken handling of L2 cache in plat-samsung/sleep.S. It assumes that
-whenever CONFIG_CACHE_L2X0 is enabled, L2 cache is enabled too.
+On Mon, Nov 11, 2013 at 04:50:20PM +0530, Yuvaraj Kumar C D wrote:
+> From: Vasanth Ananthan <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>=20
+> This patch adds polling mode support for i2c-s3c2410 driver.The
+> SATA PHY controller's CMU and TRSV block's are of I2C register
+> map in exynos5250.These blocks can be configured using i2c.
+>=20
+> But i2c controller instance on which these block's sits lacks an
+> interrupt line.Also the current i2c-s3c2410 driver is only interrupt
+> driven, thus a polling mode support is required in the driver for
+> supporting this controller. This patch adds this support to the driver.
+>=20
+> Changes from V1:
+> 	1.Changed the is_ack() to have even period b/w polls and
+> 	  used usleep_range() instead of udelay().
 
-This needs to go away. On normal resume from sleep, there is no need to
-do anything with L2X0 at such early stage. This reinitialization can be
-safely done later, by calling generic outer_resume().
+Mileages vary, but I'd like to see revision changes after the "---".
 
-The problem shows up when you look at AFTR and LPA idle modes. They keep
-L2 cache contents, but L2X0 registers must be restored to let the cache
-operate normally. This must happen early enough to keep cache data
-consistent. Still, the code doing this must consider whether the cache
-was enabled before entering AFTR/LPA and whether secure firmware is used
-(see below), so this is a bit tricky.
+>  	ret =3D devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+> -			       dev_name(&pdev->dev), i2c);
+> +				dev_name(&pdev->dev), i2c);
 
-2) There is no L2 cache controller node in Exynos4*.dtsi.
+Unrelated change.
 
-It should be added, but L2 cache can't be enabled on all boards yet,
-since on boards where secure firmware is enabled, special configuration
-involving SMC calls is required. Patches for this are queued on my work
-queue, but it's quite tricky due to 1), which needs to consider whether
-secure firmware is enabled or not.
+Rest looks good, so I'll fix up the things for you and apply to
+for-next, thanks!
 
-Best regards,
-Tomasz
+
+--LiQwW4YX+w4axhAx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSxuDjAAoJEBQN5MwUoCm2SLUP/1Q8BcJlMMfSyfORTR+34WlF
+507zNPJcyrNobOULiYp5Y6Ud5cgjEOsQOJwOdX4TAYAhMX4Ydpqp7Y8+YHZ4lEQu
+61U3qSanrUpqdyOSt8gk5ZkFO7M5jqXkMNf1SMFdGZG0cuCNC/05uMk9NB0ImyDN
+3JzuBuDBImzKUbvhQonsYtGKonZYX01jYJ5MH3UWpCrBHjD67XahH5Ut94roRMjm
+spjUG67V6cV6QNcqGfmPdQn0FdSfIoBW2JLXMfyI9SLYetiZ3mG0YsQ4qR58CEqg
+Cc4ABFhQhvOe1qfL7OMyafjgBaMIjH9DJ0fssHgV8xyPhQpjhl9Ew1dcTs7/6TqI
+a30RLhUX91VvmOPy7mMSv4UTT2ev6den1KdcJdMdCbVyn27i8nxFOweemQi0LFIF
+mReAByF1SfQQs5ViFDxQt2+nr2LChYBS9HWTXFbOrCzGawW3M54tf6y5IR73hIfI
+lkNztNi1CdtLp+fQyf/XJMG/qr+xgexs4EJq+TL9t8gsiWep8nnR4Jjt6Yo7f6Hc
+KwDArTbRsv1Hk5p9GbrV4oswN80gQLPpSLOlk6wsL1c5Yf8WhUaqTSvJuLpVMLnK
+x0rXM8d4cByBfnrAa1/0t8amj5X4DuFpeaFtlMO4QblmC25s4n48U2cPj7lNLPmZ
+KDwu6qzlN0AKXvwp3OKc
+=rOkk
+-----END PGP SIGNATURE-----
+
+--LiQwW4YX+w4axhAx--
