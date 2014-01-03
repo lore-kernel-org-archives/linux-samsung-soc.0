@@ -1,44 +1,50 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Re-organize RTC status for 5420
-Date: Fri, 3 Jan 2014 15:38:46 +0530
-Message-ID: <CAK9yfHwNkAJO71_uy38C7i=DeAxMmKxTTqP=oJ4THKp7dojaqg@mail.gmail.com>
-References: <1387450673-331-1-git-send-email-sachin.kamat@linaro.org>
-	<1941342.TJqfbb7DVG@flatron>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Boot hang on Origen with (!SMP && CPU_IDLE)
+Date: Fri, 3 Jan 2014 17:19:10 +0530
+Message-ID: <CAHbNUh1LF9+v1en==t8znAL518ERWE2LffTDykAEb2HST+WKTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:38759 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841AbaACKIq (ORCPT
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:38408 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751116AbaACLtL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jan 2014 05:08:46 -0500
-Received: by mail-oa0-f41.google.com with SMTP id j17so16128328oag.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2014 02:08:46 -0800 (PST)
-In-Reply-To: <1941342.TJqfbb7DVG@flatron>
+	Fri, 3 Jan 2014 06:49:11 -0500
+Received: by mail-ob0-f172.google.com with SMTP id gq1so15636723obb.31
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2014 03:49:10 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kgene Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 21 December 2013 02:42, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Sachin,
->
-> On Thursday 19 of December 2013 16:27:53 Sachin Kamat wrote:
->> Some boards might not have RTC xtal, so RTC shouldn't really be
->> enabled by default. Enable it in the required board files.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    4 ++++
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts     |    4 ++++
->>  arch/arm/boot/dts/exynos5420.dtsi             |    2 +-
->>  3 files changed, 9 insertions(+), 1 deletion(-)
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Hi,
 
-Ping Kukjin. Also the other patch for 5250.
+We are getting boot-time system hang on Exynos4210-based Origen board
+if the kernel (right now testing v3.13-rc6) is built using
+exynos_defconfig, disabling SMP support and enabling CPU_IDLE support.
+The boot log can be found here[1].
 
+Git bisect points to following commit.
 
+commit 87107d89052bcec1fe91b309631de4ed294a5171
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Wed Jun 19 01:36:52 2013 +0900
+
+    ARM: EXYNOS: Remove legacy L2X0 initialization
+
+    Since Exynos is now supporting only DT-based boot, the old L2X0
+    initialization code is not needed anymore, so exynos4_l2x0_cache_init()
+    can be greatly simplified.
+
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+    Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+    Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Reverting the changes, the kernel boots up.
+
+Any idea what else we might be missing?
+
+[1] http://pastebin.com/0mP6ML4y
 -- 
-With warm regards,
-Sachin
+Tushar Behera
