@@ -1,106 +1,103 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 2/7] pinctrl: exynos: add exynos5260 SoC specific data
-Date: Fri, 3 Jan 2014 14:56:18 +0530
-Message-ID: <CAPdUM4Pjx3eHoMQJ=vfaxNy9sPTiQzeemPDAJuHkXTYEqU4T+A@mail.gmail.com>
-References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
-	<1386345391-23482-3-git-send-email-rahul.sharma@samsung.com>
-	<1548210.PeZ57k2d5L@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 2/3] ARM: SAMSUNG: Remove hardware.h inclusion
+Date: Fri,  3 Jan 2014 14:54:38 +0530
+Message-ID: <1388741079-16202-2-git-send-email-sachin.kamat@linaro.org>
+References: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:63981 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751538AbaACJ0U (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:43364 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751086AbaACJ21 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jan 2014 04:26:20 -0500
-In-Reply-To: <1548210.PeZ57k2d5L@amdc1227>
+	Fri, 3 Jan 2014 04:28:27 -0500
+Received: by mail-pa0-f46.google.com with SMTP id kp14so13543863pab.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2014 01:28:27 -0800 (PST)
+In-Reply-To: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, Young-Gun Jang <yg1004.jang@samsung.com>, Arun Kumar <arun.kk@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Tomasz,
+The contents of this header file are not referenced anywhere in the
+included .c files except in devs.c. Remove its inclusion. For devs.c,
+explicitly include sizes.h header for SZ_* macros.
 
-On 10 December 2013 21:34, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Young-Gun, Pankaj, Rahul, Arun,
->
-> Please see my comments inline.
->
-> On Friday 06 of December 2013 21:26:26 Rahul Sharma wrote:
->> From: Young-Gun Jang <yg1004.jang@samsung.com>
->>
->> Add Samsung Exynos5260 SoC specific data to enable pinctrl
->> support for all platforms based on EXYNOS5260.
-> [snip]
->> diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
->> index 155b1b3..9a93df6 100644
->> --- a/drivers/pinctrl/pinctrl-exynos.c
->> +++ b/drivers/pinctrl/pinctrl-exynos.c
->> @@ -1042,6 +1042,88 @@ struct samsung_pin_ctrl exynos5250_pin_ctrl[] = {
->>       },
->>  };
->>
->> +/* pin banks of exynos5260 pin-controller 0 */
->> +static struct samsung_pin_bank exynos5260_pin_banks0[] = {
->> +     EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpa0", 0x00),
->> +     EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpa1", 0x04),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpa2", 0x08),
->> +     EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpb0", 0x0c),
->> +     EXYNOS_PIN_BANK_EINTG(4, 0x080, "gpb1", 0x10),
->> +     EXYNOS_PIN_BANK_EINTG(5, 0x0A0, "gpb2", 0x14),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x0C0, "gpb3", 0x18),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x0E0, "gpb4", 0x1c),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpb5", 0x20),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd0", 0x24),
->> +     EXYNOS_PIN_BANK_EINTG(7, 0x140, "gpd1", 0x28),
->> +     EXYNOS_PIN_BANK_EINTG(5, 0x160, "gpd2", 0x2c),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpe0", 0x30),
->> +     EXYNOS_PIN_BANK_EINTG(5, 0x1A0, "gpe1", 0x34),
->> +     EXYNOS_PIN_BANK_EINTG(4, 0x1C0, "gpf0", 0x38),
->> +     EXYNOS_PIN_BANK_EINTG(8, 0x1E0, "gpf1", 0x3c),
->> +     EXYNOS_PIN_BANK_EINTG(2, 0x200, "gpk0", 0x40),
->> +     EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
->> +     EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
->> +     EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
->> +     EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
->
-> nit: Please use lowercase hexadecimal characters. Despite of already
-> existing code, lowercase is the preferred way.
->
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/plat-samsung/clock.c        |    1 -
+ arch/arm/plat-samsung/devs.c         |    2 +-
+ arch/arm/plat-samsung/init.c         |    2 --
+ arch/arm/plat-samsung/pm.c           |    1 -
+ arch/arm/plat-samsung/s5p-dev-uart.c |    1 -
+ 5 files changed, 1 insertion(+), 6 deletions(-)
 
-Changed.
-
->> +};
->> +
->> +/* pin banks of exynos5260 pin-controller 1 */
->> +static struct samsung_pin_bank exynos5260_pin_banks1[] = {
->> +     EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpc0", 0x00),
->> +     EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpc1", 0x04),
->> +     EXYNOS_PIN_BANK_EINTG(7, 0x040, "gpc2", 0x08),
->> +     EXYNOS_PIN_BANK_EINTG(4, 0x060, "gpc3", 0x0c),
->> +     EXYNOS_PIN_BANK_EINTG(4, 0x080, "gpc4", 0x10),
->> +};
->> +
->> +/* pin banks of exynos5260 pin-controller 2 */
->> +static struct samsung_pin_bank exynos5260_pin_banks2[] = {
->> +     EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
->> +     EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
->> +};
->> +
->> +/*
->> + * Samsung pinctrl driver data for Exynos5260 SoC. Exynos5420 SoC includes
->> + * four gpio/pin-mux/pinconfig controllers.
->
-> Hmm, I can see only three of them below. Is there one left undefined?
-
-There are only three. I updated the comment.
-
-regards,
-Rahul Sharma
-
->
-> Otherwise, the patch looks fine.
->
-> Best regards,
-> Tomasz
->
+diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+index 494deadb4602..179bdc17b667 100644
+--- a/arch/arm/plat-samsung/clock.c
++++ b/arch/arm/plat-samsung/clock.c
+@@ -42,7 +42,6 @@
+ #include <linux/debugfs.h>
+ #endif
+ 
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ 
+ #include <plat/cpu-freq.h>
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 78460f836e89..7a29f1256439 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -30,6 +30,7 @@
+ #include <linux/mtd/partitions.h>
+ #include <linux/mmc/host.h>
+ #include <linux/ioport.h>
++#include <linux/sizes.h>
+ #include <linux/platform_data/s3c-hsudc.h>
+ #include <linux/platform_data/s3c-hsotg.h>
+ #include <linux/platform_data/dma-s3c24xx.h>
+@@ -41,7 +42,6 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/dma.h>
+ #include <mach/irqs.h>
+ #include <mach/map.h>
+diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+index e63e3cea9dac..9183ded63552 100644
+--- a/arch/arm/plat-samsung/init.c
++++ b/arch/arm/plat-samsung/init.c
+@@ -23,8 +23,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ 
+-#include <mach/hardware.h>
+-
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+index 72e8e8f234f4..0f70339d60da 100644
+--- a/arch/arm/plat-samsung/pm.c
++++ b/arch/arm/plat-samsung/pm.c
+@@ -25,7 +25,6 @@
+ #include <plat/regs-serial.h>
+ 
+ #ifdef CONFIG_SAMSUNG_ATAGS
+-#include <mach/hardware.h>
+ #include <mach/map.h>
+ #ifndef CONFIG_ARCH_EXYNOS
+ #include <mach/regs-clock.h>
+diff --git a/arch/arm/plat-samsung/s5p-dev-uart.c b/arch/arm/plat-samsung/s5p-dev-uart.c
+index cafa3deddcc1..8c4487af98c8 100644
+--- a/arch/arm/plat-samsung/s5p-dev-uart.c
++++ b/arch/arm/plat-samsung/s5p-dev-uart.c
+@@ -18,7 +18,6 @@
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/irq.h>
+-#include <mach/hardware.h>
+ #include <mach/map.h>
+ 
+ #include <plat/devs.h>
+-- 
+1.7.9.5
