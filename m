@@ -1,75 +1,66 @@
 From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH V2] i2c: s3c2410 : Add polling mode support
-Date: Fri, 3 Jan 2014 17:10:12 +0100
-Message-ID: <20140103161012.GH7132@katana>
-References: <1384168820-2986-1-git-send-email-yuvaraj.cd@samsung.com>
+Subject: Re: [PATCH v4] i2c: s3c2410: dont need CPU_FREQ transitions for
+ exynos series
+Date: Fri, 3 Jan 2014 17:23:52 +0100
+Message-ID: <20140103162351.GI7132@katana>
+References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
+ <1385439767-18586-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LiQwW4YX+w4axhAx"
+	protocol="application/pgp-signature"; boundary="VaKJWhUROU/xPxjb"
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1384168820-2986-1-git-send-email-yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1385439767-18586-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, aditya.ps-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vasanth Ananthan <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vasanth Ananthan <vasanth.a-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---LiQwW4YX+w4axhAx
+--VaKJWhUROU/xPxjb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Mon, Nov 11, 2013 at 04:50:20PM +0530, Yuvaraj Kumar C D wrote:
-> From: Vasanth Ananthan <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Tue, Nov 26, 2013 at 09:52:46AM +0530, Naveen Krishna Chatradhi wrote:
+> For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
+> on a fixed 66 MHz peripheral clock, and therefore is completely
+> independent of the cpu frequency.
+> Thus, registering for a CPU freq notifier is very wasteful.
 >=20
-> This patch adds polling mode support for i2c-s3c2410 driver.The
-> SATA PHY controller's CMU and TRSV block's are of I2C register
-> map in exynos5250.These blocks can be configured using i2c.
+> This patch modifes the code such that, i2c bus registers to
+> cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
 >=20
-> But i2c controller instance on which these block's sits lacks an
-> interrupt line.Also the current i2c-s3c2410 driver is only interrupt
-> driven, thus a polling mode support is required in the driver for
-> supporting this controller. This patch adds this support to the driver.
+> This change should save a bunch of cpufreq transitions calls
+> which does not apply to exynos SoCs.
 >=20
-> Changes from V1:
-> 	1.Changed the is_ack() to have even period b/w polls and
-> 	  used usleep_range() instead of udelay().
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Mileages vary, but I'd like to see revision changes after the "---".
-
->  	ret =3D devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
-> -			       dev_name(&pdev->dev), i2c);
-> +				dev_name(&pdev->dev), i2c);
-
-Unrelated change.
-
-Rest looks good, so I'll fix up the things for you and apply to
-for-next, thanks!
+Applied to for-next, thanks!
 
 
---LiQwW4YX+w4axhAx
+--VaKJWhUROU/xPxjb
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.15 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSxuDjAAoJEBQN5MwUoCm2SLUP/1Q8BcJlMMfSyfORTR+34WlF
-507zNPJcyrNobOULiYp5Y6Ud5cgjEOsQOJwOdX4TAYAhMX4Ydpqp7Y8+YHZ4lEQu
-61U3qSanrUpqdyOSt8gk5ZkFO7M5jqXkMNf1SMFdGZG0cuCNC/05uMk9NB0ImyDN
-3JzuBuDBImzKUbvhQonsYtGKonZYX01jYJ5MH3UWpCrBHjD67XahH5Ut94roRMjm
-spjUG67V6cV6QNcqGfmPdQn0FdSfIoBW2JLXMfyI9SLYetiZ3mG0YsQ4qR58CEqg
-Cc4ABFhQhvOe1qfL7OMyafjgBaMIjH9DJ0fssHgV8xyPhQpjhl9Ew1dcTs7/6TqI
-a30RLhUX91VvmOPy7mMSv4UTT2ev6den1KdcJdMdCbVyn27i8nxFOweemQi0LFIF
-mReAByF1SfQQs5ViFDxQt2+nr2LChYBS9HWTXFbOrCzGawW3M54tf6y5IR73hIfI
-lkNztNi1CdtLp+fQyf/XJMG/qr+xgexs4EJq+TL9t8gsiWep8nnR4Jjt6Yo7f6Hc
-KwDArTbRsv1Hk5p9GbrV4oswN80gQLPpSLOlk6wsL1c5Yf8WhUaqTSvJuLpVMLnK
-x0rXM8d4cByBfnrAa1/0t8amj5X4DuFpeaFtlMO4QblmC25s4n48U2cPj7lNLPmZ
-KDwu6qzlN0AKXvwp3OKc
-=rOkk
+iQIcBAEBAgAGBQJSxuQXAAoJEBQN5MwUoCm23DgP+wTf3YlfmOrh7G+lpYvsgqxQ
+r16o7AOEnjZbJkOE1sN6LNcrCiH/4jAJE756ZBZZGTSzQh6FAb0UPi8abUp18Rzq
+wpsndT//AyhoZKaO6E4qnj67089jqZc2C83+xZrvHJjxXokIz4kfB7yVfHJEsViK
+Wpxtgt7mOxDSF/FAul+ayEw+lSblTBT3y+xF1oLcLPvgl8iMpdzwLSuXkFmrQALO
+4hvOLEh1hfeYafwN8AYMcvgZAttJBrpjDjy4dVScGdQd4RdB0zUCFcSSdonCsBlb
+Hj8ZOSirqN45S6LO7njJL7nImcYmU/r0+atdKHiHKSpayqJBi74OURNciaUmSSSX
+lBFDg0e5Mw41QYryqSmxfbXO7VaF+SNZ9KzApk64MHCFbTNaYrhaColOsFHMu0Xx
+1fB4wQJD2xFhTQP7Da9uZEpytoq4Vay5TBEMGYiPwQ/u/+Z8E5giZYjoMzgzP2Ki
+4zzlSiGEd0NiZLa7OuIvA7eIrZmEKrWD7rEesSCm5OEO7MHZnRcKEn7bdOlRgGsL
+8yAjyKCiSLeCmepG4MlR99obIPuK4cp4oEm622orV/Yc2kaMUXRMrGzSYIbtlrBH
+g6hIJQRTaZdqAsqS/kSm1ShjoXwj/QhpXBnpwXWKbmBc3rprkfx+mUEEDuLBEEHZ
+btRMTWVtR7dL+YSPOpBU
+=+/YN
 -----END PGP SIGNATURE-----
 
---LiQwW4YX+w4axhAx--
+--VaKJWhUROU/xPxjb--
