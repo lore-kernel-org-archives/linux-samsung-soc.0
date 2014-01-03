@@ -1,59 +1,100 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/3] ARM: S3C24XX: Remove invalid code from hardware.h
-Date: Fri,  3 Jan 2014 14:54:37 +0530
-Message-ID: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2] ARM: dts: Add regulator entries to Exynos5420 SMDK board
+Date: Fri, 3 Jan 2014 15:37:51 +0530
+Message-ID: <CAK9yfHyu=ZKrPqb_VC-6RoJOF=W45jJrZ95=zYmvkMzd_oEooQ@mail.gmail.com>
+References: <1386236664-27763-1-git-send-email-sachin.kamat@linaro.org>
+	<6615089.743e1d93MS@amdc1227>
+	<CAK9yfHy8iKr8n5OVLm3QbiO3cL_hx-kr8f=gZ2VsBmuXLgHvgg@mail.gmail.com>
+	<1604811.B6Si6qrpKm@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:53716 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841AbaACJ2Z (ORCPT
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:64507 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750841AbaACKHy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jan 2014 04:28:25 -0500
-Received: by mail-pa0-f43.google.com with SMTP id bj1so15595773pad.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2014 01:28:24 -0800 (PST)
+	Fri, 3 Jan 2014 05:07:54 -0500
+Received: by mail-ob0-f170.google.com with SMTP id wp18so15522392obc.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2014 02:07:52 -0800 (PST)
+In-Reply-To: <1604811.B6Si6qrpKm@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Remove the code that is not referenced anywhere. While at it also
-remove incorrect file path.
+On 21 December 2013 02:40, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Thursday 19 of December 2013 10:05:52 Sachin Kamat wrote:
+>> Hi Tomasz,
+>>
+>> On 18 December 2013 20:46, Tomasz Figa <t.figa@samsung.com> wrote:
+>> > Hi Sachin,
+>> >
+>> > On Thursday 05 of December 2013 15:14:24 Sachin Kamat wrote:
+>> >> Added regulator entries to Exynos5420 SMDK board.
+>> >>
+>> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> >> ---
+>> >> Changes since v1:
+>> >> Changed node name
+>> >> ---
+>> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts |  216 +++++++++++++++++++++++++++++
+>> >>  1 file changed, 216 insertions(+)
+>> >>
+>> >> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >> index fb5a1e25c632..62e1ebe4e989 100644
+>> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >> @@ -120,4 +120,220 @@
+>> >>                       reg = <0x50>;
+>> >>               };
+>> >>       };
+>> >> +
+>> >> +     hsi2c_4: i2c@12CA0000 {
+>> >> +             status = "okay";
+>> >> +
+>> >> +             s2mps11_pmic@66 {
+>> >
+>> > Just pmic@66 is enough.
+>>
+>> Please see my comment below.
+>>
+>> >
+>> >> +                     compatible = "samsung,s2mps11-pmic";
+>> >> +                     reg = <0x66>;
+>> >> +                     s2mps11,buck2-ramp-delay = <12>;
+>> >> +                     s2mps11,buck34-ramp-delay = <12>;
+>> >> +                     s2mps11,buck16-ramp-delay = <12>;
+>> >> +                     s2mps11,buck6-ramp-enable = <1>;
+>> >> +                     s2mps11,buck2-ramp-enable = <1>;
+>> >> +                     s2mps11,buck3-ramp-enable = <1>;
+>> >> +                     s2mps11,buck4-ramp-enable = <1>;
+>> >> +
+>> >> +                     s2mps11_osc: clocks {
+>> >> +                             #clock-cells = <1>;
+>> >> +                             clock-output-names = "s2mps11_ap",
+>> >> +                                             "s2mps11_cp", "s2mps11_bt";
+>> >> +                     };
+>> >> +
+>> >> +                     regulators {
+>> >> +                             ldo1_reg: LDO1 {
+>> >> +                                     regulator-name = "vdd_ldo1";
+>> >
+>> > Is this the name as written on the PCB or board schematics?
+>> > + the same for all regulators below.
+>>
+>> Yes, the schematic refers to these just as above (with no specific names).
+>> Unless you have strong objections or a re-spin of this patch becomes
+>> necessary, I
+>> wouldn't want to change the name you pointed above. :)
+>
+> OK.
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-s3c24xx/include/mach/hardware.h |   14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+Ping Kukjin.
 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/hardware.h b/arch/arm/mach-s3c24xx/include/mach/hardware.h
-index a6cc14a092fc..dedd3837c193 100644
---- a/arch/arm/mach-s3c24xx/include/mach/hardware.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/hardware.h
-@@ -1,5 +1,4 @@
--/* arch/arm/mach-s3c2410/include/mach/hardware.h
-- *
-+/*
-  * Copyright (c) 2003 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-@@ -17,20 +16,9 @@
- 
- extern unsigned int s3c2410_modify_misccr(unsigned int clr, unsigned int chg);
- 
--#ifdef CONFIG_CPU_S3C2440
--
--extern int s3c2440_set_dsc(unsigned int pin, unsigned int value);
--
--#endif /* CONFIG_CPU_S3C2440 */
--
- #endif /* __ASSEMBLY__ */
- 
- #include <asm/sizes.h>
- #include <mach/map.h>
- 
--/* machine specific hardware definitions should go after this */
--
--/* currently here until moved into config (todo) */
--#define CONFIG_NO_MULTIWORD_IO
--
- #endif /* __ASM_ARCH_HARDWARE_H */
+
+
 -- 
-1.7.9.5
+With warm regards,
+Sachin
