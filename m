@@ -1,61 +1,63 @@
 From: kgene@kernel.org
-Subject: RE: [PATCH 1/9] ARM: SAMSUNG: Remove platform dependency from samsung.S
-Date: Sat, 04 Jan 2014 11:35:10 +0900
-Message-ID: <22ff01cf08f5$96be3010$c43a9030$@kernel.org>
-References: <1388397640-720-1-git-send-email-tushar.behera@linaro.org>
- <1388397640-720-2-git-send-email-tushar.behera@linaro.org>
- <20131231153826.GD31886@sirena.org.uk>
- <CAHbNUh2srTmYU+04xt_goUw1E4QkWtdzSOT3wfgbQTtCtBjb_w@mail.gmail.com>
+Subject: RE: [PATCH V4 1/6] clk: exynos-audss: convert to platform device
+Date: Sat, 04 Jan 2014 11:47:41 +0900
+Message-ID: <230001cf08f7$568ded80$03a9c880$@kernel.org>
+References: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
+ <20131127184145.16819.44300@quantum> <529BBB9E.40300@samsung.com>
+ <1592382.OOUUI06mrc@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42665 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753815AbaADCfL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jan 2014 21:35:11 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MYU00JPLV6MSE80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 04 Jan 2014 11:35:10 +0900 (KST)
-In-reply-to: <CAHbNUh2srTmYU+04xt_goUw1E4QkWtdzSOT3wfgbQTtCtBjb_w@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1592382.OOUUI06mrc@amdc1227>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-doc-owner@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>
+Cc: 'Andrew Bresticker' <abrestic@chromium.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, 'Padmavathi Venna' <padma.v@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Mark Brown' <broonie@kernel.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>
 
-Tushar Behera wrote:
+Tomasz Figa wrote:
 > 
-> On 31 December 2013 21:08, Mark Brown <broonie@kernel.org> wrote:
-> > On Mon, Dec 30, 2013 at 03:30:32PM +0530, Tushar Behera wrote:
-> >> From: Sachin Kamat <sachin.kamat@linaro.org>
-> >>
-> >> regs-serial.h only includes linux/serial_s3c.h. Include this
-> >> header directly in samsung.S to remove unnecessary platform
-> >> dependency.
-> >>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> ---
-> >
-> > If you're forwarding on a patch from someone else you need to add your
-> > Signed-off-by to it - that's important for the whole goal of tracking
-> > licensing.
+> Hi Kukjin, Mike,
 > 
-> Yeah, true. I forgot about that.
+> On Monday 02 of December 2013 07:43:42 Kukjin Kim wrote:
+> > On 11/28/13 03:41, Mike Turquette wrote:
+> > > Quoting Padma Venkat (2013-11-25 22:29:44)
+> > >> Hi Mike and Kukjin,
+> > >>
+> > >> On Tue, Oct 8, 2013 at 10:23 PM, Andrew Bresticker
+> > >> <abrestic@chromium.org>  wrote:
+> > >>> Hi Mike and Kukjin,
+> > >>>
+> > >>> Any decisions regarding this patchset?  I believe all comments have
+> > >>> been addressed.
+> > >>>
+> > >>> Thanks,
+> > >>> Andrew
+> > >>
+> > >> Any decisions on this patchset. These can be applied directly on
+> > >> linux-samsung tree.
+> > >
+> > > For all of the clk parts:
+> > >
+> > > Acked-by: Mike Turquette<mturquette@linaro.org>
+> > >
+> > > I'm happy to take them in as part of a pull request.
+> > >
+> > OK, Mike, I will take this series into samsung tree and let me send a
+> > pull request for your clk tree to avoid useless merge conflicts.
 > 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> 
-> Kukjin,
-> 
-> While applying this series, can you please add my Signed-off-by?
-> 
-Tushar, The 'Signed-off-by' is different with others ack, review or whatever. In my understanding it's a legal issue so you need to repost.
+- some persons in Cc
 
-BTW, I think this series looks good to me but we don't need separated #1 to #8 patches because it's samething, so please squash them.
+> Hmm, I can't find this series in any tree, so I guess it has been lost
+> in action.
+> 
+Oops, sorry about that :-(
+
+> Should I take it through samsung-clk tree with your acks?
+> 
+Tomasz, yes please take this series with my ack.
 
 Thanks,
 Kukjin
+
