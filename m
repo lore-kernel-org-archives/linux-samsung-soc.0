@@ -1,31 +1,100 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] ARM: Exynos: Use generic uncompress.h
-Date: Mon, 6 Jan 2014 16:49:36 +0100
-Message-ID: <201401061649.36364.arnd@arndb.de>
-References: <1388998975-32362-1-git-send-email-sachin.kamat@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: Boot hang on Origen with (!SMP && CPU_IDLE)
+Date: Mon, 06 Jan 2014 17:41:19 +0100
+Message-ID: <4790422.Kg6m1IjKcC@flatron>
+References: <CAHbNUh1LF9+v1en==t8znAL518ERWE2LffTDykAEb2HST+WKTw@mail.gmail.com> <CAHbNUh18WkH4CFcaeP1Tdjm3L-Rr0xVzgCnAHoPbbCFRWjKyxg@mail.gmail.com> <201401061630.56740.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:54230 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751335AbaAFPuD (ORCPT
+Received: from mail-ea0-f170.google.com ([209.85.215.170]:45283 "EHLO
+	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755256AbaAFQl1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 10:50:03 -0500
-In-Reply-To: <1388998975-32362-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 6 Jan 2014 11:41:27 -0500
+Received: by mail-ea0-f170.google.com with SMTP id k10so7961183eaj.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 08:41:25 -0800 (PST)
+In-Reply-To: <201401061630.56740.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Monday 06 January 2014, Sachin Kamat wrote:
-> As a pre-requisite step towards enabling multi-platform support
-> for Exynos, enable it to use generic uncompress.h instead of the
-> one provided in machine code.
+On Monday 06 of January 2014 16:30:56 Arnd Bergmann wrote:
+> On Monday 06 January 2014, Tushar Behera wrote:
+> > The device tree node for l2x0 device was missing. After adding a node
+> > as below I can start booting Origen board.
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
+> > b/arch/arm/boot/dts/exynos4210-origen.dts
+> > index 1a12fb2..675f323 100644
+> > --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> > +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> > @@ -32,6 +32,13 @@
+> > 
+> > +       l2-cache-controller@10502000 {
+> > +               compatible = "arm,pl310-cache";
+> > +               reg = <0x10502000 0x1000>;
+> > +               cache-unified;
+> > +               cache-level = <2>;
+> > +       };
+> > +
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Ok, very good!
+> 
+> > >> be a good time to get rid of the L2_AUX_VAL and L2_AUX_MASK defines and
+> > >> just read the respective settings from DT.
+> > 
+> > Ok.
+> 
+> Does the node you list above have the right settings for this?
+> 
+> > > 2) There is no L2 cache controller node in Exynos4*.dtsi.
+> > >
+> > > It should be added, but L2 cache can't be enabled on all boards yet,
+> > > since on boards where secure firmware is enabled, special configuration
+> > > involving SMC calls is required. Patches for this are queued on my work
+> > > queue, but it's quite tricky due to 1), which needs to consider whether
+> > > secure firmware is enabled or not.
+> > >
+> > 
+> > In that case, would it be ok to add the node for Origen board only?
 
-Both patches
+Better solution would be to add the node in SoC-level dtsi, keep it
+disabled and override the status to okay at board level. Still...
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Wouldn't that leave other systems still broken? I'm particularly worried
+> about what patch to backport to linux-stable. We should definitely add
+> the node for Origen, but we may also have to revert my broken patch
+> in all affected kernel versions.
+
+...Origen is not the only board that is affected by this, most likely any
+Exynos4-based board not running under secure firmware is.
+
+> 
+> Are there any systems that may or may not have secure firmware enabled
+> depending on the boot loader, or do we always know whether secure firmware
+> is there or not?
+
+It always depends on the boot loader, but fortunately it's unlikely to
+happen that one board will have both secure-enabled and normal bootloaders
+available and in use, at least for Exynos4-based boards, so it's quite
+safe to assume presence of secure firmware on per board basis and so you
+have the secure firmware device tree node only in dts files of boards
+that are known to use secure firmware.
+
+Aynway, from what I can see, support for the only two Exynos4 boards using
+for secure firmware was added in 3.12. This means that we can revert the
+offending patch for 3.11, but for 3.12 and newer we can't, because this
+will break such boards with CONFIG_L2X0 enabled.
+
+Instead, wouldn't it be better to fix the issue at its cause? This means
+s5p-sleep.S re-enabling L2X0 only if it was really enabled before entering
+low power mode. This could be achieved by checking if l2x0_regs_phys isn't
+0 for example (which isn't a valid physical RAM address on Exynos).
+
+What do you think?
+
+Best regards,
+Tomasz
