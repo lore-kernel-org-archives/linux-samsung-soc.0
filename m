@@ -1,50 +1,99 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH RFC alternative ver 1] phy: Exynos 421x USB 2.0 PHY support
-Date: Mon, 6 Jan 2014 15:54:28 +0530
-Message-ID: <52CA845C.5080308@ti.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com> <1387545857-9472-11-git-send-email-k.debski@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: Boot hang on Origen with (!SMP && CPU_IDLE)
+Date: Mon, 6 Jan 2014 16:01:42 +0530
+Message-ID: <CAHbNUh18WkH4CFcaeP1Tdjm3L-Rr0xVzgCnAHoPbbCFRWjKyxg@mail.gmail.com>
+References: <CAHbNUh1LF9+v1en==t8znAL518ERWE2LffTDykAEb2HST+WKTw@mail.gmail.com>
+	<201401031437.10624.arnd@arndb.de>
+	<2428340.zXRbG18t7N@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387545857-9472-11-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:56082 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752082AbaAFKbm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Jan 2014 05:31:42 -0500
+Received: by mail-ob0-f174.google.com with SMTP id wn1so18086585obc.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 02:31:42 -0800 (PST)
+In-Reply-To: <2428340.zXRbG18t7N@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kyungmin Park <kyungmin.park@samsung.com>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+On 3 January 2014 19:28, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Friday 03 of January 2014 14:37:10 Arnd Bergmann wrote:
+>> On Friday 03 January 2014, Tushar Behera wrote:
 
-On Friday 20 December 2013 06:54 PM, Kamil Debski wrote:
-> This the alternative version of the support for Exynos 421x USB 2.0 PHY
-> in the Generic PHY framework. In this version the support for Exynos
-> 4210 and 4212 was joined into one file.
+[ ... ]
+
+>> Hmm, the boot log contains no message about the l2 cache controller getting
+>> initialized, which means that l2x0_of_init probably failed before calling
+>> l2x0_init. It also seems that the dts files distributed with the kernel
+>> are lacking nodes for the l2x0 device, which is indeed a perfectly good
+>> explanation although it doesn't explain at all why it ever worked on
+>> any system with my patch.
+>>
+>> Can you check if there is a correct cache controller node in your device
+>> tree, and whether it works when you add one? If so, we should probably
+>> add a couple of stable backport patches to the dts files. It would also
+
+The device tree node for l2x0 device was missing. After adding a node
+as below I can start booting Origen board.
+
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
+b/arch/arm/boot/dts/exynos4210-origen.dts
+index 1a12fb2..675f323 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -32,6 +32,13 @@
+
++       l2-cache-controller@10502000 {
++               compatible = "arm,pl310-cache";
++               reg = <0x10502000 0x1000>;
++               cache-unified;
++               cache-level = <2>;
++       };
++
+
+>> be a good time to get rid of the L2_AUX_VAL and L2_AUX_MASK defines and
+>> just read the respective settings from DT.
+
+Ok.
+
 >
-> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Hi,
+> Tushar, do you maybe also have CONFIG_CACHE_L2X0 enabled?
 >
-> Me and Kishon were discussing for quite a long time the way how Exynos 4
-> should be handled. I have decided to post the original patches and try
-> to make an alternative version with support for Exynos 4210 and 4212 joined
-> in one file. I have prepared two versions. The first one has 506 lines (vs
-> 563 when two files are used). When doing the second version I was a little
-> more aggresive in removing code. This was done at a cost of adding if's
-> deciding which SoC version the driver is dealing with in some internal functions.
-> This resulted in a better number of removed lines - the second version has
-> only 452 lines (vs 563 original and 506 version 1).
 
-Alright.. If the alternate approach doesn't give too much of advantage, 
-lets stick with the original one. I would recommend creating a 
-documentation (Documentation/phy/?) for the samsung PHY since that 
-actually creates a layer on top of generic PHY framework. That would 
-help while adding new samsung PHY drivers.
+Yes, this config option is enabled. If this is disabled, I don't see
+this problem.
 
-Btw thank you for preparing alternate versions for your original patches.
+> Generally I can see two different issues here:
+>
+> 1) Broken handling of L2 cache in plat-samsung/sleep.S. It assumes that
+> whenever CONFIG_CACHE_L2X0 is enabled, L2 cache is enabled too.
+>
+> This needs to go away. On normal resume from sleep, there is no need to
+> do anything with L2X0 at such early stage. This reinitialization can be
+> safely done later, by calling generic outer_resume().
+>
+> The problem shows up when you look at AFTR and LPA idle modes. They keep
+> L2 cache contents, but L2X0 registers must be restored to let the cache
+> operate normally. This must happen early enough to keep cache data
+> consistent. Still, the code doing this must consider whether the cache
+> was enabled before entering AFTR/LPA and whether secure firmware is used
+> (see below), so this is a bit tricky.
+>
+> 2) There is no L2 cache controller node in Exynos4*.dtsi.
+>
+> It should be added, but L2 cache can't be enabled on all boards yet,
+> since on boards where secure firmware is enabled, special configuration
+> involving SMC calls is required. Patches for this are queued on my work
+> queue, but it's quite tricky due to 1), which needs to consider whether
+> secure firmware is enabled or not.
+>
 
-Cheers
-Kishon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In that case, would it be ok to add the node for Origen board only?
+
+-- 
+Tushar Behera
