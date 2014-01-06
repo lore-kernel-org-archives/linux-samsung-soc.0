@@ -1,86 +1,67 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: Re: [PATCH] mfd: max8997: Use "IS_ENABLED(CONFIG_OF)" for DT code.
-Date: Sun, 5 Jan 2014 13:40:42 +0530
-Message-ID: <CAKDJKT5cCebTV5F0uS_TBxjrJL4PGiUc68kiv51q0mnMjQC3HQ@mail.gmail.com>
-References: <1387734529-15622-1-git-send-email-badarkhe.manish@gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/9] ARM: SAMSUNG: Remove platform dependency from samsung.S
+Date: Mon, 6 Jan 2014 08:37:16 +0530
+Message-ID: <CAHbNUh2jW7asxsEagD-k8p120-8-OR0ZADimdOikyDLM94+aEA@mail.gmail.com>
+References: <1388397640-720-1-git-send-email-tushar.behera@linaro.org>
+	<1388397640-720-2-git-send-email-tushar.behera@linaro.org>
+	<20131231153826.GD31886@sirena.org.uk>
+	<CAHbNUh2srTmYU+04xt_goUw1E4QkWtdzSOT3wfgbQTtCtBjb_w@mail.gmail.com>
+	<22ff01cf08f5$96be3010$c43a9030$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:41264 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750816AbaAEIKn (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:45235 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751460AbaAFDHR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Jan 2014 03:10:43 -0500
-In-Reply-To: <1387734529-15622-1-git-send-email-badarkhe.manish@gmail.com>
+	Sun, 5 Jan 2014 22:07:17 -0500
+Received: by mail-ob0-f176.google.com with SMTP id vb8so17776734obc.35
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jan 2014 19:07:17 -0800 (PST)
+In-Reply-To: <22ff01cf08f5$96be3010$c43a9030$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: sameo@linux.intel.com, Lee Jones <lee.jones@linaro.org>, =?UTF-8?B?4KSu4KSo4KS/4KS3IOCkrOCkpuCksOCkluClhw==?= <badarkhe.manish@gmail.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hi Samuel,
+On 4 January 2014 08:05,  <kgene@kernel.org> wrote:
+> Tushar Behera wrote:
+>>
+>> On 31 December 2013 21:08, Mark Brown <broonie@kernel.org> wrote:
+>> > On Mon, Dec 30, 2013 at 03:30:32PM +0530, Tushar Behera wrote:
+>> >> From: Sachin Kamat <sachin.kamat@linaro.org>
+>> >>
+>> >> regs-serial.h only includes linux/serial_s3c.h. Include this
+>> >> header directly in samsung.S to remove unnecessary platform
+>> >> dependency.
+>> >>
+>> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> >> ---
+>> >
+>> > If you're forwarding on a patch from someone else you need to add your
+>> > Signed-off-by to it - that's important for the whole goal of tracking
+>> > licensing.
+>>
+>> Yeah, true. I forgot about that.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>
+>> Kukjin,
+>>
+>> While applying this series, can you please add my Signed-off-by?
+>>
+> Tushar, The 'Signed-off-by' is different with others ack, review or whatever. In my understanding it's a legal issue so you need to repost.
+>
+> BTW, I think this series looks good to me but we don't need separated #1 to #8 patches because it's samething, so please squash them.
+>
+> Thanks,
+> Kukjin
+>
 
-On Sun, Dec 22, 2013 at 11:18 PM, Manish Badarkhe
-<badarkhe.manish@gmail.com> wrote:
->
-> Instead of "#if define CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
-> option for DT code to avoid if-deffery in code.
->
-> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
-> ---
-> :100644 100644 791aea3... be9a8b0... M  drivers/mfd/max8997.c
->  drivers/mfd/max8997.c |   14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
-> index 791aea3..be9a8b0 100644
-> --- a/drivers/mfd/max8997.c
-> +++ b/drivers/mfd/max8997.c
-> @@ -133,7 +133,6 @@ int max8997_update_reg(struct i2c_client *i2c, u8 reg, u8 val, u8 mask)
->  }
->  EXPORT_SYMBOL_GPL(max8997_update_reg);
->
-> -#ifdef CONFIG_OF
->  /*
->   * Only the common platform data elements for max8997 are parsed here from the
->   * device tree. Other sub-modules of max8997 such as pmic, rtc and others have
-> @@ -164,24 +163,15 @@ static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
->
->         return pd;
->  }
-> -#else
-> -static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
-> -                                       struct device *dev)
-> -{
-> -       return 0;
-> -}
-> -#endif
->
->  static inline int max8997_i2c_get_driver_data(struct i2c_client *i2c,
->                                                 const struct i2c_device_id *id)
->  {
-> -#ifdef CONFIG_OF
-> -       if (i2c->dev.of_node) {
-> +       if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node) {
->                 const struct of_device_id *match;
->                 match = of_match_node(max8997_pmic_dt_match, i2c->dev.of_node);
->                 return (int)match->data;
->         }
-> -#endif
->         return (int)id->driver_data;
->  }
->
-> @@ -203,7 +193,7 @@ static int max8997_i2c_probe(struct i2c_client *i2c,
->         max8997->type = max8997_i2c_get_driver_data(i2c, id);
->         max8997->irq = i2c->irq;
->
-> -       if (max8997->dev->of_node) {
-> +       if (IS_ENABLED(CONFIG_OF) && max8997->dev->of_node) {
->                 pdata = max8997_i2c_parse_dt_pdata(max8997->dev);
->                 if (IS_ERR(pdata))
->                         return PTR_ERR(pdata);
+Kukjin,
 
-Gentle ping.
-Please let me know, Are there any review comments on this patch?
+I will repost the series after updating the sob and squashing the
+patches #2 to #9. I prefer to keep patch #1 separate as I would like
+to retain Sachin's authorship for that patch.
 
-Regards
-Manish Badarkhe
+-- 
+Tushar Behera
