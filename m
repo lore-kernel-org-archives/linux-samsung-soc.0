@@ -1,44 +1,211 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH RESEND 3/4] mfd: sec-core: Add cells for S5M8767-clocks
-Date: Mon, 6 Jan 2014 11:22:12 +0000
-Message-ID: <20140106112212.GP23772@lee--X1>
-References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
- <1388053141-30085-1-git-send-email-tushar.behera@linaro.org>
- <1388053141-30085-4-git-send-email-tushar.behera@linaro.org>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 4/7] clk/samsung: add support for multuple clock providers
+Date: Mon, 6 Jan 2014 17:05:26 +0530
+Message-ID: <CAPdUM4M9XkB14y=c29WzX93VysWhZTzFkCKXpkmXtFv1CB2OvQ@mail.gmail.com>
+References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
+	<1386345391-23482-5-git-send-email-rahul.sharma@samsung.com>
+	<11276764.MQ2Wg9nEER@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:60835 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752776AbaAFLWS (ORCPT
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:58248 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754697AbaAFLf1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 06:22:18 -0500
-Received: by mail-wg0-f43.google.com with SMTP id k14so15730032wgh.22
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 03:22:17 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1388053141-30085-4-git-send-email-tushar.behera@linaro.org>
+	Mon, 6 Jan 2014 06:35:27 -0500
+In-Reply-To: <11276764.MQ2Wg9nEER@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, Young-Gun Jang <yg1004.jang@samsung.com>, Arun Kumar <arun.kk@samsung.com>
 
-On Thu, 26 Dec 2013, Tushar Behera wrote:
+Hi Tomasz,
 
-> S5M8767 chip has 3 crystal oscillators running at 32KHz. These are
-> supported by s2mps11-clk driver.
->=20
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> CC: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/sec-core.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On 11 December 2013 16:45, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Rahul,
+>
+> Please see my comments inline.
+>
+> On Friday 06 of December 2013 21:26:28 Rahul Sharma wrote:
+>> Samsung CCF helper functions do not provide support to
+>> register multiple Clock Providers for a given SoC. Due to
+>> this limitation SoC platforms are not able to use these
+>> helpers for registering mulitple clock providers and are
+>> forced to bypass this layer.
+>>
+>> This layer is modified acordingly to enable the support.
+>>
+>> Clockfile for exynos4, exynos5250, exynos5420, exynos5440
+>> and S3c64xx are also modified as per changed helper functions.
+> [snip]
+>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+>> index 91bec3e..20de446 100644
+>> --- a/drivers/clk/samsung/clk.c
+>> +++ b/drivers/clk/samsung/clk.c
+>> @@ -15,11 +15,6 @@
+>>  #include "clk.h"
+>>
+>>  static DEFINE_SPINLOCK(lock);
+>
+> IMHO you can also move the spinlock into samsung_clk_provider struct, to
+> have more fine grained locking, as you shouldn't need to lock between
+> particular providers, just multiple requests for one.
+>
+Done.
 
-Applied, thanks.
+>> -static struct clk **clk_table;
+>> -static void __iomem *reg_base;
+>> -#ifdef CONFIG_OF
+>> -static struct clk_onecell_data clk_data;
+>> -#endif
+>>
+>>  void samsung_clk_save(void __iomem *base,
+>>                                   struct samsung_clk_reg_dump *rd,
+>> @@ -55,40 +50,53 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+>>  }
+>>
+>>  /* setup the essentials required to support clock lookup using ccf */
+>> -void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+>> -                          unsigned long nr_clks)
+>> +struct samsung_clk_provider *__init samsung_clk_init(struct device_node *np,
+>> +                     void __iomem *base, unsigned long nr_clks)
+>>  {
+>> -     reg_base = base;
+>> +     struct samsung_clk_provider *ctx;
+>> +     struct clk **clk_table;
+>> +     int ret;
+>> +
+>> +     if (!np)
+>> +             return NULL;
+>
+> This check is incorrect. It's completely correct to call this function
+> with NULL np, when booted without DT and this was handled correctly
+> before this patch. Please keep the same behavior.
+>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Done.
+
+>> +
+>> +     ctx = kzalloc(sizeof(struct samsung_clk_provider), GFP_KERNEL);
+>> +     if (!ctx)
+>> +             panic("could not allocate clock provider context.\n");
+>>
+>>       clk_table = kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
+>>       if (!clk_table)
+>>               panic("could not allocate clock lookup table\n");
+>>
+>> -     if (!np)
+>> -             return;
+>> +     ctx->reg_base = base;
+>> +     ctx->clk_data.clks = clk_table;
+>> +     ctx->clk_data.clk_num = nr_clks;
+>>
+>> -#ifdef CONFIG_OF
+>> -     clk_data.clks = clk_table;
+>> -     clk_data.clk_num = nr_clks;
+>> -     of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+>> -#endif
+>> +     ret = of_clk_add_provider(np, of_clk_src_onecell_get,
+>> +                     &ctx->clk_data);
+>> +     if (ret)
+>> +             panic("could not register clock provide\n");
+>> +
+>> +     return ctx;
+>>  }
+> [snip]
+>> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+>> index c7141ba..433bab3 100644
+>> --- a/drivers/clk/samsung/clk.h
+>> +++ b/drivers/clk/samsung/clk.h
+>> @@ -21,6 +21,17 @@
+>>  #include <linux/of_address.h>
+>>  #include "clk-pll.h"
+>>
+>> +/* Context node which holds information about the clock provider. */
+>> +/**
+>> + * struct samsung_clk_provider: information about clock plovider
+>
+> typo: s/plovider/provider/
+
+Ok.
+>
+>> + * @reg_base: virtual address for the register base.
+>> + * @clk_data: holds clock related data like clk* and number of clocks.
+>> + */
+>
+> Why two comments? The kerneldoc one should be enough.
+>
+>> +struct samsung_clk_provider {
+>> +     void __iomem *reg_base;
+>> +     struct clk_onecell_data clk_data;
+>> +};
+>> +
+>>  /**
+>>   * struct samsung_clock_alias: information about mux clock
+>>   * @id: platform specific id of the clock.
+>> @@ -312,29 +323,40 @@ struct samsung_pll_clock {
+>>       __PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,     \
+>>               _lock, _con, _rtable, _alias)
+>>
+>> -extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+>> -                                 unsigned long nr_clks);
+>> +extern struct samsung_clk_provider *__init samsung_clk_init(
+>> +                     struct device_node *np, void __iomem *base,
+>> +                     unsigned long nr_clks);
+>>  extern void __init samsung_clk_of_register_fixed_ext(
+>> +             struct samsung_clk_provider *ctx,
+>>               struct samsung_fixed_rate_clock *fixed_rate_clk,
+>>               unsigned int nr_fixed_rate_clk,
+>>               struct of_device_id *clk_matches);
+>>
+>> -extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
+>> +extern void samsung_clk_add_lookup(struct samsung_clk_provider *ctx,
+>> +                     struct clk *clk, unsigned int id);
+>>
+>> -extern void samsung_clk_register_alias(struct samsung_clock_alias *list,
+>> -             unsigned int nr_clk);
+>> +extern void samsung_clk_register_alias(struct samsung_clk_provider *ctx,
+>> +                     struct samsung_clock_alias *list,
+>> +                     unsigned int nr_clk);
+>>  extern void __init samsung_clk_register_fixed_rate(
+>> -             struct samsung_fixed_rate_clock *clk_list, unsigned int nr_clk);
+>> +                     struct samsung_clk_provider *ctx,
+>> +                     struct samsung_fixed_rate_clock *clk_list,
+>> +                     unsigned int nr_clk);
+>>  extern void __init samsung_clk_register_fixed_factor(
+>> -             struct samsung_fixed_factor_clock *list, unsigned int nr_clk);
+>> -extern void __init samsung_clk_register_mux(struct samsung_mux_clock *clk_list,
+>> +                     struct samsung_clk_provider *ctx,
+>> +                     struct samsung_fixed_factor_clock *list,
+>> +                     unsigned int nr_clk);
+>> +extern void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+>> +             struct samsung_mux_clock *clk_list,
+>>               unsigned int nr_clk);
+>> -extern void __init samsung_clk_register_div(struct samsung_div_clock *clk_list,
+>> +extern void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+>> +             struct samsung_div_clock *clk_list,
+>>               unsigned int nr_clk);
+>> -extern void __init samsung_clk_register_gate(
+>> +extern void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+>>               struct samsung_gate_clock *clk_list, unsigned int nr_clk);
+>> -extern void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
+>> -             unsigned int nr_clk, void __iomem *base);
+>> +extern void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>> +                     struct samsung_pll_clock *pll_list,
+>> +                     unsigned int nr_clk, void __iomem *base);
+>>
+>>  extern unsigned long _get_rate(const char *clk_name);
+>>
+>
+> nit: Please keep the indentation consistent in all the function prototypes
+> above.
+
+ok.
+
+regards,
+Rahul Sharma.
+
+>
+> Best regards,
+> Tomasz
+>
