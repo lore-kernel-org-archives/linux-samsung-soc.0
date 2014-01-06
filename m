@@ -1,67 +1,52 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 1/9] ARM: SAMSUNG: Remove platform dependency from samsung.S
-Date: Mon, 6 Jan 2014 08:37:16 +0530
-Message-ID: <CAHbNUh2jW7asxsEagD-k8p120-8-OR0ZADimdOikyDLM94+aEA@mail.gmail.com>
-References: <1388397640-720-1-git-send-email-tushar.behera@linaro.org>
-	<1388397640-720-2-git-send-email-tushar.behera@linaro.org>
-	<20131231153826.GD31886@sirena.org.uk>
-	<CAHbNUh2srTmYU+04xt_goUw1E4QkWtdzSOT3wfgbQTtCtBjb_w@mail.gmail.com>
-	<22ff01cf08f5$96be3010$c43a9030$@kernel.org>
+From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
+Subject: Re: [PATCH V2] i2c: s3c2410 : Add polling mode support
+Date: Mon, 6 Jan 2014 09:30:20 +0530
+Message-ID: <CA+NduCDr4am5+Vyr9NTAzFGjg_zRLjYVRTM2Bj0Wxd0VBEzCpw@mail.gmail.com>
+References: <1384168820-2986-1-git-send-email-yuvaraj.cd@samsung.com>
+	<20140103161012.GH7132@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:45235 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751460AbaAFDHR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Jan 2014 22:07:17 -0500
-Received: by mail-ob0-f176.google.com with SMTP id vb8so17776734obc.35
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jan 2014 19:07:17 -0800 (PST)
-In-Reply-To: <22ff01cf08f5$96be3010$c43a9030$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140103161012.GH7132@katana>
+Sender: linux-doc-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, "ks.giri@samsung.com" <ks.giri@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Vasanth Ananthan <vasanth.a@samsung.com>, Rob Herring <rob.herring@calxeda.com>, aditya.ps@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, ben-linux@fluff.org, Vasanth Ananthan <vasanthananthan@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 4 January 2014 08:05,  <kgene@kernel.org> wrote:
-> Tushar Behera wrote:
->>
->> On 31 December 2013 21:08, Mark Brown <broonie@kernel.org> wrote:
->> > On Mon, Dec 30, 2013 at 03:30:32PM +0530, Tushar Behera wrote:
->> >> From: Sachin Kamat <sachin.kamat@linaro.org>
->> >>
->> >> regs-serial.h only includes linux/serial_s3c.h. Include this
->> >> header directly in samsung.S to remove unnecessary platform
->> >> dependency.
->> >>
->> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> >> ---
->> >
->> > If you're forwarding on a patch from someone else you need to add your
->> > Signed-off-by to it - that's important for the whole goal of tracking
->> > licensing.
->>
->> Yeah, true. I forgot about that.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>
->> Kukjin,
->>
->> While applying this series, can you please add my Signed-off-by?
->>
-> Tushar, The 'Signed-off-by' is different with others ack, review or whatever. In my understanding it's a legal issue so you need to repost.
+On Fri, Jan 3, 2014 at 9:40 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> Hi,
 >
-> BTW, I think this series looks good to me but we don't need separated #1 to #8 patches because it's samething, so please squash them.
+> On Mon, Nov 11, 2013 at 04:50:20PM +0530, Yuvaraj Kumar C D wrote:
+>> From: Vasanth Ananthan <vasanthananthan@gmail.com>
+>>
+>> This patch adds polling mode support for i2c-s3c2410 driver.The
+>> SATA PHY controller's CMU and TRSV block's are of I2C register
+>> map in exynos5250.These blocks can be configured using i2c.
+>>
+>> But i2c controller instance on which these block's sits lacks an
+>> interrupt line.Also the current i2c-s3c2410 driver is only interrupt
+>> driven, thus a polling mode support is required in the driver for
+>> supporting this controller. This patch adds this support to the driver.
+>>
+>> Changes from V1:
+>>       1.Changed the is_ack() to have even period b/w polls and
+>>         used usleep_range() instead of udelay().
 >
-> Thanks,
-> Kukjin
+> Mileages vary, but I'd like to see revision changes after the "---".
 >
-
-Kukjin,
-
-I will repost the series after updating the sob and squashing the
-patches #2 to #9. I prefer to keep patch #1 separate as I would like
-to retain Sachin's authorship for that patch.
-
--- 
-Tushar Behera
+>>       ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+>> -                            dev_name(&pdev->dev), i2c);
+>> +                             dev_name(&pdev->dev), i2c);
+>
+> Unrelated change.
+>
+> Rest looks good, so I'll fix up the things for you and apply to
+> for-next, thanks!
+Thanks Wolfram.
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
