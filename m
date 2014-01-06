@@ -1,47 +1,81 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 6/7] clk/samsung: add support for pll2650xx
-Date: Mon, 6 Jan 2014 17:14:48 +0530
-Message-ID: <CAPdUM4P9tE5ohtAb5heMRj3GGjdYrNYp5iX7u-uZySiaCikA7Q@mail.gmail.com>
-References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
-	<1386345391-23482-7-git-send-email-rahul.sharma@samsung.com>
-	<1419145.DZQg0ZkHVU@amdc1227>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 0/9] cpuidle: rework device state count handling
+Date: Mon, 06 Jan 2014 13:12:16 +0100
+Message-ID: <2125614.4MjcCLIIsz@vostro.rjw.lan>
+References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:61286 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752672AbaAFLou (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 06:44:50 -0500
-In-Reply-To: <1419145.DZQg0ZkHVU@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, Young-Gun Jang <yg1004.jang@samsung.com>, Arun Kumar <arun.kk@samsung.com>
 
-Hi Tomasz,
+On Friday, December 20, 2013 07:47:22 PM Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+> 
+> Some cpuidle drivers assume that cpuidle core will handle cases where
+> device->state_count is smaller than driver->state_count, unfortunately
+> currently this is untrue (device->state_count is used only for handling
+> cpuidle state sysfs entries and driver->state_count is used for all
+> other cases) and will not be fixed in the future as device->state_count
+> is planned to be removed [1].
+> 
+> This patchset fixes such drivers (ARM EXYNOS cpuidle driver and ACPI
+> cpuidle driver), removes superflous device->state_count initialization
+> from drivers for which device->state_count equals driver->state_count
+> (POWERPC pseries cpuidle driver and intel_idle driver) and finally
+> removes state_count field from struct cpuidle_device.
+> 
+> Additionaly (while at it) this patchset fixes C1E promotion disable
+> quirk handling (in intel_idle driver) and converts cpuidle drivers code
+> to use the common cpuidle_[un]register() routines (in POWERPC pseries
+> cpuidle driver and intel_idle driver).
+> 
+> [1] http://permalink.gmane.org/gmane.linux.power-management.general/36908
+> 
+> Reference to v1:
+> 	http://comments.gmane.org/gmane.linux.power-management.general/37390
+> 
+> Changes since v1:
+> - synced patch series with next-20131220
+> - added ACKs from Daniel Lezcano
 
-On 19 December 2013 17:15, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Rahul,
->
-> On Friday 06 of December 2013 21:26:30 Rahul Sharma wrote:
->> Add support for pll2650xx in samsung pll file. This pll variant
->> is close to pll36xx but uses CON2 registers instead of CON1.
->
-> If the ops are otherwise idential, why not reuse the ops for pll36xx
-> and use CON1 or CON2 register conditionally based on pll->type field?
-> (Just as it is already done for pll4600, 4650 and 4650c.)
->
-
-I verified the difference and found that  pll2650xx is fairly
-different in terms of
-Bit Fields, Con2 register, and additional PLL config bits than pll36xx. Due to
-this, I have to add lot of if-else code based on pll type which
-doesn't looks clean.
-
-Regards,
-Rahul Sharma.
+I've queued up the series for 3.14, thanks!
 
 > Best regards,
-> Tomasz
->
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (9):
+>   ARM: EXYNOS: cpuidle: fix AFTR mode check
+>   POWERPC: pseries: cpuidle: remove superfluous dev->state_count
+>     initialization
+>   POWERPC: pseries: cpuidle: use the common cpuidle_[un]register()
+>     routines
+>   ACPI / cpuidle: fix max idle state handling with hotplug CPU support
+>   ACPI / cpuidle: remove dev->state_count setting
+>   intel_idle: do C1E promotion disable quirk for hotplugged CPUs
+>   intel_idle: remove superfluous dev->state_count initialization
+>   intel_idle: use the common cpuidle_[un]register() routines
+>   cpuidle: remove state_count field from struct cpuidle_device
+> 
+>  arch/arm/mach-exynos/cpuidle.c                  |   8 +-
+>  arch/powerpc/platforms/pseries/processor_idle.c |  59 +---------
+>  drivers/acpi/processor_idle.c                   |  29 +++--
+>  drivers/cpuidle/cpuidle.c                       |   3 -
+>  drivers/cpuidle/sysfs.c                         |   5 +-
+>  drivers/idle/intel_idle.c                       | 140 +++++-------------------
+>  include/linux/cpuidle.h                         |   1 -
+>  7 files changed, 51 insertions(+), 194 deletions(-)
+> 
+> 
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
