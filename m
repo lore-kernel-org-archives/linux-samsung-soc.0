@@ -1,107 +1,50 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v5 3/9] phy: Add new Exynos USB 2.0 PHY driver
-Date: Mon, 6 Jan 2014 15:42:26 +0530
-Message-ID: <52CA818A.4090403@ti.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com> <1387545857-9472-4-git-send-email-k.debski@samsung.com>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH RFC alternative ver 1] phy: Exynos 421x USB 2.0 PHY support
+Date: Mon, 6 Jan 2014 15:54:28 +0530
+Message-ID: <52CA845C.5080308@ti.com>
+References: <1387545857-9472-1-git-send-email-k.debski@samsung.com> <1387545857-9472-11-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:36685 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752631AbaAFKMq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 05:12:46 -0500
-In-Reply-To: <1387545857-9472-4-git-send-email-k.debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1387545857-9472-11-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
 
 Hi,
 
 On Friday 20 December 2013 06:54 PM, Kamil Debski wrote:
-> Add a new driver for the Exynos USB 2.0 PHY. The new driver uses the generic
-> PHY framework. The driver includes support for the Exynos 4x10 and 4x12
-> SoC families.
+> This the alternative version of the support for Exynos 421x USB 2.0 PHY
+> in the Generic PHY framework. In this version the support for Exynos
+> 4210 and 4212 was joined into one file.
 >
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->   .../devicetree/bindings/phy/samsung-phy.txt        |   55 ++++
->   drivers/phy/Kconfig                                |   29 ++
->   drivers/phy/Makefile                               |    3 +
->   drivers/phy/phy-exynos4210-usb2.c                  |  257 ++++++++++++++++
->   drivers/phy/phy-exynos4212-usb2.c                  |  306 ++++++++++++++++++++
->   drivers/phy/phy-samsung-usb2.c                     |  226 +++++++++++++++
->   drivers/phy/phy-samsung-usb2.h                     |   67 +++++
->   7 files changed, 943 insertions(+)
->   create mode 100644 drivers/phy/phy-exynos4210-usb2.c
->   create mode 100644 drivers/phy/phy-exynos4212-usb2.c
->   create mode 100644 drivers/phy/phy-samsung-usb2.c
->   create mode 100644 drivers/phy/phy-samsung-usb2.h
+> Hi,
 >
-.
-.
-<snip>
-.
-.
+> Me and Kishon were discussing for quite a long time the way how Exynos 4
+> should be handled. I have decided to post the original patches and try
+> to make an alternative version with support for Exynos 4210 and 4212 joined
+> in one file. I have prepared two versions. The first one has 506 lines (vs
+> 563 when two files are used). When doing the second version I was a little
+> more aggresive in removing code. This was done at a cost of adding if's
+> deciding which SoC version the driver is dealing with in some internal functions.
+> This resulted in a better number of removed lines - the second version has
+> only 452 lines (vs 563 original and 506 version 1).
 
-> diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
-> new file mode 100644
-> index 0000000..ab89f91
-> --- /dev/null
-> +++ b/drivers/phy/phy-samsung-usb2.h
-> @@ -0,0 +1,67 @@
-> +/*
-> + * Samsung SoC USB 1.1/2.0 PHY driver
-> + *
-> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Author: Kamil Debski <k.debski@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef _PHY_EXYNOS_USB2_H
-> +#define _PHY_EXYNOS_USB2_H
-> +
-> +#include <linux/clk.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define KHZ 1000
-> +#define MHZ (KHZ * KHZ)
-> +
-> +struct samsung_usb2_phy_driver;
-> +struct samsung_usb2_phy_instance;
-> +struct samsung_usb2_phy_config;
-> +
-> +struct samsung_usb2_phy_instance {
-> +	const struct samsung_usb2_common_phy *cfg;
-> +	struct clk *clk;
-> +	struct phy *phy;
-> +	struct samsung_usb2_phy_driver *drv;
-> +	unsigned long rate;
-> +	u32 clk_reg_val;
-> +	bool enabled;
-> +};
-> +
-> +struct samsung_usb2_phy_driver {
-> +	const struct samsung_usb2_phy_config *cfg;
-> +	struct clk *clk;
-> +	struct device *dev;
-> +	void __iomem *reg_phy;
-> +	struct regmap *reg_pmu;
-> +	struct regmap *reg_sys;
-> +	spinlock_t lock;
-> +	struct samsung_usb2_phy_instance instances[0];
+Alright.. If the alternate approach doesn't give too much of advantage, 
+lets stick with the original one. I would recommend creating a 
+documentation (Documentation/phy/?) for the samsung PHY since that 
+actually creates a layer on top of generic PHY framework. That would 
+help while adding new samsung PHY drivers.
 
-I think having instances as array here would allocate more space while 
-allocating 'samsung_usb2_phy_driver' in 'samsung_usb2_phy_probe'.
+Btw thank you for preparing alternate versions for your original patches.
 
-Thanks
+Cheers
 Kishon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
