@@ -1,100 +1,77 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: Boot hang on Origen with (!SMP && CPU_IDLE)
-Date: Mon, 06 Jan 2014 17:41:19 +0100
-Message-ID: <4790422.Kg6m1IjKcC@flatron>
-References: <CAHbNUh1LF9+v1en==t8znAL518ERWE2LffTDykAEb2HST+WKTw@mail.gmail.com> <CAHbNUh18WkH4CFcaeP1Tdjm3L-Rr0xVzgCnAHoPbbCFRWjKyxg@mail.gmail.com> <201401061630.56740.arnd@arndb.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/5] ARM: S3C24XX: unify restart functions
+Date: Mon, 06 Jan 2014 19:35:04 +0100
+Message-ID: <3105326.uFdOVLyXH8@phil>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:45283 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755256AbaAFQl1 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:55957 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755235AbaAFSfZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 11:41:27 -0500
-Received: by mail-ea0-f170.google.com with SMTP id k10so7961183eaj.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 08:41:25 -0800 (PST)
-In-Reply-To: <201401061630.56740.arnd@arndb.de>
+	Mon, 6 Jan 2014 13:35:25 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Monday 06 of January 2014 16:30:56 Arnd Bergmann wrote:
-> On Monday 06 January 2014, Tushar Behera wrote:
-> > The device tree node for l2x0 device was missing. After adding a node
-> > as below I can start booting Origen board.
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
-> > b/arch/arm/boot/dts/exynos4210-origen.dts
-> > index 1a12fb2..675f323 100644
-> > --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> > +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> > @@ -32,6 +32,13 @@
-> > 
-> > +       l2-cache-controller@10502000 {
-> > +               compatible = "arm,pl310-cache";
-> > +               reg = <0x10502000 0x1000>;
-> > +               cache-unified;
-> > +               cache-level = <2>;
-> > +       };
-> > +
-> 
-> Ok, very good!
-> 
-> > >> be a good time to get rid of the L2_AUX_VAL and L2_AUX_MASK defines and
-> > >> just read the respective settings from DT.
-> > 
-> > Ok.
-> 
-> Does the node you list above have the right settings for this?
-> 
-> > > 2) There is no L2 cache controller node in Exynos4*.dtsi.
-> > >
-> > > It should be added, but L2 cache can't be enabled on all boards yet,
-> > > since on boards where secure firmware is enabled, special configuration
-> > > involving SMC calls is required. Patches for this are queued on my work
-> > > queue, but it's quite tricky due to 1), which needs to consider whether
-> > > secure firmware is enabled or not.
-> > >
-> > 
-> > In that case, would it be ok to add the node for Origen board only?
+This unifies the restart functions of s3c24xx socs into one single
+function and also removes the need for the SWRST register to be
+statically mapped in the dt case.
 
-Better solution would be to add the node in SoC-level dtsi, keep it
-disabled and override the status to okay at board level. Still...
+As a result the mach-s3c2416-dt boardfile can also support
+other s3c24xx boards in the future.
 
-> 
-> Wouldn't that leave other systems still broken? I'm particularly worried
-> about what patch to backport to linux-stable. We should definitely add
-> the node for Origen, but we may also have to revert my broken patch
-> in all affected kernel versions.
+Because of the clock-reparenting in the s3c2412-swrst it depends
+on the conversion of s3c2412 to the common clock framework.
 
-...Origen is not the only board that is affected by this, most likely any
-Exynos4-based board not running under secure firmware is.
+Heiko Stuebner (5):
+  dt-bindings: document the s3c24xx software-reset register
+  ARM: S3C24XX: add generic handler for swrst resets
+  ARM: S3C24XX: add common reset function
+  ARM: S3C24XX: convert boards to use common restart function
+  ARM: S3C24XX: remove obsolete SoC-specific restart functions
 
-> 
-> Are there any systems that may or may not have secure firmware enabled
-> depending on the boot loader, or do we always know whether secure firmware
-> is there or not?
+ .../bindings/arm/samsung/s3c24xx-swrst.txt         |   16 ++
+ arch/arm/boot/dts/s3c2416.dtsi                     |    5 +
+ arch/arm/mach-s3c24xx/Kconfig                      |    8 +
+ arch/arm/mach-s3c24xx/Makefile                     |    1 +
+ arch/arm/mach-s3c24xx/common.c                     |   31 ++++
+ arch/arm/mach-s3c24xx/common.h                     |   23 ++-
+ arch/arm/mach-s3c24xx/mach-amlm5900.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-anubis.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-at2440evb.c             |    2 +-
+ arch/arm/mach-s3c24xx/mach-bast.c                  |    2 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c                 |    2 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |    2 +-
+ arch/arm/mach-s3c24xx/mach-jive.c                  |    2 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                   |    4 +-
+ arch/arm/mach-s3c24xx/mach-nexcoder.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-otom.c                  |    2 +-
+ arch/arm/mach-s3c24xx/mach-qt2410.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx3715.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   11 +-
+ arch/arm/mach-s3c24xx/mach-smdk2410.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c              |    6 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2440.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-vr1000.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c                 |    2 +-
+ arch/arm/mach-s3c24xx/s3c2410.c                    |   12 --
+ arch/arm/mach-s3c24xx/s3c2412.c                    |   20 ---
+ arch/arm/mach-s3c24xx/s3c2416.c                    |    8 -
+ arch/arm/mach-s3c24xx/s3c2443.c                    |    8 -
+ arch/arm/mach-s3c24xx/s3c244x.c                    |   11 --
+ arch/arm/mach-s3c24xx/swrst-reset.c                |  160 ++++++++++++++++++++
+ 36 files changed, 275 insertions(+), 91 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/s3c24xx-swrst.txt
+ create mode 100644 arch/arm/mach-s3c24xx/swrst-reset.c
 
-It always depends on the boot loader, but fortunately it's unlikely to
-happen that one board will have both secure-enabled and normal bootloaders
-available and in use, at least for Exynos4-based boards, so it's quite
-safe to assume presence of secure firmware on per board basis and so you
-have the secure firmware device tree node only in dts files of boards
-that are known to use secure firmware.
-
-Aynway, from what I can see, support for the only two Exynos4 boards using
-for secure firmware was added in 3.12. This means that we can revert the
-offending patch for 3.11, but for 3.12 and newer we can't, because this
-will break such boards with CONFIG_L2X0 enabled.
-
-Instead, wouldn't it be better to fix the issue at its cause? This means
-s5p-sleep.S re-enabling L2X0 only if it was really enabled before entering
-low power mode. This could be achieved by checking if l2x0_regs_phys isn't
-0 for example (which isn't a valid physical RAM address on Exynos).
-
-What do you think?
-
-Best regards,
-Tomasz
+-- 
+1.7.10.4
