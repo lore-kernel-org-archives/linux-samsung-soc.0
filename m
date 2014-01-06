@@ -1,81 +1,72 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 0/9] cpuidle: rework device state count handling
-Date: Mon, 06 Jan 2014 13:12:16 +0100
-Message-ID: <2125614.4MjcCLIIsz@vostro.rjw.lan>
-References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: drm_do_probe_ddc_edid ENXIO check too aggressive?
+Date: Mon, 6 Jan 2014 10:17:35 -0500
+Message-ID: <CAOw6vbLBqLaqugOPuthqpCkHeH51emvkT9XFZxP+FMWekLwW6w@mail.gmail.com>
+References: <CAD8Lp44qijfMGtYVcA1xjgzzusA4SaR_mtUqzJiT1rRk+DZVEw@mail.gmail.com>
+	<CAKMK7uFtCYajeHnnbMOe8VaWypj8aKM5O7CVXkROVjxqbk5VzA@mail.gmail.com>
+	<CAD8Lp47DvhV1tg4ntBSvvUefOv29cutcXt17h2Pvp6HjBRLVnA@mail.gmail.com>
+	<CAKMK7uG3tp1qnEUBh4=UKT7s4JjBwS--4kaKGf+4e1yFXmCKYA@mail.gmail.com>
+	<CAD8Lp46aXTRA8uOory2zMrHakcG6pUf9jSxgYjo=_q5mZP3U_A@mail.gmail.com>
+	<CAGS+omANxzS99gWyDGud9M-QT7euOv0L9y0i_6W8czyaKuEp3g@mail.gmail.com>
+	<CAD8Lp441qQT_gUrk-uns=65ZDd3FofOyiwwNHKnQL+JpURA0Pg@mail.gmail.com>
+	<CAD8Lp44kyHzKs67vc9ksfhHYmdbpaXMi_Dn_6KEV92o8tmuODQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAD8Lp44kyHzKs67vc9ksfhHYmdbpaXMi_Dn_6KEV92o8tmuODQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, chris@hchris-wilson.co.uk, dri-devel <dri-devel@lists.freedesktop.org>, "Dodonov,
+	Eugeni" <eugeni.dodonov@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, December 20, 2013 07:47:22 PM Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> Some cpuidle drivers assume that cpuidle core will handle cases where
-> device->state_count is smaller than driver->state_count, unfortunately
-> currently this is untrue (device->state_count is used only for handling
-> cpuidle state sysfs entries and driver->state_count is used for all
-> other cases) and will not be fixed in the future as device->state_count
-> is planned to be removed [1].
-> 
-> This patchset fixes such drivers (ARM EXYNOS cpuidle driver and ACPI
-> cpuidle driver), removes superflous device->state_count initialization
-> from drivers for which device->state_count equals driver->state_count
-> (POWERPC pseries cpuidle driver and intel_idle driver) and finally
-> removes state_count field from struct cpuidle_device.
-> 
-> Additionaly (while at it) this patchset fixes C1E promotion disable
-> quirk handling (in intel_idle driver) and converts cpuidle drivers code
-> to use the common cpuidle_[un]register() routines (in POWERPC pseries
-> cpuidle driver and intel_idle driver).
-> 
-> [1] http://permalink.gmane.org/gmane.linux.power-management.general/36908
-> 
-> Reference to v1:
-> 	http://comments.gmane.org/gmane.linux.power-management.general/37390
-> 
-> Changes since v1:
-> - synced patch series with next-20131220
-> - added ACKs from Daniel Lezcano
+On Wed, Dec 18, 2013 at 5:07 PM, Daniel Drake <drake@endlessm.com> wrote:
+> On Wed, Dec 18, 2013 at 2:18 PM, Daniel Drake <drake@endlessm.com> wrote:
+>> Yes, this looks very similar to the approach I tried earlier. I guess
+>> the patch was written for the same reasons as well.
+>> Sean, any objections to me taking your patch and sending it upstream?
+>>
+>> http://git.chromium.org/gitweb/?p=chromiumos/third_party/kernel-next.git;a=commitdiff;h=77aed71acf4b84e722ead24c820d8ad059121e5b
+>
+> Seems easier said than done. The patch looks innocent but it touches
+> on other stuff that has changed a lot.
+>
+> For example, it adds cancel_delayed_work_sync() in the hdmi_poweroff()
+> path. With my naive backport to vanilla-3.8, hdmi_poweroff() gets
+> called within the context of that work item, and a work item trying to
+> cancel_delayed_work_sync() on itself hangs. Reproduced just by
+> unplugging the display once.
+>
+> I see that things have changed substantially in the ChromiumOS tree,
+> for example this patch probably has some effect:
+>
+> commit 29ae0c6096395a96a597453271946fc7d8442b6e
+> Author: Sean Paul <seanpaul@chromium.org>
+> Date:   Thu Jun 20 17:24:12 2013 -0400
+>
+>     drm/exynos: Consolidate suspend/resume in drm_drv
+>
+>
+> As this job seems bigger than anticipated and I don't have any Exynos
+> hardware that can boot mainline, I think I might have to stop here,
+> and hope that ChromiumOS guys upstream all this soon?
+>
 
-I've queued up the series for 3.14, thanks!
+Hey Daniel,
+The set is posted, but I still owe a new version to Tomasz. It's on my
+TODO list, I'm hoping to get to it soon.
 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (9):
->   ARM: EXYNOS: cpuidle: fix AFTR mode check
->   POWERPC: pseries: cpuidle: remove superfluous dev->state_count
->     initialization
->   POWERPC: pseries: cpuidle: use the common cpuidle_[un]register()
->     routines
->   ACPI / cpuidle: fix max idle state handling with hotplug CPU support
->   ACPI / cpuidle: remove dev->state_count setting
->   intel_idle: do C1E promotion disable quirk for hotplugged CPUs
->   intel_idle: remove superfluous dev->state_count initialization
->   intel_idle: use the common cpuidle_[un]register() routines
->   cpuidle: remove state_count field from struct cpuidle_device
-> 
->  arch/arm/mach-exynos/cpuidle.c                  |   8 +-
->  arch/powerpc/platforms/pseries/processor_idle.c |  59 +---------
->  drivers/acpi/processor_idle.c                   |  29 +++--
->  drivers/cpuidle/cpuidle.c                       |   3 -
->  drivers/cpuidle/sysfs.c                         |   5 +-
->  drivers/idle/intel_idle.c                       | 140 +++++-------------------
->  include/linux/cpuidle.h                         |   1 -
->  7 files changed, 51 insertions(+), 194 deletions(-)
-> 
-> 
+Sean
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+
+
+> Daniel
