@@ -1,91 +1,51 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v4 2/9] phy: core: Add devm_of_phy_get to phy-core
-Date: Mon, 6 Jan 2014 12:44:35 +0530
-Message-ID: <52CA57DB.9040405@ti.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com> <1387545857-9472-3-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] ARM: Exynos: Use generic uncompress.h
+Date: Mon,  6 Jan 2014 14:32:54 +0530
+Message-ID: <1388998975-32362-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:35735 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751373AbaAFHPD (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:32772 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753441AbaAFJGr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 02:15:03 -0500
-In-Reply-To: <1387545857-9472-3-git-send-email-k.debski@samsung.com>
+	Mon, 6 Jan 2014 04:06:47 -0500
+Received: by mail-pa0-f45.google.com with SMTP id fb1so18412779pad.32
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 01:06:47 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org, patches@linaro.org
 
-On Friday 20 December 2013 06:54 PM, Kamil Debski wrote:
-> Adding devm_of_phy_get will allow to get phys by supplying a
-> pointer to the struct device_node instead of struct device.
->
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> ---
->   drivers/phy/phy-core.c  |   31 +++++++++++++++++++++++++++++++
->   include/linux/phy/phy.h |    2 ++
->   2 files changed, 33 insertions(+)
->
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index d6f8c34..0551cc3 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -450,6 +450,37 @@ struct phy *devm_phy_get(struct device *dev, const char *string)
->   EXPORT_SYMBOL_GPL(devm_phy_get);
->
->   /**
-> + * devm_of_phy_get() - lookup and obtain a reference to a phy.
-> + * @dev: device that requests this phy
-> + * @np: node containing the phy
-> + * @con_id: name of the phy from device's point of view
-> + *
-> + * Gets the phy using of_phy_get(), and associates a device with it using
-> + * devres. On driver detach, release function is invoked on the devres data,
-> + * then, devres data is freed.
-> + */
-> +struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
-> +			    const char *con_id)
-> +{
-> +	struct phy **ptr, *phy;
-> +
-> +	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	phy = of_phy_get(np, con_id);
-> +	if (!IS_ERR(phy)) {
-> +		*ptr = phy;
-> +		devres_add(dev, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-> +
-> +	return phy;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_of_phy_get);
-> +
-> +/**
->    * phy_create() - create a new phy
->    * @dev: device that is creating the new phy
->    * @ops: function pointers for performing phy operations
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index bcb6274..864914c 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -129,6 +129,8 @@ int phy_power_on(struct phy *phy);
->   int phy_power_off(struct phy *phy);
->   struct phy *phy_get(struct device *dev, const char *string);
->   struct phy *devm_phy_get(struct device *dev, const char *string);
-> +struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
-> +			    const char *con_id);
+As a pre-requisite step towards enabling multi-platform support
+for Exynos, enable it to use generic uncompress.h instead of the
+one provided in machine code.
 
-stub for devm_of_phy_get also..
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/Kconfig.debug |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks
-Kishon
->   void phy_put(struct phy *phy);
->   void devm_phy_put(struct device *dev, struct phy *phy);
->   struct phy *of_phy_get(struct device_node *np, const char *con_id);
->
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index e6c313ec5ece..de379a93c8ba 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1131,7 +1131,7 @@ config DEBUG_UART_8250_FLOW_CONTROL
+ 
+ config DEBUG_UNCOMPRESS
+ 	bool
+-	depends on ARCH_MULTIPLATFORM || ARCH_MSM
++	depends on ARCH_MULTIPLATFORM || ARCH_MSM || ARCH_EXYNOS
+ 	default y if DEBUG_LL && !DEBUG_OMAP2PLUS_UART && \
+ 		     (!DEBUG_TEGRA_UART || !ZBOOT_ROM)
+ 	help
+@@ -1147,7 +1147,8 @@ config DEBUG_UNCOMPRESS
+ 
+ config UNCOMPRESS_INCLUDE
+ 	string
+-	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM
++	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
++					ARCH_EXYNOS
+ 	default "mach/uncompress.h"
+ 
+ config EARLY_PRINTK
+-- 
+1.7.9.5
