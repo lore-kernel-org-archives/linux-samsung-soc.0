@@ -1,81 +1,89 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 4/5] arm: omap3: twl: use the new lookup method with usb
- phy
-Date: Tue, 7 Jan 2014 18:31:52 +0530
-Message-ID: <52CBFAC0.9040103@ti.com>
-References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com> <1386601737-8735-5-git-send-email-heikki.krogerus@linux.intel.com> <52AEDE43.8030005@ti.com> <20131216144314.GB22944@xps8300>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
+Date: Tue, 07 Jan 2014 14:14:54 +0100
+Message-ID: <52CBFDCE.7060206@samsung.com>
+References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
+ <20140107140019.7220eed6@ipc1.ka-ro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20131216144314.GB22944@xps8300>
-Sender: linux-omap-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:36800 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750834AbaAGNPQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jan 2014 08:15:16 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MZ100MY48TELC60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Jan 2014 13:15:14 +0000 (GMT)
+In-reply-to: <20140107140019.7220eed6@ipc1.ka-ro>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?TG90aGFyIFdhw59tYW5u?= <LW@KARO-electronics.de>
+Cc: sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org
 
 Hi,
 
-On Monday 16 December 2013 08:13 PM, Heikki Krogerus wrote:
-> Hi,
-> 
-> On Mon, Dec 16, 2013 at 04:34:35PM +0530, Kishon Vijay Abraham I wrote:
->> On Monday 09 December 2013 08:38 PM, Heikki Krogerus wrote:
->>> Provide a complete association for the phy and it's user
->>> (musb) with the new phy_lookup_table.
->>>
->>> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->>> ---
->>>  arch/arm/mach-omap2/twl-common.c | 15 ++++++---------
->>>  1 file changed, 6 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-omap2/twl-common.c b/arch/arm/mach-omap2/twl-common.c
->>> index b0d54da..972430b 100644
->>> --- a/arch/arm/mach-omap2/twl-common.c
->>> +++ b/arch/arm/mach-omap2/twl-common.c
->>> @@ -91,18 +91,13 @@ void __init omap_pmic_late_init(void)
->>>  }
->>>  
->>>  #if defined(CONFIG_ARCH_OMAP3)
->>> -struct phy_consumer consumers[] = {
->>> -	PHY_CONSUMER("musb-hdrc.0", "usb"),
->>> -};
->>> -
->>> -struct phy_init_data init_data = {
->>> -	.consumers = consumers,
->>> -	.num_consumers = ARRAY_SIZE(consumers),
->>> +static struct phy_lookup_table twl4030_usb_lookup = {
->>> +	.dev_id = "musb-hdrc.0",
->>> +	.table = PHY_LOOKUP("phy-twl4030_usb.0", NULL),
->>>  };
+On 07/01/14 14:00, Lothar Wa=C3=9Fmann wrote:
+> Sylwester Nawrocki wrote:
+>> Ensure clk->kref is dereferenced only when clk is not NULL.
 >>
->> had a similar approach during the initial version of phy framework [1] (see
->> phy_bind) but changed it later [2] . Here you should know the device names of
->> two devices and even if one of them started using DEVID_AUTO, it'll start
->> breaking. Such an approach needs to reviewed carefully.
-> 
-> If somebody creates a regression by changing something like the
-> platform device id without checking all the users, he deserves to get
-> into big trouble. I don't see why an individual framework should
-> provide protection against such cases.
-> 
-> In any case, having two device names to deal with does not add any
-> more risk. These associations should always be made in the place where
-> the phy device is created so you will always know it's device name.
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>> Hi Sachin,
+>>
+>> please try if this patch fixes the exyno5420 boot crash.
+>>
+>> Thanks,
+>> Sylwester
+>>
+>>  drivers/clk/clk.c |   13 +++++++------
+>>  1 file changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index e3e0327..a1fe86f 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -2179,24 +2179,25 @@ EXPORT_SYMBOL_GPL(devm_clk_unregister);
+>>   */
+>>  int __clk_get(struct clk *clk)
+>>  {
+>> -	if (clk && !try_module_get(clk->owner))
+>> -		return 0;
+>> +	if (clk) {
+>> +		if (!try_module_get(clk->owner))
+>> +			return 0;
+>>
+> This change is unnecessary! The part after the && is only evaluated
+> when clk is not NULL.
 
-huh.. we should also know the 'controller' device name while defining these
-associations and in some cases the controller device and phy device are created
-in entirely different places.
-> Normally the platform code creates these associations in the same
-> place it creates the platform devices, so you definitely know what the
-> device names will be.
-> 
-> In this case it's actually created in drivers/mfd/twl-core.c, so I do
-> need to update this and move the lookup table there. We can still
-> deliver the user name as platform data, though I believe it's always
-> "musb". Maybe we could actually skip that and just hard code the name?
+It is, but to ensure there is no NULL clk passed at the kref_get(&clk->=
+ref)
+line everything got moved under a common "if (clk) { }".
 
-I would rather leave the way it is modelled now.
+The code will look like this:
 
-Thanks
-Kishon
+-----------
+	if (clk) {
+		if (!try_module_get(clk->owner))
+			return 0;
+
+		kref_get(&clk->ref);
+	}
+------------
+
+If preferred I could make it:
+
+------------
+if (clk && !try_module_get(clk->owner))
+	return 0;
+
+if (clk)
+	kref_get(&clk->ref);
+------------
+
+--
+Regards,
+Sylwester
