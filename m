@@ -1,72 +1,91 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
-Date: Tue, 07 Jan 2014 13:03:43 +0100
-Message-ID: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH V2 00/10] exynos: add basic support for exynos5260 SoC
+Date: Tue, 07 Jan 2014 18:28:58 +0530
+Message-ID: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23436 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750851AbaAGMET (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:56840 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751179AbaAGNAU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 07:04:19 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MZ100KIK5J6W1A0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 07 Jan 2014 21:04:18 +0900 (KST)
+	Tue, 7 Jan 2014 08:00:20 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: sachin.kamat@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, tomasz.figa@gmail.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Ensure clk->kref is dereferenced only when clk is not NULL.
+Add basic support for exynos5260 SoC.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Hi Sachin,
+This series is based on linux-next, Kukjin's for-next and
+Mike's clk-for-linus-3.13 branches.
 
-please try if this patch fixes the exyno5420 boot crash.
+This patch is dependent on the following series from
+Tomasz Figa <t.figa@samsung.com>:
+http://www.spinics.net/lists/arm-kernel/msg280223.html
 
-Thanks,
-Sylwester
+V2:
+  1) Move suspend resume handling to Exynos5410 Clock file.
+  2) Removed Unused Macros and Condition checks for Exynos5260.
+  3) Add spin lock to clock provider context.
+  4) Add clock provider context for Exynos5410.
+  5) Uniform implementation for callbacks for PLL2550xx.
+  6) Split Exynos5260 clock file patch to bring it under 100 Kb limit.
+  7) Replace aclk/pclk/hclk gates with combined gates.
+  8) Remove CLK_IGNORE_UNUSED flag for gate clocks.
+  9) Split up DT patch into SoC and Board patch.
 
- drivers/clk/clk.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Pankaj Dubey (2):
+  ARM: EXYNOS: initial board support for exynos5260 SoC
+  clk/samsung: add support for pll2550xx
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e3e0327..a1fe86f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2179,24 +2179,25 @@ EXPORT_SYMBOL_GPL(devm_clk_unregister);
-  */
- int __clk_get(struct clk *clk)
- {
--	if (clk && !try_module_get(clk->owner))
--		return 0;
-+	if (clk) {
-+		if (!try_module_get(clk->owner))
-+			return 0;
+Rahul Sharma (7):
+  clk/exynos5410: Move suspend/resume handling to SoC driver
+  clk/samsung: add support for multuple clock providers
+  clk/samsung: add support for pll2650xx
+  clk/exynos5260: add macros and documentation for exynos5260
+  clk/exynos5260: add clock file for exynos5260
+  ARM: dts: add dts files for exynos5260 SoC
+  ARM: dts: add dts files for xyref5260 board
 
--	kref_get(&clk->ref);
-+		kref_get(&clk->ref);
-+	}
- 	return 1;
- }
+Young-Gun Jang (1):
+  pinctrl: exynos: add exynos5260 SoC specific data
 
- void __clk_put(struct clk *clk)
- {
--	if (WARN_ON_ONCE(IS_ERR(clk)))
-+	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
- 		return;
+ .../devicetree/bindings/clock/exynos5260-clock.txt |  299 +++
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi          |  572 ++++++
+ arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts    |  105 +
+ arch/arm/boot/dts/exynos5260.dtsi                  |  317 +++
+ arch/arm/mach-exynos/Kconfig                       |    9 +
+ arch/arm/mach-exynos/common.c                      |   19 +-
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    1 +
+ arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
+ arch/arm/plat-samsung/include/plat/map-s5p.h       |    1 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos4.c                  |   47 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   26 +-
+ drivers/clk/samsung/clk-exynos5260.c               | 2062 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5260.h               |  496 +++++
+ drivers/clk/samsung/clk-exynos5410.c               |   59 +-
+ drivers/clk/samsung/clk-exynos5420.c               |   24 +-
+ drivers/clk/samsung/clk-exynos5440.c               |   18 +-
+ drivers/clk/samsung/clk-pll.c                      |  223 ++-
+ drivers/clk/samsung/clk-pll.h                      |    3 +-
+ drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
+ drivers/clk/samsung/clk.c                          |  115 +-
+ drivers/clk/samsung/clk.h                          |   72 +-
+ drivers/pinctrl/pinctrl-exynos.c                   |   82 +
+ drivers/pinctrl/pinctrl-samsung.c                  |    2 +
+ drivers/pinctrl/pinctrl-samsung.h                  |    1 +
+ include/dt-bindings/clk/exynos5260-clk.h           |  234 +++
+ 29 files changed, 4684 insertions(+), 159 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+ create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+ create mode 100644 include/dt-bindings/clk/exynos5260-clk.h
 
- 	clk_prepare_lock();
- 	kref_put(&clk->ref, __clk_release);
- 	clk_prepare_unlock();
-
--	if (clk)
--		module_put(clk->owner);
-+	module_put(clk->owner);
- }
-
- /***        clk rate change notifiers        ***/
---
+-- 
 1.7.9.5
