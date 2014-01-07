@@ -1,208 +1,133 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Boot crash on 5420 with latest linux-next
-Date: Tue, 7 Jan 2014 12:31:48 +0530
-Message-ID: <CAK9yfHx0OcnchPE5gr-BQLD-qc2Xe9HrYH27xO7U1LFo5Kx4uw@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: Boot hang on Origen with (!SMP && CPU_IDLE)
+Date: Tue, 7 Jan 2014 12:33:43 +0530
+Message-ID: <CAHbNUh3Ao0k5gKF-3V0Ktc5+3-NhucP62fUp_i9kPjn+jTevGg@mail.gmail.com>
+References: <CAHbNUh1LF9+v1en==t8znAL518ERWE2LffTDykAEb2HST+WKTw@mail.gmail.com>
+	<CAHbNUh18WkH4CFcaeP1Tdjm3L-Rr0xVzgCnAHoPbbCFRWjKyxg@mail.gmail.com>
+	<201401061630.56740.arnd@arndb.de>
+	<4790422.Kg6m1IjKcC@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:47058 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752204AbaAGHBu (ORCPT
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:53637 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752204AbaAGHDo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 02:01:50 -0500
-Received: by mail-ob0-f172.google.com with SMTP id gq1so19461829obb.17
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 23:01:49 -0800 (PST)
+	Tue, 7 Jan 2014 02:03:44 -0500
+Received: by mail-oa0-f44.google.com with SMTP id h16so2974351oag.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 23:03:43 -0800 (PST)
+In-Reply-To: <4790422.Kg6m1IjKcC@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+On 6 January 2014 22:11, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Monday 06 of January 2014 16:30:56 Arnd Bergmann wrote:
+>> On Monday 06 January 2014, Tushar Behera wrote:
+>> > The device tree node for l2x0 device was missing. After adding a node
+>> > as below I can start booting Origen board.
+>> >
+>> > diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
+>> > b/arch/arm/boot/dts/exynos4210-origen.dts
+>> > index 1a12fb2..675f323 100644
+>> > --- a/arch/arm/boot/dts/exynos4210-origen.dts
+>> > +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+>> > @@ -32,6 +32,13 @@
+>> >
+>> > +       l2-cache-controller@10502000 {
+>> > +               compatible = "arm,pl310-cache";
+>> > +               reg = <0x10502000 0x1000>;
+>> > +               cache-unified;
+>> > +               cache-level = <2>;
+>> > +       };
+>> > +
+>>
+>> Ok, very good!
+>>
+>> > >> be a good time to get rid of the L2_AUX_VAL and L2_AUX_MASK defines and
+>> > >> just read the respective settings from DT.
+>> >
+>> > Ok.
+>>
+>> Does the node you list above have the right settings for this?
+>>
 
-The latest linux-next (20140106 as well as 201401067) gives a boot
-crash on Exynos5420 based boards with exynos_defconfig. The crash log
-is as follows:
+I will add another patch to remove the usage of L2_AUX_VAL and
+L2_AUX_MASK defines for regular mode, but we might still be needing
+them for secure firmware booting,
 
-[    4.550000] gpiochip_add: registered GPIOs 225 to 231 on device: gpz
-[    4.560000] Unable to handle kernel NULL pointer dereference at
-virtual address 00000050
-[    4.565000] pgd = c0004000
-[    4.565000] [00000050] *pgd=00000000
-[    4.570000] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-[    4.570000] Modules linked in:
-[    4.570000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-3.13.0-rc7-next-20140107 #279
-[    4.570000] task: ef0a8000 ti: ef0a6000 task.ti: ef0a6000
-[    4.570000] PC is at __clk_get+0x24/0x80
-[    4.570000] LR is at of_clk_get.part.6+0x54/0x6c
-[    4.570000] pc : [<c02ddf34>]    lr : [<c02db7c8>]    psr: 60000113
-[    4.570000] sp : ef0a7d90  ip : ef0a7da0  fp : 00000001
-[    4.570000] r10: ef22d000  r9 : f001a000  r8 : 00001000
-[    4.570000] r7 : 00000000  r6 : c078c414  r5 : ffffffea  r4 : 00000000
-[    4.570000] r3 : 00000050  r2 : 000001d9  r1 : c0569e80  r0 : 00000000
-[    4.570000] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM
-Segment kernel
-[    4.570000] Control: 10c5387d  Table: 2000406a  DAC: 00000015
-[    4.570000] Process swapper/0 (pid: 1, stack limit = 0xef0a6240)
-[    4.570000] Stack: (0xef0a7d90 to 0xef0a8000)
-[    4.570000] 7d80:                                     00000000
-c02db7c8 ef0a7da0 c02d738c
-[    4.570000] 7da0: c078afe4 00000001 000001d9 00000000 c04532a0
-c02d7bb8 c04532a0 ffffffea
-[    4.570000] 7dc0: c078c414 00000000 c04532a0 c02db864 00000022
-ef1f1040 c04532a0 ef22d128
-[    4.570000] 7de0: 00000000 c02db8c8 00000022 ef22d000 ef22d000
-c01eb5b0 00000022 ef22d000
-[    4.570000] 7e00: 00000000 c01eba10 00000000 00000009 ef22d024
-c078c414 00000000 ef22ca10
-[    4.570000] 7e20: 00000000 c02d93dc c0527ca8 c03aac00 c03aacc4
-c02d7a0c 60000113 c0527ca8
-[    4.570000] 7e40: c078c078 c078c2b4 ef22ca10 00000000 00000000
-00000000 00000001 c078c078
-[    4.570000] 7e60: c078c414 ef22ca10 00000000 c03aac00 00000000
-c02d92c8 00000001 c0227f14
-[    4.570000] 7e80: 00000000 ef0a7ea8 60000113 c0527ca8 c03aac00
-00000000 00000000 00000001
-[    4.570000] 7ea0: 00000000 c078c078 c078405c c03aac00 00000000
-00000000 00000001 ef0a6038
-[    4.570000] 7ec0: 00000000 c02d955c 00000001 00000000 00000000
-c04f037c 00000003 c052dc40
-[    4.570000] 7ee0: c052dc40 c04bd218 c04ddb70 c04bd238 00000000
-c0008908 ef01c300 c043a894
-[    4.570000] 7f00: ef1d6900 c03855e8 60000100 c0501a80 60000113
-c0501a80 00000000 00000000
-[    4.570000] 7f20: 00000000 c0501a7c c078eade c0395c4c 00000079
-c0035d9c c049a768 00000003
-[    4.570000] 7f40: c078eaf0 00000003 00000000 c04f037c 00000003
-c052dc40 c052dc40 c04ba50c
-[    4.570000] 7f60: c04ddb70 00000079 c04ddb58 c04bac9c 00000003
-00000003 c04ba50c c0381638
-[    4.570000] 7f80: c15d65c0 0000dc40 c0378d54 00000000 00000000
-00000000 00000000 00000000
-[    4.570000] 7fa0: 00000000 c0378d60 00000000 c000e438 00000000
-00000000 00000000 00000000
-[    4.570000] 7fc0: 00000000 00000000 00000000 00000000 00000000
-00000000 00000000 00000000
-[    4.570000] 7fe0: 00000000 00000000 00000000 00000000 00000013
-00000000 00000000 00000000
-[    4.570000] [<c02ddf34>] (__clk_get) from [<c02db7c8>]
-(of_clk_get.part.6+0x54/0x6c)
-[    4.570000] [<c02db7c8>] (of_clk_get.part.6) from [<c02db864>]
-(of_clk_get_by_name+0x70/0xb0)
-[    4.570000] [<c02db864>] (of_clk_get_by_name) from [<c02db8c8>]
-(clk_get+0x24/0x44)
-[    4.570000] [<c02db8c8>] (clk_get) from [<c01eb5b0>]
-(amba_get_enable_pclk+0x14/0x68)
-[    4.570000] [<c01eb5b0>] (amba_get_enable_pclk) from [<c01eba10>]
-(amba_device_add+0xa0/0x1d0)
-[    4.570000] [<c01eba10>] (amba_device_add) from [<c02d93dc>]
-(of_platform_bus_create+0x248/0x2a0)
-[    4.570000] [<c02d93dc>] (of_platform_bus_create) from [<c02d92c8>]
-(of_platform_bus_create+0x134/0x2a0)
-[    4.570000] [<c02d92c8>] (of_platform_bus_create) from [<c02d955c>]
-(of_platform_populate+0x5c/0xa0)
-[    4.570000] [<c02d955c>] (of_platform_populate) from [<c04bd238>]
-(customize_machine+0x20/0x40)
-[    4.570000] [<c04bd238>] (customize_machine) from [<c0008908>]
-(do_one_initcall+0xf8/0x144)
-[    4.570000] [<c0008908>] (do_one_initcall) from [<c04bac9c>]
-(kernel_init_freeable+0x13c/0x1dc)
-[    4.570000] [<c04bac9c>] (kernel_init_freeable) from [<c0378d60>]
-(kernel_init+0xc/0x118)
-[    4.570000] [<c0378d60>] (kernel_init) from [<c000e438>]
-(ret_from_fork+0x14/0x3c)
-[    4.570000] Code: e3500000 0a00000b e2843050 f57ff05b (e1932f9f)
-[    4.575000] ---[ end trace e07e345daa061b93 ]---
-[    4.580000] Kernel panic - not syncing: Attempted to kill init!
-exitcode=0x0000000b
-[    4.580000]
-[    4.580000] CPU3: stopping
-[    4.580000] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D
-3.13.0-rc7-next-20140107 #279
-[    4.580000] [<c0013e5c>] (unwind_backtrace) from [<c0011230>]
-(show_stack+0x10/0x14)
-[    4.580000] [<c0011230>] (show_stack) from [<c037c600>]
-(dump_stack+0x7c/0xbc)
-[    4.580000] [<c037c600>] (dump_stack) from [<c00131bc>]
-(handle_IPI+0x148/0x158)
-[    4.580000] [<c00131bc>] (handle_IPI) from [<c00085c8>]
-(gic_handle_irq+0x64/0x68)
-[    4.580000] [<c00085c8>] (gic_handle_irq) from [<c0011d80>]
-(__irq_svc+0x40/0x70)
-[    4.580000] Exception stack(0xef0d9f98 to 0xef0d9fe0)
-[    4.580000] 9f80:
-    00000003 00000000
-[    4.580000] 9fa0: 00000001 00000000 ef0d8000 c04fc494 c0384b74
-c052db19 00000001 c052db19
-[    4.580000] 9fc0: ef0d8000 ef0d8000 4c4b4000 ef0d9fe0 c000ef64
-c000ef68 60000113 ffffffff
-[    4.580000] [<c0011d80>] (__irq_svc) from [<c000ef68>]
-(arch_cpu_idle+0x2c/0x30)
-[    4.580000] [<c000ef68>] (arch_cpu_idle) from [<c00572e0>]
-(cpu_startup_entry+0x108/0x150)
-[    4.580000] [<c00572e0>] (cpu_startup_entry) from [<20008664>] (0x20008664)
-[    4.580000] CPU1: stopping
-[    4.580000] CPU: 1 PID: 0 Comm: swapper/1 Tainted: G      D
-3.13.0-rc7-next-20140107 #279
-[    4.580000] [<c0013e5c>] (unwind_backtrace) from [<c0011230>]
-(show_stack+0x10/0x14)
-[    4.580000] [<c0011230>] (show_stack) from [<c037c600>]
-(dump_stack+0x7c/0xbc)
-[    4.580000] SMP: failed to stop secondary CPUs
-[    4.590000] [<c037c600>] (dump_stack) from [<c00131bc>]
-(handle_IPI+0x148/0x158)
-[    4.600000] [<c00131bc>] (handle_IPI) from [<c00085c8>]
-(gic_handle_irq+0x64/0x68)
-[    4.605000] [<c00085c8>] (gic_handle_irq) from [<c0011d80>]
-(__irq_svc+0x40/0x70)
-[    4.615000] Exception stack(0xef0d5f98 to 0xef0d5fe0)
-[    4.620000] 5f80:
-    00000001 00000000
-[    4.630000] 5fa0: 00000001 00000000 ef0d4000 c04fc494 c0384b74
-c052db19 00000001 c052db19
-[    4.635000] 5fc0: ef0d4000 ef0d4000 4c4b4000 ef0d5fe0 c000ef64
-c000ef68 60000113 ffffffff
-[    4.645000] [<c0011d80>] (__irq_svc) from [<c000ef68>]
-(arch_cpu_idle+0x2c/0x30)
-[    4.650000] [<c000ef68>] (arch_cpu_idle) from [<c00572e0>]
-(cpu_startup_entry+0x108/0x150)
-[    4.660000] [<c00572e0>] (cpu_startup_entry) from [<20008664>] (0x20008664)
-[    4.670000] CPU2: stopping
-[    4.670000] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G      D
-3.13.0-rc7-next-20140107 #279
-[    4.680000] [<c0013e5c>] (unwind_backtrace) from [<c0011230>]
-(show_stack+0x10/0x14)
-[    4.685000] [<c0011230>] (show_stack) from [<c037c600>]
-(dump_stack+0x7c/0xbc)
-[    4.695000] [<c037c600>] (dump_stack) from [<c00131bc>]
-(handle_IPI+0x148/0x158)
-[    4.700000] [<c00131bc>] (handle_IPI) from [<c00085c8>]
-(gic_handle_irq+0x64/0x68)
-[    4.710000] [<c00085c8>] (gic_handle_irq) from [<c0011d80>]
-(__irq_svc+0x40/0x70)
-[    4.715000] Exception stack(0xef0d7f98 to 0xef0d7fe0)
-[    4.720000] 7f80:
-    00000002 00000000
-[    4.730000] 7fa0: 00000001 00000000 ef0d6000 c04fc494 c0384b74
-c052db19 00000001 c052db19
-[    4.740000] 7fc0: ef0d6000 ef0d6000 4c4b4000 ef0d7fe0 c000ef64
-c000ef68 60000113 ffffffff
-[    4.745000] [<c0011d80>] (__irq_svc) from [<c000ef68>]
-(arch_cpu_idle+0x2c/0x30)
-[    4.755000] [<c000ef68>] (arch_cpu_idle) from [<c00572e0>]
-(cpu_startup_entry+0x108/0x150)
-[    4.760000] [<c00572e0>] (cpu_startup_entry) from [<20008664>] (0x20008664)
-******************************
+>> > > 2) There is no L2 cache controller node in Exynos4*.dtsi.
+>> > >
+>> > > It should be added, but L2 cache can't be enabled on all boards yet,
+>> > > since on boards where secure firmware is enabled, special configuration
+>> > > involving SMC calls is required. Patches for this are queued on my work
+>> > > queue, but it's quite tricky due to 1), which needs to consider whether
+>> > > secure firmware is enabled or not.
+>> > >
+>> >
+>> > In that case, would it be ok to add the node for Origen board only?
+>
+> Better solution would be to add the node in SoC-level dtsi, keep it
+> disabled and override the status to okay at board level. Still...
+>
+>>
+>> Wouldn't that leave other systems still broken? I'm particularly worried
+>> about what patch to backport to linux-stable. We should definitely add
+>> the node for Origen, but we may also have to revert my broken patch
+>> in all affected kernel versions.
+>
+> ...Origen is not the only board that is affected by this, most likely any
+> Exynos4-based board not running under secure firmware is.
+>
+>>
+>> Are there any systems that may or may not have secure firmware enabled
+>> depending on the boot loader, or do we always know whether secure firmware
+>> is there or not?
+>
+> It always depends on the boot loader, but fortunately it's unlikely to
+> happen that one board will have both secure-enabled and normal bootloaders
+> available and in use, at least for Exynos4-based boards, so it's quite
+> safe to assume presence of secure firmware on per board basis and so you
+> have the secure firmware device tree node only in dts files of boards
+> that are known to use secure firmware.
+>
 
-git bisect points to a merge commit 6ea578da5acf ("Merge
-remote-tracking branch 'clk/clk-next'").
-Couldn't make much out of it though. PC: c02ddf34 points to
-arch/arm/include/asm/atomic.h:64 and
-c02db7c8 points to drivers/clk/clkdev.c:47
+Ok. I will add the node in Exynos4.dtsi, keep it disabled and enable
+on all Exynos4-based boards that are not using secure-firmware node.
 
-There is however no such problem observed on Exynos4210 and 5250 based
-boards. They boot fine.
+> Aynway, from what I can see, support for the only two Exynos4 boards using
+> for secure firmware was added in 3.12. This means that we can revert the
+> offending patch for 3.11, but for 3.12 and newer we can't, because this
+> will break such boards with CONFIG_L2X0 enabled.
+>
+> Instead, wouldn't it be better to fix the issue at its cause? This means
+> s5p-sleep.S re-enabling L2X0 only if it was really enabled before entering
+> low power mode. This could be achieved by checking if l2x0_regs_phys isn't
+> 0 for example (which isn't a valid physical RAM address on Exynos).
+>
+> What do you think?
+>
+> Best regards,
+> Tomasz
+>
+
+Tested successfully on Origen board with following code snippet.
+
+diff --git a/arch/arm/plat-samsung/s5p-sleep.S
+b/arch/arm/plat-samsung/s5p-sleep.S
+index a030e73..d1753c5 100644
+--- a/arch/arm/plat-samsung/s5p-sleep.S
++++ b/arch/arm/plat-samsung/s5p-sleep.S
+@@ -62,6 +62,8 @@ ENTRY(s3c_cpu_resume)
+        bne     resume_l2on
+        adr     r0, l2x0_regs_phys
+        ldr     r0, [r0]
++       cmp     r0, #0
++       beq     resume_l2on
+        ldr     r1, [r0, #L2X0_R_PHY_BASE]
+        ldr     r2, [r1, #L2X0_CTRL]
+        tst     r2, #0x1
 
 -- 
-With warm regards,
-Sachin
+Tushar Behera
