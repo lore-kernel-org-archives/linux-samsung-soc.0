@@ -1,162 +1,78 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH RESEND v2 12/12] clk: exynos5440: replace clock ID private
- enums with IDs from DT header
-Date: Tue, 07 Jan 2014 15:47:40 +0100
-Message-ID: <1389106060-20291-13-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RESEND v2 10/12] ARM: exynos5440: create a DT header defining
+ CLK IDs
+Date: Tue, 07 Jan 2014 15:47:38 +0100
+Message-ID: <1389106060-20291-11-git-send-email-a.hajda@samsung.com>
 References: <1389106060-20291-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33634 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751634AbaAGOs3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 09:48:29 -0500
-In-reply-to: <1389106060-20291-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1389106060-20291-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "moderated list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-The patch replaces private enum clock IDs in the driver with macros provided
-by the DT header.
+The patch adds header file defining clock IDs.
+This allows to use macros instead of magic numbers in DT bindings.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clk/samsung/clk-exynos5440.c | 81 +++++++++++++++---------------------
- 1 file changed, 34 insertions(+), 47 deletions(-)
+ include/dt-bindings/clock/exynos5440.h | 42 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 include/dt-bindings/clock/exynos5440.h
 
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-index f865894..cbc15b5 100644
---- a/drivers/clk/samsung/clk-exynos5440.c
-+++ b/drivers/clk/samsung/clk-exynos5440.c
-@@ -9,6 +9,7 @@
-  * Common Clock Framework support for Exynos5440 SoC.
- */
- 
-+#include <dt-bindings/clock/exynos5440.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
-@@ -22,79 +23,65 @@
- #define CPU_CLK_STATUS		0xfc
- #define MISC_DOUT1		0x558
- 
--/*
-- * Let each supported clock get a unique id. This id is used to lookup the clock
-- * for device tree based platforms.
-- */
--enum exynos5440_clks {
--	none, xtal, arm_clk,
--
--	spi_baud = 16, pb0_250, pr0_250, pr1_250, b_250, b_125, b_200, sata,
--	usb, gmac0, cs250, pb0_250_o, pr0_250_o, pr1_250_o, b_250_o, b_125_o,
--	b_200_o, sata_o, usb_o, gmac0_o, cs250_o,
--
--	nr_clks,
--};
--
- /* parent clock name list */
- PNAME(mout_armclk_p)	= { "cplla", "cpllb" };
- PNAME(mout_spi_p)	= { "div125", "div200" };
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
--	FRATE(none, "xtal", NULL, CLK_IS_ROOT, 0),
-+	FRATE(0, "xtal", NULL, CLK_IS_ROOT, 0),
- };
- 
- /* fixed rate clocks */
- static struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
--	FRATE(none, "ppll", NULL, CLK_IS_ROOT, 1000000000),
--	FRATE(none, "usb_phy0", NULL, CLK_IS_ROOT, 60000000),
--	FRATE(none, "usb_phy1", NULL, CLK_IS_ROOT, 60000000),
--	FRATE(none, "usb_ohci12", NULL, CLK_IS_ROOT, 12000000),
--	FRATE(none, "usb_ohci48", NULL, CLK_IS_ROOT, 48000000),
-+	FRATE(0, "ppll", NULL, CLK_IS_ROOT, 1000000000),
-+	FRATE(0, "usb_phy0", NULL, CLK_IS_ROOT, 60000000),
-+	FRATE(0, "usb_phy1", NULL, CLK_IS_ROOT, 60000000),
-+	FRATE(0, "usb_ohci12", NULL, CLK_IS_ROOT, 12000000),
-+	FRATE(0, "usb_ohci48", NULL, CLK_IS_ROOT, 48000000),
- };
- 
- /* fixed factor clocks */
- static struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
--	FFACTOR(none, "div250", "ppll", 1, 4, 0),
--	FFACTOR(none, "div200", "ppll", 1, 5, 0),
--	FFACTOR(none, "div125", "div250", 1, 2, 0),
-+	FFACTOR(0, "div250", "ppll", 1, 4, 0),
-+	FFACTOR(0, "div200", "ppll", 1, 5, 0),
-+	FFACTOR(0, "div125", "div250", 1, 2, 0),
- };
- 
- /* mux clocks */
- static struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
--	MUX(none, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
--	MUX_A(arm_clk, "arm_clk", mout_armclk_p,
-+	MUX(0, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
-+	MUX_A(CLK_ARM_CLK, "arm_clk", mout_armclk_p,
- 			CPU_CLK_STATUS, 0, 1, "armclk"),
- };
- 
- /* divider clocks */
- static struct samsung_div_clock exynos5440_div_clks[] __initdata = {
--	DIV(spi_baud, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
-+	DIV(CLK_SPI_BAUD, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
- };
- 
- /* gate clocks */
- static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
--	GATE(pb0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
--	GATE(pr0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
--	GATE(pr1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
--	GATE(b_250, "b_250", "div250", CLKEN_OV_VAL, 9, 0, 0),
--	GATE(b_125, "b_125", "div125", CLKEN_OV_VAL, 10, 0, 0),
--	GATE(b_200, "b_200", "div200", CLKEN_OV_VAL, 11, 0, 0),
--	GATE(sata, "sata", "div200", CLKEN_OV_VAL, 12, 0, 0),
--	GATE(usb, "usb", "div200", CLKEN_OV_VAL, 13, 0, 0),
--	GATE(gmac0, "gmac0", "div200", CLKEN_OV_VAL, 14, 0, 0),
--	GATE(cs250, "cs250", "div250", CLKEN_OV_VAL, 19, 0, 0),
--	GATE(pb0_250_o, "pb0_250_o", "pb0_250", CLKEN_OV_VAL, 3, 0, 0),
--	GATE(pr0_250_o, "pr0_250_o", "pr0_250", CLKEN_OV_VAL, 4, 0, 0),
--	GATE(pr1_250_o, "pr1_250_o", "pr1_250", CLKEN_OV_VAL, 5, 0, 0),
--	GATE(b_250_o, "b_250_o", "b_250", CLKEN_OV_VAL, 9, 0, 0),
--	GATE(b_125_o, "b_125_o", "b_125", CLKEN_OV_VAL, 10, 0, 0),
--	GATE(b_200_o, "b_200_o", "b_200", CLKEN_OV_VAL, 11, 0, 0),
--	GATE(sata_o, "sata_o", "sata", CLKEN_OV_VAL, 12, 0, 0),
--	GATE(usb_o, "usb_o", "usb", CLKEN_OV_VAL, 13, 0, 0),
--	GATE(gmac0_o, "gmac0_o", "gmac", CLKEN_OV_VAL, 14, 0, 0),
--	GATE(cs250_o, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
-+	GATE(CLK_PB0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
-+	GATE(CLK_PR0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
-+	GATE(CLK_PR1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
-+	GATE(CLK_B_250, "b_250", "div250", CLKEN_OV_VAL, 9, 0, 0),
-+	GATE(CLK_B_125, "b_125", "div125", CLKEN_OV_VAL, 10, 0, 0),
-+	GATE(CLK_B_200, "b_200", "div200", CLKEN_OV_VAL, 11, 0, 0),
-+	GATE(CLK_SATA, "sata", "div200", CLKEN_OV_VAL, 12, 0, 0),
-+	GATE(CLK_USB, "usb", "div200", CLKEN_OV_VAL, 13, 0, 0),
-+	GATE(CLK_GMAC0, "gmac0", "div200", CLKEN_OV_VAL, 14, 0, 0),
-+	GATE(CLK_CS250, "cs250", "div250", CLKEN_OV_VAL, 19, 0, 0),
-+	GATE(CLK_PB0_250_O, "pb0_250_o", "pb0_250", CLKEN_OV_VAL, 3, 0, 0),
-+	GATE(CLK_PR0_250_O, "pr0_250_o", "pr0_250", CLKEN_OV_VAL, 4, 0, 0),
-+	GATE(CLK_PR1_250_O, "pr1_250_o", "pr1_250", CLKEN_OV_VAL, 5, 0, 0),
-+	GATE(CLK_B_250_O, "b_250_o", "b_250", CLKEN_OV_VAL, 9, 0, 0),
-+	GATE(CLK_B_125_O, "b_125_o", "b_125", CLKEN_OV_VAL, 10, 0, 0),
-+	GATE(CLK_B_200_O, "b_200_o", "b_200", CLKEN_OV_VAL, 11, 0, 0),
-+	GATE(CLK_SATA_O, "sata_o", "sata", CLKEN_OV_VAL, 12, 0, 0),
-+	GATE(CLK_USB_O, "usb_o", "usb", CLKEN_OV_VAL, 13, 0, 0),
-+	GATE(CLK_GMAC0_O, "gmac0_o", "gmac", CLKEN_OV_VAL, 14, 0, 0),
-+	GATE(CLK_CS250_O, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
- };
- 
- static struct of_device_id ext_clk_match[] __initdata = {
-@@ -114,7 +101,7 @@ static void __init exynos5440_clk_init(struct device_node *np)
- 		return;
- 	}
- 
--	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
-+	samsung_clk_init(np, reg_base, CLK_NR_CLKS, NULL, 0, NULL, 0);
- 	samsung_clk_of_register_fixed_ext(exynos5440_fixed_rate_ext_clks,
- 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
- 
+diff --git a/include/dt-bindings/clock/exynos5440.h b/include/dt-bindings/clock/exynos5440.h
+new file mode 100644
+index 0000000..e2a0c61
+--- /dev/null
++++ b/include/dt-bindings/clock/exynos5440.h
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ * Author: Andrzej Haja <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants for Exynos5440 clock controller.
++*/
++
++#ifndef _DT_BINDINGS_CLOCK_EXYNOS_5440_H
++#define _DT_BINDINGS_CLOCK_EXYNOS_5440_H
++
++#define CLK_XTAL		1
++#define CLK_ARM_CLK		2
++#define CLK_SPI_BAUD		16
++#define CLK_PB0_250		17
++#define CLK_PR0_250		18
++#define CLK_PR1_250		19
++#define CLK_B_250		20
++#define CLK_B_125		21
++#define CLK_B_200		22
++#define CLK_SATA		23
++#define CLK_USB			24
++#define CLK_GMAC0		25
++#define CLK_CS250		26
++#define CLK_PB0_250_O		27
++#define CLK_PR0_250_O		28
++#define CLK_PR1_250_O		29
++#define CLK_B_250_O		30
++#define CLK_B_125_O		31
++#define CLK_B_200_O		32
++#define CLK_SATA_O		33
++#define CLK_USB_O		34
++#define CLK_GMAC0_O		35
++#define CLK_CS250_O		36
++
++/* must be greater than maximal clock id */
++#define CLK_NR_CLKS		37
++
++#endif /* _DT_BINDINGS_CLOCK_EXYNOS_5440_H */
 -- 
 1.8.3.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
