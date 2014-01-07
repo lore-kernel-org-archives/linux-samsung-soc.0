@@ -1,61 +1,66 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 2/2] drm/exynos: Fix build after removal of DRM_WAKUP
-Date: Tue, 7 Jan 2014 17:14:42 +0100
-Message-ID: <20140107161442.GJ4770@phenom.ffwll.local>
-References: <1389103152-21877-1-git-send-email-broonie@kernel.org>
- <1389103152-21877-2-git-send-email-broonie@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] ARM: s3c24xx: fix build error
+Date: Tue,  7 Jan 2014 19:27:25 +0100
+Message-ID: <1389119245-2167-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f54.google.com ([74.125.83.54]:48036 "EHLO
-	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752347AbaAGQN2 (ORCPT
+Received: from mail-we0-f179.google.com ([74.125.82.179]:56267 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752049AbaAGS1g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 11:13:28 -0500
-Received: by mail-ee0-f54.google.com with SMTP id e51so137423eek.41
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 08:13:27 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1389103152-21877-2-git-send-email-broonie@kernel.org>
+	Tue, 7 Jan 2014 13:27:36 -0500
+Received: by mail-we0-f179.google.com with SMTP id q59so494529wes.24
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 10:27:35 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Tue, Jan 07, 2014 at 01:59:12PM +0000, Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
-> 
-> Commit 57ed0f7b4375 (drm: Kill DRM_WAKUP and DRM_INIT_WAITQUEUE) removed
-> the definition of DRM_WAKUP but did not remove the use of it in the Exynos
-> DRM driver causing it to fail to build. Fix that.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
+When enabling device tree on the S3C an additional build
+bug appears in the Osiris DVS board file:
 
-Oops, looks like something slipped past between me making the patches and
-them getting merged. Thanks for taking care of this. Both patches are
+CC  arch/arm/mach-s3c24xx/mach-osiris-dvs.o
+archh/arm/mach-s3c24xx/mach-osiris-dvs.c:
+In function =E2=80=98osiris_dvs_notify=E2=80=99:
+arch/arm/mach-s3c24xx/mach-osiris-dvs.c:77:4:
+error: implicit declaration of function =E2=80=98S3C2410_GPB=E2=80=99
+[-Werror=3Dimplicit-function-declaration]
+    gpio_set_value(OSIRIS_GPIO_DVS, 1);
+    ^
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index bdfe31fb731b..05b72b07a134 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -706,7 +706,7 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
->  	/* set wait vsync event to zero and wake up queue. */
->  	if (atomic_read(&ctx->wait_vsync_event)) {
->  		atomic_set(&ctx->wait_vsync_event, 0);
-> -		DRM_WAKEUP(&ctx->wait_vsync_queue);
-> +		wake_up(&ctx->wait_vsync_queue);
->  	}
->  out:
->  	return IRQ_HANDLED;
-> -- 
-> 1.8.5.2
-> 
+=46ix this by explicitly including
+<linux/platform_data/gpio-samsung-s3c24xx.h>
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+I have tentatively applied this to the GPIO tree so I
+don't cause build regressions, ACKs are still
+appreciated from the S3C maintainers.
+---
+ arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c b/arch/arm/mach-s3=
+c24xx/mach-osiris-dvs.c
+index 45e74363aaa9..5b8af46c0d6b 100644
+--- a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
++++ b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+@@ -16,6 +16,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/cpufreq.h>
+ #include <linux/gpio.h>
++#include <linux/platform_data/gpio-samsung-s3c24xx.h>
+=20
+ #include <linux/i2c/tps65010.h>
+=20
+--=20
+1.8.3.1
