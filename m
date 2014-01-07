@@ -1,65 +1,167 @@
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
-Date: Tue, 7 Jan 2014 14:00:19 +0100
-Message-ID: <20140107140019.7220eed6@ipc1.ka-ro>
-References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH V2 06/10] clk/samsung: add support for pll2650xx
+Date: Tue, 07 Jan 2014 18:29:04 +0530
+Message-ID: <1389099548-14649-7-git-send-email-rahul.sharma@samsung.com>
+References: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.karo-electronics.de ([81.173.242.67]:55871 "EHLO
-	mail.karo-electronics.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751741AbaAGNAd convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46663 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751255AbaAGNAc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 08:00:33 -0500
-In-Reply-To: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
+	Tue, 7 Jan 2014 08:00:32 -0500
+In-reply-to: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi,
+Add support for pll2650xx in samsung pll file. This pll variant
+is close to pll36xx but uses CON2 registers instead of CON1.
 
-Sylwester Nawrocki wrote:
-> Ensure clk->kref is dereferenced only when clk is not NULL.
->=20
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Hi Sachin,
->=20
-> please try if this patch fixes the exyno5420 boot crash.
->=20
-> Thanks,
-> Sylwester
->=20
->  drivers/clk/clk.c |   13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index e3e0327..a1fe86f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2179,24 +2179,25 @@ EXPORT_SYMBOL_GPL(devm_clk_unregister);
->   */
->  int __clk_get(struct clk *clk)
->  {
-> -	if (clk && !try_module_get(clk->owner))
-> -		return 0;
-> +	if (clk) {
-> +		if (!try_module_get(clk->owner))
-> +			return 0;
->=20
-This change is unnecessary! The part after the && is only evaluated
-when clk is not NULL.
+Aud_pll in Exynos5260 is pll2650xx and uses this code.
 
-Lothar Wa=C3=9Fmann
---=20
-___________________________________________________________
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c |  101 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.h |    2 +-
+ 2 files changed, 102 insertions(+), 1 deletion(-)
 
-Ka-Ro electronics GmbH | Pascalstra=C3=9Fe 22 | D - 52076 Aachen
-Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
-Gesch=C3=A4ftsf=C3=BChrer: Matthias Kaussen
-Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
-
-www.karo-electronics.de | info@karo-electronics.de
-___________________________________________________________
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 08f85ae..35cbc60 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -812,6 +812,101 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
+ 	.recalc_rate = samsung_pll2550xx_recalc_rate,
+ };
+ 
++/*
++ * PLL2650XX Clock Type
++ */
++
++/* Maximum lock time can be 3000 * PDIV cycles */
++#define PLL2650XX_LOCK_FACTOR (3000)
++
++#define PLL2650XX_MDIV_SHIFT		(9)
++#define PLL2650XX_PDIV_SHIFT		(3)
++#define PLL2650XX_SDIV_SHIFT		(0)
++#define PLL2650XX_KDIV_SHIFT		(0)
++#define PLL2650XX_MDIV_MASK		(0x1ff)
++#define PLL2650XX_PDIV_MASK		(0x3f)
++#define PLL2650XX_SDIV_MASK		(0x7)
++#define PLL2650XX_KDIV_MASK		(0xffff)
++#define PLL2650XX_PLL_ENABLE_SHIFT	(23)
++#define PLL2650XX_PLL_LOCKTIME_SHIFT	(21)
++#define PLL2650XX_PLL_FOUTMASK_SHIFT	(31)
++
++static unsigned long samsung_pll2650xx_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 mdiv, pdiv, sdiv, pll_con0, pll_con2;
++	s16 kdiv;
++	u64 fvco = parent_rate;
++
++	pll_con0 = __raw_readl(pll->con_reg);
++	pll_con2 = __raw_readl(pll->con_reg + 8);
++	mdiv = (pll_con0 >> PLL2650XX_MDIV_SHIFT) & PLL2650XX_MDIV_MASK;
++	pdiv = (pll_con0 >> PLL2650XX_PDIV_SHIFT) & PLL2650XX_PDIV_MASK;
++	sdiv = (pll_con0 >> PLL2650XX_SDIV_SHIFT) & PLL2650XX_SDIV_MASK;
++	kdiv = (s16)(pll_con2 & PLL2650XX_KDIV_MASK);
++
++	fvco *= (mdiv << 16) + kdiv;
++	do_div(fvco, (pdiv << sdiv));
++	fvco >>= 16;
++
++	return (unsigned long)fvco;
++}
++
++static int samsung_pll2650xx_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long parent_rate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 tmp, pll_con0, pll_con2;
++	const struct samsung_pll_rate_table *rate;
++
++	rate = samsung_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	pll_con0 = __raw_readl(pll->con_reg);
++	pll_con2 = __raw_readl(pll->con_reg + 8);
++
++	 /* Change PLL PMS values */
++	pll_con0 &= ~(PLL2650XX_MDIV_MASK << PLL2650XX_MDIV_SHIFT |
++			PLL2650XX_PDIV_MASK << PLL2650XX_PDIV_SHIFT |
++			PLL2650XX_SDIV_MASK << PLL2650XX_SDIV_SHIFT);
++	pll_con0 |= rate->mdiv << PLL2650XX_MDIV_SHIFT;
++	pll_con0 |= rate->pdiv << PLL2650XX_PDIV_SHIFT;
++	pll_con0 |= rate->sdiv << PLL2650XX_SDIV_SHIFT;
++	pll_con0 |= 1 << PLL2650XX_PLL_ENABLE_SHIFT;
++	pll_con0 |= 1 << PLL2650XX_PLL_FOUTMASK_SHIFT;
++
++	pll_con2 &= ~(PLL2650XX_KDIV_MASK << PLL2650XX_KDIV_SHIFT);
++	pll_con2 |= ((~(rate->kdiv) + 1) & PLL2650XX_KDIV_MASK)
++			<< PLL2650XX_KDIV_SHIFT;
++
++	/* Set PLL lock time. */
++	__raw_writel(PLL2650XX_LOCK_FACTOR * rate->pdiv, pll->lock_reg);
++
++	__raw_writel(pll_con0, pll->con_reg);
++	__raw_writel(pll_con2, pll->con_reg + 8);
++
++	do {
++		tmp = __raw_readl(pll->con_reg);
++	} while (!(tmp & (0x1 << PLL2650XX_PLL_LOCKTIME_SHIFT)));
++
++	return 0;
++}
++
++static const struct clk_ops samsung_pll2650xx_clk_ops = {
++	.recalc_rate = samsung_pll2650xx_recalc_rate,
++	.set_rate = samsung_pll2650xx_set_rate,
++	.round_rate = samsung_pll_round_rate,
++};
++
++static const struct clk_ops samsung_pll2650xx_clk_min_ops = {
++	.recalc_rate = samsung_pll2650xx_recalc_rate,
++};
++
+ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 				struct samsung_pll_clock *pll_clk,
+ 				void __iomem *base)
+@@ -895,6 +990,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		else
+ 			init.ops = &samsung_pll2550xx_clk_ops;
+ 		break;
++	case pll_2650xx:
++		if (!pll->rate_table)
++			init.ops = &samsung_pll2650xx_clk_min_ops;
++		else
++			init.ops = &samsung_pll2650xx_clk_ops;
++		break;
+ 	default:
+ 		pr_warn("%s: Unknown pll type for pll clk %s\n",
+ 			__func__, pll_clk->name);
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index e106470..b326e94 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -26,6 +26,7 @@ enum samsung_pll_type {
+ 	pll_6552,
+ 	pll_6553,
+ 	pll_2550xx,
++	pll_2650xx,
+ };
+ 
+ #define PLL_35XX_RATE(_rate, _m, _p, _s)			\
+@@ -93,5 +94,4 @@ struct samsung_pll_rate_table {
+ extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
+ 			const char *pname, const void __iomem *reg_base,
+ 			const unsigned long offset);
+-
+ #endif /* __SAMSUNG_CLK_PLL_H */
+-- 
+1.7.9.5
