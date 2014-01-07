@@ -1,101 +1,118 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v4 2/4] [media] exynos-scaler: Add core functionality for
- the SCALER driver
-Date: Tue, 7 Jan 2014 09:29:12 +0530
-Message-ID: <CAOD6ATpYUCqx5zdYTev4Us8paiX4WRB8P1Vma_9VuinX3dZ3UA@mail.gmail.com>
-References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
-	<1380889594-10448-3-git-send-email-shaik.ameer@samsung.com>
-	<20140102182532.715b427e@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V2 0/3] ARM: SAMSUNG: Remove plat/regs-serial.h file
+Date: Tue,  7 Jan 2014 11:23:14 +0530
+Message-ID: <1389073997-30763-1-git-send-email-tushar.behera@linaro.org>
+References: <1388397640-720-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:42871 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932065AbaAGD7Q (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:46566 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752204AbaAGF5M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jan 2014 22:59:16 -0500
-In-Reply-To: <20140102182532.715b427e@samsung.com>
+	Tue, 7 Jan 2014 00:57:12 -0500
+Received: by mail-pa0-f50.google.com with SMTP id kp14so17736459pab.37
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2014 21:57:12 -0800 (PST)
+In-Reply-To: <1388397640-720-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@google.com>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, broonie@linaro.org
 
-Hi Mauro,
+plat-samsung/include/plat/regs-serial.h only includes linux/serial_s3c.h.
+Including linux/serial_s3c.h directly would reduce platform dependency
+while working towards multi-platform kernel.
 
-Thanks for the reveiw.
+Tested on top of Kukjin's for-next branch.
+Commit 8109c47 "Merge branch 'v3.14-next/dt-exynos-3' into for-next"
 
-On Fri, Jan 3, 2014 at 1:55 AM, Mauro Carvalho Chehab
-<m.chehab@samsung.com> wrote:
-> Em Fri,  4 Oct 2013 17:56:32 +0530
-> Shaik Ameer Basha <shaik.ameer@samsung.com> escreveu:
->
->> This patch adds the core functionality for the SCALER driver.
->>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> ---
->>  drivers/media/platform/exynos-scaler/scaler.c | 1238 +++++++++++++++++++++++++
->>  drivers/media/platform/exynos-scaler/scaler.h |  375 ++++++++
->>  2 files changed, 1613 insertions(+)
->>  create mode 100644 drivers/media/platform/exynos-scaler/scaler.c
->>  create mode 100644 drivers/media/platform/exynos-scaler/scaler.h
->>
->> diff --git a/drivers/media/platform/exynos-scaler/scaler.c b/drivers/media/platform/exynos-scaler/scaler.c
->> new file mode 100644
->> index 0000000..57635f2
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos-scaler/scaler.c
->> @@ -0,0 +1,1238 @@
->> +/*
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> + *           http://www.samsung.com
->> + *
->> + * Samsung EXYNOS5 SoC series SCALER driver
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/module.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/pm_runtime.h>
->> +
->> +#include "scaler-regs.h"
->> +
->> +#define SCALER_CLOCK_GATE_NAME       "scaler"
->> +
->> +static const struct scaler_fmt scaler_formats[] = {
->> +     {
->> +             .name           = "YUV 4:2:0 non-contig. 2p, Y/CbCr",
->> +             .pixelformat    = V4L2_PIX_FMT_NV12M,
->> +             .depth          = { 8, 4 },
->> +             .color          = SCALER_YUV420,
->> +             .color_order    = SCALER_CBCR,
->> +             .num_planes     = 2,
->> +             .num_comp       = 2,
->> +             .scaler_color   = SCALER_YUV420_2P_Y_UV,
->> +             .flags          = (SCALER_FMT_SRC | SCALER_FMT_DST),
->
-> Not a big deal, but you don't need parenthesis for any of those .flags
-> initialization.
->
+Changes for V2:
+* Squashed patches #2 to #8 from original series.
+* Rebased on top of Kukjin's for-next branch.
 
-Ok. I will fix this. and all other comments given by you in this patch series.
+Sachin Kamat (1):
+  ARM: SAMSUNG: Remove platform dependency from samsung.S
 
-Regards,
-Shaik Ameer Basha
+Tushar Behera (2):
+  ARM: SAMSUNG: Replace inclusion of plat/regs-serial.h header file
+  ARM: SAMSUNG: Delete unused plat/regs-serial.h header file
 
+ arch/arm/include/debug/samsung.S                 |    2 +-
+ arch/arm/mach-exynos/common.c                    |    2 +-
+ arch/arm/mach-s3c24xx/clock-s3c2410.c            |    3 +--
+ arch/arm/mach-s3c24xx/clock-s3c2412.c            |    3 +--
+ arch/arm/mach-s3c24xx/clock-s3c2440.c            |    2 +-
+ arch/arm/mach-s3c24xx/common.c                   |    2 +-
+ arch/arm/mach-s3c24xx/dma-s3c2410.c              |    2 +-
+ arch/arm/mach-s3c24xx/dma-s3c2412.c              |    2 +-
+ arch/arm/mach-s3c24xx/dma-s3c2440.c              |    2 +-
+ arch/arm/mach-s3c24xx/dma-s3c2443.c              |    2 +-
+ arch/arm/mach-s3c24xx/include/mach/debug-macro.S |    2 +-
+ arch/arm/mach-s3c24xx/mach-amlm5900.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-anubis.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-at2440evb.c           |    2 +-
+ arch/arm/mach-s3c24xx/mach-bast.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c               |    2 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c               |    2 +-
+ arch/arm/mach-s3c24xx/mach-jive.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                 |    2 +-
+ arch/arm/mach-s3c24xx/mach-nexcoder.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-otom.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-qt2410.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx3715.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c          |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2410.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2440.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c          |    2 +-
+ arch/arm/mach-s3c24xx/mach-vr1000.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c               |    2 +-
+ arch/arm/mach-s3c24xx/pm.c                       |    2 +-
+ arch/arm/mach-s3c24xx/s3c2410.c                  |    2 +-
+ arch/arm/mach-s3c24xx/s3c2412.c                  |    2 +-
+ arch/arm/mach-s3c24xx/s3c244x.c                  |    2 +-
+ arch/arm/mach-s3c24xx/sleep-s3c2410.S            |    2 +-
+ arch/arm/mach-s3c24xx/sleep.S                    |    2 +-
+ arch/arm/mach-s3c64xx/common.c                   |    2 +-
+ arch/arm/mach-s3c64xx/include/mach/debug-macro.S |    2 +-
+ arch/arm/mach-s3c64xx/irq-pm.c                   |    2 +-
+ arch/arm/mach-s3c64xx/mach-anw6410.c             |    2 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c                 |    2 +-
+ arch/arm/mach-s3c64xx/mach-mini6410.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-ncp.c                 |    2 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c              |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6400.c            |    3 +--
+ arch/arm/mach-s3c64xx/mach-smdk6410.c            |    2 +-
+ arch/arm/mach-s3c64xx/s3c6400.c                  |    2 +-
+ arch/arm/mach-s3c64xx/s3c6410.c                  |    2 +-
+ arch/arm/mach-s5p64x0/common.c                   |    2 +-
+ arch/arm/mach-s5p64x0/include/mach/debug-macro.S |    3 +--
+ arch/arm/mach-s5p64x0/irq-pm.c                   |    2 +-
+ arch/arm/mach-s5p64x0/mach-smdk6440.c            |    2 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c            |    2 +-
+ arch/arm/mach-s5pc100/common.c                   |    2 +-
+ arch/arm/mach-s5pc100/include/mach/debug-macro.S |    2 +-
+ arch/arm/mach-s5pc100/mach-smdkc100.c            |    2 +-
+ arch/arm/mach-s5pv210/common.c                   |    2 +-
+ arch/arm/mach-s5pv210/include/mach/debug-macro.S |    2 +-
+ arch/arm/mach-s5pv210/mach-aquila.c              |    2 +-
+ arch/arm/mach-s5pv210/mach-goni.c                |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c            |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c            |    2 +-
+ arch/arm/mach-s5pv210/mach-torbreck.c            |    2 +-
+ arch/arm/plat-samsung/clock.c                    |    2 +-
+ arch/arm/plat-samsung/devs.c                     |    2 +-
+ arch/arm/plat-samsung/include/plat/regs-serial.h |    1 -
+ arch/arm/plat-samsung/include/plat/uncompress.h  |    2 +-
+ arch/arm/plat-samsung/init.c                     |    3 +--
+ arch/arm/plat-samsung/pm.c                       |    3 +--
+ 76 files changed, 75 insertions(+), 82 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-serial.h
 
-[...] Snip
-
->
-> --
->
-> Cheers,
-> Mauro
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.7.9.5
