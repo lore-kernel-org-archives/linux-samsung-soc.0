@@ -1,89 +1,103 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
-Date: Tue, 07 Jan 2014 14:14:54 +0100
-Message-ID: <52CBFDCE.7060206@samsung.com>
-References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
- <20140107140019.7220eed6@ipc1.ka-ro>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V2 02/10] ARM: EXYNOS: initial board support for exynos5260 SoC
+Date: Tue, 07 Jan 2014 14:24:31 +0100
+Message-ID: <3255549.jEqQKz0UeP@wuerfel>
+References: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com> <1389099548-14649-3-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:36800 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834AbaAGNPQ (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.171]:64591 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbaAGNYe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 08:15:16 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MZ100MY48TELC60@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 07 Jan 2014 13:15:14 +0000 (GMT)
-In-reply-to: <20140107140019.7220eed6@ipc1.ka-ro>
+	Tue, 7 Jan 2014 08:24:34 -0500
+In-Reply-To: <1389099548-14649-3-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?TG90aGFyIFdhw59tYW5u?= <LW@KARO-electronics.de>
-Cc: sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi,
+On Tuesday 07 January 2014 18:29:00 Rahul Sharma wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> 
+> This patch add basic arch side support for exynos5260 SoC.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 09e6898..e0c7108 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -52,6 +52,7 @@ static const char name_exynos4210[] = "EXYNOS4210";
+>  static const char name_exynos4212[] = "EXYNOS4212";
+>  static const char name_exynos4412[] = "EXYNOS4412";
+>  static const char name_exynos5250[] = "EXYNOS5250";
+> +static const char name_exynos5260[] = "EXYNOS5260";
+>  static const char name_exynos5410[] = "EXYNOS5410";
+>  static const char name_exynos5420[] = "EXYNOS5420";
+>  static const char name_exynos5440[] = "EXYNOS5440";
+> @@ -92,6 +93,12 @@ static struct cpu_table cpu_ids[] __initdata = {
+>  		.init		= exynos_init,
+>  		.name		= name_exynos5410,
+>  	}, {
+> +		.idcode		= EXYNOS5260_SOC_ID,
+> +		.idmask		= EXYNOS5_SOC_MASK,
+> +		.map_io		= exynos5_map_io,
+> +		.init		= exynos_init,
+> +		.name		= name_exynos5260,
+> +	}, {
+>  		.idcode		= EXYNOS5420_SOC_ID,
+>  		.idmask		= EXYNOS5_SOC_MASK,
+>  		.map_io		= exynos5_map_io,
 
-On 07/01/14 14:00, Lothar Wa=C3=9Fmann wrote:
-> Sylwester Nawrocki wrote:
->> Ensure clk->kref is dereferenced only when clk is not NULL.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->> Hi Sachin,
->>
->> please try if this patch fixes the exyno5420 boot crash.
->>
->> Thanks,
->> Sylwester
->>
->>  drivers/clk/clk.c |   13 +++++++------
->>  1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index e3e0327..a1fe86f 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2179,24 +2179,25 @@ EXPORT_SYMBOL_GPL(devm_clk_unregister);
->>   */
->>  int __clk_get(struct clk *clk)
->>  {
->> -	if (clk && !try_module_get(clk->owner))
->> -		return 0;
->> +	if (clk) {
->> +		if (!try_module_get(clk->owner))
->> +			return 0;
->>
-> This change is unnecessary! The part after the && is only evaluated
-> when clk is not NULL.
+I think we've seen enough of these. Please generalize it enough
+so we won't need to add any more entries whenever a new SoC
+comes up. It's probably fine for now to have to tell the difference
+between EXYNOS4 and EXYNOS5, but not new chips within some family.
 
-It is, but to ensure there is no NULL clk passed at the kref_get(&clk->=
-ref)
-line everything got moved under a common "if (clk) { }".
+According to rumors on the web, EXYNOS6 is going to be released
+soon with a 64-bit CPU in it, and since we don't allow platform
+specific code for arm64 like this any more, you should just
+drop it for arm32 as well.
 
-The code will look like this:
+> @@ -279,6 +286,15 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+>  	},
+>  };
+>  
+> +static struct map_desc exynos5260_iodesc[] __initdata = {
+> +	{
+> +		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+> +		.pfn		= __phys_to_pfn(EXYNOS5260_PA_SYSRAM_NS),
+> +		.length		= SZ_4K,
+> +		.type		= MT_DEVICE,
+> +	},
+> +};
+> +
+>  void exynos4_restart(enum reboot_mode mode, const char *cmd)
+>  {
+>  	__raw_writel(0x1, S5P_SWRESET);
 
------------
-	if (clk) {
-		if (!try_module_get(clk->owner))
-			return 0;
+The only difference you have is the map descriptor, and that should
+go away if you only add a proper DT binding for SYSRAM. Try to get
+rid of the remaining map_desc entries while you're at it.
 
-		kref_get(&clk->ref);
-	}
-------------
+> diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
+> index 31cac97..13c802b 100644
+> --- a/arch/arm/plat-samsung/include/plat/map-s5p.h
+> +++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
+> @@ -23,6 +23,7 @@
+>  
+>  #define S5P_VA_SYSRAM		S3C_ADDR(0x02400000)
+>  #define S5P_VA_SYSRAM_NS	S3C_ADDR(0x02410000)
+> +
+>  #define S5P_VA_DMC0		S3C_ADDR(0x02440000)
+>  #define S5P_VA_DMC1		S3C_ADDR(0x02480000)
+>  #define S5P_VA_SROMC		S3C_ADDR(0x024C0000)
+> 
 
-If preferred I could make it:
+This hunk doesn't really belong in the patch at all.
 
-------------
-if (clk && !try_module_get(clk->owner))
-	return 0;
-
-if (clk)
-	kref_get(&clk->ref);
-------------
-
---
-Regards,
-Sylwester
+	Arnd
