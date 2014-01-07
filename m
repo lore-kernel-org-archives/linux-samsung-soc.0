@@ -1,56 +1,116 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH RESEND v2 00/12] clk/exynos convert clock IDs to macros
-Date: Tue, 07 Jan 2014 16:17:22 +0100
-Message-ID: <1514827.Cd6xxeNpq2@amdc1227>
-References: <1389106060-20291-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [GIT PULL] Samsung Clock fixes for v3.13
+Date: Tue, 07 Jan 2014 16:22:46 +0100
+Message-ID: <3440024.TplMaFaxpk@amdc1227>
+References: <3900474.uee5rn6pUr@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35193 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743AbaAGPRb (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44440 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751364AbaAGPWy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 10:17:31 -0500
-In-reply-to: <1389106060-20291-1-git-send-email-a.hajda@samsung.com>
+	Tue, 7 Jan 2014 10:22:54 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MZ100BQ9EQ4UT90@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Jan 2014 15:22:52 +0000 (GMT)
+In-reply-to: <3900474.uee5rn6pUr@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+To: mturquette@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Mike,
+On Thursday 02 of January 2014 17:14:41 Tomasz Figa wrote:
+> Hi Mike,
+> 
+> Please consider the following Samsung Clock fixes for v3.13.
+> 
+> The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+> 
+>   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/samsung-clk-fixes
+> 
+> for you to fetch changes up to 3fd68c99f3026f4fe3a1b7b6fb75e5638b2032fd:
+> 
+>   clk: exynos: File scope reg_save array should depend on PM_SLEEP (2013-12-30 18:01:09 +0100)
+> 
+> ----------------------------------------------------------------
+> Samsung Clock fixes for v3.13-rc7
+> 
+> * Several patches fixing up incorrectly defined register addresses and
+>   bitfield offsets that could lead to undefined operation when accessing
+>   respective registers or bitfields.
+> 
+>  1) clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
+> 
+>  2a) clk: samsung: exynos5250: Fix ACP gate register offset
+>  2b) clk: samsung: exynos5250: Add MDMA0 clocks
+>  2c) ARM: dts: exynos5250: Fix MDMA0 clock number
+> 
+>  3) clk: samsung: exynos4: Correct SRC_MFC register
+> 
+>    All three issues have been present since Exynos5250 and Exynos4 clock
+>    drivers were added by commits 6e3ad26816b72 ("clk: exynos5250:
+>    register clocks using common clock framework") and e062b571777f5
+>    ("clk: exynos4: register clocks using common clock framework")
+>    respectively.
+> 
+> * Patch to fix automatic disabling of Exynos5250 sysreg clock that could
+>   cause undefined operation of several peripherals, such as USB, I2C,
+>   MIPI or display block.
+> 
+>  4) clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg
+>     clock
+> 
+>    Present since Exynos5250 clock drivers was added by commits
+>    6e3ad26816b72 ("clk: exynos5250: register clocks using common clock
+>    framework").
+> 
+> * Patch fixing compilation warning in clk-exynos-audss driver when
+>   CONFIG_PM_SLEEP is disabled.
+> 
+>  5) clk: exynos: File scope reg_save array should depend on PM_SLEEP
+> 
+>    Present since the driver was added by commit 1241ef94ccc3 ("clk:
+>    samsung: register audio subsystem clocks using common clock
+>    framework").
+> 
+> ----------------------------------------------------------------
+> Abhilash Kesavan (4):
+>       clk: samsung: exynos5250: Fix ACP gate register offset
+>       clk: samsung: exynos5250: Add MDMA0 clocks
+>       ARM: dts: exynos5250: Fix MDMA0 clock number
+>       clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg clock
+> 
+> Andrew Bresticker (1):
+>       clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
+> 
+> Krzysztof Kozlowski (1):
+>       clk: exynos: File scope reg_save array should depend on PM_SLEEP
+> 
+> Seung-Woo Kim (1):
+>       clk: samsung: exynos4: Correct SRC_MFC register
+> 
+>  .../devicetree/bindings/clock/exynos5250-clock.txt         |  2 ++
+>  arch/arm/boot/dts/exynos5250.dtsi                          |  2 +-
+>  drivers/clk/samsung/clk-exynos-audss.c                     | 10 +++++-----
+>  drivers/clk/samsung/clk-exynos4.c                          |  2 +-
+>  drivers/clk/samsung/clk-exynos5250.c                       | 14 +++++++++-----
+>  5 files changed, 18 insertions(+), 12 deletions(-)
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-On Tuesday 07 of January 2014 15:47:28 Andrzej Hajda wrote:
-> Hi,
-> 
-> This patch set adds header files with macros defining exynos clocks.
-> Then it converts dts files and drivers to use macros instead
-> of magic numbers or enums to describe clock bindings.
-> 
-> The patch set is rebased on the latest samsung-clk/samsung-next branch.
-> 
-> The patches are generated by script.
-> Many clocks I have verified by hand.
-> I have also tested it successfully on exynos4 based board.
-> 
-> This is the 2nd version of the patchset.
-> Changes:
-> - corrected devicetree mailing list,
-> - added comments to include/dt-bindings/clock/exynos4.h for
->   clocks present only in particular chip,
-> - added tab alignement in headers,
-> - added comment to CLK_NR_CLKS,
-> - added copyright headers,
-> - split long lines in dts,
-> - corrected example in bindings/clock/exynos5250-clock.txt, to point
->   appropriate clocks.
-
-I believe this has been already acked before, so could you still take
-it for 3.14? For now I'd merge only the patches adding headers and
-updating clock drivers to avoid merge conflicts and then after
-release of 3.14-rc1 we could early merge dts patches for 3.15.
-
-What do you think?
+Ping. We already missed 3.13-rc7, but those are only fixes that can't
+introduce regressions so please pull this for 3.13-rc8.
 
 Best regards,
 Tomasz
