@@ -1,145 +1,72 @@
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
-Subject: [PATCH 2/5] crypto:s5p-sss: Add device tree and Exynos5 support
-Date: Tue, 07 Jan 2014 17:21:46 +0530
-Message-ID: <1389095509-14357-3-git-send-email-ch.naveen@samsung.com>
-References: <1389095509-14357-1-git-send-email-ch.naveen@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
+Date: Tue, 07 Jan 2014 13:03:43 +0100
+Message-ID: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21919 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:23436 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751124AbaAGLve (ORCPT
+	with ESMTP id S1750851AbaAGMET (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 06:51:34 -0500
-In-reply-to: <1389095509-14357-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 7 Jan 2014 07:04:19 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MZ100KIK5J6W1A0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Jan 2014 21:04:18 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, "David S. Miller" <davem@davemloft.net>
+To: sachin.kamat@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, tomasz.figa@gmail.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch adds device tree support along with a new
-compatible string to support Exynos5 SoCs (SSS_VER_5).
+Ensure clk->kref is dereferenced only when clk is not NULL.
 
-Also, Documentation under devicetree/bindings added.
-
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: David S. Miller <davem@davemloft.net>
-CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
-TO: <linux-crypto@vger.kernel.org>
-CC: <linux-samsung-soc@vger.kernel.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- .../devicetree/bindings/crypto/samsung-sss.txt     |   24 ++++++++++++
- drivers/crypto/s5p-sss.c                           |   40 ++++++++++++++++++++
- 2 files changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
+Hi Sachin,
 
-diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-new file mode 100644
-index 0000000..8871a29
---- /dev/null
-+++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-@@ -0,0 +1,24 @@
-+Samsung SoC SSS crypto Module
-+
-+Required properties:
-+
-+- compatible : Should contain entries for this and backward compatible
-+  SSS versions:
-+  - "samsung,exynos-secss" for S5PV210.
-+  - "samsung,s5p-secss" for Exynos5 series SoCs.
-+  TBD: SSS module on Exynos5 SoCs supports other algorithms,
-+  support for the is yet to be added in the driver.
-+- reg : Offset and length of the register set for the module
-+- interrupts : the interrupt-specifier for the SSS module.
-+- clocks : the required gating clock for the SSS module.
-+- clock-names : the gating clock name requested in the SSS driver.
-+
-+Example:
-+	/* SSS_VER_5 */
-+	sss: sss {
-+		compatible = "samsung,exynos-secss";
-+		reg = <0x10830000 0x10000>;
-+		interrupts = <0 112 0>;
-+		clocks = <&clock 471>;
-+		clock-names = "secss";
-+	};
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index dda4551..dcb9fc1 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -22,6 +22,7 @@
- #include <linux/scatterlist.h>
- #include <linux/dma-mapping.h>
- #include <linux/io.h>
-+#include <linux/of.h>
- #include <linux/crypto.h>
- #include <linux/interrupt.h>
- 
-@@ -173,10 +174,45 @@ struct s5p_aes_dev {
- 	struct crypto_queue         queue;
- 	bool                        busy;
- 	spinlock_t                  lock;
-+
-+	/* To support SSS versions across Samsung SoCs */
-+	unsigned int		    version;
- };
- 
- static struct s5p_aes_dev *s5p_dev;
- 
-+enum sss_version {
-+	SSS_VER_4,	/* SSS found on S5PV210 */
-+	SSS_VER_5,	/* SSS found on Exynos5 Series SoCs */
-+};
-+
-+static struct platform_device_id s5p_sss_ids[] = {
-+	{
-+		.name		= "s5p-secss",
-+		.driver_data	= SSS_VER_4,
-+	}, { },
-+};
-+MODULE_DEVICE_TABLE(platform, s5p_sss_ids);
-+
-+static struct of_device_id s5p_sss_dt_match[] = {
-+	{ .compatible = "samsung,s5p-secss", .data = (void *)SSS_VER_4 },
-+	{ .compatible = "samsung,exynos-secss", .data = (void *)SSS_VER_5 },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
-+
-+static inline unsigned int find_s5p_sss_version(struct platform_device *pdev)
-+{
-+#ifdef CONFIG_OF
-+	if (pdev->dev.of_node) {
-+		const struct of_device_id *match;
-+		match = of_match_node(s5p_sss_dt_match, pdev->dev.of_node);
-+		return (unsigned int)match->data;
-+	}
-+#endif
-+	return platform_get_device_id(pdev)->driver_data;
-+}
-+
- static void s5p_set_dma_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+please try if this patch fixes the exyno5420 boot crash.
+
+Thanks,
+Sylwester
+
+ drivers/clk/clk.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e3e0327..a1fe86f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2179,24 +2179,25 @@ EXPORT_SYMBOL_GPL(devm_clk_unregister);
+  */
+ int __clk_get(struct clk *clk)
  {
- 	SSS_WRITE(dev, FCBRDMAS, sg_dma_address(sg));
-@@ -580,6 +616,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 				     resource_size(res), pdev->name))
- 		return -EBUSY;
- 
-+	pdata->version = find_s5p_sss_version(pdev);
-+
- 	pdata->clk = devm_clk_get(dev, "secss");
- 	if (IS_ERR(pdata->clk)) {
- 		dev_err(dev, "failed to find secss clock source\n");
-@@ -674,9 +712,11 @@ static int s5p_aes_remove(struct platform_device *pdev)
- static struct platform_driver s5p_aes_crypto = {
- 	.probe	= s5p_aes_probe,
- 	.remove	= s5p_aes_remove,
-+	.id_table	= s5p_sss_ids,
- 	.driver	= {
- 		.owner	= THIS_MODULE,
- 		.name	= "s5p-secss",
-+		.of_match_table = s5p_sss_dt_match,
- 	},
- };
- 
--- 
+-	if (clk && !try_module_get(clk->owner))
+-		return 0;
++	if (clk) {
++		if (!try_module_get(clk->owner))
++			return 0;
+
+-	kref_get(&clk->ref);
++		kref_get(&clk->ref);
++	}
+ 	return 1;
+ }
+
+ void __clk_put(struct clk *clk)
+ {
+-	if (WARN_ON_ONCE(IS_ERR(clk)))
++	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+ 		return;
+
+ 	clk_prepare_lock();
+ 	kref_put(&clk->ref, __clk_release);
+ 	clk_prepare_unlock();
+
+-	if (clk)
+-		module_put(clk->owner);
++	module_put(clk->owner);
+ }
+
+ /***        clk rate change notifiers        ***/
+--
 1.7.9.5
