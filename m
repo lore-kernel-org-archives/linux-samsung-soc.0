@@ -1,64 +1,51 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH] exynos4-is: Fix error paths in probe() for !pm_runtime_enabled()
-Date: Tue,  7 Jan 2014 23:07:52 +0100
-Message-ID: <1389132472-19245-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH] exynos4-is: Compile runtime PM callbacks in conditionally
+Date: Tue,  7 Jan 2014 23:08:48 +0100
+Message-ID: <1389132528-21281-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-media-owner@vger.kernel.org>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Ensure clk_disable() is called on error paths only when clk_enable()
-was previously called.
+Enclose the runtime PM helpers in #ifdef CONFIG_PM_RUNTIME/#endif
+to avoid following compile warning when CONFIG_PM_RUNTIME is disabled:
 
-This fixes following build warning:
+ CC      drivers/media/platform/exynos4-is/fimc-core.o
+drivers/media/platform/exynos4-is/fimc-core.c:1040:12: warning: =E2=80=98=
+fimc_runtime_resume=E2=80=99 defined but not used
+drivers/media/platform/exynos4-is/fimc-core.c:1057:12: warning: =E2=80=98=
+fimc_runtime_suspend=E2=80=99 defined but not used
 
-.../media-git/drivers/media/platform/exynos4-is/fimc-lite.c: In function 'fimc_lite_probe':
-.../media-git/drivers/media/platform/exynos4-is/fimc-lite.c:1583:1: warning: label 'err_sd' defined but not used [-Wunused-label]
-
-Reported-by: Hans Verkuil <hansverk@cisco.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-core.c |    3 ++-
- drivers/media/platform/exynos4-is/fimc-lite.c |    5 +++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-core.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/media/platform/exynos4-is/fimc-core.c
-index a7dfd07..dcbea59 100644
+diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/me=
+dia/platform/exynos4-is/fimc-core.c
+index dcbea59..da2fc86 100644
 --- a/drivers/media/platform/exynos4-is/fimc-core.c
 +++ b/drivers/media/platform/exynos4-is/fimc-core.c
-@@ -1027,7 +1027,8 @@ static int fimc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_gclk:
--	clk_disable(fimc->clock[CLK_GATE]);
-+	if (!pm_runtime_enabled(dev))
-+		clk_disable(fimc->clock[CLK_GATE]);
- err_sd:
- 	fimc_unregister_capture_subdev(fimc);
- err_sclk:
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 1234734..5213ff0 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1563,7 +1563,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
- 	if (!pm_runtime_enabled(dev)) {
- 		ret = clk_enable(fimc->clock);
- 		if (ret < 0)
--			goto err_clk_put;
-+			goto err_sd;
- 	}
- 
- 	fimc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
-@@ -1579,7 +1579,8 @@ static int fimc_lite_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_clk_dis:
--	clk_disable(fimc->clock);
-+	if (!pm_runtime_enabled(dev))
-+		clk_disable(fimc->clock);
- err_sd:
- 	fimc_lite_unregister_capture_subdev(fimc);
- err_clk_put:
--- 
+@@ -1037,6 +1037,7 @@ err_sclk:
+ 	return ret;
+ }
+
++#ifdef CONFIG_PM_RUNTIME
+ static int fimc_runtime_resume(struct device *dev)
+ {
+ 	struct fimc_dev *fimc =3D	dev_get_drvdata(dev);
+@@ -1069,6 +1070,7 @@ static int fimc_runtime_suspend(struct device *de=
+v)
+ 	dbg("fimc%d: state: 0x%lx", fimc->id, fimc->state);
+ 	return ret;
+ }
++#endif
+
+ #ifdef CONFIG_PM_SLEEP
+ static int fimc_resume(struct device *dev)
+--
 1.7.4.1
