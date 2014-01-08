@@ -1,69 +1,42 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] exynos4-is: Compile runtime PM callbacks in conditionally
-Date: Wed, 08 Jan 2014 13:22:10 +0900
-Message-ID: <000001cf0c29$32cb7220$98625660$%han@samsung.com>
-References: <1389132528-21281-1-git-send-email-s.nawrocki@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
+Date: Wed, 8 Jan 2014 10:14:47 +0530
+Message-ID: <CAK9yfHx+=X+DiLe_WsiDkYonKCssPTOGqR76=+7N6eyAHXyQGQ@mail.gmail.com>
+References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1389132528-21281-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
-Sender: linux-media-owner@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:38492 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750796AbaAHEot (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jan 2014 23:44:49 -0500
+Received: by mail-ob0-f177.google.com with SMTP id vb8so1196855obc.36
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 20:44:48 -0800 (PST)
+In-Reply-To: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Wednesday, January 08, 2014 7:09 AM, Sylwester Nawrocki wrote:
->=20
-> Enclose the runtime PM helpers in #ifdef CONFIG_PM_RUNTIME/#endif
-> to avoid following compile warning when CONFIG_PM_RUNTIME is disabled=
-:
->=20
->  CC      drivers/media/platform/exynos4-is/fimc-core.o
-> drivers/media/platform/exynos4-is/fimc-core.c:1040:12: warning: =E2=80=
-=98fimc_runtime_resume=E2=80=99 defined but not
-> used
-> drivers/media/platform/exynos4-is/fimc-core.c:1057:12: warning: =E2=80=
-=98fimc_runtime_suspend=E2=80=99 defined but not
-> used
->=20
+Hi Sylwester,
+
+On 7 January 2014 17:33, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> Ensure clk->kref is dereferenced only when clk is not NULL.
+>
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Right, '#ifdef CONFIG_PM_RUNTIME' should be used in order to
-fix the compile warning.
-
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-
-Best regards,
-Jingoo Han
-
 > ---
->  drivers/media/platform/exynos4-is/fimc-core.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/=
-media/platform/exynos4-is/fimc-
-> core.c
-> index dcbea59..da2fc86 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-core.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-core.c
-> @@ -1037,6 +1037,7 @@ err_sclk:
->  	return ret;
->  }
->=20
-> +#ifdef CONFIG_PM_RUNTIME
->  static int fimc_runtime_resume(struct device *dev)
->  {
->  	struct fimc_dev *fimc =3D	dev_get_drvdata(dev);
-> @@ -1069,6 +1070,7 @@ static int fimc_runtime_suspend(struct device *=
-dev)
->  	dbg("fimc%d: state: 0x%lx", fimc->id, fimc->state);
->  	return ret;
->  }
-> +#endif
->=20
->  #ifdef CONFIG_PM_SLEEP
->  static int fimc_resume(struct device *dev)
-> --
-> 1.7.4.1
+> Hi Sachin,
+>
+> please try if this patch fixes the exyno5420 boot crash.
+
+Confirmed that this patch works fine on 5420 as well as already
+working 4210 and 5250 boards.
+Thanks for the quick fix.
+
+Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
+
+
+-- 
+With warm regards,
+Sachin
