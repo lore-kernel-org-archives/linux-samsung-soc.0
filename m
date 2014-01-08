@@ -1,94 +1,79 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [GIT PULL] Samsung Clock changes for v3.14
-Date: Wed, 08 Jan 2014 20:13:38 +0100
-Message-ID: <3518820.nAXoIq2LQG@amdc1227>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
+Date: Wed, 8 Jan 2014 19:20:28 +0000
+Message-ID: <20140108192028.GM27432@n2100.arm.linux.org.uk>
+References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com> <20140108143529.GB14122@mudshark.cambridge.arm.com> <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34441 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756115AbaAHTNq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 14:13:46 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MZ300L1OK2WT970@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Jan 2014 19:13:44 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Mike,
+On Wed, Jan 08, 2014 at 08:21:21AM -0800, Doug Anderson wrote:
+> WIll,
+> 
+> Thanks for your comments!
+> 
+> On Wed, Jan 8, 2014 at 6:35 AM, Will Deacon <will.deacon@arm.com> wrote:
+> > NAK. Whilst I appreciate that you may not be able to fix your bootloader,
+> > this isn't the right change to make in the kernel. Blindly changing memory
+> > latencies is likely to do more harm than good for a multi-platform kernel,
+> > even if it works for exynos 5250. The only alternative I can think of (if you
+> > have to make a mainline kernel change) is to restrict the clock frequencies at
+> > which the CPU is allowed to run, although that obviously requires some
+> > investigation in order to determine how viable it is for your SoC.
 
-Please consider pulling following Samsung Clock changes for v3.14.
++1
 
-The following changes since commit 2bb00c68e094271b79deac993893461cc051b721:
+> I'll start off by saying that I'm totally OK if mainline doesn't want
+> this fixed.  If mainline is not interested in running reliably on
+> exynos5250-based products then there's nothing I can do about it.  It
+> seems unfortunate, but I'm not going to get into a shouting match
+> about it.
 
-  Merge branch 'samsung-fixes' into samsung-next-base (2013-12-30 18:15:23 +0100)
+No, we're saying to put the work-around in the boot loader, not the kernel.
 
-are available in the git repository at:
+> You're saying that this patch is blindly changing memory latencies.  I
+> don't think it is (please correct me if I'm wrong!).  This patch:
+> 
+> * Is guarded by a CONFIG option so the code isn't even compiled in if
+> you don't want EXYNOS5250 support.  I know this doesn't help
+> multiplatform, but it means that if you really hate the code it's easy
+> to disable.
 
+As you identify, this is completely useless in the multiplatform kernel
+case, so you can completely remove this from the argument _for_ this
+change - it carries no weight what so ever.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.14/samsung-clk
+> * Is guarded by a runtime check of the revision number so that it
+> doesn't run on unaffected A15 revisions.
 
-for you to fetch changes up to 59d711e9ddd2f68822a2a99fc939e11a9288b73e:
+So what if the A15 reports an affected revision, but the SoC integrator
+has fixed the problem - why should they have to put up with the work-
+around being applied on their silicon?
 
-  ARM: dts: exynos5420: add input clocks to audss clock controller (2014-01-08 18:02:43 +0100)
+> * Is guarded by a runtime check so it does nothing at all if the total
+> latency is <= 3 (AKA if boot code already picked a sane value)
 
-----------------------------------------------------------------
-(A bit late) first round of Samsung clock patches for v3.14.
+Right, so the effect of the above is that with a multiplatform kernel
+including Exynos 5 support, all platforms with an A15 r2p0 or earlier
+have this work-around applied even if it was actually fixed in the
+silicon - which there's no way to know from the software perspective.
 
-----------------------------------------------------------------
-Andrew Bresticker (7):
-      clk: exynos5250: register APLL rate table
-      clk: exynos-audss: convert to platform device
-      clk: exynos-audss: allow input clocks to be specified in device tree
-      clk: exynos5250: add clock ID for div_pcm0
-      ARM: dts: exynos5250: add input clocks to audss clock controller
-      clk: exynos-audss: add support for Exynos 5420
-      ARM: dts: exynos5420: add input clocks to audss clock controller
+We've been through these arguments many times, you're not the first to
+raise it, and we've decided upon the policy.  We want as _few_ work-
+arounds in the kernel as possible, because applying the work-arounds
+is very problematical with the mixture of secure and non-secure booting.
 
-Andrzej Hajda (8):
-      ARM: exynos4: create a DT header defining CLK IDs
-      clk: exynos4: replace clock ID private enums with IDs from DT header
-      ARM: exynos5250: create a DT header defining CLK IDs
-      clk: exynos5250: replace clock ID private enums with IDs from DT header
-      ARM: exynos5420: create a DT header defining CLK IDs
-      clk: exynos5420: replace clock ID private enums with IDs from DT header
-      ARM: exynos5440: create a DT header defining CLK IDs
-      clk: exynos5440: replace clock ID private enums with IDs from DT header
+Maybe Will can check, but I believe that the L2 cache control register
+is one of those which is not writable from non-secure mode, and thus
+will crash the kernel at boot if a write is attempted.
 
-Sachin Kamat (1):
-      clk: exynos5250: Add CLK_SET_RATE_PARENT flag to mout_apll
-
-Tomasz Figa (7):
-      clk: samsung: exynos5250: Sort definitions by registers and bitfield
-      clk: samsung: exynos5250: Make names of mux and div clocks consistent
-      clk: samsung: exynos5250: Fix parents of gate clocks from GSCL domain
-      clk: samsung: exynos5250: Fix parent of gate clocks from DISP1 domain
-      clk: samsung: exynos5250: Add missing unpopulated mux parents
-      clk: samsung: exynos5250: Correct parent list of audio muxes
-      clk: samsung: exynos5250: Fix parents of gate clocks from MFC domain
-
- .../devicetree/bindings/clock/clk-exynos-audss.txt |  39 +-
- .../devicetree/bindings/clock/exynos5250-clock.txt |   1 +
- arch/arm/boot/dts/exynos5250.dtsi                  |   2 +
- arch/arm/boot/dts/exynos5420.dtsi                  |   4 +-
- drivers/clk/samsung/clk-exynos-audss.c             | 159 +++-
- drivers/clk/samsung/clk-exynos4.c                  | 857 ++++++++++-----------
- drivers/clk/samsung/clk-exynos5250.c               | 699 ++++++++++-------
- drivers/clk/samsung/clk-exynos5420.c               | 648 ++++++++--------
- drivers/clk/samsung/clk-exynos5440.c               |  81 +-
- include/dt-bindings/clk/exynos-audss-clk.h         |   3 +-
- include/dt-bindings/clock/exynos4.h                | 244 ++++++
- include/dt-bindings/clock/exynos5250.h             | 160 ++++
- include/dt-bindings/clock/exynos5420.h             | 188 +++++
- include/dt-bindings/clock/exynos5440.h             |  42 +
- 14 files changed, 1957 insertions(+), 1170 deletions(-)
- create mode 100644 include/dt-bindings/clock/exynos4.h
- create mode 100644 include/dt-bindings/clock/exynos5250.h
- create mode 100644 include/dt-bindings/clock/exynos5420.h
- create mode 100644 include/dt-bindings/clock/exynos5440.h
+-- 
+FTTC broadband for 0.8mile line: 5.8Mbps down 500kbps up.  Estimation
+in database were 13.1 to 19Mbit for a good line, about 7.5+ for a bad.
+Estimate before purchase was "up to 13.2Mbit".
