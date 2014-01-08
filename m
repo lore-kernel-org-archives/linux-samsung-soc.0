@@ -1,63 +1,36 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Handle rounding a little better for timeout
-Date: Wed, 8 Jan 2014 21:03:46 +0100
-Message-ID: <20140108200346.GA30951@spo001.leaseweb.com>
-References: <1385490637-10306-1-git-send-email-dianders@chromium.org> <1385513839-17181-1-git-send-email-dianders@chromium.org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: Looking for example to use samsung jpeg v4l2 mem2mem driver
+Date: Wed, 08 Jan 2014 21:54:39 +0100
+Message-ID: <52CDBB0F.8010505@gmail.com>
+References: <CABMudhTUQ1mBLTHnm50dWrZaOhRciTc8J_jET1xLho8pm8iC7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:51055 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753591AbaAHUED (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 15:04:03 -0500
-Content-Disposition: inline
-In-Reply-To: <1385513839-17181-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CABMudhTUQ1mBLTHnm50dWrZaOhRciTc8J_jET1xLho8pm8iC7Q@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: m silverstri <michael.j.silverstri@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, LMML <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Doug,
+Hi,
 
-> The existing watchdog timeout worked OK but didn't deal with
-> rounding in an ideal way when dividing out all of its clocks.
-> 
-> Specifically if you had a timeout of 32 seconds and an input clock of
-> 66666666, you'd end up setting a timeout of 31.9998 seconds and
-> reporting a timeout of 31 seconds.
-> 
-> Specifically DBG printouts showed:
->   s3c2410wdt_set_heartbeat: count=16666656, timeout=32, freq=520833
->   s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666656 (0000ff4f)
-> and the final timeout reported to the user was:
->   ((count / divisor) * divisor) / freq
->   (0xff4f * 255) / 520833 = 31 (truncated from 31.9998)
-> the technically "correct" value is:
->   (0xff4f * 255) / (66666666.0 / 128) = 31.9998
-> 
-> By using "DIV_ROUND_UP" we can be a little more correct.
->   s3c2410wdt_set_heartbeat: count=16666688, timeout=32, freq=520834
->   s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666688 (0000ff50)
-> and the final timeout reported to the user:
->   (0xff50 * 255) / 520834 = 32
-> the technically "correct" value is:
->   (0xff50 * 255) / (66666666.0 / 128) = 32.0003
-> 
-> We'll use a DIV_ROUND_UP to solve this, generally erroring on the side
-> of reporting shorter values to the user and setting the watchdog to
-> slightly longer than requested:
-> * Round input frequency up to assume watchdog is counting faster.
-> * Round divisions by divisor up to give us extra time.
-> 
-> At the same time we can avoid a for loop by just doing the right math.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v2:
-> - Avoid a for loop as per Guenter.
+On 01/01/2014 12:39 AM, m silverstri wrote:
+> Hi,
+>
+> I am looking for an example which uses samsung jpeg v4l2 mem2mem driver.
+> For example the 'Exynos4 JPEG codec v4l2 driver' described here
+> http://lwn.net/Articles/468547
+>
+>
+> I am new to linux v4l2 driver. I am looking for example to pass an
+> input image to hardware accelerated encoder/decoder.
 
-Patch added to linux-watchdog-next.
+I have pushed some test application to a git repository at [1]. It can be
+used for JPEG files encoding/decoding with the mainline s5p-jpeg driver.
+A v4l2-jpeg-codec-test directory should appear there within few hours.
 
-Kind regards,
-Wim.
+[1] http://git.infradead.org/users/kmpark/public-apps/tree/refs/heads/master
+
+Regards,
+Sylwester
