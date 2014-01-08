@@ -1,55 +1,61 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: USB broken on Exynos 5250 with 3.13-rc6 kernel
-Date: Wed, 8 Jan 2014 19:27:14 +0530
-Message-ID: <CAFp+6iHk+HmNSfS5sJDKb0A1PLmFbcWuY_Rspf17Wic0x7oxgQ@mail.gmail.com>
-References: <736730464.35956872.1388786216775.JavaMail.root@redhat.com>
-	<920466999.35957290.1388786401864.JavaMail.root@redhat.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
+Date: Wed, 8 Jan 2014 14:35:29 +0000
+Message-ID: <20140108143529.GB14122@mudshark.cambridge.arm.com>
+References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f44.google.com ([209.85.214.44]:54943 "EHLO
-	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756732AbaAHN5P (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:51527 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756480AbaAHOgG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 08:57:15 -0500
-Received: by mail-bk0-f44.google.com with SMTP id d7so683730bkh.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 05:57:14 -0800 (PST)
-In-Reply-To: <920466999.35957290.1388786401864.JavaMail.root@redhat.com>
+	Wed, 8 Jan 2014 09:36:06 -0500
+Content-Disposition: inline
+In-Reply-To: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: John Dulaney <jdulaney@redhat.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Will Cohen <wcohen@redhat.com>, Jonathan Masters <jcm@redhat.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 
-Hi John,
+On Wed, Jan 08, 2014 at 01:33:11PM +0000, Vivek Gautam wrote:
+> The erratum-773769 occurs on Arm Coretex-A15 (rev r2p0),
+> when L2 Data Ram latency is set to 4 cycles or more; or
+> when ACP is in use, or with L2 Data RAM slice configured.
+> Therefore, the effective latency as calculated in Table 7-2 of
+> Cotex-A15 (rev r2p0) trm should be 3 cycles or less.
+> 
+> On Exynos5250 based systems the effective data ram latency
+> is 4 cycles, since we have DATA_RAM_SETUP bit enabled (L2CTRL[5]=1b'1)
+> and DATA_RAM_LATENCY bits set to 0x2 (L2CTLR[2:0]=3b'010) therefore,
+> the effective L2 data RAM latency becomes 4 cycles.
+> So erratum '773769' occurs causing a corrupted L2 Cache.
+> 
+> This patch gives a workaround to the mentioned erratum, using below
+> mentioned algo:
+> ----------------------------------------------------------------
+> if data RAM setup = 1
+>   then check if effective latency i.e (latency + setup + 1) > 3
+>   if 'true'
+>     then clear data RAM setup
+>       goto branch 'a'
+> if data RAM setup = 0
+>   a: then check if data RAM latency > 0x10
+>     if true then force data RAM latency = 0x10
+> ----------------------------------------------------------------
+> so that the effective data RAM latency reduces to 3 cycles or less
+> and hence prevent hitting the erratum.
+> 
+> NOTE: The Exynos5250 based products have already been shipped, which
+>       makes it impossible to add the change in bootloader, so we are
+>       adding the required change in kernel.
 
+NAK. Whilst I appreciate that you may not be able to fix your bootloader,
+this isn't the right change to make in the kernel. Blindly changing memory
+latencies is likely to do more harm than good for a multi-platform kernel,
+even if it works for exynos 5250. The only alternative I can think of (if you
+have to make a mainline kernel change) is to restrict the clock frequencies at
+which the CPU is allowed to run, although that obviously requires some
+investigation in order to determine how viable it is for your SoC.
 
-On Sat, Jan 4, 2014 at 3:30 AM, John Dulaney <jdulaney@redhat.com> wrote:
-> I build 3.13-rc6 for exynso-5250.  After installing the kernel and
-> rebooting my machine, everything worked (lpae out of the box, even)
-> except for usb; I rebuilt the kernel a couple of times, poking at
-> USB config options, but was completely unable to get USB to work.
-
-Which exynos5250 machine are you trying the kernel ?
-I tested linux-next kernel 3.13-rc7 on smdk5250, and on that i could
-get USB working (i checked XHCI ports actually,
-but i am sure EHCI ports will also work straight away).
-
-Please make sure you are building with exynos_defconfig. And on top of
-that i enabled following configs:
-CONFIG_USB_ANNOUNCE_NEW_DEVICES
-CONFIG_USB_XHCI_HCD
-CONFIG_USB_EHCI_EXYNOS
-
-CONFIG_USB_OHCI_HCD             (these OHCI configs will serve the
-purpose to use HID)
-CONFIG_USB_OHCI_EXYNOS
-
-[...]
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Will
