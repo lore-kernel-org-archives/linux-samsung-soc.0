@@ -1,45 +1,50 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 6/7] clk/samsung: add support for pll2650xx
-Date: Wed, 08 Jan 2014 01:37:27 +0100
-Message-ID: <3338407.XGYaxCsdnx@flatron>
-References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com> <1419145.DZQg0ZkHVU@amdc1227> <CAPdUM4P9tE5ohtAb5heMRj3GGjdYrNYp5iX7u-uZySiaCikA7Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: remove obsolete tick.h
+Date: Wed, 08 Jan 2014 01:49:18 +0100
+Message-ID: <2341825.uZDBWhHeIh@flatron>
+References: <1907750.XQ1uIOEDlS@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f169.google.com ([209.85.215.169]:45610 "EHLO
-	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754390AbaAHAhd (ORCPT
+Received: from mail-ea0-f173.google.com ([209.85.215.173]:46601 "EHLO
+	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752310AbaAHAtY convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:37:33 -0500
-In-Reply-To: <CAPdUM4P9tE5ohtAb5heMRj3GGjdYrNYp5iX7u-uZySiaCikA7Q@mail.gmail.com>
+	Tue, 7 Jan 2014 19:49:24 -0500
+Received: by mail-ea0-f173.google.com with SMTP id o10so512119eaj.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 16:49:23 -0800 (PST)
+In-Reply-To: <1907750.XQ1uIOEDlS@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, sunil joshi <joshi@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, Young-Gun Jang <yg1004.jang@samsung.com>, Arun Kumar <arun.kk@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-On Monday 06 of January 2014 17:14:48 Rahul Sharma wrote:
-> Hi Tomasz,
-> 
-> On 19 December 2013 17:15, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Rahul,
-> >
-> > On Friday 06 of December 2013 21:26:30 Rahul Sharma wrote:
-> >> Add support for pll2650xx in samsung pll file. This pll variant
-> >> is close to pll36xx but uses CON2 registers instead of CON1.
-> >
-> > If the ops are otherwise idential, why not reuse the ops for pll36xx
-> > and use CON1 or CON2 register conditionally based on pll->type field?
-> > (Just as it is already done for pll4600, 4650 and 4650c.)
-> >
-> 
-> I verified the difference and found that  pll2650xx is fairly
-> different in terms of
-> Bit Fields, Con2 register, and additional PLL config bits than pll36xx. Due to
-> this, I have to add lot of if-else code based on pll type which
-> doesn't looks clean.
+Hi Heiko,
 
-Fair enough.
+On Tuesday 07 of January 2014 21:53:51 Heiko St=FCbner wrote:
+> Commit 48cf83dc12f2 (ARM: samsung: remove unused tick.h) removed some
+> occurences of tick.h. tick.h itself and s3c24xx_ostimer_pending was o=
+nly
+> used by the old timer driver and is not used anymore.
+>=20
+> Therefore remove the last 3 occurences.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  arch/arm/mach-s3c24xx/include/mach/tick.h |   15 --------------
+>  arch/arm/mach-s3c64xx/include/mach/tick.h |   31 -------------------=
+----------
+>  arch/arm/mach-s5pc100/include/mach/tick.h |   31 -------------------=
+----------
+>  3 files changed, 77 deletions(-)
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/tick.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/tick.h
+>  delete mode 100644 arch/arm/mach-s5pc100/include/mach/tick.h
+
+Thanks for cleaning this up.
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
