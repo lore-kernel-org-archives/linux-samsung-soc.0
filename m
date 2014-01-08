@@ -1,124 +1,164 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH V2 02/10] ARM: EXYNOS: initial board support for
- exynos5260 SoC
-Date: Wed, 8 Jan 2014 11:02:04 +0530
-Message-ID: <CAPdUM4Mi1H4CHeT_wXo8DtuEYMBCANK4ewsYd5GnciRe5fvpfg@mail.gmail.com>
-References: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
-	<1389099548-14649-3-git-send-email-rahul.sharma@samsung.com>
-	<3255549.jEqQKz0UeP@wuerfel>
+From: Shirish S <shirish@chromium.org>
+Subject: Re: [PATCH 4/4] drm: exynos: hdmi: Add dt support for hdmiphy settings
+Date: Wed, 8 Jan 2014 11:34:32 +0530
+Message-ID: <CAHvYUDBoC_=DavfgYTCwv9vbMwW6nKU09asmjzxz+MiVw+9xAQ@mail.gmail.com>
+References: <1387455148-22999-1-git-send-email-s.shirish@samsung.com>
+	<1387455148-22999-5-git-send-email-s.shirish@samsung.com>
+	<9657044.3cgrCkZ0Il@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:39471 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790AbaAHFcH (ORCPT
+Received: from mail-we0-f175.google.com ([74.125.82.175]:39839 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752932AbaAHGEe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 00:32:07 -0500
-In-Reply-To: <3255549.jEqQKz0UeP@wuerfel>
+	Wed, 8 Jan 2014 01:04:34 -0500
+Received: by mail-we0-f175.google.com with SMTP id w62so1023587wes.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 22:04:32 -0800 (PST)
+In-Reply-To: <9657044.3cgrCkZ0Il@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Shirish S <s.shirish@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, InKi Dae <inki.dae@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kgene.kim" <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Thanks Arnd,
+Hi Tomasz,
+Thanks for the review comments, please find my replies inline.
 
-On 7 January 2014 18:54, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 07 January 2014 18:29:00 Rahul Sharma wrote:
->> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+On Thu, Dec 19, 2013 at 6:49 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Thursday 19 of December 2013 17:42:28 Shirish S wrote:
+>> This patch adds dt support to hdmiphy config settings
+>> as it is board specific and depends on the signal pattern
+>> of board.
 >>
->> This patch add basic arch side support for exynos5260 SoC.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> Signed-off-by: Shirish S <s.shirish@samsung.com>
 >> ---
->> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
->> index 09e6898..e0c7108 100644
->> --- a/arch/arm/mach-exynos/common.c
->> +++ b/arch/arm/mach-exynos/common.c
->> @@ -52,6 +52,7 @@ static const char name_exynos4210[] = "EXYNOS4210";
->>  static const char name_exynos4212[] = "EXYNOS4212";
->>  static const char name_exynos4412[] = "EXYNOS4412";
->>  static const char name_exynos5250[] = "EXYNOS5250";
->> +static const char name_exynos5260[] = "EXYNOS5260";
->>  static const char name_exynos5410[] = "EXYNOS5410";
->>  static const char name_exynos5420[] = "EXYNOS5420";
->>  static const char name_exynos5440[] = "EXYNOS5440";
->> @@ -92,6 +93,12 @@ static struct cpu_table cpu_ids[] __initdata = {
->>               .init           = exynos_init,
->>               .name           = name_exynos5410,
->>       }, {
->> +             .idcode         = EXYNOS5260_SOC_ID,
->> +             .idmask         = EXYNOS5_SOC_MASK,
->> +             .map_io         = exynos5_map_io,
->> +             .init           = exynos_init,
->> +             .name           = name_exynos5260,
->> +     }, {
->>               .idcode         = EXYNOS5420_SOC_ID,
->>               .idmask         = EXYNOS5_SOC_MASK,
->>               .map_io         = exynos5_map_io,
->
-> I think we've seen enough of these. Please generalize it enough
-> so we won't need to add any more entries whenever a new SoC
-> comes up. It's probably fine for now to have to tell the difference
-> between EXYNOS4 and EXYNOS5, but not new chips within some family.
->
-> According to rumors on the web, EXYNOS6 is going to be released
-> soon with a 64-bit CPU in it, and since we don't allow platform
-> specific code for arm64 like this any more, you should just
-> drop it for arm32 as well.
-
-I agree with you. Let me explore options to optimize this part of the
-code. I prefer
-to add code here (along with legacy ) to accept DT bindings for Exynos5 family
-SoCs and use them for Exynos5260. Next, I will migrate the rest of the existing
-platforms and get rid of existing platform code.
-
->
->> @@ -279,6 +286,15 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->>       },
->>  };
+>>  .../devicetree/bindings/video/exynos_hdmi.txt      |   34 ++++++++
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c               |   89 ++++++++++++++++----
+>>  2 files changed, 105 insertions(+), 18 deletions(-)
 >>
->> +static struct map_desc exynos5260_iodesc[] __initdata = {
->> +     {
->> +             .virtual        = (unsigned long)S5P_VA_SYSRAM_NS,
->> +             .pfn            = __phys_to_pfn(EXYNOS5260_PA_SYSRAM_NS),
->> +             .length         = SZ_4K,
->> +             .type           = MT_DEVICE,
->> +     },
->> +};
+>> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> index 323983b..0766e6e 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> @@ -13,6 +13,31 @@ Required properties:
+>>       b) pin number within the gpio controller.
+>>       c) optional flags and pull up/down.
+>>
+>> +Optional-but-recommended properties:
+>> +- hdmiphy-configs: following information about the hdmiphy config settings.
+>> +     a) "config<N>: config<N>" specifies the phy configuration settings,
+>
+> Why do you need this "config<N>: " part? (This is called "label" in DT
+> terminology by the way and can be used to reference the node from
+> properties of other nodes, by so called "phandle".)
+>
+The config is required for every pixel clock that the IP supports,
+since in the parsing i iterate through all pixel clocks, i have used 'N'.
+However, if you proposed approach below is ok, then all of this shall
+be removed.
+>> +             where 'N' denotes the number of configuration, since every
+>> +             pixel clock can have its unique configuration.
+>> +             "samsung,pixel-clock" specifies the pixel clock
+>> +             "samsung,de-emphasis-level" provides fine control of TMDS data
+>> +              pre emphasis, below shown is example for
+>> +             data de-emphasis register at address 0x145D0040.
+>> +                     hdmiphy@38[16] for bits[3:0] permitted values are in
+>> +                     the range of 760 mVdiff to 1400 mVdiff at 20mVdiff
+>> +                     increments for every LSB
+>> +                     hdmiphy@38[16] for bits[7:4] permitted values are in
+>> +                     the range of 0dB to -7.45dB at increments of -0.45dB
+>> +                     for every LSB.
+>> +             "samsung,clock-level" provides fine control of TMDS data
+>> +             amplitude for each channel,
+>> +             for example if 0x145D005C is the address of clock level
+>> +             register then,
+>> +                     hdmiphy@38[23] for bits [1:0] permitted values are in
+>> +                     the range of 0 mVdiff & 60 mVdiff for each channel at
+>> +                     increments 20 mVdiff of amplitude levels for every LSB,
+>> +                     hdmiphy@38[23] for bits [7:3] permitted values are in
+>> +                     the range of 790 and 1430 mV at 20mV increments for
+>> +                     every LSB.
+>>  Example:
+>>
+>>       hdmi {
+>> @@ -20,4 +45,13 @@ Example:
+>>               reg = <0x14530000 0x100000>;
+>>               interrupts = <0 95 0>;
+>>               hpd-gpio = <&gpx3 7 1>;
+>> +             hdmiphy-configs {
+>> +                     config0: config0 {
+>> +                             samsung,pixel-clock = <25200000>;
+>> +                             samsung,de-emphasis-level =  /bits/ 8 <0x26>;
+>
+> nit: Two spaces before "/bits/".
+have corrected in the next patchset.
+>
+>> +                             samsung,clock-level =  /bits/ 8 < 0x66>;
+>
+> nit: Two spaces before "/bits/" and incorrect space after "<".
+have corrected in the next patchset.
+>
+> Generally the list of configurations should look like below:
+>
+>         phy-configs {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>
+>                 config@0 {
+>                         reg = <0>;
+>                         /* other properties... */
+>                 };
+>
+>                 config@1 {
+>                         reg = <1>;
+>                         /* other properties... */
+>                 };
+>
+>                 /* ... */
+>         };
+>
+> This is how bus-like structures should be represented in device tree.
+> Also, since this is HDMI node, maybe it's enough to call the node simply
+> phy-configs. Please rework the patches to use this correct representation.
+>
+I think there is slight misunderstanding here, the configs that i want
+to mention are not physical entities,and
+hence dont think would be a better way, i am planning to use the below
+method, if you think its the right approach then i shall do the rework
+and submit the patch:
+phy-configs {
+                        #pixel-clock = <1>;
+                        #de-emphasis-level = <1>;
+                        #clock-level = <1>;
+                        phy-map = <25200000 0x26 0x66>,
+                                        <27000000  0x26 0x66>,
+                                        /*....so on....*/,
+                };>> +
+>> +                     /* ... */
+>> +             }
+>>       };
+> [snip]
+>> +     for_each_child_of_node(phy_conf, cfg_np) {
+>> +             if (of_property_read_u32(cfg_np, "samsung,pixel-clock",
+>> +                                                     &pixel_clock))
+>> +                     continue;
 >> +
->>  void exynos4_restart(enum reboot_mode mode, const char *cmd)
->>  {
->>       __raw_writel(0x1, S5P_SWRESET);
+>> +             for (i = 0; i < ARRAY_SIZE(hdata->nr_confs); i++) {
+>> +                     if (hdata->confs[i].pixel_clock == pixel_clock)
 >
-> The only difference you have is the map descriptor, and that should
-> go away if you only add a proper DT binding for SYSRAM. Try to get
-> rid of the remaining map_desc entries while you're at it.
+> Can you have more than one config with the same pixel clock?
 >
-
-Ok. let me check this.
-
->> diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
->> index 31cac97..13c802b 100644
->> --- a/arch/arm/plat-samsung/include/plat/map-s5p.h
->> +++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
->> @@ -23,6 +23,7 @@
->>
->>  #define S5P_VA_SYSRAM                S3C_ADDR(0x02400000)
->>  #define S5P_VA_SYSRAM_NS     S3C_ADDR(0x02410000)
->> +
->>  #define S5P_VA_DMC0          S3C_ADDR(0x02440000)
->>  #define S5P_VA_DMC1          S3C_ADDR(0x02480000)
->>  #define S5P_VA_SROMC         S3C_ADDR(0x024C0000)
->>
+No, right now i intend to have one config parameters for every
+corresponding pixel clock.
+> Even if not, the code could be made more readable if the code
+> below is moved outside the if and continue keyword is used instead.
 >
-> This hunk doesn't really belong in the patch at all.
+The parsing mechanism shall be altered according to the new approach
+proposed above.
+Kindly let me know your thoughts about the approach.
 
-I will move it to correct patch.
-
-Regards,
-Rahul Sharma
-
+> Best regards,
+> Tomasz
 >
->         Arnd
+Thanks & Regards,
+Shirish S
