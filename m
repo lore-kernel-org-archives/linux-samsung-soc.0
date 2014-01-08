@@ -1,55 +1,193 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/1] spi: s3c24xx: Remove reference to plat/fiq.h
-Date: Wed, 8 Jan 2014 13:06:59 +0000
-Message-ID: <20140108130659.GE31886@sirena.org.uk>
-References: <1388478639-25279-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ueIuAkhIEDaOqOw0"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1388478639-25279-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
+Date: Wed, 08 Jan 2014 19:03:11 +0530
+Message-ID: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:14025 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932089AbaAHN3c (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jan 2014 08:29:32 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, kgene.kim@samsung.com
+Cc: will.deacon@arm.com, sboyd@codeaurora.org, gregory.clement@free-electrons.com, catalin.marinas@arm.com, Vivek Gautam <gautam.vivek@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@chromium.org>, David Garbett <david.garbett@arm.com>
 
+The erratum-773769 occurs on Arm Coretex-A15 (rev r2p0),
+when L2 Data Ram latency is set to 4 cycles or more; or
+when ACP is in use, or with L2 Data RAM slice configured.
+Therefore, the effective latency as calculated in Table 7-2 of
+Cotex-A15 (rev r2p0) trm should be 3 cycles or less.
 
---ueIuAkhIEDaOqOw0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Exynos5250 based systems the effective data ram latency
+is 4 cycles, since we have DATA_RAM_SETUP bit enabled (L2CTRL[5]=1b'1)
+and DATA_RAM_LATENCY bits set to 0x2 (L2CTLR[2:0]=3b'010) therefore,
+the effective L2 data RAM latency becomes 4 cycles.
+So erratum '773769' occurs causing a corrupted L2 Cache.
 
-On Tue, Dec 31, 2013 at 02:00:39PM +0530, Sachin Kamat wrote:
-> fiq.h contains only a function declaration and is not used by anyone
-> else. Move the declaration to the driver header file and remove the
-> unnecessary platform dependency from the driver.
+This patch gives a workaround to the mentioned erratum, using below
+mentioned algo:
+----------------------------------------------------------------
+if data RAM setup = 1
+  then check if effective latency i.e (latency + setup + 1) > 3
+  if 'true'
+    then clear data RAM setup
+      goto branch 'a'
+if data RAM setup = 0
+  a: then check if data RAM latency > 0x10
+    if true then force data RAM latency = 0x10
+----------------------------------------------------------------
+so that the effective data RAM latency reduces to 3 cycles or less
+and hence prevent hitting the erratum.
 
-Applied, thanks.
+NOTE: The Exynos5250 based products have already been shipped, which
+      makes it impossible to add the change in bootloader, so we are
+      adding the required change in kernel.
 
---ueIuAkhIEDaOqOw0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Olof Johansson <olofj@chromium.org>
+Cc: David Garbett <david.garbett@arm.com>
+---
+ arch/arm/Kconfig             |   15 ++++++++
+ arch/arm/mach-exynos/Kconfig |    1 +
+ arch/arm/mm/proc-v7.S        |   79 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 95 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSzU1wAAoJELSic+t+oim9dxUP+QEswUsgc9w4DWvFAfSkfsxY
-hD48HZZLiZq6Nbs7zMnJrqrr57BCZZ/otK16nAmRpePy+QnN+5O5vVk8m8fxDiop
-ZQEWeXqYD0f/4FOQfPUYqzSQSp+1aS2o/sehFCv4l0RQVWY00vXMs7Yqtu9pASi/
-O3927g+2V3Fm5BRdcg7mVW9y4ECiO+pz/JYM0cLfKwtwYhnYTwIMu0JxECNNGtHs
-cAkaL718/oiE9jLE/cayAnBmuvW9ZjQugkBOL9yMYMWU759dkHQYbSRorm870gkm
-pzdFm8/vOAsPaSJmN4GA9AEh1QhNLEnMu+Z/8KjlJ35RstV6taZ5sbMG3CBjXAe2
-AtoWnDtZB1gxPmWyTZF8TGumRstc8V5ErswHG+8HuwYyKUHA2tkyOVuShkVLVFX3
-GteLTnRyiX9Yjh+5LOkeLxAqXS1auZTXXvaSsTxxqhgHO+kd9n91m5F4jh0N2SiZ
-RIZus0Q5y1ueFSv1Wkx1M/mKc78Dy7K29Xh+U9AhciNioC3iwKaAEsw17LoE8Gxg
-blFNt/shVOnzvWPseaeosV9UyGHSeHY9nxvchQW8Q8iLF0KELb+TPNlBiYLoLhKh
-ZRxcDg2lGBrV+m8HRpTWzmyLxo3TwTrk9PcYh8bzIdlByBTmB4udsJ7pcBAT7Hs3
-XcIP/gmCoMzYWlsguQwH
-=mKP4
------END PGP SIGNATURE-----
-
---ueIuAkhIEDaOqOw0--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index c59fa19..2e6f36c 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1250,6 +1250,21 @@ config ARM_ERRATA_751472
+ 	  operation is received by a CPU before the ICIALLUIS has completed,
+ 	  potentially leading to corrupted entries in the cache or TLB.
+ 
++config ARM_ERRATA_773769
++	bool "ARM errata: Large data RAM latencies can lead to rare data corruption"
++	depends on CPU_V7
++	help
++	  This option enables the workaround for the erratum 773769, which affects
++	  Cortex-A15 (rev r2p0).
++	  In systems with L2 Data RAM latency programmed to 4 or more cycles,
++	  or with ACP in use, or with a L2 Data RAM slice configured, it is
++	  possible that a rare collision between non-cacheable stores and
++	  L1 data cache evictions which can lead to data corruption in L2 cache
++	  or memory.
++	  This workaround is to configure an effective Data RAM latency of 3 or
++	  less. Also note that, if a Data RAM slice is configured in A15 then
++	  there is no workaround.
++
+ config PL310_ERRATA_753970
+ 	bool "PL310 errata: cache sync operation may be faulty"
+ 	depends on CACHE_PL310
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 4c414af..29f505f 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -82,6 +82,7 @@ config SOC_EXYNOS5250
+ 	default y
+ 	depends on ARCH_EXYNOS5
+ 	select ARCH_HAS_BANDGAP
++	select ARM_ERRATA_773769
+ 	select PINCTRL_EXYNOS
+ 	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
+index bd17819..0674c4c 100644
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@ -141,6 +141,49 @@ ENTRY(cpu_v7_do_resume)
+ 	mcr	p15, 0, r4, c10, c2, 0	@ write PRRR
+ 	mcr	p15, 0, r5, c10, c2, 1	@ write NMRR
+ #endif	/* CONFIG_MMU */
++
++#ifdef CONFIG_ARM_ERRATA_773769
++	/* get the arm rev id */
++	mrc	p15, 0, r3, c0, c0, 0		@ read main ID register
++	and	r4, r3, #0xff000000		@ ARM?
++	teq	r4, #0x41000000
++	bne	8f
++	and	r5, r3, #0x00f00000		@ variant
++	and	r7, r3, #0x0000000f		@ revision
++	orr	r7, r7, r5, lsr #20-4		@ combine variant and revision
++	ubfx	r3, r3, #4, #12			@ primary part number
++
++	ldr	r4, =0x00000c0f			@ Cortex-A15 primary part number
++	teq	r3, r4
++	bne	8f
++
++	ALT_SMP(cmp r7, #0x21)			@ present prior to r2p1
++	ALT_UP_B(8f)
++	mrclt	p15, 0, r3, c1, c0, 0		@ read system control register
++	andlt	r3, r3, #0x4			@ mask for C bit
++	cmplt	r3, #0x0			@ check if cache is on/off
++	bne	8f				@ Do nothing when cache is on
++
++	mrceq	p15, 1, r5, c9, c0, 2		@ read L2 control register
++	andeq	r3, r5, #(1 << 5)		@ mask for data RAM setup
++	lsreq	r3, r3, #0x5
++	cmpeq	r3, #0x1			@ check if data RAM setup = 1
++	bne	9f
++	and	r4, r5, #0x7			@ mask for data RAM latency
++	add	r4, r4, r3
++	add	r4, r4, #0x1			@ effective latency
++	cmp	r4, #0x3
++	bicgt	r5, r5, #(1 << 5)		@ clear data RAM setup bit
++
++9:	and	r4, r5, #0x7			@ mask for data RAM latency
++	cmp	r4, #0x2			@ check if data RAM latency > 2
++	ble	10f
++	bic	r5, r5, #0x7			@ clear data RAM latency bits
++	orr	r5, r5, #0x2			@ force data RAM latency = 2
++10:	mcr	p15, 1, r5, c9, c0, 2		@ set L2 control register
++8:
++#endif
++
+ 	mrc	p15, 0, r4, c1, c0, 1	@ Read Auxiliary control register
+ 	teq	r4, r9			@ Is it already set?
+ 	mcrne	p15, 0, r9, c1, c0, 1	@ No, so write it
+@@ -349,6 +392,42 @@ __v7_setup:
+ 	mcrle	p15, 0, r10, c1, c0, 1		@ write aux control register
+ #endif
+ 
++#ifdef CONFIG_ARM_ERRATA_773769
++	ALT_SMP(cmp r6, #0x21)			@ present prior to r2p1
++	ALT_UP_B(5f)
++	mrclt	p15, 0, r3, c1, c0, 0		@ read system control register
++	andlt	r3, r3, #0x4			@ mask for C bit
++	cmplt	r3, #0x0			@ check if cache is on/off
++	bne	5f				@ Do nothing when cache is on
++	/*
++	 * if data RAM setup = 1
++	 * 	then check if effective latency i.e (latency + setup + 1) > 3
++	 *		if true then clear data RAM setup
++	 *		goto branch 'a'
++	 * if data RAM setup = 0
++	 *	a: then check if data RAM latency > 0x10
++	 *		if true then force data RAM latency = 0x10
++	 */
++	mrceq	p15, 1, r5, c9, c0, 2		@ read L2 control register
++	andeq	r3, r5, #(1 << 5)		@ mask for data RAM setup
++	lsreq	r3, r3, #0x5
++	cmpeq	r3, #0x1			@ check if data RAM setup = 1
++	bne	6f
++	and	r10, r5, #0x7			@ mask for data RAM latency
++	add	r10, r10, r3
++	add	r10, r10, #0x1			@ effective latency
++	cmp	r10, #0x3
++	bicgt	r5, r5, #(1 << 5)		@ clear data RAM setup bit
++
++6:	and	r10, r5, #0x7			@ mask for data RAM latency
++	cmp	r10, #0x2			@ check if data RAM latency > 2
++	ble	7f
++	bic	r5, r5, #0x7			@ clear data RAM latency bits
++	orr	r5, r5, #0x2			@ force data RAM latency = 2
++7:	mcr	p15, 1, r5, c9, c0, 2		@ set L2 control register
++5:
++#endif
++
+ 4:	mov	r10, #0
+ 	mcr	p15, 0, r10, c7, c5, 0		@ I+BTB cache invalidate
+ 	dsb
+-- 
+1.7.10.4
