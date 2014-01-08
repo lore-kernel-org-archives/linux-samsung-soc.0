@@ -1,76 +1,130 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2 v3] ARM: s3c24xx: get rid of custom <mach/gpio.h>
-Date: Wed, 8 Jan 2014 16:59:02 +0100
-Message-ID: <201401081659.03357.arnd@arndb.de>
-References: <1386939220-12776-1-git-send-email-linus.walleij@linaro.org> <CACRpkdbdDHyg4uz0tAMccB8yGxsoF4JaHocAxbV_bTJ832kbQw@mail.gmail.com> <201401081243.04326.arnd@arndb.de>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
+Date: Wed, 8 Jan 2014 08:21:21 -0800
+Message-ID: <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
+References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
+	<20140108143529.GB14122@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:55497 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755664AbaAHP7s (ORCPT
+Received: from mail-ve0-f180.google.com ([209.85.128.180]:45459 "EHLO
+	mail-ve0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755435AbaAHQVW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 10:59:48 -0500
-In-Reply-To: <201401081243.04326.arnd@arndb.de>
+	Wed, 8 Jan 2014 11:21:22 -0500
+Received: by mail-ve0-f180.google.com with SMTP id jz11so1408704veb.25
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 08:21:21 -0800 (PST)
+In-Reply-To: <20140108143529.GB14122@mudshark.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 
-On Wednesday 08 January 2014, Arnd Bergmann wrote:
-> On Wednesday 08 January 2014, Linus Walleij wrote:
-> > On Tue, Jan 7, 2014 at 8:52 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-b> > 
-> > I was wrong about this, too much in my head. As Tomasz says,
-> > pinctrl-samsung can be used, but mandates that everything is
-> > moved over to device tree.
-> > 
-> > Probably the best thing now that I have one problem less is to
-> > leave it to the S3C maintainers to complete their DT migration?
-> 
-> Let me have another look first, maybe I can find an intermediate
-> step that helps you on your conquest to kill mach/gpio.h.
+WIll,
 
-I've asked the mighty grep and it said that these are the files
-using the contents you moved around:
+Thanks for your comments!
 
-drivers/gpio/gpio-samsung.c
-drivers/leds/leds-s3c24xx.c
-drivers/mmc/host/s3cmci.c
-sound/soc/samsung/h1940_uda1380.c
-sound/soc/samsung/neo1973_wm8753.c
-sound/soc/samsung/rx1950_uda1380.c
-sound/soc/samsung/s3c2412-i2s.c
-sound/soc/samsung/s3c24xx-i2s.c
-sound/soc/samsung/smartq_wm8987.c
+On Wed, Jan 8, 2014 at 6:35 AM, Will Deacon <will.deacon@arm.com> wrote:
+> On Wed, Jan 08, 2014 at 01:33:11PM +0000, Vivek Gautam wrote:
+>> The erratum-773769 occurs on Arm Coretex-A15 (rev r2p0),
+>> when L2 Data Ram latency is set to 4 cycles or more; or
+>> when ACP is in use, or with L2 Data RAM slice configured.
+>> Therefore, the effective latency as calculated in Table 7-2 of
+>> Cotex-A15 (rev r2p0) trm should be 3 cycles or less.
+>>
+>> On Exynos5250 based systems the effective data ram latency
+>> is 4 cycles, since we have DATA_RAM_SETUP bit enabled (L2CTRL[5]=1b'1)
+>> and DATA_RAM_LATENCY bits set to 0x2 (L2CTLR[2:0]=3b'010) therefore,
+>> the effective L2 data RAM latency becomes 4 cycles.
+>> So erratum '773769' occurs causing a corrupted L2 Cache.
+>>
+>> This patch gives a workaround to the mentioned erratum, using below
+>> mentioned algo:
+>> ----------------------------------------------------------------
+>> if data RAM setup = 1
+>>   then check if effective latency i.e (latency + setup + 1) > 3
+>>   if 'true'
+>>     then clear data RAM setup
+>>       goto branch 'a'
+>> if data RAM setup = 0
+>>   a: then check if data RAM latency > 0x10
+>>     if true then force data RAM latency = 0x10
+>> ----------------------------------------------------------------
+>> so that the effective data RAM latency reduces to 3 cycles or less
+>> and hence prevent hitting the erratum.
+>>
+>> NOTE: The Exynos5250 based products have already been shipped, which
+>>       makes it impossible to add the change in bootloader, so we are
+>>       adding the required change in kernel.
+>
+> NAK. Whilst I appreciate that you may not be able to fix your bootloader,
+> this isn't the right change to make in the kernel. Blindly changing memory
+> latencies is likely to do more harm than good for a multi-platform kernel,
+> even if it works for exynos 5250. The only alternative I can think of (if you
+> have to make a mainline kernel change) is to restrict the clock frequencies at
+> which the CPU is allowed to run, although that obviously requires some
+> investigation in order to determine how viable it is for your SoC.
 
-The symbols used in these drivers are:
+OK, so humor me a little here...
 
-S3C....GP.()
-S3C_GPIO_END
-S3C_GPIO_PULL_.*
-S3C_GPIO_SFN()
-s3c_gpio_cfgall_range()
-s3c_gpio_setpull()
+I'll start off by saying that I'm totally OK if mainline doesn't want
+this fixed.  If mainline is not interested in running reliably on
+exynos5250-based products then there's nothing I can do about it.  It
+seems unfortunate, but I'm not going to get into a shouting match
+about it.
 
-which is basically all of the mach/gpio.h file, plus a few small parts of
-the plat/gpio-cfg.h file. The rest of plat/gpio-cfg.h however is used in
-board files to call into the gpio-samsung.c driver, so we still need 
-the header file for those, until the board files get replaced with DT
-descriptions using the pinctrl interface.
+You're saying that this patch is blindly changing memory latencies.  I
+don't think it is (please correct me if I'm wrong!).  This patch:
 
-I think it would be worthwhile to go ahead and make all inclusions of
-the plat/gpio-cfg.h file explicit, and remove it from mach/gpio.h, that
-part should be simple enough and helpful at the same time. Besides the
-leds-s3c24xx.c and gpio-samsung.c files we already talked about, I think
-it's only s3cmci.c, s3c2412-i2s.c and s3c24xx-i2s.c that still need this
-outside of mach-s3c*.
+* Is guarded by a CONFIG option so the code isn't even compiled in if
+you don't want EXYNOS5250 support.  I know this doesn't help
+multiplatform, but it means that if you really hate the code it's easy
+to disable.
 
-The correct way to get rid of S3C...._GP. and S3C_GPIO_END would be to
-pass the GPIO numbers from platform code in platform_data pointers.
-It's not hard to do, but tedious to get right for the seven drivers
-that need them.
+* Is guarded by a runtime check of the revision number so that it
+doesn't run on unaffected A15 revisions.
 
-	Arnd
+* Is guarded by a runtime check so it does nothing at all if the total
+latency is <= 3 (AKA if boot code already picked a sane value)
+
+...with the above guards it's pretty safe...
+
+I will agree that there is a _potential_ that this could make things
+work worse on an already broken product our there, but I would say
+there's a reasonable chance that such a product doesn't exist (but
+please correct me if I'm wrong).  Specifically, this patch will cause
+problems in two examples that I can think of:
+
+--
+
+Example A: existing A15 <=r2p0 product with 773769-ignorant boot code
+that could be fixed, but that needs "setup = 1"
+
+In this case we've got boot code that's like the exynos5250 boot code
+that accidentally sets the total latency to >= 4 when it would work
+just fine to use a value of 3.  ...except that unlike the exynos5250
+this hypthetical SoC needs to leave setup = 1.
+
+...if such a machine were found in the wild (seems unlikely?) then
+we'll need to figure out what to do.  If its boot code cannot be
+updated and we want to support this product with a similar patch then
+we'll need to be more dynamic.
+
+--
+
+Example B: existing A15 <=r2p0 product that just has to live with crashes
+
+In this case we've got a product where we're going to just accept that
+it crashes sometimes (since this is a fairly hard crash to trigger)
+because it crashes even more when the total latency < 4.  In this case
+we don't want to "fix" the errata because that makes things worse.
+
+...if such a machine were find in the wild (it's possible, I guess?)
+then that's a really good reason not to take this patch or to find
+some way to dynamically enable / disable it.
+
+--
+
+Let me know what you think of the above, or if I'm misunderstanding something...
+
+-Doug
