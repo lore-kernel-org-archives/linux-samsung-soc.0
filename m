@@ -1,71 +1,60 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 0/8] clk: max77686: Clock provider implementation fixes
-Date: Wed, 08 Jan 2014 09:01:55 -0800
-Message-ID: <20140108170155.27803.27478@quantum>
-References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
- <2890647.PEOApIOYyP@amdc1227> <20140108163138.27803.58310@quantum>
- <3008563.6S2kFjQKp9@amdc1227>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2 v3] ARM: s3c24xx: get rid of custom <mach/gpio.h>
+Date: Wed, 8 Jan 2014 17:08:08 +0000
+Message-ID: <20140108170808.GH31886@sirena.org.uk>
+References: <1386939220-12776-1-git-send-email-linus.walleij@linaro.org>
+ <201401071215.06064.arnd@arndb.de>
+ <CACRpkdacaskiv2R5YTB_9jFaOueXGEFxYQUEo4eq7aHkDLhjfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3008563.6S2kFjQKp9@amdc1227>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8XxSLmbBPFxpr3Sm"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48745 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756531AbaAHRIe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jan 2014 12:08:34 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdacaskiv2R5YTB_9jFaOueXGEFxYQUEo4eq7aHkDLhjfw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Quoting Tomasz Figa (2014-01-08 08:44:29)
-> On Wednesday 08 of January 2014 08:31:38 Mike Turquette wrote:
-> > Quoting Tomasz Figa (2014-01-02 07:22:12)
-> > > On Tuesday 31 of December 2013 11:42:15 Mike Turquette wrote:
-> > > > Quoting Tomasz Figa (2013-12-12 08:07:13)
-> > > > > This series intends to improve clock provider impementation of max77686
-> > > > > PMIC driver. First two patches are simple fixes of current implementation
-> > > > > to allow correct control of provided clocks. Further patches refactor
-> > > > > the driver to make the code cleaner and prepare for further patches. Then
-> > > > > last two patches add registration of OF clock provider and adjust device
-> > > > > tree nodes of boards containing max77686 chip to contain properties
-> > > > > required by clock provider.
-> > > > 
-> > > > Acked-by: Mike Turquette <mturquette@linaro.org>
-> > > 
-> > > Hmm... Shouldn't this series go through the clk tree directly? If not, who
-> > > should be taking it?
-> > 
-> > Yes it should, but I guessed it would come in a pull request. Maybe Ack
-> > is the wrong thing? I can just say "looks good to me me" or something
-> > else.
-> 
-> Nah, I think Ack is completely right, but still this series is quite
-> standalone, e.g. it does not really belong to samsung-clk nor any other
-> clock subtree, so I thought you would be applying them directly.
 
-True, this isn't really a samsung clock pull request. We can just
-attribute this one to ironing out a few bugs in our workflow ;-)
+--8XxSLmbBPFxpr3Sm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> I believe Lee has already applied this one, but in future, to avoid such
-> confusion, if it's more convenient for you, I can send you any clock
-> series as pull requests.
+On Tue, Jan 07, 2014 at 07:27:49PM +0100, Linus Walleij wrote:
 
-That is fine, and it would also be fine to state in the coverletter that
-you do NOT plan to send a pull request. That removes all ambiguity from
-my side and lets me know to pick the patches manually. Verbosity is
-always good with these sorts of things.
+> I think the S3C driver is a different piece of hardware unfortunately.
 
-Regards,
-Mike
+It's not, the IP is basically the same - the difference between s3c, s5p
+and Exynos is a marketing one, Samsung have generally just reused IP
+where that is reasonable.  There's a great deal of continuity in the
+platforms.
 
-> 
-> Best regards,
-> Tomasz
-> 
+--8XxSLmbBPFxpr3Sm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSzYX1AAoJELSic+t+oim91DUP/20Wrk9KvRtTqM02Po+6p3GB
+OwbteaqQwziNybXhmFaU0v9cK6ci1WPiGzJbKcbyyUbeAcq3tXu7ov5D/bWCJnVC
+K5h0L8YshnRV8VajtGbePddfkrRAu1E0alB1kgmzLMJ5I5VXADsZLsVNJBcqmeJY
+QkbcYe8JLARfNOUzodJf0R+wLVpKoCrx1d/jxHo5UO4TeCPCVX6wuyhUkrRkAicC
+pvzVkgENFAupYGQmT2KUrR0eNUphfYWyeregQm4jDWahZC5MY4WOP1GAre/51v5M
+I79Z+Az8MhJI0f032aChBw30XALPs99tNiEIrgagSaVXYjq5ufM5ujgGfYsI3DAs
+zhHCY0hTbbe3Vxkrq4glu6d/PFmOT/KrBfjycsxwOlSEockU4prbaA140wGNTiPb
+29B2twTWrH54vbgg9S/rb8ogQkJuh88xrok+lJ1FcntqwTkme35+Jelu5kMWL4Nr
+gxTedqtWfvCXP2ceV1WwJldyNUefq++sd/eZb5atYmIjKDDI7jY/MP4oCgKzwb2U
+F6Eu7Z+UQsowvnR+O6U/jhMqSOj4tQj8x+O+venLdf5W/TJ7SXQScakxpLr4dVLm
+hhdeyjolOBbCdqL6/1HO0VhCSJbqlW5Xgri03zbzEH3xK76Dc7EOgwkfUAhLAvAC
+Ae17IwOQCzug0O/hrGjb
+=38kd
+-----END PGP SIGNATURE-----
+
+--8XxSLmbBPFxpr3Sm--
