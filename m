@@ -1,75 +1,45 @@
-From: Nicolas Pitre <nico@fluxnic.net>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
-Date: Wed, 08 Jan 2014 15:58:52 -0500 (EST)
-Message-ID: <alpine.LFD.2.10.1401081538350.1851@knanqh.ubzr>
-References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
- <20140108143529.GB14122@mudshark.cambridge.arm.com>
- <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
- <20140108192028.GM27432@n2100.arm.linux.org.uk>
- <CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
+Date: Wed, 8 Jan 2014 21:02:28 +0000
+Message-ID: <20140108210228.GO27432@n2100.arm.linux.org.uk>
+References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com> <20140108143529.GB14122@mudshark.cambridge.arm.com> <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com> <20140108192028.GM27432@n2100.arm.linux.org.uk> <CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, David Garbett <David.Garbett@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 8 Jan 2014, Doug Anderson wrote:
+On Wed, Jan 08, 2014 at 11:43:29AM -0800, Doug Anderson wrote:
+> Olof came up with the idea that you could update the RW firmware
+> (affects initial boot) and then cache away the value and restore it in
+> the kernel after resume.  That would still require a kernel patch but
+> perhaps a less objectionable one.  ...of course if writing this
+> register is a problem in secure mode then maybe that patch would be
+> NAKed anyway.
 
-> On Wed, Jan 8, 2014 at 11:20 AM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > We've been through these arguments many times, you're not the first to
-> > raise it, and we've decided upon the policy.  We want as _few_ work-
-> > arounds in the kernel as possible, because applying the work-arounds
-> > is very problematical with the mixture of secure and non-secure booting.
-> 
-> OK, fair enough.  If we want no workaround here then we can drop this patch.
-> 
-> 
-> I'd guess that the way forward is:
-> 
-> * Land kernel workaround locally in Chromium tree
-> 
-> * I'll try to land FW change locally in at least one Chromium branch.
-> If we were to get a new RO build ever (seems unlikely at this point)
-> it would be fixed for upstream kernels.  If we were to get a new RW
-> build (seems unlikely, but at least less unlikely) it would be fixed
-> if someone landed a kernel patch to save/restore this register across
-> suspend/resume.
-> 
-> * If Joe Upstream wants to run an upstream kernel on some type of
-> exynos5250 product (Samsung ARM Chromebook, HP Chromebook 11, Nexus 10
-> are the ones I know of) then he will deal with the small number of
-> crashes or figure out a solution.
+It's not a problem in secure mode, since secure mode will have access
+to the register.  It's the non-secure mode where various registers
+either ignore writes, or they trigger an exception that are the problem.
 
-At some point you have to realize that what you're proposing is not 
-viable when taking into account the bigger picture.  And your FW 
-architecture is to blame.  If you were running Windows instead of Linux 
-I bet you'd have found a way to fix things differently than asking 
-Microsoft to add a special quirk in their code.  In the PC world you are 
-required to perform a BIOS update instead.
+Consider what would happen if an exception were to be triggered when no
+exception handlers were installed (eg, because the MMU is not enabled.)
 
-So you really need to provision the ability to update at least a portion 
-of the firmware that is not read-only.  That may be a third-stage 
-bootloader or the like which purpose is only to install workarounds such 
-as this before executing the kernel and which doesn't need to be updated 
-with the kernel.  And in theory you should be able to do that on top of 
-your current RO firmware.
+> That's one I didn't think about, you're right.  ...but we're really
+> getting into hypothetical situations here.  Are there any r2p0
+> products that have such a fix (and thus require a latency of >= 4)?
 
-Errata workarounds are often machine specific and they can be applied 
-only in special conditions the kernel might not safely know about until 
-it is too late.
+Really, we can't know, because this kind of information is dependent on
+the SoC, and probably such customisations are only knowable via NDAs.
 
+However, I do know of some A9 CPUs where exactly this kind of thing has
+happened - where various selected silicon bugs have been fixed but the
+revision still reports the same as one with all those bugs.
 
-Nicolas
+-- 
+FTTC broadband for 0.8mile line: 5.8Mbps down 500kbps up.  Estimation
+in database were 13.1 to 19Mbit for a good line, about 7.5+ for a bad.
+Estimate before purchase was "up to 13.2Mbit".
