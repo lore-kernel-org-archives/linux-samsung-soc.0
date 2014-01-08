@@ -1,130 +1,51 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
-Date: Wed, 8 Jan 2014 08:21:21 -0800
-Message-ID: <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
-References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
-	<20140108143529.GB14122@mudshark.cambridge.arm.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 0/8] clk: max77686: Clock provider implementation fixes
+Date: Wed, 08 Jan 2014 08:31:38 -0800
+Message-ID: <20140108163138.27803.58310@quantum>
+References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
+ <20131231194215.12054.39705@quantum> <2890647.PEOApIOYyP@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f180.google.com ([209.85.128.180]:45459 "EHLO
-	mail-ve0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755435AbaAHQVW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 11:21:22 -0500
-Received: by mail-ve0-f180.google.com with SMTP id jz11so1408704veb.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 08:21:21 -0800 (PST)
-In-Reply-To: <20140108143529.GB14122@mudshark.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2890647.PEOApIOYyP@amdc1227>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 
-WIll,
+Quoting Tomasz Figa (2014-01-02 07:22:12)
+> On Tuesday 31 of December 2013 11:42:15 Mike Turquette wrote:
+> > Quoting Tomasz Figa (2013-12-12 08:07:13)
+> > > This series intends to improve clock provider impementation of max77686
+> > > PMIC driver. First two patches are simple fixes of current implementation
+> > > to allow correct control of provided clocks. Further patches refactor
+> > > the driver to make the code cleaner and prepare for further patches. Then
+> > > last two patches add registration of OF clock provider and adjust device
+> > > tree nodes of boards containing max77686 chip to contain properties
+> > > required by clock provider.
+> > 
+> > Acked-by: Mike Turquette <mturquette@linaro.org>
+> 
+> Hmm... Shouldn't this series go through the clk tree directly? If not, who
+> should be taking it?
 
-Thanks for your comments!
+Yes it should, but I guessed it would come in a pull request. Maybe Ack
+is the wrong thing? I can just say "looks good to me me" or something
+else.
 
-On Wed, Jan 8, 2014 at 6:35 AM, Will Deacon <will.deacon@arm.com> wrote:
-> On Wed, Jan 08, 2014 at 01:33:11PM +0000, Vivek Gautam wrote:
->> The erratum-773769 occurs on Arm Coretex-A15 (rev r2p0),
->> when L2 Data Ram latency is set to 4 cycles or more; or
->> when ACP is in use, or with L2 Data RAM slice configured.
->> Therefore, the effective latency as calculated in Table 7-2 of
->> Cotex-A15 (rev r2p0) trm should be 3 cycles or less.
->>
->> On Exynos5250 based systems the effective data ram latency
->> is 4 cycles, since we have DATA_RAM_SETUP bit enabled (L2CTRL[5]=1b'1)
->> and DATA_RAM_LATENCY bits set to 0x2 (L2CTLR[2:0]=3b'010) therefore,
->> the effective L2 data RAM latency becomes 4 cycles.
->> So erratum '773769' occurs causing a corrupted L2 Cache.
->>
->> This patch gives a workaround to the mentioned erratum, using below
->> mentioned algo:
->> ----------------------------------------------------------------
->> if data RAM setup = 1
->>   then check if effective latency i.e (latency + setup + 1) > 3
->>   if 'true'
->>     then clear data RAM setup
->>       goto branch 'a'
->> if data RAM setup = 0
->>   a: then check if data RAM latency > 0x10
->>     if true then force data RAM latency = 0x10
->> ----------------------------------------------------------------
->> so that the effective data RAM latency reduces to 3 cycles or less
->> and hence prevent hitting the erratum.
->>
->> NOTE: The Exynos5250 based products have already been shipped, which
->>       makes it impossible to add the change in bootloader, so we are
->>       adding the required change in kernel.
->
-> NAK. Whilst I appreciate that you may not be able to fix your bootloader,
-> this isn't the right change to make in the kernel. Blindly changing memory
-> latencies is likely to do more harm than good for a multi-platform kernel,
-> even if it works for exynos 5250. The only alternative I can think of (if you
-> have to make a mainline kernel change) is to restrict the clock frequencies at
-> which the CPU is allowed to run, although that obviously requires some
-> investigation in order to determine how viable it is for your SoC.
+Regards,
+Mike
 
-OK, so humor me a little here...
-
-I'll start off by saying that I'm totally OK if mainline doesn't want
-this fixed.  If mainline is not interested in running reliably on
-exynos5250-based products then there's nothing I can do about it.  It
-seems unfortunate, but I'm not going to get into a shouting match
-about it.
-
-You're saying that this patch is blindly changing memory latencies.  I
-don't think it is (please correct me if I'm wrong!).  This patch:
-
-* Is guarded by a CONFIG option so the code isn't even compiled in if
-you don't want EXYNOS5250 support.  I know this doesn't help
-multiplatform, but it means that if you really hate the code it's easy
-to disable.
-
-* Is guarded by a runtime check of the revision number so that it
-doesn't run on unaffected A15 revisions.
-
-* Is guarded by a runtime check so it does nothing at all if the total
-latency is <= 3 (AKA if boot code already picked a sane value)
-
-...with the above guards it's pretty safe...
-
-I will agree that there is a _potential_ that this could make things
-work worse on an already broken product our there, but I would say
-there's a reasonable chance that such a product doesn't exist (but
-please correct me if I'm wrong).  Specifically, this patch will cause
-problems in two examples that I can think of:
-
---
-
-Example A: existing A15 <=r2p0 product with 773769-ignorant boot code
-that could be fixed, but that needs "setup = 1"
-
-In this case we've got boot code that's like the exynos5250 boot code
-that accidentally sets the total latency to >= 4 when it would work
-just fine to use a value of 3.  ...except that unlike the exynos5250
-this hypthetical SoC needs to leave setup = 1.
-
-...if such a machine were found in the wild (seems unlikely?) then
-we'll need to figure out what to do.  If its boot code cannot be
-updated and we want to support this product with a similar patch then
-we'll need to be more dynamic.
-
---
-
-Example B: existing A15 <=r2p0 product that just has to live with crashes
-
-In this case we've got a product where we're going to just accept that
-it crashes sometimes (since this is a fairly hard crash to trigger)
-because it crashes even more when the total latency < 4.  In this case
-we don't want to "fix" the errata because that makes things worse.
-
-...if such a machine were find in the wild (it's possible, I guess?)
-then that's a really good reason not to take this patch or to find
-some way to dynamically enable / disable it.
-
---
-
-Let me know what you think of the above, or if I'm misunderstanding something...
-
--Doug
+> 
+> Best regards,
+> Tomasz
+> 
