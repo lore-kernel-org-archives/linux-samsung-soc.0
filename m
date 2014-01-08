@@ -1,50 +1,113 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: remove obsolete tick.h
-Date: Wed, 08 Jan 2014 01:49:18 +0100
-Message-ID: <2341825.uZDBWhHeIh@flatron>
-References: <1907750.XQ1uIOEDlS@phil>
+Subject: Re: [PATCH 1/2 v3] ARM: s3c24xx: get rid of custom <mach/gpio.h>
+Date: Wed, 08 Jan 2014 01:52:50 +0100
+Message-ID: <6590746.Z4WIdgduRV@flatron>
+References: <1386939220-12776-1-git-send-email-linus.walleij@linaro.org> <CACRpkdacaskiv2R5YTB_9jFaOueXGEFxYQUEo4eq7aHkDLhjfw@mail.gmail.com> <201401072052.30599.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:46601 "EHLO
-	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752310AbaAHAtY convert rfc822-to-8bit (ORCPT
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:57245 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753832AbaAHAw4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:49:24 -0500
-Received: by mail-ea0-f173.google.com with SMTP id o10so512119eaj.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 16:49:23 -0800 (PST)
-In-Reply-To: <1907750.XQ1uIOEDlS@phil>
+	Tue, 7 Jan 2014 19:52:56 -0500
+Received: by mail-ee0-f44.google.com with SMTP id b57so375860eek.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2014 16:52:54 -0800 (PST)
+In-Reply-To: <201401072052.30599.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Hi Heiko,
+On Tuesday 07 of January 2014 20:52:30 Arnd Bergmann wrote:
+> On Tuesday 07 January 2014, Linus Walleij wrote:
+> > On Tue, Jan 7, 2014 at 12:15 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Friday 13 December 2013, Linus Walleij wrote:
+> > 
+> > Hm. I just compiled this defconfig on linux-next:
+> > 
+> >   AS      arch/arm/boot/compressed/lib1funcs.o
+> >   AS      arch/arm/boot/compressed/ashldi3.o
+> >   AS      arch/arm/boot/compressed/bswapsdi2.o
+> >   CC      arch/arm/boot/compressed/decompress.o
+> >   CC      arch/arm/boot/compressed/misc.o
+> >   GZIP    arch/arm/boot/compressed/piggy.gzip
+> >   AS      arch/arm/boot/compressed/piggy.gzip.o
+> >   LD      arch/arm/boot/compressed/vmlinux
+> >   OBJCOPY arch/arm/boot/zImage
+> >   Kernel: arch/arm/boot/zImage is ready
+> > 
+> > It appears that these problems appear if you explicitly
+> > enable the DT board support, can't we just put that into
+> > the defconfig then, so we don't miss such things?
+> 
+> I don't understand. I didn't enable it manually and
+> I still get it on linux-next-20130107. Maybe you were
+> still on the older linux-next that had not been updated
+> for some time?
+> 
+> > > Two problems:
+> > >
+> > > * Some files that use functions or macros defined in this file
+> > >   fail to include it. I see drivers/leds/leds-s3c24xx.c
+> > 
+> > I merged a patch fixing this by having that file explicitly include
+> > <plat/gpip-cfg.h> (it was already including it implicitly).
+> > 
+> > > and
+> > >   mach-osiris-dvs.c,
+> > 
+> > It needs this:
+> > #include <linux/platform_data/gpio-samsung-s3c24xx.h>
+> > 
+> > (I have sent a patch.)
+> 
+> Ok, thanks!
+> 
+> > > but there might be more that don't get built
+> > >   by default.
+> > 
+> > Yeah implicit includes are a nightmare for refactoring...
+> > I'm trying to grep around for some symbols to see if I
+> > can find some lost cases.
+> 
+> I just tried building with "make allmodconfig KCONFIG_ALLCONFIG=allconfig",
+> with the allconfig file containing a CONFIG_MACH_S3C2410=y statement.
+> This caught a number of additionl problems, some related and some not.
+> 
+> > > * The file includes <plat/gpio-cfg.h>, which is not a bug yet, but
+> > >   will be once we move s3c24xx to multiplatform, which would make
+> > >   it impossible to include this file from outside of arch/arm.
+> > 
+> > Yes that needs to be a step for multiplatform enablement.
+> > My series only tries to make the problem smaller and remove
+> > the dependence on <mach/gpio.h>. All the <mach/*> and
+> > <plat/*> stuff needs to go away eventually ...
+> 
+> True. What is actually the bigger worry here is that the contents
+> of the new file, while correctly moved out of mach/gpio.h also
+> don't belong into include/linux/platform_data, because they don't
+> define a pdata structure but rather the contents that are supposed
+> to be passed from the platform code. I would much prefer if you could
+> move the file back into mach-s3c24xx/ under a new name and keep it out of
+> platform_data. I suspect that the only thing actually needed by the
+> gpio driver is the number of GPIO lines per platform, and we can
+> find another way to communicate that. Most of the contents should
+> be private to the mach-s3c code and not be visible to either the
+> gpio driver or any drivers using the plat/gpio-cfg.h interface.
+> 
+> > > Note that on Exynos, the solution for the gpio driver dependencies
+> > > was to scrap the driver and use pinctrl-exynos instead.
+> > 
+> > I think the S3C driver is a different piece of hardware unfortunately.
+> 
+> But exynos was using this driver before it moved to the new pinctrl
+> driver.
 
-On Tuesday 07 of January 2014 21:53:51 Heiko St=FCbner wrote:
-> Commit 48cf83dc12f2 (ARM: samsung: remove unused tick.h) removed some
-> occurences of tick.h. tick.h itself and s3c24xx_ostimer_pending was o=
-nly
-> used by the old timer driver and is not used anymore.
->=20
-> Therefore remove the last 3 occurences.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  arch/arm/mach-s3c24xx/include/mach/tick.h |   15 --------------
->  arch/arm/mach-s3c64xx/include/mach/tick.h |   31 -------------------=
-----------
->  arch/arm/mach-s5pc100/include/mach/tick.h |   31 -------------------=
-----------
->  3 files changed, 77 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/tick.h
->  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/tick.h
->  delete mode 100644 arch/arm/mach-s5pc100/include/mach/tick.h
-
-Thanks for cleaning this up.
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Note that, however, pinctrl-samsung is a DT-only driver, so for non-DT
+platforms the old gpio-samsung needs to be used. There are no DT platforms
+using the old driver, though, all do use the new one.
 
 Best regards,
 Tomasz
