@@ -1,62 +1,107 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/5] crypto:s5p-sss: Use platform_get_irq() instead of _byname()
-Date: Wed, 08 Jan 2014 01:14:36 +0100
-Message-ID: <3711506.y7zYNNW8hU@flatron>
-References: <1389095509-14357-1-git-send-email-ch.naveen@samsung.com> <1389095509-14357-2-git-send-email-ch.naveen@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v12 0/7] cpufreq:boost: CPU Boost mode support
+Date: Wed, 08 Jan 2014 01:35:18 +0100
+Message-ID: <9268964.f27SUq68sj@vostro.rjw.lan>
+References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com> <1387549495-809-1-git-send-email-l.majewski@samsung.com> <20140107075824.59a1ed3c@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:56022 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752555AbaAHAOm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jan 2014 19:14:42 -0500
-In-Reply-To: <1389095509-14357-2-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140107075824.59a1ed3c@amdc2363>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Eduardo Valentin <eduardo.valentin@ti.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org, rjw@sisk.pl
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <ch.naveen@samsung.com>
-Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, "David S. Miller" <davem@davemloft.net>
 
-Hi Naveen,
+On Tuesday, January 07, 2014 07:58:24 AM Lukasz Majewski wrote:
+> Hi Rafael,
 
-Please see my comments inline.
+Hi,
 
-On Tuesday 07 of January 2014 17:21:45 Naveen Krishna Ch wrote:
-> This patch uses the platform_get_irq() instead of the
-> platform_get_irq_byname(). Making feeder control interrupt
-> as resource "0" and hash interrupt as "1".
+> > This patch series introduces support for CPU overclocking technique
+> > called Boost.
+> > 
+> > It is a follow up of a LAB governor proposal. Boost is a LAB
+> > component:
+> > http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
+> > 
+> > Boost unifies hardware based solution (e.g. Intel Nehalem) with
+> > software oriented one (like the one done at Exynos).
+> > For this reason cpufreq/freq_table code has been reorganized to
+> > include common code.
+> > 
+> > Important design decisions:
+> > - Boost related code is compiled-in unconditionally to cpufreq core
+> > and disabled by default. The cpufreq_driver is responsibile for
+> > setting boost_supported flag and providing set_boost callback(if HW
+> > support is needed). For software managed boost, special Kconfig flag -
+> >   CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be selected only
+> >   when a target platform has thermal framework properly configured.
+> > 
+> > - struct cpufreq_driver has been extended with boost related fields:
+> >         -- boost_supported - when driver supports boosting
+> >         -- boost_enabled - boost state
+> >         -- set_boost - callback to function, which is necessary to
+> >            enable/disable boost
+> > 
+> > - Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is
+> > visible _only_ when cpufreq driver supports Boost.
+> > 
+> > - No special spin_lock for Boost was created. The one from cpufreq
+> > core was reused.
+> > 
+> > - The Boost code doesn't rely on any policy. When boost state is
+> > changed, then the policy list is iterated and proper adjustements are
+> > done.
+> > 
+> > - To improve safety level, the thermal framework is also extended to
+> > disable software boosting, when thermal trip point is reached. After
+> > cooling down the boost can be enabled again. This emulates behaviour
+> > similar to HW managed boost (like x86)
+> > 
+> > Tested at HW:
+> >        Exynos 4412 3.13-rc4 Linux
+> >        Intel Core i7-3770 3.13-rc4 Linux
+> > 
+> > Above patches were posted on top of kernel_pm/bleeding-edge
+> > (SHA1: bd0f3a5d9dce48a917ce1f1047534d79c725149)
+> > 
+> > Lukasz Majewski (7):
+> >   cpufreq: Add boost frequency support in core
+> >   cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with common
+> >     boost solution
+> >   cpufreq:boost:Kconfig: Provide support for software managed BOOST
+> >   cpufreq:exynos:Extend Exynos cpufreq driver to support boost
+> >     framework
+> >   Documentation:cpufreq:boost: Update BOOST documentation
+> >   cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
+> >   thermal:exynos:boost: Automatic enable/disable of BOOST feature (at
+> >     Exynos4412)
+> > 
+> >  Documentation/cpu-freq/boost.txt          |   26 +++----
+> >  drivers/cpufreq/Kconfig                   |    4 +
+> >  drivers/cpufreq/Kconfig.arm               |   15 ++++
+> >  drivers/cpufreq/acpi-cpufreq.c            |   86
+> > +++++++-------------- drivers/cpufreq/cpufreq.c                 |
+> > 118 ++++++++++++++++++++++++++++-
+> > drivers/cpufreq/exynos-cpufreq.c          |    3 +
+> > drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
+> > drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
+> > drivers/thermal/samsung/exynos_tmu_data.c |   12 +--
+> > include/linux/cpufreq.h                   |   24 ++++++ 10 files
+> > changed, 261 insertions(+), 85 deletions(-)
+> > 
 > 
-> reasons for this change.
-> 1. Cannot find any Arch which is currently using this driver
-> 2. Samsung Exynos5 SoCs only use the feeder control interrupt
-> 3. Patches adding support for DT and H/W version are in pipeline
+> A gentle ping about BOOST patches.
 > 
-> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> CC: Herbert Xu <herbert@gondor.apana.org.au>
-> CC: David S. Miller <davem@davemloft.net>
-> CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
-> TO: <linux-crypto@vger.kernel.org>
-> CC: <linux-samsung-soc@vger.kernel.org>
-> ---
->  drivers/crypto/s5p-sss.c |   22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+> Its been already acked by Viresh and Eduardo.
 > 
-> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> index cf149b1..dda4551 100644
-> --- a/drivers/crypto/s5p-sss.c
-> +++ b/drivers/crypto/s5p-sss.c
-> @@ -592,29 +592,29 @@ static int s5p_aes_probe(struct platform_device *pdev)
->  	pdata->ioaddr = devm_ioremap(dev, res->start,
->  				     resource_size(res));
->  
-> -	pdata->irq_hash = platform_get_irq_byname(pdev, "hash");
-> -	if (pdata->irq_hash < 0) {
-> +	pdata->irq_fc = platform_get_irq(pdev, 0);
-> +	if (pdata->irq_fc < 0) {
->  		err = pdata->irq_hash;
+> It applies on kernel_pm/bleeding_edge SHA1:
+> 4836deb72c5e2a9af0cb2129c1149783a26d99ab
 
-Shouldn't this be also changed to err = pdata->irq_fc; ?
+It looks like Rui is still looking into this.
 
-Best regards,
-Tomasz
+Rui, are you fine with this series?
+
+Rafael
+
