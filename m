@@ -1,107 +1,204 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v12 0/7] cpufreq:boost: CPU Boost mode support
-Date: Wed, 08 Jan 2014 01:35:18 +0100
-Message-ID: <9268964.f27SUq68sj@vostro.rjw.lan>
-References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com> <1387549495-809-1-git-send-email-l.majewski@samsung.com> <20140107075824.59a1ed3c@amdc2363>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 2/5] crypto:s5p-sss: Add device tree and Exynos5 support
+Date: Wed, 08 Jan 2014 01:25:05 +0100
+Message-ID: <5114267.LR2mpjRmaP@flatron>
+References: <1389095509-14357-1-git-send-email-ch.naveen@samsung.com> <1389095509-14357-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140107075824.59a1ed3c@amdc2363>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Eduardo Valentin <eduardo.valentin@ti.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org, rjw@sisk.pl
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f176.google.com ([209.85.215.176]:41768 "EHLO
+	mail-ea0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754824AbaAHAZM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jan 2014 19:25:12 -0500
+In-Reply-To: <1389095509-14357-3-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Ch <ch.naveen@samsung.com>
+Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, "David S. Miller" <davem@davemloft.net>
 
-On Tuesday, January 07, 2014 07:58:24 AM Lukasz Majewski wrote:
-> Hi Rafael,
+Hi Naveen,
 
-Hi,
+Please see my comments inline.
 
-> > This patch series introduces support for CPU overclocking technique
-> > called Boost.
-> > 
-> > It is a follow up of a LAB governor proposal. Boost is a LAB
-> > component:
-> > http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
-> > 
-> > Boost unifies hardware based solution (e.g. Intel Nehalem) with
-> > software oriented one (like the one done at Exynos).
-> > For this reason cpufreq/freq_table code has been reorganized to
-> > include common code.
-> > 
-> > Important design decisions:
-> > - Boost related code is compiled-in unconditionally to cpufreq core
-> > and disabled by default. The cpufreq_driver is responsibile for
-> > setting boost_supported flag and providing set_boost callback(if HW
-> > support is needed). For software managed boost, special Kconfig flag -
-> >   CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be selected only
-> >   when a target platform has thermal framework properly configured.
-> > 
-> > - struct cpufreq_driver has been extended with boost related fields:
-> >         -- boost_supported - when driver supports boosting
-> >         -- boost_enabled - boost state
-> >         -- set_boost - callback to function, which is necessary to
-> >            enable/disable boost
-> > 
-> > - Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is
-> > visible _only_ when cpufreq driver supports Boost.
-> > 
-> > - No special spin_lock for Boost was created. The one from cpufreq
-> > core was reused.
-> > 
-> > - The Boost code doesn't rely on any policy. When boost state is
-> > changed, then the policy list is iterated and proper adjustements are
-> > done.
-> > 
-> > - To improve safety level, the thermal framework is also extended to
-> > disable software boosting, when thermal trip point is reached. After
-> > cooling down the boost can be enabled again. This emulates behaviour
-> > similar to HW managed boost (like x86)
-> > 
-> > Tested at HW:
-> >        Exynos 4412 3.13-rc4 Linux
-> >        Intel Core i7-3770 3.13-rc4 Linux
-> > 
-> > Above patches were posted on top of kernel_pm/bleeding-edge
-> > (SHA1: bd0f3a5d9dce48a917ce1f1047534d79c725149)
-> > 
-> > Lukasz Majewski (7):
-> >   cpufreq: Add boost frequency support in core
-> >   cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with common
-> >     boost solution
-> >   cpufreq:boost:Kconfig: Provide support for software managed BOOST
-> >   cpufreq:exynos:Extend Exynos cpufreq driver to support boost
-> >     framework
-> >   Documentation:cpufreq:boost: Update BOOST documentation
-> >   cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
-> >   thermal:exynos:boost: Automatic enable/disable of BOOST feature (at
-> >     Exynos4412)
-> > 
-> >  Documentation/cpu-freq/boost.txt          |   26 +++----
-> >  drivers/cpufreq/Kconfig                   |    4 +
-> >  drivers/cpufreq/Kconfig.arm               |   15 ++++
-> >  drivers/cpufreq/acpi-cpufreq.c            |   86
-> > +++++++-------------- drivers/cpufreq/cpufreq.c                 |
-> > 118 ++++++++++++++++++++++++++++-
-> > drivers/cpufreq/exynos-cpufreq.c          |    3 +
-> > drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
-> > drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
-> > drivers/thermal/samsung/exynos_tmu_data.c |   12 +--
-> > include/linux/cpufreq.h                   |   24 ++++++ 10 files
-> > changed, 261 insertions(+), 85 deletions(-)
-> > 
+On Tuesday 07 of January 2014 17:21:46 Naveen Krishna Ch wrote:
+> This patch adds device tree support along with a new
+> compatible string to support Exynos5 SoCs (SSS_VER_5).
 > 
-> A gentle ping about BOOST patches.
+> Also, Documentation under devicetree/bindings added.
 > 
-> Its been already acked by Viresh and Eduardo.
+> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+> CC: Herbert Xu <herbert@gondor.apana.org.au>
+> CC: David S. Miller <davem@davemloft.net>
+> CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
+> TO: <linux-crypto@vger.kernel.org>
+> CC: <linux-samsung-soc@vger.kernel.org>
+> ---
+>  .../devicetree/bindings/crypto/samsung-sss.txt     |   24 ++++++++++++
+>  drivers/crypto/s5p-sss.c                           |   40 ++++++++++++++++++++
+>  2 files changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
 > 
-> It applies on kernel_pm/bleeding_edge SHA1:
-> 4836deb72c5e2a9af0cb2129c1149783a26d99ab
+> diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> new file mode 100644
+> index 0000000..8871a29
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> @@ -0,0 +1,24 @@
+> +Samsung SoC SSS crypto Module
 
-It looks like Rui is still looking into this.
+A sentence or two explaining what this module is would be nice.
 
-Rui, are you fine with this series?
+> +
+> +Required properties:
+> +
+> +- compatible : Should contain entries for this and backward compatible
+> +  SSS versions:
+> +  - "samsung,exynos-secss" for S5PV210.
+> +  - "samsung,s5p-secss" for Exynos5 series SoCs.
 
-Rafael
+Hmm, this doesn't make any sense, Exynos for S5PV210 and S5P for
+Exynos5...
 
+Please use specific compatible strings containing names of first SoC in
+which given compatible IP block appeared. E.g. "samsung,s5pv210-secss"
+and "samsung,exynos5250-secss" (if S5PV210 and Exynos5 have been first
+respectively).
+
+> +  TBD: SSS module on Exynos5 SoCs supports other algorithms,
+> +  support for the is yet to be added in the driver.
+
+This has nothing to do with DT bindings.
+
+> +- reg : Offset and length of the register set for the module
+> +- interrupts : the interrupt-specifier for the SSS module.
+
+It should be specified how many entries should be specified and what are
+their meanings.
+
+> +- clocks : the required gating clock for the SSS module.
+> +- clock-names : the gating clock name requested in the SSS driver.
+
+The name should be specified and no dependency on the driver should be
+made (it's the driver that should follow the bindings, not the other
+way around).
+
+> +
+> +Example:
+> +	/* SSS_VER_5 */
+> +	sss: sss {
+
+Should be sss: sss@10830000 as per ePAPR recommendation about node naming.
+
+> +		compatible = "samsung,exynos-secss";
+> +		reg = <0x10830000 0x10000>;
+> +		interrupts = <0 112 0>;
+> +		clocks = <&clock 471>;
+> +		clock-names = "secss";
+> +	};
+> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> index dda4551..dcb9fc1 100644
+> --- a/drivers/crypto/s5p-sss.c
+> +++ b/drivers/crypto/s5p-sss.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
+>  #include <linux/crypto.h>
+>  #include <linux/interrupt.h>
+>  
+> @@ -173,10 +174,45 @@ struct s5p_aes_dev {
+>  	struct crypto_queue         queue;
+>  	bool                        busy;
+>  	spinlock_t                  lock;
+> +
+> +	/* To support SSS versions across Samsung SoCs */
+> +	unsigned int		    version;
+>  };
+>  
+>  static struct s5p_aes_dev *s5p_dev;
+>  
+> +enum sss_version {
+> +	SSS_VER_4,	/* SSS found on S5PV210 */
+> +	SSS_VER_5,	/* SSS found on Exynos5 Series SoCs */
+> +};
+> +
+> +static struct platform_device_id s5p_sss_ids[] = {
+
+static const struct platform_device_id
+
+> +	{
+> +		.name		= "s5p-secss",
+> +		.driver_data	= SSS_VER_4,
+> +	}, { },
+> +};
+> +MODULE_DEVICE_TABLE(platform, s5p_sss_ids);
+> +
+
+#ifdef CONFIG_OF
+
+> +static struct of_device_id s5p_sss_dt_match[] = {
+
+static const struct of_device_id
+
+> +	{ .compatible = "samsung,s5p-secss", .data = (void *)SSS_VER_4 },
+> +	{ .compatible = "samsung,exynos-secss", .data = (void *)SSS_VER_5 },
+
+Does this driver already support SSS version 5 at this stage? Aren't
+further patches needed for this?
+
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
+
+#endif
+
+> +
+> +static inline unsigned int find_s5p_sss_version(struct platform_device *pdev)
+> +{
+> +#ifdef CONFIG_OF
+> +	if (pdev->dev.of_node) {
+
+Please use IS_ENABLED() helper inside the if instead of #ifdef.
+
+> +		const struct of_device_id *match;
+> +		match = of_match_node(s5p_sss_dt_match, pdev->dev.of_node);
+> +		return (unsigned int)match->data;
+> +	}
+> +#endif
+> +	return platform_get_device_id(pdev)->driver_data;
+> +}
+> +
+>  static void s5p_set_dma_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+>  {
+>  	SSS_WRITE(dev, FCBRDMAS, sg_dma_address(sg));
+> @@ -580,6 +616,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  				     resource_size(res), pdev->name))
+>  		return -EBUSY;
+>  
+> +	pdata->version = find_s5p_sss_version(pdev);
+
+Instead of storing a version number, I would rather consider using
+a variant struct containing version-specific data.
+
+> +
+>  	pdata->clk = devm_clk_get(dev, "secss");
+>  	if (IS_ERR(pdata->clk)) {
+>  		dev_err(dev, "failed to find secss clock source\n");
+> @@ -674,9 +712,11 @@ static int s5p_aes_remove(struct platform_device *pdev)
+>  static struct platform_driver s5p_aes_crypto = {
+>  	.probe	= s5p_aes_probe,
+>  	.remove	= s5p_aes_remove,
+> +	.id_table	= s5p_sss_ids,
+>  	.driver	= {
+>  		.owner	= THIS_MODULE,
+>  		.name	= "s5p-secss",
+> +		.of_match_table = s5p_sss_dt_match,
+
+of_match_ptr() macro should be used instead of passing s5p_sss_dt_match
+directly.
+
+Best regards,
+Tomasz
