@@ -1,72 +1,55 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
-Date: Wed, 8 Jan 2014 13:35:27 -0800
-Message-ID: <CAD=FV=XqoSGpQ_Yrjj4hvV_0FSMfQGcGEsKkL1Stnm9m5s2Xvw@mail.gmail.com>
-References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
-	<20140108143529.GB14122@mudshark.cambridge.arm.com>
-	<CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
-	<20140108192028.GM27432@n2100.arm.linux.org.uk>
-	<CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
-	<alpine.LFD.2.10.1401081600370.1851@knanqh.ubzr>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 0/8] clk: max77686: Clock provider implementation fixes
+Date: Wed, 08 Jan 2014 13:54:32 -0800
+Message-ID: <20140108215432.27803.3120@quantum>
+References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
+ <20140108171544.GC14575@lee--X1> <20140108175939.27803.30462@quantum>
+ <4160932.uvjJSNcuKL@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f43.google.com ([209.85.212.43]:37849 "EHLO
-	mail-vb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756948AbaAHVf2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 16:35:28 -0500
-Received: by mail-vb0-f43.google.com with SMTP id p6so1585476vbe.16
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 13:35:27 -0800 (PST)
-In-Reply-To: <alpine.LFD.2.10.1401081600370.1851@knanqh.ubzr>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4160932.uvjJSNcuKL@amdc1227>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 
-Nicolas,
+Quoting Tomasz Figa (2014-01-08 10:04:57)
+> On Wednesday 08 of January 2014 09:59:39 Mike Turquette wrote:
+> > Quoting Lee Jones (2014-01-08 09:15:44)
+> > > > I believe Lee has already applied this one, but in future, to avoid such
+> > > > confusion, if it's more convenient for you, I can send you any clock
+> > > > series as pull requests.
+> > > 
+> > > Me? I haven't applied any clk patches.
+> > 
+> > I have taken patches 1-7 into clk-next just now.
+> 
+> Thanks.
+> 
+> > I can take patch #8 as
+> > well but it would probably be better to send it through arm-soc?
+> 
+> Hmm, patch 8 is trivial enough to not cause any merge conflicts, but since
+> it's unlikely that any users depending on introduced changes will show up
+> for 3.14 it shouldn't really matter which tree it goes through...
 
-On Wed, Jan 8, 2014 at 1:08 PM, Nicolas Pitre <nico@fluxnic.net> wrote:
-> On Wed, 8 Jan 2014, Doug Anderson wrote:
->
->> Hi,
->>
->> On Wed, Jan 8, 2014 at 11:20 AM, Russell King - ARM Linux
->> > No, we're saying to put the work-around in the boot loader, not the kernel.
->>
->> Unfortunately the resume path of the firmware runs from Read Only
->> firmware code (yes, it sucks), so it's not totally trivial to fix. It
->> would be possible for someone to unscrew their write protect switch
->> and update their RO firmware, but that doesn't help the average user.
->
-> [...]
->
->> I'd guess that the way forward is:
->>
->> * Land kernel workaround locally in Chromium tree
->>
->> * I'll try to land FW change locally in at least one Chromium branch.
->> If we were to get a new RO build ever (seems unlikely at this point)
->> it would be fixed for upstream kernels.  If we were to get a new RW
->> build (seems unlikely, but at least less unlikely) it would be fixed
->> if someone landed a kernel patch to save/restore this register across
->> suspend/resume.
->>
->> * If Joe Upstream wants to run an upstream kernel on some type of
->> exynos5250 product (Samsung ARM Chromebook, HP Chromebook 11, Nexus 10
->> are the ones I know of) then he will deal with the small number of
->> crashes or figure out a solution.
->
-> If Joe Upstream wants to run an upstream kernel, doesn't he have to
-> unscrew his write protect switch first, at which point the RO firmware
-> can be updated as well?
+In the absence of any strong opinion on the topic I have taken patch #8
+into clk-next for 3.14.
 
-Actually, no.  You can move your device into dev mode and run any
-kernel you want.  You'll get an annoying "you're in dev mode" screen
-at every bootup, but otherwise it works just fine.
+Regards,
+Mike
 
-Going into dev mode requires some special keystrokes at bootup and a
-wipe of your hard disk but no screwdrivers.
-
-
--Doug
+> 
+> Best regards,
+> Tomasz
+> 
