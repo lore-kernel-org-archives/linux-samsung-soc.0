@@ -1,43 +1,55 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: Fix build after removal of DRM_WAKUP
-Date: Wed, 08 Jan 2014 21:15:53 +0900
-Message-ID: <52CD4179.2050108@samsung.com>
-References: <1389103152-21877-1-git-send-email-broonie@kernel.org>
-	<1389103152-21877-2-git-send-email-broonie@kernel.org>
-	<20140107161442.GJ4770@phenom.ffwll.local>
-	<CAAQKjZPh1UdcPYb-CgpxNZjYbWyvuL2acH0_qiYm18OgGc7xhQ@mail.gmail.com>
-	<20140108120341.GQ31886@sirena.org.uk>
-Reply-To: sw0312.kim@samsung.com
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/1] spi: s3c24xx: Remove reference to plat/fiq.h
+Date: Wed, 8 Jan 2014 13:06:59 +0000
+Message-ID: <20140108130659.GE31886@sirena.org.uk>
+References: <1388478639-25279-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140108120341.GQ31886@sirena.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, linaro-kernel@lists.linaro.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ueIuAkhIEDaOqOw0"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1388478639-25279-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8sCgpPbiAyMDE064WEIDAx7JuUIDA47J28IDIxOjAzLCBNYXJrIEJyb3duIHdyb3RlOgo+
-IE9uIFdlZCwgSmFuIDA4LCAyMDE0IGF0IDEwOjE1OjI1QU0gKzA5MDAsIElua2kgRGFlIHdyb3Rl
-Ogo+PiAyMDE0LzEvOCBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Ogo+IAo+Pj4gT29w
-cywgbG9va3MgbGlrZSBzb21ldGhpbmcgc2xpcHBlZCBwYXN0IGJldHdlZW4gbWUgbWFraW5nIHRo
-ZSBwYXRjaGVzIGFuZAo+Pj4gdGhlbSBnZXR0aW5nIG1lcmdlZC4gVGhhbmtzIGZvciB0YWtpbmcg
-Y2FyZSBvZiB0aGlzLiBCb3RoIHBhdGNoZXMgYXJlCj4gCj4+IFRoZXNlIHBhdGNoZXMgYWxyZWFk
-eSB3ZXJlIHBvc3RlZCBieSBTZXVuZy1Xb28gbGluayBiZWxvdywgYW5kIEkKPj4gbWVyZ2VkIGFs
-cmVhZHkgdGhlbSB0byBleHlub3MtZHJtLW5leHQuCj4+ICAgICBodHRwOi8vd3d3LnNwaW5pY3Mu
-bmV0L2xpc3RzL2RyaS1kZXZlbC9tc2c1MDkyMS5odG1sCj4gCj4gQXJlIHlvdSBzdXJlPyAgSSBz
-dGlsbCBuZWVkIHRob3NlIHBhdGNoZXMgaW4gLW5leHQgYXMgb2YgdG9kYXkuCj4gCgpZZXMsIGF0
-IGxlYXN0IGZvciBleHlub3MtZHJtLW5leHQgdHJlZSBvZiBJbmtpLiBJbmtpIHNlbnQgcHVsbCBy
-ZXF1ZXN0CmluY2x1ZGluZyBteSBwYXRjaCB5ZXN0ZXJkYXkuCgpCZXN0IFJlZ2FyZHMsCi0gU2V1
-bmctV29vIEtpbQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--ueIuAkhIEDaOqOw0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Dec 31, 2013 at 02:00:39PM +0530, Sachin Kamat wrote:
+> fiq.h contains only a function declaration and is not used by anyone
+> else. Move the declaration to the driver header file and remove the
+> unnecessary platform dependency from the driver.
+
+Applied, thanks.
+
+--ueIuAkhIEDaOqOw0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSzU1wAAoJELSic+t+oim9dxUP+QEswUsgc9w4DWvFAfSkfsxY
+hD48HZZLiZq6Nbs7zMnJrqrr57BCZZ/otK16nAmRpePy+QnN+5O5vVk8m8fxDiop
+ZQEWeXqYD0f/4FOQfPUYqzSQSp+1aS2o/sehFCv4l0RQVWY00vXMs7Yqtu9pASi/
+O3927g+2V3Fm5BRdcg7mVW9y4ECiO+pz/JYM0cLfKwtwYhnYTwIMu0JxECNNGtHs
+cAkaL718/oiE9jLE/cayAnBmuvW9ZjQugkBOL9yMYMWU759dkHQYbSRorm870gkm
+pzdFm8/vOAsPaSJmN4GA9AEh1QhNLEnMu+Z/8KjlJ35RstV6taZ5sbMG3CBjXAe2
+AtoWnDtZB1gxPmWyTZF8TGumRstc8V5ErswHG+8HuwYyKUHA2tkyOVuShkVLVFX3
+GteLTnRyiX9Yjh+5LOkeLxAqXS1auZTXXvaSsTxxqhgHO+kd9n91m5F4jh0N2SiZ
+RIZus0Q5y1ueFSv1Wkx1M/mKc78Dy7K29Xh+U9AhciNioC3iwKaAEsw17LoE8Gxg
+blFNt/shVOnzvWPseaeosV9UyGHSeHY9nxvchQW8Q8iLF0KELb+TPNlBiYLoLhKh
+ZRxcDg2lGBrV+m8HRpTWzmyLxo3TwTrk9PcYh8bzIdlByBTmB4udsJ7pcBAT7Hs3
+XcIP/gmCoMzYWlsguQwH
+=mKP4
+-----END PGP SIGNATURE-----
+
+--ueIuAkhIEDaOqOw0--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
