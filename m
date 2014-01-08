@@ -1,51 +1,62 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH] exynos4-is: Compile runtime PM callbacks in conditionally
-Date: Tue,  7 Jan 2014 23:08:48 +0100
-Message-ID: <1389132528-21281-1-git-send-email-s.nawrocki@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/5] crypto:s5p-sss: Use platform_get_irq() instead of _byname()
+Date: Wed, 08 Jan 2014 01:14:36 +0100
+Message-ID: <3711506.y7zYNNW8hU@flatron>
+References: <1389095509-14357-1-git-send-email-ch.naveen@samsung.com> <1389095509-14357-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:56022 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752555AbaAHAOm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jan 2014 19:14:42 -0500
+In-Reply-To: <1389095509-14357-2-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Ch <ch.naveen@samsung.com>
+Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, "David S. Miller" <davem@davemloft.net>
 
-Enclose the runtime PM helpers in #ifdef CONFIG_PM_RUNTIME/#endif
-to avoid following compile warning when CONFIG_PM_RUNTIME is disabled:
+Hi Naveen,
 
- CC      drivers/media/platform/exynos4-is/fimc-core.o
-drivers/media/platform/exynos4-is/fimc-core.c:1040:12: warning: =E2=80=98=
-fimc_runtime_resume=E2=80=99 defined but not used
-drivers/media/platform/exynos4-is/fimc-core.c:1057:12: warning: =E2=80=98=
-fimc_runtime_suspend=E2=80=99 defined but not used
+Please see my comments inline.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/media/platform/exynos4-is/fimc-core.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+On Tuesday 07 of January 2014 17:21:45 Naveen Krishna Ch wrote:
+> This patch uses the platform_get_irq() instead of the
+> platform_get_irq_byname(). Making feeder control interrupt
+> as resource "0" and hash interrupt as "1".
+> 
+> reasons for this change.
+> 1. Cannot find any Arch which is currently using this driver
+> 2. Samsung Exynos5 SoCs only use the feeder control interrupt
+> 3. Patches adding support for DT and H/W version are in pipeline
+> 
+> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+> CC: Herbert Xu <herbert@gondor.apana.org.au>
+> CC: David S. Miller <davem@davemloft.net>
+> CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
+> TO: <linux-crypto@vger.kernel.org>
+> CC: <linux-samsung-soc@vger.kernel.org>
+> ---
+>  drivers/crypto/s5p-sss.c |   22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> index cf149b1..dda4551 100644
+> --- a/drivers/crypto/s5p-sss.c
+> +++ b/drivers/crypto/s5p-sss.c
+> @@ -592,29 +592,29 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  	pdata->ioaddr = devm_ioremap(dev, res->start,
+>  				     resource_size(res));
+>  
+> -	pdata->irq_hash = platform_get_irq_byname(pdev, "hash");
+> -	if (pdata->irq_hash < 0) {
+> +	pdata->irq_fc = platform_get_irq(pdev, 0);
+> +	if (pdata->irq_fc < 0) {
+>  		err = pdata->irq_hash;
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/me=
-dia/platform/exynos4-is/fimc-core.c
-index dcbea59..da2fc86 100644
---- a/drivers/media/platform/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/exynos4-is/fimc-core.c
-@@ -1037,6 +1037,7 @@ err_sclk:
- 	return ret;
- }
+Shouldn't this be also changed to err = pdata->irq_fc; ?
 
-+#ifdef CONFIG_PM_RUNTIME
- static int fimc_runtime_resume(struct device *dev)
- {
- 	struct fimc_dev *fimc =3D	dev_get_drvdata(dev);
-@@ -1069,6 +1070,7 @@ static int fimc_runtime_suspend(struct device *de=
-v)
- 	dbg("fimc%d: state: 0x%lx", fimc->id, fimc->state);
- 	return ret;
- }
-+#endif
-
- #ifdef CONFIG_PM_SLEEP
- static int fimc_resume(struct device *dev)
---
-1.7.4.1
+Best regards,
+Tomasz
