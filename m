@@ -1,49 +1,72 @@
 From: Doug Anderson <dianders@chromium.org>
 Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
-Date: Wed, 8 Jan 2014 13:33:35 -0800
-Message-ID: <CAD=FV=WV+1S65zwKRAuOfSnWzWxT_NNpYHUcj6bVyyRNXUfcGw@mail.gmail.com>
+Date: Wed, 8 Jan 2014 13:35:27 -0800
+Message-ID: <CAD=FV=XqoSGpQ_Yrjj4hvV_0FSMfQGcGEsKkL1Stnm9m5s2Xvw@mail.gmail.com>
 References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
 	<20140108143529.GB14122@mudshark.cambridge.arm.com>
 	<CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
 	<20140108192028.GM27432@n2100.arm.linux.org.uk>
 	<CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
-	<20140108210228.GO27432@n2100.arm.linux.org.uk>
+	<alpine.LFD.2.10.1401081600370.1851@knanqh.ubzr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:50364 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757084AbaAHVdg (ORCPT
+Received: from mail-vb0-f43.google.com ([209.85.212.43]:37849 "EHLO
+	mail-vb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756948AbaAHVf2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 16:33:36 -0500
-Received: by mail-ve0-f174.google.com with SMTP id pa12so1702187veb.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 13:33:36 -0800 (PST)
-In-Reply-To: <20140108210228.GO27432@n2100.arm.linux.org.uk>
+	Wed, 8 Jan 2014 16:35:28 -0500
+Received: by mail-vb0-f43.google.com with SMTP id p6so1585476vbe.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 13:35:27 -0800 (PST)
+In-Reply-To: <alpine.LFD.2.10.1401081600370.1851@knanqh.ubzr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Will Deacon <will.deacon@arm.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 
-Russell,
+Nicolas,
 
-On Wed, Jan 8, 2014 at 1:02 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Wed, Jan 08, 2014 at 11:43:29AM -0800, Doug Anderson wrote:
->> Olof came up with the idea that you could update the RW firmware
->> (affects initial boot) and then cache away the value and restore it in
->> the kernel after resume.  That would still require a kernel patch but
->> perhaps a less objectionable one.  ...of course if writing this
->> register is a problem in secure mode then maybe that patch would be
->> NAKed anyway.
+On Wed, Jan 8, 2014 at 1:08 PM, Nicolas Pitre <nico@fluxnic.net> wrote:
+> On Wed, 8 Jan 2014, Doug Anderson wrote:
 >
-> It's not a problem in secure mode, since secure mode will have access
-> to the register.  It's the non-secure mode where various registers
-> either ignore writes, or they trigger an exception that are the problem.
+>> Hi,
+>>
+>> On Wed, Jan 8, 2014 at 11:20 AM, Russell King - ARM Linux
+>> > No, we're saying to put the work-around in the boot loader, not the kernel.
+>>
+>> Unfortunately the resume path of the firmware runs from Read Only
+>> firmware code (yes, it sucks), so it's not totally trivial to fix. It
+>> would be possible for someone to unscrew their write protect switch
+>> and update their RO firmware, but that doesn't help the average user.
 >
-> Consider what would happen if an exception were to be triggered when no
-> exception handlers were installed (eg, because the MMU is not enabled.)
+> [...]
+>
+>> I'd guess that the way forward is:
+>>
+>> * Land kernel workaround locally in Chromium tree
+>>
+>> * I'll try to land FW change locally in at least one Chromium branch.
+>> If we were to get a new RO build ever (seems unlikely at this point)
+>> it would be fixed for upstream kernels.  If we were to get a new RW
+>> build (seems unlikely, but at least less unlikely) it would be fixed
+>> if someone landed a kernel patch to save/restore this register across
+>> suspend/resume.
+>>
+>> * If Joe Upstream wants to run an upstream kernel on some type of
+>> exynos5250 product (Samsung ARM Chromebook, HP Chromebook 11, Nexus 10
+>> are the ones I know of) then he will deal with the small number of
+>> crashes or figure out a solution.
+>
+> If Joe Upstream wants to run an upstream kernel, doesn't he have to
+> unscrew his write protect switch first, at which point the RO firmware
+> can be updated as well?
 
-OK, good to know.  ...so if someone wanted to code up this patch and
-send upstream they would be able to.  :)
+Actually, no.  You can move your device into dev mode and run any
+kernel you want.  You'll get an annoying "you're in dev mode" screen
+at every bootup, but otherwise it works just fine.
+
+Going into dev mode requires some special keystrokes at bootup and a
+wipe of your hard disk but no screwdrivers.
+
 
 -Doug
