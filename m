@@ -1,154 +1,107 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] Samsung Clock changes for v3.14
-Date: Wed, 08 Jan 2014 16:49:56 -0800
-Message-ID: <20140109004956.7168.34121@quantum>
-References: <3518820.nAXoIq2LQG@amdc1227> <20140108220749.6098.18052@quantum>
- <2008892.PW38q65uR0@flatron> <20140108225943.6098.47795@quantum>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v5 0/4] Exynos5 Series SCALER Driver
+Date: Thu,  9 Jan 2014 08:58:10 +0530
+Message-ID: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f41.google.com ([209.85.213.41]:37072 "EHLO
-	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752511AbaAIAuE convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:54350 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750925AbaAID2t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jan 2014 19:50:04 -0500
-Received: by mail-yh0-f41.google.com with SMTP id i72so676542yha.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2014 16:50:03 -0800 (PST)
-In-Reply-To: <20140108225943.6098.47795@quantum>
+	Wed, 8 Jan 2014 22:28:49 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: s.nawrocki@samsung.com, posciak@google.com, hverkuil@xs4all.nl, shaik.ameer@samsung.com, m.chehab@samsung.com
 
-Quoting Mike Turquette (2014-01-08 14:59:43)
-> Quoting Tomasz Figa (2014-01-08 14:43:24)
-> > On Wednesday 08 of January 2014 14:07:49 Mike Turquette wrote:
-> > > Quoting Tomasz Figa (2014-01-08 11:13:38)
-> > > > Hi Mike,
-> > > > 
-> > > > Please consider pulling following Samsung Clock changes for v3.14.
-> > > > 
-> > > > The following changes since commit 2bb00c68e094271b79deac993893461cc051b721:
-> > > 
-> > > Hi Tomasz,
-> > > 
-> > > Commit 2bb00c68 is the tip of the Samsung clk fixes that I'm about to
-> > > send out. Can you rebase this request onto the tip of clk-next?
-> > 
-> > I guess I can do it, but wouldn't this introduce merge conflicts, since
-> > some of the fixes are changing the same parts of the code?
-> 
-> Yes it will cause conflicts, but that is sometimes OK.
-> 
-> > 
-> > I based my samsung-next branch on top of your clk-next with my fixes
-> > branch merged, since that's what will end up in Linus' tree anyway. Was it
-> > not the right thing to do?
-> 
-> Well maybe I am missing something, but I think it is not the best thing.
-> The problem is that those patches will sort of be merged twice. Again
-> maybe I am missing something. The same commit IDs will be used so
-> perhaps it is OK...
-> 
-> Part of this trouble is caused by the simple way that I fork clk-next
-> from v3.xx-rc1. Since I never rebase that branch to a more recent -rc
-> then there is a delta between the fixes that go in the queue of patches
-> for the next merge window.
-> 
-> I guess one way that other subsystems handle this is by having something
-> like clk-next-late which is a new branch based on a later -rc.
-> 
-> How awful is the merge conflict resolution?
+This patch adds support for SCALER device which is a
+new device for scaling, blending, color fill  and color space
+conversion on EXYNOS5410/5420 SoCs.
 
-Thanks for working this out on IRC. I've taken this pull request into
-clk-next for 3.14.
+This device supports the following as key features.
+    input image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888, L8A8 and L8
+    output image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888
+    input rotation
+        - 0/90/180/270 degree, X/Y/XY Flip
+    scale ratio
+        - 1/4 scale down to 16 scale up
+    color space conversion
+        - RGB to YUV / YUV to RGB
+    Size - Exynos5420
+        - Input : 16x16 to 8192x8192
+        - Output:   4x4 to 8192x8192
+    Size - Exynos5410
+        - Input/Output: 4x4 to 4096x4096
+    alpha blending, color fill
 
-Regards,
-Mike
+Rebased on:
+-----------
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
 
-> 
-> Regards,
-> Mike
-> 
-> > 
-> > Best regards,
-> > Tomasz
-> > 
-> > > 
-> > > Thanks!
-> > > Mike
-> > > 
-> > > > 
-> > > >   Merge branch 'samsung-fixes' into samsung-next-base (2013-12-30 18:15:23 +0100)
-> > > > 
-> > > > are available in the git repository at:
-> > > > 
-> > > > 
-> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.14/samsung-clk
-> > > > 
-> > > > for you to fetch changes up to 59d711e9ddd2f68822a2a99fc939e11a9288b73e:
-> > > > 
-> > > >   ARM: dts: exynos5420: add input clocks to audss clock controller (2014-01-08 18:02:43 +0100)
-> > > > 
-> > > > ----------------------------------------------------------------
-> > > > (A bit late) first round of Samsung clock patches for v3.14.
-> > > > 
-> > > > ----------------------------------------------------------------
-> > > > Andrew Bresticker (7):
-> > > >       clk: exynos5250: register APLL rate table
-> > > >       clk: exynos-audss: convert to platform device
-> > > >       clk: exynos-audss: allow input clocks to be specified in device tree
-> > > >       clk: exynos5250: add clock ID for div_pcm0
-> > > >       ARM: dts: exynos5250: add input clocks to audss clock controller
-> > > >       clk: exynos-audss: add support for Exynos 5420
-> > > >       ARM: dts: exynos5420: add input clocks to audss clock controller
-> > > > 
-> > > > Andrzej Hajda (8):
-> > > >       ARM: exynos4: create a DT header defining CLK IDs
-> > > >       clk: exynos4: replace clock ID private enums with IDs from DT header
-> > > >       ARM: exynos5250: create a DT header defining CLK IDs
-> > > >       clk: exynos5250: replace clock ID private enums with IDs from DT header
-> > > >       ARM: exynos5420: create a DT header defining CLK IDs
-> > > >       clk: exynos5420: replace clock ID private enums with IDs from DT header
-> > > >       ARM: exynos5440: create a DT header defining CLK IDs
-> > > >       clk: exynos5440: replace clock ID private enums with IDs from DT header
-> > > > 
-> > > > Sachin Kamat (1):
-> > > >       clk: exynos5250: Add CLK_SET_RATE_PARENT flag to mout_apll
-> > > > 
-> > > > Tomasz Figa (7):
-> > > >       clk: samsung: exynos5250: Sort definitions by registers and bitfield
-> > > >       clk: samsung: exynos5250: Make names of mux and div clocks consistent
-> > > >       clk: samsung: exynos5250: Fix parents of gate clocks from GSCL domain
-> > > >       clk: samsung: exynos5250: Fix parent of gate clocks from DISP1 domain
-> > > >       clk: samsung: exynos5250: Add missing unpopulated mux parents
-> > > >       clk: samsung: exynos5250: Correct parent list of audio muxes
-> > > >       clk: samsung: exynos5250: Fix parents of gate clocks from MFC domain
-> > > > 
-> > > >  .../devicetree/bindings/clock/clk-exynos-audss.txt |  39 +-
-> > > >  .../devicetree/bindings/clock/exynos5250-clock.txt |   1 +
-> > > >  arch/arm/boot/dts/exynos5250.dtsi                  |   2 +
-> > > >  arch/arm/boot/dts/exynos5420.dtsi                  |   4 +-
-> > > >  drivers/clk/samsung/clk-exynos-audss.c             | 159 +++-
-> > > >  drivers/clk/samsung/clk-exynos4.c                  | 857 ++++++++++-----------
-> > > >  drivers/clk/samsung/clk-exynos5250.c               | 699 ++++++++++-------
-> > > >  drivers/clk/samsung/clk-exynos5420.c               | 648 ++++++++--------
-> > > >  drivers/clk/samsung/clk-exynos5440.c               |  81 +-
-> > > >  include/dt-bindings/clk/exynos-audss-clk.h         |   3 +-
-> > > >  include/dt-bindings/clock/exynos4.h                | 244 ++++++
-> > > >  include/dt-bindings/clock/exynos5250.h             | 160 ++++
-> > > >  include/dt-bindings/clock/exynos5420.h             | 188 +++++
-> > > >  include/dt-bindings/clock/exynos5440.h             |  42 +
-> > > >  14 files changed, 1957 insertions(+), 1170 deletions(-)
-> > > >  create mode 100644 include/dt-bindings/clock/exynos4.h
-> > > >  create mode 100644 include/dt-bindings/clock/exynos5250.h
-> > > >  create mode 100644 include/dt-bindings/clock/exynos5420.h
-> > > >  create mode 100644 include/dt-bindings/clock/exynos5440.h
-> > > > 
-> > > 
-> > > _______________________________________________
-> > > linux-arm-kernel mailing list
-> > > linux-arm-kernel@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > 
+Changes from v4:
+---------------
+Addressed review comments from, Sylwester Nawrocki and Mauro Carvalho Chehab
+Links to the review comments:
+	1] https://linuxtv.org/patch/20307/
+	2] https://linuxtv.org/patch/20308/
+	3] https://linuxtv.org/patch/20451/
+
+Changes from v3:
+---------------
+Addressed review comments from, Sylwester Nawrocki and Hans Verkuil.
+Links to the review comments:
+        1] https://linuxtv.org/patch/20072/
+        2] https://linuxtv.org/patch/20073/
+
+Changes from v2:
+---------------
+Addressed review comments from, Inki Dae, Hans Verkuil and Sylwester Nawrocki.
+Links to the review comments:
+        1] https://linuxtv.org/patch/19783/
+        2] https://linuxtv.org/patch/19784/
+        3] https://linuxtv.org/patch/19785/
+        4] https://linuxtv.org/patch/19786/
+        5] https://linuxtv.org/patch/19787/
+
+Changes from v1:
+---------------
+1] Split the previous single patch into multiple patches.
+2] Added DT binding documentation.
+3] Removed the unnecessary header file inclusions.
+4] Fix the condition check in mscl_prepare_address for swapping cb/cr addresses.
+
+Shaik Ameer Basha (4):
+  [media] exynos-scaler: Add new driver for Exynos5 SCALER
+  [media] exynos-scaler: Add core functionality for the SCALER driver
+  [media] exynos-scaler: Add m2m functionality for the SCALER driver
+  [media] exynos-scaler: Add DT bindings for SCALER driver
+
+ .../devicetree/bindings/media/exynos5-scaler.txt   |   22 +
+ drivers/media/platform/Kconfig                     |    8 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/exynos-scaler/Makefile      |    3 +
+ drivers/media/platform/exynos-scaler/scaler-m2m.c  |  788 +++++++++++++
+ drivers/media/platform/exynos-scaler/scaler-regs.c |  337 ++++++
+ drivers/media/platform/exynos-scaler/scaler-regs.h |  331 ++++++
+ drivers/media/platform/exynos-scaler/scaler.c      | 1231 ++++++++++++++++++++
+ drivers/media/platform/exynos-scaler/scaler.h      |  376 ++++++
+ 9 files changed, 3097 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+ create mode 100644 drivers/media/platform/exynos-scaler/Makefile
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.h
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler.h
+
+-- 
+1.7.9.5
