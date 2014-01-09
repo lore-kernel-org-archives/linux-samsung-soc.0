@@ -1,68 +1,30 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v5 4/4] [media] exynos-scaler: Add DT bindings for SCALER
- driver
-Date: Thu, 09 Jan 2014 10:20:07 +0100
-Message-ID: <2542868.mVreZlxTcT@amdc1032>
-References: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
- <1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 4/6 v2] crypto:s5p-sss: Kconfig: Let Exynos SoCs select
+ SSS driver
+Date: Thu, 9 Jan 2014 14:59:26 +0530
+Message-ID: <CAK9yfHyya0LwYp0f2ZrBbb9M51FVxnBkZuHqrD1ju9yDBffmqg@mail.gmail.com>
+References: <1389095509-14357-5-git-send-email-ch.naveen@samsung.com>
+	<1389243595-13207-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, posciak@google.com, hverkuil@xs4all.nl, m.chehab@samsung.com
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <1389243595-13207-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-crypto@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, vzapolskiy@gmail.com, Herbert Xu <herbert@gondor.apana.org.au>, Tomasz Figa <tomasz.figa@gmail.com>, "David S. Miller" <davem@davemloft.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Naveen,
 
-Hi,
+On 9 January 2014 10:29, Naveen Krishna Chatradhi <ch.naveen@samsung.com> wrote:
+> From: Naveen Krishna Ch <ch.naveen@samsung.com>
+>
+> This patch modifies Kconfig such that ARCH_EXYNOS SoCs
+> which includes (Exynos4210, Exynos5250 and Exynos5420)
+> can also select Samsung SSS(Security SubSystem) driver.
 
-On Thursday, January 09, 2014 08:58:14 AM Shaik Ameer Basha wrote:
-> This patch adds the DT binding documentation for the
-> Exynos5420/5410 based SCALER device driver.
-> 
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> new file mode 100644
-> index 0000000..9328e7d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> @@ -0,0 +1,22 @@
-> +* Samsung Exynos5 SCALER device
-> +
-> +SCALER is used for scaling, blending, color fill and color space
-> +conversion on EXYNOS[5420/5410] SoCs.
-> +
-> +Required properties:
-> +- compatible: should be "samsung,exynos5420-scaler" or
-> +			"samsung,exynos5410-scaler"
-> +- reg: should contain SCALER physical address location and length
-> +- interrupts: should contain SCALER interrupt number
-> +- clocks: should contain the SCALER clock specifier, from the
-> +			common clock bindings
-> +- clock-names: should be "scaler"
-> +
-> +Example:
-> +	scaler_0: scaler@12800000 {
-> +		compatible = "samsung,exynos5420-scaler";
-> +		reg = <0x12800000 0x1000>;
-> +		interrupts = <0 220 0>;
-> +		clocks = <&clock 381>;
-> +		clock-names = "scaler";
-> +	};
+What about Exynos4x12 and 5440 as they too come under ARCH_EXYNOS?
 
-Your patchset adds support for EXYNOS5 SCALER but doesn't add any real
-users of it yet.  Could you please explain why?
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+With warm regards,
+Sachin
