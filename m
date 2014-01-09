@@ -1,135 +1,130 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v5 3/9] phy: Add new Exynos USB 2.0 PHY driver
-Date: Thu, 9 Jan 2014 10:57:31 +0530
-Message-ID: <52CE3343.3020902@ti.com>
-References: <1387545857-9472-1-git-send-email-k.debski@samsung.com> <1387545857-9472-4-git-send-email-k.debski@samsung.com> <52CA818A.4090403@ti.com> <04dc01cf0c9a$f37c24d0$da746e70$%debski@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v12 0/7] cpufreq:boost: CPU Boost mode support
+Date: Thu, 09 Jan 2014 08:19:55 +0100
+Message-ID: <20140109081955.6324e08e@amdc2363>
+References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
+ <1387549495-809-1-git-send-email-l.majewski@samsung.com>
+ <20140107075824.59a1ed3c@amdc2363> <9268964.f27SUq68sj@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:47368 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751103AbaAIF1v (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jan 2014 00:27:51 -0500
-In-Reply-To: <04dc01cf0c9a$f37c24d0$da746e70$%debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <9268964.f27SUq68sj@vostro.rjw.lan>
+Sender: cpufreq-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org, rjw@sisk.pl
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
 
-Hi,
+Hi Rafael, Zhang,
 
-On Wednesday 08 January 2014 11:26 PM, Kamil Debski wrote:
+> On Tuesday, January 07, 2014 07:58:24 AM Lukasz Majewski wrote:
+> > Hi Rafael,
+> 
 > Hi,
 > 
->> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
->> Sent: Monday, January 06, 2014 11:12 AM
->>
->> Hi,
->>
->> On Friday 20 December 2013 06:54 PM, Kamil Debski wrote:
->>> Add a new driver for the Exynos USB 2.0 PHY. The new driver uses the
->>> generic PHY framework. The driver includes support for the Exynos
->> 4x10
->>> and 4x12 SoC families.
->>>
->>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>   .../devicetree/bindings/phy/samsung-phy.txt        |   55 ++++
->>>   drivers/phy/Kconfig                                |   29 ++
->>>   drivers/phy/Makefile                               |    3 +
->>>   drivers/phy/phy-exynos4210-usb2.c                  |  257
->> ++++++++++++++++
->>>   drivers/phy/phy-exynos4212-usb2.c                  |  306
->> ++++++++++++++++++++
->>>   drivers/phy/phy-samsung-usb2.c                     |  226
->> +++++++++++++++
->>>   drivers/phy/phy-samsung-usb2.h                     |   67 +++++
->>>   7 files changed, 943 insertions(+)
->>>   create mode 100644 drivers/phy/phy-exynos4210-usb2.c
->>>   create mode 100644 drivers/phy/phy-exynos4212-usb2.c
->>>   create mode 100644 drivers/phy/phy-samsung-usb2.c
->>>   create mode 100644 drivers/phy/phy-samsung-usb2.h
->>>
->> .
->> .
->> <snip>
->> .
->> .
->>
->>> diff --git a/drivers/phy/phy-samsung-usb2.h
->>> b/drivers/phy/phy-samsung-usb2.h new file mode 100644 index
->>> 0000000..ab89f91
->>> --- /dev/null
->>> +++ b/drivers/phy/phy-samsung-usb2.h
->>> @@ -0,0 +1,67 @@
->>> +/*
->>> + * Samsung SoC USB 1.1/2.0 PHY driver
->>> + *
->>> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->>> + * Author: Kamil Debski <k.debski@samsung.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> +modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + */
->>> +
->>> +#ifndef _PHY_EXYNOS_USB2_H
->>> +#define _PHY_EXYNOS_USB2_H
->>> +
->>> +#include <linux/clk.h>
->>> +#include <linux/phy/phy.h>
->>> +#include <linux/device.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/spinlock.h>
->>> +
->>> +#define KHZ 1000
->>> +#define MHZ (KHZ * KHZ)
->>> +
->>> +struct samsung_usb2_phy_driver;
->>> +struct samsung_usb2_phy_instance;
->>> +struct samsung_usb2_phy_config;
->>> +
->>> +struct samsung_usb2_phy_instance {
->>> +	const struct samsung_usb2_common_phy *cfg;
->>> +	struct clk *clk;
->>> +	struct phy *phy;
->>> +	struct samsung_usb2_phy_driver *drv;
->>> +	unsigned long rate;
->>> +	u32 clk_reg_val;
->>> +	bool enabled;
->>> +};
->>> +
->>> +struct samsung_usb2_phy_driver {
->>> +	const struct samsung_usb2_phy_config *cfg;
->>> +	struct clk *clk;
->>> +	struct device *dev;
->>> +	void __iomem *reg_phy;
->>> +	struct regmap *reg_pmu;
->>> +	struct regmap *reg_sys;
->>> +	spinlock_t lock;
->>> +	struct samsung_usb2_phy_instance instances[0];
->>
->> I think having instances as array here would allocate more space while
->> allocating 'samsung_usb2_phy_driver' in 'samsung_usb2_phy_probe'.
->>
+> > > This patch series introduces support for CPU overclocking
+> > > technique called Boost.
+> > > 
+> > > It is a follow up of a LAB governor proposal. Boost is a LAB
+> > > component:
+> > > http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
+> > > 
+> > > Boost unifies hardware based solution (e.g. Intel Nehalem) with
+> > > software oriented one (like the one done at Exynos).
+> > > For this reason cpufreq/freq_table code has been reorganized to
+> > > include common code.
+> > > 
+> > > Important design decisions:
+> > > - Boost related code is compiled-in unconditionally to cpufreq
+> > > core and disabled by default. The cpufreq_driver is responsibile
+> > > for setting boost_supported flag and providing set_boost
+> > > callback(if HW support is needed). For software managed boost,
+> > > special Kconfig flag - CONFIG_CPU_FREQ_BOOST_SW has been defined.
+> > > It will be selected only when a target platform has thermal
+> > > framework properly configured.
+> > > 
+> > > - struct cpufreq_driver has been extended with boost related
+> > > fields: -- boost_supported - when driver supports boosting
+> > >         -- boost_enabled - boost state
+> > >         -- set_boost - callback to function, which is necessary to
+> > >            enable/disable boost
+> > > 
+> > > - Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is
+> > > visible _only_ when cpufreq driver supports Boost.
+> > > 
+> > > - No special spin_lock for Boost was created. The one from cpufreq
+> > > core was reused.
+> > > 
+> > > - The Boost code doesn't rely on any policy. When boost state is
+> > > changed, then the policy list is iterated and proper adjustements
+> > > are done.
+> > > 
+> > > - To improve safety level, the thermal framework is also extended
+> > > to disable software boosting, when thermal trip point is reached.
+> > > After cooling down the boost can be enabled again. This emulates
+> > > behaviour similar to HW managed boost (like x86)
+> > > 
+> > > Tested at HW:
+> > >        Exynos 4412 3.13-rc4 Linux
+> > >        Intel Core i7-3770 3.13-rc4 Linux
+> > > 
+> > > Above patches were posted on top of kernel_pm/bleeding-edge
+> > > (SHA1: bd0f3a5d9dce48a917ce1f1047534d79c725149)
+> > > 
+> > > Lukasz Majewski (7):
+> > >   cpufreq: Add boost frequency support in core
+> > >   cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with
+> > > common boost solution
+> > >   cpufreq:boost:Kconfig: Provide support for software managed
+> > > BOOST cpufreq:exynos:Extend Exynos cpufreq driver to support boost
+> > >     framework
+> > >   Documentation:cpufreq:boost: Update BOOST documentation
+> > >   cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
+> > >   thermal:exynos:boost: Automatic enable/disable of BOOST feature
+> > > (at Exynos4412)
+> > > 
+> > >  Documentation/cpu-freq/boost.txt          |   26 +++----
+> > >  drivers/cpufreq/Kconfig                   |    4 +
+> > >  drivers/cpufreq/Kconfig.arm               |   15 ++++
+> > >  drivers/cpufreq/acpi-cpufreq.c            |   86
+> > > +++++++-------------- drivers/cpufreq/cpufreq.c                 |
+> > > 118 ++++++++++++++++++++++++++++-
+> > > drivers/cpufreq/exynos-cpufreq.c          |    3 +
+> > > drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
+> > > drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
+> > > drivers/thermal/samsung/exynos_tmu_data.c |   12 +--
+> > > include/linux/cpufreq.h                   |   24 ++++++ 10 files
+> > > changed, 261 insertions(+), 85 deletions(-)
+> > > 
+> > 
+> > A gentle ping about BOOST patches.
+> > 
+> > Its been already acked by Viresh and Eduardo.
+> > 
+> > It applies on kernel_pm/bleeding_edge SHA1:
+> > 4836deb72c5e2a9af0cb2129c1149783a26d99ab
 > 
-> I am not sure if I understand you correctly here. Maybe I will explain
-> what I intended to write. An array with size 0 at the end of a structure
-> takes no space in the structure. The benefit of using it is that after
-> the structure one can allocate a number of the array elements and
-> address them easily. Another option would be placing pointer in the
-> samsung_usb2_phy_instance and allocate memory separately, but this would
-> involve two allocations and a pointer would be always present in the 
-> structure.
+> It looks like Rui is still looking into this.
+> 
+> Rui, are you fine with this series?
 
-Al-right.. makes sense.
+I'd really appreciate Ack from Rui on this patch series.
 
-Thanks
-Kishon
+However, after Rui's comments on v9, I've completely removed the BOOST
+code from thermal core.
+
+Since the v10, I've only adjusted default data for Exynos SoC. This
+approach has been finally accepted by Eduardo (who is responsible for
+this part of the thermal subsystem) on the v12.
+
+
 > 
-> Best wishes,
+> Rafael
 > 
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
