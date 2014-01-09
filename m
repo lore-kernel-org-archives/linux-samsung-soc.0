@@ -1,257 +1,92 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/6 v2] crypto:s5p-sss: Add device tree support
-Date: Thu, 09 Jan 2014 15:14:08 +0100
-Message-ID: <52CEAEB0.80304@samsung.com>
-References: <1389095509-14357-3-git-send-email-ch.naveen@samsung.com>
- <1389243541-13122-1-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:64303 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751402AbaAIOOR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jan 2014 09:14:17 -0500
-In-reply-to: <1389243541-13122-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: [PATCH 0/6] cpufreq: use cpufreq-cpu0 driver for exynos4210 based platforms
+Date: Thu,  9 Jan 2014 21:29:19 +0530
+Message-ID: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: cpufreq@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com, shawn.guo@linaro.org, viresh.kumar@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, tomasz.figa@gmail.com, "David S. Miller" <davem@davemloft.net>
 
-Hi Naveen,
+The patch series removes the use of Exynos4210 specific cpufreq driver
+and enables to use the cpufreq-cpu0 driver for Exynos4210 based platforms.
+This is being done for few reasons.
 
-On 09.01.2014 05:59, Naveen Krishna Chatradhi wrote:
-> This patch adds device tree support to the s5p-sss.c crypto driver.
-> Implements a varient struct to address the changes in SSS hardware
-> on various SoCs from Samsung.
->
-> Also, Documentation under devicetree/bindings added.
->
-> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> CC: Herbert Xu <herbert@gondor.apana.org.au>
-> CC: David S. Miller <davem@davemloft.net>
-> CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
-> TO: <linux-crypto@vger.kernel.org>
-> CC: <linux-samsung-soc@vger.kernel.org>
-> ---
-> Changes since v1:
-> 1. Added description of the SSS module in Documentation
-> 2. Corrected the interrupts description
-> 3. Added varient struct instead of the version variable
->
->   .../devicetree/bindings/crypto/samsung-sss.txt     |   20 +++++
->   drivers/crypto/s5p-sss.c                           |   81 ++++++++++++++++++--
->   2 files changed, 95 insertions(+), 6 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
->
-> diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-> new file mode 100644
-> index 0000000..0e45b0d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-> @@ -0,0 +1,20 @@
-> +Samsung SoC SSS (Security SubSystem) module
-> +
-> +The SSS module in S5PV210 SoC supports the following:
-> +-- Feeder (FeedCtrl)
-> +-- Advanced Encryption Standard (AES)
-> +-- Data Encryption Standard (DES)/3DES
-> +-- Public Key Accelerator (PKA)
-> +-- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
-> +-- PRNG: Pseudo Random Number Generator
-> +
-> +Required properties:
-> +
-> +- compatible : Should contain entries for this and backward compatible
-> +  SSS versions:
-> +  - "samsung,s5p-secss" for S5PV210 SoC.
+(a) The Exynos4210 cpufreq driver reads/writes clock controller registers
+    bypassing the Exynos4 CCF driver which is sort of problematic.
+(b) Removes the need for having clock controller register definitions
+    in the cpufreq driver and also removes the need for statically
+    io-remapping clock controller address space (helps in moving towards
+    multiplatform kernel).
 
-As I wrote in my previous reply, please use specific compatible string 
-containing name of SoC on which the block described by it appeared 
-first. Let me say it again, for security block that showed up first on 
-S5PV210 the string will be "samsung,s5pv210-secss".
+In order to use cpufreq-cpu0 driver and provide fast cpu clock switching
+during dvfs operations, the following apporach has been used.
 
-> +- reg : Offset and length of the register set for the module
-> +- interrupts : the interrupt-specifier for the SSS module.
-> +		Two interrupts "feed control and hash" in case of S5PV210
-> +- clocks : the required gating clock for the SSS module.
-> +- clock-names : the gating clock name to be requested in the SSS driver.
-> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> index 93cddeb..78e0c37 100644
-> --- a/drivers/crypto/s5p-sss.c
-> +++ b/drivers/crypto/s5p-sss.c
-> @@ -22,6 +22,7 @@
->   #include <linux/scatterlist.h>
->   #include <linux/dma-mapping.h>
->   #include <linux/io.h>
-> +#include <linux/of.h>
->   #include <linux/crypto.h>
->   #include <linux/interrupt.h>
->
-> @@ -145,6 +146,20 @@
->   #define AES_KEY_LEN         16
->   #define CRYPTO_QUEUE_LEN    1
->
-> +/**
-> + * struct samsung_aes_varient - platform specific SSS driver data
+(a) A new CPU clock provider type has been introduced in Samsung's CCF
+    support. This clock provider type can be a compostion of multiple
+    clock blocks such as mux, dividers and gates. Typically, in Exynos
+    platforms, there are multiple clock blocks in between the output
+    of the APLL and the CPU clock domain output. Representing these
+    mutiple clock blocks within a opaque CPU clock provider type helps
+    in reducing the time taken to perform a CPU clock frequency change
+    operation, which is generally required during DVFS operations.
+    This approach was suggested by Arnd Bergmann <arnd@arndb.de> during
+    LCE-2013.
 
-typo: s/varient/variant/g
+(b) A new optional safe operating point property has been introduced
+    in the cpufreq-cpu0 driver binding. On some platforms such as the
+    Samsung Exynos, a change in CPU frequency requires a change in the
+    PLL output that drives the CPU clock. A change in PLL output
+    requires the PLL output be turned off, which implies that the CPU
+    (and other components in the CPU clock domain) be supplied with
+    an alternate clock source during the time the PLL output is changed.
 
-Anyway, I think this should be moved to the patch adding support for 
-Exynos5, as before it there is no use for this struct and it's not 
-directly related to DT support.
+    The clock speed of this alternate clock source could be higher
+    than the clock speed of the PLL at the time of switching over to
+    the alternate clock source. This temporary increase in clock speed
+    of the CPU clock domain implies that the blocks within the CPU
+    clock domain should also be supplied with an appropriate voltage
+    supply level as required to drive the CPU clock domain components
+    at the speed of the alternative clock source. This temporary
+    voltage level required during switching of CPU clock speed is
+    called safe voltage level. And the cpufreq-cpu0 driver has been
+    modified to setup the safe voltage levels during the changes
+    in CPU clock speed.
 
-> + * @has_hash_irq: true if SSS module uses hash interrupt, false otherwise
-> + * @aes_offset: AES register offset from SSS module's base.
-> + *
-> + * Specifies platform specific configuration of SSS module.
-> + * Note: A structure for driver specific platform data is used for future
-> + * expansion of its usage.
-> + */
-> +struct samsung_aes_varient {
-> +	bool			    has_hash_irq;
-> +	unsigned int		    aes_offset;
-> +};
-> +
->   struct s5p_aes_reqctx {
->   	unsigned long mode;
->   };
-> @@ -173,10 +188,56 @@ struct s5p_aes_dev {
->   	struct crypto_queue         queue;
->   	bool                        busy;
->   	spinlock_t                  lock;
-> +
-> +	struct samsung_aes_varient *varient;
->   };
->
->   static struct s5p_aes_dev *s5p_dev;
->
-> +static struct samsung_aes_varient s5p_aes_data = {
+(c) The CPU clock supply as been restructured as
+    [ Output of APLL -> Opaque CPU clock provider -> CPU clock output ]
+    And with the changes in (a) and (b) above, the cpufreq-cpu0 driver
+    can now be used and can remove the use of Exynos4210 specific
+    cpufreq driver.
 
-Remember to mark constant data as const.
+This approach is currently tried on Exynos4210 only. The same approach
+can be adopted for other Exynos SoCs as well. This patch series is
+based on linux-next master branch.
 
-> +	.has_hash_irq	= true,
-> +	.aes_offset	= 0x4000,
-> +};
-> +
-> +static const struct platform_device_id s5p_sss_ids[] = {
-> +	{
-> +		.name		= "s5p-secss",
-> +		.driver_data	= (kernel_ulong_t)&s5p_aes_data,
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, s5p_sss_ids);
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id s5p_sss_dt_match[] = {
-> +	{
-> +		.compatible = "samsung,s5p-secss",
-> +		.data = (void *)&s5p_aes_data,
+Thomas Abraham (6):
+  cpufreq: cpufreq-cpu0: allow optional safe voltage during frequency transitions
+  clk: samsung: add infrastructure to register CPU clocks
+  clk: samsung: register cpu clock provider for exynos4210 SoC
+  cpufreq: exynos: remove Exynos4210 specific cpufreq driver support
+  arm: exynos4-dt: statically add platform device for cpufreq-cpu0 platform driver
+  arm: dts: add cpu nodes for Exynos4210 SoC
 
-No need to cast pointers to (void *) explicitly.
+ .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    5 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |    6 +
+ arch/arm/boot/dts/exynos4210-trats.dts             |    6 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |    6 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |   22 +++
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    6 +
+ drivers/clk/samsung/clk-exynos4.c                  |   96 ++++++++++++-
+ drivers/clk/samsung/clk.c                          |   71 +++++++++
+ drivers/clk/samsung/clk.h                          |   37 +++++-
+ drivers/cpufreq/Kconfig.arm                        |   11 --
+ drivers/cpufreq/Makefile                           |    1 -
+ drivers/cpufreq/cpufreq-cpu0.c                     |   49 ++++++-
+ drivers/cpufreq/exynos-cpufreq.c                   |    4 +-
+ drivers/cpufreq/exynos-cpufreq.h                   |    8 -
+ drivers/cpufreq/exynos4210-cpufreq.c               |  157 --------------------
+ 15 files changed, 301 insertions(+), 184 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
 
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
-> +#else
-> +static struct of_device_id s5p_sss_dt_match[] =  {
-> +	{ },
-> +};
 
-Hmm, I don't think there is any need for this.
-
-> +#endif
-> +
-> +static inline struct samsung_aes_varient *find_s5p_sss_version
-> +				   (struct platform_device *pdev)
-> +{
-> +	if (IS_ENABLED(CONFIG_OF)) {
-> +		if (pdev->dev.of_node) {
-
-What about using a single if, as follows:
-
-if (IS_ENABLED(CONFIG_IF) && pdev->dev.of_node)
-
-> +			const struct of_device_id *match;
-> +			match = of_match_node(s5p_sss_dt_match,
-
-You can use of_match_ptr(s5p_sss_dt_match) instead of referring to the 
-table directly to eliminate the need for empty table.
-
-> +						pdev->dev.of_node);
-> +		return (struct samsung_aes_varient *)match->data;
-> +		}
-> +	}
-> +	return (struct samsung_aes_varient *)
-> +			platform_get_device_id(pdev)->driver_data;
-> +}
-> +
->   static void s5p_set_dma_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
->   {
->   	SSS_WRITE(dev, FCBRDMAS, sg_dma_address(sg));
-> @@ -564,6 +625,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
->   	struct s5p_aes_dev *pdata;
->   	struct device      *dev = &pdev->dev;
->   	struct resource    *res;
-> +	struct samsung_aes_varient *varient;
->
->   	if (s5p_dev)
->   		return -EEXIST;
-> @@ -580,6 +642,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
->   				     resource_size(res), pdev->name))
->   		return -EBUSY;
->
-> +	varient = find_s5p_sss_version(pdev);
-> +
->   	pdata->clk = devm_clk_get(dev, "secss");
->   	if (IS_ERR(pdata->clk)) {
->   		dev_err(dev, "failed to find secss clock source\n");
-> @@ -606,18 +670,21 @@ static int s5p_aes_probe(struct platform_device *pdev)
->   	}
->
-
-The if (variant->has_hash_irq) should start here and cover the whole 
-block handling second interrupt. This should be more readable.
-
->   	pdata->irq_hash = platform_get_irq(pdev, 1);
-> -	if (pdata->irq_hash < 0) {
-> +	if (varient->has_hash_irq && pdata->irq_hash < 0) {
->   		err = pdata->irq_hash;
->   		dev_warn(dev, "hash interrupt is not available.\n");
->   		goto err_irq;
->   	}
-> -	err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
-> -			       IRQF_SHARED, pdev->name, pdev);
-> -	if (err < 0) {
-> -		dev_warn(dev, "hash interrupt is not available.\n");
-> -		goto err_irq;
-> +	if (varient->has_hash_irq) {
-> +		err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
-> +				       IRQF_SHARED, pdev->name, pdev);
-> +		if (err < 0) {
-> +			dev_warn(dev, "hash interrupt is not available.\n");
-> +			goto err_irq;
-> +		}
->   	}
->
-> +	pdata->varient = varient;
->   	pdata->dev = dev;
->   	platform_set_drvdata(pdev, pdata);
->   	s5p_dev = pdata;
-> @@ -674,9 +741,11 @@ static int s5p_aes_remove(struct platform_device *pdev)
->   static struct platform_driver s5p_aes_crypto = {
->   	.probe	= s5p_aes_probe,
->   	.remove	= s5p_aes_remove,
-> +	.id_table	= s5p_sss_ids,
->   	.driver	= {
->   		.owner	= THIS_MODULE,
->   		.name	= "s5p-secss",
-> +		.of_match_table = s5p_sss_dt_match,
-
-.of_match_table = of_match_ptr(s5p_sss_dt_match),
-
-Best regards,
-Tomasz
