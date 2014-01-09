@@ -1,20 +1,20 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v5 3/4] [media] exynos-scaler: Add m2m functionality for
+Subject: Re: [PATCH v5 2/4] [media] exynos-scaler: Add core functionality for
  the SCALER driver
-Date: Thu, 09 Jan 2014 09:31:25 +0100
-Message-ID: <2693737.HeuDsQMSy5@amdc1032>
+Date: Thu, 09 Jan 2014 09:35:56 +0100
+Message-ID: <6360580.TZncfE63yq@amdc1032>
 References: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
- <1389238094-19386-4-git-send-email-shaik.ameer@samsung.com>
+ <1389238094-19386-3-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44253 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755433AbaAIIbq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:54626 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752081AbaAIIgS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jan 2014 03:31:46 -0500
-In-reply-to: <1389238094-19386-4-git-send-email-shaik.ameer@samsung.com>
+	Thu, 9 Jan 2014 03:36:18 -0500
+In-reply-to: <1389238094-19386-3-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Shaik Ameer Basha <shaik.ameer@samsung.com>
@@ -23,55 +23,110 @@ Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@v
 
 Hi,
 
-On Thursday, January 09, 2014 08:58:13 AM Shaik Ameer Basha wrote:
-> This patch adds the Makefile and memory to memory (m2m) interface
-> functionality for the SCALER driver.
-> 
-> [arun.kk@samsung.com: fix compilation issues]
+On Thursday, January 09, 2014 08:58:12 AM Shaik Ameer Basha wrote:
+> This patch adds the core functionality for the SCALER driver.
 > 
 > Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  drivers/media/platform/Kconfig                    |    8 +
->  drivers/media/platform/Makefile                   |    1 +
->  drivers/media/platform/exynos-scaler/Makefile     |    3 +
->  drivers/media/platform/exynos-scaler/scaler-m2m.c |  788 +++++++++++++++++++++
+>  drivers/media/platform/exynos-scaler/scaler.c | 1231 +++++++++++++++++++++++++
+>  drivers/media/platform/exynos-scaler/scaler.h |  376 ++++++++
+>  2 files changed, 1607 insertions(+)
+>  create mode 100644 drivers/media/platform/exynos-scaler/scaler.c
+>  create mode 100644 drivers/media/platform/exynos-scaler/scaler.h
 
-It would be cleaner to add Kconfig + Makefiles in the same patch
-that adds core functionality (patch #2) and then switch the order of
-patch #2 and patch #3.
+[...]
 
->  4 files changed, 800 insertions(+)
->  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
->  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
-> 
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index b2a4403..aec5b80 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -196,6 +196,14 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
->  	help
->  	  This is a v4l2 driver for Samsung EXYNOS5 SoC G-Scaler.
->  
-> +config VIDEO_SAMSUNG_EXYNOS_SCALER
-> +	tristate "Samsung Exynos SCALER driver"
-> +	depends on OF && VIDEO_DEV && VIDEO_V4L2 && ARCH_EXYNOS5
-
-Please check for EXYNOS5410 and EXYNOS5420 explicitly instead
-of checking just for ARCH_EXYNOS5.
-
-Also this config option doesn't need to depend on OF since
-the whole EXYNOS support is OF only now.
-
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select V4L2_MEM2MEM_DEV
-> +	help
-> +	  This is a v4l2 driver for Samsung EXYNOS5410/5420 SoC SCALER.
+> +static int scaler_probe(struct platform_device *pdev)
+> +{
+> +	struct scaler_dev *scaler;
+> +	struct resource *res;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
 > +
->  config VIDEO_SH_VEU
->  	tristate "SuperH VEU mem2mem video processing driver"
->  	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
+> +	if (!dev->of_node)
+> +		return -ENODEV;
+> +
+> +	scaler = devm_kzalloc(dev, sizeof(*scaler), GFP_KERNEL);
+> +	if (!scaler)
+> +		return -ENOMEM;
+> +
+> +	scaler->pdev = pdev;
+> +	scaler->variant = scaler_get_variant_data(pdev);
+> +
+> +	init_waitqueue_head(&scaler->irq_queue);
+> +	spin_lock_init(&scaler->slock);
+> +	mutex_init(&scaler->lock);
+> +	scaler->clock = ERR_PTR(-EINVAL);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	scaler->regs = devm_request_and_ioremap(dev, res);
+> +	if (!scaler->regs)
+> +		return -ENODEV;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +	if (!res) {
+> +		dev_err(dev, "failed to get IRQ resource\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	ret = scaler_clk_get(scaler);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = devm_request_irq(dev, res->start, scaler_irq_handler,
+> +				0, pdev->name, scaler);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to install irq (%d)\n", ret);
+> +		goto err_clk;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, scaler);
+> +	pm_runtime_enable(dev);
+> +
+> +	/* Initialize the continious memory allocator */
+> +	scaler->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+> +	if (IS_ERR(scaler->alloc_ctx)) {
+> +		ret = PTR_ERR(scaler->alloc_ctx);
+> +		goto err_clk;
+> +	}
+> +
+> +	ret = v4l2_device_register(dev, &scaler->v4l2_dev);
+> +	if (ret < 0)
+> +		goto err_clk;
+> +
+> +	ret = scaler_register_m2m_device(scaler);
+> +	if (ret < 0)
+> +		goto err_v4l2;
+> +
+> +	dev_info(dev, "registered successfully\n");
+> +	return 0;
+> +
+> +err_v4l2:
+> +	v4l2_device_unregister(&scaler->v4l2_dev);
+> +err_clk:
+> +	scaler_clk_put(scaler);
+
+vb2_dma_contig_cleanup_ctx() and pm_runtime_disable() calls on
+failure are missing
+
+> +	return ret;
+> +}
+> +
+> +static int scaler_remove(struct platform_device *pdev)
+> +{
+> +	struct scaler_dev *scaler = platform_get_drvdata(pdev);
+> +
+> +	scaler_unregister_m2m_device(scaler);
+> +	v4l2_device_unregister(&scaler->v4l2_dev);
+> +
+> +	vb2_dma_contig_cleanup_ctx(scaler->alloc_ctx);
+> +	pm_runtime_disable(&pdev->dev);
+> +	scaler_clk_put(scaler);
+> +
+> +	scaler_dbg(scaler, "%s driver unloaded\n", pdev->name);
+> +	return 0;
+> +}
 
 Best regards,
 --
