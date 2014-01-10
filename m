@@ -1,59 +1,286 @@
-From: franklinbuthelezi1@yahoo.com
-Subject: =?UTF-8?Q?DiePresse.com_Mein_Freund,_der_Fahrradh=C3=A4ndler?=
-Date: Fri, 10 Jan 2014 13:33:52 +0100 (CET)
-Message-ID: <1133012036.1389357232562.JavaMail.root@dpoportal4.diepresse.apa.net>
-Reply-To: franklinbuthelezi1@yahoo.com
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 2/6] clk: samsung: add infrastructure to register CPU clocks
+Date: Fri, 10 Jan 2014 14:25:46 +0100
+Message-ID: <20140110142546.1e8583d6@amdc2363>
+References: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com>
+ <1389283165-17708-3-git-send-email-thomas.ab@samsung.com>
+ <20140110130407.3390213d@amdc2363>
+ <CAJuA9ah7Owfo7yrZqN+iU6KYEkeoncL4AZ8rEKddNXAu6tC4aQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dpocron.diepresse.apa.net ([194.232.102.6]:42149 "EHLO
-	dpocron.diepresse.apa.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754044AbaAJMoo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jan 2014 07:44:44 -0500
-Received: from dpoportal4.diepresse.apa.net (dpoportal4.diepresse.local [192.168.0.20])
-	by dpocron.diepresse.apa.net (Postfix) with ESMTP id 8C1FD44742
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jan 2014 13:33:52 +0100 (CET)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <CAJuA9ah7Owfo7yrZqN+iU6KYEkeoncL4AZ8rEKddNXAu6tC4aQ@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, kgene.kim@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, thomas.ab@samsung.com, Lukasz Majewski <l.majewski@majess.pl>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-=46olgender Artikel auf http://diepresse.com wird Ihnen von Franklin Bu=
-thelezi empfohlen:
+Hi Thomas,
 
-Mein Freund, der Fahrradh=C3=A4ndler
-Manche Dinge ver=C3=A4ndern sich =C3=BCber die langen Wintermonate hinw=
-eg.=20
+> Hi Lukasz,
+> 
+> On Fri, Jan 10, 2014 at 5:34 PM, Lukasz Majewski
+> <l.majewski@samsung.com> wrote:
+> > Hi Thomas,
+> >
+> >> The CPU clock provider supplies the clock to the CPU clock domain.
+> >> The composition and organization of the CPU clock provider could
+> >> vary among Exynos SoCs. A CPU clock provider can be composed of
+> >> clock mux, dividers and gates. This patch defines a new clock type
+> >> for CPU clock provider and adds infrastructure to register the CPU
+> >> clock providers for Samsung platforms.
+> >>
+> >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> >> ---
+> >>  drivers/clk/samsung/clk.c |   71
+> >> +++++++++++++++++++++++++++++++++++++++++++++
+> >> drivers/clk/samsung/clk.h |   37 +++++++++++++++++++++++- 2 files
+> >> changed, 107 insertions(+), 1 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> >> index f503f32..9ac9056 100644
+> >> --- a/drivers/clk/samsung/clk.c
+> >> +++ b/drivers/clk/samsung/clk.c
+> >> @@ -316,3 +316,74 @@ unsigned long _get_rate(const char *clk_name)
+> >>
+> >>       return clk_get_rate(clk);
+> >>  }
+> >> +
+> >> +/*
+> >> + * On most platform, the core clock rate is equal to the clock
+> >> rate of
+> >> + * parent pll. This is a simple helper function to support
+> >> recalc_rate
+> >> + * callback for such platforms.
+> >> + */
+> >> +unsigned long samsung_core_clock_recalc_rate(struct clk_hw *hw,
+> >> +                             unsigned long parent_rate)
+> >> +{
+> >> +     /*
+> >> +      * Assuming that the output of the parent pll is the output
+> >> clock
+> >> +      * frequency of the core clock.
+> >> +      */
+> >> +     return parent_rate;
+> >> +}
+> >> +
+> >> +/* This is a helper function to perform clock rounding for core
+> >> clocks. */ +long samsung_core_clk_round_rate(struct clk_hw *hw,
+> >> +                     unsigned long drate, unsigned long *prate)
+> >> +{
+> >> +     struct samsung_core_clock *core_clk;
+> >> +     const struct samsung_core_clock_freq_table *freq_tbl;
+> >> +     int i;
+> >> +
+> >> +     core_clk = container_of(hw, struct samsung_core_clock, hw);
+> >> +     freq_tbl = core_clk->freq_table;
+> >> +     drate /= 1000;
+> >> +
+> >> +     for (i = 0; i < freq_tbl->freq_count; i++) {
+> >> +             if (drate >= freq_tbl->freq[i])
+> >> +                     return freq_tbl->freq[i] * 1000;
+> >> +     }
+> >> +     return freq_tbl->freq[i - 1] * 1000;
+> >> +}
+> >> +
+> >> +/* helper function to register a core clock */
+> >> +void __init samsung_coreclk_register(const char *name, const char
+> >> **parents,
+> >> +                     unsigned int num_parents, const char *pllclk,
+> >> +                     const struct clk_ops *clk_ops, unsigned int
+> >> lookup_id,
+> >> +                     const struct samsung_core_clock_freq_table
+> >> *freq_tbl) +{
+> >> +     struct samsung_core_clock *coreclk;
+> >> +     struct clk_init_data init;
+> >> +     struct clk *clk;
+> >> +
+> >> +     coreclk = kzalloc(sizeof(*coreclk), GFP_KERNEL);
+> >> +     if (!coreclk) {
+> >> +             pr_err("%s: could not allocate memory for coreclk
+> >> %s\n",
+> >> +                                     __func__, name);
+> >> +             return;
+> >> +     }
+> >> +
+> >> +     init.name = name;
+> >> +     init.flags = CLK_GET_RATE_NOCACHE;
+> >> +     init.parent_names = parents;
+> >> +     init.num_parents = num_parents;
+> >> +     init.ops = clk_ops;
+> >> +
+> >> +     coreclk->hw.init = &init;
+> >> +     coreclk->ctrl_base = reg_base;
+> >> +     coreclk->fout_pll = __clk_lookup(pllclk);
+> >> +     coreclk->freq_table = freq_tbl;
+> >> +
+> >> +     clk = clk_register(NULL, &coreclk->hw);
+> >> +     if (IS_ERR(clk)) {
+> >> +             pr_err("%s: could not register coreclk %s\n",
+> >> __func__,     name);
+> >> +             kfree(coreclk);
+> >> +             return;
+> >> +     }
+> >> +     samsung_clk_add_lookup(clk, lookup_id);
+> >> +}
+> >
+> > I think, that those definitions for samsung_core_clock shall be
+> > moved to a separate file (maybe clk-exynos-cpu.c)?
+> 
+> The additions were not really much and the samsung/clk.c file is used
+> to hold all the common code for Samsung SoCs. So the additions were
+> put into this existing file itself.
+> 
+> >
+> > Moreover, maybe you can choose a shorter name?
+> 
+> Ok, I will try to find a shorter name for in the next version.
+> 
+> >
+> >> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> >> index 31b4174..0e43023 100644
+> >> --- a/drivers/clk/samsung/clk.h
+> >> +++ b/drivers/clk/samsung/clk.h
+> >> @@ -312,6 +312,37 @@ struct samsung_pll_clock {
+> >>       __PLL(_typ, _id, NULL, _name, _pname,
+> >> CLK_GET_RATE_NOCACHE, \ _lock, _con, _rtable, _alias)
+> >>
+> >> +/**
+> >> + * struct samsung_core_clock_freq_table: table of frequency
+> >> supported by
+> >> + * a core clock and associated data if any.
+> >> + * @freq: points to a table of supported frequencies (in KHz)
+> >> + * @freq_count: number of entries in the frequency table
+> >> + * @data: core clock specific data, if any
+> >> + */
+> >> +struct samsung_core_clock_freq_table {
+> >> +     const unsigned long     *freq;       /* in KHz */
+> >> +     unsigned long           freq_count;
+> >> +     const void              *data;
+> >> +};
+> >
+> > This is another instance of a structure, which holds the frequency
+> > for the system (like struct cpufreq_frequency_table).
+> >
+> > Unfortunately, since the clk subsystem starts very early, the
+> > cpufreq_frequency_table is not yet parsed from "operating-points"
+> > attribute.
+> >
+> > Maybe we can defer the clock registration?
+> 
+> The core clock is not limited to support only those frequencies which
+> the CPU operating point specifies. The core clock type can be used
+> independent of the cpufreq driver and hence has its own set of
+> supported frequencies. The cpufreq driver, depending the operating
+> points allowed, can request the core clock to setup the requested
+> clock speed.
 
-http://diepresse.com/home/leben/mode/kolumnezumtag/548717/index.do
+The above would be true if it could have been possible to use this
+clock without cpufreq.
 
-Notiz:
-Dear friend,
-=20
-I am the international operations manager of ABSA bank South Africa. My=
- name is Franklin Buthelezi. I have a sensitive and private offer from =
-the top executive to seek your partnership in re-profiling some offshor=
-e investment funds worth 11.5M U.S.D (Eleven Million five hundred thous=
-and United States Dollars) I am constrained however to withhold most of=
- the details for now. This is a legitimate transaction.=20
-=20
-If we agree on the terms you will be given 15% of the total funds, if y=
-ou are interested please write back via email providing me your persona=
-l details and phone number for further directives.
-=20
-If you are interested and willing to render your assistance please resp=
-ond via my private email address stated below.
-=20
-I look forward to your response.
-=20
-Best regards
-=46ranklin Buthelezi
-Email: franklinbuthelezi1@yahoo.com
+Since, justification of this whole change is the clean up of cpufreq for
+Exynos, I assume that it will be only used with cpufreq. Is there any
+use case to use this clock without cpufreq?
+
+For this reason Exynos SoCs can only change frequency to the one, which
+is defined at cpufreq_frequency_table.
+
+And since the cpufreq_frequency_table is dynamically build from
+operating-points attribute, then in my opinion we shall refer to only
+one place for frequency.
+
+Similar approach - of reusing cpufreq_frequency_table is used at
+thermal core driver.
+
+> 
+> >
+> >> +
+> >> +/**
+> >> + * struct samsung_core_clock: information about clock supplied to
+> >> a CPU core.
+> >> + * @hw: handle between ccf and core clock.
+> >> + * @ctrl_base: base address of the clock controller.
+> >> + * @fout_pll: clock handle representing the clock output of the
+> >> associated PLL.
+> >> + */
+> >> +struct samsung_core_clock {
+> >> +     struct clk_hw           hw;
+> >> +     void __iomem            *ctrl_base;
+> >> +     struct clk              *fout_pll;
+> >> +     const struct samsung_core_clock_freq_table *freq_table;
+> >> +};
+> >> +
+> >> +extern unsigned long samsung_core_clock_recalc_rate(struct clk_hw
+> >> *hw,
+> >> +                             unsigned long parent_rate);
+> >> +extern long samsung_core_clk_round_rate(struct clk_hw *hw,
+> >> +                     unsigned long drate, unsigned long *prate);
+> >
+> > IMHO, those methods shall be defined as static in a separate file.
+> 
+> These two functions are generic enough to be reused for core clock
+> implementations on multiple exynos platforms. 
+
+I thought that you are going to implement this clock in a generic way,
+so by using the DT we could use it for Exynos4210/4x12 and 5250.
+
+> Only the set_rate
+> callback is the one that will be specific to SoC and core clock. The
+> SoC specific implementation can reuse these two callback funcitons
+> when registering the core clock type. That is the reason these are not
+> static functions. The 3/6 patch of this series includes the usage of
+> these functions.
+
+In my opinion we shall not duplicate per SoC constructs like for
+example:
+
+static struct apll_freq apll_freq_4412[]
+static struct apll_freq apll_freq_4212[]
+static struct apll_freq apll_freq_4210[]
+
+which would be used at different ->set_rate() callbacks.
+
+I think that the best solution would be to use one ->set_rate() with
+data parsed from DT.
+
+> 
+> Thanks,
+> Thomas.
+> 
+> >
+> >> +
+> >>  extern void __init samsung_clk_init(struct device_node *np, void
+> >> __iomem *base, unsigned long nr_clks, unsigned long *rdump,
+> >>               unsigned long nr_rdump, unsigned long *soc_rdump,
+> >> @@ -337,7 +368,11 @@ extern void __init samsung_clk_register_gate(
+> >>               struct samsung_gate_clock *clk_list, unsigned int
+> >> nr_clk); extern void __init samsung_clk_register_pll(struct
+> >> samsung_pll_clock *pll_list, unsigned int nr_clk, void __iomem
+> >> *base); -
+> >> +extern void __init samsung_coreclk_register(const char *coreclk,
+> >> +             const char **parents, unsigned int num_parents,
+> >> +             const char *pllclk, const struct clk_ops *clk_ops,
+> >> +             unsigned int lookup_id,
+> >> +             const struct samsung_core_clock_freq_table
+> >> *freq_tbl); extern unsigned long _get_rate(const char *clk_name);
+> >>
+> >>  #endif /* __SAMSUNG_CLK_H */
+> >
+> >
+> >
+> > --
+> > Best regards,
+> >
+> > Lukasz Majewski
+> >
+> > Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
 
 
-------------------------------------
-DiePresse.com =C3=BCbernimmt keine Haftung f=C3=BCr den Inhalt der pers=
-=C3=B6nlichen Nachricht.
 
-=C2=A9 DiePresse.com - http://diepresse.com
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
