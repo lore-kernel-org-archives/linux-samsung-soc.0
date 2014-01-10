@@ -1,60 +1,70 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 1/3] irqchip: exynos-combiner: call handle_bad_irq directly
-Date: Fri, 10 Jan 2014 11:38:58 +0900
-Message-ID: <52CF5D42.4000404@samsung.com>
-References: <1389321142-4073-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH 1/1] drivers: i2c: silence a compile warning in i2c-s3c2410.c
+Date: Fri, 10 Jan 2014 12:03:45 +0900
+Message-ID: <1389323025-4478-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39509 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751745AbaAJCYE (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:59924 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751642AbaAJCtH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jan 2014 21:24:04 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MZ50083CYO2BXB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jan 2014 11:24:02 +0900 (KST)
-In-reply-to: <1389321142-4073-1-git-send-email-pankaj.dubey@samsung.com>
+	Thu, 9 Jan 2014 21:49:07 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, kgene.kim@samsung.com, catalin.marinas@arm.com, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
 
-On 01/10/2014 11:32 AM, Pankaj Dubey wrote:
-> This patch is inspired from following commit
->   aec0095653: (irqchip: gic: Call handle_bad_irq() directly)
->
-> Also this will help in removing unwanted inclusion
-> of header file "asm/mach/irq.h"
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-This is single patch only. By mistake sent as Patch[1/3].
-> ---
->   drivers/irqchip/exynos-combiner.c |    3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-> index 40e6440..f8636a6 100644
-> --- a/drivers/irqchip/exynos-combiner.c
-> +++ b/drivers/irqchip/exynos-combiner.c
-> @@ -17,7 +17,6 @@
->   #include <linux/irqchip/chained_irq.h>
->   #include <linux/of_address.h>
->   #include <linux/of_irq.h>
-> -#include <asm/mach/irq.h>
->   
->   #include "irqchip.h"
->   
-> @@ -81,7 +80,7 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
->   	cascade_irq = irq_find_mapping(combiner_irq_domain, combiner_irq);
->   
->   	if (unlikely(!cascade_irq))
-> -		do_bad_IRQ(irq, desc);
-> +		handle_bad_irq(irq, desc);
->   	else
->   		generic_handle_irq(cascade_irq);
->   
+If used 64 bit compiler GCC warns that:
+
+drivers/i2c/busses/i2c-s3c2410.c: In function =E2=80=98s3c24xx_get_devi=
+ce_quirks=E2=80=99:
+drivers/i2c/busses/i2c-s3c2410.c:168:10: warning: cast from pointer to =
+integer
+of different size [-Wpointer-to-int-cast]
+
+This patch fixes this by converting "unsigned int" to "unsigned long".
+
+CC: Kukjin Kim <kgene.kim@samsung.com>
+CC: Wolfram Sang <wsa@the-dreams.de>
+CC: linux-i2c@vger.kernel.org
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-=
+s3c2410.c
+index bf8fb94..447dd98 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -101,7 +101,7 @@ enum s3c24xx_i2c_state {
+=20
+ struct s3c24xx_i2c {
+ 	wait_queue_head_t	wait;
+-	unsigned int            quirks;
++	unsigned long            quirks;
+ 	unsigned int		suspended:1;
+=20
+ 	struct i2c_msg		*msg;
+@@ -160,12 +160,13 @@ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+  * Get controller type either from device tree or platform device vari=
+ant.
+ */
+=20
+-static inline unsigned int s3c24xx_get_device_quirks(struct platform_d=
+evice *pdev)
++static inline unsigned long
++	s3c24xx_get_device_quirks(struct platform_device *pdev)
+ {
+ 	if (pdev->dev.of_node) {
+ 		const struct of_device_id *match;
+ 		match =3D of_match_node(s3c24xx_i2c_match, pdev->dev.of_node);
+-		return (unsigned int)match->data;
++		return (unsigned long)match->data;
+ 	}
+=20
+ 	return platform_get_device_id(pdev)->driver_data;
+--=20
+1.7.10.4
