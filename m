@@ -1,58 +1,46 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 4/8 v3] crypto:s5p-sss: Kconfig: Let Exynos SoCs select SSS
- driver
-Date: Fri, 10 Jan 2014 17:13:22 +0530
-Message-ID: <1389354202-31891-1-git-send-email-ch.naveen@samsung.com>
-References: <1389095509-14357-5-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 5/8 v3] clk:exynos-5250: Add gate clock for SSS module
+Date: Fri, 10 Jan 2014 17:13:49 +0530
+Message-ID: <1389354229-31936-1-git-send-email-ch.naveen@samsung.com>
+References: <1389095509-14357-6-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <1389095509-14357-5-git-send-email-ch.naveen@samsung.com>
+In-reply-to: <1389095509-14357-6-git-send-email-ch.naveen@samsung.com>
 Sender: linux-crypto-owner@vger.kernel.org
 To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, tomasz.figa@gmail.com, Naveen Krishna Ch <ch.naveen@samsung.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
+This patch adds gating clock for SSS(Security SubSystem)
+module on Exynos5250.
 
-This patch modifies Kconfig such that ARCH_EXYNOS SoCs
-which includes (Exynos4210, Exynos5250 and Exynos5420)
-can also select Samsung SSS(Security SubSystem) driver.
-
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: David S. Miller <davem@davemloft.net>
-CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
-TO: <linux-crypto@vger.kernel.org>
-CC: <linux-samsung-soc@vger.kernel.org>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
 Changes since v2:
-None
+This is a new change to support SSS on Exynos5250
 
- drivers/crypto/Kconfig |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos5250.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index f4fd837..193e8b1 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -300,15 +300,15 @@ config CRYPTO_DEV_DCP
- 	  capabilities of the DCP co-processor
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index adf3234..b47bf0a 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -120,7 +120,7 @@ enum exynos5250_clks {
+ 	spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1, hsi2c2,
+ 	hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0, tzpc1,
+ 	tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
+-	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g2d,
++	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g2d, sss,
  
- config CRYPTO_DEV_S5P
--	tristate "Support for Samsung S5PV210 crypto accelerator"
--	depends on ARCH_S5PV210
-+	tristate "Support for Samsung crypto accelerator"
-+	depends on ARCH_S5PV210 || ARCH_EXYNOS
- 	select CRYPTO_AES
- 	select CRYPTO_ALGAPI
- 	select CRYPTO_BLKCIPHER
- 	help
- 	  This option allows you to have support for S5P crypto acceleration.
--	  Select this to offload Samsung S5PV210 or S5PC110 from AES
--	  algorithms execution.
-+	  Select this to offload Samsung S5PV210 or S5PC110, Exynos4210,
-+	  Exynos5250 and Exynos5420 from AES algorithms execution.
+ 	/* mux clocks */
+ 	mout_hdmi = 1024,
+@@ -492,6 +492,7 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(mixer, "mixer", "mout_aclk200_disp1", GATE_IP_DISP1, 5, 0, 0),
+ 	GATE(hdmi, "hdmi", "mout_aclk200_disp1", GATE_IP_DISP1, 6, 0, 0),
+ 	GATE(g2d, "g2d", "aclk200", GATE_IP_ACP, 3, 0, 0),
++	GATE(sss, "sss", "aclk200", GATE_IP_ACP, 2, 0, 0),
+ };
  
- config CRYPTO_DEV_TEGRA_AES
- 	tristate "Support for TEGRA AES hw engine"
+ static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
 -- 
 1.7.9.5
