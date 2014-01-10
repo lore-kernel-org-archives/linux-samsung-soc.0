@@ -1,31 +1,41 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 8/8 v3] crypto:s5p-sss: Use clk_prepare/clk_unprepare
-Date: Fri, 10 Jan 2014 17:04:52 +0100
-Message-ID: <52D01A24.10603@samsung.com>
-References: <1389354331-32142-1-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH 1/3] irqchip: exynos-combiner: call handle_bad_irq directly
+Date: Fri, 10 Jan 2014 17:19:34 +0100
+Message-ID: <52D01D96.8000401@samsung.com>
+References: <1389321142-4073-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1389354331-32142-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, tomasz.figa@gmail.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:51662 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757892AbaAJQTn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Jan 2014 11:19:43 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MZ7002GM1CT4N70@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jan 2014 16:19:41 +0000 (GMT)
+In-reply-to: <1389321142-4073-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: tglx@linutronix.de, kgene.kim@samsung.com, catalin.marinas@arm.com, thomas.ab@samsung.com
 
-Hi Naveen,
+Hi Pankaj,
 
-On 10.01.2014 12:45, Naveen Krishna Chatradhi wrote:
-> This patch set adds use of clk_prepare/clk_unprepare as
-> required by generic clock framework.
+On 10.01.2014 03:32, Pankaj Dubey wrote:
+> This patch is inspired from following commit
+>   aec0095653: (irqchip: gic: Call handle_bad_irq() directly)
 >
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Also this will help in removing unwanted inclusion
+> of header file "asm/mach/irq.h"
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
-> Changes since v2:
-> New change to fix a WARN_ON during the bootup
->
->   drivers/crypto/s5p-sss.c |    6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+>   drivers/irqchip/exynos-combiner.c |    3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
