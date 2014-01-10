@@ -1,70 +1,46 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 1/1] drivers: i2c: silence a compile warning in i2c-s3c2410.c
-Date: Fri, 10 Jan 2014 12:03:45 +0900
-Message-ID: <1389323025-4478-1-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH 1/1] drivers: net: silence compiler warning in smc91x.c
+Date: Fri, 10 Jan 2014 12:04:06 +0900
+Message-ID: <1389323046-4521-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59924 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751642AbaAJCtH (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:44387 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751490AbaAJCtQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jan 2014 21:49:07 -0500
+	Thu, 9 Jan 2014 21:49:16 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, "David S. Miller" <davem@davemloft.net>, Jingoo Han <jg1.han@samsung.com>, netdev@vger.kernel.org
 
 If used 64 bit compiler GCC warns that:
 
-drivers/i2c/busses/i2c-s3c2410.c: In function =E2=80=98s3c24xx_get_devi=
-ce_quirks=E2=80=99:
-drivers/i2c/busses/i2c-s3c2410.c:168:10: warning: cast from pointer to =
-integer
-of different size [-Wpointer-to-int-cast]
+drivers/net/ethernet/smsc/smc91x.c:1897:7:
+warning: cast from pointer to integer of different
+size [-Wpointer-to-int-cast]
 
-This patch fixes this by converting "unsigned int" to "unsigned long".
+This patch fixes this by changing typecase from "unsigned int" to "unsigned long"
 
-CC: Kukjin Kim <kgene.kim@samsung.com>
-CC: Wolfram Sang <wsa@the-dreams.de>
-CC: linux-i2c@vger.kernel.org
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Jingoo Han <jg1.han@samsung.com> 
+CC: netdev@vger.kernel.org
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/smsc/smc91x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-=
-s3c2410.c
-index bf8fb94..447dd98 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -101,7 +101,7 @@ enum s3c24xx_i2c_state {
-=20
- struct s3c24xx_i2c {
- 	wait_queue_head_t	wait;
--	unsigned int            quirks;
-+	unsigned long            quirks;
- 	unsigned int		suspended:1;
-=20
- 	struct i2c_msg		*msg;
-@@ -160,12 +160,13 @@ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
-  * Get controller type either from device tree or platform device vari=
-ant.
- */
-=20
--static inline unsigned int s3c24xx_get_device_quirks(struct platform_d=
-evice *pdev)
-+static inline unsigned long
-+	s3c24xx_get_device_quirks(struct platform_device *pdev)
- {
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
- 		match =3D of_match_node(s3c24xx_i2c_match, pdev->dev.of_node);
--		return (unsigned int)match->data;
-+		return (unsigned long)match->data;
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 0c9b5d9..42e79b4 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -1894,7 +1894,7 @@ static int smc_probe(struct net_device *dev, void __iomem *ioaddr,
+ 	SMC_SELECT_BANK(lp, 1);
+ 	val = SMC_GET_BASE(lp);
+ 	val = ((val & 0x1F00) >> 3) << SMC_IO_SHIFT;
+-	if (((unsigned int)ioaddr & (0x3e0 << SMC_IO_SHIFT)) != val) {
++	if (((unsigned long)ioaddr & (0x3e0 << SMC_IO_SHIFT)) != val) {
+ 		netdev_warn(dev, "%s: IOADDR %p doesn't match configuration (%x).\n",
+ 			    CARDNAME, ioaddr, val);
  	}
-=20
- 	return platform_get_device_id(pdev)->driver_data;
---=20
+-- 
 1.7.10.4
