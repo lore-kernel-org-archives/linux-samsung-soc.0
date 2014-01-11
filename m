@@ -1,42 +1,57 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 1/1] drivers: net: silence compiler warning in smc91x.c
-Date: Fri, 10 Jan 2014 23:42:41 +0300
-Message-ID: <52D05B41.7000601@cogentembedded.com>
-References: <1389323046-4521-1-git-send-email-pankaj.dubey@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 0/9] cpuidle: rework device state count handling
+Date: Sat, 11 Jan 2014 01:37:29 +0100
+Message-ID: <2079155.EyEBRDoJjP@vostro.rjw.lan>
+References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:58734 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752520AbaAJTmi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jan 2014 14:42:38 -0500
-Received: by mail-la0-f52.google.com with SMTP id y1so3570166lam.39
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jan 2014 11:42:36 -0800 (PST)
-In-Reply-To: <1389323046-4521-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: "David S. Miller" <davem@davemloft.net>, Jingoo Han <jg1.han@samsung.com>, netdev@vger.kernel.org
 
-Hello.
+On Friday, December 20, 2013 07:47:22 PM Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+> 
+> Some cpuidle drivers assume that cpuidle core will handle cases where
+> device->state_count is smaller than driver->state_count, unfortunately
+> currently this is untrue (device->state_count is used only for handling
+> cpuidle state sysfs entries and driver->state_count is used for all
+> other cases) and will not be fixed in the future as device->state_count
+> is planned to be removed [1].
+> 
+> This patchset fixes such drivers (ARM EXYNOS cpuidle driver and ACPI
+> cpuidle driver), removes superflous device->state_count initialization
+> from drivers for which device->state_count equals driver->state_count
+> (POWERPC pseries cpuidle driver and intel_idle driver) and finally
+> removes state_count field from struct cpuidle_device.
+> 
+> Additionaly (while at it) this patchset fixes C1E promotion disable
+> quirk handling (in intel_idle driver) and converts cpuidle drivers code
+> to use the common cpuidle_[un]register() routines (in POWERPC pseries
+> cpuidle driver and intel_idle driver).
+> 
+> [1] http://permalink.gmane.org/gmane.linux.power-management.general/36908
+> 
+> Reference to v1:
+> 	http://comments.gmane.org/gmane.linux.power-management.general/37390
+> 
+> Changes since v1:
+> - synced patch series with next-20131220
+> - added ACKs from Daniel Lezcano
 
-On 01/10/2014 06:04 AM, Pankaj Dubey wrote:
+This series breaks boot on one of my test machines with intel_idle, so I'm
+not sure how well it has been tested.
 
-> If used 64 bit compiler GCC warns that:
+I've dropped it entirely for now.  If I have the time, I will try to identify
+the root cause of the failure, but that may not happen before the merge window.
+Sorry about that.
 
-> drivers/net/ethernet/smsc/smc91x.c:1897:7:
-> warning: cast from pointer to integer of different
-> size [-Wpointer-to-int-cast]
+Thanks!
 
-> This patch fixes this by changing typecase from "unsigned int" to "unsigned long"
-
-    Only "typecast".
-
-> CC: "David S. Miller" <davem@davemloft.net>
-> CC: Jingoo Han <jg1.han@samsung.com>
-> CC: netdev@vger.kernel.org
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-
-WBR, Sergei
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
