@@ -1,42 +1,72 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH RFC 06/10] ARM: s3c64xx: pm: Add device tree based power
- domain instantiation
-Date: Sun, 12 Jan 2014 20:34:10 +0100
-Message-ID: <52D2EE32.5060709@gmail.com>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com> <1389469372-17199-7-git-send-email-tomasz.figa@gmail.com> <20140112192910.GW29039@sirena.org.uk>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH] ARM: SAMSUNG: remove unneeded s3c24xx_init_cpu()
+Date: Sun, 12 Jan 2014 21:34:29 +0100
+Message-ID: <3865198.Kyn1P03kbU@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140112192910.GW29039-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:33842 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751062AbaALUe5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 Jan 2014 15:34:57 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 12.01.2014 20:29, Mark Brown wrote:
-> On Sat, Jan 11, 2014 at 08:42:48PM +0100, Tomasz Figa wrote:
->
->> This patch adds support for registering power domains of S3C64xx SoCs
->> and binding devices to them using device tree.
->
->> +#ifdef CONFIG_OF
->> +static struct of_device_id s3c64xx_pd_matches[] = {
->> +	{ .compatible = "samsung,s3c6400-clock", },
->> +	{ .compatible = "samsung,s3c6410-clock", },
->> +	{ },
->>   };
->
-> Looks like a rebasing issue?  Otherwise this looks nice.
+The function is nearly empty and samsung_cpu_rev is static so already 0
+making the function obsolete, therefore remove it.
 
-Hmm, what's the problem here? Maybe I'm just blind, but I fail to see 
-anything wrong (except that the array should be const...).
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/mach-s3c24xx/common.c           |    1 -
+ arch/arm/plat-samsung/cpu.c              |    7 -------
+ arch/arm/plat-samsung/include/plat/cpu.h |    1 -
+ 3 files changed, 9 deletions(-)
 
-Thanks for reviewing this.
-
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index bf57d4c..97edd4d 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -232,7 +232,6 @@ void __init s3c24xx_init_io(struct map_desc *mach_desc, int size)
+ 	} else {
+ 		samsung_cpu_id = s3c24xx_read_idcode_v4();
+ 	}
+-	s3c24xx_init_cpu();
+ 
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
+ 
+diff --git a/arch/arm/plat-samsung/cpu.c b/arch/arm/plat-samsung/cpu.c
+index 46b426e..364963a 100644
+--- a/arch/arm/plat-samsung/cpu.c
++++ b/arch/arm/plat-samsung/cpu.c
+@@ -28,13 +28,6 @@ unsigned int samsung_rev(void)
+ }
+ EXPORT_SYMBOL(samsung_rev);
+ 
+-void __init s3c24xx_init_cpu(void)
+-{
+-	/* nothing here yet */
+-
+-	samsung_cpu_rev = 0;
+-}
+-
+ void __init s3c64xx_init_cpu(void)
+ {
+ 	samsung_cpu_id = __raw_readl(S3C_VA_SYS + 0x118);
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 8f09488..262ef86 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -207,7 +207,6 @@ extern void s5p_init_irq(u32 *vic, u32 num_vic);
+ 
+ extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
+ 
+-extern void s3c24xx_init_cpu(void);
+ extern void s3c64xx_init_cpu(void);
+ extern void s5p_init_cpu(void __iomem *cpuid_addr);
+ 
+-- 
+1.7.10.4
