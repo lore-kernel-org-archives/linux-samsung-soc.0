@@ -1,66 +1,361 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/6] cpufreq: use cpufreq-cpu0 driver for exynos4210 based
- platforms
-Date: Sun, 12 Jan 2014 03:26:51 +0100
-Message-ID: <52D1FD6B.9050503@gmail.com>
-References: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com> <20140110113240.797381e6@amdc2363> <CAJuA9ahCc7b=209Tmh-O_cx2aEhPY+s_TjHHnjGk1x3duE-P1g@mail.gmail.com>
+From: Lukasz Majewski <l.majewski@majess.pl>
+Subject: Re: [PATCH 2/6] clk: samsung: add infrastructure to register CPU
+ clocks
+Date: Sun, 12 Jan 2014 09:04:41 +0100
+Message-ID: <20140112090441.23cca819@jawa>
+References: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com>
+ <1389283165-17708-3-git-send-email-thomas.ab@samsung.com>
+ <20140110130407.3390213d@amdc2363>
+ <CAJuA9ah7Owfo7yrZqN+iU6KYEkeoncL4AZ8rEKddNXAu6tC4aQ@mail.gmail.com>
+ <20140110142546.1e8583d6@amdc2363>
+ <CAJuA9aiYKb42frkE=2qDzh4Jo_mnFVm3wABJQ-3vn4Uek_AMBQ@mail.gmail.com>
+ <52D1F428.4090701@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAJuA9ahCc7b=209Tmh-O_cx2aEhPY+s_TjHHnjGk1x3duE-P1g@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, t.figa@samsung.com, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, Shawn Guo <shawn.guo@linaro.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============2726475414743328474=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <52D1F428.4090701@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, kgene.kim@samsung.com, Thomas Abraham <ta.omasab@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, t.figa@samsung.com, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10.01.2014 12:59, Thomas Abraham wrote:
-> Hi Lukasz,
->
-> On Fri, Jan 10, 2014 at 4:02 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
->> Hi Thomas,
->>
->> I've investigated the topic for a while, so if you don't mind I will
->> share my thoughts :-)
->
-> Sure. Thanks for having a look at this patch series.
->
->>
->>> The patch series removes the use of Exynos4210 specific cpufreq driver
->>> and enables to use the cpufreq-cpu0 driver for Exynos4210 based
->>> platforms. This is being done for few reasons.
->>>
->>> (a) The Exynos4210 cpufreq driver reads/writes clock controller
->>> registers bypassing the Exynos4 CCF driver which is sort of
->>> problematic.
->>
->> Also other, already supported devices suffer from it. Namely -
->> Exynos4x12 and Exynos5250.
->>
->
-> Right, I did check the cpufreq driver of these SoCs.
->
->> That's why the solution shall be as generic as possible to also work
->> with those two SoCs.
->
-> The approach taken here is to encapsulate the source of the CPU domain
-> clock in a single logical clock. The implementation of this logical
-> clock can vary for different Exynos SoCs but the interface to register
-> and use this clock is common for all Exynos SoCs. If the changes in
-> the cpufreq-cpu0 driver are accepted, the combination of cpufreq-cpu0
-> and the logical clock representing the CPU clock is sufficient to
-> provide a generic solution for Exynos4x12 and Exynos5250 SoCs.
+--===============2726475414743328474==
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/xkQSNTKiNHb4F6vjqS3/=Vi"; protocol="application/pgp-signature"
 
-Well, looking at Exynos SoCs, the structure of core block is very 
-similar on all of them. You have a single mux to select between MPLL and 
-APLL and then a number of dividers that need to be configured 
-quasi-atomically when CPU frequency is to be changed or, looking at 
-higher level, a set of registers, which values need to be changed 
-(possibly masked).
+--Sig_/xkQSNTKiNHb4F6vjqS3/=Vi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'd say it wouldn't require much more effort to make this common at 
-least for all currently supported Exynos SoCs (except 5440, which has 
-completely different clock logic).
+Dear All,
+
+> Hi Thomas, Lukasz,
+>=20
+> Let me put my two cents in.
+>=20
+> On 11.01.2014 05:43, Thomas Abraham wrote:
+> > On Fri, Jan 10, 2014 at 6:55 PM, Lukasz Majewski
+> > <l.majewski@samsung.com> wrote:
+> >> Hi Thomas,
+> >>
+> >>> Hi Lukasz,
+> >>>
+> >>> On Fri, Jan 10, 2014 at 5:34 PM, Lukasz Majewski
+> >>> <l.majewski@samsung.com> wrote:
+> [snip]
+> >>>>> +/* helper function to register a core clock */
+> >>>>> +void __init samsung_coreclk_register(const char *name, const
+> >>>>> char **parents,
+> >>>>> +                     unsigned int num_parents, const char
+> >>>>> *pllclk,
+> >>>>> +                     const struct clk_ops *clk_ops, unsigned
+> >>>>> int lookup_id,
+> >>>>> +                     const struct samsung_core_clock_freq_table
+> >>>>> *freq_tbl) +{
+> >>>>> +     struct samsung_core_clock *coreclk;
+> >>>>> +     struct clk_init_data init;
+> >>>>> +     struct clk *clk;
+> >>>>> +
+> >>>>> +     coreclk =3D kzalloc(sizeof(*coreclk), GFP_KERNEL);
+> >>>>> +     if (!coreclk) {
+> >>>>> +             pr_err("%s: could not allocate memory for coreclk
+> >>>>> %s\n",
+> >>>>> +                                     __func__, name);
+> >>>>> +             return;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     init.name =3D name;
+> >>>>> +     init.flags =3D CLK_GET_RATE_NOCACHE;
+> >>>>> +     init.parent_names =3D parents;
+> >>>>> +     init.num_parents =3D num_parents;
+> >>>>> +     init.ops =3D clk_ops;
+> >>>>> +
+> >>>>> +     coreclk->hw.init =3D &init;
+> >>>>> +     coreclk->ctrl_base =3D reg_base;
+> >>>>> +     coreclk->fout_pll =3D __clk_lookup(pllclk);
+> >>>>> +     coreclk->freq_table =3D freq_tbl;
+> >>>>> +
+> >>>>> +     clk =3D clk_register(NULL, &coreclk->hw);
+> >>>>> +     if (IS_ERR(clk)) {
+> >>>>> +             pr_err("%s: could not register coreclk %s\n",
+> >>>>> __func__,     name);
+> >>>>> +             kfree(coreclk);
+> >>>>> +             return;
+> >>>>> +     }
+> >>>>> +     samsung_clk_add_lookup(clk, lookup_id);
+> >>>>> +}
+> >>>>
+> >>>> I think, that those definitions for samsung_core_clock shall be
+> >>>> moved to a separate file (maybe clk-exynos-cpu.c)?
+> >>>
+> >>> The additions were not really much and the samsung/clk.c file is
+> >>> used to hold all the common code for Samsung SoCs. So the
+> >>> additions were put into this existing file itself.
+>=20
+> Still, separation between clock drivers and clock providers would be=20
+> nice. clk-exynos4.c and friends doesn't implement any clock handling=20
+> logic, they just define the tree of available clocks. I agree with=20
+> Lukasz that separate file would be better place for such code, just
+> as it was done with PLL drivers.
+>=20
+> In addition this would allow you to make the generic core clock
+> helpers static, as they could be moved to the same file where all the
+> core clock driver variants are implemented.
+>=20
+> >>>
+> >>>>
+> >>>> Moreover, maybe you can choose a shorter name?
+> >>>
+> >>> Ok, I will try to find a shorter name for in the next version.
+>=20
+> I'm not sure how the name (or which name) could be shorter here,
+> without impairing readability. Lukasz, can you elaborate?
+
+For example samsung_cpu_clk
+
+>=20
+> >>>
+> >>>>
+> >>>>> diff --git a/drivers/clk/samsung/clk.h
+> >>>>> b/drivers/clk/samsung/clk.h index 31b4174..0e43023 100644
+> >>>>> --- a/drivers/clk/samsung/clk.h
+> >>>>> +++ b/drivers/clk/samsung/clk.h
+> >>>>> @@ -312,6 +312,37 @@ struct samsung_pll_clock {
+> >>>>>        __PLL(_typ, _id, NULL, _name, _pname,
+> >>>>> CLK_GET_RATE_NOCACHE, \ _lock, _con, _rtable, _alias)
+> >>>>>
+> >>>>> +/**
+> >>>>> + * struct samsung_core_clock_freq_table: table of frequency
+> >>>>> supported by
+> >>>>> + * a core clock and associated data if any.
+> >>>>> + * @freq: points to a table of supported frequencies (in KHz)
+> >>>>> + * @freq_count: number of entries in the frequency table
+> >>>>> + * @data: core clock specific data, if any
+> >>>>> + */
+> >>>>> +struct samsung_core_clock_freq_table {
+> >>>>> +     const unsigned long     *freq;       /* in KHz */
+> >>>>> +     unsigned long           freq_count;
+> >>>>> +     const void              *data;
+> >>>>> +};
+> >>>>
+> >>>> This is another instance of a structure, which holds the
+> >>>> frequency for the system (like struct cpufreq_frequency_table).
+> >>>>
+> >>>> Unfortunately, since the clk subsystem starts very early, the
+> >>>> cpufreq_frequency_table is not yet parsed from "operating-points"
+> >>>> attribute.
+> >>>>
+> >>>> Maybe we can defer the clock registration?
+> >>>
+> >>> The core clock is not limited to support only those frequencies
+> >>> which the CPU operating point specifies. The core clock type can
+> >>> be used independent of the cpufreq driver and hence has its own
+> >>> set of supported frequencies. The cpufreq driver, depending the
+> >>> operating points allowed, can request the core clock to setup the
+> >>> requested clock speed.
+> >>
+> >> The above would be true if it could have been possible to use this
+> >> clock without cpufreq.
+> >>
+> >> Since, justification of this whole change is the clean up of
+> >> cpufreq for Exynos, I assume that it will be only used with
+> >> cpufreq. Is there any use case to use this clock without cpufreq?
+> >>
+> >> For this reason Exynos SoCs can only change frequency to the one,
+> >> which is defined at cpufreq_frequency_table.
+> >>
+> >> And since the cpufreq_frequency_table is dynamically build from
+> >> operating-points attribute, then in my opinion we shall refer to
+> >> only one place for frequency.
+> >>
+> >> Similar approach - of reusing cpufreq_frequency_table is used at
+> >> thermal core driver.
+> >
+> > One of the reasons for keeping the supported frequencies independent
+> > of the cpufreq table was ensure that platforms are free to use only
+> > a subset of the supported clock speed due to certain
+> > performance/power requirements particular to that platform Two or
+> > more platforms based on the same SoC can have different
+> > power/performance requirements. The case of thermal is different,
+> > it can only request for the CPU to be clocked at speeds supported
+> > by the cpufreq driver.
+> >
+> > Also, the core clock type is not limited to be used only by the
+> > cpufreq driver. It should be possible to use a platform without the
+> > cpufreq driver but still have the flexibility to change the cpu
+> > clock speed.
+> >
+>=20
+> I don't think the core clock is going to be used (in reconfigurable
+> way) with anything else than cpufreq. I agree with Thomas, though,
+> that clock drivers should not have any dependencies on other
+> subsystems. Separation is always good.
+
+One possible use case, which I can predict is the CPU frequency control
+from user space (with CPUfreq bypassed).
+
+>=20
+> However, Lukasz has a valid point. Your patch is adding third place=20
+> where list of CPU frequencies is defined. We really shouldn't have=20
+> allowed this to be scattered into two pieces with common clock
+> framework implementation, not even saying about three. This is data
+> redundancy that is not only error prone, but also a maintenance
+> issue, because whenever one wants to change the set of supported
+> frequencies, they must modify all two (or three) locations.
+
++1
+
+>=20
+> My stance on this is that we should get rid of this redundancy and I=20
+> won't Ack any patch that makes us further from this goal, unless you
+> can convince me that there is no other option.
+>=20
+> As for how I see solution for this, I believe that possible APLL=20
+> settings, core clock settings and cpufreq operating points are all=20
+> board-specific or at least SoC revision-specific. Moreover, they are
+> all closely related to themselves:
+>=20
+>   - the list of available cpufreq operating points depends on
+> available APLL and core clock configurations,
+>=20
+>   - each APLL setting has its own, specific, set of configurations of=20
+> core dividers.
+>=20
+> This makes me almost sure that what we want is a single place where
+> all (or at least all clock-related) data are specified and this is
+> probably device tree, since those can be board-specific or at least
+> SoC revision specific.
+>=20
+> >>
+> >>>
+> >>>>
+> >>>>> +
+> >>>>> +/**
+> >>>>> + * struct samsung_core_clock: information about clock supplied
+> >>>>> to a CPU core.
+> >>>>> + * @hw: handle between ccf and core clock.
+> >>>>> + * @ctrl_base: base address of the clock controller.
+> >>>>> + * @fout_pll: clock handle representing the clock output of the
+> >>>>> associated PLL.
+> >>>>> + */
+> >>>>> +struct samsung_core_clock {
+> >>>>> +     struct clk_hw           hw;
+> >>>>> +     void __iomem            *ctrl_base;
+> >>>>> +     struct clk              *fout_pll;
+> >>>>> +     const struct samsung_core_clock_freq_table *freq_table;
+> >>>>> +};
+> >>>>> +
+> >>>>> +extern unsigned long samsung_core_clock_recalc_rate(struct
+> >>>>> clk_hw *hw,
+> >>>>> +                             unsigned long parent_rate);
+> >>>>> +extern long samsung_core_clk_round_rate(struct clk_hw *hw,
+> >>>>> +                     unsigned long drate, unsigned long
+> >>>>> *prate);
+> >>>>
+> >>>> IMHO, those methods shall be defined as static in a separate
+> >>>> file.
+> >>>
+> >>> These two functions are generic enough to be reused for core clock
+> >>> implementations on multiple exynos platforms.
+> >>
+> >> I thought that you are going to implement this clock in a generic
+> >> way, so by using the DT we could use it for Exynos4210/4x12 and
+> >> 5250.
+> >>
+> >>> Only the set_rate
+> >>> callback is the one that will be specific to SoC and core clock.
+> >>> The SoC specific implementation can reuse these two callback
+> >>> funcitons when registering the core clock type. That is the
+> >>> reason these are not static functions. The 3/6 patch of this
+> >>> series includes the usage of these functions.
+> >>
+> >> In my opinion we shall not duplicate per SoC constructs like for
+> >> example:
+> >>
+> >> static struct apll_freq apll_freq_4412[]
+> >> static struct apll_freq apll_freq_4212[]
+> >> static struct apll_freq apll_freq_4210[]
+> >>
+> >> which would be used at different ->set_rate() callbacks.
+> >>
+> >> I think that the best solution would be to use one ->set_rate()
+> >> with data parsed from DT.
+> >
+> > Yes, I agree with you. The ->set_rate() callback code is not going
+> > to be repeated if the code can be reused for other Exynos SoCs.
+> >
+> > And about the values of the registers for set_rate coming in from
+> > DT, these are SoC specific values and are not different for two or
+> > more platforms using the same SoC. So why put this into DT? The
+> > same was the argument about populating all the clocks from DT.
+> > Clock blocks are not going to change from one platform to another
+> > platform which use the same SoC. They are SoC specific and not
+> > platform specific and hence there is little use in putting them
+> > into DT.
+>=20
+> Those values aren't really such generic as one might think. There
+> exist different SoC revisions on which different settings can be
+> used. Moreover, I've already seen different sets of settings even for
+> the same board in different sources of vendor kernel. This might mean
+> that those values are in fact more of configuration, than static
+> values selected for given hardware.
+
+To give an example here:
+
+Chip vendor produces a SoC with different HW revisions (rev.0, 1, 2,
+etc).
+
+For example rev 0. due to some HW bugs is not working correctly with all
+freqs listed in the SoC spec.
+
+With frequencies defined at DT and parsed in a generic way I can
+redefine the new set of frequencies at board specific DTS file without
+changing kernel code.
+
+>=20
+> Best regards,
+> Tomasz
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 Best regards,
-Tomasz
+Lukasz Majewski
+
+--Sig_/xkQSNTKiNHb4F6vjqS3/=Vi
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAlLSTJoACgkQf9/hG2YwgjFKmACcCTyQ7tpRJD1PE6xQIzljtRmf
+pGIAoI6uB+3+iujGLN/bZBqdrs7Pdeon
+=Wkdc
+-----END PGP SIGNATURE-----
+
+--Sig_/xkQSNTKiNHb4F6vjqS3/=Vi--
+
+
+--===============2726475414743328474==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2726475414743328474==--
