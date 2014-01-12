@@ -1,227 +1,76 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 3/6] clk: samsung: register cpu clock provider for exynos4210
- SoC
-Date: Sun, 12 Jan 2014 13:05:47 +0100
-Message-ID: <52D2851B.50200@gmail.com>
-References: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com>	<1389283165-17708-4-git-send-email-thomas.ab@samsung.com>	<20140110130424.6aa78438@amdc2363>	<CAJuA9aidWvkPPXFfOysqQCQ4d7q_y51zbYxHCK9d-E8+ojfN_w@mail.gmail.com>	<20140110151812.5104cc92@amdc2363>	<CAJuA9aj3ca9VNsQ9cadVH8pUpyYeaht3DufT3DW4jXuEN5BudA@mail.gmail.com>	<52D1FB94.1030006@gmail.com> <20140112092330.4baa2c77@jawa>
+Subject: Re: [PATCH RFC 01/10] ARM: s3c64xx: pm: Use name field of generic_pm_domain
+Date: Sun, 12 Jan 2014 13:16:49 +0100
+Message-ID: <52D287B1.3090106@gmail.com>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com> <1389469372-17199-2-git-send-email-tomasz.figa@gmail.com> <20140112114717.GA31318@amd.pavel.ucw.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20140112092330.4baa2c77@jawa>
-Sender: cpufreq-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@majess.pl>, Thomas Abraham <ta.omasab@gmail.com>, thomas.ab@samsung.com
-Cc: Lukasz Majewski <l.majewski@samsung.com>, devicetree@vger.kernel.org, kgene.kim@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, t.figa@samsung.com, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140112114717.GA31318@amd.pavel.ucw.cz>
+Sender: linux-pm-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12.01.2014 09:23, Lukasz Majewski wrote:
-> Dear All,
->
->> On 11.01.2014 06:25, Thomas Abraham wrote:
->>> On Fri, Jan 10, 2014 at 7:48 PM, Lukasz Majewski
->>> <l.majewski@samsung.com> wrote:
->>>>> On Fri, Jan 10, 2014 at 5:34 PM, Lukasz Majewski
->>>>> <l.majewski@samsung.com> wrote:
-[snip]
->>>>>>> +
->>>>>>> +static const struct samsung_core_clock_freq_table
->>>>>>> exyno4210_armclk_table = {
->>>>>>> +     .freq           = exynos4210_armclk_freqs,
->>>>>>> +     .freq_count     = ARRAY_SIZE(exynos4210_armclk_freqs),
->>>>>>> +     .data           = (void *)exynos4210_armclk_data,
->>>>>>> +};
->>>>>>> +
->>>>>>> +static int exynos4210_armclk_set_rate(struct clk_hw *hw,
->>>>>>> unsigned long drate,
->>>>>>> +                                     unsigned long prate)
->>>>>>> +{
->>>>>>> +     struct samsung_core_clock *armclk;
->>>>>>> +     const struct samsung_core_clock_freq_table *freq_tbl;
->>>>>>> +     unsigned long *freq_data;
->>>>>>> +     unsigned long mux_reg, idx;
->>>>>>> +     void __iomem *base;
->>>>>>> +
->>>>>>> +     if (drate == prate)
->>>>>>> +             return 0;
->>>>>>> +
->>>>>>> +     armclk = container_of(hw, struct samsung_core_clock, hw);
->>>>>>> +     freq_tbl = armclk->freq_table;
->>>>>>> +     freq_data = (unsigned long *)freq_tbl->data;
->>>>>>> +     base = armclk->ctrl_base;
->>>>>>> +
->>>>>>> +     for (idx = 0; idx < freq_tbl->freq_count; idx++, freq_data
->>>>>>> += 2)
->>>>>>> +             if ((freq_tbl->freq[idx] * 1000) == drate)
->>>>>>> +                     break;
->>>>>>> +
->>>>>>> +     if (!armclk->fout_pll)
->>>>>>> +             armclk->fout_pll = __clk_lookup("fout_apll");\
->>>>>>                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[*]
->>>>>>
->>>>>> I'm a bit confused here for two reasons. Please correct me if I'm
->>>>>> wrong.
->>>>>>
->>>>>> 1. You go into this ->set_rate() because of calling clk_set_rate
->>>>>> at "arm_clk" clock (numbered as 12 at clk-exynos4.c) at
->>>>>> cpufreq-cpu0.c
->>>>>>
->>>>>> In a Exynos4210 we have:
->>>>>> XXTI-> APLL -> fout_apll -> mout_apll -> mout_core -> div_core
->>>>>> -> div_core2 -> arm_clk
->>>>>>
->>>>>> In the code you call directly the fout_apll which changes
->>>>>> frequency. Then the change shall be propagated to all registered
->>>>>> clocks.
->>>>>> I think, that DIV and DIV1 shall be reduced before PLL change
->>>>>> [*], to reflect the changes at CCF.
->>>>>
->>>>> The core clock implementation encapsulates multiple clock blocks
->>>>> (such as dividers and muxes) which are in between the output of
->>>>> the APLL and the point that actually is the cpu domain clock
->>>>> output.
->>>>
->>>> No problem with that. I mostly agree...
->>>>
->>>>> When a clock
->>>>> frequency change has to be made, all these clock blocks
->>>>> encapsulated within the core clock are programmed by
->>>>> pre-determined values.
->>>>
->>>> And what about the situation with already defined clocks (like
->>>> "div_core" and "div_core2"). Those will not be updated when you
->>>> first call clk_set_rate() and change by hand DIV and DIV1.
->>>>
->>>> What if you would like to have the PCLK_DBG clock used in the
->>>> future? You would add it to CCF and the change will not propagate.
->>>
->>> I did intend to remove individual clock blocks which are now
->>> encapsulated within the core clock type from the clock driver file.
->>> I missed doing that in this patch series.
+Hi Pavel,
+
+On 12.01.2014 12:47, Pavel Machek wrote:
+> On Sat 2014-01-11 20:42:43, Tomasz Figa wrote:
+>> This patch removes name field from private s3c64xx_pm_domain struct and
+>> moves domain name to dedicated field of generic_pm_domain struct.
 >>
->> Yes, they should be removed, since they are encapsulated inside the
->> core clock now.
->
-> This was not my point here.
->
-> You are creating an opaque clock for cpu (like
-> "samsung_clock_cpu" [*]) , which encapsulates many other clocks
-> (mostly DIVs and MUXes to be more precise).
->
-> I don't think, that those clocks shall be removed from CCF.
->
-> I do believe, that they shall be passed as the argument to [*] and
-> recalculated.
->
-> Why the advent of [*] clock forbids me from creating and using clocks
-> based on "div_core", "div_core2" and PCLK_DBG?
->
-> What if I would like to see output of those particular clocks
-> at /sys/kernel/debug/ or use them at a custom driver?
-
-Having those clocks defined as separate entities in CCF would make them 
-accessible outside the core clock, including changing their 
-configuration, but they should be only changed on APLL change and 
-atomically. By registering them as standard CCF clocks you are providing 
-an interface to something that is not allowed.
-
-If there was a _real_ need to have them defined as separate clocks, you 
-would have to implement a separate clock type that would only allow 
-retrieving the rate from it. Maybe a read-only flag for the divider 
-clock could do, as mux clock already has such.
-
->
+>> When at it, beautify the names a bit, since they are used by genpd core
+>> as message prefixes.
 >>
->>>
->>>>
->>>>> This
->>>>> approach allows very fast clock speed switching, instead of
->>>>> traversing the entire CCF clock tree searching for individual
->>>>> clock blocks to be programmed.
->>>>
->>>> Those are mostly DIV and MUXes. Recalculation shouldn't be time
->>>> consuming.
->>>
->>> I was mainly referring to the time taken to search the clock tree
->>> for these individual clock blocks.
+>> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> ---
+>>   arch/arm/mach-s3c64xx/pm.c | 19 +++++++++----------
+>>   1 file changed, 9 insertions(+), 10 deletions(-)
 >>
->> Hmm, why couldn't you simply look-up all the needed clock at
->> initialization and keep references to them?
->
-> +1
->
+>> diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
+>> index 8cdb824..5238d66 100644
+>> --- a/arch/arm/mach-s3c64xx/pm.c
+>> +++ b/arch/arm/mach-s3c64xx/pm.c
+>> @@ -35,7 +35,6 @@
+>>   #include "regs-syscon-power.h"
 >>
->> Still, I think it is fine to directly program registers of
->> encapsulated clocks,
->
-> And then recalculate values of relevant clocks build on top of those
-> registers.
->
->> since they are not visible outside anymore and
->> there is no need for them to be visible.
->
-> Why do you assume, that those clocks won't be needed anymore? For me
-> clocks like [*] are valid clocks from CCF/user point of view.
-
-I fail to see any use cases for them. Even now from 7 of core clock 
-dividers of Exynos4210, in clk-exynos4.c only div_core and div_core2 are 
-defined.
-
-Then as I noted above, the values set to those internal blocks are 
-completely tied to used APLL setting and you can't change them 
-separately. Any potential use case would be limited to reading the 
-frequency.
-
->
+>>   struct s3c64xx_pm_domain {
+>> -	char *const name;
+>>   	u32 ena;
+>>   	u32 pwr_stat;
+>>   	struct generic_pm_domain pd;
+>> @@ -76,7 +75,7 @@ static int s3c64xx_pd_on(struct generic_pm_domain *domain)
+>>   		} while (retry--);
 >>
->>>
->>>>
->>>>>
->>>>>>
->>>>>>
->>>>>>> +
->>>>>>> +     if (drate < prate) {
->>>>>>> +             mux_reg = readl(base + SRC_CPU);
->>>>>>> +             writel(mux_reg | (1 << 16), base + SRC_CPU);
->>>>>>> +             while (((readl(base + STAT_CPU) >> 16) & 0x7) !=
->>>>>>> 2)
->>>>>>> +                     ;
->>>>>>                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ [**]
->>>>>>
->>>>>> 2. I think, the above shall be done in a following way:
->>>>>>
->>>>>>           clk_set_parent(mout_core, mout_mpll);
->>>>>>           clk_set_rate(armclk->fout_pll, drate);
->>>>>>           clk_set_parent(mout_core, mout_apll);
->>>>>>
->>>>>> The direct write to registers [**] doesn't look compliant to CCF.
->>>>>>
->>>>>
->>>>> As mentioned above, the clock block encapsulates these clock
->>>>> blocks into a single clock and only this single encapsulated
->>>>> clock is registered with CCF. The internal implementation of how
->>>>> the different clock blocks are managed within this clock is
->>>>> independent of the CCF.
->>>>
->>>> I agree, that the CPU_DIV and CPU_DIV1 shall be changed atomically
->>>> (without CCF).
->>>>
->>>> But on the situation [**] the MUX can be changed by
->>>> clk_set_parent() as it is now done at exynosXXXX-cpufreq.c code.
->>>
->>> The mux is also encapsulated into a larger clock type and this new
->>> clock type know how the mux has to be configured.
->>
->> IMHO it's fine to encapsulate the mux as well. There are no users of
->> it other than the core clock.
+>>   		if (!retry) {
+>> -			pr_err("Failed to start domain %s\n", pd->name);
+>> +			pr_err("Failed to start domain %s\n", pd->pd.name);
+>>   			return -EBUSY;
+>>   		}
 >
-> In spite of the above comment, it looks far more better to change clocks
-> with CCF API (like clk_set_parent), not by writing directly to
-> registers.
+>
+> So you changed text "failed to start domain I" to "failed to start
+> domain domain_i". Not sure that's an improvement...?
 
-This also depends on whether other entities should be able to 
-reconfigure the mux in question. If it needs to be switched only when 
-the APLL is reconfigured by core clock, then I don't think there is a 
-need to provide access to it outside.
+Right. I apparently missed this, since this error should never happen 
+unless there is something wrong with your hardware (SoC or PMIC).
+
+Still, the generic code in drivers/base/power/domain.c does not add the 
+"domain" prefix to the message. Without this patch it was printing 
+messages like
+
+I: Power-on latency exceeded, new value 1000 ns
+
+I'd say that what's need adjustment are the messages in 
+mach-s3c64xx/pm.c to print "%s: Failed to start\n" and keep things 
+consistent with higher level code.
+
+>
+> Could we get some more descriptive names for the domains?
+
+They are listed like this in user's manual, e.g. DOMAIN_F, DOMAIN_I, 
+DOMAIN_G, etc.
 
 Best regards,
 Tomasz
