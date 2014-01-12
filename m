@@ -1,193 +1,277 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 5/6] mmc: sdhci-s3c: Fix handling of bus clock switching
-Date: Sat, 11 Jan 2014 22:39:05 +0100
-Message-ID: <1389476346-20396-6-git-send-email-tomasz.figa@gmail.com>
-References: <1389476346-20396-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1389476346-20396-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Chris Ball <chris@printf.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 2/6] clk: samsung: add infrastructure to register CPU
+ clocks
+Date: Sun, 12 Jan 2014 02:47:20 +0100
+Message-ID: <52D1F428.4090701@gmail.com>
+References: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com>	<1389283165-17708-3-git-send-email-thomas.ab@samsung.com>	<20140110130407.3390213d@amdc2363>	<CAJuA9ah7Owfo7yrZqN+iU6KYEkeoncL4AZ8rEKddNXAu6tC4aQ@mail.gmail.com>	<20140110142546.1e8583d6@amdc2363> <CAJuA9aiYKb42frkE=2qDzh4Jo_mnFVm3wABJQ-3vn4Uek_AMBQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:58255 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750938AbaALBr1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 11 Jan 2014 20:47:27 -0500
+In-Reply-To: <CAJuA9aiYKb42frkE=2qDzh4Jo_mnFVm3wABJQ-3vn4Uek_AMBQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, kgene.kim@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, thomas.ab@samsung.com, Lukasz Majewski <l.majewski@majess.pl>
 
-Currently the driver assumes at probe that controller is configured for
-last valid enumerated bus clock. This assumption is completely wrong, as
-there is no way to ensure such configuration until the hardware gets
-first configured (by calling sdhci_s3c_set_clock()).
+Hi Thomas, Lukasz,
 
-This patch modifies the driver to set current clock at probe to unknown
-state (represented by negative value) and make sure that the hardware
-gets actually configured to selected clock in sdhci_s3c_set_clock().
+Let me put my two cents in.
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/mmc/host/sdhci-s3c.c | 78 ++++++++++----------------------------------
- 1 file changed, 17 insertions(+), 61 deletions(-)
+On 11.01.2014 05:43, Thomas Abraham wrote:
+> On Fri, Jan 10, 2014 at 6:55 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+>> Hi Thomas,
+>>
+>>> Hi Lukasz,
+>>>
+>>> On Fri, Jan 10, 2014 at 5:34 PM, Lukasz Majewski
+>>> <l.majewski@samsung.com> wrote:
+[snip]
+>>>>> +/* helper function to register a core clock */
+>>>>> +void __init samsung_coreclk_register(const char *name, const char
+>>>>> **parents,
+>>>>> +                     unsigned int num_parents, const char *pllclk,
+>>>>> +                     const struct clk_ops *clk_ops, unsigned int
+>>>>> lookup_id,
+>>>>> +                     const struct samsung_core_clock_freq_table
+>>>>> *freq_tbl) +{
+>>>>> +     struct samsung_core_clock *coreclk;
+>>>>> +     struct clk_init_data init;
+>>>>> +     struct clk *clk;
+>>>>> +
+>>>>> +     coreclk = kzalloc(sizeof(*coreclk), GFP_KERNEL);
+>>>>> +     if (!coreclk) {
+>>>>> +             pr_err("%s: could not allocate memory for coreclk
+>>>>> %s\n",
+>>>>> +                                     __func__, name);
+>>>>> +             return;
+>>>>> +     }
+>>>>> +
+>>>>> +     init.name = name;
+>>>>> +     init.flags = CLK_GET_RATE_NOCACHE;
+>>>>> +     init.parent_names = parents;
+>>>>> +     init.num_parents = num_parents;
+>>>>> +     init.ops = clk_ops;
+>>>>> +
+>>>>> +     coreclk->hw.init = &init;
+>>>>> +     coreclk->ctrl_base = reg_base;
+>>>>> +     coreclk->fout_pll = __clk_lookup(pllclk);
+>>>>> +     coreclk->freq_table = freq_tbl;
+>>>>> +
+>>>>> +     clk = clk_register(NULL, &coreclk->hw);
+>>>>> +     if (IS_ERR(clk)) {
+>>>>> +             pr_err("%s: could not register coreclk %s\n",
+>>>>> __func__,     name);
+>>>>> +             kfree(coreclk);
+>>>>> +             return;
+>>>>> +     }
+>>>>> +     samsung_clk_add_lookup(clk, lookup_id);
+>>>>> +}
+>>>>
+>>>> I think, that those definitions for samsung_core_clock shall be
+>>>> moved to a separate file (maybe clk-exynos-cpu.c)?
+>>>
+>>> The additions were not really much and the samsung/clk.c file is used
+>>> to hold all the common code for Samsung SoCs. So the additions were
+>>> put into this existing file itself.
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 7e14db0..bad0e00 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -51,7 +51,7 @@ struct sdhci_s3c {
- 	struct platform_device	*pdev;
- 	struct resource		*ioarea;
- 	struct s3c_sdhci_platdata *pdata;
--	unsigned int		cur_clk;
-+	int			cur_clk;
- 	int			ext_cd_irq;
- 	int			ext_cd_gpio;
- 
-@@ -78,32 +78,6 @@ static inline struct sdhci_s3c *to_s3c(struct sdhci_host *host)
- }
- 
- /**
-- * get_curclk - convert ctrl2 register to clock source number
-- * @ctrl2: Control2 register value.
-- */
--static u32 get_curclk(u32 ctrl2)
--{
--	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--	ctrl2 >>= S3C_SDHCI_CTRL2_SELBASECLK_SHIFT;
--
--	return ctrl2;
--}
--
--static void sdhci_s3c_check_sclk(struct sdhci_host *host)
--{
--	struct sdhci_s3c *ourhost = to_s3c(host);
--	u32 tmp = readl(host->ioaddr + S3C_SDHCI_CONTROL2);
--
--	if (get_curclk(tmp) != ourhost->cur_clk) {
--		dev_dbg(&ourhost->pdev->dev, "restored ctrl2 clock setting\n");
--
--		tmp &= ~S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--		tmp |= ourhost->cur_clk << S3C_SDHCI_CTRL2_SELBASECLK_SHIFT;
--		writel(tmp, host->ioaddr + S3C_SDHCI_CONTROL2);
--	}
--}
--
--/**
-  * sdhci_s3c_get_max_clk - callback to get maximum clock frequency.
-  * @host: The SDHCI host instance.
-  *
-@@ -115,11 +89,6 @@ static unsigned int sdhci_s3c_get_max_clk(struct sdhci_host *host)
- 	unsigned long rate, max = 0;
- 	int src;
- 
--	/* note, a reset will reset the clock source */
--
--	sdhci_s3c_check_sclk(host);
--
--
- 	for (src = 0; src < MAX_BUS_CLK; src++) {
- 		rate = ourhost->clk_rates[src];
- 		if (rate > max)
-@@ -206,20 +175,22 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
- 		struct clk *clk = ourhost->clk_bus[best_src];
- 
- 		clk_prepare_enable(clk);
--		clk_disable_unprepare(ourhost->clk_bus[ourhost->cur_clk]);
--
--		/* turn clock off to card before changing clock source */
--		writew(0, host->ioaddr + SDHCI_CLOCK_CONTROL);
-+		if (ourhost->cur_clk >= 0)
-+			clk_disable_unprepare(
-+					ourhost->clk_bus[ourhost->cur_clk]);
- 
- 		ourhost->cur_clk = best_src;
- 		host->max_clk = ourhost->clk_rates[best_src];
--
--		ctrl = readl(host->ioaddr + S3C_SDHCI_CONTROL2);
--		ctrl &= ~S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--		ctrl |= best_src << S3C_SDHCI_CTRL2_SELBASECLK_SHIFT;
--		writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
- 	}
- 
-+	/* turn clock off to card before changing clock source */
-+	writew(0, host->ioaddr + SDHCI_CLOCK_CONTROL);
-+
-+	ctrl = readl(host->ioaddr + S3C_SDHCI_CONTROL2);
-+	ctrl &= ~S3C_SDHCI_CTRL2_SELBASECLK_MASK;
-+	ctrl |= best_src << S3C_SDHCI_CTRL2_SELBASECLK_SHIFT;
-+	writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
-+
- 	/* reprogram default hardware configuration */
- 	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
- 		host->ioaddr + S3C64XX_SDHCI_CONTROL4);
-@@ -573,6 +544,7 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 	sc->host = host;
- 	sc->pdev = pdev;
- 	sc->pdata = pdata;
-+	sc->cur_clk = -1;
- 
- 	platform_set_drvdata(pdev, host);
- 
-@@ -595,13 +567,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 			continue;
- 
- 		clks++;
--
--		/*
--		 * save current clock index to know which clock bus
--		 * is used later in overriding functions.
--		 */
--		sc->cur_clk = ptr;
--
- 		sc->clk_rates[ptr] = clk_get_rate(sc->clk_bus[ptr]);
- 
- 		dev_info(dev, "clock source %d: %s (%ld Hz)\n",
-@@ -614,10 +579,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 		goto err_no_busclks;
- 	}
- 
--#ifndef CONFIG_PM_RUNTIME
--	clk_prepare_enable(sc->clk_bus[sc->cur_clk]);
--#endif
--
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	host->ioaddr = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(host->ioaddr)) {
-@@ -730,10 +691,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 	return 0;
- 
-  err_req_regs:
--#ifndef CONFIG_PM_RUNTIME
--	clk_disable_unprepare(sc->clk_bus[sc->cur_clk]);
--#endif
--
-  err_no_busclks:
- 	clk_disable_unprepare(sc->clk_io);
- 
-@@ -764,9 +721,6 @@ static int sdhci_s3c_remove(struct platform_device *pdev)
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
--#ifndef CONFIG_PM_RUNTIME
--	clk_disable_unprepare(sc->clk_bus[sc->cur_clk]);
--#endif
- 	clk_disable_unprepare(sc->clk_io);
- 
- 	sdhci_free_host(host);
-@@ -800,7 +754,8 @@ static int sdhci_s3c_runtime_suspend(struct device *dev)
- 
- 	ret = sdhci_runtime_suspend_host(host);
- 
--	clk_disable_unprepare(ourhost->clk_bus[ourhost->cur_clk]);
-+	if (ourhost->cur_clk >= 0)
-+		clk_disable_unprepare(ourhost->clk_bus[ourhost->cur_clk]);
- 	clk_disable_unprepare(busclk);
- 	return ret;
- }
-@@ -813,7 +768,8 @@ static int sdhci_s3c_runtime_resume(struct device *dev)
- 	int ret;
- 
- 	clk_prepare_enable(busclk);
--	clk_prepare_enable(ourhost->clk_bus[ourhost->cur_clk]);
-+	if (ourhost->cur_clk >= 0)
-+		clk_prepare_enable(ourhost->clk_bus[ourhost->cur_clk]);
- 	ret = sdhci_runtime_resume_host(host);
- 	return ret;
- }
--- 
-1.8.5.2
+Still, separation between clock drivers and clock providers would be 
+nice. clk-exynos4.c and friends doesn't implement any clock handling 
+logic, they just define the tree of available clocks. I agree with 
+Lukasz that separate file would be better place for such code, just as 
+it was done with PLL drivers.
 
+In addition this would allow you to make the generic core clock helpers 
+static, as they could be moved to the same file where all the core clock 
+driver variants are implemented.
+
+>>>
+>>>>
+>>>> Moreover, maybe you can choose a shorter name?
+>>>
+>>> Ok, I will try to find a shorter name for in the next version.
+
+I'm not sure how the name (or which name) could be shorter here, without 
+impairing readability. Lukasz, can you elaborate?
+
+>>>
+>>>>
+>>>>> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+>>>>> index 31b4174..0e43023 100644
+>>>>> --- a/drivers/clk/samsung/clk.h
+>>>>> +++ b/drivers/clk/samsung/clk.h
+>>>>> @@ -312,6 +312,37 @@ struct samsung_pll_clock {
+>>>>>        __PLL(_typ, _id, NULL, _name, _pname,
+>>>>> CLK_GET_RATE_NOCACHE, \ _lock, _con, _rtable, _alias)
+>>>>>
+>>>>> +/**
+>>>>> + * struct samsung_core_clock_freq_table: table of frequency
+>>>>> supported by
+>>>>> + * a core clock and associated data if any.
+>>>>> + * @freq: points to a table of supported frequencies (in KHz)
+>>>>> + * @freq_count: number of entries in the frequency table
+>>>>> + * @data: core clock specific data, if any
+>>>>> + */
+>>>>> +struct samsung_core_clock_freq_table {
+>>>>> +     const unsigned long     *freq;       /* in KHz */
+>>>>> +     unsigned long           freq_count;
+>>>>> +     const void              *data;
+>>>>> +};
+>>>>
+>>>> This is another instance of a structure, which holds the frequency
+>>>> for the system (like struct cpufreq_frequency_table).
+>>>>
+>>>> Unfortunately, since the clk subsystem starts very early, the
+>>>> cpufreq_frequency_table is not yet parsed from "operating-points"
+>>>> attribute.
+>>>>
+>>>> Maybe we can defer the clock registration?
+>>>
+>>> The core clock is not limited to support only those frequencies which
+>>> the CPU operating point specifies. The core clock type can be used
+>>> independent of the cpufreq driver and hence has its own set of
+>>> supported frequencies. The cpufreq driver, depending the operating
+>>> points allowed, can request the core clock to setup the requested
+>>> clock speed.
+>>
+>> The above would be true if it could have been possible to use this
+>> clock without cpufreq.
+>>
+>> Since, justification of this whole change is the clean up of cpufreq for
+>> Exynos, I assume that it will be only used with cpufreq. Is there any
+>> use case to use this clock without cpufreq?
+>>
+>> For this reason Exynos SoCs can only change frequency to the one, which
+>> is defined at cpufreq_frequency_table.
+>>
+>> And since the cpufreq_frequency_table is dynamically build from
+>> operating-points attribute, then in my opinion we shall refer to only
+>> one place for frequency.
+>>
+>> Similar approach - of reusing cpufreq_frequency_table is used at
+>> thermal core driver.
+>
+> One of the reasons for keeping the supported frequencies independent
+> of the cpufreq table was ensure that platforms are free to use only a
+> subset of the supported clock speed due to certain performance/power
+> requirements particular to that platform Two or more platforms based
+> on the same SoC can have different power/performance requirements. The
+> case of thermal is different, it can only request for the CPU to be
+> clocked at speeds supported by the cpufreq driver.
+>
+> Also, the core clock type is not limited to be used only by the
+> cpufreq driver. It should be possible to use a platform without the
+> cpufreq driver but still have the flexibility to change the cpu clock
+> speed.
+>
+
+I don't think the core clock is going to be used (in reconfigurable way) 
+with anything else than cpufreq. I agree with Thomas, though, that clock 
+drivers should not have any dependencies on other subsystems. Separation 
+is always good.
+
+However, Lukasz has a valid point. Your patch is adding third place 
+where list of CPU frequencies is defined. We really shouldn't have 
+allowed this to be scattered into two pieces with common clock framework 
+implementation, not even saying about three. This is data redundancy 
+that is not only error prone, but also a maintenance issue, because 
+whenever one wants to change the set of supported frequencies, they must 
+modify all two (or three) locations.
+
+My stance on this is that we should get rid of this redundancy and I 
+won't Ack any patch that makes us further from this goal, unless you can 
+convince me that there is no other option.
+
+As for how I see solution for this, I believe that possible APLL 
+settings, core clock settings and cpufreq operating points are all 
+board-specific or at least SoC revision-specific. Moreover, they are all 
+closely related to themselves:
+
+  - the list of available cpufreq operating points depends on available 
+APLL and core clock configurations,
+
+  - each APLL setting has its own, specific, set of configurations of 
+core dividers.
+
+This makes me almost sure that what we want is a single place where all 
+(or at least all clock-related) data are specified and this is probably 
+device tree, since those can be board-specific or at least SoC revision 
+specific.
+
+>>
+>>>
+>>>>
+>>>>> +
+>>>>> +/**
+>>>>> + * struct samsung_core_clock: information about clock supplied to
+>>>>> a CPU core.
+>>>>> + * @hw: handle between ccf and core clock.
+>>>>> + * @ctrl_base: base address of the clock controller.
+>>>>> + * @fout_pll: clock handle representing the clock output of the
+>>>>> associated PLL.
+>>>>> + */
+>>>>> +struct samsung_core_clock {
+>>>>> +     struct clk_hw           hw;
+>>>>> +     void __iomem            *ctrl_base;
+>>>>> +     struct clk              *fout_pll;
+>>>>> +     const struct samsung_core_clock_freq_table *freq_table;
+>>>>> +};
+>>>>> +
+>>>>> +extern unsigned long samsung_core_clock_recalc_rate(struct clk_hw
+>>>>> *hw,
+>>>>> +                             unsigned long parent_rate);
+>>>>> +extern long samsung_core_clk_round_rate(struct clk_hw *hw,
+>>>>> +                     unsigned long drate, unsigned long *prate);
+>>>>
+>>>> IMHO, those methods shall be defined as static in a separate file.
+>>>
+>>> These two functions are generic enough to be reused for core clock
+>>> implementations on multiple exynos platforms.
+>>
+>> I thought that you are going to implement this clock in a generic way,
+>> so by using the DT we could use it for Exynos4210/4x12 and 5250.
+>>
+>>> Only the set_rate
+>>> callback is the one that will be specific to SoC and core clock. The
+>>> SoC specific implementation can reuse these two callback funcitons
+>>> when registering the core clock type. That is the reason these are not
+>>> static functions. The 3/6 patch of this series includes the usage of
+>>> these functions.
+>>
+>> In my opinion we shall not duplicate per SoC constructs like for
+>> example:
+>>
+>> static struct apll_freq apll_freq_4412[]
+>> static struct apll_freq apll_freq_4212[]
+>> static struct apll_freq apll_freq_4210[]
+>>
+>> which would be used at different ->set_rate() callbacks.
+>>
+>> I think that the best solution would be to use one ->set_rate() with
+>> data parsed from DT.
+>
+> Yes, I agree with you. The ->set_rate() callback code is not going to
+> be repeated if the code can be reused for other Exynos SoCs.
+>
+> And about the values of the registers for set_rate coming in from DT,
+> these are SoC specific values and are not different for two or more
+> platforms using the same SoC. So why put this into DT? The same was
+> the argument about populating all the clocks from DT. Clock blocks are
+> not going to change from one platform to another platform which use
+> the same SoC. They are SoC specific and not platform specific and
+> hence there is little use in putting them into DT.
+
+Those values aren't really such generic as one might think. There exist 
+different SoC revisions on which different settings can be used. 
+Moreover, I've already seen different sets of settings even for the same 
+board in different sources of vendor kernel. This might mean that those 
+values are in fact more of configuration, than static values selected 
+for given hardware.
+
+Best regards,
+Tomasz
