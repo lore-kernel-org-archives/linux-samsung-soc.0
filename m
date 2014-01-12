@@ -1,86 +1,38 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/6] cpufreq: cpufreq-cpu0: allow optional safe voltage
- during frequency transitions
-Date: Sun, 12 Jan 2014 14:39:48 +0100
-Message-ID: <52D29B24.3070601@gmail.com>
-References: <1389283165-17708-1-git-send-email-thomas.ab@samsung.com> <1389283165-17708-2-git-send-email-thomas.ab@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH RFC 01/10] ARM: s3c64xx: pm: Use name field of
+ generic_pm_domain
+Date: Sun, 12 Jan 2014 19:53:37 +0100
+Message-ID: <20140112185337.GA6810@amd.pavel.ucw.cz>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+ <1389469372-17199-2-git-send-email-tomasz.figa@gmail.com>
+ <20140112114717.GA31318@amd.pavel.ucw.cz>
+ <52D287B1.3090106@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1389283165-17708-2-git-send-email-thomas.ab@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>, cpufreq@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com, shawn.guo@linaro.org, viresh.kumar@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51460 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750956AbaALSxj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 Jan 2014 13:53:39 -0500
+Content-Disposition: inline
+In-Reply-To: <52D287B1.3090106@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>
 
-Hi Thomas,
+Hi!
 
-Please see my comments inline.
+> >Could we get some more descriptive names for the domains?
+> 
+> They are listed like this in user's manual, e.g. DOMAIN_F, DOMAIN_I,
+> DOMAIN_G, etc.
 
-On 09.01.2014 16:59, Thomas Abraham wrote:
-[snip]
-> @@ -69,12 +71,26 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
->   		 new_freq / 1000, volt ? volt / 1000 : -1);
->
->   	/* scaling up?  scale voltage before frequency */
-> -	if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
-> +	if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
-> +				new_freq >= safe_frequency) {
->   		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
->   		if (ret) {
->   			pr_err("failed to scale voltage up: %d\n", ret);
->   			return ret;
->   		}
-> +	} else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
-> +		/*
-> +		 * the scaled up voltage level for the new_freq is lower
-> +		 * than the safe voltage level. so set safe_voltage
-> +		 * as the intermediate voltage level and revert it
-> +		 * back after the frequency has been changed.
-> +		 */
-> +		ret = regulator_set_voltage(cpu_reg, safe_voltage,
-> +						safe_voltage);
+I guessed so. So the manual sucks. Would it be feasible to get it more
+descriptive (like "Domain_G (GPU)")?
 
-Shouldn't the tolerance be used here as well?
-
-> +		if (ret) {
-> +			pr_err("failed to set safe voltage: %d\n", ret);
-> +			return ret;
-> +		}
->   	}
->
->   	ret = clk_set_rate(cpu_clk, freq_exact);
-> @@ -94,6 +110,19 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
->   		}
->   	}
->
-> +	/*
-> +	 * if safe voltage was applied during voltage scale up, then set
-> +	 * the correct target voltage now.
-> +	 */
-> +	if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
-> +					new_freq < safe_frequency) {
-> +		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
-> +		if (ret) {
-> +			pr_err("failed to scale voltage up: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-
-I believe that it would be enough to reuse the if block of scaling down 
-instead of repeating the same code, just the condition must be slightly 
-modified:
-
--	/* scaling down?  scale voltage after frequency */
--	if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
-+	/*
-+	 * scaling down or below safe frequency?
-+	 * scale voltage after frequency
-+	 */
-+	if (!IS_ERR(cpu_reg)
-+	    && (new_freq < old_freq || new_freq < safe_frequency)) {
-
-Best regards,
-Tomasz
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
