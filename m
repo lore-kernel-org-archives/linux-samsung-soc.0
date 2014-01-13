@@ -1,62 +1,87 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RFC 06/10] ARM: s3c64xx: pm: Add device tree based power
- domain instantiation
-Date: Mon, 13 Jan 2014 12:17:26 +0000
-Message-ID: <20140113121726.GQ29039@sirena.org.uk>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
- <1389469372-17199-7-git-send-email-tomasz.figa@gmail.com>
- <20140112192910.GW29039@sirena.org.uk>
- <52D2EE32.5060709@gmail.com>
- <20140113110935.GB29039@sirena.org.uk>
- <52D3D880.2090300@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 0/6] mmc: sdhci-s3c: Fix base clock source management
+Date: Mon, 13 Jan 2014 13:43:59 +0100
+Message-ID: <52D3DF8F.4000109@samsung.com>
+References: <1389476346-20396-1-git-send-email-tomasz.figa@gmail.com>
+ <1704043.sYrCOYas4N@phil> <52D37DE7.1000407@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yhCE4sTDB5mqd9YJ"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <52D3D880.2090300@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46135 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751362AbaAMMoL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jan 2014 07:44:11 -0500
+In-reply-to: <52D37DE7.1000407@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
+Hi Jaehoon, Heiko,
 
---yhCE4sTDB5mqd9YJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 13.01.2014 06:47, Jaehoon Chung wrote:
+> Hi, All.
+>
+> On 01/13/2014 06:18 AM, Heiko St=C3=BCbner wrote:
+>> Am Samstag, 11. Januar 2014, 22:39:00 schrieb Tomasz Figa:
+>>> Tested on S3C6410-based Mini6410 board, with following performance
+>>> figures:
+>>>
+>>> * Before this series (133 MHz HCLK always selected, leading to at m=
+ost
+>>>    33 MHz card clock):
+>>>
+>>> root@tiny6410:~# hdparm -t /dev/mmcblk0
+>>>
+>>> /dev/mmcblk0:
+>>>   Timing buffered disk reads:  42 MB in  3.10 seconds =3D  13.54 MB=
+/sec
+>>
+>> # hdparm -t /dev/mmcblk0
+>>
+>> /dev/mmcblk0:
+>>   Timing buffered disk reads: 44 MB in  3.12 seconds =3D  14.11 MB/s=
+ec
+>
+> /dev/mmcblk0:
+>   Timing buffered disk reads:  38 MB in  3.14 seconds =3D  12.12 MB/s=
+ec
+>>
+>>
+>>> * After this series (48 MHz EPLL clock selected, leading to 48 MHz =
+card
+>>>    clock):
+>>>
+>>> root@tiny6410:~# hdparm -t /dev/mmcblk0
+>>>
+>>> /dev/mmcblk0:
+>>>   Timing buffered disk reads:  56 MB in  3.04 seconds =3D  18.41 MB=
+/sec
+>>
+>> # hdparm -t /dev/mmcblk0
+>>
+>> /dev/mmcblk0:
+>>   Timing buffered disk reads: 48 MB in  3.01 seconds =3D  15.94 MB/s=
+ec
+>
+>   /dev/mmcblk0:
+>   Timing buffered disk reads:  56 MB in  3.05 seconds =3D  18.35 MB/s=
+ec
+>>
+>>
+>> So on a s3c2416:
+>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>
+> Tested with exynos4 board.
+>
+> Tested-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Acked-by; Jaehoon Chung <jh80.chung@samsung.com>
 
-On Mon, Jan 13, 2014 at 01:13:52PM +0100, Tomasz Figa wrote:
+Thank you both for testing and acking.
 
-> Power domain control registers are part of the system controller
-> block, which uses the "samsung,s3c64*-clock" compatible string. I
-> know this is a bit unfortunate, but all registers of this IP block
-> are mapped at the same page and some clock registers are at the
-> other end of this area than others, so there is even no good way to
-> split them into separate mappings.
-
-I see - probably would've been neater to give it a different name but
-too late now.
-
---yhCE4sTDB5mqd9YJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS09lSAAoJELSic+t+oim9nr4QAIqE+SCkUgeeuBvkgWcgDS1V
-6OPmEeFFFLTkEnq3GtbuKQL42A19y/sJgQSuIkE1kmQjXn2+Jzi/lu4SrYdhw7nR
-/kj0AKnJMQvuQVJJtGeCO81jd+6jHtPgmftkHEC0Xk1QyyeVljw1TmvXp+Y4TC4r
-TktOjbnK4Ag9rG+8u2/GemiQ2SF3mLsAzYQLJ3Z03MPYbDDTlKB5Iwkzck3HjXym
-mt4F+gZdGJ3Z3rTE+mzcfO+CjwQCYAHdTXZIpGD8lge94B7GtLK19Mx9puPCUOPQ
-zKAJ+TVRY7D2B0u28Gqr2s4D8xAWcEMn1J4oTs+dPWPJ3RD5YtYTiOuKaFNqEf00
-PY183uVXUIZAGyCmTi1HpZlBhj6YUoNKL9EEU6RBWWzJfzjn7ZhGoVga0+WULnAy
-2xf0xGxFfon3nO934qEeTp1CWz+2Mw/XBi7udnJcuwhxa31hYn2FH0yjgR1tBj5W
-ipd+FesT43k4slks4dk0sgYv750dPv22HOWySFfR+hP9fEdIbP0muRPMX92QFRgb
-IcktYp3lK052i8bWa02amXY9z++v6kF0uP7uZ9IGG0kqyrcVCCrPGWUdpoe+HiyE
-//1u2pjVT5UfdByXYt3r9yCT7KzUDM1XtaGjVVOU0vU5cTic6FZqZU1+jW89L4WN
-TCPHv1kytVqOVtZ0XHOh
-=1KKe
------END PGP SIGNATURE-----
-
---yhCE4sTDB5mqd9YJ--
+Best regards,
+Tomasz
