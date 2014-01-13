@@ -1,85 +1,77 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 0/6] mmc: sdhci-s3c: Fix base clock source management
-Date: Mon, 13 Jan 2014 14:47:19 +0900
-Message-ID: <52D37DE7.1000407@samsung.com>
-References: <1389476346-20396-1-git-send-email-tomasz.figa@gmail.com>
- <1704043.sYrCOYas4N@phil>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH RFC 06/10] ARM: s3c64xx: pm: Add device tree based power
+ domain instantiation
+Date: Mon, 13 Jan 2014 11:09:35 +0000
+Message-ID: <20140113110935.GB29039@sirena.org.uk>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+ <1389469372-17199-7-git-send-email-tomasz.figa@gmail.com>
+ <20140112192910.GW29039@sirena.org.uk>
+ <52D2EE32.5060709@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1704043.sYrCOYas4N@phil>
-Sender: linux-mmc-owner@vger.kernel.org
-To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>, Jaehoon Chung <jh80.chung@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ERHfpFOxJvIsVBXy"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53419 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751246AbaAMLKI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jan 2014 06:10:08 -0500
+Content-Disposition: inline
+In-Reply-To: <52D2EE32.5060709@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org
 
-Hi, All.
 
-On 01/13/2014 06:18 AM, Heiko St=C3=BCbner wrote:
-> Am Samstag, 11. Januar 2014, 22:39:00 schrieb Tomasz Figa:
->> Tested on S3C6410-based Mini6410 board, with following performance
->> figures:
->>
->> * Before this series (133 MHz HCLK always selected, leading to at mo=
-st
->>   33 MHz card clock):
->>
->> root@tiny6410:~# hdparm -t /dev/mmcblk0
->>
->> /dev/mmcblk0:
->>  Timing buffered disk reads:  42 MB in  3.10 seconds =3D  13.54 MB/s=
-ec
->=20
-> # hdparm -t /dev/mmcblk0
->=20
-> /dev/mmcblk0:
->  Timing buffered disk reads: 44 MB in  3.12 seconds =3D  14.11 MB/sec
+--ERHfpFOxJvIsVBXy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-/dev/mmcblk0:
- Timing buffered disk reads:  38 MB in  3.14 seconds =3D  12.12 MB/sec
->=20
->=20
->> * After this series (48 MHz EPLL clock selected, leading to 48 MHz c=
-ard
->>   clock):
->>
->> root@tiny6410:~# hdparm -t /dev/mmcblk0
->>
->> /dev/mmcblk0:
->>  Timing buffered disk reads:  56 MB in  3.04 seconds =3D  18.41 MB/s=
-ec
->=20
-> # hdparm -t /dev/mmcblk0
->=20
-> /dev/mmcblk0:
->  Timing buffered disk reads: 48 MB in  3.01 seconds =3D  15.94 MB/sec
+On Sun, Jan 12, 2014 at 08:34:10PM +0100, Tomasz Figa wrote:
+> On 12.01.2014 20:29, Mark Brown wrote:
+> >On Sat, Jan 11, 2014 at 08:42:48PM +0100, Tomasz Figa wrote:
 
- /dev/mmcblk0:
- Timing buffered disk reads:  56 MB in  3.05 seconds =3D  18.35 MB/sec
->=20
->=20
-> So on a s3c2416:
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> >>This patch adds support for registering power domains of S3C64xx SoCs
+> >>and binding devices to them using device tree.
 
-Tested with exynos4 board.
+> >>+#ifdef CONFIG_OF
+> >>+static struct of_device_id s3c64xx_pd_matches[] = {
+> >>+	{ .compatible = "samsung,s3c6400-clock", },
+> >>+	{ .compatible = "samsung,s3c6410-clock", },
+> >>+	{ },
+> >>  };
 
-Tested-by: Jaehoon Chung <jh80.chung@samsung.com>
-Acked-by; Jaehoon Chung <jh80.chung@samsung.com>
+> >Looks like a rebasing issue?  Otherwise this looks nice.
 
-Best Regards,
-Jaehoon Chung
+> Hmm, what's the problem here? Maybe I'm just blind, but I fail to
+> see anything wrong (except that the array should be const...).
 
->=20
->=20
-> Thanks for the added bandwidth :-)
-> Heiko
->=20
->=20
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->=20
+> Thanks for reviewing this.
 
+I wasn't expecting to see references to clocks come up in power domain
+code.
+
+--ERHfpFOxJvIsVBXy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS08lsAAoJELSic+t+oim9z3gP/3zuT0HAcaALVWqSI4PzqxhM
+YJAkiKO42G6jdgTNpVdzpNH5tymXRnUCWAcHi8srz8UNtnfuJjiCRDiLcoXlrVAv
+cBEPFW5ThOx8dvsMjS11n1j+R/rUKdiZ1pzIw7YOyYq67zj+k92JCT2vNATUhXuD
+6OO4BCAC0Ke38rlaXxh6w4G7mnD9NbMLiAVgIgohLMKnB4JIN4C9I+H3drgx6tgj
+uL8gL5XqDw9ACjOpcbDpzEP/6iNFJvyqTT1XYefRkMmEw7BJwiHHXJU0OhA1JBxj
+n2xhhfScZGHuhlwsGHnsXMywsS84m6UbCavEhyXd7XCS3RUjUJkwYJcvlNhavz9H
+CoqKfq9LuoGaYle/UCUZFkF8eCiaMghalZDg9WUP4ZKQtxbmkqs+/cbyh0nOyoPB
+1Wb93KKxrLj6cUmyeB+AeRzXs4MY+0b28AWThxSO827AIZrx6kT4DqUt4ARCKIMw
+sLGHMLTo/aAxIDPYY+slB1vu+PDNZmIH+hxwRKElvzH6VvNoOAKBMfZVsetUI1Vf
+u/QhTYD6dAolXkM3+oJX2mo3RCWeEZJ3qnS8SbAW0kn44IMN5qjJlDYbwcvZEQEF
+LgPjissE+hU9xjmh5NGJbkx8x5wHD4t5Wtc5+ATu24elCjzmSo2jPgS4nOy0av3B
+ErihFbYiIxBblajNYIp8
+=ltBf
+-----END PGP SIGNATURE-----
+
+--ERHfpFOxJvIsVBXy--
