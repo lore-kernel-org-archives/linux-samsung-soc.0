@@ -1,40 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH 1/1] drivers: net: silence compiler warning in smc91x.c
-Date: Mon, 13 Jan 2014 11:54:59 -0800 (PST)
-Message-ID: <20140113.115459.326248442934302460.davem@davemloft.net>
-References: <1389323046-4521-1-git-send-email-pankaj.dubey@samsung.com>
-	<52D05B41.7000601@cogentembedded.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 0/9] cpuidle: rework device state count handling
+Date: Mon, 13 Jan 2014 22:20:27 +0100
+Message-ID: <1616617.RcagPEYAid@vostro.rjw.lan>
+References: <1387565251-7051-1-git-send-email-b.zolnierkie@samsung.com> <2079155.EyEBRDoJjP@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:38256 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899AbaAMTzA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jan 2014 14:55:00 -0500
-In-Reply-To: <52D05B41.7000601@cogentembedded.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <2079155.EyEBRDoJjP@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: daniel.lezcano@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: sergei.shtylyov@cogentembedded.com
-Cc: pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, netdev@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Fri, 10 Jan 2014 23:42:41 +0300
+On Saturday, January 11, 2014 01:37:29 AM Rafael J. Wysocki wrote:
+> On Friday, December 20, 2013 07:47:22 PM Bartlomiej Zolnierkiewicz wrote:
+> > Hi,
+> > 
+> > Some cpuidle drivers assume that cpuidle core will handle cases where
+> > device->state_count is smaller than driver->state_count, unfortunately
+> > currently this is untrue (device->state_count is used only for handling
+> > cpuidle state sysfs entries and driver->state_count is used for all
+> > other cases) and will not be fixed in the future as device->state_count
+> > is planned to be removed [1].
+> > 
+> > This patchset fixes such drivers (ARM EXYNOS cpuidle driver and ACPI
+> > cpuidle driver), removes superflous device->state_count initialization
+> > from drivers for which device->state_count equals driver->state_count
+> > (POWERPC pseries cpuidle driver and intel_idle driver) and finally
+> > removes state_count field from struct cpuidle_device.
+> > 
+> > Additionaly (while at it) this patchset fixes C1E promotion disable
+> > quirk handling (in intel_idle driver) and converts cpuidle drivers code
+> > to use the common cpuidle_[un]register() routines (in POWERPC pseries
+> > cpuidle driver and intel_idle driver).
+> > 
+> > [1] http://permalink.gmane.org/gmane.linux.power-management.general/36908
+> > 
+> > Reference to v1:
+> > 	http://comments.gmane.org/gmane.linux.power-management.general/37390
+> > 
+> > Changes since v1:
+> > - synced patch series with next-20131220
+> > - added ACKs from Daniel Lezcano
+> 
+> This series breaks boot on one of my test machines with intel_idle, so I'm
+> not sure how well it has been tested.
+> 
+> I've dropped it entirely for now.  If I have the time, I will try to identify
+> the root cause of the failure, but that may not happen before the merge window.
+> Sorry about that.
 
-> Hello.
-> 
-> On 01/10/2014 06:04 AM, Pankaj Dubey wrote:
-> 
->> If used 64 bit compiler GCC warns that:
-> 
->> drivers/net/ethernet/smsc/smc91x.c:1897:7:
->> warning: cast from pointer to integer of different
->> size [-Wpointer-to-int-cast]
-> 
->> This patch fixes this by changing typecase from "unsigned int" to
->> "unsigned long"
-> 
->    Only "typecast".
+The breakage was introduced by patch [8/9], so I've re-applied patches [1-7/9]
+from this series.  Please refer to Fengguang's report [1] for the breakage
+details.
 
-Applied with this typo fixed, thanks.
+Thanks!
+
+[1] http://marc.info/?l=linux-kernel&m=138964167909907&w=2
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
