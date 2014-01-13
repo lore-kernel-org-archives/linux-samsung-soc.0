@@ -1,39 +1,40 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH v3] watchdog: s3c2410_wdt: Report when the watchdog reset the system
-Date: Mon, 13 Jan 2014 19:26:45 +0100
-Message-ID: <20140113182645.GA22249@spo001.leaseweb.com>
-References: <1386267329-9941-2-git-send-email-dianders@chromium.org> <1386364088-6220-1-git-send-email-dianders@chromium.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH 1/1] drivers: net: silence compiler warning in smc91x.c
+Date: Mon, 13 Jan 2014 11:54:59 -0800 (PST)
+Message-ID: <20140113.115459.326248442934302460.davem@davemloft.net>
+References: <1389323046-4521-1-git-send-email-pankaj.dubey@samsung.com>
+	<52D05B41.7000601@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:52208 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751316AbaAMS07 (ORCPT
+Received: from shards.monkeyblade.net ([149.20.54.216]:38256 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750899AbaAMTzA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jan 2014 13:26:59 -0500
-Content-Disposition: inline
-In-Reply-To: <1386364088-6220-1-git-send-email-dianders@chromium.org>
+	Mon, 13 Jan 2014 14:55:00 -0500
+In-Reply-To: <52D05B41.7000601@cogentembedded.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sergei.shtylyov@cogentembedded.com
+Cc: pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, netdev@vger.kernel.org
 
-Hi Doug,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Fri, 10 Jan 2014 23:42:41 +0300
 
-> A good watchdog driver is supposed to report when it was responsible
-> for resetting the system.  Implement this for the s3c2410, at least on
-> exynos5250 and exynos5420 where we already have a pointer to the PMU
-> registers to read the information.
+> Hello.
 > 
-> Note that exynos4 SoCs also provide the reset status, but providing
-> that is left as an exercise for future changes and is not plumbed up
-> in this patch series.  Also note the exynos4 SoCs don't appear to need
-> any PMU config, which is why this patch separates the concepts of
-> having PMU Registers vs. needing PMU Config.
+> On 01/10/2014 06:04 AM, Pankaj Dubey wrote:
 > 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> If used 64 bit compiler GCC warns that:
+> 
+>> drivers/net/ethernet/smsc/smc91x.c:1897:7:
+>> warning: cast from pointer to integer of different
+>> size [-Wpointer-to-int-cast]
+> 
+>> This patch fixes this by changing typecase from "unsigned int" to
+>> "unsigned long"
+> 
+>    Only "typecast".
 
-This patch has been added to linux-watchdog-next.
-
-Kind regards,
-Wim.
+Applied with this typo fixed, thanks.
