@@ -1,47 +1,117 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain look-up
-Date: Tue, 14 Jan 2014 07:42:26 -0800
-Message-ID: <87r48a8t99.fsf@linaro.org>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
-	<1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/1] drivers: i2c: silence a compile warning in
+ i2c-s3c2410.c
+Date: Tue, 14 Jan 2014 20:09:10 +0100
+Message-ID: <20140114190910.GE10340@katana>
+References: <1389323025-4478-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="19uQFt6ulqmgNgg1"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:44980 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751681AbaANPm3 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:59981 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752066AbaANTJP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jan 2014 10:42:29 -0500
-Received: by mail-pd0-f175.google.com with SMTP id r10so4923370pdi.20
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jan 2014 07:42:29 -0800 (PST)
-In-Reply-To: <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com> (Tomasz
-	Figa's message of "Sat, 11 Jan 2014 20:42:46 +0100")
+	Tue, 14 Jan 2014 14:09:15 -0500
+Content-Disposition: inline
+In-Reply-To: <1389323025-4478-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, linux-i2c@vger.kernel.org
 
-Tomasz Figa <tomasz.figa@gmail.com> writes:
 
-> This patch introduces generic code to perform power domain look-up using
-> device tree and automatically bind devices to their power domains.
-> Generic device tree binding is introduced to specify power domains of
-> devices in their device tree nodes.
->
-> Backwards compatibility with legacy Samsung-specific power domain
-> bindings is provided, but for now the new code is not compiled when
-> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
-> will change as soon as Exynos power domain code gets converted to use
-> the generic framework in further patch.
->
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+--19uQFt6ulqmgNgg1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I haven't read through this in detail yet, but wanted to make sure that
-the DT representation can handle nested power domains.  At least
-SH-mobile has a hierarchy of power domains and the genpd code can handle
-that, so wanted to make sure that the DT representation can handle it as
-well.
+On Fri, Jan 10, 2014 at 12:03:45PM +0900, Pankaj Dubey wrote:
+> If used 64 bit compiler GCC warns that:
+>=20
+> drivers/i2c/busses/i2c-s3c2410.c: In function =E2=80=98s3c24xx_get_device=
+_quirks=E2=80=99:
+> drivers/i2c/busses/i2c-s3c2410.c:168:10: warning: cast from pointer to in=
+teger
+> of different size [-Wpointer-to-int-cast]
+>=20
+> This patch fixes this by converting "unsigned int" to "unsigned long".
 
-Thanks,
+Maybe switch to kernel_ulong_t? Since this is used in mod_devicetable.h
+all over.
 
-Kevin
+>=20
+> CC: Kukjin Kim <kgene.kim@samsung.com>
+> CC: Wolfram Sang <wsa@the-dreams.de>
+> CC: linux-i2c@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |    7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3=
+c2410.c
+> index bf8fb94..447dd98 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -101,7 +101,7 @@ enum s3c24xx_i2c_state {
+> =20
+>  struct s3c24xx_i2c {
+>  	wait_queue_head_t	wait;
+> -	unsigned int            quirks;
+> +	unsigned long            quirks;
+
+The indentation is corrupted.
+
+>  	unsigned int		suspended:1;
+> =20
+>  	struct i2c_msg		*msg;
+> @@ -160,12 +160,13 @@ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+>   * Get controller type either from device tree or platform device varian=
+t.
+>  */
+> =20
+> -static inline unsigned int s3c24xx_get_device_quirks(struct platform_dev=
+ice *pdev)
+> +static inline unsigned long
+> +	s3c24xx_get_device_quirks(struct platform_device *pdev)
+
+Keep it one line please, ignoring the 80 char thing.
+
+>  {
+>  	if (pdev->dev.of_node) {
+>  		const struct of_device_id *match;
+>  		match =3D of_match_node(s3c24xx_i2c_match, pdev->dev.of_node);
+> -		return (unsigned int)match->data;
+> +		return (unsigned long)match->data;
+>  	}
+> =20
+>  	return platform_get_device_id(pdev)->driver_data;
+
+The last line also returns kernel_ulong_t. No real difference, but using
+it is a little more consistent.
+
+
+--19uQFt6ulqmgNgg1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS1YtWAAoJEBQN5MwUoCm2/YYP/R+AVyRHMb9QK4dzzMQuz9uB
+G4i6aSRmlGs27BBZsGXdOBRiY1M8/5GjCq6lwKRkvFuwktovjt2fNrLNdb9zv72b
+YhO2X62qhDygNv3nYcSimB+4UAh1qckBNoM5FcigpoM3KVOpYsSwGL/GqMM5ArjT
+2gGhGBNQPIw1JldJIhgIi0B2Pp+p1zNB1mcTdIduQxnDUsgIJkz0o1IzsGmxF8TK
+t13GuUlr4e/ADVcnp7lAXJEpzz6HUBbYdOHyHAZxdz5vKkuiwoz8FSI5zMggSP7N
+vx3VjVpvHzKlKQ/8HrgMU3ol/if7rir0C6DqpwVU9XSKz4BP9+2853WAqfF35Me+
+QL2MsEDeDPQTcxCRy5NL2aW52TWLvLusBOKCzdisJ65aDh5yJkzhk1FN8iVCdfSr
+QXSducMvIdrUaKF1jyT0dDOt1ZqbeZnb1KqgeY80hGCGEv88vaD33Ve5cfNh78vI
+rVswZfY8kJOMVxtx4tTrvk1i3VMqdhNxPdCFEc6M+EOItFIsd6XH5BmTihlU4Zss
+NnkwWNaRxbJYeuZl7wOWC7x/9TPOiQPehCzPAEJytqlF66wZ6TXEmIqs32W8DMqN
+QiqJgADGmNXbdL2y20ne6O1mFg+ML6HopHYm/pNmqq/S7dMKxisqaYGg3sywRKLx
+yZJiTAleTNImyJWh2329
+=X3TG
+-----END PGP SIGNATURE-----
+
+--19uQFt6ulqmgNgg1--
