@@ -1,71 +1,61 @@
-From: Dinh Nguyen <dinguyen@altera.com>
-Subject: Re: [RFC PATCH 0/2] dwc2/s3c-hsotg: Initial steps to combine the 2
+From: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Subject: RE: [RFC PATCH 0/2] dwc2/s3c-hsotg: Initial steps to combine the 2
  driver
-Date: Tue, 14 Jan 2014 14:46:18 -0600
-Message-ID: <1389732378.26963.7.camel@linux-builds1>
+Date: Tue, 14 Jan 2014 20:57:12 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E03046D140082@US01WEMBX2.internal.synopsys.com>
 References: <1389697262-29065-1-git-send-email-dinguyen@altera.com>
-	 <20140114142138.GB19492@kroah.com>
+	 <20140114142138.GB19492@kroah.com> <1389732378.26963.7.camel@linux-builds1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from tx2ehsobe005.messaging.microsoft.com ([65.55.88.15]:43542 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752055AbaANUsh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jan 2014 15:48:37 -0500
-In-Reply-To: <20140114142138.GB19492@kroah.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1389732378.26963.7.camel@linux-builds1>
+Content-Language: en-US
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rashika Kheria <rashika.kheria-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthijs Kooijman <matthijs-gZv8Wpyq0Kk@public.gmane.org>, Luis Ortega Perez de Villar <luiorpe1-qHq8kIZmbuA@public.gmane.org>, Dom Cobley <popcornmix-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: balbi@ti.com, dinh.linux@gmail.com, Paul Zimmerman <paulz@synopsys.com>, Rashika Kheria <rashika.kheria@gmail.com>, Matthijs Kooijman <matthijs@stdin.nl>, Luis Ortega Perez de Villar <luiorpe1@upv.es>, Dom Cobley <popcornmix@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 
-On Tue, 2014-01-14 at 06:21 -0800, Greg KH wrote:
-> On Tue, Jan 14, 2014 at 05:01:00AM -0600, dinguyen@altera.com wrote:
-> > From: Dinh Nguyen <dinguyen@altera.com>
-> > 
-> > Hi,
-> > 
-> > I'm starting work downstream on combining the DWC2 host driver and the s3c-hsotg
-> > gadget driver into a dual-role OTG driver. Before I go further, I was hoping to
-> > solicit comments on whether or not my initial approach is correct? I know there
-> > are plans to combine the 2, so would like to solicit comments/suggestions so
-> > that I can also upstream it as well.
-> > 
-> > These 2 patches:
-> > 
-> > * Moves the DWC2 driver out of drivers/staging into drivers/usb/dwc2/
-> 
-> This already happened yesterday in my tree, so you should see this in
-> linux-next by now, no need to do it again :)
-> 
-
-I see it now. Thanks for the pointer.
-
-> > * Moves the s3c-hsotg driver into drivers/usb/dwc2/
-> > * Delete s3c-hsotg.h 
-> > * Make the s3c-hsotg.c file use the defines in hw.h from the DWC2 driver.
-> > 
-> > This initial patch has been tested on the SOCFPGA platform only in Host-only
-> > and Gadget-only mode.
-> > 
-> > The next step would be to do the combining of the driver into a dual-role OTG
-> > driver.
-> 
-> I was told that merging the two of these isn't going to work as the
-> silicon is just too different, which is why I allowed the code to move
-> out of staging.  If you feel differently, and think you can combine the
-> two drivers, that's wonderful, I'll gladly take patches to do so, but be
-> sure to test on the proper platforms to make sure nothing breaks.
-> 
-
-I wasn't aware of the silicon differences. I just took the s3c-hsotg
-driver as is and it worked fine on my version 2.93a of the USB IP. I'll
-search the ML for information, or perhaps Paul can comment?
-
-Thanks,
-Dinh
-> thanks,
-> 
-> greg k-h
-> 
+PiBGcm9tOiBEaW5oIE5ndXllbiBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+IFNlbnQ6
+IFR1ZXNkYXksIEphbnVhcnkgMTQsIDIwMTQgMTI6NDYgUE0NCj4gDQo+IE9uIFR1ZSwgMjAxNC0w
+MS0xNCBhdCAwNjoyMSAtMDgwMCwgR3JlZyBLSCB3cm90ZToNCj4gPiBPbiBUdWUsIEphbiAxNCwg
+MjAxNCBhdCAwNTowMTowMEFNIC0wNjAwLCBkaW5ndXllbkBhbHRlcmEuY29tIHdyb3RlOg0KPiA+
+ID4gRnJvbTogRGluaCBOZ3V5ZW4gPGRpbmd1eWVuQGFsdGVyYS5jb20+DQo+ID4gPg0KPiA+ID4g
+SGksDQo+ID4gPg0KPiA+ID4gSSdtIHN0YXJ0aW5nIHdvcmsgZG93bnN0cmVhbSBvbiBjb21iaW5p
+bmcgdGhlIERXQzIgaG9zdCBkcml2ZXIgYW5kIHRoZSBzM2MtaHNvdGcNCj4gPiA+IGdhZGdldCBk
+cml2ZXIgaW50byBhIGR1YWwtcm9sZSBPVEcgZHJpdmVyLiBCZWZvcmUgSSBnbyBmdXJ0aGVyLCBJ
+IHdhcyBob3BpbmcgdG8NCj4gPiA+IHNvbGljaXQgY29tbWVudHMgb24gd2hldGhlciBvciBub3Qg
+bXkgaW5pdGlhbCBhcHByb2FjaCBpcyBjb3JyZWN0PyBJIGtub3cgdGhlcmUNCj4gPiA+IGFyZSBw
+bGFucyB0byBjb21iaW5lIHRoZSAyLCBzbyB3b3VsZCBsaWtlIHRvIHNvbGljaXQgY29tbWVudHMv
+c3VnZ2VzdGlvbnMgc28NCj4gPiA+IHRoYXQgSSBjYW4gYWxzbyB1cHN0cmVhbSBpdCBhcyB3ZWxs
+Lg0KPiA+ID4NCj4gPiA+IFRoZXNlIDIgcGF0Y2hlczoNCj4gPiA+DQo+ID4gPiAqIE1vdmVzIHRo
+ZSBEV0MyIGRyaXZlciBvdXQgb2YgZHJpdmVycy9zdGFnaW5nIGludG8gZHJpdmVycy91c2IvZHdj
+Mi8NCj4gPg0KPiA+IFRoaXMgYWxyZWFkeSBoYXBwZW5lZCB5ZXN0ZXJkYXkgaW4gbXkgdHJlZSwg
+c28geW91IHNob3VsZCBzZWUgdGhpcyBpbg0KPiA+IGxpbnV4LW5leHQgYnkgbm93LCBubyBuZWVk
+IHRvIGRvIGl0IGFnYWluIDopDQo+ID4NCj4gDQo+IEkgc2VlIGl0IG5vdy4gVGhhbmtzIGZvciB0
+aGUgcG9pbnRlci4NCj4gDQo+ID4gPiAqIE1vdmVzIHRoZSBzM2MtaHNvdGcgZHJpdmVyIGludG8g
+ZHJpdmVycy91c2IvZHdjMi8NCj4gPiA+ICogRGVsZXRlIHMzYy1oc290Zy5oDQo+ID4gPiAqIE1h
+a2UgdGhlIHMzYy1oc290Zy5jIGZpbGUgdXNlIHRoZSBkZWZpbmVzIGluIGh3LmggZnJvbSB0aGUg
+RFdDMiBkcml2ZXIuDQo+ID4gPg0KPiA+ID4gVGhpcyBpbml0aWFsIHBhdGNoIGhhcyBiZWVuIHRl
+c3RlZCBvbiB0aGUgU09DRlBHQSBwbGF0Zm9ybSBvbmx5IGluIEhvc3Qtb25seQ0KPiA+ID4gYW5k
+IEdhZGdldC1vbmx5IG1vZGUuDQo+ID4gPg0KPiA+ID4gVGhlIG5leHQgc3RlcCB3b3VsZCBiZSB0
+byBkbyB0aGUgY29tYmluaW5nIG9mIHRoZSBkcml2ZXIgaW50byBhIGR1YWwtcm9sZSBPVEcNCj4g
+PiA+IGRyaXZlci4NCj4gPg0KPiA+IEkgd2FzIHRvbGQgdGhhdCBtZXJnaW5nIHRoZSB0d28gb2Yg
+dGhlc2UgaXNuJ3QgZ29pbmcgdG8gd29yayBhcyB0aGUNCj4gPiBzaWxpY29uIGlzIGp1c3QgdG9v
+IGRpZmZlcmVudCwgd2hpY2ggaXMgd2h5IEkgYWxsb3dlZCB0aGUgY29kZSB0byBtb3ZlDQo+ID4g
+b3V0IG9mIHN0YWdpbmcuICBJZiB5b3UgZmVlbCBkaWZmZXJlbnRseSwgYW5kIHRoaW5rIHlvdSBj
+YW4gY29tYmluZSB0aGUNCj4gPiB0d28gZHJpdmVycywgdGhhdCdzIHdvbmRlcmZ1bCwgSSdsbCBn
+bGFkbHkgdGFrZSBwYXRjaGVzIHRvIGRvIHNvLCBidXQgYmUNCj4gPiBzdXJlIHRvIHRlc3Qgb24g
+dGhlIHByb3BlciBwbGF0Zm9ybXMgdG8gbWFrZSBzdXJlIG5vdGhpbmcgYnJlYWtzLg0KPiA+DQo+
+IA0KPiBJIHdhc24ndCBhd2FyZSBvZiB0aGUgc2lsaWNvbiBkaWZmZXJlbmNlcy4gSSBqdXN0IHRv
+b2sgdGhlIHMzYy1oc290Zw0KPiBkcml2ZXIgYXMgaXMgYW5kIGl0IHdvcmtlZCBmaW5lIG9uIG15
+IHZlcnNpb24gMi45M2Egb2YgdGhlIFVTQiBJUC4gSSdsbA0KPiBzZWFyY2ggdGhlIE1MIGZvciBp
+bmZvcm1hdGlvbiwgb3IgcGVyaGFwcyBQYXVsIGNhbiBjb21tZW50Pw0KDQpJIHRoaW5rIEdyZWcg
+aXMgdGhpbmtpbmcgb2YgdGhlIG9jdGVvbi11c2IgZHJpdmVyIGluIHN0YWdpbmcgWzFdLCBub3QN
+CnRoZSBzM2MtaHNvdGcgZHJpdmVyLiBUaGUgcGxhbiB3YXMgYWx3YXlzIHRvIGV2ZW50dWFsbHkg
+bWVyZ2UgZHdjMiB3aXRoDQpzM2MtaHNvdGcuDQoNCi0tIA0KUGF1bA0KDQpbMV0gaHR0cDovL21h
+cmMuaW5mby8/bD1saW51eC1kcml2ZXItZGV2ZWwmbT0xMzc2NjU4MDE5MDQwMTQNCg0K
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
