@@ -1,62 +1,47 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH 4/5] arm: omap3: twl: use the new lookup method with usb
- phy
-Date: Tue, 14 Jan 2014 16:38:49 +0200
-Message-ID: <20140114143849.GB21169@xps8300>
-References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com>
- <1386601737-8735-5-git-send-email-heikki.krogerus@linux.intel.com>
- <52AEDE43.8030005@ti.com>
- <20131216144314.GB22944@xps8300>
- <52CBFAC0.9040103@ti.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain look-up
+Date: Tue, 14 Jan 2014 07:42:26 -0800
+Message-ID: <87r48a8t99.fsf@linaro.org>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+	<1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:61473 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751416AbaANOjW (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:44980 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751681AbaANPm3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jan 2014 09:39:22 -0500
-Content-Disposition: inline
-In-Reply-To: <52CBFAC0.9040103@ti.com>
+	Tue, 14 Jan 2014 10:42:29 -0500
+Received: by mail-pd0-f175.google.com with SMTP id r10so4923370pdi.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jan 2014 07:42:29 -0800 (PST)
+In-Reply-To: <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com> (Tomasz
+	Figa's message of "Sat, 11 Jan 2014 20:42:46 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>
 
-On Tue, Jan 07, 2014 at 06:31:52PM +0530, Kishon Vijay Abraham I wrote:
-> > In any case, having two device names to deal with does not add any
-> > more risk. These associations should always be made in the place where
-> > the phy device is created so you will always know it's device name.
-> 
-> huh.. we should also know the 'controller' device name while defining these
-> associations and in some cases the controller device and phy device are created
-> in entirely different places.
+Tomasz Figa <tomasz.figa@gmail.com> writes:
 
-If you don't want to use the controller device name to do the
-matching, we can use the con_id string as well. I believe the lookup
-method I use in this set just needs a small change.
+> This patch introduces generic code to perform power domain look-up using
+> device tree and automatically bind devices to their power domains.
+> Generic device tree binding is introduced to specify power domains of
+> devices in their device tree nodes.
+>
+> Backwards compatibility with legacy Samsung-specific power domain
+> bindings is provided, but for now the new code is not compiled when
+> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
+> will change as soon as Exynos power domain code gets converted to use
+> the generic framework in further patch.
+>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Is that OK with you?
-
-
-> > Normally the platform code creates these associations in the same
-> > place it creates the platform devices, so you definitely know what the
-> > device names will be.
-> > 
-> > In this case it's actually created in drivers/mfd/twl-core.c, so I do
-> > need to update this and move the lookup table there. We can still
-> > deliver the user name as platform data, though I believe it's always
-> > "musb". Maybe we could actually skip that and just hard code the name?
-> 
-> I would rather leave the way it is modelled now.
-
-Do you mean, leave it in the platform code? Why? We would reduce the
-platform code by moving it to the mfd driver. Or did I misunderstood
-something?
-
-Hope I'm not forgetting something we have talked before my vacation.
+I haven't read through this in detail yet, but wanted to make sure that
+the DT representation can handle nested power domains.  At least
+SH-mobile has a hierarchy of power domains and the genpd code can handle
+that, so wanted to make sure that the DT representation can handle it as
+well.
 
 Thanks,
 
--- 
-heikki
+Kevin
