@@ -1,90 +1,78 @@
-From: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 0/2] dwc2/s3c-hsotg: Initial steps to combine the 2
+From: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Subject: RE: [RFC PATCH 0/2] dwc2/s3c-hsotg: Initial steps to combine the 2
  driver
-Date: Tue, 14 Jan 2014 15:30:29 -0600
-Message-ID: <1389735029.26963.8.camel@linux-builds1>
+Date: Tue, 14 Jan 2014 22:00:09 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E03046D1400F1@US01WEMBX2.internal.synopsys.com>
 References: <1389697262-29065-1-git-send-email-dinguyen@altera.com>
 	 <20140114142138.GB19492@kroah.com> <1389732378.26963.7.camel@linux-builds1>
 	 <A2CA0424C0A6F04399FB9E1CD98E03046D140082@US01WEMBX2.internal.synopsys.com>
-	 <20140114211422.GC28453@kroah.com>
+	 <20140114211422.GC28453@kroah.com> <1389735029.26963.8.camel@linux-builds1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140114211422.GC28453-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1389735029.26963.8.camel@linux-builds1>
+Content-Language: en-US
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rashika Kheria <rashika.kheria-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthijs Kooijman <matthijs-gZv8Wpyq0Kk@public.gmane.org>, Luis Ortega Perez de Villar <luiorpe1-qHq8kIZmbuA@public.gmane.org>, Dom Cobley <popcornmix-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rashika Kheria <rashika.kheria-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthijs Kooijman <matthijs-gZv8Wpyq0Kk@public.gmane.org>, Luis Ortega Perez de Villar <luiorpe1-qHq8kIZmbuA@public.gmane.org>, Dom Cobley <popcornmix-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2014-01-14 at 13:14 -0800, Greg KH wrote:
-> On Tue, Jan 14, 2014 at 08:57:12PM +0000, Paul Zimmerman wrote:
-> > > From: Dinh Nguyen [mailto:dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org]
-> > > Sent: Tuesday, January 14, 2014 12:46 PM
-> > > 
-> > > On Tue, 2014-01-14 at 06:21 -0800, Greg KH wrote:
-> > > > On Tue, Jan 14, 2014 at 05:01:00AM -0600, dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org wrote:
-> > > > > From: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > I'm starting work downstream on combining the DWC2 host driver and the s3c-hsotg
-> > > > > gadget driver into a dual-role OTG driver. Before I go further, I was hoping to
-> > > > > solicit comments on whether or not my initial approach is correct? I know there
-> > > > > are plans to combine the 2, so would like to solicit comments/suggestions so
-> > > > > that I can also upstream it as well.
-> > > > >
-> > > > > These 2 patches:
-> > > > >
-> > > > > * Moves the DWC2 driver out of drivers/staging into drivers/usb/dwc2/
-> > > >
-> > > > This already happened yesterday in my tree, so you should see this in
-> > > > linux-next by now, no need to do it again :)
-> > > >
-> > > 
-> > > I see it now. Thanks for the pointer.
-> > > 
-> > > > > * Moves the s3c-hsotg driver into drivers/usb/dwc2/
-> > > > > * Delete s3c-hsotg.h
-> > > > > * Make the s3c-hsotg.c file use the defines in hw.h from the DWC2 driver.
-> > > > >
-> > > > > This initial patch has been tested on the SOCFPGA platform only in Host-only
-> > > > > and Gadget-only mode.
-> > > > >
-> > > > > The next step would be to do the combining of the driver into a dual-role OTG
-> > > > > driver.
-> > > >
-> > > > I was told that merging the two of these isn't going to work as the
-> > > > silicon is just too different, which is why I allowed the code to move
-> > > > out of staging.  If you feel differently, and think you can combine the
-> > > > two drivers, that's wonderful, I'll gladly take patches to do so, but be
-> > > > sure to test on the proper platforms to make sure nothing breaks.
-> > > >
-> > > 
-> > > I wasn't aware of the silicon differences. I just took the s3c-hsotg
-> > > driver as is and it worked fine on my version 2.93a of the USB IP. I'll
-> > > search the ML for information, or perhaps Paul can comment?
-> > 
-> > I think Greg is thinking of the octeon-usb driver in staging [1], not
-> > the s3c-hsotg driver. The plan was always to eventually merge dwc2 with
-> > s3c-hsotg.
-> 
-> Yes, I'm totally confused, you are right.
-> 
-> Nevermind then, Dinh, if you want to redo your patch after 3.14-rc1 is
-> out, that would be great as merging the drivers together can be done
-> easier after that development point.
-> 
-Unless, Paul has already started the work, I can take a crack at it.
-
-Dinh
-> thanks,
-> 
-> greg k-h
-> 
-
-
-
+PiBGcm9tOiBEaW5oIE5ndXllbiBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+IFNlbnQ6
+IFR1ZXNkYXksIEphbnVhcnkgMTQsIDIwMTQgMTozMCBQTQ0KPiANCj4gT24gVHVlLCAyMDE0LTAx
+LTE0IGF0IDEzOjE0IC0wODAwLCBHcmVnIEtIIHdyb3RlOg0KPiA+IE9uIFR1ZSwgSmFuIDE0LCAy
+MDE0IGF0IDA4OjU3OjEyUE0gKzAwMDAsIFBhdWwgWmltbWVybWFuIHdyb3RlOg0KPiA+ID4gPiBG
+cm9tOiBEaW5oIE5ndXllbiBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+ID4gPiA+IFNl
+bnQ6IFR1ZXNkYXksIEphbnVhcnkgMTQsIDIwMTQgMTI6NDYgUE0NCj4gPiA+ID4NCj4gPiA+ID4g
+T24gVHVlLCAyMDE0LTAxLTE0IGF0IDA2OjIxIC0wODAwLCBHcmVnIEtIIHdyb3RlOg0KPiA+ID4g
+PiA+IE9uIFR1ZSwgSmFuIDE0LCAyMDE0IGF0IDA1OjAxOjAwQU0gLTA2MDAsIGRpbmd1eWVuQGFs
+dGVyYS5jb20gd3JvdGU6DQo+ID4gPiA+ID4gPiBGcm9tOiBEaW5oIE5ndXllbiA8ZGluZ3V5ZW5A
+YWx0ZXJhLmNvbT4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBIaSwNCj4gPiA+ID4gPiA+DQo+
+ID4gPiA+ID4gPiBJJ20gc3RhcnRpbmcgd29yayBkb3duc3RyZWFtIG9uIGNvbWJpbmluZyB0aGUg
+RFdDMiBob3N0IGRyaXZlciBhbmQgdGhlIHMzYy1oc290Zw0KPiA+ID4gPiA+ID4gZ2FkZ2V0IGRy
+aXZlciBpbnRvIGEgZHVhbC1yb2xlIE9URyBkcml2ZXIuIEJlZm9yZSBJIGdvIGZ1cnRoZXIsIEkg
+d2FzIGhvcGluZyB0bw0KPiA+ID4gPiA+ID4gc29saWNpdCBjb21tZW50cyBvbiB3aGV0aGVyIG9y
+IG5vdCBteSBpbml0aWFsIGFwcHJvYWNoIGlzIGNvcnJlY3Q/IEkga25vdyB0aGVyZQ0KPiA+ID4g
+PiA+ID4gYXJlIHBsYW5zIHRvIGNvbWJpbmUgdGhlIDIsIHNvIHdvdWxkIGxpa2UgdG8gc29saWNp
+dCBjb21tZW50cy9zdWdnZXN0aW9ucyBzbw0KPiA+ID4gPiA+ID4gdGhhdCBJIGNhbiBhbHNvIHVw
+c3RyZWFtIGl0IGFzIHdlbGwuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlc2UgMiBwYXRj
+aGVzOg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ICogTW92ZXMgdGhlIERXQzIgZHJpdmVyIG91
+dCBvZiBkcml2ZXJzL3N0YWdpbmcgaW50byBkcml2ZXJzL3VzYi9kd2MyLw0KPiA+ID4gPiA+DQo+
+ID4gPiA+ID4gVGhpcyBhbHJlYWR5IGhhcHBlbmVkIHllc3RlcmRheSBpbiBteSB0cmVlLCBzbyB5
+b3Ugc2hvdWxkIHNlZSB0aGlzIGluDQo+ID4gPiA+ID4gbGludXgtbmV4dCBieSBub3csIG5vIG5l
+ZWQgdG8gZG8gaXQgYWdhaW4gOikNCj4gPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBJIHNlZSBp
+dCBub3cuIFRoYW5rcyBmb3IgdGhlIHBvaW50ZXIuDQo+ID4gPiA+DQo+ID4gPiA+ID4gPiAqIE1v
+dmVzIHRoZSBzM2MtaHNvdGcgZHJpdmVyIGludG8gZHJpdmVycy91c2IvZHdjMi8NCj4gPiA+ID4g
+PiA+ICogRGVsZXRlIHMzYy1oc290Zy5oDQo+ID4gPiA+ID4gPiAqIE1ha2UgdGhlIHMzYy1oc290
+Zy5jIGZpbGUgdXNlIHRoZSBkZWZpbmVzIGluIGh3LmggZnJvbSB0aGUgRFdDMiBkcml2ZXIuDQo+
+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhpcyBpbml0aWFsIHBhdGNoIGhhcyBiZWVuIHRlc3Rl
+ZCBvbiB0aGUgU09DRlBHQSBwbGF0Zm9ybSBvbmx5IGluIEhvc3Qtb25seQ0KPiA+ID4gPiA+ID4g
+YW5kIEdhZGdldC1vbmx5IG1vZGUuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlIG5leHQg
+c3RlcCB3b3VsZCBiZSB0byBkbyB0aGUgY29tYmluaW5nIG9mIHRoZSBkcml2ZXIgaW50byBhIGR1
+YWwtcm9sZSBPVEcNCj4gPiA+ID4gPiA+IGRyaXZlci4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEkg
+d2FzIHRvbGQgdGhhdCBtZXJnaW5nIHRoZSB0d28gb2YgdGhlc2UgaXNuJ3QgZ29pbmcgdG8gd29y
+ayBhcyB0aGUNCj4gPiA+ID4gPiBzaWxpY29uIGlzIGp1c3QgdG9vIGRpZmZlcmVudCwgd2hpY2gg
+aXMgd2h5IEkgYWxsb3dlZCB0aGUgY29kZSB0byBtb3ZlDQo+ID4gPiA+ID4gb3V0IG9mIHN0YWdp
+bmcuICBJZiB5b3UgZmVlbCBkaWZmZXJlbnRseSwgYW5kIHRoaW5rIHlvdSBjYW4gY29tYmluZSB0
+aGUNCj4gPiA+ID4gPiB0d28gZHJpdmVycywgdGhhdCdzIHdvbmRlcmZ1bCwgSSdsbCBnbGFkbHkg
+dGFrZSBwYXRjaGVzIHRvIGRvIHNvLCBidXQgYmUNCj4gPiA+ID4gPiBzdXJlIHRvIHRlc3Qgb24g
+dGhlIHByb3BlciBwbGF0Zm9ybXMgdG8gbWFrZSBzdXJlIG5vdGhpbmcgYnJlYWtzLg0KPiA+ID4g
+PiA+DQo+ID4gPiA+DQo+ID4gPiA+IEkgd2Fzbid0IGF3YXJlIG9mIHRoZSBzaWxpY29uIGRpZmZl
+cmVuY2VzLiBJIGp1c3QgdG9vayB0aGUgczNjLWhzb3RnDQo+ID4gPiA+IGRyaXZlciBhcyBpcyBh
+bmQgaXQgd29ya2VkIGZpbmUgb24gbXkgdmVyc2lvbiAyLjkzYSBvZiB0aGUgVVNCIElQLiBJJ2xs
+DQo+ID4gPiA+IHNlYXJjaCB0aGUgTUwgZm9yIGluZm9ybWF0aW9uLCBvciBwZXJoYXBzIFBhdWwg
+Y2FuIGNvbW1lbnQ/DQo+ID4gPg0KPiA+ID4gSSB0aGluayBHcmVnIGlzIHRoaW5raW5nIG9mIHRo
+ZSBvY3Rlb24tdXNiIGRyaXZlciBpbiBzdGFnaW5nIFsxXSwgbm90DQo+ID4gPiB0aGUgczNjLWhz
+b3RnIGRyaXZlci4gVGhlIHBsYW4gd2FzIGFsd2F5cyB0byBldmVudHVhbGx5IG1lcmdlIGR3YzIg
+d2l0aA0KPiA+ID4gczNjLWhzb3RnLg0KPiA+DQo+ID4gWWVzLCBJJ20gdG90YWxseSBjb25mdXNl
+ZCwgeW91IGFyZSByaWdodC4NCj4gPg0KPiA+IE5ldmVybWluZCB0aGVuLCBEaW5oLCBpZiB5b3Ug
+d2FudCB0byByZWRvIHlvdXIgcGF0Y2ggYWZ0ZXIgMy4xNC1yYzEgaXMNCj4gPiBvdXQsIHRoYXQg
+d291bGQgYmUgZ3JlYXQgYXMgbWVyZ2luZyB0aGUgZHJpdmVycyB0b2dldGhlciBjYW4gYmUgZG9u
+ZQ0KPiA+IGVhc2llciBhZnRlciB0aGF0IGRldmVsb3BtZW50IHBvaW50Lg0KPiANCj4gVW5sZXNz
+LCBQYXVsIGhhcyBhbHJlYWR5IHN0YXJ0ZWQgdGhlIHdvcmssIEkgY2FuIHRha2UgYSBjcmFjayBh
+dCBpdC4NCg0KTm8sIEkgaGF2ZSBub3Qgc3RhcnRlZCBhbnkgd29yayBvbiB0aGF0ICh0b28gYnVz
+eSB3aXRoIG90aGVyIHRoaW5ncw0KdGhlc2UgZGF5cyksIHNvIHBsZWFzZSBmZWVsIGZyZWUgdG8g
+d29yayBvbiBpdC4NCg0KLS0gDQpQYXVsDQoNCg==
 --
 To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
