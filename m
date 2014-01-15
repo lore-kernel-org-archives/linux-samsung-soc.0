@@ -1,43 +1,60 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: S3C[24|64]xx: move includes back under <mach/> scope
-Date: Wed, 15 Jan 2014 14:19:23 +0100
-Message-ID: <201401151419.24423.arnd@arndb.de>
-References: <1389707618-17011-1-git-send-email-linus.walleij@linaro.org> <6144980.CZru2D3yJB@wuerfel> <CACRpkda=p6GnpuNQizdQA1gGuOe8Lnsp+r8rQedWCRog2MRHww@mail.gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 2/5] phy: add support for indexed lookup
+Date: Wed, 15 Jan 2014 19:41:17 +0530
+Message-ID: <52D69705.6010500@ti.com>
+References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com> <1386601737-8735-3-git-send-email-heikki.krogerus@linux.intel.com> <52AEDDE2.8060406@ti.com> <20131216143227.GA22944@xps8300> <52CC03D4.50603@ti.com> <20140114142310.GA21169@xps8300>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:57345 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751683AbaAONTi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jan 2014 08:19:38 -0500
-In-Reply-To: <CACRpkda=p6GnpuNQizdQA1gGuOe8Lnsp+r8rQedWCRog2MRHww@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140114142310.GA21169@xps8300>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Wednesday 15 January 2014, Linus Walleij wrote:
-> When I look at it, the issue also exist in e.g.
-> drivers/gpio/gpio-samsung.c which can be compiled
-> (like for allyesconfig) when PLAT_SAMSUNG is set.
+Hi Heikki,
+
+On Tuesday 14 January 2014 07:53 PM, Heikki Krogerus wrote:
+> Hi Kishon,
 > 
-> And it is also set to y for ARCH_EXYNOS... which
-> doesn't have any custom GPIO header. So this would
-> involve something like creating an empty
-> <mach/gpio-samsung.h> for Exynos which doesn't
-> seem like the right thing to do.
+> And happy new year..
 
-Ah, right. I looked at this before, but I misremembered about
-PLAT_SAMSUNG and thought it was fine because ARCH_EXYNOS no
-longer implied PLAT_SAMSUNG. That was wrong, instead ARCH_EXYNOS
-still sets PLAT_SAMSUNG but not PLAT_S5P as it used to.
+Happy new year :-)
+> 
+> On Tue, Jan 07, 2014 at 07:10:36PM +0530, Kishon Vijay Abraham I wrote:
+>>>>>  /**
+>>>>> - * phy_get() - lookup and obtain a reference to a phy.
+>>>>> + * phy_get_index() - obtain a phy based on index
+>>>>
+>>>> NAK. It still takes a 'char' argument and the name is misleading.
+>>>> Btw are you replacing phy_get() or adding a new API in addition to phy_get()?
+>>>
+>>> Additional API. The phy_get() would in practice act as a wrapper after
+>>
+>> In this patch it looks like you've replaced phy_get().
+>>> this. It could actually be just a #define macro in the include file.
+>>> The function naming I just copied straight from gpiolib.c. I did not
+>>> have the imagination for anything fancier.
+>>>
+>>> I would like to be able to use some function like phy_get_index() and
+>>> be able to deliver it both the name and the index. With DT you guys
+>>> will always be able to use the name (and the string will always
+>>> supersede the index if we do it like this), but with ACPI, and possibly
+>>> the platform lookup tables, the index can be used...
+>>
+>> I think in that case, we should drop the 'string' from phy_get_index since we
+>> have the other API to handle that? I don't know about ACPI, but is it not
+>> possible to use strings with ACPI?
+> 
+> No unfortunately. We just have what the ACPI tables provide. The PHYs
+> would be "child" device entries under the controller and we can only
+> get handle to them based on the index.
+> 
+> I think I'll skip this patch from this set. Let's wait until we have
+> an actual ACPI DSDT describing some PHYs.
 
-> So I'm sticking with the #ifdef patch for now as it
-> seems to be the lesser evil :-/
+yeah.. sure.
 
-Yes, agreed.
-
-	Arnd
+Cheers
+Kishon
