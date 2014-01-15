@@ -1,62 +1,63 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 8/8 v4] crypto:s5p-sss: Use clk_prepare/clk_unprepare
-Date: Wed, 15 Jan 2014 14:47:52 +0530
-Message-ID: <1389777472-15294-1-git-send-email-ch.naveen@samsung.com>
-References: <1389354331-32142-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22654 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750941AbaAOJRj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jan 2014 04:17:39 -0500
-In-reply-to: <1389354331-32142-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] mmc: dw_mmc: Fix card detection regression
+Date: Wed, 15 Jan 2014 15:09:02 +0530
+Message-ID: <CAK9yfHzZo82oN5+UiXzo47190JKiVwwEh8ikTfz_==_A1PdNLA@mail.gmail.com>
+References: <1389774667-18309-1-git-send-email-sachin.kamat@linaro.org>
+	<52D649C3.4020003@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <52D649C3.4020003@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: zhangfei <zhangfei.gao@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, chris@printf.net, Seungwon Jeon <tgih.jun@samsung.com>, Patch Tracking <patches@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, tomasz.figa@gmail.com
 
-This patch set adds use of clk_prepare/clk_unprepare as
-required by generic clock framework.
+Hi Zhangfei,
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+On 15 January 2014 14:11, zhangfei <zhangfei.gao@linaro.org> wrote:
+> Hi, Sachin
+>
+>
+>
+>
+> On 01/15/2014 04:31 PM, Sachin Kamat wrote:
+>>
+>> mmc_gpio_get_cd returns a negative error value upon failure.
+>> However gpio_cd was initialised with the negated return value
+>> of the above function. This negation resulted in losing of the
+>> error value thereby triggering the code to take a wrong path as
+>> IS_ERR_VALUE(gpio_cd) now returned 0 even when mmc_gpio_get_cd
+>> returned an error value. This issue introduced by commit bf626e5550f2
+>> ("mmc: dw_mmc: use slot-gpio to handle cd pin") caused card detection
+>> failure on Exynos5 boards which is now fixed by this patch.
+>>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+>> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>
+>
+> Thanks for the patch
+> I just submitted one patch to fix the issue, in case you missed it.
+
+Yes I did as I am not subscribed to mmc list.
+
+> Also spin_lock is required for atomic accessing DW_MMC_CARD_PRESENT.
+> Otherwise sd detect may be failed sometimes.
+>
+> Could you help take a look.
+
+I looked at and tested your patch [1] (which is similar to mine except
+for the locking part).
+
+Since I do not have your patch in my mailbox, FWIW,
+
+Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
+
+[1] http://permalink.gmane.org/gmane.linux.kernel.mmc/24600
 ---
-Changes since v3:
-None
-
- drivers/crypto/s5p-sss.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index f7c66c7..870e794 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -648,7 +648,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	clk_enable(pdata->clk);
-+	clk_prepare_enable(pdata->clk);
- 
- 	spin_lock_init(&pdata->lock);
- 	pdata->ioaddr = devm_ioremap(dev, res->start,
-@@ -711,7 +711,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 	tasklet_kill(&pdata->tasklet);
- 
-  err_irq:
--	clk_disable(pdata->clk);
-+	clk_disable_unprepare(pdata->clk);
- 
- 	s5p_dev = NULL;
- 
-@@ -731,7 +731,7 @@ static int s5p_aes_remove(struct platform_device *pdev)
- 
- 	tasklet_kill(&pdata->tasklet);
- 
--	clk_disable(pdata->clk);
-+	clk_disable_unprepare(pdata->clk);
- 
- 	s5p_dev = NULL;
- 
--- 
-1.7.9.5
+With warm regards,
+Sachin
