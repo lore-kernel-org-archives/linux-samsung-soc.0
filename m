@@ -1,67 +1,119 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 4/5] arm: omap3: twl: use the new lookup method with usb
- phy
-Date: Wed, 15 Jan 2014 19:41:55 +0530
-Message-ID: <52D6972B.2030704@ti.com>
-References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com> <1386601737-8735-5-git-send-email-heikki.krogerus@linux.intel.com> <52AEDE43.8030005@ti.com> <20131216144314.GB22944@xps8300> <52CBFAC0.9040103@ti.com> <20140114143849.GB21169@xps8300>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/1] ARM: S3C24XX: Move rtc-core.h from plat to mach
+Date: Wed, 15 Jan 2014 22:34:22 +0100
+Message-ID: <2677599.hxjB7meQWY@phil>
+References: <1388400008-9113-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140114143849.GB21169@xps8300>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:39853 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751336AbaAOVeu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 15 Jan 2014 16:34:50 -0500
+In-Reply-To: <1388400008-9113-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-Hi,
-
-On Tuesday 14 January 2014 08:08 PM, Heikki Krogerus wrote:
-> On Tue, Jan 07, 2014 at 06:31:52PM +0530, Kishon Vijay Abraham I wrote:
->>> In any case, having two device names to deal with does not add any
->>> more risk. These associations should always be made in the place where
->>> the phy device is created so you will always know it's device name.
->>
->> huh.. we should also know the 'controller' device name while defining these
->> associations and in some cases the controller device and phy device are created
->> in entirely different places.
+Am Montag, 30. Dezember 2013, 16:10:08 schrieb Sachin Kamat:
+> plat/rtc-core.h is only referenced from mach-s3c24xx. Hence
+> move it there to de-populate the plat directory. While at it
+> also do some cleanup of the header file.
 > 
-> If you don't want to use the controller device name to do the
-> matching, we can use the con_id string as well. I believe the lookup
-> method I use in this set just needs a small change.
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
 
-The point I'm trying to make is that we won't 'always' know the device names in
-advance.
-Btw how are you planning to differentiate between multiple controllers of the
-same type with con_id?
+late, but as the patch is not merged yet:
 
-Maybe I'm missing the actual intention of this patch. Do you face problem if
-the PHY's have to know about it's consumers in ACPI?
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+>  .../plat => mach-s3c24xx/include/mach}/rtc-core.h  |   13 ++++++-------
+>  arch/arm/mach-s3c24xx/s3c2416.c                    |    2 +-
+>  arch/arm/mach-s3c24xx/s3c2443.c                    |    2 +-
+>  3 files changed, 8 insertions(+), 9 deletions(-)
+>  rename arch/arm/{plat-samsung/include/plat =>
+> mach-s3c24xx/include/mach}/rtc-core.h (69%)
 > 
-> Is that OK with you?
+> diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h
+> b/arch/arm/mach-s3c24xx/include/mach/rtc-core.h similarity index 69%
+> rename from arch/arm/plat-samsung/include/plat/rtc-core.h
+> rename to arch/arm/mach-s3c24xx/include/mach/rtc-core.h
+> index 7b542f7b7938..4d5f5768f700 100644
+> --- a/arch/arm/plat-samsung/include/plat/rtc-core.h
+> +++ b/arch/arm/mach-s3c24xx/include/mach/rtc-core.h
+> @@ -1,5 +1,4 @@
+> -/* linux/arch/arm/plat-samsung/include/plat/rtc-core.h
+> - *
+> +/*
+>   * Copyright (c) 2011 Heiko Stuebner <heiko@sntech.de>
+>   *
+>   * Samsung RTC Controller core functions
+> @@ -9,19 +8,19 @@
+>   * published by the Free Software Foundation.
+>  */
 > 
+> -#ifndef __ASM_PLAT_RTC_CORE_H
+> -#define __ASM_PLAT_RTC_CORE_H __FILE__
+> +#ifndef __RTC_CORE_H
+> +#define __RTC_CORE_H __FILE__
 > 
->>> Normally the platform code creates these associations in the same
->>> place it creates the platform devices, so you definitely know what the
->>> device names will be.
->>>
->>> In this case it's actually created in drivers/mfd/twl-core.c, so I do
->>> need to update this and move the lookup table there. We can still
->>> deliver the user name as platform data, though I believe it's always
->>> "musb". Maybe we could actually skip that and just hard code the name?
->>
->> I would rather leave the way it is modelled now.
+>  /* These functions are only for use with the core support code, such as
+>   * the cpu specific initialisation code
+>   */
 > 
-> Do you mean, leave it in the platform code? Why? We would reduce the
-> platform code by moving it to the mfd driver. Or did I misunderstood
-> something?
-
-In this case, the lookup table will be used only for non-dt boot so don't see
-much use in moving to mfd driver.
-I meant if the new method is not solving any problem then I would prefer the
-way it is modelled now where the PHY's know about it's consumers.
-
-Btw where does device gets created in ACPI boot?
-
-Cheers
-Kishon
+> +extern struct platform_device s3c_device_rtc;
+> +
+>  /* re-define device name depending on support. */
+>  static inline void s3c_rtc_setname(char *name)
+>  {
+> -#if defined(CONFIG_S3C_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
+>  	s3c_device_rtc.name = name;
+> -#endif
+>  }
+> 
+> -#endif /* __ASM_PLAT_RTC_CORE_H */
+> +#endif /* __RTC_CORE_H */
+> diff --git a/arch/arm/mach-s3c24xx/s3c2416.c
+> b/arch/arm/mach-s3c24xx/s3c2416.c index cb77880029f7..a0b787505c02 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2416.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2416.c
+> @@ -48,6 +48,7 @@
+>  #include <asm/system_misc.h>
+> 
+>  #include <mach/regs-s3c2443-clock.h>
+> +#include <mach/rtc-core.h>
+> 
+>  #include <plat/gpio-core.h>
+>  #include <plat/gpio-cfg.h>
+> @@ -61,7 +62,6 @@
+>  #include <plat/fb-core.h>
+>  #include <plat/nand-core.h>
+>  #include <plat/adc-core.h>
+> -#include <plat/rtc-core.h>
+>  #include <plat/spi-core.h>
+> 
+>  #include "common.h"
+> diff --git a/arch/arm/mach-s3c24xx/s3c2443.c
+> b/arch/arm/mach-s3c24xx/s3c2443.c index faa1086924c4..4af858457b2f 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2443.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2443.c
+> @@ -34,6 +34,7 @@
+>  #include <asm/system_misc.h>
+> 
+>  #include <mach/regs-s3c2443-clock.h>
+> +#include <mach/rtc-core.h>
+> 
+>  #include <plat/gpio-core.h>
+>  #include <plat/gpio-cfg.h>
+> @@ -43,7 +44,6 @@
+>  #include <plat/fb-core.h>
+>  #include <plat/nand-core.h>
+>  #include <plat/adc-core.h>
+> -#include <plat/rtc-core.h>
+>  #include <plat/spi-core.h>
+> 
+>  static struct map_desc s3c2443_iodesc[] __initdata = {
