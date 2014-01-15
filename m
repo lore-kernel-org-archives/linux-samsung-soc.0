@@ -1,75 +1,68 @@
-From: y@samsung.com
-Subject: [PATCH v2] drivers: i2c: silence a compile warning in i2c-s3c2410.c
-Date: Wed, 15 Jan 2014 10:42:42 +0900
-Message-ID: <1389750162-5765-1-git-send-email-y@samsung.com>
-References: <20140114190910.GE10340@katana>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 7/8 v3] crypto:s5p-sss: validate iv before memcpy
+Date: Wed, 15 Jan 2014 12:15:16 +0530
+Message-ID: <CAHfPSqAtm-Nk1BeC3sWmtUi0dvyfweXSXYnYiQMFzzdWYiDhAg@mail.gmail.com>
+References: <1389243640-13282-1-git-send-email-ch.naveen@samsung.com>
+ <1389354321-32096-1-git-send-email-ch.naveen@samsung.com> <52D019BD.30401@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20140114190910.GE10340@katana>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:59838 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750757AbaAOGph (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 15 Jan 2014 01:45:37 -0500
+In-Reply-To: <52D019BD.30401@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vzapolskiy@gmail.com>, herbert@gondor.apana.org.au, cpgs@samsung.com, tomasz.figa@gmail.com
 
-=46rom: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Hello Tomasz,
 
-If used 64 bit compiler GCC warns that:
+On 10 January 2014 21:33, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Naveen,
+>
+>
+> On 10.01.2014 12:45, Naveen Krishna Chatradhi wrote:
+>>
+>> This patch adds code to validate "iv" buffer before trying to
+>> memcpy the contents
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> ---
+>> Changes since v2:
+>> None
+>>
+>>   drivers/crypto/s5p-sss.c |    5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+>> index f274f5f..7058bb6 100644
+>> --- a/drivers/crypto/s5p-sss.c
+>> +++ b/drivers/crypto/s5p-sss.c
+>> @@ -381,8 +381,9 @@ static void s5p_set_aes(struct s5p_aes_dev *dev,
+>>         struct samsung_aes_variant *var = dev->variant;
+>>         void __iomem *keystart;
+>>
+>> -       memcpy(dev->ioaddr + SSS_REG_AES_IV_DATA
+>> -                               (var->aes_offset, 0), iv, 0x10);
+>> +       if (iv)
+>> +               memcpy(dev->ioaddr + SSS_REG_AES_IV_DATA
+>> +                                       (var->aes_offset, 0), iv, 0x10);
+>
+>
+> In what conditions can the iv end up being NULL?
+req->info is the initialization vector in our case, which comes from user space.
+Its good to have a check to avoid any crashes.
 
-drivers/i2c/busses/i2c-s3c2410.c: In function =E2=80=98s3c24xx_get_devi=
-ce_quirks=E2=80=99:
-drivers/i2c/busses/i2c-s3c2410.c:168:10: warning: cast from pointer to =
-integer
-of different size [-Wpointer-to-int-cast]
+Also AES ECB mode does not use IV.
+>
+> Best regards,
+> Tomasz
 
-This patch fixes this by converting "unsigned int" to "kernel_ulong_t".
 
-CC: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-CC: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-CC: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
 
-Changes since v1:
-    - using "kernel_ulong_t" instead of "unsigned long" for consistency=
-=2E
-    - take care of formatting issues as pointed by Wolfram Sang.
-
- drivers/i2c/busses/i2c-s3c2410.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-=
-s3c2410.c
-index bf8fb94..168de17 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -101,7 +101,7 @@ enum s3c24xx_i2c_state {
-=20
- struct s3c24xx_i2c {
- 	wait_queue_head_t	wait;
--	unsigned int            quirks;
-+	kernel_ulong_t		quirks;
- 	unsigned int		suspended:1;
-=20
- 	struct i2c_msg		*msg;
-@@ -160,12 +160,12 @@ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
-  * Get controller type either from device tree or platform device vari=
-ant.
- */
-=20
--static inline unsigned int s3c24xx_get_device_quirks(struct platform_d=
-evice *pdev)
-+static inline kernel_ulong_t s3c24xx_get_device_quirks(struct platform=
-_device *pdev)
- {
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
- 		match =3D of_match_node(s3c24xx_i2c_match, pdev->dev.of_node);
--		return (unsigned int)match->data;
-+		return (kernel_ulong_t)match->data;
- 	}
-=20
- 	return platform_get_device_id(pdev)->driver_data;
---=20
-1.7.10.4
+-- 
+Shine bright,
+(: Nav :)
