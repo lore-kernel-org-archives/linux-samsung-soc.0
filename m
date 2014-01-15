@@ -1,64 +1,68 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: S5P[v210|c100|64x0]: Fix build error
-Date: Wed, 15 Jan 2014 14:31:29 +0530
-Message-ID: <1389776489-29853-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:48528 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750998AbaAOJFt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jan 2014 04:05:49 -0500
-Received: by mail-pa0-f44.google.com with SMTP id kq14so886712pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2014 01:05:48 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 5/8 v3] clk:exynos-5250: Add gate clock for SSS module
+Date: Wed, 15 Jan 2014 14:35:32 +0530
+Message-ID: <CAHfPSqC9CjNre9Tj_QZsUNH5BKYvC7FB0do=-YfgLZrKUg0z+w@mail.gmail.com>
+References: <1389095509-14357-6-git-send-email-ch.naveen@samsung.com>
+ <1389354229-31936-1-git-send-email-ch.naveen@samsung.com> <52D0188A.2080709@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <52D0188A.2080709@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vzapolskiy@gmail.com>, herbert@gondor.apana.org.au, cpgs@samsung.com, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-gpio-samsung.h header file introduced by commit 93177be0910c
-("ARM: S3C[24|64]xx: move includes back under <mach/> scope")
-is required only by S3C[24|64]xx machines. Include them conditionally
-to avoid the following build errors for other machine configurations.
-drivers/gpio/gpio-samsung.c:35:31: fatal error: mach/gpio-samsung.h: No such file or directory
-arch/arm/plat-samsung/pm-gpio.c:22:31: fatal error: mach/gpio-samsung.h: No such file or directory
+Hello Tomasz,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Only compile tested.
----
- arch/arm/plat-samsung/pm-gpio.c |    3 +++
- drivers/gpio/gpio-samsung.c     |    3 +++
- 2 files changed, 6 insertions(+)
+On 10 January 2014 21:28, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Naveen,
+>
+>
+> On 10.01.2014 12:43, Naveen Krishna Chatradhi wrote:
+>>
+>> This patch adds gating clock for SSS(Security SubSystem)
+>> module on Exynos5250.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> ---
+>> Changes since v2:
+>> This is a new change to support SSS on Exynos5250
+>>
+>>   drivers/clk/samsung/clk-exynos5250.c |    3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+>> b/drivers/clk/samsung/clk-exynos5250.c
+>> index adf3234..b47bf0a 100644
+>> --- a/drivers/clk/samsung/clk-exynos5250.c
+>> +++ b/drivers/clk/samsung/clk-exynos5250.c
+>> @@ -120,7 +120,7 @@ enum exynos5250_clks {
+>>         spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1,
+>> hsi2c2,
+>>         hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0,
+>> tzpc1,
+>>         tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec,
+>> mct,
+>> -       wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g2d,
+>> +       wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g2d, sss,
+>
+>
+> Please base changes to Samsung clock drivers on Mike Turquette's clk-next
+> [1] or ideally on my samsung-next branch on samsung-clk-tree [2].
+>
+> By the way, if you assign an ID to a clock, you need to document this in
+> respective clock bindings documentation.
+>
+> [1] - https://git.linaro.org/people/mike.turquette/linux.git
+> [2] - https://git.kernel.org/cgit/linux/kernel/git/tfiga/samsung-clk.git/
+Sure Tomasz, Will rebase this changes on to your samsung-clk.git tree
+>
+> Best regards,
+> Tomasz
 
-diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
-index a9f7a37c4173..dd4c15d0d68f 100644
---- a/arch/arm/plat-samsung/pm-gpio.c
-+++ b/arch/arm/plat-samsung/pm-gpio.c
-@@ -19,7 +19,10 @@
- #include <linux/io.h>
- #include <linux/gpio.h>
- 
-+#if defined(CONFIG_ARCH_S3C24XX) || defined(CONFIG_ARCH_S3C64XX)
- #include <mach/gpio-samsung.h>
-+#endif
-+
- #include <plat/gpio-core.h>
- #include <plat/pm.h>
- 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index 9741cce11df5..a85e00bf9834 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -32,7 +32,10 @@
- 
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
-+
-+#if defined(CONFIG_ARCH_S3C24XX) || defined(CONFIG_ARCH_S3C64XX)
- #include <mach/gpio-samsung.h>
-+#endif
- 
- #include <plat/cpu.h>
- #include <plat/gpio-core.h>
+
+
 -- 
-1.7.9.5
+Shine bright,
+(: Nav :)
