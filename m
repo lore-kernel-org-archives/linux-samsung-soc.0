@@ -1,53 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: S3C[24|64]xx: move includes back under <mach/> scope
-Date: Wed, 15 Jan 2014 10:43:37 +0100
-Message-ID: <6144980.CZru2D3yJB@wuerfel>
-References: <1389707618-17011-1-git-send-email-linus.walleij@linaro.org>
- <CAHbNUh29qGSt-isqOAdVVO3x0w2mDTVnKeH+Sc_rkfkOiXc_mA@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] mmc: dw_mmc: Fix card detection regression
+Date: Wed, 15 Jan 2014 15:24:05 +0530
+Message-ID: <CAK9yfHwCxc2X4Q+xHFd_Xy3cQjMzNdxVrvgbpVjYijaOad+GBw@mail.gmail.com>
+References: <1389774667-18309-1-git-send-email-sachin.kamat@linaro.org>
+	<52D649C3.4020003@linaro.org>
+	<CAK9yfHzZo82oN5+UiXzo47190JKiVwwEh8ikTfz_==_A1PdNLA@mail.gmail.com>
+	<52D6584E.2020606@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAHbNUh29qGSt-isqOAdVVO3x0w2mDTVnKeH+Sc_rkfkOiXc_mA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Ben Dooks <ben-linux@fluff.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Tushar Behera <tushar.behera@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <52D6584E.2020606@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: zhangfei <zhangfei.gao@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, chris@printf.net, Seungwon Jeon <tgih.jun@samsung.com>, Patch Tracking <patches@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday 15 January 2014 14:41:01 Tushar Behera wrote:
-> > diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
-> > index c4efa1c2a5d1..a9f7a37c4173 100644
-> > --- a/arch/arm/plat-samsung/pm-gpio.c
-> > +++ b/arch/arm/plat-samsung/pm-gpio.c
-> > @@ -19,12 +19,7 @@
-> >  #include <linux/io.h>
-> >  #include <linux/gpio.h>
-> >
-> > -#ifdef CONFIG_ARCH_S3C24XX
-> > -#include <linux/platform_data/gpio-samsung-s3c24xx.h>
-> > -#endif
-> > -#ifdef CONFIG_ARCH_S3C64XX
-> > -#include <linux/platform_data/gpio-samsung-s3c64xx.h>
-> > -#endif
-> > +#include <mach/gpio-samsung.h>
-> 
-> This inclusion should be protected by a check for CONFIG_ARCH_S3C24XX
-> || CONFIG_ARCH_S3C64XX. Currently generating build errors for
-> s5p64x0_defconfig, s5pc100_defconfig and s5pv210_defconfig on
-> next-20140115.
-> 
+On 15 January 2014 15:13, zhangfei <zhangfei.gao@linaro.org> wrote:
+>
+>
+> On 01/15/2014 05:39 PM, Sachin Kamat wrote:
+>>>
+>>> Thanks for the patch
+>>> I just submitted one patch to fix the issue, in case you missed it.
+>>
+>>
+>> Yes I did as I am not subscribed to mmc list.
+>>
+>>> Also spin_lock is required for atomic accessing DW_MMC_CARD_PRESENT.
+>>> Otherwise sd detect may be failed sometimes.
+>>>
+>>> Could you help take a look.
+>>
+>>
+>> I looked at and tested your patch [1] (which is similar to mine except
+>> for the locking part).
+>>
+>> Since I do not have your patch in my mailbox, FWIW,
+>>
+>> Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
+>
+>
+> Thanks Sachin,  that's great it works, all my mistake.
+> Then I resumit the patch with this and cc you.
 
-I noticed the same problem, but I think a better solution would
-be to do the same change for s5p that Linus has done for s3c,
-which is to move the nonstandard contents of mach/gpio.h to
-mach/gpio-samsung.h.
+If you are planning to re-submit, then you may please consider
+revising the commit message as follows:
 
-	Arnd
+s/Introdeced/Introduced
+Please provide patch title after the commit Id in braces ("<patch title>").
+s/ingored/ignored
+
+You may also elaborate on why IS_ERR_VALUE(!mmc_gpio_get_cd(mmc)) does not work.
+
+-- 
+With warm regards,
+Sachin
