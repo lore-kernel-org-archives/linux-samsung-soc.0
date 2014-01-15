@@ -1,53 +1,31 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] drm/exynos: Fix multiplatform breakage for ipp
-Date: Wed, 15 Jan 2014 17:27:33 +0530
-Message-ID: <1389787053-18228-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:59430 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237AbaAOMBo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jan 2014 07:01:44 -0500
-Received: by mail-pa0-f53.google.com with SMTP id lj1so1049778pab.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2014 04:01:44 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: S5P[v210|c100|64x0]: Fix build error
+Date: Wed, 15 Jan 2014 13:48:52 +0100
+Message-ID: <CACRpkdZmNb+-BJdxcKMBe-LTT9-325KosEp0jTniAgBoD0hcdQ@mail.gmail.com>
+References: <1389776489-29853-1-git-send-email-sachin.kamat@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1389776489-29853-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: inki.dae@samsung.com, arnd@arndb.de
 
-There is no need to include "plat/map-base.h" in ipp driver. Remove
-this and enable this driver for multi-platform.
+On Wed, Jan 15, 2014 at 10:01 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- drivers/gpu/drm/exynos/Kconfig          |    2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c |    1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+> gpio-samsung.h header file introduced by commit 93177be0910c
+> ("ARM: S3C[24|64]xx: move includes back under <mach/> scope")
+> is required only by S3C[24|64]xx machines. Include them conditionally
+> to avoid the following build errors for other machine configurations.
+> drivers/gpio/gpio-samsung.c:35:31: fatal error: mach/gpio-samsung.h: No such file or directory
+> arch/arm/plat-samsung/pm-gpio.c:22:31: fatal error: mach/gpio-samsung.h: No such file or directory
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index f227f54..3af44c2 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -51,7 +51,7 @@ config DRM_EXYNOS_G2D
- 
- config DRM_EXYNOS_IPP
- 	bool "Exynos DRM IPP"
--	depends on DRM_EXYNOS && !ARCH_MULTIPLATFORM
-+	depends on DRM_EXYNOS
- 	help
- 	  Choose this option if you want to use IPP feature for DRM.
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index d519a4e..eefb429 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -16,7 +16,6 @@
- #include <linux/types.h>
- #include <linux/clk.h>
- #include <linux/pm_runtime.h>
--#include <plat/map-base.h>
- 
- #include <drm/drmP.h>
- #include <drm/exynos_drm.h>
--- 
-1.7.9.5
+Damned I couldn't get rid of the ifdefs anyway :-(
+
+Thanks Sachin, patch applied.
+
+Yours,
+Linus Walleij
