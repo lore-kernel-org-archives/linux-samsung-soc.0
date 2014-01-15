@@ -1,68 +1,58 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 7/8 v3] crypto:s5p-sss: validate iv before memcpy
-Date: Wed, 15 Jan 2014 12:15:16 +0530
-Message-ID: <CAHfPSqAtm-Nk1BeC3sWmtUi0dvyfweXSXYnYiQMFzzdWYiDhAg@mail.gmail.com>
-References: <1389243640-13282-1-git-send-email-ch.naveen@samsung.com>
- <1389354321-32096-1-git-send-email-ch.naveen@samsung.com> <52D019BD.30401@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] mmc: dw_mmc: Fix card detection regression
+Date: Wed, 15 Jan 2014 14:01:07 +0530
+Message-ID: <1389774667-18309-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:59838 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750757AbaAOGph (ORCPT
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:64450 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132AbaAOIff (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jan 2014 01:45:37 -0500
-In-Reply-To: <52D019BD.30401@samsung.com>
+	Wed, 15 Jan 2014 03:35:35 -0500
+Received: by mail-pd0-f176.google.com with SMTP id r10so819231pdi.35
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2014 00:35:35 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vzapolskiy@gmail.com>, herbert@gondor.apana.org.au, cpgs@samsung.com, tomasz.figa@gmail.com
+To: linux-mmc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, chris@printf.net, tgih.jun@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Zhangfei Gao <zhangfei.gao@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 
-Hello Tomasz,
+mmc_gpio_get_cd returns a negative error value upon failure.
+However gpio_cd was initialised with the negated return value
+of the above function. This negation resulted in losing of the
+error value thereby triggering the code to take a wrong path as
+IS_ERR_VALUE(gpio_cd) now returned 0 even when mmc_gpio_get_cd
+returned an error value. This issue introduced by commit bf626e5550f2
+("mmc: dw_mmc: use slot-gpio to handle cd pin") caused card detection
+failure on Exynos5 boards which is now fixed by this patch.
 
-On 10 January 2014 21:33, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Naveen,
->
->
-> On 10.01.2014 12:45, Naveen Krishna Chatradhi wrote:
->>
->> This patch adds code to validate "iv" buffer before trying to
->> memcpy the contents
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> ---
->> Changes since v2:
->> None
->>
->>   drivers/crypto/s5p-sss.c |    5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
->> index f274f5f..7058bb6 100644
->> --- a/drivers/crypto/s5p-sss.c
->> +++ b/drivers/crypto/s5p-sss.c
->> @@ -381,8 +381,9 @@ static void s5p_set_aes(struct s5p_aes_dev *dev,
->>         struct samsung_aes_variant *var = dev->variant;
->>         void __iomem *keystart;
->>
->> -       memcpy(dev->ioaddr + SSS_REG_AES_IV_DATA
->> -                               (var->aes_offset, 0), iv, 0x10);
->> +       if (iv)
->> +               memcpy(dev->ioaddr + SSS_REG_AES_IV_DATA
->> +                                       (var->aes_offset, 0), iv, 0x10);
->
->
-> In what conditions can the iv end up being NULL?
-req->info is the initialization vector in our case, which comes from user space.
-Its good to have a check to avoid any crashes.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mmc/host/dw_mmc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Also AES ECB mode does not use IV.
->
-> Best regards,
-> Tomasz
-
-
-
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index a776f24f4311..f1683ba194ee 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1033,7 +1033,7 @@ static int dw_mci_get_cd(struct mmc_host *mmc)
+ 	int present;
+ 	struct dw_mci_slot *slot = mmc_priv(mmc);
+ 	struct dw_mci_board *brd = slot->host->pdata;
+-	int gpio_cd = !mmc_gpio_get_cd(mmc);
++	int gpio_cd = mmc_gpio_get_cd(mmc);
+ 
+ 	/* Use platform get_cd function, else try onboard card detect */
+ 	if (brd->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
+@@ -1041,7 +1041,7 @@ static int dw_mci_get_cd(struct mmc_host *mmc)
+ 	else if (brd->get_cd)
+ 		present = !brd->get_cd(slot->id);
+ 	else if (!IS_ERR_VALUE(gpio_cd))
+-		present = !!gpio_cd;
++		present = !gpio_cd;
+ 	else
+ 		present = (mci_readl(slot->host, CDETECT) & (1 << slot->id))
+ 			== 0 ? 1 : 0;
 -- 
-Shine bright,
-(: Nav :)
+1.7.9.5
