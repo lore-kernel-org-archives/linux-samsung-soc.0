@@ -1,199 +1,48 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 1/2] spi: Provide core support for DMA mapping transfers
-Date: Thu, 16 Jan 2014 12:28:50 +0000
-Message-ID: <1389875331-13692-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: =?gb2312?B?wO7PxMjz?= <lxr1234@hotmail.com>
+Subject: RE: Can't use the usbphy in exynos4412
+Date: Thu, 16 Jan 2014 21:05:49 +0800
+Message-ID: <BLU170-W12970C22F7D01EE8F74C1FAADB90@phx.gbl>
+References: <BLU0-SMTP134652419A269488A455784ADBE0@phx.gbl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from blu0-omc4-s34.blu0.hotmail.com ([65.55.111.173]:13338 "EHLO
+	blu0-omc4-s34.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751369AbaAPNFu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jan 2014 08:05:50 -0500
+In-Reply-To: <BLU0-SMTP134652419A269488A455784ADBE0@phx.gbl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-The process of DMA mapping buffers for SPI transfers does not vary between
-devices so in order to save duplication of code in drivers this can be
-factored out into the core, allowing it to be integrated with the work that
-is being done on factoring out the common elements from the data path
-including more sharing of dmaengine code.
-
-In order to use this masters need to provide a can_dma() operation and while
-the hardware is prepared they should ensure that DMA channels are provided
-in tx_dma and rx_dma. The core will then ensure that the buffers are mapped
-for DMA prior to calling transfer_one_message().
-
-Currently the cleanup on error is not complete, this needs to be improved.
-
-Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/spi/spi.c       | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/spi/spi.h | 18 +++++++++++
- 2 files changed, 97 insertions(+)
-
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index a86569e1f178..314d326bce9f 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -24,6 +24,8 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/cache.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-@@ -570,6 +572,74 @@ static void spi_set_cs(struct spi_device *spi, bool enable)
- 		spi->master->set_cs(spi, !enable);
- }
- 
-+static int spi_dma_map_msg(struct spi_master *master, struct spi_message *msg)
-+{
-+	struct device *dev = master->dev.parent;
-+	struct device *tx_dev, *rx_dev;
-+	struct spi_transfer *xfer;
-+
-+	if (msg->is_dma_mapped || !master->can_dma)
-+		return 0;
-+
-+	tx_dev = &master->dma_tx->dev->device;
-+	rx_dev = &master->dma_rx->dev->device;
-+
-+	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-+		if (!master->can_dma(master, msg->spi, xfer))
-+			continue;
-+
-+		if (xfer->tx_buf != NULL) {
-+			xfer->tx_dma = dma_map_single(tx_dev,
-+						      (void *)xfer->tx_buf,
-+						      xfer->len,
-+						      DMA_TO_DEVICE);
-+			if (dma_mapping_error(dev, xfer->tx_dma)) {
-+				dev_err(dev, "dma_map_single Tx failed\n");
-+				return -ENOMEM;
-+			}
-+		}
-+
-+		if (xfer->rx_buf != NULL) {
-+			xfer->rx_dma = dma_map_single(rx_dev,
-+						      xfer->rx_buf, xfer->len,
-+						      DMA_FROM_DEVICE);
-+			if (dma_mapping_error(dev, xfer->rx_dma)) {
-+				dev_err(dev, "dma_map_single Rx failed\n");
-+				dma_unmap_single(tx_dev, xfer->tx_dma,
-+						 xfer->len, DMA_TO_DEVICE);
-+				return -ENOMEM;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int spi_dma_unmap_msg(struct spi_master *master,
-+			     struct spi_message *msg)
-+{
-+	struct spi_transfer *xfer;
-+	struct device *tx_dev, *rx_dev;
-+
-+	if (!master->cur_msg_mapped || msg->is_dma_mapped || !master->can_dma)
-+		return 0;
-+
-+	tx_dev = &master->dma_tx->dev->device;
-+	rx_dev = &master->dma_rx->dev->device;
-+
-+	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-+		if (!master->can_dma(master, msg->spi, xfer))
-+			continue;
-+
-+		dma_unmap_single(rx_dev, xfer->rx_dma, xfer->len,
-+				 DMA_FROM_DEVICE);
-+		dma_unmap_single(tx_dev, xfer->tx_dma, xfer->len,
-+				 DMA_TO_DEVICE);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * spi_transfer_one_message - Default implementation of transfer_one_message()
-  *
-@@ -740,6 +810,13 @@ static void spi_pump_messages(struct kthread_work *work)
- 		master->cur_msg_prepared = true;
- 	}
- 
-+	ret = spi_dma_map_msg(master, master->cur_msg);
-+	if (ret) {
-+		master->cur_msg->status = ret;
-+		spi_finalize_current_message(master);
-+		return;
-+	}
-+
- 	ret = master->transfer_one_message(master, master->cur_msg);
- 	if (ret) {
- 		dev_err(&master->dev,
-@@ -829,6 +906,8 @@ void spi_finalize_current_message(struct spi_master *master)
- 	queue_kthread_work(&master->kworker, &master->pump_messages);
- 	spin_unlock_irqrestore(&master->queue_lock, flags);
- 
-+	spi_dma_unmap_msg(master, mesg);
-+
- 	if (master->cur_msg_prepared && master->unprepare_message) {
- 		ret = master->unprepare_message(master, mesg);
- 		if (ret) {
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 21a7251d85ee..14380043491b 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -25,6 +25,8 @@
- #include <linux/kthread.h>
- #include <linux/completion.h>
- 
-+struct dma_chan;
-+
- /*
-  * INTERFACES between SPI master-side drivers and SPI infrastructure.
-  * (There's no SPI slave support for Linux yet...)
-@@ -385,6 +387,17 @@ struct spi_master {
- 	void			(*cleanup)(struct spi_device *spi);
- 
- 	/*
-+	 * Used to enable core support for DMA handling, if can_dma()
-+	 * exists and returns true then the transfer will be mapped
-+	 * prior to transfer_one() being called.  The driver should
-+	 * not modify or store xfer and dma_tx and dma_rx must be set
-+	 * while the device is prepared.
-+	 */
-+	bool			(*can_dma)(struct spi_master *master,
-+					   struct spi_device *spi,
-+					   struct spi_transfer *xfer);
-+
-+	/*
- 	 * These hooks are for drivers that want to use the generic
- 	 * master transfer queueing mechanism. If these are used, the
- 	 * transfer() function above must NOT be specified by the driver.
-@@ -402,6 +415,7 @@ struct spi_master {
- 	bool				rt;
- 	bool				auto_runtime_pm;
- 	bool                            cur_msg_prepared;
-+	bool				cur_msg_mapped;
- 	struct completion               xfer_completion;
- 
- 	int (*prepare_transfer_hardware)(struct spi_master *master);
-@@ -423,6 +437,10 @@ struct spi_master {
- 
- 	/* gpio chip select */
- 	int			*cs_gpios;
-+
-+	/* DMA channels for use with core dmaengine helpers */
-+	struct dma_chan		*dma_tx;
-+	struct dma_chan		*dma_rx;
- };
- 
- static inline void *spi_master_get_devdata(struct spi_master *master)
--- 
-1.8.5.2
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IERhdGU6IFdlZCwgMTUg
+SmFuIDIwMTQgMTg6NDQ6MzMgKzA4MDAKPiBGcm9tOiBseHIxMjM0QGhvdG1haWwuY29tCj4gVG86
+IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZwo+IENDOiBiYWxiaUB0aS5jb207IGtn
+ZW5lLmtpbUBzYW1zdW5nLmNvbQo+IFN1YmplY3Q6IENhbid0IHVzZSB0aGUgdXNicGh5IGluIGV4
+eW5vczQ0MTIKPgo+IC0tLS0tQkVHSU4gUEdQIFNJR05FRCBNRVNTQUdFLS0tLS0KPiBIYXNoOiBT
+SEExCj4KPiBJIG1lZXQgdGhlIHVzYiBwcm9ibGVtIGluIExpbnV4IDMuMTMtcmM4LCBpbiBteSBi
+b2FyZCwgdGhlIEhTSUMgaW4gU29DCj4gaXMgY29ubmVjdCB0byB1c2I0NjQwLCBJIGhhdmUgdXNp
+bmcgYSBsaXR0ZXIgZHJpdmVyIHRvIHJlc2V0IHVzYjQ2NDAKPiBhZnRlciBib290Lgo+IEluIHRo
+ZSBvbGQgdGltZSwgd2hlbiBpdCBkb2Vzbid0IHVzZSBjb21tb24gcGh5IGZyYW1ld29yaywgaXQg
+d2FzIHdvcmsuCj4gSW4gYm9hcmQsIHRoZSBvdGcgaXMgYnJpa2UobWF5YmUgYnkgZnJhbmtsaW5p
+c20pIGJ1dCBIU0lDIG9mIGhvc3QgaXMKPiBub3JtYWwsIEkgaGF2ZSB0ZXN0ZWQuCj4gdGhlIGRt
+ZXNnIHNob3cgdGhhdAo+IFsgMS4yNjAwMDBdIHNhbXN1bmctdXNiMnBoeSAxMjViMDAwMC51c2Jw
+aHk6IENhbid0IGdldCB1c2ItcGh5Cj4gc3lzcmVnIGNmZyByZWdpc3Rlcgo+IFsgMS4zMDAwMDBd
+IHVzYmNvcmU6IHJlZ2lzdGVyZWQgbmV3IGludGVyZmFjZSBkcml2ZXIgdXZjdmlkZW8KPiBbIDEu
+NDQwMDAwXSB1c2Jjb3JlOiByZWdpc3RlcmVkIG5ldyBpbnRlcmZhY2UgZHJpdmVyIHVzYmhpZAo+
+IFsgMS40NDAwMDBdIHVzYmhpZDogVVNCIEhJRCBjb3JlIGRyaXZlcgo+IFsgMS40NzUwMDBdIHNh
+bXN1bmctdXNiMnBoeSAxMjViMDAwMC51c2JwaHk6IENhbid0IGNvbmZpZ3VyZQo+IHNwZWNpZmll
+ZCBwaHkgbW9kZQo+IHNwZWNpZmllZCBwaHkgbW9kZQo+Cj4gcm9vdEBrYWdhbWk6fiMgbHN1c2IK
+PiBCdXMgMDAxIERldmljZSAwMDE6IElEIDFkNmI6MDAwMiBMaW51eCBGb3VuZGF0aW9uIDIuMCBy
+b290IGh1Ygo+Cj4gdXNiX3BoeTogdXNicGh5QDEyNUIwMDAwIHsKPiAjYWRkcmVzcy1jZWxscyA9
+IDwxPjsKPiAjc2l6ZS1jZWxscyA9IDwxPjsKPiBjb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9z
+NDIxMC11c2IycGh5IjsKSSBhbSB2ZXJ5IHNvcnJ5IGFib3V0IHRoYXQsIEkgc2hhbGwgdXNlIHNh
+bXN1bmcsZXh5bm9zNHgxMC11c2IycGh5IGluc3RlYWQuCj4gcmVnID0gPDB4MTI1QjAwMDAgMHgx
+MDA+Owo+IHJhbmdlczsKPiBzdGF0dXMgPSAib2theSI7Cj4KPiBjbG9ja3MgPSA8JmNsb2NrIDI+
+LCA8JmNsb2NrIDMwNT47Cj4gY2xvY2stbmFtZXMgPSAieHVzYnh0aSIsICJvdGciOwo+Cj4gdXNi
+cGh5LXN5cyB7Cj4gLyogVVNCIGRldmljZSBhbmQgaG9zdCBQSFlfQ09OVFJPTCByZWdpc3RlcnMg
+Ki8KPiByZWcgPSA8MHgxMDAyMDcwNCAweDg+Owo+IH07Cj4gfTsKPgo+IGVoY2lAMTI1ODAwMDAg
+ewo+IHVzYi1waHkgPSA8JnVzYl9waHk+Owo+IHN0YXR1cyA9ICJva2F5IjsKPiB9Owo+CgpJIGFt
+IHNvcnJ5IGZvciBjYXJlbGVzcyBhZ2Fpbi4KVGhhbmsgeW91CmF5YWthIAkJIAkgICAJCSAg
