@@ -1,83 +1,68 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] tty: Fallback to use dynamic major number
-Date: Thu, 16 Jan 2014 10:33:22 +0530
-Message-ID: <1389848602-30985-1-git-send-email-tushar.behera@linaro.org>
+Subject: [PATCH V2] drm/exynos: Fix multiplatform breakage for ipp/gsc
+Date: Thu, 16 Jan 2014 11:57:57 +0530
+Message-ID: <1389853677-3485-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:43968 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750736AbaAPFHf (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:57373 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751046AbaAPGcM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Jan 2014 00:07:35 -0500
-Received: by mail-pa0-f52.google.com with SMTP id bj1so645384pad.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2014 21:07:35 -0800 (PST)
+	Thu, 16 Jan 2014 01:32:12 -0500
+Received: by mail-pd0-f181.google.com with SMTP id p10so2176253pdj.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2014 22:32:11 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: jslaby@suse.cz, gregkh@linuxfoundation.org, broonie@kernel.org
+To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: inki.dae@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
 
-In a multi-platform scenario, the hard-coded major/minor numbers in
-serial drivers may conflict with each other. A typical scenario is
-observed with amba-pl011 and samsung-uart drivers, both of these
-drivers use same set of major/minor numbers. If both of these drivers
-are enabled, probe of samsung-uart driver fails because the desired
-node is busy.
+There is no need to include "plat/map-base.h" in ipp driver. Remove
+this and enable this driver for multi-platform.
 
-The issue is fixed by adding a fallback in driver core, so that we can
-use dynamic major number in case device node allocation fails for
-hard-coded major/minor number.
+However gsc driver is not multiplatform compliant yet, so make the
+compilation conditional upon !ARCH_MULTIPLATFORM.
 
 Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
-Hi Greg,
+Changes for V2:
+* Made compilation of exynos_drm_gsc.c conditional on
+ !ARCH_MULTIPLATFORM.
 
-This is my second attempt at getting this fixed. Let me know if you are
-okay with this.
+ drivers/gpu/drm/exynos/Kconfig          |    4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c |    1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Initial approach to fix this problem was by forcing samsung-uart driver
-to use dynamic major number, but it was rejected [1] because of possible
-user-space breakage. Current approach falls back to dynamic major
-number as a fallback in case of failure.
-[1] https://lkml.org/lkml/2013/12/27/2
-
- drivers/tty/tty_io.c |   19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index c74a00a..0c692be 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -3341,6 +3341,22 @@ int tty_register_driver(struct tty_driver *driver)
- 	dev_t dev;
- 	struct device *d;
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index f227f54..6e1a1a2 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -51,7 +51,7 @@ config DRM_EXYNOS_G2D
  
-+	if (driver->major) {
-+		dev = MKDEV(driver->major, driver->minor_start);
-+		error = register_chrdev_region(dev, driver->num, driver->name);
-+		/* In case of error, fall back to dynamic allocation */
-+		if (error < 0) {
-+			pr_warn("Default device node (%d:%d) for %s is busy, using dynamic node\n",
-+				driver->major, driver->minor_start,
-+				driver->name);
-+			driver->major = 0;
-+		}
-+	}
-+
-+	/*
-+	 * Don't replace the following check with an else to above if statement,
-+	 * as it may also be called as a fallback.
-+	 */
- 	if (!driver->major) {
- 		error = alloc_chrdev_region(&dev, driver->minor_start,
- 						driver->num, driver->name);
-@@ -3348,9 +3364,6 @@ int tty_register_driver(struct tty_driver *driver)
- 			driver->major = MAJOR(dev);
- 			driver->minor_start = MINOR(dev);
- 		}
--	} else {
--		dev = MKDEV(driver->major, driver->minor_start);
--		error = register_chrdev_region(dev, driver->num, driver->name);
- 	}
- 	if (error < 0)
- 		goto err;
+ config DRM_EXYNOS_IPP
+ 	bool "Exynos DRM IPP"
+-	depends on DRM_EXYNOS && !ARCH_MULTIPLATFORM
++	depends on DRM_EXYNOS
+ 	help
+ 	  Choose this option if you want to use IPP feature for DRM.
+ 
+@@ -69,6 +69,6 @@ config DRM_EXYNOS_ROTATOR
+ 
+ config DRM_EXYNOS_GSC
+ 	bool "Exynos DRM GSC"
+-	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5
++	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && !ARCH_MULTIPLATFORM
+ 	help
+ 	  Choose this option if you want to use Exynos GSC for DRM.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index d519a4e..eefb429 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -16,7 +16,6 @@
+ #include <linux/types.h>
+ #include <linux/clk.h>
+ #include <linux/pm_runtime.h>
+-#include <plat/map-base.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
 -- 
 1.7.9.5
