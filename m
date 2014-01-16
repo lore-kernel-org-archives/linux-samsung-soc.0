@@ -1,140 +1,58 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v12 0/7] cpufreq:boost: CPU Boost mode support
-Date: Thu, 16 Jan 2014 16:56:02 +0100
-Message-ID: <20140116165602.5d991e74@amdc2363>
-References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
- <1389335623.2411.15.camel@rzhang1-mobl4> <20140116104008.15b77a1f@amdc2363>
- <63197714.M09EiGrl9g@vostro.rjw.lan>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tty: Fallback to use dynamic major number
+Date: Thu, 16 Jan 2014 08:18:41 -0800
+Message-ID: <20140116161841.GA7476@kroah.com>
+References: <1389848602-30985-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <63197714.M09EiGrl9g@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Zhang Rui <rui.zhang@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, Eduardo Valentin <eduardo.valentin@ti.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52303 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752238AbaAPQST (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jan 2014 11:18:19 -0500
+Content-Disposition: inline
+In-Reply-To: <1389848602-30985-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, broonie@kernel.org
 
-Hi Rafael,
+On Thu, Jan 16, 2014 at 10:33:22AM +0530, Tushar Behera wrote:
+> In a multi-platform scenario, the hard-coded major/minor numbers in
+> serial drivers may conflict with each other. A typical scenario is
+> observed with amba-pl011 and samsung-uart drivers, both of these
+> drivers use same set of major/minor numbers. If both of these drivers
+> are enabled, probe of samsung-uart driver fails because the desired
+> node is busy.
 
-> On Thursday, January 16, 2014 10:40:08 AM Lukasz Majewski wrote:
-> > Hi Rafael,
-> > 
-> > > On Wed, 2014-01-08 at 01:35 +0100, Rafael J. Wysocki wrote:
-> > > > On Tuesday, January 07, 2014 07:58:24 AM Lukasz Majewski wrote:
-> > > > > Hi Rafael,
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > > > This patch series introduces support for CPU overclocking
-> > > > > > technique called Boost.
-> > > > > > 
-> > > > > > It is a follow up of a LAB governor proposal. Boost is a LAB
-> > > > > > component:
-> > > > > > http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
-> > > > > > 
-> > > > > > Boost unifies hardware based solution (e.g. Intel Nehalem)
-> > > > > > with software oriented one (like the one done at Exynos).
-> > > > > > For this reason cpufreq/freq_table code has been
-> > > > > > reorganized to include common code.
-> > > > > > 
-> > > > > > Important design decisions:
-> > > > > > - Boost related code is compiled-in unconditionally to
-> > > > > > cpufreq core and disabled by default. The cpufreq_driver is
-> > > > > > responsibile for setting boost_supported flag and providing
-> > > > > > set_boost callback(if HW support is needed). For software
-> > > > > > managed boost, special Kconfig flag -
-> > > > > > CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be
-> > > > > > selected only when a target platform has thermal framework
-> > > > > > properly configured.
-> > > > > > 
-> > > > > > - struct cpufreq_driver has been extended with boost related
-> > > > > > fields: -- boost_supported - when driver supports boosting
-> > > > > >         -- boost_enabled - boost state
-> > > > > >         -- set_boost - callback to function, which is
-> > > > > > necessary to enable/disable boost
-> > > > > > 
-> > > > > > - Boost sysfs attribute
-> > > > > > (/sys/devices/system/cpu/cpufreq/boost) is visible _only_
-> > > > > > when cpufreq driver supports Boost.
-> > > > > > 
-> > > > > > - No special spin_lock for Boost was created. The one from
-> > > > > > cpufreq core was reused.
-> > > > > > 
-> > > > > > - The Boost code doesn't rely on any policy. When boost
-> > > > > > state is changed, then the policy list is iterated and
-> > > > > > proper adjustements are done.
-> > > > > > 
-> > > > > > - To improve safety level, the thermal framework is also
-> > > > > > extended to disable software boosting, when thermal trip
-> > > > > > point is reached. After cooling down the boost can be
-> > > > > > enabled again. This emulates behaviour similar to HW
-> > > > > > managed boost (like x86)
-> > > > > > 
-> > > > > > Tested at HW:
-> > > > > >        Exynos 4412 3.13-rc4 Linux
-> > > > > >        Intel Core i7-3770 3.13-rc4 Linux
-> > > > > > 
-> > > > > > Above patches were posted on top of kernel_pm/bleeding-edge
-> > > > > > (SHA1: bd0f3a5d9dce48a917ce1f1047534d79c725149)
-> > > > > > 
-> > > > > > Lukasz Majewski (7):
-> > > > > >   cpufreq: Add boost frequency support in core
-> > > > > >   cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work
-> > > > > > with common boost solution
-> > > > > >   cpufreq:boost:Kconfig: Provide support for software
-> > > > > > managed BOOST cpufreq:exynos:Extend Exynos cpufreq driver
-> > > > > > to support boost framework
-> > > > > >   Documentation:cpufreq:boost: Update BOOST documentation
-> > > > > >   cpufreq:exynos4x12: Change L0 driver data to
-> > > > > > CPUFREQ_BOOST_FREQ thermal:exynos:boost: Automatic
-> > > > > > enable/disable of BOOST feature (at Exynos4412)
-> > > > > > 
-> > > > > >  Documentation/cpu-freq/boost.txt          |   26 +++----
-> > > > > >  drivers/cpufreq/Kconfig                   |    4 +
-> > > > > >  drivers/cpufreq/Kconfig.arm               |   15 ++++
-> > > > > >  drivers/cpufreq/acpi-cpufreq.c            |   86
-> > > > > > +++++++-------------- drivers/cpufreq/cpufreq.c
-> > > > > > | 118 ++++++++++++++++++++++++++++-
-> > > > > > drivers/cpufreq/exynos-cpufreq.c          |    3 +
-> > > > > > drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
-> > > > > > drivers/cpufreq/freq_table.c              |   56
-> > > > > > ++++++++++++-- drivers/thermal/samsung/exynos_tmu_data.c
-> > > > > > |   12 +-- include/linux/cpufreq.h                   |   24
-> > > > > > ++++++ 10 files changed, 261 insertions(+), 85 deletions(-)
-> > > > > > 
-> > > > > 
-> > > > > A gentle ping about BOOST patches.
-> > > > > 
-> > > > > Its been already acked by Viresh and Eduardo.
-> > > > > 
-> > > > > It applies on kernel_pm/bleeding_edge SHA1:
-> > > > > 4836deb72c5e2a9af0cb2129c1149783a26d99ab
-> > > > 
-> > > > It looks like Rui is still looking into this.
-> > > > 
-> > > > Rui, are you fine with this series?
-> > > > 
-> > > Yes, I'm okay with the thermal related parts of this patch set.
-> > > 
-> > 
-> > Rafael, gentle reminder about BOOST patches ... :-)
+Why would both drivers ever be loaded at the same time?  Don't they bind
+to different hardware devices, and as such, never will be in the same
+system?
+
+The driver shouldn't be registering it's tty devices if the hardware
+isn't present in the system, so how can this codepath ever happen?
+
+> The issue is fixed by adding a fallback in driver core, so that we can
+> use dynamic major number in case device node allocation fails for
+> hard-coded major/minor number.
+
+Did you test this out?  You still get userspace breakage with it :(
+
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+> Hi Greg,
 > 
-> I'm about to take them for 3.14.
+> This is my second attempt at getting this fixed. Let me know if you are
+> okay with this.
 > 
+> Initial approach to fix this problem was by forcing samsung-uart driver
+> to use dynamic major number, but it was rejected [1] because of possible
+> user-space breakage.
 
-Thanks :-)
+"possible"?  Heh, no, that should be "real".
 
-> Thanks!
-> 
-> [PS: Please don't use the rjw@sisk.pl address, that domain is gone.]
-> 
+Sorry, but I think you are trying to fix a problem that never actually
+happens in real life, or in valid configurations...
 
-Ok, I will not use it.
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+greg k-h
