@@ -1,47 +1,142 @@
-From: Alex Ling <kasimling@gmail.com>
-Subject: [PATCH 2/2] ARM: dts: Add AT24C08 EEPROM support to TINY4412
-Date: Sat, 18 Jan 2014 22:24:43 +0800
-Message-ID: <1390055084-27483-2-git-send-email-kasimling@gmail.com>
-References: <1390055084-27483-1-git-send-email-kasimling@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:39227 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066AbaAROZq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 18 Jan 2014 09:25:46 -0500
-In-Reply-To: <1390055084-27483-1-git-send-email-kasimling@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v2 3/7] devicetree: bindings: add cpu clock configuration
+ data binding for Exynos4/5
+Date: Sat, 18 Jan 2014 09:22:18 -0600
+Message-ID: <CAL_JsqJSSW3DKQvcwzuapAYRbZMP3CP5vne-Bvg7-4z-rDGSxw@mail.gmail.com>
+References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
+	<1390047057-2239-4-git-send-email-thomas.ab@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1390047057-2239-4-git-send-email-thomas.ab@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Ling <kasimling@gmail.com>
 
-This patch adds support for AT24C08 EEPROM found on TINY4412 board.
+On Sat, Jan 18, 2014 at 6:10 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+>
+> The clk ops of the new Samsung cpu clock provider type requires configuration
+> data that will be programmed in the multiple clock blocks encapsulated within
+> the cpu clock provider type. This configuration data is held in the clock
+> controller node. Update clock binding documentation about this configuration
+> data format for Samsung Exynos4 and Exynos5 platforms.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
 
-Signed-off-by: Alex Ling <kasimling@gmail.com>
----
- arch/arm/boot/dts/exynos4412-tiny4412.dts |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Please copy all maintainers.
 
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index 2c6bfe3..9f63664 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -109,4 +109,16 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	i2c@13860000 {
-+		status = "okay";
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <200000>;
-+
-+		eeprom@50 {
-+			compatible = "atmel,24c08";
-+			reg = <0x50>;
-+			pagesize = <16>;
-+		};
-+	};
- };
--- 
-1.7.9.5
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |   30 ++++++++++++++++++++
+>  .../devicetree/bindings/clock/exynos5250-clock.txt |   21 ++++++++++++++
+>  2 files changed, 51 insertions(+), 0 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> index a2ac2d9..c28aabd 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> @@ -15,6 +15,29 @@ Required Properties:
+>
+>  - #clock-cells: should be 1.
+>
+> +- arm-frequency-table: defines the list of arm clock speeds supported and
+
+Seems like a Samsung specific property and nothing to do with ARM, so
+it should be named accordingly.
+
+> +  the associated configuration values required to setup the clock controller
+> +  for generating those speeds. The format of each entry included in the
+> +  arm-frequency-table should be as defined below (#cells per entry = 13)
+> +
+> +  - for Exynos4210 and Exynos4212 based platforms:
+> +      cell #1: arm clock frequency
+> +      cell #2: expected arm clock parent frequency
+> +      cell #3 ~ cell 12#: value of clock divider in the following order
+> +              core_ratio, corem0_ratio, corem1_ratio, periph_ratio,
+> +              atb_ratio, pclk_dbg_ratio, apll_ratio, core2_ratio,
+> +              copy_ratio, hpm_ratio.
+> +      cell #13: reserved (should be zero).
+> +
+> +  - for Exynos4412 based platforms:
+> +      cell #1: arm clock frequency
+> +      cell #2: expected arm clock parent frequency
+> +      cell #3 ~ cell #13: value of clock divider in the following order
+> +              core_ratio, corem0_ratio, corem1_ratio, periph_ratio,
+> +              atb_ratio, pclk_dbg_ratio, apll_ratio, core2_ratio,
+> +              copy_ratio, hpm_ratio, cores_ratio
+
+You don't need voltages? Are the h/w limitations really ratios or each
+clock has a max frequency that must be maintained? I would expect the
+latter and think it would be better to specify maximum frequencies of
+each clock. Then you can calculate the dividers to keep frequencies in
+range.
+
+How will this scale to multi-cluster chips with different frequency ranges?
+
+Rob
+
+> +
+> +
+>  The following is the list of clocks generated by the controller. Each clock is
+>  assigned an identifier and client nodes use this identifier to specify the
+>  clock which they consume. Some of the clocks are available only on a particular
+> @@ -275,6 +298,13 @@ Example 1: An example of a clock controller node is listed below.
+>                 compatible = "samsung,exynos4210-clock";
+>                 reg = <0x10030000 0x20000>;
+>                 #clock-cells = <1>;
+> +
+> +               arm-frequency-table = <1200000 1200000 0 3 7 3 4 1 7 0 5 0>,
+> +                                     <1000000 1000000 0 3 7 3 4 1 7 0 4 0>,
+> +                                     < 800000  800000 0 3 7 3 3 1 7 0 3 0>,
+> +                                     < 500000  500000 0 3 7 3 3 1 7 0 3 0>,
+> +                                     < 400000  400000 0 3 7 3 3 1 7 0 3 0>,
+> +                                     < 200000  200000 0 1 3 1 1 1 0 0 3 0>;
+>         };
+>
+>  Example 2: UART controller node that consumes the clock generated by the clock
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> index 72ce617..99eae9c 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> @@ -13,6 +13,20 @@ Required Properties:
+>
+>  - #clock-cells: should be 1.
+>
+> +- arm-frequency-table: defines the list of arm clock speeds supported and
+> +  the associated configuration values required to setup the clock controller
+> +  for generating those speeds. The format of each entry included in the
+> +  arm-frequency-table should be as defined below (#cells per entry = 13)
+> +
+> +      cell #1: arm clock frequency
+> +      cell #2: expected arm clock parent frequency
+> +      cell #3 ~ cell #12: value of clock divider in the following order
+> +              arm_ratio, cpud_ratio, acp_ratio, periph_ratio,
+> +              atb_ratio, pclk_dbg_ratio, apll_ratio, arm2_ratio,
+> +              copy_ratio, hpm_ratio
+> +      cell #13: reserved (should be zero)
+> +
+> +
+>  The following is the list of clocks generated by the controller. Each clock is
+>  assigned an identifier and client nodes use this identifier to specify the
+>  clock which they consume.
+> @@ -177,6 +191,13 @@ Example 1: An example of a clock controller node is listed below.
+>                 compatible = "samsung,exynos5250-clock";
+>                 reg = <0x10010000 0x30000>;
+>                 #clock-cells = <1>;
+> +
+> +               arm-frequency-table = <1700000 1700000 0 3 7 7 7 3 5 0 0 2>,
+> +                                     <1600000 1600000 0 3 7 7 7 1 4 0 0 2>,
+> +                                     <1500000 1500000 0 2 7 7 7 1 4 0 0 2>,
+> +                                     <1400000 1400000 0 2 7 7 6 1 4 0 0 2>,
+> +                                     <1300000 1300000 0 2 7 7 6 1 3 0 0 2>,
+> +                                     <1200000 1200000 0 2 7 7 5 1 3 0 0 2>;
+>         };
+>
+>  Example 2: UART controller node that consumes the clock generated by the clock
+> --
+> 1.6.6.rc2
+>
