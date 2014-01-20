@@ -1,80 +1,95 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 20 Jan 2014 19:15:57 +0530
-Message-ID: <CAFp+6iGAKjxQEa8BK3NmbQemQ-=Vnrm=+TbKA3w5d0eRVKYFYQ@mail.gmail.com>
-References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
-	<1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
-	<527744B2.4090303@ti.com>
-	<030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
-	<52779D28.9000905@ti.com>
-	<CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
-	<00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
-	<000001ceda17$f41c2030$dc546090$%han@samsung.com>
-	<000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com>
-	<CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com>
-	<000301ceda84$1d648bf0$582da3d0$%han@samsung.com>
-	<5280BB65.5040305@ti.com>
-	<CAFp+6iGKpzOHjwnSMvSgTehzPLQMB8madoYqMk5JPSAZfSGSTg@mail.gmail.com>
-	<528C7B0E.3080401@ti.com>
-	<CAFp+6iF3UnV-w2pYQE2THQZBGma8xpp6pqSuwXzjUN3emJnftQ@mail.gmail.com>
-	<528CD8EC.9050403@ti.com>
-	<529F3C1C.2050509@ti.com>
-	<CAFp+6iF+N+eMOd=B-J3oS_u0TEse+5V2gHkcNxN0OS+YbV_Y9g@mail.gmail.com>
-	<52B9C83E.6070502@ti.com>
-	<CAFp+6iGkNjCDHJSPd76V7SzOkma1q7CiOKg7oK7ws77Rh022Jg@mail.gmail.com>
-	<52CBCDB2.9080301@ti.com>
-	<CAFp+6iGYapTX0tfTLaoiF02n+hNdXN2OEphOCkb3dAYvqA4N5g@mail.gmail.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v5 4/4] [media] exynos-scaler: Add DT bindings for SCALER driver
+Date: Mon, 20 Jan 2014 23:34:39 +0900
+Message-ID: <CAOD6ATofW_M+z5vb7doOnjf=wsbZ7vcdjf9qMJpN0o9oz4_8fg@mail.gmail.com>
+References: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
+	<1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
+	<2542868.mVreZlxTcT@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAFp+6iGYapTX0tfTLaoiF02n+hNdXN2OEphOCkb3dAYvqA4N5g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Felipe Balbi <balbi@ti.com>, Julius Werner <jwerner@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:35443 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751740AbaATOek (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Jan 2014 09:34:40 -0500
+In-Reply-To: <2542868.mVreZlxTcT@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@google.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-Hi Kishon,
+Hi Bartlomiej,
+
+Thanks for the review.
+
+Yes you are right. I didn't add the users for this driver.
+Once the driver gets merged, I will send more patches with the users.
+Already this driver merge is pending on DT maintainers ack and  I
+don't want to complex it more by adding DT patches :)
+
+Definitely, I will send the users patches once the driver gets merged.
+And I will address all your comments in next version of patch series.
 
 
-[...]
+Regards,
+Shaik Ameer Basha
 
->>>>>>>>>>>> Right.
->>>>>>>>>>>>
->>>>>>>>>>>> While 3.0 block(PIPE3) can be used for Super Speed, 2.0
->>>>>>>>>>>> block(UTMI+)
->>>>>>>>>>>> can be used for High speed.
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> It should then come under *single IP muliple PHY* category similar
->>>>>>>>>>> to what
->>>>>>>>>>> Sylwester has done.
-
-[...]
-
->>
->> The idea is to model the driver as close to the hardware though I understand
->> there won't be any advantages w.r.t power or performance. maybe in later
->> versions of the IP we'll have separate bits to control usb3 and usb2.
+On Thu, Jan 9, 2014 at 6:20 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
 >
-> Ok, i will prepare the next patchset for separating out the possible
-> code based on
-> the UTMI+ or PIPE3 phys. Though when experimenting with the PHY
-> settings i can see
-> there's little of such code  :-)
+> Hi,
 >
+> On Thursday, January 09, 2014 08:58:14 AM Shaik Ameer Basha wrote:
+>> This patch adds the DT binding documentation for the
+>> Exynos5420/5410 based SCALER device driver.
 >>
->> I think for power control we should have both usb3 and usb2 power-on callback
->> calling a single function that controls the power bit.
-> Right. I will do that.
-
-Have posted the next version of patch with functionality to support
-multiple PHYs as suggested.
-Please review the same.
-Thanks !!
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
+>>  1 file changed, 22 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
+>> new file mode 100644
+>> index 0000000..9328e7d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
+>> @@ -0,0 +1,22 @@
+>> +* Samsung Exynos5 SCALER device
+>> +
+>> +SCALER is used for scaling, blending, color fill and color space
+>> +conversion on EXYNOS[5420/5410] SoCs.
+>> +
+>> +Required properties:
+>> +- compatible: should be "samsung,exynos5420-scaler" or
+>> +                     "samsung,exynos5410-scaler"
+>> +- reg: should contain SCALER physical address location and length
+>> +- interrupts: should contain SCALER interrupt number
+>> +- clocks: should contain the SCALER clock specifier, from the
+>> +                     common clock bindings
+>> +- clock-names: should be "scaler"
+>> +
+>> +Example:
+>> +     scaler_0: scaler@12800000 {
+>> +             compatible = "samsung,exynos5420-scaler";
+>> +             reg = <0x12800000 0x1000>;
+>> +             interrupts = <0 220 0>;
+>> +             clocks = <&clock 381>;
+>> +             clock-names = "scaler";
+>> +     };
+>
+> Your patchset adds support for EXYNOS5 SCALER but doesn't add any real
+> users of it yet.  Could you please explain why?
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
