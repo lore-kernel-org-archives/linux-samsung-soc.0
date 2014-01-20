@@ -1,95 +1,55 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v5 4/4] [media] exynos-scaler: Add DT bindings for SCALER driver
-Date: Mon, 20 Jan 2014 23:34:39 +0900
-Message-ID: <CAOD6ATofW_M+z5vb7doOnjf=wsbZ7vcdjf9qMJpN0o9oz4_8fg@mail.gmail.com>
-References: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
-	<1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
-	<2542868.mVreZlxTcT@amdc1032>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain
+ look-up
+Date: Mon, 20 Jan 2014 17:24:17 +0100
+Message-ID: <52DD4DB1.2050200@samsung.com>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+ <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
+ <87r48a8t99.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:35443 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751740AbaATOek (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jan 2014 09:34:40 -0500
-In-Reply-To: <2542868.mVreZlxTcT@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <87r48a8t99.fsf-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@google.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-Hi Bartlomiej,
+Hi Kevin,
 
-Thanks for the review.
-
-Yes you are right. I didn't add the users for this driver.
-Once the driver gets merged, I will send more patches with the users.
-Already this driver merge is pending on DT maintainers ack and  I
-don't want to complex it more by adding DT patches :)
-
-Definitely, I will send the users patches once the driver gets merged.
-And I will address all your comments in next version of patch series.
-
-
-Regards,
-Shaik Ameer Basha
-
-On Thu, Jan 9, 2014 at 6:20 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On 14.01.2014 16:42, Kevin Hilman wrote:
+> Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
 >
-> Hi,
->
-> On Thursday, January 09, 2014 08:58:14 AM Shaik Ameer Basha wrote:
->> This patch adds the DT binding documentation for the
->> Exynos5420/5410 based SCALER device driver.
+>> This patch introduces generic code to perform power domain look-up using
+>> device tree and automatically bind devices to their power domains.
+>> Generic device tree binding is introduced to specify power domains of
+>> devices in their device tree nodes.
 >>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+>> Backwards compatibility with legacy Samsung-specific power domain
+>> bindings is provided, but for now the new code is not compiled when
+>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
+>> will change as soon as Exynos power domain code gets converted to use
+>> the generic framework in further patch.
 >>
->> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> new file mode 100644
->> index 0000000..9328e7d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> @@ -0,0 +1,22 @@
->> +* Samsung Exynos5 SCALER device
->> +
->> +SCALER is used for scaling, blending, color fill and color space
->> +conversion on EXYNOS[5420/5410] SoCs.
->> +
->> +Required properties:
->> +- compatible: should be "samsung,exynos5420-scaler" or
->> +                     "samsung,exynos5410-scaler"
->> +- reg: should contain SCALER physical address location and length
->> +- interrupts: should contain SCALER interrupt number
->> +- clocks: should contain the SCALER clock specifier, from the
->> +                     common clock bindings
->> +- clock-names: should be "scaler"
->> +
->> +Example:
->> +     scaler_0: scaler@12800000 {
->> +             compatible = "samsung,exynos5420-scaler";
->> +             reg = <0x12800000 0x1000>;
->> +             interrupts = <0 220 0>;
->> +             clocks = <&clock 381>;
->> +             clock-names = "scaler";
->> +     };
+>> Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >
-> Your patchset adds support for EXYNOS5 SCALER but doesn't add any real
-> users of it yet.  Could you please explain why?
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I haven't read through this in detail yet, but wanted to make sure that
+> the DT representation can handle nested power domains.  At least
+> SH-mobile has a hierarchy of power domains and the genpd code can handle
+> that, so wanted to make sure that the DT representation can handle it as
+> well.
+
+The representation of power domains themselves as implied by this patch 
+is fully platform-specific. The only generic part is the 
+#power-domain-cells property, which defines the number of cells needed 
+to identify the power domain of given provider. You are free to have any 
+platform-specific properties (or even generic ones, added on top of this 
+patch) to let you specify the hierarchy in DT.
+
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
