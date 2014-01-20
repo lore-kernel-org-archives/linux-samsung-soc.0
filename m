@@ -1,1125 +1,172 @@
 From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 7/7] cpufreq: exynos: remove all exynos specific cpufreq
- driver support
-Date: Mon, 20 Jan 2014 09:08:15 +0100
-Message-ID: <20140120090815.39e8c21a@amdc2363>
+Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage
+ during frequency transitions
+Date: Mon, 20 Jan 2014 09:09:51 +0100
+Message-ID: <20140120090951.2e41f656@amdc2363>
 References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
- <1390047057-2239-8-git-send-email-thomas.ab@samsung.com>
+ <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21075 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbaATIIb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jan 2014 03:08:31 -0500
-In-reply-to: <1390047057-2239-8-git-send-email-thomas.ab@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
 To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, Jaecheol Lee <jc.lee@samsung.com>, t.figa@gmail.com
+Cc: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Thomas,
 
 > From: Thomas Abraham <thomas.ab@samsung.com>
 > 
-> Exynos4210, Exynos4x12 and Exynos5250 based platforms have switched
-> over to use cpufreq-cpu0 driver for cpufreq functionality. So the
-> Exynos specific cpufreq drivers for these platforms can be removed.
+> On some platforms such as the Samsung Exynos, changing the frequency
+> of the CPU clock requires changing the frequency of the PLL that is
+> supplying the CPU clock. To change the frequency of the PLL, the CPU
+> clock is temporarily reparented to another parent clock.
 > 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Jaecheol Lee <jc.lee@samsung.com>
+> The clock frequency of this temporary parent clock could be much
+> higher than the clock frequency of the PLL at the time of
+> reparenting. Due to the temporary increase in the CPU clock speed,
+> the CPU (and any other components in the CPU clock domain such as
+> dividers, mux, etc.) have to to be operated at a higher voltage
+> level, called the safe voltage level. This patch adds optional
+> support to temporarily switch to a safe voltage level during CPU
+> frequency transitions.
+> 
+> Cc: Shawn Guo <shawn.guo@linaro.org>
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > ---
->  drivers/cpufreq/Kconfig.arm          |   36 ----
->  drivers/cpufreq/Makefile             |    4 -
->  drivers/cpufreq/exynos-cpufreq.c     |  292
-> ----------------------------------
-> drivers/cpufreq/exynos-cpufreq.h     |   91 -----------
-> drivers/cpufreq/exynos4210-cpufreq.c |  157 ------------------
-> drivers/cpufreq/exynos4x12-cpufreq.c |  211 ------------------------
-> drivers/cpufreq/exynos5250-cpufreq.c |  183 --------------------- 7
-> files changed, 0 insertions(+), 974 deletions(-) delete mode 100644
-> drivers/cpufreq/exynos-cpufreq.c delete mode 100644
-> drivers/cpufreq/exynos-cpufreq.h delete mode 100644
-> drivers/cpufreq/exynos4210-cpufreq.c delete mode 100644
-> drivers/cpufreq/exynos4x12-cpufreq.c delete mode 100644
-> drivers/cpufreq/exynos5250-cpufreq.c
+>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    7 ++++
+>  drivers/cpufreq/cpufreq-cpu0.c                     |   37
+> +++++++++++++++++-- 2 files changed, 40 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 3129749..704656d 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -16,42 +16,6 @@ config ARM_DT_BL_CPUFREQ
->  	  This enables probing via DT for Generic CPUfreq driver for
-> ARM big.LITTLE platform. This gets frequency tables from DT.
+> diff --git
+> a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt index
+> f055515..37453ab 100644 ---
+> a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt +++
+> b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt @@ -19,6
+> +19,12 @@ Optional properties:
+>  - cooling-min-level:
+>  - cooling-max-level:
+>       Please refer to
+> Documentation/devicetree/bindings/thermal/thermal.txt. +- safe-opp:
+> Certain platforms require that during a opp transition,
+> +  a system should not go below a particular opp level. For such
+> systems,
+> +  this property specifies the minimum opp to be maintained during the
+> +  opp transitions. The safe-opp value is a tuple with first element
+> +  representing the safe frequency and the second element
+> representing the
+> +  safe voltage.
 >  
-> -config ARM_EXYNOS_CPUFREQ
-> -	bool
-> -
-> -config ARM_EXYNOS4210_CPUFREQ
-> -	bool "SAMSUNG EXYNOS4210"
-> -	depends on CPU_EXYNOS4210
-> -	default y
-> -	select ARM_EXYNOS_CPUFREQ
-> -	help
-> -	  This adds the CPUFreq driver for Samsung EXYNOS4210
-> -	  SoC (S5PV310 or S5PC210).
-> -
-> -	  If in doubt, say N.
-> -
-> -config ARM_EXYNOS4X12_CPUFREQ
-> -	bool "SAMSUNG EXYNOS4x12"
-> -	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-> -	default y
-> -	select ARM_EXYNOS_CPUFREQ
-> -	help
-> -	  This adds the CPUFreq driver for Samsung EXYNOS4X12
-> -	  SoC (EXYNOS4212 or EXYNOS4412).
-> -
-> -	  If in doubt, say N.
-> -
-> -config ARM_EXYNOS5250_CPUFREQ
-> -	bool "SAMSUNG EXYNOS5250"
-> -	depends on SOC_EXYNOS5250
-> -	default y
-> -	select ARM_EXYNOS_CPUFREQ
-> -	help
-> -	  This adds the CPUFreq driver for Samsung EXYNOS5250
-> -	  SoC.
-> -
-> -	  If in doubt, say N.
-> -
->  config ARM_EXYNOS5440_CPUFREQ
->  	bool "SAMSUNG EXYNOS5440"
->  	depends on SOC_EXYNOS5440
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 7494565..3abfe05 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -49,10 +49,6 @@ obj-$(CONFIG_ARM_DT_BL_CPUFREQ)		+=
-> arm_big_little_dt.o 
->  obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= davinci-cpufreq.o
->  obj-$(CONFIG_UX500_SOC_DB8500)		+= dbx500-cpufreq.o
-> -obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)	+= exynos-cpufreq.o
-> -obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+= exynos4210-cpufreq.o
-> -obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+= exynos4x12-cpufreq.o
-> -obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)	+= exynos5250-cpufreq.o
->  obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ)	+= exynos5440-cpufreq.o
->  obj-$(CONFIG_ARM_HIGHBANK_CPUFREQ)	+= highbank-cpufreq.o
->  obj-$(CONFIG_ARM_IMX6Q_CPUFREQ)		+= imx6q-cpufreq.o
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c
-> b/drivers/cpufreq/exynos-cpufreq.c deleted file mode 100644
-> index fcd2914..0000000
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ /dev/null
-> @@ -1,292 +0,0 @@
-> -/*
-> - * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * EXYNOS - CPU frequency scaling support for EXYNOS series
-> - *
-> - * This program is free software; you can redistribute it and/or
-> modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/err.h>
-> -#include <linux/clk.h>
-> -#include <linux/io.h>
-> -#include <linux/slab.h>
-> -#include <linux/regulator/consumer.h>
-> -#include <linux/cpufreq.h>
-> -#include <linux/suspend.h>
-> -#include <linux/platform_device.h>
-> -
-> -#include <plat/cpu.h>
-> -
-> -#include "exynos-cpufreq.h"
-> -
-> -static struct exynos_dvfs_info *exynos_info;
-> -
-> -static struct regulator *arm_regulator;
-> -
-> -static unsigned int locking_frequency;
-> -static bool frequency_locked;
-> -static DEFINE_MUTEX(cpufreq_lock);
-> -
-> -static int exynos_cpufreq_get_index(unsigned int freq)
-> -{
-> -	struct cpufreq_frequency_table *freq_table =
-> exynos_info->freq_table;
-> -	int index;
-> -
-> -	for (index = 0;
-> -		freq_table[index].frequency != CPUFREQ_TABLE_END;
-> index++)
-> -		if (freq_table[index].frequency == freq)
-> -			break;
-> -
-> -	if (freq_table[index].frequency == CPUFREQ_TABLE_END)
-> -		return -EINVAL;
-> -
-> -	return index;
-> -}
-> -
-> -static int exynos_cpufreq_scale(unsigned int target_freq)
-> -{
-> -	struct cpufreq_frequency_table *freq_table =
-> exynos_info->freq_table;
-> -	unsigned int *volt_table = exynos_info->volt_table;
-> -	struct cpufreq_policy *policy = cpufreq_cpu_get(0);
-> -	unsigned int arm_volt, safe_arm_volt = 0;
-> -	unsigned int mpll_freq_khz = exynos_info->mpll_freq_khz;
-> -	unsigned int old_freq;
-> -	int index, old_index;
-> -	int ret = 0;
-> -
-> -	old_freq = policy->cur;
-> -
-> -	/*
-> -	 * The policy max have been changed so that we cannot get
-> proper
-> -	 * old_index with cpufreq_frequency_table_target(). Thus,
-> ignore
-> -	 * policy and get the index from the raw frequency table.
-> -	 */
-> -	old_index = exynos_cpufreq_get_index(old_freq);
-> -	if (old_index < 0) {
-> -		ret = old_index;
-> -		goto out;
-> -	}
-> -
-> -	index = exynos_cpufreq_get_index(target_freq);
-> -	if (index < 0) {
-> -		ret = index;
-> -		goto out;
-> -	}
-> -
-> -	/*
-> -	 * ARM clock source will be changed APLL to MPLL temporary
-> -	 * To support this level, need to control regulator for
-> -	 * required voltage level
-> -	 */
-> -	if (exynos_info->need_apll_change != NULL) {
-> -		if (exynos_info->need_apll_change(old_index, index)
-> &&
-> -		   (freq_table[index].frequency < mpll_freq_khz) &&
-> -		   (freq_table[old_index].frequency < mpll_freq_khz))
-> -			safe_arm_volt =
-> volt_table[exynos_info->pll_safe_idx];
-> -	}
-> -	arm_volt = volt_table[index];
-> -
-> -	/* When the new frequency is higher than current frequency */
-> -	if ((target_freq > old_freq) && !safe_arm_volt) {
-> -		/* Firstly, voltage up to increase frequency */
-> -		ret = regulator_set_voltage(arm_regulator, arm_volt,
-> arm_volt);
-> -		if (ret) {
-> -			pr_err("%s: failed to set cpu voltage to
-> %d\n",
-> -				__func__, arm_volt);
-> -			return ret;
-> -		}
-> -	}
-> -
-> -	if (safe_arm_volt) {
-> -		ret = regulator_set_voltage(arm_regulator,
-> safe_arm_volt,
-> -				      safe_arm_volt);
-> -		if (ret) {
-> -			pr_err("%s: failed to set cpu voltage to
-> %d\n",
-> -				__func__, safe_arm_volt);
-> -			return ret;
-> -		}
-> -	}
-> -
-> -	exynos_info->set_freq(old_index, index);
-> -
-> -	/* When the new frequency is lower than current frequency */
-> -	if ((target_freq < old_freq) ||
-> -	   ((target_freq > old_freq) && safe_arm_volt)) {
-> -		/* down the voltage after frequency change */
-> -		ret = regulator_set_voltage(arm_regulator, arm_volt,
-> -				arm_volt);
-> -		if (ret) {
-> -			pr_err("%s: failed to set cpu voltage to
-> %d\n",
-> -				__func__, arm_volt);
-> -			goto out;
-> -		}
-> -	}
-> -
-> -out:
-> -	cpufreq_cpu_put(policy);
-> -
-> -	return ret;
-> -}
-> -
-> -static int exynos_target(struct cpufreq_policy *policy, unsigned int
-> index) -{
-> -	struct cpufreq_frequency_table *freq_table =
-> exynos_info->freq_table;
-> -	int ret = 0;
-> -
-> -	mutex_lock(&cpufreq_lock);
-> -
-> -	if (frequency_locked)
-> -		goto out;
-> -
-> -	ret = exynos_cpufreq_scale(freq_table[index].frequency);
-> -
-> -out:
-> -	mutex_unlock(&cpufreq_lock);
-> -
-> -	return ret;
-> -}
-> -
-> -#ifdef CONFIG_PM
-> -static int exynos_cpufreq_suspend(struct cpufreq_policy *policy)
-> -{
-> -	return 0;
-> -}
-> -
-> -static int exynos_cpufreq_resume(struct cpufreq_policy *policy)
-> -{
-> -	return 0;
-> -}
-> -#endif
-> -
-> -/**
-> - * exynos_cpufreq_pm_notifier - block CPUFREQ's activities in
-> suspend-resume
-> - *			context
-> - * @notifier
-> - * @pm_event
-> - * @v
-> - *
-> - * While frequency_locked == true, target() ignores every frequency
-> but
-> - * locking_frequency. The locking_frequency value is the initial
-> frequency,
-> - * which is set by the bootloader. In order to eliminate possible
-> - * inconsistency in clock values, we save and restore frequencies
-> during
-> - * suspend and resume and block CPUFREQ activities. Note that the
-> standard
-> - * suspend/resume cannot be used as they are too deep (syscore_ops)
-> for
-> - * regulator actions.
-> - */
-> -static int exynos_cpufreq_pm_notifier(struct notifier_block
-> *notifier,
-> -				       unsigned long pm_event, void
-> *v) -{
-> -	int ret;
-> -
-> -	switch (pm_event) {
-> -	case PM_SUSPEND_PREPARE:
-> -		mutex_lock(&cpufreq_lock);
-> -		frequency_locked = true;
-> -		mutex_unlock(&cpufreq_lock);
-> -
-> -		ret = exynos_cpufreq_scale(locking_frequency);
-> -		if (ret < 0)
-> -			return NOTIFY_BAD;
-> -
-> -		break;
-> -
-> -	case PM_POST_SUSPEND:
-> -		mutex_lock(&cpufreq_lock);
-> -		frequency_locked = false;
-> -		mutex_unlock(&cpufreq_lock);
-> -		break;
-> -	}
-> -
-> -	return NOTIFY_OK;
-> -}
-> -
-> -static struct notifier_block exynos_cpufreq_nb = {
-> -	.notifier_call = exynos_cpufreq_pm_notifier,
-> -};
-> -
-> -static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
-> -{
-> -	policy->clk = exynos_info->cpu_clk;
-> -	return cpufreq_generic_init(policy, exynos_info->freq_table,
-> 100000); -}
-> -
-> -static struct cpufreq_driver exynos_driver = {
-> -	.flags		= CPUFREQ_STICKY |
-> CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-> -	.verify		=
-> cpufreq_generic_frequency_table_verify,
-> -	.target_index	= exynos_target,
-> -	.get		= cpufreq_generic_get,
-> -	.init		= exynos_cpufreq_cpu_init,
-> -	.exit		= cpufreq_generic_exit,
-> -	.name		= "exynos_cpufreq",
-> -	.attr		= cpufreq_generic_attr,
-> -#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
-> -	.boost_supported = true,
-> -#endif
-> -#ifdef CONFIG_PM
-> -	.suspend	= exynos_cpufreq_suspend,
-> -	.resume		= exynos_cpufreq_resume,
-> -#endif
-> -};
-> -
-> -static int exynos_cpufreq_probe(struct platform_device *pdev)
-> -{
-> -	int ret = -EINVAL;
-> -
-> -	exynos_info = kzalloc(sizeof(*exynos_info), GFP_KERNEL);
-> -	if (!exynos_info)
-> -		return -ENOMEM;
-> -
-> -	if (soc_is_exynos4210())
-> -		ret = exynos4210_cpufreq_init(exynos_info);
-> -	else if (soc_is_exynos4212() || soc_is_exynos4412())
-> -		ret = exynos4x12_cpufreq_init(exynos_info);
-> -	else if (soc_is_exynos5250())
-> -		ret = exynos5250_cpufreq_init(exynos_info);
-> -	else
-> -		return 0;
-> -
-> -	if (ret)
-> -		goto err_vdd_arm;
-> -
-> -	if (exynos_info->set_freq == NULL) {
-> -		pr_err("%s: No set_freq function (ERR)\n", __func__);
-> -		goto err_vdd_arm;
-> -	}
-> -
-> -	arm_regulator = regulator_get(NULL, "vdd_arm");
-> -	if (IS_ERR(arm_regulator)) {
-> -		pr_err("%s: failed to get resource vdd_arm\n",
-> __func__);
-> -		goto err_vdd_arm;
-> -	}
-> -
-> -	locking_frequency = clk_get_rate(exynos_info->cpu_clk) /
-> 1000; -
-> -	register_pm_notifier(&exynos_cpufreq_nb);
-> -
-> -	if (cpufreq_register_driver(&exynos_driver)) {
-> -		pr_err("%s: failed to register cpufreq driver\n",
-> __func__);
-> -		goto err_cpufreq;
-> -	}
-> -
-> -	return 0;
-> -err_cpufreq:
-> -	unregister_pm_notifier(&exynos_cpufreq_nb);
-> -
-> -	regulator_put(arm_regulator);
-> -err_vdd_arm:
-> -	kfree(exynos_info);
-> -	return -EINVAL;
-> -}
-> -
-> -static struct platform_driver exynos_cpufreq_platdrv = {
-> -	.driver = {
-> -		.name	= "exynos-cpufreq",
-> -		.owner	= THIS_MODULE,
-> -	},
-> -	.probe = exynos_cpufreq_probe,
-> -};
-> -module_platform_driver(exynos_cpufreq_platdrv);
-> diff --git a/drivers/cpufreq/exynos-cpufreq.h
-> b/drivers/cpufreq/exynos-cpufreq.h deleted file mode 100644
-> index 3ddade8..0000000
-> --- a/drivers/cpufreq/exynos-cpufreq.h
-> +++ /dev/null
-> @@ -1,91 +0,0 @@
-> -/*
-> - * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * EXYNOS - CPUFreq support
-> - *
-> - * This program is free software; you can redistribute it and/or
-> modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -enum cpufreq_level_index {
-> -	L0, L1, L2, L3, L4,
-> -	L5, L6, L7, L8, L9,
-> -	L10, L11, L12, L13, L14,
-> -	L15, L16, L17, L18, L19,
-> -	L20,
-> -};
-> -
-> -#define APLL_FREQ(f, a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, m,
-> p, s) \
-> -	{ \
-> -		.freq = (f) * 1000, \
-> -		.clk_div_cpu0 = ((a0) | (a1) << 4 | (a2) << 8 | (a3)
-> << 12 | \
-> -			(a4) << 16 | (a5) << 20 | (a6) << 24 | (a7)
-> << 28), \
-> -		.clk_div_cpu1 = (b0 << 0 | b1 << 4 | b2 << 8), \
-> -		.mps = ((m) << 16 | (p) << 8 | (s)), \
-> -	}
-> -
-> -struct apll_freq {
-> -	unsigned int freq;
-> -	u32 clk_div_cpu0;
-> -	u32 clk_div_cpu1;
-> -	u32 mps;
-> -};
-> -
-> -struct exynos_dvfs_info {
-> -	unsigned long	mpll_freq_khz;
-> -	unsigned int	pll_safe_idx;
-> -	struct clk	*cpu_clk;
-> -	unsigned int	*volt_table;
-> -	struct cpufreq_frequency_table	*freq_table;
-> -	void (*set_freq)(unsigned int, unsigned int);
-> -	bool (*need_apll_change)(unsigned int, unsigned int);
-> -};
-> -
-> -#ifdef CONFIG_ARM_EXYNOS4210_CPUFREQ
-> -extern int exynos4210_cpufreq_init(struct exynos_dvfs_info *);
-> -#else
-> -static inline int exynos4210_cpufreq_init(struct exynos_dvfs_info
-> *info) -{
-> -	return -EOPNOTSUPP;
-> -}
-> -#endif
-> -#ifdef CONFIG_ARM_EXYNOS4X12_CPUFREQ
-> -extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
-> -#else
-> -static inline int exynos4x12_cpufreq_init(struct exynos_dvfs_info
-> *info) -{
-> -	return -EOPNOTSUPP;
-> -}
-> -#endif
-> -#ifdef CONFIG_ARM_EXYNOS5250_CPUFREQ
-> -extern int exynos5250_cpufreq_init(struct exynos_dvfs_info *);
-> -#else
-> -static inline int exynos5250_cpufreq_init(struct exynos_dvfs_info
-> *info) -{
-> -	return -EOPNOTSUPP;
-> -}
-> -#endif
-> -
-> -#include <plat/cpu.h>
-> -#include <mach/map.h>
-> -
-> -#define EXYNOS4_CLKSRC_CPU			(S5P_VA_CMU +
-> 0x14200) -#define EXYNOS4_CLKMUX_STATCPU
-> (S5P_VA_CMU + 0x14400) -
-> -#define EXYNOS4_CLKDIV_CPU			(S5P_VA_CMU +
-> 0x14500) -#define EXYNOS4_CLKDIV_CPU1
-> (S5P_VA_CMU + 0x14504) -#define
-> EXYNOS4_CLKDIV_STATCPU			(S5P_VA_CMU + 0x14600)
-> -#define EXYNOS4_CLKDIV_STATCPU1			(S5P_VA_CMU +
-> 0x14604) - -#define EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT	(16)
-> -#define EXYNOS4_CLKMUX_STATCPU_MUXCORE_MASK	(0x7 <<
-> EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT) -
-> -#define EXYNOS5_APLL_LOCK			(S5P_VA_CMU +
-> 0x00000) -#define EXYNOS5_APLL_CON0
-> (S5P_VA_CMU + 0x00100) -#define
-> EXYNOS5_CLKMUX_STATCPU			(S5P_VA_CMU + 0x00400)
-> -#define EXYNOS5_CLKDIV_CPU0			(S5P_VA_CMU +
-> 0x00500) -#define EXYNOS5_CLKDIV_CPU1
-> (S5P_VA_CMU + 0x00504) -#define
-> EXYNOS5_CLKDIV_STATCPU0			(S5P_VA_CMU + 0x00600)
-> -#define EXYNOS5_CLKDIV_STATCPU1			(S5P_VA_CMU +
-> 0x00604) diff --git a/drivers/cpufreq/exynos4210-cpufreq.c
-> b/drivers/cpufreq/exynos4210-cpufreq.c deleted file mode 100644 index
-> 40d84c4..0000000 --- a/drivers/cpufreq/exynos4210-cpufreq.c
-> +++ /dev/null @@ -1,157 +0,0 @@
-> -/*
-> - * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * EXYNOS4210 - CPU frequency scaling support
-> - *
-> - * This program is free software; you can redistribute it and/or
-> modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#include <linux/module.h>
-> -#include <linux/kernel.h>
-> -#include <linux/err.h>
-> -#include <linux/clk.h>
-> -#include <linux/io.h>
-> -#include <linux/slab.h>
-> -#include <linux/cpufreq.h>
-> -
-> -#include "exynos-cpufreq.h"
-> -
-> -static struct clk *cpu_clk;
-> -static struct clk *moutcore;
-> -static struct clk *mout_mpll;
-> -static struct clk *mout_apll;
-> -
-> -static unsigned int exynos4210_volt_table[] = {
-> -	1250000, 1150000, 1050000, 975000, 950000,
-> -};
-> -
-> -static struct cpufreq_frequency_table exynos4210_freq_table[] = {
-> -	{L0, 1200 * 1000},
-> -	{L1, 1000 * 1000},
-> -	{L2,  800 * 1000},
-> -	{L3,  500 * 1000},
-> -	{L4,  200 * 1000},
-> -	{0, CPUFREQ_TABLE_END},
-> -};
-> -
-> -static struct apll_freq apll_freq_4210[] = {
-> -	/*
-> -	 * values:
-> -	 * freq
-> -	 * clock divider for CORE, COREM0, COREM1, PERIPH, ATB,
-> PCLK_DBG, APLL, RESERVED
-> -	 * clock divider for COPY, HPM, RESERVED
-> -	 * PLL M, P, S
-> -	 */
-> -	APLL_FREQ(1200, 0, 3, 7, 3, 4, 1, 7, 0, 5, 0, 0, 150, 3, 1),
-> -	APLL_FREQ(1000, 0, 3, 7, 3, 4, 1, 7, 0, 4, 0, 0, 250, 6, 1),
-> -	APLL_FREQ(800,  0, 3, 7, 3, 3, 1, 7, 0, 3, 0, 0, 200, 6, 1),
-> -	APLL_FREQ(500,  0, 3, 7, 3, 3, 1, 7, 0, 3, 0, 0, 250, 6, 2),
-> -	APLL_FREQ(200,  0, 1, 3, 1, 3, 1, 0, 0, 3, 0, 0, 200, 6, 3),
-> -};
-> -
-> -static void exynos4210_set_clkdiv(unsigned int div_index)
-> -{
-> -	unsigned int tmp;
-> -
-> -	/* Change Divider - CPU0 */
-> -
-> -	tmp = apll_freq_4210[div_index].clk_div_cpu0;
-> -
-> -	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU);
-> -
-> -	do {
-> -		tmp = __raw_readl(EXYNOS4_CLKDIV_STATCPU);
-> -	} while (tmp & 0x1111111);
-> -
-> -	/* Change Divider - CPU1 */
-> -
-> -	tmp = apll_freq_4210[div_index].clk_div_cpu1;
-> -
-> -	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU1);
-> -
-> -	do {
-> -		tmp = __raw_readl(EXYNOS4_CLKDIV_STATCPU1);
-> -	} while (tmp & 0x11);
-> -}
-> -
-> -static void exynos4210_set_apll(unsigned int index)
-> -{
-> -	unsigned int tmp, freq = apll_freq_4210[index].freq;
-> -
-> -	/* MUX_CORE_SEL = MPLL, ARMCLK uses MPLL for lock time */
-> -	clk_set_parent(moutcore, mout_mpll);
-> -
-> -	do {
-> -		tmp = (__raw_readl(EXYNOS4_CLKMUX_STATCPU)
-> -			>> EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT);
-> -		tmp &= 0x7;
-> -	} while (tmp != 0x2);
-> -
-> -	clk_set_rate(mout_apll, freq * 1000);
-> -
-> -	/* MUX_CORE_SEL = APLL */
-> -	clk_set_parent(moutcore, mout_apll);
-> -
-> -	do {
-> -		tmp = __raw_readl(EXYNOS4_CLKMUX_STATCPU);
-> -		tmp &= EXYNOS4_CLKMUX_STATCPU_MUXCORE_MASK;
-> -	} while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
-> -}
-> -
-> -static void exynos4210_set_frequency(unsigned int old_index,
-> -				     unsigned int new_index)
-> -{
-> -	if (old_index > new_index) {
-> -		exynos4210_set_clkdiv(new_index);
-> -		exynos4210_set_apll(new_index);
-> -	} else if (old_index < new_index) {
-> -		exynos4210_set_apll(new_index);
-> -		exynos4210_set_clkdiv(new_index);
-> -	}
-> -}
-> -
-> -int exynos4210_cpufreq_init(struct exynos_dvfs_info *info)
-> -{
-> -	unsigned long rate;
-> -
-> -	cpu_clk = clk_get(NULL, "armclk");
-> -	if (IS_ERR(cpu_clk))
-> -		return PTR_ERR(cpu_clk);
-> -
-> -	moutcore = clk_get(NULL, "moutcore");
-> -	if (IS_ERR(moutcore))
-> -		goto err_moutcore;
-> -
-> -	mout_mpll = clk_get(NULL, "mout_mpll");
-> -	if (IS_ERR(mout_mpll))
-> -		goto err_mout_mpll;
-> -
-> -	rate = clk_get_rate(mout_mpll) / 1000;
-> -
-> -	mout_apll = clk_get(NULL, "mout_apll");
-> -	if (IS_ERR(mout_apll))
-> -		goto err_mout_apll;
-> -
-> -	info->mpll_freq_khz = rate;
-> -	/* 800Mhz */
-> -	info->pll_safe_idx = L2;
-> -	info->cpu_clk = cpu_clk;
-> -	info->volt_table = exynos4210_volt_table;
-> -	info->freq_table = exynos4210_freq_table;
-> -	info->set_freq = exynos4210_set_frequency;
-> -
-> -	return 0;
-> -
-> -err_mout_apll:
-> -	clk_put(mout_mpll);
-> -err_mout_mpll:
-> -	clk_put(moutcore);
-> -err_moutcore:
-> -	clk_put(cpu_clk);
-> -
-> -	pr_debug("%s: failed initialization\n", __func__);
-> -	return -EINVAL;
-> -}
-> diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c
-> b/drivers/cpufreq/exynos4x12-cpufreq.c deleted file mode 100644
-> index 7c11ace..0000000
-> --- a/drivers/cpufreq/exynos4x12-cpufreq.c
-> +++ /dev/null
-> @@ -1,211 +0,0 @@
-> -/*
-> - * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * EXYNOS4X12 - CPU frequency scaling support
-> - *
-> - * This program is free software; you can redistribute it and/or
-> modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#include <linux/module.h>
-> -#include <linux/kernel.h>
-> -#include <linux/err.h>
-> -#include <linux/clk.h>
-> -#include <linux/io.h>
-> -#include <linux/slab.h>
-> -#include <linux/cpufreq.h>
-> -
-> -#include "exynos-cpufreq.h"
-> -
-> -static struct clk *cpu_clk;
-> -static struct clk *moutcore;
-> -static struct clk *mout_mpll;
-> -static struct clk *mout_apll;
-> -
-> -static unsigned int exynos4x12_volt_table[] = {
-> -	1350000, 1287500, 1250000, 1187500, 1137500, 1087500,
-> 1037500,
-> -	1000000,  987500,  975000,  950000,  925000,  900000,  900000
-> -};
-> -
-> -static struct cpufreq_frequency_table exynos4x12_freq_table[] = {
-> -	{CPUFREQ_BOOST_FREQ, 1500 * 1000},
+>  Examples:
+>  
+> @@ -36,6 +42,7 @@ cpus {
+>  			396000  950000
+>  			198000  850000
+>  		>;
+> +		safe-opp = <396000 950000>
+>  		clock-latency = <61036>; /* two CLK32 periods */
+>  		#cooling-cells = <2>;
+>  		cooling-min-level = <0>;
+> diff --git a/drivers/cpufreq/cpufreq-cpu0.c
+> b/drivers/cpufreq/cpufreq-cpu0.c index 0c12ffc..075d3d1 100644
+> --- a/drivers/cpufreq/cpufreq-cpu0.c
+> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+> @@ -27,6 +27,8 @@
+>  
+>  static unsigned int transition_latency;
+>  static unsigned int voltage_tolerance; /* in percentage */
+> +static unsigned long safe_frequency;
+> +static unsigned long safe_voltage;
+>  
+>  static struct device *cpu_dev;
+>  static struct clk *cpu_clk;
+> @@ -64,17 +66,30 @@ static int cpu0_set_target(struct cpufreq_policy
+> *policy, unsigned int index) volt_old =
+> regulator_get_voltage(cpu_reg); }
+>  
+> -	pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
+> +	pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
+>  		 old_freq / 1000, volt_old ? volt_old / 1000 : -1,
+>  		 new_freq / 1000, volt ? volt / 1000 : -1);
+>  
+>  	/* scaling up?  scale voltage before frequency */
+> -	if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
+> +	if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
+> +				new_freq >= safe_frequency) {
+>  		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>  		if (ret) {
+>  			pr_err("failed to scale voltage up: %d\n",
+> ret); return ret;
+>  		}
+> +	} else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
+> +		/*
+> +		 * the scaled up voltage level for the new_freq is
+> lower
+> +		 * than the safe voltage level. so set safe_voltage
+> +		 * as the intermediate voltage level and revert it
+> +		 * back after the frequency has been changed.
+> +		 */
+> +		ret = regulator_set_voltage_tol(cpu_reg,
+> safe_voltage, tol);
+> +		if (ret) {
+> +			pr_err("failed to set safe voltage: %d\n",
+> ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	ret = clk_set_rate(cpu_clk, freq_exact);
+> @@ -86,7 +101,8 @@ static int cpu0_set_target(struct cpufreq_policy
+> *policy, unsigned int index) }
+>  
+>  	/* scaling down?  scale voltage after frequency */
+> -	if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
+> +	if (!IS_ERR(cpu_reg) &&
+> +			(new_freq < old_freq || new_freq <
+> safe_frequency)) { ret = regulator_set_voltage_tol(cpu_reg, volt,
+> tol); if (ret) {
+>  			pr_err("failed to scale voltage down: %d\n",
+> ret); @@ -116,6 +132,8 @@ static struct cpufreq_driver
+> cpu0_cpufreq_driver = { 
+>  static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>  {
+> +	const struct property *prop;
+> +	struct dev_pm_opp *opp;
+>  	struct device_node *np;
+>  	int ret;
+>  
+> @@ -165,13 +183,24 @@ static int cpu0_cpufreq_probe(struct
+> platform_device *pdev) goto out_put_node;
+>  	}
+>  
+> +	prop = of_find_property(np, "safe-opp", NULL);
+> +	if (prop) {
+> +		if (prop->value && (prop->length / sizeof(u32)) ==
+> 2) {
+> +			const __be32 *val;
+> +			val = prop->value;
+> +			safe_frequency = be32_to_cpup(val++);
+> +			safe_voltage = be32_to_cpup(val);
+> +		} else {
+> +			pr_err("invalid safe-opp level specified\n");
+> +		}
+> +	}
+> +
+>  	of_property_read_u32(np, "voltage-tolerance",
+> &voltage_tolerance); 
+>  	if (of_property_read_u32(np, "clock-latency",
+> &transition_latency)) transition_latency = CPUFREQ_ETERNAL;
+>  
+>  	if (!IS_ERR(cpu_reg)) {
+> -		struct dev_pm_opp *opp;
+>  		unsigned long min_uV, max_uV;
+>  		int i;
+>  
 
-Here, you are removing BOOST support for Exynos4412, without any code,
-which brings back this functionality in the new code.
-
-I'd propose adding new property to cpus node and during
-operating-points parsing mark the entry at the cpufreq_frequency_table
-accordingly.
-
-> -	{L1, 1400 * 1000},
-> -	{L2, 1300 * 1000},
-> -	{L3, 1200 * 1000},
-> -	{L4, 1100 * 1000},
-> -	{L5, 1000 * 1000},
-> -	{L6,  900 * 1000},
-> -	{L7,  800 * 1000},
-> -	{L8,  700 * 1000},
-> -	{L9,  600 * 1000},
-> -	{L10, 500 * 1000},
-> -	{L11, 400 * 1000},
-> -	{L12, 300 * 1000},
-> -	{L13, 200 * 1000},
-> -	{0, CPUFREQ_TABLE_END},
-> -};
-> -
-> -static struct apll_freq *apll_freq_4x12;
-> -
-> -static struct apll_freq apll_freq_4212[] = {
-> -	/*
-> -	 * values:
-> -	 * freq
-> -	 * clock divider for CORE, COREM0, COREM1, PERIPH, ATB,
-> PCLK_DBG, APLL, CORE2
-> -	 * clock divider for COPY, HPM, RESERVED
-> -	 * PLL M, P, S
-> -	 */
-> -	APLL_FREQ(1500, 0, 3, 7, 0, 6, 1, 2, 0, 6, 2, 0, 250, 4, 0),
-> -	APLL_FREQ(1400, 0, 3, 7, 0, 6, 1, 2, 0, 6, 2, 0, 175, 3, 0),
-> -	APLL_FREQ(1300, 0, 3, 7, 0, 5, 1, 2, 0, 5, 2, 0, 325, 6, 0),
-> -	APLL_FREQ(1200, 0, 3, 7, 0, 5, 1, 2, 0, 5, 2, 0, 200, 4, 0),
-> -	APLL_FREQ(1100, 0, 3, 6, 0, 4, 1, 2, 0, 4, 2, 0, 275, 6, 0),
-> -	APLL_FREQ(1000, 0, 2, 5, 0, 4, 1, 1, 0, 4, 2, 0, 125, 3, 0),
-> -	APLL_FREQ(900,  0, 2, 5, 0, 3, 1, 1, 0, 3, 2, 0, 150, 4, 0),
-> -	APLL_FREQ(800,  0, 2, 5, 0, 3, 1, 1, 0, 3, 2, 0, 100, 3, 0),
-> -	APLL_FREQ(700,  0, 2, 4, 0, 3, 1, 1, 0, 3, 2, 0, 175, 3, 1),
-> -	APLL_FREQ(600,  0, 2, 4, 0, 3, 1, 1, 0, 3, 2, 0, 200, 4, 1),
-> -	APLL_FREQ(500,  0, 2, 4, 0, 3, 1, 1, 0, 3, 2, 0, 125, 3, 1),
-> -	APLL_FREQ(400,  0, 2, 4, 0, 3, 1, 1, 0, 3, 2, 0, 100, 3, 1),
-> -	APLL_FREQ(300,  0, 2, 4, 0, 2, 1, 1, 0, 3, 2, 0, 200, 4, 2),
-> -	APLL_FREQ(200,  0, 1, 3, 0, 1, 1, 1, 0, 3, 2, 0, 100, 3, 2),
-> -};
-> -
-> -static struct apll_freq apll_freq_4412[] = {
-> -	/*
-> -	 * values:
-> -	 * freq
-> -	 * clock divider for CORE, COREM0, COREM1, PERIPH, ATB,
-> PCLK_DBG, APLL, CORE2
-> -	 * clock divider for COPY, HPM, CORES
-> -	 * PLL M, P, S
-> -	 */
-> -	APLL_FREQ(1500, 0, 3, 7, 0, 6, 1, 2, 0, 6, 0, 7, 250, 4, 0),
-> -	APLL_FREQ(1400, 0, 3, 7, 0, 6, 1, 2, 0, 6, 0, 6, 175, 3, 0),
-> -	APLL_FREQ(1300, 0, 3, 7, 0, 5, 1, 2, 0, 5, 0, 6, 325, 6, 0),
-> -	APLL_FREQ(1200, 0, 3, 7, 0, 5, 1, 2, 0, 5, 0, 5, 200, 4, 0),
-> -	APLL_FREQ(1100, 0, 3, 6, 0, 4, 1, 2, 0, 4, 0, 5, 275, 6, 0),
-> -	APLL_FREQ(1000, 0, 2, 5, 0, 4, 1, 1, 0, 4, 0, 4, 125, 3, 0),
-> -	APLL_FREQ(900,  0, 2, 5, 0, 3, 1, 1, 0, 3, 0, 4, 150, 4, 0),
-> -	APLL_FREQ(800,  0, 2, 5, 0, 3, 1, 1, 0, 3, 0, 3, 100, 3, 0),
-> -	APLL_FREQ(700,  0, 2, 4, 0, 3, 1, 1, 0, 3, 0, 3, 175, 3, 1),
-> -	APLL_FREQ(600,  0, 2, 4, 0, 3, 1, 1, 0, 3, 0, 2, 200, 4, 1),
-> -	APLL_FREQ(500,  0, 2, 4, 0, 3, 1, 1, 0, 3, 0, 2, 125, 3, 1),
-> -	APLL_FREQ(400,  0, 2, 4, 0, 3, 1, 1, 0, 3, 0, 1, 100, 3, 1),
-> -	APLL_FREQ(300,  0, 2, 4, 0, 2, 1, 1, 0, 3, 0, 1, 200, 4, 2),
-> -	APLL_FREQ(200,  0, 1, 3, 0, 1, 1, 1, 0, 3, 0, 0, 100, 3, 2),
-> -};
-> -
-> -static void exynos4x12_set_clkdiv(unsigned int div_index)
-> -{
-> -	unsigned int tmp;
-> -	unsigned int stat_cpu1;
-> -
-> -	/* Change Divider - CPU0 */
-> -
-> -	tmp = apll_freq_4x12[div_index].clk_div_cpu0;
-> -
-> -	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU);
-> -
-> -	while (__raw_readl(EXYNOS4_CLKDIV_STATCPU) & 0x11111111)
-> -		cpu_relax();
-> -
-> -	/* Change Divider - CPU1 */
-> -	tmp = apll_freq_4x12[div_index].clk_div_cpu1;
-> -
-> -	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU1);
-> -	if (soc_is_exynos4212())
-> -		stat_cpu1 = 0x11;
-> -	else
-> -		stat_cpu1 = 0x111;
-> -
-> -	while (__raw_readl(EXYNOS4_CLKDIV_STATCPU1) & stat_cpu1)
-> -		cpu_relax();
-> -}
-> -
-> -static void exynos4x12_set_apll(unsigned int index)
-> -{
-> -	unsigned int tmp, freq = apll_freq_4x12[index].freq;
-> -
-> -	/* MUX_CORE_SEL = MPLL, ARMCLK uses MPLL for lock time */
-> -	clk_set_parent(moutcore, mout_mpll);
-> -
-> -	do {
-> -		cpu_relax();
-> -		tmp = (__raw_readl(EXYNOS4_CLKMUX_STATCPU)
-> -			>> EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT);
-> -		tmp &= 0x7;
-> -	} while (tmp != 0x2);
-> -
-> -	clk_set_rate(mout_apll, freq * 1000);
-> -
-> -	/* MUX_CORE_SEL = APLL */
-> -	clk_set_parent(moutcore, mout_apll);
-> -
-> -	do {
-> -		cpu_relax();
-> -		tmp = __raw_readl(EXYNOS4_CLKMUX_STATCPU);
-> -		tmp &= EXYNOS4_CLKMUX_STATCPU_MUXCORE_MASK;
-> -	} while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
-> -}
-> -
-> -static void exynos4x12_set_frequency(unsigned int old_index,
-> -				  unsigned int new_index)
-> -{
-> -	if (old_index > new_index) {
-> -		exynos4x12_set_clkdiv(new_index);
-> -		exynos4x12_set_apll(new_index);
-> -	} else if (old_index < new_index) {
-> -		exynos4x12_set_apll(new_index);
-> -		exynos4x12_set_clkdiv(new_index);
-> -	}
-> -}
-> -
-> -int exynos4x12_cpufreq_init(struct exynos_dvfs_info *info)
-> -{
-> -	unsigned long rate;
-> -
-> -	cpu_clk = clk_get(NULL, "armclk");
-> -	if (IS_ERR(cpu_clk))
-> -		return PTR_ERR(cpu_clk);
-> -
-> -	moutcore = clk_get(NULL, "moutcore");
-> -	if (IS_ERR(moutcore))
-> -		goto err_moutcore;
-> -
-> -	mout_mpll = clk_get(NULL, "mout_mpll");
-> -	if (IS_ERR(mout_mpll))
-> -		goto err_mout_mpll;
-> -
-> -	rate = clk_get_rate(mout_mpll) / 1000;
-> -
-> -	mout_apll = clk_get(NULL, "mout_apll");
-> -	if (IS_ERR(mout_apll))
-> -		goto err_mout_apll;
-> -
-> -	if (soc_is_exynos4212())
-> -		apll_freq_4x12 = apll_freq_4212;
-> -	else
-> -		apll_freq_4x12 = apll_freq_4412;
-> -
-> -	info->mpll_freq_khz = rate;
-> -	/* 800Mhz */
-> -	info->pll_safe_idx = L7;
-> -	info->cpu_clk = cpu_clk;
-> -	info->volt_table = exynos4x12_volt_table;
-> -	info->freq_table = exynos4x12_freq_table;
-> -	info->set_freq = exynos4x12_set_frequency;
-> -
-> -	return 0;
-> -
-> -err_mout_apll:
-> -	clk_put(mout_mpll);
-> -err_mout_mpll:
-> -	clk_put(moutcore);
-> -err_moutcore:
-> -	clk_put(cpu_clk);
-> -
-> -	pr_debug("%s: failed initialization\n", __func__);
-> -	return -EINVAL;
-> -}
-> diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
-> b/drivers/cpufreq/exynos5250-cpufreq.c deleted file mode 100644
-> index 5f90b82..0000000
-> --- a/drivers/cpufreq/exynos5250-cpufreq.c
-> +++ /dev/null
-> @@ -1,183 +0,0 @@
-> -/*
-> - * Copyright (c) 2010-20122Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * EXYNOS5250 - CPU frequency scaling support
-> - *
-> - * This program is free software; you can redistribute it and/or
-> modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#include <linux/module.h>
-> -#include <linux/kernel.h>
-> -#include <linux/err.h>
-> -#include <linux/clk.h>
-> -#include <linux/io.h>
-> -#include <linux/slab.h>
-> -#include <linux/cpufreq.h>
-> -
-> -#include <mach/map.h>
-> -
-> -#include "exynos-cpufreq.h"
-> -
-> -static struct clk *cpu_clk;
-> -static struct clk *moutcore;
-> -static struct clk *mout_mpll;
-> -static struct clk *mout_apll;
-> -
-> -static unsigned int exynos5250_volt_table[] = {
-> -	1300000, 1250000, 1225000, 1200000, 1150000,
-> -	1125000, 1100000, 1075000, 1050000, 1025000,
-> -	1012500, 1000000,  975000,  950000,  937500,
-> -	925000
-> -};
-> -
-> -static struct cpufreq_frequency_table exynos5250_freq_table[] = {
-> -	{L0, 1700 * 1000},
-> -	{L1, 1600 * 1000},
-> -	{L2, 1500 * 1000},
-> -	{L3, 1400 * 1000},
-> -	{L4, 1300 * 1000},
-> -	{L5, 1200 * 1000},
-> -	{L6, 1100 * 1000},
-> -	{L7, 1000 * 1000},
-> -	{L8,  900 * 1000},
-> -	{L9,  800 * 1000},
-> -	{L10, 700 * 1000},
-> -	{L11, 600 * 1000},
-> -	{L12, 500 * 1000},
-> -	{L13, 400 * 1000},
-> -	{L14, 300 * 1000},
-> -	{L15, 200 * 1000},
-> -	{0, CPUFREQ_TABLE_END},
-> -};
-> -
-> -static struct apll_freq apll_freq_5250[] = {
-> -	/*
-> -	 * values:
-> -	 * freq
-> -	 * clock divider for ARM, CPUD, ACP, PERIPH, ATB, PCLK_DBG,
-> APLL, ARM2
-> -	 * clock divider for COPY, HPM, RESERVED
-> -	 * PLL M, P, S
-> -	 */
-> -	APLL_FREQ(1700, 0, 3, 7, 7, 7, 3, 5, 0, 0, 2, 0, 425, 6, 0),
-> -	APLL_FREQ(1600, 0, 3, 7, 7, 7, 1, 4, 0, 0, 2, 0, 200, 3, 0),
-> -	APLL_FREQ(1500, 0, 2, 7, 7, 7, 1, 4, 0, 0, 2, 0, 250, 4, 0),
-> -	APLL_FREQ(1400, 0, 2, 7, 7, 6, 1, 4, 0, 0, 2, 0, 175, 3, 0),
-> -	APLL_FREQ(1300, 0, 2, 7, 7, 6, 1, 3, 0, 0, 2, 0, 325, 6, 0),
-> -	APLL_FREQ(1200, 0, 2, 7, 7, 5, 1, 3, 0, 0, 2, 0, 200, 4, 0),
-> -	APLL_FREQ(1100, 0, 3, 7, 7, 5, 1, 3, 0, 0, 2, 0, 275, 6, 0),
-> -	APLL_FREQ(1000, 0, 1, 7, 7, 4, 1, 2, 0, 0, 2, 0, 125, 3, 0),
-> -	APLL_FREQ(900,  0, 1, 7, 7, 4, 1, 2, 0, 0, 2, 0, 150, 4, 0),
-> -	APLL_FREQ(800,  0, 1, 7, 7, 4, 1, 2, 0, 0, 2, 0, 100, 3, 0),
-> -	APLL_FREQ(700,  0, 1, 7, 7, 3, 1, 1, 0, 0, 2, 0, 175, 3, 1),
-> -	APLL_FREQ(600,  0, 1, 7, 7, 3, 1, 1, 0, 0, 2, 0, 200, 4, 1),
-> -	APLL_FREQ(500,  0, 1, 7, 7, 2, 1, 1, 0, 0, 2, 0, 125, 3, 1),
-> -	APLL_FREQ(400,  0, 1, 7, 7, 2, 1, 1, 0, 0, 2, 0, 100, 3, 1),
-> -	APLL_FREQ(300,  0, 1, 7, 7, 1, 1, 1, 0, 0, 2, 0, 200, 4, 2),
-> -	APLL_FREQ(200,  0, 1, 7, 7, 1, 1, 1, 0, 0, 2, 0, 100, 3, 2),
-> -};
-> -
-> -static void set_clkdiv(unsigned int div_index)
-> -{
-> -	unsigned int tmp;
-> -
-> -	/* Change Divider - CPU0 */
-> -
-> -	tmp = apll_freq_5250[div_index].clk_div_cpu0;
-> -
-> -	__raw_writel(tmp, EXYNOS5_CLKDIV_CPU0);
-> -
-> -	while (__raw_readl(EXYNOS5_CLKDIV_STATCPU0) & 0x11111111)
-> -		cpu_relax();
-> -
-> -	/* Change Divider - CPU1 */
-> -	tmp = apll_freq_5250[div_index].clk_div_cpu1;
-> -
-> -	__raw_writel(tmp, EXYNOS5_CLKDIV_CPU1);
-> -
-> -	while (__raw_readl(EXYNOS5_CLKDIV_STATCPU1) & 0x11)
-> -		cpu_relax();
-> -}
-> -
-> -static void set_apll(unsigned int index)
-> -{
-> -	unsigned int tmp;
-> -	unsigned int freq = apll_freq_5250[index].freq;
-> -
-> -	/* MUX_CORE_SEL = MPLL, ARMCLK uses MPLL for lock time */
-> -	clk_set_parent(moutcore, mout_mpll);
-> -
-> -	do {
-> -		cpu_relax();
-> -		tmp = (__raw_readl(EXYNOS5_CLKMUX_STATCPU) >> 16);
-> -		tmp &= 0x7;
-> -	} while (tmp != 0x2);
-> -
-> -	clk_set_rate(mout_apll, freq * 1000);
-> -
-> -	/* MUX_CORE_SEL = APLL */
-> -	clk_set_parent(moutcore, mout_apll);
-> -
-> -	do {
-> -		cpu_relax();
-> -		tmp = __raw_readl(EXYNOS5_CLKMUX_STATCPU);
-> -		tmp &= (0x7 << 16);
-> -	} while (tmp != (0x1 << 16));
-> -}
-> -
-> -static void exynos5250_set_frequency(unsigned int old_index,
-> -				  unsigned int new_index)
-> -{
-> -	if (old_index > new_index) {
-> -		set_clkdiv(new_index);
-> -		set_apll(new_index);
-> -	} else if (old_index < new_index) {
-> -		set_apll(new_index);
-> -		set_clkdiv(new_index);
-> -	}
-> -}
-> -
-> -int exynos5250_cpufreq_init(struct exynos_dvfs_info *info)
-> -{
-> -	unsigned long rate;
-> -
-> -	cpu_clk = clk_get(NULL, "armclk");
-> -	if (IS_ERR(cpu_clk))
-> -		return PTR_ERR(cpu_clk);
-> -
-> -	moutcore = clk_get(NULL, "mout_cpu");
-> -	if (IS_ERR(moutcore))
-> -		goto err_moutcore;
-> -
-> -	mout_mpll = clk_get(NULL, "mout_mpll");
-> -	if (IS_ERR(mout_mpll))
-> -		goto err_mout_mpll;
-> -
-> -	rate = clk_get_rate(mout_mpll) / 1000;
-> -
-> -	mout_apll = clk_get(NULL, "mout_apll");
-> -	if (IS_ERR(mout_apll))
-> -		goto err_mout_apll;
-> -
-> -	info->mpll_freq_khz = rate;
-> -	/* 800Mhz */
-> -	info->pll_safe_idx = L9;
-> -	info->cpu_clk = cpu_clk;
-> -	info->volt_table = exynos5250_volt_table;
-> -	info->freq_table = exynos5250_freq_table;
-> -	info->set_freq = exynos5250_set_frequency;
-> -
-> -	return 0;
-> -
-> -err_mout_apll:
-> -	clk_put(mout_mpll);
-> -err_mout_mpll:
-> -	clk_put(moutcore);
-> -err_moutcore:
-> -	clk_put(cpu_clk);
-> -
-> -	pr_err("%s: failed initialization\n", __func__);
-> -	return -EINVAL;
-> -}
-
-
+Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
 
 -- 
 Best regards,
