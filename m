@@ -1,104 +1,83 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
-	device probe
-Date: Tue, 21 Jan 2014 00:38:56 +0000
-Message-ID: <20140121003856.GP15937@n2100.arm.linux.org.uk>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org> <1390208555-27770-2-git-send-email-tushar.behera@linaro.org> <20140120100530.GY15937@n2100.arm.linux.org.uk> <20140120211601.GB634@kroah.com> <20140120213206.GJ15937@n2100.arm.linux.org.uk> <20140120231141.GA2355@kroah.com> <20140120231603.GL15937@n2100.arm.linux.org.uk> <20140120235128.GA5012@kroah.com> <20140121000706.GN15937@n2100.arm.linux.org.uk> <20140121002623.GA6173@kroah.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH V2] drm/exynos: Fix multiplatform breakage for ipp/gsc
+Date: Tue, 21 Jan 2014 13:37:46 +0900
+Message-ID: <CAAQKjZO8njs_UW_mcRjtuYX8t+tdNKYWZmBcr1Xuf30t_eAYrg@mail.gmail.com>
+References: <1389853677-3485-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:43346 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755948AbaAUAjG (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:48129 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751380AbaAUEhs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jan 2014 19:39:06 -0500
-Content-Disposition: inline
-In-Reply-To: <20140121002623.GA6173@kroah.com>
+	Mon, 20 Jan 2014 23:37:48 -0500
+Received: by mail-wg0-f52.google.com with SMTP id b13so7604338wgh.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jan 2014 20:37:47 -0800 (PST)
+In-Reply-To: <1389853677-3485-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Arnd Bergmann <arnd@arndb.de>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On Mon, Jan 20, 2014 at 04:26:23PM -0800, Greg KH wrote:
-> On Tue, Jan 21, 2014 at 12:07:06AM +0000, Russell King - ARM Linux wrote:
-> > On Mon, Jan 20, 2014 at 03:51:28PM -0800, Greg KH wrote:
-> > > On Mon, Jan 20, 2014 at 11:16:03PM +0000, Russell King - ARM Linux wrote:
-> > > > I don't believe the driver model has any locking to prevent a drivers
-> > > > ->probe function running concurrently with it's ->remove function for
-> > > > two (or more) devices.
-> > > 
-> > > The bus prevents this from happening.
-> > > 
-> > > > The locking against this is done on a per-device basis, not a per-driver
-> > > > basis.
-> > > 
-> > > No, on a per-bus basis.
-> > 
-> > I don't see it.
-> > 
-> > Let's start from driver_register().
-> 
-> Which happens from module probing, which is single-threaded, right?
+Applied.
 
-Yes, to _some_ extent - the driver is added to the bus list of drivers
-before existing drivers are probed, so it's always worth bearing in
-mind that if a new device comes along, it's possible for that device
-to be offered to even a driver which hasn't finished returning from
-its module_init().
+Thanks,
+Inki Dae
 
-> > If you think there's a per-driver lock that's held over probes or removes,
-> > please point it out.  I'm fairly certain that there isn't, because we have
-> > to be able to deal with recursive probes (yes, we've had to deal with
-> > those in the past.)
-> 
-> Hm, you are right, I think that's why we had to remove the locks.  The
-> klist stuff handles us getting the needed locks for managing our
-> internal lists of devices and drivers, and those should be fine.
-> 
-> So, let's go back to your original worry, what are you concerned about?
-> A device being removed while probe() is called?
-
-My concern is that we're turning something which should be simple into
-something unnecessarily complex.  By that, I mean something along the
-lines of:
-
-static DEFINE_MUTEX(foo_mutex);
-static unsigned foo_devices;
-
-static int foo_probe(struct platform_device *pdev)
-{
-	int ret;
-
-	mutex_lock(&foo_mutex);
-	if (foo_devices++ == 0)
-		uart_register_driver(&driver);
-
-	ret = foo_really_probe_device(pdev);
-	if (ret) {
-		if (--foo_devices == 0)
-			uart_unregister_driver(&driver);
-	}
-	mutex_unlock(&foo_mutex);
-
-	return ret;
-}
-
-static int foo_remove(struct platform_device *pdev)
-{
-	mutex_lock(&foo_mutex);
-	foo_really_remove(pdev);
-	if (--foo_devices == 0)
-		uart_unregister_driver(&driver);
-	mutex_unlock(&foo_mutex);
-
-	return 0;
-}
-
-in every single serial driver we have...  Wouldn't it just be better to
-fix the major/minor number problem rather than have to add all that code
-repetitively to all those drivers?
-
--- 
-FTTC broadband for 0.8mile line: 5.8Mbps down 500kbps up.  Estimation
-in database were 13.1 to 19Mbit for a good line, about 7.5+ for a bad.
-Estimate before purchase was "up to 13.2Mbit".
+2014/1/16 Tushar Behera <tushar.behera@linaro.org>:
+> There is no need to include "plat/map-base.h" in ipp driver. Remove
+> this and enable this driver for multi-platform.
+>
+> However gsc driver is not multiplatform compliant yet, so make the
+> compilation conditional upon !ARCH_MULTIPLATFORM.
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+> Changes for V2:
+> * Made compilation of exynos_drm_gsc.c conditional on
+>  !ARCH_MULTIPLATFORM.
+>
+>  drivers/gpu/drm/exynos/Kconfig          |    4 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.c |    1 -
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+> index f227f54..6e1a1a2 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -51,7 +51,7 @@ config DRM_EXYNOS_G2D
+>
+>  config DRM_EXYNOS_IPP
+>         bool "Exynos DRM IPP"
+> -       depends on DRM_EXYNOS && !ARCH_MULTIPLATFORM
+> +       depends on DRM_EXYNOS
+>         help
+>           Choose this option if you want to use IPP feature for DRM.
+>
+> @@ -69,6 +69,6 @@ config DRM_EXYNOS_ROTATOR
+>
+>  config DRM_EXYNOS_GSC
+>         bool "Exynos DRM GSC"
+> -       depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5
+> +       depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && !ARCH_MULTIPLATFORM
+>         help
+>           Choose this option if you want to use Exynos GSC for DRM.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> index d519a4e..eefb429 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> @@ -16,7 +16,6 @@
+>  #include <linux/types.h>
+>  #include <linux/clk.h>
+>  #include <linux/pm_runtime.h>
+> -#include <plat/map-base.h>
+>
+>  #include <drm/drmP.h>
+>  #include <drm/exynos_drm.h>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
