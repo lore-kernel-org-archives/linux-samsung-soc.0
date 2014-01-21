@@ -1,44 +1,98 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch] drm/exynos: potential use after free in exynos_drm_open()
-Date: Tue, 21 Jan 2014 16:35:56 +0300
-Message-ID: <20140121133556.GY7444@mwanda>
-References: <20140121065748.GC31535@elgon.mountain> <52DE69F3.9070307@bfs.de>
-	<52DE6B8B.6080304@bfs.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] serial: samsung: move clock deactivation below uart registration
+Date: Tue, 21 Jan 2014 15:26:42 +0100
+Message-ID: <2813762.7GxfVBIcrq@phil>
+References: <201312050054.39327.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <52DE6B8B.6080304@bfs.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: walter harms <wharms@bfs.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <201312050054.39327.heiko@sntech.de>
+Sender: linux-serial-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 21, 2014 at 01:43:55PM +0100, walter harms wrote:
-> 
-> i have just noticed: The function already exits
-> 
-> 194 static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
-> 195 {
-> 196         if (!file->driver_priv)
-> 197                 return;
-> 198
-> 199         kfree(file->driver_priv);
-> 200         file->driver_priv = NULL;
-> 201 }
+Hi Greg,
 
-The function is different in the current code.  I glanced through
-drm_open_helper() and I don't see that file->driver_priv to NULL is
-needed anyway...
+just wanted to ask about the state of this patch. I can see it in your =
+branch=20
+named "fixes" [0] but it seems it hasn't made its way into the kernel n=
+either=20
+during the 3.13-rcs or with your 3.14-pull [1].
 
-regards,
-dan carpenter
+
+Thanks
+Heiko
+
+
+[0] https://git.kernel.org/cgit/linux/kernel/git/gregkh/tty.git/log/?h=3D=
+fixes
+[1]=20
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/=
+?id=3Dbcee63488ece9a0fca8be19951428a7b41001e66
+
+
+Am Donnerstag, 5. Dezember 2013, 00:54:38 schrieb Heiko St=FCbner:
+> Commit 60e93575476f (serial: samsung: enable clock before clearing pe=
+nding
+> interrupts during init) added handling of the controller clock during=
+ init.
+>=20
+> On most systems this clock is also one of the baud_clock sources and
+> possibly used by the earlycon and thus already enabled by the bootloa=
+der.
+>=20
+> Therefore a gap exists between s3c24xx_serial_init_port disabling the
+> clock and an attached console reenabling it, making the transition fr=
+om
+> earlycon to regular console possibly hang the system - as seen on my
+> S3C2442 based Freerunner today.
+>=20
+> Therefore move the disabling of the clock from s3c24xx_serial_init_po=
+rt
+> below the uart port registration, effectively creating an overlap and
+> keeping the clock running non-stop if the console wants to grab this =
+port.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/tty/serial/samsung.c |    8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
+g.c
+> index c1af04d..9cd706d 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1209,7 +1209,6 @@ static int s3c24xx_serial_init_port(struct
+> s3c24xx_uart_port *ourport,
+>=20
+>  	/* reset the fifos (and setup the uart) */
+>  	s3c24xx_serial_resetport(port, cfg);
+> -	clk_disable_unprepare(ourport->clk);
+>  	return 0;
+>  }
+>=20
+> @@ -1287,6 +1286,13 @@ static int s3c24xx_serial_probe(struct
+> platform_device *pdev) uart_add_one_port(&s3c24xx_uart_drv,
+> &ourport->port);
+>  	platform_set_drvdata(pdev, &ourport->port);
+>=20
+> +	/*
+> +	 * Deactivate the clock enabled in s3c24xx_serial_init_port here,
+> +	 * so that a potential re-enablement through the pm-callback overla=
+ps
+> +	 * and keeps the clock enabled in this case.
+> +	 */
+> +	clk_disable_unprepare(ourport->clk);
+> +
+>  #ifdef CONFIG_SAMSUNG_CLOCK
+>  	ret =3D device_create_file(&pdev->dev, &dev_attr_clock_source);
+>  	if (ret < 0)
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-serial"=
+ in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
