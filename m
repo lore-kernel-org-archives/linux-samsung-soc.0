@@ -1,81 +1,44 @@
-From: walter harms <wharms@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 Subject: Re: [patch] drm/exynos: potential use after free in exynos_drm_open()
-Date: Tue, 21 Jan 2014 13:43:55 +0100
-Message-ID: <52DE6B8B.6080304@bfs.de>
+Date: Tue, 21 Jan 2014 16:35:56 +0300
+Message-ID: <20140121133556.GY7444@mwanda>
 References: <20140121065748.GC31535@elgon.mountain> <52DE69F3.9070307@bfs.de>
-Reply-To: wharms@bfs.de
+	<52DE6B8B.6080304@bfs.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <52DE69F3.9070307@bfs.de>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: wharms@bfs.de
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <52DE6B8B.6080304@bfs.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: walter harms <wharms@bfs.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Tue, Jan 21, 2014 at 01:43:55PM +0100, walter harms wrote:
+> 
+> i have just noticed: The function already exits
+> 
+> 194 static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> 195 {
+> 196         if (!file->driver_priv)
+> 197                 return;
+> 198
+> 199         kfree(file->driver_priv);
+> 200         file->driver_priv = NULL;
+> 201 }
 
-i have just noticed: The function already exits
+The function is different in the current code.  I glanced through
+drm_open_helper() and I don't see that file->driver_priv to NULL is
+needed anyway...
 
-194 static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
-195 {
-196         if (!file->driver_priv)
-197                 return;
-198
-199         kfree(file->driver_priv);
-200         file->driver_priv = NULL;
-201 }
-
-
-Am 21.01.2014 13:37, schrieb walter harms:
-> 
-> 
-> Am 21.01.2014 07:57, schrieb Dan Carpenter:
->> If exynos_drm_subdrv_open() fails then we re-use "file_priv".
->>
->> Fixes: 96f5421523df ('drm/exynos: use a new anon file for exynos gem mmaper')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> index 9d096a0c5f8d..3c845292845a 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -174,6 +174,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
->>  	if (ret) {
->>  		kfree(file_priv);
->>  		file->driver_priv = NULL;
->> +		return ret;
->>  	}
-> 
-> using
-> 	kfree(	file->driver_priv );
-> 	file->driver_priv = NULL;
-> 
-> would be less confusing to read, and give checkers a better chance to spot mistakes.
-> (btw: file_priv could be removed from this function completely).
-> 
-> just my 2 cents,
-> re,
->  wh
-> 
->>  
->>  	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
->> @@ -186,7 +187,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
->>  	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
->>  	file_priv->anon_filp = anon_filp;
->>  
->> -	return ret;
->> +	return 0;
->>  }
->>  
->>  static void exynos_drm_preclose(struct drm_device *dev,
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+regards,
+dan carpenter
