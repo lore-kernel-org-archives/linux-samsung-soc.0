@@ -1,68 +1,48 @@
-From: kgene@kernel.org
-Subject: RE: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
- exynos5420 dtsi files
-Date: Tue, 21 Jan 2014 14:08:04 +0900
-Message-ID: <0baa01cf1666$c42d1d80$4c875880$@kernel.org>
-References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
- <1386308868-30264-2-git-send-email-l.krishna@samsung.com>
- <20140110074113.GB12119@spo001.leaseweb.com>
- <CAL1wa8cfE7_HfkMOx8jKM6p+xjMFGXaE9X1DsN1pfbt11x62jg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] drm/exynos: potential use after free in exynos_drm_open()
+Date: Tue, 21 Jan 2014 09:57:48 +0300
+Message-ID: <20140121065748.GC31535@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42014 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750748AbaAUFIH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jan 2014 00:08:07 -0500
-In-reply-to: <CAL1wa8cfE7_HfkMOx8jKM6p+xjMFGXaE9X1DsN1pfbt11x62jg@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, 'Wim Van Sebroeck' <wim@iguana.be>
-Cc: linux-samsung-soc@vger.kernel.org, dianders@chromium.org, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, linux@roeck-us.net
 
-Leela Krishna Amudala wrote:
-> 
-> On 1/10/14, Wim Van Sebroeck <wim@iguana.be> wrote:
-> > Hi Leela,
-> >
-> >> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files
-> to
-> >> handle PMU register accesses in a centralized way using syscon driver
-> >>
-> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> >> Tested-by: Doug Anderson <dianders@chromium.org>
-> >> ---
-> > ...
-> >> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
-> >> b/arch/arm/boot/dts/exynos5420.dtsi
-> >> index b1fa334..cd47db0 100644
-> >> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> >> @@ -402,4 +402,9 @@
-> >>  		clock-names = "gscl";
-> >>  		samsung,power-domain = <&gsc_pd>;
-> >>  	};
-> >
-> > I can't add this patch since there is no "gscl" in the current linux-
-> tree.
-> > Is this depending on another patch or are we going to fix this in
-> another
-> > way?
-> >
-> 
-> Hi Kgene,
-> 
-Hi Leela,
+If exynos_drm_subdrv_open() fails then we re-use "file_priv".
 
-> Driver changes has been merged to Wim's tree, so can you please pick
-> this patch into your tree.
-> 
-OK, let me take this and 3rd patch into Samsung tree for next time.
+Fixes: 96f5421523df ('drm/exynos: use a new anon file for exynos gem mmaper')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Kukjin
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 9d096a0c5f8d..3c845292845a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -174,6 +174,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+ 	if (ret) {
+ 		kfree(file_priv);
+ 		file->driver_priv = NULL;
++		return ret;
+ 	}
+ 
+ 	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
+@@ -186,7 +187,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+ 	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
+ 	file_priv->anon_filp = anon_filp;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void exynos_drm_preclose(struct drm_device *dev,
