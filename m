@@ -1,42 +1,62 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] Documentation: devicetree: mct: Fix counter bit of CPU local
- timers
-Date: Tue, 21 Jan 2014 18:03:19 +0900
-Message-ID: <000001cf1687$a0e5e250$e2b1a6f0$%han@samsung.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Tue, 21 Jan 2014 09:03:40 +0000
+Message-ID: <20140121090340.6e067d2d@www.etchedpixels.co.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+	<1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+	<20140120100530.GY15937@n2100.arm.linux.org.uk>
+	<CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+	<20140120214305.54f65ffa@www.etchedpixels.co.uk>
+	<20140120231457.GZ17314@sirena.org.uk>
+	<20140120234734.11b78578@www.etchedpixels.co.uk>
+	<20140121001657.GO15937@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-language: ko
-Sender: linux-doc-owner@vger.kernel.org
-To: 'Daniel Lezcano' <daniel.lezcano@linaro.org>
-Cc: 'Thomas Gleixner' <tglx@linutronix.de>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:58672 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752285AbaAUJEH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jan 2014 04:04:07 -0500
+In-Reply-To: <20140121001657.GO15937@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
 
-According to the datasheet of Exynos SoCs, the counter bit
-of CPU local timers is 31-bit, not 32-bit; thus, it should
-be fixed.
+On Tue, 21 Jan 2014 00:16:57 +0000
+Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[I did post a reply to this while on my phone but it got rejected]
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-index 167d5da..8c77791 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-@@ -3,7 +3,7 @@ Samsung's Multi Core Timer (MCT)
- The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
- global timer and CPU local timers. The global timer is a 64-bit free running
- up-counter and can generate 4 interrupts when the counter reaches one of the
--four preset counter values. The CPU local timers are 32-bit free running
-+four preset counter values. The CPU local timers are 31-bit free running
- down-counters and generate an interrupt when the counter expires. There is
- one CPU local timer instantiated in MCT for every CPU in the system.
- 
--- 
-1.7.10.4
+> On Mon, Jan 20, 2014 at 11:47:34PM +0000, Alan Cox wrote:
+> > But yes I agree about the idiom, but a definite NAK to any attempts to
+> > plaster over this grand screwup by crapping in the tty core. Your turd,
+> > deal with it locally in the ARM code if you can't apply common sense and
+> > just go dynamic.
+> 
+> I believe at the time there was no one maintaining the device list to
+> _do_ that allocation - AMBA PL011 came along in 2005 after (I believe)
+> hpa stopped looking after that list.
 
+git log Documentation/devices.txt
 
+> So, please tell me how a number could be allocated properly without the
+> device numbers list being maintained?
+
+It was being maintained
+
+> I've no problem with going dynamic, and I suggest that you get a sense
+> of perspective rather than just spouting rubbish from on high.
+
+I suggest you take a harder look at the actual history rather than your
+revisionist one and then apologise.
+
+The "simple" way to sort this out is to go dynamic as first proposed. The
+more complicated way *IFF* Ben can show an actual systems that break is
+for the ARM folks to bury a "Use ancient static device mapping" KConfig
+entry into the arch Kconfig - which can then go away after a while.
+
+Alan
