@@ -1,257 +1,62 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 5/7] clk: exynos: use cpu-clock provider type to
- represent arm clock
-Date: Tue, 21 Jan 2014 12:42:12 +0100
-Message-ID: <20140121124212.562d7efa@amdc2363>
-References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
- <1390047057-2239-6-git-send-email-thomas.ab@samsung.com>
- <20140120084721.7f0050ea@amdc2363>
- <CAJuA9ajQWStgtFHDshM8PgRwizndzyTuRqvBNwh6GT4m-Exj6A@mail.gmail.com>
- <20140121113855.3875555d@amdc2363>
- <CAJuA9agR182H1NPj8N6TmBhBvKEk=QvKqNa_7T95SA5GxqQXGg@mail.gmail.com>
+From: walter harms <wharms@bfs.de>
+Subject: Re: [patch] drm/exynos: potential use after free in exynos_drm_open()
+Date: Tue, 21 Jan 2014 13:37:07 +0100
+Message-ID: <52DE69F3.9070307@bfs.de>
+References: <20140121065748.GC31535@elgon.mountain>
+Reply-To: wharms@bfs.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19716 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754466AbaAULmU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jan 2014 06:42:20 -0500
-In-reply-to: <CAJuA9agR182H1NPj8N6TmBhBvKEk=QvKqNa_7T95SA5GxqQXGg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <20140121065748.GC31535@elgon.mountain>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, thomas.ab@samsung.com, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Thomas,
 
-> Hi Lukasz,
+
+Am 21.01.2014 07:57, schrieb Dan Carpenter:
+> If exynos_drm_subdrv_open() fails then we re-use "file_priv".
 > 
-> On Tue, Jan 21, 2014 at 4:08 PM, Lukasz Majewski
-> <l.majewski@samsung.com> wrote:
-> > Hi Thomas,
-> >
-> >> On Mon, Jan 20, 2014 at 1:17 PM, Lukasz Majewski
-> >> <l.majewski@samsung.com> wrote:
-> >> > Hi Thomas,
-> >> >
-> >> >> From: Thomas Abraham <thomas.ab@samsung.com>
-> >> >>
-> >> >> With the addition of the new Samsung specific cpu-clock type,
-> >> >> the arm clock can be represented as a cpu-clock type and the
-> >> >> independent clock blocks that made up the arm clock can be
-> >> >> removed.
-> >> >>
-> >> >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> >> >> ---
-> >> >>  .../devicetree/bindings/clock/exynos5250-clock.txt |    1 +
-> >> >>  drivers/clk/samsung/clk-exynos4.c                  |   11
-> >> >> +++++------ drivers/clk/samsung/clk-exynos5250.c
-> >> >> |    8 ++++---- include/dt-bindings/clock/exynos5250.h
-> >> >> |    1 + 4 files changed, 11 insertions(+), 10 deletions(-)
-> >> >>
-> >> >> diff --git
-> >> >> a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> >> >> b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> >> >> index 99eae9c..acf867a 100644 ---
-> >> >> a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> >> >> +++
-> >> >> b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> >> >> @@ -38,6 +38,7 @@ clock which they consume.
-> >> >> ---------------------------- fin_pll            1
-> >> >> +  armclk             12
-> >> >>
-> >> >>    [Clock Gate for Special Clocks]
-> >> >>
-> >> >> diff --git a/drivers/clk/samsung/clk-exynos4.c
-> >> >> b/drivers/clk/samsung/clk-exynos4.c index 010f071..efcf4a3
-> >> >> 100644 --- a/drivers/clk/samsung/clk-exynos4.c
-> >> >> +++ b/drivers/clk/samsung/clk-exynos4.c
-> >> >> @@ -437,8 +437,6 @@ static struct samsung_mux_clock
-> >> >> exynos4x12_mux_clks[] __initdata = {
-> >> >>  /* list of divider clocks supported in all exynos4 soc's */
-> >> >>  static struct samsung_div_clock exynos4_div_clks[] __initdata
-> >> >> = {
-> >> >> -     DIV(0, "div_core", "mout_core", DIV_CPU0, 0, 3),
-> >> >> -     DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
-> >> >>       DIV(0, "div_fimc0", "mout_fimc0", DIV_CAM, 0, 4),
-> >> >>       DIV(0, "div_fimc1", "mout_fimc1", DIV_CAM, 4, 4),
-> >> >>       DIV(0, "div_fimc2", "mout_fimc2", DIV_CAM, 8, 4),
-> >> >> @@ -484,8 +482,8 @@ static struct samsung_div_clock
-> >> >> exynos4_div_clks[] __initdata = { DIV(0, "div_spi_pre2",
-> >> >> "div_spi2", DIV_PERIL2, 8, 8), DIV(0, "div_audio1",
-> >> >> "mout_audio1", DIV_PERIL4, 0, 4), DIV(0, "div_audio2",
-> >> >> "mout_audio2", DIV_PERIL4, 16, 4),
-> >> >> -     DIV(CLK_ARM_CLK, "arm_clk", "div_core2", DIV_CPU0, 28, 3),
-> >> >> -     DIV(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0, 24,
-> >> >> 3),
-> >> >> +     DIV_F(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0,
-> >> >> 24, 3,
-> >> >> +                     CLK_GET_RATE_NOCACHE, 0),
-> >> >>       DIV_F(0, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
-> >> >>                       CLK_SET_RATE_PARENT, 0),
-> >> >>       DIV_F(0, "div_mmc_pre0", "div_mmc0", DIV_FSYS1, 8, 8,
-> >> >> @@ -870,7 +868,6 @@ static struct samsung_gate_clock
-> >> >> exynos4x12_gate_clks[] __initdata = {
-> >> >>  static struct samsung_clock_alias exynos4_aliases[] __initdata
-> >> >> = { ALIAS(CLK_MOUT_CORE, NULL, "moutcore"),
-> >> >> -     ALIAS(CLK_ARM_CLK, NULL, "armclk"),
-> >> >>       ALIAS(CLK_SCLK_APLL, NULL, "mout_apll"),
-> >> >>  };
-> >> >>
-> >> >> @@ -1125,12 +1122,14 @@ static void __init
-> >> >> exynos4_clk_init(struct device_node *np,
-> >> >> samsung_clk_register_alias(exynos4_aliases,
-> >> >> ARRAY_SIZE(exynos4_aliases));
-> >> >>
-> >> >> +     samsung_register_arm_clock(np, CLK_ARM_CLK, "mout_apll",
-> >> >> reg_base); +
-> >> >
-> >> > I've got some doubts about allowing only the "mout_apll" clock to
-> >> > be the only parent for armclk Samsung clock.
-> >> >
-> >> > For the Exynos4412 it is also valid to have SCLK_MPLL_USER_C [*]
-> >> > as a parent for this clock.
-> >> >
-> >> > The problem is that you are reparenting the armclk to [*] with
-> >> > the register modification - no CCF involved.
-> >>
-> >> The MUX_CORE mux is part of the larger cpu clock type and not
-> >> registered as a separate mux clock with CCF. So I would like to
-> >> know if there are any potential issues you see if this mux clock is
-> >> internally managed within the set_rate of the larger cpu clock
-> >> type.
-> >
-> > So the large opaque clock (armclk) starts with inputs to MUX_CORE
-> > (and embrace this MUX as well)?
+> Fixes: 96f5421523df ('drm/exynos: use a new anon file for exynos gem mmaper')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Yes, the MUX_CORE is now part of the large opaque clock and will only
-> use mout_apll as the parent clock. The other parent will be used
-> temporarily only when the frequency of the mout_apll (leading to APLL)
-> has to be changed.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 9d096a0c5f8d..3c845292845a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -174,6 +174,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+>  	if (ret) {
+>  		kfree(file_priv);
+>  		file->driver_priv = NULL;
+> +		return ret;
+>  	}
+
+using
+	kfree(	file->driver_priv );
+	file->driver_priv = NULL;
+
+would be less confusing to read, and give checkers a better chance to spot mistakes.
+(btw: file_priv could be removed from this function completely).
+
+just my 2 cents,
+re,
+ wh
+
+>  
+>  	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
+> @@ -186,7 +187,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+>  	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
+>  	file_priv->anon_filp = anon_filp;
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static void exynos_drm_preclose(struct drm_device *dev,
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> >
-> > If yes, then I don't mind if it is solely managed inside the armclk.
-> >
-> > This however allows the armclk to be fed from mout_apll[*] and
-> > sclk_mpll__user_c[**]. And this would be nice if reflected in the
-> > code.
-> 
-> Okay.
-> 
-> >
-> >>
-> >> >
-> >> > I just would like to know if this is yours design decision or
-> >> > something, that we have overlooked in the v1 of this patch
-> >> > series.
-> >>
-> >> I did overlook this one. This will be fixed in the next version by
-> >> ensuring that the dividers for SCLK_HPM clock will be updated only
-> >> if mout_apll is the parent of the MUX_HPM clock mux.
-> >
-> > Shall not they be updated if whatever connected to the MUX_HPM
-> > ([*] and [**]) changes?
-> 
-> They will be updated if their parent is mout_apll. If their parent is
-> a MPLL sourced clock, the divider will not be updated since the set
-> rate on this opaque clock will not change the frequency of the MPLL
-> sourced clock.
-
-Ok, Thanks for clarification.
-
-> 
-> Thanks,
-> Thomas.
-> 
-> >
-> >>
-> >> Thanks,
-> >> Thomas.
-> >>
-> >> >
-> >> >>       pr_info("%s clocks: sclk_apll = %ld, sclk_mpll = %ld\n"
-> >> >>               "\tsclk_epll = %ld, sclk_vpll = %ld, arm_clk =
-> >> >> %ld\n", exynos4_soc == EXYNOS4210 ? "Exynos4210" : "Exynos4x12",
-> >> >>               _get_rate("sclk_apll"),
-> >> >> _get_rate("sclk_mpll"), _get_rate("sclk_epll"),
-> >> >> _get_rate("sclk_vpll"),
-> >> >> -             _get_rate("arm_clk"));
-> >> >> +             _get_rate("armclk"));
-> >> >>  }
-> >> >>
-> >> >>
-> >> >> diff --git a/drivers/clk/samsung/clk-exynos5250.c
-> >> >> b/drivers/clk/samsung/clk-exynos5250.c index ff4beeb..487be36
-> >> >> 100644 --- a/drivers/clk/samsung/clk-exynos5250.c
-> >> >> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> >> >> @@ -298,9 +298,8 @@ static struct samsung_div_clock
-> >> >> exynos5250_div_clks[] __initdata = { /*
-> >> >>        * CMU_CPU
-> >> >>        */
-> >> >> -     DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
-> >> >> -     DIV(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3),
-> >> >> -     DIV_A(0, "div_arm2", "div_arm", DIV_CPU0, 28, 3,
-> >> >> "armclk"),
-> >> >> +     DIV_F(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3,
-> >> >> +                     CLK_GET_RATE_NOCACHE, 0),
-> >> >>
-> >> >>       /*
-> >> >>        * CMU_TOP
-> >> >> @@ -684,8 +683,9 @@ static void __init
-> >> >> exynos5250_clk_init(struct device_node *np)
-> >> >> ARRAY_SIZE(exynos5250_div_clks));
-> >> >> samsung_clk_register_gate(exynos5250_gate_clks,
-> >> >> ARRAY_SIZE(exynos5250_gate_clks));
-> >> >> +     samsung_register_arm_clock(np, CLK_ARM_CLK, "mout_apll",
-> >> >> reg_base);
-> >> >>       pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
-> >> >> -                     _get_rate("div_arm2"));
-> >> >> +                     _get_rate("armclk"));
-> >> >>  }
-> >> >>  CLK_OF_DECLARE(exynos5250_clk, "samsung,exynos5250-clock",
-> >> >> exynos5250_clk_init); diff --git
-> >> >> a/include/dt-bindings/clock/exynos5250.h
-> >> >> b/include/dt-bindings/clock/exynos5250.h index 922f2dc..59a10fb
-> >> >> 100644 --- a/include/dt-bindings/clock/exynos5250.h +++
-> >> >> b/include/dt-bindings/clock/exynos5250.h @@ -21,6 +21,7 @@
-> >> >>  #define CLK_FOUT_CPLL                6
-> >> >>  #define CLK_FOUT_EPLL                7
-> >> >>  #define CLK_FOUT_VPLL                8
-> >> >> +#define CLK_ARM_CLK          12
-> >> >>
-> >> >>  /* gate for special clocks (sclk) */
-> >> >>  #define CLK_SCLK_CAM_BAYER   128
-> >> >
-> >> >
-> >> >
-> >> > --
-> >> > Best regards,
-> >> >
-> >> > Lukasz Majewski
-> >> >
-> >> > Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
-> >>
-> >> _______________________________________________
-> >> linux-arm-kernel mailing list
-> >> linux-arm-kernel@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >
-> >
-> >
-> > --
-> > Best regards,
-> >
-> > Lukasz Majewski
-> >
-> > Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
