@@ -1,79 +1,160 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain
- look-up
-Date: Wed, 22 Jan 2014 11:00:18 +0000
-Message-ID: <20140122110018.GB24288@e102568-lin.cambridge.arm.com>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
- <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
- <20140116163409.GD25540@e102568-lin.cambridge.arm.com>
- <52DD5DC5.3000908@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: EXYNOS: Consolidate CPU init code
+Date: Wed, 22 Jan 2014 17:19:02 +0530
+Message-ID: <1390391342-4344-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:40067 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753419AbaAVLAY convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:45844 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755168AbaAVLxq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jan 2014 06:00:24 -0500
-In-Reply-To: <52DD5DC5.3000908@samsung.com>
-Content-Disposition: inline
+	Wed, 22 Jan 2014 06:53:46 -0500
+Received: by mail-pa0-f42.google.com with SMTP id kl14so291239pab.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jan 2014 03:53:45 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <Mark.Rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On Mon, Jan 20, 2014 at 05:32:53PM +0000, Tomasz Figa wrote:
-> Hi Lorenzo,
-> 
-> On 16.01.2014 17:34, Lorenzo Pieralisi wrote:
-> > Hi Tomasz,
-> >
-> > thank you for posting this series. I would like to use the DT bindings
-> > for power domains in the bindings for C-states on ARM:
-> >
-> > http://comments.gmane.org/gmane.linux.power-management.general/41012
-> >
-> > and in particular link a given C-state to a given power domain so that the
-> > kernel will have a way to actually check what devices are lost upon C-state
-> > entry (and for devices I also mean CPU peripheral like PMUs, GIC CPU IF,
-> > caches and possibly cpus, all of them already represented with DT nodes).
-> >
-> > I have a remark:
-> >
-> > -  Can we group device nodes under a single power-domain-parent so that
-> >     all devices defined under that parent won't have to re-define a
-> >     power-domain property (a property like interrupt-parent, so to speak)
-> >
-> > What do you think ?
-> 
-> Hmm, I can see potential benefits of such construct on platforms with 
-> clear hierarchy of devices, but to make sure I'm getting it correctly, 
-> is the following what you have in mind?
-> 
-> soc-domain-x@12340000 {
-> 	compatible = "...";
-> 	reg = <...>;
-> 	power-domain-parent = <&power_domains DOMAIN_X>;
-> 
-> 	device@1000 {
-> 		compatible = "...";
-> 		// inherits power-domain = <&power_domains DOMAIN_X>
-> 	};
-> 
-> 	device@2000 {
-> 		compatible = "...";
-> 		// inherits power-domain = <&power_domains DOMAIN_X>
-> 	};
-> };
+cpu_table was used to distinguish between different Exynos4 and 5 SoCs
+and assign the the initialization and io mapping pointers based on type.
+exynos_init is dummy and no longer needed as we do a DT based booting.
+By having a common io mapping function we can get rid of the whole
+table and avoid populating it for every SoC.
 
-Yes, exactly, it could avoid duplicated data. I still have an issue
-with nodes that are per-cpu but define just one node (eg PMU), since
-a CPU might belong in a power-domain on its own (ie one power domain
-per-CPU) and basically this means that arch-timers, PMU & company should
-link to multiple power domains, ie one per CPU or we find a way to define
-a power domain as "banked".
+Tested on Exynos4210, 5250 and 5420 based boards.
 
-I need to think about this a bit more, thanks for your feedback.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/common.c |   93 ++++++++---------------------------------
+ 1 file changed, 17 insertions(+), 76 deletions(-)
 
-Lorenzo
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index f18be40e5b21..02d0aaa7af59 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -48,55 +48,7 @@
+ #define L2_AUX_VAL 0x7C470001
+ #define L2_AUX_MASK 0xC200ffff
+ 
+-static const char name_exynos4210[] = "EXYNOS4210";
+-static const char name_exynos4212[] = "EXYNOS4212";
+-static const char name_exynos4412[] = "EXYNOS4412";
+-static const char name_exynos5250[] = "EXYNOS5250";
+-static const char name_exynos5420[] = "EXYNOS5420";
+-static const char name_exynos5440[] = "EXYNOS5440";
+-
+-static void exynos4_map_io(void);
+-static void exynos5_map_io(void);
+-static int exynos_init(void);
+-
+-static struct cpu_table cpu_ids[] __initdata = {
+-	{
+-		.idcode		= EXYNOS4210_CPU_ID,
+-		.idmask		= EXYNOS4_CPU_MASK,
+-		.map_io		= exynos4_map_io,
+-		.init		= exynos_init,
+-		.name		= name_exynos4210,
+-	}, {
+-		.idcode		= EXYNOS4212_CPU_ID,
+-		.idmask		= EXYNOS4_CPU_MASK,
+-		.map_io		= exynos4_map_io,
+-		.init		= exynos_init,
+-		.name		= name_exynos4212,
+-	}, {
+-		.idcode		= EXYNOS4412_CPU_ID,
+-		.idmask		= EXYNOS4_CPU_MASK,
+-		.map_io		= exynos4_map_io,
+-		.init		= exynos_init,
+-		.name		= name_exynos4412,
+-	}, {
+-		.idcode		= EXYNOS5250_SOC_ID,
+-		.idmask		= EXYNOS5_SOC_MASK,
+-		.map_io		= exynos5_map_io,
+-		.init		= exynos_init,
+-		.name		= name_exynos5250,
+-	}, {
+-		.idcode		= EXYNOS5420_SOC_ID,
+-		.idmask		= EXYNOS5_SOC_MASK,
+-		.map_io		= exynos5_map_io,
+-		.init		= exynos_init,
+-		.name		= name_exynos5420,
+-	}, {
+-		.idcode		= EXYNOS5440_SOC_ID,
+-		.idmask		= EXYNOS5_SOC_MASK,
+-		.init		= exynos_init,
+-		.name		= name_exynos5440,
+-	},
+-};
++static void exynos_map_io(void);
+ 
+ /* Initial IO mappings */
+ 
+@@ -355,28 +307,28 @@ void __init exynos_init_io(void)
+ 	/* detect cpu id and rev. */
+ 	s5p_init_cpu(S5P_VA_CHIPID);
+ 
+-	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++	exynos_map_io();
+ }
+ 
+-static void __init exynos4_map_io(void)
++static void __init exynos_map_io(void)
+ {
+-	iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+-
+-	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_0)
+-		iotable_init(exynos4_iodesc0, ARRAY_SIZE(exynos4_iodesc0));
+-	else
+-		iotable_init(exynos4_iodesc1, ARRAY_SIZE(exynos4_iodesc1));
+-
+-	if (soc_is_exynos4210())
++	if (soc_is_exynos4210() || soc_is_exynos4212() || soc_is_exynos4412())
++		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
++
++	if (soc_is_exynos5250() || soc_is_exynos5420())
++		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
++
++	if (soc_is_exynos4210()) {
++		if (samsung_rev() == EXYNOS4210_REV_0)
++			iotable_init(exynos4_iodesc0,
++						ARRAY_SIZE(exynos4_iodesc0));
++		else
++			iotable_init(exynos4_iodesc1,
++						ARRAY_SIZE(exynos4_iodesc1));
+ 		iotable_init(exynos4210_iodesc, ARRAY_SIZE(exynos4210_iodesc));
++	}
+ 	if (soc_is_exynos4212() || soc_is_exynos4412())
+ 		iotable_init(exynos4x12_iodesc, ARRAY_SIZE(exynos4x12_iodesc));
+-}
+-
+-static void __init exynos5_map_io(void)
+-{
+-	iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+-
+ 	if (soc_is_exynos5250())
+ 		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
+ }
+@@ -386,10 +338,6 @@ struct bus_type exynos_subsys = {
+ 	.dev_name	= "exynos-core",
+ };
+ 
+-static struct device exynos4_dev = {
+-	.bus	= &exynos_subsys,
+-};
+-
+ static int __init exynos_core_init(void)
+ {
+ 	return subsys_system_register(&exynos_subsys, NULL);
+@@ -409,10 +357,3 @@ static int __init exynos4_l2x0_cache_init(void)
+ 	return 0;
+ }
+ early_initcall(exynos4_l2x0_cache_init);
+-
+-static int __init exynos_init(void)
+-{
+-	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
+-
+-	return device_register(&exynos4_dev);
+-}
+-- 
+1.7.9.5
