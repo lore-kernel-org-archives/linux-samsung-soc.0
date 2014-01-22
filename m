@@ -1,53 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH RESEND] cpufreq: exynos: Fix build error of no type of
- module_init
-Date: Wed, 22 Jan 2014 17:10:07 +0100
-Message-ID: <1390407007.18340.13.camel@AMDC1943>
-References: <1390400476-22951-1-git-send-email-k.kozlowski@samsung.com>
- <CAKohpo=2wR+Sqwxj4koH0rvuk29BkNyAZgN0RR7bVH+3uqpB1Q@mail.gmail.com>
- <1390402760.18340.6.camel@AMDC1943> <1390405030.18340.11.camel@AMDC1943>
- <52DFE7D9.5050001@windriver.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 2/2] regulator: s5m8767: Document new bindings for
+ Buck9 GPIO control
+Date: Wed, 22 Jan 2014 19:49:27 +0000
+Message-ID: <20140122194927.GZ17314@sirena.org.uk>
+References: <1390406848-20964-1-git-send-email-k.kozlowski@samsung.com>
+ <1390406848-20964-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <52DFE7D9.5050001@windriver.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cuTOFZ26ESCmzf04"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58320 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752711AbaAVTtw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jan 2014 14:49:52 -0500
+Content-Disposition: inline
+In-Reply-To: <1390406848-20964-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Grant Likely <grant.likely@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, 2014-01-22 at 10:46 -0500, Paul Gortmaker wrote:
-> On 14-01-22 10:37 AM, Krzysztof Kozlowski wrote:
-> > 
-> >>
-> >> Hi,
-> >>
-> >> A little more explanation from my side: the build error actually happens
-> >> only on next/master, not Linus' tree.
-> >>
-> >> Mentioned commit which changes the driver to platform driver is in
-> >> mainline since 3.12-rc2 so it seems this is not the cause of the build
-> >> error. I think I need to find first the real cause of this build error.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> > 
-> > After bisecting, the real commit for build error is:
-> > caa7dcde7c424cdc81698a6e4e48072eb67ec67e
-> >     module: relocate module_init from init.h to module.h
-> 
-> Yep, even though I fixed a crap-tonne of implicit includes, and
-> built all the arm configs, some were bound to sneak through.
-> 
-> I'll push a fix shortly to the init cleanup queue:
-> 
->    http://git.kernel.org/cgit/linux/kernel/git/paulg/init.git/
-> 
-> so it will be fine for the next linux-next tree.
 
-Thanks, the same issue applies to drivers/cpufreq/exynos-cpufreq.c.
+--cuTOFZ26ESCmzf04
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+On Wed, Jan 22, 2014 at 05:07:28PM +0100, Krzysztof Kozlowski wrote:
+> Add documentation for new bindings for controlling (enable/disable) the
+> Buck9 Converter by GPIO (BUCK9EN).
 
+Your CC list for this is *very* large...
+
+> +	- s5m8767,pmic-ext-control-enable: regulator can be enabled/disabled
+> +		by GPIO (valid only for buck9).
+> +	- s5m8767,pmic-ext-control-gpio: GPIO specifier for one GPIO
+> +		controlling this regulator (valid only for buck9).
+> +		This property is required when 's5m8767,pmic-ext-control-enable' is specified.
+
+In what situation might the GPIO be present but not usable - can't we
+just use the presence of the GPIO property?  Also GPIO properties are
+supposed to be always "-gpios".
+
+--cuTOFZ26ESCmzf04
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS4CDEAAoJELSic+t+oim9Pq0P/31Fbn4RJnd39sT3N+pWQI0l
+EMBxB8o7fmDQdNym/B/Zs8zIqVFWIFEJexP2071vVE3zjodBJH2msQD8E0OK8W7p
+p/Hw8Dhloj8G4QnqiXsvfl/wFpwe0NhcDeaOLDSYX4W7hT5V2HI47D+LAaU7mFo0
+EMJ/pWUECbiekt+X3xgXBEh3ysh03I1QRDl299N+NuQHwwRzilqIcYHhpYppU1je
+npwa/C6sNNeCVR+Dmgw22g7wjTTqK5+M040j8lDpQW2sSdd2ukgFNG+rN+RMF8Ng
+XiDWyCPNsToBYQq5uemR2dDbq4hJS6RkAS+zx5LO1koNQMKewPCOV+Sjhpdvo5cM
+fis6Ec1xR55++yiOwACGHrH1GSy/ghMybQIxTFZI/9X6FouwKNXpp6A0TJX38JTT
+50jGVvkJdbbaBxoeqYzIcXGVLdmV/PhvXV6k/ws8MvRpKzARMiBU9LhXqB2jd5rt
+nJilduKnLxTLZfoyO4rRos2FQNV38tMQ2cznEEc/U180iYt1fpoSRzXAa8XTI9I9
+1ASzbEVtZf/LPD94bZRd7II8sa8yH0aGUddC2aceGPlCsvAod1ALWd6CsfR5KmIs
+JiqgJv0yfnlcHQDhHO2G6GBTtL+PTj5ZAjnp3GeM69sG+lXFpYRJurBCGSf9nTv1
+fw/zDZCYC4NRQslR+sCY
+=Hu/4
+-----END PGP SIGNATURE-----
+
+--cuTOFZ26ESCmzf04--
