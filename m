@@ -1,7 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH 9/9] ARM: dts: exynos4412-trats2: add panel node
-Date: Wed, 22 Jan 2014 15:35:35 +0100
-Message-ID: <1390401336-22915-10-git-send-email-a.hajda@samsung.com>
+Subject: [RFC PATCH 2/9] drm/exynos: delay fbdev initialization until an output
+	is connected
+Date: Wed, 22 Jan 2014 15:35:28 +0100
+Message-ID: <1390401336-22915-3-git-send-email-a.hajda@samsung.com>
 References: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,77 +22,81 @@ To: dri-devel@lists.freedesktop.org
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds s6e8aa0 panel node for trats2.
-It adds also trats2 specific properties for DSI
-and regulator required by panel.
+In case fbdev is initialized before any output is connected,
+fb resolution defaults to 1024x768. After that any output with
+bigger resolution is ignored and fbdev is not displayed.
+The patch postpones fbdev initialization to avoid such situation.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 45 +++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 12 ------------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |  3 +++
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  4 +++-
+ 3 files changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 2867c4e..3243b76 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -442,6 +442,15 @@
- 		};
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index cbb53a3..4dc9f0d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -107,22 +107,10 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	/* setup possible_clones. */
+ 	exynos_drm_encoder_setup(dev);
  
-+	lcd_vdd3_reg: voltage-regulator@1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "LCD_VDD_2.2V";
-+		regulator-min-microvolt = <2200000>;
-+		regulator-max-microvolt = <2200000>;
-+		gpio = <&gpc0 1 0>;
-+		enable-active-high;
-+	};
-+
- 	sdhci@12510000 {
- 		bus-width = <8>;
- 		non-removable;
-@@ -498,6 +507,42 @@
- 		};
- 	};
+-	/*
+-	 * create and configure fb helper and also exynos specific
+-	 * fbdev object.
+-	 */
+-	ret = exynos_drm_fbdev_init(dev);
+-	if (ret) {
+-		DRM_ERROR("failed to initialize drm fbdev\n");
+-		goto err_drm_device;
+-	}
+-
+ 	drm_vblank_offdelay = VBLANK_OFF_DELAY;
  
-+	dsi_0: dsi@11C80000 {
-+		vddcore-supply = <&ldo8_reg>;
-+		vddio-supply = <&ldo10_reg>;
-+		samsung,pll-clk-freq = <24000000>;
-+		status = "okay";
-+
-+		panel@0 {
-+			compatible = "samsung,s6e8aa0";
-+			reg = <0>;
-+			vdd3-supply = <&lcd_vdd3_reg>;
-+			vci-supply = <&ldo25_reg>;
-+			reset-gpio = <&gpy4 5 0>;
-+			power-on-delay= <50>;
-+			reset-delay = <100>;
-+			init-delay = <100>;
-+			flip-horizontal;
-+			flip-vertical;
-+			samsung,panel-width-mm = <58>;
-+			samsung,panel-height-mm = <103>;
-+
-+			display-timings {
-+				timing-0 {
-+					clock-frequency = <0>;
-+					hactive = <720>;
-+					vactive = <1280>;
-+					hfront-porch = <5>;
-+					hback-porch = <5>;
-+					hsync-len = <5>;
-+					vfront-porch = <13>;
-+					vback-porch = <1>;
-+					vsync-len = <2>;
-+				};
-+			};
-+		};
-+	};
-+
- 	fimd@11c00000 {
- 		samsung,fimd-vidout-rgb;
- 		samsung,fimd-inv-vclk;
+ 	return 0;
+ 
+-err_drm_device:
+-	exynos_drm_device_unregister(dev);
+ err_vblank:
+ 	drm_vblank_cleanup(dev);
+ err_display_cleanup:
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index c7c08d0..65a22ca 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -20,6 +20,7 @@
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
++#include "exynos_drm_fbdev.h"
+ #include "exynos_drm_gem.h"
+ #include "exynos_drm_iommu.h"
+ #include "exynos_drm_crtc.h"
+@@ -300,6 +301,8 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
+ 
+ 	if (fb_helper)
+ 		drm_fb_helper_hotplug_event(fb_helper);
++	else
++		exynos_drm_fbdev_init(dev);
+ }
+ 
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index e7c2f2d..9a5ec83 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -249,8 +249,10 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
+ 		return 0;
+ 
+ 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
+-	if (!fbdev)
++	if (!fbdev) {
++		DRM_ERROR("failed to allocate fbdev.\n");
+ 		return -ENOMEM;
++	}
+ 
+ 	private->fb_helper = helper = &fbdev->drm_fb_helper;
+ 	helper->funcs = &exynos_drm_fb_helper_funcs;
 -- 
 1.8.3.2
