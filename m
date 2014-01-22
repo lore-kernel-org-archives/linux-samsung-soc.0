@@ -1,102 +1,87 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH 2/9] drm/exynos: delay fbdev initialization until an output
-	is connected
-Date: Wed, 22 Jan 2014 15:35:28 +0100
-Message-ID: <1390401336-22915-3-git-send-email-a.hajda@samsung.com>
+Subject: [RFC PATCH 3/9] exynos/dsim: add DT bindings
+Date: Wed, 22 Jan 2014 15:35:29 +0100
+Message-ID: <1390401336-22915-4-git-send-email-a.hajda@samsung.com>
 References: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22997 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755891AbaAVOgT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jan 2014 09:36:19 -0500
 In-reply-to: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
-In case fbdev is initialized before any output is connected,
-fb resolution defaults to 1024x768. After that any output with
-bigger resolution is ignored and fbdev is not displayed.
-The patch postpones fbdev initialization to avoid such situation.
+The patch adds DT bindings for Exynos DSI Master. DSIM follows rules
+for DSI bus host bindings [1].
+Other properties describes its resources: memory, interrupt, clocks,
+phy, regulators.
+There is only one configuration property: pll-clock-frequency.
+
+[1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c   | 12 ------------
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |  3 +++
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  4 +++-
- 3 files changed, 6 insertions(+), 13 deletions(-)
+ .../devicetree/bindings/video/exynos_dsim.txt      | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index cbb53a3..4dc9f0d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -107,22 +107,10 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
- 	/* setup possible_clones. */
- 	exynos_drm_encoder_setup(dev);
- 
--	/*
--	 * create and configure fb helper and also exynos specific
--	 * fbdev object.
--	 */
--	ret = exynos_drm_fbdev_init(dev);
--	if (ret) {
--		DRM_ERROR("failed to initialize drm fbdev\n");
--		goto err_drm_device;
--	}
--
- 	drm_vblank_offdelay = VBLANK_OFF_DELAY;
- 
- 	return 0;
- 
--err_drm_device:
--	exynos_drm_device_unregister(dev);
- err_vblank:
- 	drm_vblank_cleanup(dev);
- err_display_cleanup:
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index c7c08d0..65a22ca 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -20,6 +20,7 @@
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
-+#include "exynos_drm_fbdev.h"
- #include "exynos_drm_gem.h"
- #include "exynos_drm_iommu.h"
- #include "exynos_drm_crtc.h"
-@@ -300,6 +301,8 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
- 
- 	if (fb_helper)
- 		drm_fb_helper_hotplug_event(fb_helper);
-+	else
-+		exynos_drm_fbdev_init(dev);
- }
- 
- static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index e7c2f2d..9a5ec83 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -249,8 +249,10 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
- 		return 0;
- 
- 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
--	if (!fbdev)
-+	if (!fbdev) {
-+		DRM_ERROR("failed to allocate fbdev.\n");
- 		return -ENOMEM;
-+	}
- 
- 	private->fb_helper = helper = &fbdev->drm_fb_helper;
- 	helper->funcs = &exynos_drm_fb_helper_funcs;
+diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+new file mode 100644
+index 0000000..0246e26
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+@@ -0,0 +1,48 @@
++Exynos MIPI DSI Master
++
++Required properties:
++  - compatible: "samsung,exynos4210-mipi-dsi"
++  - reg: physical base address and length of the registers set for the device
++  - interrupts: should contain DSI interrupt
++  - clocks: list of clock specifiers, must contain an entry for each required
++    entry in clock-names
++  - clock-names: should include "bus_clk"and "pll_clk" entries
++  - phys: list of phy specifiers, must contain an entry for each required
++    entry in phy-names
++  - phy-names: should include "dsim" entry
++  - vddcore-supply: MIPI DSIM Core voltage supply (e.g. 1.1V)
++  - vddio-supply: MIPI DSIM I/O and PLL voltage supply (e.g. 1.8V)
++  - pll-clock-frequency: specifies frequency of "pll_clk" clock
++  - #address-cells, #size-cells: should be set respectively to <1> and <0>
++    according to DSI host bindings (see MIPI DSI bindings [1])
++
++Optional properties:
++  - samsung,power-domain: a phandle to DSIM power domain node
++
++Child nodes:
++  Should contain DSI peripheral nodes (see DSI bindings [1])
++
++[1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
++
++Example:
++
++	dsi@11C80000 {
++		compatible = "samsung,exynos4210-mipi-dsi";
++		reg = <0x11C80000 0x10000>;
++		interrupts = <0 79 0>;
++		clocks = <&clock 286>, <&clock 143>;
++		clock-names = "bus_clk", "pll_clk";
++		phys = <&mipi_phy 1>;
++		phy-names = "dsim";
++		vddcore-supply = <&vusb_reg>;
++		vddio-supply = <&vmipi_reg>;
++		samsung,power-domain = <&pd_lcd0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pll-clock-frequency = <24000000>;
++
++		panel@0 {
++			reg = <0>;
++			...
++		};
++	};
 -- 
 1.8.3.2
