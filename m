@@ -1,77 +1,79 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] Documentation: devicetree: mct: Fix counter bit of CPU
- local timers
-Date: Wed, 22 Jan 2014 09:31:16 +0100
-Message-ID: <52DF81D4.9000008@linaro.org>
-References: <000001cf1687$a0e5e250$e2b1a6f0$%han@samsung.com> <000101cf1749$30ae3b50$920ab1f0$%han@samsung.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain
+ look-up
+Date: Wed, 22 Jan 2014 11:00:18 +0000
+Message-ID: <20140122110018.GB24288@e102568-lin.cambridge.arm.com>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+ <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
+ <20140116163409.GD25540@e102568-lin.cambridge.arm.com>
+ <52DD5DC5.3000908@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <000101cf1749$30ae3b50$920ab1f0$%han@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Thomas Gleixner' <tglx@linutronix.de>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:40067 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753419AbaAVLAY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jan 2014 06:00:24 -0500
+In-Reply-To: <52DD5DC5.3000908@samsung.com>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <Mark.Rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>
 
-On 01/22/2014 09:08 AM, Jingoo Han wrote:
-> On Tuesday, January 21, 2014 6:03 PM, Jingoo Han wrote:
->>
->> According to the datasheet of Exynos SoCs, the counter bit
->> of CPU local timers is 31-bit, not 32-bit; thus, it should
->> be fixed.
->
-> Please, ignore this patch.
-> There is a 31-bit counter in CPU local timers; however,
-> FRC (free running down-counters) of CPU local timers is
-> 32-bit. Thus, there is no need to fix it.
-> Thank you.
+On Mon, Jan 20, 2014 at 05:32:53PM +0000, Tomasz Figa wrote:
+> Hi Lorenzo,
+> 
+> On 16.01.2014 17:34, Lorenzo Pieralisi wrote:
+> > Hi Tomasz,
+> >
+> > thank you for posting this series. I would like to use the DT bindings
+> > for power domains in the bindings for C-states on ARM:
+> >
+> > http://comments.gmane.org/gmane.linux.power-management.general/41012
+> >
+> > and in particular link a given C-state to a given power domain so that the
+> > kernel will have a way to actually check what devices are lost upon C-state
+> > entry (and for devices I also mean CPU peripheral like PMUs, GIC CPU IF,
+> > caches and possibly cpus, all of them already represented with DT nodes).
+> >
+> > I have a remark:
+> >
+> > -  Can we group device nodes under a single power-domain-parent so that
+> >     all devices defined under that parent won't have to re-define a
+> >     power-domain property (a property like interrupt-parent, so to speak)
+> >
+> > What do you think ?
+> 
+> Hmm, I can see potential benefits of such construct on platforms with 
+> clear hierarchy of devices, but to make sure I'm getting it correctly, 
+> is the following what you have in mind?
+> 
+> soc-domain-x@12340000 {
+> 	compatible = "...";
+> 	reg = <...>;
+> 	power-domain-parent = <&power_domains DOMAIN_X>;
+> 
+> 	device@1000 {
+> 		compatible = "...";
+> 		// inherits power-domain = <&power_domains DOMAIN_X>
+> 	};
+> 
+> 	device@2000 {
+> 		compatible = "...";
+> 		// inherits power-domain = <&power_domains DOMAIN_X>
+> 	};
+> };
 
-Ok.
+Yes, exactly, it could avoid duplicated data. I still have an issue
+with nodes that are per-cpu but define just one node (eg PMU), since
+a CPU might belong in a power-domain on its own (ie one power domain
+per-CPU) and basically this means that arch-timers, PMU & company should
+link to multiple power domains, ie one per CPU or we find a way to define
+a power domain as "banked".
 
->>
->> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
->> ---
->>   Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt=
- |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4=
-210-mct.txt
->> b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
->> index 167d5da..8c77791 100644
->> --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct=
-=2Etxt
->> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct=
-=2Etxt
->> @@ -3,7 +3,7 @@ Samsung's Multi Core Timer (MCT)
->>   The Samsung's Multi Core Timer (MCT) module includes two main bloc=
-ks, the
->>   global timer and CPU local timers. The global timer is a 64-bit fr=
-ee running
->>   up-counter and can generate 4 interrupts when the counter reaches =
-one of the
->> -four preset counter values. The CPU local timers are 32-bit free ru=
-nning
->> +four preset counter values. The CPU local timers are 31-bit free ru=
-nning
->>   down-counters and generate an interrupt when the counter expires. =
-There is
->>   one CPU local timer instantiated in MCT for every CPU in the syste=
-m.
->>
->> --
->> 1.7.10.4
->
->
+I need to think about this a bit more, thanks for your feedback.
 
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Lorenzo
