@@ -1,86 +1,93 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH 3/9] exynos/dsim: add DT bindings
-Date: Wed, 22 Jan 2014 15:35:29 +0100
-Message-ID: <1390401336-22915-4-git-send-email-a.hajda@samsung.com>
+Subject: [RFC PATCH 5/9] panel/s6e8aa0: add DT bindings
+Date: Wed, 22 Jan 2014 15:35:31 +0100
+Message-ID: <1390401336-22915-6-git-send-email-a.hajda@samsung.com>
 References: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22997 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755891AbaAVOgT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jan 2014 09:36:19 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
 To: dri-devel@lists.freedesktop.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds DT bindings for Exynos DSI Master. DSIM follows rules
-for DSI bus host bindings [1].
-Other properties describes its resources: memory, interrupt, clocks,
-phy, regulators.
-There is only one configuration property: pll-clock-frequency.
-
-[1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
+The patch adds bindings for s6e8aa0 panel.
+Bindings describes panel resources, boot delays,
+display timings, orientation and physical size.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- .../devicetree/bindings/video/exynos_dsim.txt      | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
+ .../devicetree/bindings/panel/samsung-s6e8aa0.txt  | 53 ++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+diff --git a/Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt b/Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt
 new file mode 100644
-index 0000000..0246e26
+index 0000000..675e66e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-@@ -0,0 +1,48 @@
-+Exynos MIPI DSI Master
++++ b/Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt
+@@ -0,0 +1,53 @@
++Samsung S6E8AA0 AMOLED LCD 5.3 inch panel
 +
 +Required properties:
-+  - compatible: "samsung,exynos4210-mipi-dsi"
-+  - reg: physical base address and length of the registers set for the device
-+  - interrupts: should contain DSI interrupt
-+  - clocks: list of clock specifiers, must contain an entry for each required
-+    entry in clock-names
-+  - clock-names: should include "bus_clk"and "pll_clk" entries
-+  - phys: list of phy specifiers, must contain an entry for each required
-+    entry in phy-names
-+  - phy-names: should include "dsim" entry
-+  - vddcore-supply: MIPI DSIM Core voltage supply (e.g. 1.1V)
-+  - vddio-supply: MIPI DSIM I/O and PLL voltage supply (e.g. 1.8V)
-+  - pll-clock-frequency: specifies frequency of "pll_clk" clock
-+  - #address-cells, #size-cells: should be set respectively to <1> and <0>
-+    according to DSI host bindings (see MIPI DSI bindings [1])
++  - compatible: "samsung,s6e8aa0"
++  - reg: the virtual channel number of a DSI peripheral
++  - vdd3-supply: core voltage supply
++  - vci-supply: voltage supply for analog circuits
++  - reset-gpio: a GPIO spec for the reset pin
++  - display-timings: timings for the connected panel as described by [1]
 +
 +Optional properties:
-+  - samsung,power-domain: a phandle to DSIM power domain node
++  - power-on-delay: delay after turning regulators on [ms]
++  - reset-delay: delay after reset sequence [ms]
++  - init-delay: delay after initialization sequence [ms]
++  - samsung,panel-width-mm: physical panel width [mm]
++  - samsung,panel-height-mm: physical panel height [mm]
++  - flip-horizontal: boolean to flip image horizontally
++  - flip-vertical: boolean to flip image vertically
 +
-+Child nodes:
-+  Should contain DSI peripheral nodes (see DSI bindings [1])
-+
-+[1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
++[1]: Documentation/devicetree/bindings/video/display-timing.txt
 +
 +Example:
 +
-+	dsi@11C80000 {
-+		compatible = "samsung,exynos4210-mipi-dsi";
-+		reg = <0x11C80000 0x10000>;
-+		interrupts = <0 79 0>;
-+		clocks = <&clock 286>, <&clock 143>;
-+		clock-names = "bus_clk", "pll_clk";
-+		phys = <&mipi_phy 1>;
-+		phy-names = "dsim";
-+		vddcore-supply = <&vusb_reg>;
-+		vddio-supply = <&vmipi_reg>;
-+		samsung,power-domain = <&pd_lcd0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pll-clock-frequency = <24000000>;
++	panel {
++		compatible = "samsung,s6e8aa0";
++		reg = <0>;
++		vdd3-supply = <&vcclcd_reg>;
++		vci-supply = <&vlcd_reg>;
++		reset-gpio = <&gpy4 5 0>;
++		power-on-delay= <50>;
++		reset-delay = <100>;
++		init-delay = <100>;
++		samsung,panel-width-mm = <58>;
++		samsung,panel-height-mm = <103>;
++		flip-horizontal;
++		flip-vertical;
 +
-+		panel@0 {
-+			reg = <0>;
-+			...
++		display-timings {
++		        native-mode = <&timing0>;
++
++		        timing0: timing-0 {
++		                clock-frequency = <57153600>;
++		                hactive = <720>;
++		                vactive = <1280>;
++		                hfront-porch = <5>;
++		                hback-porch = <5>;
++		                hsync-len = <5>;
++		                vfront-porch = <13>;
++		                vback-porch = <1>;
++		                vsync-len = <2>;
++		        };
 +		};
 +	};
 -- 
