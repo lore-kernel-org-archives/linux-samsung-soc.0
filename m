@@ -1,94 +1,51 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH 5/9] panel/s6e8aa0: add DT bindings
-Date: Wed, 22 Jan 2014 15:35:31 +0100
-Message-ID: <1390401336-22915-6-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH 7/9] ARM: dts: exynos4: add MIPI DSI Master node
+Date: Wed, 22 Jan 2014 15:35:33 +0100
+Message-ID: <1390401336-22915-8-git-send-email-a.hajda@samsung.com>
 References: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1390401336-22915-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds bindings for s6e8aa0 panel.
-Bindings describes panel resources, boot delays,
-display timings, orientation and physical size.
+This is a common part of DSI node for all Exynos4 boards.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../devicetree/bindings/panel/samsung-s6e8aa0.txt  | 53 ++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt
+ arch/arm/boot/dts/exynos4.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt b/Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt
-new file mode 100644
-index 0000000..675e66e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/samsung-s6e8aa0.txt
-@@ -0,0 +1,53 @@
-+Samsung S6E8AA0 AMOLED LCD 5.3 inch panel
-+
-+Required properties:
-+  - compatible: "samsung,s6e8aa0"
-+  - reg: the virtual channel number of a DSI peripheral
-+  - vdd3-supply: core voltage supply
-+  - vci-supply: voltage supply for analog circuits
-+  - reset-gpio: a GPIO spec for the reset pin
-+  - display-timings: timings for the connected panel as described by [1]
-+
-+Optional properties:
-+  - power-on-delay: delay after turning regulators on [ms]
-+  - reset-delay: delay after reset sequence [ms]
-+  - init-delay: delay after initialization sequence [ms]
-+  - samsung,panel-width-mm: physical panel width [mm]
-+  - samsung,panel-height-mm: physical panel height [mm]
-+  - flip-horizontal: boolean to flip image horizontally
-+  - flip-vertical: boolean to flip image vertically
-+
-+[1]: Documentation/devicetree/bindings/video/display-timing.txt
-+
-+Example:
-+
-+	panel {
-+		compatible = "samsung,s6e8aa0";
-+		reg = <0>;
-+		vdd3-supply = <&vcclcd_reg>;
-+		vci-supply = <&vlcd_reg>;
-+		reset-gpio = <&gpy4 5 0>;
-+		power-on-delay= <50>;
-+		reset-delay = <100>;
-+		init-delay = <100>;
-+		samsung,panel-width-mm = <58>;
-+		samsung,panel-height-mm = <103>;
-+		flip-horizontal;
-+		flip-vertical;
-+
-+		display-timings {
-+		        native-mode = <&timing0>;
-+
-+		        timing0: timing-0 {
-+		                clock-frequency = <57153600>;
-+		                hactive = <720>;
-+		                vactive = <1280>;
-+		                hfront-porch = <5>;
-+		                hback-porch = <5>;
-+		                hsync-len = <5>;
-+		                vfront-porch = <13>;
-+		                vback-porch = <1>;
-+		                vsync-len = <2>;
-+		        };
-+		};
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index a73eeb5..7102f29 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -104,6 +104,20 @@
+ 		reg = <0x10010000 0x400>;
+ 	};
+ 
++	dsi_0: dsi@11C80000 {
++		compatible = "samsung,exynos4210-mipi-dsi";
++		reg = <0x11C80000 0x10000>;
++		interrupts = <0 79 0>;
++		samsung,power-domain = <&pd_lcd0>;
++		phys = <&mipi_phy 1>;
++		phy-names = "dsim";
++		clocks = <&clock 286>, <&clock 143>;
++		clock-names = "bus_clk", "pll_clk";
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +	};
++
+ 	camera {
+ 		compatible = "samsung,fimc", "simple-bus";
+ 		status = "disabled";
 -- 
 1.8.3.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
