@@ -1,67 +1,142 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 2/2] regulator: s5m8767: Document new bindings for
- Buck9 GPIO control
-Date: Wed, 22 Jan 2014 19:49:27 +0000
-Message-ID: <20140122194927.GZ17314@sirena.org.uk>
-References: <1390406848-20964-1-git-send-email-k.kozlowski@samsung.com>
- <1390406848-20964-3-git-send-email-k.kozlowski@samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power
+ domain look-up
+Date: Wed, 22 Jan 2014 16:18:02 -0800
+Message-ID: <20140123001802.GF13785@codeaurora.org>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+ <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cuTOFZ26ESCmzf04"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58320 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752711AbaAVTtw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jan 2014 14:49:52 -0500
-Content-Disposition: inline
-In-Reply-To: <1390406848-20964-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Grant Likely <grant.likely@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-
---cuTOFZ26ESCmzf04
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 22, 2014 at 05:07:28PM +0100, Krzysztof Kozlowski wrote:
-> Add documentation for new bindings for controlling (enable/disable) the
-> Buck9 Converter by GPIO (BUCK9EN).
+On 01/11, Tomasz Figa wrote:
+> +
+> +/**
+> + * of_genpd_lock() - Lock access to of_genpd_providers list
+> + */
+> +static void of_genpd_lock(void)
+> +{
+> +	mutex_lock(&of_genpd_mutex);
+> +}
+> +
+> +/**
+> + * of_genpd_unlock() - Unlock access to of_genpd_providers list
+> + */
+> +static void of_genpd_unlock(void)
+> +{
+> +	mutex_unlock(&of_genpd_mutex);
+> +}
 
-Your CC list for this is *very* large...
+Why do we need these functions? Can't we just call
+mutex_lock/unlock directly?
 
-> +	- s5m8767,pmic-ext-control-enable: regulator can be enabled/disabled
-> +		by GPIO (valid only for buck9).
-> +	- s5m8767,pmic-ext-control-gpio: GPIO specifier for one GPIO
-> +		controlling this regulator (valid only for buck9).
-> +		This property is required when 's5m8767,pmic-ext-control-enable' is specified.
+> +
+> +/**
+> + * of_genpd_add_provider() - Register a domain provider for a node
+> + * @np: Device node pointer associated with domain provider
+> + * @genpd_src_get: callback for decoding domain
+> + * @data: context pointer for @genpd_src_get callback.
 
-In what situation might the GPIO be present but not usable - can't we
-just use the presence of the GPIO property?  Also GPIO properties are
-supposed to be always "-gpios".
+These look a little outdated.
 
---cuTOFZ26ESCmzf04
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> + */
+> +int of_genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
+> +			  void *data)
+> +{
+> +	struct of_genpd_provider *cp;
+> +
+> +	cp = kzalloc(sizeof(struct of_genpd_provider), GFP_KERNEL);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Please use sizeof(*cp) instead.
 
-iQIcBAEBAgAGBQJS4CDEAAoJELSic+t+oim9Pq0P/31Fbn4RJnd39sT3N+pWQI0l
-EMBxB8o7fmDQdNym/B/Zs8zIqVFWIFEJexP2071vVE3zjodBJH2msQD8E0OK8W7p
-p/Hw8Dhloj8G4QnqiXsvfl/wFpwe0NhcDeaOLDSYX4W7hT5V2HI47D+LAaU7mFo0
-EMJ/pWUECbiekt+X3xgXBEh3ysh03I1QRDl299N+NuQHwwRzilqIcYHhpYppU1je
-npwa/C6sNNeCVR+Dmgw22g7wjTTqK5+M040j8lDpQW2sSdd2ukgFNG+rN+RMF8Ng
-XiDWyCPNsToBYQq5uemR2dDbq4hJS6RkAS+zx5LO1koNQMKewPCOV+Sjhpdvo5cM
-fis6Ec1xR55++yiOwACGHrH1GSy/ghMybQIxTFZI/9X6FouwKNXpp6A0TJX38JTT
-50jGVvkJdbbaBxoeqYzIcXGVLdmV/PhvXV6k/ws8MvRpKzARMiBU9LhXqB2jd5rt
-nJilduKnLxTLZfoyO4rRos2FQNV38tMQ2cznEEc/U180iYt1fpoSRzXAa8XTI9I9
-1ASzbEVtZf/LPD94bZRd7II8sa8yH0aGUddC2aceGPlCsvAod1ALWd6CsfR5KmIs
-JiqgJv0yfnlcHQDhHO2G6GBTtL+PTj5ZAjnp3GeM69sG+lXFpYRJurBCGSf9nTv1
-fw/zDZCYC4NRQslR+sCY
-=Hu/4
------END PGP SIGNATURE-----
+> +	if (!cp)
+> +		return -ENOMEM;
+> +
+> +	cp->node = of_node_get(np);
+> +	cp->data = data;
+> +	cp->xlate = xlate;
+> +
+> +	of_genpd_lock();
+> +	list_add(&cp->link, &of_genpd_providers);
+> +	of_genpd_unlock();
+> +	pr_debug("Added domain provider from %s\n", np->full_name);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(of_genpd_add_provider);
+> +
+[...]
+> +
+> +/* See of_genpd_get_from_provider(). */
+> +static struct generic_pm_domain *__of_genpd_get_from_provider(
+> +					struct of_phandle_args *genpdspec)
+> +{
+> +	struct of_genpd_provider *provider;
+> +	struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
 
---cuTOFZ26ESCmzf04--
+Can this be -EPROBE_DEFER so that we can defer probe until a
+later time if the power domain provider hasn't registered yet?
+
+> +
+> +	/* Check if we have such a provider in our array */
+> +	list_for_each_entry(provider, &of_genpd_providers, link) {
+> +		if (provider->node == genpdspec->np)
+> +			genpd = provider->xlate(genpdspec, provider->data);
+> +		if (!IS_ERR(genpd))
+> +			break;
+> +	}
+> +
+> +	return genpd;
+> +}
+> +
+[...]
+> +static int of_genpd_notifier_call(struct notifier_block *nb,
+> +				  unsigned long event, void *data)
+> +{
+> +	struct device *dev = data;
+> +	int ret;
+> +
+> +	if (!dev->of_node)
+> +		return NOTIFY_DONE;
+> +
+> +	switch (event) {
+> +	case BUS_NOTIFY_BIND_DRIVER:
+> +		ret = of_genpd_add_to_domain(dev);
+> +		break;
+> +
+> +	case BUS_NOTIFY_UNBOUND_DRIVER:
+> +		ret = of_genpd_del_from_domain(dev);
+> +		break;
+> +
+> +	default:
+> +		return NOTIFY_DONE;
+> +	}
+> +
+> +	return notifier_from_errno(ret);
+> +}
+> +
+> +static struct notifier_block of_genpd_notifier_block = {
+> +	.notifier_call = of_genpd_notifier_call,
+> +};
+> +
+> +static int of_genpd_init(void)
+> +{
+> +	return bus_register_notifier(&platform_bus_type,
+> +					&of_genpd_notifier_block);
+> +}
+> +core_initcall(of_genpd_init);
+
+Would it be possible to call the of_genpd_add_to_domain() and
+of_genpd_del_from_domain() functions directly in the driver core,
+similar to how the pinctrl framework has a hook in there? That
+way we're not relying on any initcall ordering for this.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
