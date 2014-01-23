@@ -1,88 +1,226 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [RFC PATCH 1/9] drm/exynos: correct timing porch conversion
-Date: Thu, 23 Jan 2014 11:01:56 +0800
-Message-ID: <CAGS+omBgp5SZAcnkELWw3n_rStHY9tgoBR_yQwdZAH_0WWg_0Q@mail.gmail.com>
-References: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
-	<1390401336-22915-2-git-send-email-a.hajda@samsung.com>
-	<52DFDF10.20100@samsung.com>
+From: swaminathan <swaminath.p@samsung.com>
+Subject: Re: [PATCH] [media] s5p-mfc: Add Horizontal and Vertical search range
+ for Video Macro Blocks
+Date: Thu, 23 Jan 2014 10:49:03 +0530
+Message-ID: <DA6097ED98694425932A6AF93513371A@sisodomain.com>
+References: <1388400186-22045-1-git-send-email-amit.grover@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; format=flowed; charset=iso-8859-1; reply-type=original
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <52DFDF10.20100@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1388400186-22045-1-git-send-email-amit.grover@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Amit Grover <amit.grover@samsung.com>, linux-media@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob@landley.net, kyungmin.park@samsung.com, k.debski@samsung.com, jtp.park@samsung.com
+Cc: hans.verkuil@cisco.com, andrew.smirnov@gmail.com, s.nawrocki@samsung.com, arun.kk@samsung.com, anatol.pomozov@gmail.com, jmccrohan@gmail.com, austin.lobo@samsung.com, hverkuil@xs4all.nl
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 22, 2014 at 11:09 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Hi,
->
-> It seems I have not added description to this patch.
-> In this patch porch is calculated in compatible way to
-> drm_display_mode_from_videomode core function.
-> The way it was seems to me incorrect and it did not work on my hw.
->
-> Anyway this patch could be merged with Sean's patches, if he agrees.
->
-> Regards
-> Andrzej
->
-> On 01/22/2014 03:35 PM, Andrzej Hajda wrote:
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Hi All,
+Is there any review Comments for the patch "[PATCH] [media] s5p-mfc: Add 
+Horizontal and Vertical search range for Video Macro Blocks"
+posted on 30-Dec-2013 ?
 
-Yes, it does make more sense than just arbitrarily assigning half of
-the non-sync blank period to the back porch, and the remainder to the
-front porch.
-With your follow-on commit message added, this is:
 
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Regards,
+Swaminathan
 
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 11 ++++-------
->>  1 file changed, 4 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> index 8caaac2..b611f33 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -538,21 +538,18 @@ static void fimd_mode_set(struct exynos_drm_manager *mgr,
->>  {
->>       struct fimd_context *ctx = mgr->ctx;
->>       struct fimd_mode_data *mode = &ctx->mode;
->> -     int hblank, vblank;
->>
->> -     vblank = in_mode->crtc_vblank_end - in_mode->crtc_vblank_start;
->>       mode->vtotal = in_mode->crtc_vtotal;
->>       mode->vdisplay = in_mode->crtc_vdisplay;
->>       mode->vsync_len = in_mode->crtc_vsync_end - in_mode->crtc_vsync_start;
->> -     mode->vbpd = (vblank - mode->vsync_len) / 2;
->> -     mode->vfpd = vblank - mode->vsync_len - mode->vbpd;
->> +     mode->vbpd = in_mode->crtc_vtotal - in_mode->crtc_vsync_end;
->> +     mode->vfpd = in_mode->crtc_vsync_start - in_mode->crtc_vdisplay;
->>
->> -     hblank = in_mode->crtc_hblank_end - in_mode->crtc_hblank_start;
->>       mode->htotal = in_mode->crtc_htotal;
->>       mode->hdisplay = in_mode->crtc_hdisplay;
->>       mode->hsync_len = in_mode->crtc_hsync_end - in_mode->crtc_hsync_start;
->> -     mode->hbpd = (hblank - mode->hsync_len) / 2;
->> -     mode->hfpd = hblank - mode->hsync_len - mode->hbpd;
->> +     mode->hbpd = in_mode->crtc_htotal - in_mode->crtc_hsync_end;
->> +     mode->hfpd = in_mode->crtc_hsync_start - in_mode->crtc_hdisplay;
->>
->>       mode->clkdiv = fimd_calc_clkdiv(ctx, in_mode);
->>
->>
+
+
+
+--------------------------------------------------
+From: "Amit Grover" <amit.grover@samsung.com>
+Sent: Monday, December 30, 2013 4:13 PM
+To: <m.chehab@samsung.com>; <linux-media@vger.kernel.org>; 
+<linux-doc@vger.kernel.org>; <linux-kernel@vger.kernel.org>; 
+<linux-arm-kernel@lists.infradead.org>; <linux-samsung-soc@vger.kernel.org>; 
+<rob@landley.net>; <kyungmin.park@samsung.com>; <k.debski@samsung.com>; 
+<jtp.park@samsung.com>
+Cc: <hans.verkuil@cisco.com>; <andrew.smirnov@gmail.com>; 
+<s.nawrocki@samsung.com>; <arun.kk@samsung.com>; <anatol.pomozov@gmail.com>; 
+<jmccrohan@gmail.com>; <austin.lobo@samsung.com>; "Swami Nathan" 
+<swaminath.p@samsung.com>
+Subject: [PATCH] [media] s5p-mfc: Add Horizontal and Vertical search range 
+for Video Macro Blocks
+
+> This patch adds Controls to set Horizontal and Vertical search range
+> for Motion Estimation block for Samsung MFC video Encoders.
 >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Signed-off-by: Swami Nathan <swaminath.p@samsung.com>
+> Signed-off-by: Amit Grover <amit.grover@samsung.com>
+> ---
+> Documentation/DocBook/media/v4l/controls.xml    |   14 +++++++++++++
+> drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
+> drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   24 
+> +++++++++++++++++++++++
+> drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    8 ++------
+> drivers/media/v4l2-core/v4l2-ctrls.c            |   14 +++++++++++++
+> include/uapi/linux/v4l2-controls.h              |    2 ++
+> 6 files changed, 58 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/DocBook/media/v4l/controls.xml 
+> b/Documentation/DocBook/media/v4l/controls.xml
+> index 7a3b49b..70a0f6f 100644
+> --- a/Documentation/DocBook/media/v4l/controls.xml
+> +++ b/Documentation/DocBook/media/v4l/controls.xml
+> @@ -2258,6 +2258,20 @@ Applicable to the MPEG1, MPEG2, MPEG4 
+> encoders.</entry>
+> VBV buffer control.</entry>
+>        </row>
+>
+> +   <row><entry></entry></row>
+> +       <row id="v4l2-mpeg-video-horz-search-range">
+> + <entry 
+> spanname="id"><constant>V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE</constant>&nbsp;</entry>
+> + <entry>integer</entry>
+> +       </row><row><entry spanname="descr">Sets the Horizontal search 
+> range for Video Macro blocks.</entry>
+> +       </row>
+> +
+> + <row><entry></entry></row>
+> +       <row id="v4l2-mpeg-video-vert-search-range">
+> + <entry 
+> spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE</constant>&nbsp;</entry>
+> + <entry>integer</entry>
+> +       </row><row><entry spanname="descr">Sets the Vertical search range 
+> for Video Macro blocks.</entry>
+> +       </row>
+> +
+>        <row><entry></entry></row>
+>        <row>
+>  <entry 
+> spanname="id"><constant>V4L2_CID_MPEG_VIDEO_H264_CPB_SIZE</constant>&nbsp;</entry>
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h 
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 6920b54..f2c13c3 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -430,6 +430,8 @@ struct s5p_mfc_vp8_enc_params {
+> struct s5p_mfc_enc_params {
+>  u16 width;
+>  u16 height;
+> + u32 horz_range;
+> + u32 vert_range;
+>
+>  u16 gop_size;
+>  enum v4l2_mpeg_video_multi_slice_mode slice_mode;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c 
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> index 4ff3b6c..a02e7b8 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> @@ -208,6 +208,24 @@ static struct mfc_control controls[] = {
+>  .default_value = 0,
+>  },
+>  {
+> + .id = V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE,
+> + .type = V4L2_CTRL_TYPE_INTEGER,
+> + .name = "horizontal search range of video macro block",
+> + .minimum = 16,
+> + .maximum = 128,
+> + .step = 16,
+> + .default_value = 32,
+> + },
+> + {
+> + .id = V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE,
+> + .type = V4L2_CTRL_TYPE_INTEGER,
+> + .name = "vertical search range of video macro block",
+> + .minimum = 16,
+> + .maximum = 128,
+> + .step = 16,
+> + .default_value = 32,
+> + },
+> + {
+>  .id = V4L2_CID_MPEG_VIDEO_H264_CPB_SIZE,
+>  .type = V4L2_CTRL_TYPE_INTEGER,
+>  .minimum = 0,
+> @@ -1377,6 +1395,12 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl 
+> *ctrl)
+>  case V4L2_CID_MPEG_VIDEO_VBV_SIZE:
+>  p->vbv_size = ctrl->val;
+>  break;
+> + case V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE:
+> + p->horz_range = ctrl->val;
+> + break;
+> + case V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE:
+> + p->vert_range = ctrl->val;
+> + break;
+>  case V4L2_CID_MPEG_VIDEO_H264_CPB_SIZE:
+>  p->codec.h264.cpb_size = ctrl->val;
+>  break;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c 
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> index 461358c..47e1807 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -727,14 +727,10 @@ static int s5p_mfc_set_enc_params(struct s5p_mfc_ctx 
+> *ctx)
+>  WRITEL(reg, S5P_FIMV_E_RC_CONFIG_V6);
+>
+>  /* setting for MV range [16, 256] */
+> - reg = 0;
+> - reg &= ~(0x3FFF);
+> - reg = 256;
+> + reg = (p->horz_range & 0x3fff); /* conditional check in app */
+>  WRITEL(reg, S5P_FIMV_E_MV_HOR_RANGE_V6);
+>
+> - reg = 0;
+> - reg &= ~(0x3FFF);
+> - reg = 256;
+> + reg = (p->vert_range & 0x3fff); /* conditional check in app */
+>  WRITEL(reg, S5P_FIMV_E_MV_VER_RANGE_V6);
+>
+>  WRITEL(0x0, S5P_FIMV_E_FRAME_INSERTION_V6);
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c 
+> b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index fb46790..7cf23d5 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -735,6 +735,8 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  case V4L2_CID_MPEG_VIDEO_DEC_PTS: return "Video Decoder PTS";
+>  case V4L2_CID_MPEG_VIDEO_DEC_FRAME: return "Video Decoder Frame Count";
+>  case V4L2_CID_MPEG_VIDEO_VBV_DELAY: return "Initial Delay for VBV 
+> Control";
+> + case V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE: return "hor search range of 
+> video MB";
+> + case V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE: return "vert search range of 
+> video MB";
+>  case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER: return "Repeat Sequence 
+> Header";
+>
+>  /* VPX controls */
+> @@ -905,6 +907,18 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum 
+> v4l2_ctrl_type *type,
+>  *min = 0;
+>  *max = *step = 1;
+>  break;
+> + case V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE:
+> + *type = V4L2_CTRL_TYPE_INTEGER;
+> + *min = 16;
+> + *max = 128;
+> + *step = 16;
+> + break;
+> + case V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE:
+> + *type = V4L2_CTRL_TYPE_INTEGER;
+> + *min = 16;
+> + *max = 128;
+> + *step = 16;
+> + break;
+>  case V4L2_CID_PAN_RESET:
+>  case V4L2_CID_TILT_RESET:
+>  case V4L2_CID_FLASH_STROBE:
+> diff --git a/include/uapi/linux/v4l2-controls.h 
+> b/include/uapi/linux/v4l2-controls.h
+> index 1666aab..bcce536 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -372,6 +372,8 @@ enum v4l2_mpeg_video_multi_slice_mode {
+> #define V4L2_CID_MPEG_VIDEO_DEC_FRAME (V4L2_CID_MPEG_BASE+224)
+> #define V4L2_CID_MPEG_VIDEO_VBV_DELAY (V4L2_CID_MPEG_BASE+225)
+> #define V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER (V4L2_CID_MPEG_BASE+226)
+> +#define V4L2_CID_MPEG_VIDEO_HORZ_SEARCH_RANGE (V4L2_CID_MPEG_BASE+227)
+> +#define V4L2_CID_MPEG_VIDEO_VERT_SEARCH_RANGE (V4L2_CID_MPEG_BASE+228)
+>
+> #define V4L2_CID_MPEG_VIDEO_H263_I_FRAME_QP (V4L2_CID_MPEG_BASE+300)
+> #define V4L2_CID_MPEG_VIDEO_H263_P_FRAME_QP (V4L2_CID_MPEG_BASE+301)
+> -- 
+> 1.7.9.5
+> 
