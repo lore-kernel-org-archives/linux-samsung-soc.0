@@ -1,56 +1,66 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/8 v4] crypto:s5p-sss: Add device tree support
-Date: Thu, 23 Jan 2014 17:59:30 +0000
-Message-ID: <20140123175930.GJ15586@e106331-lin.cambridge.arm.com>
-References: <1389243541-13122-1-git-send-email-ch.naveen@samsung.com>
- <1389777291-15026-1-git-send-email-ch.naveen@samsung.com>
- <52E0EEB8.4080602@samsung.com>
- <20140123174121.GI15586@e106331-lin.cambridge.arm.com>
- <52E155AD.9070802@samsung.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Thu, 23 Jan 2014 18:04:23 +0000
+Message-ID: <20140123180423.1a62611a@www.etchedpixels.co.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+	<1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+	<20140120100530.GY15937@n2100.arm.linux.org.uk>
+	<CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:56937 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753454AbaAWSAH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jan 2014 13:00:07 -0500
-Content-Disposition: inline
-In-Reply-To: <52E155AD.9070802@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+Sender: linux-serial-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "vzapolskiy@gmail.com" <vzapolskiy@gmail.com>, "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "cpgs@samsung.com" <cpgs@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "David S. Miller" <davem@davemloft.net>, devicetree <devicetree@vger.kernel.org>
 
-On Thu, Jan 23, 2014 at 05:47:25PM +0000, Sylwester Nawrocki wrote:
-> On 23/01/14 18:41, Mark Rutland wrote:
-> >>> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> >>> > > index 93cddeb..2da5617 100644
-> >>> > > --- a/drivers/crypto/s5p-sss.c
-> >>> > > +++ b/drivers/crypto/s5p-sss.c
-> >>> > > @@ -22,6 +22,7 @@
-> >>> > >  #include <linux/scatterlist.h>
-> >>> > >  #include <linux/dma-mapping.h>
-> >>> > >  #include <linux/io.h>
-> >>> > > +#include <linux/of.h>
-> >>> > >  #include <linux/crypto.h>
-> >>> > >  #include <linux/interrupt.h>
-> >>> > >  
-> >>> > > @@ -177,6 +178,12 @@ struct s5p_aes_dev {
-> >>> > >  
-> >>> > >  static struct s5p_aes_dev *s5p_dev;
-> >>> > >  
-> >>> > > +static const struct of_device_id s5p_sss_dt_match[] = {
-> >>> > > +	{ .compatible = "samsung,s5pv210-secss", },
-> >> > 
-> >> > nit: the first semicolon could be omitted.
-> >
-> > I assume you mean comma ratehr than semicolon?
+> I had earlier submitted a patch [1] to remove the hard coded
+> major/minor number for Samsung UART driver, but that was rejected
+> because of userspace breakage. Without this patch, Samsung UART driver
+> can't bind to the hard-coded device node. Changing the default
+> major/minor will also not help to fix the objections raised in [1].
 > 
-> Indeed...and it's actually the second one :-/
+> Would you please suggest a way forward?
+> 
+> [1] https://lkml.org/lkml/2013/12/27/2
 
-Also, I meant "rather" rather than "ratehr". At least we figured it out
-in the end. :)
+So to go and try and put this to bed properly I would suggest the
+following way forward. 
 
-Thanks,
-Mark.
+We add
+
+CONFIG_LEGACY_STATIC_TTY
+
+Some platforms historically used static device nodes for the console
+devices. Select this if you are building a kernel for an old system which
+has a static /dev.
+
+Note that because some devices historically used incorrect clashing
+numbering this may prevent you building a single kernel which can be
+booted on multiple platforms.
+
+
+And then we do
+
+	.nr		= CONFIG_SERIAL_SAMSUNG_UARTS,
+ 	.cons		= S3C24XX_SERIAL_CONSOLE,
+ 	.dev_name	= S3C24XX_SERIAL_NAME,
+#ifdef CONFIG_LEGACY_STATIC_TTY
+	.major		= S3C24XX_SERIAL_MAJOR,
+	.minor		= S3C24XX_SERIAL_MINOR,
+#endif
+
+for the afflicted ports (and anyone else who wants to migrate)
+
+
+We can then enable that config option for ARM (and in time for any other
+architecture that turns out to need/want it). Eventually it can go away
+(not that its exactly doing any harm if it doesnt).
+
+
+Does that sound a valid way forward for everyone ?
+
+Alan
