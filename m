@@ -1,52 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 8/8 v4] crypto:s5p-sss: Use clk_prepare/clk_unprepare
-Date: Thu, 23 Jan 2014 11:41:27 +0100
-Message-ID: <52E0F1D7.4030401@samsung.com>
-References: <1389354331-32142-1-git-send-email-ch.naveen@samsung.com>
- <1389777472-15294-1-git-send-email-ch.naveen@samsung.com>
- <CAHfPSqCHGbVX3iMC-LNnFYkdutRYFuk07RCeYLU4KAaTpgyQ0w@mail.gmail.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Subject: RE: [PATCH 2/2] clocksource: Make clocksource register functions
+ void
+Date: Thu, 23 Jan 2014 11:40:35 +0000
+Message-ID: <063D6719AE5E284EB5DD2968C1650D6D46489C@AcuExch.aculab.com>
+References: <1390461166-36440-1-git-send-email-wangyijing@huawei.com>
+ <52E0C889.6000106@prisktech.co.nz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAHfPSqCHGbVX3iMC-LNnFYkdutRYFuk07RCeYLU4KAaTpgyQ0w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vzapolskiy@gmail.com>, herbert@gondor.apana.org.au, cpgs@samsung.com, tomasz.figa@gmail.com
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <52E0C889.6000106@prisktech.co.nz>
+Content-Language: en-US
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: 'Tony Prisk' <linux@prisktech.co.nz>, Yijing Wang <wangyijing@huawei.com>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux@lists.openrisc.net" <linux@lists.openrisc.net>, Sekhar Nori <nsekhar@ti.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, Daniel Walker <dwalker@fifo99.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Jonas Bonn <jonas@southpole.se>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Richard Weinberger <richard@nod.at>, "x86@kernel.org" <x86@kernel.org>, Tony Lindgren <tony@atomide.com>, Ingo Molnar <mingo@redhat.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, David Brown <davidb@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 23/01/14 11:18, Naveen Krishna Ch wrote:
-> Hello All,
+From: Linuxppc-dev Tony Prisk
+> On 23/01/14 20:12, Yijing Wang wrote:
+> > Currently, clocksource_register() and __clocksource_register_scale()
+> > functions always return 0, it's pointless, make functions void.
+> > And remove the dead code that check the clocksource_register_hz()
+> > return value.
+> ......
+> > -static inline int clocksource_register_hz(struct clocksource *cs, u32 hz)
+> > +static inline void clocksource_register_hz(struct clocksource *cs, u32 hz)
+> >   {
+> >   	return __clocksource_register_scale(cs, 1, hz);
+> >   }
 > 
-> On 15 January 2014 14:47, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
->> This patch set adds use of clk_prepare/clk_unprepare as
->> required by generic clock framework.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->> Changes since v3:
->> None
->>
->>  drivers/crypto/s5p-sss.c |    6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
->> index f7c66c7..870e794 100644
->> --- a/drivers/crypto/s5p-sss.c
->> +++ b/drivers/crypto/s5p-sss.c
->> @@ -648,7 +648,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
->>                 return -ENOENT;
->>         }
->>
->> -       clk_enable(pdata->clk);
->> +       clk_prepare_enable(pdata->clk);
+> This doesn't make sense - you are still returning a value on a function
+> declared void, and the return is now from a function that doesn't return
+> anything either ?!?!
+> Doesn't this throw a compile-time warning??
 
-How about properly checking the return value ?
+It depends on the compiler.
+Recent gcc allow it.
+I don't know if it is actually valid C though.
 
---
-Thanks,
-Sylwester
+There is no excuse for it on lines like the above though.
+
+	David
