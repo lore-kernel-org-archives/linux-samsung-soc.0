@@ -1,115 +1,65 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 4/5] ARM: S3C24XX: convert boards to use common restart function
-Date: Thu, 23 Jan 2014 20:02:33 +0100
-Message-ID: <3955130.WSqWacB8SI@phil>
-References: <3105326.uFdOVLyXH8@phil> <7172372.015CdWJg1F@phil> <52E164B6.5070206@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Thu, 23 Jan 2014 19:36:33 +0000
+Message-ID: <20140123193633.GG11727@sirena.org.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+ <1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+ <20140120100530.GY15937@n2100.arm.linux.org.uk>
+ <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+ <20140123180423.1a62611a@www.etchedpixels.co.uk>
+ <20140123184022.GC11727@sirena.org.uk>
+ <52E163DC.1090002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:49482 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751535AbaAWTDP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jan 2014 14:03:15 -0500
-In-Reply-To: <52E164B6.5070206@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="m972NQjnE83KvVa/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <52E163DC.1090002@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-
-Am Donnerstag, 23. Januar 2014, 19:51:34 schrieb Tomasz Figa:
-> On 23.01.2014 19:36, Heiko St=FCbner wrote:
-> > Am Donnerstag, 23. Januar 2014, 19:12:04 schrieb Tomasz Figa:
-> >> Hi Heiko,
-> >>=20
-> >> On 06.01.2014 19:40, Heiko St=FCbner wrote:
-> >>> This converts all boards to use the new common restart function i=
-nstead
-> >>> of SoC specific ones.
-> >>>=20
-> >>> The mach-s3c2416-dt board now tries to setup either a swrst- or
-> >>> watchdog-
-> >>> reset so that it will be able to handle more s3c24xx-SoCs later o=
-n.
-> >>=20
-> >> [snip]
-> >>=20
-> >>> diff --git a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-> >>> b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c index 0a86953..88716fa4=
- 100644
-> >>> --- a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-> >>> +++ b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-> >>> @@ -24,6 +24,7 @@
-> >>>=20
-> >>>    #include <plat/cpu.h>
-> >>>    #include <plat/pm.h>
-> >>>=20
-> >>> +#include <plat/watchdog-reset.h>
-> >>>=20
-> >>>    #include "common.h"
-> >>>=20
-> >>> @@ -34,6 +35,14 @@ static void __init s3c2416_dt_map_io(void)
-> >>>=20
-> >>>    static void __init s3c2416_dt_machine_init(void)
-> >>>    {
-> >>>=20
-> >>> +	s3c24xx_swrst_reset_of_init();
-> >>> +
-> >>> +#ifdef CONFIG_SAMSUNG_WDT_RESET
-> >>> +	/* if no special swrst-device exists try to find a watchdog */
-> >>> +	if (!s3c24xx_swrst_reset_available())
-> >>> +		samsung_wdt_reset_of_init();
-> >>> +#endif
-> >>=20
-> >> Hmm... I think it would be safe to assume availability of soft res=
-et,
-> >> especially if you could move the restart code to the clock driver.
-> >=20
-> > ok, so something like the following:
-> >=20
-> > the boards would simply use samsung_watchdog_reset, which should ac=
-cording
-> > to the manuals be available on all architectures. And the ccf-drive=
-r on
-> > appropriate architectures would simple replace the arm_pm_restart
-> > callback with its own SoC specific one?
-> >=20
-> > For the s3c2412 this also means that the clock-logic would get simp=
-lified.
-> >=20
-> >=20
-> > Like this, or do I overlook something?
->=20
-> Hmm, this would mean a dependency on CONFIG_SAMSUNG_WDT_RESET then. I=
-s
-> there a need to fall back to it on platforms which support soft reset
-> (assuming that CCF driver would always install its restart handler on
-> applicable platforms)?
-
-s3c2410, s3c2440 and s3c2442 do not have the swrst facility. They alway=
-s use=20
-samsung_wdt_reset.
-
-In general, I want to try establishing some sort of general restart way=
-, as in=20
-the future one dt-board should hopefully be enough to cover all s3c24xx=
- soc=20
-variants.
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
-> Note that you can make the restart field NULL in mach_desc in board f=
-iles.
+--m972NQjnE83KvVa/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As I said above, this is mainly meant for the dt-case. The legacy-board=
- files=20
-are more or less only secondary, and the affected boards can of course =
-then=20
-have a NULL restart handle :-) .
+On Thu, Jan 23, 2014 at 07:47:56PM +0100, Tomasz Figa wrote:
+> On 23.01.2014 19:40, Mark Brown wrote:
 
-So for this the dt-board could simply use the wdt-reset, which then get=
-s=20
-replaced by the ccf-based reset if appropriate.
+> >We'd need to leave it user selectable rather than enabling it for ARM,
+> >the whole reason this got noticed is that people are trying to build
+> >kernels that support a wider range of devices for ARM.
 
+> What about making it depend on !MULTIPLATFORM and enabled by default?
 
-Heiko
+That'd work, but if we're doing that then substituting in the dynamic
+assignment only when we hit a collision seems smoother and more general.
+Or we could just make the core ignore all hard coded numbers if this is
+set rather than putting ifdefs in the drivers.
+
+--m972NQjnE83KvVa/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS4W89AAoJELSic+t+oim97lgP/2bSE4u2+XgI7zAZj4sXR5iI
+7tohhlVPD7DOxGMBp3uK00DN25VoiIEXVOaaTy5lvj9OKMC9O23rCEU1WKzO5aNR
+Y0bHW+IWFTsP3FtLZvXTx4UlLoZwt0p/DwNRYUDdWDMEkmgLfFUC5sZMbYqGAr4r
+Luan3lCgejzZ6/15HYhfX6lDYS349aJQ+GijJ/9T214ABDUdrqxwIUWmTdTk9SQF
+hk0IZWeubMGErSTrCy8ySL/fPVxx/6YfwRlJz3PZIqKm67OgGfLaC1nrb033Qjsw
+7SQABO8C5ktjthTI725/IbS/2kU1/0O/2DoBHxPzwB7JO7r8CO4dxlyVeJeJzWF4
+f2G4lko3h3Wp+61Zn/J4relN2iuvaMFO8v76W0rs/1GxDMMmq9xMQdRUukq0ExLS
+32MjSqq2HgBAnBBKPciOSuMLYKkXmXE3shibGg0JB7Kh38KhfweAfZEmpXyrIyqD
+/JXg7OikRBWMakoYdRqDv24rhbF+VkbWxE0lU1dYGH7gLfpmJMNl9Vb22zeSCFb0
+YG0uEAnDKocELCzX9vBMYlZ4yngpfh+Bcs7nBDSzSRzJcsopBq5jZllRhaLYH/O+
+YJYjOLGWHD2EjN++hkvANT7ENdNaXnS4KMF34u+lczju8QjTHrBoAZgDF8FUpJLA
+/ZDtiRug0uBTDAyelXIV
+=Gt4l
+-----END PGP SIGNATURE-----
+
+--m972NQjnE83KvVa/--
