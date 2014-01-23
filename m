@@ -1,54 +1,88 @@
-From: kgene@kernel.org
-Subject: RE: [PATCH 1/1] ARM: S3C24XX: Move rtc-core.h from plat to mach
-Date: Thu, 23 Jan 2014 10:24:38 +0900
-Message-ID: <023701cf17d9$e1f7f6e0$a5e7e4a0$@kernel.org>
-References: <1388400008-9113-1-git-send-email-sachin.kamat@linaro.org>
- <2677599.hxjB7meQWY@phil>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [RFC PATCH 1/9] drm/exynos: correct timing porch conversion
+Date: Thu, 23 Jan 2014 11:01:56 +0800
+Message-ID: <CAGS+omBgp5SZAcnkELWw3n_rStHY9tgoBR_yQwdZAH_0WWg_0Q@mail.gmail.com>
+References: <1390401336-22915-1-git-send-email-a.hajda@samsung.com>
+	<1390401336-22915-2-git-send-email-a.hajda@samsung.com>
+	<52DFDF10.20100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34135 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276AbaAWBYj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jan 2014 20:24:39 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MZT0013YYL2WQ20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Jan 2014 10:24:38 +0900 (KST)
-In-reply-to: <2677599.hxjB7meQWY@phil>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <52DFDF10.20100@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Heiko St=FCbner wrote:
->=20
-> Am Montag, 30. Dezember 2013, 16:10:08 schrieb Sachin Kamat:
-> > plat/rtc-core.h is only referenced from mach-s3c24xx. Hence
-> > move it there to de-populate the plat directory. While at it
-> > also do some cleanup of the header file.
-> >
-> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> > Cc: Heiko Stuebner <heiko@sntech.de>
->=20
-> late, but as the patch is not merged yet:
->=20
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
->=20
-Applied into cleanup, thanks.
+On Wed, Jan 22, 2014 at 11:09 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> Hi,
+>
+> It seems I have not added description to this patch.
+> In this patch porch is calculated in compatible way to
+> drm_display_mode_from_videomode core function.
+> The way it was seems to me incorrect and it did not work on my hw.
+>
+> Anyway this patch could be merged with Sean's patches, if he agrees.
+>
+> Regards
+> Andrzej
+>
+> On 01/22/2014 03:35 PM, Andrzej Hajda wrote:
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
-- Kukjin
+Yes, it does make more sense than just arbitrarily assigning half of
+the non-sync blank period to the back porch, and the remainder to the
+front porch.
+With your follow-on commit message added, this is:
 
-> > ---
-> >  .../plat =3D> mach-s3c24xx/include/mach}/rtc-core.h  |   13 ++++++=
--------
-> >  arch/arm/mach-s3c24xx/s3c2416.c                    |    2 +-
-> >  arch/arm/mach-s3c24xx/s3c2443.c                    |    2 +-
-> >  3 files changed, 8 insertions(+), 9 deletions(-)
-> >  rename arch/arm/{plat-samsung/include/plat =3D>
-> > mach-s3c24xx/include/mach}/rtc-core.h (69%)
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 11 ++++-------
+>>  1 file changed, 4 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> index 8caaac2..b611f33 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> @@ -538,21 +538,18 @@ static void fimd_mode_set(struct exynos_drm_manager *mgr,
+>>  {
+>>       struct fimd_context *ctx = mgr->ctx;
+>>       struct fimd_mode_data *mode = &ctx->mode;
+>> -     int hblank, vblank;
+>>
+>> -     vblank = in_mode->crtc_vblank_end - in_mode->crtc_vblank_start;
+>>       mode->vtotal = in_mode->crtc_vtotal;
+>>       mode->vdisplay = in_mode->crtc_vdisplay;
+>>       mode->vsync_len = in_mode->crtc_vsync_end - in_mode->crtc_vsync_start;
+>> -     mode->vbpd = (vblank - mode->vsync_len) / 2;
+>> -     mode->vfpd = vblank - mode->vsync_len - mode->vbpd;
+>> +     mode->vbpd = in_mode->crtc_vtotal - in_mode->crtc_vsync_end;
+>> +     mode->vfpd = in_mode->crtc_vsync_start - in_mode->crtc_vdisplay;
+>>
+>> -     hblank = in_mode->crtc_hblank_end - in_mode->crtc_hblank_start;
+>>       mode->htotal = in_mode->crtc_htotal;
+>>       mode->hdisplay = in_mode->crtc_hdisplay;
+>>       mode->hsync_len = in_mode->crtc_hsync_end - in_mode->crtc_hsync_start;
+>> -     mode->hbpd = (hblank - mode->hsync_len) / 2;
+>> -     mode->hfpd = hblank - mode->hsync_len - mode->hbpd;
+>> +     mode->hbpd = in_mode->crtc_htotal - in_mode->crtc_hsync_end;
+>> +     mode->hfpd = in_mode->crtc_hsync_start - in_mode->crtc_hdisplay;
+>>
+>>       mode->clkdiv = fimd_calc_clkdiv(ctx, in_mode);
+>>
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
