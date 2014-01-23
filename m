@@ -1,66 +1,50 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
- device probe
-Date: Thu, 23 Jan 2014 18:04:23 +0000
-Message-ID: <20140123180423.1a62611a@www.etchedpixels.co.uk>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
-	<1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
-	<20140120100530.GY15937@n2100.arm.linux.org.uk>
-	<CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/5] dt-bindings: document the s3c24xx software-reset
+ register
+Date: Thu, 23 Jan 2014 19:09:22 +0100
+Message-ID: <52E15AD2.7000602@samsung.com>
+References: <3105326.uFdOVLyXH8@phil> <2635551.Gy9A9uhyAA@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
-Sender: linux-serial-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17836 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753675AbaAWSJj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jan 2014 13:09:39 -0500
+In-reply-to: <2635551.Gy9A9uhyAA@phil>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org
 
-> I had earlier submitted a patch [1] to remove the hard coded
-> major/minor number for Samsung UART driver, but that was rejected
-> because of userspace breakage. Without this patch, Samsung UART driver
-> can't bind to the hard-coded device node. Changing the default
-> major/minor will also not help to fix the objections raised in [1].
-> 
-> Would you please suggest a way forward?
-> 
-> [1] https://lkml.org/lkml/2013/12/27/2
+Hi Heiko,
 
-So to go and try and put this to bed properly I would suggest the
-following way forward. 
+On 06.01.2014 19:37, Heiko St=FCbner wrote:
+> The S3C2412/S3C2413 as well as the S3C2443 and following contain a sp=
+ecial
+> register that restarts the system when written to. This adds a simple
+> binding, so that it gets accessible on dt systems too.
+>
+> We distinguish between the two types (s3c2412, s3c2443) because the
+> handling of the swrst register on the s3c2412 also needs to take care
+> of a hardware glitch at reset time.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>   .../devicetree/bindings/arm/samsung/s3c24xx-swrst.txt  |   16 +++++=
++++++++++++
+>   1 file changed, 16 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/arm/samsung/s3=
+c24xx-swrst.txt
 
-We add
+Is there really a need to have separate bindings for this?
 
-CONFIG_LEGACY_STATIC_TTY
+As far as I can see, the swreset register is a part of the clock=20
+controller, so restart function could be provided by clock driver and=20
+there would be no need to change anything in DT.
 
-Some platforms historically used static device nodes for the console
-devices. Select this if you are building a kernel for an old system which
-has a static /dev.
-
-Note that because some devices historically used incorrect clashing
-numbering this may prevent you building a single kernel which can be
-booted on multiple platforms.
-
-
-And then we do
-
-	.nr		= CONFIG_SERIAL_SAMSUNG_UARTS,
- 	.cons		= S3C24XX_SERIAL_CONSOLE,
- 	.dev_name	= S3C24XX_SERIAL_NAME,
-#ifdef CONFIG_LEGACY_STATIC_TTY
-	.major		= S3C24XX_SERIAL_MAJOR,
-	.minor		= S3C24XX_SERIAL_MINOR,
-#endif
-
-for the afflicted ports (and anyone else who wants to migrate)
-
-
-We can then enable that config option for ARM (and in time for any other
-architecture that turns out to need/want it). Eventually it can go away
-(not that its exactly doing any harm if it doesnt).
-
-
-Does that sound a valid way forward for everyone ?
-
-Alan
+Best regards,
+Tomasz
