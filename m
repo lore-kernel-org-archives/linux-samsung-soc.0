@@ -1,77 +1,74 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power
- domain look-up
-Date: Wed, 22 Jan 2014 16:32:19 -0800
-Message-ID: <20140123003219.GG13785@codeaurora.org>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
- <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
- <87r48a8t99.fsf@linaro.org>
- <52DD4DB1.2050200@samsung.com>
+From: kgene@kernel.org
+Subject: RE: [PATCH] ARM: exynos_defconfig: Update EHCI config entry
+Date: Thu, 23 Jan 2014 10:22:46 +0900
+Message-ID: <023601cf17d9$9f2cf720$dd86e560$@kernel.org>
+References: <1389861264-7305-1-git-send-email-tushar.behera@linaro.org>
+ <000101cf1297$fef674c0$fce35e40$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:49895 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752588AbaAWAcV (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:61838 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751276AbaAWBWs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jan 2014 19:32:21 -0500
-Content-Disposition: inline
-In-Reply-To: <52DD4DB1.2050200@samsung.com>
+	Wed, 22 Jan 2014 20:22:48 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MZT00572YHYFA90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Jan 2014 10:22:46 +0900 (KST)
+In-reply-to: <000101cf1297$fef674c0$fce35e40$%han@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org
+To: 'Jingoo Han' <jg1.han@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Yulgon Kim' <yulgon.kim@samsung.com>, 'Julius Werner' <jwerner@chromium.org>
 
-On 01/20, Tomasz Figa wrote:
-> Hi Kevin,
+Jingoo Han wrote:
 > 
-> On 14.01.2014 16:42, Kevin Hilman wrote:
-> >Tomasz Figa <tomasz.figa@gmail.com> writes:
+> On Thursday, January 16, 2014 5:34 PM, Tushar Behera wrote:
 > >
-> >>This patch introduces generic code to perform power domain look-up using
-> >>device tree and automatically bind devices to their power domains.
-> >>Generic device tree binding is introduced to specify power domains of
-> >>devices in their device tree nodes.
-> >>
-> >>Backwards compatibility with legacy Samsung-specific power domain
-> >>bindings is provided, but for now the new code is not compiled when
-> >>CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
-> >>will change as soon as Exynos power domain code gets converted to use
-> >>the generic framework in further patch.
-> >>
-> >>Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > Commit 29824c167bea ("USB: host: Rename ehci-s5p to ehci-exynos")
+> > renamed the config entry of EHCI host driver. Similar change needs
+> > to be done in exynos_defconfig as well.
 > >
-> >I haven't read through this in detail yet, but wanted to make sure that
-> >the DT representation can handle nested power domains.  At least
-> >SH-mobile has a hierarchy of power domains and the genpd code can handle
-> >that, so wanted to make sure that the DT representation can handle it as
-> >well.
+> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > 
-> The representation of power domains themselves as implied by this
-> patch is fully platform-specific. The only generic part is the
-> #power-domain-cells property, which defines the number of cells
-> needed to identify the power domain of given provider. You are free
-> to have any platform-specific properties (or even generic ones,
-> added on top of this patch) to let you specify the hierarchy in DT.
+> (+cc Vivek Gautam, Yulgon Kim, Julius Werner)
 > 
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+> 
+> Yes, right.
+> I overlooked 'exynos_defconfig', when I changed the name of
+> Exynos EHCI driver. Thank you for sending the patch. :-)
+> 
+> Best regards,
+> Jingoo Han
+> 
+> > ---
+> >  arch/arm/configs/exynos_defconfig |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/configs/exynos_defconfig
+> b/arch/arm/configs/exynos_defconfig
+> > index dbe1f1c..4ce7b70 100644
+> > --- a/arch/arm/configs/exynos_defconfig
+> > +++ b/arch/arm/configs/exynos_defconfig
+> > @@ -94,7 +94,7 @@ CONFIG_FONT_7x14=y
+> >  CONFIG_LOGO=y
+> >  CONFIG_USB=y
+> >  CONFIG_USB_EHCI_HCD=y
+> > -CONFIG_USB_EHCI_S5P=y
+> > +CONFIG_USB_EHCI_EXYNOS=y
+> >  CONFIG_USB_STORAGE=y
+> >  CONFIG_USB_DWC3=y
+> >  CONFIG_USB_PHY=y
+> > --
+> > 1.7.9.5
 
-(Semi-related to this thread, but not really the patchset)
+OK, applied into -fixes.
 
-I'd like to have a way to say that this power domain is a
-subdomain of another domain provided by a different power domain
-provider driver. From what I can tell, the only way to reparent
-domains as of today is by name or reference and you have to make
-a function call to do it (pm_genpd_add_subdomain_names() or
-pm_genpd_add_subdomain()). This is annoying in the case where all
-the power domains are not regsitered within the same driver
-because we don't know which driver comes first.
-
-It would be great if there was a way to specify this relationship
-explicitly when initializing a power domain so that the
-reparenting is done automatically without requiring any explicit
-function call. Perhaps DT could specify this? Or we could add
-another field to the generic_power_domain struct like parent_name?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Thanks,
+Kukjin
