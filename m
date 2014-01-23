@@ -1,65 +1,82 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 04/10] clk/samsung: add support for multiple clock
- providers
-Date: Thu, 23 Jan 2014 19:24:01 +0100
-Message-ID: <52E15E41.7020600@samsung.com>
-References: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
- <1389099548-14649-5-git-send-email-rahul.sharma@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 4/5] ARM: S3C24XX: convert boards to use common restart function
+Date: Thu, 23 Jan 2014 19:36:13 +0100
+Message-ID: <7172372.015CdWJg1F@phil>
+References: <3105326.uFdOVLyXH8@phil> <2227259.2cNbl9uzOp@phil> <52E15B74.3040409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:13690 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751184AbaAWSYR (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:49171 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750927AbaAWSgz convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jan 2014 13:24:17 -0500
-In-reply-to: <1389099548-14649-5-git-send-email-rahul.sharma@samsung.com>
+	Thu, 23 Jan 2014 13:36:55 -0500
+In-Reply-To: <52E15B74.3040409@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Rahul,
+Am Donnerstag, 23. Januar 2014, 19:12:04 schrieb Tomasz Figa:
+> Hi Heiko,
+>=20
+> On 06.01.2014 19:40, Heiko St=FCbner wrote:
+> > This converts all boards to use the new common restart function ins=
+tead
+> > of SoC specific ones.
+> >=20
+> > The mach-s3c2416-dt board now tries to setup either a swrst- or wat=
+chdog-
+> > reset so that it will be able to handle more s3c24xx-SoCs later on.
+>=20
+> [snip]
+>=20
+> > diff --git a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+> > b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c index 0a86953..88716fa4 1=
+00644
+> > --- a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+> > +++ b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+> > @@ -24,6 +24,7 @@
+> >=20
+> >   #include <plat/cpu.h>
+> >   #include <plat/pm.h>
+> >=20
+> > +#include <plat/watchdog-reset.h>
+> >=20
+> >   #include "common.h"
+> >=20
+> > @@ -34,6 +35,14 @@ static void __init s3c2416_dt_map_io(void)
+> >=20
+> >   static void __init s3c2416_dt_machine_init(void)
+> >   {
+> >=20
+> > +	s3c24xx_swrst_reset_of_init();
+> > +
+> > +#ifdef CONFIG_SAMSUNG_WDT_RESET
+> > +	/* if no special swrst-device exists try to find a watchdog */
+> > +	if (!s3c24xx_swrst_reset_available())
+> > +		samsung_wdt_reset_of_init();
+> > +#endif
+>=20
+> Hmm... I think it would be safe to assume availability of soft reset,
+> especially if you could move the restart code to the clock driver.
 
-The patch looks mostly fine now, but I still have one inline comment.
+ok, so something like the following:
 
-On 07.01.2014 13:59, Rahul Sharma wrote:
-> Samsung CCF helper functions do not provide support to
-> register multiple Clock Providers for a given SoC. Due to
-> this limitation SoC platforms are not able to use these
-> helpers for registering multiple clock providers and are
-> forced to bypass this layer.
->
-> This layer is modified accordingly to enable the support.
->
-> Clock file for exynos4, exynos5250, exynos5420, exynos5440
-[snip]
->   /* setup the essentials required to support clock lookup using ccf */
-> -void __init samsung_clk_init(struct device_node *np, void __iomem *base,
-> -			     unsigned long nr_clks)
-> +struct samsung_clk_provider *__init samsung_clk_init(struct device_node *np,
-> +			void __iomem *base, unsigned long nr_clks)
->   {
-> -	reg_base = base;
-> +	struct samsung_clk_provider *ctx;
-> +	struct clk **clk_table;
-> +	int ret;
-> +
-> +	ctx = kzalloc(sizeof(struct samsung_clk_provider), GFP_KERNEL);
-> +	if (!ctx)
-> +		panic("could not allocate clock provider context.\n");
->
->   	clk_table = kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
->   	if (!clk_table)
->   		panic("could not allocate clock lookup table\n");
->
-> +	ctx->reg_base = base;
-> +	ctx->clk_data.clks = clk_table;
-> +	ctx->clk_data.clk_num = nr_clks;
-> +	ctx->lock = __SPIN_LOCK_UNLOCKED(lock);
+the boards would simply use samsung_watchdog_reset, which should accord=
+ing to=20
+the manuals be available on all architectures. And the ccf-driver on=20
+appropriate architectures would simple replace the arm_pm_restart callb=
+ack=20
+with its own SoC specific one?
 
-spin_lock_init(&ctx->lock);
+=46or the s3c2412 this also means that the clock-logic would get simpli=
+fied.
 
-Best regards,
-Tomasz
+
+Like this, or do I overlook something?
+
+
+Thanks
+Heiko
