@@ -1,397 +1,563 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+From: Yijing Wang <wangyijing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 2/2] clocksource: Make clocksource register functions void
-Date: Thu, 23 Jan 2014 09:40:21 +0100
-Message-ID: <52E0D575.5050702@linaro.org>
+Date: Thu, 23 Jan 2014 17:01:41 +0800
+Message-ID: <52E0DA75.1040802@huawei.com>
 References: <1390461166-36440-1-git-send-email-wangyijing@huawei.com>
+	<52E0D575.5050702@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1390461166-36440-1-git-send-email-wangyijing@huawei.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Yijing Wang <wangyijing@huawei.com>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, Kevin Hilman <khilman@deeprootsystems.com>, linux@lists.openrisc.net, Sekhar Nori <nsekhar@ti.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, Daniel Walker <dwalker@fifo99.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Jonas Bonn <jonas@southpole.se>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Richard Weinberger <richard@nod.at>, x86@kernel.org, Tony Lindgren <tony@atomide.com>, Ingo Molnar <mingo@redhat.com>, linux-arm-msm@vger.kernel.org, David Brown <davidb@codeaurora.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Mike Frysinger <vapier@gentoo.org>, user-mode-linux-devel@lists.sourceforge.net, Nicolas Ferre <nicolas.ferre@atmel.com>, Jeff Dike <jdike@addtoit.com>, Barry Song <baohua@kernel.org>, linux-samsung-soc@vger.kernel.org, user-mode-linux-user@lists.sourceforge.netl
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <52E0D575.5050702-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Kevin Hilman <khilman-1D3HCaltpLuhEniVeURVKkEOCMrvLtNR@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, linux-73nT9ZVIoz3k1uMJSBkQmQ@public.gmane.org, Hanjun Guo <guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "H.
+ Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, Daniel Walker <dwalker-zu3NM2574RrQT0dZR+AlfA@public.gmane.org>, Hans-Christian Egtvedt <egtvedt-BrfabpQBY5qlHtIdYg32fQ@public.gmane.org>, Jonas Bonn <jonas-A9uVI2HLR7kOP4wsBPIw7w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Haavard Skinnemoen <hskinnemoen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, user-mode-linux-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Nicolas Ferre <nico>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDEvMjMvMjAxNCAwODoxMiBBTSwgWWlqaW5nIFdhbmcgd3JvdGU6Cj4gQ3VycmVudGx5LCBj
-bG9ja3NvdXJjZV9yZWdpc3RlcigpIGFuZCBfX2Nsb2Nrc291cmNlX3JlZ2lzdGVyX3NjYWxlKCkK
-PiBmdW5jdGlvbnMgYWx3YXlzIHJldHVybiAwLCBpdCdzIHBvaW50bGVzcywgbWFrZSBmdW5jdGlv
-bnMgdm9pZC4KPiBBbmQgcmVtb3ZlIHRoZSBkZWFkIGNvZGUgdGhhdCBjaGVjayB0aGUgY2xvY2tz
-b3VyY2VfcmVnaXN0ZXJfaHooKQo+IHJldHVybiB2YWx1ZS4KPgo+IFNpZ25lZC1vZmYtYnk6IFlp
-amluZyBXYW5nIDx3YW5neWlqaW5nQGh1YXdlaS5jb20+CgpXZWxsLCBkbyB3ZSByZWFsbHkgd2Fu
-dCB0byBjaGFuZ2UgYWxsIHRoZXNlIGZpbGVzIHRvIG5vdCB0YWtlIGNhcmUgb2YgYSAKcmV0dXJu
-IHZhbHVlID8gV2hhdCBhYm91dCBpcyB3ZSBoYXZlIHRvIGNoZWNrIGl0IGFnYWluIGxhdGVyID8K
-Ckkgd291bGQgcmVjb21tZW5kIHRvIGludmVzdGlnYXRlIF9fY2xvY2tzb3VyY2VfcmVnaXN0ZXJf
-c2NhbGUgYW5kIHRoZSAKdW5kZXJuZWF0aCBmdW5jdGlvbnMgaWYgdGhlcmUgaXMgbm90IGFuIGVy
-cm9yIHRvIGJlIHJldHVybmVkIGluIHRoZSBjYWxsIApzdGFjayBzb21ld2hlcmUgd2hpY2ggaXMg
-aWdub3JlZCB0b2RheS4KClRoZSBzYW1lIGFwcGxpZXMgZm9yIGNsb2Nrc291cmNlX3JlZ2lzdGVy
-LgoKVGhhbmtzCiAgIC0tIERhbmllbAoKPiAtLS0KPiAgIGFyY2gvYXJtL21hY2gtZGF2aW5jaS90
-aW1lLmMgICAgICAgICAgICAgICAgICAgIHwgICAgNSArKy0tLQo+ICAgYXJjaC9hcm0vbWFjaC1t
-c20vdGltZXIuYyAgICAgICAgICAgICAgICAgICAgICAgfCAgICA0ICstLS0KPiAgIGFyY2gvYXJt
-L21hY2gtb21hcDIvdGltZXIuYyAgICAgICAgICAgICAgICAgICAgIHwgICAgOCArKystLS0tLQo+
-ICAgYXJjaC9hdnIzMi9rZXJuZWwvdGltZS5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgICA0
-ICstLS0KPiAgIGFyY2gvYmxhY2tmaW4va2VybmVsL3RpbWUtdHMuYyAgICAgICAgICAgICAgICAg
-IHwgICAgNiArKy0tLS0KPiAgIGFyY2gvbWljcm9ibGF6ZS9rZXJuZWwvdGltZXIuYyAgICAgICAg
-ICAgICAgICAgIHwgICAgMyArLS0KPiAgIGFyY2gvbWlwcy9qejQ3NDAvdGltZS5jICAgICAgICAg
-ICAgICAgICAgICAgICAgIHwgICAgNiArLS0tLS0KPiAgIGFyY2gvbWlwcy9sb29uZ3Nvbi9jb21t
-b24vY3M1NTM2L2NzNTUzNl9tZmdwdC5jIHwgICAgMyArKy0KPiAgIGFyY2gvb3BlbnJpc2Mva2Vy
-bmVsL3RpbWUuYyAgICAgICAgICAgICAgICAgICAgIHwgICAgMyArLS0KPiAgIGFyY2gvcG93ZXJw
-Yy9rZXJuZWwvdGltZS5jICAgICAgICAgICAgICAgICAgICAgIHwgICAgNiArLS0tLS0KPiAgIGFy
-Y2gvdW0va2VybmVsL3RpbWUuYyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgNiArLS0t
-LS0KPiAgIGFyY2gveDg2L3BsYXRmb3JtL3V2L3V2X3RpbWUuYyAgICAgICAgICAgICAgICAgIHwg
-ICAxNCArKysrKystLS0tLS0tLQo+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS9hY3BpX3BtLmMgICAg
-ICAgICAgICAgICAgICAgfCAgICAzICsrLQo+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS9jYWRlbmNl
-X3R0Y190aW1lci5jICAgICAgICAgfCAgICA2ICstLS0tLQo+ICAgZHJpdmVycy9jbG9ja3NvdXJj
-ZS9leHlub3NfbWN0LmMgICAgICAgICAgICAgICAgfCAgICA0ICstLS0KPiAgIGRyaXZlcnMvY2xv
-Y2tzb3VyY2UvaTgyNTMuYyAgICAgICAgICAgICAgICAgICAgIHwgICAgMyArKy0KPiAgIGRyaXZl
-cnMvY2xvY2tzb3VyY2UvbW1pby5jICAgICAgICAgICAgICAgICAgICAgIHwgICAgMyArKy0KPiAg
-IGRyaXZlcnMvY2xvY2tzb3VyY2Uvc2Ftc3VuZ19wd21fdGltZXIuYyAgICAgICAgIHwgICAgNSAr
-LS0tLQo+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS9zY3gyMDBfaHJ0LmMgICAgICAgICAgICAgICAg
-fCAgICAzICsrLQo+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS90Y2JfY2xrc3JjLmMgICAgICAgICAg
-ICAgICAgfCAgICA4ICstLS0tLS0tCj4gICBkcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLW1hcmNv
-LmMgICAgICAgICAgICAgICB8ICAgIDIgKy0KPiAgIGRyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXIt
-cHJpbWEyLmMgICAgICAgICAgICAgIHwgICAgMiArLQo+ICAgZHJpdmVycy9jbG9ja3NvdXJjZS92
-dDg1MDBfdGltZXIuYyAgICAgICAgICAgICAgfCAgICA0ICstLS0KPiAgIGluY2x1ZGUvbGludXgv
-Y2xvY2tzb3VyY2UuaCAgICAgICAgICAgICAgICAgICAgIHwgICAgOCArKysrLS0tLQo+ICAga2Vy
-bmVsL3RpbWUvY2xvY2tzb3VyY2UuYyAgICAgICAgICAgICAgICAgICAgICAgfCAgICA2ICsrLS0t
-LQo+ICAga2VybmVsL3RpbWUvamlmZmllcy5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAg
-ICAzICsrLQo+ICAgMjYgZmlsZXMgY2hhbmdlZCwgNDUgaW5zZXJ0aW9ucygrKSwgODMgZGVsZXRp
-b25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1kYXZpbmNpL3RpbWUuYyBiL2Fy
-Y2gvYXJtL21hY2gtZGF2aW5jaS90aW1lLmMKPiBpbmRleCA1NmM2ZWI1Li45NTM2Zjg1IDEwMDY0
-NAo+IC0tLSBhL2FyY2gvYXJtL21hY2gtZGF2aW5jaS90aW1lLmMKPiArKysgYi9hcmNoL2FybS9t
-YWNoLWRhdmluY2kvdGltZS5jCj4gQEAgLTM4Nyw5ICszODcsOCBAQCB2b2lkIF9faW5pdCBkYXZp
-bmNpX3RpbWVyX2luaXQodm9pZCkKPgo+ICAgCS8qIHNldHVwIGNsb2Nrc291cmNlICovCj4gICAJ
-Y2xvY2tzb3VyY2VfZGF2aW5jaS5uYW1lID0gaWRfdG9fbmFtZVtjbG9ja3NvdXJjZV9pZF07Cj4g
-LQlpZiAoY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHooJmNsb2Nrc291cmNlX2RhdmluY2ksCj4gLQkJ
-CQkgICAgZGF2aW5jaV9jbG9ja190aWNrX3JhdGUpKQo+IC0JCXByaW50ayhlcnIsIGNsb2Nrc291
-cmNlX2RhdmluY2kubmFtZSk7Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3Vy
-Y2VfZGF2aW5jaSwKPiArCQkJCSAgICBkYXZpbmNpX2Nsb2NrX3RpY2tfcmF0ZSk7Cj4KPiAgIAlz
-ZXR1cF9zY2hlZF9jbG9jayhkYXZpbmNpX3JlYWRfc2NoZWRfY2xvY2ssIDMyLAo+ICAgCQkJICBk
-YXZpbmNpX2Nsb2NrX3RpY2tfcmF0ZSk7Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtbXNt
-L3RpbWVyLmMgYi9hcmNoL2FybS9tYWNoLW1zbS90aW1lci5jCj4gaW5kZXggMWU5YzMzOC4uYzk2
-ZTAzNCAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9tYWNoLW1zbS90aW1lci5jCj4gKysrIGIvYXJj
-aC9hcm0vbWFjaC1tc20vdGltZXIuYwo+IEBAIC0yMjYsOSArMjI2LDcgQEAgc3RhdGljIHZvaWQg
-X19pbml0IG1zbV90aW1lcl9pbml0KHUzMiBkZ3RfaHosIGludCBzY2hlZF9iaXRzLCBpbnQgaXJx
-LAo+Cj4gICBlcnI6Cj4gICAJd3JpdGVsX3JlbGF4ZWQoVElNRVJfRU5BQkxFX0VOLCBzb3VyY2Vf
-YmFzZSArIFRJTUVSX0VOQUJMRSk7Cj4gLQlyZXMgPSBjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeihj
-cywgZGd0X2h6KTsKPiAtCWlmIChyZXMpCj4gLQkJcHJfZXJyKCJjbG9ja3NvdXJjZV9yZWdpc3Rl
-ciBmYWlsZWRcbiIpOwo+ICsJY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHooY3MsIGRndF9oeik7Cj4g
-ICAJc2V0dXBfc2NoZWRfY2xvY2sobXNtX3NjaGVkX2Nsb2NrX3JlYWQsIHNjaGVkX2JpdHMsIGRn
-dF9oeik7Cj4gICB9Cj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1vbWFwMi90aW1lci5j
-IGIvYXJjaC9hcm0vbWFjaC1vbWFwMi90aW1lci5jCj4gaW5kZXggM2NhODFlMC4uYmVhZjdjNyAx
-MDA2NDQKPiAtLS0gYS9hcmNoL2FybS9tYWNoLW9tYXAyL3RpbWVyLmMKPiArKysgYi9hcmNoL2Fy
-bS9tYWNoLW9tYXAyL3RpbWVyLmMKPiBAQCAtNDczLDExICs0NzMsOSBAQCBzdGF0aWMgdm9pZCBf
-X2luaXQgb21hcDJfZ3B0aW1lcl9jbG9ja3NvdXJjZV9pbml0KGludCBncHRpbWVyX2lkLAo+ICAg
-CQkJCSAgIE9NQVBfVElNRVJfTk9OUE9TVEVEKTsKPiAgIAlzZXR1cF9zY2hlZF9jbG9jayhkbXRp
-bWVyX3JlYWRfc2NoZWRfY2xvY2ssIDMyLCBjbGtzcmMucmF0ZSk7Cj4KPiAtCWlmIChjbG9ja3Nv
-dXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2VfZ3B0LCBjbGtzcmMucmF0ZSkpCj4gLQkJcHJf
-ZXJyKCJDb3VsZCBub3QgcmVnaXN0ZXIgY2xvY2tzb3VyY2UgJXNcbiIsCj4gLQkJCWNsb2Nrc291
-cmNlX2dwdC5uYW1lKTsKPiAtCWVsc2UKPiAtCQlwcl9pbmZvKCJPTUFQIGNsb2Nrc291cmNlOiAl
-cyBhdCAlbHUgSHpcbiIsCj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2Vf
-Z3B0LCBjbGtzcmMucmF0ZSk7Cj4gKwo+ICsJcHJfaW5mbygiT01BUCBjbG9ja3NvdXJjZTogJXMg
-YXQgJWx1IEh6XG4iLAo+ICAgCQkJY2xvY2tzb3VyY2VfZ3B0Lm5hbWUsIGNsa3NyYy5yYXRlKTsK
-PiAgIH0KPgo+IGRpZmYgLS1naXQgYS9hcmNoL2F2cjMyL2tlcm5lbC90aW1lLmMgYi9hcmNoL2F2
-cjMyL2tlcm5lbC90aW1lLmMKPiBpbmRleCBkMGY3NzFiLi41MWI0YTY2IDEwMDY0NAo+IC0tLSBh
-L2FyY2gvYXZyMzIva2VybmVsL3RpbWUuYwo+ICsrKyBiL2FyY2gvYXZyMzIva2VybmVsL3RpbWUu
-Ywo+IEBAIC0xMzQsOSArMTM0LDcgQEAgdm9pZCBfX2luaXQgdGltZV9pbml0KHZvaWQpCj4KPiAg
-IAkvKiBmaWd1cmUgcmF0ZSBmb3IgY291bnRlciAqLwo+ICAgCWNvdW50ZXJfaHogPSBjbGtfZ2V0
-X3JhdGUoYm9vdF9jcHVfZGF0YS5jbGspOwo+IC0JcmV0ID0gY2xvY2tzb3VyY2VfcmVnaXN0ZXJf
-aHooJmNvdW50ZXIsIGNvdW50ZXJfaHopOwo+IC0JaWYgKHJldCkKPiAtCQlwcl9kZWJ1ZygidGlt
-ZXI6IGNvdWxkIG5vdCByZWdpc3RlciBjbG9ja3NvdXJjZTogJWRcbiIsIHJldCk7Cj4gKwljbG9j
-a3NvdXJjZV9yZWdpc3Rlcl9oeigmY291bnRlciwgY291bnRlcl9oeik7Cj4KPiAgIAkvKiBzZXR1
-cCBDT01QQVJFIGNsb2NrZXZlbnQgKi8KPiAgIAljb21wYXJhdG9yLm11bHQgPSBkaXZfc2MoY291
-bnRlcl9oeiwgTlNFQ19QRVJfU0VDLCBjb21wYXJhdG9yLnNoaWZ0KTsKPiBkaWZmIC0tZ2l0IGEv
-YXJjaC9ibGFja2Zpbi9rZXJuZWwvdGltZS10cy5jIGIvYXJjaC9ibGFja2Zpbi9rZXJuZWwvdGlt
-ZS10cy5jCj4gaW5kZXggY2IwYTQ4NC4uZGYzYmIwOCAxMDA2NDQKPiAtLS0gYS9hcmNoL2JsYWNr
-ZmluL2tlcm5lbC90aW1lLXRzLmMKPiArKysgYi9hcmNoL2JsYWNrZmluL2tlcm5lbC90aW1lLXRz
-LmMKPiBAQCAtNTEsOCArNTEsNyBAQCBzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgbG9uZyBi
-ZmluX2NzX2N5Y2xlc19zY2hlZF9jbG9jayh2b2lkKQo+Cj4gICBzdGF0aWMgaW50IF9faW5pdCBi
-ZmluX2NzX2N5Y2xlc19pbml0KHZvaWQpCj4gICB7Cj4gLQlpZiAoY2xvY2tzb3VyY2VfcmVnaXN0
-ZXJfaHooJmJmaW5fY3NfY3ljbGVzLCBnZXRfY2NsaygpKSkKPiAtCQlwYW5pYygiZmFpbGVkIHRv
-IHJlZ2lzdGVyIGNsb2Nrc291cmNlIik7Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmYmZp
-bl9jc19jeWNsZXMsIGdldF9jY2xrKCkpOwo+Cj4gICAJcmV0dXJuIDA7Cj4gICB9Cj4gQEAgLTEw
-Myw4ICsxMDIsNyBAQCBzdGF0aWMgaW50IF9faW5pdCBiZmluX2NzX2dwdGltZXIwX2luaXQodm9p
-ZCkKPiAgIHsKPiAgIAlzZXR1cF9ncHRpbWVyMCgpOwo+Cj4gLQlpZiAoY2xvY2tzb3VyY2VfcmVn
-aXN0ZXJfaHooJmJmaW5fY3NfZ3B0aW1lcjAsIGdldF9zY2xrKCkpKQo+IC0JCXBhbmljKCJmYWls
-ZWQgdG8gcmVnaXN0ZXIgY2xvY2tzb3VyY2UiKTsKPiArCWNsb2Nrc291cmNlX3JlZ2lzdGVyX2h6
-KCZiZmluX2NzX2dwdGltZXIwLCBnZXRfc2NsaygpKTsKPgo+ICAgCXJldHVybiAwOwo+ICAgfQo+
-IGRpZmYgLS1naXQgYS9hcmNoL21pY3JvYmxhemUva2VybmVsL3RpbWVyLmMgYi9hcmNoL21pY3Jv
-YmxhemUva2VybmVsL3RpbWVyLmMKPiBpbmRleCAzZTM5YjEwLi42YTI0MTdlIDEwMDY0NAo+IC0t
-LSBhL2FyY2gvbWljcm9ibGF6ZS9rZXJuZWwvdGltZXIuYwo+ICsrKyBiL2FyY2gvbWljcm9ibGF6
-ZS9rZXJuZWwvdGltZXIuYwo+IEBAIC0yMDgsOCArMjA4LDcgQEAgc3RhdGljIHN0cnVjdCBjbG9j
-a3NvdXJjZSBjbG9ja3NvdXJjZV9taWNyb2JsYXplID0gewo+Cj4gICBzdGF0aWMgaW50IF9faW5p
-dCB4aWxpbnhfY2xvY2tzb3VyY2VfaW5pdCh2b2lkKQo+ICAgewo+IC0JaWYgKGNsb2Nrc291cmNl
-X3JlZ2lzdGVyX2h6KCZjbG9ja3NvdXJjZV9taWNyb2JsYXplLCB0aW1lcl9jbG9ja19mcmVxKSkK
-PiAtCQlwYW5pYygiZmFpbGVkIHRvIHJlZ2lzdGVyIGNsb2Nrc291cmNlIik7Cj4gKwljbG9ja3Nv
-dXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2VfbWljcm9ibGF6ZSwgdGltZXJfY2xvY2tfZnJl
-cSk7Cj4KPiAgIAkvKiBzdG9wIHRpbWVyMSAqLwo+ICAgCW91dF9iZTMyKHRpbWVyX2Jhc2VhZGRy
-ICsgVENTUjEsCj4gZGlmZiAtLWdpdCBhL2FyY2gvbWlwcy9qejQ3NDAvdGltZS5jIGIvYXJjaC9t
-aXBzL2p6NDc0MC90aW1lLmMKPiBpbmRleCA1ZTQzMGNlLi4wNDFjZGZmIDEwMDY0NAo+IC0tLSBh
-L2FyY2gvbWlwcy9qejQ3NDAvdGltZS5jCj4gKysrIGIvYXJjaC9taXBzL2p6NDc0MC90aW1lLmMK
-PiBAQCAtMTA1LDcgKzEwNSw2IEBAIHN0YXRpYyBzdHJ1Y3QgaXJxYWN0aW9uIHRpbWVyX2lycWFj
-dGlvbiA9IHsKPgo+ICAgdm9pZCBfX2luaXQgcGxhdF90aW1lX2luaXQodm9pZCkKPiAgIHsKPiAt
-CWludCByZXQ7Cj4gICAJdWludDMyX3QgY2xrX3JhdGU7Cj4gICAJdWludDE2X3QgY3RybDsKPgo+
-IEBAIC0xMjEsMTAgKzEyMCw3IEBAIHZvaWQgX19pbml0IHBsYXRfdGltZV9pbml0KHZvaWQpCj4K
-PiAgIAljbG9ja2V2ZW50c19yZWdpc3Rlcl9kZXZpY2UoJmp6NDc0MF9jbG9ja2V2ZW50KTsKPgo+
-IC0JcmV0ID0gY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHooJmp6NDc0MF9jbG9ja3NvdXJjZSwgY2xr
-X3JhdGUpOwo+IC0KPiAtCWlmIChyZXQpCj4gLQkJcHJpbnRrKEtFUk5fRVJSICJGYWlsZWQgdG8g
-cmVnaXN0ZXIgY2xvY2tzb3VyY2U6ICVkXG4iLCByZXQpOwo+ICsJY2xvY2tzb3VyY2VfcmVnaXN0
-ZXJfaHooJmp6NDc0MF9jbG9ja3NvdXJjZSwgY2xrX3JhdGUpOwo+Cj4gICAJc2V0dXBfaXJxKEpa
-NDc0MF9JUlFfVENVMCwgJnRpbWVyX2lycWFjdGlvbik7Cj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9t
-aXBzL2xvb25nc29uL2NvbW1vbi9jczU1MzYvY3M1NTM2X21mZ3B0LmMgYi9hcmNoL21pcHMvbG9v
-bmdzb24vY29tbW9uL2NzNTUzNi9jczU1MzZfbWZncHQuYwo+IGluZGV4IGM2MzliOWQuLjlmYTZk
-OTkgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9taXBzL2xvb25nc29uL2NvbW1vbi9jczU1MzYvY3M1NTM2
-X21mZ3B0LmMKPiArKysgYi9hcmNoL21pcHMvbG9vbmdzb24vY29tbW9uL2NzNTUzNi9jczU1MzZf
-bWZncHQuYwo+IEBAIC0yMDgsNyArMjA4LDggQEAgaW50IF9faW5pdCBpbml0X21mZ3B0X2Nsb2Nr
-c291cmNlKHZvaWQpCj4gICAJaWYgKG51bV9wb3NzaWJsZV9jcHVzKCkgPiAxKQkvKiBNRkdQVCBk
-b2VzIG5vdCBzY2FsZSEgKi8KPiAgIAkJcmV0dXJuIDA7Cj4KPiAtCXJldHVybiBjbG9ja3NvdXJj
-ZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2VfbWZncHQsIE1GR1BUX1RJQ0tfUkFURSk7Cj4gKwlj
-bG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2VfbWZncHQsIE1GR1BUX1RJQ0tfUkFU
-RSk7Cj4gKwlyZXR1cm4gMDsKPiAgIH0KPgo+ICAgYXJjaF9pbml0Y2FsbChpbml0X21mZ3B0X2Ns
-b2Nrc291cmNlKTsKPiBkaWZmIC0tZ2l0IGEvYXJjaC9vcGVucmlzYy9rZXJuZWwvdGltZS5jIGIv
-YXJjaC9vcGVucmlzYy9rZXJuZWwvdGltZS5jCj4gaW5kZXggN2M1MmU5NC4uM2Y3ODlhYSAxMDA2
-NDQKPiAtLS0gYS9hcmNoL29wZW5yaXNjL2tlcm5lbC90aW1lLmMKPiArKysgYi9hcmNoL29wZW5y
-aXNjL2tlcm5lbC90aW1lLmMKPiBAQCAtMTU2LDggKzE1Niw3IEBAIHN0YXRpYyBzdHJ1Y3QgY2xv
-Y2tzb3VyY2Ugb3BlbnJpc2NfdGltZXIgPSB7Cj4KPiAgIHN0YXRpYyBpbnQgX19pbml0IG9wZW5y
-aXNjX3RpbWVyX2luaXQodm9pZCkKPiAgIHsKPiAtCWlmIChjbG9ja3NvdXJjZV9yZWdpc3Rlcl9o
-eigmb3BlbnJpc2NfdGltZXIsIGNwdWluZm8uY2xvY2tfZnJlcXVlbmN5KSkKPiAtCQlwYW5pYygi
-ZmFpbGVkIHRvIHJlZ2lzdGVyIGNsb2Nrc291cmNlIik7Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rl
-cl9oeigmb3BlbnJpc2NfdGltZXIsIGNwdWluZm8uY2xvY2tfZnJlcXVlbmN5KTsKPgo+ICAgCS8q
-IEVuYWJsZSB0aGUgaW5jcmVtZW50ZXI6ICdjb250aW51b3VzJyBtb2RlIHdpdGggaW50ZXJydXB0
-IGRpc2FibGVkICovCj4gICAJbXRzcHIoU1BSX1RUTVIsIFNQUl9UVE1SX0NSKTsKPiBkaWZmIC0t
-Z2l0IGEvYXJjaC9wb3dlcnBjL2tlcm5lbC90aW1lLmMgYi9hcmNoL3Bvd2VycGMva2VybmVsL3Rp
-bWUuYwo+IGluZGV4IGIzYjE0NDEuLjI3YzA2MjcgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9wb3dlcnBj
-L2tlcm5lbC90aW1lLmMKPiArKysgYi9hcmNoL3Bvd2VycGMva2VybmVsL3RpbWUuYwo+IEBAIC03
-ODgsMTEgKzc4OCw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBjbG9ja3NvdXJjZV9pbml0KHZvaWQp
-Cj4gICAJZWxzZQo+ICAgCQljbG9jayA9ICZjbG9ja3NvdXJjZV90aW1lYmFzZTsKPgo+IC0JaWYg
-KGNsb2Nrc291cmNlX3JlZ2lzdGVyX2h6KGNsb2NrLCB0Yl90aWNrc19wZXJfc2VjKSkgewo+IC0J
-CXByaW50ayhLRVJOX0VSUiAiY2xvY2tzb3VyY2U6ICVzIGlzIGFscmVhZHkgcmVnaXN0ZXJlZFxu
-IiwKPiAtCQkgICAgICAgY2xvY2stPm5hbWUpOwo+IC0JCXJldHVybjsKPiAtCX0KPiArCWNsb2Nr
-c291cmNlX3JlZ2lzdGVyX2h6KGNsb2NrLCB0Yl90aWNrc19wZXJfc2VjKTsKPgo+ICAgCXByaW50
-ayhLRVJOX0lORk8gImNsb2Nrc291cmNlOiAlcyBtdWx0WyV4XSBzaGlmdFslZF0gcmVnaXN0ZXJl
-ZFxuIiwKPiAgIAkgICAgICAgY2xvY2stPm5hbWUsIGNsb2NrLT5tdWx0LCBjbG9jay0+c2hpZnQp
-Owo+IGRpZmYgLS1naXQgYS9hcmNoL3VtL2tlcm5lbC90aW1lLmMgYi9hcmNoL3VtL2tlcm5lbC90
-aW1lLmMKPiBpbmRleCAxMTc1NjhkLi4yMDM0YjU4IDEwMDY0NAo+IC0tLSBhL2FyY2gvdW0va2Vy
-bmVsL3RpbWUuYwo+ICsrKyBiL2FyY2gvdW0va2VybmVsL3RpbWUuYwo+IEBAIC05MiwxMSArOTIs
-NyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc2V0dXBfaXRpbWVyKHZvaWQpCj4gICAJCWNsb2NrZXZl
-bnRfZGVsdGEybnMoNjAgKiBIWiwgJml0aW1lcl9jbG9ja2V2ZW50KTsKPiAgIAlpdGltZXJfY2xv
-Y2tldmVudC5taW5fZGVsdGFfbnMgPQo+ICAgCQljbG9ja2V2ZW50X2RlbHRhMm5zKDEsICZpdGlt
-ZXJfY2xvY2tldmVudCk7Cj4gLQllcnIgPSBjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmaXRpbWVy
-X2Nsb2Nrc291cmNlLCBVU0VDX1BFUl9TRUMpOwo+IC0JaWYgKGVycikgewo+IC0JCXByaW50ayhL
-RVJOX0VSUiAiY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHogcmV0dXJuZWQgJWRcbiIsIGVycik7Cj4g
-LQkJcmV0dXJuOwo+IC0JfQo+ICsJY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHooJml0aW1lcl9jbG9j
-a3NvdXJjZSwgVVNFQ19QRVJfU0VDKTsKPiAgIAljbG9ja2V2ZW50c19yZWdpc3Rlcl9kZXZpY2Uo
-Jml0aW1lcl9jbG9ja2V2ZW50KTsKPiAgIH0KPgo+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9wbGF0
-Zm9ybS91di91dl90aW1lLmMgYi9hcmNoL3g4Ni9wbGF0Zm9ybS91di91dl90aW1lLmMKPiBpbmRl
-eCA1Yzg2Nzg2Li5iOTYzNzc0IDEwMDY0NAo+IC0tLSBhL2FyY2gveDg2L3BsYXRmb3JtL3V2L3V2
-X3RpbWUuYwo+ICsrKyBiL2FyY2gveDg2L3BsYXRmb3JtL3V2L3V2X3RpbWUuYwo+IEBAIC0zNzks
-MTUgKzM3OSwxMyBAQCBzdGF0aWMgX19pbml0IGludCB1dl9ydGNfc2V0dXBfY2xvY2sodm9pZCkK
-PiAgIAlpZiAoIWlzX3V2X3N5c3RlbSgpKQo+ICAgCQlyZXR1cm4gLUVOT0RFVjsKPgo+IC0JcmMg
-PSBjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2VfdXYsIHNuX3J0Y19jeWNsZXNf
-cGVyX3NlY29uZCk7Cj4gLQlpZiAocmMpCj4gLQkJcHJpbnRrKEtFUk5fSU5GTyAiVVYgUlRDIGNs
-b2Nrc291cmNlIGZhaWxlZCByYyAlZFxuIiwgcmMpOwo+IC0JZWxzZQo+IC0JCXByaW50ayhLRVJO
-X0lORk8gIlVWIFJUQyBjbG9ja3NvdXJjZSByZWdpc3RlcmVkIGZyZXEgJWx1IE1IelxuIiwKPiAt
-CQkJc25fcnRjX2N5Y2xlc19wZXJfc2Vjb25kLyh1bnNpZ25lZCBsb25nKTFFNik7Cj4gKwljbG9j
-a3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2VfdXYsIHNuX3J0Y19jeWNsZXNfcGVyX3Nl
-Y29uZCk7Cj4gKwo+ICsJcHJfaW5mbygiVVYgUlRDIGNsb2Nrc291cmNlIHJlZ2lzdGVyZWQgZnJl
-cSAlbHUgTUh6XG4iLAo+ICsJCXNuX3J0Y19jeWNsZXNfcGVyX3NlY29uZC8odW5zaWduZWQgbG9u
-ZykxRTYpOwo+Cj4gLQlpZiAocmMgfHwgIXV2X3J0Y19ldnRfZW5hYmxlIHx8IHg4Nl9wbGF0Zm9y
-bV9pcGlfY2FsbGJhY2spCj4gLQkJcmV0dXJuIHJjOwo+ICsJaWYgKCF1dl9ydGNfZXZ0X2VuYWJs
-ZSB8fCB4ODZfcGxhdGZvcm1faXBpX2NhbGxiYWNrKQo+ICsJCXJldHVybiAwOwo+Cj4gICAJLyog
-U2V0dXAgYW5kIHJlZ2lzdGVyIGNsb2NrZXZlbnRzICovCj4gICAJcmMgPSB1dl9ydGNfYWxsb2Nh
-dGVfdGltZXJzKCk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvYWNwaV9wbS5j
-IGIvZHJpdmVycy9jbG9ja3NvdXJjZS9hY3BpX3BtLmMKPiBpbmRleCA2ZWFiODg5Li5hYjFkYzYz
-IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvYWNwaV9wbS5jCj4gKysrIGIvZHJp
-dmVycy9jbG9ja3NvdXJjZS9hY3BpX3BtLmMKPiBAQCAtMjE4LDggKzIxOCw5IEBAIHN0YXRpYyBp
-bnQgX19pbml0IGluaXRfYWNwaV9wbV9jbG9ja3NvdXJjZSh2b2lkKQo+ICAgCQlyZXR1cm4gLUVO
-T0RFVjsKPiAgIAl9Cj4KPiAtCXJldHVybiBjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tz
-b3VyY2VfYWNwaV9wbSwKPiArCWNsb2Nrc291cmNlX3JlZ2lzdGVyX2h6KCZjbG9ja3NvdXJjZV9h
-Y3BpX3BtLAo+ICAgCQkJCQkJUE1UTVJfVElDS1NfUEVSX1NFQyk7Cj4gKwlyZXR1cm4gMDsKPiAg
-IH0KPgo+ICAgLyogV2UgdXNlIGZzX2luaXRjYWxsIGJlY2F1c2Ugd2Ugd2FudCB0aGUgUENJIGZp
-eHVwcyB0byBoYXZlIHJ1bgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291cmNlL2NhZGVu
-Y2VfdHRjX3RpbWVyLmMgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL2NhZGVuY2VfdHRjX3RpbWVyLmMK
-PiBpbmRleCA2M2YxNzZkLi5iOWI1NmVkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3Vy
-Y2UvY2FkZW5jZV90dGNfdGltZXIuYwo+ICsrKyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvY2FkZW5j
-ZV90dGNfdGltZXIuYwo+IEBAIC0zMDEsMTEgKzMwMSw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCB0
-dGNfc2V0dXBfY2xvY2tzb3VyY2Uoc3RydWN0IGNsayAqY2xrLCB2b2lkIF9faW9tZW0gKmJhc2Up
-Cj4gICAJX19yYXdfd3JpdGVsKENOVF9DTlRSTF9SRVNFVCwKPiAgIAkJICAgICB0dGNjcy0+dHRj
-LmJhc2VfYWRkciArIFRUQ19DTlRfQ05UUkxfT0ZGU0VUKTsKPgo+IC0JZXJyID0gY2xvY2tzb3Vy
-Y2VfcmVnaXN0ZXJfaHooJnR0Y2NzLT5jcywgdHRjY3MtPnR0Yy5mcmVxIC8gUFJFU0NBTEUpOwo+
-IC0JaWYgKFdBUk5fT04oZXJyKSkgewo+IC0JCWtmcmVlKHR0Y2NzKTsKPiAtCQlyZXR1cm47Cj4g
-LQl9Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmdHRjY3MtPmNzLCB0dGNjcy0+dHRjLmZy
-ZXEgLyBQUkVTQ0FMRSk7Cj4KPiAgIAl0dGNfc2NoZWRfY2xvY2tfdmFsX3JlZyA9IGJhc2UgKyBU
-VENfQ09VTlRfVkFMX09GRlNFVDsKPiAgIAlzY2hlZF9jbG9ja19yZWdpc3Rlcih0dGNfc2NoZWRf
-Y2xvY2tfcmVhZCwgMTYsIHR0Y2NzLT50dGMuZnJlcSAvIFBSRVNDQUxFKTsKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMgYi9kcml2ZXJzL2Nsb2Nrc291cmNl
-L2V4eW5vc19tY3QuYwo+IGluZGV4IDYyYjBkZTYuLjk4NjQ5YzcgMTAwNjQ0Cj4gLS0tIGEvZHJp
-dmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMKPiArKysgYi9kcml2ZXJzL2Nsb2Nrc291cmNl
-L2V4eW5vc19tY3QuYwo+IEBAIC0xOTMsOSArMTkzLDcgQEAgc3RydWN0IGNsb2Nrc291cmNlIG1j
-dF9mcmMgPSB7Cj4gICBzdGF0aWMgdm9pZCBfX2luaXQgZXh5bm9zNF9jbG9ja3NvdXJjZV9pbml0
-KHZvaWQpCj4gICB7Cj4gICAJZXh5bm9zNF9tY3RfZnJjX3N0YXJ0KDAsIDApOwo+IC0KPiAtCWlm
-IChjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmbWN0X2ZyYywgY2xrX3JhdGUpKQo+IC0JCXBhbmlj
-KCIlczogY2FuJ3QgcmVnaXN0ZXIgY2xvY2tzb3VyY2VcbiIsIG1jdF9mcmMubmFtZSk7Cj4gKwlj
-bG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmbWN0X2ZyYywgY2xrX3JhdGUpOwo+ICAgfQo+Cj4gICBz
-dGF0aWMgdm9pZCBleHlub3M0X21jdF9jb21wMF9zdG9wKHZvaWQpCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvY2xvY2tzb3VyY2UvaTgyNTMuYyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvaTgyNTMuYwo+
-IGluZGV4IDE0ZWUzZWYuLjljNDVmMGEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jbG9ja3NvdXJj
-ZS9pODI1My5jCj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9pODI1My5jCj4gQEAgLTk1LDcg
-Kzk1LDggQEAgc3RhdGljIHN0cnVjdCBjbG9ja3NvdXJjZSBpODI1M19jcyA9IHsKPgo+ICAgaW50
-IF9faW5pdCBjbG9ja3NvdXJjZV9pODI1M19pbml0KHZvaWQpCj4gICB7Cj4gLQlyZXR1cm4gY2xv
-Y2tzb3VyY2VfcmVnaXN0ZXJfaHooJmk4MjUzX2NzLCBQSVRfVElDS19SQVRFKTsKPiArCWNsb2Nr
-c291cmNlX3JlZ2lzdGVyX2h6KCZpODI1M19jcywgUElUX1RJQ0tfUkFURSk7Cj4gKwlyZXR1cm4g
-MDsKPiAgIH0KPiAgICNlbmRpZgo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2Uv
-bW1pby5jIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9tbWlvLmMKPiBpbmRleCBjMGUyNTEyLi42ZTBi
-NTMwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvbW1pby5jCj4gKysrIGIvZHJp
-dmVycy9jbG9ja3NvdXJjZS9tbWlvLmMKPiBAQCAtNjksNSArNjksNiBAQCBpbnQgX19pbml0IGNs
-b2Nrc291cmNlX21taW9faW5pdCh2b2lkIF9faW9tZW0gKmJhc2UsIGNvbnN0IGNoYXIgKm5hbWUs
-Cj4gICAJY3MtPmNsa3NyYy5tYXNrID0gQ0xPQ0tTT1VSQ0VfTUFTSyhiaXRzKTsKPiAgIAljcy0+
-Y2xrc3JjLmZsYWdzID0gQ0xPQ0tfU09VUkNFX0lTX0NPTlRJTlVPVVM7Cj4KPiAtCXJldHVybiBj
-bG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY3MtPmNsa3NyYywgaHopOwo+ICsJY2xvY2tzb3VyY2Vf
-cmVnaXN0ZXJfaHooJmNzLT5jbGtzcmMsIGh6KTsKPiArCXJldHVybiAwOwo+ICAgfQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291cmNlL3NhbXN1bmdfcHdtX3RpbWVyLmMgYi9kcml2ZXJz
-L2Nsb2Nrc291cmNlL3NhbXN1bmdfcHdtX3RpbWVyLmMKPiBpbmRleCA1NjQ1Y2ZjLi5jNTkyOTJm
-IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2Ftc3VuZ19wd21fdGltZXIuYwo+
-ICsrKyBiL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2Ftc3VuZ19wd21fdGltZXIuYwo+IEBAIC0zNDAs
-NyArMzQwLDYgQEAgc3RhdGljIHZvaWQgX19pbml0IHNhbXN1bmdfY2xvY2tzb3VyY2VfaW5pdCh2
-b2lkKQo+ICAgewo+ICAgCXVuc2lnbmVkIGxvbmcgcGNsazsKPiAgIAl1bnNpZ25lZCBsb25nIGNs
-b2NrX3JhdGU7Cj4gLQlpbnQgcmV0Owo+Cj4gICAJcGNsayA9IGNsa19nZXRfcmF0ZShwd20udGlt
-ZXJjbGspOwo+Cj4gQEAgLTM2MSw5ICszNjAsNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc2Ftc3Vu
-Z19jbG9ja3NvdXJjZV9pbml0KHZvaWQpCj4gICAJCQkJCQlwd20udmFyaWFudC5iaXRzLCBjbG9j
-a19yYXRlKTsKPgo+ICAgCXNhbXN1bmdfY2xvY2tzb3VyY2UubWFzayA9IENMT0NLU09VUkNFX01B
-U0socHdtLnZhcmlhbnQuYml0cyk7Cj4gLQlyZXQgPSBjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigm
-c2Ftc3VuZ19jbG9ja3NvdXJjZSwgY2xvY2tfcmF0ZSk7Cj4gLQlpZiAocmV0KQo+IC0JCXBhbmlj
-KCJzYW1zdW5nX2Nsb2Nrc291cmNlX3RpbWVyOiBjYW4ndCByZWdpc3RlciBjbG9ja3NvdXJjZVxu
-Iik7Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmc2Ftc3VuZ19jbG9ja3NvdXJjZSwgY2xv
-Y2tfcmF0ZSk7Cj4gICB9Cj4KPiAgIHN0YXRpYyB2b2lkIF9faW5pdCBzYW1zdW5nX3RpbWVyX3Jl
-c291cmNlcyh2b2lkKQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291cmNlL3NjeDIwMF9o
-cnQuYyBiL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2N4MjAwX2hydC5jCj4gaW5kZXggNjRmOWU4Mi4u
-NTdiZGMwNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2Nsb2Nrc291cmNlL3NjeDIwMF9ocnQuYwo+
-ICsrKyBiL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2N4MjAwX2hydC5jCj4gQEAgLTgzLDcgKzgzLDgg
-QEAgc3RhdGljIGludCBfX2luaXQgaW5pdF9ocnRfY2xvY2tzb3VyY2Uodm9pZCkKPgo+ICAgCXBy
-X2luZm8oImVuYWJsaW5nIHNjeDIwMCBoaWdoLXJlcyB0aW1lciAoJXMgTUh6ICslZCBwcG0pXG4i
-LCBtaHoyNyA/ICIyNyI6IjEiLCBwcG0pOwo+Cj4gLQlyZXR1cm4gY2xvY2tzb3VyY2VfcmVnaXN0
-ZXJfaHooJmNzX2hydCwgZnJlcSk7Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmY3NfaHJ0
-LCBmcmVxKTsKPiArCXJldHVybiAwOwo+ICAgfQo+Cj4gICBtb2R1bGVfaW5pdChpbml0X2hydF9j
-bG9ja3NvdXJjZSk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGNiX2Nsa3Ny
-Yy5jIGIvZHJpdmVycy9jbG9ja3NvdXJjZS90Y2JfY2xrc3JjLmMKPiBpbmRleCAwMGZkZDExLi44
-MDUyNDVkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGNiX2Nsa3NyYy5jCj4g
-KysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS90Y2JfY2xrc3JjLmMKPiBAQCAtMzQwLDkgKzM0MCw3
-IEBAIHN0YXRpYyBpbnQgX19pbml0IHRjYl9jbGtzcmNfaW5pdCh2b2lkKQo+ICAgCX0KPgo+ICAg
-CS8qIGFuZCBhd2F5IHdlIGdvISAqLwo+IC0JcmV0ID0gY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHoo
-JmNsa3NyYywgZGl2aWRlZF9yYXRlKTsKPiAtCWlmIChyZXQpCj4gLQkJZ290byBlcnJfZGlzYWJs
-ZV90MTsKPiArCWNsb2Nrc291cmNlX3JlZ2lzdGVyX2h6KCZjbGtzcmMsIGRpdmlkZWRfcmF0ZSk7
-Cj4KPiAgIAkvKiBjaGFubmVsIDI6ICBwZXJpb2RpYyBhbmQgb25lc2hvdCB0aW1lciBzdXBwb3J0
-ICovCj4gICAJcmV0ID0gc2V0dXBfY2xrZXZlbnRzKHRjLCBjbGszMmtfZGl2aXNvcl9pZHgpOwo+
-IEBAIC0zNTQsMTAgKzM1Miw2IEBAIHN0YXRpYyBpbnQgX19pbml0IHRjYl9jbGtzcmNfaW5pdCh2
-b2lkKQo+ICAgZXJyX3VucmVnaXN0ZXJfY2xrc3JjOgo+ICAgCWNsb2Nrc291cmNlX3VucmVnaXN0
-ZXIoJmNsa3NyYyk7Cj4KPiAtZXJyX2Rpc2FibGVfdDE6Cj4gLQlpZiAoIXRjLT50Y2JfY29uZmln
-IHx8IHRjLT50Y2JfY29uZmlnLT5jb3VudGVyX3dpZHRoICE9IDMyKQo+IC0JCWNsa19kaXNhYmxl
-X3VucHJlcGFyZSh0Yy0+Y2xrWzFdKTsKPiAtCj4gICBlcnJfZGlzYWJsZV90MDoKPiAgIAljbGtf
-ZGlzYWJsZV91bnByZXBhcmUodDBfY2xrKTsKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nr
-c291cmNlL3RpbWVyLW1hcmNvLmMgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLW1hcmNvLmMK
-PiBpbmRleCAwOWExN2Q5Li5hZTc4Y2UwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3Vy
-Y2UvdGltZXItbWFyY28uYwo+ICsrKyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXItbWFyY28u
-Ywo+IEBAIC0yODMsNyArMjgzLDcgQEAgc3RhdGljIHZvaWQgX19pbml0IHNpcmZzb2NfbWFyY29f
-dGltZXJfaW5pdCh2b2lkKQo+ICAgCS8qIENsZWFyIGFsbCBpbnRlcnJ1cHRzICovCj4gICAJd3Jp
-dGVsX3JlbGF4ZWQoMHhGRkZGLCBzaXJmc29jX3RpbWVyX2Jhc2UgKyBTSVJGU09DX1RJTUVSX0lO
-VFJfU1RBVFVTKTsKPgo+IC0JQlVHX09OKGNsb2Nrc291cmNlX3JlZ2lzdGVyX2h6KCZzaXJmc29j
-X2Nsb2Nrc291cmNlLCBDTE9DS19USUNLX1JBVEUpKTsKPiArCWNsb2Nrc291cmNlX3JlZ2lzdGVy
-X2h6KCZzaXJmc29jX2Nsb2Nrc291cmNlLCBDTE9DS19USUNLX1JBVEUpOwo+Cj4gICAJc2lyZnNv
-Y19jbG9ja2V2ZW50X2luaXQoKTsKPiAgIH0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3Nv
-dXJjZS90aW1lci1wcmltYTIuYyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXItcHJpbWEyLmMK
-PiBpbmRleCA4YTQ5MmQzLi5jOWNjMzA3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3Vy
-Y2UvdGltZXItcHJpbWEyLmMKPiArKysgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLXByaW1h
-Mi5jCj4gQEAgLTIwNCw3ICsyMDQsNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc2lyZnNvY19wcmlt
-YTJfdGltZXJfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQo+ICAgCXdyaXRlbF9yZWxheGVk
-KDAsIHNpcmZzb2NfdGltZXJfYmFzZSArIFNJUkZTT0NfVElNRVJfQ09VTlRFUl9ISSk7Cj4gICAJ
-d3JpdGVsX3JlbGF4ZWQoQklUKDApLCBzaXJmc29jX3RpbWVyX2Jhc2UgKyBTSVJGU09DX1RJTUVS
-X1NUQVRVUyk7Cj4KPiAtCUJVR19PTihjbG9ja3NvdXJjZV9yZWdpc3Rlcl9oeigmc2lyZnNvY19j
-bG9ja3NvdXJjZSwgQ0xPQ0tfVElDS19SQVRFKSk7Cj4gKwljbG9ja3NvdXJjZV9yZWdpc3Rlcl9o
-eigmc2lyZnNvY19jbG9ja3NvdXJjZSwgQ0xPQ0tfVElDS19SQVRFKTsKPgo+ICAgCXNjaGVkX2Ns
-b2NrX3JlZ2lzdGVyKHNpcmZzb2NfcmVhZF9zY2hlZF9jbG9jaywgNjQsIENMT0NLX1RJQ0tfUkFU
-RSk7Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS92dDg1MDBfdGltZXIuYyBi
-L2RyaXZlcnMvY2xvY2tzb3VyY2UvdnQ4NTAwX3RpbWVyLmMKPiBpbmRleCAxMDk4ZWQzLi4xM2Y1
-ZmE0IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvdnQ4NTAwX3RpbWVyLmMKPiAr
-KysgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3Z0ODUwMF90aW1lci5jCj4gQEAgLTE1MCw5ICsxNTAs
-NyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgdnQ4NTAwX3RpbWVyX2luaXQoc3RydWN0IGRldmljZV9u
-b2RlICpucCkKPiAgIAl3cml0ZWwoMHhmLCByZWdiYXNlICsgVElNRVJfU1RBVFVTX1ZBTCk7Cj4g
-ICAJd3JpdGVsKH4wLCByZWdiYXNlICsgVElNRVJfTUFUQ0hfVkFMKTsKPgo+IC0JaWYgKGNsb2Nr
-c291cmNlX3JlZ2lzdGVyX2h6KCZjbG9ja3NvdXJjZSwgVlQ4NTAwX1RJTUVSX0haKSkKPiAtCQlw
-cl9lcnIoIiVzOiB2dDg1MDBfdGltZXJfaW5pdDogY2xvY2tzb3VyY2VfcmVnaXN0ZXIgZmFpbGVk
-IGZvciAlc1xuIiwKPiAtCQkJCQlfX2Z1bmNfXywgY2xvY2tzb3VyY2UubmFtZSk7Cj4gKwljbG9j
-a3NvdXJjZV9yZWdpc3Rlcl9oeigmY2xvY2tzb3VyY2UsIFZUODUwMF9USU1FUl9IWik7Cj4KPiAg
-IAljbG9ja2V2ZW50LmNwdW1hc2sgPSBjcHVtYXNrX29mKDApOwo+Cj4gZGlmZiAtLWdpdCBhL2lu
-Y2x1ZGUvbGludXgvY2xvY2tzb3VyY2UuaCBiL2luY2x1ZGUvbGludXgvY2xvY2tzb3VyY2UuaAo+
-IGluZGV4IDY3MzAxYTQuLjVhMTdjNWUgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS9saW51eC9jbG9j
-a3NvdXJjZS5oCj4gKysrIGIvaW5jbHVkZS9saW51eC9jbG9ja3NvdXJjZS5oCj4gQEAgLTI4Miw3
-ICsyODIsNyBAQCBzdGF0aWMgaW5saW5lIHM2NCBjbG9ja3NvdXJjZV9jeWMybnMoY3ljbGVfdCBj
-eWNsZXMsIHUzMiBtdWx0LCB1MzIgc2hpZnQpCj4gICB9Cj4KPgo+IC1leHRlcm4gaW50IGNsb2Nr
-c291cmNlX3JlZ2lzdGVyKHN0cnVjdCBjbG9ja3NvdXJjZSopOwo+ICtleHRlcm4gdm9pZCBjbG9j
-a3NvdXJjZV9yZWdpc3RlcihzdHJ1Y3QgY2xvY2tzb3VyY2UgKik7Cj4gICBleHRlcm4gaW50IGNs
-b2Nrc291cmNlX3VucmVnaXN0ZXIoc3RydWN0IGNsb2Nrc291cmNlKik7Cj4gICBleHRlcm4gdm9p
-ZCBjbG9ja3NvdXJjZV90b3VjaF93YXRjaGRvZyh2b2lkKTsKPiAgIGV4dGVybiBzdHJ1Y3QgY2xv
-Y2tzb3VyY2UqIGNsb2Nrc291cmNlX2dldF9uZXh0KHZvaWQpOwo+IEBAIC0zMDEsMTcgKzMwMSwx
-NyBAQCBjbG9ja3NfY2FsY19tdWx0X3NoaWZ0KHUzMiAqbXVsdCwgdTMyICpzaGlmdCwgdTMyIGZy
-b20sIHUzMiB0bywgdTMyIG1pbnNlYyk7Cj4gICAgKiBEb24ndCBjYWxsIF9fY2xvY2tzb3VyY2Vf
-cmVnaXN0ZXJfc2NhbGUgZGlyZWN0bHksIHVzZQo+ICAgICogY2xvY2tzb3VyY2VfcmVnaXN0ZXJf
-aHova2h6Cj4gICAgKi8KPiAtZXh0ZXJuIGludAo+ICtleHRlcm4gdm9pZAo+ICAgX19jbG9ja3Nv
-dXJjZV9yZWdpc3Rlcl9zY2FsZShzdHJ1Y3QgY2xvY2tzb3VyY2UgKmNzLCB1MzIgc2NhbGUsIHUz
-MiBmcmVxKTsKPiAgIGV4dGVybiB2b2lkCj4gICBfX2Nsb2Nrc291cmNlX3VwZGF0ZWZyZXFfc2Nh
-bGUoc3RydWN0IGNsb2Nrc291cmNlICpjcywgdTMyIHNjYWxlLCB1MzIgZnJlcSk7Cj4KPiAtc3Rh
-dGljIGlubGluZSBpbnQgY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHooc3RydWN0IGNsb2Nrc291cmNl
-ICpjcywgdTMyIGh6KQo+ICtzdGF0aWMgaW5saW5lIHZvaWQgY2xvY2tzb3VyY2VfcmVnaXN0ZXJf
-aHooc3RydWN0IGNsb2Nrc291cmNlICpjcywgdTMyIGh6KQo+ICAgewo+ICAgCXJldHVybiBfX2Ns
-b2Nrc291cmNlX3JlZ2lzdGVyX3NjYWxlKGNzLCAxLCBoeik7Cj4gICB9Cj4KPiAtc3RhdGljIGlu
-bGluZSBpbnQgY2xvY2tzb3VyY2VfcmVnaXN0ZXJfa2h6KHN0cnVjdCBjbG9ja3NvdXJjZSAqY3Ms
-IHUzMiBraHopCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBjbG9ja3NvdXJjZV9yZWdpc3Rlcl9raHoo
-c3RydWN0IGNsb2Nrc291cmNlICpjcywgdTMyIGtoeikKPiAgIHsKPiAgIAlyZXR1cm4gX19jbG9j
-a3NvdXJjZV9yZWdpc3Rlcl9zY2FsZShjcywgMTAwMCwga2h6KTsKPiAgIH0KPiBkaWZmIC0tZ2l0
-IGEva2VybmVsL3RpbWUvY2xvY2tzb3VyY2UuYyBiL2tlcm5lbC90aW1lL2Nsb2Nrc291cmNlLmMK
-PiBpbmRleCA5OTUxNTc1Li42ODZmZjcyIDEwMDY0NAo+IC0tLSBhL2tlcm5lbC90aW1lL2Nsb2Nr
-c291cmNlLmMKPiArKysgYi9rZXJuZWwvdGltZS9jbG9ja3NvdXJjZS5jCj4gQEAgLTc4Miw3ICs3
-ODIsNyBAQCBFWFBPUlRfU1lNQk9MX0dQTChfX2Nsb2Nrc291cmNlX3VwZGF0ZWZyZXFfc2NhbGUp
-Owo+ICAgICogVGhpcyAqU0hPVUxEIE5PVCogYmUgY2FsbGVkIGRpcmVjdGx5ISBQbGVhc2UgdXNl
-IHRoZQo+ICAgICogY2xvY2tzb3VyY2VfcmVnaXN0ZXJfaHooKSBvciBjbG9ja3NvdXJjZV9yZWdp
-c3Rlcl9raHogaGVscGVyIGZ1bmN0aW9ucy4KPiAgICAqLwo+IC1pbnQgX19jbG9ja3NvdXJjZV9y
-ZWdpc3Rlcl9zY2FsZShzdHJ1Y3QgY2xvY2tzb3VyY2UgKmNzLCB1MzIgc2NhbGUsIHUzMiBmcmVx
-KQo+ICt2b2lkIF9fY2xvY2tzb3VyY2VfcmVnaXN0ZXJfc2NhbGUoc3RydWN0IGNsb2Nrc291cmNl
-ICpjcywgdTMyIHNjYWxlLCB1MzIgZnJlcSkKPiAgIHsKPgo+ICAgCS8qIEluaXRpYWxpemUgbXVs
-dC9zaGlmdCBhbmQgbWF4X2lkbGVfbnMgKi8KPiBAQCAtNzk0LDcgKzc5NCw2IEBAIGludCBfX2Ns
-b2Nrc291cmNlX3JlZ2lzdGVyX3NjYWxlKHN0cnVjdCBjbG9ja3NvdXJjZSAqY3MsIHUzMiBzY2Fs
-ZSwgdTMyIGZyZXEpCj4gICAJY2xvY2tzb3VyY2VfZW5xdWV1ZV93YXRjaGRvZyhjcyk7Cj4gICAJ
-Y2xvY2tzb3VyY2Vfc2VsZWN0KCk7Cj4gICAJbXV0ZXhfdW5sb2NrKCZjbG9ja3NvdXJjZV9tdXRl
-eCk7Cj4gLQlyZXR1cm4gMDsKPiAgIH0KPiAgIEVYUE9SVF9TWU1CT0xfR1BMKF9fY2xvY2tzb3Vy
-Y2VfcmVnaXN0ZXJfc2NhbGUpOwo+Cj4gQEAgLTgwNCw3ICs4MDMsNyBAQCBFWFBPUlRfU1lNQk9M
-X0dQTChfX2Nsb2Nrc291cmNlX3JlZ2lzdGVyX3NjYWxlKTsKPiAgICAqIEBjczoJCWNsb2Nrc291
-cmNlIHRvIGJlIHJlZ2lzdGVyZWQKPiAgICAqCj4gICAgKi8KPiAtaW50IGNsb2Nrc291cmNlX3Jl
-Z2lzdGVyKHN0cnVjdCBjbG9ja3NvdXJjZSAqY3MpCj4gK3ZvaWQgY2xvY2tzb3VyY2VfcmVnaXN0
-ZXIoc3RydWN0IGNsb2Nrc291cmNlICpjcykKPiAgIHsKPiAgIAkvKiBjYWxjdWxhdGUgbWF4IGFk
-anVzdG1lbnQgZm9yIGdpdmVuIG11bHQvc2hpZnQgKi8KPiAgIAljcy0+bWF4YWRqID0gY2xvY2tz
-b3VyY2VfbWF4X2FkanVzdG1lbnQoY3MpOwo+IEBAIC04MjAsNyArODE5LDYgQEAgaW50IGNsb2Nr
-c291cmNlX3JlZ2lzdGVyKHN0cnVjdCBjbG9ja3NvdXJjZSAqY3MpCj4gICAJY2xvY2tzb3VyY2Vf
-ZW5xdWV1ZV93YXRjaGRvZyhjcyk7Cj4gICAJY2xvY2tzb3VyY2Vfc2VsZWN0KCk7Cj4gICAJbXV0
-ZXhfdW5sb2NrKCZjbG9ja3NvdXJjZV9tdXRleCk7Cj4gLQlyZXR1cm4gMDsKPiAgIH0KPiAgIEVY
-UE9SVF9TWU1CT0woY2xvY2tzb3VyY2VfcmVnaXN0ZXIpOwo+Cj4gZGlmZiAtLWdpdCBhL2tlcm5l
-bC90aW1lL2ppZmZpZXMuYyBiL2tlcm5lbC90aW1lL2ppZmZpZXMuYwo+IGluZGV4IDdhOTI1YmEu
-LmFlNGM1MzQgMTAwNjQ0Cj4gLS0tIGEva2VybmVsL3RpbWUvamlmZmllcy5jCj4gKysrIGIva2Vy
-bmVsL3RpbWUvamlmZmllcy5jCj4gQEAgLTg4LDcgKzg4LDggQEAgRVhQT1JUX1NZTUJPTChqaWZm
-aWVzKTsKPgo+ICAgc3RhdGljIGludCBfX2luaXQgaW5pdF9qaWZmaWVzX2Nsb2Nrc291cmNlKHZv
-aWQpCj4gICB7Cj4gLQlyZXR1cm4gY2xvY2tzb3VyY2VfcmVnaXN0ZXIoJmNsb2Nrc291cmNlX2pp
-ZmZpZXMpOwo+ICsJY2xvY2tzb3VyY2VfcmVnaXN0ZXIoJmNsb2Nrc291cmNlX2ppZmZpZXMpOwo+
-ICsJcmV0dXJuIDA7Cj4gICB9Cj4KPiAgIGNvcmVfaW5pdGNhbGwoaW5pdF9qaWZmaWVzX2Nsb2Nr
-c291cmNlKTsKPgoKCi0tIAogIDxodHRwOi8vd3d3LmxpbmFyby5vcmcvPiBMaW5hcm8ub3JnIOKU
-giBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKCkZvbGxvdyBMaW5hcm86ICA8aHR0
-cDovL3d3dy5mYWNlYm9vay5jb20vcGFnZXMvTGluYXJvPiBGYWNlYm9vayB8CjxodHRwOi8vdHdp
-dHRlci5jb20vIyEvbGluYXJvb3JnPiBUd2l0dGVyIHwKPGh0dHA6Ly93d3cubGluYXJvLm9yZy9s
-aW5hcm8tYmxvZy8+IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2QGxpc3RzLm96
-bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4cHBjLWRldg==
+On 2014/1/23 16:40, Daniel Lezcano wrote:
+> On 01/23/2014 08:12 AM, Yijing Wang wrote:
+>> Currently, clocksource_register() and __clocksource_register_scale()
+>> functions always return 0, it's pointless, make functions void.
+>> And remove the dead code that check the clocksource_register_hz()
+>> return value.
+>>
+>> Signed-off-by: Yijing Wang <wangyijing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> 
+> Well, do we really want to change all these files to not take care of a return value ? What about is we have to check it again later ?
+> 
+> I would recommend to investigate __clocksource_register_scale and the underneath functions if there is not an error to be returned in the call stack somewhere which is ignored today.
+> 
+> The same applies for clocksource_register.
+
+Hi Daniel, thanks for your comment, all functions type under __clocksource_register_scale() are void.
+This just is trivial cleanup patch, I don't know whether we will check these function return value again later.
+If there is some possibility to check it again, I agree to keep them. Of course, this is all determined by Thomas.
+
+Thanks!
+Yijing.
+
+> 
+>> ---
+>>   arch/arm/mach-davinci/time.c                    |    5 ++---
+>>   arch/arm/mach-msm/timer.c                       |    4 +---
+>>   arch/arm/mach-omap2/timer.c                     |    8 +++-----
+>>   arch/avr32/kernel/time.c                        |    4 +---
+>>   arch/blackfin/kernel/time-ts.c                  |    6 ++----
+>>   arch/microblaze/kernel/timer.c                  |    3 +--
+>>   arch/mips/jz4740/time.c                         |    6 +-----
+>>   arch/mips/loongson/common/cs5536/cs5536_mfgpt.c |    3 ++-
+>>   arch/openrisc/kernel/time.c                     |    3 +--
+>>   arch/powerpc/kernel/time.c                      |    6 +-----
+>>   arch/um/kernel/time.c                           |    6 +-----
+>>   arch/x86/platform/uv/uv_time.c                  |   14 ++++++--------
+>>   drivers/clocksource/acpi_pm.c                   |    3 ++-
+>>   drivers/clocksource/cadence_ttc_timer.c         |    6 +-----
+>>   drivers/clocksource/exynos_mct.c                |    4 +---
+>>   drivers/clocksource/i8253.c                     |    3 ++-
+>>   drivers/clocksource/mmio.c                      |    3 ++-
+>>   drivers/clocksource/samsung_pwm_timer.c         |    5 +----
+>>   drivers/clocksource/scx200_hrt.c                |    3 ++-
+>>   drivers/clocksource/tcb_clksrc.c                |    8 +-------
+>>   drivers/clocksource/timer-marco.c               |    2 +-
+>>   drivers/clocksource/timer-prima2.c              |    2 +-
+>>   drivers/clocksource/vt8500_timer.c              |    4 +---
+>>   include/linux/clocksource.h                     |    8 ++++----
+>>   kernel/time/clocksource.c                       |    6 ++----
+>>   kernel/time/jiffies.c                           |    3 ++-
+>>   26 files changed, 45 insertions(+), 83 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+>> index 56c6eb5..9536f85 100644
+>> --- a/arch/arm/mach-davinci/time.c
+>> +++ b/arch/arm/mach-davinci/time.c
+>> @@ -387,9 +387,8 @@ void __init davinci_timer_init(void)
+>>
+>>       /* setup clocksource */
+>>       clocksource_davinci.name = id_to_name[clocksource_id];
+>> -    if (clocksource_register_hz(&clocksource_davinci,
+>> -                    davinci_clock_tick_rate))
+>> -        printk(err, clocksource_davinci.name);
+>> +    clocksource_register_hz(&clocksource_davinci,
+>> +                    davinci_clock_tick_rate);
+>>
+>>       setup_sched_clock(davinci_read_sched_clock, 32,
+>>                 davinci_clock_tick_rate);
+>> diff --git a/arch/arm/mach-msm/timer.c b/arch/arm/mach-msm/timer.c
+>> index 1e9c338..c96e034 100644
+>> --- a/arch/arm/mach-msm/timer.c
+>> +++ b/arch/arm/mach-msm/timer.c
+>> @@ -226,9 +226,7 @@ static void __init msm_timer_init(u32 dgt_hz, int sched_bits, int irq,
+>>
+>>   err:
+>>       writel_relaxed(TIMER_ENABLE_EN, source_base + TIMER_ENABLE);
+>> -    res = clocksource_register_hz(cs, dgt_hz);
+>> -    if (res)
+>> -        pr_err("clocksource_register failed\n");
+>> +    clocksource_register_hz(cs, dgt_hz);
+>>       setup_sched_clock(msm_sched_clock_read, sched_bits, dgt_hz);
+>>   }
+>>
+>> diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+>> index 3ca81e0..beaf7c7 100644
+>> --- a/arch/arm/mach-omap2/timer.c
+>> +++ b/arch/arm/mach-omap2/timer.c
+>> @@ -473,11 +473,9 @@ static void __init omap2_gptimer_clocksource_init(int gptimer_id,
+>>                      OMAP_TIMER_NONPOSTED);
+>>       setup_sched_clock(dmtimer_read_sched_clock, 32, clksrc.rate);
+>>
+>> -    if (clocksource_register_hz(&clocksource_gpt, clksrc.rate))
+>> -        pr_err("Could not register clocksource %s\n",
+>> -            clocksource_gpt.name);
+>> -    else
+>> -        pr_info("OMAP clocksource: %s at %lu Hz\n",
+>> +    clocksource_register_hz(&clocksource_gpt, clksrc.rate);
+>> +
+>> +    pr_info("OMAP clocksource: %s at %lu Hz\n",
+>>               clocksource_gpt.name, clksrc.rate);
+>>   }
+>>
+>> diff --git a/arch/avr32/kernel/time.c b/arch/avr32/kernel/time.c
+>> index d0f771b..51b4a66 100644
+>> --- a/arch/avr32/kernel/time.c
+>> +++ b/arch/avr32/kernel/time.c
+>> @@ -134,9 +134,7 @@ void __init time_init(void)
+>>
+>>       /* figure rate for counter */
+>>       counter_hz = clk_get_rate(boot_cpu_data.clk);
+>> -    ret = clocksource_register_hz(&counter, counter_hz);
+>> -    if (ret)
+>> -        pr_debug("timer: could not register clocksource: %d\n", ret);
+>> +    clocksource_register_hz(&counter, counter_hz);
+>>
+>>       /* setup COMPARE clockevent */
+>>       comparator.mult = div_sc(counter_hz, NSEC_PER_SEC, comparator.shift);
+>> diff --git a/arch/blackfin/kernel/time-ts.c b/arch/blackfin/kernel/time-ts.c
+>> index cb0a484..df3bb08 100644
+>> --- a/arch/blackfin/kernel/time-ts.c
+>> +++ b/arch/blackfin/kernel/time-ts.c
+>> @@ -51,8 +51,7 @@ static inline unsigned long long bfin_cs_cycles_sched_clock(void)
+>>
+>>   static int __init bfin_cs_cycles_init(void)
+>>   {
+>> -    if (clocksource_register_hz(&bfin_cs_cycles, get_cclk()))
+>> -        panic("failed to register clocksource");
+>> +    clocksource_register_hz(&bfin_cs_cycles, get_cclk());
+>>
+>>       return 0;
+>>   }
+>> @@ -103,8 +102,7 @@ static int __init bfin_cs_gptimer0_init(void)
+>>   {
+>>       setup_gptimer0();
+>>
+>> -    if (clocksource_register_hz(&bfin_cs_gptimer0, get_sclk()))
+>> -        panic("failed to register clocksource");
+>> +    clocksource_register_hz(&bfin_cs_gptimer0, get_sclk());
+>>
+>>       return 0;
+>>   }
+>> diff --git a/arch/microblaze/kernel/timer.c b/arch/microblaze/kernel/timer.c
+>> index 3e39b10..6a2417e 100644
+>> --- a/arch/microblaze/kernel/timer.c
+>> +++ b/arch/microblaze/kernel/timer.c
+>> @@ -208,8 +208,7 @@ static struct clocksource clocksource_microblaze = {
+>>
+>>   static int __init xilinx_clocksource_init(void)
+>>   {
+>> -    if (clocksource_register_hz(&clocksource_microblaze, timer_clock_freq))
+>> -        panic("failed to register clocksource");
+>> +    clocksource_register_hz(&clocksource_microblaze, timer_clock_freq);
+>>
+>>       /* stop timer1 */
+>>       out_be32(timer_baseaddr + TCSR1,
+>> diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
+>> index 5e430ce..041cdff 100644
+>> --- a/arch/mips/jz4740/time.c
+>> +++ b/arch/mips/jz4740/time.c
+>> @@ -105,7 +105,6 @@ static struct irqaction timer_irqaction = {
+>>
+>>   void __init plat_time_init(void)
+>>   {
+>> -    int ret;
+>>       uint32_t clk_rate;
+>>       uint16_t ctrl;
+>>
+>> @@ -121,10 +120,7 @@ void __init plat_time_init(void)
+>>
+>>       clockevents_register_device(&jz4740_clockevent);
+>>
+>> -    ret = clocksource_register_hz(&jz4740_clocksource, clk_rate);
+>> -
+>> -    if (ret)
+>> -        printk(KERN_ERR "Failed to register clocksource: %d\n", ret);
+>> +    clocksource_register_hz(&jz4740_clocksource, clk_rate);
+>>
+>>       setup_irq(JZ4740_IRQ_TCU0, &timer_irqaction);
+>>
+>> diff --git a/arch/mips/loongson/common/cs5536/cs5536_mfgpt.c b/arch/mips/loongson/common/cs5536/cs5536_mfgpt.c
+>> index c639b9d..9fa6d99 100644
+>> --- a/arch/mips/loongson/common/cs5536/cs5536_mfgpt.c
+>> +++ b/arch/mips/loongson/common/cs5536/cs5536_mfgpt.c
+>> @@ -208,7 +208,8 @@ int __init init_mfgpt_clocksource(void)
+>>       if (num_possible_cpus() > 1)    /* MFGPT does not scale! */
+>>           return 0;
+>>
+>> -    return clocksource_register_hz(&clocksource_mfgpt, MFGPT_TICK_RATE);
+>> +    clocksource_register_hz(&clocksource_mfgpt, MFGPT_TICK_RATE);
+>> +    return 0;
+>>   }
+>>
+>>   arch_initcall(init_mfgpt_clocksource);
+>> diff --git a/arch/openrisc/kernel/time.c b/arch/openrisc/kernel/time.c
+>> index 7c52e94..3f789aa 100644
+>> --- a/arch/openrisc/kernel/time.c
+>> +++ b/arch/openrisc/kernel/time.c
+>> @@ -156,8 +156,7 @@ static struct clocksource openrisc_timer = {
+>>
+>>   static int __init openrisc_timer_init(void)
+>>   {
+>> -    if (clocksource_register_hz(&openrisc_timer, cpuinfo.clock_frequency))
+>> -        panic("failed to register clocksource");
+>> +    clocksource_register_hz(&openrisc_timer, cpuinfo.clock_frequency);
+>>
+>>       /* Enable the incrementer: 'continuous' mode with interrupt disabled */
+>>       mtspr(SPR_TTMR, SPR_TTMR_CR);
+>> diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+>> index b3b1441..27c0627 100644
+>> --- a/arch/powerpc/kernel/time.c
+>> +++ b/arch/powerpc/kernel/time.c
+>> @@ -788,11 +788,7 @@ static void __init clocksource_init(void)
+>>       else
+>>           clock = &clocksource_timebase;
+>>
+>> -    if (clocksource_register_hz(clock, tb_ticks_per_sec)) {
+>> -        printk(KERN_ERR "clocksource: %s is already registered\n",
+>> -               clock->name);
+>> -        return;
+>> -    }
+>> +    clocksource_register_hz(clock, tb_ticks_per_sec);
+>>
+>>       printk(KERN_INFO "clocksource: %s mult[%x] shift[%d] registered\n",
+>>              clock->name, clock->mult, clock->shift);
+>> diff --git a/arch/um/kernel/time.c b/arch/um/kernel/time.c
+>> index 117568d..2034b58 100644
+>> --- a/arch/um/kernel/time.c
+>> +++ b/arch/um/kernel/time.c
+>> @@ -92,11 +92,7 @@ static void __init setup_itimer(void)
+>>           clockevent_delta2ns(60 * HZ, &itimer_clockevent);
+>>       itimer_clockevent.min_delta_ns =
+>>           clockevent_delta2ns(1, &itimer_clockevent);
+>> -    err = clocksource_register_hz(&itimer_clocksource, USEC_PER_SEC);
+>> -    if (err) {
+>> -        printk(KERN_ERR "clocksource_register_hz returned %d\n", err);
+>> -        return;
+>> -    }
+>> +    clocksource_register_hz(&itimer_clocksource, USEC_PER_SEC);
+>>       clockevents_register_device(&itimer_clockevent);
+>>   }
+>>
+>> diff --git a/arch/x86/platform/uv/uv_time.c b/arch/x86/platform/uv/uv_time.c
+>> index 5c86786..b963774 100644
+>> --- a/arch/x86/platform/uv/uv_time.c
+>> +++ b/arch/x86/platform/uv/uv_time.c
+>> @@ -379,15 +379,13 @@ static __init int uv_rtc_setup_clock(void)
+>>       if (!is_uv_system())
+>>           return -ENODEV;
+>>
+>> -    rc = clocksource_register_hz(&clocksource_uv, sn_rtc_cycles_per_second);
+>> -    if (rc)
+>> -        printk(KERN_INFO "UV RTC clocksource failed rc %d\n", rc);
+>> -    else
+>> -        printk(KERN_INFO "UV RTC clocksource registered freq %lu MHz\n",
+>> -            sn_rtc_cycles_per_second/(unsigned long)1E6);
+>> +    clocksource_register_hz(&clocksource_uv, sn_rtc_cycles_per_second);
+>> +
+>> +    pr_info("UV RTC clocksource registered freq %lu MHz\n",
+>> +        sn_rtc_cycles_per_second/(unsigned long)1E6);
+>>
+>> -    if (rc || !uv_rtc_evt_enable || x86_platform_ipi_callback)
+>> -        return rc;
+>> +    if (!uv_rtc_evt_enable || x86_platform_ipi_callback)
+>> +        return 0;
+>>
+>>       /* Setup and register clockevents */
+>>       rc = uv_rtc_allocate_timers();
+>> diff --git a/drivers/clocksource/acpi_pm.c b/drivers/clocksource/acpi_pm.c
+>> index 6eab889..ab1dc63 100644
+>> --- a/drivers/clocksource/acpi_pm.c
+>> +++ b/drivers/clocksource/acpi_pm.c
+>> @@ -218,8 +218,9 @@ static int __init init_acpi_pm_clocksource(void)
+>>           return -ENODEV;
+>>       }
+>>
+>> -    return clocksource_register_hz(&clocksource_acpi_pm,
+>> +    clocksource_register_hz(&clocksource_acpi_pm,
+>>                           PMTMR_TICKS_PER_SEC);
+>> +    return 0;
+>>   }
+>>
+>>   /* We use fs_initcall because we want the PCI fixups to have run
+>> diff --git a/drivers/clocksource/cadence_ttc_timer.c b/drivers/clocksource/cadence_ttc_timer.c
+>> index 63f176d..b9b56ed 100644
+>> --- a/drivers/clocksource/cadence_ttc_timer.c
+>> +++ b/drivers/clocksource/cadence_ttc_timer.c
+>> @@ -301,11 +301,7 @@ static void __init ttc_setup_clocksource(struct clk *clk, void __iomem *base)
+>>       __raw_writel(CNT_CNTRL_RESET,
+>>                ttccs->ttc.base_addr + TTC_CNT_CNTRL_OFFSET);
+>>
+>> -    err = clocksource_register_hz(&ttccs->cs, ttccs->ttc.freq / PRESCALE);
+>> -    if (WARN_ON(err)) {
+>> -        kfree(ttccs);
+>> -        return;
+>> -    }
+>> +    clocksource_register_hz(&ttccs->cs, ttccs->ttc.freq / PRESCALE);
+>>
+>>       ttc_sched_clock_val_reg = base + TTC_COUNT_VAL_OFFSET;
+>>       sched_clock_register(ttc_sched_clock_read, 16, ttccs->ttc.freq / PRESCALE);
+>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+>> index 62b0de6..98649c7 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> @@ -193,9 +193,7 @@ struct clocksource mct_frc = {
+>>   static void __init exynos4_clocksource_init(void)
+>>   {
+>>       exynos4_mct_frc_start(0, 0);
+>> -
+>> -    if (clocksource_register_hz(&mct_frc, clk_rate))
+>> -        panic("%s: can't register clocksource\n", mct_frc.name);
+>> +    clocksource_register_hz(&mct_frc, clk_rate);
+>>   }
+>>
+>>   static void exynos4_mct_comp0_stop(void)
+>> diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
+>> index 14ee3ef..9c45f0a 100644
+>> --- a/drivers/clocksource/i8253.c
+>> +++ b/drivers/clocksource/i8253.c
+>> @@ -95,7 +95,8 @@ static struct clocksource i8253_cs = {
+>>
+>>   int __init clocksource_i8253_init(void)
+>>   {
+>> -    return clocksource_register_hz(&i8253_cs, PIT_TICK_RATE);
+>> +    clocksource_register_hz(&i8253_cs, PIT_TICK_RATE);
+>> +    return 0;
+>>   }
+>>   #endif
+>>
+>> diff --git a/drivers/clocksource/mmio.c b/drivers/clocksource/mmio.c
+>> index c0e2512..6e0b530 100644
+>> --- a/drivers/clocksource/mmio.c
+>> +++ b/drivers/clocksource/mmio.c
+>> @@ -69,5 +69,6 @@ int __init clocksource_mmio_init(void __iomem *base, const char *name,
+>>       cs->clksrc.mask = CLOCKSOURCE_MASK(bits);
+>>       cs->clksrc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+>>
+>> -    return clocksource_register_hz(&cs->clksrc, hz);
+>> +    clocksource_register_hz(&cs->clksrc, hz);
+>> +    return 0;
+>>   }
+>> diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
+>> index 5645cfc..c59292f 100644
+>> --- a/drivers/clocksource/samsung_pwm_timer.c
+>> +++ b/drivers/clocksource/samsung_pwm_timer.c
+>> @@ -340,7 +340,6 @@ static void __init samsung_clocksource_init(void)
+>>   {
+>>       unsigned long pclk;
+>>       unsigned long clock_rate;
+>> -    int ret;
+>>
+>>       pclk = clk_get_rate(pwm.timerclk);
+>>
+>> @@ -361,9 +360,7 @@ static void __init samsung_clocksource_init(void)
+>>                           pwm.variant.bits, clock_rate);
+>>
+>>       samsung_clocksource.mask = CLOCKSOURCE_MASK(pwm.variant.bits);
+>> -    ret = clocksource_register_hz(&samsung_clocksource, clock_rate);
+>> -    if (ret)
+>> -        panic("samsung_clocksource_timer: can't register clocksource\n");
+>> +    clocksource_register_hz(&samsung_clocksource, clock_rate);
+>>   }
+>>
+>>   static void __init samsung_timer_resources(void)
+>> diff --git a/drivers/clocksource/scx200_hrt.c b/drivers/clocksource/scx200_hrt.c
+>> index 64f9e82..57bdc04 100644
+>> --- a/drivers/clocksource/scx200_hrt.c
+>> +++ b/drivers/clocksource/scx200_hrt.c
+>> @@ -83,7 +83,8 @@ static int __init init_hrt_clocksource(void)
+>>
+>>       pr_info("enabling scx200 high-res timer (%s MHz +%d ppm)\n", mhz27 ? "27":"1", ppm);
+>>
+>> -    return clocksource_register_hz(&cs_hrt, freq);
+>> +    clocksource_register_hz(&cs_hrt, freq);
+>> +    return 0;
+>>   }
+>>
+>>   module_init(init_hrt_clocksource);
+>> diff --git a/drivers/clocksource/tcb_clksrc.c b/drivers/clocksource/tcb_clksrc.c
+>> index 00fdd11..805245d 100644
+>> --- a/drivers/clocksource/tcb_clksrc.c
+>> +++ b/drivers/clocksource/tcb_clksrc.c
+>> @@ -340,9 +340,7 @@ static int __init tcb_clksrc_init(void)
+>>       }
+>>
+>>       /* and away we go! */
+>> -    ret = clocksource_register_hz(&clksrc, divided_rate);
+>> -    if (ret)
+>> -        goto err_disable_t1;
+>> +    clocksource_register_hz(&clksrc, divided_rate);
+>>
+>>       /* channel 2:  periodic and oneshot timer support */
+>>       ret = setup_clkevents(tc, clk32k_divisor_idx);
+>> @@ -354,10 +352,6 @@ static int __init tcb_clksrc_init(void)
+>>   err_unregister_clksrc:
+>>       clocksource_unregister(&clksrc);
+>>
+>> -err_disable_t1:
+>> -    if (!tc->tcb_config || tc->tcb_config->counter_width != 32)
+>> -        clk_disable_unprepare(tc->clk[1]);
+>> -
+>>   err_disable_t0:
+>>       clk_disable_unprepare(t0_clk);
+>>
+>> diff --git a/drivers/clocksource/timer-marco.c b/drivers/clocksource/timer-marco.c
+>> index 09a17d9..ae78ce0 100644
+>> --- a/drivers/clocksource/timer-marco.c
+>> +++ b/drivers/clocksource/timer-marco.c
+>> @@ -283,7 +283,7 @@ static void __init sirfsoc_marco_timer_init(void)
+>>       /* Clear all interrupts */
+>>       writel_relaxed(0xFFFF, sirfsoc_timer_base + SIRFSOC_TIMER_INTR_STATUS);
+>>
+>> -    BUG_ON(clocksource_register_hz(&sirfsoc_clocksource, CLOCK_TICK_RATE));
+>> +    clocksource_register_hz(&sirfsoc_clocksource, CLOCK_TICK_RATE);
+>>
+>>       sirfsoc_clockevent_init();
+>>   }
+>> diff --git a/drivers/clocksource/timer-prima2.c b/drivers/clocksource/timer-prima2.c
+>> index 8a492d3..c9cc307 100644
+>> --- a/drivers/clocksource/timer-prima2.c
+>> +++ b/drivers/clocksource/timer-prima2.c
+>> @@ -204,7 +204,7 @@ static void __init sirfsoc_prima2_timer_init(struct device_node *np)
+>>       writel_relaxed(0, sirfsoc_timer_base + SIRFSOC_TIMER_COUNTER_HI);
+>>       writel_relaxed(BIT(0), sirfsoc_timer_base + SIRFSOC_TIMER_STATUS);
+>>
+>> -    BUG_ON(clocksource_register_hz(&sirfsoc_clocksource, CLOCK_TICK_RATE));
+>> +    clocksource_register_hz(&sirfsoc_clocksource, CLOCK_TICK_RATE);
+>>
+>>       sched_clock_register(sirfsoc_read_sched_clock, 64, CLOCK_TICK_RATE);
+>>
+>> diff --git a/drivers/clocksource/vt8500_timer.c b/drivers/clocksource/vt8500_timer.c
+>> index 1098ed3..13f5fa4 100644
+>> --- a/drivers/clocksource/vt8500_timer.c
+>> +++ b/drivers/clocksource/vt8500_timer.c
+>> @@ -150,9 +150,7 @@ static void __init vt8500_timer_init(struct device_node *np)
+>>       writel(0xf, regbase + TIMER_STATUS_VAL);
+>>       writel(~0, regbase + TIMER_MATCH_VAL);
+>>
+>> -    if (clocksource_register_hz(&clocksource, VT8500_TIMER_HZ))
+>> -        pr_err("%s: vt8500_timer_init: clocksource_register failed for %s\n",
+>> -                    __func__, clocksource.name);
+>> +    clocksource_register_hz(&clocksource, VT8500_TIMER_HZ);
+>>
+>>       clockevent.cpumask = cpumask_of(0);
+>>
+>> diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+>> index 67301a4..5a17c5e 100644
+>> --- a/include/linux/clocksource.h
+>> +++ b/include/linux/clocksource.h
+>> @@ -282,7 +282,7 @@ static inline s64 clocksource_cyc2ns(cycle_t cycles, u32 mult, u32 shift)
+>>   }
+>>
+>>
+>> -extern int clocksource_register(struct clocksource*);
+>> +extern void clocksource_register(struct clocksource *);
+>>   extern int clocksource_unregister(struct clocksource*);
+>>   extern void clocksource_touch_watchdog(void);
+>>   extern struct clocksource* clocksource_get_next(void);
+>> @@ -301,17 +301,17 @@ clocks_calc_mult_shift(u32 *mult, u32 *shift, u32 from, u32 to, u32 minsec);
+>>    * Don't call __clocksource_register_scale directly, use
+>>    * clocksource_register_hz/khz
+>>    */
+>> -extern int
+>> +extern void
+>>   __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq);
+>>   extern void
+>>   __clocksource_updatefreq_scale(struct clocksource *cs, u32 scale, u32 freq);
+>>
+>> -static inline int clocksource_register_hz(struct clocksource *cs, u32 hz)
+>> +static inline void clocksource_register_hz(struct clocksource *cs, u32 hz)
+>>   {
+>>       return __clocksource_register_scale(cs, 1, hz);
+>>   }
+>>
+>> -static inline int clocksource_register_khz(struct clocksource *cs, u32 khz)
+>> +static inline void clocksource_register_khz(struct clocksource *cs, u32 khz)
+>>   {
+>>       return __clocksource_register_scale(cs, 1000, khz);
+>>   }
+>> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+>> index 9951575..686ff72 100644
+>> --- a/kernel/time/clocksource.c
+>> +++ b/kernel/time/clocksource.c
+>> @@ -782,7 +782,7 @@ EXPORT_SYMBOL_GPL(__clocksource_updatefreq_scale);
+>>    * This *SHOULD NOT* be called directly! Please use the
+>>    * clocksource_register_hz() or clocksource_register_khz helper functions.
+>>    */
+>> -int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+>> +void __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+>>   {
+>>
+>>       /* Initialize mult/shift and max_idle_ns */
+>> @@ -794,7 +794,6 @@ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+>>       clocksource_enqueue_watchdog(cs);
+>>       clocksource_select();
+>>       mutex_unlock(&clocksource_mutex);
+>> -    return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(__clocksource_register_scale);
+>>
+>> @@ -804,7 +803,7 @@ EXPORT_SYMBOL_GPL(__clocksource_register_scale);
+>>    * @cs:        clocksource to be registered
+>>    *
+>>    */
+>> -int clocksource_register(struct clocksource *cs)
+>> +void clocksource_register(struct clocksource *cs)
+>>   {
+>>       /* calculate max adjustment for given mult/shift */
+>>       cs->maxadj = clocksource_max_adjustment(cs);
+>> @@ -820,7 +819,6 @@ int clocksource_register(struct clocksource *cs)
+>>       clocksource_enqueue_watchdog(cs);
+>>       clocksource_select();
+>>       mutex_unlock(&clocksource_mutex);
+>> -    return 0;
+>>   }
+>>   EXPORT_SYMBOL(clocksource_register);
+>>
+>> diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
+>> index 7a925ba..ae4c534 100644
+>> --- a/kernel/time/jiffies.c
+>> +++ b/kernel/time/jiffies.c
+>> @@ -88,7 +88,8 @@ EXPORT_SYMBOL(jiffies);
+>>
+>>   static int __init init_jiffies_clocksource(void)
+>>   {
+>> -    return clocksource_register(&clocksource_jiffies);
+>> +    clocksource_register(&clocksource_jiffies);
+>> +    return 0;
+>>   }
+>>
+>>   core_initcall(init_jiffies_clocksource);
+>>
+> 
+> 
+
+
+-- 
+Thanks!
+Yijing
