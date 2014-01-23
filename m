@@ -1,51 +1,101 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Subject: RE: [PATCH 2/2] clocksource: Make clocksource register functions
- void
-Date: Thu, 23 Jan 2014 11:40:35 +0000
-Message-ID: <063D6719AE5E284EB5DD2968C1650D6D46489C@AcuExch.aculab.com>
-References: <1390461166-36440-1-git-send-email-wangyijing@huawei.com>
- <52E0C889.6000106@prisktech.co.nz>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/8 v4] crypto:s5p-sss: Add device tree support
+Date: Thu, 23 Jan 2014 17:41:21 +0000
+Message-ID: <20140123174121.GI15586@e106331-lin.cambridge.arm.com>
+References: <1389243541-13122-1-git-send-email-ch.naveen@samsung.com>
+ <1389777291-15026-1-git-send-email-ch.naveen@samsung.com>
+ <52E0EEB8.4080602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <52E0C889.6000106@prisktech.co.nz>
-Content-Language: en-US
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: 'Tony Prisk' <linux@prisktech.co.nz>, Yijing Wang <wangyijing@huawei.com>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux@lists.openrisc.net" <linux@lists.openrisc.net>, Sekhar Nori <nsekhar@ti.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, Daniel Walker <dwalker@fifo99.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Jonas Bonn <jonas@southpole.se>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Richard Weinberger <richard@nod.at>, "x86@kernel.org" <x86@kernel.org>, Tony Lindgren <tony@atomide.com>, Ingo Molnar <mingo@redhat.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, David Brown <davidb@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <52E0EEB8.4080602@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "vzapolskiy@gmail.com" <vzapolskiy@gmail.com>, "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "cpgs@samsung.com" <cpgs@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "David S. Miller" <davem@davemloft.net>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Linuxppc-dev Tony Prisk
-> On 23/01/14 20:12, Yijing Wang wrote:
-> > Currently, clocksource_register() and __clocksource_register_scale()
-> > functions always return 0, it's pointless, make functions void.
-> > And remove the dead code that check the clocksource_register_hz()
-> > return value.
-> ......
-> > -static inline int clocksource_register_hz(struct clocksource *cs, u32 hz)
-> > +static inline void clocksource_register_hz(struct clocksource *cs, u32 hz)
-> >   {
-> >   	return __clocksource_register_scale(cs, 1, hz);
-> >   }
+On Thu, Jan 23, 2014 at 10:28:08AM +0000, Sylwester Nawrocki wrote:
+> Hi,
 > 
-> This doesn't make sense - you are still returning a value on a function
-> declared void, and the return is now from a function that doesn't return
-> anything either ?!?!
-> Doesn't this throw a compile-time warning??
+> (Adding missing devicetre ML list at CC.)
+> 
+> On 15/01/14 10:14, Naveen Krishna Chatradhi wrote:
+> > This patch adds device tree support to the s5p-sss.c crypto driver.
+> > 
+> > Also, Documentation under devicetree/bindings added.
+> > 
+> > Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+> > CC: Herbert Xu <herbert@gondor.apana.org.au>
+> > CC: David S. Miller <davem@davemloft.net>
+> > CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
+> > TO: <linux-crypto@vger.kernel.org>
+> > CC: <linux-samsung-soc@vger.kernel.org>
+> > ---
+> > Changes since v3:
+> > None
+> > 
+> >  .../devicetree/bindings/crypto/samsung-sss.txt     |   20 ++++++++++++++++++++
+> >  drivers/crypto/s5p-sss.c                           |   10 +++++++++-
+> >  2 files changed, 29 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> > new file mode 100644
+> > index 0000000..2f9d7e4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> > @@ -0,0 +1,20 @@
+> > +Samsung SoC SSS (Security SubSystem) module
+> > +
+> > +The SSS module in S5PV210 SoC supports the following:
+> > +-- Feeder (FeedCtrl)
+> > +-- Advanced Encryption Standard (AES)
+> > +-- Data Encryption Standard (DES)/3DES
+> > +-- Public Key Accelerator (PKA)
+> > +-- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
+> > +-- PRNG: Pseudo Random Number Generator
+> > +
+> > +Required properties:
+> > +
+> > +- compatible : Should contain entries for this and backward compatible
+> > +  SSS versions:
+> > +  - "samsung,s5pv210-secss" for S5PV210 SoC.
+> > +- reg : Offset and length of the register set for the module
+> > +- interrupts : the interrupt-specifier for the SSS module.
+> > +		Two interrupts "feed control and hash" in case of S5PV210
+> 
+> It should be described in what order both interrupts are supposed to be
+> specified.
+> 
+> > +- clocks : the required gating clock for the SSS module.
+> > +- clock-names : the gating clock name to be requested in the SSS driver.
 
-It depends on the compiler.
-Recent gcc allow it.
-I don't know if it is actually valid C though.
+The _exact_ names expected must be described in the binding, or this
+property is useless.
 
-There is no excuse for it on lines like the above though.
+> > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> > index 93cddeb..2da5617 100644
+> > --- a/drivers/crypto/s5p-sss.c
+> > +++ b/drivers/crypto/s5p-sss.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/scatterlist.h>
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/io.h>
+> > +#include <linux/of.h>
+> >  #include <linux/crypto.h>
+> >  #include <linux/interrupt.h>
+> >  
+> > @@ -177,6 +178,12 @@ struct s5p_aes_dev {
+> >  
+> >  static struct s5p_aes_dev *s5p_dev;
+> >  
+> > +static const struct of_device_id s5p_sss_dt_match[] = {
+> > +	{ .compatible = "samsung,s5pv210-secss", },
+> 
+> nit: the first semicolon could be omitted.
 
-	David
+I assume you mean comma ratehr than semicolon?
+
+Cheers,
+Mark.
