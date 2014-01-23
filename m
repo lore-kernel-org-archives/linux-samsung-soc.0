@@ -1,194 +1,36 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 06/10] clk/samsung: add support for pll2650xx
-Date: Thu, 23 Jan 2014 19:46:03 +0100
-Message-ID: <52E1636B.70702@samsung.com>
-References: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
- <1389099548-14649-7-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Thu, 23 Jan 2014 19:47:56 +0100
+Message-ID: <52E163DC.1090002@samsung.com>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+ <1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+ <20140120100530.GY15937@n2100.arm.linux.org.uk>
+ <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+ <20140123180423.1a62611a@www.etchedpixels.co.uk>
+ <20140123184022.GC11727@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16788 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754456AbaAWSqU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jan 2014 13:46:20 -0500
-In-reply-to: <1389099548-14649-7-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140123184022.GC11727@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
 
-Hi Rahul,
-
-On 07.01.2014 13:59, Rahul Sharma wrote:
-> Add support for pll2650xx in samsung pll file. This pll variant
-> is close to pll36xx but uses CON2 registers instead of CON1.
+On 23.01.2014 19:40, Mark Brown wrote:
+> On Thu, Jan 23, 2014 at 06:04:23PM +0000, Alan Cox wrote:
 >
-> Aud_pll in Exynos5260 is pll2650xx and uses this code.
+>> We can then enable that config option for ARM (and in time for any other
+>> architecture that turns out to need/want it). Eventually it can go away
+>> (not that its exactly doing any harm if it doesnt).
 >
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ---
->   drivers/clk/samsung/clk-pll.c |  101 +++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/samsung/clk-pll.h |    2 +-
->   2 files changed, 102 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 08f85ae..35cbc60 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -812,6 +812,101 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
->   	.recalc_rate = samsung_pll2550xx_recalc_rate,
->   };
->
-> +/*
-> + * PLL2650XX Clock Type
-> + */
-> +
-> +/* Maximum lock time can be 3000 * PDIV cycles */
-> +#define PLL2650XX_LOCK_FACTOR (3000)
-> +
-> +#define PLL2650XX_MDIV_SHIFT		(9)
-> +#define PLL2650XX_PDIV_SHIFT		(3)
-> +#define PLL2650XX_SDIV_SHIFT		(0)
-> +#define PLL2650XX_KDIV_SHIFT		(0)
-> +#define PLL2650XX_MDIV_MASK		(0x1ff)
-> +#define PLL2650XX_PDIV_MASK		(0x3f)
-> +#define PLL2650XX_SDIV_MASK		(0x7)
-> +#define PLL2650XX_KDIV_MASK		(0xffff)
-> +#define PLL2650XX_PLL_ENABLE_SHIFT	(23)
-> +#define PLL2650XX_PLL_LOCKTIME_SHIFT	(21)
-> +#define PLL2650XX_PLL_FOUTMASK_SHIFT	(31)
+> We'd need to leave it user selectable rather than enabling it for ARM,
+> the whole reason this got noticed is that people are trying to build
+> kernels that support a wider range of devices for ARM.
 
-For single bit fields it would be better to use simple definitions, 
-using BIT() macro, such as
-
-#define PLL2650XX_PLL_ENABLE		BIT(23)
-
-and then using it with | or & ~ operators directly.
-
-Also there is no need for parentheses around simple integers.
-
-> +
-> +static unsigned long samsung_pll2650xx_recalc_rate(struct clk_hw *hw,
-> +				unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con2;
-> +	s16 kdiv;
-> +	u64 fvco = parent_rate;
-> +
-> +	pll_con0 = __raw_readl(pll->con_reg);
-> +	pll_con2 = __raw_readl(pll->con_reg + 8);
-> +	mdiv = (pll_con0 >> PLL2650XX_MDIV_SHIFT) & PLL2650XX_MDIV_MASK;
-> +	pdiv = (pll_con0 >> PLL2650XX_PDIV_SHIFT) & PLL2650XX_PDIV_MASK;
-> +	sdiv = (pll_con0 >> PLL2650XX_SDIV_SHIFT) & PLL2650XX_SDIV_MASK;
-> +	kdiv = (s16)(pll_con2 & PLL2650XX_KDIV_MASK);
-> +
-> +	fvco *= (mdiv << 16) + kdiv;
-> +	do_div(fvco, (pdiv << sdiv));
-> +	fvco >>= 16;
-> +
-> +	return (unsigned long)fvco;
-> +}
-> +
-> +static int samsung_pll2650xx_set_rate(struct clk_hw *hw, unsigned long drate,
-> +					unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 tmp, pll_con0, pll_con2;
-> +	const struct samsung_pll_rate_table *rate;
-> +
-> +	rate = samsung_get_pll_settings(pll, drate);
-> +	if (!rate) {
-> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-> +			drate, __clk_get_name(hw->clk));
-> +		return -EINVAL;
-> +	}
-> +
-> +	pll_con0 = __raw_readl(pll->con_reg);
-> +	pll_con2 = __raw_readl(pll->con_reg + 8);
-> +
-> +	 /* Change PLL PMS values */
-> +	pll_con0 &= ~(PLL2650XX_MDIV_MASK << PLL2650XX_MDIV_SHIFT |
-> +			PLL2650XX_PDIV_MASK << PLL2650XX_PDIV_SHIFT |
-> +			PLL2650XX_SDIV_MASK << PLL2650XX_SDIV_SHIFT);
-> +	pll_con0 |= rate->mdiv << PLL2650XX_MDIV_SHIFT;
-> +	pll_con0 |= rate->pdiv << PLL2650XX_PDIV_SHIFT;
-> +	pll_con0 |= rate->sdiv << PLL2650XX_SDIV_SHIFT;
-> +	pll_con0 |= 1 << PLL2650XX_PLL_ENABLE_SHIFT;
-> +	pll_con0 |= 1 << PLL2650XX_PLL_FOUTMASK_SHIFT;
-> +
-> +	pll_con2 &= ~(PLL2650XX_KDIV_MASK << PLL2650XX_KDIV_SHIFT);
-> +	pll_con2 |= ((~(rate->kdiv) + 1) & PLL2650XX_KDIV_MASK)
-> +			<< PLL2650XX_KDIV_SHIFT;
-
-Huh? This looks suspiciously. Why KDIV needs to be negated and increased 
-by 1?
-
-> +
-> +	/* Set PLL lock time. */
-> +	__raw_writel(PLL2650XX_LOCK_FACTOR * rate->pdiv, pll->lock_reg);
-> +
-> +	__raw_writel(pll_con0, pll->con_reg);
-> +	__raw_writel(pll_con2, pll->con_reg + 8);
-> +
-> +	do {
-> +		tmp = __raw_readl(pll->con_reg);
-> +	} while (!(tmp & (0x1 << PLL2650XX_PLL_LOCKTIME_SHIFT)));
-
-Is the right bit being checked here? On other PLLs it's 29th bit named 
-LOCK_STAT. Could you confirm this?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops samsung_pll2650xx_clk_ops = {
-> +	.recalc_rate = samsung_pll2650xx_recalc_rate,
-> +	.set_rate = samsung_pll2650xx_set_rate,
-> +	.round_rate = samsung_pll_round_rate,
-> +};
-> +
-> +static const struct clk_ops samsung_pll2650xx_clk_min_ops = {
-> +	.recalc_rate = samsung_pll2650xx_recalc_rate,
-> +};
-> +
->   static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->   				struct samsung_pll_clock *pll_clk,
->   				void __iomem *base)
-> @@ -895,6 +990,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->   		else
->   			init.ops = &samsung_pll2550xx_clk_ops;
->   		break;
-> +	case pll_2650xx:
-> +		if (!pll->rate_table)
-> +			init.ops = &samsung_pll2650xx_clk_min_ops;
-> +		else
-> +			init.ops = &samsung_pll2650xx_clk_ops;
-> +		break;
->   	default:
->   		pr_warn("%s: Unknown pll type for pll clk %s\n",
->   			__func__, pll_clk->name);
-> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-> index e106470..b326e94 100644
-> --- a/drivers/clk/samsung/clk-pll.h
-> +++ b/drivers/clk/samsung/clk-pll.h
-> @@ -26,6 +26,7 @@ enum samsung_pll_type {
->   	pll_6552,
->   	pll_6553,
->   	pll_2550xx,
-> +	pll_2650xx,
->   };
->
->   #define PLL_35XX_RATE(_rate, _m, _p, _s)			\
-> @@ -93,5 +94,4 @@ struct samsung_pll_rate_table {
->   extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
->   			const char *pname, const void __iomem *reg_base,
->   			const unsigned long offset);
-> -
-
-Not a part of this change.
+What about making it depend on !MULTIPLATFORM and enabled by default?
 
 Best regards,
 Tomasz
