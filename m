@@ -1,40 +1,59 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 05/10] clk/samsung: add support for pll2550xx
-Date: Thu, 23 Jan 2014 19:40:06 +0100
-Message-ID: <52E16206.2020801@samsung.com>
-References: <1389099548-14649-1-git-send-email-rahul.sharma@samsung.com>
- <1389099548-14649-6-git-send-email-rahul.sharma@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Thu, 23 Jan 2014 18:40:22 +0000
+Message-ID: <20140123184022.GC11727@sirena.org.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+ <1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+ <20140120100530.GY15937@n2100.arm.linux.org.uk>
+ <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+ <20140123180423.1a62611a@www.etchedpixels.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63794 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753637AbaAWSkX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jan 2014 13:40:23 -0500
-In-reply-to: <1389099548-14649-6-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
+Return-path: <linux-serial-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140123180423.1a62611a@www.etchedpixels.co.uk>
+Sender: linux-serial-owner@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 07.01.2014 13:59, Rahul Sharma wrote:
-> From: Pankaj Dubey <pankaj.dubey@samsung.com>
->
-> exynos5260 use pll2550xx and it has different bit fields
-> for P,M,S values as compared to pll2550. Support for
-> pll2550xx is added here.
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->   drivers/clk/samsung/clk-pll.c |  108 +++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/samsung/clk-pll.h |    1 +
->   2 files changed, 109 insertions(+)
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
+--UPT3ojh+0CqEDtpF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Tomasz
+On Thu, Jan 23, 2014 at 06:04:23PM +0000, Alan Cox wrote:
+
+> We can then enable that config option for ARM (and in time for any other
+> architecture that turns out to need/want it). Eventually it can go away
+> (not that its exactly doing any harm if it doesnt).
+
+We'd need to leave it user selectable rather than enabling it for ARM,
+the whole reason this got noticed is that people are trying to build
+kernels that support a wider range of devices for ARM.
+
+--UPT3ojh+0CqEDtpF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS4WISAAoJELSic+t+oim9/IAP/iQ9FWf4Yvk5hhAuq/9JU9M7
+3jJjM/wpQ1I2n2JRu0KyE4Had9tCEdUV1gDwMbWehAP8VsbjRhouOVs0VvDggWcn
+s2VQAg0tgMmTkUsdrLagJNuJhvJqB6heXitiIvU/+GAF9IaQKV3VM1LaRSVFazCi
+uJltDTdS2+8cdO59prUK528LeE+5hYB096B9LvEuUC37jXOWlkOsA/grl0Arxc+x
+GhXCPikVYS8ecq5xSsAfLt7puSg7Uk/rf6ByHDlgtgaSlU4baqEEKEDqBu22RqPl
+/X7EadmVfzeGnUghQ2k/6suz6Igf1TdxvIa783Clq171yWpaY7Rdi7MJQ0Y2nZ5P
+YGSvvO9UEoBqca1lJjhrLwWVkH0KQbCQVBBmUTIvUMzwALOBOGUOj+GV2c/pb79D
+gHAOBOo6RBGpH4hLDAnYD/zILflehMBDsrrzkrkr1JF8MlbkqnP0MFdhF0WJDon9
+b6WmfvsyiAX+SK6WGr4Xk9gO1BuschTUoxtVFMXvxeF428c6hVWOreJvm7GWSWph
+Re8f417NlKryfw1InFQ23b5SAI+jxpn1OW+P39A9Jx+MBlGaPMx7AG0+MrvpQF4+
+K/4RBXERVR3vXUfIwQfXkVvXyaTSsrsJQVsNhXFnCClmvuDA22vIu+g8vYGj15q4
+48gdgQL5GfigXUatwXVK
+=QPQS
+-----END PGP SIGNATURE-----
+
+--UPT3ojh+0CqEDtpF--
