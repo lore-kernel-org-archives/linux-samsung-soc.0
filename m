@@ -1,49 +1,68 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 2/2] regulator: s5m8767: Document new bindings for Buck9
- GPIO control
-Date: Thu, 23 Jan 2014 08:37:01 +0100
-Message-ID: <1390462621.25714.5.camel@AMDC1943>
-References: <1390406848-20964-1-git-send-email-k.kozlowski@samsung.com>
- <1390406848-20964-3-git-send-email-k.kozlowski@samsung.com>
- <20140122194927.GZ17314@sirena.org.uk>
+From: Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: [PATCH 2/2] clocksource: Make clocksource register functions
+ void
+Date: Thu, 23 Jan 2014 20:45:13 +1300
+Message-ID: <52E0C889.6000106@prisktech.co.nz>
+References: <1390461166-36440-1-git-send-email-wangyijing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43788 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831AbaAWHhG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jan 2014 02:37:06 -0500
-In-reply-to: <20140122194927.GZ17314@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1390461166-36440-1-git-send-email-wangyijing@huawei.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Yijing Wang <wangyijing@huawei.com>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Russell King <linux@arm.linux.org.uk>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Mike Frysinger <vapier@gentoo.org>, Michal Simek <monstr@monstr.eu>, Ralf Baechle <ralf@linux-mips.org>, Jonas Bonn <jonas@southpole.se>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Daniel Lezcano <dan>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Grant Likely <grant.likely@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, 2014-01-22 at 19:49 +0000, Mark Brown wrote:
-> On Wed, Jan 22, 2014 at 05:07:28PM +0100, Krzysztof Kozlowski wrote:
-> > Add documentation for new bindings for controlling (enable/disable) the
-> > Buck9 Converter by GPIO (BUCK9EN).
-> 
-> Your CC list for this is *very* large...
-Hmmm... The get_maintainers produces such long list for any change in
-Documentation/devicetree/bindings... I'll stop using it for this.
+On 23/01/14 20:12, Yijing Wang wrote:
+> Currently, clocksource_register() and __clocksource_register_scale()
+> functions always return 0, it's pointless, make functions void.
+> And remove the dead code that check the clocksource_register_hz()
+> return value.
+>
+> Signed-off-by: Yijing Wang <wangyijing@huawei.com>
+......
+> diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+> index 67301a4..5a17c5e 100644
+> --- a/include/linux/clocksource.h
+> +++ b/include/linux/clocksource.h
+> @@ -282,7 +282,7 @@ static inline s64 clocksource_cyc2ns(cycle_t cycles, u32 mult, u32 shift)
+>   }
+>   
+>   
+> -extern int clocksource_register(struct clocksource*);
+> +extern void clocksource_register(struct clocksource *);
+>   extern int clocksource_unregister(struct clocksource*);
+>   extern void clocksource_touch_watchdog(void);
+>   extern struct clocksource* clocksource_get_next(void);
+> @@ -301,17 +301,17 @@ clocks_calc_mult_shift(u32 *mult, u32 *shift, u32 from, u32 to, u32 minsec);
+>    * Don't call __clocksource_register_scale directly, use
+>    * clocksource_register_hz/khz
+>    */
+> -extern int
+> +extern void
+>   __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq);
+>   extern void
+>   __clocksource_updatefreq_scale(struct clocksource *cs, u32 scale, u32 freq);
+>   
+> -static inline int clocksource_register_hz(struct clocksource *cs, u32 hz)
+> +static inline void clocksource_register_hz(struct clocksource *cs, u32 hz)
+>   {
+>   	return __clocksource_register_scale(cs, 1, hz);
+>   }
 
-> 
-> > +	- s5m8767,pmic-ext-control-enable: regulator can be enabled/disabled
-> > +		by GPIO (valid only for buck9).
-> > +	- s5m8767,pmic-ext-control-gpio: GPIO specifier for one GPIO
-> > +		controlling this regulator (valid only for buck9).
-> > +		This property is required when 's5m8767,pmic-ext-control-enable' is specified.
-> 
-> In what situation might the GPIO be present but not usable - can't we
-> just use the presence of the GPIO property?  Also GPIO properties are
-> supposed to be always "-gpios".
-Remove the "s5m8767,pmic-ext-control-enable" and use only
-"s5m8767,pmic-ext-control-gpios"? Sure, that makes sense. Thanks for
-idea.
+This doesn't make sense - you are still returning a value on a function 
+declared void, and the return is now from a function that doesn't return 
+anything either ?!?!
+Doesn't this throw a compile-time warning??
 
-
-Best regards,
-Krzysztof
+Regards
+Tony Prisk
