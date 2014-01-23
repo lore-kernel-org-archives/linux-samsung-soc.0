@@ -1,65 +1,52 @@
-From: Mj Embd <mj.embd@gmail.com>
-Subject: Re: Arndale Timer Interrupt Question
-Date: Thu, 23 Jan 2014 11:40:23 +0530
-Message-ID: <CAPUj1OOvphUhLRO6jDRD4RRUFbYO_my=BZZ1gMJ6d_G9WUN4_w@mail.gmail.com>
-References: <CAPUj1OM=Zn2nd98aXRCRUJrLknkS0o44V1BfuJhz5i19w+M5Ow@mail.gmail.com>
-	<1437466.9hkS4zH5MN@amdc1032>
-	<52D02693.1040003@samsung.com>
+From: Yijing Wang <wangyijing@huawei.com>
+Subject: [PATCH 1/2] clocksource: Remove outdated comments
+Date: Thu, 23 Jan 2014 15:12:27 +0800
+Message-ID: <1390461147-36256-1-git-send-email-wangyijing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52D02693.1040003@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linaro-kernel <linaro-kernel@lists.linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mips-bounce@linux-mips.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Russell King <linux@arm.linux.org.uk>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Mike Frysinger <vapier@gentoo.org>, Michal Simek <monstr@monstr.eu>, Ralf Baechle <ralf@linux-mips.org>, Jonas Bonn <jonas@southpole.se>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Daniel Lezcano <danie>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 1/10/14, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi,
->
-> On 09.01.2014 13:52, Bartlomiej Zolnierkiewicz wrote:
->>
->> added linux-samsung-soc to cc:,
->> it is a better suited list for this question
->>
->> On Thursday, January 09, 2014 10:30:56 AM Mj Embd wrote:
->>> I am a bit confused on the interrupt number for CNTVIRQ..CNTHPIRQ. Can
->>> you please help here.
->>>
->>> As per the exynos5 public manual
->>> What is the difference between  CPU_nCNTHPIRQ[0] and CNTHPIRQ.
->
-> I'm not sure if this is really what I think it is, but looking at the
-> manual, CPU_nCNTHPIRQ[0] and [1] SPI ports and CNTHPIRQ PPI port seem to
-> be the same signals, with the difference that the first two are shared
-> interrupts connected through the combiner, while the last one is a
-> per-processor interrupt, directly connected to GIC PPI port, allowing
-> each CPU to get its own CNTHPIRQ signal ([0] for CPU 0 and [1] for CPU 1).
+clocksource_register() and __clocksource_register_scale()
+always return 0, so the comment is just pointless, it's
+outdated, remove it.
 
-So while registering the IRQ which one has to be used Core0:26/33 Core1:26/54 ?
+Signed-off-by: Yijing Wang <wangyijing@huawei.com>
+---
+ kernel/time/clocksource.c |    3 ---
+ 1 files changed, 0 insertions(+), 3 deletions(-)
 
-> Best regards,
-> Tomasz
->
->>>
->>> While the later has an interrupt ID 26, the former is part of a group
->>> with combined interrupt id as 33 for core 0 and 54 for core 1.
->>>
->>> For a timer interrupt which goes to PL2, which id should be used 26 or
->>> 33 for core 0 ?
->>>
->>> Please clear this confusion.
->>>
->>> Many Thanks
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
-
-
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index ba3e502..9951575 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -779,8 +779,6 @@ EXPORT_SYMBOL_GPL(__clocksource_updatefreq_scale);
+  * @scale:	Scale factor multiplied against freq to get clocksource hz
+  * @freq:	clocksource frequency (cycles per second) divided by scale
+  *
+- * Returns -EBUSY if registration fails, zero otherwise.
+- *
+  * This *SHOULD NOT* be called directly! Please use the
+  * clocksource_register_hz() or clocksource_register_khz helper functions.
+  */
+@@ -805,7 +803,6 @@ EXPORT_SYMBOL_GPL(__clocksource_register_scale);
+  * clocksource_register - Used to install new clocksources
+  * @cs:		clocksource to be registered
+  *
+- * Returns -EBUSY if registration fails, zero otherwise.
+  */
+ int clocksource_register(struct clocksource *cs)
+ {
 -- 
--mj
+1.7.1
