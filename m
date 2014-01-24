@@ -1,76 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
- device probe
-Date: Fri, 24 Jan 2014 12:03:09 +0000
-Message-ID: <20140124120309.GU11727@sirena.org.uk>
-References: <1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
- <20140120100530.GY15937@n2100.arm.linux.org.uk>
- <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
- <20140123180423.1a62611a@www.etchedpixels.co.uk>
- <20140123184022.GC11727@sirena.org.uk>
- <52E163DC.1090002@samsung.com>
- <20140123193633.GG11727@sirena.org.uk>
- <20140123195144.2d3aa44d@www.etchedpixels.co.uk>
- <20140123200509.GO11727@sirena.org.uk>
- <20140123213321.372ce82b@www.etchedpixels.co.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gn1ylXQ+YRNuZICZ"
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v3 0/2] regulator: s5m8767: Use GPIO for controlling Buck9/eMMC
+Date: Fri, 24 Jan 2014 14:37:56 +0100
+Message-ID: <1390570678-30686-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58897 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752265AbaAXMDb (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41251 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752497AbaAXNiR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jan 2014 07:03:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20140123213321.372ce82b@www.etchedpixels.co.uk>
+	Fri, 24 Jan 2014 08:38:17 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Hi,
 
 
---gn1ylXQ+YRNuZICZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is third version of patch adding GPIO control over Buck9 regulator
+in s5m8767 regulator driver.
 
-On Thu, Jan 23, 2014 at 09:33:21PM +0000, Alan Cox wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Previously the patch was part of larger patchset from which all other patches
+were applied.
 
-> > I don't see how we can meaningfully test this on a platform - the kernel
-> > would have to be pretty demented to care, it's userspace that cares and
-> > that's not really tied to individual serial drivers but is where we
-> > mainly need coverage.
 
-> Which is why I think we want to enable it gradually and platform by
-> platform as that platform or arch maintainer judges it appropriate given
-> their knowledge of their platform(s).
+Changes since v2:
+1. Use only one DT property ("s5m8767,pmic-ext-control-gpios");
+   suggested by Mark Brown.
 
-I don't see how that follows?  For the most part architecture
-maintainers aren't going to be able to say too much about which
-userspaces are being run on their platforms if the architecture
-has any kind of widespread use.
+Changes since v1:
+1. Use ena_gpio of regulator core, as suggested by Mark Brown.
 
---gn1ylXQ+YRNuZICZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+This patchset is based on next tree: next-20140122.
 
-iQIcBAEBAgAGBQJS4lZ6AAoJELSic+t+oim9OPUQAJG4Z+j/lirrJAWlmFxJXBHZ
-bmzofKXrOShsBFBOFUDrIKYZ6FNlr8YuU+5Pggr9IT52fc7gGUeU3j9U075nQMgx
-9Bx8rOBSh4WxNiGFDkf6PK5S3PkaXTvrNtrnx5TA57LtqzueEhErD8KsofaKdp1G
-51Z5fr+DRiceauRBnRAN8ozN1fjJnHUMyXwZoKZYFh1vHlRc0OJBxuUsmTkZvoj7
-6ZfDUa/Sl5Z6d7GXyQDZlZLwJY8Sfm/oO9FzLqMlAkn6rzWnkw6suvqXxBUuqrBr
-eKzeDAZCd7zf8M4r/KWBmFS6mwkGjDdY8+eoP+JOLG7BpUQmBdvMrzUXbcouEqEz
-unsCFxJ0SqQgMehq7jK8uccqguzN0odc5pcLL3dlOaAbKROGL8tYsDoex72yqm2I
-dCZBNiqLbLmz7/kl8FoMcbAPZUH/B246XunYtg9O1oaFXlTH0Wamm9hXbhGrcj5p
-C/GzxErdLM8ZaCWwLStU4InTQzK2vmJPbqT5fkvKGdX2Wx80DHixVkvX6pFFuFX1
-aTgGtXbB04M4IJGk4j0wQ1uBWTHVWpcAjN3wHJej34P6g73h+82GHAd/cqEi4RGv
-MhJBtCuHkhPHJJlJf0Hx/nee6KDDlR672QRULlKKag7Zpz1YzUCnKxDciSw6PFjU
-P5QLeU5DIwmMpXnJNgvi
-=+gPQ
------END PGP SIGNATURE-----
+Best regards,
+Krzysztof
 
---gn1ylXQ+YRNuZICZ--
+Krzysztof Kozlowski (2):
+  regulator: s5m8767: Use GPIO for controlling Buck9/eMMC
+  regulator: s5m8767: Document new binding for Buck9 GPIO control
+
+ .../bindings/regulator/s5m8767-regulator.txt       |   13 ++-
+ drivers/regulator/s5m8767.c                        |   87 +++++++++++++++++++-
+ include/linux/mfd/samsung/core.h                   |    3 +-
+ include/linux/mfd/samsung/s5m8767.h                |    7 ++
+ 4 files changed, 105 insertions(+), 5 deletions(-)
+
+-- 
+1.7.9.5
