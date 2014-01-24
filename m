@@ -1,58 +1,48 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/8 v4] crypto:s5p-sss: Add support for SSS module on Exynos
-Date: Fri, 24 Jan 2014 15:09:58 +0100
-Message-ID: <52E27436.5040908@samsung.com>
-References: <1389243569-13161-1-git-send-email-ch.naveen@samsung.com>
- <1389777316-15070-1-git-send-email-ch.naveen@samsung.com>
+Subject: Samsung-clk patches for 3.15
+Date: Fri, 24 Jan 2014 15:38:33 +0100
+Message-ID: <52E27AE9.7040501@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35615 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752359AbaAXOKP (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:44346 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752445AbaAXOiu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jan 2014 09:10:15 -0500
-In-reply-to: <1389777316-15070-1-git-send-email-ch.naveen@samsung.com>
+	Fri, 24 Jan 2014 09:38:50 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MZW00CL6U0P3290@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 24 Jan 2014 14:38:49 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, tomasz.figa@gmail.com, "David S. Miller" <davem@davemloft.net>
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, thomas.ab@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>, a.hajda@samsung.com
 
-Hi Naveen,
+Hi,
 
-On 15.01.2014 10:15, Naveen Krishna Chatradhi wrote:
-> This patch adds new compatible and variant struct to support the SSS
-> module on Exynos4 (Exynos4210), Exynos5 (Exynos5420 and Exynos5250)
-> for which
-> 1. AES register are at an offset of 0x200 and
-> 2. hash interrupt is not available
-[snip]
->   Required properties:
->
->   - compatible : Should contain entries for this and backward compatible
->     SSS versions:
->     - "samsung,s5pv210-secss" for S5PV210 SoC.
-> +  - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
-> +		Exynos5260 and Exynos5420 SoCs.
->   - reg : Offset and length of the register set for the module
->   - interrupts : the interrupt-specifier for the SSS module.
-> -		Two interrupts "feed control and hash" in case of S5PV210
-> -- clocks : the required gating clock for the SSS module.
-> -- clock-names : the gating clock name to be requested in the SSS driver.
-> +		-- Two interrupts "feed control and hash" in case of
-> +		   "samsung,s5pv210-secss"
-> +		-- One interrupts "feed control" in case of
-> +		   "samsung,exynos4210-secss".
-> +- clocks : list of clock phandle and specifier pairs for all clocks  listed in
-> +		clock-names property.
-> +- clock-names : list of device clock input names; should contain one entry
-> +		"secss".
+Linux 3.14 is going to include Andrzej Hajda's patches converting 
+Samsung clock drivers to use clock ID defines in include/dt-bindings, 
+instead of local enums, but to avoid unnecessary merge conflicts we have 
+converted only the clock driver, leaving DTS files unchanged yet.
 
-Hmm, I guess this is a rebase error, because this should rather be 
-squashed with patch 2/8.
+We intend to complete the conversion in 3.15, by replacing magic numbers 
+in DTS files with respective preprocessor macros, but to reduce 
+potential conflicts we need help of you, Samsung clock patches authors :).
 
-Otherwise the patch looks good to me.
+I'd like to ask anybody who already has patches for DTS files adding any 
+clock-related contents still using numeric IDs, e.g. clock properties in 
+nodes or full nodes containing clock properties, to make sure that the 
+patches are merged before Andrzej sends the conversion patches. Then 
+Andrzej's script will generate patches updating all clock properties, 
+leaving no numeric IDs in DTS files.
+
+If you are just starting your work on a patch that introduces changes as 
+mentioned above, please make sure to already use clock macros, not 
+numeric IDs. Otherwise you risk having needless rebases with a lot of 
+conflicts. You have been warned ;).
 
 Best regards,
 Tomasz
