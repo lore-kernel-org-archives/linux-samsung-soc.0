@@ -1,80 +1,75 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 4/5] ARM: S3C24XX: convert boards to use common restart
- function
-Date: Fri, 24 Jan 2014 11:08:58 +0100
-Message-ID: <52E23BBA.7020804@gmail.com>
-References: <3105326.uFdOVLyXH8@phil> <3955130.WSqWacB8SI@phil> <52E19931.80803@gmail.com> <1873916.c2IkPH5hCW@phil>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add l2x0 device node for Exynos4-based boards
+Date: Fri, 24 Jan 2014 12:48:13 +0100
+Message-ID: <52E252FD.7030908@samsung.com>
+References: <1389084826-19827-1-git-send-email-tushar.behera@linaro.org>
+ <52E15C27.3020104@samsung.com>
+ <CAHbNUh3=RVj-40d++Qa9OORBS53==zKr6XKYhEKoDYLudwFoSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:52289 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751053AbaAXKJE (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:35825 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752064AbaAXLsa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jan 2014 05:09:04 -0500
-Received: by mail-ea0-f174.google.com with SMTP id b10so887381eae.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jan 2014 02:09:02 -0800 (PST)
-In-Reply-To: <1873916.c2IkPH5hCW@phil>
+	Fri, 24 Jan 2014 06:48:30 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MZW00D51M4SNG60@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 24 Jan 2014 11:48:28 +0000 (GMT)
+In-reply-to: <CAHbNUh3=RVj-40d++Qa9OORBS53==zKr6XKYhEKoDYLudwFoSg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kgene Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>
 
 
 
-On 24.01.2014 09:03, Heiko St=FCbner wrote:
-> On Thursday 23 January 2014 23:35:29 Tomasz Figa wrote:
->> On 23.01.2014 20:02, Heiko St=FCbner wrote:
->>> Am Donnerstag, 23. Januar 2014, 19:51:34 schrieb Tomasz Figa:
->>>> On 23.01.2014 19:36, Heiko St=FCbner wrote:
->>> In general, I want to try establishing some sort of general restart=
- way,
->>> as in the future one dt-board should hopefully be enough to cover a=
-ll
->>> s3c24xx soc variants.
+On 24.01.2014 05:44, Tushar Behera wrote:
+> On 23 January 2014 23:45, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi,
 >>
->> If you make SAMSUNG_WDT_RESET always selected on S3C24XX then I gues=
-s
->> it's fine.
 >>
->>>> Note that you can make the restart field NULL in mach_desc in boar=
-d
->>>> files.
+>> On 07.01.2014 09:53, Tushar Behera wrote:
 >>>
->>> As I said above, this is mainly meant for the dt-case. The legacy-b=
-oard
->>> files are more or less only secondary, and the affected boards can =
-of
->>> course then have a NULL restart handle :-) .
+>>> For Exynos4 platform, L2 cache initialization is done only if
+>>> a device node for l2x0 device exists.
 >>>
->>> So for this the dt-board could simply use the wdt-reset, which then=
- gets
->>> replaced by the ccf-based reset if appropriate.
+>>> L2 cache initialization path is different when a board boots with
+>>> secure firmware. Since there are many Exynos4 based SoCs that boot
+>>> in secure mode, enabling this only for boards that don't boot with
+>>> secure firmware.
+>>>
+>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>> ---
+>>>
+>>> Tested on Exynos4210-Origen board.
+>>>
+>>>    arch/arm/boot/dts/exynos4.dtsi                  |    8 ++++++++
+>>>    arch/arm/boot/dts/exynos4210-origen.dts         |    4 ++++
+>>>    arch/arm/boot/dts/exynos4210-smdkv310.dts       |    4 ++++
+>>>    arch/arm/boot/dts/exynos4210-trats.dts          |    4 ++++
+>>>    arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 ++++
+>>>    arch/arm/boot/dts/exynos4412-odroidx.dts        |    4 ++++
+>>>    arch/arm/boot/dts/exynos4412-smdk4412.dts       |    4 ++++
+>>>    arch/arm/boot/dts/exynos4412-tiny4412.dts       |    4 ++++
+>>>    8 files changed, 36 insertions(+)
 >>
->> OK. By the way, are there any benefits of using this software reset =
-over
->> watchdog reset? Maybe all S3C24xx could simply use watchdog reset an=
-d no
->> special handling of those with swrst would be needed.
+>>
+>> Looks good. Unfortunately this is still going to break secure firmware
+>> enabled boards, because l2x0_of_init() does not check if the node is
+>> enabled.
+>>
 >
-> According to the manuals I looked at, all S3C24XX SoCs seem to suppor=
-t the
-> watchdog reset - I'm not sure why the swrst variant was choosen for t=
-he newer
-> ones when they were added initially. So yes in theory all of them see=
-m to be
-> able to use the watchdog reset.
+> Is the following check in l2x0_of_init() not enough?
 >
-> But in any case the s3c2412 will need its own handling, due to the ap=
-parent
-> clock problem during resets (mentioned in the code and the manuals of
-> s3c2412/s3c2413).
+> 1002 |-------np = of_find_matching_node(NULL, l2x0_ids);
+> 1003 |-------if (!np)
+> 1004 |-------|-------return -ENODEV;
 
-OK. So WDT by default (always selected in Kconfig) and override to SWRS=
-T=20
-in clock driver if available should work.
+It only looks for a matching node without checking its status property.
 
 Best regards,
 Tomasz
