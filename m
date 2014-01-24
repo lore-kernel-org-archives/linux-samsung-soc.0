@@ -1,72 +1,234 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v5 4/4] [media] exynos-scaler: Add DT bindings for SCALER
- driver
-Date: Fri, 24 Jan 2014 17:09:53 +0100
-Message-ID: <52E29051.3070906@samsung.com>
-References: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
- <1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41427 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831AbaAXQKL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jan 2014 11:10:11 -0500
-In-reply-to: <1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] spi/s3c64xx: Split wait_for_xfer() into PIO and DMA versions
+Date: Fri, 24 Jan 2014 20:06:14 +0000
+Message-ID: <1390593974-28837-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: s.nawrocki@samsung.com, posciak@google.com, hverkuil@xs4all.nl, m.chehab@samsung.com
 
-Hi Shaik,
+From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-On 09.01.2014 04:28, Shaik Ameer Basha wrote:
-> This patch adds the DT binding documentation for the
-> Exynos5420/5410 based SCALER device driver.
->
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->   .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
->   1 file changed, 22 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
->
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> new file mode 100644
-> index 0000000..9328e7d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> @@ -0,0 +1,22 @@
-> +* Samsung Exynos5 SCALER device
-> +
-> +SCALER is used for scaling, blending, color fill and color space
-> +conversion on EXYNOS[5420/5410] SoCs.
-> +
-> +Required properties:
-> +- compatible: should be "samsung,exynos5420-scaler" or
-> +			"samsung,exynos5410-scaler"
-> +- reg: should contain SCALER physical address location and length
-> +- interrupts: should contain SCALER interrupt number
+There is no meaningful code sharing between the PIO and DMA variants
+(just the timeout calculation) so in order to make the code easier to
+work with split the two cases.
 
-s/number/specifier/
+Looking at the code it is not clear how the PIO version works for large
+transmits, greater than FIFO size is only handled for RX.
 
-> +- clocks: should contain the SCALER clock specifier, from the
-> +			common clock bindings
+Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ drivers/spi/spi-s3c64xx.c | 166 +++++++++++++++++++++++++---------------------
+ 1 file changed, 89 insertions(+), 77 deletions(-)
 
-s/specifier/phandle and specifier pair for each clock listed in 
-clock-names property/
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 19113538f5c6..b9ba7a3e7741 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -677,101 +677,110 @@ static u32 s3c64xx_spi_wait_for_timeout(struct s3c64xx_spi_driver_data *sdd,
+ 	return RX_FIFO_LVL(status, sdd);
+ }
+ 
+-static int wait_for_xfer(struct s3c64xx_spi_driver_data *sdd,
+-				struct spi_transfer *xfer, int dma_mode)
++static int wait_for_dma(struct s3c64xx_spi_driver_data *sdd,
++			struct spi_transfer *xfer)
+ {
+ 	void __iomem *regs = sdd->regs;
+ 	unsigned long val;
++	u32 status;
+ 	int ms;
+ 
+ 	/* millisecs to xfer 'len' bytes @ 'cur_speed' */
+ 	ms = xfer->len * 8 * 1000 / sdd->cur_speed;
+ 	ms += 10; /* some tolerance */
+ 
+-	if (dma_mode) {
+-		val = msecs_to_jiffies(ms) + 10;
+-		val = wait_for_completion_timeout(&sdd->xfer_completion, val);
+-	} else {
+-		u32 status;
+-		val = msecs_to_loops(ms);
+-		do {
++	val = msecs_to_jiffies(ms) + 10;
++	val = wait_for_completion_timeout(&sdd->xfer_completion, val);
++
++	/*
++	 * If the previous xfer was completed within timeout, then
++	 * proceed further else return -EIO.
++	 * DmaTx returns after simply writing data in the FIFO,
++	 * w/o waiting for real transmission on the bus to finish.
++	 * DmaRx returns only after Dma read data from FIFO which
++	 * needs bus transmission to finish, so we don't worry if
++	 * Xfer involved Rx(with or without Tx).
++	 */
++	if (val && !xfer->rx_buf) {
++		val = msecs_to_loops(10);
++		status = readl(regs + S3C64XX_SPI_STATUS);
++		while ((TX_FIFO_LVL(status, sdd)
++			|| !S3C64XX_SPI_ST_TX_DONE(status, sdd))
++		       && --val) {
++			cpu_relax();
+ 			status = readl(regs + S3C64XX_SPI_STATUS);
+-		} while (RX_FIFO_LVL(status, sdd) < xfer->len && --val);
++		}
++
+ 	}
+ 
+-	if (dma_mode) {
+-		u32 status;
+-
+-		/*
+-		 * If the previous xfer was completed within timeout, then
+-		 * proceed further else return -EIO.
+-		 * DmaTx returns after simply writing data in the FIFO,
+-		 * w/o waiting for real transmission on the bus to finish.
+-		 * DmaRx returns only after Dma read data from FIFO which
+-		 * needs bus transmission to finish, so we don't worry if
+-		 * Xfer involved Rx(with or without Tx).
+-		 */
+-		if (val && !xfer->rx_buf) {
+-			val = msecs_to_loops(10);
+-			status = readl(regs + S3C64XX_SPI_STATUS);
+-			while ((TX_FIFO_LVL(status, sdd)
+-				|| !S3C64XX_SPI_ST_TX_DONE(status, sdd))
+-					&& --val) {
+-				cpu_relax();
+-				status = readl(regs + S3C64XX_SPI_STATUS);
+-			}
++	/* If timed out while checking rx/tx status return error */
++	if (!val)
++		return -EIO;
+ 
+-		}
++	return 0;
++}
+ 
+-		/* If timed out while checking rx/tx status return error */
+-		if (!val)
+-			return -EIO;
+-	} else {
+-		int loops;
+-		u32 cpy_len;
+-		u8 *buf;
+-
+-		/* If it was only Tx */
+-		if (!xfer->rx_buf) {
+-			sdd->state &= ~TXBUSY;
+-			return 0;
+-		}
++static int wait_for_pio(struct s3c64xx_spi_driver_data *sdd,
++			struct spi_transfer *xfer)
++{
++	void __iomem *regs = sdd->regs;
++	unsigned long val;
++	u32 status;
++	int loops;
++	u32 cpy_len;
++	u8 *buf;
++	int ms;
+ 
+-		/*
+-		 * If the receive length is bigger than the controller fifo
+-		 * size, calculate the loops and read the fifo as many times.
+-		 * loops = length / max fifo size (calculated by using the
+-		 * fifo mask).
+-		 * For any size less than the fifo size the below code is
+-		 * executed atleast once.
+-		 */
+-		loops = xfer->len / ((FIFO_LVL_MASK(sdd) >> 1) + 1);
+-		buf = xfer->rx_buf;
+-		do {
+-			/* wait for data to be received in the fifo */
+-			cpy_len = s3c64xx_spi_wait_for_timeout(sdd,
+-						(loops ? ms : 0));
++	/* millisecs to xfer 'len' bytes @ 'cur_speed' */
++	ms = xfer->len * 8 * 1000 / sdd->cur_speed;
++	ms += 10; /* some tolerance */
+ 
+-			switch (sdd->cur_bpw) {
+-			case 32:
+-				ioread32_rep(regs + S3C64XX_SPI_RX_DATA,
+-					buf, cpy_len / 4);
+-				break;
+-			case 16:
+-				ioread16_rep(regs + S3C64XX_SPI_RX_DATA,
+-					buf, cpy_len / 2);
+-				break;
+-			default:
+-				ioread8_rep(regs + S3C64XX_SPI_RX_DATA,
+-					buf, cpy_len);
+-				break;
+-			}
++	val = msecs_to_loops(ms);
++	do {
++		status = readl(regs + S3C64XX_SPI_STATUS);
++	} while (RX_FIFO_LVL(status, sdd) < xfer->len && --val);
+ 
+-			buf = buf + cpy_len;
+-		} while (loops--);
+-		sdd->state &= ~RXBUSY;
++
++	/* If it was only Tx */
++	if (!xfer->rx_buf) {
++		sdd->state &= ~TXBUSY;
++		return 0;
+ 	}
+ 
++	/*
++	 * If the receive length is bigger than the controller fifo
++	 * size, calculate the loops and read the fifo as many times.
++	 * loops = length / max fifo size (calculated by using the
++	 * fifo mask).
++	 * For any size less than the fifo size the below code is
++	 * executed atleast once.
++	 */
++	loops = xfer->len / ((FIFO_LVL_MASK(sdd) >> 1) + 1);
++	buf = xfer->rx_buf;
++	do {
++		/* wait for data to be received in the fifo */
++		cpy_len = s3c64xx_spi_wait_for_timeout(sdd,
++						       (loops ? ms : 0));
++
++		switch (sdd->cur_bpw) {
++		case 32:
++			ioread32_rep(regs + S3C64XX_SPI_RX_DATA,
++				     buf, cpy_len / 4);
++			break;
++		case 16:
++			ioread16_rep(regs + S3C64XX_SPI_RX_DATA,
++				     buf, cpy_len / 2);
++			break;
++		default:
++			ioread8_rep(regs + S3C64XX_SPI_RX_DATA,
++				    buf, cpy_len);
++			break;
++		}
++
++		buf = buf + cpy_len;
++	} while (loops--);
++	sdd->state &= ~RXBUSY;
++
+ 	return 0;
+ }
+ 
+@@ -928,7 +937,10 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+ 
+ 	spin_unlock_irqrestore(&sdd->lock, flags);
+ 
+-	status = wait_for_xfer(sdd, xfer, use_dma);
++	if (use_dma)
++		status = wait_for_dma(sdd, xfer);
++	else
++		status = wait_for_pio(sdd, xfer);
+ 
+ 	if (status) {
+ 		dev_err(&spi->dev, "I/O Error: rx-%d tx-%d res:rx-%c tx-%c len-%d\n",
+-- 
+1.8.5.3
 
-s/from/according to/
-
-> +- clock-names: should be "scaler"
-
-should contain exactly one entry:
-  - "scaler" - IP bus clock.
-
-Also this patch should be first in the series to let the driver added in 
-further patches use already present bindings.
-
-Best regards,
-Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
