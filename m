@@ -1,57 +1,101 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
-Date: Sun, 26 Jan 2014 13:36:53 -0800
-Message-ID: <20140126213653.GB18840@core.coreip.homeip.net>
-References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
+Subject: Re: [PATCH] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
+Date: Sun, 26 Jan 2014 13:45:42 -0800
+Message-ID: <20140126214542.GC18840@core.coreip.homeip.net>
+References: <1390720540-13350-1-git-send-email-badarkhe.manish@gmail.com>
+ <52E50C24.8030305@gmail.com>
+ <CAKDJKT5TvkgUN2Ee-2NignzxY1F54SHEiNL2i6c+hMjnLHOg5g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:34462 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753130AbaAZVpp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 26 Jan 2014 16:45:45 -0500
 Content-Disposition: inline
-In-Reply-To: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manish Badarkhe <badarkhe.manish@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com
+In-Reply-To: <CAKDJKT5TvkgUN2Ee-2NignzxY1F54SHEiNL2i6c+hMjnLHOg5g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Manish Badarkhe <badarkhe.manish@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-Hi Manish,
-
-On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
-> Use "devm_regulator_register" instead of "regulator_register"
-> which simplifies the code.
-
-... and also breaks the driver: now you are freeing desc->name and
-desc->supply_name while regulator structures are still alive and can be
-referenced from its sysfs attributes, etc.
-
+On Sun, Jan 26, 2014 at 07:31:50PM +0530, Manish Badarkhe wrote:
+> Hi Tomasz,
 > 
-> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
-> ---
-> :100644 100644 5ea64b9... 6d32341... M	drivers/regulator/fixed.c
->  drivers/regulator/fixed.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Thank you for your review comments.
 > 
-> diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-> index 5ea64b9..6d32341 100644
-> --- a/drivers/regulator/fixed.c
-> +++ b/drivers/regulator/fixed.c
-> @@ -186,7 +186,8 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
->  	cfg.driver_data = drvdata;
->  	cfg.of_node = pdev->dev.of_node;
->  
-> -	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
-> +	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
-> +					       &cfg);
->  	if (IS_ERR(drvdata->dev)) {
->  		ret = PTR_ERR(drvdata->dev);
->  		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
-> @@ -212,7 +213,6 @@ static int reg_fixed_voltage_remove(struct platform_device *pdev)
->  {
->  	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
->  
-> -	regulator_unregister(drvdata->dev);
->  	kfree(drvdata->desc.supply_name);
->  	kfree(drvdata->desc.name);
->  
+> On Sun, Jan 26, 2014 at 6:52 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> >
+> > Hi Manish,
+> >
+> >
+> > On 26.01.2014 08:15, Manish Badarkhe wrote:
+> >>
+> >> Instead of "#if define CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
+> >> option for DT code to avoid if-deffery in code.
+> >>
+> >> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+> >> ---
+> >> :100644 100644 b4513f2... d353fbc... M  drivers/power/max8925_power.c
+> >>   drivers/power/max8925_power.c |   14 +++++---------
+> >>   1 file changed, 5 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
+> >> index b4513f2..d353fbc 100644
+> >> --- a/drivers/power/max8925_power.c
+> >> +++ b/drivers/power/max8925_power.c
+> >> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
+> >>         return 0;
+> >>   }
+> >>
+> >> -#ifdef CONFIG_OF
+> >>   static struct max8925_power_pdata *
+> >>   max8925_power_dt_init(struct platform_device *pdev)
+> >>   {
+> >> @@ -468,13 +467,6 @@ max8925_power_dt_init(struct platform_device *pdev)
+> >>
+> >>         return pdata;
+> >>   }
+> >> -#else
+> >> -static struct max8925_power_pdata *
+> >> -max8925_power_dt_init(struct platform_device *pdev)
+> >> -{
+> >> -       return pdev->dev.platform_data;
+> >> -}
+> >> -#endif
+> >>
+> >>   static int max8925_power_probe(struct platform_device *pdev)
+> >>   {
+> >> @@ -483,7 +475,11 @@ static int max8925_power_probe(struct platform_device *pdev)
+> >>         struct max8925_power_info *info;
+> >>         int ret;
+> >>
+> >> -       pdata = max8925_power_dt_init(pdev);
+> >> +       if (IS_ENABLED(CONFIG_OF))
+> >> +               pdata = max8925_power_dt_init(pdev);
+> >> +       else
+> >> +               pdata = pdev->dev.platform_data;
+> >> +
+> >
+> >
+> > This does not look much better than before this patch. Instead of "if-deffery" outside function bodies you are adding "iffery" (if there is such a word) inside a function.
+> > What about adding
+> >
+> >         if (!IS_ENABLED(CONFIG_OF))
+> >                 return pdev->dev.platform_data;
+> >
+> > on top of max8925_power_dt_init() instead or maybe also renaming this function to max8925_get_pdata()?
+> 
+> Okay, I will rename function "max8925_power_dt_init()" to "max8925_get_pdata()".
+> As you suggested, in the body of this function  will add a logic to
+> retrieve  data in case
+> of DT and non-DT platforms.
+
+Should we not always favor platform-supplied data regardless of
+CONFIG_OF state and fall back to DT (firmware) supplied data if platform
+data is absent? This way one can tweak kernel behavior without needing
+to change firmware.
 
 Thanks.
 
