@@ -1,47 +1,59 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
- device probe
-Date: Sun, 26 Jan 2014 22:09:07 +0100
-Message-ID: <20140126210907.GB7246@Nokia-N900>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
- <1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
- <20140120100530.GY15937@n2100.arm.linux.org.uk>
- <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
- <20140123180423.1a62611a@www.etchedpixels.co.uk>
- <20140123184022.GC11727@sirena.org.uk>
- <52E163DC.1090002@samsung.com>
- <20140123193633.GG11727@sirena.org.uk>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
+Date: Sun, 26 Jan 2014 13:36:53 -0800
+Message-ID: <20140126213653.GB18840@core.coreip.homeip.net>
+References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140123193633.GG11727@sirena.org.uk>
+In-Reply-To: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+To: Manish Badarkhe <badarkhe.manish@gmail.com>
+Cc: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu 2014-01-23 19:36:33, Mark Brown wrote:
-> On Thu, Jan 23, 2014 at 07:47:56PM +0100, Tomasz Figa wrote:
-> > On 23.01.2014 19:40, Mark Brown wrote:
-> 
-> > >We'd need to leave it user selectable rather than enabling it for ARM,
-> > >the whole reason this got noticed is that people are trying to build
-> > >kernels that support a wider range of devices for ARM.
-> 
-> > What about making it depend on !MULTIPLATFORM and enabled by default?
-> 
-> That'd work, but if we're doing that then substituting in the dynamic
-> assignment only when we hit a collision seems smoother and more general.
+Hi Manish,
 
-That seems like a mess. I had enough fun debugging "WTF is
-going on with my serials" as is...
+On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
+> Use "devm_regulator_register" instead of "regulator_register"
+> which simplifies the code.
 
-Plus... collision can happen at runtime when you insert
-BT CF card... at that point it is too late to reassign.
+... and also breaks the driver: now you are freeing desc->name and
+desc->supply_name while regulator structures are still alive and can be
+referenced from its sysfs attributes, etc.
 
-							Pavel
+> 
+> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+> ---
+> :100644 100644 5ea64b9... 6d32341... M	drivers/regulator/fixed.c
+>  drivers/regulator/fixed.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+> index 5ea64b9..6d32341 100644
+> --- a/drivers/regulator/fixed.c
+> +++ b/drivers/regulator/fixed.c
+> @@ -186,7 +186,8 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+>  	cfg.driver_data = drvdata;
+>  	cfg.of_node = pdev->dev.of_node;
+>  
+> -	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+> +	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
+> +					       &cfg);
+>  	if (IS_ERR(drvdata->dev)) {
+>  		ret = PTR_ERR(drvdata->dev);
+>  		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+> @@ -212,7 +213,6 @@ static int reg_fixed_voltage_remove(struct platform_device *pdev)
+>  {
+>  	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
+>  
+> -	regulator_unregister(drvdata->dev);
+>  	kfree(drvdata->desc.supply_name);
+>  	kfree(drvdata->desc.name);
+>  
+
+Thanks.
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Dmitry
