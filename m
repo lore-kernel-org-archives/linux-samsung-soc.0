@@ -1,43 +1,65 @@
 From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: [PATCH] regulator: fixed: Use devm_regulator_register
-Date: Sat, 25 Jan 2014 23:35:54 +0530
-Message-ID: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: broonie@kernel.org, lgirdwood@gmail.com, badarkhe.manish@gmail.com
+Subject: [PATCH] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
+Date: Sun, 26 Jan 2014 12:45:40 +0530
+Message-ID: <1390720540-13350-1-git-send-email-badarkhe.manish@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:50066 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751174AbaAZHPy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 26 Jan 2014 02:15:54 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dbaryshkov@gmail.com, dwmw2@infradead.org, badarkhe.manish@gmail.com
 
-Use "devm_regulator_register" instead of "regulator_register"
-which simplifies the code.
+Instead of "#if define CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
+option for DT code to avoid if-deffery in code.
 
 Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
 ---
-:100644 100644 5ea64b9... 6d32341... M	drivers/regulator/fixed.c
- drivers/regulator/fixed.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+:100644 100644 b4513f2... d353fbc... M	drivers/power/max8925_power.c
+ drivers/power/max8925_power.c |   14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index 5ea64b9..6d32341 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -186,7 +186,8 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 	cfg.driver_data = drvdata;
- 	cfg.of_node = pdev->dev.of_node;
+diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
+index b4513f2..d353fbc 100644
+--- a/drivers/power/max8925_power.c
++++ b/drivers/power/max8925_power.c
+@@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
+ 	return 0;
+ }
  
--	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
-+	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
-+					       &cfg);
- 	if (IS_ERR(drvdata->dev)) {
- 		ret = PTR_ERR(drvdata->dev);
- 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
-@@ -212,7 +213,6 @@ static int reg_fixed_voltage_remove(struct platform_device *pdev)
+-#ifdef CONFIG_OF
+ static struct max8925_power_pdata *
+ max8925_power_dt_init(struct platform_device *pdev)
  {
- 	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
+@@ -468,13 +467,6 @@ max8925_power_dt_init(struct platform_device *pdev)
  
--	regulator_unregister(drvdata->dev);
- 	kfree(drvdata->desc.supply_name);
- 	kfree(drvdata->desc.name);
+ 	return pdata;
+ }
+-#else
+-static struct max8925_power_pdata *
+-max8925_power_dt_init(struct platform_device *pdev)
+-{
+-	return pdev->dev.platform_data;
+-}
+-#endif
  
+ static int max8925_power_probe(struct platform_device *pdev)
+ {
+@@ -483,7 +475,11 @@ static int max8925_power_probe(struct platform_device *pdev)
+ 	struct max8925_power_info *info;
+ 	int ret;
+ 
+-	pdata = max8925_power_dt_init(pdev);
++	if (IS_ENABLED(CONFIG_OF))
++		pdata = max8925_power_dt_init(pdev);
++	else
++		pdata = pdev->dev.platform_data;
++
+ 	if (!pdata) {
+ 		dev_err(&pdev->dev, "platform data isn't assigned to "
+ 			"power supply\n");
 -- 
 1.7.10.4
