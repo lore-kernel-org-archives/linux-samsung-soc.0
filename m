@@ -1,77 +1,47 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: [PATCH V2] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
-Date: Sun, 26 Jan 2014 20:08:07 +0530
-Message-ID: <1390747087-5394-1-git-send-email-badarkhe.manish@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:46662 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752225AbaAZOiU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Jan 2014 09:38:20 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Sun, 26 Jan 2014 22:09:07 +0100
+Message-ID: <20140126210907.GB7246@Nokia-N900>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+ <1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+ <20140120100530.GY15937@n2100.arm.linux.org.uk>
+ <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+ <20140123180423.1a62611a@www.etchedpixels.co.uk>
+ <20140123184022.GC11727@sirena.org.uk>
+ <52E163DC.1090002@samsung.com>
+ <20140123193633.GG11727@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140123193633.GG11727@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: broonie@kernel.org, lgirdwood@gmail.com, badarkhe.manish@gmail.com
 
-Instead of "#ifdef CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
-option for DT code to avoid if-deffery in code.
+On Thu 2014-01-23 19:36:33, Mark Brown wrote:
+> On Thu, Jan 23, 2014 at 07:47:56PM +0100, Tomasz Figa wrote:
+> > On 23.01.2014 19:40, Mark Brown wrote:
+> 
+> > >We'd need to leave it user selectable rather than enabling it for ARM,
+> > >the whole reason this got noticed is that people are trying to build
+> > >kernels that support a wider range of devices for ARM.
+> 
+> > What about making it depend on !MULTIPLATFORM and enabled by default?
+> 
+> That'd work, but if we're doing that then substituting in the dynamic
+> assignment only when we hit a collision seems smoother and more general.
 
-Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
----
-Changes since V1:
-1. update code to retrieve platform/dt data in same function
+That seems like a mess. I had enough fun debugging "WTF is
+going on with my serials" as is...
 
-:100644 100644 b4513f2... 20a7100... M	drivers/power/max8925_power.c
- drivers/power/max8925_power.c |   15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Plus... collision can happen at runtime when you insert
+BT CF card... at that point it is too late to reassign.
 
-diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
-index b4513f2..20a7100 100644
---- a/drivers/power/max8925_power.c
-+++ b/drivers/power/max8925_power.c
-@@ -427,9 +427,8 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
- 	return 0;
- }
- 
--#ifdef CONFIG_OF
- static struct max8925_power_pdata *
--max8925_power_dt_init(struct platform_device *pdev)
-+max8925_get_data(struct platform_device *pdev)
- {
- 	struct device_node *nproot = pdev->dev.parent->of_node;
- 	struct device_node *np;
-@@ -440,7 +439,7 @@ max8925_power_dt_init(struct platform_device *pdev)
- 	int no_insert_detect;
- 	struct max8925_power_pdata *pdata;
- 
--	if (!nproot)
-+	if (!IS_ENABLED(CONFIG_OF) || !nproot)
- 		return pdev->dev.platform_data;
- 
- 	np = of_find_node_by_name(nproot, "charger");
-@@ -468,13 +467,6 @@ max8925_power_dt_init(struct platform_device *pdev)
- 
- 	return pdata;
- }
--#else
--static struct max8925_power_pdata *
--max8925_power_dt_init(struct platform_device *pdev)
--{
--	return pdev->dev.platform_data;
--}
--#endif
- 
- static int max8925_power_probe(struct platform_device *pdev)
- {
-@@ -483,7 +475,8 @@ static int max8925_power_probe(struct platform_device *pdev)
- 	struct max8925_power_info *info;
- 	int ret;
- 
--	pdata = max8925_power_dt_init(pdev);
-+	pdata = max8925_get_data(pdev);
-+
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "platform data isn't assigned to "
- 			"power supply\n");
+							Pavel
+
 -- 
-1.7.10.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
