@@ -1,71 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
- device probe
-Date: Mon, 27 Jan 2014 00:15:00 +0000
-Message-ID: <20140127001500.GS11727@sirena.org.uk>
-References: <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
- <20140123180423.1a62611a@www.etchedpixels.co.uk>
- <20140123184022.GC11727@sirena.org.uk>
- <52E163DC.1090002@samsung.com>
- <20140123193633.GG11727@sirena.org.uk>
- <20140123195144.2d3aa44d@www.etchedpixels.co.uk>
- <20140123200509.GO11727@sirena.org.uk>
- <20140123213321.372ce82b@www.etchedpixels.co.uk>
- <20140124120309.GU11727@sirena.org.uk>
- <20140124143859.70e0e610@www.etchedpixels.co.uk>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
+Date: Mon, 27 Jan 2014 09:59:12 +0530
+Message-ID: <CAKDJKT6FVx+mZ1AvD1CuW66AfUJsF9BavsPJAMfgkBz1GMqz4A@mail.gmail.com>
+References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
+	<20140126213653.GB18840@core.coreip.homeip.net>
+	<20140127000300.GR11727@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HKLejDDV6gCqJAZ/"
-Return-path: <linux-serial-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140124143859.70e0e610@www.etchedpixels.co.uk>
-Sender: linux-serial-owner@vger.kernel.org
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140127000300.GR11727@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-omap@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi
 
---HKLejDDV6gCqJAZ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Jan 27, 2014 at 5:33 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Sun, Jan 26, 2014 at 01:36:53PM -0800, Dmitry Torokhov wrote:
+>> On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
+>
+>> > Use "devm_regulator_register" instead of "regulator_register"
+>> > which simplifies the code.
+>
+>> ... and also breaks the driver: now you are freeing desc->name and
+>> desc->supply_name while regulator structures are still alive and can be
+>> referenced from its sysfs attributes, etc.
+>
+> Yup, they need to be converted to managed allocations too if the
+> regulator_register() is going to be converted (see previous discussions
+> on similar patches).  It would be good to do so.
 
-On Fri, Jan 24, 2014 at 02:38:59PM +0000, Alan Cox wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Thank you for pointing this out.
+I missed to convert these two " desc->name" and "desc->supply_name"
+to manage allocation. I will modify code and repost patch.
 
-> > I don't see how that follows?  For the most part architecture
-> > maintainers aren't going to be able to say too much about which
-> > userspaces are being run on their platforms if the architecture
-> > has any kind of widespread use.
-
-> For most architectures I suspect that they do have a pretty good idea.
-> ARM is a bit different but I imagine the various platform specific
-> maintainers are the ones who have that knowledge
-
-I'm still not entirely sure how you expect people to answer this unless
-the answer is something along the lines of "all the systems are on my
-desk".  This definitely does need to be selectable, I'm just not clear
-that making it depend on the architecture is going to help.
-
---HKLejDDV6gCqJAZ/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS5aUBAAoJELSic+t+oim9LZQP/327MKh7ksk2UkW5RqKdmC0a
-5KZPf82dTjKfycVVe6Lh0xqR04zGk8RwnT/AFOpfEn2uWOm7tJmFsnrFz1qVtTb3
-VnsIP6OInA1AQlck4oDhK62Y/PPuMSF4nsvXSVOMjXoqYNgzSjDJZr/vQLiRlFHU
-1E60xKUWxDffRug24ccG5t9Tgh/E3WGKZ8kN2+aYYsrncCjKF7K6kR/6kDnSHhb6
-sskV7NCdCAZEd0ZEkYOr44sNVyKUDfPEmfdBnnGLA3z3RaYbW3dEoQ3AaCNWCJtV
-KwOGqQVXnYd412sYwTgrgzcm7f8XSOs9WcvjK1C6rCBf7JxAqu2hIjmbMmq3o8P/
-8ShFR34KGqXKze3B+dkEZPx+4awTE4Sa9MOFq2Qzyh6FsV2dUCJYLIlNenZzloG7
-YEcy27iVOumCImFF3ViI1cKuDYRnZcPFDjO7WzR9cbmyfWr6IXYUHFciVh3t++Wq
-PCNn64Soyawxt0jxsk8VISkKcbxKUkHtVrWL5Z0WbVBT45daNUan26BG3XwH+12X
-ztSeyZt+9ESb8XSBQTS+Znf2x9idnKknWPf2qHt/yIXF6TzufNJLG7xdhZqARsLA
-/58ofSJjG1leOwNMiM1QxeIkSaoOVbPTa3zrUNaNKaCmxTzADIW6pkSndKWAlLTR
-yH09AG1jrrsoGim+bQRx
-=vaNi
------END PGP SIGNATURE-----
-
---HKLejDDV6gCqJAZ/--
+Regards
+Manish Badarkhe
