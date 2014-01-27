@@ -1,52 +1,198 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 2/2] regulator: s5m8767: Document new binding for
- Buck9 GPIO control
-Date: Mon, 27 Jan 2014 20:25:33 +0000
-Message-ID: <20140127202533.GR11841@sirena.org.uk>
-References: <1390570678-30686-1-git-send-email-k.kozlowski@samsung.com>
- <1390570678-30686-3-git-send-email-k.kozlowski@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage during
+ frequency transitions
+Date: Mon, 27 Jan 2014 12:25:43 -0800
+Message-ID: <20140127202543.4167.83362@quantum>
+References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
+ <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Aq6vH1t1JS3Uc7g3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1390570678-30686-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:61880 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754372AbaA0UZ7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jan 2014 15:25:59 -0500
+Received: by mail-bk0-f49.google.com with SMTP id v15so3068524bkz.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jan 2014 12:25:58 -0800 (PST)
+In-Reply-To: <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>, cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com
 
+Quoting Thomas Abraham (2014-01-18 04:10:51)
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> On some platforms such as the Samsung Exynos, changing the frequency
+> of the CPU clock requires changing the frequency of the PLL that is
+> supplying the CPU clock. To change the frequency of the PLL, the CPU
+> clock is temporarily reparented to another parent clock.
+> 
+> The clock frequency of this temporary parent clock could be much higher
+> than the clock frequency of the PLL at the time of reparenting. Due
+> to the temporary increase in the CPU clock speed, the CPU (and any other
+> components in the CPU clock domain such as dividers, mux, etc.) have to
+> to be operated at a higher voltage level, called the safe voltage level.
+> This patch adds optional support to temporarily switch to a safe voltage
+> level during CPU frequency transitions.
+> 
+> Cc: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 
---Aq6vH1t1JS3Uc7g3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm not a fan of this change. This corner case should be abstracted away
+somehow. I had talked to Chander Kayshap previously about handling
+voltage changes in clock notifier callbacks, which then renders any
+voltage change as a trivial part of the clock rate transition. That
+means that this "safe voltage" thing could be handled automagically
+without any additional code in the CPUfreq driver.
 
-On Fri, Jan 24, 2014 at 02:37:58PM +0100, Krzysztof Kozlowski wrote:
-> Add documentation for new binding for controlling (enable/disable) the
-> Buck9 Converter by GPIO (BUCK9EN).
+There are two nice ways to do this with the clock framework. First is
+explicit re-parenting with voltage scaling done in the clock rate-change
+notifiers:
 
-Applied, thanks.
+clk_set_parent(cpu_clk, temp_parent);
+/* implicit voltage scaling to "safe voltage" happens above */
+clk_set_rate(pll, some_rate);
+clk_set_parent(cpu_clk, pll);
+/* implicit voltage scaling to nominal OPP voltage happens above */
 
---Aq6vH1t1JS3Uc7g3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The above sequence would require a separate exnyos CPUfreq driver, due
+to the added clk_set_parent logic.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+The second way to do this is to abstract the clk re-muxing logic out
+into the clk driver, which would allow cpufreq-cpu0 to be used for the
+exynos chips.
 
-iQIcBAEBAgAGBQJS5sC6AAoJELSic+t+oim9ENsP/REhERS50UsFd8b1I3tsFXEe
-+NFVRLC/qdOHIfaDztcIbjRUM6bgg2qYHVZYfIT1amOLEu87/MBRMFcsZ7M62EV7
-xceGpRQMGULFftYl6JNCU1A5GoNtGCgkhFibkwbnWuJCLXDLFxLvVzUgj/5Yp/9y
-pPqWOx+/BF0cev4p+/BJMI69PKg40Whlj9q7klcty5PwlLawuB/zXeUQjSXl5No0
-MTxXTXUvA8iEDLnmvipwB19sR7Z3/jkwaL8dhwqpEnWLc/DwLa8FpEYD02HJ/xyo
-Y03FmFaPqCPlDr8eP6em40KbC0RFRgUiWXPoR0DU07DPsfAPpLA2QgVfStnlyItk
-r3xFzG6yyQYb9XUWw5jSimhclmKJ7UhTXpoSW1GLNrlFV0ezhDzMCvk6FNNVLsbW
-E1nmwe9CDJQAEi6Pw6qLI/2KudFv4BRny8gIrP3L+skGRvOTVVb48fijYl0A2db8
-/ulH/Vtf/xV+KmlC8tikeNEr4MkXJDExaz8JISUy9fDQJRoJq2TcJzyuRjRFRH6y
-PXNoH+gkJI7gGbUtATAfYg97eqcgJTLA13bXJhSVyQMmXsg0Sy9UnHFFFWRp5X3M
-HzHd3hitFXzUz4cOdVBIPB24OF+qs9wAN+2PsXdqwhQSRL/KV1pjvewYoMegH+Np
-6QIM34AGD1GYbByzIjV3
-=5GSJ
------END PGP SIGNATURE-----
+I'm more a fan of explicitly listing the Exact Steps for the cpu opp
+transition in a separate exynos-specific CPUfreq driver, but that's
+probably an unpopular view.
 
---Aq6vH1t1JS3Uc7g3--
+Regards,
+Mike
+
+> ---
+>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    7 ++++
+>  drivers/cpufreq/cpufreq-cpu0.c                     |   37 +++++++++++++++++--
+>  2 files changed, 40 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> index f055515..37453ab 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> @@ -19,6 +19,12 @@ Optional properties:
+>  - cooling-min-level:
+>  - cooling-max-level:
+>       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
+> +- safe-opp: Certain platforms require that during a opp transition,
+> +  a system should not go below a particular opp level. For such systems,
+> +  this property specifies the minimum opp to be maintained during the
+> +  opp transitions. The safe-opp value is a tuple with first element
+> +  representing the safe frequency and the second element representing the
+> +  safe voltage.
+>  
+>  Examples:
+>  
+> @@ -36,6 +42,7 @@ cpus {
+>                         396000  950000
+>                         198000  850000
+>                 >;
+> +               safe-opp = <396000 950000>
+>                 clock-latency = <61036>; /* two CLK32 periods */
+>                 #cooling-cells = <2>;
+>                 cooling-min-level = <0>;
+> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
+> index 0c12ffc..075d3d1 100644
+> --- a/drivers/cpufreq/cpufreq-cpu0.c
+> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+> @@ -27,6 +27,8 @@
+>  
+>  static unsigned int transition_latency;
+>  static unsigned int voltage_tolerance; /* in percentage */
+> +static unsigned long safe_frequency;
+> +static unsigned long safe_voltage;
+>  
+>  static struct device *cpu_dev;
+>  static struct clk *cpu_clk;
+> @@ -64,17 +66,30 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
+>                 volt_old = regulator_get_voltage(cpu_reg);
+>         }
+>  
+> -       pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
+> +       pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
+>                  old_freq / 1000, volt_old ? volt_old / 1000 : -1,
+>                  new_freq / 1000, volt ? volt / 1000 : -1);
+>  
+>         /* scaling up?  scale voltage before frequency */
+> -       if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
+> +       if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
+> +                               new_freq >= safe_frequency) {
+>                 ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>                 if (ret) {
+>                         pr_err("failed to scale voltage up: %d\n", ret);
+>                         return ret;
+>                 }
+> +       } else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
+> +               /*
+> +                * the scaled up voltage level for the new_freq is lower
+> +                * than the safe voltage level. so set safe_voltage
+> +                * as the intermediate voltage level and revert it
+> +                * back after the frequency has been changed.
+> +                */
+> +               ret = regulator_set_voltage_tol(cpu_reg, safe_voltage, tol);
+> +               if (ret) {
+> +                       pr_err("failed to set safe voltage: %d\n", ret);
+> +                       return ret;
+> +               }
+>         }
+>  
+>         ret = clk_set_rate(cpu_clk, freq_exact);
+> @@ -86,7 +101,8 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
+>         }
+>  
+>         /* scaling down?  scale voltage after frequency */
+> -       if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
+> +       if (!IS_ERR(cpu_reg) &&
+> +                       (new_freq < old_freq || new_freq < safe_frequency)) {
+>                 ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>                 if (ret) {
+>                         pr_err("failed to scale voltage down: %d\n", ret);
+> @@ -116,6 +132,8 @@ static struct cpufreq_driver cpu0_cpufreq_driver = {
+>  
+>  static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>  {
+> +       const struct property *prop;
+> +       struct dev_pm_opp *opp;
+>         struct device_node *np;
+>         int ret;
+>  
+> @@ -165,13 +183,24 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>                 goto out_put_node;
+>         }
+>  
+> +       prop = of_find_property(np, "safe-opp", NULL);
+> +       if (prop) {
+> +               if (prop->value && (prop->length / sizeof(u32)) == 2) {
+> +                       const __be32 *val;
+> +                       val = prop->value;
+> +                       safe_frequency = be32_to_cpup(val++);
+> +                       safe_voltage = be32_to_cpup(val);
+> +               } else {
+> +                       pr_err("invalid safe-opp level specified\n");
+> +               }
+> +       }
+> +
+>         of_property_read_u32(np, "voltage-tolerance", &voltage_tolerance);
+>  
+>         if (of_property_read_u32(np, "clock-latency", &transition_latency))
+>                 transition_latency = CPUFREQ_ETERNAL;
+>  
+>         if (!IS_ERR(cpu_reg)) {
+> -               struct dev_pm_opp *opp;
+>                 unsigned long min_uV, max_uV;
+>                 int i;
+>  
+> -- 
+> 1.6.6.rc2
+> 
