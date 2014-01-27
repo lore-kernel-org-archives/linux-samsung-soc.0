@@ -1,59 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
-Date: Mon, 27 Jan 2014 00:03:00 +0000
-Message-ID: <20140127000300.GR11727@sirena.org.uk>
-References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
- <20140126213653.GB18840@core.coreip.homeip.net>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
+ device probe
+Date: Mon, 27 Jan 2014 00:04:26 +0000
+Message-ID: <20140127000426.6027cdd5@www.etchedpixels.co.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+	<1390208555-27770-2-git-send-email-tushar.behera@linaro.org>
+	<20140120100530.GY15937@n2100.arm.linux.org.uk>
+	<CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
+	<20140123180423.1a62611a@www.etchedpixels.co.uk>
+	<20140123184022.GC11727@sirena.org.uk>
+	<52E163DC.1090002@samsung.com>
+	<20140123193633.GG11727@sirena.org.uk>
+	<20140126210907.GB7246@Nokia-N900>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="X1pyOwMoA9G3DWfK"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140126213653.GB18840@core.coreip.homeip.net>
-Sender: linux-omap-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Manish Badarkhe <badarkhe.manish@gmail.com>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <20140126210907.GB7246@Nokia-N900>
+Sender: linux-serial-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Mark Brown <broonie@kernel.org>, Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Sun, 26 Jan 2014 22:09:07 +0100
+Pavel Machek <pavel@ucw.cz> wrote:
 
---X1pyOwMoA9G3DWfK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Thu 2014-01-23 19:36:33, Mark Brown wrote:
+> > On Thu, Jan 23, 2014 at 07:47:56PM +0100, Tomasz Figa wrote:
+> > > On 23.01.2014 19:40, Mark Brown wrote:
+> > 
+> > > >We'd need to leave it user selectable rather than enabling it for ARM,
+> > > >the whole reason this got noticed is that people are trying to build
+> > > >kernels that support a wider range of devices for ARM.
+> > 
+> > > What about making it depend on !MULTIPLATFORM and enabled by default?
+> > 
+> > That'd work, but if we're doing that then substituting in the dynamic
+> > assignment only when we hit a collision seems smoother and more general.
+> 
+> That seems like a mess. I had enough fun debugging "WTF is
+> going on with my serials" as is...
+> 
+> Plus... collision can happen at runtime when you insert
+> BT CF card... at that point it is too late to reassign.
 
-On Sun, Jan 26, 2014 at 01:36:53PM -0800, Dmitry Torokhov wrote:
-> On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
+Agreed entirely - you want predictability here, plus making it happen by
+magic is going to do the nut of anyone trying to figure out why kernel A
+works on their platform and kernel B doesn't.
 
-> > Use "devm_regulator_register" instead of "regulator_register"
-> > which simplifies the code.
-
-> ... and also breaks the driver: now you are freeing desc->name and
-> desc->supply_name while regulator structures are still alive and can be
-> referenced from its sysfs attributes, etc.
-
-Yup, they need to be converted to managed allocations too if the
-regulator_register() is going to be converted (see previous discussions
-on similar patches).  It would be good to do so.
-
---X1pyOwMoA9G3DWfK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS5aIxAAoJELSic+t+oim92QsP/0NPhMMAgwoVcy4afvg8XV10
-J/PWI+Kc/vOpJVjP5hMYZmijtKA/YvaD8tOuZ0afKXehdt8oOOzXpK8zlSV3FDsm
-W0ZnS6ojtEjJ5t2teVexrBpGaA/kUK9hsQ12nu6aBEDU9Lup/aSn6BKMglEw+zzw
-Y9YqkiqOLczpsjvUx6zV/gFuRhW4NOWTJwWfHlwJlCpqMM1aA70AYwGTvRVoRoBM
-yjy5I5mc7mbeEjXCNi6Uoh+SldBMGeGskF8DhcKlIod1oUh2HjMR6HemD5YDtrDb
-uQdbTXqvCIohbytEvE8vX55BbDQB8Hf9FBNGn5qV1FQ3ZIAMcZJaIpl7ZZ/pGbzp
-40CIYZU3y8MqWpk7ePr62fkJj5USylxCytKpjSSFpkNCYW6/eC08rJUd0DO73FbE
-E+lm+32nIUArgsp6I8Hrh/NZkBqZjLLAegwNH0fkBgIwBdynGMJyvm0HZcUv7jZE
-ZJcxEKL6BqjO54APojRoyL/Qw0vkrkdwahX1/n4t566s+0/uBachRYOkbMYzh+Yi
-YTyxYQxUsYjzLlXsAztNpCvWucVuQZKo5HGCiz+IfK4oA73FxRUM/JPssMUXSvey
-m7Dx2+pJMsQMEtcXMaqHXGO4x6IZA7qNYUH+MuY3lbmFfYGbNxkO0JLC6nfiNxTA
-Z50ZbRQceqBSSN6Pb3d6
-=2z/J
------END PGP SIGNATURE-----
-
---X1pyOwMoA9G3DWfK--
+It needs to be something you choose to turn on as compatibility, like old
+sysfs files and so forth.
