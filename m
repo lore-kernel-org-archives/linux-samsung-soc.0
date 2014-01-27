@@ -1,56 +1,176 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH 1/2] serial: samsung: Move uart_register_driver call to
- device probe
-Date: Sun, 26 Jan 2014 23:30:00 -0500 (EST)
-Message-ID: <alpine.LFD.2.11.1401262318350.1652@knanqh.ubzr>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org> <1390208555-27770-2-git-send-email-tushar.behera@linaro.org> <20140120100530.GY15937@n2100.arm.linux.org.uk> <CAHbNUh3m=uNybv=3yxmr2on=Cc0UuGrYP8zf3GMR-9RQZ394dg@mail.gmail.com>
- <20140120214305.54f65ffa@www.etchedpixels.co.uk> <20140120231457.GZ17314@sirena.org.uk> <20140120234734.11b78578@www.etchedpixels.co.uk> <20140121001657.GO15937@n2100.arm.linux.org.uk> <50b66ac6-1150-4ad7-aeaf-3d0dce77334d@email.android.com>
- <20140126115402.GA25689@n2100.arm.linux.org.uk>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe
+ voltage during frequency transitions
+Date: Mon, 27 Jan 2014 15:16:59 +0800
+Message-ID: <20140127071656.GB3135@S2101-09.ap.freescale.net>
+References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
+ <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <20140126115402.GA25689@n2100.arm.linux.org.uk>
-Sender: linux-serial-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Alan Cox <alan@etchedpixels.co.uk>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>, lkml <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from co1ehsobe002.messaging.microsoft.com ([216.32.180.185]:4331
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751321AbaA0HS3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jan 2014 02:18:29 -0500
+Content-Disposition: inline
+In-Reply-To: <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com
 
-On Sun, 26 Jan 2014, Russell King - ARM Linux wrote:
-
-> On Tue, Jan 21, 2014 at 12:45:05AM +0000, Alan Cox wrote:
-> > Peter handed it on. Try using git log on Documentation/devices.txt. It
-> > still gets updates.
-> > 
-> > Perhaps you'd care to stick to reality and fix the tree instead of trying
-> > to excuse the mess ?
+On Sat, Jan 18, 2014 at 05:40:51PM +0530, Thomas Abraham wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
 > 
-> Perhaps returning to reality might be advantageous rather than trying
-> to repeat statements which can't have any bearing on this - especially
-> as the git history which you're referring to only goes back to 2.6.12-rc2,
-> and this predates 2.6.12-rc2 by a long shot.
+> On some platforms such as the Samsung Exynos, changing the frequency
+> of the CPU clock requires changing the frequency of the PLL that is
+> supplying the CPU clock. To change the frequency of the PLL, the CPU
+> clock is temporarily reparented to another parent clock.
 > 
-> > More importantly certain folks need to stop abusing static numbers
-> > allocated properly. Repeating it having made a total hash of it before
-> > is dismal.
+> The clock frequency of this temporary parent clock could be much higher
+> than the clock frequency of the PLL at the time of reparenting. Due
+> to the temporary increase in the CPU clock speed, the CPU (and any other
+> components in the CPU clock domain such as dividers, mux, etc.) have to
+> to be operated at a higher voltage level, called the safe voltage level.
+> This patch adds optional support to temporarily switch to a safe voltage
+> level during CPU frequency transitions.
 > 
-> And if you continue these stupid accusations which have no basis at all,
-> we're going to get into a real big argument, because you are soo _wrong_
-> on that point.  I was always the one arguing /against/ the re-use of
-> existing major/minor numbers.  I was the one arguing /against/ Nicolas'
-> patches to make every serial port appear in the 4,64 ttyS namespace.
+> Cc: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    7 ++++
 
-If you remember correctly, that was my attempt at making serial port 
-minor assignment to be dynamic... just like everything else is today.  
-And it seemed to me that you thought this was a good idea.
+The devicetree list should be copied for this change.
 
-But that was objected by the X86 folks who insisted on always having 
-COM1 == ttyS0 and COM2 == ttyS1, whether or not COM1 was present.
+>  drivers/cpufreq/cpufreq-cpu0.c                     |   37 +++++++++++++++++--
+>  2 files changed, 40 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> index f055515..37453ab 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> @@ -19,6 +19,12 @@ Optional properties:
+>  - cooling-min-level:
+>  - cooling-max-level:
+>       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
+> +- safe-opp: Certain platforms require that during a opp transition,
+> +  a system should not go below a particular opp level. For such systems,
+> +  this property specifies the minimum opp to be maintained during the
+> +  opp transitions. The safe-opp value is a tuple with first element
+> +  representing the safe frequency and the second element representing the
+> +  safe voltage.
+>  
+>  Examples:
+>  
+> @@ -36,6 +42,7 @@ cpus {
+>  			396000  950000
+>  			198000  850000
+>  		>;
+> +		safe-opp = <396000 950000>
+>  		clock-latency = <61036>; /* two CLK32 periods */
+>  		#cooling-cells = <2>;
+>  		cooling-min-level = <0>;
+> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
+> index 0c12ffc..075d3d1 100644
+> --- a/drivers/cpufreq/cpufreq-cpu0.c
+> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+> @@ -27,6 +27,8 @@
+>  
+>  static unsigned int transition_latency;
+>  static unsigned int voltage_tolerance; /* in percentage */
+> +static unsigned long safe_frequency;
+> +static unsigned long safe_voltage;
+>  
+>  static struct device *cpu_dev;
+>  static struct clk *cpu_clk;
+> @@ -64,17 +66,30 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
+>  		volt_old = regulator_get_voltage(cpu_reg);
+>  	}
+>  
+> -	pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
+> +	pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
 
-Nowdays serial ports have pretty much disappeared from the X86 world.  
-But the problem they've created is still with us.
+This is an unnecessary change?
 
-Either everything is dynamic, or everything follows proper minor 
-assignment process.
+Otherwise,
 
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
 
-Nicolas
+Shawn
+
+>  		 old_freq / 1000, volt_old ? volt_old / 1000 : -1,
+>  		 new_freq / 1000, volt ? volt / 1000 : -1);
+>  
+>  	/* scaling up?  scale voltage before frequency */
+> -	if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
+> +	if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
+> +				new_freq >= safe_frequency) {
+>  		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>  		if (ret) {
+>  			pr_err("failed to scale voltage up: %d\n", ret);
+>  			return ret;
+>  		}
+> +	} else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
+> +		/*
+> +		 * the scaled up voltage level for the new_freq is lower
+> +		 * than the safe voltage level. so set safe_voltage
+> +		 * as the intermediate voltage level and revert it
+> +		 * back after the frequency has been changed.
+> +		 */
+> +		ret = regulator_set_voltage_tol(cpu_reg, safe_voltage, tol);
+> +		if (ret) {
+> +			pr_err("failed to set safe voltage: %d\n", ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	ret = clk_set_rate(cpu_clk, freq_exact);
+> @@ -86,7 +101,8 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
+>  	}
+>  
+>  	/* scaling down?  scale voltage after frequency */
+> -	if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
+> +	if (!IS_ERR(cpu_reg) &&
+> +			(new_freq < old_freq || new_freq < safe_frequency)) {
+>  		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>  		if (ret) {
+>  			pr_err("failed to scale voltage down: %d\n", ret);
+> @@ -116,6 +132,8 @@ static struct cpufreq_driver cpu0_cpufreq_driver = {
+>  
+>  static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>  {
+> +	const struct property *prop;
+> +	struct dev_pm_opp *opp;
+>  	struct device_node *np;
+>  	int ret;
+>  
+> @@ -165,13 +183,24 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>  		goto out_put_node;
+>  	}
+>  
+> +	prop = of_find_property(np, "safe-opp", NULL);
+> +	if (prop) {
+> +		if (prop->value && (prop->length / sizeof(u32)) == 2) {
+> +			const __be32 *val;
+> +			val = prop->value;
+> +			safe_frequency = be32_to_cpup(val++);
+> +			safe_voltage = be32_to_cpup(val);
+> +		} else {
+> +			pr_err("invalid safe-opp level specified\n");
+> +		}
+> +	}
+> +
+>  	of_property_read_u32(np, "voltage-tolerance", &voltage_tolerance);
+>  
+>  	if (of_property_read_u32(np, "clock-latency", &transition_latency))
+>  		transition_latency = CPUFREQ_ETERNAL;
+>  
+>  	if (!IS_ERR(cpu_reg)) {
+> -		struct dev_pm_opp *opp;
+>  		unsigned long min_uV, max_uV;
+>  		int i;
+>  
+> -- 
+> 1.6.6.rc2
+> 
