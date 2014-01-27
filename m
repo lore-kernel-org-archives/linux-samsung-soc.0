@@ -1,176 +1,150 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe
- voltage during frequency transitions
-Date: Mon, 27 Jan 2014 15:16:59 +0800
-Message-ID: <20140127071656.GB3135@S2101-09.ap.freescale.net>
-References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
- <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: Re: [PATCH] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
+Date: Mon, 27 Jan 2014 12:57:38 +0530
+Message-ID: <CAKDJKT7=4+N7G2TQJKj9xm4Ftn53jqThHoUUOyVr+hZv3Us1kg@mail.gmail.com>
+References: <1390720540-13350-1-git-send-email-badarkhe.manish@gmail.com>
+	<52E50C24.8030305@gmail.com>
+	<CAKDJKT5TvkgUN2Ee-2NignzxY1F54SHEiNL2i6c+hMjnLHOg5g@mail.gmail.com>
+	<20140126214542.GC18840@core.coreip.homeip.net>
+	<52E582D0.9070501@gmail.com>
+	<CALT56yPJjLZ_UHgH1koKPbTLBR=5QzSFMMXfqYxspw30_fpKNQ@mail.gmail.com>
+	<20140126231452.GE18840@core.coreip.homeip.net>
+	<CALT56yODeNZLH5bDHN2N0awFA0EyPH77wDyAv+4Qkgr6mu_u0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from co1ehsobe002.messaging.microsoft.com ([216.32.180.185]:4331
-	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751321AbaA0HS3 (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:63431 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751405AbaA0H1j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jan 2014 02:18:29 -0500
-Content-Disposition: inline
-In-Reply-To: <1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
+	Mon, 27 Jan 2014 02:27:39 -0500
+In-Reply-To: <CALT56yODeNZLH5bDHN2N0awFA0EyPH77wDyAv+4Qkgr6mu_u0Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-On Sat, Jan 18, 2014 at 05:40:51PM +0530, Thomas Abraham wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> On some platforms such as the Samsung Exynos, changing the frequency
-> of the CPU clock requires changing the frequency of the PLL that is
-> supplying the CPU clock. To change the frequency of the PLL, the CPU
-> clock is temporarily reparented to another parent clock.
-> 
-> The clock frequency of this temporary parent clock could be much higher
-> than the clock frequency of the PLL at the time of reparenting. Due
-> to the temporary increase in the CPU clock speed, the CPU (and any other
-> components in the CPU clock domain such as dividers, mux, etc.) have to
-> to be operated at a higher voltage level, called the safe voltage level.
-> This patch adds optional support to temporarily switch to a safe voltage
-> level during CPU frequency transitions.
-> 
-> Cc: Shawn Guo <shawn.guo@linaro.org>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    7 ++++
+Hi
 
-The devicetree list should be copied for this change.
+Thank you for review.
 
->  drivers/cpufreq/cpufreq-cpu0.c                     |   37 +++++++++++++++++--
->  2 files changed, 40 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
-> index f055515..37453ab 100644
-> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
-> @@ -19,6 +19,12 @@ Optional properties:
->  - cooling-min-level:
->  - cooling-max-level:
->       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
-> +- safe-opp: Certain platforms require that during a opp transition,
-> +  a system should not go below a particular opp level. For such systems,
-> +  this property specifies the minimum opp to be maintained during the
-> +  opp transitions. The safe-opp value is a tuple with first element
-> +  representing the safe frequency and the second element representing the
-> +  safe voltage.
->  
->  Examples:
->  
-> @@ -36,6 +42,7 @@ cpus {
->  			396000  950000
->  			198000  850000
->  		>;
-> +		safe-opp = <396000 950000>
->  		clock-latency = <61036>; /* two CLK32 periods */
->  		#cooling-cells = <2>;
->  		cooling-min-level = <0>;
-> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
-> index 0c12ffc..075d3d1 100644
-> --- a/drivers/cpufreq/cpufreq-cpu0.c
-> +++ b/drivers/cpufreq/cpufreq-cpu0.c
-> @@ -27,6 +27,8 @@
->  
->  static unsigned int transition_latency;
->  static unsigned int voltage_tolerance; /* in percentage */
-> +static unsigned long safe_frequency;
-> +static unsigned long safe_voltage;
->  
->  static struct device *cpu_dev;
->  static struct clk *cpu_clk;
-> @@ -64,17 +66,30 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
->  		volt_old = regulator_get_voltage(cpu_reg);
->  	}
->  
-> -	pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
-> +	pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
+On Mon, Jan 27, 2014 at 5:16 AM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
+> On Mon, Jan 27, 2014 at 3:14 AM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+>> On Mon, Jan 27, 2014 at 02:31:59AM +0400, Dmitry Eremin-Solenikov wrote:
+>>> On Mon, Jan 27, 2014 at 1:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> > On 26.01.2014 22:45, Dmitry Torokhov wrote:
+>>> >>
+>>> >> On Sun, Jan 26, 2014 at 07:31:50PM +0530, Manish Badarkhe wrote:
+>>> >>>
+>>> >>> Hi Tomasz,
+>>> >>>
+>>> >>> Thank you for your review comments.
+>>> >>>
+>>> >>> On Sun, Jan 26, 2014 at 6:52 PM, Tomasz Figa <tomasz.figa@gmail.com>
+>>> >>> wrote:
+>>> >>>>
+>>> >>>>
+>>> >>>> Hi Manish,
+>>> >>>>
+>>> >>>>
+>>> >>>> On 26.01.2014 08:15, Manish Badarkhe wrote:
+>>> >>>>>
+>>> >>>>>
+>>> >>>>> Instead of "#if define CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
+>>> >>>>> option for DT code to avoid if-deffery in code.
+>>> >>>>>
+>>> >>>>> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+>>> >>>>> ---
+>>> >>>>> :100644 100644 b4513f2... d353fbc... M  drivers/power/max8925_power.c
+>>> >>>>>    drivers/power/max8925_power.c |   14 +++++---------
+>>> >>>>>    1 file changed, 5 insertions(+), 9 deletions(-)
+>>> >>>>>
+>>> >>>>> diff --git a/drivers/power/max8925_power.c
+>>> >>>>> b/drivers/power/max8925_power.c
+>>> >>>>> index b4513f2..d353fbc 100644
+>>> >>>>> --- a/drivers/power/max8925_power.c
+>>> >>>>> +++ b/drivers/power/max8925_power.c
+>>> >>>>> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct
+>>> >>>>> max8925_power_info *info)
+>>> >>>>>          return 0;
+>>> >>>>>    }
+>>> >>>>>
+>>> >>>>> -#ifdef CONFIG_OF
+>>> >>>>>    static struct max8925_power_pdata *
+>>> >>>>>    max8925_power_dt_init(struct platform_device *pdev)
+>>> >>>>>    {
+>>> >>>>> @@ -468,13 +467,6 @@ max8925_power_dt_init(struct platform_device
+>>> >>>>> *pdev)
+>>> >>>>>
+>>> >>>>>          return pdata;
+>>> >>>>>    }
+>>> >>>>> -#else
+>>> >>>>> -static struct max8925_power_pdata *
+>>> >>>>> -max8925_power_dt_init(struct platform_device *pdev)
+>>> >>>>> -{
+>>> >>>>> -       return pdev->dev.platform_data;
+>>> >>>>> -}
+>>> >>>>> -#endif
+>>> >>>>>
+>>> >>>>>    static int max8925_power_probe(struct platform_device *pdev)
+>>> >>>>>    {
+>>> >>>>> @@ -483,7 +475,11 @@ static int max8925_power_probe(struct
+>>> >>>>> platform_device *pdev)
+>>> >>>>>          struct max8925_power_info *info;
+>>> >>>>>          int ret;
+>>> >>>>>
+>>> >>>>> -       pdata = max8925_power_dt_init(pdev);
+>>> >>>>> +       if (IS_ENABLED(CONFIG_OF))
+>>> >>>>> +               pdata = max8925_power_dt_init(pdev);
+>>> >>>>> +       else
+>>> >>>>> +               pdata = pdev->dev.platform_data;
+>>> >>>>> +
+>>> >>>>
+>>> >>>>
+>>> >>>>
+>>> >>>> This does not look much better than before this patch. Instead of
+>>> >>>> "if-deffery" outside function bodies you are adding "iffery" (if there is
+>>> >>>> such a word) inside a function.
+>>> >>>> What about adding
+>>> >>>>
+>>> >>>>          if (!IS_ENABLED(CONFIG_OF))
+>>> >>>>                  return pdev->dev.platform_data;
+>>> >>>>
+>>> >>>> on top of max8925_power_dt_init() instead or maybe also renaming this
+>>> >>>> function to max8925_get_pdata()?
+>>> >>>
+>>> >>>
+>>> >>> Okay, I will rename function "max8925_power_dt_init()" to
+>>> >>> "max8925_get_pdata()".
+>>> >>> As you suggested, in the body of this function  will add a logic to
+>>> >>> retrieve  data in case
+>>> >>> of DT and non-DT platforms.
+>>> >>
+>>> >>
+>>> >> Should we not always favor platform-supplied data regardless of
+>>> >> CONFIG_OF state and fall back to DT (firmware) supplied data if platform
+>>> >> data is absent? This way one can tweak kernel behavior without needing
+>>> >> to change firmware.
+>>> >
+>>> >
+>>> > I guess we should, but apparently this was not the original behavior before
+>>> > this patch, so I'm not sure if we should be squashing such semantic change
+>>> > with this simple refactor.
+>>>
+>>> Hmm. Judging from the code, max8925_power_dt_init() function follows exactly
+>>> opposite strategy - it uses platform_data if of_node is not populated/available.
+>>> So (if dt_init will compile with CONFIG_OF disabled) one can always
+>>> use _dt_init()
+>>> function to retrieve pdata.
+>>
+>> Right, and I question whether this is good behavior or if it should be
+>> corrected.
+>
+> I'd say, correct it.
 
-This is an unnecessary change?
+Okay, I will update code as per Dmitry's feedback.
 
-Otherwise,
-
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
-
-Shawn
-
->  		 old_freq / 1000, volt_old ? volt_old / 1000 : -1,
->  		 new_freq / 1000, volt ? volt / 1000 : -1);
->  
->  	/* scaling up?  scale voltage before frequency */
-> -	if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
-> +	if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
-> +				new_freq >= safe_frequency) {
->  		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
->  		if (ret) {
->  			pr_err("failed to scale voltage up: %d\n", ret);
->  			return ret;
->  		}
-> +	} else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
-> +		/*
-> +		 * the scaled up voltage level for the new_freq is lower
-> +		 * than the safe voltage level. so set safe_voltage
-> +		 * as the intermediate voltage level and revert it
-> +		 * back after the frequency has been changed.
-> +		 */
-> +		ret = regulator_set_voltage_tol(cpu_reg, safe_voltage, tol);
-> +		if (ret) {
-> +			pr_err("failed to set safe voltage: %d\n", ret);
-> +			return ret;
-> +		}
->  	}
->  
->  	ret = clk_set_rate(cpu_clk, freq_exact);
-> @@ -86,7 +101,8 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
->  	}
->  
->  	/* scaling down?  scale voltage after frequency */
-> -	if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
-> +	if (!IS_ERR(cpu_reg) &&
-> +			(new_freq < old_freq || new_freq < safe_frequency)) {
->  		ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
->  		if (ret) {
->  			pr_err("failed to scale voltage down: %d\n", ret);
-> @@ -116,6 +132,8 @@ static struct cpufreq_driver cpu0_cpufreq_driver = {
->  
->  static int cpu0_cpufreq_probe(struct platform_device *pdev)
->  {
-> +	const struct property *prop;
-> +	struct dev_pm_opp *opp;
->  	struct device_node *np;
->  	int ret;
->  
-> @@ -165,13 +183,24 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
->  		goto out_put_node;
->  	}
->  
-> +	prop = of_find_property(np, "safe-opp", NULL);
-> +	if (prop) {
-> +		if (prop->value && (prop->length / sizeof(u32)) == 2) {
-> +			const __be32 *val;
-> +			val = prop->value;
-> +			safe_frequency = be32_to_cpup(val++);
-> +			safe_voltage = be32_to_cpup(val);
-> +		} else {
-> +			pr_err("invalid safe-opp level specified\n");
-> +		}
-> +	}
-> +
->  	of_property_read_u32(np, "voltage-tolerance", &voltage_tolerance);
->  
->  	if (of_property_read_u32(np, "clock-latency", &transition_latency))
->  		transition_latency = CPUFREQ_ETERNAL;
->  
->  	if (!IS_ERR(cpu_reg)) {
-> -		struct dev_pm_opp *opp;
->  		unsigned long min_uV, max_uV;
->  		int i;
->  
-> -- 
-> 1.6.6.rc2
-> 
+Regards
+Manish Badarkhe
