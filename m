@@ -1,142 +1,59 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
-Date: Mon, 27 Jan 2014 03:46:28 +0400
-Message-ID: <CALT56yODeNZLH5bDHN2N0awFA0EyPH77wDyAv+4Qkgr6mu_u0Q@mail.gmail.com>
-References: <1390720540-13350-1-git-send-email-badarkhe.manish@gmail.com>
-	<52E50C24.8030305@gmail.com>
-	<CAKDJKT5TvkgUN2Ee-2NignzxY1F54SHEiNL2i6c+hMjnLHOg5g@mail.gmail.com>
-	<20140126214542.GC18840@core.coreip.homeip.net>
-	<52E582D0.9070501@gmail.com>
-	<CALT56yPJjLZ_UHgH1koKPbTLBR=5QzSFMMXfqYxspw30_fpKNQ@mail.gmail.com>
-	<20140126231452.GE18840@core.coreip.homeip.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
+Date: Mon, 27 Jan 2014 00:03:00 +0000
+Message-ID: <20140127000300.GR11727@sirena.org.uk>
+References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
+ <20140126213653.GB18840@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:59102 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753076AbaAZXq3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Jan 2014 18:46:29 -0500
-In-Reply-To: <20140126231452.GE18840@core.coreip.homeip.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="X1pyOwMoA9G3DWfK"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140126213653.GB18840@core.coreip.homeip.net>
+Sender: linux-omap-owner@vger.kernel.org
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Manish Badarkhe <badarkhe.manish@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
+Cc: Manish Badarkhe <badarkhe.manish@gmail.com>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 27, 2014 at 3:14 AM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Mon, Jan 27, 2014 at 02:31:59AM +0400, Dmitry Eremin-Solenikov wrote:
->> On Mon, Jan 27, 2014 at 1:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> > On 26.01.2014 22:45, Dmitry Torokhov wrote:
->> >>
->> >> On Sun, Jan 26, 2014 at 07:31:50PM +0530, Manish Badarkhe wrote:
->> >>>
->> >>> Hi Tomasz,
->> >>>
->> >>> Thank you for your review comments.
->> >>>
->> >>> On Sun, Jan 26, 2014 at 6:52 PM, Tomasz Figa <tomasz.figa@gmail.com>
->> >>> wrote:
->> >>>>
->> >>>>
->> >>>> Hi Manish,
->> >>>>
->> >>>>
->> >>>> On 26.01.2014 08:15, Manish Badarkhe wrote:
->> >>>>>
->> >>>>>
->> >>>>> Instead of "#if define CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
->> >>>>> option for DT code to avoid if-deffery in code.
->> >>>>>
->> >>>>> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
->> >>>>> ---
->> >>>>> :100644 100644 b4513f2... d353fbc... M  drivers/power/max8925_power.c
->> >>>>>    drivers/power/max8925_power.c |   14 +++++---------
->> >>>>>    1 file changed, 5 insertions(+), 9 deletions(-)
->> >>>>>
->> >>>>> diff --git a/drivers/power/max8925_power.c
->> >>>>> b/drivers/power/max8925_power.c
->> >>>>> index b4513f2..d353fbc 100644
->> >>>>> --- a/drivers/power/max8925_power.c
->> >>>>> +++ b/drivers/power/max8925_power.c
->> >>>>> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct
->> >>>>> max8925_power_info *info)
->> >>>>>          return 0;
->> >>>>>    }
->> >>>>>
->> >>>>> -#ifdef CONFIG_OF
->> >>>>>    static struct max8925_power_pdata *
->> >>>>>    max8925_power_dt_init(struct platform_device *pdev)
->> >>>>>    {
->> >>>>> @@ -468,13 +467,6 @@ max8925_power_dt_init(struct platform_device
->> >>>>> *pdev)
->> >>>>>
->> >>>>>          return pdata;
->> >>>>>    }
->> >>>>> -#else
->> >>>>> -static struct max8925_power_pdata *
->> >>>>> -max8925_power_dt_init(struct platform_device *pdev)
->> >>>>> -{
->> >>>>> -       return pdev->dev.platform_data;
->> >>>>> -}
->> >>>>> -#endif
->> >>>>>
->> >>>>>    static int max8925_power_probe(struct platform_device *pdev)
->> >>>>>    {
->> >>>>> @@ -483,7 +475,11 @@ static int max8925_power_probe(struct
->> >>>>> platform_device *pdev)
->> >>>>>          struct max8925_power_info *info;
->> >>>>>          int ret;
->> >>>>>
->> >>>>> -       pdata = max8925_power_dt_init(pdev);
->> >>>>> +       if (IS_ENABLED(CONFIG_OF))
->> >>>>> +               pdata = max8925_power_dt_init(pdev);
->> >>>>> +       else
->> >>>>> +               pdata = pdev->dev.platform_data;
->> >>>>> +
->> >>>>
->> >>>>
->> >>>>
->> >>>> This does not look much better than before this patch. Instead of
->> >>>> "if-deffery" outside function bodies you are adding "iffery" (if there is
->> >>>> such a word) inside a function.
->> >>>> What about adding
->> >>>>
->> >>>>          if (!IS_ENABLED(CONFIG_OF))
->> >>>>                  return pdev->dev.platform_data;
->> >>>>
->> >>>> on top of max8925_power_dt_init() instead or maybe also renaming this
->> >>>> function to max8925_get_pdata()?
->> >>>
->> >>>
->> >>> Okay, I will rename function "max8925_power_dt_init()" to
->> >>> "max8925_get_pdata()".
->> >>> As you suggested, in the body of this function  will add a logic to
->> >>> retrieve  data in case
->> >>> of DT and non-DT platforms.
->> >>
->> >>
->> >> Should we not always favor platform-supplied data regardless of
->> >> CONFIG_OF state and fall back to DT (firmware) supplied data if platform
->> >> data is absent? This way one can tweak kernel behavior without needing
->> >> to change firmware.
->> >
->> >
->> > I guess we should, but apparently this was not the original behavior before
->> > this patch, so I'm not sure if we should be squashing such semantic change
->> > with this simple refactor.
->>
->> Hmm. Judging from the code, max8925_power_dt_init() function follows exactly
->> opposite strategy - it uses platform_data if of_node is not populated/available.
->> So (if dt_init will compile with CONFIG_OF disabled) one can always
->> use _dt_init()
->> function to retrieve pdata.
->
-> Right, and I question whether this is good behavior or if it should be
-> corrected.
 
-I'd say, correct it.
+--X1pyOwMoA9G3DWfK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-With best wishes
-Dmitry
+On Sun, Jan 26, 2014 at 01:36:53PM -0800, Dmitry Torokhov wrote:
+> On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
+
+> > Use "devm_regulator_register" instead of "regulator_register"
+> > which simplifies the code.
+
+> ... and also breaks the driver: now you are freeing desc->name and
+> desc->supply_name while regulator structures are still alive and can be
+> referenced from its sysfs attributes, etc.
+
+Yup, they need to be converted to managed allocations too if the
+regulator_register() is going to be converted (see previous discussions
+on similar patches).  It would be good to do so.
+
+--X1pyOwMoA9G3DWfK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS5aIxAAoJELSic+t+oim92QsP/0NPhMMAgwoVcy4afvg8XV10
+J/PWI+Kc/vOpJVjP5hMYZmijtKA/YvaD8tOuZ0afKXehdt8oOOzXpK8zlSV3FDsm
+W0ZnS6ojtEjJ5t2teVexrBpGaA/kUK9hsQ12nu6aBEDU9Lup/aSn6BKMglEw+zzw
+Y9YqkiqOLczpsjvUx6zV/gFuRhW4NOWTJwWfHlwJlCpqMM1aA70AYwGTvRVoRoBM
+yjy5I5mc7mbeEjXCNi6Uoh+SldBMGeGskF8DhcKlIod1oUh2HjMR6HemD5YDtrDb
+uQdbTXqvCIohbytEvE8vX55BbDQB8Hf9FBNGn5qV1FQ3ZIAMcZJaIpl7ZZ/pGbzp
+40CIYZU3y8MqWpk7ePr62fkJj5USylxCytKpjSSFpkNCYW6/eC08rJUd0DO73FbE
+E+lm+32nIUArgsp6I8Hrh/NZkBqZjLLAegwNH0fkBgIwBdynGMJyvm0HZcUv7jZE
+ZJcxEKL6BqjO54APojRoyL/Qw0vkrkdwahX1/n4t566s+0/uBachRYOkbMYzh+Yi
+YTyxYQxUsYjzLlXsAztNpCvWucVuQZKo5HGCiz+IfK4oA73FxRUM/JPssMUXSvey
+m7Dx2+pJMsQMEtcXMaqHXGO4x6IZA7qNYUH+MuY3lbmFfYGbNxkO0JLC6nfiNxTA
+Z50ZbRQceqBSSN6Pb3d6
+=2z/J
+-----END PGP SIGNATURE-----
+
+--X1pyOwMoA9G3DWfK--
