@@ -1,24 +1,29 @@
 From: Thomas Abraham <ta.omasab@gmail.com>
 Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage
  during frequency transitions
-Date: Tue, 28 Jan 2014 10:00:47 +0530
-Message-ID: <CAJuA9ahp8vquvtfY+UEg0bX=6bmR5Dwj9NAt6dzdPdv=bnJ76w@mail.gmail.com>
+Date: Tue, 28 Jan 2014 11:00:29 +0530
+Message-ID: <CAJuA9ah1vsgpD04QhM5RApkCe9xcvpPkLvdwzgadKGWvngAt+g@mail.gmail.com>
 References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
 	<1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
-	<20140127071656.GB3135@S2101-09.ap.freescale.net>
+	<20140127202543.4167.83362@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20140127071656.GB3135@S2101-09.ap.freescale.net>
-Sender: cpufreq-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f42.google.com ([209.85.215.42]:55101 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750747AbaA1Faa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Jan 2014 00:30:30 -0500
+In-Reply-To: <20140127202543.4167.83362@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
 
-Hi Shawn,
+Hi Mike,
 
-On Mon, Jan 27, 2014 at 12:46 PM, Shawn Guo <shawn.guo@linaro.org> wrote:
-> On Sat, Jan 18, 2014 at 05:40:51PM +0530, Thomas Abraham wrote:
+On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Thomas Abraham (2014-01-18 04:10:51)
 >> From: Thomas Abraham <thomas.ab@samsung.com>
 >>
 >> On some platforms such as the Samsung Exynos, changing the frequency
@@ -36,14 +41,62 @@ On Mon, Jan 27, 2014 at 12:46 PM, Shawn Guo <shawn.guo@linaro.org> wrote:
 >>
 >> Cc: Shawn Guo <shawn.guo@linaro.org>
 >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>
+> I'm not a fan of this change. This corner case should be abstracted away
+> somehow. I had talked to Chander Kayshap previously about handling
+> voltage changes in clock notifier callbacks, which then renders any
+> voltage change as a trivial part of the clock rate transition. That
+> means that this "safe voltage" thing could be handled automagically
+> without any additional code in the CPUfreq driver.
+>
+> There are two nice ways to do this with the clock framework. First is
+> explicit re-parenting with voltage scaling done in the clock rate-change
+> notifiers:
+>
+> clk_set_parent(cpu_clk, temp_parent);
+> /* implicit voltage scaling to "safe voltage" happens above */
+> clk_set_rate(pll, some_rate);
+> clk_set_parent(cpu_clk, pll);
+> /* implicit voltage scaling to nominal OPP voltage happens above */
+>
+> The above sequence would require a separate exnyos CPUfreq driver, due
+> to the added clk_set_parent logic.
+>
+> The second way to do this is to abstract the clk re-muxing logic out
+> into the clk driver, which would allow cpufreq-cpu0 to be used for the
+> exynos chips.
+
+This is the approach this patch series takes (patch 2/7). The clock
+re-muxing logic is handled by a clock driver code. The difference from
+what you suggested is that the safe voltage (that may be optionally)
+required before doing the re-muxing is handled here in cpufreq-cpu0
+driver.
+
+The safe voltage setup can be done in the notifier as you suggested.
+But, doing that in cpufreq-cpu0 driver will help other platforms reuse
+this feature if required. Also, if done here, the regulator handling
+is localized in this driver which otherwise would need to be handled
+in two places, cpufreq-cpu0 driver and the clock notifier.
+
+So I tend to prefer the approach in this patch but I am willing to
+consider any suggestions. Shawn, it would be helpful if you could let
+us know your thoughts on this. I am almost done with testing the v3 of
+this series and want to post it so if there are any objections to the
+changes in this patch, please let me know.
+
+Thanks,
+Thomas.
+
+>
+> I'm more a fan of explicitly listing the Exact Steps for the cpu opp
+> transition in a separate exynos-specific CPUfreq driver, but that's
+> probably an unpopular view.
+>
+> Regards,
+> Mike
+>
 >> ---
 >>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    7 ++++
->
-> The devicetree list should be copied for this change.
-
-Okay, will do in the next version.
-
->
 >>  drivers/cpufreq/cpufreq-cpu0.c                     |   37 +++++++++++++++++--
 >>  2 files changed, 40 insertions(+), 4 deletions(-)
 >>
@@ -65,13 +118,13 @@ Okay, will do in the next version.
 >>  Examples:
 >>
 >> @@ -36,6 +42,7 @@ cpus {
->>                       396000  950000
->>                       198000  850000
->>               >;
->> +             safe-opp = <396000 950000>
->>               clock-latency = <61036>; /* two CLK32 periods */
->>               #cooling-cells = <2>;
->>               cooling-min-level = <0>;
+>>                         396000  950000
+>>                         198000  850000
+>>                 >;
+>> +               safe-opp = <396000 950000>
+>>                 clock-latency = <61036>; /* two CLK32 periods */
+>>                 #cooling-cells = <2>;
+>>                 cooling-min-level = <0>;
 >> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
 >> index 0c12ffc..075d3d1 100644
 >> --- a/drivers/cpufreq/cpufreq-cpu0.c
@@ -86,102 +139,83 @@ Okay, will do in the next version.
 >>  static struct device *cpu_dev;
 >>  static struct clk *cpu_clk;
 >> @@ -64,17 +66,30 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
->>               volt_old = regulator_get_voltage(cpu_reg);
->>       }
+>>                 volt_old = regulator_get_voltage(cpu_reg);
+>>         }
 >>
->> -     pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
->> +     pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
->
-> This is an unnecessary change?
-
-Yes, sorry missed that.
-
->
-> Otherwise,
->
-> Acked-by: Shawn Guo <shawn.guo@linaro.org>
-
-Thanks for your review.
-
-Regards,
-Thomas.
-
->
-> Shawn
->
->>                old_freq / 1000, volt_old ? volt_old / 1000 : -1,
->>                new_freq / 1000, volt ? volt / 1000 : -1);
+>> -       pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
+>> +       pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
+>>                  old_freq / 1000, volt_old ? volt_old / 1000 : -1,
+>>                  new_freq / 1000, volt ? volt / 1000 : -1);
 >>
->>       /* scaling up?  scale voltage before frequency */
->> -     if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
->> +     if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
->> +                             new_freq >= safe_frequency) {
->>               ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
->>               if (ret) {
->>                       pr_err("failed to scale voltage up: %d\n", ret);
->>                       return ret;
->>               }
->> +     } else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
->> +             /*
->> +              * the scaled up voltage level for the new_freq is lower
->> +              * than the safe voltage level. so set safe_voltage
->> +              * as the intermediate voltage level and revert it
->> +              * back after the frequency has been changed.
->> +              */
->> +             ret = regulator_set_voltage_tol(cpu_reg, safe_voltage, tol);
->> +             if (ret) {
->> +                     pr_err("failed to set safe voltage: %d\n", ret);
->> +                     return ret;
->> +             }
->>       }
+>>         /* scaling up?  scale voltage before frequency */
+>> -       if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
+>> +       if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
+>> +                               new_freq >= safe_frequency) {
+>>                 ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>>                 if (ret) {
+>>                         pr_err("failed to scale voltage up: %d\n", ret);
+>>                         return ret;
+>>                 }
+>> +       } else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
+>> +               /*
+>> +                * the scaled up voltage level for the new_freq is lower
+>> +                * than the safe voltage level. so set safe_voltage
+>> +                * as the intermediate voltage level and revert it
+>> +                * back after the frequency has been changed.
+>> +                */
+>> +               ret = regulator_set_voltage_tol(cpu_reg, safe_voltage, tol);
+>> +               if (ret) {
+>> +                       pr_err("failed to set safe voltage: %d\n", ret);
+>> +                       return ret;
+>> +               }
+>>         }
 >>
->>       ret = clk_set_rate(cpu_clk, freq_exact);
+>>         ret = clk_set_rate(cpu_clk, freq_exact);
 >> @@ -86,7 +101,8 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
->>       }
+>>         }
 >>
->>       /* scaling down?  scale voltage after frequency */
->> -     if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
->> +     if (!IS_ERR(cpu_reg) &&
->> +                     (new_freq < old_freq || new_freq < safe_frequency)) {
->>               ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
->>               if (ret) {
->>                       pr_err("failed to scale voltage down: %d\n", ret);
+>>         /* scaling down?  scale voltage after frequency */
+>> -       if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
+>> +       if (!IS_ERR(cpu_reg) &&
+>> +                       (new_freq < old_freq || new_freq < safe_frequency)) {
+>>                 ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>>                 if (ret) {
+>>                         pr_err("failed to scale voltage down: %d\n", ret);
 >> @@ -116,6 +132,8 @@ static struct cpufreq_driver cpu0_cpufreq_driver = {
 >>
 >>  static int cpu0_cpufreq_probe(struct platform_device *pdev)
 >>  {
->> +     const struct property *prop;
->> +     struct dev_pm_opp *opp;
->>       struct device_node *np;
->>       int ret;
+>> +       const struct property *prop;
+>> +       struct dev_pm_opp *opp;
+>>         struct device_node *np;
+>>         int ret;
 >>
 >> @@ -165,13 +183,24 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
->>               goto out_put_node;
->>       }
+>>                 goto out_put_node;
+>>         }
 >>
->> +     prop = of_find_property(np, "safe-opp", NULL);
->> +     if (prop) {
->> +             if (prop->value && (prop->length / sizeof(u32)) == 2) {
->> +                     const __be32 *val;
->> +                     val = prop->value;
->> +                     safe_frequency = be32_to_cpup(val++);
->> +                     safe_voltage = be32_to_cpup(val);
->> +             } else {
->> +                     pr_err("invalid safe-opp level specified\n");
->> +             }
->> +     }
+>> +       prop = of_find_property(np, "safe-opp", NULL);
+>> +       if (prop) {
+>> +               if (prop->value && (prop->length / sizeof(u32)) == 2) {
+>> +                       const __be32 *val;
+>> +                       val = prop->value;
+>> +                       safe_frequency = be32_to_cpup(val++);
+>> +                       safe_voltage = be32_to_cpup(val);
+>> +               } else {
+>> +                       pr_err("invalid safe-opp level specified\n");
+>> +               }
+>> +       }
 >> +
->>       of_property_read_u32(np, "voltage-tolerance", &voltage_tolerance);
+>>         of_property_read_u32(np, "voltage-tolerance", &voltage_tolerance);
 >>
->>       if (of_property_read_u32(np, "clock-latency", &transition_latency))
->>               transition_latency = CPUFREQ_ETERNAL;
+>>         if (of_property_read_u32(np, "clock-latency", &transition_latency))
+>>                 transition_latency = CPUFREQ_ETERNAL;
 >>
->>       if (!IS_ERR(cpu_reg)) {
->> -             struct dev_pm_opp *opp;
->>               unsigned long min_uV, max_uV;
->>               int i;
+>>         if (!IS_ERR(cpu_reg)) {
+>> -               struct dev_pm_opp *opp;
+>>                 unsigned long min_uV, max_uV;
+>>                 int i;
 >>
 >> --
 >> 1.6.6.rc2
 >>
->
