@@ -1,74 +1,123 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: Samsung-clk patches for 3.15
-Date: Tue, 28 Jan 2014 01:17:42 +0100
-Message-ID: <52E6F726.1070900@gmail.com>
-References: <52E27AE9.7040501@samsung.com> <52E6EDC1.9080003@gmail.com> <251c01cf1bbd$36802390$a3806ab0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: [PATCH V2] regulator: fixed: update to devm_* API
+Date: Tue, 28 Jan 2014 08:42:00 +0530
+Message-ID: <1390878720-8676-1-git-send-email-badarkhe.manish@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:64413 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751405AbaA1ARv (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:33636 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753347AbaA1DM2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jan 2014 19:17:51 -0500
-Received: by mail-ee0-f53.google.com with SMTP id t10so2594504eei.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jan 2014 16:17:50 -0800 (PST)
-In-Reply-To: <251c01cf1bbd$36802390$a3806ab0$@samsung.com>
+	Mon, 27 Jan 2014 22:12:28 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: a.hajda@samsung.com, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, thomas.ab@samsung.com, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>
+To: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: broonie@kernel.org, lgirdwood@gmail.com, badarkhe.manish@gmail.com
 
+Update the code to use devm_* API so that driver core will manage
+resources.
 
+Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+---
+Changes since V1:
+1. Updated driver to use "devm_kzalloc" to "kstrdup".
+2. Updated commit message.
 
-On 28.01.2014 01:09, Kukjin Kim wrote:
-> Tomasz Figa wrote:
->>
->> [Forgot to Cc Mike...]
->>
->> On 24.01.2014 15:38, Tomasz Figa wrote:
->>> Hi,
->>>
->
-> Hi,
->
->>> Linux 3.14 is going to include Andrzej Hajda's patches converting
->>> Samsung clock drivers to use clock ID defines in include/dt-bindings,
->>> instead of local enums, but to avoid unnecessary merge conflicts we
->>> have converted only the clock driver, leaving DTS files unchanged yet.
->>>
->>> We intend to complete the conversion in 3.15, by replacing magic
->>> numbers in DTS files with respective preprocessor macros, but to
->>> reduce potential conflicts we need help of you, Samsung clock patches
->> authors :).
->>>
->>> I'd like to ask anybody who already has patches for DTS files adding
->>> any clock-related contents still using numeric IDs, e.g. clock
->>> properties in nodes or full nodes containing clock properties, to make
->>> sure that the patches are merged before Andrzej sends the conversion
->>> patches. Then Andrzej's script will generate patches updating all
->>> clock properties, leaving no numeric IDs in DTS files.
->>>
->
-> There are several DTS patches in v3.14-drop/soc-exynos-2 branch of my tree
-> for 3.15 and it will be merged after done of multiplatform, I need to rebase
-> them based on v3.14-rc1 though...So I think, would be better if we could
-> update DTS with using Andrzej's script after merging it into arm-soc...
+Not tested on any board.
 
-Basically my intention is to:
+:100644 100644 5ea64b9... e9763a4... M	drivers/regulator/fixed.c
+ drivers/regulator/fixed.c |   42 ++++++++++++------------------------------
+ 1 file changed, 12 insertions(+), 30 deletions(-)
 
-1) Have any existing patches using clock numbers merged in reasonable 
-period of time (to not miss the merge window with DTS conversion patches).
-
-2) Stop accepting such patches anymore.
-
-3) Rerun Andrzej's script and convert all device tree sources to use 
-clock macros.
-
-Andrzej's patches for DTSes should go through your tree anyway (as any 
-Samsung DTS patches by default), so it shouldn't be a problem, 
-regardless of merging anything into arm-soc.
-
-Best regards,
-Tomasz
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 5ea64b9..e9763a4 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -132,15 +132,15 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 			       GFP_KERNEL);
+ 	if (drvdata == NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate device data\n");
+-		ret = -ENOMEM;
+-		goto err;
++		return -ENOMEM;
+ 	}
+ 
+-	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
++	drvdata->desc.name = devm_kzalloc(&pdev->dev,
++					  strlen(config->supply_name) + 1,
++					  GFP_KERNEL);
+ 	if (drvdata->desc.name == NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+-		ret = -ENOMEM;
+-		goto err;
++		return -ENOMEM;
+ 	}
+ 	drvdata->desc.type = REGULATOR_VOLTAGE;
+ 	drvdata->desc.owner = THIS_MODULE;
+@@ -149,13 +149,13 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	drvdata->desc.enable_time = config->startup_delay;
+ 
+ 	if (config->input_supply) {
+-		drvdata->desc.supply_name = kstrdup(config->input_supply,
+-							GFP_KERNEL);
++		drvdata->desc.supply_name = devm_kzalloc(&pdev->dev,
++					    strlen(config->input_supply) + 1,
++					    GFP_KERNEL);
+ 		if (!drvdata->desc.supply_name) {
+ 			dev_err(&pdev->dev,
+ 				"Failed to allocate input supply\n");
+-			ret = -ENOMEM;
+-			goto err_name;
++			return -ENOMEM;
+ 		}
+ 	}
+ 
+@@ -186,11 +186,12 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = pdev->dev.of_node;
+ 
+-	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
++	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
++					       &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_input;
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+@@ -199,24 +200,6 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 		drvdata->desc.fixed_uV);
+ 
+ 	return 0;
+-
+-err_input:
+-	kfree(drvdata->desc.supply_name);
+-err_name:
+-	kfree(drvdata->desc.name);
+-err:
+-	return ret;
+-}
+-
+-static int reg_fixed_voltage_remove(struct platform_device *pdev)
+-{
+-	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
+-
+-	regulator_unregister(drvdata->dev);
+-	kfree(drvdata->desc.supply_name);
+-	kfree(drvdata->desc.name);
+-
+-	return 0;
+ }
+ 
+ #if defined(CONFIG_OF)
+@@ -229,7 +212,6 @@ MODULE_DEVICE_TABLE(of, fixed_of_match);
+ 
+ static struct platform_driver regulator_fixed_voltage_driver = {
+ 	.probe		= reg_fixed_voltage_probe,
+-	.remove		= reg_fixed_voltage_remove,
+ 	.driver		= {
+ 		.name		= "reg-fixed-voltage",
+ 		.owner		= THIS_MODULE,
+-- 
+1.7.10.4
