@@ -1,137 +1,318 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH v6 1/8] phy: core: Add an exported of_phy_get function
-Date: Wed, 29 Jan 2014 18:29:27 +0100
-Message-ID: <1391016574-25237-2-git-send-email-k.debski@samsung.com>
+From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 6/8] phy: Add support for S5PV210 to the Exynos USB PHY
+ driver
+Date: Wed, 29 Jan 2014 18:29:32 +0100
+Message-ID: <1391016574-25237-7-git-send-email-k.debski@samsung.com>
 References: <1391016574-25237-1-git-send-email-k.debski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1391016574-25237-1-git-send-email-k.debski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, k.debski@samsung.com, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1391016574-25237-1-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Previously the of_phy_get function took a struct device * and
-was declared static. It was impossible to call it from
-another driver and thus it was impossible to get phy defined
-for a given node. The old function was renamed to _of_phy_get
-and was left for internal use. of_phy_get function was added
-and it was exported. The function enables to get a phy for
-a given device tree node.
+From: Mateusz Krawczuk <mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
+Add support for the Samsung's S5PV210 SoC to the Exynos USB PHY driver.
+
+Signed-off-by: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>
+[k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: cleanup and commit description]
+[k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: make changes accordingly to the mailing list
+comments]
+[k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: fix bug with setting of clk register]
+Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/phy/phy-core.c  |   45 ++++++++++++++++++++++++++++++++++++---------
- include/linux/phy/phy.h |    6 ++++++
- 2 files changed, 42 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/phy/samsung-phy.txt        |    1 +
+ drivers/phy/Kconfig                                |   10 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-s5pv210-usb2.c                     |  199 ++++++++++++++++++++
+ drivers/phy/phy-samsung-usb2.c                     |    6 +
+ drivers/phy/phy-samsung-usb2.h                     |    1 +
+ 6 files changed, 218 insertions(+)
+ create mode 100644 drivers/phy/phy-s5pv210-usb2.c
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 645c867..a1d4387 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -258,8 +258,8 @@ int phy_power_off(struct phy *phy)
- EXPORT_SYMBOL_GPL(phy_power_off);
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+index 6668c41..710d41f 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -26,6 +26,7 @@ Samsung S5P/EXYNOS SoC series USB PHY
  
- /**
-- * of_phy_get() - lookup and obtain a reference to a phy by phandle
-- * @dev: device that requests this phy
-+ * _of_phy_get() - lookup and obtain a reference to a phy by phandle
-+ * @np: device_node for which to get the phy
-  * @index: the index of the phy
-  *
-  * Returns the phy associated with the given phandle value,
-@@ -268,20 +268,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
-  * not yet loaded. This function uses of_xlate call back function provided
-  * while registering the phy_provider to find the phy instance.
-  */
--static struct phy *of_phy_get(struct device *dev, int index)
-+static struct phy *_of_phy_get(struct device_node *np, int index)
- {
- 	int ret;
- 	struct phy_provider *phy_provider;
- 	struct phy *phy = NULL;
- 	struct of_phandle_args args;
+ Required properties:
+ - compatible : should be one of the listed compatibles:
++	- "samsung,s5pv210-usb2-phy"
+ 	- "samsung,exynos4210-usb2-phy"
+ 	- "samsung,exynos4x12-usb2-phy"
+ - reg : a list of registers used by phy driver
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 3691d24..a5554b5 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -73,6 +73,16 @@ config PHY_SAMSUNG_USB2
+ 	  particular SoCs has to be enabled in addition to this driver. Number
+ 	  and type of supported phys depends on the SoC.
  
--	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
-+	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
- 		index, &args);
--	if (ret) {
--		dev_dbg(dev, "failed to get phy in %s node\n",
--			dev->of_node->full_name);
-+	if (ret)
- 		return ERR_PTR(-ENODEV);
--	}
- 
- 	mutex_lock(&phy_provider_mutex);
- 	phy_provider = of_phy_provider_lookup(args.np);
-@@ -301,6 +298,36 @@ err0:
- }
- 
- /**
-+ * of_phy_get() - lookup and obtain a reference to a phy using a device_node.
-+ * @np: device_node for which to get the phy
-+ * @con_id: name of the phy from device's point of view
++config PHY_S5PV210_USB2
++	bool "Support for S5PV210"
++	depends on PHY_SAMSUNG_USB2
++	depends on ARCH_S5PV210
++	help
++	  Enable USB PHY support for S5PV210. This option requires that Samsung
++	  USB 2.0 PHY driver is enabled and means that support for this
++	  particular SoC is compiled in the driver. In case of S5PV210 two phys
++	  are available - device and host.
++
+ config PHY_EXYNOS4210_USB2
+ 	bool "Support for Exynos 4210"
+ 	depends on PHY_SAMSUNG_USB2
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 69d0b3f2..d738f65 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -10,5 +10,6 @@ obj-$(CONFIG_PHY_MVEBU_SATA)		+= phy-mvebu-sata.o
+ obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
+ obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
+ obj-$(CONFIG_PHY_SAMSUNG_USB2)		+= phy-samsung-usb2.o
++obj-$(CONFIG_PHY_S5PV210_USB2)		+= phy-s5pv210-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+diff --git a/drivers/phy/phy-s5pv210-usb2.c b/drivers/phy/phy-s5pv210-usb2.c
+new file mode 100644
+index 0000000..08e5094
+--- /dev/null
++++ b/drivers/phy/phy-s5pv210-usb2.c
+@@ -0,0 +1,199 @@
++/*
++ * Samsung SoC USB 1.1/2.0 PHY driver - S5PV210 support
 + *
-+ * Returns the phy driver, after getting a refcount to it; or
-+ * -ENODEV if there is no such phy. The caller is responsible for
-+ * calling phy_put() to release that count.
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Authors: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + */
-+struct phy *of_phy_get(struct device_node *np, const char *con_id)
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/phy/phy.h>
++#include "phy-samsung-usb2.h"
++
++/* Exynos USB PHY registers */
++
++/* PHY power control */
++#define S5PV210_UPHYPWR			0x0
++
++#define S5PV210_UPHYPWR_PHY0_SUSPEND	BIT(0)
++#define S5PV210_UPHYPWR_PHY0_PWR	BIT(3)
++#define S5PV210_UPHYPWR_PHY0_OTG_PWR	BIT(4)
++#define S5PV210_UPHYPWR_PHY0	( \
++	S5PV210_UPHYPWR_PHY0_SUSPEND | \
++	S5PV210_UPHYPWR_PHY0_PWR | \
++	S5PV210_UPHYPWR_PHY0_OTG_PWR)
++
++#define S5PV210_UPHYPWR_PHY1_SUSPEND	BIT(6)
++#define S5PV210_UPHYPWR_PHY1_PWR	BIT(7)
++#define S5PV210_UPHYPWR_PHY1 ( \
++	S5PV210_UPHYPWR_PHY1_SUSPEND | \
++	S5PV210_UPHYPWR_PHY1_PWR)
++
++/* PHY clock control */
++#define S5PV210_UPHYCLK			0x4
++
++#define S5PV210_UPHYCLK_PHYFSEL_MASK	(0x3 << 0)
++#define S5PV210_UPHYCLK_PHYFSEL_48MHZ	(0x0 << 0)
++#define S5PV210_UPHYCLK_PHYFSEL_24MHZ	(0x3 << 0)
++#define S5PV210_UPHYCLK_PHYFSEL_12MHZ	(0x2 << 0)
++
++#define S5PV210_UPHYCLK_PHY0_ID_PULLUP	BIT(2)
++#define S5PV210_UPHYCLK_PHY0_COMMON_ON	BIT(4)
++#define S5PV210_UPHYCLK_PHY1_COMMON_ON	BIT(7)
++
++/* PHY reset control */
++#define S5PV210_UPHYRST			0x8
++
++#define S5PV210_URSTCON_PHY0		BIT(0)
++#define S5PV210_URSTCON_OTG_HLINK	BIT(1)
++#define S5PV210_URSTCON_OTG_PHYLINK	BIT(2)
++#define S5PV210_URSTCON_PHY1_ALL	BIT(3)
++#define S5PV210_URSTCON_HOST_LINK_ALL	BIT(4)
++
++/* Isolation, configured in the power management unit */
++#define S5PV210_USB_ISOL_DEVICE_OFFSET	0x704
++#define S5PV210_USB_ISOL_DEVICE		BIT(0)
++#define S5PV210_USB_ISOL_HOST_OFFSET	0x708
++#define S5PV210_USB_ISOL_HOST		BIT(1)
++
++
++enum s5pv210_phy_id {
++	S5PV210_DEVICE,
++	S5PV210_HOST,
++	S5PV210_NUM_PHYS,
++};
++
++/*
++ * s5pv210_rate_to_clk() converts the supplied clock rate to the value that
++ * can be written to the phy register.
++ */
++static int s5pv210_rate_to_clk(unsigned long rate, u32 *reg)
 +{
-+	struct phy *phy = NULL;
-+	int index = 0;
-+
-+	if (con_id)
-+		index = of_property_match_string(np, "phy-names", con_id);
-+
-+	phy = _of_phy_get(np, index);
-+	if (IS_ERR(phy))
-+		return phy;
-+
-+	if (!try_module_get(phy->ops->owner))
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	get_device(&phy->dev);
-+
-+	return phy;
++	pr_info("%lu\n", rate);
++	switch (rate) {
++	case 12 * MHZ:
++		*reg = S5PV210_UPHYCLK_PHYFSEL_12MHZ;
++		break;
++	case 24 * MHZ:
++		*reg = S5PV210_UPHYCLK_PHYFSEL_24MHZ;
++		break;
++	case 48 * MHZ:
++		*reg = S5PV210_UPHYCLK_PHYFSEL_48MHZ;
++		break;
++	default:
++		return -EINVAL;
++	}
 +}
-+EXPORT_SYMBOL_GPL(of_phy_get);
 +
-+/**
-  * phy_put() - release the PHY
-  * @phy: the phy returned by phy_get()
-  *
-@@ -388,7 +415,7 @@ struct phy *phy_get(struct device *dev, const char *string)
- 	if (dev->of_node) {
- 		index = of_property_match_string(dev->of_node, "phy-names",
- 			string);
--		phy = of_phy_get(dev, index);
-+		phy = _of_phy_get(dev->of_node, index);
- 		if (IS_ERR(phy)) {
- 			dev_err(dev, "unable to find phy\n");
- 			return phy;
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index e273e5a..5cffc69 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -149,6 +149,7 @@ struct phy *phy_get(struct device *dev, const char *string);
- struct phy *devm_phy_get(struct device *dev, const char *string);
- void phy_put(struct phy *phy);
- void devm_phy_put(struct device *dev, struct phy *phy);
-+struct phy *of_phy_get(struct device_node *np, const char *con_id);
- struct phy *of_phy_simple_xlate(struct device *dev,
- 	struct of_phandle_args *args);
- struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
-@@ -245,6 +246,11 @@ static inline void devm_phy_put(struct device *dev, struct phy *phy)
- {
++static void s5pv210_isol(struct samsung_usb2_phy_instance *inst, bool on)
++{
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++	u32 mask;
++	u32 tmp;
++
++	if (!drv->reg_isol)
++		return;
++
++	switch (inst->cfg->id) {
++	case S5PV210_DEVICE:
++		mask = S5PV210_USB_ISOL_DEVICE;
++		break;
++	case S5PV210_HOST:
++		mask = S5PV210_USB_ISOL_HOST;
++		break;
++	default:
++		return;
++	};
++
++	regmap_update_bits(drv->reg_pmu, offset, mask, on ? 0 : mask);
++}
++
++static void s5pv210_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
++{
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++	u32 rstbits = 0;
++	u32 phypwr = 0;
++	u32 rst;
++	u32 pwr;
++
++	switch (inst->cfg->id) {
++	case S5PV210_DEVICE:
++		phypwr =	S5PV210_UPHYPWR_PHY0;
++		rstbits =	S5PV210_URSTCON_PHY0;
++		break;
++	case S5PV210_HOST:
++		phypwr =	S5PV210_UPHYPWR_PHY1;
++		rstbits =	S5PV210_URSTCON_PHY1_ALL |
++				S5PV210_URSTCON_HOST_LINK_ALL;
++		break;
++	};
++
++	if (on) {
++		writel(inst->clk_reg_val, drv->reg_phy + S5PV210_UPHYCLK);
++
++		pwr = readl(drv->reg_phy + S5PV210_UPHYPWR);
++		pwr &= ~phypwr;
++		writel(pwr, drv->reg_phy + S5PV210_UPHYPWR);
++
++		rst = readl(drv->reg_phy + S5PV210_UPHYRST);
++		rst |= rstbits;
++		writel(rst, drv->reg_phy + S5PV210_UPHYRST);
++		udelay(10);
++		rst &= ~rstbits;
++		writel(rst, drv->reg_phy + S5PV210_UPHYRST);
++	} else {
++		pwr = readl(drv->reg_phy + S5PV210_UPHYPWR);
++		pwr |= phypwr;
++		writel(pwr, drv->reg_phy + S5PV210_UPHYPWR);
++	}
++}
++
++static int s5pv210_power_on(struct samsung_usb2_phy_instance *inst)
++{
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++
++	s5pv210_isol(inst, 0);
++	s5pv210_phy_pwr(inst, 1);
++
++	return 0;
++}
++
++static int s5pv210_power_off(struct samsung_usb2_phy_instance *inst)
++{
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++
++	s5pv210_phy_pwr(inst, 0);
++	s5pv210_isol(inst, 1);
++
++	return 0;
++}
++
++
++static const struct samsung_usb2_common_phy s5pv210_phys[] = {
++	{
++		.label		= "device",
++		.id		= S5PV210_DEVICE,
++		.rate_to_clk	= s5pv210_rate_to_clk,
++		.power_on	= s5pv210_power_on,
++		.power_off	= s5pv210_power_off,
++	},
++	{
++		.label		= "host",
++		.id		= S5PV210_HOST,
++		.rate_to_clk	= s5pv210_rate_to_clk,
++		.power_on	= s5pv210_power_on,
++		.power_off	= s5pv210_power_off,
++	},
++	{},
++};
++
++const struct samsung_usb2_phy_config s5pv210_usb2_phy_config = {
++	.cpu		= TYPE_S5PV210,
++	.num_phys	= S5PV210_NUM_PHYS,
++	.phys		= s5pv210_phys,
++};
++
+diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
+index c1b0fd5..3e48f17 100644
+--- a/drivers/phy/phy-samsung-usb2.c
++++ b/drivers/phy/phy-samsung-usb2.c
+@@ -95,6 +95,12 @@ static struct phy *samsung_usb2_phy_xlate(struct device *dev,
  }
  
-+struct phy *of_phy_get(struct device_node *np, const char *con_id)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- static inline struct phy *of_phy_simple_xlate(struct device *dev,
- 	struct of_phandle_args *args)
- {
+ static const struct of_device_id samsung_usb2_phy_of_match[] = {
++#ifdef CONFIG_PHY_S5PV210_USB2
++	{
++		.compatible = "samsung,s5pv210-usb2-phy",
++		.data = &s5pv210_usb2_phy_config,
++	},
++#endif
+ #ifdef CONFIG_PHY_EXYNOS4210_USB2
+ 	{
+ 		.compatible = "samsung,exynos4210-usb2-phy",
+diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
+index 868dd33..ae41d0f 100644
+--- a/drivers/phy/phy-samsung-usb2.h
++++ b/drivers/phy/phy-samsung-usb2.h
+@@ -61,6 +61,7 @@ struct samsung_usb2_phy_config {
+ 	bool has_mode_switch;
+ };
+ 
++extern const struct samsung_usb2_phy_config s5pv210_usb2_phy_config;
+ extern const struct samsung_usb2_phy_config exynos4210_usb2_phy_config;
+ extern const struct samsung_usb2_phy_config exynos4x12_usb2_phy_config;
+ #endif
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
