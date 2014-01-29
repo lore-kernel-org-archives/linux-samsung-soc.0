@@ -1,94 +1,55 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 5/9 v5] clk: samsung exynos5250/5420: Add gate clock for SSS
- module
-Date: Wed, 29 Jan 2014 14:54:06 +0530
-Message-ID: <1390987446-18784-1-git-send-email-ch.naveen@samsung.com>
-References: <1389354229-31936-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1389354229-31936-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH RESEND 1/4] clk: clk-s2mps11: Refactor for including
+ support for  other MFD clocks
+Date: Wed, 29 Jan 2014 11:29:04 +0100
+Message-ID: <1390991344.2207.8.camel@AMDC1943>
+References: <m8Uox-5kN-11@gated-at.bofh.it> <mtgmt-44E-3@gated-at.bofh.it>
+ <mtgmu-44E-27@gated-at.bofh.it> <muwSe-WJ-17@gated-at.bofh.it>
+ <muCkW-RP-15@gated-at.bofh.it> <mva3f-bR-7@gated-at.bofh.it>
+ <mvd17-4vW-3@gated-at.bofh.it>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:13335 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882AbaA2K3J (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Jan 2014 05:29:09 -0500
+In-reply-to: <mvd17-4vW-3@gated-at.bofh.it>
+References: <m8Uox-5kN-11@gated-at.bofh.it> <mtgmt-44E-3@gated-at.bofh.it>
+ <mtgmu-44E-27@gated-at.bofh.it> <muwSe-WJ-17@gated-at.bofh.it>
+ <muCkW-RP-15@gated-at.bofh.it> <mva3f-bR-7@gated-at.bofh.it>
+ <mvd17-4vW-3@gated-at.bofh.it>
+In-reply-to: <mvd17-4vW-3@gated-at.bofh.it>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>
 
-This patch adds gating clock for SSS(Security SubSystem)
-module on Exynos5250/5420.
+Hi,
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-TO: <linux-samsung-soc@vger.kernel.org>
-TO: Tomasz Figa <t.figa@samsung.com>
-CC: Kukjin Kim <kgene.kim@samsung.com>
-CC: <linux-crypto@vger.kernel.org>
----
-Changes since v4:
-Use register GATE_IP_G2D instead of GATE_BUS_G2D for Exynos5420
-Changes since v3:
-1. Rebased on to https://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git
-2. Added new ID for SSS clock on Exynos5250, with Documentation and 
-3. Added gate clocks definitions for SSS on Exynos5420 and Exynos5250
- .../devicetree/bindings/clock/exynos5250-clock.txt |    1 +
- drivers/clk/samsung/clk-exynos5250.c               |    1 +
- drivers/clk/samsung/clk-exynos5420.c               |    4 ++++
- include/dt-bindings/clock/exynos5250.h             |    1 +
- 4 files changed, 7 insertions(+)
+> 
+> Quoting Mark Brown (2013-12-31 08:09:16)
+> > On Mon, Dec 30, 2013 at 09:33:50AM +0530, Tushar Behera wrote:
+> > 
+> > > Commit 1b1ccee1e821 "mfd: s2mps11: Fix build after regmap field rename
+> > > in sec-core.c" is also touching this file, which is in Mark's tree
+> > > right now. If I rebase
+> > 
+> > It's been in Linus' tree for a while now.
+> 
+> OK, so I merged the two patches into clk-next, then merged clk-next into
+> next-20131224 and the merge is super trivial to resolve. So I propose
+> that we just let it get resolved in linux-next the usual way.
+> 
+> Any objections? If not I'll take these two patches into clk-next.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-index 492ed09..a845fc6 100644
---- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-@@ -162,6 +162,7 @@ clock which they consume.
-   g2d			345
-   mdma0			346
-   smmu_mdma0		347
-+  sss			348
- 
- 
-    [Clock Muxes]
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index ff4beeb..2c52fe1 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -387,6 +387,7 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
- 	 * CMU_ACP
- 	 */
- 	GATE(CLK_MDMA0, "mdma0", "div_aclk266", GATE_IP_ACP, 1, 0, 0),
-+	GATE(CLK_SSS, "sss", "div_aclk266", GATE_IP_ACP, 2, 0, 0),
- 	GATE(CLK_G2D, "g2d", "div_aclk200", GATE_IP_ACP, 3, 0, 0),
- 	GATE(CLK_SMMU_MDMA0, "smmu_mdma0", "div_aclk266", GATE_IP_ACP, 5, 0, 0),
- 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index ab4f2f7..c93d4d5 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -26,6 +26,7 @@
- #define DIV_CPU1		0x504
- #define GATE_BUS_CPU		0x700
- #define GATE_SCLK_CPU		0x800
-+#define GATE_IP_G2D		0x8800
- #define CPLL_LOCK		0x10020
- #define DPLL_LOCK		0x10030
- #define EPLL_LOCK		0x10040
-@@ -702,6 +703,9 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 		0),
- 	GATE(CLK_SMMU_MIXER, "smmu_mixer", "aclk200_disp1", GATE_IP_DISP1, 9, 0,
- 		0),
-+
-+	/* SSS */
-+	GATE(CLK_SSS, "sss", "aclk266_g2d", GATE_IP_G2D, 2, 0, 0),
- };
- 
- static struct samsung_pll_clock exynos5420_plls[nr_plls] __initdata = {
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-index 922f2dc..f9b452b 100644
---- a/include/dt-bindings/clock/exynos5250.h
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -150,6 +150,7 @@
- #define CLK_G2D			345
- #define CLK_MDMA0		346
- #define CLK_SMMU_MDMA0		347
-+#define CLK_SSS			348
- 
- /* mux clocks */
- #define CLK_MOUT_HDMI		1024
--- 
-1.7.9.5
+Did you merged these patches into clk-next? Unfortunately I couldn't
+find them (clk-next, next).
+
+I am asking because I want to send patches with support for S2MPS14
+clock (based on these patches).
+
+Best regards,
+Krzysztof
