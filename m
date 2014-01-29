@@ -1,55 +1,45 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH RESEND 1/4] clk: clk-s2mps11: Refactor for including
- support for  other MFD clocks
-Date: Wed, 29 Jan 2014 11:29:04 +0100
-Message-ID: <1390991344.2207.8.camel@AMDC1943>
-References: <m8Uox-5kN-11@gated-at.bofh.it> <mtgmt-44E-3@gated-at.bofh.it>
- <mtgmu-44E-27@gated-at.bofh.it> <muwSe-WJ-17@gated-at.bofh.it>
- <muCkW-RP-15@gated-at.bofh.it> <mva3f-bR-7@gated-at.bofh.it>
- <mvd17-4vW-3@gated-at.bofh.it>
+From: Sander <sander@humilis.net>
+Subject: Re: [PATCH] arm: Add Arm Erratum 773769 for Large data RAM latency.
+Date: Wed, 29 Jan 2014 13:26:51 +0100
+Message-ID: <20140129122651.GB31980@panda>
+References: <1389187991-26446-1-git-send-email-gautam.vivek@samsung.com>
+ <20140108143529.GB14122@mudshark.cambridge.arm.com>
+ <CAD=FV=WYe7Qk_XPs=FCeB7pbDz8AnG0txFcDyAQWWAU60vd-Sw@mail.gmail.com>
+ <20140108192028.GM27432@n2100.arm.linux.org.uk>
+ <CAD=FV=Ui8kec5vYA1jRT3EGNaUeWX-Ua5sUs+u3wdRz1oFnTzw@mail.gmail.com>
+ <alpine.LFD.2.10.1401081600370.1851@knanqh.ubzr>
+ <CAD=FV=XqoSGpQ_Yrjj4hvV_0FSMfQGcGEsKkL1Stnm9m5s2Xvw@mail.gmail.com>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:13335 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882AbaA2K3J (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jan 2014 05:29:09 -0500
-In-reply-to: <mvd17-4vW-3@gated-at.bofh.it>
-References: <m8Uox-5kN-11@gated-at.bofh.it> <mtgmt-44E-3@gated-at.bofh.it>
- <mtgmu-44E-27@gated-at.bofh.it> <muwSe-WJ-17@gated-at.bofh.it>
- <muCkW-RP-15@gated-at.bofh.it> <mva3f-bR-7@gated-at.bofh.it>
- <mvd17-4vW-3@gated-at.bofh.it>
-In-reply-to: <mvd17-4vW-3@gated-at.bofh.it>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XqoSGpQ_Yrjj4hvV_0FSMfQGcGEsKkL1Stnm9m5s2Xvw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, David Garbett <David.Garbett@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, Olof Johansson <olofj@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>
 
-Hi,
-
+Doug Anderson wrote (ao):
+> On Wed, Jan 8, 2014 at 1:08 PM, Nicolas Pitre <nico@fluxnic.net> wrote:
+> > On Wed, 8 Jan 2014, Doug Anderson wrote:
+> >> * If Joe Upstream wants to run an upstream kernel on some type of
+> >> exynos5250 product (Samsung ARM Chromebook, HP Chromebook 11, Nexus 10
+> >> are the ones I know of) then he will deal with the small number of
+> >> crashes or figure out a solution.
+> >
+> > If Joe Upstream wants to run an upstream kernel, doesn't he have to
+> > unscrew his write protect switch first, at which point the RO firmware
+> > can be updated as well?
 > 
-> Quoting Mark Brown (2013-12-31 08:09:16)
-> > On Mon, Dec 30, 2013 at 09:33:50AM +0530, Tushar Behera wrote:
-> > 
-> > > Commit 1b1ccee1e821 "mfd: s2mps11: Fix build after regmap field rename
-> > > in sec-core.c" is also touching this file, which is in Mark's tree
-> > > right now. If I rebase
-> > 
-> > It's been in Linus' tree for a while now.
+> Actually, no.  You can move your device into dev mode and run any
+> kernel you want.  You'll get an annoying "you're in dev mode" screen
+> at every bootup, but otherwise it works just fine.
 > 
-> OK, so I merged the two patches into clk-next, then merged clk-next into
-> next-20131224 and the merge is super trivial to resolve. So I propose
-> that we just let it get resolved in linux-next the usual way.
-> 
-> Any objections? If not I'll take these two patches into clk-next.
+> Going into dev mode requires some special keystrokes at bootup and a
+> wipe of your hard disk but no screwdrivers.
 
-Did you merged these patches into clk-next? Unfortunately I couldn't
-find them (clk-next, next).
+And there is http://www.arndaleboard.org/ where you just put an upstream
+kernel on sd and boot.
 
-I am asking because I want to send patches with support for S2MPS14
-clock (based on these patches).
-
-Best regards,
-Krzysztof
+	Sander
