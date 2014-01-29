@@ -1,7 +1,7 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH v6 3/8] dts: Add usb2phy to Exynos 4
-Date: Wed, 29 Jan 2014 18:29:29 +0100
-Message-ID: <1391016574-25237-4-git-send-email-k.debski@samsung.com>
+Subject: [PATCH v6 2/8] phy: core: Add devm_of_phy_get to phy-core
+Date: Wed, 29 Jan 2014 18:29:28 +0100
+Message-ID: <1391016574-25237-3-git-send-email-k.debski@samsung.com>
 References: <1391016574-25237-1-git-send-email-k.debski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1391016574-25237-1-git-send-email-k.debski@samsung.com>
@@ -10,129 +10,82 @@ To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@v
 Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, k.debski@samsung.com, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add support to PHY of USB2 of the Exynos 4 SoC.
+Adding devm_of_phy_get will allow to get phys by supplying a
+pointer to the struct device_node instead of struct device.
 
 Signed-off-by: Kamil Debski <k.debski@samsung.com>
 ---
- .../devicetree/bindings/arm/samsung/pmu.txt        |    2 ++
- arch/arm/boot/dts/exynos4.dtsi                     |   31 ++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi                  |   17 +++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi                  |   17 +++++++++++
- 4 files changed, 67 insertions(+)
+ drivers/phy/phy-core.c  |   31 +++++++++++++++++++++++++++++++
+ include/linux/phy/phy.h |    8 ++++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index 307e727..a76f91d 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -3,6 +3,8 @@ SAMSUNG Exynos SoC series PMU Registers
- Properties:
-  - name : should be 'syscon';
-  - compatible : should contain two values. First value must be one from following list:
-+		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
-+		   - "samsung,exynos4x12-pmu" - for Exynos4212 SoC,
- 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
- 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
- 		second value must be always "syscon".
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index a73eeb5..031d07a 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -253,6 +253,17 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index a1d4387..6e32fb0 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -468,6 +468,37 @@ struct phy *devm_phy_get(struct device *dev, const char *string)
+ EXPORT_SYMBOL_GPL(devm_phy_get);
  
-+	usbotg@12480000 {
-+		compatible = "samsung,s3c6400-hsotg";
-+		reg = <0x12480000 0x20000>;
-+		interrupts = <0 71 0>;
-+		clocks = <&clock 305>;
-+		clock-names = "otg";
-+		phys = <&usb2phy 0>;
-+		phy-names = "usb2-phy";
-+		status = "disabled";
-+	};
+ /**
++ * devm_of_phy_get() - lookup and obtain a reference to a phy.
++ * @dev: device that requests this phy
++ * @np: node containing the phy
++ * @con_id: name of the phy from device's point of view
++ *
++ * Gets the phy using of_phy_get(), and associates a device with it using
++ * devres. On driver detach, release function is invoked on the devres data,
++ * then, devres data is freed.
++ */
++struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
++			    const char *con_id)
++{
++	struct phy **ptr, *phy;
 +
- 	ehci@12580000 {
- 		compatible = "samsung,exynos4210-ehci";
- 		reg = <0x12580000 0x100>;
-@@ -260,6 +271,26 @@
- 		clocks = <&clock 304>;
- 		clock-names = "usbhost";
- 		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+			phys = <&usb2phy 1>;
-+			phy-names = "host";
-+			reg = <0>;
-+			status = "disabled";
-+		};
-+		port@1 {
-+			phys = <&usb2phy 2>;
-+			phy-names = "hsic0";
-+			reg = <1>;
-+			status = "disabled";
-+		};
-+		port@2 {
-+			phys = <&usb2phy 3>;
-+			phy-names = "hsic1";
-+			reg = <2>;
-+			status = "disabled";
-+		};
- 	};
++	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	phy = of_phy_get(np, con_id);
++	if (!IS_ERR(phy)) {
++		*ptr = phy;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return phy;
++}
++EXPORT_SYMBOL_GPL(devm_of_phy_get);
++
++/**
+  * phy_create() - create a new phy
+  * @dev: device that is creating the new phy
+  * @ops: function pointers for performing phy operations
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 5cffc69..b17d6d2 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -147,6 +147,8 @@ static inline void phy_set_bus_width(struct phy *phy, int bus_width)
+ }
+ struct phy *phy_get(struct device *dev, const char *string);
+ struct phy *devm_phy_get(struct device *dev, const char *string);
++struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
++			    const char *con_id);
+ void phy_put(struct phy *phy);
+ void devm_phy_put(struct device *dev, struct phy *phy);
+ struct phy *of_phy_get(struct device_node *np, const char *con_id);
+@@ -238,6 +240,12 @@ static inline struct phy *devm_phy_get(struct device *dev, const char *string)
+ 	return ERR_PTR(-ENOSYS);
+ }
  
- 	ohci@12590000 {
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 057d682..f9d06bb 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -155,4 +155,21 @@
- 			samsung,lcd-wb;
- 		};
- 	};
++struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
++			    const char *con_id)
++{
++	return ERR_PTR(-ENOSYS);
++}
 +
-+	pmu_reg: syscon@10020000 {
-+		compatible = "samsung,exynos4210-pmu", "syscon";
-+		reg = <0x10020000 0x4000>;
-+	};
-+
-+	usb2phy: phy@125B0000 {
-+		compatible = "samsung,exynos4210-usb2-phy";
-+		reg = <0x125B0000 0x100>;
-+		clocks = <&clock 305>, <&clock 2>, <&clock 2>, <&clock 2>,
-+								<&clock 2>;
-+		clock-names = "phy", "device", "host", "hsic0", "hsic1";
-+		status = "disabled";
-+		#phy-cells = <1>;
-+		samsung,sysreg-phandle = <&sys_reg>;
-+		samsung,pmureg-phandle = <&pmu_reg>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index ad531fe..63b0fe5 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -176,4 +176,21 @@
- 			};
- 		};
- 	};
-+
-+	pmu_reg: syscon@10020000 {
-+		compatible = "samsung,exynos4x12-pmu", "syscon";
-+		reg = <0x10020000 0x4000>;
-+	};
-+
-+	usb2phy: phy@125B0000 {
-+		compatible = "samsung,exynos4x12-usb2-phy";
-+		reg = <0x125B0000 0x100>;
-+		clocks = <&clock 305>, <&clock 2>, <&clock 2>, <&clock 2>,
-+								<&clock 2>;
-+		clock-names = "phy", "device", "host", "hsic0", "hsic1";
-+		status = "disabled";
-+		#phy-cells = <1>;
-+		samsung,sysreg-phandle = <&sys_reg>;
-+		samsung,pmureg-phandle = <&pmu_reg>;
-+	};
- };
+ static inline void phy_put(struct phy *phy)
+ {
+ }
 -- 
 1.7.9.5
