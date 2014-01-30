@@ -1,70 +1,59 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage during frequency transitions
-Date: Thu, 30 Jan 2014 16:09:04 +0100
-Message-ID: <2009408.gnUEcoqA3p@phil>
-References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com> <CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com> <CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
+From: Josh Boyer <jwboyer@fedoraproject.org>
+Subject: exynos_hdmi.c fails to build with v3.13-10094-g9b0cd30
+Date: Thu, 30 Jan 2014 11:47:39 -0500
+Message-ID: <CA+5PVA6CNam9F_n=Sz9o=4-RHVCVczeJ1G1_EzcUTj92nzALFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:38353 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750905AbaA3Qrk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Jan 2014 11:47:40 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
 
-On Thursday, 30. January 2014 18:23:44 Thomas Abraham wrote:
-> Hi Mike,
-> 
-> On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linaro.org> 
-wrote:
-> > On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail.com> 
-wrote:
-> >> Hi Mike,
-> >> 
-> >> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@linaro.org> 
-wrote:
-> >>> Quoting Thomas Abraham (2014-01-18 04:10:51)
-> >>> 
-> > As far as I can tell
-> > the remux does not happen because it is necessary to generate the
-> > required clock rate, but because we don't want to run the ARM core out
-> > of spec for a short time while the PLL relocks. Assuming I have that
-> > part of it right, I prefer for the parent mux operation to be a part
-> > of the CPUfreq driver's .target callback instead of hidden away in the
-> > clock driver.
-> 
-> The re-parenting is mostly done to keep the ARM CPU clocked while the
-> PLL is stopped, reprogrammed and restarted. One of the side effects of
-> that is, the clock speed of the temporary parent could be higher then
-> what is allowed due to the ARM voltage at the time of re-parenting.
-> That is the reason to use the safe voltage.
+Hi All,
 
-The Rockchip-SoCs use something similar, so I'm following quite closely what 
-Thomas is trying to do here, as similar solution would also solve this issue 
-for me.
+After the DRM merge, the exynos_hdmi.c file fails to build with our
+ARM config.  The error is:
 
-On some Rockchip-SoCs even stuff like pclk and hclk seems to be sourced from 
-the divided armclk, creating additional constraints.
+drivers/gpu/drm/exynos/exynos_hdmi.c:382:8: error: 'hdmi_infoframe'
+defined as wrong kind of tag
+ struct hdmi_infoframe {
+        ^
+make[4]: *** [drivers/gpu/drm/exynos/exynos_hdmi.o] Error 1
+make[3]: *** [drivers/gpu/drm/exynos] Error 2
+make[2]: *** [drivers/gpu/drm] Error 2
 
-But on the RKs (at least in the upstream sources) the armclk is simply equal 
-to the pll output. A divider exists, but is only used to make sure that the 
-armclk stays below the original rate when sourced from the temp-parent, like
+which to me was a somewhat confusing error message.  After digging
+further, I believe it means that there is a conflict with the
+definition in exynos_hdmi.c and the one found in include/linux/hdmi.h
+for what hdmi_infoframe is supposed to be.
 
-	if (clk_get_rate(temp_parent) > clk_get_rate(main_parent)
-		set_divider(something so that rate(temp) <= rate(main)
-	clk_set_parent(...)
+exynos_hdmi.c:
 
-Isn't there a similar possiblity on your platform, as it would remove the need 
-for the safe-voltage?
+struct hdmi_infoframe {
+        enum HDMI_PACKET_TYPE type;
+        u8 ver;
+        u8 len;
+};
 
 
-In general I also like the approach of hiding the rate-change logic inside 
-this composite clock, as the depending clocks can be easily kept in sync. As 
-with the Rockchips the depending clocks are different for each of the three 
-Cortex-A9 SoCs I looked at, it would be "interesting" if all of this would 
-need to be done in a cpufreq driver.
+include/linux/hdmi.h:
+
+union hdmi_infoframe {
+        struct hdmi_any_infoframe any;
+        struct hdmi_avi_infoframe avi;
+        struct hdmi_spd_infoframe spd;
+        union hdmi_vendor_any_infoframe vendor;
+        struct hdmi_audio_infoframe audio;
+};
 
 
-Heiko
+Could someone take a look at this?  I have no idea how this wasn't
+caught before being merged.
 
+josh
