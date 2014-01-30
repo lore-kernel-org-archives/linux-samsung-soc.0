@@ -1,559 +1,307 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Thu, 30 Jan 2014 13:03:11 +0530
-Message-ID: <CAFp+6iHXnzNVMzMYPCkGc4BVNyN-gg3YLdNj7-BP697kZXpBcw@mail.gmail.com>
-References: <1386151747-3209-2-git-send-email-gautam.vivek@samsung.com>
-	<1390225363-24210-1-git-send-email-gautam.vivek@samsung.com>
-	<52E61F63.1090200@ti.com>
-	<CAFp+6iHGchyZFRGyT1D3O3mv6TFOMGUdYvc4qmLEanCKwMrDkw@mail.gmail.com>
-	<52E9EEBC.8040000@ti.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage
+ during frequency transitions
+Date: Thu, 30 Jan 2014 18:23:44 +0530
+Message-ID: <CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
+References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
+	<1390047057-2239-2-git-send-email-thomas.ab@samsung.com>
+	<20140127202543.4167.83362@quantum>
+	<CAJuA9ah1vsgpD04QhM5RApkCe9xcvpPkLvdwzgadKGWvngAt+g@mail.gmail.com>
+	<CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <52E9EEBC.8040000@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Julius Werner <jwerner@chromium.org>, Jingoo Han <jg1.han@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Mike,
 
-
-On Thu, Jan 30, 2014 at 11:48 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> Hi,
+On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linaro.org> wrote:
+> On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+>> Hi Mike,
+>>
+>> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@linaro.org> wrote:
+>>> Quoting Thomas Abraham (2014-01-18 04:10:51)
+>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>>
+>>>> On some platforms such as the Samsung Exynos, changing the frequency
+>>>> of the CPU clock requires changing the frequency of the PLL that is
+>>>> supplying the CPU clock. To change the frequency of the PLL, the CPU
+>>>> clock is temporarily reparented to another parent clock.
+>>>>
+>>>> The clock frequency of this temporary parent clock could be much higher
+>>>> than the clock frequency of the PLL at the time of reparenting. Due
+>>>> to the temporary increase in the CPU clock speed, the CPU (and any other
+>>>> components in the CPU clock domain such as dividers, mux, etc.) have to
+>>>> to be operated at a higher voltage level, called the safe voltage level.
+>>>> This patch adds optional support to temporarily switch to a safe voltage
+>>>> level during CPU frequency transitions.
+>>>>
+>>>> Cc: Shawn Guo <shawn.guo@linaro.org>
+>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>>
+>>> I'm not a fan of this change. This corner case should be abstracted away
+>>> somehow. I had talked to Chander Kayshap previously about handling
+>>> voltage changes in clock notifier callbacks, which then renders any
+>>> voltage change as a trivial part of the clock rate transition. That
+>>> means that this "safe voltage" thing could be handled automagically
+>>> without any additional code in the CPUfreq driver.
+>>>
+>>> There are two nice ways to do this with the clock framework. First is
+>>> explicit re-parenting with voltage scaling done in the clock rate-change
+>>> notifiers:
+>>>
+>>> clk_set_parent(cpu_clk, temp_parent);
+>>> /* implicit voltage scaling to "safe voltage" happens above */
+>>> clk_set_rate(pll, some_rate);
+>>> clk_set_parent(cpu_clk, pll);
+>>> /* implicit voltage scaling to nominal OPP voltage happens above */
+>>>
+>>> The above sequence would require a separate exnyos CPUfreq driver, due
+>>> to the added clk_set_parent logic.
+>>>
+>>> The second way to do this is to abstract the clk re-muxing logic out
+>>> into the clk driver, which would allow cpufreq-cpu0 to be used for the
+>>> exynos chips.
+>>
+>> This is the approach this patch series takes (patch 2/7). The clock
+>> re-muxing logic is handled by a clock driver code. The difference from
+>> what you suggested is that the safe voltage (that may be optionally)
+>> required before doing the re-muxing is handled here in cpufreq-cpu0
+>> driver.
 >
-> On Thursday 30 January 2014 09:49 AM, Vivek Gautam wrote:
->> Hi Kishon,
+> Right, I understand the approach taken in this series and I'm not sure
+> it is the right one. Why does the clock driver handle the remuxing if
+> it is a functional dependency of the ARM core?
+
+The output of the PLL is the input to a tree of clock nodes. One of
+the outputs from this tree is the clock to ARM. And the other outputs
+do not serve as parents to any other clocks in the system but are used
+internally in the bus interconnect. In addition to that, there are
+clock speed restrictions for the clock outputs from this tree with
+respect to speeds of other clocks in this clock tree.
+
+Hence, this entire clock tree has been purged into a single composite
+clock which includes mux and dividers. So the clock tree now looks
+like PLL Output -> Custom Composite Clock -> ARM clock output.
+
+But there is a problem when changing the ARM clock speed which in turn
+causes change in PLL clock speed. When PLL clock speed has to be
+changed, the PLL has to be first turned off. Which means the clock to
+ARM core is cut-off. To avoid that, the Custom Composite Clock now has
+to get its clock from another source until the PLL is ready to operate
+again. So this composite clock does an automatic re-parenting (the mux
+is within is composite clock) because it knows that it is its
+responsibility to ensure clock ARM all the time.
+
+
+> As far as I can tell
+> the remux does not happen because it is necessary to generate the
+> required clock rate, but because we don't want to run the ARM core out
+> of spec for a short time while the PLL relocks. Assuming I have that
+> part of it right, I prefer for the parent mux operation to be a part
+> of the CPUfreq driver's .target callback instead of hidden away in the
+> clock driver.
+
+The re-parenting is mostly done to keep the ARM CPU clocked while the
+PLL is stopped, reprogrammed and restarted. One of the side effects of
+that is, the clock speed of the temporary parent could be higher then
+what is allowed due to the ARM voltage at the time of re-parenting.
+That is the reason to use the safe voltage.
+
+>
+> A common pattern I'm seeing for the last 18 months is code
+> consolidation for the sake of code consolidation and it is not always
+> a good thing. Having hardware-specific machine drivers under
+> drivers/cpufreq/ is the right way to go, and we should only
+> consolidate a driver to cpufreq-cpu0 if it makes sense.
+
+Okay.I agree. And I did feel that adding the optional "safe voltage"
+feature in cpufreq-cpu0 would help Exynos platforms reuse this driver.
+And adding this feature in cpufreq-cpu did not feel like some
+orthogonal approach but a logical extension.
+
+>
 >>
+>> The safe voltage setup can be done in the notifier as you suggested.
+>> But, doing that in cpufreq-cpu0 driver will help other platforms reuse
+>> this feature if required. Also, if done here, the regulator handling
+>> is localized in this driver which otherwise would need to be handled
+>> in two places, cpufreq-cpu0 driver and the clock notifier.
+>
+> The notifiers are reusable across other platforms. And the notifier
+> can be entirely set up within the cpufreq driver. Code location is not
+> a problem. See this RFC series:
+> https://lkml.org/lkml/2013/7/7/110
+
+Okay.
+
+>
 >>
->> On Mon, Jan 27, 2014 at 2:27 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>> Hi,
+>> So I tend to prefer the approach in this patch but I am willing to
+>> consider any suggestions. Shawn, it would be helpful if you could let
+>> us know your thoughts on this. I am almost done with testing the v3 of
+>> this series and want to post it so if there are any objections to the
+>> changes in this patch, please let me know.
+>
+> Well I wonder if the whole approach could be more generalized. The DT
+> bindings for CPU frequencies could be used by any platform instead of
+> being Exynos-specific. We could construct a binding which captures an
+> arbitrary clock sub-tree snapshot. By that I mean a DT binding in
+> which any number of clocks and their parents and rates could be
+> specified in a table. Separately we could have a binding that links a
+> given clock at a given rate to some specified regulator and voltage.
+> So in this way the bindings are re-usable.
+>
+> These DT ideas should be considered separately from the CPUfreq notes
+> outlined above, and I will respond to patch #3 in this series once I
+> have a chance.
+
+Okay. Thanks Mike for your comments. And sorry for the delay in my reply.
+
+Regards,
+Thomas.
+
+>
+> Thanks,
+> Mike
+>
 >>
->> Thanks for review. Please find my answers inline below.
+>> Thanks,
+>> Thomas.
 >>
 >>>
->>> On Monday 20 January 2014 07:12 PM, Vivek Gautam wrote:
->>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->>>> The new driver uses the generic PHY framework and will interact
->>>> with DWC3 controller present on Exynos5 series of SoCs.
->>>> Thereby, removing old phy-samsung-usb3 driver and related code
->>>> used untill now which was based on usb/phy framework.
->>>>
->>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>> I'm more a fan of explicitly listing the Exact Steps for the cpu opp
+>>> transition in a separate exynos-specific CPUfreq driver, but that's
+>>> probably an unpopular view.
+>>>
+>>> Regards,
+>>> Mike
+>>>
 >>>> ---
+>>>>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    7 ++++
+>>>>  drivers/cpufreq/cpufreq-cpu0.c                     |   37 +++++++++++++++++--
+>>>>  2 files changed, 40 insertions(+), 4 deletions(-)
 >>>>
->>>> Changes from v2:
->>>> 1) Added support for multiple PHYs (UTMI+ and PIPE3) and
->>>>    related changes in the driver structuring.
->>>> 2) Added a xlate function to get the required phy out of
->>>>    number of PHYs in mutiple PHY scenerio.
->>>> 3) Changed the names of few structures and variables to
->>>>    have a clearer meaning.
->>>> 4) Added 'usb3phy_config' structure to take care of mutiple
->>>>    phys for a SoC having 'exynos5_usb3phy_drv_data' driver data.
->>>> 5) Not deleting support for old driver 'phy-samsung-usb3' until
->>>>    required support for generic phy is added to DWC3.
+>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+>>>> index f055515..37453ab 100644
+>>>> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+>>>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+>>>> @@ -19,6 +19,12 @@ Optional properties:
+>>>>  - cooling-min-level:
+>>>>  - cooling-max-level:
+>>>>       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
+>>>> +- safe-opp: Certain platforms require that during a opp transition,
+>>>> +  a system should not go below a particular opp level. For such systems,
+>>>> +  this property specifies the minimum opp to be maintained during the
+>>>> +  opp transitions. The safe-opp value is a tuple with first element
+>>>> +  representing the safe frequency and the second element representing the
+>>>> +  safe voltage.
 >>>>
->>>>  .../devicetree/bindings/phy/samsung-phy.txt        |   49 ++
->>>>  drivers/phy/Kconfig                                |    8 +
->>>>  drivers/phy/Makefile                               |    1 +
->>>>  drivers/phy/phy-exynos5-usb3.c                     |  621 ++++++++++++++++++++
->>>>  4 files changed, 679 insertions(+)
->>>>  create mode 100644 drivers/phy/phy-exynos5-usb3.c
->> [snip]
->>
->>>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->>>> index 330ef2d..32f9f38 100644
->>>> --- a/drivers/phy/Kconfig
->>>> +++ b/drivers/phy/Kconfig
->>>> @@ -51,4 +51,12 @@ config PHY_EXYNOS_DP_VIDEO
->>>>       help
->>>>         Support for Display Port PHY found on Samsung EXYNOS SoCs.
+>>>>  Examples:
 >>>>
->>>> +config PHY_EXYNOS5_USB3
->
-> This shouldn't be USB3 since this driver has support for both USB2 and USB3.
-> maybe just PHY_EXYNOS5_USB?
-
-Ok, will change this.
-
->>>> +     tristate "Exynos5 SoC series USB 3.0 PHY driver"
->>>> +     depends on ARCH_EXYNOS5
->>>> +     select GENERIC_PHY
->>>> +     select MFD_SYSCON
->>>
->>> add depends on 'HAS_IOMEM'. Someone reported getting
->>> undefined reference to `devm_ioremap_resource' with it.
->>
->> Ok will add it.
->>
->>>> +     help
->>>> +       Enable USB 3.0 PHY support for Exynos 5 SoC series
->>>> +
->>>>  endmenu
->> [snip]
->>
->>>> diff --git a/drivers/phy/phy-exynos5-usb3.c b/drivers/phy/phy-exynos5-usb3.c
->>>> new file mode 100644
->>>> index 0000000..24efed0
->>>> --- /dev/null
->>>> +++ b/drivers/phy/phy-exynos5-usb3.c
->>>> @@ -0,0 +1,621 @@
->>>> +/*
->>>> + * Samsung EXYNOS5 SoC series USB 3.0 PHY driver
->>>> + *
->>>> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->>>> + * Author: Vivek Gautam <gautam.vivek@samsung.com>
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>> + */
->>>> +
->>>> +#include <linux/clk.h>
->>>> +#include <linux/delay.h>
->>>> +#include <linux/io.h>
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/of.h>
->>>> +#include <linux/of_address.h>
->>>> +#include <linux/phy/phy.h>
->>>> +#include <linux/platform_device.h>
->>>> +#include <linux/mutex.h>
->>>> +#include <linux/mfd/syscon.h>
->>>> +#include <linux/regmap.h>
->>>> +
->>>> +/* Exynos USB PHY registers */
->>>> +#define EXYNOS5_FSEL_9MHZ6           0x0
->>>> +#define EXYNOS5_FSEL_10MHZ           0x1
->>>> +#define EXYNOS5_FSEL_12MHZ           0x2
->>>> +#define EXYNOS5_FSEL_19MHZ2          0x3
->>>> +#define EXYNOS5_FSEL_20MHZ           0x4
->>>> +#define EXYNOS5_FSEL_24MHZ           0x5
->>>> +#define EXYNOS5_FSEL_50MHZ           0x7
->>>> +
->>>> +/* EXYNOS5: USB 3.0 DRD PHY registers */
->>>> +#define EXYNOS5_DRD_LINKSYSTEM                       (0x04)
->>>> +
->>>> +#define LINKSYSTEM_FLADJ_MASK                        (0x3f << 1)
->>>> +#define LINKSYSTEM_FLADJ(_x)                 ((_x) << 1)
->>>> +#define LINKSYSTEM_XHCI_VERSION_CONTROL              (0x1 << 27)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYUTMI                  (0x08)
->>>> +
->>>> +#define PHYUTMI_OTGDISABLE                   (0x1 << 6)
->>>> +#define PHYUTMI_FORCESUSPEND                 (0x1 << 1)
->>>> +#define PHYUTMI_FORCESLEEP                   (0x1 << 0)
->>>
->>> use BIT macro here and below?
->>
->> Ok.
->>
->>>> +
->>>> +#define EXYNOS5_DRD_PHYPIPE                  (0x0c)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYCLKRST                        (0x10)
->>>> +
->>>> +#define PHYCLKRST_EN_UTMISUSPEND             (0x1 << 31)
->>>> +
->>>> +#define PHYCLKRST_SSC_REFCLKSEL_MASK         (0xff << 23)
->>>> +#define PHYCLKRST_SSC_REFCLKSEL(_x)          ((_x) << 23)
->>>> +
->>>> +#define PHYCLKRST_SSC_RANGE_MASK             (0x03 << 21)
->>>> +#define PHYCLKRST_SSC_RANGE(_x)                      ((_x) << 21)
->>>> +
->>>> +#define PHYCLKRST_SSC_EN                     (0x1 << 20)
->>>> +#define PHYCLKRST_REF_SSP_EN                 (0x1 << 19)
->>>> +#define PHYCLKRST_REF_CLKDIV2                        (0x1 << 18)
->>>> +
->>>> +#define PHYCLKRST_MPLL_MULTIPLIER_MASK               (0x7f << 11)
->>>> +#define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF (0x19 << 11)
->>>> +#define PHYCLKRST_MPLL_MULTIPLIER_50M_REF    (0x32 << 11)
->>>> +#define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF  (0x68 << 11)
->>>> +#define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF  (0x7d << 11)
->>>> +#define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF       (0x02 << 11)
->>>> +
->>>> +#define PHYCLKRST_FSEL_MASK                  (0x3f << 5)
->>>> +#define PHYCLKRST_FSEL(_x)                   ((_x) << 5)
->>>> +#define PHYCLKRST_FSEL_PAD_100MHZ            (0x27 << 5)
->>>> +#define PHYCLKRST_FSEL_PAD_24MHZ             (0x2a << 5)
->>>> +#define PHYCLKRST_FSEL_PAD_20MHZ             (0x31 << 5)
->>>> +#define PHYCLKRST_FSEL_PAD_19_2MHZ           (0x38 << 5)
->>>> +
->>>> +#define PHYCLKRST_RETENABLEN                 (0x1 << 4)
->>>> +
->>>> +#define PHYCLKRST_REFCLKSEL_MASK             (0x03 << 2)
->>>> +#define PHYCLKRST_REFCLKSEL_PAD_REFCLK               (0x2 << 2)
->>>> +#define PHYCLKRST_REFCLKSEL_EXT_REFCLK               (0x3 << 2)
->>>> +
->>>> +#define PHYCLKRST_PORTRESET                  (0x1 << 1)
->>>> +#define PHYCLKRST_COMMONONN                  (0x1 << 0)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYREG0                  (0x14)
->>>> +#define EXYNOS5_DRD_PHYREG1                  (0x18)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYPARAM0                        (0x1c)
->>>> +
->>>> +#define PHYPARAM0_REF_USE_PAD                        (0x1 << 31)
->>>> +#define PHYPARAM0_REF_LOSLEVEL_MASK          (0x1f << 26)
->>>> +#define PHYPARAM0_REF_LOSLEVEL                       (0x9 << 26)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYPARAM1                        (0x20)
->>>> +
->>>> +#define PHYPARAM1_PCS_TXDEEMPH_MASK          (0x1f << 0)
->>>> +#define PHYPARAM1_PCS_TXDEEMPH                       (0x1c)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYTERM                  (0x24)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYTEST                  (0x28)
->>>> +
->>>> +#define PHYTEST_POWERDOWN_SSP                        (0x1 << 3)
->>>> +#define PHYTEST_POWERDOWN_HSP                        (0x1 << 2)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYADP                   (0x2c)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYBATCHG                        (0x30)
->>>> +
->>>> +#define PHYBATCHG_UTMI_CLKSEL                        (0x1 << 2)
->>>> +
->>>> +#define EXYNOS5_DRD_PHYRESUME                        (0x34)
->>>> +#define EXYNOS5_DRD_LINKPORT                 (0x44)
->>>> +
->>>> +/* Power isolation defined in power management unit */
->>>> +#define EXYNOS5_USB3DRD_PHY_PMU_REG_OFFSET   (0x704)
->>>> +#define EXYNOS5_USB3DRD_PMU_ISOL             (1 << 0)
->>>> +
->>>> +#define KHZ  1000
->>>> +#define MHZ  (KHZ * KHZ)
->>>> +
->>>> +enum exynos5_usb3phy_id {
->>>> +     EXYNOS5_USB3PHY_UTMI,
->>>> +     EXYNOS5_USB3PHY_PIPE3,
->>>> +     EXYNOS5_USB3PHYS_NUM,
->>>> +};
->
-> here and all the structure names below shouldn't have usb3 in their names since
-> this is not just a 'usb3' phy driver..
-
-right, will change the nomenclature driver-wide (including function names too).
-
->>>> +
->>>> +struct usb3phy_config {
->>>> +     u32 id;
->>>> +     u32 reg_pmu_offset;
->>>> +     void (*phy_isol)(struct phy *phy, u32 on);
->>>> +};
->>>> +
->>>> +struct exynos5_usb3phy_drv_data {
->>>> +     bool has_usb30_sclk;
->>>> +     bool has_multi_controller;
->>>> +     const struct usb3phy_config *phy_cfg;
->>>> +};
->>>> +
->>>> +/**
->>>> + * struct exynos5_usb3phy_driver - driver data for USB 3.0 PHY
->>>
->>> Is this really a driver data? I think it should be just exynos5_usb3phy.
->> Yes, not a driver data, rather just 'exynos_usb3phy' structure. will
->> modify the name
->>
->>>> + * @dev: pointer to device instance of this platform device
->>>> + * @reg_phy: usb phy controller register memory base
->>>> + * @clk: phy clock for register access
->>>> + * @usb30_sclk: additional special clock for phy operations
->>>> + * @drv_data: pointer to SoC level driver data structure
->>>> + * @phys[]: array for 'EXYNOS5_USB3PHYS_NUM' number of PHY
->>>> + *       instances each with its 'phy' and 'phy_cfg'.
->>>> + * @extrefclk: frequency select settings when using 'separate
->>>> + *          reference clocks' for SS and HS operations
->>>> + * @rate: rate of reference clock to PHY block
->>>> + * @channel: number of PHY channels present in SoC
->>>> + */
->>>> +struct exynos5_usb3phy_driver {
->>>> +     struct device *dev;
->>>> +     void __iomem *reg_phy;
->>>> +     struct clk *clk;
->>>> +     struct clk *usb30_sclk;
->>>> +     const struct exynos5_usb3phy_drv_data *drv_data;
->>>> +     struct phy_usb_instance {
->>>> +             struct phy *phy;
->>>> +             u32 index;
->>>> +             struct regmap *reg_isol;
->>>> +             const struct usb3phy_config *phy_cfg;
->>>> +     } phys[EXYNOS5_USB3PHYS_NUM];
->>>> +     u32 extrefclk;
->>>> +     unsigned long rate;
->>>> +     u32 channel;
->>>> +};
->>>> +
->>>> +#define to_usb3phy_driver(inst) \
->>>> +     container_of((inst), struct exynos5_usb3phy_driver, \
->>>> +                  phys[(inst)->index]);
->>>> +
->>>> +/*
->>>> + * exynos5_rate_to_clk() converts the supplied clock rate to the value that
->>>> + * can be written to the phy register.
->>>> + */
->>>> +static u32 exynos5_rate_to_clk(unsigned long rate)
->>>> +{
->>>> +     unsigned int clksel;
->>>> +
->>>> +     /* EXYNOS5_FSEL_MASK */
->>>> +
->>>> +     switch (rate) {
->>>> +     case 9600 * KHZ:
->>>> +             clksel = EXYNOS5_FSEL_9MHZ6;
->>>> +             break;
->>>> +     case 10 * MHZ:
->>>> +             clksel = EXYNOS5_FSEL_10MHZ;
->>>> +             break;
->>>> +     case 12 * MHZ:
->>>> +             clksel = EXYNOS5_FSEL_12MHZ;
->>>> +             break;
->>>> +     case 19200 * KHZ:
->>>> +             clksel = EXYNOS5_FSEL_19MHZ2;
->>>> +             break;
->>>> +     case 20 * MHZ:
->>>> +             clksel = EXYNOS5_FSEL_20MHZ;
->>>> +             break;
->>>> +     case 24 * MHZ:
->>>> +             clksel = EXYNOS5_FSEL_24MHZ;
->>>> +             break;
->>>> +     case 50 * MHZ:
->>>> +             clksel = EXYNOS5_FSEL_50MHZ;
->>>> +             break;
->>>> +     default:
->>>> +             clksel = -EINVAL;
->>>> +     }
->>>> +
->>>> +     return clksel;
->>>> +}
->>>> +
->>>> +static void exynos5_usb3phy_isol(struct phy *phy, unsigned int on)
->>>> +{
->>>> +     u32 pmu_offset;
->>>> +     struct phy_usb_instance *inst = phy_get_drvdata(phy);
->>>> +     struct exynos5_usb3phy_driver *drv = to_usb3phy_driver(inst);
->>>> +
->>>> +     pmu_offset = inst->phy_cfg->reg_pmu_offset;
->>>> +     if (!inst->reg_isol)
->>>> +             return;
->>>> +
->>>> +     switch (drv->channel) {
->>>> +     case 1:
->>>> +             /* Channel 1 is at 0x708 offset */
->>>> +             pmu_offset += sizeof(&pmu_offset);
->>>> +             break;
->>>> +     case 0:
->>>> +     default:
->>>> +             /* Channel 0 is at 0x704 offset */
->>>> +             break;
->>>> +     }
->>>
->>> This can be in a simple 'if' stmt no?
->> What if there are systems with more channels? In that case also we
->> will have to fall back to a switch-case statement ?
->
-> right.
->>
->>>> +
->>>> +     regmap_update_bits(inst->reg_isol, pmu_offset,
->>>> +                        EXYNOS5_USB3DRD_PMU_ISOL, ~on);
->>>> +}
->>>> +
->>>> +/*
->>>> + * Sets the phy clk as EXTREFCLK (XXTI) which is internal clock from clock core.
->>>> + */
->>>> +static u32 exynos5_usb3phy_set_refclk(struct exynos5_usb3phy_driver *drv)
->>>> +{
->>>> +     u32 reg;
->>>> +
->>>> +     reg = PHYCLKRST_REFCLKSEL_EXT_REFCLK |
->>>> +           PHYCLKRST_FSEL(drv->extrefclk);
->>>> +
->>>> +     switch (drv->extrefclk) {
->>>> +     case EXYNOS5_FSEL_50MHZ:
->>>> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
->>>> +                     PHYCLKRST_SSC_REFCLKSEL(0x00));
->>>> +             break;
->>>> +     case EXYNOS5_FSEL_24MHZ:
->>>> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF |
->>>> +                     PHYCLKRST_SSC_REFCLKSEL(0x88));
->>>> +             break;
->>>> +     case EXYNOS5_FSEL_20MHZ:
->>>> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF |
->>>> +                     PHYCLKRST_SSC_REFCLKSEL(0x00));
->>>> +             break;
->>>> +     case EXYNOS5_FSEL_19MHZ2:
->>>> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF |
->>>> +                     PHYCLKRST_SSC_REFCLKSEL(0x88));
->>>> +             break;
->>>> +     default:
->>>> +             dev_dbg(drv->dev, "unsupported ref clk\n");
->>>> +             break;
->>>> +     }
->>>> +
->>>> +     return reg;
->>>> +}
->>>> +
->>>> +static int exynos5_usb3phy_init(struct phy *phy)
->>>> +{
->>>> +     int ret;
->>>> +     u32 phyparam0;
->>>> +     u32 phyparam1;
->>>> +     u32 linksystem;
->>>> +     u32 phybatchg;
->>>> +     u32 phytest;
->>>> +     u32 phyclkrst;
->>>
->>> instead you can define a single variable 'u32 reg' for register read and writes.
->>
->> Right.
->>
->>>> +     struct phy_usb_instance *inst = phy_get_drvdata(phy);
->>>> +     struct exynos5_usb3phy_driver *drv = to_usb3phy_driver(inst);
->>>> +
->>>> +     ret = clk_prepare_enable(drv->clk);
->>>> +     if (ret)
->>>> +             return ret;
->>>> +
->>>> +     drv->extrefclk = exynos5_rate_to_clk(drv->rate);
->>>> +     if (drv->extrefclk == -EINVAL) {
->>>> +             dev_err(drv->dev, "Clock rate (%ld) not supported\n",
->>>> +                                             drv->rate);
->>>> +             return -EINVAL;
->>>> +     }
->>>> +
->>>> +     /* Reset USB 3.0 PHY */
->>>> +     writel(0x0, drv->reg_phy + EXYNOS5_DRD_PHYREG0);
->>>> +
->>>> +     phyparam0 = readl(drv->reg_phy + EXYNOS5_DRD_PHYPARAM0);
->>>> +     /* Select PHY CLK source */
->>>> +     phyparam0 &= ~PHYPARAM0_REF_USE_PAD;
->>>> +     /* Set Loss-of-Signal Detector sensitivity */
->>>> +     phyparam0 &= ~PHYPARAM0_REF_LOSLEVEL_MASK;
->>>> +     phyparam0 |= PHYPARAM0_REF_LOSLEVEL;
->>>> +     writel(phyparam0, drv->reg_phy + EXYNOS5_DRD_PHYPARAM0);
->>>> +
->>>> +     writel(0x0, drv->reg_phy + EXYNOS5_DRD_PHYRESUME);
->>>> +
->>>> +     /*
->>>> +      * Setting the Frame length Adj value[6:1] to default 0x20
->>>> +      * See xHCI 1.0 spec, 5.2.4
->>>> +      */
->>>> +     linksystem = LINKSYSTEM_XHCI_VERSION_CONTROL |
->>>> +                  LINKSYSTEM_FLADJ(0x20);
->>>> +     writel(linksystem, drv->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
->>>> +
->>>> +     phyparam1 = readl(drv->reg_phy + EXYNOS5_DRD_PHYPARAM1);
->>>> +     /* Set Tx De-Emphasis level */
->>>> +     phyparam1 &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
->>>> +     phyparam1 |= PHYPARAM1_PCS_TXDEEMPH;
->>>> +     writel(phyparam1, drv->reg_phy + EXYNOS5_DRD_PHYPARAM1);
->>>> +
->>>> +     phybatchg = readl(drv->reg_phy + EXYNOS5_DRD_PHYBATCHG);
->>>> +     phybatchg |= PHYBATCHG_UTMI_CLKSEL;
->>>> +     writel(phybatchg, drv->reg_phy + EXYNOS5_DRD_PHYBATCHG);
->>>> +
->>>> +     /* PHYTEST POWERDOWN Control */
->>>> +     phytest = readl(drv->reg_phy + EXYNOS5_DRD_PHYTEST);
->>>> +     phytest &= ~(PHYTEST_POWERDOWN_SSP |
->>>> +                  PHYTEST_POWERDOWN_HSP);
->>>> +     writel(phytest, drv->reg_phy + EXYNOS5_DRD_PHYTEST);
->>>> +
->>>> +     /* UTMI Power Control */
->>>> +     writel(PHYUTMI_OTGDISABLE, drv->reg_phy + EXYNOS5_DRD_PHYUTMI);
->>>
->>> All these UTMI configuration should be done in usb2 init.
->> Ok, will move this to separate function.
->>
->>>> +
->>>> +     phyclkrst = exynos5_usb3phy_set_refclk(drv);
->>>> +
->>>> +     phyclkrst |= PHYCLKRST_PORTRESET |
->>>> +                  /* Digital power supply in normal operating mode */
->>>> +                  PHYCLKRST_RETENABLEN |
->>>> +                  /* Enable ref clock for SS function */
->>>> +                  PHYCLKRST_REF_SSP_EN |
->>>> +                  /* Enable spread spectrum */
->>>> +                  PHYCLKRST_SSC_EN |
->>>> +                  /* Power down HS Bias and PLL blocks in suspend mode */
->>>> +                  PHYCLKRST_COMMONONN;
->>>> +
->>>> +     writel(phyclkrst, drv->reg_phy + EXYNOS5_DRD_PHYCLKRST);
->>>> +
->>>> +     udelay(10);
->>>> +
->>>> +     phyclkrst &= ~PHYCLKRST_PORTRESET;
->>>> +     writel(phyclkrst, drv->reg_phy + EXYNOS5_DRD_PHYCLKRST);
->>>> +
->>>> +     clk_disable_unprepare(drv->clk);
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +static int exynos5_usb3phy_exit(struct phy *phy)
->>>> +{
->>>> +     int ret;
->>>> +     u32 phyutmi;
->>>> +     u32 phyclkrst;
->>>> +     u32 phytest;
->>>
->>> same here..
->> right, will do it.
->>
->>>> +     struct phy_usb_instance *inst = phy_get_drvdata(phy);
->>>> +     struct exynos5_usb3phy_driver *drv = to_usb3phy_driver(inst);
->>>> +
->>>> +     ret = clk_prepare_enable(drv->clk);
->>>> +     if (ret)
->>>> +             return ret;
->>>> +
->>>> +     phyutmi = PHYUTMI_OTGDISABLE |
->>>> +               PHYUTMI_FORCESUSPEND |
->>>> +               PHYUTMI_FORCESLEEP;
->>>> +     writel(phyutmi, drv->reg_phy + EXYNOS5_DRD_PHYUTMI);
->>>
->>> here too.. UTMI configuration should be part of USB2.
->> ok.
->>
->>>> +
->> [snip]
->>
->>>> +
->>>> +static struct phy_ops exynos5_usb3phy_ops = {
->>>> +     .init           = exynos5_usb3phy_init,
->>>> +     .exit           = exynos5_usb3phy_exit,
->>>> +     .power_on       = exynos5_usb3phy_power_on,
->>>> +     .power_off      = exynos5_usb3phy_power_off,
->>>> +     .owner          = THIS_MODULE,
->>>> +};
->>>> +
->>>> +const struct usb3phy_config exynos5_usb3phy_cfg[] = {
->>>> +     {
->>>> +             .id             = EXYNOS5_USB3PHY_UTMI,
->>>
->>> This should be USB2 no?
->> Actually the thought was to have similar naming for enums.
->> EXYNOS5_USB3PHY_UTMI
->> EXYNOS5_USB3PHY_PIPE3
->>
->> Since the entire driver was going that way.
->> But will change these to a more common name
->> EXYNOS5_DRDPHY_UTMI
->> EXYNOS5_DRDPHY_PIPE3,
->> in the same fashion the register names are defined.
->> Will that be fine ?
->
-> Yeah.
->
-> Thanks
-> Kishon
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+>>>> @@ -36,6 +42,7 @@ cpus {
+>>>>                         396000  950000
+>>>>                         198000  850000
+>>>>                 >;
+>>>> +               safe-opp = <396000 950000>
+>>>>                 clock-latency = <61036>; /* two CLK32 periods */
+>>>>                 #cooling-cells = <2>;
+>>>>                 cooling-min-level = <0>;
+>>>> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
+>>>> index 0c12ffc..075d3d1 100644
+>>>> --- a/drivers/cpufreq/cpufreq-cpu0.c
+>>>> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+>>>> @@ -27,6 +27,8 @@
+>>>>
+>>>>  static unsigned int transition_latency;
+>>>>  static unsigned int voltage_tolerance; /* in percentage */
+>>>> +static unsigned long safe_frequency;
+>>>> +static unsigned long safe_voltage;
+>>>>
+>>>>  static struct device *cpu_dev;
+>>>>  static struct clk *cpu_clk;
+>>>> @@ -64,17 +66,30 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
+>>>>                 volt_old = regulator_get_voltage(cpu_reg);
+>>>>         }
+>>>>
+>>>> -       pr_debug("%u MHz, %ld mV --> %u MHz, %ld mV\n",
+>>>> +       pr_debug("\n\n%u MHz, %ld mV --> %u MHz, %ld mV\n",
+>>>>                  old_freq / 1000, volt_old ? volt_old / 1000 : -1,
+>>>>                  new_freq / 1000, volt ? volt / 1000 : -1);
+>>>>
+>>>>         /* scaling up?  scale voltage before frequency */
+>>>> -       if (!IS_ERR(cpu_reg) && new_freq > old_freq) {
+>>>> +       if (!IS_ERR(cpu_reg) && new_freq > old_freq &&
+>>>> +                               new_freq >= safe_frequency) {
+>>>>                 ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>>>>                 if (ret) {
+>>>>                         pr_err("failed to scale voltage up: %d\n", ret);
+>>>>                         return ret;
+>>>>                 }
+>>>> +       } else if (!IS_ERR(cpu_reg) && old_freq < safe_frequency) {
+>>>> +               /*
+>>>> +                * the scaled up voltage level for the new_freq is lower
+>>>> +                * than the safe voltage level. so set safe_voltage
+>>>> +                * as the intermediate voltage level and revert it
+>>>> +                * back after the frequency has been changed.
+>>>> +                */
+>>>> +               ret = regulator_set_voltage_tol(cpu_reg, safe_voltage, tol);
+>>>> +               if (ret) {
+>>>> +                       pr_err("failed to set safe voltage: %d\n", ret);
+>>>> +                       return ret;
+>>>> +               }
+>>>>         }
+>>>>
+>>>>         ret = clk_set_rate(cpu_clk, freq_exact);
+>>>> @@ -86,7 +101,8 @@ static int cpu0_set_target(struct cpufreq_policy *policy, unsigned int index)
+>>>>         }
+>>>>
+>>>>         /* scaling down?  scale voltage after frequency */
+>>>> -       if (!IS_ERR(cpu_reg) && new_freq < old_freq) {
+>>>> +       if (!IS_ERR(cpu_reg) &&
+>>>> +                       (new_freq < old_freq || new_freq < safe_frequency)) {
+>>>>                 ret = regulator_set_voltage_tol(cpu_reg, volt, tol);
+>>>>                 if (ret) {
+>>>>                         pr_err("failed to scale voltage down: %d\n", ret);
+>>>> @@ -116,6 +132,8 @@ static struct cpufreq_driver cpu0_cpufreq_driver = {
+>>>>
+>>>>  static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>>>>  {
+>>>> +       const struct property *prop;
+>>>> +       struct dev_pm_opp *opp;
+>>>>         struct device_node *np;
+>>>>         int ret;
+>>>>
+>>>> @@ -165,13 +183,24 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>>>>                 goto out_put_node;
+>>>>         }
+>>>>
+>>>> +       prop = of_find_property(np, "safe-opp", NULL);
+>>>> +       if (prop) {
+>>>> +               if (prop->value && (prop->length / sizeof(u32)) == 2) {
+>>>> +                       const __be32 *val;
+>>>> +                       val = prop->value;
+>>>> +                       safe_frequency = be32_to_cpup(val++);
+>>>> +                       safe_voltage = be32_to_cpup(val);
+>>>> +               } else {
+>>>> +                       pr_err("invalid safe-opp level specified\n");
+>>>> +               }
+>>>> +       }
+>>>> +
+>>>>         of_property_read_u32(np, "voltage-tolerance", &voltage_tolerance);
+>>>>
+>>>>         if (of_property_read_u32(np, "clock-latency", &transition_latency))
+>>>>                 transition_latency = CPUFREQ_ETERNAL;
+>>>>
+>>>>         if (!IS_ERR(cpu_reg)) {
+>>>> -               struct dev_pm_opp *opp;
+>>>>                 unsigned long min_uV, max_uV;
+>>>>                 int i;
+>>>>
+>>>> --
+>>>> 1.6.6.rc2
+>>>>
