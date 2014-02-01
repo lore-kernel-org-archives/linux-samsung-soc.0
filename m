@@ -1,96 +1,186 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v5 4/4] [media] exynos-scaler: Add DT bindings for SCALER driver
-Date: Fri, 31 Jan 2014 15:47:33 +0900
-Message-ID: <CAOD6ATq1U1o4MVxM9g6rqfO7k2eebb_BzPO4JOtU3y4H=YHh9w@mail.gmail.com>
-References: <1389238094-19386-1-git-send-email-shaik.ameer@samsung.com>
-	<1389238094-19386-5-git-send-email-shaik.ameer@samsung.com>
-	<52E29051.3070906@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage during
+ frequency transitions
+Date: Fri, 31 Jan 2014 20:10:51 -0800
+Message-ID: <20140201041051.9977.46568@quantum>
+References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
+ <CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com>
+ <CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
+ <2009408.gnUEcoqA3p@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f178.google.com ([209.85.160.178]:62885 "EHLO
-	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751327AbaAaGrd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Jan 2014 01:47:33 -0500
-In-Reply-To: <52E29051.3070906@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <2009408.gnUEcoqA3p@phil>
+Sender: cpufreq-owner@vger.kernel.org
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Thomas Abraham <ta.omasab@gmail.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@google.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-Hi Tomasz,
+Quoting Heiko St=C3=BCbner (2014-01-30 07:09:04)
+> On Thursday, 30. January 2014 18:23:44 Thomas Abraham wrote:
+> > Hi Mike,
+> >=20
+> > On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linaro=
+=2Eorg>=20
+> wrote:
+> > > On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail.=
+com>=20
+> wrote:
+> > >> Hi Mike,
+> > >>=20
+> > >> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@lina=
+ro.org>=20
+> wrote:
+> > >>> Quoting Thomas Abraham (2014-01-18 04:10:51)
+> > >>>=20
+> > > As far as I can tell
+> > > the remux does not happen because it is necessary to generate the
+> > > required clock rate, but because we don't want to run the ARM cor=
+e out
+> > > of spec for a short time while the PLL relocks. Assuming I have t=
+hat
+> > > part of it right, I prefer for the parent mux operation to be a p=
+art
+> > > of the CPUfreq driver's .target callback instead of hidden away i=
+n the
+> > > clock driver.
+> >=20
+> > The re-parenting is mostly done to keep the ARM CPU clocked while t=
+he
+> > PLL is stopped, reprogrammed and restarted. One of the side effects=
+ of
+> > that is, the clock speed of the temporary parent could be higher th=
+en
+> > what is allowed due to the ARM voltage at the time of re-parenting.
+> > That is the reason to use the safe voltage.
+>=20
+> The Rockchip-SoCs use something similar, so I'm following quite close=
+ly what=20
+> Thomas is trying to do here, as similar solution would also solve thi=
+s issue=20
+> for me.
+>=20
+> On some Rockchip-SoCs even stuff like pclk and hclk seems to be sourc=
+ed from=20
+> the divided armclk, creating additional constraints.
+>=20
+> But on the RKs (at least in the upstream sources) the armclk is simpl=
+y equal=20
+> to the pll output. A divider exists, but is only used to make sure th=
+at the=20
+> armclk stays below the original rate when sourced from the temp-paren=
+t, like
+>=20
+>         if (clk_get_rate(temp_parent) > clk_get_rate(main_parent)
+>                 set_divider(something so that rate(temp) <=3D rate(ma=
+in)
+>         clk_set_parent(...)
+>=20
+> Isn't there a similar possiblity on your platform, as it would remove=
+ the need=20
+> for the safe-voltage?
+>=20
+>=20
+> In general I also like the approach of hiding the rate-change logic i=
+nside=20
+> this composite clock, as the depending clocks can be easily kept in s=
+ync. As=20
+> with the Rockchips the depending clocks are different for each of the=
+ three=20
+> Cortex-A9 SoCs I looked at, it would be "interesting" if all of this =
+would=20
+> need to be done in a cpufreq driver.
 
-Thanks for the review.
-Will consider all your comments in the next version of patch series.
+I wonder if hiding these details inside of the composite clock
+implementation indicates the lack of some needed feature in the clk
+core? I've discussed the idea of "coordinated rate changes" before. E.g=
+:
+
+_________________________________________________________
+|  clk	|  opp-low	|  opp-mid	|  opp-fast	|
+|	|		|		|		|
+|pll	| 300000	|  600000	|  600000	|
+|	|		|		|		|
+|div	| 150000	|  300000	|  600000	|
+|	|		|		|		|
+|mpu_clk| 150000	|  300000       |  600000	|
+|	|		|		|		|
+|periph	| 150000	|  150000	|  300000	|
+---------------------------------------------------------
+
+A call to clk_set_rate() against any of those clocks will result in all
+of their dividers being updated. At the implementation level this might
+look something like this extremely simplified pseudocode:
+
+int clk_set_rate(struct clk* clk, unsigned long rate)
+{
+	/* trap clks that support coordinated rate changes */
+	if (clk->ops->coordinate_rate)
+		return clk->ops->coordinate_rate(clk->hw, rate);
+	...
+}
+
+and,
+
+struct coord_rates {
+	struct clk_hw *hw;
+	struct clk *parent;
+	struct clk *rate;
+};
+
+and in the clock driver,
+
+#define PLL 0
+#define DIV 1
+#define MPU 2
+#define PER 3
+
+#define NR_OPP 4
+#define NR_CLK 4
+
+struct coord_rates my_opps[NR_OPP][NR_CLK]; // populated from DT data
+
+int my_coordinate_rate_callback(struct clk_hw *hw, unsigned long rate)
+{
+	struct coord_rate **selected_opp;
+
+	for(i =3D 0; i < NR_OPP; i++) {
+		for(j =3D 0; j < NR_CLK; j++) {
+			if (my_opps[i][j]->hw =3D=3D hw &&
+				my_opps[i][j]->rate =3D=3D rate)
+				selected_opp =3D my_opps[i];
+				break;
+		}
+	}
+
+	/*
+	 * order of operations is specific to my hardware and should be
+	 * managed by my clock driver, not generic code
+	 */
+
+	__clk_set_parent(selected_opp[DIV]->hw, temp_parent);
+	__clk_set_rate(selected_opp[PLL]->hw, selected_opp[PLL]->rate);
+	__clk_set_parent(selected_opp[DIV]->hw,
+				selected_opp[PLL]->hw->clk);
+	...
+
+	/*
+	 * note that the above could be handled by a switch-case or
+	 * something else
+	 */
+}
+
+Thoughts? Please forgive any gaps in my logic or abuse of C.
+
+I have long thought that something like the above would someday go into
+a generic dvfs layer instead of the clock framework, but maybe starting
+with the clk framework makes more sense?
 
 Regards,
-Shaik Ameer Basha
+Mike
 
-On Sat, Jan 25, 2014 at 1:09 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Shaik,
->
->
-> On 09.01.2014 04:28, Shaik Ameer Basha wrote:
->>
->> This patch adds the DT binding documentation for the
->> Exynos5420/5410 based SCALER device driver.
->>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>   .../devicetree/bindings/media/exynos5-scaler.txt   |   22
->> ++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/media/exynos5-scaler.txt
->>
->> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> new file mode 100644
->> index 0000000..9328e7d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> @@ -0,0 +1,22 @@
->> +* Samsung Exynos5 SCALER device
->> +
->> +SCALER is used for scaling, blending, color fill and color space
->> +conversion on EXYNOS[5420/5410] SoCs.
->> +
->> +Required properties:
->> +- compatible: should be "samsung,exynos5420-scaler" or
->> +                       "samsung,exynos5410-scaler"
->> +- reg: should contain SCALER physical address location and length
->> +- interrupts: should contain SCALER interrupt number
->
->
-> s/number/specifier/
->
->
->> +- clocks: should contain the SCALER clock specifier, from the
->> +                       common clock bindings
->
->
-> s/specifier/phandle and specifier pair for each clock listed in clock-names
-> property/
->
-> s/from/according to/
->
->
->> +- clock-names: should be "scaler"
->
->
-> should contain exactly one entry:
->  - "scaler" - IP bus clock.
->
-> Also this patch should be first in the series to let the driver added in
-> further patches use already present bindings.
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
->
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
+> Heiko
+>=20
