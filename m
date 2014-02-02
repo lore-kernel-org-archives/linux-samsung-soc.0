@@ -1,186 +1,303 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage during
- frequency transitions
-Date: Fri, 31 Jan 2014 20:10:51 -0800
-Message-ID: <20140201041051.9977.46568@quantum>
-References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
- <CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com>
- <CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
- <2009408.gnUEcoqA3p@phil>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <2009408.gnUEcoqA3p@phil>
-Sender: cpufreq-owner@vger.kernel.org
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Thomas Abraham <ta.omasab@gmail.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] spi: Make core DMA mapping functions generate scatterlists
+Date: Sun,  2 Feb 2014 13:52:52 +0000
+Message-ID: <1391349172-27668-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Lukasz Czerwinski <l.czerwinski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Heiko St=C3=BCbner (2014-01-30 07:09:04)
-> On Thursday, 30. January 2014 18:23:44 Thomas Abraham wrote:
-> > Hi Mike,
-> >=20
-> > On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linaro=
-=2Eorg>=20
-> wrote:
-> > > On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail.=
-com>=20
-> wrote:
-> > >> Hi Mike,
-> > >>=20
-> > >> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@lina=
-ro.org>=20
-> wrote:
-> > >>> Quoting Thomas Abraham (2014-01-18 04:10:51)
-> > >>>=20
-> > > As far as I can tell
-> > > the remux does not happen because it is necessary to generate the
-> > > required clock rate, but because we don't want to run the ARM cor=
-e out
-> > > of spec for a short time while the PLL relocks. Assuming I have t=
-hat
-> > > part of it right, I prefer for the parent mux operation to be a p=
-art
-> > > of the CPUfreq driver's .target callback instead of hidden away i=
-n the
-> > > clock driver.
-> >=20
-> > The re-parenting is mostly done to keep the ARM CPU clocked while t=
-he
-> > PLL is stopped, reprogrammed and restarted. One of the side effects=
- of
-> > that is, the clock speed of the temporary parent could be higher th=
-en
-> > what is allowed due to the ARM voltage at the time of re-parenting.
-> > That is the reason to use the safe voltage.
->=20
-> The Rockchip-SoCs use something similar, so I'm following quite close=
-ly what=20
-> Thomas is trying to do here, as similar solution would also solve thi=
-s issue=20
-> for me.
->=20
-> On some Rockchip-SoCs even stuff like pclk and hclk seems to be sourc=
-ed from=20
-> the divided armclk, creating additional constraints.
->=20
-> But on the RKs (at least in the upstream sources) the armclk is simpl=
-y equal=20
-> to the pll output. A divider exists, but is only used to make sure th=
-at the=20
-> armclk stays below the original rate when sourced from the temp-paren=
-t, like
->=20
->         if (clk_get_rate(temp_parent) > clk_get_rate(main_parent)
->                 set_divider(something so that rate(temp) <=3D rate(ma=
-in)
->         clk_set_parent(...)
->=20
-> Isn't there a similar possiblity on your platform, as it would remove=
- the need=20
-> for the safe-voltage?
->=20
->=20
-> In general I also like the approach of hiding the rate-change logic i=
-nside=20
-> this composite clock, as the depending clocks can be easily kept in s=
-ync. As=20
-> with the Rockchips the depending clocks are different for each of the=
- three=20
-> Cortex-A9 SoCs I looked at, it would be "interesting" if all of this =
-would=20
-> need to be done in a cpufreq driver.
+From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-I wonder if hiding these details inside of the composite clock
-implementation indicates the lack of some needed feature in the clk
-core? I've discussed the idea of "coordinated rate changes" before. E.g=
-:
+We cannot unconditionally use dma_map_single() to map data for use with
+SPI since transfers may exceed a page and virtual addresses may not be
+provided with physically contiguous pages. Further, addresses allocated
+using vmalloc() need to be mapped differently to other addresses.
 
-_________________________________________________________
-|  clk	|  opp-low	|  opp-mid	|  opp-fast	|
-|	|		|		|		|
-|pll	| 300000	|  600000	|  600000	|
-|	|		|		|		|
-|div	| 150000	|  300000	|  600000	|
-|	|		|		|		|
-|mpu_clk| 150000	|  300000       |  600000	|
-|	|		|		|		|
-|periph	| 150000	|  150000	|  300000	|
----------------------------------------------------------
+Currently only the MXS driver handles all this, a few drivers do handle
+the possibility that buffers may not be physically contiguous which is
+the main potential problem but many don't even do that. Factoring this
+out into the core will make it easier for drivers to do a good job so if
+the driver is using the core DMA code then generate a scatterlist
+instead of mapping to a single address so do that.
 
-A call to clk_set_rate() against any of those clocks will result in all
-of their dividers being updated. At the implementation level this might
-look something like this extremely simplified pseudocode:
+This code is mainly based on a combination of the existing code in the MXS
+and PXA2xx drivers. In future we should be able to extend it to allow the
+core to concatenate adjacent transfers if they are compatible, improving
+performance.
 
-int clk_set_rate(struct clk* clk, unsigned long rate)
-{
-	/* trap clks that support coordinated rate changes */
-	if (clk->ops->coordinate_rate)
-		return clk->ops->coordinate_rate(clk->hw, rate);
-	...
-}
+Currently for simplicity clients are not allowed to use the scatterlist
+when they do DMA mapping, in the future the existing single address
+mappings will be replaced with use of the scatterlist most likely as
+part of pre-verifying transfers.
 
-and,
+This change makes it mandatory to use scatterlists when using the core DMA
+mapping so update the s3c64xx driver to do this when used with dmaengine.
+Doing so makes the code more ugly but it is expected that the old s3c-dma
+code can be removed very soon.
 
-struct coord_rates {
-	struct clk_hw *hw;
-	struct clk *parent;
-	struct clk *rate;
-};
+Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ drivers/spi/spi-s3c64xx.c |  14 +++++--
+ drivers/spi/spi.c         | 101 ++++++++++++++++++++++++++++++++++------------
+ include/linux/spi/spi.h   |   7 ++++
+ 3 files changed, 94 insertions(+), 28 deletions(-)
 
-and in the clock driver,
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index b9ba7a3e7741..4490e8c499c0 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -470,7 +470,7 @@ static void s3c64xx_spi_unmap_mssg(struct s3c64xx_spi_driver_data *sdd,
+ }
+ 
+ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
+-					unsigned len, dma_addr_t buf)
++			struct sg_table *sgt)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd;
+ 	struct dma_slave_config config;
+@@ -496,8 +496,8 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
+ 		dmaengine_slave_config(dma->ch, &config);
+ 	}
+ 
+-	desc = dmaengine_prep_slave_single(dma->ch, buf, len,
+-					dma->direction, DMA_PREP_INTERRUPT);
++	desc = dmaengine_prep_slave_sg(dma->ch, sgt->sgl, sgt->nents,
++				       dma->direction, DMA_PREP_INTERRUPT);
+ 
+ 	desc->callback = s3c64xx_spi_dmacb;
+ 	desc->callback_param = dma;
+@@ -616,7 +616,11 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 		chcfg |= S3C64XX_SPI_CH_TXCH_ON;
+ 		if (dma_mode) {
+ 			modecfg |= S3C64XX_SPI_MODE_TXDMA_ON;
++#ifndef CONFIG_S3C_DMA
++			prepare_dma(&sdd->tx_dma, &xfer->tx_sg);
++#else
+ 			prepare_dma(&sdd->tx_dma, xfer->len, xfer->tx_dma);
++#endif
+ 		} else {
+ 			switch (sdd->cur_bpw) {
+ 			case 32:
+@@ -648,7 +652,11 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 			writel(((xfer->len * 8 / sdd->cur_bpw) & 0xffff)
+ 					| S3C64XX_SPI_PACKET_CNT_EN,
+ 					regs + S3C64XX_SPI_PACKET_CNT);
++#ifndef CONFIG_S3C_DMA
++			prepare_dma(&sdd->rx_dma, &xfer->rx_sg);
++#else
+ 			prepare_dma(&sdd->rx_dma, xfer->len, xfer->rx_dma);
++#endif
+ 		}
+ 	}
+ 
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 1826a50c2aaf..fb93d2d69182 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -582,13 +582,70 @@ static void spi_set_cs(struct spi_device *spi, bool enable)
+ 		spi->master->set_cs(spi, !enable);
+ }
+ 
++static int spi_map_buf(struct spi_master *master, struct device *dev,
++		       struct sg_table *sgt, void *buf, size_t len,
++		       enum dma_data_direction dir)
++{
++	const bool vmalloced_buf = is_vmalloc_addr(buf);
++	const int desc_len = vmalloced_buf ? PAGE_SIZE : master->max_dma_len;
++	const int sgs = DIV_ROUND_UP(len, desc_len);
++	struct page *vm_page;
++	void *sg_buf;
++	size_t min;
++	int i, ret;
++
++	ret = sg_alloc_table(sgt, sgs, GFP_KERNEL);
++	if (ret != 0)
++		return ret;
++
++	for (i = 0; i < sgs; i++) {
++		min = min_t(size_t, len, desc_len);
++
++		if (vmalloced_buf) {
++			vm_page = vmalloc_to_page(buf);
++			if (!vm_page) {
++				sg_free_table(sgt);
++				return -ENOMEM;
++			}
++			sg_buf = page_address(vm_page) +
++				((size_t)buf & ~PAGE_MASK);
++		} else {
++			sg_buf = buf;
++		}
++
++		sg_set_buf(&sgt->sgl[i], sg_buf, min);
++
++		buf += min;
++		len -= min;
++	}
++
++	ret = dma_map_sg(dev, sgt->sgl, sgt->nents, dir);
++	if (ret < 0) {
++		sg_free_table(sgt);
++		return ret;
++	}
++
++	sgt->nents = ret;
++
++	return 0;
++}
++
++static void spi_unmap_buf(struct spi_master *master, struct device *dev,
++			  struct sg_table *sgt, enum dma_data_direction dir)
++{
++	if (sgt->orig_nents) {
++		dma_unmap_sg(dev, sgt->sgl, sgt->orig_nents, dir);
++		sg_free_table(sgt);
++	}
++}
++
+ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
+ {
+-	struct device *dev = master->dev.parent;
+ 	struct device *tx_dev, *rx_dev;
+ 	struct spi_transfer *xfer;
+ 	void *tmp;
+ 	size_t max_tx, max_rx;
++	int ret;
+ 
+ 	if (master->flags & (SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX)) {
+ 		max_tx = 0;
+@@ -631,7 +688,7 @@ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
+ 		}
+ 	}
+ 
+-	if (msg->is_dma_mapped || !master->can_dma)
++	if (!master->can_dma)
+ 		return 0;
+ 
+ 	tx_dev = &master->dma_tx->dev->device;
+@@ -642,25 +699,21 @@ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
+ 			continue;
+ 
+ 		if (xfer->tx_buf != NULL) {
+-			xfer->tx_dma = dma_map_single(tx_dev,
+-						      (void *)xfer->tx_buf,
+-						      xfer->len,
+-						      DMA_TO_DEVICE);
+-			if (dma_mapping_error(dev, xfer->tx_dma)) {
+-				dev_err(dev, "dma_map_single Tx failed\n");
+-				return -ENOMEM;
+-			}
++			ret = spi_map_buf(master, tx_dev, &xfer->tx_sg,
++					  (void *)xfer->tx_buf, xfer->len,
++					  DMA_TO_DEVICE);
++			if (ret != 0)
++				return ret;
+ 		}
+ 
+ 		if (xfer->rx_buf != NULL) {
+-			xfer->rx_dma = dma_map_single(rx_dev,
+-						      xfer->rx_buf, xfer->len,
+-						      DMA_FROM_DEVICE);
+-			if (dma_mapping_error(dev, xfer->rx_dma)) {
+-				dev_err(dev, "dma_map_single Rx failed\n");
+-				dma_unmap_single(tx_dev, xfer->tx_dma,
+-						 xfer->len, DMA_TO_DEVICE);
+-				return -ENOMEM;
++			ret = spi_map_buf(master, rx_dev, &xfer->rx_sg,
++					  xfer->rx_buf, xfer->len,
++					  DMA_FROM_DEVICE);
++			if (ret != 0) {
++				spi_unmap_buf(master, tx_dev, &xfer->tx_sg,
++					      DMA_TO_DEVICE);
++				return ret;
+ 			}
+ 		}
+ 	}
+@@ -675,7 +728,7 @@ static int spi_unmap_msg(struct spi_master *master, struct spi_message *msg)
+ 	struct spi_transfer *xfer;
+ 	struct device *tx_dev, *rx_dev;
+ 
+-	if (!master->cur_msg_mapped || msg->is_dma_mapped || !master->can_dma)
++	if (!master->cur_msg_mapped || !master->can_dma)
+ 		return 0;
+ 
+ 	tx_dev = &master->dma_tx->dev->device;
+@@ -685,12 +738,8 @@ static int spi_unmap_msg(struct spi_master *master, struct spi_message *msg)
+ 		if (!master->can_dma(master, msg->spi, xfer))
+ 			continue;
+ 
+-		if (xfer->rx_buf)
+-			dma_unmap_single(rx_dev, xfer->rx_dma, xfer->len,
+-					 DMA_FROM_DEVICE);
+-		if (xfer->tx_buf)
+-			dma_unmap_single(tx_dev, xfer->tx_dma, xfer->len,
+-					 DMA_TO_DEVICE);
++		spi_unmap_buf(master, rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
++		spi_unmap_buf(master, tx_dev, &xfer->tx_sg, DMA_TO_DEVICE);
+ 	}
+ 
+ 	return 0;
+@@ -1509,6 +1558,8 @@ int spi_register_master(struct spi_master *master)
+ 	mutex_init(&master->bus_lock_mutex);
+ 	master->bus_lock_flag = 0;
+ 	init_completion(&master->xfer_completion);
++	if (!master->max_dma_len)
++		master->max_dma_len = INT_MAX;
+ 
+ 	/* register the device, then userspace will see it.
+ 	 * registration fails if the bus ID is in use.
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index c4c68093cd7c..36c86ef51ff3 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/kthread.h>
+ #include <linux/completion.h>
++#include <linux/scatterlist.h>
+ 
+ struct dma_chan;
+ 
+@@ -268,6 +269,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @auto_runtime_pm: the core should ensure a runtime PM reference is held
+  *                   while the hardware is prepared, using the parent
+  *                   device for the spidev
++ * @max_dma_len: Maximum length of a DMA transfer for the device.
+  * @prepare_transfer_hardware: a message will soon arrive from the queue
+  *	so the subsystem requests the driver to prepare the transfer hardware
+  *	by issuing this call
+@@ -424,6 +426,7 @@ struct spi_master {
+ 	bool                            cur_msg_prepared;
+ 	bool				cur_msg_mapped;
+ 	struct completion               xfer_completion;
++	size_t				max_dma_len;
+ 
+ 	int (*prepare_transfer_hardware)(struct spi_master *master);
+ 	int (*transfer_one_message)(struct spi_master *master,
+@@ -536,6 +539,8 @@ extern struct spi_master *spi_busnum_to_master(u16 busnum);
+  *	(optionally) changing the chipselect status, then starting
+  *	the next transfer or completing this @spi_message.
+  * @transfer_list: transfers are sequenced through @spi_message.transfers
++ * @tx_sg: Scatterlist for transmit, currently not for client use
++ * @rx_sg: Scatterlist for receive, currently not for client use
+  *
+  * SPI transfers always write the same number of bytes as they read.
+  * Protocol drivers should always provide @rx_buf and/or @tx_buf.
+@@ -603,6 +608,8 @@ struct spi_transfer {
+ 
+ 	dma_addr_t	tx_dma;
+ 	dma_addr_t	rx_dma;
++	struct sg_table tx_sg;
++	struct sg_table rx_sg;
+ 
+ 	unsigned	cs_change:1;
+ 	unsigned	tx_nbits:3;
+-- 
+1.9.rc1
 
-#define PLL 0
-#define DIV 1
-#define MPU 2
-#define PER 3
-
-#define NR_OPP 4
-#define NR_CLK 4
-
-struct coord_rates my_opps[NR_OPP][NR_CLK]; // populated from DT data
-
-int my_coordinate_rate_callback(struct clk_hw *hw, unsigned long rate)
-{
-	struct coord_rate **selected_opp;
-
-	for(i =3D 0; i < NR_OPP; i++) {
-		for(j =3D 0; j < NR_CLK; j++) {
-			if (my_opps[i][j]->hw =3D=3D hw &&
-				my_opps[i][j]->rate =3D=3D rate)
-				selected_opp =3D my_opps[i];
-				break;
-		}
-	}
-
-	/*
-	 * order of operations is specific to my hardware and should be
-	 * managed by my clock driver, not generic code
-	 */
-
-	__clk_set_parent(selected_opp[DIV]->hw, temp_parent);
-	__clk_set_rate(selected_opp[PLL]->hw, selected_opp[PLL]->rate);
-	__clk_set_parent(selected_opp[DIV]->hw,
-				selected_opp[PLL]->hw->clk);
-	...
-
-	/*
-	 * note that the above could be handled by a switch-case or
-	 * something else
-	 */
-}
-
-Thoughts? Please forgive any gaps in my logic or abuse of C.
-
-I have long thought that something like the above would someday go into
-a generic dvfs layer instead of the clock framework, but maybe starting
-with the clk framework makes more sense?
-
-Regards,
-Mike
-
->=20
->=20
-> Heiko
->=20
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
