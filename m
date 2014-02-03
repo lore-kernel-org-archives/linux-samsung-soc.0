@@ -1,303 +1,190 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] spi: Make core DMA mapping functions generate scatterlists
-Date: Sun,  2 Feb 2014 13:52:52 +0000
-Message-ID: <1391349172-27668-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Lukasz Czerwinski <l.czerwinski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v10 1/2] [media] exynos5-is: Adds DT binding documentation
+Date: Mon, 3 Feb 2014 15:43:55 +0530
+Message-ID: <CALt3h7-VBZgX-ueNa-Fer_RBiWkd-frNwrr8DsykXbvCab=h3w@mail.gmail.com>
+References: <1386911563-26236-1-git-send-email-arun.kk@samsung.com>
+	<1386911563-26236-2-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f174.google.com ([209.85.128.174]:41906 "EHLO
+	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779AbaBCKN5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Feb 2014 05:13:57 -0500
+In-Reply-To: <1386911563-26236-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
 
-From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Hi Mark,
 
-We cannot unconditionally use dma_map_single() to map data for use with
-SPI since transfers may exceed a page and virtual addresses may not be
-provided with physically contiguous pages. Further, addresses allocated
-using vmalloc() need to be mapped differently to other addresses.
+This patch and hence a full series of 13 patches is waiting for a long time now
+due to your missing ack on this DT binding patch.
+I have addressed your review comments given on earlier version -
+http://www.spinics.net/lists/devicetree/msg11550.html
 
-Currently only the MXS driver handles all this, a few drivers do handle
-the possibility that buffers may not be physically contiguous which is
-the main potential problem but many don't even do that. Factoring this
-out into the core will make it easier for drivers to do a good job so if
-the driver is using the core DMA code then generate a scatterlist
-instead of mapping to a single address so do that.
+Please check this and give an ack if it is fine to be merged.
 
-This code is mainly based on a combination of the existing code in the MXS
-and PXA2xx drivers. In future we should be able to extend it to allow the
-core to concatenate adjacent transfers if they are compatible, improving
-performance.
+Regards
+Arun
 
-Currently for simplicity clients are not allowed to use the scatterlist
-when they do DMA mapping, in the future the existing single address
-mappings will be replaced with use of the scatterlist most likely as
-part of pre-verifying transfers.
-
-This change makes it mandatory to use scatterlists when using the core DMA
-mapping so update the s3c64xx driver to do this when used with dmaengine.
-Doing so makes the code more ugly but it is expected that the old s3c-dma
-code can be removed very soon.
-
-Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/spi/spi-s3c64xx.c |  14 +++++--
- drivers/spi/spi.c         | 101 ++++++++++++++++++++++++++++++++++------------
- include/linux/spi/spi.h   |   7 ++++
- 3 files changed, 94 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index b9ba7a3e7741..4490e8c499c0 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -470,7 +470,7 @@ static void s3c64xx_spi_unmap_mssg(struct s3c64xx_spi_driver_data *sdd,
- }
- 
- static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
--					unsigned len, dma_addr_t buf)
-+			struct sg_table *sgt)
- {
- 	struct s3c64xx_spi_driver_data *sdd;
- 	struct dma_slave_config config;
-@@ -496,8 +496,8 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
- 		dmaengine_slave_config(dma->ch, &config);
- 	}
- 
--	desc = dmaengine_prep_slave_single(dma->ch, buf, len,
--					dma->direction, DMA_PREP_INTERRUPT);
-+	desc = dmaengine_prep_slave_sg(dma->ch, sgt->sgl, sgt->nents,
-+				       dma->direction, DMA_PREP_INTERRUPT);
- 
- 	desc->callback = s3c64xx_spi_dmacb;
- 	desc->callback_param = dma;
-@@ -616,7 +616,11 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
- 		chcfg |= S3C64XX_SPI_CH_TXCH_ON;
- 		if (dma_mode) {
- 			modecfg |= S3C64XX_SPI_MODE_TXDMA_ON;
-+#ifndef CONFIG_S3C_DMA
-+			prepare_dma(&sdd->tx_dma, &xfer->tx_sg);
-+#else
- 			prepare_dma(&sdd->tx_dma, xfer->len, xfer->tx_dma);
-+#endif
- 		} else {
- 			switch (sdd->cur_bpw) {
- 			case 32:
-@@ -648,7 +652,11 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
- 			writel(((xfer->len * 8 / sdd->cur_bpw) & 0xffff)
- 					| S3C64XX_SPI_PACKET_CNT_EN,
- 					regs + S3C64XX_SPI_PACKET_CNT);
-+#ifndef CONFIG_S3C_DMA
-+			prepare_dma(&sdd->rx_dma, &xfer->rx_sg);
-+#else
- 			prepare_dma(&sdd->rx_dma, xfer->len, xfer->rx_dma);
-+#endif
- 		}
- 	}
- 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 1826a50c2aaf..fb93d2d69182 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -582,13 +582,70 @@ static void spi_set_cs(struct spi_device *spi, bool enable)
- 		spi->master->set_cs(spi, !enable);
- }
- 
-+static int spi_map_buf(struct spi_master *master, struct device *dev,
-+		       struct sg_table *sgt, void *buf, size_t len,
-+		       enum dma_data_direction dir)
-+{
-+	const bool vmalloced_buf = is_vmalloc_addr(buf);
-+	const int desc_len = vmalloced_buf ? PAGE_SIZE : master->max_dma_len;
-+	const int sgs = DIV_ROUND_UP(len, desc_len);
-+	struct page *vm_page;
-+	void *sg_buf;
-+	size_t min;
-+	int i, ret;
-+
-+	ret = sg_alloc_table(sgt, sgs, GFP_KERNEL);
-+	if (ret != 0)
-+		return ret;
-+
-+	for (i = 0; i < sgs; i++) {
-+		min = min_t(size_t, len, desc_len);
-+
-+		if (vmalloced_buf) {
-+			vm_page = vmalloc_to_page(buf);
-+			if (!vm_page) {
-+				sg_free_table(sgt);
-+				return -ENOMEM;
-+			}
-+			sg_buf = page_address(vm_page) +
-+				((size_t)buf & ~PAGE_MASK);
-+		} else {
-+			sg_buf = buf;
-+		}
-+
-+		sg_set_buf(&sgt->sgl[i], sg_buf, min);
-+
-+		buf += min;
-+		len -= min;
-+	}
-+
-+	ret = dma_map_sg(dev, sgt->sgl, sgt->nents, dir);
-+	if (ret < 0) {
-+		sg_free_table(sgt);
-+		return ret;
-+	}
-+
-+	sgt->nents = ret;
-+
-+	return 0;
-+}
-+
-+static void spi_unmap_buf(struct spi_master *master, struct device *dev,
-+			  struct sg_table *sgt, enum dma_data_direction dir)
-+{
-+	if (sgt->orig_nents) {
-+		dma_unmap_sg(dev, sgt->sgl, sgt->orig_nents, dir);
-+		sg_free_table(sgt);
-+	}
-+}
-+
- static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
- {
--	struct device *dev = master->dev.parent;
- 	struct device *tx_dev, *rx_dev;
- 	struct spi_transfer *xfer;
- 	void *tmp;
- 	size_t max_tx, max_rx;
-+	int ret;
- 
- 	if (master->flags & (SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX)) {
- 		max_tx = 0;
-@@ -631,7 +688,7 @@ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
- 		}
- 	}
- 
--	if (msg->is_dma_mapped || !master->can_dma)
-+	if (!master->can_dma)
- 		return 0;
- 
- 	tx_dev = &master->dma_tx->dev->device;
-@@ -642,25 +699,21 @@ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
- 			continue;
- 
- 		if (xfer->tx_buf != NULL) {
--			xfer->tx_dma = dma_map_single(tx_dev,
--						      (void *)xfer->tx_buf,
--						      xfer->len,
--						      DMA_TO_DEVICE);
--			if (dma_mapping_error(dev, xfer->tx_dma)) {
--				dev_err(dev, "dma_map_single Tx failed\n");
--				return -ENOMEM;
--			}
-+			ret = spi_map_buf(master, tx_dev, &xfer->tx_sg,
-+					  (void *)xfer->tx_buf, xfer->len,
-+					  DMA_TO_DEVICE);
-+			if (ret != 0)
-+				return ret;
- 		}
- 
- 		if (xfer->rx_buf != NULL) {
--			xfer->rx_dma = dma_map_single(rx_dev,
--						      xfer->rx_buf, xfer->len,
--						      DMA_FROM_DEVICE);
--			if (dma_mapping_error(dev, xfer->rx_dma)) {
--				dev_err(dev, "dma_map_single Rx failed\n");
--				dma_unmap_single(tx_dev, xfer->tx_dma,
--						 xfer->len, DMA_TO_DEVICE);
--				return -ENOMEM;
-+			ret = spi_map_buf(master, rx_dev, &xfer->rx_sg,
-+					  xfer->rx_buf, xfer->len,
-+					  DMA_FROM_DEVICE);
-+			if (ret != 0) {
-+				spi_unmap_buf(master, tx_dev, &xfer->tx_sg,
-+					      DMA_TO_DEVICE);
-+				return ret;
- 			}
- 		}
- 	}
-@@ -675,7 +728,7 @@ static int spi_unmap_msg(struct spi_master *master, struct spi_message *msg)
- 	struct spi_transfer *xfer;
- 	struct device *tx_dev, *rx_dev;
- 
--	if (!master->cur_msg_mapped || msg->is_dma_mapped || !master->can_dma)
-+	if (!master->cur_msg_mapped || !master->can_dma)
- 		return 0;
- 
- 	tx_dev = &master->dma_tx->dev->device;
-@@ -685,12 +738,8 @@ static int spi_unmap_msg(struct spi_master *master, struct spi_message *msg)
- 		if (!master->can_dma(master, msg->spi, xfer))
- 			continue;
- 
--		if (xfer->rx_buf)
--			dma_unmap_single(rx_dev, xfer->rx_dma, xfer->len,
--					 DMA_FROM_DEVICE);
--		if (xfer->tx_buf)
--			dma_unmap_single(tx_dev, xfer->tx_dma, xfer->len,
--					 DMA_TO_DEVICE);
-+		spi_unmap_buf(master, rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
-+		spi_unmap_buf(master, tx_dev, &xfer->tx_sg, DMA_TO_DEVICE);
- 	}
- 
- 	return 0;
-@@ -1509,6 +1558,8 @@ int spi_register_master(struct spi_master *master)
- 	mutex_init(&master->bus_lock_mutex);
- 	master->bus_lock_flag = 0;
- 	init_completion(&master->xfer_completion);
-+	if (!master->max_dma_len)
-+		master->max_dma_len = INT_MAX;
- 
- 	/* register the device, then userspace will see it.
- 	 * registration fails if the bus ID is in use.
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index c4c68093cd7c..36c86ef51ff3 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/kthread.h>
- #include <linux/completion.h>
-+#include <linux/scatterlist.h>
- 
- struct dma_chan;
- 
-@@ -268,6 +269,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
-  * @auto_runtime_pm: the core should ensure a runtime PM reference is held
-  *                   while the hardware is prepared, using the parent
-  *                   device for the spidev
-+ * @max_dma_len: Maximum length of a DMA transfer for the device.
-  * @prepare_transfer_hardware: a message will soon arrive from the queue
-  *	so the subsystem requests the driver to prepare the transfer hardware
-  *	by issuing this call
-@@ -424,6 +426,7 @@ struct spi_master {
- 	bool                            cur_msg_prepared;
- 	bool				cur_msg_mapped;
- 	struct completion               xfer_completion;
-+	size_t				max_dma_len;
- 
- 	int (*prepare_transfer_hardware)(struct spi_master *master);
- 	int (*transfer_one_message)(struct spi_master *master,
-@@ -536,6 +539,8 @@ extern struct spi_master *spi_busnum_to_master(u16 busnum);
-  *	(optionally) changing the chipselect status, then starting
-  *	the next transfer or completing this @spi_message.
-  * @transfer_list: transfers are sequenced through @spi_message.transfers
-+ * @tx_sg: Scatterlist for transmit, currently not for client use
-+ * @rx_sg: Scatterlist for receive, currently not for client use
-  *
-  * SPI transfers always write the same number of bytes as they read.
-  * Protocol drivers should always provide @rx_buf and/or @tx_buf.
-@@ -603,6 +608,8 @@ struct spi_transfer {
- 
- 	dma_addr_t	tx_dma;
- 	dma_addr_t	rx_dma;
-+	struct sg_table tx_sg;
-+	struct sg_table rx_sg;
- 
- 	unsigned	cs_change:1;
- 	unsigned	tx_nbits:3;
--- 
-1.9.rc1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Fri, Dec 13, 2013 at 10:42 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
+> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>
+> The patch adds the DT binding doc for exynos5 SoC camera
+> subsystem.
+>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  .../bindings/media/exynos5250-camera.txt           |  136 ++++++++++++++++++++
+>  1 file changed, 136 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> new file mode 100644
+> index 0000000..0c36bc4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> @@ -0,0 +1,136 @@
+> +Samsung EXYNOS5 SoC Camera Subsystem
+> +------------------------------------
+> +
+> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
+> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
+> +MIPI CSIS and FIMC-IS.
+> +
+> +The sub-device nodes are referenced using phandles in the common 'camera' node
+> +which also includes common properties of the whole subsystem not really
+> +specific to any single sub-device, like common camera port pins or the common
+> +camera bus clocks.
+> +
+> +Common 'camera' node
+> +--------------------
+> +
+> +Required properties:
+> +
+> +- compatible           : must be "samsung,exynos5250-fimc"
+> +- clocks               : list of phandles and clock specifiers, corresponding
+> +                         to entries in the clock-names property
+> +- clock-names          : must contain "sclk_bayer" entry
+> +- samsung,csis         : list of phandles to the mipi-csis device nodes
+> +- samsung,fimc-lite    : list of phandles to the fimc-lite device nodes
+> +- samsung,fimc-is      : phandle to the fimc-is device node
+> +
+> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
+> +to define a required pinctrl state named "default".
+> +
+> +'parallel-ports' node
+> +---------------------
+> +
+> +This node should contain child 'port' nodes specifying active parallel video
+> +input ports. It includes camera A, camera B and RGB bay inputs.
+> +'reg' property in the port nodes specifies the input type:
+> + 1 - parallel camport A
+> + 2 - parallel camport B
+> + 5 - RGB camera bay
+> +
+> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
+> +
+> +Required properties:
+> +
+> +For describing the input type in the child nodes, the following properties
+> +have to be present in the parallel-ports node:
+> +- #address-cells: Must be 1
+> +- #size-cells: Must be 0
+> +
+> +Image sensor nodes
+> +------------------
+> +
+> +The sensor device nodes should be added to their control bus controller (e.g.
+> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
+> +using the common video interfaces bindings, defined in video-interfaces.txt.
+> +
+> +Example:
+> +
+> +       aliases {
+> +               fimc-lite0 = &fimc_lite_0
+> +       };
+> +
+> +       /* Parallel bus IF sensor */
+> +       i2c_0: i2c@13860000 {
+> +               s5k6aa: sensor@3c {
+> +                       compatible = "samsung,s5k6aafx";
+> +                       reg = <0x3c>;
+> +                       vddio-supply = <...>;
+> +
+> +                       clock-frequency = <24000000>;
+> +                       clocks = <...>;
+> +                       clock-names = "mclk";
+> +
+> +                       port {
+> +                               s5k6aa_ep: endpoint {
+> +                                       remote-endpoint = <&fimc0_ep>;
+> +                                       bus-width = <8>;
+> +                                       hsync-active = <0>;
+> +                                       vsync-active = <1>;
+> +                                       pclk-sample = <1>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       /* MIPI CSI-2 bus IF sensor */
+> +       s5c73m3: sensor@1a {
+> +               compatible = "samsung,s5c73m3";
+> +               reg = <0x1a>;
+> +               vddio-supply = <...>;
+> +
+> +               clock-frequency = <24000000>;
+> +               clocks = <...>;
+> +               clock-names = "mclk";
+> +
+> +               port {
+> +                       s5c73m3_1: endpoint {
+> +                               data-lanes = <1 2 3 4>;
+> +                               remote-endpoint = <&csis0_ep>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       camera {
+> +               compatible = "samsung,exynos5250-fimc";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               status = "okay";
+> +
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&cam_port_a_clk_active>;
+> +
+> +               samsung,csis = <&csis_0>, <&csis_1>;
+> +               samsung,fimc-lite = <&fimc_lite_0>, <&fimc_lite_1>, <&fimc_lite_2>;
+> +               samsung,fimc-is = <&fimc_is>;
+> +
+> +               /* parallel camera ports */
+> +               parallel-ports {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +
+> +                       /* camera A input */
+> +                       port@1 {
+> +                               reg = <1>;
+> +                               camport_a_ep: endpoint {
+> +                                       remote-endpoint = <&s5k6aa_ep>;
+> +                                       bus-width = <8>;
+> +                                       hsync-active = <0>;
+> +                                       vsync-active = <1>;
+> +                                       pclk-sample = <1>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt, FIMC-LITE
+> +device binding is defined in exynos-fimc-lite.txt and FIMC-IS binding
+> +is defined in exynos5-fimc-is.txt.
+> --
+> 1.7.9.5
+>
