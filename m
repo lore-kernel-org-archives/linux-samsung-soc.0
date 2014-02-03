@@ -1,190 +1,114 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v10 1/2] [media] exynos5-is: Adds DT binding documentation
-Date: Mon, 3 Feb 2014 15:43:55 +0530
-Message-ID: <CALt3h7-VBZgX-ueNa-Fer_RBiWkd-frNwrr8DsykXbvCab=h3w@mail.gmail.com>
-References: <1386911563-26236-1-git-send-email-arun.kk@samsung.com>
-	<1386911563-26236-2-git-send-email-arun.kk@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage
+ during frequency transitions
+Date: Mon, 3 Feb 2014 21:36:23 +0530
+Message-ID: <CAJuA9ahFqcT9oEUY5zU6pWxZLMkgQx9F521qAS0HQ-KvBjdRbw@mail.gmail.com>
+References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
+	<CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com>
+	<CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
+	<2009408.gnUEcoqA3p@phil>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:41906 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750779AbaBCKN5 (ORCPT
+Received: from mail-la0-f42.google.com ([209.85.215.42]:49535 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751134AbaBCQGY convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Feb 2014 05:13:57 -0500
-In-Reply-To: <1386911563-26236-2-git-send-email-arun.kk@samsung.com>
+	Mon, 3 Feb 2014 11:06:24 -0500
+In-Reply-To: <2009408.gnUEcoqA3p@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Mike Turquette <mturquette@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
 
-Hi Mark,
-
-This patch and hence a full series of 13 patches is waiting for a long time now
-due to your missing ack on this DT binding patch.
-I have addressed your review comments given on earlier version -
-http://www.spinics.net/lists/devicetree/msg11550.html
-
-Please check this and give an ack if it is fine to be merged.
-
-Regards
-Arun
-
-On Fri, Dec 13, 2013 at 10:42 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
-> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+On Thu, Jan 30, 2014 at 8:39 PM, Heiko St=FCbner <heiko@sntech.de> wrot=
+e:
+> On Thursday, 30. January 2014 18:23:44 Thomas Abraham wrote:
+>> Hi Mike,
+>>
+>> On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linaro.=
+org>
+> wrote:
+>> > On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail.c=
+om>
+> wrote:
+>> >> Hi Mike,
+>> >>
+>> >> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@linar=
+o.org>
+> wrote:
+>> >>> Quoting Thomas Abraham (2014-01-18 04:10:51)
+>> >>>
+>> > As far as I can tell
+>> > the remux does not happen because it is necessary to generate the
+>> > required clock rate, but because we don't want to run the ARM core=
+ out
+>> > of spec for a short time while the PLL relocks. Assuming I have th=
+at
+>> > part of it right, I prefer for the parent mux operation to be a pa=
+rt
+>> > of the CPUfreq driver's .target callback instead of hidden away in=
+ the
+>> > clock driver.
+>>
+>> The re-parenting is mostly done to keep the ARM CPU clocked while th=
+e
+>> PLL is stopped, reprogrammed and restarted. One of the side effects =
+of
+>> that is, the clock speed of the temporary parent could be higher the=
+n
+>> what is allowed due to the ARM voltage at the time of re-parenting.
+>> That is the reason to use the safe voltage.
 >
-> The patch adds the DT binding doc for exynos5 SoC camera
-> subsystem.
+> The Rockchip-SoCs use something similar, so I'm following quite close=
+ly what
+> Thomas is trying to do here, as similar solution would also solve thi=
+s issue
+> for me.
 >
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  .../bindings/media/exynos5250-camera.txt           |  136 ++++++++++++++++++++
->  1 file changed, 136 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> On some Rockchip-SoCs even stuff like pclk and hclk seems to be sourc=
+ed from
+> the divided armclk, creating additional constraints.
 >
-> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> new file mode 100644
-> index 0000000..0c36bc4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> @@ -0,0 +1,136 @@
-> +Samsung EXYNOS5 SoC Camera Subsystem
-> +------------------------------------
-> +
-> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
-> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
-> +MIPI CSIS and FIMC-IS.
-> +
-> +The sub-device nodes are referenced using phandles in the common 'camera' node
-> +which also includes common properties of the whole subsystem not really
-> +specific to any single sub-device, like common camera port pins or the common
-> +camera bus clocks.
-> +
-> +Common 'camera' node
-> +--------------------
-> +
-> +Required properties:
-> +
-> +- compatible           : must be "samsung,exynos5250-fimc"
-> +- clocks               : list of phandles and clock specifiers, corresponding
-> +                         to entries in the clock-names property
-> +- clock-names          : must contain "sclk_bayer" entry
-> +- samsung,csis         : list of phandles to the mipi-csis device nodes
-> +- samsung,fimc-lite    : list of phandles to the fimc-lite device nodes
-> +- samsung,fimc-is      : phandle to the fimc-is device node
-> +
-> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-> +to define a required pinctrl state named "default".
-> +
-> +'parallel-ports' node
-> +---------------------
-> +
-> +This node should contain child 'port' nodes specifying active parallel video
-> +input ports. It includes camera A, camera B and RGB bay inputs.
-> +'reg' property in the port nodes specifies the input type:
-> + 1 - parallel camport A
-> + 2 - parallel camport B
-> + 5 - RGB camera bay
-> +
-> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
-> +
-> +Required properties:
-> +
-> +For describing the input type in the child nodes, the following properties
-> +have to be present in the parallel-ports node:
-> +- #address-cells: Must be 1
-> +- #size-cells: Must be 0
-> +
-> +Image sensor nodes
-> +------------------
-> +
-> +The sensor device nodes should be added to their control bus controller (e.g.
-> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
-> +using the common video interfaces bindings, defined in video-interfaces.txt.
-> +
-> +Example:
-> +
-> +       aliases {
-> +               fimc-lite0 = &fimc_lite_0
-> +       };
-> +
-> +       /* Parallel bus IF sensor */
-> +       i2c_0: i2c@13860000 {
-> +               s5k6aa: sensor@3c {
-> +                       compatible = "samsung,s5k6aafx";
-> +                       reg = <0x3c>;
-> +                       vddio-supply = <...>;
-> +
-> +                       clock-frequency = <24000000>;
-> +                       clocks = <...>;
-> +                       clock-names = "mclk";
-> +
-> +                       port {
-> +                               s5k6aa_ep: endpoint {
-> +                                       remote-endpoint = <&fimc0_ep>;
-> +                                       bus-width = <8>;
-> +                                       hsync-active = <0>;
-> +                                       vsync-active = <1>;
-> +                                       pclk-sample = <1>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +       /* MIPI CSI-2 bus IF sensor */
-> +       s5c73m3: sensor@1a {
-> +               compatible = "samsung,s5c73m3";
-> +               reg = <0x1a>;
-> +               vddio-supply = <...>;
-> +
-> +               clock-frequency = <24000000>;
-> +               clocks = <...>;
-> +               clock-names = "mclk";
-> +
-> +               port {
-> +                       s5c73m3_1: endpoint {
-> +                               data-lanes = <1 2 3 4>;
-> +                               remote-endpoint = <&csis0_ep>;
-> +                       };
-> +               };
-> +       };
-> +
-> +       camera {
-> +               compatible = "samsung,exynos5250-fimc";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               status = "okay";
-> +
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&cam_port_a_clk_active>;
-> +
-> +               samsung,csis = <&csis_0>, <&csis_1>;
-> +               samsung,fimc-lite = <&fimc_lite_0>, <&fimc_lite_1>, <&fimc_lite_2>;
-> +               samsung,fimc-is = <&fimc_is>;
-> +
-> +               /* parallel camera ports */
-> +               parallel-ports {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +
-> +                       /* camera A input */
-> +                       port@1 {
-> +                               reg = <1>;
-> +                               camport_a_ep: endpoint {
-> +                                       remote-endpoint = <&s5k6aa_ep>;
-> +                                       bus-width = <8>;
-> +                                       hsync-active = <0>;
-> +                                       vsync-active = <1>;
-> +                                       pclk-sample = <1>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt, FIMC-LITE
-> +device binding is defined in exynos-fimc-lite.txt and FIMC-IS binding
-> +is defined in exynos5-fimc-is.txt.
-> --
-> 1.7.9.5
+> But on the RKs (at least in the upstream sources) the armclk is simpl=
+y equal
+> to the pll output. A divider exists, but is only used to make sure th=
+at the
+> armclk stays below the original rate when sourced from the temp-paren=
+t, like
+>
+>         if (clk_get_rate(temp_parent) > clk_get_rate(main_parent)
+>                 set_divider(something so that rate(temp) <=3D rate(ma=
+in)
+>         clk_set_parent(...)
+>
+> Isn't there a similar possiblity on your platform, as it would remove=
+ the need
+> for the safe-voltage?
+
+Hi Heiko,
+
+Yes, this works too! I have tested this method on Exynos4210,
+Exynos4412 and Exynos5250 and it works fine without any need for safe
+voltage. This is much better than using safe voltage. Thank you for
+suggesting this.
+
+Regards,
+Thomas.
+
+>
+>
+> In general I also like the approach of hiding the rate-change logic i=
+nside
+> this composite clock, as the depending clocks can be easily kept in s=
+ync. As
+> with the Rockchips the depending clocks are different for each of the=
+ three
+> Cortex-A9 SoCs I looked at, it would be "interesting" if all of this =
+would
+> need to be done in a cpufreq driver.
+>
+>
+> Heiko
 >
