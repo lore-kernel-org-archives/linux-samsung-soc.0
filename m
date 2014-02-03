@@ -1,114 +1,208 @@
 From: Thomas Abraham <ta.omasab@gmail.com>
 Subject: Re: [PATCH v2 1/7] cpufreq: cpufreq-cpu0: allow optional safe voltage
  during frequency transitions
-Date: Mon, 3 Feb 2014 21:36:23 +0530
-Message-ID: <CAJuA9ahFqcT9oEUY5zU6pWxZLMkgQx9F521qAS0HQ-KvBjdRbw@mail.gmail.com>
+Date: Mon, 3 Feb 2014 21:36:39 +0530
+Message-ID: <CAJuA9aiKAq5Q_PR_aCGU2QvLDhRWkc3JFHTzKFhcv9q=rJbbSw@mail.gmail.com>
 References: <1390047057-2239-1-git-send-email-thomas.ab@samsung.com>
 	<CAPtuhTj2ZOb+5LDbqghuOhQZfVy8i1xuWotoZ6ocbJFgMxnSMQ@mail.gmail.com>
 	<CAJuA9ajLUPtsReomPuuzMpshTEiUz81sc4584DEVQnG=iwGb-g@mail.gmail.com>
 	<2009408.gnUEcoqA3p@phil>
+	<20140201041051.9977.46568@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:49535 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbaBCQGY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Feb 2014 11:06:24 -0500
-In-Reply-To: <2009408.gnUEcoqA3p@phil>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <20140201041051.9977.46568@quantum>
+Sender: cpufreq-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Mike Turquette <mturquette@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, thomas.ab@samsung.com
 
-On Thu, Jan 30, 2014 at 8:39 PM, Heiko St=FCbner <heiko@sntech.de> wrot=
-e:
-> On Thursday, 30. January 2014 18:23:44 Thomas Abraham wrote:
->> Hi Mike,
->>
->> On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linaro.=
-org>
-> wrote:
->> > On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail.c=
-om>
-> wrote:
->> >> Hi Mike,
->> >>
->> >> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@linar=
+On Sat, Feb 1, 2014 at 9:40 AM, Mike Turquette <mturquette@linaro.org> =
+wrote:
+> Quoting Heiko St=FCbner (2014-01-30 07:09:04)
+>> On Thursday, 30. January 2014 18:23:44 Thomas Abraham wrote:
+>> > Hi Mike,
+>> >
+>> > On Wed, Jan 29, 2014 at 12:17 AM, Mike Turquette <mturquette@linar=
 o.org>
-> wrote:
->> >>> Quoting Thomas Abraham (2014-01-18 04:10:51)
->> >>>
->> > As far as I can tell
->> > the remux does not happen because it is necessary to generate the
->> > required clock rate, but because we don't want to run the ARM core=
- out
->> > of spec for a short time while the PLL relocks. Assuming I have th=
-at
->> > part of it right, I prefer for the parent mux operation to be a pa=
-rt
->> > of the CPUfreq driver's .target callback instead of hidden away in=
- the
->> > clock driver.
->>
->> The re-parenting is mostly done to keep the ARM CPU clocked while th=
+>> wrote:
+>> > > On Mon, Jan 27, 2014 at 9:30 PM, Thomas Abraham <ta.omasab@gmail=
+=2Ecom>
+>> wrote:
+>> > >> Hi Mike,
+>> > >>
+>> > >> On Tue, Jan 28, 2014 at 1:55 AM, Mike Turquette <mturquette@lin=
+aro.org>
+>> wrote:
+>> > >>> Quoting Thomas Abraham (2014-01-18 04:10:51)
+>> > >>>
+>> > > As far as I can tell
+>> > > the remux does not happen because it is necessary to generate th=
 e
->> PLL is stopped, reprogrammed and restarted. One of the side effects =
-of
->> that is, the clock speed of the temporary parent could be higher the=
-n
->> what is allowed due to the ARM voltage at the time of re-parenting.
->> That is the reason to use the safe voltage.
+>> > > required clock rate, but because we don't want to run the ARM co=
+re out
+>> > > of spec for a short time while the PLL relocks. Assuming I have =
+that
+>> > > part of it right, I prefer for the parent mux operation to be a =
+part
+>> > > of the CPUfreq driver's .target callback instead of hidden away =
+in the
+>> > > clock driver.
+>> >
+>> > The re-parenting is mostly done to keep the ARM CPU clocked while =
+the
+>> > PLL is stopped, reprogrammed and restarted. One of the side effect=
+s of
+>> > that is, the clock speed of the temporary parent could be higher t=
+hen
+>> > what is allowed due to the ARM voltage at the time of re-parenting=
+=2E
+>> > That is the reason to use the safe voltage.
+>>
+>> The Rockchip-SoCs use something similar, so I'm following quite clos=
+ely what
+>> Thomas is trying to do here, as similar solution would also solve th=
+is issue
+>> for me.
+>>
+>> On some Rockchip-SoCs even stuff like pclk and hclk seems to be sour=
+ced from
+>> the divided armclk, creating additional constraints.
+>>
+>> But on the RKs (at least in the upstream sources) the armclk is simp=
+ly equal
+>> to the pll output. A divider exists, but is only used to make sure t=
+hat the
+>> armclk stays below the original rate when sourced from the temp-pare=
+nt, like
+>>
+>>         if (clk_get_rate(temp_parent) > clk_get_rate(main_parent)
+>>                 set_divider(something so that rate(temp) <=3D rate(m=
+ain)
+>>         clk_set_parent(...)
+>>
+>> Isn't there a similar possiblity on your platform, as it would remov=
+e the need
+>> for the safe-voltage?
+>>
+>>
+>> In general I also like the approach of hiding the rate-change logic =
+inside
+>> this composite clock, as the depending clocks can be easily kept in =
+sync. As
+>> with the Rockchips the depending clocks are different for each of th=
+e three
+>> Cortex-A9 SoCs I looked at, it would be "interesting" if all of this=
+ would
+>> need to be done in a cpufreq driver.
 >
-> The Rockchip-SoCs use something similar, so I'm following quite close=
-ly what
-> Thomas is trying to do here, as similar solution would also solve thi=
-s issue
-> for me.
+> I wonder if hiding these details inside of the composite clock
+> implementation indicates the lack of some needed feature in the clk
+> core? I've discussed the idea of "coordinated rate changes" before. E=
+=2Eg:
 >
-> On some Rockchip-SoCs even stuff like pclk and hclk seems to be sourc=
-ed from
-> the divided armclk, creating additional constraints.
+> _________________________________________________________
+> |  clk  |  opp-low      |  opp-mid      |  opp-fast     |
+> |       |               |               |               |
+> |pll    | 300000        |  600000       |  600000       |
+> |       |               |               |               |
+> |div    | 150000        |  300000       |  600000       |
+> |       |               |               |               |
+> |mpu_clk| 150000        |  300000       |  600000       |
+> |       |               |               |               |
+> |periph | 150000        |  150000       |  300000       |
+> ---------------------------------------------------------
 >
-> But on the RKs (at least in the upstream sources) the armclk is simpl=
-y equal
-> to the pll output. A divider exists, but is only used to make sure th=
-at the
-> armclk stays below the original rate when sourced from the temp-paren=
-t, like
+> A call to clk_set_rate() against any of those clocks will result in a=
+ll
+> of their dividers being updated. At the implementation level this mig=
+ht
+> look something like this extremely simplified pseudocode:
 >
->         if (clk_get_rate(temp_parent) > clk_get_rate(main_parent)
->                 set_divider(something so that rate(temp) <=3D rate(ma=
-in)
->         clk_set_parent(...)
+> int clk_set_rate(struct clk* clk, unsigned long rate)
+> {
+>         /* trap clks that support coordinated rate changes */
+>         if (clk->ops->coordinate_rate)
+>                 return clk->ops->coordinate_rate(clk->hw, rate);
+>         ...
+> }
 >
-> Isn't there a similar possiblity on your platform, as it would remove=
- the need
-> for the safe-voltage?
+> and,
+>
+> struct coord_rates {
+>         struct clk_hw *hw;
+>         struct clk *parent;
+>         struct clk *rate;
+> };
+>
+> and in the clock driver,
+>
+> #define PLL 0
+> #define DIV 1
+> #define MPU 2
+> #define PER 3
+>
+> #define NR_OPP 4
+> #define NR_CLK 4
+>
+> struct coord_rates my_opps[NR_OPP][NR_CLK]; // populated from DT data
+>
+> int my_coordinate_rate_callback(struct clk_hw *hw, unsigned long rate=
+)
+> {
+>         struct coord_rate **selected_opp;
+>
+>         for(i =3D 0; i < NR_OPP; i++) {
+>                 for(j =3D 0; j < NR_CLK; j++) {
+>                         if (my_opps[i][j]->hw =3D=3D hw &&
+>                                 my_opps[i][j]->rate =3D=3D rate)
+>                                 selected_opp =3D my_opps[i];
+>                                 break;
+>                 }
+>         }
+>
+>         /*
+>          * order of operations is specific to my hardware and should =
+be
+>          * managed by my clock driver, not generic code
+>          */
+>
+>         __clk_set_parent(selected_opp[DIV]->hw, temp_parent);
+>         __clk_set_rate(selected_opp[PLL]->hw, selected_opp[PLL]->rate=
+);
+>         __clk_set_parent(selected_opp[DIV]->hw,
+>                                 selected_opp[PLL]->hw->clk);
+>         ...
+>
+>         /*
+>          * note that the above could be handled by a switch-case or
+>          * something else
+>          */
+> }
+>
+> Thoughts? Please forgive any gaps in my logic or abuse of C.
+>
+> I have long thought that something like the above would someday go in=
+to
+> a generic dvfs layer instead of the clock framework, but maybe starti=
+ng
+> with the clk framework makes more sense?
 
-Hi Heiko,
+Hi Mike,
 
-Yes, this works too! I have tested this method on Exynos4210,
-Exynos4412 and Exynos5250 and it works fine without any need for safe
-voltage. This is much better than using safe voltage. Thank you for
-suggesting this.
+Yes, this will be very helpful for atomically controlling the rates of
+a group of clocks. This coordinated rate change method can be used
+during the armclk rate changes on Samsung platforms.
 
-Regards,
+Thanks,
 Thomas.
 
 >
+> Regards,
+> Mike
 >
-> In general I also like the approach of hiding the rate-change logic i=
-nside
-> this composite clock, as the depending clocks can be easily kept in s=
-ync. As
-> with the Rockchips the depending clocks are different for each of the=
- three
-> Cortex-A9 SoCs I looked at, it would be "interesting" if all of this =
-would
-> need to be done in a cpufreq driver.
->
->
-> Heiko
->
+>>
+>>
+>> Heiko
+>>
