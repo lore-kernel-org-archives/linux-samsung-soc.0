@@ -1,82 +1,66 @@
-From: Dinh Nguyen <dinguyen@altera.com>
-Subject: RE: [RFC PATCHv1] usb: dwc2: Combine the dwc2 and s3c_hsotg into a
- single USB DRD driver.
-Date: Wed, 5 Feb 2014 00:14:22 -0600
-Message-ID: <1391580862.32553.10.camel@linux-builds1>
-References: <1391550341-32509-1-git-send-email-dinguyen@altera.com>
-	 <1391550341-32509-2-git-send-email-dinguyen@altera.com>
-	 <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH V2 0/3] exynos: arch: add support for exynos5260 SoC
+Date: Wed, 5 Feb 2014 11:47:04 +0530
+Message-ID: <CAPdUM4PgAO-WB7R_mR7wHeTJFZr-NgY9cWtFLCk3y7N5O5qh3g@mail.gmail.com>
+References: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
+	<000301cf2233$92224670$b666d350$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-by2on0102.outbound.protection.outlook.com ([207.46.100.102]:29455
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751288AbaBEGQ2 (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:47308 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751288AbaBEGRG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Feb 2014 01:16:28 -0500
-In-Reply-To: <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
+	Wed, 5 Feb 2014 01:17:06 -0500
+Received: by mail-wi0-f174.google.com with SMTP id f8so232101wiw.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Feb 2014 22:17:04 -0800 (PST)
+In-Reply-To: <000301cf2233$92224670$b666d350$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "dinh.linux@gmail.com" <dinh.linux@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sunil Joshi <joshi@samsung.com>
 
-On Wed, 2014-02-05 at 00:42 +0000, Paul Zimmerman wrote:
-> > From: dinguyen@altera.com [mailto:dinguyen@altera.com]
-> > Sent: Tuesday, February 04, 2014 1:46 PM
-> > 
-> > From: Dinh Nguyen <dinguyen@altera.com>
-> > 
-> > This means that the driver can be in host or peripheral mode when the appropriate
-> > connector is used. When an A-cable is plugged in, the driver behaves in host
-> > mode, and when a B-cable is used, the driver will be in peripheral mode.
-> > 
-> > This commit:
-> > - Replaces in the defines used in s3c_hsotg.h with the defines used in the dwc2
-> >   hw.h defines.
-> > - Use the dw2_hsotg as the unified data structure for the host/gadget.
-> > - Uses the dwc2 IRQ handler for host/gadget.
-> > - A single spinlock.
-> 
-> Hi Dinh,
-> 
-> Putting all of these changes into a single patch makes them unreviewable
-> as far I am concerned. You need to break this into a series of smaller
-> patches. I would suggest something like this:
-> 
-> 1 of n:  Make the minimum changes to the dwc2 header files needed to
->          support s3c-hsotg as a standalone driver.
-> 2 of n:  Make the spelling changes to s3c-hsotg.c needed to use the dwc2
->          headers, and move it to the dwc2/ directory. Make the Kconfig
->          and Makefile changes needed for the move. Delete s3c-hsotg.h.
-> 3 of n:  Move the struct defines etc. from s3c-hsotg.c to the dwc2
->          header files.
-> .. of n: Make the changes required to combine the functionality of
->          both drivers into one. Preferably this would also be a series
->          of patches instead of one big one.
-> 
-> At each step of the series, both drivers should still compile and work.
+Oops. Thanks Jingoo Han.
 
-I agree. My original thought was to also split this patch, but I just
-didn't know how to split it. This is why I designated as an RFC. I was
-really looking for feedback as this is the correct way to combine this
-driver. I was also looking for testing purpose to make sure I did not
-break anything for the s3c platform.
-
-> 
-> Also, please follow the patch style used on the linux lists. 
-> 'git format-patch --cover-letter' should do most of this for you
-> automatically.
-
-I did use --cover-letter on this patch series.
-
-> 
-> And you should probably trim the Cc list to something more reasonable.
-
-I looked through all the commits for the dwc2 driver for the cc list. I
-also CC a bunch of the Samsung people as I figured that the biggest
-impact of the work would affect the s3c folks.
-
-
-Dinh
+On 5 February 2014 11:01, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Wednesday, February 05, 2014 2:16 PM, Rahul Sharma wrote:
+>>
+>> This is re-spin of V2 which add arch-side support for exynos5260 SoC.
+>>
+>> V2:
+>>   1) Split up DT patch into SoC and Board patch.
+>>
+>> This series is based on Kukjin's for-next branch at
+>> http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
+>>
+>> Pankaj Dubey (1):
+>>   ARM: EXYNOS: initial board support for exynos5260 SoC
+>>
+>> Rahul Sharma (2):
+>>   ARM: dts: add dts files for exynos5260 SoC
+>>   ARM: dts: add dts files for xyref5260 board
+>>
+>>  arch/arm/boot/dts/Makefile                      |    1 +
+>>  arch/arm/boot/dts/exynos5260-pinctrl.dtsi       |  572 +++++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  105 +++++
+>>  arch/arm/boot/dts/exynos5260.dtsi               |  317 +++++++++++++
+>>  arch/arm/mach-exynos/Kconfig                    |    9 +
+>>  arch/arm/mach-exynos/common.c                   |   18 +
+>>  arch/arm/mach-exynos/include/mach/map.h         |    1 +
+>>  arch/arm/mach-exynos/mach-exynos5-dt.c          |    1 +
+>>  arch/arm/plat-samsung/include/plat/cpu.h        |    8 +
+>>  arch/arm/plat-samsung/include/plat/map-s5p.h    |    1 +
+>>  10 files changed, 1033 insertions(+)
+>>  create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+>>  create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>  create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+>>  mode change 100644 => 100755 arch/arm/mach-exynos/include/mach/map.h
+>>  mode change 100644 => 100755 arch/arm/mach-exynos/mach-exynos5-dt.c
+>>  mode change 100644 => 100755 arch/arm/plat-samsung/include/plat/cpu.h
+>
+> The mode of these three files should NOT be changed to 100755.
+> Please fix it.
+>
+> Best regards,
+> Jingoo Han
+>
