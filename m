@@ -1,71 +1,56 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 0/9] Samsung clock PM consolidation part 1
-Date: Wed, 5 Feb 2014 10:15:11 +0530
-Message-ID: <CAPdUM4OHCEgy4Y8An9j8t3sQ6RjzMdSEdOnqrZNuAwrWGZN7Nw@mail.gmail.com>
-References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH V2 0/3] exynos: arch: add support for exynos5260 SoC
+Date: Wed, 05 Feb 2014 10:46:12 +0530
+Message-ID: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:32771 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754668AbaBEEpM (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:44549 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750898AbaBEFQw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Feb 2014 23:45:12 -0500
-Received: by mail-wg0-f47.google.com with SMTP id m15so13450987wgh.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Feb 2014 20:45:11 -0800 (PST)
-In-Reply-To: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
+	Wed, 5 Feb 2014 00:16:52 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N0I00A62C02BY30@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Feb 2014 14:16:50 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Tomasz,
+This is re-spin of V2 which add arch-side support for exynos5260 SoC.
 
-Are you planning to respin this series? It is not applying on mike's for-next.
+V2:
+  1) Split up DT patch into SoC and Board patch.
 
-Regards,
-Rahul Sharma.
+This series is based on Kukjin's for-next branch at
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
 
+Pankaj Dubey (1):
+  ARM: EXYNOS: initial board support for exynos5260 SoC
 
-On 16 October 2013 16:38, Tomasz Figa <t.figa@samsung.com> wrote:
-> This series reworks suspend/resume handling of Samsung clock drivers
-> to cover more SoC specific aspects that are beyond simple register
-> save and restore. The goal is to have all the suspend/resume code
-> that touches the clock controller in single place, which is the
-> clock driver.
->
-> On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
-> Arndale boards (except suspend/resume, which is broken because of
-> unrelated reasons):
->
-> Tested-by: Tomasz Figa <t.figa@samsung.com>
->
-> Tomasz Figa (9):
->   clk: exynos4: Remove remnants of non-DT support
->   clk: samsung: Provide common helpers for register save/restore
->   clk: samsung: exynos4: Move suspend/resume handling to SoC driver
->   clk: samsung: exynos5250: Move suspend/resume handling to SoC driver
->   clk: samsung: exynos5420: Move suspend/resume handling to SoC driver
->   clk: samsung: s3c64xx: Move suspend/resume handling to SoC driver
->   clk: samsung: Drop old suspend/resume code
->   clk: samsung: exynos4: Add remaining suspend/resume handling
->   ARM: EXYNOS: pm: Drop legacy Exynos4 clock suspend/resume code
->
->  arch/arm/mach-exynos/pm.c            | 125 +-------------------------
->  drivers/clk/samsung/clk-exynos4.c    | 170 ++++++++++++++++++++++++++++++-----
->  drivers/clk/samsung/clk-exynos5250.c |  49 ++++++++--
->  drivers/clk/samsung/clk-exynos5420.c |  49 ++++++++--
->  drivers/clk/samsung/clk-exynos5440.c |   2 +-
->  drivers/clk/samsung/clk-s3c64xx.c    |  79 +++++++++++++---
->  drivers/clk/samsung/clk.c            |  71 ++++++---------
->  drivers/clk/samsung/clk.h            |  14 ++-
->  8 files changed, 346 insertions(+), 213 deletions(-)
->
-> --
-> 1.8.3.2
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Rahul Sharma (2):
+  ARM: dts: add dts files for exynos5260 SoC
+  ARM: dts: add dts files for xyref5260 board
+
+ arch/arm/boot/dts/Makefile                      |    1 +
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi       |  572 +++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  105 +++++
+ arch/arm/boot/dts/exynos5260.dtsi               |  317 +++++++++++++
+ arch/arm/mach-exynos/Kconfig                    |    9 +
+ arch/arm/mach-exynos/common.c                   |   18 +
+ arch/arm/mach-exynos/include/mach/map.h         |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c          |    1 +
+ arch/arm/plat-samsung/include/plat/cpu.h        |    8 +
+ arch/arm/plat-samsung/include/plat/map-s5p.h    |    1 +
+ 10 files changed, 1033 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+ create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+ mode change 100644 => 100755 arch/arm/mach-exynos/include/mach/map.h
+ mode change 100644 => 100755 arch/arm/mach-exynos/mach-exynos5-dt.c
+ mode change 100644 => 100755 arch/arm/plat-samsung/include/plat/cpu.h
+
+-- 
+1.7.9.5
