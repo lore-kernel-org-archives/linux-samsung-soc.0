@@ -1,67 +1,34 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2 0/3] exynos: arch: add support for exynos5260 SoC
-Date: Wed, 05 Feb 2014 14:31:50 +0900
-Message-ID: <000301cf2233$92224670$b666d350$%han@samsung.com>
-References: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 0/9] Samsung clock PM consolidation part 1
+Date: Wed, 05 Feb 2014 07:10:34 +0100
+Message-ID: <52F1D5DA.6080702@gmail.com>
+References: <1381921698-5060-1-git-send-email-t.figa@samsung.com> <CAPdUM4OHCEgy4Y8An9j8t3sQ6RjzMdSEdOnqrZNuAwrWGZN7Nw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:17298 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750720AbaBEFbw (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:39629 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751047AbaBEGKn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Feb 2014 00:31:52 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N0I00EGFCP25760@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Feb 2014 14:31:50 +0900 (KST)
-In-reply-to: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
-Content-language: ko
+	Wed, 5 Feb 2014 01:10:43 -0500
+Received: by mail-ee0-f46.google.com with SMTP id c13so4666052eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Feb 2014 22:10:42 -0800 (PST)
+In-Reply-To: <CAPdUM4OHCEgy4Y8An9j8t3sQ6RjzMdSEdOnqrZNuAwrWGZN7Nw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sunil Joshi' <joshi@samsung.com>, 'Rahul Sharma' <r.sh.open@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Rahul Sharma <r.sh.open@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>
 
-On Wednesday, February 05, 2014 2:16 PM, Rahul Sharma wrote:
-> 
-> This is re-spin of V2 which add arch-side support for exynos5260 SoC.
-> 
-> V2:
->   1) Split up DT patch into SoC and Board patch.
-> 
-> This series is based on Kukjin's for-next branch at
-> http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
-> 
-> Pankaj Dubey (1):
->   ARM: EXYNOS: initial board support for exynos5260 SoC
-> 
-> Rahul Sharma (2):
->   ARM: dts: add dts files for exynos5260 SoC
->   ARM: dts: add dts files for xyref5260 board
-> 
->  arch/arm/boot/dts/Makefile                      |    1 +
->  arch/arm/boot/dts/exynos5260-pinctrl.dtsi       |  572 +++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  105 +++++
->  arch/arm/boot/dts/exynos5260.dtsi               |  317 +++++++++++++
->  arch/arm/mach-exynos/Kconfig                    |    9 +
->  arch/arm/mach-exynos/common.c                   |   18 +
->  arch/arm/mach-exynos/include/mach/map.h         |    1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c          |    1 +
->  arch/arm/plat-samsung/include/plat/cpu.h        |    8 +
->  arch/arm/plat-samsung/include/plat/map-s5p.h    |    1 +
->  10 files changed, 1033 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->  create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
->  mode change 100644 => 100755 arch/arm/mach-exynos/include/mach/map.h
->  mode change 100644 => 100755 arch/arm/mach-exynos/mach-exynos5-dt.c
->  mode change 100644 => 100755 arch/arm/plat-samsung/include/plat/cpu.h
+Hi Rahul,
 
-The mode of these three files should NOT be changed to 100755.
-Please fix it.
+On 05.02.2014 05:45, Rahul Sharma wrote:
+> Hi Tomasz,
+>
+> Are you planning to respin this series? It is not applying on mike's for-next.
+
+Yes, I have already rebased it and was planning to resend it later today 
+or tomorrow after checking one more thing.
 
 Best regards,
-Jingoo Han
+Tomasz
