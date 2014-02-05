@@ -1,66 +1,71 @@
-From: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
-Subject: RE: [RFC PATCHv1] usb: dwc2: Combine the dwc2 and s3c_hsotg into a
- single USB DRD driver.
-Date: Wed, 5 Feb 2014 00:42:19 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
-References: <1391550341-32509-1-git-send-email-dinguyen@altera.com>
- <1391550341-32509-2-git-send-email-dinguyen@altera.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 0/9] Samsung clock PM consolidation part 1
+Date: Wed, 5 Feb 2014 10:15:11 +0530
+Message-ID: <CAPdUM4OHCEgy4Y8An9j8t3sQ6RjzMdSEdOnqrZNuAwrWGZN7Nw@mail.gmail.com>
+References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1391550341-32509-2-git-send-email-dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org" <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:32771 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754668AbaBEEpM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Feb 2014 23:45:12 -0500
+Received: by mail-wg0-f47.google.com with SMTP id m15so13450987wgh.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Feb 2014 20:45:11 -0800 (PST)
+In-Reply-To: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
 
-> From: dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org [mailto:dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org]
-> Sent: Tuesday, February 04, 2014 1:46 PM
-> 
-> From: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
-> 
-> This means that the driver can be in host or peripheral mode when the appropriate
-> connector is used. When an A-cable is plugged in, the driver behaves in host
-> mode, and when a B-cable is used, the driver will be in peripheral mode.
-> 
-> This commit:
-> - Replaces in the defines used in s3c_hsotg.h with the defines used in the dwc2
->   hw.h defines.
-> - Use the dw2_hsotg as the unified data structure for the host/gadget.
-> - Uses the dwc2 IRQ handler for host/gadget.
-> - A single spinlock.
+Hi Tomasz,
 
-Hi Dinh,
+Are you planning to respin this series? It is not applying on mike's for-next.
 
-Putting all of these changes into a single patch makes them unreviewable
-as far I am concerned. You need to break this into a series of smaller
-patches. I would suggest something like this:
+Regards,
+Rahul Sharma.
 
-1 of n:  Make the minimum changes to the dwc2 header files needed to
-         support s3c-hsotg as a standalone driver.
-2 of n:  Make the spelling changes to s3c-hsotg.c needed to use the dwc2
-         headers, and move it to the dwc2/ directory. Make the Kconfig
-         and Makefile changes needed for the move. Delete s3c-hsotg.h.
-3 of n:  Move the struct defines etc. from s3c-hsotg.c to the dwc2
-         header files.
-.. of n: Make the changes required to combine the functionality of
-         both drivers into one. Preferably this would also be a series
-         of patches instead of one big one.
 
-At each step of the series, both drivers should still compile and work.
-
-Also, please follow the patch style used on the linux lists. 
-'git format-patch --cover-letter' should do most of this for you
-automatically.
-
-And you should probably trim the Cc list to something more reasonable.
-
--- 
-Paul
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 16 October 2013 16:38, Tomasz Figa <t.figa@samsung.com> wrote:
+> This series reworks suspend/resume handling of Samsung clock drivers
+> to cover more SoC specific aspects that are beyond simple register
+> save and restore. The goal is to have all the suspend/resume code
+> that touches the clock controller in single place, which is the
+> clock driver.
+>
+> On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
+> Arndale boards (except suspend/resume, which is broken because of
+> unrelated reasons):
+>
+> Tested-by: Tomasz Figa <t.figa@samsung.com>
+>
+> Tomasz Figa (9):
+>   clk: exynos4: Remove remnants of non-DT support
+>   clk: samsung: Provide common helpers for register save/restore
+>   clk: samsung: exynos4: Move suspend/resume handling to SoC driver
+>   clk: samsung: exynos5250: Move suspend/resume handling to SoC driver
+>   clk: samsung: exynos5420: Move suspend/resume handling to SoC driver
+>   clk: samsung: s3c64xx: Move suspend/resume handling to SoC driver
+>   clk: samsung: Drop old suspend/resume code
+>   clk: samsung: exynos4: Add remaining suspend/resume handling
+>   ARM: EXYNOS: pm: Drop legacy Exynos4 clock suspend/resume code
+>
+>  arch/arm/mach-exynos/pm.c            | 125 +-------------------------
+>  drivers/clk/samsung/clk-exynos4.c    | 170 ++++++++++++++++++++++++++++++-----
+>  drivers/clk/samsung/clk-exynos5250.c |  49 ++++++++--
+>  drivers/clk/samsung/clk-exynos5420.c |  49 ++++++++--
+>  drivers/clk/samsung/clk-exynos5440.c |   2 +-
+>  drivers/clk/samsung/clk-s3c64xx.c    |  79 +++++++++++++---
+>  drivers/clk/samsung/clk.c            |  71 ++++++---------
+>  drivers/clk/samsung/clk.h            |  14 ++-
+>  8 files changed, 346 insertions(+), 213 deletions(-)
+>
+> --
+> 1.8.3.2
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
