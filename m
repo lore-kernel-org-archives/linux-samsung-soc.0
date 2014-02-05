@@ -1,158 +1,67 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH V2 3/3] ARM: dts: add dts files for xyref5260 board
-Date: Wed, 05 Feb 2014 10:46:15 +0530
-Message-ID: <1391577375-17625-4-git-send-email-rahul.sharma@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 0/3] exynos: arch: add support for exynos5260 SoC
+Date: Wed, 05 Feb 2014 14:31:50 +0900
+Message-ID: <000301cf2233$92224670$b666d350$%han@samsung.com>
 References: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44568 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172AbaBEFQz (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:17298 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750720AbaBEFbw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Feb 2014 00:16:55 -0500
+	Wed, 5 Feb 2014 00:31:52 -0500
 Received: from epcpsbgr3.samsung.com
  (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N0I00A6EC06BY30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Feb 2014 14:16:54 +0900 (KST)
+ with ESMTP id <0N0I00EGFCP25760@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Feb 2014 14:31:50 +0900 (KST)
 In-reply-to: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: 'Rahul Sharma' <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sunil Joshi' <joshi@samsung.com>, 'Rahul Sharma' <r.sh.open@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-The patch adds the dts files for xyref5260 board which
-is based on Exynos5260 Evt0 sample.
+On Wednesday, February 05, 2014 2:16 PM, Rahul Sharma wrote:
+> 
+> This is re-spin of V2 which add arch-side support for exynos5260 SoC.
+> 
+> V2:
+>   1) Split up DT patch into SoC and Board patch.
+> 
+> This series is based on Kukjin's for-next branch at
+> http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
+> 
+> Pankaj Dubey (1):
+>   ARM: EXYNOS: initial board support for exynos5260 SoC
+> 
+> Rahul Sharma (2):
+>   ARM: dts: add dts files for exynos5260 SoC
+>   ARM: dts: add dts files for xyref5260 board
+> 
+>  arch/arm/boot/dts/Makefile                      |    1 +
+>  arch/arm/boot/dts/exynos5260-pinctrl.dtsi       |  572 +++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  105 +++++
+>  arch/arm/boot/dts/exynos5260.dtsi               |  317 +++++++++++++
+>  arch/arm/mach-exynos/Kconfig                    |    9 +
+>  arch/arm/mach-exynos/common.c                   |   18 +
+>  arch/arm/mach-exynos/include/mach/map.h         |    1 +
+>  arch/arm/mach-exynos/mach-exynos5-dt.c          |    1 +
+>  arch/arm/plat-samsung/include/plat/cpu.h        |    8 +
+>  arch/arm/plat-samsung/include/plat/map-s5p.h    |    1 +
+>  10 files changed, 1033 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>  create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+>  mode change 100644 => 100755 arch/arm/mach-exynos/include/mach/map.h
+>  mode change 100644 => 100755 arch/arm/mach-exynos/mach-exynos5-dt.c
+>  mode change 100644 => 100755 arch/arm/plat-samsung/include/plat/cpu.h
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- arch/arm/boot/dts/Makefile                      |    1 +
- arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  105 +++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+The mode of these three files should NOT be changed to 100755.
+Please fix it.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index fa70ea2..c513a69 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -64,6 +64,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos5250-arndale.dtb \
- 	exynos5250-smdk5250.dtb \
- 	exynos5250-snow.dtb \
-+	exynos5260-xyref5260-evt0.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-smdk5420.dtb \
- 	exynos5440-sd5v1.dtb \
-diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
-new file mode 100644
-index 0000000..b4c9c35
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
-@@ -0,0 +1,105 @@
-+/*
-+ * SAMSUNG XYREF5260 EVT0 board device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos5260.dtsi"
-+
-+/ {
-+	model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
-+	compatible = "samsung,xyref5260", "samsung,exynos5260";
-+
-+	memory {
-+		reg = <0x20000000 0x80000000>;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttySAC2,115200";
-+	};
-+
-+	clocks {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		fin_pll: oscillator@0 {
-+			compatible = "fixed-clock";
-+			reg = <0>;
-+			clock-frequency = <24000000>;
-+			clock-output-names = "fin_pll";
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+	pinctrl@11600000 {
-+		hdmi_hpd_irq: hdmi-hpd-irq {
-+			samsung,pins = "gpx3-7";
-+			samsung,pin-function = <0>;
-+			samsung,pin-pud = <1>;
-+			samsung,pin-drv = <0>;
-+		};
-+	};
-+
-+	serial@12C00000 {
-+		status = "okay";
-+	};
-+
-+	serial@12C10000 {
-+		status = "okay";
-+	};
-+
-+	serial@12C20000 {
-+		status = "okay";
-+	};
-+
-+	serial@12860000 {
-+		status = "okay";
-+	};
-+
-+	mmc0@12140000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		broken-cd;
-+		bypass-smu;
-+		supports-highspeed;
-+		supports-hs200-mode; /* 200 Mhz */
-+		fifo-depth = <0x40>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <0 4>;
-+		samsung,dw-mshc-ddr-timing = <0 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	mmc2@12160000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x40>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+			disable-wp;
-+		};
-+	};
-+};
--- 
-1.7.9.5
+Best regards,
+Jingoo Han
