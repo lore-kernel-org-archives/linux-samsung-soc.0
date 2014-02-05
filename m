@@ -1,34 +1,82 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/9] Samsung clock PM consolidation part 1
-Date: Wed, 05 Feb 2014 07:10:34 +0100
-Message-ID: <52F1D5DA.6080702@gmail.com>
-References: <1381921698-5060-1-git-send-email-t.figa@samsung.com> <CAPdUM4OHCEgy4Y8An9j8t3sQ6RjzMdSEdOnqrZNuAwrWGZN7Nw@mail.gmail.com>
+From: Dinh Nguyen <dinguyen@altera.com>
+Subject: RE: [RFC PATCHv1] usb: dwc2: Combine the dwc2 and s3c_hsotg into a
+ single USB DRD driver.
+Date: Wed, 5 Feb 2014 00:14:22 -0600
+Message-ID: <1391580862.32553.10.camel@linux-builds1>
+References: <1391550341-32509-1-git-send-email-dinguyen@altera.com>
+	 <1391550341-32509-2-git-send-email-dinguyen@altera.com>
+	 <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:39629 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbaBEGKn (ORCPT
+Received: from mail-by2on0102.outbound.protection.outlook.com ([207.46.100.102]:29455
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751288AbaBEGQ2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Feb 2014 01:10:43 -0500
-Received: by mail-ee0-f46.google.com with SMTP id c13so4666052eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Feb 2014 22:10:42 -0800 (PST)
-In-Reply-To: <CAPdUM4OHCEgy4Y8An9j8t3sQ6RjzMdSEdOnqrZNuAwrWGZN7Nw@mail.gmail.com>
+	Wed, 5 Feb 2014 01:16:28 -0500
+In-Reply-To: <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>
+To: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "dinh.linux@gmail.com" <dinh.linux@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>
 
-Hi Rahul,
+On Wed, 2014-02-05 at 00:42 +0000, Paul Zimmerman wrote:
+> > From: dinguyen@altera.com [mailto:dinguyen@altera.com]
+> > Sent: Tuesday, February 04, 2014 1:46 PM
+> > 
+> > From: Dinh Nguyen <dinguyen@altera.com>
+> > 
+> > This means that the driver can be in host or peripheral mode when the appropriate
+> > connector is used. When an A-cable is plugged in, the driver behaves in host
+> > mode, and when a B-cable is used, the driver will be in peripheral mode.
+> > 
+> > This commit:
+> > - Replaces in the defines used in s3c_hsotg.h with the defines used in the dwc2
+> >   hw.h defines.
+> > - Use the dw2_hsotg as the unified data structure for the host/gadget.
+> > - Uses the dwc2 IRQ handler for host/gadget.
+> > - A single spinlock.
+> 
+> Hi Dinh,
+> 
+> Putting all of these changes into a single patch makes them unreviewable
+> as far I am concerned. You need to break this into a series of smaller
+> patches. I would suggest something like this:
+> 
+> 1 of n:  Make the minimum changes to the dwc2 header files needed to
+>          support s3c-hsotg as a standalone driver.
+> 2 of n:  Make the spelling changes to s3c-hsotg.c needed to use the dwc2
+>          headers, and move it to the dwc2/ directory. Make the Kconfig
+>          and Makefile changes needed for the move. Delete s3c-hsotg.h.
+> 3 of n:  Move the struct defines etc. from s3c-hsotg.c to the dwc2
+>          header files.
+> .. of n: Make the changes required to combine the functionality of
+>          both drivers into one. Preferably this would also be a series
+>          of patches instead of one big one.
+> 
+> At each step of the series, both drivers should still compile and work.
 
-On 05.02.2014 05:45, Rahul Sharma wrote:
-> Hi Tomasz,
->
-> Are you planning to respin this series? It is not applying on mike's for-next.
+I agree. My original thought was to also split this patch, but I just
+didn't know how to split it. This is why I designated as an RFC. I was
+really looking for feedback as this is the correct way to combine this
+driver. I was also looking for testing purpose to make sure I did not
+break anything for the s3c platform.
 
-Yes, I have already rebased it and was planning to resend it later today 
-or tomorrow after checking one more thing.
+> 
+> Also, please follow the patch style used on the linux lists. 
+> 'git format-patch --cover-letter' should do most of this for you
+> automatically.
 
-Best regards,
-Tomasz
+I did use --cover-letter on this patch series.
+
+> 
+> And you should probably trim the Cc list to something more reasonable.
+
+I looked through all the commits for the dwc2 driver for the cc list. I
+also CC a bunch of the Samsung people as I figured that the biggest
+impact of the work would affect the s3c folks.
+
+
+Dinh
