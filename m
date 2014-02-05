@@ -1,78 +1,62 @@
-From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Subject: RE: [RFC PATCHv1] usb: dwc2: Combine the dwc2 and s3c_hsotg into a
- single USB DRD driver.
-Date: Wed, 5 Feb 2014 19:20:31 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E03046D149CAA@US01WEMBX2.internal.synopsys.com>
-References: <1391550341-32509-1-git-send-email-dinguyen@altera.com>
-	 <1391550341-32509-2-git-send-email-dinguyen@altera.com>
-	 <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
- <1391580862.32553.10.camel@linux-builds1>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: RE: [PATCH v6 8/8] usb: ehci-exynos: Change to use phy provided by
+ the generic phy framework
+Date: Wed, 5 Feb 2014 14:55:51 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1402051453150.1312-100000@iolanthe.rowland.org>
+References: <054301cf228a$eb58a480$c209ed80$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay.synopsys.com ([198.182.44.111]:43114 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751427AbaBETUf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Feb 2014 14:20:35 -0500
-In-Reply-To: <1391580862.32553.10.camel@linux-builds1>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <054301cf228a$eb58a480$c209ed80$%debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dinh Nguyen <dinguyen@altera.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "dinh.linux@gmail.com" <dinh.linux@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>
 
-PiBGcm9tOiBEaW5oIE5ndXllbiBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+IFNlbnQ6
-IFR1ZXNkYXksIEZlYnJ1YXJ5IDA0LCAyMDE0IDEwOjE0IFBNDQo+IA0KPiBPbiBXZWQsIDIwMTQt
-MDItMDUgYXQgMDA6NDIgKzAwMDAsIFBhdWwgWmltbWVybWFuIHdyb3RlOg0KPiA+ID4gRnJvbTog
-ZGluZ3V5ZW5AYWx0ZXJhLmNvbSBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+ID4gPiBT
-ZW50OiBUdWVzZGF5LCBGZWJydWFyeSAwNCwgMjAxNCAxOjQ2IFBNDQo+ID4gPg0KPiA+ID4gRnJv
-bTogRGluaCBOZ3V5ZW4gPGRpbmd1eWVuQGFsdGVyYS5jb20+DQo+ID4gPg0KPiA+ID4gVGhpcyBt
-ZWFucyB0aGF0IHRoZSBkcml2ZXIgY2FuIGJlIGluIGhvc3Qgb3IgcGVyaXBoZXJhbCBtb2RlIHdo
-ZW4gdGhlIGFwcHJvcHJpYXRlDQo+ID4gPiBjb25uZWN0b3IgaXMgdXNlZC4gV2hlbiBhbiBBLWNh
-YmxlIGlzIHBsdWdnZWQgaW4sIHRoZSBkcml2ZXIgYmVoYXZlcyBpbiBob3N0DQo+ID4gPiBtb2Rl
-LCBhbmQgd2hlbiBhIEItY2FibGUgaXMgdXNlZCwgdGhlIGRyaXZlciB3aWxsIGJlIGluIHBlcmlw
-aGVyYWwgbW9kZS4NCj4gPiA+DQo+ID4gPiBUaGlzIGNvbW1pdDoNCj4gPiA+IC0gUmVwbGFjZXMg
-aW4gdGhlIGRlZmluZXMgdXNlZCBpbiBzM2NfaHNvdGcuaCB3aXRoIHRoZSBkZWZpbmVzIHVzZWQg
-aW4gdGhlIGR3YzINCj4gPiA+ICAgaHcuaCBkZWZpbmVzLg0KPiA+ID4gLSBVc2UgdGhlIGR3Ml9o
-c290ZyBhcyB0aGUgdW5pZmllZCBkYXRhIHN0cnVjdHVyZSBmb3IgdGhlIGhvc3QvZ2FkZ2V0Lg0K
-PiA+ID4gLSBVc2VzIHRoZSBkd2MyIElSUSBoYW5kbGVyIGZvciBob3N0L2dhZGdldC4NCj4gPiA+
-IC0gQSBzaW5nbGUgc3BpbmxvY2suDQo+ID4NCj4gPiBIaSBEaW5oLA0KPiA+DQo+ID4gUHV0dGlu
-ZyBhbGwgb2YgdGhlc2UgY2hhbmdlcyBpbnRvIGEgc2luZ2xlIHBhdGNoIG1ha2VzIHRoZW0gdW5y
-ZXZpZXdhYmxlDQo+ID4gYXMgZmFyIEkgYW0gY29uY2VybmVkLiBZb3UgbmVlZCB0byBicmVhayB0
-aGlzIGludG8gYSBzZXJpZXMgb2Ygc21hbGxlcg0KPiA+IHBhdGNoZXMuIEkgd291bGQgc3VnZ2Vz
-dCBzb21ldGhpbmcgbGlrZSB0aGlzOg0KPiA+DQo+ID4gMSBvZiBuOiAgTWFrZSB0aGUgbWluaW11
-bSBjaGFuZ2VzIHRvIHRoZSBkd2MyIGhlYWRlciBmaWxlcyBuZWVkZWQgdG8NCj4gPiAgICAgICAg
-ICBzdXBwb3J0IHMzYy1oc290ZyBhcyBhIHN0YW5kYWxvbmUgZHJpdmVyLg0KPiA+IDIgb2Ygbjog
-IE1ha2UgdGhlIHNwZWxsaW5nIGNoYW5nZXMgdG8gczNjLWhzb3RnLmMgbmVlZGVkIHRvIHVzZSB0
-aGUgZHdjMg0KPiA+ICAgICAgICAgIGhlYWRlcnMsIGFuZCBtb3ZlIGl0IHRvIHRoZSBkd2MyLyBk
-aXJlY3RvcnkuIE1ha2UgdGhlIEtjb25maWcNCj4gPiAgICAgICAgICBhbmQgTWFrZWZpbGUgY2hh
-bmdlcyBuZWVkZWQgZm9yIHRoZSBtb3ZlLiBEZWxldGUgczNjLWhzb3RnLmguDQo+ID4gMyBvZiBu
-OiAgTW92ZSB0aGUgc3RydWN0IGRlZmluZXMgZXRjLiBmcm9tIHMzYy1oc290Zy5jIHRvIHRoZSBk
-d2MyDQo+ID4gICAgICAgICAgaGVhZGVyIGZpbGVzLg0KPiA+IC4uIG9mIG46IE1ha2UgdGhlIGNo
-YW5nZXMgcmVxdWlyZWQgdG8gY29tYmluZSB0aGUgZnVuY3Rpb25hbGl0eSBvZg0KPiA+ICAgICAg
-ICAgIGJvdGggZHJpdmVycyBpbnRvIG9uZS4gUHJlZmVyYWJseSB0aGlzIHdvdWxkIGFsc28gYmUg
-YSBzZXJpZXMNCj4gPiAgICAgICAgICBvZiBwYXRjaGVzIGluc3RlYWQgb2Ygb25lIGJpZyBvbmUu
-DQo+ID4NCj4gPiBBdCBlYWNoIHN0ZXAgb2YgdGhlIHNlcmllcywgYm90aCBkcml2ZXJzIHNob3Vs
-ZCBzdGlsbCBjb21waWxlIGFuZCB3b3JrLg0KPiANCj4gSSBhZ3JlZS4gTXkgb3JpZ2luYWwgdGhv
-dWdodCB3YXMgdG8gYWxzbyBzcGxpdCB0aGlzIHBhdGNoLCBidXQgSSBqdXN0DQo+IGRpZG4ndCBr
-bm93IGhvdyB0byBzcGxpdCBpdC4gVGhpcyBpcyB3aHkgSSBkZXNpZ25hdGVkIGFzIGFuIFJGQy4g
-SSB3YXMNCj4gcmVhbGx5IGxvb2tpbmcgZm9yIGZlZWRiYWNrIGFzIHRoaXMgaXMgdGhlIGNvcnJl
-Y3Qgd2F5IHRvIGNvbWJpbmUgdGhpcw0KPiBkcml2ZXIuIEkgd2FzIGFsc28gbG9va2luZyBmb3Ig
-dGVzdGluZyBwdXJwb3NlIHRvIG1ha2Ugc3VyZSBJIGRpZCBub3QNCj4gYnJlYWsgYW55dGhpbmcg
-Zm9yIHRoZSBzM2MgcGxhdGZvcm0uDQoNClRoZSBwcm9ibGVtIGlzLCBpdCdzIGFsbW9zdCBpbXBv
-c3NpYmxlIHRvIHNlZSB3aGF0IHRoZSBmdW5jdGlvbmFsDQpjaGFuZ2VzIGFyZSBiZWNhdXNlIG9m
-IGFsbCB0aGUgbm9pc2Ugb2YgdGhlIG90aGVyIGNoYW5nZXMuDQoNCj4gPg0KPiA+IEFsc28sIHBs
-ZWFzZSBmb2xsb3cgdGhlIHBhdGNoIHN0eWxlIHVzZWQgb24gdGhlIGxpbnV4IGxpc3RzLg0KPiA+
-ICdnaXQgZm9ybWF0LXBhdGNoIC0tY292ZXItbGV0dGVyJyBzaG91bGQgZG8gbW9zdCBvZiB0aGlz
-IGZvciB5b3UNCj4gPiBhdXRvbWF0aWNhbGx5Lg0KPiANCj4gSSBkaWQgdXNlIC0tY292ZXItbGV0
-dGVyIG9uIHRoaXMgcGF0Y2ggc2VyaWVzLg0KPiANCj4gPg0KPiA+IEFuZCB5b3Ugc2hvdWxkIHBy
-b2JhYmx5IHRyaW0gdGhlIENjIGxpc3QgdG8gc29tZXRoaW5nIG1vcmUgcmVhc29uYWJsZS4NCj4g
-DQo+IEkgbG9va2VkIHRocm91Z2ggYWxsIHRoZSBjb21taXRzIGZvciB0aGUgZHdjMiBkcml2ZXIg
-Zm9yIHRoZSBjYyBsaXN0LiBJDQo+IGFsc28gQ0MgYSBidW5jaCBvZiB0aGUgU2Ftc3VuZyBwZW9w
-bGUgYXMgSSBmaWd1cmVkIHRoYXQgdGhlIGJpZ2dlc3QNCj4gaW1wYWN0IG9mIHRoZSB3b3JrIHdv
-dWxkIGFmZmVjdCB0aGUgczNjIGZvbGtzLg0KDQpJIHdvdWxkIHN1Z2dlc3QganVzdCBDQ2luZyB0
-aGUgU2Ftc3VuZyBmb2xrcyB0byBzdGFydCB3aXRoLCBzaW5jZSBzM2MtaHNvdGcNCmlzIGEgZHJp
-dmVyIGZvciB0aGVpciBoYXJkd2FyZS4gQW5kIHRoZSBsaW51eC11c2IgYW5kIGxpbnV4LXNhbXN1
-bmctc29jDQpsaXN0cy4NCg0KLS0gDQpQYXVsDQoNCg==
+On Wed, 5 Feb 2014, Kamil Debski wrote:
+
+> Hi Alan,
+> 
+> Thank you for your review.
+
+You're welcome.
+
+> > 
+> > > Change the phy provider used from the old one using the USB phy
+> > You have removed all the OTG stuff from the driver.  This wasn't
+> > mentioned in the patch description, and it has no connection with the
+> > PHY work.
+> 
+> Maybe I'll explain more about what are we trying to achieve. The goal
+> is to replace the old phy driver with the new one. In the old driver it was
+> difficult to add support to new SoC. It also had issues with having device
+> and
+> host working together.
+> 
+> You're right that until the old phy driver is removed support for the it
+> should
+> remain. To be able to remove the old driver both new USB2 and new USB3 phy
+> drivers
+> have to be ready. The USB3 driver is written by Vivek Gautam and as I see
+> it, he
+> is also close to completion.
+> 
+> Regarding the otg part. The old phy driver is the only provider of the otg
+> structure. It sets the host field of the structure. It is then used by
+> samsung_usb2phy_init (drivers/usb/phy/phy-samsung-usb2.c) to check which
+> driver is requesting the phy (is it host or device). In the new driver this
+> is determined by the entry in device tree. So no need to check the otg
+> struct
+> and strstr (!) to check if dev_name is ehci, ohci or other, like the old
+> driver.
+
+Okay, that's fine.  But please explain this in the patch description
+next time.  Otherwise the connection between the phy driver and the otg
+structure is not at all clear; they look like two unrelated things.
+
+Alan Stern
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
