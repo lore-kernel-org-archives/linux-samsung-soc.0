@@ -1,87 +1,78 @@
-From: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Subject: Re: [PATCH] spi: Make core DMA mapping functions generate scatterlists
-Date: Wed, 5 Feb 2014 19:13:20 +0100
-Message-ID: <201402051913.20422.marex@denx.de>
-References: <1391349172-27668-1-git-send-email-broonie@kernel.org> <201402050730.57398.marex@denx.de> <20140205120002.GH22609@sirena.org.uk>
+From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
+Subject: RE: [RFC PATCHv1] usb: dwc2: Combine the dwc2 and s3c_hsotg into a
+ single USB DRD driver.
+Date: Wed, 5 Feb 2014 19:20:31 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E03046D149CAA@US01WEMBX2.internal.synopsys.com>
+References: <1391550341-32509-1-git-send-email-dinguyen@altera.com>
+	 <1391550341-32509-2-git-send-email-dinguyen@altera.com>
+	 <A2CA0424C0A6F04399FB9E1CD98E03046D149949@US01WEMBX2.internal.synopsys.com>
+ <1391580862.32553.10.camel@linux-builds1>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140205120002.GH22609-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Lukasz Czerwinski <l.czerwinski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtprelay.synopsys.com ([198.182.44.111]:43114 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbaBETUf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Feb 2014 14:20:35 -0500
+In-Reply-To: <1391580862.32553.10.camel@linux-builds1>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dinh Nguyen <dinguyen@altera.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "dinh.linux@gmail.com" <dinh.linux@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>
 
-On Wednesday, February 05, 2014 at 01:00:02 PM, Mark Brown wrote:
-> On Wed, Feb 05, 2014 at 07:30:57AM +0100, Marek Vasut wrote:
-> > On Sunday, February 02, 2014 at 02:52:52 PM, Mark Brown wrote:
-> > > +static int spi_map_buf(struct spi_master *master, struct device *dev,
-> > > +		       struct sg_table *sgt, void *buf, size_t len,
-> > > +		       enum dma_data_direction dir)
-> > > +{
-> > > +	const bool vmalloced_buf = is_vmalloc_addr(buf);
-> > > +	const int desc_len = vmalloced_buf ? PAGE_SIZE : master->max_dma_len;
-> > 
-> > You might want to rename this to "sg_chunk_max_size" or something,
-> > "desc_len" doesn't make much sense here. The variable describes the
-> > maximum size of one single scatterlist element.
-> 
-> A scatterlist entry is pretty much an abstract descriptor though.  I
-> seem to remember looking at the name and thinking it was good that it
-> was something less easily applicable to the length of the table but it
-> doesn't make much odds.
-
-It's the length of the entry, but I see your point.
-
-> > > +	const int sgs = DIV_ROUND_UP(len, desc_len);
-> > 
-> > Looking at this, the variables could generally use a more meaningful
-> > name. I think it'd be clearer to call this "num_sg_chunks" or so ?
-> 
-> You do know where I lifted most of these variable names from, right?  :P
-
-Yeah, I don't like looking at my old code, it's always so frustrating ;-) Still, 
-it's a good source for learning how to NOT do things again :)
-
-> Looking at the code again everything seems idiomatic with the naming of
-> the fields inside the sg_table - I probably would apply a patch to
-> rename but I wouldn't write one.
-
-OK, makes sense.
-
-> > > +		min = min_t(size_t, len, desc_len);
-> > > +
-> > > +		if (vmalloced_buf) {
-> > > +			vm_page = vmalloc_to_page(buf);
-> > 
-> > Just curious, but shouldn't we check if buf != NULL right at the begining
-> > of this function?
-> 
-> No need, the check is outside the function along with the check that the
-> controller is OK with DMAing on this transfer and so on.
-
-OK, thank you for checking this.
-
-> > > +static void spi_unmap_buf(struct spi_master *master, struct device
-> > > *dev, +			  struct sg_table *sgt, enum dma_data_direction 
-dir)
-> > > +{
-> > > +	if (sgt->orig_nents) {
-> > 
-> > I don't want to nag, but why not use if (!sgt->...) return; ? This would
-> > cut down one level of indent.
-> 
-> I was looking at some stuff which might add a bit more in here if it's
-> not just the core doing mappings.  Not sure that's sensible though so it
-> might never materialise.
-
-OK.
-
-Best regards,
-Marek Vasut
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+PiBGcm9tOiBEaW5oIE5ndXllbiBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+IFNlbnQ6
+IFR1ZXNkYXksIEZlYnJ1YXJ5IDA0LCAyMDE0IDEwOjE0IFBNDQo+IA0KPiBPbiBXZWQsIDIwMTQt
+MDItMDUgYXQgMDA6NDIgKzAwMDAsIFBhdWwgWmltbWVybWFuIHdyb3RlOg0KPiA+ID4gRnJvbTog
+ZGluZ3V5ZW5AYWx0ZXJhLmNvbSBbbWFpbHRvOmRpbmd1eWVuQGFsdGVyYS5jb21dDQo+ID4gPiBT
+ZW50OiBUdWVzZGF5LCBGZWJydWFyeSAwNCwgMjAxNCAxOjQ2IFBNDQo+ID4gPg0KPiA+ID4gRnJv
+bTogRGluaCBOZ3V5ZW4gPGRpbmd1eWVuQGFsdGVyYS5jb20+DQo+ID4gPg0KPiA+ID4gVGhpcyBt
+ZWFucyB0aGF0IHRoZSBkcml2ZXIgY2FuIGJlIGluIGhvc3Qgb3IgcGVyaXBoZXJhbCBtb2RlIHdo
+ZW4gdGhlIGFwcHJvcHJpYXRlDQo+ID4gPiBjb25uZWN0b3IgaXMgdXNlZC4gV2hlbiBhbiBBLWNh
+YmxlIGlzIHBsdWdnZWQgaW4sIHRoZSBkcml2ZXIgYmVoYXZlcyBpbiBob3N0DQo+ID4gPiBtb2Rl
+LCBhbmQgd2hlbiBhIEItY2FibGUgaXMgdXNlZCwgdGhlIGRyaXZlciB3aWxsIGJlIGluIHBlcmlw
+aGVyYWwgbW9kZS4NCj4gPiA+DQo+ID4gPiBUaGlzIGNvbW1pdDoNCj4gPiA+IC0gUmVwbGFjZXMg
+aW4gdGhlIGRlZmluZXMgdXNlZCBpbiBzM2NfaHNvdGcuaCB3aXRoIHRoZSBkZWZpbmVzIHVzZWQg
+aW4gdGhlIGR3YzINCj4gPiA+ICAgaHcuaCBkZWZpbmVzLg0KPiA+ID4gLSBVc2UgdGhlIGR3Ml9o
+c290ZyBhcyB0aGUgdW5pZmllZCBkYXRhIHN0cnVjdHVyZSBmb3IgdGhlIGhvc3QvZ2FkZ2V0Lg0K
+PiA+ID4gLSBVc2VzIHRoZSBkd2MyIElSUSBoYW5kbGVyIGZvciBob3N0L2dhZGdldC4NCj4gPiA+
+IC0gQSBzaW5nbGUgc3BpbmxvY2suDQo+ID4NCj4gPiBIaSBEaW5oLA0KPiA+DQo+ID4gUHV0dGlu
+ZyBhbGwgb2YgdGhlc2UgY2hhbmdlcyBpbnRvIGEgc2luZ2xlIHBhdGNoIG1ha2VzIHRoZW0gdW5y
+ZXZpZXdhYmxlDQo+ID4gYXMgZmFyIEkgYW0gY29uY2VybmVkLiBZb3UgbmVlZCB0byBicmVhayB0
+aGlzIGludG8gYSBzZXJpZXMgb2Ygc21hbGxlcg0KPiA+IHBhdGNoZXMuIEkgd291bGQgc3VnZ2Vz
+dCBzb21ldGhpbmcgbGlrZSB0aGlzOg0KPiA+DQo+ID4gMSBvZiBuOiAgTWFrZSB0aGUgbWluaW11
+bSBjaGFuZ2VzIHRvIHRoZSBkd2MyIGhlYWRlciBmaWxlcyBuZWVkZWQgdG8NCj4gPiAgICAgICAg
+ICBzdXBwb3J0IHMzYy1oc290ZyBhcyBhIHN0YW5kYWxvbmUgZHJpdmVyLg0KPiA+IDIgb2Ygbjog
+IE1ha2UgdGhlIHNwZWxsaW5nIGNoYW5nZXMgdG8gczNjLWhzb3RnLmMgbmVlZGVkIHRvIHVzZSB0
+aGUgZHdjMg0KPiA+ICAgICAgICAgIGhlYWRlcnMsIGFuZCBtb3ZlIGl0IHRvIHRoZSBkd2MyLyBk
+aXJlY3RvcnkuIE1ha2UgdGhlIEtjb25maWcNCj4gPiAgICAgICAgICBhbmQgTWFrZWZpbGUgY2hh
+bmdlcyBuZWVkZWQgZm9yIHRoZSBtb3ZlLiBEZWxldGUgczNjLWhzb3RnLmguDQo+ID4gMyBvZiBu
+OiAgTW92ZSB0aGUgc3RydWN0IGRlZmluZXMgZXRjLiBmcm9tIHMzYy1oc290Zy5jIHRvIHRoZSBk
+d2MyDQo+ID4gICAgICAgICAgaGVhZGVyIGZpbGVzLg0KPiA+IC4uIG9mIG46IE1ha2UgdGhlIGNo
+YW5nZXMgcmVxdWlyZWQgdG8gY29tYmluZSB0aGUgZnVuY3Rpb25hbGl0eSBvZg0KPiA+ICAgICAg
+ICAgIGJvdGggZHJpdmVycyBpbnRvIG9uZS4gUHJlZmVyYWJseSB0aGlzIHdvdWxkIGFsc28gYmUg
+YSBzZXJpZXMNCj4gPiAgICAgICAgICBvZiBwYXRjaGVzIGluc3RlYWQgb2Ygb25lIGJpZyBvbmUu
+DQo+ID4NCj4gPiBBdCBlYWNoIHN0ZXAgb2YgdGhlIHNlcmllcywgYm90aCBkcml2ZXJzIHNob3Vs
+ZCBzdGlsbCBjb21waWxlIGFuZCB3b3JrLg0KPiANCj4gSSBhZ3JlZS4gTXkgb3JpZ2luYWwgdGhv
+dWdodCB3YXMgdG8gYWxzbyBzcGxpdCB0aGlzIHBhdGNoLCBidXQgSSBqdXN0DQo+IGRpZG4ndCBr
+bm93IGhvdyB0byBzcGxpdCBpdC4gVGhpcyBpcyB3aHkgSSBkZXNpZ25hdGVkIGFzIGFuIFJGQy4g
+SSB3YXMNCj4gcmVhbGx5IGxvb2tpbmcgZm9yIGZlZWRiYWNrIGFzIHRoaXMgaXMgdGhlIGNvcnJl
+Y3Qgd2F5IHRvIGNvbWJpbmUgdGhpcw0KPiBkcml2ZXIuIEkgd2FzIGFsc28gbG9va2luZyBmb3Ig
+dGVzdGluZyBwdXJwb3NlIHRvIG1ha2Ugc3VyZSBJIGRpZCBub3QNCj4gYnJlYWsgYW55dGhpbmcg
+Zm9yIHRoZSBzM2MgcGxhdGZvcm0uDQoNClRoZSBwcm9ibGVtIGlzLCBpdCdzIGFsbW9zdCBpbXBv
+c3NpYmxlIHRvIHNlZSB3aGF0IHRoZSBmdW5jdGlvbmFsDQpjaGFuZ2VzIGFyZSBiZWNhdXNlIG9m
+IGFsbCB0aGUgbm9pc2Ugb2YgdGhlIG90aGVyIGNoYW5nZXMuDQoNCj4gPg0KPiA+IEFsc28sIHBs
+ZWFzZSBmb2xsb3cgdGhlIHBhdGNoIHN0eWxlIHVzZWQgb24gdGhlIGxpbnV4IGxpc3RzLg0KPiA+
+ICdnaXQgZm9ybWF0LXBhdGNoIC0tY292ZXItbGV0dGVyJyBzaG91bGQgZG8gbW9zdCBvZiB0aGlz
+IGZvciB5b3UNCj4gPiBhdXRvbWF0aWNhbGx5Lg0KPiANCj4gSSBkaWQgdXNlIC0tY292ZXItbGV0
+dGVyIG9uIHRoaXMgcGF0Y2ggc2VyaWVzLg0KPiANCj4gPg0KPiA+IEFuZCB5b3Ugc2hvdWxkIHBy
+b2JhYmx5IHRyaW0gdGhlIENjIGxpc3QgdG8gc29tZXRoaW5nIG1vcmUgcmVhc29uYWJsZS4NCj4g
+DQo+IEkgbG9va2VkIHRocm91Z2ggYWxsIHRoZSBjb21taXRzIGZvciB0aGUgZHdjMiBkcml2ZXIg
+Zm9yIHRoZSBjYyBsaXN0LiBJDQo+IGFsc28gQ0MgYSBidW5jaCBvZiB0aGUgU2Ftc3VuZyBwZW9w
+bGUgYXMgSSBmaWd1cmVkIHRoYXQgdGhlIGJpZ2dlc3QNCj4gaW1wYWN0IG9mIHRoZSB3b3JrIHdv
+dWxkIGFmZmVjdCB0aGUgczNjIGZvbGtzLg0KDQpJIHdvdWxkIHN1Z2dlc3QganVzdCBDQ2luZyB0
+aGUgU2Ftc3VuZyBmb2xrcyB0byBzdGFydCB3aXRoLCBzaW5jZSBzM2MtaHNvdGcNCmlzIGEgZHJp
+dmVyIGZvciB0aGVpciBoYXJkd2FyZS4gQW5kIHRoZSBsaW51eC11c2IgYW5kIGxpbnV4LXNhbXN1
+bmctc29jDQpsaXN0cy4NCg0KLS0gDQpQYXVsDQoNCg==
