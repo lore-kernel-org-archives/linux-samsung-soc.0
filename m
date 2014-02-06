@@ -1,262 +1,116 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 2/3] ARM: dts: add dts files for exynos5260 SoC
-Date: Thu, 06 Feb 2014 14:21:06 +0100
-Message-ID: <52F38C42.5030508@samsung.com>
-References: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
- <1391577375-17625-3-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH 1/2 v3] i2c: exynos5: add support for HSI2C on Exynos5260
+ SoC
+Date: Thu, 06 Feb 2014 14:31:16 +0100
+Message-ID: <52F38EA4.10805@samsung.com>
+References: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com>
+ <1391688408-8077-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54864 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751433AbaBFNVM (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50078 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756238AbaBFNbV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Feb 2014 08:21:12 -0500
-In-reply-to: <1391577375-17625-3-git-send-email-rahul.sharma@samsung.com>
+	Thu, 6 Feb 2014 08:31:21 -0500
+In-reply-to: <1391688408-8077-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, naveenkrishna.ch@gmail.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, w.sang@pengutronix.de, linux-kernel@vger.kernel.org, taeggyun.ko@samsung.com, balbi@ti.com, cpgs@samsung.com
 
-Hi Rahul, Pankaj, Arun,
+Hi Naveen,
 
-[adding linux-arm-kernel, devicetree MLs and DT people on Cc]
-
-I think it's good time to stop accepting DTS files like this and force 
-new ones to use the proper structure with soc node, labels for every 
-node and node references.
-
-In case of previous Exynos 5 SoCs I hadn't complained, because they 
-shared a lot of data with already existing exynos5.dtsi, but since 
-Exynos5260 is completely different, I'd say it should be converted to 
-the new layout.
-
-As an example you can look at arch/arm/boot/dts/s3c64xx.dtsi and files 
-that include it or, for more complete structures, DTS of other 
-platforms, such as imx6*.
-
-Btw. Please remember that linux-samsung-soc mailing list is just a 
-convenient utility for reviewers of Samsung-specific patches to have all 
-of them in one place. Sending patches to it alone is not enough - a 
-general kernel ML list needs to be CCed as well, in this case 
-linux-arm-kernel.
-
-Also, please see my comments inline, for review comments unrelated to 
-the issue described above.
-
-On 05.02.2014 06:16, Rahul Sharma wrote:
-> The patch adds the dts files for exynos5260.
+On 06.02.2014 13:06, Naveen Krishna Chatradhi wrote:
+> This patch implements a variant struct to handle the differences
+> (like fifo_depths) in the HSI2C modules across SoCs.
 >
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Adds a new compatible to support HSI2C module on Exynos5260.
+> Also resets the module as an init sequence (Needed by Exynos5260).
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > ---
->   arch/arm/boot/dts/exynos5260-pinctrl.dtsi |  572 +++++++++++++++++++++++++++++
->   arch/arm/boot/dts/exynos5260.dtsi         |  317 ++++++++++++++++
->   2 files changed, 889 insertions(+)
->   create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
->   create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+> Changes since v2:
+> 1. Used variant struct as suggested by Tomasz Figa.
+> 2. Change compatible strings from samsung,exynos5-hsi2c to
+>     samsung,exynos5250-hsi2c based on the first SoC to see the feature.
+> 3. Using reset as init sequences.
+> 4. Merged the 2 patches into one.
 >
-> diff --git a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-> new file mode 100644
-> index 0000000..3f2c5c4
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-> @@ -0,0 +1,572 @@
-> +/*
-> + * Samsung's Exynos5260 SoC pin-mux and pin-config device tree source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Samsung's Exynos5260 SoC pin-mux and pin-config options are listed as device
-> + * tree nodes are listed in this file.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+>   .../devicetree/bindings/i2c/i2c-exynos5.txt        |    8 ++-
+>   drivers/i2c/busses/i2c-exynos5.c                   |   64 ++++++++++++++++----
+>   2 files changed, 58 insertions(+), 14 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> index 056732c..5bc4998 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> @@ -5,7 +5,11 @@ at various speeds ranging from 100khz to 3.4Mhz.
+>
+>   Required properties:
+>     - compatible: value should be.
+> -      -> "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
+
+Device tree bindings need to be backwards compatible, so you need to 
+keep this compatible string supported, just marked as (DEPRECATED).
+
+Driver-wise, it will use the same driver data / variant struct as 
+"samsung,exynos5250-hsi2c", just one more entry in OF match table is needed.
+
+> +	-> "samsung,exynos5250-hsi2c", for i2c compatible with HSI2C available
+> +				on Exynos5250 and Exynos5420 SoCs.
+> +	-> "samsung,exynos5260-hsi2c", for i2c compatible with HSI2C available
+> +				on Exynos5260 SoCs.
 > +
-> +/ {
-> +	pinctrl@11600000 {
+>     - reg: physical base address of the controller and length of memory mapped
+>       region.
+>     - interrupts: interrupt number to the cpu.
+> @@ -26,7 +30,7 @@ Optional properties:
+>   Example:
+>
+>   hsi2c@12ca0000 {
+> -	compatible = "samsung,exynos5-hsi2c";
+> +	compatible = "samsung,exynos5250-hsi2c";
+>   	reg = <0x12ca0000 0x100>;
+>   	interrupts = <56>;
+>   	clock-frequency = <100000>;
 
 [snip]
 
-> +		spi0_bus: spi0-bus {
-> +			samsung,pins = "gpa2-0", "gpa2-1", "gpa2-2", "gpa2-3";
-
-What is the reason for SPI0 to have 4 pins, while SPI1 has just 3?
-
-> +			samsung,pin-function = <2>;
-> +			samsung,pin-pud = <3>;
-> +			samsung,pin-drv = <0>;
-> +		};
-
-[snip]
-
-> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-> new file mode 100644
-> index 0000000..32a95c7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5260.dtsi
-> @@ -0,0 +1,317 @@
-> +/*
-> + * SAMSUNG EXYNOS5260 SoC device tree source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include "skeleton.dtsi"
-> +#include "exynos5260-pinctrl.dtsi"
-> +
-> +#include <dt-bindings/clk/exynos5260-clk.h>
-> +
-> +/ {
-> +	compatible = "samsung,exynos5260";
-> +	interrupt-parent = <&gic>;
-> +
-> +	aliases {
-> +		pinctrl0 = &pinctrl_0;
-> +		pinctrl1 = &pinctrl_1;
-> +		pinctrl2 = &pinctrl_2;
-> +	};
-> +
-> +	chipid@10000000 {
-> +		compatible = "samsung,exynos4210-chipid";
-> +		reg = <0x10000000 0x100>;
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a15";
-> +			reg = <0>;
-
-nit: Please make this consistent with CPUs 10x below, by using hex here 
-as well.
-
-> +			cci-control-port = <&cci_control1>;
-> +		};
-
-nit: Please keep 1 blank line of spacing between nodes.
-
-> +		cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a15";
-> +			reg = <1>;
-> +			cci-control-port = <&cci_control1>;
-> +		};
-> +		cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0x100>;
-> +			cci-control-port = <&cci_control0>;
-> +		};
-> +		cpu@101 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0x101>;
-> +			cci-control-port = <&cci_control0>;
-> +		};
-> +		cpu@102 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0x102>;
-> +			cci-control-port = <&cci_control0>;
-> +		};
-> +		cpu@103 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0x103>;
-> +			cci-control-port = <&cci_control0>;
-> +		};
-> +	};
-> +
-> +	cmus {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
+> @@ -483,6 +514,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>   	u32 i2c_auto_conf = 0;
+>   	u32 fifo_ctl;
+>   	unsigned long flags;
+> +	unsigned short trig_lvl;
+>
+>   	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
+>   	i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
+> @@ -493,13 +525,19 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>
+>   		i2c_auto_conf = HSI2C_READ_WRITE;
+>
+> -		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
+> +		trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
+> +			(i2c->variant->fifo_depth * 3/4) : i2c->msg->len;
+> +		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(trig_lvl);
 > +
 
-I don't think there is a need to group these nodes under a parent node 
-that doesn't give any additional information, especially when the CMUs 
-are scattered trough the whole address space, while we'd like to keep 
-the nodes ordered by their addresses, as most platforms do.
+This is a rather serious semantic change, that doesn't look to belong to 
+this patch. If this is needed, it should be done in a separate patch.
 
-> +		cmu_top: clock-controller@10010000 {
-> +			compatible = "exynos5260-cmu-top", "samsung,exynos5260-clock";
-
-I don't think that having the "samsung,exynos5260-clock" compatible 
-string for every CMU is appropriate here, because there is no way to 
-automatically recognize which CMU it is. Since every CMU instance is 
-different, they need to have different compatible strings.
-
-> +			reg = <0x10010000 0x10000>;
-> +			#clock-cells = <1>;
-> +		};
-
-[snip]
-
-> +	mct@100B0000 {
-> +		compatible = "samsung,exynos4210-mct";
-> +		reg = <0x100B0000 0x1000>;
-> +		interrupt-controller;
-> +		#interrups-cells = <1>;
-
-MCT is not an interrupt controller, so the 2 properties above are incorrect.
-
-> +		interrupt-parent = <&mct_map>;
-> +		interrupts = <0>, <1>, <2>, <3>,
-> +				<4>, <5>, <6>, <7>,
-> +				<8>, <9>, <10>, <11>;
-> +		clocks = <&cmu_top FIN_PLL>, <&cmu_peri PERI_CLK_MCT>;
-> +		clock-names = "fin_pll", "mct";
+>   		int_en |= (HSI2C_INT_RX_ALMOSTFULL_EN |
+>   			HSI2C_INT_TRAILING_EN);
+>   	} else {
+>   		i2c_ctl |= HSI2C_TXCHON;
+>
+> -		fifo_ctl |= HSI2C_TXFIFO_TRIGGER_LEVEL(HSI2C_DEF_RXFIFO_LVL);
+> +		trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
+> +			(i2c->variant->fifo_depth * 1/4) : i2c->msg->len;
+> +		fifo_ctl |= HSI2C_TXFIFO_TRIGGER_LEVEL(trig_lvl);
 > +
-> +		mct_map: mct-map {
-> +			#interrupt-cells = <1>;
-> +			#address-cells = <0>;
-> +			#size-cells = <0>;
-> +			interrupt-map = <0 &gic 0 104 0>,
-> +					<1 &gic 0 105 0>,
-> +					<2 &gic 0 106 0>,
-> +					<3 &gic 0 107 0>,
-> +					<4 &gic 0 122 0>,
-> +					<5 &gic 0 123 0>,
-> +					<6 &gic 0 124 0>,
-> +					<7 &gic 0 125 0>,
-> +					<8 &gic 0 126 0>,
-> +					<9 &gic 0 127 0>,
-> +					<10 &gic 0 128 0>,
-> +					<11 &gic 0 129 0>;
-> +		};
 
-There is no need for interrupt-map here, because all the interrupts are 
-from GIC.
-
-> +	};
-
-[snip]
-
-> +	mmc_0: mmc0@12140000 {
-> +		compatible = "samsung,exynos5250-dw-mshc";
-> +		reg = <0x12140000 0x2000>;
-> +		interrupts = <0 156 0>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		clocks = <&cmu_fsys FSYS_CLK_MMC0>, <&cmu_top TOP_SCLK_MMC0>;
-> +		clock-names = "biu", "ciu";
-> +		fifo-depth = <0x40>;
-
-nit: It might be more readable to use decimal 64 here.
+Ditto.
 
 Best regards,
 Tomasz
