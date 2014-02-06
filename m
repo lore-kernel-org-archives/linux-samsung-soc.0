@@ -1,102 +1,138 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 00/12] Samsung PM consolidation part 2 (multiplatform)
-Date: Thu, 06 Feb 2014 20:12:45 +0100
-Message-ID: <1391713977-22300-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Kyungmin Park <kyungmin.park@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 10/12] ARM: EXYNOS: Remove PM initcalls and useless
+ indirection
+Date: Thu, 06 Feb 2014 20:12:55 +0100
+Message-ID: <1391713977-22300-11-git-send-email-t.figa@samsung.com>
+References: <1391713977-22300-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:62950 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756847AbaBFTNM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Feb 2014 14:13:12 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N0L00J289DT6LB0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Feb 2014 19:13:05 +0000 (GMT)
+In-reply-to: <1391713977-22300-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Current Samsung PM code is heavily unprepared for multiplatform systems.
-The design implies accessing functions and global variables defined in
-particular mach- subdirectory from common code in plat-, which is not
-allowed when building ARCH_MULTIPLATFORM. In addition there is a lot of
-forced code unification, which makes common function handle any possible
-quirks of all supported SoCs. In the end this design turned out to not
-work too well, ending with a lot of empty functions exported from mach-,
-just because code in common pm.c calls them. Moreover, recent trend of
-moving lower level suspend/resume code to proper drivers, like pinctrl
-or clk, made a lot of code there redundant, especially on DT-only platforms
-like Exynos.
+This patch simplifies Exynos PM initialization and makes it
+multiplatform friendly by replacing initcalls used originally to invoke
+all the initialization code with explicit function calls.
 
-This patch series attempts to untie Exynos PM support from the legacy
-Samsung PM core and make it multiplatform-aware, by isolating truly
-generic parts of the latter, making them multiplatform-friendly and then
-reimplementing Exynos PM support in a multiplatform-capable way by using
-those generic parts. The result is that now PM initialization is started
-from mach-exynos*-dt, which calls Exynos-specific initialization code that
-registers platform_suspend_ops, so control flow is basically reversed
-ending with mach- code calling more generic plat- code if needed.
+In addition, an useless subsys_interface is removed, as all its .add_dev
+callback did was setting two function pointers.
 
-This is limited to Exynos right now, but remaining SoCs could follow
-in further series.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |  1 +
+ arch/arm/mach-exynos/common.h |  6 ++++++
+ arch/arm/mach-exynos/pm.c     | 50 +++++++++++--------------------------------
+ 3 files changed, 19 insertions(+), 38 deletions(-)
 
-Depends on Samsung PM consolidation part 1 (clocks) series:
- - http://thread.gmane.org/gmane.linux.kernel.samsung-soc/26816
-
-On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
-Arndale boards (except suspend/resume, which is broken because of
-unrelated reasons):
-
-Tested-by: Tomasz Figa <t.figa@samsung.com>
-
-Changes since v1 (RFC):
- - fixed l2x0 resume,
- - fixed checkpatch complaints (about issues in existing code being moved),
- - rebased on top of current linux-next,
- - slightly reordered patches to make the order more logical.
-
-Tomasz Figa (12):
-  ARM: EXYNOS: Do not resume l2x0 if not enabled before suspend
-  ARM: SAMSUNG: Add soc_is_s3c2410() helper
-  ARM: SAMSUNG: pm: Save UART DIVSLOT register based on SoC type
-  ARM: SAMSUNG: pm: Use debug_ll_addr() to get UART base address
-  ARM: SAMSUNG: pm: Consolidate PM debug functions
-  ARM: SAMSUNG: pm: Move Samsung PM debug code into separate file
-  ARM: SAMSUNG: Move common save/restore helpers to separate file
-  ARM: SAMSUNG: pm: Move s3c_pm_check_* prototypes to plat/pm-common.h
-  ARM: EXYNOS: Kconfig: Fix abuse of CONFIG_PM
-  ARM: EXYNOS: Remove PM initcalls and useless indirection
-  ARM: EXYNOS: Stop using legacy Samsung PM code
-  ARM: exynos: Allow wake-up using GIC interrupts
-
- arch/arm/mach-exynos/Kconfig                   |  16 +--
- arch/arm/mach-exynos/Makefile                  |   2 +-
- arch/arm/mach-exynos/common.c                  |   1 +
- arch/arm/mach-exynos/common.h                  |  14 ++
- arch/arm/mach-exynos/include/mach/pm-core.h    |  75 -----------
- arch/arm/mach-exynos/pm.c                      | 172 +++++++++++++++++++------
- arch/arm/mach-exynos/regs-pmu.h                |   2 +
- arch/arm/mach-exynos/sleep.S                   |  85 ++++++++++++
- arch/arm/mach-s3c64xx/pm.c                     |   1 -
- arch/arm/mach-s5p64x0/pm.c                     |   1 -
- arch/arm/plat-samsung/Makefile                 |   2 +
- arch/arm/plat-samsung/include/plat/cpu.h       |   6 +
- arch/arm/plat-samsung/include/plat/pm-common.h | 110 ++++++++++++++++
- arch/arm/plat-samsung/include/plat/pm.h        |  80 +-----------
- arch/arm/plat-samsung/pm-check.c               |   2 +-
- arch/arm/plat-samsung/pm-common.c              |  75 +++++++++++
- arch/arm/plat-samsung/pm-debug.c               |  98 ++++++++++++++
- arch/arm/plat-samsung/pm.c                     | 146 ---------------------
- arch/arm/plat-samsung/s5p-sleep.S              |  43 -------
- 19 files changed, 531 insertions(+), 400 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/pm-core.h
- create mode 100644 arch/arm/mach-exynos/sleep.S
- create mode 100644 arch/arm/plat-samsung/include/plat/pm-common.h
- create mode 100644 arch/arm/plat-samsung/pm-common.c
- create mode 100644 arch/arm/plat-samsung/pm-debug.c
-
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index f18be40..fb4e7dc 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -315,6 +315,7 @@ void __init exynos_init_late(void)
+ 		return;
+ 
+ 	pm_genpd_poweroff_unused();
++	exynos_pm_init();
+ }
+ 
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index f76967b..82e08fb 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -27,6 +27,12 @@ void exynos_init_late(void);
+ 
+ void exynos_firmware_init(void);
+ 
++#ifdef CONFIG_PM_SLEEP
++extern void __init exynos_pm_init(void);
++#else
++static inline void exynos_pm_init(void) {}
++#endif
++
+ extern struct smp_operations exynos_smp_ops;
+ 
+ extern void exynos_cpu_die(unsigned int cpu);
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index ba18214..596ed13 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -92,39 +92,6 @@ static void exynos_pm_prepare(void)
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), S5P_INFORM0);
+ }
+ 
+-static int exynos_pm_add(struct device *dev, struct subsys_interface *sif)
+-{
+-	pm_cpu_prep = exynos_pm_prepare;
+-	pm_cpu_sleep = exynos_cpu_suspend;
+-
+-	return 0;
+-}
+-
+-static struct subsys_interface exynos_pm_interface = {
+-	.name		= "exynos_pm",
+-	.subsys		= &exynos_subsys,
+-	.add_dev	= exynos_pm_add,
+-};
+-
+-static __init int exynos_pm_drvinit(void)
+-{
+-	unsigned int tmp;
+-
+-	if (soc_is_exynos5440())
+-		return 0;
+-
+-	s3c_pm_init();
+-
+-	/* All wakeup disable */
+-
+-	tmp = __raw_readl(S5P_WAKEUP_MASK);
+-	tmp |= ((0xFF << 8) | (0x1F << 1));
+-	__raw_writel(tmp, S5P_WAKEUP_MASK);
+-
+-	return subsys_interface_register(&exynos_pm_interface);
+-}
+-arch_initcall(exynos_pm_drvinit);
+-
+ static int exynos_pm_suspend(void)
+ {
+ 	unsigned long tmp;
+@@ -220,12 +187,19 @@ static struct syscore_ops exynos_pm_syscore_ops = {
+ 	.resume		= exynos_pm_resume,
+ };
+ 
+-static __init int exynos_pm_syscore_init(void)
++void __init exynos_pm_init(void)
+ {
+-	if (soc_is_exynos5440())
+-		return 0;
++	u32 tmp;
++
++	pm_cpu_prep = exynos_pm_prepare;
++	pm_cpu_sleep = exynos_cpu_suspend;
++
++	s3c_pm_init();
++
++	/* All wakeup disable */
++	tmp = __raw_readl(S5P_WAKEUP_MASK);
++	tmp |= ((0xFF << 8) | (0x1F << 1));
++	__raw_writel(tmp, S5P_WAKEUP_MASK);
+ 
+ 	register_syscore_ops(&exynos_pm_syscore_ops);
+-	return 0;
+ }
+-arch_initcall(exynos_pm_syscore_init);
 -- 
 1.8.5.2
