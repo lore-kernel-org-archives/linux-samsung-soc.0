@@ -1,120 +1,98 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 12/12] ARM: exynos: Allow wake-up using GIC interrupts
-Date: Thu, 06 Feb 2014 20:12:57 +0100
-Message-ID: <1391713977-22300-13-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 08/12] ARM: SAMSUNG: pm: Move s3c_pm_check_* prototypes to
+ plat/pm-common.h
+Date: Thu, 06 Feb 2014 20:12:53 +0100
+Message-ID: <1391713977-22300-9-git-send-email-t.figa@samsung.com>
 References: <1391713977-22300-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11026 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756785AbaBFTNP (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:62950 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756843AbaBFTNJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Feb 2014 14:13:15 -0500
+	Thu, 6 Feb 2014 14:13:09 -0500
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N0L00IR19DYXJA0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 Feb 2014 19:13:10 +0000 (GMT)
+ 17 2011)) with ESMTP id <0N0L00KYZ9DS90A0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Feb 2014 19:13:04 +0000 (GMT)
 In-reply-to: <1391713977-22300-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-This patch restores the ability to receive wake-up events from internal
-GIC interrupts, e.g. RTC tick or alarm interrupts.
+To allow using Samsung PM memory check helpers on platforms that do not
+use the legacy Samsung PM core, this patch moves prototypes of relevant
+functions to plat/pm-common.h header.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/pm.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ arch/arm/plat-samsung/include/plat/pm-common.h | 14 ++++++++++++++
+ arch/arm/plat-samsung/include/plat/pm.h        | 14 --------------
+ arch/arm/plat-samsung/pm-check.c               |  2 +-
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index ada1c83..15af0ce 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -17,6 +17,7 @@
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
- #include <linux/io.h>
-+#include <linux/irqchip/arm-gic.h>
- #include <linux/err.h>
- #include <linux/clk.h>
+diff --git a/arch/arm/plat-samsung/include/plat/pm-common.h b/arch/arm/plat-samsung/include/plat/pm-common.h
+index 741723e..8705f9e 100644
+--- a/arch/arm/plat-samsung/include/plat/pm-common.h
++++ b/arch/arm/plat-samsung/include/plat/pm-common.h
+@@ -93,4 +93,18 @@ static inline void s3c_pm_save_uarts(void) { }
+ static inline void s3c_pm_restore_uarts(void) { }
+ #endif
  
-@@ -35,6 +36,16 @@
- #include "common.h"
- #include "regs-pmu.h"
++/* suspend memory checking */
++
++#ifdef CONFIG_SAMSUNG_PM_CHECK
++extern void s3c_pm_check_prepare(void);
++extern void s3c_pm_check_restore(void);
++extern void s3c_pm_check_cleanup(void);
++extern void s3c_pm_check_store(void);
++#else
++#define s3c_pm_check_prepare() do { } while (0)
++#define s3c_pm_check_restore() do { } while (0)
++#define s3c_pm_check_cleanup() do { } while (0)
++#define s3c_pm_check_store()   do { } while (0)
++#endif
++
+ #endif
+diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
+index 4099e8d..e17d871 100644
+--- a/arch/arm/plat-samsung/include/plat/pm.h
++++ b/arch/arm/plat-samsung/include/plat/pm.h
+@@ -80,20 +80,6 @@ extern void s3c_pm_debug_smdkled(u32 set, u32 clear);
+ static inline void s3c_pm_debug_smdkled(u32 set, u32 clear) { }
+ #endif /* CONFIG_S3C_PM_DEBUG_LED_SMDK */
  
-+/**
-+ * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
-+ * @hwirq: Hardware IRQ signal of the GIC
-+ * @mask: Mask in PMU wake-up mask register
-+ */
-+struct exynos_wkup_irq {
-+	unsigned int hwirq;
-+	u32 mask;
-+};
-+
- static struct sleep_save exynos5_sys_save[] = {
- 	SAVE_ITEM(EXYNOS5_SYS_I2C_CFG),
- };
-@@ -48,8 +59,47 @@ static struct sleep_save exynos_core_save[] = {
- 	SAVE_ITEM(S5P_SROM_BC3),
- };
+-/* suspend memory checking */
+-
+-#ifdef CONFIG_SAMSUNG_PM_CHECK
+-extern void s3c_pm_check_prepare(void);
+-extern void s3c_pm_check_restore(void);
+-extern void s3c_pm_check_cleanup(void);
+-extern void s3c_pm_check_store(void);
+-#else
+-#define s3c_pm_check_prepare() do { } while(0)
+-#define s3c_pm_check_restore() do { } while(0)
+-#define s3c_pm_check_cleanup() do { } while(0)
+-#define s3c_pm_check_store()   do { } while(0)
+-#endif
+-
+ /**
+  * s3c_pm_configure_extint() - ensure pins are correctly set for IRQ
+  *
+diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
+index 3cbd626..04aff2c 100644
+--- a/arch/arm/plat-samsung/pm-check.c
++++ b/arch/arm/plat-samsung/pm-check.c
+@@ -19,7 +19,7 @@
+ #include <linux/ioport.h>
+ #include <linux/slab.h>
  
-+/*
-+ * GIC wake-up support
-+ */
-+
- static u32 exynos_irqwake_intmask = 0xffffffff;
+-#include <plat/pm.h>
++#include <plat/pm-common.h>
  
-+static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
-+	{ 76, BIT(1) }, /* RTC alarm */
-+	{ 77, BIT(2) }, /* RTC tick */
-+	{ /* sentinel */ },
-+};
-+
-+static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
-+	{ 75, BIT(1) }, /* RTC alarm */
-+	{ 76, BIT(2) }, /* RTC tick */
-+	{ /* sentinel */ },
-+};
-+
-+static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
-+{
-+	const struct exynos_wkup_irq *wkup_irq;
-+
-+	if (soc_is_exynos5250())
-+		wkup_irq = exynos5250_wkup_irq;
-+	else
-+		wkup_irq = exynos4_wkup_irq;
-+
-+	while (wkup_irq->mask) {
-+		if (wkup_irq->hwirq == data->hwirq) {
-+			if (!state)
-+				exynos_irqwake_intmask |= wkup_irq->mask;
-+			else
-+				exynos_irqwake_intmask &= ~wkup_irq->mask;
-+			return 0;
-+		}
-+		++wkup_irq;
-+	}
-+
-+	return -ENOENT;
-+}
-+
- /* For Cortex-A9 Diagnostic and Power control register */
- static unsigned int save_arm_register[2];
- 
-@@ -258,6 +308,9 @@ void __init exynos_pm_init(void)
- {
- 	u32 tmp;
- 
-+	/* Platform-specific GIC callback */
-+	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
-+
- 	/* All wakeup disable */
- 	tmp = __raw_readl(S5P_WAKEUP_MASK);
- 	tmp |= ((0xFF << 8) | (0x1F << 1));
+ #if CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE < 1
+ #error CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE must be a positive non-zero value
 -- 
 1.8.5.2
