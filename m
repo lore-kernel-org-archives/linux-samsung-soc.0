@@ -1,72 +1,90 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Consolidate Kconfig entries
-Date: Thu, 06 Feb 2014 16:02:08 +0100
-Message-ID: <5101685.tPb8PWOH5Q@amdc1032>
-References: <1391687996-26011-1-git-send-email-sachin.kamat@linaro.org>
- <52F397DF.6050209@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v2 1/9] clk: exynos4: Remove remnants of non-DT support
+Date: Thu, 06 Feb 2014 19:16:48 +0100
+Message-ID: <1391710616-14226-2-git-send-email-t.figa@samsung.com>
+References: <1391710616-14226-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38373 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752681AbaBFPCN (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:62068 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752681AbaBFSRG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Feb 2014 10:02:13 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+	Thu, 6 Feb 2014 13:17:06 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N0K000J7XRN8LB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Feb 2014 00:02:11 +0900 (KST)
-In-reply-to: <52F397DF.6050209@samsung.com>
+ 17 2011)) with ESMTP id <0N0L00JM06SB6LA0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Feb 2014 18:16:59 +0000 (GMT)
+In-reply-to: <1391710616-14226-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, olof@lixom.net
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rahul Sharma <r.sh.open@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Thomas Abraham <thomas.abraham@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
+This patch simplifies a bit clock initialization code by removing
+remnants of non-DT clock initialization, such as reg_base and xom values
+passed in function parameters.
 
-Hi,
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-On Thursday, February 06, 2014 03:10:39 PM Tomasz Figa wrote:
-> Hi Sachin,
-> 
-> On 06.02.2014 12:59, Sachin Kamat wrote:
-> > Instead of repeating the Kconfig entries for every SoC, move them under
-> > ARCH_EXYNOS4 and 5 and move the entries common to both 4 and 5 under
-> > ARCH_EXYNOS. Also, since the individual SoCs do not have any specific
-> > machine/platform code, keep them as boolean symbols instead of user
-
-All soc_is_exynosxxxx() dependent code gets thrown away is specific SoC
-support is not selected.  With this change this is not longer true.
-Moreover some drivers are doing explicit ifdef checks for specific SoC
-support, i.e. thermal driver.
-
-> > selectable and select them from Exynos4 and 5 config symbols. Individual
-> > SoC symbols can be removed eventually once the driver Kconfig dependencies
-> > on these symbols are removed.
-> >
-> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> > ---
-> >   arch/arm/Kconfig             |   12 ++++++
-> >   arch/arm/mach-exynos/Kconfig |   97 ++++++++++--------------------------------
-> >   2 files changed, 35 insertions(+), 74 deletions(-)
-> 
-> I fully agree that there is no real need of having per-SoC Kconfig 
-> entries, since the differences caused by them are quite insignificant. 
-
-I think so but some numbers to back it up would be good..
-
-> Moreover, this makes me wonder if there is even need to distinguish 
-> between ARCH_EXYNOS4 and ARCH_EXYNOS5...
-
-Well, once again, seeing some numbers would be good. :)
-
-> Anyway, I second this patch:
-> 
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 010f071..12a9f28 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -908,12 +908,13 @@ static unsigned long exynos4_get_xom(void)
+ 	return xom;
+ }
+ 
+-static void __init exynos4_clk_register_finpll(unsigned long xom)
++static void __init exynos4_clk_register_finpll(void)
+ {
+ 	struct samsung_fixed_rate_clock fclk;
+ 	struct clk *clk;
+ 	unsigned long finpll_f = 24000000;
+ 	char *parent_name;
++	unsigned int xom = exynos4_get_xom();
+ 
+ 	parent_name = xom & 1 ? "xusbxti" : "xxti";
+ 	clk = clk_get(NULL, parent_name);
+@@ -1038,9 +1039,10 @@ static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
+ 
+ /* register exynos4 clocks */
+ static void __init exynos4_clk_init(struct device_node *np,
+-				    enum exynos4_soc exynos4_soc,
+-				    void __iomem *reg_base, unsigned long xom)
++				    enum exynos4_soc exynos4_soc)
+ {
++	void __iomem *reg_base;
++
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base)
+ 		panic("%s: failed to map registers\n", __func__);
+@@ -1058,7 +1060,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
+ 			ext_clk_match);
+ 
+-	exynos4_clk_register_finpll(xom);
++	exynos4_clk_register_finpll();
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+ 		samsung_clk_register_mux(exynos4210_mux_early,
+@@ -1136,12 +1138,12 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 
+ static void __init exynos4210_clk_init(struct device_node *np)
+ {
+-	exynos4_clk_init(np, EXYNOS4210, NULL, exynos4_get_xom());
++	exynos4_clk_init(np, EXYNOS4210);
+ }
+ CLK_OF_DECLARE(exynos4210_clk, "samsung,exynos4210-clock", exynos4210_clk_init);
+ 
+ static void __init exynos4412_clk_init(struct device_node *np)
+ {
+-	exynos4_clk_init(np, EXYNOS4X12, NULL, exynos4_get_xom());
++	exynos4_clk_init(np, EXYNOS4X12);
+ }
+ CLK_OF_DECLARE(exynos4412_clk, "samsung,exynos4412-clock", exynos4412_clk_init);
+-- 
+1.8.5.2
