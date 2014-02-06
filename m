@@ -1,45 +1,72 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 5/9 v5] clk: samsung exynos5250/5420: Add gate clock for
- SSS module
-Date: Thu, 06 Feb 2014 15:43:12 +0100
-Message-ID: <52F39F80.1090709@samsung.com>
-References: <1389354229-31936-1-git-send-email-ch.naveen@samsung.com>
- <1390987446-18784-1-git-send-email-ch.naveen@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Consolidate Kconfig entries
+Date: Thu, 06 Feb 2014 16:02:08 +0100
+Message-ID: <5101685.tPb8PWOH5Q@amdc1032>
+References: <1391687996-26011-1-git-send-email-sachin.kamat@linaro.org>
+ <52F397DF.6050209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <1390987446-18784-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:38373 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752681AbaBFPCN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Feb 2014 10:02:13 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N0K000J7XRN8LB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Feb 2014 00:02:11 +0900 (KST)
+In-reply-to: <52F397DF.6050209@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, olof@lixom.net
 
-Hi Naveen,
 
-On 29.01.2014 10:24, Naveen Krishna Chatradhi wrote:
-> This patch adds gating clock for SSS(Security SubSystem)
-> module on Exynos5250/5420.
->
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> TO: <linux-samsung-soc@vger.kernel.org>
-> TO: Tomasz Figa <t.figa@samsung.com>
-> CC: Kukjin Kim <kgene.kim@samsung.com>
-> CC: <linux-crypto@vger.kernel.org>
-> ---
-> Changes since v4:
-> Use register GATE_IP_G2D instead of GATE_BUS_G2D for Exynos5420
-> Changes since v3:
-> 1. Rebased on to https://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git
-> 2. Added new ID for SSS clock on Exynos5250, with Documentation and
-> 3. Added gate clocks definitions for SSS on Exynos5420 and Exynos5250
->   .../devicetree/bindings/clock/exynos5250-clock.txt |    1 +
->   drivers/clk/samsung/clk-exynos5250.c               |    1 +
->   drivers/clk/samsung/clk-exynos5420.c               |    4 ++++
->   include/dt-bindings/clock/exynos5250.h             |    1 +
->   4 files changed, 7 insertions(+)
+Hi,
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+On Thursday, February 06, 2014 03:10:39 PM Tomasz Figa wrote:
+> Hi Sachin,
+> 
+> On 06.02.2014 12:59, Sachin Kamat wrote:
+> > Instead of repeating the Kconfig entries for every SoC, move them under
+> > ARCH_EXYNOS4 and 5 and move the entries common to both 4 and 5 under
+> > ARCH_EXYNOS. Also, since the individual SoCs do not have any specific
+> > machine/platform code, keep them as boolean symbols instead of user
+
+All soc_is_exynosxxxx() dependent code gets thrown away is specific SoC
+support is not selected.  With this change this is not longer true.
+Moreover some drivers are doing explicit ifdef checks for specific SoC
+support, i.e. thermal driver.
+
+> > selectable and select them from Exynos4 and 5 config symbols. Individual
+> > SoC symbols can be removed eventually once the driver Kconfig dependencies
+> > on these symbols are removed.
+> >
+> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> > ---
+> >   arch/arm/Kconfig             |   12 ++++++
+> >   arch/arm/mach-exynos/Kconfig |   97 ++++++++++--------------------------------
+> >   2 files changed, 35 insertions(+), 74 deletions(-)
+> 
+> I fully agree that there is no real need of having per-SoC Kconfig 
+> entries, since the differences caused by them are quite insignificant. 
+
+I think so but some numbers to back it up would be good..
+
+> Moreover, this makes me wonder if there is even need to distinguish 
+> between ARCH_EXYNOS4 and ARCH_EXYNOS5...
+
+Well, once again, seeing some numbers would be good. :)
+
+> Anyway, I second this patch:
+> 
+> Acked-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
-Tomasz
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
