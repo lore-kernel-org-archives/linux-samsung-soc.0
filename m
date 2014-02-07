@@ -1,125 +1,51 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] dma-buf: avoid using IS_ERR_OR_NULL
-Date: Fri, 7 Feb 2014 11:27:38 -0800
-Message-ID: <20140207192738.GA18771@kroah.com>
-References: <1387586630-1954-1-git-send-email-ccross@android.com>
- <CAF6AEGuQSWOw6KWVo-uorJ+8M3-kLzYHdOOfdHWUDi=SkzUUVA@mail.gmail.com>
- <20140207164313.GA32655@kroah.com>
- <CAMbhsRQXUZH_n13X78HEvXuF58T-ubAXnEXXPa7Za9L-KEduMQ@mail.gmail.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v2 2/2] Documentation: devicetree: Add boost-frequency
+ binding to list boost mode frequency
+Date: Fri, 7 Feb 2014 13:41:04 -0600
+Message-ID: <CAGo_u6quxExJOyY8mvCw5sDSuz=_j0YqJ6FJW+FAdaxUeqzN9Q@mail.gmail.com>
+References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
+	<1391786342-11812-3-git-send-email-thomas.ab@samsung.com>
+	<52F50698.4060305@arm.com>
+	<52F509BD.70903@arm.com>
+	<CAGo_u6raZY0sKdDn4d92SKpi=eqUpf23vW8K_bEi-v62V2jdPA@mail.gmail.com>
+	<52F51888.5010608@arm.com>
+	<CAGo_u6ofC4NNPiTNcSnXUvT3RZJo54=XyjetR-ok5hCBrVZkKg@mail.gmail.com>
+	<52F51FCD.5000009@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMbhsRQXUZH_n13X78HEvXuF58T-ubAXnEXXPa7Za9L-KEduMQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>
-Cc: Rob Clark <robdclark@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, "open list:DMA BUFFER SHARIN..." <linux-media@vger.kernel.org>, "open list:DMA BUFFER SHARIN..." <dri-devel@lists.freedesktop.org>, "open list:DMA BUFFER SHARIN..." <linaro-mm-sig@lists.linaro.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52F51FCD.5000009@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: Thomas Abraham <ta.omasab@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 07, 2014 at 09:22:37AM -0800, Colin Cross wrote:
-> On Fri, Feb 7, 2014 at 8:43 AM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Sat, Dec 21, 2013 at 07:42:17AM -0500, Rob Clark wrote:
-> >> On Fri, Dec 20, 2013 at 7:43 PM, Colin Cross <ccross@android.com> wrote:
-> >> > dma_buf_map_attachment and dma_buf_vmap can return NULL or
-> >> > ERR_PTR on a error.  This encourages a common buggy pattern in
-> >> > callers:
-> >> >         sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
-> >> >         if (IS_ERR_OR_NULL(sgt))
-> >> >                 return PTR_ERR(sgt);
-> >> >
-> >> > This causes the caller to return 0 on an error.  IS_ERR_OR_NULL
-> >> > is almost always a sign of poorly-defined error handling.
-> >> >
-> >> > This patch converts dma_buf_map_attachment to always return
-> >> > ERR_PTR, and fixes the callers that incorrectly handled NULL.
-> >> > There are a few more callers that were not checking for NULL
-> >> > at all, which would have dereferenced a NULL pointer later.
-> >> > There are also a few more callers that correctly handled NULL
-> >> > and ERR_PTR differently, I left those alone but they could also
-> >> > be modified to delete the NULL check.
-> >> >
-> >> > This patch also converts dma_buf_vmap to always return NULL.
-> >> > All the callers to dma_buf_vmap only check for NULL, and would
-> >> > have dereferenced an ERR_PTR and panic'd if one was ever
-> >> > returned. This is not consistent with the rest of the dma buf
-> >> > APIs, but matches the expectations of all of the callers.
-> >> >
-> >> > Signed-off-by: Colin Cross <ccross@android.com>
-> >> > ---
-> >> >  drivers/base/dma-buf.c                         | 18 +++++++++++-------
-> >> >  drivers/gpu/drm/drm_prime.c                    |  2 +-
-> >> >  drivers/gpu/drm/exynos/exynos_drm_dmabuf.c     |  2 +-
-> >> >  drivers/media/v4l2-core/videobuf2-dma-contig.c |  2 +-
-> >> >  4 files changed, 14 insertions(+), 10 deletions(-)
-> >> >
-> >> > diff --git a/drivers/base/dma-buf.c b/drivers/base/dma-buf.c
-> >> > index 1e16cbd61da2..cfe1d8bc7bb8 100644
-> >> > --- a/drivers/base/dma-buf.c
-> >> > +++ b/drivers/base/dma-buf.c
-> >> > @@ -251,9 +251,8 @@ EXPORT_SYMBOL_GPL(dma_buf_put);
-> >> >   * @dmabuf:    [in]    buffer to attach device to.
-> >> >   * @dev:       [in]    device to be attached.
-> >> >   *
-> >> > - * Returns struct dma_buf_attachment * for this attachment; may return negative
-> >> > - * error codes.
-> >> > - *
-> >> > + * Returns struct dma_buf_attachment * for this attachment; returns ERR_PTR on
-> >> > + * error.
-> >> >   */
-> >> >  struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
-> >> >                                           struct device *dev)
-> >> > @@ -319,9 +318,8 @@ EXPORT_SYMBOL_GPL(dma_buf_detach);
-> >> >   * @attach:    [in]    attachment whose scatterlist is to be returned
-> >> >   * @direction: [in]    direction of DMA transfer
-> >> >   *
-> >> > - * Returns sg_table containing the scatterlist to be returned; may return NULL
-> >> > - * or ERR_PTR.
-> >> > - *
-> >> > + * Returns sg_table containing the scatterlist to be returned; returns ERR_PTR
-> >> > + * on error.
-> >> >   */
-> >> >  struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
-> >> >                                         enum dma_data_direction direction)
-> >> > @@ -334,6 +332,8 @@ struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
-> >> >                 return ERR_PTR(-EINVAL);
-> >> >
-> >> >         sg_table = attach->dmabuf->ops->map_dma_buf(attach, direction);
-> >> > +       if (!sg_table)
-> >> > +               sg_table = ERR_PTR(-ENOMEM);
-> >> >
-> >> >         return sg_table;
-> >> >  }
-> >> > @@ -544,6 +544,8 @@ EXPORT_SYMBOL_GPL(dma_buf_mmap);
-> >> >   * These calls are optional in drivers. The intended use for them
-> >> >   * is for mapping objects linear in kernel space for high use objects.
-> >> >   * Please attempt to use kmap/kunmap before thinking about these interfaces.
-> >> > + *
-> >> > + * Returns NULL on error.
-> >> >   */
-> >> >  void *dma_buf_vmap(struct dma_buf *dmabuf)
-> >> >  {
-> >> > @@ -566,7 +568,9 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
-> >> >         BUG_ON(dmabuf->vmap_ptr);
-> >> >
-> >> >         ptr = dmabuf->ops->vmap(dmabuf);
-> >> > -       if (IS_ERR_OR_NULL(ptr))
-> >> > +       if (WARN_ON_ONCE(IS_ERR(ptr)))
-> >>
-> >> since vmap is optional, the WARN_ON might be a bit strong..  although
-> >> it would be a bit strange for an exporter to supply a vmap fxn which
-> >> always returned NULL, not sure about that.  Just thought I'd mention
-> >> it in case anyone else had an opinion about that.
-> >
-> > Yeah, I don't like this, it could cause unnecessary reports of problems.
-> 
-> The WARN_ON_ONCE is only if the vmap op returns ERR_PTR, not if it
-> returns NULL.  This is designed to catch vmap ops that don't follow
-> the spec, so I would call them necessary reports, but I can take it
-> out if you still disagree.
+On Fri, Feb 7, 2014 at 12:02 PM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
+> On 07/02/14 17:37, Nishanth Menon wrote:
+>> On Fri, Feb 7, 2014 at 11:31 AM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
+>
+> [...]
+>
+>>> Yes I think its counter-intuitive as it's visible to the userspace(list of
+>>> frequencies and the boost parameters are exposed through sysfs)
+>>
+>> That will be a different problem -> as currently every single
+>> frequency in the cpufreq list has ability to be marked as boost
+>> frequency - if userspace does not maintain that, then, IMHO, fix the
+>> userspace :D
+>>
+>
+> /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_frequencies gives
+> the list of frequencies based on the state of the boost feature at anytime.
+>
+> Intuitively the list without boost shouldn't have any frequency above the range
+> when it's enabled :), that's what I was referring to. So I am not talking about
+> any issue with user-space maintenance.
+Fair enough - but i still think it has nothing to do with dt binding
+itself -> and i think the discussion we've had should be good for the
+binding provided in this patch.. I hope.. if documentation needs a bit
+of better explanation to prevent a repeat of the same discussion at a
+later point of time, now might be a good time to add it in.
 
-Ah, ok, that makes more sense.  I'll queue this up.
-
-thanks,
-
-greg k-h
+Regards,
+Nishanth Menon
