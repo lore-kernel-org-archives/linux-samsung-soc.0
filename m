@@ -1,117 +1,68 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 2/2] spi/s3c64xx: Remove code no longer needed as a result of S3C_DMA removal
-Date: Fri,  7 Feb 2014 13:11:32 +0000
-Message-ID: <1391778692-20129-2-git-send-email-broonie@kernel.org>
-References: <1391778692-20129-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1391778692-20129-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] iommu/exynos: Remove driver
+Date: Fri, 07 Feb 2014 14:49:53 +0100
+Message-ID: <52F4E481.3050902@samsung.com>
+References: <1391716317-20300-1-git-send-email-olof@lixom.net>
+ <CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
+ <CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33856 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868AbaBGNt5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Feb 2014 08:49:57 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N0M002YFP337V00@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Feb 2014 13:49:51 +0000 (GMT)
+In-reply-to: <CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Hello,
 
-Remove functions that only had an effect when using S3C_DMA and inline
-dmaengine_terminate_all() since it's pointless to have a function which
-expands to a single function call.
+On 2014-02-07 13:44, Kyungmin Park wrote:
+>
+> On Friday, February 7, 2014, Inki Dae <inki.dae@samsung.com 
+> <mailto:inki.dae@samsung.com>> wrote:
+>
+>     2014-02-07 Olof Johansson <olof@lixom.net <javascript:;>>:
+>     > The driver has been unbuildable due to unfulfilled dependencies
+>     since
+>     > 3.11, and even if enabled it won't build due to build breakage.
+>     Emails
+>     > about status on this have gone unanswered, and fixes seem to
+>     have been
+>     > abandoned.
+>     >
+>     > It's obvious that nobody cares about it, so let's remove it.
+>
+>     Wait, we are going to fix up this module. It seems that KyoungHo,
+>     original author, is busy with some works related to product.
+>
+>     we can care about it if KyoungHo cannot afford to care for the
+>     time being.
+>
+> Any volunteers?
+> Marek or Bartek, how do you think?
+>
+> Before that it makes orphan or unsupported at maintainer file first and
+> change it to new volunteers.
 
-Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/spi/spi-s3c64xx.c | 39 ++-------------------------------------
- 1 file changed, 2 insertions(+), 37 deletions(-)
+I think that it might be easier to remove the existing non-functional driver
+now and add it again once the driver is ready. I have it on my TODO 
+list, but
+doubt I will manage to finish it for v3.15.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 18ec7e65a319..9ad5e3e76b96 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -277,17 +277,6 @@ static void s3c64xx_spi_dmacb(void *data)
- 	spin_unlock_irqrestore(&sdd->lock, flags);
- }
- 
--static int s3c64xx_spi_map_mssg(struct s3c64xx_spi_driver_data *sdd,
--						struct spi_message *msg)
--{
--	return 0;
--}
--
--static void s3c64xx_spi_unmap_mssg(struct s3c64xx_spi_driver_data *sdd,
--						struct spi_message *msg)
--{
--}
--
- static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
- 			struct sg_table *sgt)
- {
-@@ -387,12 +376,6 @@ static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
- 	return 0;
- }
- 
--static void s3c64xx_spi_dma_stop(struct s3c64xx_spi_driver_data *sdd,
--				 struct s3c64xx_spi_dma_data *dma)
--{
--	dmaengine_terminate_all(dma->ch);
--}
--
- static bool s3c64xx_spi_can_dma(struct spi_master *master,
- 				struct spi_device *spi,
- 				struct spi_transfer *xfer)
-@@ -691,13 +674,6 @@ static int s3c64xx_spi_prepare_message(struct spi_master *master,
- 		s3c64xx_spi_config(sdd);
- 	}
- 
--	/* Map all the transfers if needed */
--	if (s3c64xx_spi_map_mssg(sdd, msg)) {
--		dev_err(&spi->dev,
--			"Xfer: Unable to map message buffers!\n");
--		return -ENOMEM;
--	}
--
- 	/* Configure feedback delay */
- 	writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
- 
-@@ -769,10 +745,10 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
- 		if (use_dma) {
- 			if (xfer->tx_buf != NULL
- 			    && (sdd->state & TXBUSY))
--				s3c64xx_spi_dma_stop(sdd, &sdd->tx_dma);
-+				dmaengine_terminate_all(sdd->tx_dma.ch);
- 			if (xfer->rx_buf != NULL
- 			    && (sdd->state & RXBUSY))
--				s3c64xx_spi_dma_stop(sdd, &sdd->rx_dma);
-+				dmaengine_terminate_all(sdd->rx_dma.ch);
- 		}
- 	} else {
- 		flush_fifo(sdd);
-@@ -781,16 +757,6 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
- 	return status;
- }
- 
--static int s3c64xx_spi_unprepare_message(struct spi_master *master,
--					    struct spi_message *msg)
--{
--	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
--
--	s3c64xx_spi_unmap_mssg(sdd, msg);
--
--	return 0;
--}
--
- static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
- 				struct spi_device *spi)
- {
-@@ -1164,7 +1130,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
- 	master->prepare_message = s3c64xx_spi_prepare_message;
- 	master->transfer_one = s3c64xx_spi_transfer_one;
--	master->unprepare_message = s3c64xx_spi_unprepare_message;
- 	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
- 	master->num_chipselect = sci->num_cs;
- 	master->dma_alignment = 8;
+Discussing the DT bindings might take some time.
+
+Best regards
 -- 
-1.9.rc1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
