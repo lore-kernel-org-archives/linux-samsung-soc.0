@@ -1,135 +1,141 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] i2c-s3c2410: Leave the bus disabled unless it is in use
-Date: Fri, 07 Feb 2014 14:24:09 +0530
-Message-ID: <1391763249-28964-1-git-send-email-ch.naveen@samsung.com>
-References: <1354165536-18529-2-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:27423 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751077AbaBGIy2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Feb 2014 03:54:28 -0500
-In-reply-to: <1354165536-18529-2-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] thermal: exynos: handle gate clock for misplaced TRIMINFO register
+Date: Fri, 7 Feb 2014 15:03:18 +0530
+Message-ID: <CAHfPSqCftzo8ud=K9Lv4Y_q9+wW+23ZPnbTxXpwsBWOXHXLucg@mail.gmail.com>
+References: <1383828154-428-1-git-send-email-ch.naveen@samsung.com> <1388642820.3739.80.camel@rzhang1-mobl4>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1388642820.3739.80.camel@rzhang1-mobl4>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, eduardo.valentin-l0cyMroinI0@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, wsa@the-dreams.de, ben-linux@fluff.org, cpgs@samsung.com, sjg@chromium.org, grundler@chromium.org
 
-From: Simon Glass <sjg@chromium.org>
+Hello All,
 
-There is a rather odd feature of the exynos i2c controller that if it
-is left enabled, it can lock itself up with the clk line held low.
-This makes the bus unusable.
+On 2 January 2014 11:37, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, 2013-11-07 at 18:12 +0530, Naveen Krishna Chatradhi wrote:
+>> On Exynos5420 the TMU(4) for GPU has a seperate clock enable bit from
+>> the other TMU channels(0 ~ 3). Hence, accessing TRIMINFO for base_second
+>> should be acompanied by enabling the respective clock.
+>>
+>> This patch which allow for a "clk_sec" clock to be specified in the
+>> device-tree which will be ungated when accessing the TRIMINFO register.
+>>
+>> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> Eduardo,
+>
+> what do you think of this patch?
+>
+> thanks,
+> rui
+>> ---
+>>  drivers/thermal/samsung/exynos_tmu.c |   24 +++++++++++++++++++++++-
+>>  1 file changed, 23 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index b54825a..33edd1a 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -47,6 +47,7 @@
+>>   * @irq_work: pointer to the irq work structure.
+>>   * @lock: lock to implement synchronization.
+>>   * @clk: pointer to the clock structure.
+>> + * @clk_sec: pointer to the clock structure for accessing the base_second.
+>>   * @temp_error1: fused value of the first point trim.
+>>   * @temp_error2: fused value of the second point trim.
+>>   * @regulator: pointer to the TMU regulator structure.
+>> @@ -61,7 +62,7 @@ struct exynos_tmu_data {
+>>       enum soc_type soc;
+>>       struct work_struct irq_work;
+>>       struct mutex lock;
+>> -     struct clk *clk;
+>> +     struct clk *clk, *clk_sec;
+>>       u8 temp_error1, temp_error2;
+>>       struct regulator *regulator;
+>>       struct thermal_sensor_conf *reg_conf;
+>> @@ -152,6 +153,8 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>>
+>>       mutex_lock(&data->lock);
+>>       clk_enable(data->clk);
+>> +     if (!IS_ERR(data->clk_sec))
+>> +             clk_enable(data->clk_sec);
+>>
+>>       if (TMU_SUPPORTS(pdata, READY_STATUS)) {
+>>               status = readb(data->base + reg->tmu_status);
+>> @@ -306,6 +309,8 @@ skip_calib_data:
+>>  out:
+>>       clk_disable(data->clk);
+>>       mutex_unlock(&data->lock);
+>> +     if (!IS_ERR(data->clk_sec))
+>> +             clk_disable(data->clk_sec);
+>>
+>>       return ret;
+>>  }
+>> @@ -457,12 +462,16 @@ static void exynos_tmu_work(struct work_struct *work)
+>>       const struct exynos_tmu_registers *reg = pdata->registers;
+>>       unsigned int val_irq, val_type;
+>>
+>> +     if (!IS_ERR(data->clk_sec))
+>> +             clk_enable(data->clk_sec);
+>>       /* Find which sensor generated this interrupt */
+>>       if (reg->tmu_irqstatus) {
+>>               val_type = readl(data->base_second + reg->tmu_irqstatus);
+>>               if (!((val_type >> data->id) & 0x1))
+>>                       goto out;
+>>       }
+>> +     if (!IS_ERR(data->clk_sec))
+>> +             clk_disable(data->clk_sec);
+>>
+>>       exynos_report_trigger(data->reg_conf);
+>>       mutex_lock(&data->lock);
+>> @@ -641,6 +650,15 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>       if (ret)
+>>               return ret;
+>>
+>> +     data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
+>> +     if (!IS_ERR(data->clk_sec)) {
+>> +             ret = clk_prepare(data->clk_sec);
+>> +             if (ret) {
+>> +                     dev_err(&pdev->dev, "Failed to get clock\n");
+>> +                     return  PTR_ERR(data->clk_sec);
+>> +             }
+>> +     }
+>> +
+>>       if (pdata->type == SOC_ARCH_EXYNOS4210 ||
+>>           pdata->type == SOC_ARCH_EXYNOS4412 ||
+>>           pdata->type == SOC_ARCH_EXYNOS5250 ||
+>> @@ -713,6 +731,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>       return 0;
+>>  err_clk:
+>>       clk_unprepare(data->clk);
+>> +     if (!IS_ERR(data->clk_sec))
+>> +             clk_unprepare(data->clk_sec);
+>>       return ret;
+>>  }
+>>
+>> @@ -725,6 +745,8 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+>>       exynos_unregister_thermal(data->reg_conf);
+>>
+>>       clk_unprepare(data->clk);
+>> +     if (!IS_ERR(data->clk_sec))
+>> +             clk_unprepare(data->clk_sec);
+>>
+>>       if (!IS_ERR(data->regulator))
+>>               regulator_disable(data->regulator);
+>
+>
+Ping.
 
-Unfortunately, the s3c24xx_i2c_set_master() function does not notice
-this, and reports a timeout. From then on the bus cannot be used until
-the AP is rebooted.
 
-The problem happens when any sort of interrupt occurs (e.g. due to a
-bus transition) when we are not in the middle of a transaction. We
-have seen many instances of this when U-Boot leaves the bus apparently
-happy, but Linux cannot access it.
 
-The current code is therefore pretty fragile.
-
-This fixes things by leaving the bus disabled unless we are actually
-in a transaction. We enable the bus at the start of the transaction and
-disable it at the end. That way we won't get interrupts and will not
-lock up the bus.
-
-It might be possible to clear pending interrupts on start-up, but this
-seems to be a more robust solution. We can't service interrupts when
-we are not in a transaction, and anyway would rather not lock up the
-bus while we try.
-
-Signed-off-by: Simon Glass <sjg@chromium.org>
-Cc: Grant Grundler <grundler@chromium.org>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/i2c/busses/i2c-s3c2410.c |   37 +++++++++++++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 684d21e..9d39511 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -601,6 +601,31 @@ static irqreturn_t s3c24xx_i2c_irq(int irqno, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+/*
-+ * Disable the bus so that we won't get any interrupts from now on, or try
-+ * to drive any lines. This is the default state when we don't have
-+ * anything to send/receive.
-+ *
-+ * If there is an event on the bus, or we have a pre-existing event at
-+ * kernel boot time, we may not notice the event and the I2C controller
-+ * will lock the bus with the I2C clock line low indefinitely.
-+ */
-+static inline void s3c24xx_i2c_disable_bus(struct s3c24xx_i2c *i2c)
-+{
-+	unsigned long tmp;
-+
-+	/* Stop driving the I2C pins */
-+	tmp = readl(i2c->regs + S3C2410_IICSTAT);
-+	tmp &= ~S3C2410_IICSTAT_TXRXEN;
-+	writel(tmp, i2c->regs + S3C2410_IICSTAT);
-+
-+	/* We don't expect any interrupts now, and don't want send acks */
-+	tmp = readl(i2c->regs + S3C2410_IICCON);
-+	tmp &= ~(S3C2410_IICCON_IRQEN | S3C2410_IICCON_IRQPEND |
-+		S3C2410_IICCON_ACKEN);
-+	writel(tmp, i2c->regs + S3C2410_IICCON);
-+}
-+
- 
- /* s3c24xx_i2c_set_master
-  *
-@@ -735,7 +760,11 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 
- 	s3c24xx_i2c_wait_idle(i2c);
- 
-+	s3c24xx_i2c_disable_bus(i2c);
-+
-  out:
-+	i2c->state = STATE_IDLE;
-+
- 	return ret;
- }
- 
-@@ -1004,7 +1033,6 @@ static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
- 
- static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
- {
--	unsigned long iicon = S3C2410_IICCON_IRQEN | S3C2410_IICCON_ACKEN;
- 	struct s3c2410_platform_i2c *pdata;
- 	unsigned int freq;
- 
-@@ -1018,12 +1046,12 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
- 
- 	dev_info(i2c->dev, "slave address 0x%02x\n", pdata->slave_addr);
- 
--	writel(iicon, i2c->regs + S3C2410_IICCON);
-+	writel(0, i2c->regs + S3C2410_IICCON);
-+	writel(0, i2c->regs + S3C2410_IICSTAT);
- 
- 	/* we need to work out the divisors for the clock... */
- 
- 	if (s3c24xx_i2c_clockrate(i2c, &freq) != 0) {
--		writel(0, i2c->regs + S3C2410_IICCON);
- 		dev_err(i2c->dev, "cannot meet bus frequency required\n");
- 		return -EINVAL;
- 	}
-@@ -1031,7 +1059,8 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
- 	/* todo - check that the i2c lines aren't being dragged anywhere */
- 
- 	dev_info(i2c->dev, "bus frequency set to %d KHz\n", freq);
--	dev_dbg(i2c->dev, "S3C2410_IICCON=0x%02lx\n", iicon);
-+	dev_dbg(i2c->dev, "S3C2410_IICCON=0x%02x\n",
-+		readl(i2c->regs + S3C2410_IICCON));
- 
- 	return 0;
- }
 -- 
-1.7.9.5
+Shine bright,
+(: Nav :)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
