@@ -1,98 +1,41 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 9/9 v6] crypto:s5p-sss: Look for the next request in the queue
-Date: Fri, 07 Feb 2014 10:57:02 +0530
-Message-ID: <1391750822-27572-1-git-send-email-ch.naveen@samsung.com>
-References: <1390987621-19019-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <1390987621-19019-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, Naveen Krishna Ch <ch.naveen@samsung.com>, "David S. Miller" <davem@davemloft.net>
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] i2c: s3c2410: do not put a default class for the adapter
+Date: Fri, 07 Feb 2014 13:59:55 +0530
+Message-ID: <1391761795-28384-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
+From: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Currently, the driver enqueues a request only if the busy bit is
-false. And every request initiates a dequeue. If 2 requests arrive
-simultaneously, only one of them will be dequeued.
+Avoid adding I2C_CLASS_HWMON and I2C_CLASS_SPD class flags to all
+Samsung I2C adapters when the I2C mappings are defined in a device tree.
+So the drivers doing an auto-detection by probing busses won't mess-up
+sensitive I2C devices or trigger long timeouts on non-functional busses.
 
-To avoid this senario, we will enqueue the next request irrespective
-of the system condition (that is what queue is here for). Also
-schedule at a tasklet immediatly after the current request is done.
-The tasklet will dequeue the next request in the queue, giving
-continuous loop. tasklet will exit if there are no requests in the
-queue.
-
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: David S. Miller <davem@davemloft.net>
-CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
-TO: <linux-crypto@vger.kernel.org>
-CC: <linux-samsung-soc@vger.kernel.org>
+Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Tested-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 ---
-changes since v5:
-None
+ drivers/i2c/busses/i2c-s3c2410.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/crypto/s5p-sss.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index d35a477..63dd679 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -330,8 +330,12 @@ static void s5p_aes_tx(struct s5p_aes_dev *dev)
- 		}
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 684d21e..63bc64c 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1106,7 +1106,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.owner   = THIS_MODULE;
+ 	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
+ 	i2c->adap.retries = 2;
+-	i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD;
++	if (!pdev->dev.of_node)
++		i2c->adap.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+ 	i2c->tx_setup     = 50;
  
- 		s5p_set_dma_outdata(dev, dev->sg_dst);
--	} else
-+	} else {
- 		s5p_aes_complete(dev, err);
-+
-+		dev->busy = true;
-+		tasklet_schedule(&dev->tasklet);
-+	}
- }
- 
- static void s5p_aes_rx(struct s5p_aes_dev *dev)
-@@ -469,10 +473,13 @@ static void s5p_tasklet_cb(unsigned long data)
- 	spin_lock_irqsave(&dev->lock, flags);
- 	backlog   = crypto_get_backlog(&dev->queue);
- 	async_req = crypto_dequeue_request(&dev->queue);
--	spin_unlock_irqrestore(&dev->lock, flags);
- 
--	if (!async_req)
-+	if (!async_req) {
-+		dev->busy = false;
-+		spin_unlock_irqrestore(&dev->lock, flags);
- 		return;
-+	}
-+	spin_unlock_irqrestore(&dev->lock, flags);
- 
- 	if (backlog)
- 		backlog->complete(backlog, -EINPROGRESS);
-@@ -491,14 +498,13 @@ static int s5p_aes_handle_req(struct s5p_aes_dev *dev,
- 	int err;
- 
- 	spin_lock_irqsave(&dev->lock, flags);
-+	err = ablkcipher_enqueue_request(&dev->queue, req);
- 	if (dev->busy) {
--		err = -EAGAIN;
- 		spin_unlock_irqrestore(&dev->lock, flags);
- 		goto exit;
- 	}
- 	dev->busy = true;
- 
--	err = ablkcipher_enqueue_request(&dev->queue, req);
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 
- 	tasklet_schedule(&dev->tasklet);
-@@ -688,6 +694,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	pdata->busy = false;
- 	pdata->variant = variant;
- 	pdata->dev = dev;
- 	platform_set_drvdata(pdev, pdata);
+ 	init_waitqueue_head(&i2c->wait);
 -- 
 1.7.9.5
