@@ -1,70 +1,70 @@
 From: Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [PATCH v3 5/7] ARM: dts: Exynos: add cpu nodes, opp and cpu clock
- configuration data
-Date: Fri, 07 Feb 2014 16:20:27 +0000
-Message-ID: <52F507CB.6090300@arm.com>
-References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com> <1391788548-13056-6-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH v2 2/2] Documentation: devicetree: Add boost-frequency
+ binding to list boost mode frequency
+Date: Fri, 07 Feb 2014 16:28:45 +0000
+Message-ID: <52F509BD.70903@arm.com>
+References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com> <1391786342-11812-3-git-send-email-thomas.ab@samsung.com> <52F50698.4060305@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: 8BIT
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1391788548-13056-6-git-send-email-thomas.ab@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Sudeep.Holla@arm.com, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:54346 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751370AbaBGQ2j convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Feb 2014 11:28:39 -0500
+In-Reply-To: <52F50698.4060305@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Sudeep Holla <Sudeep.Holla@arm.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On 07/02/14 15:55, Thomas Abraham wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
+On 07/02/14 16:15, Sudeep Holla wrote:
+> On 07/02/14 15:19, Thomas Abraham wrote:
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> Add a new optional boost-frequency binding for specifying the frequencies
+>> usable in boost mode.
+>>
+>> Cc: Nishanth Menon <nm@ti.com>
+>> Cc: Lukasz Majewski <l.majewski@samsung.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Pawel Moll <pawel.moll@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>> Cc: Kumar Gala <galak@codeaurora.org>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> ---
+>>  Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt |   11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>> new file mode 100644
+>> index 0000000..d925e38
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>> @@ -0,0 +1,11 @@
+>> +* Device tree binding for CPU boost frequency (aka over-clocking)
+>> +
+>> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
+>> +overclocking) in which the CPU can operate in frequencies beyond the normal
+>> +operating conditions.
+>> +
+>> +Optional Properties:
+>> +- boost-frequency: list of frequencies in KHz to be used only in boost mode.
+>> +  This list should be a subset of frequencies listed in "operating-points"
+>> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
+>> +  details about "operating-points" property.
+>>
 > 
-> For all Exynos based platforms, add CPU nodes, operating points and cpu
-> clock data for migrating from Exynos specific cpufreq driver to using
-> generic cpufreq-cpu0 driver.
+> Won't single entry for boost frequency suffice which would be the starting
+> frequency in the boost range. IOW will there be OPP list with frequencies:
+> A > B > C > D, but only B and C are boost frequency. That seems little odd,
+> unless it's some configuration chosen purely on software basis rather than
+> hardware. For me B marks the beginning of over-clocking.
 > 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-
-[...]
-
-> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-> index 5c412aa..c613fc2 100644
-> --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> @@ -31,6 +31,42 @@
->                 mshc0 = &mshc_0;
->         };
-> 
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a9";
-> +                       reg = <0>;
-> +                       clocks = <&clock 12>;
-> +                       clock-names = "cpu";
-> +
-> +                       operating-points = <
-> +                               1500000 1350000
-> +                               1400000 1287500
-> +                               1300000 1250000
-> +                               1200000 1187500
-> +                               1100000 1137500
-> +                               1000000 1087500
-> +                                900000 1037500
-> +                                800000 1000000
-> +                                700000  987500
-> +                                600000  975000
-> +                                500000  950000
-> +                                400000  925000
-> +                                300000  900000
-> +                                200000  900000
-> +                       >;
-> +                       clock-latency = <200000>;
-> +                       boost-frequency = <1500000 1350000>;
-
-This is confusing, 1350000 is not in the OPP frequency list or this is still
-following old binding with voltage. Either case this needs to be fixed.
+Ah, I meant A < B < C < D in the above example.
 
 Regards,
 Sudeep
-
