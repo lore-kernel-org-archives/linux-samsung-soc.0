@@ -1,96 +1,86 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/2 v4] i2c: exynos5: configure fifo_depth based on HSI2C
- module variant
-Date: Fri, 07 Feb 2014 10:13:15 +0530
-Message-ID: <1391748195-12490-1-git-send-email-ch.naveen@samsung.com>
-References: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1385100851-32254-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 1/9 v6] crypto:s5p-sss: Use platform_get_irq() instead of
+ _byname()
+Date: Fri, 07 Feb 2014 10:51:25 +0530
+Message-ID: <1391750485-27225-1-git-send-email-ch.naveen@samsung.com>
+References: <1389095509-14357-2-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-reply-to: <1389095509-14357-2-git-send-email-ch.naveen@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, Naveen Krishna Ch <ch.naveen@samsung.com>, "David S. Miller" <davem@davemloft.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-fifo_depth of the HSI2C is not constant
-Exynos5420 and Exynos5250 supports fifo_depth of 64bytes
-Exynos5260 supports fifo_depth of 16bytes.
+From: Naveen Krishna Ch <ch.naveen@samsung.com>
 
-This patch configures the fifo_depth based on HSI2C modules version.
+This patch uses the platform_get_irq() instead of the
+platform_get_irq_byname(). Making feeder control interrupt
+as resource "0" and hash interrupt as "1".
 
-Signed-off-by: Naveen Krishna Chatradhi <ich.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-[For finding out the difference and initial contribution]
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+reasons for this change.
+1. Cannot find any Arch which is currently using this driver
+2. Samsung Exynos4 and 5 SoCs only use the feeder control interrupt
+3. Patches adding support for DT and H/W version are in pipeline
+
+Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>
+CC: David S. Miller <davem@davemloft.net>
+CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
+TO: <linux-crypto@vger.kernel.org>
+CC: <linux-samsung-soc@vger.kernel.org>
 ---
-changes since v3:
-use variant struct to handle the fifo depths
+Changes since v5:
+None
 
- drivers/i2c/busses/i2c-exynos5.c |   21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/crypto/s5p-sss.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 12730d1..5c875c0 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -76,12 +76,6 @@
- #define HSI2C_RXFIFO_TRIGGER_LEVEL(x)		((x) << 4)
- #define HSI2C_TXFIFO_TRIGGER_LEVEL(x)		((x) << 16)
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index cf149b1..93cddeb 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -592,29 +592,29 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	pdata->ioaddr = devm_ioremap(dev, res->start,
+ 				     resource_size(res));
  
--/* As per user manual FIFO max depth is 64bytes */
--#define HSI2C_FIFO_MAX				0x40
--/* default trigger levels for Tx and Rx FIFOs */
--#define HSI2C_DEF_TXFIFO_LVL			(HSI2C_FIFO_MAX - 0x30)
--#define HSI2C_DEF_RXFIFO_LVL			(HSI2C_FIFO_MAX - 0x10)
--
- /* I2C_TRAILING_CTL Register bits */
- #define HSI2C_TRAILING_COUNT			(0xf)
- 
-@@ -455,7 +449,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 		fifo_status = readl(i2c->regs + HSI2C_FIFO_STATUS);
- 		fifo_level = HSI2C_TX_FIFO_LVL(fifo_status);
- 
--		len = HSI2C_FIFO_MAX - fifo_level;
-+		len = i2c->variant->fifo_depth - fifo_level;
- 		if (len > (i2c->msg->len - i2c->msg_ptr))
- 			len = i2c->msg->len - i2c->msg_ptr;
- 
-@@ -523,6 +517,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	u32 i2c_auto_conf = 0;
- 	u32 fifo_ctl;
- 	unsigned long flags;
-+	unsigned short trig_lvl;
- 
- 	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
- 	i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
-@@ -533,13 +528,19 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 
- 		i2c_auto_conf = HSI2C_READ_WRITE;
- 
--		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
-+		trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
-+			(i2c->variant->fifo_depth * 3/4) : i2c->msg->len;
-+		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(trig_lvl);
-+
- 		int_en |= (HSI2C_INT_RX_ALMOSTFULL_EN |
- 			HSI2C_INT_TRAILING_EN);
- 	} else {
- 		i2c_ctl |= HSI2C_TXCHON;
- 
--		fifo_ctl |= HSI2C_TXFIFO_TRIGGER_LEVEL(HSI2C_DEF_RXFIFO_LVL);
-+		trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
-+			(i2c->variant->fifo_depth * 1/4) : i2c->msg->len;
-+		fifo_ctl |= HSI2C_TXFIFO_TRIGGER_LEVEL(trig_lvl);
-+
- 		int_en |= HSI2C_INT_TX_ALMOSTEMPTY_EN;
+-	pdata->irq_hash = platform_get_irq_byname(pdev, "hash");
+-	if (pdata->irq_hash < 0) {
+-		err = pdata->irq_hash;
+-		dev_warn(dev, "hash interrupt is not available.\n");
++	pdata->irq_fc = platform_get_irq(pdev, 0);
++	if (pdata->irq_fc < 0) {
++		err = pdata->irq_fc;
++		dev_warn(dev, "feed control interrupt is not available.\n");
+ 		goto err_irq;
+ 	}
+-	err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
++	err = devm_request_irq(dev, pdata->irq_fc, s5p_aes_interrupt,
+ 			       IRQF_SHARED, pdev->name, pdev);
+ 	if (err < 0) {
+-		dev_warn(dev, "hash interrupt is not available.\n");
++		dev_warn(dev, "feed control interrupt is not available.\n");
+ 		goto err_irq;
  	}
  
-@@ -731,6 +732,8 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_clk;
+-	pdata->irq_fc = platform_get_irq_byname(pdev, "feed control");
+-	if (pdata->irq_fc < 0) {
+-		err = pdata->irq_fc;
+-		dev_warn(dev, "feed control interrupt is not available.\n");
++	pdata->irq_hash = platform_get_irq(pdev, 1);
++	if (pdata->irq_hash < 0) {
++		err = pdata->irq_hash;
++		dev_warn(dev, "hash interrupt is not available.\n");
+ 		goto err_irq;
+ 	}
+-	err = devm_request_irq(dev, pdata->irq_fc, s5p_aes_interrupt,
++	err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
+ 			       IRQF_SHARED, pdev->name, pdev);
+ 	if (err < 0) {
+-		dev_warn(dev, "feed control interrupt is not available.\n");
++		dev_warn(dev, "hash interrupt is not available.\n");
+ 		goto err_irq;
+ 	}
  
-+	i2c->variant = exynos5_i2c_get_variant(pdev);
-+
- 	exynos5_i2c_reset(i2c);
- 
- 	ret = i2c_add_adapter(&i2c->adap);
 -- 
 1.7.9.5
