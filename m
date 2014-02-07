@@ -1,68 +1,36 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] iommu/exynos: Remove driver
-Date: Fri, 07 Feb 2014 14:49:53 +0100
-Message-ID: <52F4E481.3050902@samsung.com>
-References: <1391716317-20300-1-git-send-email-olof@lixom.net>
- <CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
- <CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33856 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbaBGNt5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Feb 2014 08:49:57 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N0M002YFP337V00@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Feb 2014 13:49:51 +0000 (GMT)
-In-reply-to: <CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: [PATCH v2 0/2] Add device tree based lookup of boost mode frequency
+Date: Fri,  7 Feb 2014 20:49:00 +0530
+Message-ID: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Hello,
+Changes since v1:
+- Boost mode frequencies are specfied as a set of frequencies instead of
+  specifying them as OPPs. Thanks to Nishanth, Lukasz and Rob for the
+  feedback.
 
-On 2014-02-07 13:44, Kyungmin Park wrote:
->
-> On Friday, February 7, 2014, Inki Dae <inki.dae@samsung.com 
-> <mailto:inki.dae@samsung.com>> wrote:
->
->     2014-02-07 Olof Johansson <olof@lixom.net <javascript:;>>:
->     > The driver has been unbuildable due to unfulfilled dependencies
->     since
->     > 3.11, and even if enabled it won't build due to build breakage.
->     Emails
->     > about status on this have gone unanswered, and fixes seem to
->     have been
->     > abandoned.
->     >
->     > It's obvious that nobody cares about it, so let's remove it.
->
->     Wait, we are going to fix up this module. It seems that KyoungHo,
->     original author, is busy with some works related to product.
->
->     we can care about it if KyoungHo cannot afford to care for the
->     time being.
->
-> Any volunteers?
-> Marek or Bartek, how do you think?
->
-> Before that it makes orphan or unsupported at maintainer file first and
-> change it to new volunteers.
+Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
+support for CPU boost mode for CPUfreq drivers. To use the new boost
+mode, CPUfreq drivers have to specify the boost mode frequency and
+voltage within the CPUfreq driver, which is the case for Exynos4x12
+CPUfreq driver.
 
-I think that it might be easier to remove the existing non-functional driver
-now and add it again once the driver is ready. I have it on my TODO 
-list, but
-doubt I will manage to finish it for v3.15.
+But for CPUfreq drivers which obtain the OPPs from cpus node, this
+patch series adds support to specify boost mode frequencies in the
+cpu device tree node. This requirement came up when Lukasz pointed
+out the regression caused by the Exynos CPUfreq driver consolidation
+patches.
 
-Discussing the DT bindings might take some time.
+Thomas Abraham (2):
+  PM / OPP: Allow boost frequency to be looked up from device tree
+  Documentation: devicetree: Add boost-frequency binding to list boost mode frequency
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+ .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   11 +++++++
+ drivers/base/power/opp.c                           |   34 +++++++++++++++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+
