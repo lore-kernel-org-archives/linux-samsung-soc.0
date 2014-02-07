@@ -1,32 +1,68 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] clk: samsung: Initialize clock table with error pointers
-Date: Thu, 06 Feb 2014 23:21:54 +0100
-Message-ID: <52F40B02.8070403@gmail.com>
-References: <1391711591-19416-1-git-send-email-t.figa@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v2 0/9] Samsung PM consolidation part 1 (clocks)
+Date: Fri, 7 Feb 2014 09:15:39 +0530
+Message-ID: <CAJuA9ah97MQKrNeKG2vijFCr8b7T4r2Zr9gsGtETwtBLmKBrXg@mail.gmail.com>
+References: <1391710616-14226-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:43454 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756402AbaBFWV6 (ORCPT
+Received: from mail-la0-f47.google.com ([209.85.215.47]:57169 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751000AbaBGDpm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Feb 2014 17:21:58 -0500
-Received: by mail-ea0-f170.google.com with SMTP id k10so1208871eaj.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Feb 2014 14:21:57 -0800 (PST)
-In-Reply-To: <1391711591-19416-1-git-send-email-t.figa@samsung.com>
+	Thu, 6 Feb 2014 22:45:42 -0500
+Received: by mail-la0-f47.google.com with SMTP id hr17so2176344lab.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Feb 2014 19:45:39 -0800 (PST)
+In-Reply-To: <1391710616-14226-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Mike Turquette <mturquette@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Rahul Sharma <r.sh.open@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 02/06/2014 07:33 PM, Tomasz Figa wrote:
-> Before this patch, the driver was simply zeroing the clock table, which
-> is incorrect, because invalid clock numbers returned NULL instead of
-> error pointers. This patch fixes this by changing the driver to
-> initialize the array with PTR_ERR(-ENOENT).
+On Thu, Feb 6, 2014 at 11:46 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> This series reworks suspend/resume handling of Samsung clock drivers
+> to cover more SoC specific aspects that are beyond simple register
+> save and restore. The goal is to have all the suspend/resume code
+> that touches the clock controller in single place, which is the
+> clock driver.
 >
-> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
-> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
+> On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
+> Arndale boards (except suspend/resume, which is broken because of
+> unrelated reasons):
+>
+> Tested-by: Tomasz Figa <t.figa@samsung.com>
+>
+> Tomasz Figa (9):
+>   clk: exynos4: Remove remnants of non-DT support
+>   clk: samsung: Provide common helpers for register save/restore
+>   clk: samsung: exynos4: Move suspend/resume handling to SoC driver
+>   clk: samsung: exynos5250: Move suspend/resume handling to SoC driver
+>   clk: samsung: exynos5420: Move suspend/resume handling to SoC driver
+>   clk: samsung: s3c64xx: Move suspend/resume handling to SoC driver
+>   clk: samsung: Drop old suspend/resume code
+>   clk: samsung: exynos4: Add remaining suspend/resume handling
+>   ARM: EXYNOS: pm: Drop legacy Exynos4 clock suspend/resume code
+>
+>  arch/arm/mach-exynos/pm.c            | 148 +-----------------------------
+>  drivers/clk/samsung/clk-exynos4.c    | 172 +++++++++++++++++++++++++++++++----
+>  drivers/clk/samsung/clk-exynos5250.c |  49 +++++++++-
+>  drivers/clk/samsung/clk-exynos5420.c |  49 +++++++++-
+>  drivers/clk/samsung/clk-exynos5440.c |   2 +-
+>  drivers/clk/samsung/clk-s3c64xx.c    |  79 +++++++++++++---
+>  drivers/clk/samsung/clk.c            |  71 ++++++---------
+>  drivers/clk/samsung/clk.h            |  14 ++-
+>  8 files changed, 348 insertions(+), 236 deletions(-)
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Nice series!
+Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
+
+
+>
+> --
+> 1.8.5.2
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
