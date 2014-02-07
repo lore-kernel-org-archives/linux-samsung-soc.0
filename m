@@ -1,33 +1,35 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2 v3] i2c: exynos5: add support for HSI2C on Exynos5260
- SoC
-Date: Fri, 07 Feb 2014 11:21:48 +0100
-Message-ID: <52F4B3BC.6080907@gmail.com>
-References: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com> <1391688408-8077-1-git-send-email-ch.naveen@samsung.com> <52F38EA4.10805@samsung.com> <52F3933B.9090202@samsung.com> <20140207101747.GA2621@katana>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/9] clk: exynos4: Remove remnants of non-DT support
+Date: Fri, 07 Feb 2014 12:32:48 +0100
+Message-ID: <52F4C460.1050306@samsung.com>
+References: <1391710616-14226-1-git-send-email-t.figa@samsung.com>
+ <1391710616-14226-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140207101747.GA2621@katana>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40384 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752384AbaBGLcx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Feb 2014 06:32:53 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N0M00J8PIQRX690@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Feb 2014 11:32:51 +0000 (GMT)
+In-reply-to: <1391710616-14226-2-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rahul Sharma <r.sh.open@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Thomas Abraham <thomas.abraham@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 07.02.2014 11:17, Wolfram Sang wrote:
-> On Thu, Feb 06, 2014 at 02:50:51PM +0100, Tomasz Figa wrote:
->> Also, please use correct addresses of DT ML and Wolfram's e-mail
->> (fixed in this message).
->
-> And please don't use In-Reply-To when sending new versions of patches.
-> The message threading became hard to read here...
->
+On 06/02/14 19:16, Tomasz Figa wrote:
+> This patch simplifies a bit clock initialization code by removing
+> remnants of non-DT clock initialization, such as reg_base and xom values
+> passed in function parameters.
+> 
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-+1
-
-It's hard to follow new versions of series that show up under the thread 
-of old version. If you want to keep reference to old versions, you can 
-add links to respective threads to change log entries in cover letter.
-
-Best regards,
-Tomasz
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
