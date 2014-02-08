@@ -1,103 +1,79 @@
 From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v3 1/7] cpufreq: cpufreq-cpu0: allow use of optional boost
- mode frequencies
-Date: Sat, 8 Feb 2014 10:49:27 +0530
-Message-ID: <CAJuA9ah9xHZZknW5yfh8v8GS65TLd4uZedigEt4ATdoiy6-1Gg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] ARM: dts: Exynos: add cpu nodes, opp and cpu clock
+ configuration data
+Date: Sat, 8 Feb 2014 10:50:42 +0530
+Message-ID: <CAJuA9aghuiVtTV4srj_Sp0sJFJ6D=1vS5fVZHf5S+SuUkpvMVA@mail.gmail.com>
 References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com>
-	<1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
-	<52F506EC.2070907@ti.com>
+	<1391788548-13056-6-git-send-email-thomas.ab@samsung.com>
+	<52F507CB.6090300@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:33540 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750717AbaBHFT3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Feb 2014 00:19:29 -0500
-In-Reply-To: <52F506EC.2070907@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <52F507CB.6090300@arm.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
 
-On Fri, Feb 7, 2014 at 9:46 PM, Nishanth Menon <nm@ti.com> wrote:
-> On 02/07/2014 09:55 AM, Thomas Abraham wrote:
+On Fri, Feb 7, 2014 at 9:50 PM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
+> On 07/02/14 15:55, Thomas Abraham wrote:
 >> From: Thomas Abraham <thomas.ab@samsung.com>
 >>
->> Lookup for the optional boost-frequency property in cpu0 node and if
->> available, enable support for boost mode frequencies. The frequencies
->> usable in boost mode are determined while preparing the cpufreq table
->> from the list of operating points available.
+>> For all Exynos based platforms, add CPU nodes, operating points and cpu
+>> clock data for migrating from Exynos specific cpufreq driver to using
+>> generic cpufreq-cpu0 driver.
 >>
->> In addition to this, enable the CPU_FREQ_BOOST_SW config option for
->> this driver by default. On platforms that do not support boost mode,
->> the boost mode frequencies will not be specified in cpu0 node and
->> hence the boost mode support will not be enabled. Since this driver
->> anyways depends on THERMAL config option, it is safe to enable
->> CPU_FREQ_BOOST_SW config option as default.
->>
->> Cc: Shawn Guo <shawn.guo@linaro.org>
->> Cc: Lukasz Majewski <l.majewski@samsung.com>
 >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> ---
->>  Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt |    2 ++
->>  drivers/cpufreq/Kconfig                                    |    1 +
->>  drivers/cpufreq/cpufreq-cpu0.c                             |    3 +++
->>  3 files changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
->> index f055515..60f321a 100644
->> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
->> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
->> @@ -19,6 +19,8 @@ Optional properties:
->>  - cooling-min-level:
->>  - cooling-max-level:
->>       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
->> +- boost-frequency:
->> +     Please refer to Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
->>
->>  Examples:
->>
->> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
->> index 4b029c0..52cc704 100644
->> --- a/drivers/cpufreq/Kconfig
->> +++ b/drivers/cpufreq/Kconfig
->> @@ -187,6 +187,7 @@ config GENERIC_CPUFREQ_CPU0
->>       tristate "Generic CPU0 cpufreq driver"
->>       depends on HAVE_CLK && REGULATOR && OF && THERMAL && CPU_THERMAL
->>       select PM_OPP
->> +     select CPU_FREQ_BOOST_SW
->>       help
->>         This adds a generic cpufreq driver for CPU0 frequency management.
->>         It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
->> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
->> index 0c12ffc..06539eb 100644
->> --- a/drivers/cpufreq/cpufreq-cpu0.c
->> +++ b/drivers/cpufreq/cpufreq-cpu0.c
->> @@ -195,6 +195,9 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
->>                       transition_latency += ret * 1000;
->>       }
->>
->> +     if (of_find_property(cpu_dev->of_node, "boost-frequency", NULL))
->> +             cpu0_cpufreq_driver.boost_supported = true;
->> +
->>       ret = cpufreq_register_driver(&cpu0_cpufreq_driver);
->>       if (ret) {
->>               pr_err("failed register driver: %d\n", ret);
->>
 >
-> might as well hide that under the opp api which returns a bool that
-> says if boost is supported or not. that allows the parse to be
-> isolated to a single location.
+> [...]
+>
+>> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+>> index 5c412aa..c613fc2 100644
+>> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+>> @@ -31,6 +31,42 @@
+>>                 mshc0 = &mshc_0;
+>>         };
+>>
+>> +       cpus {
+>> +               #address-cells = <1>;
+>> +               #size-cells = <0>;
+>> +               cpu@0 {
+>> +                       device_type = "cpu";
+>> +                       compatible = "arm,cortex-a9";
+>> +                       reg = <0>;
+>> +                       clocks = <&clock 12>;
+>> +                       clock-names = "cpu";
+>> +
+>> +                       operating-points = <
+>> +                               1500000 1350000
+>> +                               1400000 1287500
+>> +                               1300000 1250000
+>> +                               1200000 1187500
+>> +                               1100000 1137500
+>> +                               1000000 1087500
+>> +                                900000 1037500
+>> +                                800000 1000000
+>> +                                700000  987500
+>> +                                600000  975000
+>> +                                500000  950000
+>> +                                400000  925000
+>> +                                300000  900000
+>> +                                200000  900000
+>> +                       >;
+>> +                       clock-latency = <200000>;
+>> +                       boost-frequency = <1500000 1350000>;
+>
+> This is confusing, 1350000 is not in the OPP frequency list or this is still
+> following old binding with voltage. Either case this needs to be fixed.
 
-This is specific to the cpufreq-cpu0 driver. Other cpufreq drivers
-might want to use other methods and additional constraints to
-determine if boost has to be enabled.
+Yes, I missed that. Will fix it. Thanks for your review.
 
-Thanks,
+Regards,
 Thomas.
 
+
 >
-> --
 > Regards,
-> Nishanth Menon
+> Sudeep
+>
