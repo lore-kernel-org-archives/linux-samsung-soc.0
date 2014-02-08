@@ -1,70 +1,58 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v2 2/2] Documentation: devicetree: Add boost-frequency
- binding to list boost mode frequency
-Date: Sat, 8 Feb 2014 12:17:46 +0530
-Message-ID: <CAJuA9aj-LsdBiS2msOVmNRSe6mNj9QJsys9KjHZAk=9hrZOLzA@mail.gmail.com>
-References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
-	<1391786342-11812-3-git-send-email-thomas.ab@samsung.com>
-	<52F50698.4060305@arm.com>
-	<52F509BD.70903@arm.com>
-	<CAGo_u6raZY0sKdDn4d92SKpi=eqUpf23vW8K_bEi-v62V2jdPA@mail.gmail.com>
-	<52F51888.5010608@arm.com>
-	<CAGo_u6ofC4NNPiTNcSnXUvT3RZJo54=XyjetR-ok5hCBrVZkKg@mail.gmail.com>
-	<52F51FCD.5000009@arm.com>
-	<CAGo_u6quxExJOyY8mvCw5sDSuz=_j0YqJ6FJW+FAdaxUeqzN9Q@mail.gmail.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v3 1/7] cpufreq: cpufreq-cpu0: allow use of optional boost
+ mode frequencies
+Date: Sat, 8 Feb 2014 10:31:50 -0600
+Message-ID: <CAGo_u6qdc=dRgRFNq4f4tSC7+3J5dnZfa63wR5C+HRy-z5LBbw@mail.gmail.com>
+References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com>
+	<1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
+	<52F506EC.2070907@ti.com>
+	<CAJuA9ah9xHZZknW5yfh8v8GS65TLd4uZedigEt4ATdoiy6-1Gg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAGo_u6quxExJOyY8mvCw5sDSuz=_j0YqJ6FJW+FAdaxUeqzN9Q@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Sudeep Holla <Sudeep.Holla@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAJuA9ah9xHZZknW5yfh8v8GS65TLd4uZedigEt4ATdoiy6-1Gg@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Feb 8, 2014 at 1:11 AM, Nishanth Menon <nm@ti.com> wrote:
-> On Fri, Feb 7, 2014 at 12:02 PM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
->> On 07/02/14 17:37, Nishanth Menon wrote:
->>> On Fri, Feb 7, 2014 at 11:31 AM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
->>
->> [...]
->>
->>>> Yes I think its counter-intuitive as it's visible to the userspace(list of
->>>> frequencies and the boost parameters are exposed through sysfs)
+On Fri, Feb 7, 2014 at 11:19 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+>>> --- a/drivers/cpufreq/cpufreq-cpu0.c
+>>> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+>>> @@ -195,6 +195,9 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>>>                       transition_latency += ret * 1000;
+>>>       }
 >>>
->>> That will be a different problem -> as currently every single
->>> frequency in the cpufreq list has ability to be marked as boost
->>> frequency - if userspace does not maintain that, then, IMHO, fix the
->>> userspace :D
->>>
->>
->> /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_frequencies gives
->> the list of frequencies based on the state of the boost feature at anytime.
->>
->> Intuitively the list without boost shouldn't have any frequency above the range
->> when it's enabled :), that's what I was referring to. So I am not talking about
->> any issue with user-space maintenance.
-> Fair enough - but i still think it has nothing to do with dt binding
-> itself -> and i think the discussion we've had should be good for the
-> binding provided in this patch.. I hope.. if documentation needs a bit
-> of better explanation to prevent a repeat of the same discussion at a
-> later point of time, now might be a good time to add it in.
-
-The term boost and over-clocking have been described in the bindings
-document as being the same. Since the term over-clocking refers to
-running a CPU beyond normal operating frequencies, I tend to agree
-with Sudeep that it is not intuitive if a normal operating frequency
-is greater than a boost mode frequency.
-
-Otherwise, when userspace does "echo 1 >
-/sys/devices/system/cpu/cpufreq/boost", what is it supposed to mean. I
-think the original intent of boost mode patches was to allow CPU to
-operate at frequencies greater than the normal operating frequencies.
-
-Lukasz, how would you want this to be handled?
-
-Thanks,
-Thomas.
-
+>>> +     if (of_find_property(cpu_dev->of_node, "boost-frequency", NULL))
+>>> +             cpu0_cpufreq_driver.boost_supported = true;
+>>> +
+>> might as well hide that under the opp api which returns a bool that
+>> says if boost is supported or not. that allows the parse to be
+>> isolated to a single location.
 >
-> Regards,
-> Nishanth Menon
+> This is specific to the cpufreq-cpu0 driver. Other cpufreq drivers
+> might want to use other methods and additional constraints to
+> determine if boost has to be enabled.
+
+struct cpufreq_driver::boost_supported is nothing CPU0 specifc - i am
+just saying that the same property "boost-frequency" parsed by in two
+places (dev_pm_opp_init_cpufreq_table and cpu0_cpufreq_probe) is a
+very bad idea.
+
+you could instead make
+int dev_pm_opp_init_cpufreq_table(struct device *dev,
+                           struct cpufreq_frequency_table **table)
+into:
+int dev_pm_opp_init_cpufreq_table(struct device *dev,
+                           struct cpufreq_frequency_table **table,
+bool *boost_supported);
+
+Then use boost_supported for anything of your driver's choice
+(including updating cpufreq_driver::boost_supported).
+
+That allows the property to be isolated into a single function, who
+can be modified without impacting other drivers at a later point in
+time.
+
+Regards,
+Nishanth Menon
