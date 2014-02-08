@@ -1,59 +1,97 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 00/12] Samsung PM consolidation part 2 (multiplatform)
-Date: Sat, 08 Feb 2014 03:42:53 +0100
-Message-ID: <52F599AD.5070200@gmail.com>
-References: <1391713977-22300-1-git-send-email-t.figa@samsung.com>	<20140207221537.GA12714@quad.lixom.net>	<52F57372.7010507@gmail.com> <CAD=FV=UPH4vf2-5GuOypkkbMsDPmM7dPZJtFpHs+wBsN0wy8=Q@mail.gmail.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v2 1/2] PM / OPP: Allow boost frequency to be looked up
+ from device tree
+Date: Sat, 8 Feb 2014 10:40:01 +0530
+Message-ID: <CAJuA9agT4PC6YOmhCwKQ=58qaGEr1qSuhTpX57ro1pEuk++Miw@mail.gmail.com>
+References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
+	<1391786342-11812-2-git-send-email-thomas.ab@samsung.com>
+	<52F50346.7040707@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:56003 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751246AbaBHCm7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Feb 2014 21:42:59 -0500
-Received: by mail-ee0-f45.google.com with SMTP id b15so1856602eek.32
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Feb 2014 18:42:58 -0800 (PST)
-In-Reply-To: <CAD=FV=UPH4vf2-5GuOypkkbMsDPmM7dPZJtFpHs+wBsN0wy8=Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52F50346.7040707@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Nishanth Menon <nm@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Olof Johansson <olof@lixom.net>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Doug,
+On Fri, Feb 7, 2014 at 9:31 PM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
+> On 07/02/14 15:19, Thomas Abraham wrote:
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
+>> support for CPU boost mode. This patch adds support for finding available
+>> boost frequencies from device tree and marking them as usable in boost mode.
+>>
+>> Cc: Nishanth Menon <nm@ti.com>
+>> Cc: Lukasz Majewski <l.majewski@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> ---
+>>  drivers/base/power/opp.c |   34 +++++++++++++++++++++++++++++++++-
+>>  1 file changed, 33 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+>> index fa41874..b636826 100644
+>> --- a/drivers/base/power/opp.c
+>> +++ b/drivers/base/power/opp.c
+>> @@ -628,7 +628,8 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
+>>       struct device_opp *dev_opp;
+>>       struct dev_pm_opp *opp;
+>>       struct cpufreq_frequency_table *freq_table;
+>> -     int i = 0;
+>> +     int i = 0, j, len, ret;
+>> +     u32 *boost_freqs = NULL;
+>>
+>>       /* Pretend as if I am an updater */
+>>       mutex_lock(&dev_opp_list_lock);
+>> @@ -650,10 +651,35 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
+>>               return -ENOMEM;
+>>       }
+>>
+>> +     if (of_find_property(dev->of_node, "boost-frequency", &len)) {
+>> +             if (len == 0 || (len & (sizeof(u32) - 1)) != 0) {
+>> +                     dev_err(dev, "%s: invalid boost frequency\n", __func__);
+>> +                     ret = -EINVAL;
+>> +                     goto err_boost;
+>> +             }
+>> +
+>> +             boost_freqs = kzalloc(len, GFP_KERNEL);
+>> +             if (!boost_freqs) {
+>> +                     dev_warn(dev, "%s: no memory for boost freq table\n",
+>> +                                     __func__);
+>> +                     ret = -ENOMEM;
+>> +                     goto err_boost;
+>> +             }
+>> +             of_property_read_u32_array(dev->of_node, "boost-frequency",
+>> +                     boost_freqs, len / sizeof(u32));
+>> +     }
+>> +
+>>       list_for_each_entry(opp, &dev_opp->opp_list, node) {
+>>               if (opp->available) {
+>>                       freq_table[i].driver_data = i;
+>>                       freq_table[i].frequency = opp->rate / 1000;
+>> +                     for (j = 0; j < len / sizeof(u32) && boost_freqs; j++) {
+>> +                             if (boost_freqs[j] == freq_table[i].frequency) {
+>> +                                     freq_table[i].driver_data =
+>> +                                                     CPUFREQ_BOOST_FREQ;
+>> +                                     break;
+>> +                             }
+>> +                     }
+>>                       i++;
+>>               }
+>>       }
+> IIRC you had mentioned that the boost-opp was not limited to be a cpufreq, but
+> this change seems to be cpufreq only.
 
-On 08.02.2014 01:51, Doug Anderson wrote:
-> Tomasz,
+Yes, but as you have initiated the discussion on extending the OPP
+binding, this has been limited to cpufreq only. If the new OPP library
+has support for listing boost frequency, this can be migrated to the
+new OPP libaray.
+
+Thanks,
+Thomas.
+
 >
-> On Fri, Feb 7, 2014 at 3:59 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>
->>
->> On 07.02.2014 23:15, Olof Johansson wrote:
->>>
->>> On Thu, Feb 06, 2014 at 08:12:45PM +0100, Tomasz Figa wrote:
->>>
->>>> On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
->>>> Arndale boards (except suspend/resume, which is broken because of
->>>> unrelated reasons):
->>>
->>>
->>> Has this been reported, and is it being worked on by anyone?
->>
->>
->> Yes, reported quite a long time ago by Vikas Sajjan of Samsung/Linaro, but
->> I'm not sure if anybody is working to fix it.
->>
->> I've been looking into this for a while, but couldn't really find anything
->> except that it hangs when PMU starts power state transtion after CPU
->> executing WFI instruction.
+> Regards,
+> Sudeep
 >
-> It's likely it's something else, but just in case I'll point you to a
-> bug that we fixed that had the same symptom.  There's some details
-> (and a lot of noise) in <http://crbug.com/218132>.  ...or maybe just
-> look at the root cause at <http://crosreview.com/42067>.
-
-OK. Thanks for pointing me to this. Will do some more tests back at the 
-office after the weekend.
-
-Best regards,
-Tomasz
