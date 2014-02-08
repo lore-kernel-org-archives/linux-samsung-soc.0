@@ -1,58 +1,79 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v3 1/7] cpufreq: cpufreq-cpu0: allow use of optional boost
- mode frequencies
-Date: Sat, 8 Feb 2014 10:31:50 -0600
-Message-ID: <CAGo_u6qdc=dRgRFNq4f4tSC7+3J5dnZfa63wR5C+HRy-z5LBbw@mail.gmail.com>
-References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com>
-	<1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
-	<52F506EC.2070907@ti.com>
-	<CAJuA9ah9xHZZknW5yfh8v8GS65TLd4uZedigEt4ATdoiy6-1Gg@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 01/12] ARM: S3C24XX: cpufreq-utils: don't write raw values
+ to MPLLCON when using ccf
+Date: Sat, 08 Feb 2014 21:23:24 +0100
+Message-ID: <52F6923C.3040103@gmail.com>
+References: <201312131356.40755.heiko@sntech.de> <201312131357.19899.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAJuA9ah9xHZZknW5yfh8v8GS65TLd4uZedigEt4ATdoiy6-1Gg@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:55505 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbaBHUXj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 8 Feb 2014 15:23:39 -0500
+Received: by mail-ea0-f174.google.com with SMTP id b10so2168068eae.5
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Feb 2014 12:23:37 -0800 (PST)
+In-Reply-To: <201312131357.19899.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: t.figa@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 7, 2014 at 11:19 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
->>> --- a/drivers/cpufreq/cpufreq-cpu0.c
->>> +++ b/drivers/cpufreq/cpufreq-cpu0.c
->>> @@ -195,6 +195,9 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
->>>                       transition_latency += ret * 1000;
->>>       }
->>>
->>> +     if (of_find_property(cpu_dev->of_node, "boost-frequency", NULL))
->>> +             cpu0_cpufreq_driver.boost_supported = true;
->>> +
->> might as well hide that under the opp api which returns a bool that
->> says if boost is supported or not. that allows the parse to be
->> isolated to a single location.
+Hi Heiko,
+
+On 13.12.2013 13:57, Heiko St=C3=BCbner wrote:
+> The s3c24xx cpufreq driver needs to change the mpll speed and was doi=
+ng
+> this by writing raw values from a translation table into the MPLLCON
+> register.
 >
-> This is specific to the cpufreq-cpu0 driver. Other cpufreq drivers
-> might want to use other methods and additional constraints to
-> determine if boost has to be enabled.
+> Change this to use a regular clk_set_rate call when using the common
+> clock framework and only write the raw value in the samsung_clock cas=
+e.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>   arch/arm/mach-s3c24xx/cpufreq-utils.c |   13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/arm/mach-s3c24xx/cpufreq-utils.c b/arch/arm/mach-s3=
+c24xx/cpufreq-utils.c
+> index 2a0aa56..680a031 100644
+> --- a/arch/arm/mach-s3c24xx/cpufreq-utils.c
+> +++ b/arch/arm/mach-s3c24xx/cpufreq-utils.c
+> @@ -14,6 +14,7 @@
+>   #include <linux/errno.h>
+>   #include <linux/cpufreq.h>
+>   #include <linux/io.h>
+> +#include <linux/clk.h>
+>
+>   #include <mach/map.h>
+>   #include <mach/regs-clock.h>
+> @@ -60,5 +61,17 @@ void s3c2410_cpufreq_setrefresh(struct s3c_cpufreq=
+_config *cfg)
+>    */
+>   void s3c2410_set_fvco(struct s3c_cpufreq_config *cfg)
+>   {
+> +#ifdef CONFIG_SAMSUNG_CLOCK
+>   	__raw_writel(cfg->pll.driver_data, S3C2410_MPLLCON);
+> +#endif
+> +
+> +#ifdef CONFIG_COMMON_CLK
+> +	struct clk *mpll =3D clk_get(NULL, "mpll");
+> +	if (IS_ERR(mpll))
+> +		return;
 
-struct cpufreq_driver::boost_supported is nothing CPU0 specifc - i am
-just saying that the same property "boost-frequency" parsed by in two
-places (dev_pm_opp_init_cpufreq_table and cpu0_cpufreq_probe) is a
-very bad idea.
+Wouldn't it be more sensible to get the clock only once, at the time=20
+cpufreq is initialized? This would avoid going through the list of all=20
+clocks every CPU frequency change and be more semantically correct.
 
-you could instead make
-int dev_pm_opp_init_cpufreq_table(struct device *dev,
-                           struct cpufreq_frequency_table **table)
-into:
-int dev_pm_opp_init_cpufreq_table(struct device *dev,
-                           struct cpufreq_frequency_table **table,
-bool *boost_supported);
+If there is no good place to put this clk_get() then maybe it could be=20
+simply called on first call to s3c2410_set_fvco() and the clock saved t=
+o=20
+a static variable.
 
-Then use boost_supported for anything of your driver's choice
-(including updating cpufreq_driver::boost_supported).
-
-That allows the property to be isolated into a single function, who
-can be modified without impacting other drivers at a later point in
-time.
-
-Regards,
-Nishanth Menon
+Best regards,
+Tomasz
