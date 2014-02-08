@@ -1,78 +1,58 @@
 From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v3 5/7] ARM: dts: Exynos: add cpu nodes, opp and cpu clock
- configuration data
-Date: Sat, 8 Feb 2014 10:50:42 +0530
-Message-ID: <CAJuA9aghuiVtTV4srj_Sp0sJFJ6D=1vS5fVZHf5S+SuUkpvMVA@mail.gmail.com>
-References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com>
-	<1391788548-13056-6-git-send-email-thomas.ab@samsung.com>
-	<52F507CB.6090300@arm.com>
+Subject: Re: [PATCH v2 2/2] Documentation: devicetree: Add boost-frequency
+ binding to list boost mode frequency
+Date: Sat, 8 Feb 2014 12:17:09 +0530
+Message-ID: <CAJuA9agcpbKYocaQUBr2-VCXcXAo3r3urFF=+G_+ib2jCZqvwg@mail.gmail.com>
+References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
+	<1391786342-11812-3-git-send-email-thomas.ab@samsung.com>
+	<52F50698.4060305@arm.com>
+	<52F509BD.70903@arm.com>
+	<CAGo_u6raZY0sKdDn4d92SKpi=eqUpf23vW8K_bEi-v62V2jdPA@mail.gmail.com>
+	<52F51888.5010608@arm.com>
+	<CAGo_u6ofC4NNPiTNcSnXUvT3RZJo54=XyjetR-ok5hCBrVZkKg@mail.gmail.com>
+	<52F51FCD.5000009@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <52F507CB.6090300@arm.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Sudeep Holla <Sudeep.Holla@arm.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:45836 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750772AbaBHGrM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 8 Feb 2014 01:47:12 -0500
+In-Reply-To: <52F51FCD.5000009@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: Nishanth Menon <nm@ti.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On Fri, Feb 7, 2014 at 9:50 PM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
-> On 07/02/14 15:55, Thomas Abraham wrote:
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> For all Exynos based platforms, add CPU nodes, operating points and cpu
->> clock data for migrating from Exynos specific cpufreq driver to using
->> generic cpufreq-cpu0 driver.
->>
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+On Fri, Feb 7, 2014 at 11:32 PM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
+> On 07/02/14 17:37, Nishanth Menon wrote:
+>> On Fri, Feb 7, 2014 at 11:31 AM, Sudeep Holla <Sudeep.Holla@arm.com> wrote:
 >
 > [...]
 >
->> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
->> index 5c412aa..c613fc2 100644
->> --- a/arch/arm/boot/dts/exynos4x12.dtsi
->> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
->> @@ -31,6 +31,42 @@
->>                 mshc0 = &mshc_0;
->>         };
+>>> Yes I think its counter-intuitive as it's visible to the userspace(list of
+>>> frequencies and the boost parameters are exposed through sysfs)
 >>
->> +       cpus {
->> +               #address-cells = <1>;
->> +               #size-cells = <0>;
->> +               cpu@0 {
->> +                       device_type = "cpu";
->> +                       compatible = "arm,cortex-a9";
->> +                       reg = <0>;
->> +                       clocks = <&clock 12>;
->> +                       clock-names = "cpu";
->> +
->> +                       operating-points = <
->> +                               1500000 1350000
->> +                               1400000 1287500
->> +                               1300000 1250000
->> +                               1200000 1187500
->> +                               1100000 1137500
->> +                               1000000 1087500
->> +                                900000 1037500
->> +                                800000 1000000
->> +                                700000  987500
->> +                                600000  975000
->> +                                500000  950000
->> +                                400000  925000
->> +                                300000  900000
->> +                                200000  900000
->> +                       >;
->> +                       clock-latency = <200000>;
->> +                       boost-frequency = <1500000 1350000>;
+>> That will be a different problem -> as currently every single
+>> frequency in the cpufreq list has ability to be marked as boost
+>> frequency - if userspace does not maintain that, then, IMHO, fix the
+>> userspace :D
+>>
 >
-> This is confusing, 1350000 is not in the OPP frequency list or this is still
-> following old binding with voltage. Either case this needs to be fixed.
+> /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_frequencies gives
+> the list of frequencies based on the state of the boost feature at anytime.
 
-Yes, I missed that. Will fix it. Thanks for your review.
+The list of frequencies in
+/sys/devices/system/cpu/cpu*/cpufreq/scaling_available_frequencies
+does not change based in the state of the boost feature (enabled or
+disabled). But the scaling_max_frequency and scaling_min_frequency are
+updated based on the set of available + boost frequencies available.
 
-Regards,
-Thomas.
-
-
+>
+> Intuitively the list without boost shouldn't have any frequency above the range
+> when it's enabled :), that's what I was referring to. So I am not talking about
+> any issue with user-space maintenance.
 >
 > Regards,
 > Sudeep
