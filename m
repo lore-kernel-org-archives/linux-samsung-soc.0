@@ -1,158 +1,47 @@
-From: taikyung yu <taikyung.yu@gmail.com>
-Subject: [PATCH] clk: samsung: pll: bugfix about segmentation fault
-Date: Sun,  9 Feb 2014 21:51:19 +0900
-Message-ID: <1391950279-10252-1-git-send-email-taikyung.yu@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:36837 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751473AbaBIMv0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Feb 2014 07:51:26 -0500
-Received: by mail-pd0-f170.google.com with SMTP id p10so5009146pdj.15
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Feb 2014 04:51:26 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: s3c24xx: get rid of unneeded selects
+Date: Sun, 09 Feb 2014 15:51:05 +0100
+Message-ID: <1391957465.25424.14.camel@x220>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: taikyung yu <taikyung.yu@gmail.com>
 
-init has pll initialization information. but it is local variable.
-so it is just valid in samsung_clk_register_pll2550x() function.
+Commit c67d0f29262b ("ARM: s3c24xx: get rid of custom <mach/gpio.h>")
+got rid of the Kconfig symbols S3C24XX_GPIO_EXTRA64 and
+S3C24XX_GPIO_EXTRA128. It missed one select of both of these symbols, so
+get rid of those now.
 
-Signed-off-by: taikyung yu <taikyung.yu@gmail.com>
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 ---
- drivers/clk/samsung/clk-pll.c |   61 +++++++++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 24 deletions(-)
+Untested.
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 81e6d2f..effd2c3 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -679,7 +679,7 @@ struct clk * __init samsung_clk_register_pll2550x(const char *name,
- {
- 	struct samsung_clk_pll2550x *pll;
- 	struct clk *clk;
--	struct clk_init_data init;
-+	struct clk_init_data *init;
- 
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
- 	if (!pll) {
-@@ -687,13 +687,19 @@ struct clk * __init samsung_clk_register_pll2550x(const char *name,
- 		return NULL;
- 	}
- 
--	init.name = name;
--	init.ops = &samsung_pll2550x_clk_ops;
--	init.flags = CLK_GET_RATE_NOCACHE;
--	init.parent_names = &pname;
--	init.num_parents = 1;
-+	init = kzalloc(sizeof(*init), GFP_KERNEL);
-+	if (!init) {
-+		pr_err("%s: could not allocate pll init clk %s\n", __func__, name);
-+		return NULL;
-+	}
- 
--	pll->hw.init = &init;
-+	init->name = name;
-+	init->ops = &samsung_pll2550x_clk_ops;
-+	init->flags = CLK_GET_RATE_NOCACHE;
-+	init->parent_names = &pname;
-+	init->num_parents = 1;
-+
-+	pll->hw.init = init;
- 	pll->reg_base = reg_base;
- 	pll->offset = offset;
- 
-@@ -715,7 +721,7 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
- {
- 	struct samsung_clk_pll *pll;
- 	struct clk *clk;
--	struct clk_init_data init;
-+	struct clk_init_data *init;
- 	int ret, len;
- 
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-@@ -725,10 +731,17 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
- 		return;
- 	}
- 
--	init.name = pll_clk->name;
--	init.flags = pll_clk->flags;
--	init.parent_names = &pll_clk->parent_name;
--	init.num_parents = 1;
-+	init = kzalloc(sizeof(*init), GFP_KERNEL);
-+	if (!init) {
-+		pr_err("%s: could not allocate pll init clk %s\n",
-+			__func__, pll_clk->name);
-+		return;
-+	}
-+
-+	init->name = pll_clk->name;
-+	init->flags = pll_clk->flags;
-+	init->parent_names = &pll_clk->parent_name;
-+	init->num_parents = 1;
- 
- 	if (pll_clk->rate_table) {
- 		/* find count of rates in rate_table */
-@@ -750,48 +763,48 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
- 	case pll_35xx:
- 	case pll_2550:
- 		if (!pll->rate_table)
--			init.ops = &samsung_pll35xx_clk_min_ops;
-+			init->ops = &samsung_pll35xx_clk_min_ops;
- 		else
--			init.ops = &samsung_pll35xx_clk_ops;
-+			init->ops = &samsung_pll35xx_clk_ops;
- 		break;
- 	case pll_4500:
--		init.ops = &samsung_pll45xx_clk_min_ops;
-+		init->ops = &samsung_pll45xx_clk_min_ops;
- 		break;
- 	case pll_4502:
- 	case pll_4508:
- 		if (!pll->rate_table)
--			init.ops = &samsung_pll45xx_clk_min_ops;
-+			init->ops = &samsung_pll45xx_clk_min_ops;
- 		else
--			init.ops = &samsung_pll45xx_clk_ops;
-+			init->ops = &samsung_pll45xx_clk_ops;
- 		break;
- 	/* clk_ops for 36xx and 2650 are similar */
- 	case pll_36xx:
- 	case pll_2650:
- 		if (!pll->rate_table)
--			init.ops = &samsung_pll36xx_clk_min_ops;
-+			init->ops = &samsung_pll36xx_clk_min_ops;
- 		else
--			init.ops = &samsung_pll36xx_clk_ops;
-+			init->ops = &samsung_pll36xx_clk_ops;
- 		break;
- 	case pll_6552:
--		init.ops = &samsung_pll6552_clk_ops;
-+		init->ops = &samsung_pll6552_clk_ops;
- 		break;
- 	case pll_6553:
--		init.ops = &samsung_pll6553_clk_ops;
-+		init->ops = &samsung_pll6553_clk_ops;
- 		break;
- 	case pll_4600:
- 	case pll_4650:
- 	case pll_4650c:
- 		if (!pll->rate_table)
--			init.ops = &samsung_pll46xx_clk_min_ops;
-+			init->ops = &samsung_pll46xx_clk_min_ops;
- 		else
--			init.ops = &samsung_pll46xx_clk_ops;
-+			init->ops = &samsung_pll46xx_clk_ops;
- 		break;
- 	default:
- 		pr_warn("%s: Unknown pll type for pll clk %s\n",
- 			__func__, pll_clk->name);
- 	}
- 
--	pll->hw.init = &init;
-+	pll->hw.init = init;
- 	pll->type = pll_clk->type;
- 	pll->lock_reg = base + pll_clk->lock_offset;
- 	pll->con_reg = base + pll_clk->con_offset;
+ arch/arm/mach-s3c24xx/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+index d876431..bb1fa603 100644
+--- a/arch/arm/mach-s3c24xx/Kconfig
++++ b/arch/arm/mach-s3c24xx/Kconfig
+@@ -521,7 +521,6 @@ config MACH_ANUBIS
+ 	select HAVE_PATA_PLATFORM
+ 	select S3C2440_XTAL_12000000
+ 	select S3C24XX_DCLK
+-	select S3C24XX_GPIO_EXTRA64
+ 	select S3C24XX_SIMTEC_PM if PM
+ 	select S3C_DEV_USB_HOST
+ 	help
+@@ -562,7 +561,6 @@ config MACH_OSIRIS
+ 	select S3C2410_IOTIMING if ARM_S3C2440_CPUFREQ
+ 	select S3C2440_XTAL_12000000
+ 	select S3C24XX_DCLK
+-	select S3C24XX_GPIO_EXTRA128
+ 	select S3C24XX_SIMTEC_PM if PM
+ 	select S3C_DEV_NAND
+ 	select S3C_DEV_USB_HOST
 -- 
-1.7.9.5
+1.8.5.3
