@@ -1,40 +1,46 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: samsung: pll: bugfix about segmentation fault
-Date: Sun, 09 Feb 2014 17:26:35 +0100
-Message-ID: <52F7AC3B.10503@gmail.com>
-References: <1391950279-10252-1-git-send-email-taikyung.yu@gmail.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: [PATCH 14/28] Remove MACH_SMDKC210
+Date: Sun,  9 Feb 2014 19:47:52 +0100
+Message-ID: <1391971686-9517-15-git-send-email-richard@nod.at>
+References: <1391971686-9517-1-git-send-email-richard@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:54685 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751919AbaBIQ0q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Feb 2014 11:26:46 -0500
-Received: by mail-ee0-f42.google.com with SMTP id b15so2481002eek.29
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Feb 2014 08:26:44 -0800 (PST)
-In-Reply-To: <1391950279-10252-1-git-send-email-taikyung.yu@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1391971686-9517-1-git-send-email-richard@nod.at>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "moderated list:ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG ARM A..." <linux-samsung-soc@vger.kernel.org>, "moderated list:SAMSUNG AUDIO AS...,
+ linux-kernel@vger.kernel.org open list" <alsa-devel@alsa-project.org>
+Cc: Richard Weinberger <richard@nod.at>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: taikyung yu <taikyung.yu@gmail.com>, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Hi,
+The symbol is an orphan, get rid of it.
 
-On 09.02.2014 13:51, taikyung yu wrote:
-> init has pll initialization information. but it is local variable.
-> so it is just valid in samsung_clk_register_pll2550x() function.
->
-> Signed-off-by: taikyung yu <taikyung.yu@gmail.com>
-> ---
->   drivers/clk/samsung/clk-pll.c |   61 +++++++++++++++++++++++++----------------
->   1 file changed, 37 insertions(+), 24 deletions(-)
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ sound/soc/samsung/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As far as I can see all the data from clk_init_data struct are copied by 
-clk_register(), so I'm not sure if there is any reason why current code 
-could be wrong.
-
-Have you actually observed any issues without this patch?
-
-Best regards,
-Tomasz
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 454f41c..7ea576c 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -145,7 +145,7 @@ config SND_SOC_SAMSUNG_RX1950_UDA1380
+ 
+ config SND_SOC_SAMSUNG_SMDK_WM9713
+ 	tristate "SoC AC97 Audio support for SMDK with WM9713"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310 || MACH_SMDKC210)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310)
+ 	select SND_SOC_WM9713
+ 	select SND_SAMSUNG_AC97
+ 	help
+-- 
+1.8.4.2
