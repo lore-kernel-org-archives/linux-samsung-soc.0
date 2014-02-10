@@ -1,140 +1,69 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/12] ARM: S3C24XX: convert s3c2410, s3c2440 s3c2442
- to common clock framework
-Date: Sun, 09 Feb 2014 20:56:30 +0100
-Message-ID: <52F7DD6E.8070303@gmail.com>
-References: <201312131356.40755.heiko@sntech.de>
+From: Yijing Wang <wangyijing@huawei.com>
+Subject: Re: [PATCH 2/2] clocksource: Make clocksource register functions
+ void
+Date: Mon, 10 Feb 2014 09:13:55 +0800
+Message-ID: <52F827D3.5080906@huawei.com>
+References: <1390461166-36440-1-git-send-email-wangyijing@huawei.com> <52E0C889.6000106@prisktech.co.nz> <063D6719AE5E284EB5DD2968C1650D6D46489C@AcuExch.aculab.com> <alpine.DEB.2.02.1402052139560.24986@ionos.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:37910 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751788AbaBIT4k (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Feb 2014 14:56:40 -0500
-Received: by mail-ee0-f42.google.com with SMTP id b15so2550424eek.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Feb 2014 11:56:39 -0800 (PST)
-In-Reply-To: <201312131356.40755.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <alpine.DEB.2.02.1402052139560.24986@ionos.tec.linutronix.de>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Thomas Gleixner <tglx@linutronix.de>, David Laight <David.Laight@ACULAB.COM>
+Cc: 'Tony Prisk' <linux@prisktech.co.nz>, John Stultz <john.stultz@linaro.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux@lists.openrisc.net" <linux@openrisc.net>, Sekhar Nori <nsekhar@ti.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, Daniel Walker <dwalker@fifo99.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Jonas Bonn <jonas@southpole.se>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Richard Weinberger <richard@nod.at>, "x86@kernel.org" <x86@kernel.org>, Tony Lindgren <tony@atomide.com>, Ingo Molnar <mingo@redhat.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@v>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, t.figa@samsung.com
-Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Heiko,
+On 2014/2/6 4:40, Thomas Gleixner wrote:
+> Yijing,
+> 
+> On Thu, 23 Jan 2014, David Laight wrote:
+> 
+>> From: Linuxppc-dev Tony Prisk
+>>> On 23/01/14 20:12, Yijing Wang wrote:
+>>>> Currently, clocksource_register() and __clocksource_register_scale()
+>>>> functions always return 0, it's pointless, make functions void.
+>>>> And remove the dead code that check the clocksource_register_hz()
+>>>> return value.
+>>> ......
+>>>> -static inline int clocksource_register_hz(struct clocksource *cs, u32 hz)
+>>>> +static inline void clocksource_register_hz(struct clocksource *cs, u32 hz)
+>>>>   {
+>>>>   	return __clocksource_register_scale(cs, 1, hz);
+>>>>   }
+>>>
+>>> This doesn't make sense - you are still returning a value on a function
+>>> declared void, and the return is now from a function that doesn't return
+>>> anything either ?!?!
+>>> Doesn't this throw a compile-time warning??
+>>
+>> It depends on the compiler.
+>> Recent gcc allow it.
+>> I don't know if it is actually valid C though.
+>>
+>> There is no excuse for it on lines like the above though.
+> 
+> Can you please resend with that fixed against 3.14-rc1 ?
 
-On 13.12.2013 13:56, Heiko St=C3=BCbner wrote:
-> This series converts the earliest s3c socs to use a clock driver base=
-d on the
-> common clock framework instead of the old Samsung clock implementatio=
-n.
->
-> The only obstacle I found was the configuration of the clkout outputs=
- in
-> the different machines. As I lack hardware test and knowledge on what=
- is
-> expected there, somebody with interest in these machines will have to
-> step up to implement the clkout configuration
-> This can for example be done in the machine_init function after
-> the platform-devices (and thus the dclk-device) are populated.
->
-> This leaves the s3c2412 soc to be converted, as it has yet another di=
-fferent
-> clock tree.
->
-> Tested on an Openmoko Neo Freerunner (S3C2442), but of course more te=
-sts
-> would be really helpful.
->
-> Heiko Stuebner (12):
->    ARM: S3C24XX: cpufreq-utils: don't write raw values to MPLLCON whe=
-n using ccf
->    dt-bindings: document s3c24xx controller for external clock output
->    clk: samsung: add clock driver for external clock outputs
->    ARM: S3C24XX: enable usage of common dclk if common clock framewor=
-k is enabled
->    ARM: S3C24XX: only store clock registers when old clock code is ac=
-tive
->    clk: samsung: add plls used by the early s3c24xx cpus
->    dt-bindings: add documentation for s3c2410 clock controller
->    clk: samsung: add clock controller driver for s3c2410, s3c2440 and=
- s3c2442
->    ARM: S3C24XX: add platform code for conversion to the common clock=
- framework
->    ARM: S3C24XX: convert s3c2440 and s3c2442 to common clock framewor=
-k
->    ARM: S3C24XX: convert s3c2410 to common clock framework
->    ARM: S3C24XX: remove legacy clock code
->
->   .../bindings/clock/samsung,s3c2410-clock.txt       |   50 ++
->   .../bindings/clock/samsung,s3c2410-dclk.txt        |   53 ++
->   arch/arm/mach-s3c24xx/Kconfig                      |   50 +-
->   arch/arm/mach-s3c24xx/Makefile                     |    6 +-
->   arch/arm/mach-s3c24xx/clock-dclk.c                 |  195 --------
->   arch/arm/mach-s3c24xx/clock-s3c2410.c              |  285 ---------=
---
->   arch/arm/mach-s3c24xx/clock-s3c2440.c              |  217 --------
->   arch/arm/mach-s3c24xx/clock-s3c244x.c              |  141 ------
->   arch/arm/mach-s3c24xx/common.c                     |   45 +-
->   arch/arm/mach-s3c24xx/common.h                     |   11 +-
->   arch/arm/mach-s3c24xx/cpufreq-utils.c              |   13 +
->   arch/arm/mach-s3c24xx/include/mach/regs-clock.h    |   18 -
->   arch/arm/mach-s3c24xx/include/mach/regs-gpio.h     |    3 -
->   arch/arm/mach-s3c24xx/mach-amlm5900.c              |    9 +-
->   arch/arm/mach-s3c24xx/mach-anubis.c                |   15 +-
->   arch/arm/mach-s3c24xx/mach-at2440evb.c             |   10 +-
->   arch/arm/mach-s3c24xx/mach-bast.c                  |   15 +-
->   arch/arm/mach-s3c24xx/mach-gta02.c                 |    8 +-
->   arch/arm/mach-s3c24xx/mach-h1940.c                 |   10 +-
->   arch/arm/mach-s3c24xx/mach-mini2440.c              |   10 +-
->   arch/arm/mach-s3c24xx/mach-n30.c                   |   12 +-
->   arch/arm/mach-s3c24xx/mach-nexcoder.c              |   10 +-
->   arch/arm/mach-s3c24xx/mach-osiris.c                |   15 +-
->   arch/arm/mach-s3c24xx/mach-otom.c                  |   10 +-
->   arch/arm/mach-s3c24xx/mach-qt2410.c                |    9 +-
->   arch/arm/mach-s3c24xx/mach-rx1950.c                |   15 +-
->   arch/arm/mach-s3c24xx/mach-rx3715.c                |   10 +-
->   arch/arm/mach-s3c24xx/mach-smdk2410.c              |    9 +-
->   arch/arm/mach-s3c24xx/mach-smdk2440.c              |   10 +-
->   arch/arm/mach-s3c24xx/mach-tct_hammer.c            |    9 +-
->   arch/arm/mach-s3c24xx/mach-vr1000.c                |   15 +-
->   arch/arm/mach-s3c24xx/pm.c                         |   13 +-
->   arch/arm/mach-s3c24xx/s3c2410.c                    |   56 ---
->   arch/arm/mach-s3c24xx/s3c2442.c                    |  111 -----
->   arch/arm/mach-s3c24xx/s3c244x.c                    |   59 +--
->   drivers/clk/samsung/Makefile                       |    2 +
->   drivers/clk/samsung/clk-pll.c                      |  182 +++++++
->   drivers/clk/samsung/clk-pll.h                      |    3 +
->   drivers/clk/samsung/clk-s3c2410-dclk.c             |  517 +++++++++=
-+++++++++++
->   drivers/clk/samsung/clk-s3c2410.c                  |  428 +++++++++=
-+++++++
->   include/dt-bindings/clock/samsung,s3c2410-clock.h  |   64 +++
->   include/dt-bindings/clock/samsung,s3c2410-dclk.h   |   28 ++
->   42 files changed, 1575 insertions(+), 1176 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/samsung,=
-s3c2410-clock.txt
->   create mode 100644 Documentation/devicetree/bindings/clock/samsung,=
-s3c2410-dclk.txt
->   delete mode 100644 arch/arm/mach-s3c24xx/clock-dclk.c
->   delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2410.c
->   delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2440.c
->   delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c244x.c
->   create mode 100644 drivers/clk/samsung/clk-s3c2410-dclk.c
->   create mode 100644 drivers/clk/samsung/clk-s3c2410.c
->   create mode 100644 include/dt-bindings/clock/samsung,s3c2410-clock.=
-h
->   create mode 100644 include/dt-bindings/clock/samsung,s3c2410-dclk.h
->
+OK, I will resend later.
 
-=46or patches 4, 5, 9, 10, 11, 12:
+Thanks!
+Yijing.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-=46or patches 6, 7:
+> 
+> .
+> 
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
 
-Best regards,
-Tomasz
+-- 
+Thanks!
+Yijing
