@@ -1,101 +1,134 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Consolidate Kconfig entries
-Date: Mon, 10 Feb 2014 10:20:23 +0530
-Message-ID: <CAK9yfHxi7EPTdeMoLYHrnomC3w5OpEux6vOHPeOEKhZg9Jw8+g@mail.gmail.com>
-References: <1391687996-26011-1-git-send-email-sachin.kamat@linaro.org>
-	<5101685.tPb8PWOH5Q@amdc1032>
-	<CAOesGMi8SUXzxJSW4yoywLQn0C7HmPL81iCQqxg9uZp_jN7yPQ@mail.gmail.com>
-	<7214831.iPsDTEq8CU@amdc1032>
-	<CAOesGMhGTVQex7vu49QnHv2HsdE7S8jz7oKY04FsT4Hg1VR7sA@mail.gmail.com>
-	<52F50ACC.3020105@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 1/2] PM / OPP: Allow boost frequency to be looked up
+ from device tree
+Date: Mon, 10 Feb 2014 08:10:51 +0100
+Message-ID: <20140210081051.05da33bd@amdc2363>
+References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
+ <1391786342-11812-2-git-send-email-thomas.ab@samsung.com>
+ <52F50346.7040707@arm.com>
+ <CAJuA9agT4PC6YOmhCwKQ=58qaGEr1qSuhTpX57ro1pEuk++Miw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:41407 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751678AbaBJEuY (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:30361 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750915AbaBJHK7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Feb 2014 23:50:24 -0500
-Received: by mail-ob0-f182.google.com with SMTP id wm4so6688081obc.41
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Feb 2014 20:50:23 -0800 (PST)
-In-Reply-To: <52F50ACC.3020105@samsung.com>
+	Mon, 10 Feb 2014 02:10:59 -0500
+In-reply-to: <CAJuA9agT4PC6YOmhCwKQ=58qaGEr1qSuhTpX57ro1pEuk++Miw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Thomas Abraham <ta.omasab@gmail.com>, Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: Nishanth Menon <nm@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 7 February 2014 22:03, Tomasz Figa <t.figa@samsung.com> wrote:
-> On 06.02.2014 19:59, Olof Johansson wrote:
->>
->> On Thu, Feb 6, 2014 at 10:43 AM, Bartlomiej Zolnierkiewicz
->> <b.zolnierkie@samsung.com> wrote:
->>
->>>>> Well, once again, seeing some numbers would be good. :)
->>>>
->>>>
->>>> What numbers do you want? Size comparisons with all SoC options on vs
->>>> only one?
->>>
->>>
->>> Yes, size comparisions with all SoCs (for given family) turned on vs
->>> only one turned on (done on kernel without this patch applied).
->>>
->>> Also size comparisons for ARCH_EXYNOS4 and ARCH_EXYNOS5 both turned
->>> on vs only ARCH_EXYNOS4 or ARCH_EXYNOS5 turned on (with this patch
->>> applied).
->>
->>
->> exynos_defconfig-based build data below.
->>
->>     text    data     bss     dec     hex filename
->> 5109986  319952  270196 5700134  56fa26 obj-tmp/vmlinux   # all 4+5 SoCs
->> enabled
->> 5088312  296912  270196 5655420  564b7c obj-tmp/vmlinux  # EXYNOS5
->> off, all EXYNOS4 SoCs enabled
->> 5088032  296896  270196 5655124  564a54 obj-tmp/vmlinux  # Only 4210
->> enabled
->> 5079205  299928  270068 5649201  563331 obj-tmp/vmlinux  # EXYNOS4
->> off, all EXYNOS5 SoCs enabled
->> 5063355  286792  270068 5620215  55c1f7 obj-tmp/vmlinux   # Only 5250
->> enabled
->> 5067815  298152  270068 5636035  55ffc3 obj-tmp/vmlinux    # Only
->> 5250+5420 enabled
->> 5053357  278480  269364 5601201  5577b1 obj-tmp/vmlinux  # Only 5440
->> enabled
->>
->> The main difference of disabling 5440 is that it removed the PCI
->> support, which explains that reduction in size.
->>
->> So, I would argue that theere might be some value in disabling whole
->> families (since it saves about 20k of text and the same of data), but
->> that there's less gain per SoC member. 5440 is an oddball in this
->> setup so it might make sense to treat it differently due to the PCI
->> aspect.
->
->
-> Well, the numbers basically represent what I expected. Thanks for checking
-> this.
+Hi Thomas, Sudeep
 
-Thanks to Olof for coming out with these numbers.
+> On Fri, Feb 7, 2014 at 9:31 PM, Sudeep Holla <Sudeep.Holla@arm.com>
+> wrote:
+> > On 07/02/14 15:19, Thomas Abraham wrote:
+> >> From: Thomas Abraham <thomas.ab@samsung.com>
+> >>
+> >> Commit 6f19efc0 ("cpufreq: Add boost frequency support in core")
+> >> adds support for CPU boost mode. This patch adds support for
+> >> finding available boost frequencies from device tree and marking
+> >> them as usable in boost mode.
+> >>
+> >> Cc: Nishanth Menon <nm@ti.com>
+> >> Cc: Lukasz Majewski <l.majewski@samsung.com>
+> >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> >> ---
+> >>  drivers/base/power/opp.c |   34 +++++++++++++++++++++++++++++++++-
+> >>  1 file changed, 33 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+> >> index fa41874..b636826 100644
+> >> --- a/drivers/base/power/opp.c
+> >> +++ b/drivers/base/power/opp.c
+> >> @@ -628,7 +628,8 @@ int dev_pm_opp_init_cpufreq_table(struct
+> >> device *dev, struct device_opp *dev_opp;
+> >>       struct dev_pm_opp *opp;
+> >>       struct cpufreq_frequency_table *freq_table;
+> >> -     int i = 0;
+> >> +     int i = 0, j, len, ret;
+> >> +     u32 *boost_freqs = NULL;
+> >>
+> >>       /* Pretend as if I am an updater */
+> >>       mutex_lock(&dev_opp_list_lock);
+> >> @@ -650,10 +651,35 @@ int dev_pm_opp_init_cpufreq_table(struct
+> >> device *dev, return -ENOMEM;
+> >>       }
+> >>
+> >> +     if (of_find_property(dev->of_node, "boost-frequency", &len))
+> >> {
+> >> +             if (len == 0 || (len & (sizeof(u32) - 1)) != 0) {
+> >> +                     dev_err(dev, "%s: invalid boost
+> >> frequency\n", __func__);
+> >> +                     ret = -EINVAL;
+> >> +                     goto err_boost;
+> >> +             }
+> >> +
+> >> +             boost_freqs = kzalloc(len, GFP_KERNEL);
+> >> +             if (!boost_freqs) {
+> >> +                     dev_warn(dev, "%s: no memory for boost freq
+> >> table\n",
+> >> +                                     __func__);
+> >> +                     ret = -ENOMEM;
+> >> +                     goto err_boost;
+> >> +             }
+> >> +             of_property_read_u32_array(dev->of_node,
+> >> "boost-frequency",
+> >> +                     boost_freqs, len / sizeof(u32));
+> >> +     }
+> >> +
+> >>       list_for_each_entry(opp, &dev_opp->opp_list, node) {
+> >>               if (opp->available) {
+> >>                       freq_table[i].driver_data = i;
+> >>                       freq_table[i].frequency = opp->rate / 1000;
+> >> +                     for (j = 0; j < len / sizeof(u32) &&
+> >> boost_freqs; j++) {
+> >> +                             if (boost_freqs[j] ==
+> >> freq_table[i].frequency) {
+> >> +                                     freq_table[i].driver_data =
+> >> +
+> >> CPUFREQ_BOOST_FREQ;
+> >> +                                     break;
+> >> +                             }
+> >> +                     }
+> >>                       i++;
+> >>               }
+> >>       }
+> > IIRC you had mentioned that the boost-opp was not limited to be a
+> > cpufreq, but this change seems to be cpufreq only.
+> 
+> Yes, but as you have initiated the discussion on extending the OPP
+> binding, this has been limited to cpufreq only. If the new OPP library
+> has support for listing boost frequency, this can be migrated to the
+> new OPP libaray.
 
->So I second this patch even more now,
+I agree here with Thomas. Since we are fixing regression here, we shall
+use the existing OPP API. When agreement for the future OPPs format is
+in place, we will port the boost OPPs to it.
 
-Thanks Tomasz :)
+> 
+> Thanks,
+> Thomas.
+> 
+> >
+> > Regards,
+> > Sudeep
+> >
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-> but maybe let's change it a bit
-> and introduce third entry for Exynos5440, since it doesn't really belong to
-> either of ARCHs. Candidates that come to my mind are ARCH_EXYNOS5440 (seems
-> to specific) or ARCH_EXYNOS5_SERVER. Feel free to suggest anything better,
-> though.
 
-Though Exynos5440 belongs to the Exynos5 family, it is different in a
-few ways and hence
-I preferred to keep it as a separate entry for now. I agree with your
-suggestion to have a third
-ARCH category but I would prefer to wait for a while until we have one
-more candidate for this
-category so that we have a bit more data for naming and grouping.
 
 -- 
-With warm regards,
-Sachin
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
