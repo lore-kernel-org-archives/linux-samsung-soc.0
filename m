@@ -1,126 +1,55 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v3 1/7] cpufreq: cpufreq-cpu0: allow use of optional boost
- mode frequencies
-Date: Mon, 10 Feb 2014 09:20:20 +0100
-Message-ID: <20140210092020.768f1c31@amdc2363>
-References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com>
- <1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v3] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Mon, 10 Feb 2014 13:57:37 +0530
+Message-ID: <52F88D79.9040203@ti.com>
+References: <1386151747-3209-2-git-send-email-gautam.vivek@samsung.com> <1390225363-24210-1-git-send-email-gautam.vivek@samsung.com> <52F39710.80101@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52F39710.80101@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, balbi@ti.com, k.debski@samsung.com, s.nawrocki@samsung.com, jwerner@chromium.org, jg1.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
+Hi,
 
-> From: Thomas Abraham <thomas.ab@samsung.com>
+On Thursday 06 February 2014 07:37 PM, Tomasz Figa wrote:
+> Hi Vivek,
 > 
-> Lookup for the optional boost-frequency property in cpu0 node and if
-> available, enable support for boost mode frequencies. The frequencies
-> usable in boost mode are determined while preparing the cpufreq table
-> from the list of operating points available.
+> This patch is just adding the PHY driver. I would also like to look at some
+> users of it, to see how this works when put together.
 > 
-> In addition to this, enable the CPU_FREQ_BOOST_SW config option for
-> this driver by default. On platforms that do not support boost mode,
-> the boost mode frequencies will not be specified in cpu0 node and
-> hence the boost mode support will not be enabled. Since this driver
-> anyways depends on THERMAL config option, it is safe to enable
-> CPU_FREQ_BOOST_SW config option as default.
-
-I think that you introduce some implicit dependency here.
-
-I don't like the idea to enable CPU_FREQ_BOOST_SW by default and depend
-on other option (THERMAL in this case).
- 
-I think that user shall feel free to explicitly enable or disable boost
-from menuconfig.
-
+> For now, please see my comments inline.
 > 
-> Cc: Shawn Guo <shawn.guo@linaro.org>
-> Cc: Lukasz Majewski <l.majewski@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt |    2 ++
->  drivers/cpufreq/Kconfig                                    |    1 +
->  drivers/cpufreq/cpufreq-cpu0.c                             |    3 +++
->  3 files changed, 6 insertions(+)
+> On 20.01.2014 14:42, Vivek Gautam wrote:
+>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>> The new driver uses the generic PHY framework and will interact
+>> with DWC3 controller present on Exynos5 series of SoCs.
+>> Thereby, removing old phy-samsung-usb3 driver and related code
+>> used untill now which was based on usb/phy framework.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> ---
+>>
+>> Changes from v2:
+>> 1) Added support for multiple PHYs (UTMI+ and PIPE3) and
+>>     related changes in the driver structuring.
 > 
-> diff --git
-> a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
-> b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt index
-> f055515..60f321a 100644 ---
-> a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt +++
-> b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt @@ -19,6
-> +19,8 @@ Optional properties:
->  - cooling-min-level:
->  - cooling-max-level:
->       Please refer to
-> Documentation/devicetree/bindings/thermal/thermal.txt. +-
-> boost-frequency:
-> +     Please refer to
-> Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt 
->  Examples:
->  
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 4b029c0..52cc704 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -187,6 +187,7 @@ config GENERIC_CPUFREQ_CPU0
->  	tristate "Generic CPU0 cpufreq driver"
->  	depends on HAVE_CLK && REGULATOR && OF && THERMAL &&
-> CPU_THERMAL select PM_OPP
-> +	select CPU_FREQ_BOOST_SW
->  	help
->  	  This adds a generic cpufreq driver for CPU0 frequency
-> management. It supports both uniprocessor (UP) and symmetric
-> multiprocessor (SMP) diff --git a/drivers/cpufreq/cpufreq-cpu0.c
-> b/drivers/cpufreq/cpufreq-cpu0.c index 0c12ffc..06539eb 100644
-> --- a/drivers/cpufreq/cpufreq-cpu0.c
-> +++ b/drivers/cpufreq/cpufreq-cpu0.c
-> @@ -195,6 +195,9 @@ static int cpu0_cpufreq_probe(struct
-> platform_device *pdev) transition_latency += ret * 1000;
->  	}
->  
-> +	if (of_find_property(cpu_dev->of_node, "boost-frequency",
-> NULL))
-> +		cpu0_cpufreq_driver.boost_supported = true;
-> +
+> I'm a bit skeptical about this separation. Can the PHY operate with just the
+> UTMI+ or PIPE3 part enabled alone without the other? Can any PHY consumer
+> operate this way?
 
-This is also a bit misleading. Here you assume, that boost is supported
-when somebody define "boost-frequency" DTS attribute. Conceptually the
-boost is supported when user explicitly selects
-CONFIG_CPU_FREQ_BOOST_SW.
+Theoretically yes. If the USB controller should operate only in high-speed
+mode, the PIPE3 part is not required at all. However for super speed mode both
+PIPE3 part and UTMI part should be enabled. Maybe it doesn't work that way with
+all SoCs because of some HW bug.
+> 
+> Introducing separation of something that can't exist alone doesn't add any
+> value, but instead makes things more difficult to work with. Of course, it's
 
+IMO separating it into different parts adds more clarity to the driver.
 
-I would prefer to see approach similar to the one now found at
-exynos-cpufreq.c exynos_driver struct:
-
-static struct cpufreq_driver cpu0_cpufreq_driver = {
-	.flags = CPUFREQ_STICKY,
-	.verify = cpu0_verify_speed,
-	.target = cpu0_set_target,
-	.get = cpu0_get_speed,
-#ifdef CONFIG_CPU_FREQ_BOOST_SW
-	.boost_supported = true,
-#endif
-	... other fields ...
-
-and also, please remove references to
-CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW flag since it will not be used
-after the exynos cpufreq clean up.
-
->  	ret = cpufreq_register_driver(&cpu0_cpufreq_driver);
->  	if (ret) {
->  		pr_err("failed register driver: %d\n", ret);
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Thanks
+Kishon
