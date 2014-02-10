@@ -1,112 +1,121 @@
 From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 2/2] Documentation: devicetree: Add boost-frequency
- binding to list boost mode frequency
-Date: Mon, 10 Feb 2014 08:53:05 +0100
-Message-ID: <20140210085305.641e6de5@amdc2363>
-References: <1391786342-11812-1-git-send-email-thomas.ab@samsung.com>
- <1391786342-11812-3-git-send-email-thomas.ab@samsung.com>
- <52F50698.4060305@arm.com> <52F509BD.70903@arm.com>
- <CAGo_u6raZY0sKdDn4d92SKpi=eqUpf23vW8K_bEi-v62V2jdPA@mail.gmail.com>
- <52F51888.5010608@arm.com>
- <CAGo_u6ofC4NNPiTNcSnXUvT3RZJo54=XyjetR-ok5hCBrVZkKg@mail.gmail.com>
- <52F51FCD.5000009@arm.com>
- <CAGo_u6quxExJOyY8mvCw5sDSuz=_j0YqJ6FJW+FAdaxUeqzN9Q@mail.gmail.com>
- <CAJuA9aj-LsdBiS2msOVmNRSe6mNj9QJsys9KjHZAk=9hrZOLzA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] cpufreq: cpufreq-cpu0: allow use of optional boost
+ mode frequencies
+Date: Mon, 10 Feb 2014 09:20:20 +0100
+Message-ID: <20140210092020.768f1c31@amdc2363>
+References: <1391788548-13056-1-git-send-email-thomas.ab@samsung.com>
+ <1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAJuA9aj-LsdBiS2msOVmNRSe6mNj9QJsys9KjHZAk=9hrZOLzA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <1391788548-13056-2-git-send-email-thomas.ab@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
 To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Nishanth Menon <nm@ti.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "t.figa@samsung.com" <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas, Sudeep,
+Hi Thomas,
 
-> On Sat, Feb 8, 2014 at 1:11 AM, Nishanth Menon <nm@ti.com> wrote:
-> > On Fri, Feb 7, 2014 at 12:02 PM, Sudeep Holla
-> > <Sudeep.Holla@arm.com> wrote:
-> >> On 07/02/14 17:37, Nishanth Menon wrote:
-> >>> On Fri, Feb 7, 2014 at 11:31 AM, Sudeep Holla
-> >>> <Sudeep.Holla@arm.com> wrote:
-> >>
-> >> [...]
-> >>
-> >>>> Yes I think its counter-intuitive as it's visible to the
-> >>>> userspace(list of frequencies and the boost parameters are
-> >>>> exposed through sysfs)
-> >>>
-> >>> That will be a different problem -> as currently every single
-> >>> frequency in the cpufreq list has ability to be marked as boost
-> >>> frequency - if userspace does not maintain that, then, IMHO, fix
-> >>> the userspace :D
-> >>>
-> >>
-> >> /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_frequencies
-> >> gives the list of frequencies based on the state of the boost
-> >> feature at anytime.
-> >>
-> >> Intuitively the list without boost shouldn't have any frequency
-> >> above the range when it's enabled :), that's what I was referring
-> >> to. So I am not talking about any issue with user-space
-> >> maintenance.
-> > Fair enough - but i still think it has nothing to do with dt binding
-> > itself -> and i think the discussion we've had should be good for
-> > the binding provided in this patch.. I hope.. if documentation
-> > needs a bit of better explanation to prevent a repeat of the same
-> > discussion at a later point of time, now might be a good time to
-> > add it in.
+> From: Thomas Abraham <thomas.ab@samsung.com>
 > 
-> The term boost and over-clocking have been described in the bindings
-> document as being the same. Since the term over-clocking refers to
-> running a CPU beyond normal operating frequencies, I tend to agree
-> with Sudeep that it is not intuitive if a normal operating frequency
-> is greater than a boost mode frequency.
+> Lookup for the optional boost-frequency property in cpu0 node and if
+> available, enable support for boost mode frequencies. The frequencies
+> usable in boost mode are determined while preparing the cpufreq table
+> from the list of operating points available.
 > 
-> Otherwise, when userspace does "echo 1 >
-> /sys/devices/system/cpu/cpufreq/boost", what is it supposed to mean. I
-> think the original intent of boost mode patches was to allow CPU to
-> operate at frequencies greater than the normal operating frequencies.
-> 
-> Lukasz, how would you want this to be handled?
+> In addition to this, enable the CPU_FREQ_BOOST_SW config option for
+> this driver by default. On platforms that do not support boost mode,
+> the boost mode frequencies will not be specified in cpu0 node and
+> hence the boost mode support will not be enabled. Since this driver
+> anyways depends on THERMAL config option, it is safe to enable
+> CPU_FREQ_BOOST_SW config option as default.
 
-Please consider an example:
+I think that you introduce some implicit dependency here.
 
-normal-freqs: 1400000, 1200000, 1000000, 800000, 600000, 400000, 200000
-[1]
-boost-freqs: 1700000, 1600000, 1500000. [2]
-
-All those freqs shall be represented as OPPs freq and voltage tuple.
-
-Best would be to specify all the boost-freqs as:
-boost-freqs = <1700000 1600000 1500000> to be prepared for future
-quirks or problems (or special cases which might show up latter).
-If anybody can foresee any potential threads - like platform on which
-boost freqs are 1700000 and 1500000, but not 1600000, then please share
-this information.
-
-However, I think that it would be also acceptable to specify only:
-boost-freq = <1500000> and mark all freqs greater or equal to it as
-CPUFREQ_BOOST_FREQ.
-
-If there aren't any potential problems, then I think the second option
-would be a good solution (we would have only one BOOST attribute stored
-at CPUs DTS node).
+I don't like the idea to enable CPU_FREQ_BOOST_SW by default and depend
+on other option (THERMAL in this case).
+ 
+I think that user shall feel free to explicitly enable or disable boost
+from menuconfig.
 
 > 
-> Thanks,
-> Thomas.
+> Cc: Shawn Guo <shawn.guo@linaro.org>
+> Cc: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt |    2 ++
+>  drivers/cpufreq/Kconfig                                    |    1 +
+>  drivers/cpufreq/cpufreq-cpu0.c                             |    3 +++
+>  3 files changed, 6 insertions(+)
 > 
-> >
-> > Regards,
-> > Nishanth Menon
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> diff --git
+> a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt index
+> f055515..60f321a 100644 ---
+> a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt +++
+> b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt @@ -19,6
+> +19,8 @@ Optional properties:
+>  - cooling-min-level:
+>  - cooling-max-level:
+>       Please refer to
+> Documentation/devicetree/bindings/thermal/thermal.txt. +-
+> boost-frequency:
+> +     Please refer to
+> Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt 
+>  Examples:
+>  
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 4b029c0..52cc704 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -187,6 +187,7 @@ config GENERIC_CPUFREQ_CPU0
+>  	tristate "Generic CPU0 cpufreq driver"
+>  	depends on HAVE_CLK && REGULATOR && OF && THERMAL &&
+> CPU_THERMAL select PM_OPP
+> +	select CPU_FREQ_BOOST_SW
+>  	help
+>  	  This adds a generic cpufreq driver for CPU0 frequency
+> management. It supports both uniprocessor (UP) and symmetric
+> multiprocessor (SMP) diff --git a/drivers/cpufreq/cpufreq-cpu0.c
+> b/drivers/cpufreq/cpufreq-cpu0.c index 0c12ffc..06539eb 100644
+> --- a/drivers/cpufreq/cpufreq-cpu0.c
+> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+> @@ -195,6 +195,9 @@ static int cpu0_cpufreq_probe(struct
+> platform_device *pdev) transition_latency += ret * 1000;
+>  	}
+>  
+> +	if (of_find_property(cpu_dev->of_node, "boost-frequency",
+> NULL))
+> +		cpu0_cpufreq_driver.boost_supported = true;
+> +
 
+This is also a bit misleading. Here you assume, that boost is supported
+when somebody define "boost-frequency" DTS attribute. Conceptually the
+boost is supported when user explicitly selects
+CONFIG_CPU_FREQ_BOOST_SW.
+
+
+I would prefer to see approach similar to the one now found at
+exynos-cpufreq.c exynos_driver struct:
+
+static struct cpufreq_driver cpu0_cpufreq_driver = {
+	.flags = CPUFREQ_STICKY,
+	.verify = cpu0_verify_speed,
+	.target = cpu0_set_target,
+	.get = cpu0_get_speed,
+#ifdef CONFIG_CPU_FREQ_BOOST_SW
+	.boost_supported = true,
+#endif
+	... other fields ...
+
+and also, please remove references to
+CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW flag since it will not be used
+after the exynos cpufreq clean up.
+
+>  	ret = cpufreq_register_driver(&cpu0_cpufreq_driver);
+>  	if (ret) {
+>  		pr_err("failed register driver: %d\n", ret);
 
 
 -- 
