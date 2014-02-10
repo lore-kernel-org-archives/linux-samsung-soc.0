@@ -1,59 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
-Date: Mon, 10 Feb 2014 16:02:00 +0100
-Message-ID: <52F8E9E8.8060408@samsung.com>
-References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
- <CAK9yfHx+=X+DiLe_WsiDkYonKCssPTOGqR76=+7N6eyAHXyQGQ@mail.gmail.com>
- <52CFC5C9.4000006@samsung.com>
- <CAK9yfHxnrM--A_SZSBWzQ2B7zrtU+=n77H61bzq4ddtLrpHMBg@mail.gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 14/28] Remove MACH_SMDKC210
+Date: Mon, 10 Feb 2014 16:30:42 +0100
+Message-ID: <1392046242.3585.41.camel@x220>
+References: <1391971686-9517-1-git-send-email-richard@nod.at>
+	 <1391971686-9517-15-git-send-email-richard@nod.at>
+	 <20140210114154.GQ1757@sirena.org.uk> <1392039072.3585.15.camel@x220>
+	 <20140210141255.GI1757@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45231 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751770AbaBJPCI (ORCPT
+Received: from cpsmtpb-ews02.kpnxchange.com ([213.75.39.5]:55719 "EHLO
+	cpsmtpb-ews02.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751831AbaBJPao (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Feb 2014 10:02:08 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N0S00A1SCFD2NB0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Feb 2014 15:02:01 +0000 (GMT)
-In-reply-to: <CAK9yfHxnrM--A_SZSBWzQ2B7zrtU+=n77H61bzq4ddtLrpHMBg@mail.gmail.com>
+	Mon, 10 Feb 2014 10:30:44 -0500
+In-Reply-To: <20140210141255.GI1757@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On 30/01/14 05:50, Sachin Kamat wrote:
-> On 10 January 2014 15:34, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->> > On 08/01/14 05:44, Sachin Kamat wrote:
->>> >> Hi Sylwester,
->>> >>
->>> >> On 7 January 2014 17:33, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->>>> >>> Ensure clk->kref is dereferenced only when clk is not NULL.
->>>> >>>
->>>> >>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>>> >>> ---
->>>> >>> Hi Sachin,
->>>> >>>
->>>> >>> please try if this patch fixes the exyno5420 boot crash.
->>> >>
->>> >> Confirmed that this patch works fine on 5420 as well as already
->>> >> working 4210 and 5250 boards.
->>> >> Thanks for the quick fix.
->>> >>
->>> >> Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
->> >
->> > Thanks Sachin. Mike, it seems we need this patch on top of
->> > my clk-unregister branch. Sorry for overlooking this issue.
->> > Could you add the $subject patch to your clk-next tree ?
->
-> Gentle ping Mike. Hope we can have this patch in rc-2.
+On Mon, 2014-02-10 at 14:12 +0000, Mark Brown wrote:
+> On Mon, Feb 10, 2014 at 02:31:12PM +0100, Paul Bolle wrote:
+> > If so, to be absolutely sure we start from the same point: do you agree
+> > that the above line now effectively reads
+> >     depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || false || false)
+> 
+> > because there's neither a Kconfig symbol MACH_SMDKV310 nor a Kconfig
+> > symbol MACH_SMDKC210?
+> 
+> Yes, that's correct.  Now, like I say think about what the symbol was
+> there for in the first place.
 
-A gentle reminder, this patch is still not in current -rc and is required
-to fix booting of some exynos platforms.
+So, next step: the Kconfig symbols MACH_SMDKV310 and MACH_SMDKC210 were
+removed in commit 383ffda2fa ("ARM: EXYNOS: no more support non-DT for
+EXYNOS SoCs"). That commit was part of v3.11. Correct?
 
-Thanks,
-Sylwester
+Thanks for your patience.
+
+
+Paul Bolle
