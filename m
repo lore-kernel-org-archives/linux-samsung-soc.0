@@ -1,69 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
+From: Paul Bolle <pebolle@tiscali.nl>
 Subject: Re: [PATCH 14/28] Remove MACH_SMDKC210
-Date: Mon, 10 Feb 2014 11:41:54 +0000
-Message-ID: <20140210114154.GQ1757@sirena.org.uk>
+Date: Mon, 10 Feb 2014 14:31:12 +0100
+Message-ID: <1392039072.3585.15.camel@x220>
 References: <1391971686-9517-1-git-send-email-richard@nod.at>
  <1391971686-9517-15-git-send-email-richard@nod.at>
+ <20140210114154.GQ1757@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qd/SZIFVu+MYwfCR"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39898 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752337AbaBJLmZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Feb 2014 06:42:25 -0500
-Content-Disposition: inline
-In-Reply-To: <1391971686-9517-15-git-send-email-richard@nod.at>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20140210114154.GQ1757@sirena.org.uk>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Richard Weinberger <richard@nod.at>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Richard Weinberger <richard@nod.at>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+
+On Mon, 2014-02-10 at 11:41 +0000, Mark Brown wrote:
+> On Sun, Feb 09, 2014 at 07:47:52PM +0100, Richard Weinberger wrote:
+> Please fix whatever script you're using to generate your mails, it's
+> generating corrupt headers.
+
+I think Richard's mail didn't end up on lkml. But it's pretty clear what
+it must have looked like.
+
+> >  config SND_SOC_SAMSUNG_SMDK_WM9713
+> >  	tristate "SoC AC97 Audio support for SMDK with WM9713"
+> > -	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310 || MACH_SMDKC210)
+> > +	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310)
+> 
+> Like I said to Paul this isn't fixing the actual issue - think about why
+> the symbol was there in the first place and why it was removed.  There
+> is a problem here but this would make it less likely that it would be
+> properly fixed.
+
+Would you mind going through this one step at a time, just to make sure
+_I_ understand what it is that you'd like to see?
+
+If so, to be absolutely sure we start from the same point: do you agree
+that the above line now effectively reads
+    depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || false || false)
+
+because there's neither a Kconfig symbol MACH_SMDKV310 nor a Kconfig
+symbol MACH_SMDKC210?
 
 
---qd/SZIFVu+MYwfCR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Feb 09, 2014 at 07:47:52PM +0100, Richard Weinberger wrote:
-
-> The symbol is an orphan, get rid of it.
-
-Please fix whatever script you're using to generate your mails, it's
-generating corrupt headers.  Please also use subject lines consistent
-with the rest of the subsystem - between the two I very nearly just
-deleted this unread, it's only Paul's mail that made me look.
-
->  config SND_SOC_SAMSUNG_SMDK_WM9713
->  	tristate "SoC AC97 Audio support for SMDK with WM9713"
-> -	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310 || MACH_SMDKC210)
-> +	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310)
-
-Like I said to Paul this isn't fixing the actual issue - think about why
-the symbol was there in the first place and why it was removed.  There
-is a problem here but this would make it less likely that it would be
-properly fixed.
-
---qd/SZIFVu+MYwfCR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS+Lr+AAoJELSic+t+oim9vxYP/1rHH0BvAyI3uM47spId+ACF
-8nArourCnAlMvprRcqnJhIwUzOmgLof9gIV3wjFakcSNzE/80zKE5fhvUMfoEmAa
-Wvq08oOSJyGn3QUBBKInK36CXyB7M7AJQvTwj+HuhntyTmeaYx1Bvdh39SZEaiOd
-g7lkrHMvD/NuKOn4jx6LnQtx0Uik8Y3RkkVNvtErUOjqyPDOwPBgnICU8832b+nb
-NU7p8TNUgwAYwE86j/GJK40IrnWHz1uYMkHHzhvDJJDqzy7ZPTdcoO88xiDDMWf5
-FW5bLNyOrwmCOuCqwXoPqKd59kYzesi3lpUsaf/n+xLwBvasMH+L8BD9zdjQCY69
-ac8IRC7yzVpF78ZKCCj+GjPPBCovhqPbCW28ELMMS59ynU+QiezqKga8RaoydqPt
-JL0n6nGFTn4eLImJJfADryos6bWTYVea2o1CQYnzInmqBqclX+M323vAKldwEH41
-zkRN+HmbnfCVpqJyc8FJhJ7KjQXV5cSLqCkGqC4xS/v91eWsIAMDopHITt0jif1W
-DcSFd+2MQDaAr/g4vZAcCm25abC6mtfaoNxeR6hcyuL58JZADdDZhHowbZ1gzOvt
-OhjjDn8/l8WpzKjEUCr0reaVo71546kzpareUx6fY6lhKlI/vD3fkwa6MsAXUwas
-6zCaFAG+cpKZ+eBb5uZo
-=Qh7R
------END PGP SIGNATURE-----
-
---qd/SZIFVu+MYwfCR--
+Paul Bolle
