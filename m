@@ -1,69 +1,62 @@
-From: Yijing Wang <wangyijing@huawei.com>
-Subject: Re: [PATCH 2/2] clocksource: Make clocksource register functions
- void
-Date: Mon, 10 Feb 2014 09:13:55 +0800
-Message-ID: <52F827D3.5080906@huawei.com>
-References: <1390461166-36440-1-git-send-email-wangyijing@huawei.com> <52E0C889.6000106@prisktech.co.nz> <063D6719AE5E284EB5DD2968C1650D6D46489C@AcuExch.aculab.com> <alpine.DEB.2.02.1402052139560.24986@ionos.tec.linutronix.de>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 04/28] Remove EXYNOS_DEV_SYSMMU
+Date: Mon, 10 Feb 2014 10:02:33 +0530
+Message-ID: <CAK9yfHzP0ekboc-yi6FHvR3_rRiqcLC18pE2UynpxGYO0mUOsw@mail.gmail.com>
+References: <1391971686-9517-1-git-send-email-richard@nod.at>
+	<1391971686-9517-5-git-send-email-richard@nod.at>
+	<1391976496.25855.19.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <alpine.DEB.2.02.1402052139560.24986@ionos.tec.linutronix.de>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Thomas Gleixner <tglx@linutronix.de>, David Laight <David.Laight@ACULAB.COM>
-Cc: 'Tony Prisk' <linux@prisktech.co.nz>, John Stultz <john.stultz@linaro.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux@lists.openrisc.net" <linux@openrisc.net>, Sekhar Nori <nsekhar@ti.com>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, Daniel Walker <dwalker@fifo99.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Jonas Bonn <jonas@southpole.se>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Richard Weinberger <richard@nod.at>, "x86@kernel.org" <x86@kernel.org>, Tony Lindgren <tony@atomide.com>, Ingo Molnar <mingo@redhat.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@v>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:50736 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751556AbaBJEce (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 9 Feb 2014 23:32:34 -0500
+Received: by mail-ob0-f173.google.com with SMTP id vb8so6744117obc.18
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Feb 2014 20:32:33 -0800 (PST)
+In-Reply-To: <1391976496.25855.19.camel@x220>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Richard Weinberger <richard@nod.at>, Joerg Roedel <joro@8bytes.org>, "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>, open list <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 2014/2/6 4:40, Thomas Gleixner wrote:
-> Yijing,
-> 
-> On Thu, 23 Jan 2014, David Laight wrote:
-> 
->> From: Linuxppc-dev Tony Prisk
->>> On 23/01/14 20:12, Yijing Wang wrote:
->>>> Currently, clocksource_register() and __clocksource_register_scale()
->>>> functions always return 0, it's pointless, make functions void.
->>>> And remove the dead code that check the clocksource_register_hz()
->>>> return value.
->>> ......
->>>> -static inline int clocksource_register_hz(struct clocksource *cs, u32 hz)
->>>> +static inline void clocksource_register_hz(struct clocksource *cs, u32 hz)
->>>>   {
->>>>   	return __clocksource_register_scale(cs, 1, hz);
->>>>   }
->>>
->>> This doesn't make sense - you are still returning a value on a function
->>> declared void, and the return is now from a function that doesn't return
->>> anything either ?!?!
->>> Doesn't this throw a compile-time warning??
++cc linux-samsung-soc list
+
+On 10 February 2014 01:38, Paul Bolle <pebolle@tiscali.nl> wrote:
+> On Sun, 2014-02-09 at 19:47 +0100, Richard Weinberger wrote:
+>> The symbol is an orphan, get rid of it.
 >>
->> It depends on the compiler.
->> Recent gcc allow it.
->> I don't know if it is actually valid C though.
+>> Signed-off-by: Richard Weinberger <richard@nod.at>
+>> ---
+>>  drivers/iommu/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> There is no excuse for it on lines like the above though.
-> 
-> Can you please resend with that fixed against 3.14-rc1 ?
+>> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+>> index 79bbc21..20d062d 100644
+>> --- a/drivers/iommu/Kconfig
+>> +++ b/drivers/iommu/Kconfig
+>> @@ -178,7 +178,7 @@ config TEGRA_IOMMU_SMMU
+>>
+>>  config EXYNOS_IOMMU
+>>       bool "Exynos IOMMU Support"
+>> -     depends on ARCH_EXYNOS && EXYNOS_DEV_SYSMMU
+>> +     depends on ARCH_EXYNOS
+>>       select IOMMU_API
+>>       help
+>>         Support for the IOMMU(System MMU) of Samsung Exynos application
+>
+> I noted this one about a year ago (see
+> https://lkml.org/lkml/2013/3/5/401 ). By now I wonder whether
+> EXYNOS_IOMMU (and everything depending on it) shouldn't be removed. That
+> code has been unbuildable for at least a year now  (I have not checked
+> how much code is involved).
 
-OK, I will resend later.
 
-Thanks!
-Yijing.
+Please refer to some on-going discussion about it at [1].
 
-
-> 
-> .
-> 
-
+[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/26842
 
 -- 
-Thanks!
-Yijing
+With warm regards,
+Sachin
