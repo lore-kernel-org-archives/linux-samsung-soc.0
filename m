@@ -1,68 +1,81 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 7/7] mfd: max8998: Fix possible NULL pointer dereference
- on i2c_new_dummy error
-Date: Tue, 11 Feb 2014 12:23:46 +0000
-Message-ID: <20140211122346.GV32042@lee--X1>
-References: <1392113015-11180-1-git-send-email-k.kozlowski@samsung.com>
- <1392113015-11180-7-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 00/14] mfd/regulator/rtc: sec: Add support for S2MPS14
+Date: Tue, 11 Feb 2014 14:03:43 +0100
+Message-ID: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:45673 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752690AbaBKMXx (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:32478 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751071AbaBKNEO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Feb 2014 07:23:53 -0500
-Received: by mail-wi0-f174.google.com with SMTP id f8so4139170wiw.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Feb 2014 04:23:52 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1392113015-11180-7-git-send-email-k.kozlowski@samsung.com>
+	Tue, 11 Feb 2014 08:04:14 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Tue, 11 Feb 2014, Krzysztof Kozlowski wrote:
+Hi,
 
-> During probe the driver allocates dummy I2C device for RTC with i2c_n=
-ew_dummy() but it does not check the return value of this call.
->=20
-> In case of error (i2c_new_device(): memory allocation failure or I2C
-> address cannot be used) this function returns NULL which is later use=
-d
-> by i2c_unregister_device().
->=20
-> If i2c_new_dummy() fails for RTC device, fail also the probe for
-> main MFD driver.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/mfd/max8998.c |    4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
-> index 612ca404e150..61ea1826f8b4 100644
-> --- a/drivers/mfd/max8998.c
-> +++ b/drivers/mfd/max8998.c
-> @@ -215,6 +215,10 @@ static int max8998_i2c_probe(struct i2c_client *=
-i2c,
->  	mutex_init(&max8998->iolock);
-> =20
->  	max8998->rtc =3D i2c_new_dummy(i2c->adapter, RTC_I2C_ADDR);
-> +	if (!max8998->rtc) {
-> +		dev_err(&i2c->dev, "Failed to allocate I2C device for RTC\n");
-> +		return -ENODEV;
-> +	}
->  	i2c_set_clientdata(max8998->rtc, max8998);
-> =20
->  	max8998_irq_init(max8998);
 
-Applied, thanks.
+This patchset adds support for S2MPS14 device to the Samsung MFD driver family.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+The S2MPS14 is similar to S2MPS11 but it has fewer regulators, two
+clocks instead of three and a little different registers layout.
+
+The patchset is organized in following way:
+1. Patches from 1 to 7 clean up the S2MPS1X/S5M876X drivers and prepare
+   for adding S2MPS14 support (some symbol renaming is needed).
+2. Patches from 8 to 10 add support for S2MPS14 to the MFD and regulator
+   drivers. They depend on previous patches.
+3. Patches 11 and 12 add opmode support for S2MPS14 regulator driver.
+4. Patches 13 and 14 add support for S2MPS14 RTC and they depend on previous
+   MFD and RTC patches.
+
+Probably the best way to get everything working and merged into the linux-next
+would be to obtain ACK-s from all maintainers and to put all the patches into
+the mfd-next tree.
+
+
+The patchset is based on linux-next: next-20140211 *with* today's patch:
+mfd: sec-core: Fix possible NULL pointer dereference when i2c_new_dummy error
+
+
+TODO
+====
+Add support for S2MPS14 to the S2MPS11 clock driver. The patch
+is actually ready but it is based on the "Add support for clocks in S5M8767"
+   http://thread.gmane.org/gmane.linux.kernel/1587881/focus=1587882
+which didn't get their way into clk-next. I will wait for them.
+
+
+Krzysztof Kozlowski (14):
+  mfd: sec: Add maximum RTC register for regmap config
+  mfd: sec: Select different RTC regmaps for devices
+  mfd/rtc: sec/sec: Rename SEC* symbols to S5M
+  rtc: s5m: Remove undocumented time init on first boot
+  mfd: sec: Use consistent S2MPS11 RTC alarm interrupt indexes
+  regulator: s2mps11: Constify regulator_desc array
+  regulator: s2mps11: Choose number of supported regulators during
+    probe
+  mfd: sec: Add support for S2MPS14
+  regulator: s2mps11: Add support for S2MPS14 regulators
+  Documentation: mfd: s2mps11: Document support for S2MPS14
+  regulator: s2mps11: Add opmode for S2MPS14 regulators
+  Documentation: mfd/regulator: s2mps11: Document the "op_mode"
+    bindings
+  rtc: s5m: Support different register layout
+  rtc: s5m: Add support for S2MPS14 RTC
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   58 ++-
+ drivers/mfd/sec-core.c                            |   57 ++-
+ drivers/mfd/sec-irq.c                             |   97 ++++-
+ drivers/regulator/s2mps11.c                       |  393 +++++++++++++++++----
+ drivers/rtc/rtc-s5m.c                             |  284 ++++++++++-----
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/irq.h                   |   31 +-
+ include/linux/mfd/samsung/rtc.h                   |  132 ++++---
+ include/linux/mfd/samsung/s2mps14.h               |  169 +++++++++
+ 9 files changed, 1000 insertions(+), 222 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps14.h
+
+-- 
+1.7.9.5
