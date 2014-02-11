@@ -1,75 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 05/14] mfd: sec: Use consistent S2MPS11 RTC alarm interrupt
- indexes
-Date: Tue, 11 Feb 2014 14:03:48 +0100
-Message-ID: <1392123837-5517-6-git-send-email-k.kozlowski@samsung.com>
-References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: Re: [PATCH V4] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
+Date: Tue, 11 Feb 2014 22:15:41 +0530
+Message-ID: <CAKDJKT5PuL6RTwUC3pkZCPDVosfcX51TRmrX3tC952L2N+X43Q@mail.gmail.com>
+References: <1390928069-7313-1-git-send-email-badarkhe.manish@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:34136 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751837AbaBKNEP (ORCPT
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:53928 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752189AbaBKQpn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Feb 2014 08:04:15 -0500
-In-reply-to: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
+	Tue, 11 Feb 2014 11:45:43 -0500
+In-Reply-To: <1390928069-7313-1-git-send-email-badarkhe.manish@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, =?UTF-8?B?4KSu4KSo4KS/4KS3IOCkrOCkpuCksOCkluClhw==?= <badarkhe.manish@gmail.com>
 
-The S2MPS11 RTC has two alarms: alarm0 and alarm1 (corresponding
-interrupts are named similarly). Use consistent names for interrupts to
-limit possible errors.
+Hi Dmitry,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/mfd/sec-irq.c           |    8 ++++----
- include/linux/mfd/samsung/irq.h |    4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+On Tue, Jan 28, 2014 at 10:24 PM, Manish Badarkhe
+<badarkhe.manish@gmail.com> wrote:
+> Instead of "#ifdef CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
+> option for DT code to avoid if-deffery in code.
+>
+> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+> ---
+> Changes since V1:
+> 1.Updated code to use "IS_ENABLED" during retrieval
+>   of platform/DT data.
+>
+> Changes since V2:
+> 1.Updated code as per Dmitry's comment to give preferance to
+>   platform data.
+>
+> Changes since V3:
+> 1.Updated code to use "IS_ENABLED(CONFIG_OF)" to remove
+>   DT data retrieval function during compilation itself
+>   when CONFIG_OF option is not set.
+>
+> :100644 100644 b4513f2... a7482db... M  drivers/power/max8925_power.c
+>  drivers/power/max8925_power.c |   17 +++++------------
+>  1 file changed, 5 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
+> index b4513f2..a7482db 100644
+> --- a/drivers/power/max8925_power.c
+> +++ b/drivers/power/max8925_power.c
+> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
+>         return 0;
+>  }
+>
+> -#ifdef CONFIG_OF
+>  static struct max8925_power_pdata *
+>  max8925_power_dt_init(struct platform_device *pdev)
+>  {
+> @@ -440,9 +439,6 @@ max8925_power_dt_init(struct platform_device *pdev)
+>         int no_insert_detect;
+>         struct max8925_power_pdata *pdata;
+>
+> -       if (!nproot)
+> -               return pdev->dev.platform_data;
+> -
+>         np = of_find_node_by_name(nproot, "charger");
+>         if (!np) {
+>                 dev_err(&pdev->dev, "failed to find charger node\n");
+> @@ -468,13 +464,6 @@ max8925_power_dt_init(struct platform_device *pdev)
+>
+>         return pdata;
+>  }
+> -#else
+> -static struct max8925_power_pdata *
+> -max8925_power_dt_init(struct platform_device *pdev)
+> -{
+> -       return pdev->dev.platform_data;
+> -}
+> -#endif
+>
+>  static int max8925_power_probe(struct platform_device *pdev)
+>  {
+> @@ -483,7 +472,11 @@ static int max8925_power_probe(struct platform_device *pdev)
+>         struct max8925_power_info *info;
+>         int ret;
+>
+> -       pdata = max8925_power_dt_init(pdev);
+> +       pdata = dev_get_platdata(&pdev->dev);
+> +
+> +       if (IS_ENABLED(CONFIG_OF) && !pdata && chip->dev->of_node)
+> +               pdata = max8925_power_dt_init(pdev);
+> +
+>         if (!pdata) {
+>                 dev_err(&pdev->dev, "platform data isn't assigned to "
+>                         "power supply\n");
 
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index 4de494f51d40..e403c293b437 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -59,13 +59,13 @@ static const struct regmap_irq s2mps11_irqs[] = {
- 		.reg_offset = 1,
- 		.mask = S2MPS11_IRQ_RTC60S_MASK,
- 	},
--	[S2MPS11_IRQ_RTCA1] = {
-+	[S2MPS11_IRQ_RTCA0] = {
- 		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA1_MASK,
-+		.mask = S2MPS11_IRQ_RTCA0_MASK,
- 	},
--	[S2MPS11_IRQ_RTCA2] = {
-+	[S2MPS11_IRQ_RTCA1] = {
- 		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA2_MASK,
-+		.mask = S2MPS11_IRQ_RTCA1_MASK,
- 	},
- 	[S2MPS11_IRQ_SMPL] = {
- 		.reg_offset = 1,
-diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
-index d43b4f9e7fb2..abe1a6aae3b7 100644
---- a/include/linux/mfd/samsung/irq.h
-+++ b/include/linux/mfd/samsung/irq.h
-@@ -24,8 +24,8 @@ enum s2mps11_irq {
- 	S2MPS11_IRQ_MRB,
- 
- 	S2MPS11_IRQ_RTC60S,
-+	S2MPS11_IRQ_RTCA0,
- 	S2MPS11_IRQ_RTCA1,
--	S2MPS11_IRQ_RTCA2,
- 	S2MPS11_IRQ_SMPL,
- 	S2MPS11_IRQ_RTC1S,
- 	S2MPS11_IRQ_WTSR,
-@@ -47,7 +47,7 @@ enum s2mps11_irq {
- 
- #define S2MPS11_IRQ_RTC60S_MASK		(1 << 0)
- #define S2MPS11_IRQ_RTCA1_MASK		(1 << 1)
--#define S2MPS11_IRQ_RTCA2_MASK		(1 << 2)
-+#define S2MPS11_IRQ_RTCA0_MASK		(1 << 2)
- #define S2MPS11_IRQ_SMPL_MASK		(1 << 3)
- #define S2MPS11_IRQ_RTC1S_MASK		(1 << 4)
- #define S2MPS11_IRQ_WTSR_MASK		(1 << 5)
--- 
-1.7.9.5
+Gentle ping!!
+Please let me know, are there any review comments on this patch?
+
+Thanks
+Manish Badarkhe
