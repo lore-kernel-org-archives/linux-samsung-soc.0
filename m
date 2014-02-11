@@ -1,38 +1,149 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/7] mfd: 88pm860x: Fix I2C device resource leak on regmap init
- fail
-Date: Tue, 11 Feb 2014 11:03:30 +0100
-Message-ID: <1392113015-11180-2-git-send-email-k.kozlowski@samsung.com>
-References: <1392113015-11180-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1392113015-11180-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V2 2/3] ARM: dts: add dts files for exynos5260 SoC
+Date: Tue, 11 Feb 2014 11:04:13 +0100
+Message-ID: <52F9F59D.1090905@gmail.com>
+References: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>	<1391577375-17625-3-git-send-email-rahul.sharma@samsung.com>	<52F38C42.5030508@samsung.com> <CAPdUM4NBwXcnL2KK9Rsi46GWQz_KQsXF0EEeSmCb=wB8WfgUKQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:54298 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751738AbaBKKEY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Feb 2014 05:04:24 -0500
+In-Reply-To: <CAPdUM4NBwXcnL2KK9Rsi46GWQz_KQsXF0EEeSmCb=wB8WfgUKQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <r.sh.open@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>
 
-During probe the driver allocates dummy I2C device for companion chip
-and then allocates a regmap for it. If regmap_init_i2c() fails then the
-I2C driver (allocated with i2c_new_dummy()) is not freed and this
-resource leaks.
+Hi Rahul,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: stable@vger.kernel.org
----
- drivers/mfd/88pm860x-core.c |    1 +
- 1 file changed, 1 insertion(+)
+On 11.02.2014 06:22, Rahul Sharma wrote:
+> Hi Tomasz,
+>
+> On 6 February 2014 18:51, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Rahul, Pankaj, Arun,
+>>
+>> [adding linux-arm-kernel, devicetree MLs and DT people on Cc]
+>>
+>> I think it's good time to stop accepting DTS files like this and force new
+>> ones to use the proper structure with soc node, labels for every node and
+>> node references.
+>
+> I am unable to find information on SoC node and grouping inside SoC node. Please
+> share some pointers.
 
-diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
-index e456be9a7c67..bcfc9e85b4a0 100644
---- a/drivers/mfd/88pm860x-core.c
-+++ b/drivers/mfd/88pm860x-core.c
-@@ -1190,6 +1190,7 @@ static int pm860x_probe(struct i2c_client *client,
- 			ret = PTR_ERR(chip->regmap_companion);
- 			dev_err(&chip->companion->dev,
- 				"Failed to allocate register map: %d\n", ret);
-+			i2c_unregister_device(chip->companion);
- 			return ret;
- 		}
- 		i2c_set_clientdata(chip->companion, chip);
--- 
-1.7.9.5
+Well, there is not much information needed about this. Basically all the 
+devices built into the SoC should be listed under respective bus nodes 
+or a single soc node, instead of root level. Such node should be a 
+"simple-bus" and just group the components together to separate 
+board-specific devices (which are still at root level) from SoC devices.
+
+Even though it might seem useless, it improves DT readability a bit and 
+still most of the platforms use this approach, so for consistency, 
+Exynos should use too.
+
+Just for reference, back in April 2013, in his review of S3C64xx DT 
+series [1], Rob Herring requested that we don't submit any new device 
+trees using flat approach and start using bus hierarchy.
+
+[1] 
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-April/163659.html
+
+>>
+>>> +               spi0_bus: spi0-bus {
+>>> +                       samsung,pins = "gpa2-0", "gpa2-1", "gpa2-2",
+>>> "gpa2-3";
+>>
+>>
+>> What is the reason for SPI0 to have 4 pins, while SPI1 has just 3?
+>>
+>
+> I should align SPI1 with SPI0.
+>
+
+Are you sure that SPI0 is the correct one? SPI usually uses four pins - 
+SDI, SDO, SCK and nCS, but we always used to treat nCS as a simple GPIO, 
+due to the fact that the controller can only support one dedicated chip 
+select and with direct GPIO control you can have more.
+
+What is the fourth pin here?
+
+>>
+>>> +               cpu@1 {
+>>> +                       device_type = "cpu";
+>>> +                       compatible = "arm,cortex-a15";
+>>> +                       reg = <1>;
+>>> +                       cci-control-port = <&cci_control1>;
+>>> +               };
+>>> +               cpu@100 {
+>>> +                       device_type = "cpu";
+>>> +                       compatible = "arm,cortex-a7";
+>>> +                       reg = <0x100>;
+>>> +                       cci-control-port = <&cci_control0>;
+>>> +               };
+>>> +               cpu@101 {
+>>> +                       device_type = "cpu";
+>>> +                       compatible = "arm,cortex-a7";
+>>> +                       reg = <0x101>;
+>>> +                       cci-control-port = <&cci_control0>;
+>>> +               };
+>>> +               cpu@102 {
+>>> +                       device_type = "cpu";
+>>> +                       compatible = "arm,cortex-a7";
+>>> +                       reg = <0x102>;
+>>> +                       cci-control-port = <&cci_control0>;
+>>> +               };
+>>> +               cpu@103 {
+>>> +                       device_type = "cpu";
+>>> +                       compatible = "arm,cortex-a7";
+>>> +                       reg = <0x103>;
+>>> +                       cci-control-port = <&cci_control0>;
+>>> +               };
+>>> +       };
+>>> +
+>>> +       cmus {
+>>> +               #address-cells = <1>;
+>>> +               #size-cells = <1>;
+>>> +               ranges;
+>>> +
+>>
+>>
+>> I don't think there is a need to group these nodes under a parent node that
+>> doesn't give any additional information, especially when the CMUs are
+>> scattered trough the whole address space, while we'd like to keep the nodes
+>> ordered by their addresses, as most platforms do.
+>>
+>
+> This is exactly the same case as "cpus". I mean, "cpus" also doesn't provide
+> any common information about child cpu nodes. This looks to me as a logical
+> grouping and I have implemented same thing for cmu nodes.
+> I am ok with removing this grouping Just want to understand the rational behind
+> grouping cpus which seems similar to cmus.
+
+The "cpus" node is a defined standard node that should be present at 
+root of device tree and include subnodes for all CPUs. This is a 
+standard binding defined for low level code to be able to simply find 
+nodes of all CPUs in the system - so they can expect that at /cpus node 
+all the subnodes are subsequent CPUs.
+
+> Similarly "soc" is just a logical entity used to group SoC elements which looks
+> optional to me. What are we achieving with this? Please help me in understanding
+> this better.
+
+Also "soc" has a slightly wider meaning. It is a node grouping all nodes 
+from a single address space - the node specifies #address-cells and 
+#size-cells of this address space and all the devices under this 
+"simple-bus" can be accessed using addresses in this format. In 
+addition, it separates board-level devices from generic SoC devices.
+
+Now, in case of "cmus", the only purpose is to group all CMU nodes 
+together and, while this improves readability a bit, it doesn't make the 
+DT better express the hardware topology, because the CMUs in the 
+hardware are in fact scattered through the whole address space, not 
+under a contiguous block of it, as the grouping would suggest.
+
+Best regards,
+Tomasz
