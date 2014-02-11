@@ -1,54 +1,130 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: smdk_wm8994: Fix typo "wm8894"
-Date: Tue, 11 Feb 2014 16:46:08 +0000
-Message-ID: <20140211164608.GS13533@sirena.org.uk>
-References: <1392067531.27939.19.camel@x220>
+From: Kukjin Kim <kgene.kim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] iommu/exynos: Remove driver
+Date: Tue, 11 Feb 2014 11:51:09 +0530
+Message-ID: <CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
+References: <1391716317-20300-1-git-send-email-olof@lixom.net>
+	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
+	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+	<52F4E481.3050902@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="daC8KDjlMyCcZyAo"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40463 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750779AbaBKQ7Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Feb 2014 11:59:16 -0500
-Content-Disposition: inline
-In-Reply-To: <1392067531.27939.19.camel@x220>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7210698855061498746=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <52F4E481.3050902-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
+--===============7210698855061498746==
+Content-Type: multipart/alternative; boundary=047d7bdc7d525007e404f21b764f
 
---daC8KDjlMyCcZyAo
-Content-Type: text/plain; charset=us-ascii
+--047d7bdc7d525007e404f21b764f
+Content-Type: text/plain; charset=ISO-8859-1
+
+2014-02-07 19:19 GMT+05:30 Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+> Hello,
+>
+> On 2014-02-07 13:44, Kyungmin Park wrote:
+>>
+>>
+>> On Friday, February 7, 2014, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+>> <mailto:inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>> wrote:
+>>
+>>     2014-02-07 Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org <javascript:;>>:
+>>
+>>     > The driver has been unbuildable due to unfulfilled dependencies
+>>     since
+>>     > 3.11, and even if enabled it won't build due to build breakage.
+>>     Emails
+>>     > about status on this have gone unanswered, and fixes seem to
+>>     have been
+>>     > abandoned.
+>>     >
+>>     > It's obvious that nobody cares about it, so let's remove it.
+>>
+>>     Wait, we are going to fix up this module. It seems that KyoungHo,
+>>     original author, is busy with some works related to product.
+>>
+>>     we can care about it if KyoungHo cannot afford to care for the
+>>     time being.
+>>
+>> Any volunteers?
+>> Marek or Bartek, how do you think?
+>>
+>> Before that it makes orphan or unsupported at maintainer file first and
+>> change it to new volunteers.
+>
+>
+> I think that it might be easier to remove the existing non-functional
+driver
+> now and add it again once the driver is ready. I have it on my TODO list,
+> but
+> doubt I will manage to finish it for v3.15.
+>
+> Discussing the DT bindings might take some time.
+>
+Just adding KyongHo Cho.
+
+If he can fixup for this time, it would be best solution because he knows
+well than others, I think.
+
+Thanks,
+Kukjin
+
+--047d7bdc7d525007e404f21b764f
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">2014-02-07 19:19 GMT+05:30 Marek Szyprowski &lt;<a href=3D=
+"mailto:m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org">m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;:<br>&gt;=
+ Hello,<br>&gt;<br>&gt; On 2014-02-07 13:44, Kyungmin Park wrote:<br>&gt;&g=
+t;<br>
+&gt;&gt;<br>&gt;&gt; On Friday, February 7, 2014, Inki Dae &lt;<a href=3D"m=
+ailto:inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org">inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a><br>&gt;&gt; &lt;mailto=
+:<a href=3D"mailto:inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org">inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;&gt; w=
+rote:<br>
+&gt;&gt;<br>&gt;&gt; =A0 =A0 2014-02-07 Olof Johansson &lt;<a href=3D"mailt=
+o:olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org">olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org</a> &lt;javascript:;&gt;&gt;:<br>&gt;&gt;<=
+br>&gt;&gt; =A0 =A0 &gt; The driver has been unbuildable due to unfulfilled=
+ dependencies<br>
+&gt;&gt; =A0 =A0 since<br>&gt;&gt; =A0 =A0 &gt; 3.11, and even if enabled i=
+t won&#39;t build due to build breakage.<br>&gt;&gt; =A0 =A0 Emails<br>&gt;=
+&gt; =A0 =A0 &gt; about status on this have gone unanswered, and fixes seem=
+ to<br>&gt;&gt; =A0 =A0 have been<br>
+&gt;&gt; =A0 =A0 &gt; abandoned.<br>&gt;&gt; =A0 =A0 &gt;<br>&gt;&gt; =A0 =
+=A0 &gt; It&#39;s obvious that nobody cares about it, so let&#39;s remove i=
+t.<br>&gt;&gt;<br>&gt;&gt; =A0 =A0 Wait, we are going to fix up this module=
+. It seems that KyoungHo,<br>
+&gt;&gt; =A0 =A0 original author, is busy with some works related to produc=
+t.<br>&gt;&gt;<br>&gt;&gt; =A0 =A0 we can care about it if KyoungHo cannot =
+afford to care for the<br>&gt;&gt; =A0 =A0 time being.<br>&gt;&gt;<br>&gt;&=
+gt; Any volunteers?<br>
+&gt;&gt; Marek or Bartek, how do you think?<br>&gt;&gt;<br>&gt;&gt; Before =
+that it makes orphan or unsupported at maintainer file first and<br>&gt;&gt=
+; change it to new volunteers.<br>&gt;<br>&gt;<br>&gt; I think that it migh=
+t be easier to remove the existing non-functional driver<br>
+&gt; now and add it again once the driver is ready. I have it on my TODO li=
+st,<br>&gt; but<br>&gt; doubt I will manage to finish it for v3.15.<br>&gt;=
+<br>&gt; Discussing the DT bindings might take some time.<br>&gt;<br>Just a=
+dding KyongHo Cho.<br>
+<br>If he can fixup for this time, it would be best solution because he kno=
+ws well than others, I think.<br><br>Thanks,<br>Kukjin<br><br></div>
+
+--047d7bdc7d525007e404f21b764f--
+
+--===============7210698855061498746==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Mon, Feb 10, 2014 at 10:25:31PM +0100, Paul Bolle wrote:
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 
-Applied, thanks.
-
---daC8KDjlMyCcZyAo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS+lPNAAoJELSic+t+oim9UgwP/1xzYGjADXwBabOMXLm5atyQ
-3k1JLb8rCfCXDLJCh4McET//CrSXzBG6Ry5fp9FSsGp+q98uzvffbTAKhBctOpfF
-D3vjnWjSav1c6Bkcj1fyg966w1CvGvkCZadeNTRuklpTLW8+8z9/Pxb/ahx/+GWg
-M+bkVMcrFoteU9FTiRd6YkHw60w6qHSq45xhM3xCfwvs/U7Liy/IzHSkvH+/5Y4E
-VJTZQPeNA8d4Kmx3vxfkJaCqoZgb83kUBSCQwxrjpTyTlRcc+Yd593+njzwBCdyV
-qiXaNcGwDrTFgHuOaBm/YXAZpvHEWqp8u5bxmWqQeITkrqqCsq1zxeaX3dfmhqwn
-zz/hyAkOiEdByxOUcQiBIaVsSN7CQVp6BIUuuBsbbJPs5DUGBtu7YpADKI51zk1p
-RhYZCfzWX4M6zkI2xF64d4yltw77SQO8GXiGNq20ERlgne2uTgrfaR8wgTUrfiZ3
-qONAb3tBmIAAxYgGpXYW/pCPMFsp+TQSrHVx4j3r5w+Pui7gU+x6jYsuRSW5zuSm
-SAkGFGxQBU8TES62ODlmJP3QEQe1SvEZ59koF4oE0LFHhvkA6nI/HjnMitM5FHDY
-npY72AfWGxaGCn6FdFDJBe9g7gT/6FFZHHUSYT//DVKnuXtfwIgDAsN6TcAElqVf
-3Hff1qdF0dDNuUzK0Xl8
-=T20I
------END PGP SIGNATURE-----
-
---daC8KDjlMyCcZyAo--
+--===============7210698855061498746==--
