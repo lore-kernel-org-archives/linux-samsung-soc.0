@@ -1,100 +1,54 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: Re: [PATCH V4] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
-Date: Tue, 11 Feb 2014 22:15:41 +0530
-Message-ID: <CAKDJKT5PuL6RTwUC3pkZCPDVosfcX51TRmrX3tC952L2N+X43Q@mail.gmail.com>
-References: <1390928069-7313-1-git-send-email-badarkhe.manish@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: smdk_wm8994: Fix typo "wm8894"
+Date: Tue, 11 Feb 2014 16:46:08 +0000
+Message-ID: <20140211164608.GS13533@sirena.org.uk>
+References: <1392067531.27939.19.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="daC8KDjlMyCcZyAo"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:53928 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752189AbaBKQpn (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40463 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779AbaBKQ7Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Feb 2014 11:45:43 -0500
-In-Reply-To: <1390928069-7313-1-git-send-email-badarkhe.manish@gmail.com>
+	Tue, 11 Feb 2014 11:59:16 -0500
+Content-Disposition: inline
+In-Reply-To: <1392067531.27939.19.camel@x220>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, =?UTF-8?B?4KSu4KSo4KS/4KS3IOCkrOCkpuCksOCkluClhw==?= <badarkhe.manish@gmail.com>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-Hi Dmitry,
 
-On Tue, Jan 28, 2014 at 10:24 PM, Manish Badarkhe
-<badarkhe.manish@gmail.com> wrote:
-> Instead of "#ifdef CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
-> option for DT code to avoid if-deffery in code.
->
-> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
-> ---
-> Changes since V1:
-> 1.Updated code to use "IS_ENABLED" during retrieval
->   of platform/DT data.
->
-> Changes since V2:
-> 1.Updated code as per Dmitry's comment to give preferance to
->   platform data.
->
-> Changes since V3:
-> 1.Updated code to use "IS_ENABLED(CONFIG_OF)" to remove
->   DT data retrieval function during compilation itself
->   when CONFIG_OF option is not set.
->
-> :100644 100644 b4513f2... a7482db... M  drivers/power/max8925_power.c
->  drivers/power/max8925_power.c |   17 +++++------------
->  1 file changed, 5 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
-> index b4513f2..a7482db 100644
-> --- a/drivers/power/max8925_power.c
-> +++ b/drivers/power/max8925_power.c
-> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
->         return 0;
->  }
->
-> -#ifdef CONFIG_OF
->  static struct max8925_power_pdata *
->  max8925_power_dt_init(struct platform_device *pdev)
->  {
-> @@ -440,9 +439,6 @@ max8925_power_dt_init(struct platform_device *pdev)
->         int no_insert_detect;
->         struct max8925_power_pdata *pdata;
->
-> -       if (!nproot)
-> -               return pdev->dev.platform_data;
-> -
->         np = of_find_node_by_name(nproot, "charger");
->         if (!np) {
->                 dev_err(&pdev->dev, "failed to find charger node\n");
-> @@ -468,13 +464,6 @@ max8925_power_dt_init(struct platform_device *pdev)
->
->         return pdata;
->  }
-> -#else
-> -static struct max8925_power_pdata *
-> -max8925_power_dt_init(struct platform_device *pdev)
-> -{
-> -       return pdev->dev.platform_data;
-> -}
-> -#endif
->
->  static int max8925_power_probe(struct platform_device *pdev)
->  {
-> @@ -483,7 +472,11 @@ static int max8925_power_probe(struct platform_device *pdev)
->         struct max8925_power_info *info;
->         int ret;
->
-> -       pdata = max8925_power_dt_init(pdev);
-> +       pdata = dev_get_platdata(&pdev->dev);
-> +
-> +       if (IS_ENABLED(CONFIG_OF) && !pdata && chip->dev->of_node)
-> +               pdata = max8925_power_dt_init(pdev);
-> +
->         if (!pdata) {
->                 dev_err(&pdev->dev, "platform data isn't assigned to "
->                         "power supply\n");
+--daC8KDjlMyCcZyAo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Gentle ping!!
-Please let me know, are there any review comments on this patch?
+On Mon, Feb 10, 2014 at 10:25:31PM +0100, Paul Bolle wrote:
+> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 
-Thanks
-Manish Badarkhe
+Applied, thanks.
+
+--daC8KDjlMyCcZyAo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS+lPNAAoJELSic+t+oim9UgwP/1xzYGjADXwBabOMXLm5atyQ
+3k1JLb8rCfCXDLJCh4McET//CrSXzBG6Ry5fp9FSsGp+q98uzvffbTAKhBctOpfF
+D3vjnWjSav1c6Bkcj1fyg966w1CvGvkCZadeNTRuklpTLW8+8z9/Pxb/ahx/+GWg
+M+bkVMcrFoteU9FTiRd6YkHw60w6qHSq45xhM3xCfwvs/U7Liy/IzHSkvH+/5Y4E
+VJTZQPeNA8d4Kmx3vxfkJaCqoZgb83kUBSCQwxrjpTyTlRcc+Yd593+njzwBCdyV
+qiXaNcGwDrTFgHuOaBm/YXAZpvHEWqp8u5bxmWqQeITkrqqCsq1zxeaX3dfmhqwn
+zz/hyAkOiEdByxOUcQiBIaVsSN7CQVp6BIUuuBsbbJPs5DUGBtu7YpADKI51zk1p
+RhYZCfzWX4M6zkI2xF64d4yltw77SQO8GXiGNq20ERlgne2uTgrfaR8wgTUrfiZ3
+qONAb3tBmIAAxYgGpXYW/pCPMFsp+TQSrHVx4j3r5w+Pui7gU+x6jYsuRSW5zuSm
+SAkGFGxQBU8TES62ODlmJP3QEQe1SvEZ59koF4oE0LFHhvkA6nI/HjnMitM5FHDY
+npY72AfWGxaGCn6FdFDJBe9g7gT/6FFZHHUSYT//DVKnuXtfwIgDAsN6TcAElqVf
+3Hff1qdF0dDNuUzK0Xl8
+=T20I
+-----END PGP SIGNATURE-----
+
+--daC8KDjlMyCcZyAo--
