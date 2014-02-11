@@ -1,81 +1,86 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 00/14] mfd/regulator/rtc: sec: Add support for S2MPS14
-Date: Tue, 11 Feb 2014 14:03:43 +0100
-Message-ID: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 04/14] rtc: s5m: Remove undocumented time init on first boot
+Date: Tue, 11 Feb 2014 14:03:47 +0100
+Message-ID: <1392123837-5517-5-git-send-email-k.kozlowski@samsung.com>
+References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:32478 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751071AbaBKNEO (ORCPT
+	with ESMTP id S1751833AbaBKNEP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Feb 2014 08:04:14 -0500
+	Tue, 11 Feb 2014 08:04:15 -0500
+In-reply-to: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com
 
-Hi,
+This patch removes the code for initializing time if this is first boot.
 
+The code for detecting first boot uses undocumented field RTC_TCON in
+RTC_UDR_CON register. According to S5M8767's datasheet this field is
+reserved. On S2MPS14 it is not documented at all. On device first boot
+the registers will be initialized with reset value (2000-01-01
+00:00:00).
 
-This patchset adds support for S2MPS14 device to the Samsung MFD driver family.
+The code might work on S5M8763 but still this does not look like a task
+for RTC driver.
 
-The S2MPS14 is similar to S2MPS11 but it has fewer regulators, two
-clocks instead of three and a little different registers layout.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: rtc-linux@googlegroups.com
+---
+ drivers/rtc/rtc-s5m.c |   30 ------------------------------
+ 1 file changed, 30 deletions(-)
 
-The patchset is organized in following way:
-1. Patches from 1 to 7 clean up the S2MPS1X/S5M876X drivers and prepare
-   for adding S2MPS14 support (some symbol renaming is needed).
-2. Patches from 8 to 10 add support for S2MPS14 to the MFD and regulator
-   drivers. They depend on previous patches.
-3. Patches 11 and 12 add opmode support for S2MPS14 regulator driver.
-4. Patches 13 and 14 add support for S2MPS14 RTC and they depend on previous
-   MFD and RTC patches.
-
-Probably the best way to get everything working and merged into the linux-next
-would be to obtain ACK-s from all maintainers and to put all the patches into
-the mfd-next tree.
-
-
-The patchset is based on linux-next: next-20140211 *with* today's patch:
-mfd: sec-core: Fix possible NULL pointer dereference when i2c_new_dummy error
-
-
-TODO
-====
-Add support for S2MPS14 to the S2MPS11 clock driver. The patch
-is actually ready but it is based on the "Add support for clocks in S5M8767"
-   http://thread.gmane.org/gmane.linux.kernel/1587881/focus=1587882
-which didn't get their way into clk-next. I will wait for them.
-
-
-Krzysztof Kozlowski (14):
-  mfd: sec: Add maximum RTC register for regmap config
-  mfd: sec: Select different RTC regmaps for devices
-  mfd/rtc: sec/sec: Rename SEC* symbols to S5M
-  rtc: s5m: Remove undocumented time init on first boot
-  mfd: sec: Use consistent S2MPS11 RTC alarm interrupt indexes
-  regulator: s2mps11: Constify regulator_desc array
-  regulator: s2mps11: Choose number of supported regulators during
-    probe
-  mfd: sec: Add support for S2MPS14
-  regulator: s2mps11: Add support for S2MPS14 regulators
-  Documentation: mfd: s2mps11: Document support for S2MPS14
-  regulator: s2mps11: Add opmode for S2MPS14 regulators
-  Documentation: mfd/regulator: s2mps11: Document the "op_mode"
-    bindings
-  rtc: s5m: Support different register layout
-  rtc: s5m: Add support for S2MPS14 RTC
-
- Documentation/devicetree/bindings/mfd/s2mps11.txt |   58 ++-
- drivers/mfd/sec-core.c                            |   57 ++-
- drivers/mfd/sec-irq.c                             |   97 ++++-
- drivers/regulator/s2mps11.c                       |  393 +++++++++++++++++----
- drivers/rtc/rtc-s5m.c                             |  284 ++++++++++-----
- include/linux/mfd/samsung/core.h                  |    1 +
- include/linux/mfd/samsung/irq.h                   |   31 +-
- include/linux/mfd/samsung/rtc.h                   |  132 ++++---
- include/linux/mfd/samsung/s2mps14.h               |  169 +++++++++
- 9 files changed, 1000 insertions(+), 222 deletions(-)
- create mode 100644 include/linux/mfd/samsung/s2mps14.h
-
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index d26e2480f8b3..b1627e9ab8f0 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -502,16 +502,7 @@ static void s5m_rtc_enable_smpl(struct s5m_rtc_info *info, bool enable)
+ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ {
+ 	u8 data[2];
+-	unsigned int tp_read;
+ 	int ret;
+-	struct rtc_time tm;
+-
+-	ret = regmap_read(info->regmap, S5M_RTC_UDR_CON, &tp_read);
+-	if (ret < 0) {
+-		dev_err(info->dev, "%s: fail to read control reg(%d)\n",
+-			__func__, ret);
+-		return ret;
+-	}
+ 
+ 	/* Set RTC control register : Binary mode, 24hour mode */
+ 	data[0] = (1 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+@@ -525,27 +516,6 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 		return ret;
+ 	}
+ 
+-	/* In first boot time, Set rtc time to 1/1/2012 00:00:00(SUN) */
+-	if ((tp_read & RTC_TCON_MASK) == 0) {
+-		dev_dbg(info->dev, "rtc init\n");
+-		tm.tm_sec = 0;
+-		tm.tm_min = 0;
+-		tm.tm_hour = 0;
+-		tm.tm_wday = 0;
+-		tm.tm_mday = 1;
+-		tm.tm_mon = 0;
+-		tm.tm_year = 112;
+-		tm.tm_yday = 0;
+-		tm.tm_isdst = 0;
+-		ret = s5m_rtc_set_time(info->dev, &tm);
+-	}
+-
+-	ret = regmap_update_bits(info->regmap, S5M_RTC_UDR_CON,
+-				 RTC_TCON_MASK, tp_read | RTC_TCON_MASK);
+-	if (ret < 0)
+-		dev_err(info->dev, "%s: fail to update TCON reg(%d)\n",
+-			__func__, ret);
+-
+ 	return ret;
+ }
+ 
 -- 
 1.7.9.5
