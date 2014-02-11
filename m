@@ -1,51 +1,39 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 14/28] Remove MACH_SMDKC210
-Date: Mon, 10 Feb 2014 23:09:19 +0100
-Message-ID: <1392070159.27939.34.camel@x220>
-References: <1391971686-9517-1-git-send-email-richard@nod.at>
-	 <1391971686-9517-15-git-send-email-richard@nod.at>
-	 <20140210114154.GQ1757@sirena.org.uk> <1392039072.3585.15.camel@x220>
-	 <20140210141255.GI1757@sirena.org.uk> <1392046242.3585.41.camel@x220>
-	 <20140210163621.GA13533@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: [PATCH v1 0/1] Boot all secondary cores on Exynos SoC's
+Date: Tue, 11 Feb 2014 11:15:28 +0900
+Message-ID: <1392084929-14116-1-git-send-email-t.dakhran@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews09.kpnxchange.com ([213.75.39.14]:62875 "EHLO
-	cpsmtpb-ews09.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752085AbaBJWJV (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64357 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752133AbaBKCSK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Feb 2014 17:09:21 -0500
-In-Reply-To: <20140210163621.GA13533@sirena.org.uk>
+	Mon, 10 Feb 2014 21:18:10 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Richard Weinberger <richard@nod.at>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Tarek Dakhran <t.dakhran@samsung.com>
 
-On Mon, 2014-02-10 at 16:36 +0000, Mark Brown wrote:
-> On Mon, Feb 10, 2014 at 04:30:42PM +0100, Paul Bolle wrote:
-> > So, next step: the Kconfig symbols MACH_SMDKV310 and MACH_SMDKC210 were
-> > removed in commit 383ffda2fa ("ARM: EXYNOS: no more support non-DT for
-> > EXYNOS SoCs"). That commit was part of v3.11. Correct?
-> 
-> Indeed, so we can see that these platforms were converted to use DT and
-> the symbols were removed as a result.  This means that a good fix here
-> is to ensure that the driver can be used with DT platforms.
+Due to implementation of exynos_boot_secondary function
+only one secondary core boots on Exynos SoC's.
 
-One of the problems I face is that I find it hard to understand how this
-stuff works in v3.10 (ie, before MACH_SMDKV310 and MACH_SMDKC210 were
-dropped).
+Two new functions added to power up and power down secondary cores:
 
-See, if you scan v3.10:arch/arm/mach-exynos/mach-smdkv310.c you'll
-notice the string "smdk-audio". If you grep that string you get a few
-hits. But none in v3.10:sound/soc/samsung/smdk_wm9713.c. And if you scan
-v3.10:sound/soc/samsung/smdk_wm9713.c for strings you'll find stuff like
-"wm9713-hifi",  "wm9713-codec", and "soc-audio". But these don't show up
-in v3.10:arch/arm/mach-exynos/mach-smdkv310.c. So it's not obvious how
-these two files relate.
+static int exynos_core_power_up(unsigned int cpu);
+static int exynos_core_power_down(unsigned int cpu).
 
-And I'm left wondering why SND_SOC_SAMSUNG_SMDK_WM9713 actually depends
-on (among other symbols) MACH_SMDKV310 and MACH_SMDKC210 in v3.10.
+Tested on linux kernel v3.14-rc2.
 
+Comments and additions would be appreciated.
+Thank you.
+	Tarek.
 
-Paul Bolle
+Tarek Dakhran (1):
+  ARM: EXYNOS: enable boot all secondary cpus instead 2
+
+ arch/arm/mach-exynos/hotplug.c  |   11 ++++--
+ arch/arm/mach-exynos/platsmp.c  |   75 ++++++++++++++++++++++++++++-----------
+ arch/arm/mach-exynos/regs-pmu.h |    5 +++
+ 3 files changed, 68 insertions(+), 23 deletions(-)
+
+-- 
+1.7.10.4
