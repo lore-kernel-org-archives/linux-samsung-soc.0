@@ -1,203 +1,371 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 11/14] regulator: s2mps11: Add opmode for S2MPS14 regulators
-Date: Tue, 11 Feb 2014 14:03:54 +0100
-Message-ID: <1392123837-5517-12-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 09/14] regulator: s2mps11: Add support for S2MPS14 regulators
+Date: Tue, 11 Feb 2014 14:03:52 +0100
+Message-ID: <1392123837-5517-10-git-send-email-k.kozlowski@samsung.com>
 References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-S2MPS11/S2MPS14 regulators support different modes of operation:
- - Always off;
- - On/Off controlled by pin/GPIO (PWREN/LDOEN/EMMCEN);
- - Always on;
-This is very similar to S5M8767 regulator driver which also supports
-opmodes (although S5M8767 have also low-power mode).
-
-This patch adds parsing the operation mode from DTS by reading a
-"op_mode" property from regulator child node.
-
-The op_mode is then used for enabling the S2MPS14 regulators.
-On S2MPS11 the DTS "op_mode" property is parsed but not used for
-enabling, as this was not tested.
+Add support for S2MPS14 PMIC regulators to s2mps11 driver. The S2MPS14
+has fewer BUCK-s and LDO-s than S2MPS11. It also does not support
+controlling the BUCK ramp delay.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Cc: Mark Brown <broonie@kernel.org>
 Cc: Liam Girdwood <lgirdwood@gmail.com>
 ---
- drivers/regulator/s2mps11.c         |   98 ++++++++++++++++++++++++++++++++++-
- include/linux/mfd/samsung/s2mps14.h |   17 ++++++
- 2 files changed, 114 insertions(+), 1 deletion(-)
+ drivers/regulator/s2mps11.c |  251 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 190 insertions(+), 61 deletions(-)
 
 diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index c37869fb6c7a..b30fa6cd370d 100644
+index 43a2eefb9aa4..c37869fb6c7a 100644
 --- a/drivers/regulator/s2mps11.c
 +++ b/drivers/regulator/s2mps11.c
-@@ -34,6 +34,7 @@
+@@ -1,13 +1,18 @@
+ /*
+  * s2mps11.c
+  *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd
++ * Copyright (c) 2012-2014 Samsung Electronics Co., Ltd
+  *              http://www.samsung.com
+  *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
+  *
+  */
+ 
+@@ -24,6 +29,7 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/s2mps11.h>
++#include <linux/mfd/samsung/s2mps14.h>
+ 
  struct s2mps11_info {
  	struct regulator_dev **rdev;
- 	unsigned int rdev_num;
-+	struct sec_opmode_data *opmode;
- 
- 	int ramp_delay2;
- 	int ramp_delay34;
-@@ -43,6 +44,48 @@ struct s2mps11_info {
- 	int ramp_delay9;
+@@ -235,7 +241,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.set_ramp_delay		= s2mps11_set_ramp_delay,
  };
  
-+/* LDO_EN/BUCK_EN register values for enabling/disabling regulator */
-+static unsigned int s2mps14_opmode_reg[4] = {
-+	[S2MPS14_REGULATOR_OPMODE_OFF]		= 0x0,
-+	[S2MPS14_REGULATOR_OPMODE_ON]		= 0x3,
-+	[S2MPS14_REGULATOR_OPMODE_RESERVED]	= 0x2,
-+	[S2MPS14_REGULATOR_OPMODE_SUSPEND]	= 0x1,
+-#define regulator_desc_ldo1(num)	{		\
++#define regulator_desc_s2mps11_ldo1(num)	{		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPS11_LDO##num,		\
+ 	.ops		= &s2mps11_ldo_ops,		\
+@@ -249,7 +255,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_reg	= S2MPS11_REG_L1CTRL + num - 1,	\
+ 	.enable_mask	= S2MPS11_ENABLE_MASK		\
+ }
+-#define regulator_desc_ldo2(num)	{		\
++#define regulator_desc_s2mps11_ldo2(num) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPS11_LDO##num,		\
+ 	.ops		= &s2mps11_ldo_ops,		\
+@@ -264,7 +270,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_mask	= S2MPS11_ENABLE_MASK		\
+ }
+ 
+-#define regulator_desc_buck1_4(num)	{			\
++#define regulator_desc_s2mps11_buck1_4(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS11_BUCK##num,			\
+ 	.ops		= &s2mps11_buck_ops,			\
+@@ -280,7 +286,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_mask	= S2MPS11_ENABLE_MASK			\
+ }
+ 
+-#define regulator_desc_buck5	{				\
++#define regulator_desc_s2mps11_buck5 {				\
+ 	.name		= "BUCK5",				\
+ 	.id		= S2MPS11_BUCK5,			\
+ 	.ops		= &s2mps11_buck_ops,			\
+@@ -296,7 +302,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_mask	= S2MPS11_ENABLE_MASK			\
+ }
+ 
+-#define regulator_desc_buck6_8(num)	{			\
++#define regulator_desc_s2mps11_buck6_8(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS11_BUCK##num,			\
+ 	.ops		= &s2mps11_buck_ops,			\
+@@ -312,7 +318,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_mask	= S2MPS11_ENABLE_MASK			\
+ }
+ 
+-#define regulator_desc_buck9	{				\
++#define regulator_desc_s2mps11_buck9 {				\
+ 	.name		= "BUCK9",				\
+ 	.id		= S2MPS11_BUCK9,			\
+ 	.ops		= &s2mps11_buck_ops,			\
+@@ -328,7 +334,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_mask	= S2MPS11_ENABLE_MASK			\
+ }
+ 
+-#define regulator_desc_buck10	{				\
++#define regulator_desc_s2mps11_buck10 {				\
+ 	.name		= "BUCK10",				\
+ 	.id		= S2MPS11_BUCK10,			\
+ 	.ops		= &s2mps11_buck_ops,			\
+@@ -345,54 +351,172 @@ static struct regulator_ops s2mps11_buck_ops = {
+ }
+ 
+ static const struct regulator_desc s2mps11_regulators[] = {
+-	regulator_desc_ldo2(1),
+-	regulator_desc_ldo1(2),
+-	regulator_desc_ldo1(3),
+-	regulator_desc_ldo1(4),
+-	regulator_desc_ldo1(5),
+-	regulator_desc_ldo2(6),
+-	regulator_desc_ldo1(7),
+-	regulator_desc_ldo1(8),
+-	regulator_desc_ldo1(9),
+-	regulator_desc_ldo1(10),
+-	regulator_desc_ldo2(11),
+-	regulator_desc_ldo1(12),
+-	regulator_desc_ldo1(13),
+-	regulator_desc_ldo1(14),
+-	regulator_desc_ldo1(15),
+-	regulator_desc_ldo1(16),
+-	regulator_desc_ldo1(17),
+-	regulator_desc_ldo1(18),
+-	regulator_desc_ldo1(19),
+-	regulator_desc_ldo1(20),
+-	regulator_desc_ldo1(21),
+-	regulator_desc_ldo2(22),
+-	regulator_desc_ldo2(23),
+-	regulator_desc_ldo1(24),
+-	regulator_desc_ldo1(25),
+-	regulator_desc_ldo1(26),
+-	regulator_desc_ldo2(27),
+-	regulator_desc_ldo1(28),
+-	regulator_desc_ldo1(29),
+-	regulator_desc_ldo1(30),
+-	regulator_desc_ldo1(31),
+-	regulator_desc_ldo1(32),
+-	regulator_desc_ldo1(33),
+-	regulator_desc_ldo1(34),
+-	regulator_desc_ldo1(35),
+-	regulator_desc_ldo1(36),
+-	regulator_desc_ldo1(37),
+-	regulator_desc_ldo1(38),
+-	regulator_desc_buck1_4(1),
+-	regulator_desc_buck1_4(2),
+-	regulator_desc_buck1_4(3),
+-	regulator_desc_buck1_4(4),
+-	regulator_desc_buck5,
+-	regulator_desc_buck6_8(6),
+-	regulator_desc_buck6_8(7),
+-	regulator_desc_buck6_8(8),
+-	regulator_desc_buck9,
+-	regulator_desc_buck10,
++	regulator_desc_s2mps11_ldo2(1),
++	regulator_desc_s2mps11_ldo1(2),
++	regulator_desc_s2mps11_ldo1(3),
++	regulator_desc_s2mps11_ldo1(4),
++	regulator_desc_s2mps11_ldo1(5),
++	regulator_desc_s2mps11_ldo2(6),
++	regulator_desc_s2mps11_ldo1(7),
++	regulator_desc_s2mps11_ldo1(8),
++	regulator_desc_s2mps11_ldo1(9),
++	regulator_desc_s2mps11_ldo1(10),
++	regulator_desc_s2mps11_ldo2(11),
++	regulator_desc_s2mps11_ldo1(12),
++	regulator_desc_s2mps11_ldo1(13),
++	regulator_desc_s2mps11_ldo1(14),
++	regulator_desc_s2mps11_ldo1(15),
++	regulator_desc_s2mps11_ldo1(16),
++	regulator_desc_s2mps11_ldo1(17),
++	regulator_desc_s2mps11_ldo1(18),
++	regulator_desc_s2mps11_ldo1(19),
++	regulator_desc_s2mps11_ldo1(20),
++	regulator_desc_s2mps11_ldo1(21),
++	regulator_desc_s2mps11_ldo2(22),
++	regulator_desc_s2mps11_ldo2(23),
++	regulator_desc_s2mps11_ldo1(24),
++	regulator_desc_s2mps11_ldo1(25),
++	regulator_desc_s2mps11_ldo1(26),
++	regulator_desc_s2mps11_ldo2(27),
++	regulator_desc_s2mps11_ldo1(28),
++	regulator_desc_s2mps11_ldo1(29),
++	regulator_desc_s2mps11_ldo1(30),
++	regulator_desc_s2mps11_ldo1(31),
++	regulator_desc_s2mps11_ldo1(32),
++	regulator_desc_s2mps11_ldo1(33),
++	regulator_desc_s2mps11_ldo1(34),
++	regulator_desc_s2mps11_ldo1(35),
++	regulator_desc_s2mps11_ldo1(36),
++	regulator_desc_s2mps11_ldo1(37),
++	regulator_desc_s2mps11_ldo1(38),
++	regulator_desc_s2mps11_buck1_4(1),
++	regulator_desc_s2mps11_buck1_4(2),
++	regulator_desc_s2mps11_buck1_4(3),
++	regulator_desc_s2mps11_buck1_4(4),
++	regulator_desc_s2mps11_buck5,
++	regulator_desc_s2mps11_buck6_8(6),
++	regulator_desc_s2mps11_buck6_8(7),
++	regulator_desc_s2mps11_buck6_8(8),
++	regulator_desc_s2mps11_buck9,
++	regulator_desc_s2mps11_buck10,
 +};
 +
-+static int s2mps14_get_opmode(struct regulator_dev *rdev)
-+{
-+	int i, reg_id = rdev_get_id(rdev);
-+	int mode = -EINVAL;
-+	struct s2mps11_info *s2mps11 = rdev_get_drvdata(rdev);
++static struct regulator_ops s2mps14_reg_ops = {
++	.list_voltage		= regulator_list_voltage_linear,
++	.map_voltage		= regulator_map_voltage_linear,
++	.is_enabled		= regulator_is_enabled_regmap,
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
++};
 +
-+	for (i = 0; i < s2mps11->rdev_num; i++) {
-+		if (s2mps11->opmode[i].id == reg_id) {
-+			mode = s2mps11->opmode[i].mode;
-+			break;
-+		}
-+	}
-+
-+	if (mode == -EINVAL) {
-+		dev_warn(rdev_get_dev(rdev),
-+				"No op_mode in the driver for regulator %s\n",
-+				rdev->desc->name);
-+		return mode;
-+	}
-+
-+	return s2mps14_opmode_reg[mode] << S2MPS14_ENCTRL_SHIFT;
++#define regulator_desc_s2mps14_ldo1(num) {		\
++	.name		= "LDO"#num,			\
++	.id		= S2MPS14_LDO##num,		\
++	.ops		= &s2mps14_reg_ops,		\
++	.type		= REGULATOR_VOLTAGE,		\
++	.owner		= THIS_MODULE,			\
++	.min_uV		= S2MPS14_LDO_MIN_800MV,	\
++	.uV_step	= S2MPS14_LDO_STEP_25MV,	\
++	.n_voltages	= S2MPS14_LDO_N_VOLTAGES,	\
++	.vsel_reg	= S2MPS14_REG_L1CTRL + num - 1,	\
++	.vsel_mask	= S2MPS14_LDO_VSEL_MASK,	\
++	.enable_reg	= S2MPS14_REG_L1CTRL + num - 1,	\
++	.enable_mask	= S2MPS14_ENABLE_MASK		\
 +}
-+
-+static int s2mps14_reg_enable(struct regulator_dev *rdev)
-+{
-+	int enable_ctrl = s2mps14_get_opmode(rdev);
-+
-+	if (enable_ctrl < 0)
-+		return enable_ctrl;
-+
-+	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-+			S2MPS14_ENCTRL_MASK, enable_ctrl);
++#define regulator_desc_s2mps14_ldo2(num) {		\
++	.name		= "LDO"#num,			\
++	.id		= S2MPS14_LDO##num,		\
++	.ops		= &s2mps14_reg_ops,		\
++	.type		= REGULATOR_VOLTAGE,		\
++	.owner		= THIS_MODULE,			\
++	.min_uV		= S2MPS14_LDO_MIN_1800MV,	\
++	.uV_step	= S2MPS14_LDO_STEP_25MV,	\
++	.n_voltages	= S2MPS14_LDO_N_VOLTAGES,	\
++	.vsel_reg	= S2MPS14_REG_L1CTRL + num - 1,	\
++	.vsel_mask	= S2MPS14_LDO_VSEL_MASK,	\
++	.enable_reg	= S2MPS14_REG_L1CTRL + num - 1,	\
++	.enable_mask	= S2MPS14_ENABLE_MASK		\
 +}
-+
- static int get_ramp_delay(int ramp_delay)
- {
- 	unsigned char cnt = 0;
-@@ -405,7 +448,7 @@ static struct regulator_ops s2mps14_reg_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.is_enabled		= regulator_is_enabled_regmap,
--	.enable			= regulator_enable_regmap,
-+	.enable			= s2mps14_reg_enable,
- 	.disable		= regulator_disable_regmap,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-@@ -519,6 +562,54 @@ static const struct regulator_desc s2mps14_regulators[] = {
- 	regulator_desc_s2mps14_buck1235(5),
++#define regulator_desc_s2mps14_ldo3(num) {		\
++	.name		= "LDO"#num,			\
++	.id		= S2MPS14_LDO##num,		\
++	.ops		= &s2mps14_reg_ops,		\
++	.type		= REGULATOR_VOLTAGE,		\
++	.owner		= THIS_MODULE,			\
++	.min_uV		= S2MPS14_LDO_MIN_800MV,	\
++	.uV_step	= S2MPS14_LDO_STEP_12_5MV,	\
++	.n_voltages	= S2MPS14_LDO_N_VOLTAGES,	\
++	.vsel_reg	= S2MPS14_REG_L1CTRL + num - 1,	\
++	.vsel_mask	= S2MPS14_LDO_VSEL_MASK,	\
++	.enable_reg	= S2MPS14_REG_L1CTRL + num - 1,	\
++	.enable_mask	= S2MPS14_ENABLE_MASK		\
++}
++#define regulator_desc_s2mps14_buck1235(num) {			\
++	.name		= "BUCK"#num,				\
++	.id		= S2MPS14_BUCK##num,			\
++	.ops		= &s2mps14_reg_ops,			\
++	.type		= REGULATOR_VOLTAGE,			\
++	.owner		= THIS_MODULE,				\
++	.min_uV		= S2MPS14_BUCK1235_MIN_600MV,		\
++	.uV_step	= S2MPS14_BUCK1235_STEP_6_25MV,		\
++	.n_voltages	= S2MPS14_BUCK_N_VOLTAGES,		\
++	.linear_min_sel = S2MPS14_BUCK1235_START_SEL,		\
++	.ramp_delay	= S2MPS14_BUCK_RAMP_DELAY,		\
++	.vsel_reg	= S2MPS14_REG_B1CTRL2 + (num - 1) * 2,	\
++	.vsel_mask	= S2MPS14_BUCK_VSEL_MASK,		\
++	.enable_reg	= S2MPS14_REG_B1CTRL1 + (num - 1) * 2,	\
++	.enable_mask	= S2MPS14_ENABLE_MASK			\
++}
++#define regulator_desc_s2mps14_buck4(num) {			\
++	.name		= "BUCK"#num,				\
++	.id		= S2MPS14_BUCK##num,			\
++	.ops		= &s2mps14_reg_ops,			\
++	.type		= REGULATOR_VOLTAGE,			\
++	.owner		= THIS_MODULE,				\
++	.min_uV		= S2MPS14_BUCK4_MIN_1400MV,		\
++	.uV_step	= S2MPS14_BUCK4_STEP_12_5MV,		\
++	.n_voltages	= S2MPS14_BUCK_N_VOLTAGES,		\
++	.linear_min_sel = S2MPS14_BUCK4_START_SEL,		\
++	.ramp_delay	= S2MPS14_BUCK_RAMP_DELAY,		\
++	.vsel_reg	= S2MPS14_REG_B1CTRL2 + (num - 1) * 2,	\
++	.vsel_mask	= S2MPS14_BUCK_VSEL_MASK,		\
++	.enable_reg	= S2MPS14_REG_B1CTRL1 + (num - 1) * 2,	\
++	.enable_mask	= S2MPS14_ENABLE_MASK			\
++}
++static const struct regulator_desc s2mps14_regulators[] = {
++	regulator_desc_s2mps14_ldo3(1),
++	regulator_desc_s2mps14_ldo3(2),
++	regulator_desc_s2mps14_ldo1(3),
++	regulator_desc_s2mps14_ldo1(4),
++	regulator_desc_s2mps14_ldo3(5),
++	regulator_desc_s2mps14_ldo3(6),
++	regulator_desc_s2mps14_ldo1(7),
++	regulator_desc_s2mps14_ldo2(8),
++	regulator_desc_s2mps14_ldo3(9),
++	regulator_desc_s2mps14_ldo3(10),
++	regulator_desc_s2mps14_ldo1(11),
++	regulator_desc_s2mps14_ldo2(12),
++	regulator_desc_s2mps14_ldo2(13),
++	regulator_desc_s2mps14_ldo2(14),
++	regulator_desc_s2mps14_ldo2(15),
++	regulator_desc_s2mps14_ldo2(16),
++	regulator_desc_s2mps14_ldo2(17),
++	regulator_desc_s2mps14_ldo2(18),
++	regulator_desc_s2mps14_ldo1(19),
++	regulator_desc_s2mps14_ldo1(20),
++	regulator_desc_s2mps14_ldo1(21),
++	regulator_desc_s2mps14_ldo3(22),
++	regulator_desc_s2mps14_ldo1(23),
++	regulator_desc_s2mps14_ldo2(24),
++	regulator_desc_s2mps14_ldo2(25),
++	regulator_desc_s2mps14_buck1235(1),
++	regulator_desc_s2mps14_buck1235(2),
++	regulator_desc_s2mps14_buck1235(3),
++	regulator_desc_s2mps14_buck4(4),
++	regulator_desc_s2mps14_buck1235(5),
  };
  
-+static inline void s2mps11_dt_read_opmode(struct platform_device *pdev,
-+		struct device_node *np, unsigned int *mode)
-+{
-+	if (of_property_read_u32(np, "op_mode",	mode)) {
-+		dev_warn(&pdev->dev, "no op_mode property property at %s\n",
-+				np->full_name);
-+		*mode = S2MPS14_REGULATOR_OPMODE_ON;
-+	} else if (*mode >= S2MPS14_REGULATOR_OPMODE_MAX ||
-+			*mode == S2MPS14_REGULATOR_OPMODE_RESERVED) {
-+		dev_warn(&pdev->dev, "wrong op_mode value at %s\n",
-+				np->full_name);
-+		*mode = S2MPS14_REGULATOR_OPMODE_ON;
-+	}
-+	/* else: 'mode' was read from DTS and it is valid */
-+}
-+
-+/*
-+ * Returns allocated array with opmodes for regulators. The opmodes are read
-+ * from DTS.
-+ */
-+static struct sec_opmode_data *
-+s2mps11_pmic_dt_parse_opmode(struct platform_device *pdev,
-+		struct s2mps11_info *s2mps11, struct of_regulator_match *rdata,
-+		const struct regulator_desc *regulators)
-+{
-+	struct sec_opmode_data *rmode;
-+	int i;
-+
-+	rmode = devm_kzalloc(&pdev->dev, sizeof(*rmode) * s2mps11->rdev_num,
-+			GFP_KERNEL);
-+	if (!rmode) {
-+		dev_err(&pdev->dev,
-+			"could not allocate memory for regulator mode\n");
-+		return NULL;
-+	}
-+
-+	for (i = 0; i < s2mps11->rdev_num; i++) {
-+		/*
-+		 * The index of rdata and regulators is the same, but this
-+		 * may not be equal to ID of regulator.
-+		 */
-+		rmode[i].id = regulators[i].id;
-+		s2mps11_dt_read_opmode(pdev, rdata[i].of_node, &rmode[i].mode);
-+	}
-+
-+	return rmode;
-+}
-+
  static int s2mps11_pmic_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-@@ -581,9 +672,14 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	}
+@@ -418,6 +542,10 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
+ 		regulators = s2mps11_regulators;
+ 		break;
++	case S2MPS14X:
++		s2mps11->rdev_num = ARRAY_SIZE(s2mps14_regulators);
++		regulators = s2mps14_regulators;
++		break;
+ 	default:
+ 		dev_err(&pdev->dev, "Invalid device type: %u\n", dev_type);
+ 		return -EINVAL;
+@@ -488,6 +616,7 @@ common_reg:
  
- 	of_regulator_match(&pdev->dev, reg_np, rdata, s2mps11->rdev_num);
-+	pdata->opmode = s2mps11_pmic_dt_parse_opmode(pdev, s2mps11, rdata,
-+				regulators);
-+	if (!pdata->opmode)
-+		return -ENOMEM;
+ static const struct platform_device_id s2mps11_pmic_id[] = {
+ 	{ "s2mps11-pmic", S2MPS11X},
++	{ "s2mps14-pmic", S2MPS14X},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
+@@ -515,5 +644,5 @@ module_exit(s2mps11_pmic_exit);
  
- common_reg:
- 	platform_set_drvdata(pdev, s2mps11);
-+	s2mps11->opmode = pdata->opmode;
- 
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
-diff --git a/include/linux/mfd/samsung/s2mps14.h b/include/linux/mfd/samsung/s2mps14.h
-index c4bfb8edc836..69582ae4c971 100644
---- a/include/linux/mfd/samsung/s2mps14.h
-+++ b/include/linux/mfd/samsung/s2mps14.h
-@@ -149,4 +149,21 @@ enum s2mps14_regulators {
- #define S2MPS14_LDO_N_VOLTAGES	(S2MPS14_LDO_VSEL_MASK + 1)
- #define S2MPS14_BUCK_N_VOLTAGES (S2MPS14_BUCK_VSEL_MASK + 1)
- 
-+#define S2MPS14_ENCTRL_SHIFT		6
-+#define S2MPS14_ENCTRL_MASK		(0x3 << S2MPS14_ENCTRL_SHIFT)
-+
-+/*
-+ * Values of regulator operation modes match device tree bindings.
-+ */
-+enum s2mps14_regulator_opmode {
-+	S2MPS14_REGULATOR_OPMODE_OFF		= 0,
-+	S2MPS14_REGULATOR_OPMODE_ON		= 1,
-+	/* Reserved for compatibility with S5M8767 where this
-+	 * is a low power mode. */
-+	S2MPS14_REGULATOR_OPMODE_RESERVED	= 2,
-+	S2MPS14_REGULATOR_OPMODE_SUSPEND	= 3,
-+
-+	S2MPS14_REGULATOR_OPMODE_MAX,
-+};
-+
- #endif /*  __LINUX_MFD_S2MPS14_H */
+ /* Module information */
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+-MODULE_DESCRIPTION("SAMSUNG S2MPS11 Regulator Driver");
++MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14 Regulator Driver");
+ MODULE_LICENSE("GPL");
 -- 
 1.7.9.5
