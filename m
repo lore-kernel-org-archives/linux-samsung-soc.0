@@ -1,52 +1,48 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 1/3] arm64: dts: add initial dts for Samsung GH7 SoC and
- SSDK-GH7 board
-Date: Wed, 12 Feb 2014 11:40:33 +0000
-Message-ID: <52FB5DB1.4090609@arm.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <1392100183-30930-2-git-send-email-kgene.kim@samsung.com> <CAOesGMjE=zOStKoZQhYLhYtL_aWD73DcF4w6STboZPMfHkLtxA@mail.gmail.com> <52FB575F.3070104@arm.com> <20140212112946.GD21992@e106331-lin.cambridge.arm.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [RFC PATCH v2 16/21] ARM: dts: exynos5250: add display power
+ domain node
+Date: Wed, 12 Feb 2014 17:21:52 +0530
+Message-ID: <CAK9yfHwikyhoV6rLgB+vHoFdjuFWSZxCtE3xth7AhF6o=oS2GQ@mail.gmail.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+	<1392204688-4591-17-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:39775 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751808AbaBLLkg (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:42982 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751962AbaBLLvx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 06:40:36 -0500
-In-Reply-To: <20140212112946.GD21992@e106331-lin.cambridge.arm.com>
+	Wed, 12 Feb 2014 06:51:53 -0500
+Received: by mail-oa0-f54.google.com with SMTP id i4so10821862oah.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2014 03:51:53 -0800 (PST)
+In-Reply-To: <1392204688-4591-17-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 12/02/14 11:29, Mark Rutland wrote:
->>>> +       gic: interrupt-controller@1C000000 {
->>>> +               compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
->>>
->>> This looks incorrect -- you should at the very least have a more
->>> specific one than a15-gic? Marc?
->>
->> "arm,cortex-a9-gic" is definitely wrong (the A9 GIC doesn't have the
->> virt extensions). This binding matches what the A15 GIC has, so
->> "arm,cortex-a15-gic" is probably fine. Main issue here is that the GICv2
->> driver has no compatible string for anything else.
->>
->> Should we define something more generic (like "arm,gic-v2")? Or carry on
->> adding more compatible strings?
-> 
-> It's been proposed repeatedly, and it probably makes sense to add the
-> generic versions to the driver, and allow for more specific ones in the
-> binding which DTs can use. That way we don't get an explosion of strings
-> in the driver, but if we need to handle any particular GIC specially in
-> future we can do so.
-> 
-> I guess for Linux we'd want to add "arm,gic-v1" and "arm,gic-v2" to the
-> driver. We could just add "arm,gic-v1" and expect it later in the
-> compatible list if v2 is a strict superset of v1; I think it is but I'm
-> not a GIC expert.
+Hi Andrzej,
 
-Sounds good to me.
+On 12 February 2014 17:01, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> The patch adds power domain for display subsystem.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index c8745a0..0935dca 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -84,6 +84,11 @@
+>                 reg = <0x10044040 0x20>;
+>         };
+>
+> +       pd_disp: mfc-power-domain@100440a0 {
 
-	M.
+Looks like a typo here.
+
 -- 
-Jazz is not dead. It just smells funny...
+With warm regards,
+Sachin
