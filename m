@@ -1,79 +1,108 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 11/14] regulator: s2mps11: Add opmode for S2MPS14 regulators
-Date: Wed, 12 Feb 2014 11:05:36 +0100
-Message-ID: <1392199536.22265.14.camel@AMDC1943>
-References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
- <1392123837-5517-12-git-send-email-k.kozlowski@samsung.com>
- <20140212092108.GT15081@lee--X1>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Add l2x0 device node for Exynos4-based boards
+Date: Wed, 12 Feb 2014 11:10:41 +0100
+Message-ID: <52FB48A1.909@gmail.com>
+References: <1389084826-19827-1-git-send-email-tushar.behera@linaro.org>	<52E15C27.3020104@samsung.com>	<CAHbNUh3=RVj-40d++Qa9OORBS53==zKr6XKYhEKoDYLudwFoSg@mail.gmail.com>	<52E252FD.7030908@samsung.com> <CAHbNUh0mbbwjuXCQKU6MaFLRoB9tq8wgrPchPOjCEkD07xz3qg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140212092108.GT15081@lee--X1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:62364 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752214AbaBLKKu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Feb 2014 05:10:50 -0500
+Received: by mail-wi0-f176.google.com with SMTP id hi5so6640939wib.15
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2014 02:10:49 -0800 (PST)
+In-Reply-To: <CAHbNUh0mbbwjuXCQKU6MaFLRoB9tq8wgrPchPOjCEkD07xz3qg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kgene Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Wed, 2014-02-12 at 09:21 +0000, Lee Jones wrote:
-> > S2MPS11/S2MPS14 regulators support different modes of operation:
-> >  - Always off;
-> >  - On/Off controlled by pin/GPIO (PWREN/LDOEN/EMMCEN);
-> >  - Always on;
-> > This is very similar to S5M8767 regulator driver which also supports
-> > opmodes (although S5M8767 have also low-power mode).
-> > 
-> > This patch adds parsing the operation mode from DTS by reading a
-> > "op_mode" property from regulator child node.
-> > 
-> > The op_mode is then used for enabling the S2MPS14 regulators.
-> > On S2MPS11 the DTS "op_mode" property is parsed but not used for
-> > enabling, as this was not tested.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > Cc: Mark Brown <broonie@kernel.org>
-> > Cc: Liam Girdwood <lgirdwood@gmail.com>
-> > ---
-> >  drivers/regulator/s2mps11.c         |   98 ++++++++++++++++++++++++++++++++++-
-> >  include/linux/mfd/samsung/s2mps14.h |   17 ++++++
-> >  2 files changed, 114 insertions(+), 1 deletion(-)
-> 
-> <snip>
-> 
-> > diff --git a/include/linux/mfd/samsung/s2mps14.h b/include/linux/mfd/samsung/s2mps14.h
-> > index c4bfb8edc836..69582ae4c971 100644
-> > --- a/include/linux/mfd/samsung/s2mps14.h
-> > +++ b/include/linux/mfd/samsung/s2mps14.h
-> > @@ -149,4 +149,21 @@ enum s2mps14_regulators {
-> >  #define S2MPS14_LDO_N_VOLTAGES	(S2MPS14_LDO_VSEL_MASK + 1)
-> >  #define S2MPS14_BUCK_N_VOLTAGES (S2MPS14_BUCK_VSEL_MASK + 1)
-> >  
-> > +#define S2MPS14_ENCTRL_SHIFT		6
-> > +#define S2MPS14_ENCTRL_MASK		(0x3 << S2MPS14_ENCTRL_SHIFT)
-> > +
-> > +/*
-> > + * Values of regulator operation modes match device tree bindings.
-> > + */
-> > +enum s2mps14_regulator_opmode {
-> > +	S2MPS14_REGULATOR_OPMODE_OFF		= 0,
-> > +	S2MPS14_REGULATOR_OPMODE_ON		= 1,
-> > +	/* Reserved for compatibility with S5M8767 where this
-> > +	 * is a low power mode. */
-> 
-> Sorry to be an arse, but can you use proper multi-line comments
-> please?
-> 
-> The preferred style for long (multi-line) comments is:
-> 
->         /*
->          * This is the preferred style for multi-line
->          * comments in the Linux kernel source code.
->          * Please use it consistently.
->          *
->          * Description:  A column of asterisks on the left side,
->          * with beginning and ending almost-blank lines.
->          */
+On 12.02.2014 10:33, Tushar Behera wrote:
+> On 24 January 2014 17:18, Tomasz Figa <t.figa@samsung.com> wrote:
+>>
+>>
+>> On 24.01.2014 05:44, Tushar Behera wrote:
+>>>
+>>> On 23 January 2014 23:45, Tomasz Figa <t.figa@samsung.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>>
+>>>> On 07.01.2014 09:53, Tushar Behera wrote:
+>>>>>
+>>>>>
+>>>>> For Exynos4 platform, L2 cache initialization is done only if
+>>>>> a device node for l2x0 device exists.
+>>>>>
+>>>>> L2 cache initialization path is different when a board boots with
+>>>>> secure firmware. Since there are many Exynos4 based SoCs that boot
+>>>>> in secure mode, enabling this only for boards that don't boot with
+>>>>> secure firmware.
+>>>>>
+>>>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>>>> ---
+>>>>>
+>>>>> Tested on Exynos4210-Origen board.
+>>>>>
+>>>>>     arch/arm/boot/dts/exynos4.dtsi                  |    8 ++++++++
+>>>>>     arch/arm/boot/dts/exynos4210-origen.dts         |    4 ++++
+>>>>>     arch/arm/boot/dts/exynos4210-smdkv310.dts       |    4 ++++
+>>>>>     arch/arm/boot/dts/exynos4210-trats.dts          |    4 ++++
+>>>>>     arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 ++++
+>>>>>     arch/arm/boot/dts/exynos4412-odroidx.dts        |    4 ++++
+>>>>>     arch/arm/boot/dts/exynos4412-smdk4412.dts       |    4 ++++
+>>>>>     arch/arm/boot/dts/exynos4412-tiny4412.dts       |    4 ++++
+>>>>>     8 files changed, 36 insertions(+)
+>>>>
+>>>>
+>>>>
+>>>> Looks good. Unfortunately this is still going to break secure firmware
+>>>> enabled boards, because l2x0_of_init() does not check if the node is
+>>>> enabled.
+>>>>
+>>>
+>>> Is the following check in l2x0_of_init() not enough?
+>>>
+>>> 1002 |-------np = of_find_matching_node(NULL, l2x0_ids);
+>>> 1003 |-------if (!np)
+>>> 1004 |-------|-------return -ENODEV;
+>>
+>>
+>> It only looks for a matching node without checking its status property.
+>>
+>
+> Hmm ... so in that case, will this work?
+>
+> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+> index 7abde2ce..ebcab01 100644
+> --- a/arch/arm/mm/cache-l2x0.c
+> +++ b/arch/arm/mm/cache-l2x0.c
+> @@ -973,11 +973,17 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+>          struct device_node *np;
+>          const struct l2x0_of_data *data;
+>          struct resource res;
+> +       const char *status;
+>
+>          np = of_find_matching_node(NULL, l2x0_ids);
+>          if (!np)
+>                  return -ENODEV;
+>
+> +       status = of_get_property(np, "status", NULL);
+> +       if (status)
+> +               if (strcmp(status, "okay"))
+> +                       return -ENODEV;
+> +
+>          if (of_address_to_resource(np, 0, &res))
+>                  return -ENODEV;
 
-No problem, I'll fix it. The preferred comment in such case had 4 lines
-instead of 2 so it looked a little weird to me :).
+Yes, this would work, but there is already
+
+int of_device_is_available(const struct device_node *device)
+
+which can be used instead of open coding this.
+
+Best regards,
+Tomasz
