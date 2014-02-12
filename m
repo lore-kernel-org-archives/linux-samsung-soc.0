@@ -1,41 +1,44 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH v2 10/21] panel/hv070wsa-100: add DT bindings
-Date: Wed, 12 Feb 2014 12:31:17 +0100
-Message-ID: <1392204688-4591-11-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH v2 09/21] panel/simple: add video interface DT bindings
+Date: Wed, 12 Feb 2014 12:31:16 +0100
+Message-ID: <1392204688-4591-10-git-send-email-a.hajda@samsung.com>
 References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19962 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752635AbaBLLc3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 06:32:29 -0500
-In-reply-to: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1392204688-4591-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-The patch adds bindings to BOE HV070-WSA WSVGA panel.
-Bindings are compatible with simple panel bindings.
+The bindings allow to create explicit link between devices
+providing video signal and the panel.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- Documentation/devicetree/bindings/panel/boe,hv070wsa-100.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/boe,hv070wsa-100.txt
+ Documentation/devicetree/bindings/panel/simple-panel.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/panel/boe,hv070wsa-100.txt b/Documentation/devicetree/bindings/panel/boe,hv070wsa-100.txt
-new file mode 100644
-index 0000000..bfc20ac
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/boe,hv070wsa-100.txt
-@@ -0,0 +1,7 @@
-+BOE HV070WSA-100 7.01" WSVGA TFT LCD panel
+diff --git a/Documentation/devicetree/bindings/panel/simple-panel.txt b/Documentation/devicetree/bindings/panel/simple-panel.txt
+index 1341bbf..4b1612e 100644
+--- a/Documentation/devicetree/bindings/panel/simple-panel.txt
++++ b/Documentation/devicetree/bindings/panel/simple-panel.txt
+@@ -8,6 +8,12 @@ Optional properties:
+ - enable-gpios: GPIO pin to enable or disable the panel
+ - backlight: phandle of the backlight device attached to the panel
+ 
++The device node can contain one 'port' child node with one child
++'endpoint' node, according to the bindings defined in [1]. This
++node should describe panel's video bus.
 +
-+Required properties:
-+- compatible: should be "boe,hv070wsa-100"
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
 +
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
+ Example:
+ 
+ 	panel: panel {
 -- 
 1.8.3.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
