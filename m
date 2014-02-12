@@ -1,115 +1,98 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH v2 00/21] Add DSI display support for Exynos based boards
-Date: Wed, 12 Feb 2014 12:31:07 +0100
-Message-ID: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+Subject: [RFC PATCH v2 02/21] drm/exynos: delay fbdev initialization until an
+ output is connected
+Date: Wed, 12 Feb 2014 12:31:09 +0100
+Message-ID: <1392204688-4591-3-git-send-email-a.hajda@samsung.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:19317 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751878AbaBLLcE (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24986 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752154AbaBLLcK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 06:32:04 -0500
+	Wed, 12 Feb 2014 06:32:10 -0500
+In-reply-to: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi,
+In case fbdev is initialized before any output is connected,
+fb resolution defaults to 1024x768. After that any output with
+bigger resolution is ignored and fbdev is not displayed.
+The patch postpones fbdev initialization to avoid such situation.
 
-This patchset adds drivers and bindings to the following devices:
-- Exynos DSI master,
-- S6E8AA0 DSI panel,
-- TC358764 DSI/LVDS bridge,
-- HV070WSA-100 LVDS panel.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 12 ------------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |  3 +++
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  4 +++-
+ 3 files changed, 6 insertions(+), 13 deletions(-)
 
-It adds also display support in DTS files for the following boards:
-- Exynos4210/Trats,
-- Exynos4412/Trats2,
-- Exynos5250/Arndale.
-
-Things worth mentioning:
-
-1. I have implemented DSI/LVDS bridge using drm_panel framework, ie.
-the driver exposes drm_panel interface on DSI side, and interact with
-panels on LVDS side using drm_panel framework. This approach seems to
-me simpler and more natural than using drm_bridge.
-
-2. I have used video interface bindings to make link between bridge and LVDS panel.
-Other places where such links can be created are:
-a) link between DSI master and slave, I wonder if it is always neccessary,
-   DSI bus is also video bus,
-b) link between FIMD(display controller) and DSI Master, currently Exynos DRM
-   framework uses driver's hardcoded links, converting it to video interface
-   bindings should be done (if required) by separate patches.
-
-The patchset is based on Sean's Paul Exynos refactor patches v4 [1].
-To work properly porch calculation should be fixed according to my comment [2].
-
-It is the 2nd iteration of the patches, main changes:
-- based on v4 refactor patches,
-- added arndale related stuff.
-Other changes are described in individual patches.
-
-[1] http://permalink.gmane.org/gmane.comp.video.dri.devel/99264
-[2] http://permalink.gmane.org/gmane.comp.video.dri.devel/99826
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (21):
-  drm_mipi_dsi: add flags to DSI messages
-  drm/exynos: delay fbdev initialization until an output is connected
-  exynos/dsim: add DT bindings
-  drm/exynos: add DSIM driver
-  panel/s6e8aa0: add DT bindings
-  drm/panel: add S6E8AA0 driver
-  panel/tc358764: add DT bindings
-  drm/panel: add TC358764 driver
-  panel/simple: add video interface DT bindings
-  panel/hv070wsa-100: add DT bindings
-  drm/panel: add support for BOE HV070WSA-100 panel to simple-panel
-  ARM: dts: exynos4: add MIPI DSI Master node
-  ARM: dts: exynos4210-trats: add panel node
-  ARM: dts: exynos4412-trats2: add panel node
-  ARM: dts: exynos5250: add mipi-phy node
-  ARM: dts: exynos5250: add display power domain node
-  ARM: dts: exynos5250: add DSI node
-  ARM: dts: exynos5250-arndale: add display regulators
-  ARM: dts: exynos5250-arndale: add dsi and panel nodes
-  ARM: dts: exynos4210-trats: enable exynos/fimd node
-  ARM: dts: exynos4412-trats2: enable exynos/fimd node
-
- .../devicetree/bindings/panel/boe,hv070wsa-100.txt |    7 +
- .../devicetree/bindings/panel/samsung,s6e8aa0.txt  |   51 +
- .../devicetree/bindings/panel/simple-panel.txt     |    6 +
- .../devicetree/bindings/panel/toshiba,tc358764.txt |   41 +
- .../devicetree/bindings/video/exynos_dsim.txt      |   53 +
- arch/arm/boot/dts/exynos4.dtsi                     |   14 +
- arch/arm/boot/dts/exynos4210-trats.dts             |   42 +
- arch/arm/boot/dts/exynos4412-trats2.dts            |   51 +
- arch/arm/boot/dts/exynos5250-arndale.dts           |   63 +
- arch/arm/boot/dts/exynos5250.dtsi                  |   25 +
- drivers/gpu/drm/exynos/Kconfig                     |    9 +
- drivers/gpu/drm/exynos/Makefile                    |    1 +
- drivers/gpu/drm/exynos/exynos_drm_drv.c            |   26 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.h            |    1 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 1402 ++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_fb.c             |    3 +
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c          |    4 +-
- drivers/gpu/drm/panel/Kconfig                      |   14 +
- drivers/gpu/drm/panel/Makefile                     |    2 +
- drivers/gpu/drm/panel/panel-s6e8aa0.c              | 1064 +++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               |   25 +
- drivers/gpu/drm/panel/panel-tc358764.c             |  505 +++++++
- include/drm/drm_mipi_dsi.h                         |    6 +
- 23 files changed, 3402 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/panel/boe,hv070wsa-100.txt
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt
- create mode 100644 Documentation/devicetree/bindings/panel/toshiba,tc358764.txt
- create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
- create mode 100644 drivers/gpu/drm/exynos/exynos_drm_dsi.c
- create mode 100644 drivers/gpu/drm/panel/panel-s6e8aa0.c
- create mode 100644 drivers/gpu/drm/panel/panel-tc358764.c
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index c8869de..0ef46fe 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -109,24 +109,12 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	/* setup possible_clones. */
+ 	exynos_drm_encoder_setup(dev);
+ 
+-	/*
+-	 * create and configure fb helper and also exynos specific
+-	 * fbdev object.
+-	 */
+-	ret = exynos_drm_fbdev_init(dev);
+-	if (ret) {
+-		DRM_ERROR("failed to initialize drm fbdev\n");
+-		goto err_drm_device;
+-	}
+-
+ 	drm_vblank_offdelay = VBLANK_OFF_DELAY;
+ 
+ 	platform_set_drvdata(dev->platformdev, dev);
+ 
+ 	return 0;
+ 
+-err_drm_device:
+-	exynos_drm_device_unregister(dev);
+ err_vblank:
+ 	drm_vblank_cleanup(dev);
+ err_display_cleanup:
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index c7c08d0..65a22ca 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -20,6 +20,7 @@
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
++#include "exynos_drm_fbdev.h"
+ #include "exynos_drm_gem.h"
+ #include "exynos_drm_iommu.h"
+ #include "exynos_drm_crtc.h"
+@@ -300,6 +301,8 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
+ 
+ 	if (fb_helper)
+ 		drm_fb_helper_hotplug_event(fb_helper);
++	else
++		exynos_drm_fbdev_init(dev);
+ }
+ 
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index e7c2f2d..9a5ec83 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -249,8 +249,10 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
+ 		return 0;
+ 
+ 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
+-	if (!fbdev)
++	if (!fbdev) {
++		DRM_ERROR("failed to allocate fbdev.\n");
+ 		return -ENOMEM;
++	}
+ 
+ 	private->fb_helper = helper = &fbdev->drm_fb_helper;
+ 	helper->funcs = &exynos_drm_fb_helper_funcs;
 -- 
 1.8.3.2
