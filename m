@@ -1,52 +1,62 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 05/14] mfd: sec: Use consistent S2MPS11 RTC alarm
- interrupt indexes
-Date: Wed, 12 Feb 2014 09:07:46 +0000
-Message-ID: <20140212090746.GR15081@lee--X1>
+Subject: Re: [PATCH 08/14] mfd: sec: Add support for S2MPS14
+Date: Wed, 12 Feb 2014 09:17:24 +0000
+Message-ID: <20140212091724.GS15081@lee--X1>
 References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
- <1392123837-5517-6-git-send-email-k.kozlowski@samsung.com>
+ <1392123837-5517-9-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f179.google.com ([209.85.215.179]:37509 "EHLO
-	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751909AbaBLJH5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 04:07:57 -0500
-Received: by mail-ea0-f179.google.com with SMTP id q10so3646914ead.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2014 01:07:55 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1392123837-5517-6-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1392123837-5517-9-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-
-> The S2MPS11 RTC has two alarms: alarm0 and alarm1 (corresponding
-> interrupts are named similarly). Use consistent names for interrupts =
-to
-> limit possible errors.
+> Add support for S2MPS14 PMIC device to the MFD sec-core driver.
+> The S2MPS14 is similar to S2MPS11 but it has fewer regulators, two
+> clocks instead of three and a little different registers layout.
 >=20
 > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  drivers/mfd/sec-irq.c           |    8 ++++----
->  include/linux/mfd/samsung/irq.h |    4 ++--
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  drivers/mfd/sec-core.c              |   48 +++++++++--
+>  drivers/mfd/sec-irq.c               |   89 +++++++++++++++++++-
+>  include/linux/mfd/samsung/core.h    |    1 +
+>  include/linux/mfd/samsung/irq.h     |   27 +++++++
+>  include/linux/mfd/samsung/rtc.h     |   56 +++++++++++--
+>  include/linux/mfd/samsung/s2mps14.h |  152 +++++++++++++++++++++++++=
+++++++++++
+>  6 files changed, 361 insertions(+), 12 deletions(-)
+>  create mode 100644 include/linux/mfd/samsung/s2mps14.h
+>=20
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
 
 <snip>
 
->  #define S2MPS11_IRQ_RTC60S_MASK		(1 << 0)
->  #define S2MPS11_IRQ_RTCA1_MASK		(1 << 1)
-> -#define S2MPS11_IRQ_RTCA2_MASK		(1 << 2)
-> +#define S2MPS11_IRQ_RTCA0_MASK		(1 << 2)
+> +static const struct mfd_cell s2mps14_devs[] =3D {
+> +	{
+> +		.name =3D "s2mps14-pmic",
+> +	}, {
+> +		.name =3D "s2mps14-rtc",
+> +	}, {
+> +		.name =3D "s2mps14-clk",
+> +	}
+> +};
 
-This doesn't look correct to me.
+No device tree support for the children?
 
->  #define S2MPS11_IRQ_SMPL_MASK		(1 << 3)
->  #define S2MPS11_IRQ_RTC1S_MASK		(1 << 4)
->  #define S2MPS11_IRQ_WTSR_MASK		(1 << 5)
+<Snip>
+
+> +#define S2MPS14_LDO_VSEL_MASK	0x3F
+> +#define S2MPS14_BUCK_VSEL_MASK	0xFF
+> +#define S2MPS14_ENABLE_MASK	(0x03 << S2MPS14_ENABLE_SHIFT)
+> +#define S2MPS14_ENABLE_SHIFT	6
+> +#define S2MPS14_LDO_N_VOLTAGES	(S2MPS14_LDO_VSEL_MASK + 1)
+> +#define S2MPS14_BUCK_N_VOLTAGES (S2MPS14_BUCK_VSEL_MASK + 1)
+
+Nit: Can you line these up using tabs please?
 
 --=20
 Lee Jones
