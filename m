@@ -1,103 +1,55 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 1/3] arm64: dts: add initial dts for Samsung GH7 SoC and
- SSDK-GH7 board
-Date: Wed, 12 Feb 2014 11:13:35 +0000
-Message-ID: <52FB575F.3070104@arm.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <1392100183-30930-2-git-send-email-kgene.kim@samsung.com> <CAOesGMjE=zOStKoZQhYLhYtL_aWD73DcF4w6STboZPMfHkLtxA@mail.gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
+ and SSDK-GH7 board
+Date: Wed, 12 Feb 2014 11:29:46 +0000
+Message-ID: <20140212112946.GD21992@e106331-lin.cambridge.arm.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+ <1392100183-30930-2-git-send-email-kgene.kim@samsung.com>
+ <CAOesGMjE=zOStKoZQhYLhYtL_aWD73DcF4w6STboZPMfHkLtxA@mail.gmail.com>
+ <52FB575F.3070104@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:33769 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751167AbaBLLNh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 06:13:37 -0500
-In-Reply-To: <CAOesGMjE=zOStKoZQhYLhYtL_aWD73DcF4w6STboZPMfHkLtxA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <52FB575F.3070104@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>
 
-On 11/02/14 23:36, Olof Johansson wrote:
-> Hi,
+> >> +       gic: interrupt-controller@1C000000 {
+> >> +               compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+> > 
+> > This looks incorrect -- you should at the very least have a more
+> > specific one than a15-gic? Marc?
 > 
-> Besides what Mark Rutland already commented on:
+> "arm,cortex-a9-gic" is definitely wrong (the A9 GIC doesn't have the
+> virt extensions). This binding matches what the A15 GIC has, so
+> "arm,cortex-a15-gic" is probably fine. Main issue here is that the GICv2
+> driver has no compatible string for anything else.
 > 
-> On Mon, Feb 10, 2014 at 10:29 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> +/ {
->> +       model = "SAMSUNG GH7";
->> +       compatible = "samsung,gh7";
-> 
-> Model and compatible in the dtsi should probably always be overridden
-> by a dts that includes it, so there's little use in having it here.
-> 
->> +       interrupt-parent = <&gic>;
->> +       #address-cells = <2>;
->> +       #size-cells = <2>;
->> +
->> +       cpus {
->> +               #address-cells = <2>;
->> +               #size-cells = <0>;
->> +
->> +               cpu@000 {
->> +                       device_type = "cpu";
->> +                       compatible = "arm,armv8";
->> +                       reg = <0x0 0x000>;
-> 
-> No need to zero-pad cpu numbers in unit address or reg.
-> 
->> +                       enable-method = "spin-table";
->> +                       cpu-release-addr = <0x0 0x8000fff8>;
->> +               };
->> +               cpu@001 {
->> +                       device_type = "cpu";
->> +                       compatible = "arm,armv8";
->> +                       reg = <0x0 0x001>;
->> +                       enable-method = "spin-table";
->> +                       cpu-release-addr = <0x0 0x8000fff8>;
->> +               };
->> +               cpu@002 {
->> +                       device_type = "cpu";
->> +                       compatible = "arm,armv8";
->> +                       reg = <0x0 0x002>;
->> +                       enable-method = "spin-table";
->> +                       cpu-release-addr = <0x0 0x8000fff8>;
->> +               };
->> +               cpu@003 {
->> +                       device_type = "cpu";
->> +                       compatible = "arm,armv8";
->> +                       reg = <0x0 0x003>;
->> +                       enable-method = "spin-table";
->> +                       cpu-release-addr = <0x0 0x8000fff8>;
->> +               };
->> +       };
->> +
->> +       gic: interrupt-controller@1C000000 {
->> +               compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
-> 
-> This looks incorrect -- you should at the very least have a more
-> specific one than a15-gic? Marc?
+> Should we define something more generic (like "arm,gic-v2")? Or carry on
+> adding more compatible strings?
 
-"arm,cortex-a9-gic" is definitely wrong (the A9 GIC doesn't have the
-virt extensions). This binding matches what the A15 GIC has, so
-"arm,cortex-a15-gic" is probably fine. Main issue here is that the GICv2
-driver has no compatible string for anything else.
+It's been proposed repeatedly, and it probably makes sense to add the
+generic versions to the driver, and allow for more specific ones in the
+binding which DTs can use. That way we don't get an explosion of strings
+in the driver, but if we need to handle any particular GIC specially in
+future we can do so.
 
-Should we define something more generic (like "arm,gic-v2")? Or carry on
-adding more compatible strings?
+I guess for Linux we'd want to add "arm,gic-v1" and "arm,gic-v2" to the
+driver. We could just add "arm,gic-v1" and expect it later in the
+compatible list if v2 is a strict superset of v1; I think it is but I'm
+not a GIC expert.
 
-	M.
-
->> +               #interrupt-cells = <3>;
->> +               #address-cells = <0>;
->> +               interrupt-controller;
->> +               reg = <0x0 0x1C001000 0 0x1000>,        /* GIC Dist */
->> +                     <0x0 0x1C002000 0 0x1000>,        /* GIC CPU */
->> +                     <0x0 0x1C004000 0 0x2000>,        /* GIC VCPU Control */
->> +                     <0x0 0x1C006000 0 0x2000>;        /* GIC VCPU */
->> +               interrupts = <1 9 0xf04>;       /* GIC Maintenence IRQ */
->> +       };
-
--- 
-Jazz is not dead. It just smells funny...
+Thanks,
+Mark.
