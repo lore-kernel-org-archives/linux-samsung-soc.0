@@ -1,81 +1,62 @@
 From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: remove unneeded s3c24xx_init_cpu()
-Date: Wed, 12 Feb 2014 01:20:04 +0100
-Message-ID: <1740860.STngzZgRLl@phil>
-References: <3865198.Kyn1P03kbU@phil>
+Subject: Re: [PATCH] ARM: SAMSUNG: remove obsolete tick.h
+Date: Wed, 12 Feb 2014 01:21:38 +0100
+Message-ID: <1570984.izKrWRrZLR@phil>
+References: <1907750.XQ1uIOEDlS@phil> <093801cf0ddc$6f8fe060$4eafa120$@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:54782 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:54810 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750978AbaBLAU7 convert rfc822-to-8bit (ORCPT
+	id S1750978AbaBLAWb convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Feb 2014 19:20:59 -0500
-In-Reply-To: <3865198.Kyn1P03kbU@phil>
+	Tue, 11 Feb 2014 19:22:31 -0500
+In-Reply-To: <093801cf0ddc$6f8fe060$4eafa120$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
+To: kgene@kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Am Sonntag, 12. Januar 2014, 21:34:29 schrieb Heiko St=FCbner:
-> The function is nearly empty and samsung_cpu_rev is static so already=
- 0
-> making the function obsolete, therefore remove it.
+Am Freitag, 10. Januar 2014, 17:17:43 schrieb kgene@kernel.org:
+> Heiko St=FCbner wrote:
+> > Commit 48cf83dc12f2 (ARM: samsung: remove unused tick.h) removed so=
+me
+> > occurences of tick.h. tick.h itself and s3c24xx_ostimer_pending was=
+ only
+> > used by the old timer driver and is not used anymore.
+> >=20
+> > Therefore remove the last 3 occurences.
+> >=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >=20
+> >  arch/arm/mach-s3c24xx/include/mach/tick.h |   15 --------------
+> >  arch/arm/mach-s3c64xx/include/mach/tick.h |   31
 >=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> -------------------------
+>=20
+> > ----
+> >=20
+> >  arch/arm/mach-s5pc100/include/mach/tick.h |   31
+>=20
+> -------------------------
+>=20
+> > ----
+> >=20
+> >  3 files changed, 77 deletions(-)
+> >  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/tick.h
+> >  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/tick.h
+> >  delete mode 100644 arch/arm/mach-s5pc100/include/mach/tick.h
+>=20
+> Nice cleanup :-)
+>=20
+> Applied, thanks,
 
-ping :-)
+did this make its way into your tree? Because as of now I can't see it =
+in the=20
+linux-samsung.git.
 
 
-> ---
->  arch/arm/mach-s3c24xx/common.c           |    1 -
->  arch/arm/plat-samsung/cpu.c              |    7 -------
->  arch/arm/plat-samsung/include/plat/cpu.h |    1 -
->  3 files changed, 9 deletions(-)
->=20
-> diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/c=
-ommon.c
-> index bf57d4c..97edd4d 100644
-> --- a/arch/arm/mach-s3c24xx/common.c
-> +++ b/arch/arm/mach-s3c24xx/common.c
-> @@ -232,7 +232,6 @@ void __init s3c24xx_init_io(struct map_desc *mach=
-_desc,
-> int size) } else {
->  		samsung_cpu_id =3D s3c24xx_read_idcode_v4();
->  	}
-> -	s3c24xx_init_cpu();
->=20
->  	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
->=20
-> diff --git a/arch/arm/plat-samsung/cpu.c b/arch/arm/plat-samsung/cpu.=
-c
-> index 46b426e..364963a 100644
-> --- a/arch/arm/plat-samsung/cpu.c
-> +++ b/arch/arm/plat-samsung/cpu.c
-> @@ -28,13 +28,6 @@ unsigned int samsung_rev(void)
->  }
->  EXPORT_SYMBOL(samsung_rev);
->=20
-> -void __init s3c24xx_init_cpu(void)
-> -{
-> -	/* nothing here yet */
-> -
-> -	samsung_cpu_rev =3D 0;
-> -}
-> -
->  void __init s3c64xx_init_cpu(void)
->  {
->  	samsung_cpu_id =3D __raw_readl(S3C_VA_SYS + 0x118);
-> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h
-> b/arch/arm/plat-samsung/include/plat/cpu.h index 8f09488..262ef86 100=
-644
-> --- a/arch/arm/plat-samsung/include/plat/cpu.h
-> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
-> @@ -207,7 +207,6 @@ extern void s5p_init_irq(u32 *vic, u32 num_vic);
->=20
->  extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
->=20
-> -extern void s3c24xx_init_cpu(void);
->  extern void s3c64xx_init_cpu(void);
->  extern void s5p_init_cpu(void __iomem *cpuid_addr);
+Thanks
+Heiko
