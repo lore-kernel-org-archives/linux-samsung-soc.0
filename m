@@ -1,21 +1,36 @@
-From: 2014 Heritage Foundation Board <sifi.bouaziz@iresa.agrinet.tn>
-Subject: Cash Awaiting Pick Up..
-Date: Wed, 12 Feb 2014 10:13:00 +0100 (CET)
-Message-ID: <a0e7879a-4cf2-4fcf-966b-5fe677b6fbde__21200.5516085357$1392198917$gmane$org@mbox12>
-Reply-To: Mrs Hillary Florence <heritdept@xtra.co.nz>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH 07/14] regulator: s2mps11: Choose number of supported
+ regulators during probe
+Date: Wed, 12 Feb 2014 15:31:33 +0530
+Message-ID: <CAKew6eV4t-CybRe0h3jVTFH5xZvj5+XLVTKdNyWyYNby_jMnZQ@mail.gmail.com>
+References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
+	<1392123837-5517-8-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from agrinetmail21.outgw.tn ([196.203.250.101]:50495 "EHLO
-	agrinetmail21.outgw.tn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbaBLJyl (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:65420 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751015AbaBLKBe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 04:54:41 -0500
+	Wed, 12 Feb 2014 05:01:34 -0500
+In-Reply-To: <1392123837-5517-8-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+
+Hi,
 
 
+>
+> +       dev_type = platform_get_device_id(pdev)->driver_data;
+> +       switch (dev_type) {
+> +       case S2MPS11X:
+> +               s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
+> +               regulators = s2mps11_regulators;
 
-This is to re-notify you that you have $500,000.00 waiting for pick-up at Money Gram, Contact 
-Mrs Hillary Florence via email : heritdept@xtra.co.nz for claims.
+How about creating and passing copy of s2mps11_regulators at runtime
+and making s2mps11_regulators __initdata ?
+
+Regards,
+Yadwinder
