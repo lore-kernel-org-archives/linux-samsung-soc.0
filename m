@@ -1,51 +1,76 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [RFC PATCH v2 12/21] ARM: dts: exynos4: add MIPI DSI Master node
-Date: Wed, 12 Feb 2014 12:31:19 +0100
-Message-ID: <1392204688-4591-13-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [RFC PATCH v2 13/21] ARM: dts: exynos4210-trats: add panel node
+Date: Wed, 12 Feb 2014 12:31:20 +0100
+Message-ID: <1392204688-4591-14-git-send-email-a.hajda@samsung.com>
 References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1392204688-4591-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:19370 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752547AbaBLLcg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Feb 2014 06:32:36 -0500
+In-reply-to: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-This is a common part of DSI node for all Exynos4 boards.
+The patch adds s6e8aa0 panel node for trats.
+It adds also trats specific properties for DSI.
 
-Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/exynos4210-trats.dts | 38 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index a73eeb5..7102f29 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -104,6 +104,20 @@
- 		reg = <0x10010000 0x400>;
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 63cc571..5483969 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -353,6 +353,44 @@
+ 		};
  	};
  
 +	dsi_0: dsi@11C80000 {
-+		compatible = "samsung,exynos4210-mipi-dsi";
-+		reg = <0x11C80000 0x10000>;
-+		interrupts = <0 79 0>;
-+		samsung,power-domain = <&pd_lcd0>;
-+		phys = <&mipi_phy 1>;
-+		phy-names = "dsim";
-+		clocks = <&clock 286>, <&clock 143>;
-+		clock-names = "bus_clk", "pll_clk";
-+		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		vddcore-supply = <&vusb_reg>;
++		vddio-supply = <&vmipi_reg>;
++		samsung,pll-clock-frequency = <24000000>;
++		samsung,burst-clock-frequency = <500000000>;
++		samsung,esc-clock-frequency = <20000000>;
++		status = "okay";
++
++		panel@0 {
++			reg = <0>;
++			compatible = "samsung,s6e8aa0";
++			vdd3-supply = <&vcclcd_reg>;
++			vci-supply = <&vlcd_reg>;
++			reset-gpio = <&gpy4 5 0>;
++			power-on-delay= <50>;
++			reset-delay = <100>;
++			init-delay = <100>;
++			flip-horizontal;
++			flip-vertical;
++			panel-width-mm = <58>;
++			panel-height-mm = <103>;
++
++			display-timings {
++				timing-0 {
++					clock-frequency = <57153600>;
++					hactive = <720>;
++					vactive = <1280>;
++					hfront-porch = <5>;
++					hback-porch = <5>;
++					hsync-len = <5>;
++					vfront-porch = <13>;
++					vback-porch = <1>;
++					vsync-len = <2>;
++				};
++			};
++		};
 +	};
 +
  	camera {
- 		compatible = "samsung,fimc", "simple-bus";
- 		status = "disabled";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <>;
 -- 
 1.8.3.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
