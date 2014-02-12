@@ -1,88 +1,73 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC PATCH v2 05/21] panel/s6e8aa0: add DT bindings
-Date: Wed, 12 Feb 2014 12:31:12 +0100
-Message-ID: <1392204688-4591-6-git-send-email-a.hajda@samsung.com>
+Subject: [RFC PATCH v2 07/21] panel/tc358764: add DT bindings
+Date: Wed, 12 Feb 2014 12:31:14 +0100
+Message-ID: <1392204688-4591-8-git-send-email-a.hajda@samsung.com>
 References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:13449 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752622AbaBLLcS (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:25005 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752622AbaBLLcV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 06:32:18 -0500
+	Wed, 12 Feb 2014 06:32:21 -0500
 In-reply-to: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-The patch adds bindings for s6e8aa0 panel.
-Bindings describes panel resources, boot delays,
-display timings, orientation and physical size.
+The patch add bindings to Toshiba DSI/LVDS bridge TC358764.
+Bindings describes power supplies, reset gpio and video interfaces.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
-v2
-- removed samsung prefix from panel physical size props,
-- renamed file to follow convention of panel bindings
----
- .../devicetree/bindings/panel/samsung,s6e8aa0.txt  | 51 ++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt
+ .../devicetree/bindings/panel/toshiba,tc358764.txt | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/toshiba,tc358764.txt
 
-diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt
+diff --git a/Documentation/devicetree/bindings/panel/toshiba,tc358764.txt b/Documentation/devicetree/bindings/panel/toshiba,tc358764.txt
 new file mode 100644
-index 0000000..75a64db
+index 0000000..fe3e2f1
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt
-@@ -0,0 +1,51 @@
-+Samsung S6E8AA0 AMOLED LCD 5.3 inch panel
++++ b/Documentation/devicetree/bindings/panel/toshiba,tc358764.txt
+@@ -0,0 +1,41 @@
++TC358764 MIPI-DSI to LVDS panel bridge
 +
 +Required properties:
-+  - compatible: "samsung,s6e8aa0"
++  - compatible: "toshiba,tc358764"
 +  - reg: the virtual channel number of a DSI peripheral
-+  - vdd3-supply: core voltage supply
-+  - vci-supply: voltage supply for analog circuits
++  - vddc-supply: core voltage supply
++  - vddio-supply: I/O voltage supply
++  - vddmipi-supply: MIPI voltage supply
++  - vddlvds133-supply: LVDS1 3.3V voltage supply
++  - vddlvds112-supply: LVDS1 1.2V voltage supply
 +  - reset-gpio: a GPIO spec for the reset pin
-+  - display-timings: timings for the connected panel as described by [1]
 +
-+Optional properties:
-+  - power-on-delay: delay after turning regulators on [ms]
-+  - reset-delay: delay after reset sequence [ms]
-+  - init-delay: delay after initialization sequence [ms]
-+  - panel-width-mm: physical panel width [mm]
-+  - panel-height-mm: physical panel height [mm]
-+  - flip-horizontal: boolean to flip image horizontally
-+  - flip-vertical: boolean to flip image vertically
++The device node can contain zero to two 'port' child nodes, each with one child
++'endpoint' node, according to the bindings defined in [1].
++The following are properties specific to those nodes.
 +
-+[1]: Documentation/devicetree/bindings/video/display-timing.txt
++port:
++  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
++
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
 +
 +Example:
 +
-+	panel {
-+		compatible = "samsung,s6e8aa0";
++	bridge@0 {
 +		reg = <0>;
-+		vdd3-supply = <&vcclcd_reg>;
-+		vci-supply = <&vlcd_reg>;
-+		reset-gpio = <&gpy4 5 0>;
-+		power-on-delay= <50>;
-+		reset-delay = <100>;
-+		init-delay = <100>;
-+		panel-width-mm = <58>;
-+		panel-height-mm = <103>;
-+		flip-horizontal;
-+		flip-vertical;
-+
-+		display-timings {
-+			timing0: timing-0 {
-+				clock-frequency = <57153600>;
-+				hactive = <720>;
-+				vactive = <1280>;
-+				hfront-porch = <5>;
-+				hback-porch = <5>;
-+				hsync-len = <5>;
-+				vfront-porch = <13>;
-+				vback-porch = <1>;
-+				vsync-len = <2>;
++		compatible = "toshiba,tc358764";
++		vddc-supply = <&vcc_1v2_reg>;
++		vddio-supply = <&vcc_1v8_reg>;
++		vddmipi-supply = <&vcc_1v2_reg>;
++		vddlvds133-supply = <&vcc_3v3_reg>;
++		vddlvds112-supply = <&vcc_1v2_reg>;
++		reset-gpio = <&gpd1 6 1>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@1 {
++			reg = <1>;
++			lvds_ep: endpoint {
++				remote-endpoint = <&panel_ep>;
 +			};
 +		};
 +	};
