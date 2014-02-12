@@ -1,58 +1,82 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [RFC PATCH v2 02/21] drm/exynos: delay fbdev initialization until
- an output is connected
-Date: Wed, 12 Feb 2014 17:33:56 +0530
-Message-ID: <CAK9yfHxyoew3L+k2sN_vHZuy=GWk5arYtQyyvAvUx_4U-y5f5g@mail.gmail.com>
-References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-	<1392204688-4591-3-git-send-email-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 05/14] mfd: sec: Use consistent S2MPS11 RTC alarm interrupt
+ indexes
+Date: Wed, 12 Feb 2014 13:06:09 +0100
+Message-ID: <1392206769.22265.25.camel@AMDC1943>
+References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
+ <1392123837-5517-6-git-send-email-k.kozlowski@samsung.com>
+ <20140212090746.GR15081@lee--X1> <1392197497.22265.8.camel@AMDC1943>
+ <20140212100219.GX15081@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:46214 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751530AbaBLMD5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 07:03:57 -0500
-Received: by mail-ob0-f178.google.com with SMTP id wn1so10497547obc.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2014 04:03:56 -0800 (PST)
-In-Reply-To: <1392204688-4591-3-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140212100219.GX15081@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-+cc Inki Dae
 
-Looks like you missed CCing Exynos DRM maintainers.
 
-On 12 February 2014 17:01, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> In case fbdev is initialized before any output is connected,
-> fb resolution defaults to 1024x768. After that any output with
-> bigger resolution is ignored and fbdev is not displayed.
-> The patch postpones fbdev initialization to avoid such situation.
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-[snip]
+On Wed, 2014-02-12 at 10:02 +0000, Lee Jones wrote:
+> On Wed, 12 Feb 2014, Krzysztof Kozlowski wrote:
+> 
+> > On Wed, 2014-02-12 at 09:07 +0000, Lee Jones wrote:
+> > > > The S2MPS11 RTC has two alarms: alarm0 and alarm1 (corresponding
+> > > > interrupts are named similarly). Use consistent names for interrupts to
+> > > > limit possible errors.
+> > > > 
+> > > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > > ---
+> > > >  drivers/mfd/sec-irq.c           |    8 ++++----
+> > > >  include/linux/mfd/samsung/irq.h |    4 ++--
+> > > >  2 files changed, 6 insertions(+), 6 deletions(-)
+> > > 
+> > > <snip>
+> > > 
+> > > >  #define S2MPS11_IRQ_RTC60S_MASK		(1 << 0)
+> > > >  #define S2MPS11_IRQ_RTCA1_MASK		(1 << 1)
+> > > > -#define S2MPS11_IRQ_RTCA2_MASK		(1 << 2)
+> > > > +#define S2MPS11_IRQ_RTCA0_MASK		(1 << 2)
+> > > 
+> > > This doesn't look correct to me.
+> > 
+> > It is just renaming RTCA2 to RTCA0 because there is no "alarm 2"
+> > registers. Actually the behavior of driver does not change (especially
+> > that there is no RTC driver for S2MPS11) but now it looks properly:
+> >  - set ALARM0 registers for RTCA0 interrupt,
+> >  - set ALARM1 registers for RTCA1 interrupt,
+> > 
+> > This patch is not essential.
+> 
+> I mean the logic.
+> 
+> If these masks are used for registers then I assume RTCA0 would be
+> BIT(1) amd RTCA1 would be BIT(2), but this patch swaps them round.
 
->  static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index e7c2f2d..9a5ec83 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -249,8 +249,10 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
->                 return 0;
->
->         fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
-> -       if (!fbdev)
-> +       if (!fbdev) {
-> +               DRM_ERROR("failed to allocate fbdev.\n");
 
-This message is not needed as kzalloc gives oom message.
+Yes, one could assume that and in case of S5M8767 this is right (the
+order is proper)... but on S2MPS11/S2MPS14 this is reverted:
+ - BIT(0): RTC periodic 60s
+ - BIT(1): RTC Alarm 1
+ - BIT(2): RTC Alarm 0
 
->                 return -ENOMEM;
-> +       }
+The original code (BIT(1) for RTCA1 and BIT(2) for RTCA2) was wrong here
+and may lead to errors. I think that this was changed during mainstream
+process to match S5M8767. However some old internal driver sources for
+S2MPS11 have:
+#define S2MPS11_IRQ_RTCA2_MASK          (1 << 1)
+#define S2MPS11_IRQ_RTCA1_MASK          (1 << 2)
 
--- 
-With warm regards,
-Sachin
+
+Best regards,
+Krzysztof
+
+> 
+> > > >  #define S2MPS11_IRQ_SMPL_MASK		(1 << 3)
+> > > >  #define S2MPS11_IRQ_RTC1S_MASK		(1 << 4)
+> > > >  #define S2MPS11_IRQ_WTSR_MASK		(1 << 5)
+> > > 
+> > 
+> 
