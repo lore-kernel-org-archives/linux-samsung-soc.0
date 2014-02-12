@@ -1,108 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Add l2x0 device node for Exynos4-based boards
-Date: Wed, 12 Feb 2014 11:10:41 +0100
-Message-ID: <52FB48A1.909@gmail.com>
-References: <1389084826-19827-1-git-send-email-tushar.behera@linaro.org>	<52E15C27.3020104@samsung.com>	<CAHbNUh3=RVj-40d++Qa9OORBS53==zKr6XKYhEKoDYLudwFoSg@mail.gmail.com>	<52E252FD.7030908@samsung.com> <CAHbNUh0mbbwjuXCQKU6MaFLRoB9tq8wgrPchPOjCEkD07xz3qg@mail.gmail.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC
+ family
+Date: Wed, 12 Feb 2014 10:38:24 +0000
+Message-ID: <20140212103824.GF29702@arm.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+ <1392100183-30930-3-git-send-email-kgene.kim@samsung.com>
+ <CAOesGMiWsWXkQkb-_VZGco0gKNZPsHf3ubR88y4Pt4-umk5_Ww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:62364 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752214AbaBLKKu (ORCPT
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:24211 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750963AbaBLKia (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 05:10:50 -0500
-Received: by mail-wi0-f176.google.com with SMTP id hi5so6640939wib.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2014 02:10:49 -0800 (PST)
-In-Reply-To: <CAHbNUh0mbbwjuXCQKU6MaFLRoB9tq8wgrPchPOjCEkD07xz3qg@mail.gmail.com>
+	Wed, 12 Feb 2014 05:38:30 -0500
+Content-Disposition: inline
+In-Reply-To: <CAOesGMiWsWXkQkb-_VZGco0gKNZPsHf3ubR88y4Pt4-umk5_Ww@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kgene Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-On 12.02.2014 10:33, Tushar Behera wrote:
-> On 24 January 2014 17:18, Tomasz Figa <t.figa@samsung.com> wrote:
->>
->>
->> On 24.01.2014 05:44, Tushar Behera wrote:
->>>
->>> On 23 January 2014 23:45, Tomasz Figa <t.figa@samsung.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>>
->>>> On 07.01.2014 09:53, Tushar Behera wrote:
->>>>>
->>>>>
->>>>> For Exynos4 platform, L2 cache initialization is done only if
->>>>> a device node for l2x0 device exists.
->>>>>
->>>>> L2 cache initialization path is different when a board boots with
->>>>> secure firmware. Since there are many Exynos4 based SoCs that boot
->>>>> in secure mode, enabling this only for boards that don't boot with
->>>>> secure firmware.
->>>>>
->>>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>>>> ---
->>>>>
->>>>> Tested on Exynos4210-Origen board.
->>>>>
->>>>>     arch/arm/boot/dts/exynos4.dtsi                  |    8 ++++++++
->>>>>     arch/arm/boot/dts/exynos4210-origen.dts         |    4 ++++
->>>>>     arch/arm/boot/dts/exynos4210-smdkv310.dts       |    4 ++++
->>>>>     arch/arm/boot/dts/exynos4210-trats.dts          |    4 ++++
->>>>>     arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 ++++
->>>>>     arch/arm/boot/dts/exynos4412-odroidx.dts        |    4 ++++
->>>>>     arch/arm/boot/dts/exynos4412-smdk4412.dts       |    4 ++++
->>>>>     arch/arm/boot/dts/exynos4412-tiny4412.dts       |    4 ++++
->>>>>     8 files changed, 36 insertions(+)
->>>>
->>>>
->>>>
->>>> Looks good. Unfortunately this is still going to break secure firmware
->>>> enabled boards, because l2x0_of_init() does not check if the node is
->>>> enabled.
->>>>
->>>
->>> Is the following check in l2x0_of_init() not enough?
->>>
->>> 1002 |-------np = of_find_matching_node(NULL, l2x0_ids);
->>> 1003 |-------if (!np)
->>> 1004 |-------|-------return -ENODEV;
->>
->>
->> It only looks for a matching node without checking its status property.
->>
->
-> Hmm ... so in that case, will this work?
->
-> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-> index 7abde2ce..ebcab01 100644
-> --- a/arch/arm/mm/cache-l2x0.c
-> +++ b/arch/arm/mm/cache-l2x0.c
-> @@ -973,11 +973,17 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
->          struct device_node *np;
->          const struct l2x0_of_data *data;
->          struct resource res;
-> +       const char *status;
->
->          np = of_find_matching_node(NULL, l2x0_ids);
->          if (!np)
->                  return -ENODEV;
->
-> +       status = of_get_property(np, "status", NULL);
-> +       if (status)
-> +               if (strcmp(status, "okay"))
-> +                       return -ENODEV;
-> +
->          if (of_address_to_resource(np, 0, &res))
->                  return -ENODEV;
+On Tue, Feb 11, 2014 at 11:39:27PM +0000, Olof Johansson wrote:
+> On Mon, Feb 10, 2014 at 10:29 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > This patch adds support for Samsung GH7 SoC in arm64/Kconfig.
+> >
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> 
+> The overhead of building one more device tree isn't very large, and I
+> don't see any other need to have a Kconfig entry per SoC at this time.
+> It's of course up to Catalin, but you might just want to always
+> compile all dts files instead.
 
-Yes, this would work, but there is already
+For arm64, I thought of getting rid of ARCH_* Kconfig entries entirely,
+only that I haven't heard any strong opinion either way (in which case
+I'll do it, with a risk of single Image getting bigger and bigger and
+people needing smaller Image can trim their .config).
 
-int of_device_is_available(const struct device_node *device)
-
-which can be used instead of open coding this.
-
-Best regards,
-Tomasz
+-- 
+Catalin
