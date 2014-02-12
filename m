@@ -1,55 +1,46 @@
-From: Dinh Nguyen <dinh.linux@gmail.com>
-Subject: Re: [RFC PATCHv1] usb: dwc2: Combine the dwc2 and s3c_hsotg into
- a single USB DRD driver.
-Date: Wed, 12 Feb 2014 00:17:38 -0600
-Message-ID: <52FB1202.8040506@gmail.com>
-References: <1391550341-32509-1-git-send-email-dinguyen@altera.com> <1391550341-32509-2-git-send-email-dinguyen@altera.com> <52FB07CE.6060601@wwwdotorg.org> <000401cf27b7$25114160$6f33c420$%han@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 01/14] mfd: sec: Add maximum RTC register for regmap
+ config
+Date: Wed, 12 Feb 2014 08:48:59 +0000
+Message-ID: <20140212084859.GO15081@lee--X1>
+References: <1392123837-5517-1-git-send-email-k.kozlowski@samsung.com>
+ <1392123837-5517-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:51145 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750726AbaBLGRn (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:46564 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752358AbaBLItI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Feb 2014 01:17:43 -0500
-In-Reply-To: <000401cf27b7$25114160$6f33c420$%han@samsung.com>
+	Wed, 12 Feb 2014 03:49:08 -0500
+Received: by mail-ea0-f174.google.com with SMTP id z10so918419ead.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Feb 2014 00:49:06 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1392123837-5517-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, dinguyen@altera.com, linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Paul Zimmerman' <paulz@synopsys.com>, 'Felipe Balbi' <balbi@ti.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Matt Porter' <mporter@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Matthijs Kooijman' <matthijs@stdin.nl>, 'Fengguang Wu' <fengguang.wu@intel.com>, 'Dan Carpenter' <dan.carpenter@oracle.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Wolfram Sang' <wsa@the-dreams.de>, 'Yijing Wang' <wangyijing@huawei.com>, 'Ray Jui' <rjui@broadcom.com>, 'Julien Delacou' <julien.delacou@stericsson.com>, 'Dom Cobley' <popcornmix@gmail.com>, 'Rashika Kheria' <rashika.kheria@gmail.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Robert Baldyga' <r.baldyga@samsung.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+> Add maximum register to the regmap used by rtc-s5m driver.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/mfd/sec-core.c          |    2 ++
+>  include/linux/mfd/samsung/rtc.h |    2 ++
+>  2 files changed, 4 insertions(+)
 
-On 2/11/14 11:56 PM, Jingoo Han wrote:
-> On Wednesday, February 12, 2014 2:34 PM, Stephen Warren wrote:
->> On 02/04/2014 02:45 PM, dinguyen@altera.com wrote:
->>> From: Dinh Nguyen <dinguyen@altera.com>
->>>
->>> This means that the driver can be in host or peripheral mode when the appropriate
->>> connector is used. When an A-cable is plugged in, the driver behaves in host
->>> mode, and when a B-cable is used, the driver will be in peripheral mode.
->> Sorry for the slow response. When building ARCH=arm bcm2835_defconfig, I
->> get build errors:
-Thanks for testing.
->>
->>> drivers/built-in.o: In function `dwc2_gadget_init':
->>> drivers/usb/dwc2/s3c-hsotg.c:3335: undefined reference to `usb_add_gadget_udc'
->>> drivers/built-in.o: In function `s3c_hsotg_remove':
->>> drivers/usb/dwc2/s3c-hsotg.c:3358: undefined reference to `usb_del_gadget_udc'
->>> drivers/usb/dwc2/s3c-hsotg.c:3364: undefined reference to `usb_gadget_unregister_driver'
-> These errors happen when CONFIG_USB_GADGET=n. 's3c-hsotg.c'
-> supports only gadget mode. In the case of USB_DWC2_HOST mode,
-> CONFIG_USB_GADGET is NOT enabled. I don't know how to solve it.
-I'm working on v2 of this patch. I think I can make the Kconfig more
-flexible by selecting
-USB_GADGET for dual-role or gadget. Or I can make the new driver more
-independent
-for the various modes, meaning if the driver is built for HOST mode, it
-shouldn't be dependent
-on gadget functions.
+I guess some of these patches depend on some others?
 
-Dinh
->
-> Best regards,
-> Jingoo Han
->
+When provided with their Acked-by:s, I'm happy to take this whole
+patch-set and create an immutable branch for the other maintainer()s
+in the set to pull from.
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
