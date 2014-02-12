@@ -1,42 +1,52 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [RFC PATCH v2 21/21] ARM: dts: exynos4412-trats2: enable exynos/fimd
- node
-Date: Wed, 12 Feb 2014 12:31:28 +0100
-Message-ID: <1392204688-4591-22-git-send-email-a.hajda@samsung.com>
-References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1392204688-4591-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 1/3] arm64: dts: add initial dts for Samsung GH7 SoC and
+ SSDK-GH7 board
+Date: Wed, 12 Feb 2014 11:40:33 +0000
+Message-ID: <52FB5DB1.4090609@arm.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <1392100183-30930-2-git-send-email-kgene.kim@samsung.com> <CAOesGMjE=zOStKoZQhYLhYtL_aWD73DcF4w6STboZPMfHkLtxA@mail.gmail.com> <52FB575F.3070104@arm.com> <20140212112946.GD21992@e106331-lin.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:39775 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751808AbaBLLkg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Feb 2014 06:40:36 -0500
+In-Reply-To: <20140212112946.GD21992@e106331-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-The patch changes fimd node status to OK.
+On 12/02/14 11:29, Mark Rutland wrote:
+>>>> +       gic: interrupt-controller@1C000000 {
+>>>> +               compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+>>>
+>>> This looks incorrect -- you should at the very least have a more
+>>> specific one than a15-gic? Marc?
+>>
+>> "arm,cortex-a9-gic" is definitely wrong (the A9 GIC doesn't have the
+>> virt extensions). This binding matches what the A15 GIC has, so
+>> "arm,cortex-a15-gic" is probably fine. Main issue here is that the GICv2
+>> driver has no compatible string for anything else.
+>>
+>> Should we define something more generic (like "arm,gic-v2")? Or carry on
+>> adding more compatible strings?
+> 
+> It's been proposed repeatedly, and it probably makes sense to add the
+> generic versions to the driver, and allow for more specific ones in the
+> binding which DTs can use. That way we don't get an explosion of strings
+> in the driver, but if we need to handle any particular GIC specially in
+> future we can do so.
+> 
+> I guess for Linux we'd want to add "arm,gic-v1" and "arm,gic-v2" to the
+> driver. We could just add "arm,gic-v1" and expect it later in the
+> compatible list if v2 is a strict superset of v1; I think it is but I'm
+> not a GIC expert.
 
-Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Sounds good to me.
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 0986d08..9296f86 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -545,6 +545,10 @@
- 		};
- 	};
- 
-+	fimd@11c00000 {
-+		status = "okay";
-+	};
-+
- 	camera {
- 		pinctrl-0 = <&cam_port_b_clk_active>;
- 		pinctrl-names = "default";
+	M.
 -- 
-1.8.3.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jazz is not dead. It just smells funny...
