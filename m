@@ -1,57 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos5250-arndale: Keep G3D regulator always
- on
-Date: Fri, 14 Feb 2014 07:44:59 +0900
-Message-ID: <52FD4AEB.40401@samsung.com>
-References: <1392141043-27170-1-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH 22/28] Remove S3C24XX_GPIO_EXTRA128
+Date: Fri, 14 Feb 2014 07:57:33 +0900
+Message-ID: <52FD4DDD.6020400@samsung.com>
+References: <1391971686-9517-1-git-send-email-richard@nod.at> <1391971686-9517-23-git-send-email-richard@nod.at> <52F999A1.1070709@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1392141043-27170-1-git-send-email-t.figa@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, stable@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52F999A1.1070709@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Richard Weinberger <richard@nod.at>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG ARM A..." <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Paul Bolle <pebolle@tiscali.nl>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/12/14 02:50, Tomasz Figa wrote:
-> Apparently, if G3D regulator is powered off, the SoC cannot enter low
-> power modes and just hangs. This patch fixes this by keeping the
-> regulator always on when the system is running, as suggested by Exynos 4
-> User's Manual in case of Exynos4210/4x12 SoCs (Exynos5250 UM does not
-> have such note, but observed behavior seems to confirm that it is true
-> for this SoC as well).
+On 02/11/14 12:31, Kukjin Kim wrote:
+> On 02/10/14 03:48, Richard Weinberger wrote:
+>> The symbol is an orphan, get rid of it.
+>>
+>> Signed-off-by: Richard Weinberger<richard@nod.at>
+>> ---
+>> arch/arm/mach-s3c24xx/Kconfig | 1 -
+>> 1 file changed, 1 deletion(-)
+>>
+>> diff --git a/arch/arm/mach-s3c24xx/Kconfig
+>> b/arch/arm/mach-s3c24xx/Kconfig
+>> index 1c67f04..bb1fa603 100644
+>> --- a/arch/arm/mach-s3c24xx/Kconfig
+>> +++ b/arch/arm/mach-s3c24xx/Kconfig
+>> @@ -561,7 +561,6 @@ config MACH_OSIRIS
+>> select S3C2410_IOTIMING if ARM_S3C2440_CPUFREQ
+>> select S3C2440_XTAL_12000000
+>> select S3C24XX_DCLK
+>> - select S3C24XX_GPIO_EXTRA128
+>> select S3C24XX_SIMTEC_PM if PM
+>> select S3C_DEV_NAND
+>> select S3C_DEV_USB_HOST
 >
-> This fixes an issue preventing Arndale board from entering sleep mode
-> observed since commit
+> OK good, but I will squash this with 13th for mach-s3c24xx/Kconfig when
+> I apply.
 >
-> 346f372f7b72a0 clk: exynos5250: Add CLK_IGNORE_UNUSED flag for pmu clock
->
-> that landed in kernel 3.11, which has fixed the clock driver to make the
-> SoC actually try to enter the sleep mode.
->
-> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
-> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
-> Cc: stable@vger.kernel.org
-> ---
->   arch/arm/boot/dts/exynos5250-arndale.dts | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index e14dd62..5e9ddb8 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -287,6 +287,7 @@
->   					regulator-name = "vdd_g3d";
->   					regulator-min-microvolt =<1000000>;
->   					regulator-max-microvolt =<1000000>;
-> +					regulator-always-on;
->   					regulator-boot-on;
->   					op_mode =<1>;
->   				};
++ Paul Bolle
 
-Looks good to me, applied. BTW, the patch you mentioned has been merged 
-since v3.10 so I fixed it.
+Richard,
+
+I found same patch ([PATCH] ARM: s3c24xx: get rid of unneeded selects) 
+for S3C24XX from Paul before your posting. So I picked that up.
 
 Thanks,
 Kukjin
