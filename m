@@ -1,80 +1,64 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
-Date: Thu, 13 Feb 2014 11:26:09 -0800
-Message-ID: <CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
-	<1540B9A3-2485-4149-81DD-7D86A532E5D4@arm.com>
-	<D225ECFF-E2A7-44C9-8D11-20EE77077797@codeaurora.org>
-	<2286031.FWmKXGrGIV@wuerfel>
-	<52F99056.6010906@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Thu, 13 Feb 2014 19:28:35 +0000
+Message-ID: <20140213192835.GD28112@sirena.org.uk>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4TjORqrrURmsgxxJ"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f54.google.com ([209.85.216.54]:35368 "EHLO
-	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751562AbaBMT0K (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42974 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750839AbaBMT2m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Feb 2014 14:26:10 -0500
-Received: by mail-qa0-f54.google.com with SMTP id i13so16610611qae.41
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 11:26:09 -0800 (PST)
-In-Reply-To: <52F99056.6010906@samsung.com>
+	Thu, 13 Feb 2014 14:28:42 -0500
+Content-Disposition: inline
+In-Reply-To: <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>
-
-On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 02/13/14 04:14, Arnd Bergmann wrote:
->>
->> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
->>>
->>> On Feb 12, 2014, at 12:12 PM, Catalin Marinas<catalin.marinas@arm.com>
->>> wrote:
->>>>
->>>> On 12 Feb 2014, at 16:25, Kumar Gala<galak@codeaurora.org>  wrote:
->>>>>
->>>>> One reason to keep around ARCH_* is for drivers shared between arm and
->>>>> arm64 that depend on it.
->>>>
->>>>
->>>> We already converted some of them (those depending on ARCH_VEXPRESS) to
->>>> just depend on ARM64. Ideally, at some point I'd like to see them as
->>>> defaulting to modules but I don't think we are there yet (we had some
->>>> discussions at the last KS, I'm not sure anyone started looking into
->>>> this).
->>>
->>>
->>> I'm torn about this, I think for something like VEXPRESS it makes sense,
->>> however I think  its reasonable to still have an config symbol for a full
->>> SoC family or something of that nature.
->>
->>
->> I think for SBSA compliant systems, we should be able to live with a
->> generic ARCH_SBSA Kconfig symbol. For more irregular embedded platforms,
->> we may need something more specific.
->>
-> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
-> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
-> compliant with SBSA Level1 and having some specific features?
-
-(It's a little hard to answer since nobody can download the doc and
-then talk about it.)
-
-What kind of features are you expecting though? More IP
-blocks/devices? Those are just kernel config options to enable,
-ideally as modules.
-
-x86 doesn't need config options for each generation of their platform,
-and neither should ARM64. Sure, there might be drivers that don't make
-sense to enable on some platforms, but that's what defconfigs (or
-distro configs), and modules are for -- the modules won't load unless
-the hardware is there.
-
-As long as we're not talking about massive amounts of code that is
-part of the base platform, separating out per version again doesn't
-make sense -- just enable for SBSA and it'll support Level 1 through
-whatever. If the kernel size becomes a concern we can revisit, but
-let's not start out that way.
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
 
 
--Olof
+--4TjORqrrURmsgxxJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Feb 13, 2014 at 10:14:04AM +0100, Krzysztof Kozlowski wrote:
+> S2MPS11/S2MPS14 regulators support different modes of operation:
+>  - Always off;
+>  - On/Off controlled by pin/GPIO (PWREN/LDOEN/EMMCEN);
+>  - Always on;
+> This is very similar to S5M8767 regulator driver which also supports
+> opmodes (although S5M8767 have also low-power mode).
+
+What is the difference between always off/on and the normal enable
+control?  This sounds like a fairly standard register control that can
+be overridden by a GPIO.  The usual way of specifying that is by keying
+off the presence of the GPIO.
+
+--4TjORqrrURmsgxxJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS/RzfAAoJELSic+t+oim9RU4P/i+tRT5wNiwRIQa3+RWeDix0
+EiPWDXivGDWBjbx0oeGVKY3e0XZ/+evFtH8L5aG43sPMJ6xGF8Lxvk33Zhr1dmFw
+H8TzH2Eq6Pwc5iIHXN60aC6ukgLva4Phuz6YiATbUBZaH1UXF3Uv/EuT2ciD0xNq
+kSFCZwKuca6P+OhZO13IzdGkAk1A7SyYcPKrGArP4J0vnysMHYQFVRoOEII1Qxwv
+l9gY3xkXgEp6zwSqybkHlArRGn2Z3w+b/8KewGg6ovP8RG5izcESWX3YmWL3mdvE
+pk7S+j2svd6iYEwKuoeHx51wr+f+W1FBgYW4tpXavwudHYdygkij8UbyBlpo4zx/
+l7gQ9R62IEeGOIxJaOJyWQI6ShEXUbJdTuB8MpU47JRA2KlFFiJq4BUoYwGXlC4O
+Q2QwAdqy9053D0RmoVfiTwHGZ7BP1qkzq4gTIc/oESrrMTdCHzNlwuEM/q7UnG4n
+EJbMFYJzVQTDcBqEjk7bpBV0Xj+xc35V14mCtAwhXSjW693AuLoZ91vs7o+E6ihU
+Abp3UrR0kSYKmXnF+1ST3TXnEL/FfOTH9LuQcPKnkGS+uqMaOgx6E/L0jnhXjkM+
+JdZrnZLGk2c0Xhp+1MJEotDUnEbRt3pACze5gKtw1Rn2+Ej0nS0mQ4/+EyOc4QLv
+piBCoelZnyaAvCPNeC53
+=x/Px
+-----END PGP SIGNATURE-----
+
+--4TjORqrrURmsgxxJ--
