@@ -1,92 +1,73 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 00/14] mfd/regulator/rtc: sec: Add support for S2MPS14
-Date: Thu, 13 Feb 2014 10:13:53 +0100
-Message-ID: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 10/14] Documentation: mfd: s2mps11: Document support for
+ S2MPS14
+Date: Thu, 13 Feb 2014 10:14:03 +0100
+Message-ID: <1392282847-25444-11-git-send-email-k.kozlowski@samsung.com>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:54968 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752985AbaBMJOh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Feb 2014 04:14:37 -0500
+In-reply-to: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi,
+Add bindings documentation for S2MPS14 device to the s2mps11 driver.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+---
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-This is second version of patchset adding support for S2MPS14 device to the
-Samsung MFD driver family.
-
-
-Changes since v1
-================
-1. Added Lee Jones' ACK-s.
-2. Applied suggestions from review (Lee Jones).
-3. Regulator: added __initconst to regulator_desc array (Yadwinder Singh Brar).
-   This replaces the patch 7/15:
-   "regulator: s2mps11: Choose number of supported regulators during probe"
-   with:
-   "regulator: s2mps11: Copy supported regulators from initconst"
-
-
-Description
-===========
-
-The S2MPS14 is similar to S2MPS11 but it has fewer regulators, two
-clocks instead of three and a little different registers layout.
-
-The patchset is organized in following way:
-1. Patches from 1 to 7 clean up the S2MPS1X/S5M876X drivers and prepare
-   for adding S2MPS14 support (some symbol renaming is needed).
-2. Patches from 8 to 10 add support for S2MPS14 to the MFD and regulator
-   drivers. They depend on previous patches.
-3. Patches 11 and 12 add opmode support for S2MPS14 regulator driver.
-4. Patches 13 and 14 add support for S2MPS14 RTC and they depend on previous
-   MFD and RTC patches.
-
-Probably the best way to get everything working and merged into the linux-next
-would be to obtain ACK-s from all maintainers and to put all the patches into
-the mfd-next tree.
-
-
-The patchset is based on linux-next: next-20140211 *with* patch:
-mfd: sec-core: Fix possible NULL pointer dereference when i2c_new_dummy error
-
-
-TODO
-====
-Add support for S2MPS14 to the S2MPS11 clock driver. The patch
-is actually ready but it is based on the "Add support for clocks in S5M8767"
-   http://thread.gmane.org/gmane.linux.kernel/1587881/focus=1587882
-which didn't get their way into clk-next. I will wait for them.
-
-
-Krzysztof Kozlowski (15):
-  mfd: sec: Add maximum RTC register for regmap config
-  mfd: sec: Select different RTC regmaps for devices
-  mfd/rtc: sec/sec: Rename SEC* symbols to S5M
-  rtc: s5m: Remove undocumented time init on first boot
-  mfd: sec: Use consistent S2MPS11 RTC alarm interrupt indexes
-  regulator: s2mps11: Constify regulator_desc array
-  regulator: s2mps11: Copy supported regulators from initconst
-  mfd: sec: Add support for S2MPS14
-  regulator: s2mps11: Add support for S2MPS14 regulators
-  Documentation: mfd: s2mps11: Document support for S2MPS14
-  regulator: s2mps11: Add opmode for S2MPS14 regulators
-  Documentation: mfd/regulator: s2mps11: Document the "op_mode"
-    bindings
-  rtc: s5m: Support different register layout
-  rtc: s5m: Add support for S2MPS14 RTC
-  Documentation: mfd: s2mps11: Describe S5M8767 and S2MPS14 clocks
-
- Documentation/devicetree/bindings/mfd/s2mps11.txt |   82 +++-
- drivers/mfd/sec-core.c                            |   57 ++-
- drivers/mfd/sec-irq.c                             |   97 ++++-
- drivers/regulator/s2mps11.c                       |  421 +++++++++++++++++----
- drivers/rtc/rtc-s5m.c                             |  284 +++++++++-----
- include/linux/mfd/samsung/core.h                  |    1 +
- include/linux/mfd/samsung/irq.h                   |   31 +-
- include/linux/mfd/samsung/rtc.h                   |  132 ++++---
- include/linux/mfd/samsung/s2mps14.h               |  171 +++++++++
- 9 files changed, 1045 insertions(+), 231 deletions(-)
- create mode 100644 include/linux/mfd/samsung/s2mps14.h
-
+diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+index 15ee89c3cc7b..f69bec294f02 100644
+--- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
++++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+@@ -1,5 +1,5 @@
+ 
+-* Samsung S2MPS11 Voltage and Current Regulator
++* Samsung S2MPS11 and S2MPS14 Voltage and Current Regulator
+ 
+ The Samsung S2MPS11 is a multi-function device which includes voltage and
+ current regulators, RTC, charger controller and other sub-blocks. It is
+@@ -7,7 +7,7 @@ interfaced to the host controller using an I2C interface. Each sub-block is
+ addressed by the host system using different I2C slave addresses.
+ 
+ Required properties:
+-- compatible: Should be "samsung,s2mps11-pmic".
++- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps14-pmic".
+ - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+ 
+ Optional properties:
+@@ -59,10 +59,14 @@ supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
+ as per the datasheet of s2mps11.
+ 
+ 	- LDOn
+-		  - valid values for n are 1 to 38
++		  - valid values for n are:
++			- S2MPS11: 1 to 38
++			- S2MPS14: 1 to 25
+ 		  - Example: LDO1, LD02, LDO28
+ 	- BUCKn
+-		  - valid values for n are 1 to 10.
++		  - valid values for n are:
++			- S2MPS11: 1 to 10
++			- S2MPS14: 1 to 5
+ 		  - Example: BUCK1, BUCK2, BUCK9
+ 
+ Example:
 -- 
 1.7.9.5
