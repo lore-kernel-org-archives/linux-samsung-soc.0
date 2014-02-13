@@ -1,572 +1,395 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 08/14] mfd: sec: Add support for S2MPS14
-Date: Thu, 13 Feb 2014 10:14:01 +0100
-Message-ID: <1392282847-25444-9-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 03/14] mfd/rtc: sec/s5m: Rename SEC* symbols to S5M
+Date: Thu, 13 Feb 2014 10:13:56 +0100
+Message-ID: <1392282847-25444-4-git-send-email-k.kozlowski@samsung.com>
 References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add support for S2MPS14 PMIC device to the MFD sec-core driver.
-The S2MPS14 is similar to S2MPS11 but it has fewer regulators, two
-clocks instead of three and a little different registers layout.
+This patch prepares for adding support for S2MPS14 RTC device to the
+rtc-s5m driver:
+1. Renames SEC* symbols to S5M.
+2. Adds S5M prefix to some of defines which are different between S5M876X
+and S2MPS14.
+
+This is only a rename-like patch, new code is not added.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: rtc-linux@googlegroups.com
 ---
- drivers/mfd/sec-core.c              |   48 +++++++++--
- drivers/mfd/sec-irq.c               |   89 +++++++++++++++++++-
- include/linux/mfd/samsung/core.h    |    1 +
- include/linux/mfd/samsung/irq.h     |   27 +++++++
- include/linux/mfd/samsung/rtc.h     |   56 +++++++++++--
- include/linux/mfd/samsung/s2mps14.h |  152 +++++++++++++++++++++++++++++++++++
- 6 files changed, 361 insertions(+), 12 deletions(-)
- create mode 100644 include/linux/mfd/samsung/s2mps14.h
+ drivers/mfd/sec-core.c          |    2 +-
+ drivers/rtc/rtc-s5m.c           |   64 ++++++++++++++++-----------------
+ include/linux/mfd/samsung/rtc.h |   76 +++++++++++++++++++--------------------
+ 3 files changed, 71 insertions(+), 71 deletions(-)
 
 diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 8504de82b7e0..6e5343255633 100644
+index 0efa69e123ee..8504de82b7e0 100644
 --- a/drivers/mfd/sec-core.c
 +++ b/drivers/mfd/sec-core.c
-@@ -27,6 +27,7 @@
- #include <linux/mfd/samsung/irq.h>
- #include <linux/mfd/samsung/rtc.h>
- #include <linux/mfd/samsung/s2mps11.h>
-+#include <linux/mfd/samsung/s2mps14.h>
- #include <linux/mfd/samsung/s5m8763.h>
- #include <linux/mfd/samsung/s5m8767.h>
- #include <linux/regmap.h>
-@@ -69,6 +70,16 @@ static const struct mfd_cell s2mps11_devs[] = {
- 	}
- };
- 
-+static const struct mfd_cell s2mps14_devs[] = {
-+	{
-+		.name = "s2mps14-pmic",
-+	}, {
-+		.name = "s2mps14-rtc",
-+	}, {
-+		.name = "s2mps14-clk",
-+	}
-+};
-+
- #ifdef CONFIG_OF
- static struct of_device_id sec_dt_match[] = {
- 	{	.compatible = "samsung,s5m8767-pmic",
-@@ -77,6 +88,9 @@ static struct of_device_id sec_dt_match[] = {
- 	{	.compatible = "samsung,s2mps11-pmic",
- 		.data = (void *)S2MPS11X,
- 	},
-+	{	.compatible = "samsung,s2mps14-pmic",
-+		.data = (void *)S2MPS14X,
-+	},
- 	{},
- };
- #endif
-@@ -120,6 +134,15 @@ static const struct regmap_config s2mps11_regmap_config = {
- 	.cache_type = REGCACHE_FLAT,
- };
- 
-+static const struct regmap_config s2mps14_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = S2MPS14_REG_LDODSCH3,
-+	.volatile_reg = s2mps11_volatile,
-+	.cache_type = REGCACHE_FLAT,
-+};
-+
- static const struct regmap_config s5m8763_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -138,13 +161,20 @@ static const struct regmap_config s5m8767_regmap_config = {
- 	.cache_type = REGCACHE_FLAT,
- };
- 
--static const struct regmap_config sec_rtc_regmap_config = {
-+static const struct regmap_config s5m_rtc_regmap_config = {
+@@ -142,7 +142,7 @@ static const struct regmap_config sec_rtc_regmap_config = {
  	.reg_bits = 8,
  	.val_bits = 8,
  
- 	.max_register = S5M_RTC_REG_MAX,
+-	.max_register = SEC_RTC_REG_MAX,
++	.max_register = S5M_RTC_REG_MAX,
  };
  
-+static const struct regmap_config s2mps14_rtc_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = S2MPS_RTC_REG_MAX,
-+};
-+
  #ifdef CONFIG_OF
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index 476af93543f6..d26e2480f8b3 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -30,10 +30,10 @@
+ 
  /*
-  * Only the common platform data elements for s5m8767 are parsed here from the
-@@ -239,19 +269,23 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 		 * However we must pass something to devm_regmap_init_i2c()
- 		 * so use S5M-like regmap config even though it wouldn't work.
- 		 */
--		regmap_rtc = &sec_rtc_regmap_config;
-+		regmap_rtc = &s5m_rtc_regmap_config;
-+		break;
-+	case S2MPS14X:
-+		regmap = &s2mps14_regmap_config;
-+		regmap_rtc = &s2mps14_rtc_regmap_config;
- 		break;
+  * Maximum number of retries for checking changes in UDR field
+- * of SEC_RTC_UDR_CON register (to limit possible endless loop).
++ * of S5M_RTC_UDR_CON register (to limit possible endless loop).
+  *
+  * After writing to RTC registers (setting time or alarm) read the UDR field
+- * in SEC_RTC_UDR_CON register. UDR is auto-cleared when data have
++ * in S5M_RTC_UDR_CON register. UDR is auto-cleared when data have
+  * been transferred.
+  */
+ #define UDR_READ_RETRY_CNT	5
+@@ -104,8 +104,8 @@ static inline int s5m8767_wait_for_udr_update(struct s5m_rtc_info *info)
+ 	unsigned int data;
+ 
+ 	do {
+-		ret = regmap_read(info->regmap, SEC_RTC_UDR_CON, &data);
+-	} while (--retry && (data & RTC_UDR_MASK) && !ret);
++		ret = regmap_read(info->regmap, S5M_RTC_UDR_CON, &data);
++	} while (--retry && (data & S5M_RTC_UDR_MASK) && !ret);
+ 
+ 	if (!retry)
+ 		dev_err(info->dev, "waiting for UDR update, reached max number of retries\n");
+@@ -118,16 +118,16 @@ static inline int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
+ 	int ret;
+ 	unsigned int data;
+ 
+-	ret = regmap_read(info->regmap, SEC_RTC_UDR_CON, &data);
++	ret = regmap_read(info->regmap, S5M_RTC_UDR_CON, &data);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "failed to read update reg(%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+-	data |= RTC_TIME_EN_MASK;
+-	data |= RTC_UDR_MASK;
++	data |= S5M_RTC_TIME_EN_MASK;
++	data |= S5M_RTC_UDR_MASK;
+ 
+-	ret = regmap_write(info->regmap, SEC_RTC_UDR_CON, data);
++	ret = regmap_write(info->regmap, S5M_RTC_UDR_CON, data);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "failed to write update reg(%d)\n", ret);
+ 		return ret;
+@@ -143,17 +143,17 @@ static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+ 	int ret;
+ 	unsigned int data;
+ 
+-	ret = regmap_read(info->regmap, SEC_RTC_UDR_CON, &data);
++	ret = regmap_read(info->regmap, S5M_RTC_UDR_CON, &data);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to read update reg(%d)\n",
+ 			__func__, ret);
+ 		return ret;
+ 	}
+ 
+-	data &= ~RTC_TIME_EN_MASK;
+-	data |= RTC_UDR_MASK;
++	data &= ~S5M_RTC_TIME_EN_MASK;
++	data |= S5M_RTC_UDR_MASK;
+ 
+-	ret = regmap_write(info->regmap, SEC_RTC_UDR_CON, data);
++	ret = regmap_write(info->regmap, S5M_RTC_UDR_CON, data);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write update reg(%d)\n",
+ 			__func__, ret);
+@@ -203,7 +203,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	u8 data[8];
+ 	int ret;
+ 
+-	ret = regmap_bulk_read(info->regmap, SEC_RTC_SEC, data, 8);
++	ret = regmap_bulk_read(info->regmap, S5M_RTC_SEC, data, 8);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -251,7 +251,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 		1900 + tm->tm_year, 1 + tm->tm_mon, tm->tm_mday,
+ 		tm->tm_hour, tm->tm_min, tm->tm_sec, tm->tm_wday);
+ 
+-	ret = regmap_raw_write(info->regmap, SEC_RTC_SEC, data, 8);
++	ret = regmap_raw_write(info->regmap, S5M_RTC_SEC, data, 8);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -267,20 +267,20 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	unsigned int val;
+ 	int ret, i;
+ 
+-	ret = regmap_bulk_read(info->regmap, SEC_ALARM0_SEC, data, 8);
++	ret = regmap_bulk_read(info->regmap, S5M_ALARM0_SEC, data, 8);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	switch (info->device_type) {
  	case S5M8763X:
- 		regmap = &s5m8763_regmap_config;
--		regmap_rtc = &sec_rtc_regmap_config;
-+		regmap_rtc = &s5m_rtc_regmap_config;
+ 		s5m8763_data_to_tm(data, &alrm->time);
+-		ret = regmap_read(info->regmap, SEC_ALARM0_CONF, &val);
++		ret = regmap_read(info->regmap, S5M_ALARM0_CONF, &val);
+ 		if (ret < 0)
+ 			return ret;
+ 
+ 		alrm->enabled = !!val;
+ 
+-		ret = regmap_read(info->regmap, SEC_RTC_STATUS, &val);
++		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+ 		if (ret < 0)
+ 			return ret;
+ 
+@@ -303,7 +303,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		}
+ 
+ 		alrm->pending = 0;
+-		ret = regmap_read(info->regmap, SEC_RTC_STATUS, &val);
++		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+ 		if (ret < 0)
+ 			return ret;
  		break;
- 	case S5M8767X:
- 		regmap = &s5m8767_regmap_config;
--		regmap_rtc = &sec_rtc_regmap_config;
-+		regmap_rtc = &s5m_rtc_regmap_config;
- 		break;
- 	default:
- 		regmap = &sec_regmap_config;
--		regmap_rtc = &sec_rtc_regmap_config;
-+		regmap_rtc = &s5m_rtc_regmap_config;
- 		break;
+@@ -312,7 +312,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		return -EINVAL;
  	}
  
-@@ -302,6 +336,10 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 		ret = mfd_add_devices(sec_pmic->dev, -1, s2mps11_devs,
- 				      ARRAY_SIZE(s2mps11_devs), NULL, 0, NULL);
+-	if (val & ALARM0_STATUS)
++	if (val & S5M_ALARM0_STATUS)
+ 		alrm->pending = 1;
+ 	else
+ 		alrm->pending = 0;
+@@ -326,7 +326,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+ 	int ret, i;
+ 	struct rtc_time tm;
+ 
+-	ret = regmap_bulk_read(info->regmap, SEC_ALARM0_SEC, data, 8);
++	ret = regmap_bulk_read(info->regmap, S5M_ALARM0_SEC, data, 8);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -337,14 +337,14 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+ 
+ 	switch (info->device_type) {
+ 	case S5M8763X:
+-		ret = regmap_write(info->regmap, SEC_ALARM0_CONF, 0);
++		ret = regmap_write(info->regmap, S5M_ALARM0_CONF, 0);
  		break;
-+	case S2MPS14X:
-+		ret = mfd_add_devices(sec_pmic->dev, -1, s2mps14_devs,
-+				      ARRAY_SIZE(s2mps14_devs), NULL, 0, NULL);
-+		break;
- 	default:
- 		/* If this happens the probe function is problem */
- 		BUG();
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index e403c293b437..64e7913aadc6 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -1,7 +1,7 @@
- /*
-  * sec-irq.c
-  *
-- * Copyright (c) 2011 Samsung Electronics Co., Ltd
-+ * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd
-  *              http://www.samsung.com
-  *
-  *  This program is free software; you can redistribute  it and/or modify it
-@@ -19,6 +19,7 @@
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/irq.h>
- #include <linux/mfd/samsung/s2mps11.h>
-+#include <linux/mfd/samsung/s2mps14.h>
- #include <linux/mfd/samsung/s5m8763.h>
- #include <linux/mfd/samsung/s5m8767.h>
  
-@@ -89,6 +90,76 @@ static const struct regmap_irq s2mps11_irqs[] = {
- 	},
- };
+ 	case S5M8767X:
+ 		for (i = 0; i < 7; i++)
+ 			data[i] &= ~ALARM_ENABLE_MASK;
  
-+static const struct regmap_irq s2mps14_irqs[] = {
-+	[S2MPS14_IRQ_PWRONF] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_PWRONF_MASK,
-+	},
-+	[S2MPS14_IRQ_PWRONR] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_PWRONR_MASK,
-+	},
-+	[S2MPS14_IRQ_JIGONBF] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_JIGONBF_MASK,
-+	},
-+	[S2MPS14_IRQ_JIGONBR] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_JIGONBR_MASK,
-+	},
-+	[S2MPS14_IRQ_ACOKBF] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_ACOKBF_MASK,
-+	},
-+	[S2MPS14_IRQ_ACOKBR] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_ACOKBR_MASK,
-+	},
-+	[S2MPS14_IRQ_PWRON1S] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_PWRON1S_MASK,
-+	},
-+	[S2MPS14_IRQ_MRB] = {
-+		.reg_offset = 0,
-+		.mask = S2MPS11_IRQ_MRB_MASK,
-+	},
-+	[S2MPS14_IRQ_RTC60S] = {
-+		.reg_offset = 1,
-+		.mask = S2MPS11_IRQ_RTC60S_MASK,
-+	},
-+	[S2MPS14_IRQ_RTCA1] = {
-+		.reg_offset = 1,
-+		.mask = S2MPS11_IRQ_RTCA1_MASK,
-+	},
-+	[S2MPS14_IRQ_RTCA0] = {
-+		.reg_offset = 1,
-+		.mask = S2MPS11_IRQ_RTCA0_MASK,
-+	},
-+	[S2MPS14_IRQ_SMPL] = {
-+		.reg_offset = 1,
-+		.mask = S2MPS11_IRQ_SMPL_MASK,
-+	},
-+	[S2MPS14_IRQ_RTC1S] = {
-+		.reg_offset = 1,
-+		.mask = S2MPS11_IRQ_RTC1S_MASK,
-+	},
-+	[S2MPS14_IRQ_WTSR] = {
-+		.reg_offset = 1,
-+		.mask = S2MPS11_IRQ_WTSR_MASK,
-+	},
-+	[S2MPS14_IRQ_INT120C] = {
-+		.reg_offset = 2,
-+		.mask = S2MPS11_IRQ_INT120C_MASK,
-+	},
-+	[S2MPS14_IRQ_INT140C] = {
-+		.reg_offset = 2,
-+		.mask = S2MPS11_IRQ_INT140C_MASK,
-+	},
-+	[S2MPS14_IRQ_TSD] = {
-+		.reg_offset = 2,
-+		.mask = S2MPS14_IRQ_TSD_MASK,
-+	},
-+};
+-		ret = regmap_raw_write(info->regmap, SEC_ALARM0_SEC, data, 8);
++		ret = regmap_raw_write(info->regmap, S5M_ALARM0_SEC, data, 8);
+ 		if (ret < 0)
+ 			return ret;
  
- static const struct regmap_irq s5m8767_irqs[] = {
- 	[S5M8767_IRQ_PWRR] = {
-@@ -246,6 +317,16 @@ static const struct regmap_irq_chip s2mps11_irq_chip = {
- 	.ack_base = S2MPS11_REG_INT1,
- };
+@@ -366,7 +366,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ 	u8 alarm0_conf;
+ 	struct rtc_time tm;
  
-+static const struct regmap_irq_chip s2mps14_irq_chip = {
-+	.name = "s2mps14",
-+	.irqs = s2mps14_irqs,
-+	.num_irqs = ARRAY_SIZE(s2mps14_irqs),
-+	.num_regs = 3,
-+	.status_base = S2MPS14_REG_INT1,
-+	.mask_base = S2MPS14_REG_INT1M,
-+	.ack_base = S2MPS14_REG_INT1,
-+};
-+
- static const struct regmap_irq_chip s5m8767_irq_chip = {
- 	.name = "s5m8767",
- 	.irqs = s5m8767_irqs,
-@@ -297,6 +378,12 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
- 				  sec_pmic->irq_base, &s2mps11_irq_chip,
- 				  &sec_pmic->irq_data);
+-	ret = regmap_bulk_read(info->regmap, SEC_ALARM0_SEC, data, 8);
++	ret = regmap_bulk_read(info->regmap, S5M_ALARM0_SEC, data, 8);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -378,7 +378,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ 	switch (info->device_type) {
+ 	case S5M8763X:
+ 		alarm0_conf = 0x77;
+-		ret = regmap_write(info->regmap, SEC_ALARM0_CONF, alarm0_conf);
++		ret = regmap_write(info->regmap, S5M_ALARM0_CONF, alarm0_conf);
  		break;
-+	case S2MPS14X:
-+		ret = regmap_add_irq_chip(sec_pmic->regmap_pmic, sec_pmic->irq,
-+				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+				  sec_pmic->irq_base, &s2mps14_irq_chip,
-+				  &sec_pmic->irq_data);
-+		break;
- 	default:
- 		dev_err(sec_pmic->dev, "Unknown device type %d\n",
- 			sec_pmic->device_type);
-diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-index 55510444b9fd..e517b12f290f 100644
---- a/include/linux/mfd/samsung/core.h
-+++ b/include/linux/mfd/samsung/core.h
-@@ -19,6 +19,7 @@ enum sec_device_type {
- 	S5M8763X,
- 	S5M8767X,
- 	S2MPS11X,
-+	S2MPS14X,
- };
  
- /**
-diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
-index abe1a6aae3b7..0065f6f1daf4 100644
---- a/include/linux/mfd/samsung/irq.h
-+++ b/include/linux/mfd/samsung/irq.h
-@@ -55,6 +55,33 @@ enum s2mps11_irq {
- #define S2MPS11_IRQ_INT120C_MASK	(1 << 0)
- #define S2MPS11_IRQ_INT140C_MASK	(1 << 1)
+ 	case S5M8767X:
+@@ -393,7 +393,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ 		if (data[RTC_YEAR1] & 0x7f)
+ 			data[RTC_YEAR1] |= ALARM_ENABLE_MASK;
  
-+enum s2mps14_irq {
-+	S2MPS14_IRQ_PWRONF,
-+	S2MPS14_IRQ_PWRONR,
-+	S2MPS14_IRQ_JIGONBF,
-+	S2MPS14_IRQ_JIGONBR,
-+	S2MPS14_IRQ_ACOKBF,
-+	S2MPS14_IRQ_ACOKBR,
-+	S2MPS14_IRQ_PWRON1S,
-+	S2MPS14_IRQ_MRB,
-+
-+	S2MPS14_IRQ_RTC60S,
-+	S2MPS14_IRQ_RTCA1,
-+	S2MPS14_IRQ_RTCA0,
-+	S2MPS14_IRQ_SMPL,
-+	S2MPS14_IRQ_RTC1S,
-+	S2MPS14_IRQ_WTSR,
-+
-+	S2MPS14_IRQ_INT120C,
-+	S2MPS14_IRQ_INT140C,
-+	S2MPS14_IRQ_TSD,
-+
-+	S2MPS14_IRQ_NR,
-+};
-+
-+/* Masks for interrupts are the same as in s2mps11 */
-+#define S2MPS14_IRQ_TSD_MASK		(1 << 2)
-+
- enum s5m8767_irq {
- 	S5M8767_IRQ_PWRR,
- 	S5M8767_IRQ_PWRF,
+-		ret = regmap_raw_write(info->regmap, SEC_ALARM0_SEC, data, 8);
++		ret = regmap_raw_write(info->regmap, S5M_ALARM0_SEC, data, 8);
+ 		if (ret < 0)
+ 			return ret;
+ 		ret = s5m8767_rtc_set_alarm_reg(info);
+@@ -435,7 +435,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = regmap_raw_write(info->regmap, SEC_ALARM0_SEC, data, 8);
++	ret = regmap_raw_write(info->regmap, S5M_ALARM0_SEC, data, 8);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -480,7 +480,7 @@ static const struct rtc_class_ops s5m_rtc_ops = {
+ static void s5m_rtc_enable_wtsr(struct s5m_rtc_info *info, bool enable)
+ {
+ 	int ret;
+-	ret = regmap_update_bits(info->regmap, SEC_WTSR_SMPL_CNTL,
++	ret = regmap_update_bits(info->regmap, S5M_WTSR_SMPL_CNTL,
+ 				 WTSR_ENABLE_MASK,
+ 				 enable ? WTSR_ENABLE_MASK : 0);
+ 	if (ret < 0)
+@@ -491,7 +491,7 @@ static void s5m_rtc_enable_wtsr(struct s5m_rtc_info *info, bool enable)
+ static void s5m_rtc_enable_smpl(struct s5m_rtc_info *info, bool enable)
+ {
+ 	int ret;
+-	ret = regmap_update_bits(info->regmap, SEC_WTSR_SMPL_CNTL,
++	ret = regmap_update_bits(info->regmap, S5M_WTSR_SMPL_CNTL,
+ 				 SMPL_ENABLE_MASK,
+ 				 enable ? SMPL_ENABLE_MASK : 0);
+ 	if (ret < 0)
+@@ -506,7 +506,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 	int ret;
+ 	struct rtc_time tm;
+ 
+-	ret = regmap_read(info->regmap, SEC_RTC_UDR_CON, &tp_read);
++	ret = regmap_read(info->regmap, S5M_RTC_UDR_CON, &tp_read);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to read control reg(%d)\n",
+ 			__func__, ret);
+@@ -518,7 +518,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 	data[1] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+ 
+ 	info->rtc_24hr_mode = 1;
+-	ret = regmap_raw_write(info->regmap, SEC_ALARM0_CONF, data, 2);
++	ret = regmap_raw_write(info->regmap, S5M_ALARM0_CONF, data, 2);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write controlm reg(%d)\n",
+ 			__func__, ret);
+@@ -540,7 +540,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 		ret = s5m_rtc_set_time(info->dev, &tm);
+ 	}
+ 
+-	ret = regmap_update_bits(info->regmap, SEC_RTC_UDR_CON,
++	ret = regmap_update_bits(info->regmap, S5M_RTC_UDR_CON,
+ 				 RTC_TCON_MASK, tp_read | RTC_TCON_MASK);
+ 	if (ret < 0)
+ 		dev_err(info->dev, "%s: fail to update TCON reg(%d)\n",
+@@ -623,7 +623,7 @@ static void s5m_rtc_shutdown(struct platform_device *pdev)
+ 	if (info->wtsr_smpl) {
+ 		for (i = 0; i < 3; i++) {
+ 			s5m_rtc_enable_wtsr(info, false);
+-			regmap_read(info->regmap, SEC_WTSR_SMPL_CNTL, &val);
++			regmap_read(info->regmap, S5M_WTSR_SMPL_CNTL, &val);
+ 			pr_debug("%s: WTSR_SMPL reg(0x%02x)\n", __func__, val);
+ 			if (val & WTSR_ENABLE_MASK)
+ 				pr_emerg("%s: fail to disable WTSR\n",
 diff --git a/include/linux/mfd/samsung/rtc.h b/include/linux/mfd/samsung/rtc.h
-index bdf0573891d0..fa0fc32c763a 100644
+index 4627f59ebd84..bdf0573891d0 100644
 --- a/include/linux/mfd/samsung/rtc.h
 +++ b/include/linux/mfd/samsung/rtc.h
-@@ -1,12 +1,17 @@
--/*  rtc.h
-+/* rtc.h
-  *
-- * Copyright (c) 2011 Samsung Electronics Co., Ltd
-+ * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd
-  *              http://www.samsung.com
-  *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-  *
-  */
+@@ -13,38 +13,38 @@
+ #ifndef __LINUX_MFD_SEC_RTC_H
+ #define __LINUX_MFD_SEC_RTC_H
  
-@@ -47,15 +52,50 @@ enum s5m_rtc_reg {
- 	S5M_RTC_REG_MAX,
+-enum sec_rtc_reg {
+-	SEC_RTC_SEC,
+-	SEC_RTC_MIN,
+-	SEC_RTC_HOUR,
+-	SEC_RTC_WEEKDAY,
+-	SEC_RTC_DATE,
+-	SEC_RTC_MONTH,
+-	SEC_RTC_YEAR1,
+-	SEC_RTC_YEAR2,
+-	SEC_ALARM0_SEC,
+-	SEC_ALARM0_MIN,
+-	SEC_ALARM0_HOUR,
+-	SEC_ALARM0_WEEKDAY,
+-	SEC_ALARM0_DATE,
+-	SEC_ALARM0_MONTH,
+-	SEC_ALARM0_YEAR1,
+-	SEC_ALARM0_YEAR2,
+-	SEC_ALARM1_SEC,
+-	SEC_ALARM1_MIN,
+-	SEC_ALARM1_HOUR,
+-	SEC_ALARM1_WEEKDAY,
+-	SEC_ALARM1_DATE,
+-	SEC_ALARM1_MONTH,
+-	SEC_ALARM1_YEAR1,
+-	SEC_ALARM1_YEAR2,
+-	SEC_ALARM0_CONF,
+-	SEC_ALARM1_CONF,
+-	SEC_RTC_STATUS,
+-	SEC_WTSR_SMPL_CNTL,
+-	SEC_RTC_UDR_CON,
++enum s5m_rtc_reg {
++	S5M_RTC_SEC,
++	S5M_RTC_MIN,
++	S5M_RTC_HOUR,
++	S5M_RTC_WEEKDAY,
++	S5M_RTC_DATE,
++	S5M_RTC_MONTH,
++	S5M_RTC_YEAR1,
++	S5M_RTC_YEAR2,
++	S5M_ALARM0_SEC,
++	S5M_ALARM0_MIN,
++	S5M_ALARM0_HOUR,
++	S5M_ALARM0_WEEKDAY,
++	S5M_ALARM0_DATE,
++	S5M_ALARM0_MONTH,
++	S5M_ALARM0_YEAR1,
++	S5M_ALARM0_YEAR2,
++	S5M_ALARM1_SEC,
++	S5M_ALARM1_MIN,
++	S5M_ALARM1_HOUR,
++	S5M_ALARM1_WEEKDAY,
++	S5M_ALARM1_DATE,
++	S5M_ALARM1_MONTH,
++	S5M_ALARM1_YEAR1,
++	S5M_ALARM1_YEAR2,
++	S5M_ALARM0_CONF,
++	S5M_ALARM1_CONF,
++	S5M_RTC_STATUS,
++	S5M_WTSR_SMPL_CNTL,
++	S5M_RTC_UDR_CON,
+ 
+-	SEC_RTC_REG_MAX,
++	S5M_RTC_REG_MAX,
  };
  
-+enum s2mps_rtc_reg {
-+	S2MPS_RTC_CTRL,
-+	S2MPS_WTSR_SMPL_CNTL,
-+	S2MPS_RTC_UDR_CON,
-+	S2MPS_RSVD,
-+	S2MPS_RTC_SEC,
-+	S2MPS_RTC_MIN,
-+	S2MPS_RTC_HOUR,
-+	S2MPS_RTC_WEEKDAY,
-+	S2MPS_RTC_DATE,
-+	S2MPS_RTC_MONTH,
-+	S2MPS_RTC_YEAR,
-+	S2MPS_ALARM0_SEC,
-+	S2MPS_ALARM0_MIN,
-+	S2MPS_ALARM0_HOUR,
-+	S2MPS_ALARM0_WEEKDAY,
-+	S2MPS_ALARM0_DATE,
-+	S2MPS_ALARM0_MONTH,
-+	S2MPS_ALARM0_YEAR,
-+	S2MPS_ALARM1_SEC,
-+	S2MPS_ALARM1_MIN,
-+	S2MPS_ALARM1_HOUR,
-+	S2MPS_ALARM1_WEEKDAY,
-+	S2MPS_ALARM1_DATE,
-+	S2MPS_ALARM1_MONTH,
-+	S2MPS_ALARM1_YEAR,
-+	S2MPS_OFFSRC,
-+
-+	S2MPS_RTC_REG_MAX,
-+};
-+
  #define RTC_I2C_ADDR		(0x0C >> 1)
- 
+@@ -52,9 +52,9 @@ enum sec_rtc_reg {
  #define HOUR_12			(1 << 7)
  #define HOUR_AMPM		(1 << 6)
  #define HOUR_PM			(1 << 5)
-+
- #define S5M_ALARM0_STATUS	(1 << 1)
- #define S5M_ALARM1_STATUS	(1 << 2)
- #define S5M_UPDATE_AD		(1 << 0)
+-#define ALARM0_STATUS		(1 << 1)
+-#define ALARM1_STATUS		(1 << 2)
+-#define UPDATE_AD		(1 << 0)
++#define S5M_ALARM0_STATUS	(1 << 1)
++#define S5M_ALARM1_STATUS	(1 << 2)
++#define S5M_UPDATE_AD		(1 << 0)
  
-+#define S2MPS_ALARM0_STATUS	(1 << 2)
-+#define S2MPS_ALARM1_STATUS	(1 << 1)
-+
  /* RTC Control Register */
  #define BCD_EN_SHIFT		0
- #define BCD_EN_MASK		(1 << BCD_EN_SHIFT)
-@@ -64,6 +104,10 @@ enum s5m_rtc_reg {
+@@ -62,12 +62,12 @@ enum sec_rtc_reg {
+ #define MODEL24_SHIFT		1
+ #define MODEL24_MASK		(1 << MODEL24_SHIFT)
  /* RTC Update Register1 */
- #define S5M_RTC_UDR_SHIFT	0
- #define S5M_RTC_UDR_MASK	(1 << S5M_RTC_UDR_SHIFT)
-+#define S2MPS_RTC_WUDR_SHIFT	4
-+#define S2MPS_RTC_WUDR_MASK	(1 << S2MPS_RTC_WUDR_SHIFT)
-+#define S2MPS_RTC_RUDR_SHIFT	0
-+#define S2MPS_RTC_RUDR_MASK	(1 << S2MPS_RTC_RUDR_SHIFT)
+-#define RTC_UDR_SHIFT		0
+-#define RTC_UDR_MASK		(1 << RTC_UDR_SHIFT)
++#define S5M_RTC_UDR_SHIFT	0
++#define S5M_RTC_UDR_MASK	(1 << S5M_RTC_UDR_SHIFT)
  #define RTC_TCON_SHIFT		1
  #define RTC_TCON_MASK		(1 << RTC_TCON_SHIFT)
- #define S5M_RTC_TIME_EN_SHIFT	3
-diff --git a/include/linux/mfd/samsung/s2mps14.h b/include/linux/mfd/samsung/s2mps14.h
-new file mode 100644
-index 000000000000..ec1e0857ddde
---- /dev/null
-+++ b/include/linux/mfd/samsung/s2mps14.h
-@@ -0,0 +1,152 @@
-+/*
-+ * s2mps14.h
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd
-+ *              http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#ifndef __LINUX_MFD_S2MPS14_H
-+#define __LINUX_MFD_S2MPS14_H
-+
-+/* S2MPS14 registers */
-+enum s2mps14_reg {
-+	S2MPS14_REG_ID,
-+	S2MPS14_REG_INT1,
-+	S2MPS14_REG_INT2,
-+	S2MPS14_REG_INT3,
-+	S2MPS14_REG_INT1M,
-+	S2MPS14_REG_INT2M,
-+	S2MPS14_REG_INT3M,
-+	S2MPS14_REG_ST1,
-+	S2MPS14_REG_ST2,
-+	S2MPS14_REG_PWRONSRC,
-+	S2MPS14_REG_OFFSRC,
-+	S2MPS14_REG_BU_CHG,
-+	S2MPS14_REG_RTCCTRL,
-+	S2MPS14_REG_CTRL1,
-+	S2MPS14_REG_CTRL2,
-+	S2MPS14_REG_RSVD1,
-+	S2MPS14_REG_RSVD2,
-+	S2MPS14_REG_RSVD3,
-+	S2MPS14_REG_RSVD4,
-+	S2MPS14_REG_RSVD5,
-+	S2MPS14_REG_RSVD6,
-+	S2MPS14_REG_CTRL3,
-+	S2MPS14_REG_RSVD7,
-+	S2MPS14_REG_RSVD8,
-+	S2MPS14_REG_WRSTBI,
-+	S2MPS14_REG_B1CTRL1,
-+	S2MPS14_REG_B1CTRL2,
-+	S2MPS14_REG_B2CTRL1,
-+	S2MPS14_REG_B2CTRL2,
-+	S2MPS14_REG_B3CTRL1,
-+	S2MPS14_REG_B3CTRL2,
-+	S2MPS14_REG_B4CTRL1,
-+	S2MPS14_REG_B4CTRL2,
-+	S2MPS14_REG_B5CTRL1,
-+	S2MPS14_REG_B5CTRL2,
-+	S2MPS14_REG_L1CTRL,
-+	S2MPS14_REG_L2CTRL,
-+	S2MPS14_REG_L3CTRL,
-+	S2MPS14_REG_L4CTRL,
-+	S2MPS14_REG_L5CTRL,
-+	S2MPS14_REG_L6CTRL,
-+	S2MPS14_REG_L7CTRL,
-+	S2MPS14_REG_L8CTRL,
-+	S2MPS14_REG_L9CTRL,
-+	S2MPS14_REG_L10CTRL,
-+	S2MPS14_REG_L11CTRL,
-+	S2MPS14_REG_L12CTRL,
-+	S2MPS14_REG_L13CTRL,
-+	S2MPS14_REG_L14CTRL,
-+	S2MPS14_REG_L15CTRL,
-+	S2MPS14_REG_L16CTRL,
-+	S2MPS14_REG_L17CTRL,
-+	S2MPS14_REG_L18CTRL,
-+	S2MPS14_REG_L19CTRL,
-+	S2MPS14_REG_L20CTRL,
-+	S2MPS14_REG_L21CTRL,
-+	S2MPS14_REG_L22CTRL,
-+	S2MPS14_REG_L23CTRL,
-+	S2MPS14_REG_L24CTRL,
-+	S2MPS14_REG_L25CTRL,
-+	S2MPS14_REG_LDODSCH1,
-+	S2MPS14_REG_LDODSCH2,
-+	S2MPS14_REG_LDODSCH3,
-+};
-+
-+/* S2MPS14 regulator ids */
-+enum s2mps14_regulators {
-+	S2MPS14_LDO1,
-+	S2MPS14_LDO2,
-+	S2MPS14_LDO3,
-+	S2MPS14_LDO4,
-+	S2MPS14_LDO5,
-+	S2MPS14_LDO6,
-+	S2MPS14_LDO7,
-+	S2MPS14_LDO8,
-+	S2MPS14_LDO9,
-+	S2MPS14_LDO10,
-+	S2MPS14_LDO11,
-+	S2MPS14_LDO12,
-+	S2MPS14_LDO13,
-+	S2MPS14_LDO14,
-+	S2MPS14_LDO15,
-+	S2MPS14_LDO16,
-+	S2MPS14_LDO17,
-+	S2MPS14_LDO18,
-+	S2MPS14_LDO19,
-+	S2MPS14_LDO20,
-+	S2MPS14_LDO21,
-+	S2MPS14_LDO22,
-+	S2MPS14_LDO23,
-+	S2MPS14_LDO24,
-+	S2MPS14_LDO25,
-+	S2MPS14_BUCK1,
-+	S2MPS14_BUCK2,
-+	S2MPS14_BUCK3,
-+	S2MPS14_BUCK4,
-+	S2MPS14_BUCK5,
-+
-+	S2MPS14_REGULATOR_MAX,
-+};
-+
-+/* Regulator constraints for BUCKx */
-+#define S2MPS14_BUCK1235_MIN_600MV	600000
-+#define S2MPS14_BUCK4_MIN_1400MV	1400000
-+#define S2MPS14_BUCK1235_STEP_6_25MV	6250
-+#define S2MPS14_BUCK4_STEP_12_5MV	12500
-+#define S2MPS14_BUCK1235_START_SEL	0x20
-+#define S2MPS14_BUCK4_START_SEL		0x40
-+/*
-+ * Default ramp delay in uv/us. Datasheet says that ramp delay can be
-+ * controlled however it does not specify which register is used for that.
-+ * Let's assume that default value will be set.
-+ */
-+#define S2MPS14_BUCK_RAMP_DELAY		12500
-+
-+/* Regulator constraints for different types of LDOx */
-+#define S2MPS14_LDO_MIN_800MV		800000
-+#define S2MPS14_LDO_MIN_1800MV		1800000
-+#define S2MPS14_LDO_STEP_12_5MV		12500
-+#define S2MPS14_LDO_STEP_25MV		25000
-+
-+#define S2MPS14_LDO_VSEL_MASK		0x3F
-+#define S2MPS14_BUCK_VSEL_MASK		0xFF
-+#define S2MPS14_ENABLE_MASK		(0x03 << S2MPS14_ENABLE_SHIFT)
-+#define S2MPS14_ENABLE_SHIFT		6
-+#define S2MPS14_LDO_N_VOLTAGES		(S2MPS14_LDO_VSEL_MASK + 1)
-+#define S2MPS14_BUCK_N_VOLTAGES		(S2MPS14_BUCK_VSEL_MASK + 1)
-+
-+#endif /*  __LINUX_MFD_S2MPS14_H */
+-#define RTC_TIME_EN_SHIFT	3
+-#define RTC_TIME_EN_MASK	(1 << RTC_TIME_EN_SHIFT)
++#define S5M_RTC_TIME_EN_SHIFT	3
++#define S5M_RTC_TIME_EN_MASK	(1 << S5M_RTC_TIME_EN_SHIFT)
+ 
+ /* RTC Hour register */
+ #define HOUR_PM_SHIFT		6
 -- 
 1.7.9.5
