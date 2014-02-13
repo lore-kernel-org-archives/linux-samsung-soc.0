@@ -1,45 +1,41 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] iommu/exynos: Remove driver
-Date: Thu, 13 Feb 2014 11:33:31 -0800
-Message-ID: <CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
-References: <1391716317-20300-1-git-send-email-olof@lixom.net>
-	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
-	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
-	<52F4E481.3050902@samsung.com>
-	<CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Thu, 13 Feb 2014 14:08:30 -0600
+Message-ID: <CAL_JsqJ5FHt4HoV2NtU1ddFpcdxi=Jji0-mPSXL872P8fXrCuQ@mail.gmail.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+	<1392100183-30930-3-git-send-email-kgene.kim@samsung.com>
+	<CAOesGMiWsWXkQkb-_VZGco0gKNZPsHf3ubR88y4Pt4-umk5_Ww@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:36406 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751323AbaBMTdc (ORCPT
+Received: from mail-ve0-f172.google.com ([209.85.128.172]:33067 "EHLO
+	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751460AbaBMUIb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Feb 2014 14:33:32 -0500
-Received: by mail-qa0-f42.google.com with SMTP id k4so17182982qaq.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 11:33:32 -0800 (PST)
-In-Reply-To: <CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
+	Thu, 13 Feb 2014 15:08:31 -0500
+Received: by mail-ve0-f172.google.com with SMTP id c14so8868700vea.17
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 12:08:30 -0800 (PST)
+In-Reply-To: <CAOesGMiWsWXkQkb-_VZGco0gKNZPsHf3ubR88y4Pt4-umk5_Ww@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, KyongHo Cho <pullip.cho@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ilho Lee <ilho215.lee@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
-
-> Just adding KyongHo Cho.
+On Tue, Feb 11, 2014 at 5:39 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Mon, Feb 10, 2014 at 10:29 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> This patch adds support for Samsung GH7 SoC in arm64/Kconfig.
+>>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
 >
-> If he can fixup for this time, it would be best solution because he knows
-> well than others, I think.
+> The overhead of building one more device tree isn't very large, and I
+> don't see any other need to have a Kconfig entry per SoC at this time.
+> It's of course up to Catalin, but you might just want to always
+> compile all dts files instead.
 
-It's not so much a matter of "fixup for this time", it's a about
-having ownership of the driver, making sure it works (and keeps
-working if there is related development). The posted patches have not
-been followed through on and the result is a broken driver. :(
+I think having "make dtbs" build all regardless of the config would be
+better. Perhaps a "all_dtbs" target could be added and everyone can
+get what they want. If/when we add checking into dtc, this we
+certainly become more desirable.
 
-I definitely appreciate his expertise, and we should make sure that he
-gets to review the code, but if someone else is able to spend time on
-reworking the driver (or rewriting a newer one) and maintaining it
-longer-term, then we should not stop them from doing so. And there is
-no reason to keep broken stale code in the kernel meanwhile.
-
-
--Olof
+Rob
