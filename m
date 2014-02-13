@@ -1,59 +1,80 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
-	device probe
-Date: Thu, 13 Feb 2014 18:42:49 +0000
-Message-ID: <20140213184249.GC30257@n2100.arm.linux.org.uk>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org> <1390208555-27770-3-git-send-email-tushar.behera@linaro.org> <20140120100415.GX15937@n2100.arm.linux.org.uk> <20140213181216.GB24155@kroah.com> <20140213181559.GB30257@n2100.arm.linux.org.uk> <20140213182701.GA32578@kroah.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Thu, 13 Feb 2014 11:26:09 -0800
+Message-ID: <CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+	<1540B9A3-2485-4149-81DD-7D86A532E5D4@arm.com>
+	<D225ECFF-E2A7-44C9-8D11-20EE77077797@codeaurora.org>
+	<2286031.FWmKXGrGIV@wuerfel>
+	<52F99056.6010906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-serial-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140213182701.GA32578@kroah.com>
-Sender: linux-serial-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f54.google.com ([209.85.216.54]:35368 "EHLO
+	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751562AbaBMT0K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Feb 2014 14:26:10 -0500
+Received: by mail-qa0-f54.google.com with SMTP id i13so16610611qae.41
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 11:26:09 -0800 (PST)
+In-Reply-To: <52F99056.6010906@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>
 
-On Thu, Feb 13, 2014 at 10:27:01AM -0800, Greg KH wrote:
-> On Thu, Feb 13, 2014 at 06:15:59PM +0000, Russell King - ARM Linux wrote:
-> > On Thu, Feb 13, 2014 at 10:12:16AM -0800, Greg KH wrote:
-> > > On Mon, Jan 20, 2014 at 10:04:15AM +0000, Russell King - ARM Linux wrote:
-> > > > On Mon, Jan 20, 2014 at 02:32:35PM +0530, Tushar Behera wrote:
-> > > > > uart_register_driver call binds the driver to a specific device
-> > > > > node through tty_register_driver call. This should typically happen
-> > > > > during device probe call.
-> > > > > 
-> > > > > In a multiplatform scenario, it is possible that multiple serial
-> > > > > drivers are part of the kernel. Currently the driver registration fails
-> > > > > if multiple serial drivers with same default major/minor numbers are
-> > > > > included in the kernel.
-> > > > > 
-> > > > > A typical case is observed with amba-pl011 and samsung-uart drivers.
-> > > > 
-> > > > NAK.  There should not be any other driver using amba-pl011's device numbers.
-> > > 
-> > > I agree, but there is.  And because of that, moving the registration to
-> > > the probe call fixes the issue with building a kernel with all of the
-> > > drivers built into them, so I'm going to take both of these patches, as
-> > > it does solve that problem, while still allowing the device number
-> > > collision to happen.
-> > 
-> > So what happens when two _devices_ are probed by this driver at the same
-> > time?
-> 
-> The bus that the driver is on will not allow that to happen, I thought
-> we went through this before...
-> 
-> And yes, devices on different busses could cause problems, but is that
-> the case here for these devices?  At first glance, I don't think that
-> can happen for these drivers.
+On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 02/13/14 04:14, Arnd Bergmann wrote:
+>>
+>> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
+>>>
+>>> On Feb 12, 2014, at 12:12 PM, Catalin Marinas<catalin.marinas@arm.com>
+>>> wrote:
+>>>>
+>>>> On 12 Feb 2014, at 16:25, Kumar Gala<galak@codeaurora.org>  wrote:
+>>>>>
+>>>>> One reason to keep around ARCH_* is for drivers shared between arm and
+>>>>> arm64 that depend on it.
+>>>>
+>>>>
+>>>> We already converted some of them (those depending on ARCH_VEXPRESS) to
+>>>> just depend on ARM64. Ideally, at some point I'd like to see them as
+>>>> defaulting to modules but I don't think we are there yet (we had some
+>>>> discussions at the last KS, I'm not sure anyone started looking into
+>>>> this).
+>>>
+>>>
+>>> I'm torn about this, I think for something like VEXPRESS it makes sense,
+>>> however I think  its reasonable to still have an config symbol for a full
+>>> SoC family or something of that nature.
+>>
+>>
+>> I think for SBSA compliant systems, we should be able to live with a
+>> generic ARCH_SBSA Kconfig symbol. For more irregular embedded platforms,
+>> we may need something more specific.
+>>
+> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
+> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
+> compliant with SBSA Level1 and having some specific features?
 
-We went through this before, and I stated the paths, and no one disagreed
-with that.
+(It's a little hard to answer since nobody can download the doc and
+then talk about it.)
 
-It /is/ racy.
+What kind of features are you expecting though? More IP
+blocks/devices? Those are just kernel config options to enable,
+ideally as modules.
 
--- 
-FTTC broadband for 0.8mile line: 5.8Mbps down 500kbps up.  Estimation
-in database were 13.1 to 19Mbit for a good line, about 7.5+ for a bad.
-Estimate before purchase was "up to 13.2Mbit".
+x86 doesn't need config options for each generation of their platform,
+and neither should ARM64. Sure, there might be drivers that don't make
+sense to enable on some platforms, but that's what defconfigs (or
+distro configs), and modules are for -- the modules won't load unless
+the hardware is there.
+
+As long as we're not talking about massive amounts of code that is
+part of the base platform, separating out per version again doesn't
+make sense -- just enable for SBSA and it'll support Level 1 through
+whatever. If the kernel size becomes a concern we can revisit, but
+let's not start out that way.
+
+
+-Olof
