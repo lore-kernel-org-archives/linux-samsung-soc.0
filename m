@@ -1,188 +1,86 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 07/14] regulator: s2mps11: Copy supported regulators from
- initconst
-Date: Thu, 13 Feb 2014 13:37:03 +0100
-Message-ID: <1392295024-4862-1-git-send-email-k.kozlowski@samsung.com>
-References: <CAKew6eUtuQEHJJ9G+g54LRoH8sXzqixDBUEjCjFyRDJTRP00Nw@mail.gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAKew6eUtuQEHJJ9G+g54LRoH8sXzqixDBUEjCjFyRDJTRP00Nw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Thu, 13 Feb 2014 12:43:20 +0000
+Message-ID: <20140213124320.GB3403@lee--X1>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f174.google.com ([74.125.82.174]:46476 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753261AbaBMMn2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Feb 2014 07:43:28 -0500
+Received: by mail-we0-f174.google.com with SMTP id w61so1740200wes.33
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 04:43:27 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-Add __initconst to 'regulator_desc' array with supported regulators.
-During probe choose how many and which regulators will be supported
-according to device ID. Then copy the 'regulator_desc' array to
-allocated memory so the regulator core can use it.
+> S2MPS11/S2MPS14 regulators support different modes of operation:
+>  - Always off;
+>  - On/Off controlled by pin/GPIO (PWREN/LDOEN/EMMCEN);
+>  - Always on;
+> This is very similar to S5M8767 regulator driver which also supports
+> opmodes (although S5M8767 have also low-power mode).
+>=20
+> This patch adds parsing the operation mode from DTS by reading a
+> "op_mode" property from regulator child node.
+>=20
+> The op_mode is then used for enabling the S2MPS14 regulators.
+> On S2MPS11 the DTS "op_mode" property is parsed but not used for
+> enabling, as this was not tested.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> ---
+>  drivers/regulator/s2mps11.c         |   97 +++++++++++++++++++++++++=
++++++++++-
+>  include/linux/mfd/samsung/s2mps14.h |   19 +++++++
+>  2 files changed, 115 insertions(+), 1 deletion(-)
 
-Additionally allocate array of of_regulator_match() dynamically (based
-on number of regulators) instead of allocation on the stack.
+<snip>
 
-This is needed for supporting different devices in s2mps11
-driver and actually prepares the regulator driver for supporting the
-S2MPS14 device.
+> +++ b/include/linux/mfd/samsung/s2mps14.h
+> @@ -149,4 +149,23 @@ enum s2mps14_regulators {
+>  #define S2MPS14_LDO_N_VOLTAGES		(S2MPS14_LDO_VSEL_MASK + 1)
+>  #define S2MPS14_BUCK_N_VOLTAGES		(S2MPS14_BUCK_VSEL_MASK + 1)
+> =20
+> +#define S2MPS14_ENCTRL_SHIFT		6
+> +#define S2MPS14_ENCTRL_MASK		(0x3 << S2MPS14_ENCTRL_SHIFT)
+> +
+> +/*
+> + * Values of regulator operation modes match device tree bindings.
+> + */
+> +enum s2mps14_regulator_opmode {
+> +	S2MPS14_REGULATOR_OPMODE_OFF		=3D 0,
+> +	S2MPS14_REGULATOR_OPMODE_ON		=3D 1,
+> +	/*
+> +	 * Reserved for compatibility with S5M8767 where this
+> +	 * is a low power mode.
+> +	 */
+> +	S2MPS14_REGULATOR_OPMODE_RESERVED	=3D 2,
+> +	S2MPS14_REGULATOR_OPMODE_SUSPEND	=3D 3,
 
-Code for supporting the S2MPS14 device will add its own array of
-'regulator_desc' (also marked as __initconst). This way memory footprint
-of the driver will be reduced (approximately 'regulators_desc' array for
-S2MPS11 occupies 5 kB on 32-bit ARM, for S2MPS14 will occupy 3 kB).
+You don't need to number these like this. If you want to force the
+numbering to start at '0' initialise the top value, then the rest
+should be sequential.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
----
- drivers/regulator/s2mps11.c |   75 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 65 insertions(+), 10 deletions(-)
+> +	S2MPS14_REGULATOR_OPMODE_MAX,
+> +};
+> +
+>  #endif /*  __LINUX_MFD_S2MPS14_H */
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index d44bd5b3fe8e..8504ab29aa9f 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -25,10 +25,9 @@
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mps11.h>
- 
--#define S2MPS11_REGULATOR_CNT ARRAY_SIZE(regulators)
--
- struct s2mps11_info {
--	struct regulator_dev *rdev[S2MPS11_REGULATOR_MAX];
-+	struct regulator_dev **rdev;
-+	unsigned int rdev_num;
- 
- 	int ramp_delay2;
- 	int ramp_delay34;
-@@ -345,7 +344,7 @@ static struct regulator_ops s2mps11_buck_ops = {
- 	.enable_mask	= S2MPS11_ENABLE_MASK			\
- }
- 
--static const struct regulator_desc regulators[] = {
-+static const struct regulator_desc s2mps11_regulators[] __initconst = {
- 	regulator_desc_ldo2(1),
- 	regulator_desc_ldo1(2),
- 	regulator_desc_ldo1(3),
-@@ -396,21 +395,62 @@ static const struct regulator_desc regulators[] = {
- 	regulator_desc_buck10,
- };
- 
-+/*
-+ * Allocates memory under 'regulators' pointer and copies there array
-+ * of regulator_desc for given device.
-+ *
-+ * Returns number of regulators or negative ERRNO on error.
-+ */
-+static int __init
-+s2mps11_pmic_init_regulators_desc(struct platform_device *pdev,
-+		struct regulator_desc **regulators)
-+{
-+	const struct regulator_desc *regulators_init;
-+	enum sec_device_type dev_type;
-+	int rdev_num;
-+
-+	dev_type = platform_get_device_id(pdev)->driver_data;
-+	switch (dev_type) {
-+	case S2MPS11X:
-+		rdev_num = ARRAY_SIZE(s2mps11_regulators);
-+		regulators_init = s2mps11_regulators;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "Invalid device type: %u\n", dev_type);
-+		return -EINVAL;
-+	};
-+
-+	*regulators = devm_kzalloc(&pdev->dev,
-+			sizeof(**regulators) * rdev_num, GFP_KERNEL);
-+	if (!*regulators)
-+		return -ENOMEM;
-+
-+	memcpy(*regulators, regulators_init, sizeof(**regulators) * rdev_num);
-+
-+	return rdev_num;
-+}
-+
- static int s2mps11_pmic_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct sec_platform_data *pdata = dev_get_platdata(iodev->dev);
--	struct of_regulator_match rdata[S2MPS11_REGULATOR_MAX];
-+	struct sec_platform_data *pdata = iodev->pdata;
-+	struct of_regulator_match *rdata = NULL;
- 	struct device_node *reg_np = NULL;
- 	struct regulator_config config = { };
- 	struct s2mps11_info *s2mps11;
- 	int i, ret;
-+	struct regulator_desc *regulators = NULL;
-+	unsigned int rdev_num;
- 
- 	s2mps11 = devm_kzalloc(&pdev->dev, sizeof(struct s2mps11_info),
- 				GFP_KERNEL);
- 	if (!s2mps11)
- 		return -ENOMEM;
- 
-+	rdev_num = s2mps11_pmic_init_regulators_desc(pdev, &regulators);
-+	if (rdev_num < 0)
-+		return rdev_num;
-+
- 	if (!iodev->dev->of_node) {
- 		if (pdata) {
- 			goto common_reg;
-@@ -421,7 +461,17 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	for (i = 0; i < S2MPS11_REGULATOR_CNT; i++)
-+	s2mps11->rdev = devm_kzalloc(&pdev->dev,
-+			sizeof(*s2mps11->rdev) * rdev_num, GFP_KERNEL);
-+	if (!s2mps11->rdev)
-+		return -ENOMEM;
-+
-+	rdata = devm_kzalloc(&pdev->dev, sizeof(*rdata) * rdev_num,
-+			GFP_KERNEL);
-+	if (!rdata)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < rdev_num; i++)
- 		rdata[i].name = regulators[i].name;
- 
- 	reg_np = of_find_node_by_name(iodev->dev->of_node, "regulators");
-@@ -430,15 +480,16 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	of_regulator_match(&pdev->dev, reg_np, rdata, S2MPS11_REGULATOR_MAX);
-+	of_regulator_match(&pdev->dev, reg_np, rdata, rdev_num);
- 
- common_reg:
- 	platform_set_drvdata(pdev, s2mps11);
-+	s2mps11->rdev_num = rdev_num;
- 
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
--	for (i = 0; i < S2MPS11_REGULATOR_MAX; i++) {
-+	for (i = 0; i < rdev_num; i++) {
- 		if (!reg_np) {
- 			config.init_data = pdata->regulators[i].initdata;
- 			config.of_node = pdata->regulators[i].reg_node;
-@@ -457,11 +508,15 @@ common_reg:
- 		}
- 	}
- 
-+	/* rdata was needed only for of_regulator_match() during probe */
-+	if (rdata)
-+		devm_kfree(&pdev->dev, rdata);
-+
- 	return 0;
- }
- 
- static const struct platform_device_id s2mps11_pmic_id[] = {
--	{ "s2mps11-pmic", 0},
-+	{ "s2mps11-pmic", S2MPS11X},
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
--- 
-1.7.9.5
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
