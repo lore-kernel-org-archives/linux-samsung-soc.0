@@ -1,71 +1,89 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 0/9] Samsung PM consolidation part 1 (clocks)
-Date: Fri, 14 Feb 2014 08:17:06 +0900
-Message-ID: <52FD5272.7010309@samsung.com>
-References: <1391710616-14226-1-git-send-email-t.figa@samsung.com> <CAJuA9ah97MQKrNeKG2vijFCr8b7T4r2Zr9gsGtETwtBLmKBrXg@mail.gmail.com> <52F4C9CB.6060901@samsung.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Thu, 13 Feb 2014 15:26:06 -0800
+Message-ID: <20140213232606.GA27372@kroah.com>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+ <1390208555-27770-3-git-send-email-tushar.behera@linaro.org>
+ <20140120100415.GX15937@n2100.arm.linux.org.uk>
+ <20140213181216.GB24155@kroah.com>
+ <20140213181559.GB30257@n2100.arm.linux.org.uk>
+ <20140213182701.GA32578@kroah.com>
+ <20140213184249.GC30257@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:64145 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751795AbaBMXRP (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37090 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752107AbaBMXYs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Feb 2014 18:17:15 -0500
-Received: by mail-pb0-f44.google.com with SMTP id rq2so11465018pbb.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 15:17:15 -0800 (PST)
-In-Reply-To: <52F4C9CB.6060901@samsung.com>
+	Thu, 13 Feb 2014 18:24:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20140213184249.GC30257@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Rahul Sharma <r.sh.open@gmail.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
 
-On 02/07/14 20:55, Sylwester Nawrocki wrote:
-> On 07/02/14 04:45, Thomas Abraham wrote:
->> On Thu, Feb 6, 2014 at 11:46 PM, Tomasz Figa<t.figa@samsung.com>  wrote:
->>>> This series reworks suspend/resume handling of Samsung clock drivers
->>>> to cover more SoC specific aspects that are beyond simple register
->>>> save and restore. The goal is to have all the suspend/resume code
->>>> that touches the clock controller in single place, which is the
->>>> clock driver.
->>>>
->>>> On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
->>>> Arndale boards (except suspend/resume, which is broken because of
->>>> unrelated reasons):
->>>>
->>>> Tested-by: Tomasz Figa<t.figa@samsung.com>
->>>>
->>>> Tomasz Figa (9):
->>>>    clk: exynos4: Remove remnants of non-DT support
->>>>    clk: samsung: Provide common helpers for register save/restore
->>>>    clk: samsung: exynos4: Move suspend/resume handling to SoC driver
->>>>    clk: samsung: exynos5250: Move suspend/resume handling to SoC driver
->>>>    clk: samsung: exynos5420: Move suspend/resume handling to SoC driver
->>>>    clk: samsung: s3c64xx: Move suspend/resume handling to SoC driver
->>>>    clk: samsung: Drop old suspend/resume code
->>>>    clk: samsung: exynos4: Add remaining suspend/resume handling
->>>>    ARM: EXYNOS: pm: Drop legacy Exynos4 clock suspend/resume code
->>>>
->>>>   arch/arm/mach-exynos/pm.c            | 148 +-----------------------------
->>>>   drivers/clk/samsung/clk-exynos4.c    | 172 +++++++++++++++++++++++++++++++----
->>>>   drivers/clk/samsung/clk-exynos5250.c |  49 +++++++++-
->>>>   drivers/clk/samsung/clk-exynos5420.c |  49 +++++++++-
->>>>   drivers/clk/samsung/clk-exynos5440.c |   2 +-
->>>>   drivers/clk/samsung/clk-s3c64xx.c    |  79 +++++++++++++---
->>>>   drivers/clk/samsung/clk.c            |  71 ++++++---------
->>>>   drivers/clk/samsung/clk.h            |  14 ++-
->>>>   8 files changed, 348 insertions(+), 236 deletions(-)
->>
->> Nice series!
->> Reviewed-by: Thomas Abraham<thomas.ab@samsung.com>
->
-> Yes, that's a nice cleanup.
->
-> Reviewed-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
->
-+1 Nice
+On Thu, Feb 13, 2014 at 06:42:49PM +0000, Russell King - ARM Linux wrote:
+> On Thu, Feb 13, 2014 at 10:27:01AM -0800, Greg KH wrote:
+> > On Thu, Feb 13, 2014 at 06:15:59PM +0000, Russell King - ARM Linux wrote:
+> > > On Thu, Feb 13, 2014 at 10:12:16AM -0800, Greg KH wrote:
+> > > > On Mon, Jan 20, 2014 at 10:04:15AM +0000, Russell King - ARM Linux wrote:
+> > > > > On Mon, Jan 20, 2014 at 02:32:35PM +0530, Tushar Behera wrote:
+> > > > > > uart_register_driver call binds the driver to a specific device
+> > > > > > node through tty_register_driver call. This should typically happen
+> > > > > > during device probe call.
+> > > > > > 
+> > > > > > In a multiplatform scenario, it is possible that multiple serial
+> > > > > > drivers are part of the kernel. Currently the driver registration fails
+> > > > > > if multiple serial drivers with same default major/minor numbers are
+> > > > > > included in the kernel.
+> > > > > > 
+> > > > > > A typical case is observed with amba-pl011 and samsung-uart drivers.
+> > > > > 
+> > > > > NAK.  There should not be any other driver using amba-pl011's device numbers.
+> > > > 
+> > > > I agree, but there is.  And because of that, moving the registration to
+> > > > the probe call fixes the issue with building a kernel with all of the
+> > > > drivers built into them, so I'm going to take both of these patches, as
+> > > > it does solve that problem, while still allowing the device number
+> > > > collision to happen.
+> > > 
+> > > So what happens when two _devices_ are probed by this driver at the same
+> > > time?
+> > 
+> > The bus that the driver is on will not allow that to happen, I thought
+> > we went through this before...
+> > 
+> > And yes, devices on different busses could cause problems, but is that
+> > the case here for these devices?  At first glance, I don't think that
+> > can happen for these drivers.
+> 
+> We went through this before, and I stated the paths, and no one disagreed
+> with that.
+> 
+> It /is/ racy.
 
-I've applied this whole series.
-Thanks, Tomasz.
+Ok, I just went and looked at the uart driver register path, and I don't
+see the race (note, if there is one, it's there today, regardless of
+this patch).
 
-- Kukjin
+uart_register_driver() fils in a bunch of fields, and passes control off
+to tty_register_driver().  If the minor/major number allocation here
+fails, due to collisions, then an error occurs, and things back out
+safely.
+
+If the allocation succeeds, then we lock the list of drivers, add them
+to the list, then register the tty device with the subsystem for how
+ever many tty devices were asked for.  Yes, the locking might be wrong
+here, in the tty layer, but again, that's nothing new created by this
+patch.
+
+So I fail to see the problem with applying this patch, as it solves a
+problem people are having, and should be fine given that no hardware
+with both of these devices will ever be present at the same time.
+
+thanks,
+
+greg k-h
