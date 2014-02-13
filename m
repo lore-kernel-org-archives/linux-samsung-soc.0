@@ -1,50 +1,52 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 22/28] Remove S3C24XX_GPIO_EXTRA128
-Date: Fri, 14 Feb 2014 07:57:33 +0900
-Message-ID: <52FD4DDD.6020400@samsung.com>
-References: <1391971686-9517-1-git-send-email-richard@nod.at> <1391971686-9517-23-git-send-email-richard@nod.at> <52F999A1.1070709@samsung.com>
+Subject: Re: [PATCH] ARM: s3c24xx: get rid of unneeded selects
+Date: Fri, 14 Feb 2014 08:00:52 +0900
+Message-ID: <52FD4EA4.2060402@samsung.com>
+References: <1391957465.25424.14.camel@x220>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52F999A1.1070709@samsung.com>
+In-Reply-To: <1391957465.25424.14.camel@x220>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Richard Weinberger <richard@nod.at>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM SUB-ARCHITECT..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG ARM A..." <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Paul Bolle <pebolle@tiscali.nl>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/11/14 12:31, Kukjin Kim wrote:
-> On 02/10/14 03:48, Richard Weinberger wrote:
->> The symbol is an orphan, get rid of it.
->>
->> Signed-off-by: Richard Weinberger<richard@nod.at>
->> ---
->> arch/arm/mach-s3c24xx/Kconfig | 1 -
->> 1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-s3c24xx/Kconfig
->> b/arch/arm/mach-s3c24xx/Kconfig
->> index 1c67f04..bb1fa603 100644
->> --- a/arch/arm/mach-s3c24xx/Kconfig
->> +++ b/arch/arm/mach-s3c24xx/Kconfig
->> @@ -561,7 +561,6 @@ config MACH_OSIRIS
->> select S3C2410_IOTIMING if ARM_S3C2440_CPUFREQ
->> select S3C2440_XTAL_12000000
->> select S3C24XX_DCLK
->> - select S3C24XX_GPIO_EXTRA128
->> select S3C24XX_SIMTEC_PM if PM
->> select S3C_DEV_NAND
->> select S3C_DEV_USB_HOST
+On 02/09/14 23:51, Paul Bolle wrote:
+> Commit c67d0f29262b ("ARM: s3c24xx: get rid of custom<mach/gpio.h>")
+> got rid of the Kconfig symbols S3C24XX_GPIO_EXTRA64 and
+> S3C24XX_GPIO_EXTRA128. It missed one select of both of these symbols, so
+> get rid of those now.
 >
-> OK good, but I will squash this with 13th for mach-s3c24xx/Kconfig when
-> I apply.
+> Signed-off-by: Paul Bolle<pebolle@tiscali.nl>
+> ---
+> Untested.
 >
-+ Paul Bolle
+>   arch/arm/mach-s3c24xx/Kconfig | 2 --
+>   1 file changed, 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+> index d876431..bb1fa603 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -521,7 +521,6 @@ config MACH_ANUBIS
+>   	select HAVE_PATA_PLATFORM
+>   	select S3C2440_XTAL_12000000
+>   	select S3C24XX_DCLK
+> -	select S3C24XX_GPIO_EXTRA64
+>   	select S3C24XX_SIMTEC_PM if PM
+>   	select S3C_DEV_USB_HOST
+>   	help
+> @@ -562,7 +561,6 @@ config MACH_OSIRIS
+>   	select S3C2410_IOTIMING if ARM_S3C2440_CPUFREQ
+>   	select S3C2440_XTAL_12000000
+>   	select S3C24XX_DCLK
+> -	select S3C24XX_GPIO_EXTRA128
+>   	select S3C24XX_SIMTEC_PM if PM
+>   	select S3C_DEV_NAND
+>   	select S3C_DEV_USB_HOST
 
-Richard,
+Applied, thanks.
 
-I found same patch ([PATCH] ARM: s3c24xx: get rid of unneeded selects) 
-for S3C24XX from Paul before your posting. So I picked that up.
-
-Thanks,
-Kukjin
+- Kukjin
