@@ -1,75 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 07/14] regulator: s2mps11: Copy supported regulators
- from initconst
-Date: Thu, 13 Feb 2014 19:07:30 +0000
-Message-ID: <20140213190730.GB28112@sirena.org.uk>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-8-git-send-email-k.kozlowski@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] iommu/exynos: Remove driver
+Date: Thu, 13 Feb 2014 11:33:31 -0800
+Message-ID: <CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
+References: <1391716317-20300-1-git-send-email-olof@lixom.net>
+	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
+	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+	<52F4E481.3050902@samsung.com>
+	<CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JSPlny27wWFXU/ig"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42975 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750987AbaBMT2n (ORCPT
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:36406 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751323AbaBMTdc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Feb 2014 14:28:43 -0500
-Content-Disposition: inline
-In-Reply-To: <1392282847-25444-8-git-send-email-k.kozlowski@samsung.com>
+	Thu, 13 Feb 2014 14:33:32 -0500
+Received: by mail-qa0-f42.google.com with SMTP id k4so17182982qaq.29
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2014 11:33:32 -0800 (PST)
+In-Reply-To: <CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+To: Kukjin Kim <kgene.kim@gmail.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, KyongHo Cho <pullip.cho@samsung.com>
+
+On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
+
+> Just adding KyongHo Cho.
+>
+> If he can fixup for this time, it would be best solution because he knows
+> well than others, I think.
+
+It's not so much a matter of "fixup for this time", it's a about
+having ownership of the driver, making sure it works (and keeps
+working if there is related development). The posted patches have not
+been followed through on and the result is a broken driver. :(
+
+I definitely appreciate his expertise, and we should make sure that he
+gets to review the code, but if someone else is able to spend time on
+reworking the driver (or rewriting a newer one) and maintaining it
+longer-term, then we should not stop them from doing so. And there is
+no reason to keep broken stale code in the kernel meanwhile.
 
 
---JSPlny27wWFXU/ig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Feb 13, 2014 at 10:14:00AM +0100, Krzysztof Kozlowski wrote:
-
-> -	for (i = 0; i < S2MPS11_REGULATOR_CNT; i++)
-> +	s2mps11->rdev = devm_kzalloc(&pdev->dev,
-> +			sizeof(*s2mps11->rdev)*rdev_num, GFP_KERNEL);
-> +	if (!s2mps11->rdev)
-> +		return -ENOMEM;
-
-If we're using managed allocations do we actually need to keep the rdev
-table at all?  We only normally use it to free.
-
-> +	rdata = devm_kzalloc(&pdev->dev, sizeof(*rdata)*rdev_num, GFP_KERNEL);
-> +	if (!rdata)
-> +		return -ENOMEM;
-> +
-
-> +	/* rdata was needed only for of_regulator_match() during probe */
-> +	if (rdata)
-> +		devm_kfree(&pdev->dev, rdata);
-> +
-
-If this is always going to be freed within the probe path (in the same
-function indeed) why is it a managed allocaton at all?
-
---JSPlny27wWFXU/ig
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS/RfvAAoJELSic+t+oim9WbkP/RlkJ7EQw2+eNFL32x5YCjra
-QBU8N3GmiF43anP7q8lV8k93HXK5ZxlJesd+odTDAdsjA4lt6+wP4zuLjDfFKvSP
-DI5RqjjbA7bvDxdVmiSfHtah1d9VQ7ewz6VlvFaDFavawvmg8WjvdO5L32aqdg67
-I5FHqLXhvtZsHNOEKC9gZPk7k7FkjvHfx1aCARkaezvjUiRcWZIoQzQgi6IPen3y
-2rVxrcoZNKF3gCLarcIr297pOAB9MOOIJL/OdbgWYzOBBibeMuBrFsx6cvGlwmFr
-m9rqRxpxGt2yX4OAYyv8zVGqVf5pDO703Wkch9uSVDv+QnvuwkvW+UROjJXj9TUt
-dHIwF9NI6G0QE0rYdVlncR4OASs9NgDtfZZvSxHy9nE6AA2EyNzZz189gJY9PVjD
-mt05VH2x8rutnkNFNysL2U4Fqx2h+MQYKUFwZhXrMfnGx6QriP2KgIVV9hmZ0Inz
-JQpb79uxW6WBRWbkv6Qj3ymw64s47bopPXAYp8Mmk5r4omApc4rLpzeLHNX4hAJq
-Pa7szTKfLNTc+QHH7QfH3/pKNVFeBDHXru5zg8QPmT6sre/z++ntuL+JEHFeSehp
-bFHvo2XxqvmBP55HcmRSMXHXha9G5MzKLFKrt3qdMeQE8hFkn9llrXLcKZPjmA5N
-LGv89444Dk9BfdmTIW/4
-=pS+i
------END PGP SIGNATURE-----
-
---JSPlny27wWFXU/ig--
+-Olof
