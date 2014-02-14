@@ -1,66 +1,70 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
  regulators
-Date: Fri, 14 Feb 2014 20:59:15 +0000
-Message-ID: <20140214205915.GW4451@sirena.org.uk>
+Date: Fri, 14 Feb 2014 21:05:02 +0000
+Message-ID: <20140214210502.GX4451@sirena.org.uk>
 References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
  <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <20140213192835.GD28112@sirena.org.uk>
- <1392365712.29133.16.camel@AMDC1943>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+ <1392383156.12506.20.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Fw8vdPO5iEPGjqL+"
+	protocol="application/pgp-signature"; boundary="/Kwy1es1GwkEJhNg"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1392365712.29133.16.camel@AMDC1943>
+In-Reply-To: <1392383156.12506.20.camel@AMDC1943>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---Fw8vdPO5iEPGjqL+
+--/Kwy1es1GwkEJhNg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Feb 14, 2014 at 09:15:12AM +0100, Krzysztof Kozlowski wrote:
+On Fri, Feb 14, 2014 at 02:05:56PM +0100, Krzysztof Kozlowski wrote:
+> On Thu, 2014-02-13 at 17:46 +0530, Yadwinder Singh Brar wrote:
 
-> My initial idea was to do this similarly to the S5M8767 regulator (where
-> there is also 4th mode: low power). The presence of GPIO in DTS can
-> simplify the bindings but on the other hand it wouldn't be compatible
-> with S5M8767 regulator driver. This may complicate the merge of these
-> drivers.
+>  - low-power mode;
+>  - low-power mode controlled by PWREN;
+> Although not all are present for each regulator.
 
-They can always use separate ops.
+What exactly is low power mode and how does it interact with the enable?
+The name suggests it's a more efficient mode for use with low current
+drain, is that right?
 
-> What is your opinion on this - should I abandon the "op_mode" idea and
-> use presence of GPIO?
+> A generic solution for operating mode of regulators (not only s2mps11
+> and s5m8767) could cover all of these above or just a subset, for
+> example regulator bindings could look like:
+>  - regulator-mode-suspend; /* PWR controls: on/off or low-power mode */
+>  - regulator-mode-low-power; /* Low power mode */
 
-Yes, that's better - especially since the framework has support for
-enable GPIOs.  It can do things like handle cases where the hardware has
-tied the enables for several regulators together so they all need to be
-enabled and disabled as one.
+Those properties have awfully generic names and part of what I was
+wondering above is if the low power mode maps onto the idle or standby
+modes that the API defines?  We don't cover those in the bindings yet
+since they are unfortunately fuzzy but perhaps we need to do so.
 
---Fw8vdPO5iEPGjqL+
+--/Kwy1es1GwkEJhNg
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJS/oOgAAoJELSic+t+oim98x4P/0BkAcussMl6iaO7QENAuCkT
-dS0CLxy1SoCnDxa+RWX8cB0hpBJEAAQ5zlUDVauRU9FfO9ijvhVzn9vZx5erjrKV
-QEuMPmL2hiLZ6ymZ4T3qCkOdOnZ/i9b0y+AKIHopY/xwPL6cFxoO5P4FbOLhUMVn
-o8qoEQQqGgwgxi/kGlCBecTUCT10B4tc924t0EpyJuDHNZA2kokYSkuoLQs84Z+A
-6mW8a4lwsVt6afWwIXKQHBIRfO1Fj2gywSxsjFo3YhuFbPyX8bY67+78184dMcYV
-EFD1yL9axOv59pIeYZmA8BtDiS2XqrL4szGcg4jpw7gZ6UR7kR0mIXe8ofJUoQoe
-IF4ms1A2nMJKGRBhmOqhu2sRPRsmR62pjJVaym+efa7mSLzuIsbZEQHX0x/o8AM7
-EGQtrkYK079W7aVePR5h1dEr17RMHN9wIHgnL+/YFW8MnP5Ybr6KdeRcQm0JTIDt
-uXP1iIkAxSiWKhGNNIEm/FzXnw+m80wwWWBbhZk60agIoRMBgYNBvQvpeZ5KkvFD
-EeRjLFzIuXcGqBXQSyo8BGoB7KwXN3oSFk1nVBCZBniqFfhNXORDZupgA2MMEkQE
-JN3YDb7EKHXBx19jfy9JQ59cJNnO53pPZMQj4szVGZY0ra/ngC5Lo8SRFj9V+2Z3
-9VJo1+5ushqnYOcVVu64
-=iNyu
+iQIcBAEBAgAGBQJS/oT7AAoJELSic+t+oim99lcP/2kFSZ61Z4yz77nEn7NV5oSy
+GngIymNi8N76RIDELr+jN0U4a0ijjgSx+sZqiap1B0IoKpGl6lTs2fOKeFMzPUBY
+HAEQF3pPPz70O7AQ9uI4YkuDBXh3vhhaQV+3M/ZXr39EqWySjrjVW21M/Et87FDh
+tQ6VbbBmXq7N0DdXI4FhYJjtdsa6WgWhbEyVK0GDxKKl7lGyayZ+UJ9ntV4u+z30
+t2EztL2xT9GtPaxIAXs//Tc6ltkxlVZR13G8OYyTUVDc7YaDljbuGJHFUdt6tn/1
+TpFxkpqqPZ/FO7uoOpUTrzj6BAxejl44HPmDPBtPjHYdfXzy9XUUEAGBCG2wa1qX
+sQzKPYk5GVVaAi0T2YAWGDqmCEU3DjuiUAPmmI67RIMTxrxyxJJviW+8kuvWrP9o
+NYP0XbRJfrhc1MoG+/TeLu3kI4cZ/aMvhS/j7xmLXS7rt4WSSN0b0qURJEB9E5Gi
+TZq1ykVwPTGiAy57Eu4jbvW8kDPEUHRNqJCb0dOjVJp8AP0+NTxhOCOPiXruVDUE
+K19AB68UVj2CHnPgwYRmARwJsZpjBch7ykEkk6QgbgXdOhmWZ1PzpYrSCIzo5Chb
+Z9KG2UnaRCXaq5+ImEK9VwpCnElUsOlQJWfSpq0jpo6rZvpeos6LdtMzmC+VVG/Q
+p0d8Zw2DX92wSQJxj04v
+=Cd9B
 -----END PGP SIGNATURE-----
 
---Fw8vdPO5iEPGjqL+--
+--/Kwy1es1GwkEJhNg--
