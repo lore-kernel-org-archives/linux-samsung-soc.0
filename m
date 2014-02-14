@@ -1,61 +1,44 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Fri, 14 Feb 2014 16:47:29 +0100
-Message-ID: <52FE3A91.1090107@samsung.com>
-References: <1386151747-3209-2-git-send-email-gautam.vivek@samsung.com>
- <1390225363-24210-1-git-send-email-gautam.vivek@samsung.com>
- <52F39710.80101@samsung.com>
- <CAFp+6iFYoN1w_BX7mMEa-Xx5ADaPTTKeDzjsSbQmwVKdSEsmOw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Fri, 14 Feb 2014 18:06:12 +0100
+Message-ID: <201402141806.12711.arnd@arndb.de>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <52F99056.6010906@samsung.com> <CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAFp+6iFYoN1w_BX7mMEa-Xx5ADaPTTKeDzjsSbQmwVKdSEsmOw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:63703 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752253AbaBNRG1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Feb 2014 12:06:27 -0500
+In-Reply-To: <CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>
 
-Hi Vivek,
+On Thursday 13 February 2014, Olof Johansson wrote:
+> On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > On 02/13/14 04:14, Arnd Bergmann wrote:
+> >> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
+> > Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
+> > define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
+> > compliant with SBSA Level1 and having some specific features?
 
-On 14.02.2014 14:53, Vivek Gautam wrote:
->>> Changes from v2:
->>> 1) Added support for multiple PHYs (UTMI+ and PIPE3) and
->>>      related changes in the driver structuring.
->>
->>
->> I'm a bit skeptical about this separation. Can the PHY operate with just the
->> UTMI+ or PIPE3 part enabled alone without the other? Can any PHY consumer
->> operate this way?
->
-> Yes :-)
-> As also pointed by Kishon the PHY consumer (which is DWC3 in case of
-> Exynos5 SoC series)
-> should theoretically be able use either UTMI+ phy for High speed
-> operations or both (UTMI+ and PIPE3)
-> for Super Speed operations.
+My feeling is that we don't need to use the levels for Kconfig, although
+we might want to use them DT compatible strings, even if it ends up looking
+a little funny when you do 
 
-OK, that's fine then. This is the explanation I needed, thanks.
+	compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
 
->>
->> I believe the right thing to do here is to do all the initialization in
->> .power_on() and let the driver simply call phy_power_on() when it needs the
->> PHY and phy_power_off() otherwise.
->
-> If this is what we should be doing then what will be the purpose of
-> two separate APIs :
-> phy_power_on() and phy_init().
-> Am i missing while understanding the things.
->
+> What kind of features are you expecting though? More IP
+> blocks/devices? Those are just kernel config options to enable,
+> ideally as modules.
 
-I don't understand this separation as well. Operations that should be 
-done together shouldn't be separated. Is there any case when you can 
-call one of phy_power_on() and phy_init() without calling another one 
-right before/after it?
+Right, I think we can just put them into defconfig. No need to
+"select" them from Kconfig since the extra options wouldn't be
+required for booting or using the system.
 
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
