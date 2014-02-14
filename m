@@ -1,86 +1,66 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
- device probe
-Date: Thu, 13 Feb 2014 16:14:36 -0800
-Message-ID: <20140214001436.GA16287@kroah.com>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
- <1390208555-27770-3-git-send-email-tushar.behera@linaro.org>
- <20140120100415.GX15937@n2100.arm.linux.org.uk>
- <20140213181216.GB24155@kroah.com>
- <20140213181559.GB30257@n2100.arm.linux.org.uk>
- <20140213182701.GA32578@kroah.com>
- <20140213184249.GC30257@n2100.arm.linux.org.uk>
- <20140213232606.GA27372@kroah.com>
- <20140214000717.GG30257@n2100.arm.linux.org.uk>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: RE: [PATCH] iommu/exynos: Remove driver
+Date: Fri, 14 Feb 2014 09:17:25 +0900
+Message-ID: <001301cf291a$233fdc70$69bf9550$@samsung.com>
+References: <1391716317-20300-1-git-send-email-olof@lixom.net>
+ <CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
+ <CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+ <52F4E481.3050902@samsung.com>
+ <CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
+ <CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37737 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751050AbaBNANS (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:14380 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751491AbaBNAR1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Feb 2014 19:13:18 -0500
-Content-Disposition: inline
-In-Reply-To: <20140214000717.GG30257@n2100.arm.linux.org.uk>
+	Thu, 13 Feb 2014 19:17:27 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N0Y00BV0M51X070@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Feb 2014 09:17:25 +0900 (KST)
+In-reply-to: <CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
+To: 'Olof Johansson' <olof@lixom.net>, 'Kukjin Kim' <kgene.kim@gmail.com>
+Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kyungmin Park' <kmpark@infradead.org>, 'Inki Dae' <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, iommu@lists.linux-foundation.org, 'Sean Paul' <seanpaul@chromium.org>, 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Feb 14, 2014 at 12:07:17AM +0000, Russell King - ARM Linux wrote:
-> On Thu, Feb 13, 2014 at 03:26:06PM -0800, Greg KH wrote:
-> > On Thu, Feb 13, 2014 at 06:42:49PM +0000, Russell King - ARM Linux wrote:
-> > > We went through this before, and I stated the paths, and no one disagreed
-> > > with that.
-> > > 
-> > > It /is/ racy.
-> > 
-> > Ok, I just went and looked at the uart driver register path, and I don't
-> > see the race (note, if there is one, it's there today, regardless of
-> > this patch).
+> -----Original Message-----
+> From: Olof Johansson [mailto:olof@lixom.net]
+> Sent: Friday, February 14, 2014 4:34 AM
 > 
-> The race isn't the uart code, it's the driver model.
+> On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
 > 
-> Consider what happens when this happens:
+> > Just adding KyongHo Cho.
+> >
+> > If he can fixup for this time, it would be best solution because he knows
+> > well than others, I think.
 > 
-> * Two pl011 devices get registered at the same time by two different
->   threads.
+> It's not so much a matter of "fixup for this time", it's a about
+> having ownership of the driver, making sure it works (and keeps
+> working if there is related development). The posted patches have not
+> been followed through on and the result is a broken driver. :(
+> 
+> I definitely appreciate his expertise, and we should make sure that he
+> gets to review the code, but if someone else is able to spend time on
+> reworking the driver (or rewriting a newer one) and maintaining it
+> longer-term, then we should not stop them from doing so. And there is
+> no reason to keep broken stale code in the kernel meanwhile.
+> 
 
-How?  What two different busses will see this same device?  The amba bus
-code should prevent that from happening, right?  If not, there's bigger
-problems in that bus code :)
+Thank you for your concerning.
+I also definitely agree with you that the driver must work.
+I am always concerning about it but it was not easy to make some time
+for the patches.
 
-That's where this problem should be fixed, if there is one, otherwise
-this same issue would be there for any type of driver that calles into
-the uart core, right?
+I will continue to post the next version of patches, of course.
+I think it is not far from now to show it.
 
-> * Both devices have a lock taken on the _device_ itself before matching
->   against the driver.
-> 
-> * Both devices get matched to the same driver.
-> 
-> * Both devices are passed into the driver's probe function.
-> 
-> * Both check uart_reg.state, both call uart_register_driver() on that
->   at the same time, which results in two allocations inside
->   uart_register_driver(), one gets overwritten...
-> 
-> So, the /only/ thing which stops this happening is that the devices
-> are generally available before the driver is registered, and driver
-> registration results in devices being probed serially.  Moreover, both
-> attempt to call tty_register_driver()... one succeeds, the other fails.
-> 
-> However, what about the userspace bind/unbind methods.  Yes, userspace
-> can ask the driver core to unbind devices from a driver or bind - and
-> again, there's no per-driver locking here.  So, if you can trigger two
-> concurrent binds from userspace, you hit the same race as above.
-> 
-> So, if you want to accept these patches, go ahead, introduce races, but
-> personally I'd recommend plugging these races.
+Regards,
 
-The only way to solve this would be to do it in the bus, I don't see
-anything here that makes it any "racier" than it currently is.
-
-thanks,
-
-greg k-h
+Ky0ongHo
