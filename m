@@ -1,113 +1,68 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V2 2/3] ARM: dts: add dts files for exynos5260 SoC
-Date: Fri, 14 Feb 2014 12:49:38 +0100
-Message-ID: <52FE02D2.7050305@samsung.com>
-References: <1391577375-17625-1-git-send-email-rahul.sharma@samsung.com>
- <1391577375-17625-3-git-send-email-rahul.sharma@samsung.com>
- <52F38C42.5030508@samsung.com>
- <CAPdUM4NBwXcnL2KK9Rsi46GWQz_KQsXF0EEeSmCb=wB8WfgUKQ@mail.gmail.com>
- <52F9F59D.1090905@gmail.com>
- <CAPdUM4Pu-CbuNwwjrd_8itbSbjKqTBLE5u_T_vO89jreOy4=kQ@mail.gmail.com>
- <CAPdUM4Pr7UC3wzYMsO+sYQHRDGixSNsR3XQuHBomsi-H-dfOZw@mail.gmail.com>
+From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] spi: s3c24xx: Convert to let spi core validate bits_per_word
+Date: Fri, 14 Feb 2014 20:38:16 +0800
+Message-ID: <1392381496.31961.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAPdUM4Pr7UC3wzYMsO+sYQHRDGixSNsR3XQuHBomsi-H-dfOZw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 14.02.2014 12:28, Rahul Sharma wrote:
-> On 14 February 2014 08:54, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Thanks Tomasz,
->>
->> I will add these changes to v3.
->>
->> Regards,
->> Rahul Sharma.
->>
->> On 11 February 2014 15:34, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> Hi Rahul,
->>>
->>>
->>> On 11.02.2014 06:22, Rahul Sharma wrote:
->>>>
->>>> Hi Tomasz,
->>>>
->>>> On 6 February 2014 18:51, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>>>
->>>>> Hi Rahul, Pankaj, Arun,
->>>>>
->>>>> [adding linux-arm-kernel, devicetree MLs and DT people on Cc]
->>>>>
->>>>> I think it's good time to stop accepting DTS files like this and force
->>>>> new
->>>>> ones to use the proper structure with soc node, labels for every node and
->>>>> node references.
->>>>
->>>>
->>>> I am unable to find information on SoC node and grouping inside SoC node.
->>>> Please
->>>> share some pointers.
->>>
->>>
->>> Well, there is not much information needed about this. Basically all the
->>> devices built into the SoC should be listed under respective bus nodes or a
->>> single soc node, instead of root level. Such node should be a "simple-bus"
->>> and just group the components together to separate board-specific devices
->>> (which are still at root level) from SoC devices.
->>>
->>> Even though it might seem useless, it improves DT readability a bit and
->>> still most of the platforms use this approach, so for consistency, Exynos
->>> should use too.
->>>
->>> Just for reference, back in April 2013, in his review of S3C64xx DT series
->>> [1], Rob Herring requested that we don't submit any new device trees using
->>> flat approach and start using bus hierarchy.
->>>
->>> [1]
->>> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-April/163659.html
->>>
->>>
->>>>>
->>>>>> +               spi0_bus: spi0-bus {
->>>>>> +                       samsung,pins = "gpa2-0", "gpa2-1", "gpa2-2",
->>>>>> "gpa2-3";
->>>>>
->>>>>
->>>>>
->>>>> What is the reason for SPI0 to have 4 pins, while SPI1 has just 3?
->>>>>
->>>>
->>>> I should align SPI1 with SPI0.
->>>>
->>>
->>> Are you sure that SPI0 is the correct one? SPI usually uses four pins - SDI,
->>> SDO, SCK and nCS, but we always used to treat nCS as a simple GPIO, due to
->>> the fact that the controller can only support one dedicated chip select and
->>> with direct GPIO control you can have more.
->>>
->>> What is the fourth pin here?
->>>
->
-> As you said, these are CLK, SS, MISO, MOSI (gpa2-0 to gpa2-3). Fourth pin is
-> CS. It can be defined as a simple GPIO but better to include it in the
-> SPI pingroup
-> as it belongs to there.
+Set bits_per_word_mask so spi core will reject transfers that attempt to use
+an unsupported bits_per_word value.
 
-I have to disagree here.
+Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/spi/spi-s3c24xx.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-If you define a pin in pinctrl group then it is tied to this specific 
-hardware function and you can't use it as GPIO.
+diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+index c20df45..a275445 100644
+--- a/drivers/spi/spi-s3c24xx.c
++++ b/drivers/spi/spi-s3c24xx.c
+@@ -122,25 +122,15 @@ static int s3c24xx_spi_update_state(struct spi_device *spi,
+ {
+ 	struct s3c24xx_spi *hw = to_hw(spi);
+ 	struct s3c24xx_spi_devstate *cs = spi->controller_state;
+-	unsigned int bpw;
+ 	unsigned int hz;
+ 	unsigned int div;
+ 	unsigned long clk;
+ 
+-	bpw = t ? t->bits_per_word : spi->bits_per_word;
+ 	hz  = t ? t->speed_hz : spi->max_speed_hz;
+ 
+-	if (!bpw)
+-		bpw = 8;
+-
+ 	if (!hz)
+ 		hz = spi->max_speed_hz;
+ 
+-	if (bpw != 8) {
+-		dev_err(&spi->dev, "invalid bits-per-word (%d)\n", bpw);
+-		return -EINVAL;
+-	}
+-
+ 	if (spi->mode != cs->mode) {
+ 		u8 spcon = SPCON_DEFAULT | S3C2410_SPCON_ENSCK;
+ 
+@@ -543,6 +533,7 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
+ 
+ 	master->num_chipselect = hw->pdata->num_cs;
+ 	master->bus_num = pdata->bus_num;
++	master->bits_per_word_mask = SPI_BPW_MASK(8);
+ 
+ 	/* setup the state for the bitbang driver */
+ 
+-- 
+1.8.1.2
 
-Since it's board specific to use it as HW chip select or GPIO chip 
-select (the usual setup), it should not be included in this group.
 
-Best regards,
-Tomasz
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
