@@ -1,89 +1,66 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v3 3/3] ARM: dts: add dts files for xyref5260 board
-Date: Sat, 15 Feb 2014 14:54:45 +0530
-Message-ID: <CAPdUM4ONDr6x+CTXGXR_MzYAdktjp+4TO7FL+mJd3UdqFNkTEw@mail.gmail.com>
-References: <1392385032-22015-1-git-send-email-rahul.sharma@samsung.com>
-	<1392385032-22015-4-git-send-email-rahul.sharma@samsung.com>
-	<52FE672A.6070803@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Fri, 14 Feb 2014 20:59:15 +0000
+Message-ID: <20140214205915.GW4451@sirena.org.uk>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <20140213192835.GD28112@sirena.org.uk>
+ <1392365712.29133.16.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:38015 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751585AbaBOJYr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Feb 2014 04:24:47 -0500
-In-Reply-To: <52FE672A.6070803@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Fw8vdPO5iEPGjqL+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1392365712.29133.16.camel@AMDC1943>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Thanks Tomasz,
 
-On 15 February 2014 00:27, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Rahul,
->
-> The patch looks good, except one issue pointed inline.
->
->
-> On 14.02.2014 14:37, Rahul Sharma wrote:
->>
->> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->> b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->> new file mode 100644
->> index 0000000..c4efc1e
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->
->
-> [snip]
->
->
->> +&mmc_0 {
->> +       status = "okay";
->> +       num-slots = <1>;
->> +       broken-cd;
->> +       bypass-smu;
->> +       supports-highspeed;
->> +       supports-hs200-mode; /* 200 Mhz */
->> +       fifo-depth = <0x40>;
->
->
-> This is a SoC-level property and it is already specified in your
-> exynos5260.dtsi.
->
+--Fw8vdPO5iEPGjqL+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tomasz,
+On Fri, Feb 14, 2014 at 09:15:12AM +0100, Krzysztof Kozlowski wrote:
 
-yea correct. I will put these inside SoC node.
+> My initial idea was to do this similarly to the S5M8767 regulator (where
+> there is also 4th mode: low power). The presence of GPIO in DTS can
+> simplify the bindings but on the other hand it wouldn't be compatible
+> with S5M8767 regulator driver. This may complicate the merge of these
+> drivers.
 
-Regards,
-Rahul Sharma.
+They can always use separate ops.
 
->
->> +       card-detect-delay = <200>;
->> +       samsung,dw-mshc-ciu-div = <3>;
->> +       samsung,dw-mshc-sdr-timing = <0 4>;
->> +       samsung,dw-mshc-ddr-timing = <0 2>;
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4
->> &sd0_bus8>;
->> +
->> +       slot@0 {
->> +               reg = <0>;
->> +               bus-width = <8>;
->> +       };
->> +};
->> +
->> +&mmc_2 {
->> +       status = "okay";
->> +       num-slots = <1>;
->> +       supports-highspeed;
->> +       fifo-depth = <0x40>;
->
->
-> Ditto.
->
-> Best regards,
-> Tomasz
+> What is your opinion on this - should I abandon the "op_mode" idea and
+> use presence of GPIO?
+
+Yes, that's better - especially since the framework has support for
+enable GPIOs.  It can do things like handle cases where the hardware has
+tied the enables for several regulators together so they all need to be
+enabled and disabled as one.
+
+--Fw8vdPO5iEPGjqL+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS/oOgAAoJELSic+t+oim98x4P/0BkAcussMl6iaO7QENAuCkT
+dS0CLxy1SoCnDxa+RWX8cB0hpBJEAAQ5zlUDVauRU9FfO9ijvhVzn9vZx5erjrKV
+QEuMPmL2hiLZ6ymZ4T3qCkOdOnZ/i9b0y+AKIHopY/xwPL6cFxoO5P4FbOLhUMVn
+o8qoEQQqGgwgxi/kGlCBecTUCT10B4tc924t0EpyJuDHNZA2kokYSkuoLQs84Z+A
+6mW8a4lwsVt6afWwIXKQHBIRfO1Fj2gywSxsjFo3YhuFbPyX8bY67+78184dMcYV
+EFD1yL9axOv59pIeYZmA8BtDiS2XqrL4szGcg4jpw7gZ6UR7kR0mIXe8ofJUoQoe
+IF4ms1A2nMJKGRBhmOqhu2sRPRsmR62pjJVaym+efa7mSLzuIsbZEQHX0x/o8AM7
+EGQtrkYK079W7aVePR5h1dEr17RMHN9wIHgnL+/YFW8MnP5Ybr6KdeRcQm0JTIDt
+uXP1iIkAxSiWKhGNNIEm/FzXnw+m80wwWWBbhZk60agIoRMBgYNBvQvpeZ5KkvFD
+EeRjLFzIuXcGqBXQSyo8BGoB7KwXN3oSFk1nVBCZBniqFfhNXORDZupgA2MMEkQE
+JN3YDb7EKHXBx19jfy9JQ59cJNnO53pPZMQj4szVGZY0ra/ngC5Lo8SRFj9V+2Z3
+9VJo1+5ushqnYOcVVu64
+=iNyu
+-----END PGP SIGNATURE-----
+
+--Fw8vdPO5iEPGjqL+--
