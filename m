@@ -1,95 +1,109 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 6/9 v6] ARM: dts: exynos5250/5420: add dt node for sss
- module
-Date: Fri, 14 Feb 2014 11:54:50 +0100
-Message-ID: <52FDF5FA.4000909@samsung.com>
-References: <1389095509-14357-6-git-send-email-ch.naveen@samsung.com>
- <1391750695-27447-1-git-send-email-ch.naveen@samsung.com>
- <52FD552E.8040008@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH RESEND v2 00/12] clk/exynos convert clock IDs to macros
+Date: Fri, 14 Feb 2014 16:44:08 +0530
+Message-ID: <CAK9yfHwZCDJSh0xy4XYxLq06bAgx-ZmT-t225RjtNvDABuZgmg@mail.gmail.com>
+References: <1389106060-20291-1-git-send-email-a.hajda@samsung.com>
+	<1514827.Cd6xxeNpq2@amdc1227>
+	<20140127214944.4167.58042@quantum>
+	<52FD5EDA.60909@samsung.com>
+	<52FD60A8.8070402@samsung.com>
+	<52FDF2C9.6060403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <52FD552E.8040008@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:65363 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751795AbaBNLOK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Feb 2014 06:14:10 -0500
+Received: by mail-ob0-f173.google.com with SMTP id vb8so13689644obc.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Feb 2014 03:14:08 -0800 (PST)
+In-Reply-To: <52FDF2C9.6060403@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "moderated list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi Kukjin,
+Hi Tomasz,
 
-On 14.02.2014 00:28, Kukjin Kim wrote:
-> On 02/07/14 14:24, Naveen Krishna Chatradhi wrote:
->> This patch adds the device tree node for SSS module
->> found on Exynos5420 and Exynos5250
->>
->> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
->> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->> TO:<linux-samsung-soc@vger.kernel.org>
->> CC: Kukjin Kim<kgene.kim@samsung.com>
->> CC:<linux-crypto@vger.kernel.org>
->> ---
->> changes since v5:
->> 1. Added Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->>
->>   arch/arm/boot/dts/exynos5250.dtsi |    8 ++++++++
->>   arch/arm/boot/dts/exynos5420.dtsi |   10 ++++++++++
->>   2 files changed, 18 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> b/arch/arm/boot/dts/exynos5250.dtsi
->> index b7dec41..46b04e8 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -706,4 +706,12 @@
->>           io-channel-ranges;
->>           status = "disabled";
->>       };
->> +
->> +    sss@10830000 {
->> +        compatible = "samsung,exynos4210-secss";
->> +        reg =<0x10830000 0x10000>;
->> +        interrupts =<0 112 0>;
->> +        clocks =<&clock 348>;
->> +        clock-names = "secss";
->> +    };
->>   };
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
->> b/arch/arm/boot/dts/exynos5420.dtsi
->> index 8db792b..b503e96 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -652,4 +652,14 @@
->>           clocks =<&clock 319>,<&clock 318>;
->>           clock-names = "tmu_apbif", "tmu_triminfo_apbif";
->>       };
->> +
->> +    sss@10830000 {
->> +        compatible = "samsung,exynos4210-secss";
->> +        reg =<0x10830000 0x10000>;
->> +        interrupts =<0 112 0>;
->> +        clocks =<&clock 471>;
->> +        clock-names = "secss";
->> +        samsung,power-domain =<&g2d_pd>;
->> +    };
->> +
->>   };
+On 14 February 2014 16:11, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Kukjin,
 >
-> Applied, thanks.
 >
-> BTW, I think the numbering is strange...maybe I missed something?
-> [PATCH 5/5], [PATCH 5/6 V2], [PATCH 6/8 V3] and this [PATCH 6/9 V6]
+> On 14.02.2014 01:17, Kukjin Kim wrote:
+>>
+>> On 02/14/14 09:10, Kukjin Kim wrote:
+>>>
+>>> On 01/28/14 06:49, Mike Turquette wrote:
+>>>>
+>>>> Quoting Tomasz Figa (2014-01-07 07:17:22)
+>>>>>
+>>>>> Hi Mike,
+>>>>>
+>>>>> On Tuesday 07 of January 2014 15:47:28 Andrzej Hajda wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> This patch set adds header files with macros defining exynos clocks.
+>>>>>> Then it converts dts files and drivers to use macros instead
+>>>>>> of magic numbers or enums to describe clock bindings.
+>>>>>>
+>>>>>> The patch set is rebased on the latest samsung-clk/samsung-next
+>>>>>> branch.
+>>>>>>
+>>>>>> The patches are generated by script.
+>>>>>> Many clocks I have verified by hand.
+>>>>>> I have also tested it successfully on exynos4 based board.
+>>>>>>
+>>>>>> This is the 2nd version of the patchset.
+>>>>>> Changes:
+>>>>>> - corrected devicetree mailing list,
+>>>>>> - added comments to include/dt-bindings/clock/exynos4.h for
+>>>>>> clocks present only in particular chip,
+>>>>>> - added tab alignement in headers,
+>>>>>> - added comment to CLK_NR_CLKS,
+>>>>>> - added copyright headers,
+>>>>>> - split long lines in dts,
+>>>>>> - corrected example in bindings/clock/exynos5250-clock.txt, to point
+>>>>>> appropriate clocks.
+>>>>>
+>>>>>
+>>>>> I believe this has been already acked before, so could you still take
+>>>>> it for 3.14? For now I'd merge only the patches adding headers and
+>>>>> updating clock drivers to avoid merge conflicts and then after
+>>>>> release of 3.14-rc1 we could early merge dts patches for 3.15.
+>>>>
+>>>>
+>>>> Hi Tomasz,
+>>>>
+>>>> Let's go ahead and merge this after 3.14-rc1. I'll take it in when that
+>>>> drops and the DTS data will go in during the same merge window.
+>>>>
+>>>
+>>> Hi Mike,
+>>>
+>>> As I talked to Tomasz, would be better to us if this series could be
+>>> handled in Samsung tree so I'm going to do it. How do you think?
+>>>
+>> Oops, already merged into mainline ;-)
+>> Sorry, please kindly ignore my previous e-mail.
+>
+>
+> As you probably found out already, we've merged clock-side part of the
+> series for 3.14 to ease things a bit and let you simply merge the DT-side
+> for 3.15.
+>
+> Also, since there were patches floating on the ML still using clock numbers,
+> we decided to give them some more time to be applied, then stop accepting
+> such patches and then finally rerun Andrzej's script on your tree and ask
+> you to apply resulting conversion patches.
+>
+> Since you seem to have already applied most of such floating patches,
+> Andrzej will send you new series soon.
 
-I would wait with applying any patches from this series until they are 
-acked by crypto subsystem maintainer and DT bindings by DT maintainers.
+There are still quite a few board support patches of Arndale-octa and 5420 SMDK
+that need to be applied. I believe Kukjin will apply them over the weekend.
 
-I'd like Naveen to resend this series in separate thread, with proper 
-message threading, so we can make sure that we are not missing anything. 
-Naveen, please also add
-
-David S. Miller <davem@davemloft.net>
-
-to Cc list, as he is also listed as crypto maintainer in MAINTAINERS file.
-
-Best regards,
-Tomasz
+-- 
+With warm regards,
+Sachin
