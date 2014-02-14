@@ -1,68 +1,84 @@
-From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] spi: s3c24xx: Convert to let spi core validate bits_per_word
-Date: Fri, 14 Feb 2014 20:38:16 +0800
-Message-ID: <1392381496.31961.1.camel@phoenix>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Fri, 14 Feb 2014 14:05:56 +0100
+Message-ID: <1392383156.12506.20.camel@AMDC1943>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56267 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751288AbaBNNGA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Feb 2014 08:06:00 -0500
+In-reply-to: <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Set bits_per_word_mask so spi core will reject transfers that attempt to use
-an unsupported bits_per_word value.
-
-Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
----
- drivers/spi/spi-s3c24xx.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index c20df45..a275445 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -122,25 +122,15 @@ static int s3c24xx_spi_update_state(struct spi_device *spi,
- {
- 	struct s3c24xx_spi *hw = to_hw(spi);
- 	struct s3c24xx_spi_devstate *cs = spi->controller_state;
--	unsigned int bpw;
- 	unsigned int hz;
- 	unsigned int div;
- 	unsigned long clk;
- 
--	bpw = t ? t->bits_per_word : spi->bits_per_word;
- 	hz  = t ? t->speed_hz : spi->max_speed_hz;
- 
--	if (!bpw)
--		bpw = 8;
--
- 	if (!hz)
- 		hz = spi->max_speed_hz;
- 
--	if (bpw != 8) {
--		dev_err(&spi->dev, "invalid bits-per-word (%d)\n", bpw);
--		return -EINVAL;
--	}
--
- 	if (spi->mode != cs->mode) {
- 		u8 spcon = SPCON_DEFAULT | S3C2410_SPCON_ENSCK;
- 
-@@ -543,6 +533,7 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
- 
- 	master->num_chipselect = hw->pdata->num_cs;
- 	master->bus_num = pdata->bus_num;
-+	master->bits_per_word_mask = SPI_BPW_MASK(8);
- 
- 	/* setup the state for the bitbang driver */
- 
--- 
-1.8.1.2
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Thu, 2014-02-13 at 17:46 +0530, Yadwinder Singh Brar wrote:
+> Hi,
+> 
+> On Thu, Feb 13, 2014 at 2:44 PM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> > S2MPS11/S2MPS14 regulators support different modes of operation:
+> >  - Always off;
+> >  - On/Off controlled by pin/GPIO (PWREN/LDOEN/EMMCEN);
+> >  - Always on;
+> > This is very similar to S5M8767 regulator driver which also supports
+> > opmodes (although S5M8767 have also low-power mode).
+> >
+> > This patch adds parsing the operation mode from DTS by reading a
+> > "op_mode" property from regulator child node.
+> >
+> 
+> First thing since "op_mode" is not generic property, I think it should
+> be appended with some driver specific prefix.
+> 
+> But IMHO its quite generic property used and required by many other
+> PMICs(almost all used by Samsung).
+> I would like to use this opportunity to discuss about adding it as
+> generic regulator constraint(as initial_mode)
+> by providing a default mapping of generic Regulator operating
+> modes(kernel specific) to operating modes supported by hardware in
+> regulator driver itself.
+> 
+> Regards,
+> Yadwinder
+
+Hi,
+
+I was thinking about this. This relates also to ideas pointed by Mark:
+ - Maybe s2mps11 and s5m8767 regulator drivers could be merged into one;
+ - The external control should be determined by presence of attribute
+with gpios.
+
+The S5M8767 has following operation modes (except on/off):
+ - external control by GPIO;
+ - On/Off controlled by PWREN;
+ - low-power mode;
+ - low-power mode controlled by PWREN;
+Although not all are present for each regulator.
+
+The S2MPS14 is easier:
+ - external control by GPIO;
+ - On/Off controlled by PWREN;
+
+A generic solution for operating mode of regulators (not only s2mps11
+and s5m8767) could cover all of these above or just a subset, for
+example regulator bindings could look like:
+ - regulator-mode-suspend; /* PWR controls: on/off or low-power mode */
+ - regulator-mode-low-power; /* Low power mode */
+
+
+What do you think?
+
+Best regards,
+Krzysztof
