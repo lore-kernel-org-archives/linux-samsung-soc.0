@@ -1,55 +1,68 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c24xx: Convert to let spi core validate
- bits_per_word
-Date: Fri, 14 Feb 2014 18:09:21 +0000
-Message-ID: <20140214180921.GF4451@sirena.org.uk>
-References: <1392381496.31961.1.camel@phoenix>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Fri, 14 Feb 2014 19:57:46 +0100
+Message-ID: <52FE672A.6070803@gmail.com>
+References: <1392385032-22015-1-git-send-email-rahul.sharma@samsung.com> <1392385032-22015-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="udcq9yAoWb9A4FsZ"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1392381496.31961.1.camel@phoenix>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:53670 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751855AbaBNS55 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Feb 2014 13:57:57 -0500
+In-Reply-To: <1392385032-22015-4-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
+Hi Rahul,
 
---udcq9yAoWb9A4FsZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The patch looks good, except one issue pointed inline.
 
-On Fri, Feb 14, 2014 at 08:38:16PM +0800, Axel Lin wrote:
-> Set bits_per_word_mask so spi core will reject transfers that attempt to use
-> an unsupported bits_per_word value.
+On 14.02.2014 14:37, Rahul Sharma wrote:
+> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+> new file mode 100644
+> index 0000000..c4efc1e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
 
-Applied, thanks.
+[snip]
 
---udcq9yAoWb9A4FsZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +&mmc_0 {
+> +	status = "okay";
+> +	num-slots = <1>;
+> +	broken-cd;
+> +	bypass-smu;
+> +	supports-highspeed;
+> +	supports-hs200-mode; /* 200 Mhz */
+> +	fifo-depth = <0x40>;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+This is a SoC-level property and it is already specified in your 
+exynos5260.dtsi.
 
-iQIcBAEBAgAGBQJS/lvIAAoJELSic+t+oim9CpcP/jCZhFEOis8emNTY142k3XAz
-TNcD+QcwMHkcu1b2rBxrCzWfj81Dw0VznOmmKedVB4uTGqoYDRFuTEZ9zoGDJjRx
-tVhepCvZrWMbTOxarEif/p5j1YUNJ9Mv3oe9qI+PdmNL9Xh4Kj8I1tNXzdUytmfj
-Conps7LSW6zI4fkyyHyQH69VU700pQhEjWWDMvz3GYzE4rGYABiOC6rgOABRvquh
-rtkNgt8tC0l3SwpPmiCuI723G9VddDAFUFbH2JimxQa2chCHai7qwoafUPbILrcH
-miqZPU7bosdJa7TRXDvXbUwCY++BnV/Dt4IE2HW03/RPNKam08yqF0O1HkgE2YvY
-iCfsifrx30kRGHT0Pee4vvl3ZqoGzBAXzidCkUfDkA6ZKnQ712+P7ozbRZOzZUSA
-ecdtaY3OSSOurPcGiOvILghhpwUyZoTN3sXLHO2ZE7dZsWdYJDrrkxtok5q+Pcia
-rMyvGzQ7yetCHvNpacm6hyGoDWCfROqXxo6cALGga4YAJxbx9O8DllCvFzTO9CTh
-koaSgmoqzcbb4LfrNcyV4qNjTohLjtgWmI6Id+sQ7L6thDACwQVFmLb1C3UfOwOr
-k8ULBVTa0hrA4Wv/Z+EIi9eg9Hr9J/cONT+bziBCMAaAyo6LetN4Iau0vXi5DJwQ
-GsLNF5Myf9s6TaIkt0Pk
-=ZuEJ
------END PGP SIGNATURE-----
+> +	card-detect-delay = <200>;
+> +	samsung,dw-mshc-ciu-div = <3>;
+> +	samsung,dw-mshc-sdr-timing = <0 4>;
+> +	samsung,dw-mshc-ddr-timing = <0 2>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> +
+> +	slot@0 {
+> +		reg = <0>;
+> +		bus-width = <8>;
+> +	};
+> +};
+> +
+> +&mmc_2 {
+> +	status = "okay";
+> +	num-slots = <1>;
+> +	supports-highspeed;
+> +	fifo-depth = <0x40>;
 
---udcq9yAoWb9A4FsZ--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ditto.
+
+Best regards,
+Tomasz
