@@ -1,70 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Fri, 14 Feb 2014 21:05:02 +0000
-Message-ID: <20140214210502.GX4451@sirena.org.uk>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
- <1392383156.12506.20.camel@AMDC1943>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v1 1/2] clocksource: mct: remove request_irq from
+ exynos4_local_timer_setup
+Date: Sat, 15 Feb 2014 13:42:54 +0100 (CET)
+Message-ID: <alpine.DEB.2.02.1402151321120.21991@ionos.tec.linutronix.de>
+References: <1392260923-31659-1-git-send-email-t.dakhran@samsung.com> <1392260923-31659-2-git-send-email-t.dakhran@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/Kwy1es1GwkEJhNg"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1392383156.12506.20.camel@AMDC1943>
+In-Reply-To: <1392260923-31659-2-git-send-email-t.dakhran@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+To: Tarek Dakhran <t.dakhran@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Tarek Dakhran <t.dakhran@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Thu, 13 Feb 2014, Tarek Dakhran wrote:
 
---/Kwy1es1GwkEJhNg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> exynos4_local_timer_setup called on the secondary cpu before
+> irqs are enabled. request_irq can sleep, which produces next warning:
+> 
+> 	BUG: sleeping function called from invalid context at mm/slub.c:965
+> 	in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/3
+> 
+> Call setup_irq for each local timer in exynos4_timer_resources,
+> and only call enable_irq during percpu timer setup.
+> 
+> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+> ---
+>  drivers/clocksource/exynos_mct.c |   38 ++++++++++++++++++++++++++++++--------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 48f76bc..1cde3de 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -82,6 +82,7 @@ static void __iomem *reg_base;
+>  static unsigned long clk_rate;
+>  static unsigned int mct_int_type;
+>  static int mct_irqs[MCT_NR_IRQS];
+> +static struct irqaction __percpu *mct_LX_irqaction;
+>  
+>  struct mct_clock_event_device {
+>  	struct clock_event_device evt;
+> @@ -402,6 +403,25 @@ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static void exynos4_setup_irqaction_spi(unsigned int cpu)
+> +{
+> +	struct irqaction *pcpu_irqaction = per_cpu_ptr(mct_LX_irqaction, cpu);
+> +	unsigned int irq = mct_irqs[MCT_L0_IRQ + cpu];
+> +	int err;
+> +
+> +	pcpu_irqaction->name = per_cpu(percpu_mct_tick, cpu).name;
+> +	pcpu_irqaction->flags  = IRQF_TIMER | IRQF_NOBALANCING;
+> +	pcpu_irqaction->handler = exynos4_mct_tick_isr;
+> +	pcpu_irqaction->dev_id = &per_cpu(percpu_mct_tick, cpu);
+> +
+> +	err = setup_irq(irq, pcpu_irqaction);
 
-On Fri, Feb 14, 2014 at 02:05:56PM +0100, Krzysztof Kozlowski wrote:
-> On Thu, 2014-02-13 at 17:46 +0530, Yadwinder Singh Brar wrote:
+This is just crap. Why don't you use request_irq()?
 
->  - low-power mode;
->  - low-power mode controlled by PWREN;
-> Although not all are present for each regulator.
+> +	if (err) {
+> +		pr_err("MCT: can't setup IRQ %d (%d)\n", irq, err);
+> +		return;
+> +	}
+> +	disable_irq(irq);
 
-What exactly is low power mode and how does it interact with the enable?
-The name suggests it's a more efficient mode for use with low current
-drain, is that right?
+This is completely backwards. We have flags which tell the core not to
+enable an interrupt at setup time. Also what's wrong with enabling the
+interrupt in the first place? When the timer is stopped then no
+interrupts happen and it does not matter a bit whether the irq line is
+enabled or not.
 
-> A generic solution for operating mode of regulators (not only s2mps11
-> and s5m8767) could cover all of these above or just a subset, for
-> example regulator bindings could look like:
->  - regulator-mode-suspend; /* PWR controls: on/off or low-power mode */
->  - regulator-mode-low-power; /* Low power mode */
+Thanks,
 
-Those properties have awfully generic names and part of what I was
-wondering above is if the low power mode maps onto the idle or standby
-modes that the API defines?  We don't cover those in the bindings yet
-since they are unfortunately fuzzy but perhaps we need to do so.
-
---/Kwy1es1GwkEJhNg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS/oT7AAoJELSic+t+oim99lcP/2kFSZ61Z4yz77nEn7NV5oSy
-GngIymNi8N76RIDELr+jN0U4a0ijjgSx+sZqiap1B0IoKpGl6lTs2fOKeFMzPUBY
-HAEQF3pPPz70O7AQ9uI4YkuDBXh3vhhaQV+3M/ZXr39EqWySjrjVW21M/Et87FDh
-tQ6VbbBmXq7N0DdXI4FhYJjtdsa6WgWhbEyVK0GDxKKl7lGyayZ+UJ9ntV4u+z30
-t2EztL2xT9GtPaxIAXs//Tc6ltkxlVZR13G8OYyTUVDc7YaDljbuGJHFUdt6tn/1
-TpFxkpqqPZ/FO7uoOpUTrzj6BAxejl44HPmDPBtPjHYdfXzy9XUUEAGBCG2wa1qX
-sQzKPYk5GVVaAi0T2YAWGDqmCEU3DjuiUAPmmI67RIMTxrxyxJJviW+8kuvWrP9o
-NYP0XbRJfrhc1MoG+/TeLu3kI4cZ/aMvhS/j7xmLXS7rt4WSSN0b0qURJEB9E5Gi
-TZq1ykVwPTGiAy57Eu4jbvW8kDPEUHRNqJCb0dOjVJp8AP0+NTxhOCOPiXruVDUE
-K19AB68UVj2CHnPgwYRmARwJsZpjBch7ykEkk6QgbgXdOhmWZ1PzpYrSCIzo5Chb
-Z9KG2UnaRCXaq5+ImEK9VwpCnElUsOlQJWfSpq0jpo6rZvpeos6LdtMzmC+VVG/Q
-p0d8Zw2DX92wSQJxj04v
-=Cd9B
------END PGP SIGNATURE-----
-
---/Kwy1es1GwkEJhNg--
+	tglx
