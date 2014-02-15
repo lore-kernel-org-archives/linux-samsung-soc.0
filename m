@@ -1,77 +1,68 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v1 1/2] clocksource: mct: remove request_irq from
- exynos4_local_timer_setup
-Date: Sat, 15 Feb 2014 13:42:54 +0100 (CET)
-Message-ID: <alpine.DEB.2.02.1402151321120.21991@ionos.tec.linutronix.de>
-References: <1392260923-31659-1-git-send-email-t.dakhran@samsung.com> <1392260923-31659-2-git-send-email-t.dakhran@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: s3c2410: do not put a default class for the adapter
+Date: Sat, 15 Feb 2014 16:10:39 +0100
+Message-ID: <20140215151039.GE2579@katana>
+References: <1391761795-28384-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1392260923-31659-2-git-send-email-t.dakhran@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Tarek Dakhran <t.dakhran@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jKBxcB1XkHIR0Eqt"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:53426 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753279AbaBOPKo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 15 Feb 2014 10:10:44 -0500
+Content-Disposition: inline
+In-Reply-To: <1391761795-28384-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, ben-linux@fluff.org, cpgs@samsung.com, broonie@kernel.org, Vincent Palatin <vpalatin@chromium.org>
 
-On Thu, 13 Feb 2014, Tarek Dakhran wrote:
 
-> exynos4_local_timer_setup called on the secondary cpu before
-> irqs are enabled. request_irq can sleep, which produces next warning:
-> 
-> 	BUG: sleeping function called from invalid context at mm/slub.c:965
-> 	in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/3
-> 
-> Call setup_irq for each local timer in exynos4_timer_resources,
-> and only call enable_irq during percpu timer setup.
-> 
-> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-> ---
->  drivers/clocksource/exynos_mct.c |   38 ++++++++++++++++++++++++++++++--------
->  1 file changed, 30 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 48f76bc..1cde3de 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -82,6 +82,7 @@ static void __iomem *reg_base;
->  static unsigned long clk_rate;
->  static unsigned int mct_int_type;
->  static int mct_irqs[MCT_NR_IRQS];
-> +static struct irqaction __percpu *mct_LX_irqaction;
->  
->  struct mct_clock_event_device {
->  	struct clock_event_device evt;
-> @@ -402,6 +403,25 @@ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void exynos4_setup_irqaction_spi(unsigned int cpu)
-> +{
-> +	struct irqaction *pcpu_irqaction = per_cpu_ptr(mct_LX_irqaction, cpu);
-> +	unsigned int irq = mct_irqs[MCT_L0_IRQ + cpu];
-> +	int err;
-> +
-> +	pcpu_irqaction->name = per_cpu(percpu_mct_tick, cpu).name;
-> +	pcpu_irqaction->flags  = IRQF_TIMER | IRQF_NOBALANCING;
-> +	pcpu_irqaction->handler = exynos4_mct_tick_isr;
-> +	pcpu_irqaction->dev_id = &per_cpu(percpu_mct_tick, cpu);
-> +
-> +	err = setup_irq(irq, pcpu_irqaction);
+--jKBxcB1XkHIR0Eqt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is just crap. Why don't you use request_irq()?
+On Fri, Feb 07, 2014 at 01:59:55PM +0530, Naveen Krishna Chatradhi wrote:
+> From: Vincent Palatin <vpalatin@chromium.org>
+>=20
+> Avoid adding I2C_CLASS_HWMON and I2C_CLASS_SPD class flags to all
+> Samsung I2C adapters when the I2C mappings are defined in a device tree.
+> So the drivers doing an auto-detection by probing busses won't mess-up
+> sensitive I2C devices or trigger long timeouts on non-functional busses.
+>=20
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Reviewed-by: Olof Johansson <olofj@chromium.org>
+> Tested-by: Vincent Palatin <vpalatin@chromium.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
 
-> +	if (err) {
-> +		pr_err("MCT: can't setup IRQ %d (%d)\n", irq, err);
-> +		return;
-> +	}
-> +	disable_irq(irq);
+I'd prefer to drop it in favour of this series:
 
-This is completely backwards. We have flags which tell the core not to
-enable an interrupt at setup time. Also what's wrong with enabling the
-interrupt in the first place? When the timer is stopped then no
-interrupts happen and it does not matter a bit whether the irq line is
-enabled or not.
+http://lkml.org/lkml/2014/2/10/836
 
-Thanks,
 
-	tglx
+--jKBxcB1XkHIR0Eqt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS/4NuAAoJEBQN5MwUoCm2zkgQAI223Br8FLGO+UjZx6lpkIPJ
+BtQMnfChcCqiRF58tgX6PD7k1tq/XesWAuud/DWpSEu3XYv6IXkw1GWm5+CcQKcx
+BArwffntzdq0q8/2Ol1JSRg7BB98ImH0yCksxfMAzrC86CcNBNT3mfWQFMAQRUmG
+KImEV41ymVRf4AGdoNoy69sTrXHR9ZwTwd4YIN4fRZxY6oZqYzD2u6C7ZuOGyIaX
+7scT7GXMxC0okVyh4RtZqOpX1KyXtOrZQIrtqB9uIcd1h+uOo5WXCG95jUXp5AUJ
+8FytC1QO/alJuNilXY6H4+uvnfLM147ExetfLkz44vAm4o4m5ztnVvE6Xdxdqoai
+zeZ6NhET8OsYIvUDeRrg+uMThO5FonWmNTg/PnNuSoN0mZ27o5CQnYGoy5ZNWsqo
+d+PECdrwXyV8NXQZdLq8UhCdAbKp7JEVbtGeYB/VHD+ARBVB98JWdEf/dmmFBcPH
+njjkTfDHqWe6BfOa3Ur+1qv/NVL3XiQt1oTavyenBzJwNvDO0zbhOdU1o+6HgbJ8
+LOaYVqjwQ4gmaTWSBwb9pHvviEFtzLjxGlVTiE4qZacsqzMBLn23OAK9RtTr2Uik
+RUjdAwY2INzvQz62ynX7nQMhWcx4DJii71itftNNK1xtGlCdm719vvch+HFuU93e
+Jc81DWLfXmpwWpiFB44Q
+=MqSk
+-----END PGP SIGNATURE-----
+
+--jKBxcB1XkHIR0Eqt--
