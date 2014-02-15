@@ -1,138 +1,89 @@
-From: Tarek Dakhran <t.dakhran@gmail.com>
-Subject: Re: [PATCH v1 0/2] exynos_mct driver: fix irq allocation and cleanup
-Date: Sat, 15 Feb 2014 13:12:14 +0900
-Message-ID: <CANhyOUfm8D70OU2QJWH-JyzLuqhcfza1OcTECKbbPbyXDaut_g@mail.gmail.com>
-References: <1392260923-31659-1-git-send-email-t.dakhran@samsung.com>
-	<52FCBC42.6020904@samsung.com>
-	<CANhyOUcBrsnfSa3sCGbFqUB0g6zfG9moqbGapJGU3zbxWQVgiA@mail.gmail.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v3 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Sat, 15 Feb 2014 14:54:45 +0530
+Message-ID: <CAPdUM4ONDr6x+CTXGXR_MzYAdktjp+4TO7FL+mJd3UdqFNkTEw@mail.gmail.com>
+References: <1392385032-22015-1-git-send-email-rahul.sharma@samsung.com>
+	<1392385032-22015-4-git-send-email-rahul.sharma@samsung.com>
+	<52FE672A.6070803@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:47375 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751242AbaBOEMQ (ORCPT
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:38015 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585AbaBOJYr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Feb 2014 23:12:16 -0500
-In-Reply-To: <CANhyOUcBrsnfSa3sCGbFqUB0g6zfG9moqbGapJGU3zbxWQVgiA@mail.gmail.com>
+	Sat, 15 Feb 2014 04:24:47 -0500
+In-Reply-To: <52FE672A.6070803@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tarek Dakhran <t.dakhran@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tarek Dakhran <t.dakhran@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
 
-On Thu, Feb 13, 2014 at 10:31 PM, Tarek Dakhran <t.dakhran@gmail.com> wrote:
-> Hi Tomasz,
->
-> On Thursday, February 13, 2014, Tomasz Figa <t.figa@samsung.com> wrote:
->>
->> Hi Tarek,
->>
->> On 13.02.2014 04:08, Tarek Dakhran wrote:
->>>
->>> exynos4_local_timer_setup called on the secondary cpu before
->>> irqs are enabled. request_irq can sleep, which produces next warning:
->>>
->>> on boot:
->>> [    0.370000] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
->>> [    0.370000] Setting up static identity map for 0x403b5700 - 0x403b5758
->>> [    0.395000] CPU1: Booted secondary processor
->>> [    0.395000] ------------[ cut here ]------------
->>> [    0.395000] WARNING: CPU: 1 PID: 0 at kernel/locking/lockdep.c:2742
->>> lockdep_trace_alloc+0xe0/0xfc()
->>> [    0.395000] DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags))
->>> [    0.395000] Modules linked in:
->>> [    0.395000] CPU: 1 PID: 0 Comm: swapper/1 Not tainted
->>> 3.14.0-rc2-00004-g0db95f4 #128
->>> [    0.395000] [<c0014308>] (unwind_backtrace) from [<c0011690>]
->>> (show_stack+0x10/0x14)
->>> [    0.395000] [<c0011690>] (show_stack) from [<c03ae7d0>]
->>> (dump_stack+0x6c/0xb8)
->>> [    0.395000] [<c03ae7d0>] (dump_stack) from [<c001d504>]
->>> (warn_slowpath_common+0x68/0x8c)
->>> [    0.395000] [<c001d504>] (warn_slowpath_common) from [<c001d5bc>]
->>> (warn_slowpath_fmt+0x30/0x40)
->>> [    0.395000] [<c001d5bc>] (warn_slowpath_fmt) from [<c0059824>]
->>> (lockdep_trace_alloc+0xe0/0xfc)
->>> [    0.395000] [<c0059824>] (lockdep_trace_alloc) from [<c00bee24>]
->>> (kmem_cache_alloc+0x24/0x160)
->>> [    0.395000] [<c00bee24>] (kmem_cache_alloc) from [<c0068174>]
->>> (request_threaded_irq+0x64/0x130)
->>> [    0.395000] [<c0068174>] (request_threaded_irq) from [<c02efaf8>]
->>> (exynos4_local_timer_setup+0xd0/0x124)
->>> [    0.395000] [<c02efaf8>] (exynos4_local_timer_setup) from [<c02efc34>]
->>> (exynos4_mct_cpu_notify+0x78/0xf0)
->>> [    0.395000] [<c02efc34>] (exynos4_mct_cpu_notify) from [<c003d318>]
->>> (notifier_call_chain+0x44/0x84)
->>> [    0.395000] [<c003d318>] (notifier_call_chain) from [<c001d61c>]
->>> (__cpu_notify+0x24/0x40)
->>> [    0.395000] [<c001d61c>] (__cpu_notify) from [<c0013314>]
->>> (secondary_start_kernel+0xe4/0x134)
->>> [    0.395000] [<c0013314>] (secondary_start_kernel) from [<40008624>]
->>> (0x40008624)
->>> [    0.395000] ---[ end trace 347890460e745f50 ]---
->>> [    0.420000] CPU1: update cpu_power 1024
->>> [    0.420000] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
->>>
->>> on hotplug:
->>> [  108.040000] CPU3: Booted secondary processor
->>> [  108.040000] BUG: sleeping function called from invalid context at
->>> mm/slub.c:965
->>> [  108.040000] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name:
->>> swapper/3
->>> [  108.040000] INFO: lockdep is turned off.
->>> [  108.040000] irq event stamp: 0
->>> [  108.040000] hardirqs last  enabled at (0): [<  (null)>]   (null)
->>> [  108.040000] hardirqs last disabled at (0): [<c001b768>]
->>> copy_process.part.2+0x2a4/0x12f4
->>> [  108.040000] softirqs last  enabled at (0): [<c001b768>]
->>> copy_process.part.2+0x2a4/0x12f4
->>> [  108.040000] softirqs last disabled at (0): [<  (null)>]   (null)
->>> [  108.040000] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G        W
->>> 3.14.0-rc2-00004-g0db95f4 #128
->>> [  108.040000] [<c0014308>] (unwind_backtrace) from [<c0011690>]
->>> (show_stack+0x10/0x14)
->>> [  108.040000] [<c0011690>] (show_stack) from [<c03ae7d0>]
->>> (dump_stack+0x6c/0xb8)
->>> [  108.040000] [<c03ae7d0>] (dump_stack) from [<c00beed4>]
->>> (kmem_cache_alloc+0xd4/0x160)
->>> [  108.040000] [<c00beed4>] (kmem_cache_alloc) from [<c0068174>]
->>> (request_threaded_irq+0x64/0x130)
->>> [  108.040000] [<c0068174>] (request_threaded_irq) from [<c02efaf8>]
->>> (exynos4_local_timer_setup+0xd0/0x124)
->>> [  108.040000] [<c02efaf8>] (exynos4_local_timer_setup) from [<c02efc34>]
->>> (exynos4_mct_cpu_notify+0x78/0xf0)
->>> [  108.040000] [<c02efc34>] (exynos4_mct_cpu_notify) from [<c003d318>]
->>> (notifier_call_chain+0x44/0x84)
->>> [  108.040000] [<c003d318>] (notifier_call_chain) from [<c001d61c>]
->>> (__cpu_notify+0x24/0x40)
->>> [  108.040000] [<c001d61c>] (__cpu_notify) from [<c0013314>]
->>> (secondary_start_kernel+0xe4/0x134)
->>> [  108.040000] [<c0013314>] (secondary_start_kernel) from [<40008624>]
->>> (0x40008624)
->>>
->>> First patch fixes this problem by removing request_irq from
->>> exynos4_local_timer_setup
->>> Second removes non-dt stuff.
->>>
->>> Tested on linux kernel v3.14-rc2.
->>
->>
->> It would be nice to say on which boards it has been tested. Let me check
->> this on our boards anyway.
->>
->> Best regards,
->> Tomasz
->
->
-> Tested on smdk5410 reference board with lockdep enabled.
-> I think the problem will present on all boards due to call sleeping function
-> in irq_disabled context.
->
-> Best Regards,
->     Tarek
->
-Has anyone else tested this patches?
-if yes, what is the result?
+Thanks Tomasz,
 
+On 15 February 2014 00:27, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Rahul,
+>
+> The patch looks good, except one issue pointed inline.
+>
+>
+> On 14.02.2014 14:37, Rahul Sharma wrote:
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>> b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>> new file mode 100644
+>> index 0000000..c4efc1e
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>
+>
+> [snip]
+>
+>
+>> +&mmc_0 {
+>> +       status = "okay";
+>> +       num-slots = <1>;
+>> +       broken-cd;
+>> +       bypass-smu;
+>> +       supports-highspeed;
+>> +       supports-hs200-mode; /* 200 Mhz */
+>> +       fifo-depth = <0x40>;
+>
+>
+> This is a SoC-level property and it is already specified in your
+> exynos5260.dtsi.
+>
 
-Best regards,
-. Tarek
+Tomasz,
+
+yea correct. I will put these inside SoC node.
+
+Regards,
+Rahul Sharma.
+
+>
+>> +       card-detect-delay = <200>;
+>> +       samsung,dw-mshc-ciu-div = <3>;
+>> +       samsung,dw-mshc-sdr-timing = <0 4>;
+>> +       samsung,dw-mshc-ddr-timing = <0 2>;
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4
+>> &sd0_bus8>;
+>> +
+>> +       slot@0 {
+>> +               reg = <0>;
+>> +               bus-width = <8>;
+>> +       };
+>> +};
+>> +
+>> +&mmc_2 {
+>> +       status = "okay";
+>> +       num-slots = <1>;
+>> +       supports-highspeed;
+>> +       fifo-depth = <0x40>;
+>
+>
+> Ditto.
+>
+> Best regards,
+> Tomasz
