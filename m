@@ -1,489 +1,93 @@
 From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 2/2] ARM: SAMSUNG: remove all custom uncompress.h
-Date: Sun, 16 Feb 2014 18:34:07 +0100
-Message-ID: <2212191.1gWzhui2bt@phil>
-References: <3594365.ORKU4Q2jDp@phil>
+Subject: Re: [PATCH 02/12] dt-bindings: document s3c24xx controller for external clock output
+Date: Sun, 16 Feb 2014 21:33:52 +0100
+Message-ID: <5620516.DA2mHk7Kko@phil>
+References: <201312131356.40755.heiko@sntech.de> <201312131359.00450.heiko@sntech.de> <52F6DFE0.7030508@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:54236 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752004AbaBPRfH (ORCPT
+Received: from [95.129.55.99] ([95.129.55.99]:55524 "EHLO gloria.sntech.de"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753396AbaBPUfg convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Feb 2014 12:35:07 -0500
-In-Reply-To: <3594365.ORKU4Q2jDp@phil>
+	Sun, 16 Feb 2014 15:35:36 -0500
+In-Reply-To: <52F6DFE0.7030508@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, t.figa@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org
 
-All Samsung platforms now use the generic uncompress.h so all the custom
-ones can be removed.
+Am Sonntag, 9. Februar 2014, 02:54:40 schrieb Tomasz Figa:
+> Hi Heiko,
+>=20
+> On 13.12.2013 13:59, Heiko St=FCbner wrote:
+> > The clock settings are distributed over a regular register and part=
+s
+> > of the misccr register.
+> >=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >=20
+> >   .../bindings/clock/samsung,s3c2410-dclk.txt        |   53
+> >   ++++++++++++++++++++ 1 file changed, 53 insertions(+)
+> >   create mode 100644
+> >   Documentation/devicetree/bindings/clock/samsung,s3c2410-dclk.txt>=
+=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/clock/samsung,s3c2410-dclk.txt
+> > b/Documentation/devicetree/bindings/clock/samsung,s3c2410-dclk.txt =
+new
+> > file mode 100644
+> > index 0000000..0a1f7b1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/samsung,s3c2410-dclk.=
+txt
+> > @@ -0,0 +1,53 @@
+> > +* Samsung S3C24XX External Clock Output Controller
+> > +
+> > +The S3C24XX series can generate clock signals on two clock output =
+pads.
+> > +The clock binding described here is applicable to all SoCs in
+> > +the s3c24x family.
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: should be one of the following.
+> > +  - "samsung,s3c2410-dclk" - controller in S3C2410 SoCs.
+> > +  - "samsung,s3c2412-dclk" - controller in S3C2412 SoCs.
+> > +  - "samsung,s3c2440-dclk" - controller in S3C2440 and S3C2442 SoC=
+s.
+> > +  - "samsung,s3c2443-dclk" - controller in S3C2443 and later SoCs.
+> > +- reg: physical base address of the controller and length of memor=
+y
+> > mapped
+> > +  region.
+> > +- #clock-cells: should be 1.
+> > +- samsung,misccr: phandle to the syscon managing the misccr regist=
+er,
+> > which +  holds configuration settings for different soc-components
+> > (clocks, usb, ...).
+> Hmm, looking at the datasheet, DCLK and CLKOUT registers seem to be p=
+art
+> of the pin controller. I wonder if there is really a need for differe=
+nt
+> driver and device node to handle them.
+>=20
+> Could this be simply made a part of the s3c24xx pinctrl driver,
+> extending it to register also a clock provider under the same DT node=
+?
 
-Suggested-by: Sachin Kamat <sachin.kamat@linaro.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-exynos/include/mach/uncompress.h  |  48 -------
- arch/arm/mach-s3c24xx/include/mach/uncompress.h |  57 --------
- arch/arm/mach-s3c64xx/include/mach/uncompress.h |  31 -----
- arch/arm/mach-s5p64x0/include/mach/uncompress.h |  34 -----
- arch/arm/mach-s5pc100/include/mach/uncompress.h |  30 ----
- arch/arm/mach-s5pv210/include/mach/uncompress.h |  28 ----
- arch/arm/plat-samsung/include/plat/uncompress.h | 175 ------------------------
- 7 files changed, 403 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s3c64xx/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s5p64x0/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/uncompress.h
+it could, but of course the non-dt platforms would not be able to use i=
+t in=20
+this case.
 
-diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/arm/mach-exynos/include/mach/uncompress.h
-deleted file mode 100644
-index 5d7ce36..0000000
---- a/arch/arm/mach-exynos/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,48 +0,0 @@
--/*
-- * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS - uncompress code
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H __FILE__
--
--#include <asm/mach-types.h>
--
--#include <mach/map.h>
--#include <plat/uncompress.h>
--
--static unsigned int __raw_readl(unsigned int ptr)
--{
--	return *((volatile unsigned int *)ptr);
--}
--
--static void arch_detect_cpu(void)
--{
--	u32 chip_id = __raw_readl(EXYNOS_PA_CHIPID);
--
--	/*
--	 * product_id is bits 31:12
--	 * bits 23:20 describe the exynosX family
--	 * bits 27:24 describe the exynosX family in exynos5420
--	 */
--	chip_id >>= 20;
--
--	if ((chip_id & 0x0f) == 0x5 || (chip_id & 0xf0) == 0x50)
--		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
--	else
--		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
--
--	/*
--	 * For preventing FIFO overrun or infinite loop of UART console,
--	 * fifo_max should be the minimum fifo size of all of the UART channels
--	 */
--	fifo_mask = S5PV210_UFSTAT_TXMASK;
--	fifo_max = 15 << S5PV210_UFSTAT_TXSHIFT;
--}
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/mach-s3c24xx/include/mach/uncompress.h b/arch/arm/mach-s3c24xx/include/mach/uncompress.h
-deleted file mode 100644
-index 7d2ce20..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,57 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/uncompress.h
-- *
-- * Copyright (c) 2003-2007 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C2410 - uncompress code
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H
--
--#include <mach/regs-gpio.h>
--#include <mach/map.h>
--
--/* working in physical space... */
--#undef S3C2410_GPIOREG
--#define S3C2410_GPIOREG(x) ((S3C24XX_PA_GPIO + (x)))
--
--#include <plat/uncompress.h>
--
--static inline int is_arm926(void)
--{
--	unsigned int cpuid;
--
--	asm volatile ("mrc p15, 0, %0, c1, c0, 0" : "=r" (cpuid));
--
--	return ((cpuid & 0xff0) == 0x260);
--}
--
--static void arch_detect_cpu(void)
--{
--	unsigned int cpuid;
--
--	cpuid = *((volatile unsigned int *)S3C2410_GSTATUS1);
--	cpuid &= S3C2410_GSTATUS1_IDMASK;
--
--	if (is_arm926() || cpuid == S3C2410_GSTATUS1_2440 ||
--	    cpuid == S3C2410_GSTATUS1_2442 ||
--	    cpuid == S3C2410_GSTATUS1_2416 ||
--	    cpuid == S3C2410_GSTATUS1_2450) {
--		fifo_mask = S3C2440_UFSTAT_TXMASK;
--		fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
--	} else {
--		fifo_mask = S3C2410_UFSTAT_TXMASK;
--		fifo_max = 15 << S3C2410_UFSTAT_TXSHIFT;
--	}
--
--	uart_base = (volatile u8 *) S3C_PA_UART +
--		(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
--}
--
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/mach-s3c64xx/include/mach/uncompress.h b/arch/arm/mach-s3c64xx/include/mach/uncompress.h
-deleted file mode 100644
-index 1c95673..0000000
---- a/arch/arm/mach-s3c64xx/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,31 +0,0 @@
--/* arch/arm/mach-s3c6400/include/mach/uncompress.h
-- *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C6400 - uncompress code
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H
--
--#include <mach/map.h>
--#include <plat/uncompress.h>
--
--static void arch_detect_cpu(void)
--{
--	/* we do not need to do any cpu detection here at the moment. */
--	fifo_mask = S3C2440_UFSTAT_TXMASK;
--	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
--
--	uart_base = (volatile u8 *)S3C_PA_UART +
--		(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
--}
--
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/mach-s5p64x0/include/mach/uncompress.h b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-deleted file mode 100644
-index bbcc3f6..0000000
---- a/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,34 +0,0 @@
--/* linux/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-- *
-- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * S5P64X0 - uncompress code
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H
--
--#include <mach/map.h>
--#include <plat/uncompress.h>
--
--static void arch_detect_cpu(void)
--{
--	unsigned int chipid;
--
--	chipid = *(const volatile unsigned int __force *) 0xE0100118;
--
--	if ((chipid & 0xff000) == 0x50000)
--		uart_base = (volatile u8 *)S5P6450_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
--	else
--		uart_base = (volatile u8 *)S5P6440_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
--
--	fifo_mask = S3C2440_UFSTAT_TXMASK;
--	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
--}
--
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/uncompress.h b/arch/arm/mach-s5pc100/include/mach/uncompress.h
-deleted file mode 100644
-index 720e133..0000000
---- a/arch/arm/mach-s5pc100/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,30 +0,0 @@
--/* arch/arm/mach-s5pc100/include/mach/uncompress.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *	Byungho Min <bhmin@samsung.com>
-- *
-- * S5PC100 - uncompress code
-- *
-- * Based on mach-s3c6400/include/mach/uncompress.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H
--
--#include <mach/map.h>
--#include <plat/uncompress.h>
--
--static void arch_detect_cpu(void)
--{
--	/* we do not need to do any cpu detection here at the moment. */
--	fifo_mask = S3C2440_UFSTAT_TXMASK;
--	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
--
--	uart_base = (volatile u8 *)S5P_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
--}
--
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/uncompress.h b/arch/arm/mach-s5pv210/include/mach/uncompress.h
-deleted file mode 100644
-index 231cb07..0000000
---- a/arch/arm/mach-s5pv210/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,28 +0,0 @@
--/* linux/arch/arm/mach-s5pv210/include/mach/uncompress.h
-- *
-- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-- *
-- * S5PV210 - uncompress code
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H
--
--#include <mach/map.h>
--#include <plat/uncompress.h>
--
--static void arch_detect_cpu(void)
--{
--	/* we do not need to do any cpu detection here at the moment. */
--	fifo_mask = S5PV210_UFSTAT_TXMASK;
--	fifo_max = 63 << S5PV210_UFSTAT_TXSHIFT;
--
--	uart_base = (volatile u8 *)S5P_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
--}
--
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/plat-samsung/include/plat/uncompress.h b/arch/arm/plat-samsung/include/plat/uncompress.h
-deleted file mode 100644
-index f48dc0a..0000000
---- a/arch/arm/plat-samsung/include/plat/uncompress.h
-+++ /dev/null
-@@ -1,175 +0,0 @@
--/* arch/arm/plat-samsung/include/plat/uncompress.h
-- *
-- * Copyright 2003, 2007 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C - uncompress code
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_PLAT_UNCOMPRESS_H
--#define __ASM_PLAT_UNCOMPRESS_H
--
--typedef unsigned int upf_t;	/* cannot include linux/serial_core.h */
--
--/* uart setup */
--
--unsigned int fifo_mask;
--unsigned int fifo_max;
--
--volatile u8 *uart_base;
--
--/* forward declerations */
--
--static void arch_detect_cpu(void);
--
--/* defines for UART registers */
--
--#include <plat/regs-serial.h>
--
--/* working in physical space... */
--#define S3C_WDOGREG(x)	((S3C_PA_WDT + (x)))
--
--#define S3C2410_WTCON	S3C_WDOGREG(0x00)
--#define S3C2410_WTDAT	S3C_WDOGREG(0x04)
--#define S3C2410_WTCNT	S3C_WDOGREG(0x08)
--
--#define S3C2410_WTCON_RSTEN	(1 << 0)
--#define S3C2410_WTCON_ENABLE	(1 << 5)
--
--#define S3C2410_WTCON_DIV128	(3 << 3)
--
--#define S3C2410_WTCON_PRESCALE(x)	((x) << 8)
--
--/* how many bytes we allow into the FIFO at a time in FIFO mode */
--#define FIFO_MAX	 (14)
--
--static __inline__ void
--uart_wr(unsigned int reg, unsigned int val)
--{
--	volatile unsigned int *ptr;
--
--	ptr = (volatile unsigned int *)(reg + uart_base);
--	*ptr = val;
--}
--
--static __inline__ unsigned int
--uart_rd(unsigned int reg)
--{
--	volatile unsigned int *ptr;
--
--	ptr = (volatile unsigned int *)(reg + uart_base);
--	return *ptr;
--}
--
--/* we can deal with the case the UARTs are being run
-- * in FIFO mode, so that we don't hold up our execution
-- * waiting for tx to happen...
--*/
--
--static void putc(int ch)
--{
--	if (!config_enabled(CONFIG_DEBUG_LL))
--		return;
--
--	if (uart_rd(S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE) {
--		int level;
--
--		while (1) {
--			level = uart_rd(S3C2410_UFSTAT);
--			level &= fifo_mask;
--
--			if (level < fifo_max)
--				break;
--		}
--
--	} else {
--		/* not using fifos */
--
--		while ((uart_rd(S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXE) != S3C2410_UTRSTAT_TXE)
--			barrier();
--	}
--
--	/* write byte to transmission register */
--	uart_wr(S3C2410_UTXH, ch);
--}
--
--static inline void flush(void)
--{
--}
--
--#define __raw_writel(d, ad)			\
--	do {							\
--		*((volatile unsigned int __force *)(ad)) = (d); \
--	} while (0)
--
--#ifdef CONFIG_S3C_BOOT_ERROR_RESET
--
--static void arch_decomp_error(const char *x)
--{
--	putstr("\n\n");
--	putstr(x);
--	putstr("\n\n -- System resetting\n");
--
--	__raw_writel(0x4000, S3C2410_WTDAT);
--	__raw_writel(0x4000, S3C2410_WTCNT);
--	__raw_writel(S3C2410_WTCON_ENABLE | S3C2410_WTCON_DIV128 | S3C2410_WTCON_RSTEN | S3C2410_WTCON_PRESCALE(0x40), S3C2410_WTCON);
--
--	while(1);
--}
--
--#define arch_error arch_decomp_error
--#endif
--
--#ifdef CONFIG_S3C_BOOT_UART_FORCE_FIFO
--static inline void arch_enable_uart_fifo(void)
--{
--	u32 fifocon;
--
--	if (!config_enabled(CONFIG_DEBUG_LL))
--		return;
--
--	fifocon = uart_rd(S3C2410_UFCON);
--
--	if (!(fifocon & S3C2410_UFCON_FIFOMODE)) {
--		fifocon |= S3C2410_UFCON_RESETBOTH;
--		uart_wr(S3C2410_UFCON, fifocon);
--
--		/* wait for fifo reset to complete */
--		while (1) {
--			fifocon = uart_rd(S3C2410_UFCON);
--			if (!(fifocon & S3C2410_UFCON_RESETBOTH))
--				break;
--		}
--
--		uart_wr(S3C2410_UFCON, S3C2410_UFCON_FIFOMODE);
--	}
--}
--#else
--#define arch_enable_uart_fifo() do { } while(0)
--#endif
--
--
--static void
--arch_decomp_setup(void)
--{
--	/* we may need to setup the uart(s) here if we are not running
--	 * on an BAST... the BAST will have left the uarts configured
--	 * after calling linux.
--	 */
--
--	arch_detect_cpu();
--
--	/* Enable the UART FIFOs if they where not enabled and our
--	 * configuration says we should turn them on.
--	 */
--
--	arch_enable_uart_fifo();
--}
--
--
--#endif /* __ASM_PLAT_UNCOMPRESS_H */
--- 
-1.8.5.3
+So I guess, we could get rid of this dt binding, implement the clkout h=
+andling=20
+in the pinctrl driver for dt platforms, but use the platform-driver thi=
+s=20
+binding described for the time we're still handling non-dt s3c24xx mach=
+ines.
+
+
+Heiko
