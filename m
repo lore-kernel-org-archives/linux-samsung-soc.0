@@ -1,87 +1,58 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 17 Feb 2014 15:31:41 +0530
-Message-ID: <CAFp+6iF+-C0KgRW9EXPxEeKnkWOjp2UueAGeSUUqs6coAftgFQ@mail.gmail.com>
-References: <1386151747-3209-2-git-send-email-gautam.vivek@samsung.com>
-	<1390225363-24210-1-git-send-email-gautam.vivek@samsung.com>
-	<52F39710.80101@samsung.com>
-	<CAFp+6iFYoN1w_BX7mMEa-Xx5ADaPTTKeDzjsSbQmwVKdSEsmOw@mail.gmail.com>
-	<52FE3A91.1090107@samsung.com>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Mon, 17 Feb 2014 15:35:18 +0000
+Message-ID: <20140217153518.30891455@alan.etchedpixels.co.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+	<1390208555-27770-3-git-send-email-tushar.behera@linaro.org>
+	<20140120100415.GX15937@n2100.arm.linux.org.uk>
+	<20140213181216.GB24155@kroah.com>
+	<20140213181559.GB30257@n2100.arm.linux.org.uk>
+	<20140213182701.GA32578@kroah.com>
+	<20140213184249.GC30257@n2100.arm.linux.org.uk>
+	<20140213232606.GA27372@kroah.com>
+	<20140214000717.GG30257@n2100.arm.linux.org.uk>
+	<20140214001436.GA16287@kroah.com>
+	<20140214003834.GH30257@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <52FE3A91.1090107@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Julius Werner <jwerner@chromium.org>, Jingoo Han <jg1.han@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:34553 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750830AbaBQPfw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Feb 2014 10:35:52 -0500
+In-Reply-To: <20140214003834.GH30257@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
 
-Hi Tomasz,
+> > How?  What two different busses will see this same device?  The amba bus
+> > code should prevent that from happening, right?  If not, there's bigger
+> > problems in that bus code :)
+> 
+> Where is that requirement documented?  It isn't documented.  No one
+> implements any kind of locking at the bus level to prevent this, not
+> PCI, nor platform devices.
 
+We don't want bus locking. There are lots of busses that can be parallel
+probed and in some cases its expensive not to do so. We may well need to
+do much more parallel probing in PCI bus in future and we may be parallel
+probing multiple bus types at once.
 
-On Fri, Feb 14, 2014 at 9:17 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+The uart_register hack is simply broken. Nobody can stop you merging it
+Greg but in the long term its the wrong approach.
 
-mistakenly didn't do "Reply All", so sending it again.
+We've identified a correct working approach which is to simply add a
+CONFIG entry to the ARM tree and a few ifdefs to the problem drivers to
+make the "problem" (in fact a complete fictional non-problem) go away and
+to get rid of the mess over time completely as the drivers are set
+dynamic and it turns out that all the userspace happens to already handle
+this just fine.
 
-> Hi Vivek,
->
->
-> On 14.02.2014 14:53, Vivek Gautam wrote:
->>>>
->>>> Changes from v2:
->>>> 1) Added support for multiple PHYs (UTMI+ and PIPE3) and
->>>>      related changes in the driver structuring.
->>>
->>>
->>>
->>> I'm a bit skeptical about this separation. Can the PHY operate with just
->>> the
->>> UTMI+ or PIPE3 part enabled alone without the other? Can any PHY consumer
->>> operate this way?
->>
->>
->> Yes :-)
->> As also pointed by Kishon the PHY consumer (which is DWC3 in case of
->> Exynos5 SoC series)
->> should theoretically be able use either UTMI+ phy for High speed
->> operations or both (UTMI+ and PIPE3)
->> for Super Speed operations.
->
->
-> OK, that's fine then. This is the explanation I needed, thanks.
->
->
->>>
->>> I believe the right thing to do here is to do all the initialization in
->>> .power_on() and let the driver simply call phy_power_on() when it needs
->>> the
->>> PHY and phy_power_off() otherwise.
->>
->>
->> If this is what we should be doing then what will be the purpose of
->> two separate APIs :
->> phy_power_on() and phy_init().
->> Am i missing while understanding the things.
->>
->
-> I don't understand this separation as well. Operations that should be done
-> together shouldn't be separated. Is there any case when you can call one of
-> phy_power_on() and phy_init() without calling another one right before/after
-> it?
+Far better than botchfixes to uart registration code that will haunt us
+for years.
 
-Most of the PHY consumers need to call phy_power_on() as well as phy_init()
-to get PHY working (if the PHY provider gives callback to both).
-I think the idea would have been to separate out the initialization
-related and power related
-jobs (which may include setting up the PMUs and may be regulators ?)
-But, i think it's true, if the PHY provider callback for both
-phy_power_on() and phy_init()
-then the consumer __has__ to call both to get things working.
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Alan
