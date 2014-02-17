@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 06/13] regulator: s2mps11: Don't store registered regulators
- in state container
-Date: Mon, 17 Feb 2014 09:40:20 +0100
-Message-ID: <1392626427-4518-7-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v3 05/13] mfd: sec: Use consistent S2MPS11 RTC alarm interrupt
+ indexes
+Date: Mon, 17 Feb 2014 09:40:19 +0100
+Message-ID: <1392626427-4518-6-git-send-email-k.kozlowski@samsung.com>
 References: <1392626427-4518-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1392626427-4518-1-git-send-email-k.kozlowski@samsung.com>
@@ -11,50 +11,61 @@ To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Le
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Regulators registered by devm_regulator_register() do not have to be
-stored in state container because they are never dereferenced later.
-The array of regulator_dev can be safely removed from state container.
+The S2MPS11 RTC has two alarms: alarm0 and alarm1 (corresponding
+interrupts are named similarly). Use consistent names for interrupts to
+limit possible errors.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/regulator/s2mps11.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/mfd/sec-irq.c           |    8 ++++----
+ include/linux/mfd/samsung/irq.h |    4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 89966213315c..acdd3b92b8d6 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -28,8 +28,6 @@
- #define S2MPS11_REGULATOR_CNT ARRAY_SIZE(regulators)
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index 4de494f51d40..e403c293b437 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -59,13 +59,13 @@ static const struct regmap_irq s2mps11_irqs[] = {
+ 		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTC60S_MASK,
+ 	},
+-	[S2MPS11_IRQ_RTCA1] = {
++	[S2MPS11_IRQ_RTCA0] = {
+ 		.reg_offset = 1,
+-		.mask = S2MPS11_IRQ_RTCA1_MASK,
++		.mask = S2MPS11_IRQ_RTCA0_MASK,
+ 	},
+-	[S2MPS11_IRQ_RTCA2] = {
++	[S2MPS11_IRQ_RTCA1] = {
+ 		.reg_offset = 1,
+-		.mask = S2MPS11_IRQ_RTCA2_MASK,
++		.mask = S2MPS11_IRQ_RTCA1_MASK,
+ 	},
+ 	[S2MPS11_IRQ_SMPL] = {
+ 		.reg_offset = 1,
+diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
+index d43b4f9e7fb2..abe1a6aae3b7 100644
+--- a/include/linux/mfd/samsung/irq.h
++++ b/include/linux/mfd/samsung/irq.h
+@@ -24,8 +24,8 @@ enum s2mps11_irq {
+ 	S2MPS11_IRQ_MRB,
  
- struct s2mps11_info {
--	struct regulator_dev *rdev[S2MPS11_REGULATOR_MAX];
--
- 	int ramp_delay2;
- 	int ramp_delay34;
- 	int ramp_delay5;
-@@ -439,6 +437,8 @@ common_reg:
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
- 	for (i = 0; i < S2MPS11_REGULATOR_MAX; i++) {
-+		struct regulator_dev *regulator;
-+
- 		if (!reg_np) {
- 			config.init_data = pdata->regulators[i].initdata;
- 			config.of_node = pdata->regulators[i].reg_node;
-@@ -447,10 +447,10 @@ common_reg:
- 			config.of_node = rdata[i].of_node;
- 		}
+ 	S2MPS11_IRQ_RTC60S,
++	S2MPS11_IRQ_RTCA0,
+ 	S2MPS11_IRQ_RTCA1,
+-	S2MPS11_IRQ_RTCA2,
+ 	S2MPS11_IRQ_SMPL,
+ 	S2MPS11_IRQ_RTC1S,
+ 	S2MPS11_IRQ_WTSR,
+@@ -47,7 +47,7 @@ enum s2mps11_irq {
  
--		s2mps11->rdev[i] = devm_regulator_register(&pdev->dev,
-+		regulator = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
--		if (IS_ERR(s2mps11->rdev[i])) {
--			ret = PTR_ERR(s2mps11->rdev[i]);
-+		if (IS_ERR(regulator)) {
-+			ret = PTR_ERR(regulator);
- 			dev_err(&pdev->dev, "regulator init failed for %d\n",
- 				i);
- 			return ret;
+ #define S2MPS11_IRQ_RTC60S_MASK		(1 << 0)
+ #define S2MPS11_IRQ_RTCA1_MASK		(1 << 1)
+-#define S2MPS11_IRQ_RTCA2_MASK		(1 << 2)
++#define S2MPS11_IRQ_RTCA0_MASK		(1 << 2)
+ #define S2MPS11_IRQ_SMPL_MASK		(1 << 3)
+ #define S2MPS11_IRQ_RTC1S_MASK		(1 << 4)
+ #define S2MPS11_IRQ_WTSR_MASK		(1 << 5)
 -- 
 1.7.9.5
