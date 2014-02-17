@@ -1,87 +1,70 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
- device probe
-Date: Mon, 17 Feb 2014 15:54:51 +0000
-Message-ID: <20140217155451.34b2c749@alan.etchedpixels.co.uk>
-References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
-	<1390208555-27770-3-git-send-email-tushar.behera@linaro.org>
-	<20140120100415.GX15937@n2100.arm.linux.org.uk>
-	<20140213181216.GB24155@kroah.com>
-	<20140213181559.GB30257@n2100.arm.linux.org.uk>
-	<20140213182701.GA32578@kroah.com>
-	<20140213184249.GC30257@n2100.arm.linux.org.uk>
-	<20140213232606.GA27372@kroah.com>
-	<20140214000717.GG30257@n2100.arm.linux.org.uk>
-	<20140214001436.GA16287@kroah.com>
-	<20140214003834.GH30257@n2100.arm.linux.org.uk>
-	<20140217153518.30891455@alan.etchedpixels.co.uk>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v5 0/7] ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+Date: Mon, 17 Feb 2014 21:05:17 +0100
+Message-ID: <2678040.KALsQ0bZFm@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:34576 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751403AbaBQPzY (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:37393 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753878AbaBQUGK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Feb 2014 10:55:24 -0500
-In-Reply-To: <20140217153518.30891455@alan.etchedpixels.co.uk>
+	Mon, 17 Feb 2014 15:06:10 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
 
-And an even simpler broad brush approach will also work I think (untested)
+Next try, hopefully this time the final one :-)
 
-The "zero crap" approach....
+Tested on both non-dt and dt s3c2416.
 
-commit c5cd0be0576ba9059799ef5383402ff6ffc212a3
-Author: Alan <gnomes@lxorguk.ukuu.org.uk>
-Date:   Mon Feb 17 15:52:21 2014 +0000
+Changes since v4:
+- adapt to samsung clock pm changes
+- rename include/dt-bindings header
+Changes since v3:
+- address comments from Tomasz Figa (binding documentation, etc)
+- prevent conflicts with unconverted s3c24xx socs
+Changes since v2
+- address comments from Tomasz Figa
+- use new pll registration mechanism
+- use fixed-rate clocks for xti etc
 
-    tty: Allow serial port allocations to be fully dynamic
-    
-    This switch allows platforms to make their serial port allocations entirely
-    dynamic as is needed on some non-x86 platforms which have overlapping static
-    minor numbers between some of their devices.
-    
-    Default to the old static allocations for maximum compatibility with ancient
-    userspace.
-    
-    Signed-off-by: Alan Cox <alan@linux.intel.com>
+Heiko Stuebner (7):
+  clk: samsung: add pll_6552 variant for s3c2416
+  clk: samsung: add plls used by the s3c2443
+  dt-bindings: add binding for clock-controller of s3c2443 and following
+  clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
+  ARM: S3C24XX: prevent conflicts between ccf and non-ccf s3c24xx-socs
+  ARM: dt: add clock data for s3c2416
+  ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
 
-diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-index 65cd80b..670c076 100644
---- a/drivers/tty/Kconfig
-+++ b/drivers/tty/Kconfig
-@@ -166,6 +166,16 @@ config LEGACY_PTY_COUNT
- 	  When not in use, each legacy PTY occupies 12 bytes on 32-bit
- 	  architectures and 24 bytes on 64-bit architectures.
- 
-+config TTY_SERIAL_LEGACY
-+	bool "Allocate legacy fixed minor numbers for serial ports"
-+	default y
-+	---help---
-+	  Modern linux dynamically allocates device numbers. Some very old
-+	  Linux distributions only support static device numbering.
-+	  Selecting this option will enable support for very old
-+	  userspace but on some non PC architectures may prevent you building
-+	  a single kernel for multiple machines.
-+
- config BFIN_JTAG_COMM
- 	tristate "Blackfin JTAG Communication"
- 	depends on BLACKFIN
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index ece2049..b78afc1 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -2315,8 +2315,10 @@ int uart_register_driver(struct uart_driver *drv)
- 
- 	normal->driver_name	= drv->driver_name;
- 	normal->name		= drv->dev_name;
-+#ifdef CONFIG_TTY_SERIAL_LEGACY
- 	normal->major		= drv->major;
- 	normal->minor_start	= drv->minor;
-+#endif	
- 	normal->type		= TTY_DRIVER_TYPE_SERIAL;
- 	normal->subtype		= SERIAL_TYPE_NORMAL;
- 	normal->init_termios	= tty_std_termios;
+ .../bindings/clock/samsung,s3c2443-clock.txt       |  56 ++
+ arch/arm/boot/dts/s3c2416-smdk2416.dts             |  13 +
+ arch/arm/boot/dts/s3c2416.dtsi                     |  42 ++
+ arch/arm/mach-s3c24xx/Kconfig                      |  18 +-
+ arch/arm/mach-s3c24xx/Makefile                     |   5 +-
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              | 171 ------
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              | 212 -------
+ arch/arm/mach-s3c24xx/common-s3c2443.c             | 675 ---------------------
+ arch/arm/mach-s3c24xx/common.c                     |  18 +-
+ arch/arm/mach-s3c24xx/common.h                     |   6 +
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |  39 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c              |   9 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c              |   9 +-
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-pll.c                      |  84 ++-
+ drivers/clk/samsung/clk-pll.h                      |   3 +
+ drivers/clk/samsung/clk-s3c2443.c                  | 462 ++++++++++++++
+ include/dt-bindings/clock/s3c2443.h                |  92 +++
+ 18 files changed, 801 insertions(+), 1114 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
+ delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
+ create mode 100644 drivers/clk/samsung/clk-s3c2443.c
+ create mode 100644 include/dt-bindings/clock/s3c2443.h
+
+-- 
+1.8.5.3
