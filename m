@@ -1,48 +1,106 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Mon, 17 Feb 2014 09:09:46 +0100
-Message-ID: <1392624586.3755.13.camel@AMDC1943>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <20140213192835.GD28112@sirena.org.uk> <1392365712.29133.16.camel@AMDC1943>
- <20140214205915.GW4451@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 00/13] mfd/regulator/rtc: sec: Add support for S2MPS14
+Date: Mon, 17 Feb 2014 09:40:14 +0100
+Message-ID: <1392626427-4518-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:30965 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750956AbaBQIJu (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44828 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751061AbaBQIkj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Feb 2014 03:09:50 -0500
-In-reply-to: <20140214205915.GW4451@sirena.org.uk>
+	Mon, 17 Feb 2014 03:40:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Fri, 2014-02-14 at 20:59 +0000, Mark Brown wrote:
-> On Fri, Feb 14, 2014 at 09:15:12AM +0100, Krzysztof Kozlowski wrote:
-> 
-> > My initial idea was to do this similarly to the S5M8767 regulator (where
-> > there is also 4th mode: low power). The presence of GPIO in DTS can
-> > simplify the bindings but on the other hand it wouldn't be compatible
-> > with S5M8767 regulator driver. This may complicate the merge of these
-> > drivers.
-> 
-> They can always use separate ops.
-> 
-> > What is your opinion on this - should I abandon the "op_mode" idea and
-> > use presence of GPIO?
-> 
-> Yes, that's better - especially since the framework has support for
-> enable GPIOs.  It can do things like handle cases where the hardware has
-> tied the enables for several regulators together so they all need to be
-> enabled and disabled as one.
+Hi,
 
-OK. I'll rewrite this patch and send later when S2MPS14 will be
-accepted.
 
-Best regards,
-Krzysztof
+This is third version of patchset adding support for S2MPS14 device to the
+Samsung MFD driver family.
+
+
+Changes since v2
+================
+1. Added ack-s and reviews (Lee Jones, Tomasz Figa, Yadwinder Singh Brar).
+2. Applied suggestions from review (Mark Brown).
+3. Added patch 6/13:
+   regulator: s2mps11: Don't store registered regulators in state container
+4. Dropped two patches adding opmode (regulator: s2mps11: Add opmode for
+   S2MPS14 regulators).
+5. Rebased on current next (next-20140217).
+
+
+Changes since v1
+================
+1. Added Lee Jones' ACK-s.
+2. Applied suggestions from review (Lee Jones).
+3. Regulator: added __initconst to regulator_desc array (Yadwinder Singh Brar).
+   This replaces the patch 7/15:
+   "regulator: s2mps11: Choose number of supported regulators during probe"
+   with:
+   "regulator: s2mps11: Copy supported regulators from initconst"
+
+
+Description
+===========
+
+The S2MPS14 is similar to S2MPS11 but it has fewer regulators, two
+clocks instead of three and a little different registers layout.
+
+The patchset is organized in following way:
+1. Patches from 1 to 8 clean up the S2MPS1X/S5M876X drivers and prepare
+   for adding S2MPS14 support (some symbol renaming is needed).
+2. Patches from 9 to 11 add support for S2MPS14 to the MFD and regulator
+   drivers. They depend on previous patches.
+4. Patches 12 and 13 add support for S2MPS14 RTC and they depend on previous
+   MFD and RTC patches.
+
+Probably the best way to get everything working and merged into the linux-next
+would be to obtain ACK-s from all maintainers and to put all the patches into
+the mfd-next tree.
+
+
+The patchset is based on linux-next: next-20140217 *with* patch:
+mfd: sec-core: Fix possible NULL pointer dereference when i2c_new_dummy error
+
+
+TODO
+====
+1. Add support for S2MPS14 to the S2MPS11 clock driver. The patch is actually
+   ready but it is based on the "Add support for clocks in S5M8767"
+      http://thread.gmane.org/gmane.linux.kernel/1587881/focus=1587882
+   which didn't get their way into clk-next. I will wait for them.
+2. Add external GPIO control (ena_gpio) to regulator driver.
+
+
+Krzysztof Kozlowski (13):
+  mfd: sec: Add maximum RTC register for regmap config
+  mfd: sec: Select different RTC regmaps for devices
+  mfd/rtc: sec/s5m: Rename SEC* symbols to S5M
+  rtc: s5m: Remove undocumented time init on first boot
+  mfd: sec: Use consistent S2MPS11 RTC alarm interrupt indexes
+  regulator: s2mps11: Don't store registered regulators in state
+    container
+  regulator: s2mps11: Constify regulator_desc array
+  regulator: s2mps11: Copy supported regulators from initconst
+  mfd: sec: Add support for S2MPS14
+  regulator: s2mps11: Add support for S2MPS14 regulators
+  Documentation: mfd: s2mps11: Document support for S2MPS14
+  rtc: s5m: Support different register layout
+  rtc: s5m: Add support for S2MPS14 RTC
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   12 +-
+ drivers/mfd/sec-core.c                            |   57 +++-
+ drivers/mfd/sec-irq.c                             |   97 +++++-
+ drivers/regulator/s2mps11.c                       |  337 ++++++++++++++++-----
+ drivers/rtc/rtc-s5m.c                             |  284 +++++++++++------
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/irq.h                   |   31 +-
+ include/linux/mfd/samsung/rtc.h                   |  132 +++++---
+ include/linux/mfd/samsung/s2mps14.h               |  152 ++++++++++
+ 9 files changed, 873 insertions(+), 230 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps14.h
+
+-- 
+1.7.9.5
