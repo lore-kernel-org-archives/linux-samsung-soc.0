@@ -1,54 +1,194 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 01/13] mfd: sec: Add maximum RTC register for regmap config
-Date: Mon, 17 Feb 2014 09:40:15 +0100
-Message-ID: <1392626427-4518-2-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v3 08/13] regulator: s2mps11: Copy supported regulators from
+ initconst
+Date: Mon, 17 Feb 2014 09:40:22 +0100
+Message-ID: <1392626427-4518-9-git-send-email-k.kozlowski@samsung.com>
 References: <1392626427-4518-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38453 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:38460 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277AbaBQIkk (ORCPT
+	with ESMTP id S1751061AbaBQIko (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Feb 2014 03:40:40 -0500
+	Mon, 17 Feb 2014 03:40:44 -0500
 In-reply-to: <1392626427-4518-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
 
-Add maximum register to the regmap used by rtc-s5m driver.
+Add __initconst to 'regulator_desc' array with supported regulators.
+During probe choose how many and which regulators will be supported
+according to device ID. Then copy the 'regulator_desc' array to
+allocated memory so the regulator core can use it.
+
+Additionally allocate array of of_regulator_match() dynamically (based
+on number of regulators) instead of allocation on the stack.
+
+This is needed for supporting different devices in s2mps11
+driver and actually prepares the regulator driver for supporting the
+S2MPS14 device.
+
+Code for supporting the S2MPS14 device will add its own array of
+'regulator_desc' (also marked as __initconst). This way memory footprint
+of the driver will be reduced (approximately 'regulators_desc' array for
+S2MPS11 occupies 5 kB on 32-bit ARM, for S2MPS14 will occupy 3 kB).
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
 ---
- drivers/mfd/sec-core.c          |    2 ++
- include/linux/mfd/samsung/rtc.h |    2 ++
- 2 files changed, 4 insertions(+)
+ drivers/regulator/s2mps11.c |   75 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 62 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 7c6ce2e4aaa6..6021c54f74cf 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -141,6 +141,8 @@ static const struct regmap_config s5m8767_regmap_config = {
- static const struct regmap_config sec_rtc_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-+
-+	.max_register = SEC_RTC_REG_MAX,
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index caf3977761e7..81de1233b825 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -25,9 +25,8 @@
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/s2mps11.h>
+ 
+-#define S2MPS11_REGULATOR_CNT ARRAY_SIZE(regulators)
+-
+ struct s2mps11_info {
++	unsigned int rdev_num;
+ 	int ramp_delay2;
+ 	int ramp_delay34;
+ 	int ramp_delay5;
+@@ -343,7 +342,7 @@ static struct regulator_ops s2mps11_buck_ops = {
+ 	.enable_mask	= S2MPS11_ENABLE_MASK			\
+ }
+ 
+-static const struct regulator_desc regulators[] = {
++static const struct regulator_desc s2mps11_regulators[] __initconst = {
+ 	regulator_desc_ldo2(1),
+ 	regulator_desc_ldo1(2),
+ 	regulator_desc_ldo1(3),
+@@ -394,21 +393,62 @@ static const struct regulator_desc regulators[] = {
+ 	regulator_desc_buck10,
  };
  
- #ifdef CONFIG_OF
-diff --git a/include/linux/mfd/samsung/rtc.h b/include/linux/mfd/samsung/rtc.h
-index 94b7cd6d8891..4627f59ebd84 100644
---- a/include/linux/mfd/samsung/rtc.h
-+++ b/include/linux/mfd/samsung/rtc.h
-@@ -43,6 +43,8 @@ enum sec_rtc_reg {
- 	SEC_RTC_STATUS,
- 	SEC_WTSR_SMPL_CNTL,
- 	SEC_RTC_UDR_CON,
++/*
++ * Allocates memory under 'regulators' pointer and copies there array
++ * of regulator_desc for given device.
++ *
++ * Returns number of regulators or negative ERRNO on error.
++ */
++static int __init
++s2mps11_pmic_init_regulators_desc(struct platform_device *pdev,
++		struct regulator_desc **regulators)
++{
++	const struct regulator_desc *regulators_init;
++	enum sec_device_type dev_type;
++	int rdev_num;
 +
-+	SEC_RTC_REG_MAX,
- };
++	dev_type = platform_get_device_id(pdev)->driver_data;
++	switch (dev_type) {
++	case S2MPS11X:
++		rdev_num = ARRAY_SIZE(s2mps11_regulators);
++		regulators_init = s2mps11_regulators;
++		break;
++	default:
++		dev_err(&pdev->dev, "Invalid device type: %u\n", dev_type);
++		return -EINVAL;
++	};
++
++	*regulators = devm_kzalloc(&pdev->dev,
++			sizeof(**regulators) * rdev_num, GFP_KERNEL);
++	if (!*regulators)
++		return -ENOMEM;
++
++	memcpy(*regulators, regulators_init, sizeof(**regulators) * rdev_num);
++
++	return rdev_num;
++}
++
+ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct sec_platform_data *pdata = dev_get_platdata(iodev->dev);
+-	struct of_regulator_match rdata[S2MPS11_REGULATOR_MAX];
++	struct sec_platform_data *pdata = iodev->pdata;
++	struct of_regulator_match *rdata = NULL;
+ 	struct device_node *reg_np = NULL;
+ 	struct regulator_config config = { };
+ 	struct s2mps11_info *s2mps11;
+-	int i, ret;
++	int i, ret = 0;
++	struct regulator_desc *regulators = NULL;
++	unsigned int rdev_num;
  
- #define RTC_I2C_ADDR		(0x0C >> 1)
+ 	s2mps11 = devm_kzalloc(&pdev->dev, sizeof(struct s2mps11_info),
+ 				GFP_KERNEL);
+ 	if (!s2mps11)
+ 		return -ENOMEM;
+ 
++	rdev_num = s2mps11_pmic_init_regulators_desc(pdev, &regulators);
++	if (rdev_num < 0)
++		return rdev_num;
++
+ 	if (!iodev->dev->of_node) {
+ 		if (pdata) {
+ 			goto common_reg;
+@@ -419,24 +459,30 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	for (i = 0; i < S2MPS11_REGULATOR_CNT; i++)
++	rdata = kzalloc(sizeof(*rdata) * rdev_num, GFP_KERNEL);
++	if (!rdata)
++		return -ENOMEM;
++
++	for (i = 0; i < rdev_num; i++)
+ 		rdata[i].name = regulators[i].name;
+ 
+ 	reg_np = of_find_node_by_name(iodev->dev->of_node, "regulators");
+ 	if (!reg_np) {
+ 		dev_err(&pdev->dev, "could not find regulators sub-node\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+-	of_regulator_match(&pdev->dev, reg_np, rdata, S2MPS11_REGULATOR_MAX);
++	of_regulator_match(&pdev->dev, reg_np, rdata, rdev_num);
+ 
+ common_reg:
+ 	platform_set_drvdata(pdev, s2mps11);
++	s2mps11->rdev_num = rdev_num;
+ 
+ 	config.dev = &pdev->dev;
+ 	config.regmap = iodev->regmap_pmic;
+ 	config.driver_data = s2mps11;
+-	for (i = 0; i < S2MPS11_REGULATOR_MAX; i++) {
++	for (i = 0; i < rdev_num; i++) {
+ 		struct regulator_dev *regulator;
+ 
+ 		if (!reg_np) {
+@@ -453,15 +499,18 @@ common_reg:
+ 			ret = PTR_ERR(regulator);
+ 			dev_err(&pdev->dev, "regulator init failed for %d\n",
+ 				i);
+-			return ret;
++			goto out;
+ 		}
+ 	}
+ 
+-	return 0;
++out:
++	kfree(rdata);
++
++	return ret;
+ }
+ 
+ static const struct platform_device_id s2mps11_pmic_id[] = {
+-	{ "s2mps11-pmic", 0},
++	{ "s2mps11-pmic", S2MPS11X},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
 -- 
 1.7.9.5
