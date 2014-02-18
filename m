@@ -1,44 +1,58 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Tue, 18 Feb 2014 09:12:09 +0100
-Message-ID: <1392711129.14646.9.camel@AMDC1943>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
- <1392383156.12506.20.camel@AMDC1943> <20140214210502.GX4451@sirena.org.uk>
- <1392624454.3755.12.camel@AMDC1943> <20140218003555.GJ2669@sirena.org.uk>
+From: Etched Pixels <sales@etchedpixels.co.uk>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Tue, 18 Feb 2014 10:09:43 +0000
+Message-ID: <20140218100943.34f2e186@alan.etchedpixels.co.uk>
+References: <20140120100415.GX15937@n2100.arm.linux.org.uk>
+	<20140213181216.GB24155@kroah.com>
+	<20140213181559.GB30257@n2100.arm.linux.org.uk>
+	<20140213182701.GA32578@kroah.com>
+	<20140213184249.GC30257@n2100.arm.linux.org.uk>
+	<20140213232606.GA27372@kroah.com>
+	<20140214000717.GG30257@n2100.arm.linux.org.uk>
+	<20140214001436.GA16287@kroah.com>
+	<20140214003834.GH30257@n2100.arm.linux.org.uk>
+	<20140217153518.30891455@alan.etchedpixels.co.uk>
+	<20140217235013.GD2669@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:26292 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754045AbaBRIMO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Feb 2014 03:12:14 -0500
-In-reply-to: <20140218003555.GJ2669@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140217235013.GD2669@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2014-02-18 at 09:35 +0900, Mark Brown wrote:
-> On Mon, Feb 17, 2014 at 09:07:34AM +0100, Krzysztof Kozlowski wrote:
+On Tue, 18 Feb 2014 08:50:13 +0900
+Mark Brown <broonie@kernel.org> wrote:
+
+> On Mon, Feb 17, 2014 at 03:35:18PM +0000, One Thousand Gnomes wrote:
 > 
-> > The low power maps to REGULATOR_MODE_IDLE or REGULATOR_MODE_STANDBY
-> > (depending on the understanding of "more efficient" and "most efficient"
-> > for light loads). However the suspend mode of S5M8767/S2MPS14 is more
-> > like automatic regulator disable by SoC.
+> > We've identified a correct working approach which is to simply add a
+> > CONFIG entry to the ARM tree and a few ifdefs to the problem drivers to
+> > make the "problem" (in fact a complete fictional non-problem) go away and
+> > to get rid of the mess over time completely as the drivers are set
+> > dynamic and it turns out that all the userspace happens to already handle
+> > this just fine.
 > 
-> I don't understand the above?  Are you saying that suspend mode actually
-> turns off the regulator or something else? If it's a separate setting
-> for suspend mode then it should be using the core suspend mode stuff.
+> It's a very real problem which affects actual kernels that distro style
+> users are building.
 
-No, it is similar to external control (by GPIO) except that regulator is
-controlled by PWREN pin. The PMIC's PWREN is not a GPIO, but instead it
-is directly connected to AP (for Exynos 4212: XPWRRGTON). In AP's normal
-mode the XPWRRGTON/PWREN is high. In sleep mode *AP* sets it low.
+Only because you persist in trying to keep the old static minor
+numbers even though they are not needed by anything in the real world
+that will ever run such kernels. Also only because you are apparently
+too slack to bother to check whether the driver matches the platform or
+there is an device tree node before registering it even though that's
+trivial to code and is already done by some other platforms and serial
+drivers just fine.
 
-Best regards,
-Krzysztof
+It's a core code "problem" that is invented by refusing to do the simple
+trivial fixes in the ARM tree. Please clean up your own poop instead of
+trying to shovel it into the street.
+
+And the proposed change set is buggy as hell - because we register things
+like 8250 devices at least four ways on the same x86 machine all of which
+could in theory occur in parallel.
+
+Alan
