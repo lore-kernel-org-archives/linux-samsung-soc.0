@@ -1,60 +1,56 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
-Date: Tue, 18 Feb 2014 11:53:49 +0100
-Message-ID: <2152943.isBRrxZ7xx@wuerfel>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <201402141806.12711.arnd@arndb.de> <5302B306.8090503@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/3] exynos: arch: add support for exynos5260 SoC
+Date: Tue, 18 Feb 2014 16:27:53 +0530
+Message-ID: <1392721076-26630-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:59038 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753814AbaBRKyG (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43441 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753936AbaBRK6i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Feb 2014 05:54:06 -0500
-In-Reply-To: <5302B306.8090503@samsung.com>
+	Tue, 18 Feb 2014 05:58:38 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Tuesday 18 February 2014 10:10:30 Kukjin Kim wrote:
-> On 02/15/14 02:06, Arnd Bergmann wrote:
-> > On Thursday 13 February 2014, Olof Johansson wrote:
-> >> On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
-> >>> On 02/13/14 04:14, Arnd Bergmann wrote:
-> >>>> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
-> >>> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
-> >>> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
-> >>> compliant with SBSA Level1 and having some specific features?
-> >
-> Well, how about ARMv8 mobile SoC? I think, it is not compatible with 
-> SBSA. For example, you know MCT can be used for ARMv8 cores instead of 
-> ARCH Timer. So I'm not sure ARCH_SBSA is really good choice...
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Sure, if you are talking about an embedded SoC that is not SBSA compliant,
-we shouldn't try to make it work with ARCH_SBSA and instead give it
-its own Kconfig symbol.
+V4:
+  1) Removed duplicate MMC Soc property from Board file.
 
-> > My feeling is that we don't need to use the levels for Kconfig, although
-> > we might want to use them DT compatible strings, even if it ends up looking
-> > a little funny when you do
-> >
-> > 	compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
-> >
-> >> What kind of features are you expecting though? More IP
-> >> blocks/devices? Those are just kernel config options to enable,
-> >> ideally as modules.
-> >
-> > Right, I think we can just put them into defconfig. No need to
-> > "select" them from Kconfig since the extra options wouldn't be
-> > required for booting or using the system.
-> >
-> As I commented above, how about MCT? Samsung has a plan to use MCT on 
-> ARMv8, it is not for used for GH7 though...
+V3:
+  1) Addressed review comments from Tomasz figa.
 
-If it's just one driver that is needed in addition to the usual stuff,
-we can also just make it a standalone option and turn it on in the
-generic defconfig. We won't need a per-platform option in that case.
+V2:
+  1) Split up DT patch into SoC and Board patch.
 
-	Arnd
+This series is dependent on Sachin's patch
+"ARM: EXYNOS: Consolidate CPU init code" at
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/26560
+
+This series is based on Kukjin's for-next branch at
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
+
+Pankaj Dubey (1):
+  ARM: EXYNOS: initial board support for exynos5260 SoC
+
+Rahul Sharma (2):
+  ARM: dts: add dts files for exynos5260 SoC
+  ARM: dts: add dts files for xyref5260 board
+
+ arch/arm/boot/dts/Makefile                      |    1 +
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi       |  574 +++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  103 ++++
+ arch/arm/boot/dts/exynos5260.dtsi               |  304 ++++++++++++
+ arch/arm/mach-exynos/Kconfig                    |    4 +
+ arch/arm/mach-exynos/common.c                   |   11 +
+ arch/arm/mach-exynos/include/mach/map.h         |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c          |    1 +
+ arch/arm/plat-samsung/include/plat/cpu.h        |    8 +
+ 9 files changed, 1007 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+ create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+
+-- 
+1.7.9.5
