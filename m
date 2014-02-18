@@ -1,58 +1,113 @@
-From: Etched Pixels <sales@etchedpixels.co.uk>
-Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
- device probe
-Date: Tue, 18 Feb 2014 10:09:43 +0000
-Message-ID: <20140218100943.34f2e186@alan.etchedpixels.co.uk>
-References: <20140120100415.GX15937@n2100.arm.linux.org.uk>
-	<20140213181216.GB24155@kroah.com>
-	<20140213181559.GB30257@n2100.arm.linux.org.uk>
-	<20140213182701.GA32578@kroah.com>
-	<20140213184249.GC30257@n2100.arm.linux.org.uk>
-	<20140213232606.GA27372@kroah.com>
-	<20140214000717.GG30257@n2100.arm.linux.org.uk>
-	<20140214001436.GA16287@kroah.com>
-	<20140214003834.GH30257@n2100.arm.linux.org.uk>
-	<20140217153518.30891455@alan.etchedpixels.co.uk>
-	<20140217235013.GD2669@sirena.org.uk>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
+ and SSDK-GH7 board
+Date: Tue, 18 Feb 2014 10:30:16 +0000
+Message-ID: <20140218103015.GA6051@e106331-lin.cambridge.arm.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+ <1392100183-30930-2-git-send-email-kgene.kim@samsung.com>
+ <20140211181529.GC15200@e106331-lin.cambridge.arm.com>
+ <52F9960A.2090802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140217235013.GD2669@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:52793 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754745AbaBRKaq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Feb 2014 05:30:46 -0500
+Content-Disposition: inline
+In-Reply-To: <52F9960A.2090802@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ilho Lee <ilho215.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <Catalin.Marinas@arm.com>
 
-On Tue, 18 Feb 2014 08:50:13 +0900
-Mark Brown <broonie@kernel.org> wrote:
+On Tue, Feb 11, 2014 at 03:16:26AM +0000, Kukjin Kim wrote:
+> On 02/12/14 03:15, Mark Rutland wrote:
+> > On Tue, Feb 11, 2014 at 06:29:41AM +0000, Kukjin Kim wrote:
+> >> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> >> Reviewed-by: Thomas Abraham<thomas.ab@samsung.com>
+> >> Cc: Catalin Marinas<catalin.marinas@arm.com>
+> >> ---
+> >>   arch/arm64/boot/dts/samsung-gh7.dtsi     |  108 ++++++++++++++++++++++++++++++
+> >>   arch/arm64/boot/dts/samsung-ssdk-gh7.dts |   26 +++++++
+> >>   2 files changed, 134 insertions(+)
+> >>   create mode 100644 arch/arm64/boot/dts/samsung-gh7.dtsi
+> >>   create mode 100644 arch/arm64/boot/dts/samsung-ssdk-gh7.dts
+> >>
+> >> diff --git a/arch/arm64/boot/dts/samsung-gh7.dtsi b/arch/arm64/boot/dts/samsung-gh7.dtsi
+> >> new file mode 100644
+> >> index 0000000..5b8785c
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/samsung-gh7.dtsi
+> >> @@ -0,0 +1,108 @@
+> >> +/*
+> >> + * SAMSUNG GH7 SoC device tree source
+> >> + *
+> >> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> >> + *		http://www.samsung.com
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or modify
+> >> + * it under the terms of the GNU General Public License version 2 as
+> >> + * published by the Free Software Foundation.
+> >> +*/
+> >> +
+> >> +/dts-v1/;
+> >> +
+> >> +/memreserve/ 0x80000000 0x0C400000;
+> >
+> > That looks _very_ large. What is this for?
+> >
+> Yes, I know but we need to reserve that for EL3 monitor, UEFI services, 
+> secure, hypervisor and scan chanin...
 
-> On Mon, Feb 17, 2014 at 03:35:18PM +0000, One Thousand Gnomes wrote:
+OK. How much of that memory does the kernel need to know about then?
+
+Surely the kernel shouldn't be able to map the EL3 monitor or hypervisor
+at all?
+
+What address is the kernel getting loaded at if everything up to
+0x8C400000 isn't usable?
+
+[...]
+
 > 
-> > We've identified a correct working approach which is to simply add a
-> > CONFIG entry to the ARM tree and a few ifdefs to the problem drivers to
-> > make the "problem" (in fact a complete fictional non-problem) go away and
-> > to get rid of the mess over time completely as the drivers are set
-> > dynamic and it turns out that all the userspace happens to already handle
-> > this just fine.
-> 
-> It's a very real problem which affects actual kernels that distro style
-> users are building.
+> > [...]
+> >
+> >> +	amba {
+> >> +		compatible = "arm,amba-bus";
+> >> +		#address-cells =<1>;
+> >> +		#size-cells =<1>;
+> >> +		ranges;
+> >> +
+> >> +		serial@12c00000 {
+> >> +			compatible = "arm,pl011", "arm,primecell";
+> >> +			reg =<0x12c00000 0x10000>;
+> >> +			interrupts =<418>;
+> >> +		};
+> >> +
+> >> +		serial@12c20000 {
+> >> +			compatible = "arm,pl011", "arm,primecell";
+> >> +			reg =<0x12c20000 0x10000>;
+> >> +			interrupts =<420>;
+> >> +		};
+> >
+> > Don't these need clocks?
+> >
+> We don't need and the clocks will be handled by bootloader...
 
-Only because you persist in trying to keep the old static minor
-numbers even though they are not needed by anything in the real world
-that will ever run such kernels. Also only because you are apparently
-too slack to bother to check whether the driver matches the platform or
-there is an device tree node before registering it even though that's
-trivial to code and is already done by some other platforms and serial
-drivers just fine.
+While that might be sufficient for the device to function, Linux doesn't
+know that from this DT, and as far as I can see the device can't
+possibly probe, as no clocks are provided through platform data:
 
-It's a core code "problem" that is invented by refusing to do the simple
-trivial fixes in the ARM tree. Please clean up your own poop instead of
-trying to shovel it into the street.
+of_platform_bus_create will call of_amba_device_create for anyting
+compatible with "arm,primecell". This in turn will call amba_device_add,
+which will call amba_get_enable_pclk. Then clk_get(&pcdev->dev,
+"apb_pclk") should fail, amba_device_add should fail, and
+of_platform_bus_create will stop trying to probe the node.
+of_platform_populate will carry on probing other nodes.
 
-And the proposed change set is buggy as hell - because we register things
-like 8250 devices at least four ways on the same x86 machine all of which
-could in theory occur in parallel.
+Surely the pl011 nodes at least need "apb_pclk"?
 
-Alan
+Cheers,
+Mark.
