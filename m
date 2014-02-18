@@ -1,66 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Tue, 18 Feb 2014 09:35:55 +0900
-Message-ID: <20140218003555.GJ2669@sirena.org.uk>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
- <1392383156.12506.20.camel@AMDC1943>
- <20140214210502.GX4451@sirena.org.uk>
- <1392624454.3755.12.camel@AMDC1943>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Tue, 18 Feb 2014 10:10:30 +0900
+Message-ID: <5302B306.8090503@samsung.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <52F99056.6010906@samsung.com> <CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com> <201402141806.12711.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35634 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751893AbaBRAgf (ORCPT
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:49620 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753222AbaBRBKi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Feb 2014 19:36:35 -0500
-Content-Disposition: inline
-In-Reply-To: <1392624454.3755.12.camel@AMDC1943>
+	Mon, 17 Feb 2014 20:10:38 -0500
+Received: by mail-pb0-f49.google.com with SMTP id up15so15987396pbc.36
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Feb 2014 17:10:37 -0800 (PST)
+In-Reply-To: <201402141806.12711.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+On 02/15/14 02:06, Arnd Bergmann wrote:
+> On Thursday 13 February 2014, Olof Johansson wrote:
+>> On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>> On 02/13/14 04:14, Arnd Bergmann wrote:
+>>>> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
+>>> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
+>>> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
+>>> compliant with SBSA Level1 and having some specific features?
+>
+Well, how about ARMv8 mobile SoC? I think, it is not compatible with 
+SBSA. For example, you know MCT can be used for ARMv8 cores instead of 
+ARCH Timer. So I'm not sure ARCH_SBSA is really good choice...
 
---72k7VsmfIboquFwl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> My feeling is that we don't need to use the levels for Kconfig, although
+> we might want to use them DT compatible strings, even if it ends up looking
+> a little funny when you do
+>
+> 	compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
+>
+>> What kind of features are you expecting though? More IP
+>> blocks/devices? Those are just kernel config options to enable,
+>> ideally as modules.
+>
+> Right, I think we can just put them into defconfig. No need to
+> "select" them from Kconfig since the extra options wouldn't be
+> required for booting or using the system.
+>
+As I commented above, how about MCT? Samsung has a plan to use MCT on 
+ARMv8, it is not for used for GH7 though...
 
-On Mon, Feb 17, 2014 at 09:07:34AM +0100, Krzysztof Kozlowski wrote:
-
-> The low power maps to REGULATOR_MODE_IDLE or REGULATOR_MODE_STANDBY
-> (depending on the understanding of "more efficient" and "most efficient"
-> for light loads). However the suspend mode of S5M8767/S2MPS14 is more
-> like automatic regulator disable by SoC.
-
-I don't understand the above?  Are you saying that suspend mode actually
-turns off the regulator or something else?  If it's a separate setting
-for suspend mode then it should be using the core suspend mode stuff.
-
---72k7VsmfIboquFwl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTAqroAAoJELSic+t+oim9cLAQAJxfSCNtCfAf6DCJKD8rj/sh
-oSd11K8tcZhjxcN9Uyd72rd8v0G9QlSChQEFxh/1Nl96V+bJNQzbP82N9IxjsH6J
-y3EdqyVtwLrpaEfWXqPLtK61yHkYqIm61sj/6JPe5+VKqGaYFWVrY4hYw3ZVWueb
-7uNyHl9IhtTuWmlDr63LbxQAeKHcCI5Fsd03QX/eDEgnDm0eMm6cbyo6b54fwWXx
-NmAxiU5sFo5yXP97/WMUOObHG6h1a9hADBKL0UD7IKOuQCBWCw5+zf7Um7IeFML1
-EhOLmSjnncEInrs/ttqjA6Gfe8fDG7Po2X2qpxKrvp9w5J/AIHvHHQ4sTPUlSMCN
-nUXx6cgUWPN+hfw68xjsg9JhQXPA+VgPYDqDsAcCfIEkagkoBtQaWbHEDpimLsJN
-wI5rITZupKFhOW3Foq0eGmw+7sykGe/ltE9IDuICAuzk83ZQTII/t2VeqqN2KXTj
-islUBV7SaaUG542yF/UxzKxWAVAYXGZ/QDJTsDQDs65Sm0ccOoYoDYhpfjFov+UT
-Npk4d7OECsAZLAyAQlLLkQ4vVY78qcqqTjATc/7FZc+qo3OW2mZv5hq/LZaaHzzh
-p+3zD+rxbI5b3VeqATczNtC3IGvHNnVNo3nxD41Qz0/QlztYF1JikcNWtP/QACUj
-ojs02OIymDhSRQl3NeOl
-=Oc9q
------END PGP SIGNATURE-----
-
---72k7VsmfIboquFwl--
+- Kukjin
