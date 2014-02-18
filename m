@@ -1,113 +1,60 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
- and SSDK-GH7 board
-Date: Tue, 18 Feb 2014 10:30:16 +0000
-Message-ID: <20140218103015.GA6051@e106331-lin.cambridge.arm.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
- <1392100183-30930-2-git-send-email-kgene.kim@samsung.com>
- <20140211181529.GC15200@e106331-lin.cambridge.arm.com>
- <52F9960A.2090802@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Tue, 18 Feb 2014 11:53:49 +0100
+Message-ID: <2152943.isBRrxZ7xx@wuerfel>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <201402141806.12711.arnd@arndb.de> <5302B306.8090503@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:52793 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754745AbaBRKaq (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.186]:59038 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753814AbaBRKyG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Feb 2014 05:30:46 -0500
-Content-Disposition: inline
-In-Reply-To: <52F9960A.2090802@samsung.com>
+	Tue, 18 Feb 2014 05:54:06 -0500
+In-Reply-To: <5302B306.8090503@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ilho Lee <ilho215.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <Catalin.Marinas@arm.com>
+Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Feb 11, 2014 at 03:16:26AM +0000, Kukjin Kim wrote:
-> On 02/12/14 03:15, Mark Rutland wrote:
-> > On Tue, Feb 11, 2014 at 06:29:41AM +0000, Kukjin Kim wrote:
-> >> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
-> >> Reviewed-by: Thomas Abraham<thomas.ab@samsung.com>
-> >> Cc: Catalin Marinas<catalin.marinas@arm.com>
-> >> ---
-> >>   arch/arm64/boot/dts/samsung-gh7.dtsi     |  108 ++++++++++++++++++++++++++++++
-> >>   arch/arm64/boot/dts/samsung-ssdk-gh7.dts |   26 +++++++
-> >>   2 files changed, 134 insertions(+)
-> >>   create mode 100644 arch/arm64/boot/dts/samsung-gh7.dtsi
-> >>   create mode 100644 arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> >>
-> >> diff --git a/arch/arm64/boot/dts/samsung-gh7.dtsi b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> >> new file mode 100644
-> >> index 0000000..5b8785c
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> >> @@ -0,0 +1,108 @@
-> >> +/*
-> >> + * SAMSUNG GH7 SoC device tree source
-> >> + *
-> >> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> >> + *		http://www.samsung.com
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or modify
-> >> + * it under the terms of the GNU General Public License version 2 as
-> >> + * published by the Free Software Foundation.
-> >> +*/
-> >> +
-> >> +/dts-v1/;
-> >> +
-> >> +/memreserve/ 0x80000000 0x0C400000;
+On Tuesday 18 February 2014 10:10:30 Kukjin Kim wrote:
+> On 02/15/14 02:06, Arnd Bergmann wrote:
+> > On Thursday 13 February 2014, Olof Johansson wrote:
+> >> On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+> >>> On 02/13/14 04:14, Arnd Bergmann wrote:
+> >>>> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
+> >>> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
+> >>> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
+> >>> compliant with SBSA Level1 and having some specific features?
 > >
-> > That looks _very_ large. What is this for?
+> Well, how about ARMv8 mobile SoC? I think, it is not compatible with 
+> SBSA. For example, you know MCT can be used for ARMv8 cores instead of 
+> ARCH Timer. So I'm not sure ARCH_SBSA is really good choice...
+
+Sure, if you are talking about an embedded SoC that is not SBSA compliant,
+we shouldn't try to make it work with ARCH_SBSA and instead give it
+its own Kconfig symbol.
+
+> > My feeling is that we don't need to use the levels for Kconfig, although
+> > we might want to use them DT compatible strings, even if it ends up looking
+> > a little funny when you do
 > >
-> Yes, I know but we need to reserve that for EL3 monitor, UEFI services, 
-> secure, hypervisor and scan chanin...
-
-OK. How much of that memory does the kernel need to know about then?
-
-Surely the kernel shouldn't be able to map the EL3 monitor or hypervisor
-at all?
-
-What address is the kernel getting loaded at if everything up to
-0x8C400000 isn't usable?
-
-[...]
-
-> 
-> > [...]
+> > 	compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
 > >
-> >> +	amba {
-> >> +		compatible = "arm,amba-bus";
-> >> +		#address-cells =<1>;
-> >> +		#size-cells =<1>;
-> >> +		ranges;
-> >> +
-> >> +		serial@12c00000 {
-> >> +			compatible = "arm,pl011", "arm,primecell";
-> >> +			reg =<0x12c00000 0x10000>;
-> >> +			interrupts =<418>;
-> >> +		};
-> >> +
-> >> +		serial@12c20000 {
-> >> +			compatible = "arm,pl011", "arm,primecell";
-> >> +			reg =<0x12c20000 0x10000>;
-> >> +			interrupts =<420>;
-> >> +		};
+> >> What kind of features are you expecting though? More IP
+> >> blocks/devices? Those are just kernel config options to enable,
+> >> ideally as modules.
 > >
-> > Don't these need clocks?
+> > Right, I think we can just put them into defconfig. No need to
+> > "select" them from Kconfig since the extra options wouldn't be
+> > required for booting or using the system.
 > >
-> We don't need and the clocks will be handled by bootloader...
+> As I commented above, how about MCT? Samsung has a plan to use MCT on 
+> ARMv8, it is not for used for GH7 though...
 
-While that might be sufficient for the device to function, Linux doesn't
-know that from this DT, and as far as I can see the device can't
-possibly probe, as no clocks are provided through platform data:
+If it's just one driver that is needed in addition to the usual stuff,
+we can also just make it a standalone option and turn it on in the
+generic defconfig. We won't need a per-platform option in that case.
 
-of_platform_bus_create will call of_amba_device_create for anyting
-compatible with "arm,primecell". This in turn will call amba_device_add,
-which will call amba_get_enable_pclk. Then clk_get(&pcdev->dev,
-"apb_pclk") should fail, amba_device_add should fail, and
-of_platform_bus_create will stop trying to probe the node.
-of_platform_populate will carry on probing other nodes.
-
-Surely the pl011 nodes at least need "apb_pclk"?
-
-Cheers,
-Mark.
+	Arnd
