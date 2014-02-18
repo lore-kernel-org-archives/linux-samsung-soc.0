@@ -1,53 +1,44 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
-Date: Tue, 18 Feb 2014 10:10:30 +0900
-Message-ID: <5302B306.8090503@samsung.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <52F99056.6010906@samsung.com> <CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com> <201402141806.12711.arnd@arndb.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Tue, 18 Feb 2014 09:12:09 +0100
+Message-ID: <1392711129.14646.9.camel@AMDC1943>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+ <1392383156.12506.20.camel@AMDC1943> <20140214210502.GX4451@sirena.org.uk>
+ <1392624454.3755.12.camel@AMDC1943> <20140218003555.GJ2669@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:49620 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753222AbaBRBKi (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:26292 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754045AbaBRIMO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Feb 2014 20:10:38 -0500
-Received: by mail-pb0-f49.google.com with SMTP id up15so15987396pbc.36
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Feb 2014 17:10:37 -0800 (PST)
-In-Reply-To: <201402141806.12711.arnd@arndb.de>
+	Tue, 18 Feb 2014 03:12:14 -0500
+In-reply-to: <20140218003555.GJ2669@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
-On 02/15/14 02:06, Arnd Bergmann wrote:
-> On Thursday 13 February 2014, Olof Johansson wrote:
->> On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->>> On 02/13/14 04:14, Arnd Bergmann wrote:
->>>> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
->>> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need to
->>> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
->>> compliant with SBSA Level1 and having some specific features?
->
-Well, how about ARMv8 mobile SoC? I think, it is not compatible with 
-SBSA. For example, you know MCT can be used for ARMv8 cores instead of 
-ARCH Timer. So I'm not sure ARCH_SBSA is really good choice...
+On Tue, 2014-02-18 at 09:35 +0900, Mark Brown wrote:
+> On Mon, Feb 17, 2014 at 09:07:34AM +0100, Krzysztof Kozlowski wrote:
+> 
+> > The low power maps to REGULATOR_MODE_IDLE or REGULATOR_MODE_STANDBY
+> > (depending on the understanding of "more efficient" and "most efficient"
+> > for light loads). However the suspend mode of S5M8767/S2MPS14 is more
+> > like automatic regulator disable by SoC.
+> 
+> I don't understand the above?  Are you saying that suspend mode actually
+> turns off the regulator or something else? If it's a separate setting
+> for suspend mode then it should be using the core suspend mode stuff.
 
-> My feeling is that we don't need to use the levels for Kconfig, although
-> we might want to use them DT compatible strings, even if it ends up looking
-> a little funny when you do
->
-> 	compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
->
->> What kind of features are you expecting though? More IP
->> blocks/devices? Those are just kernel config options to enable,
->> ideally as modules.
->
-> Right, I think we can just put them into defconfig. No need to
-> "select" them from Kconfig since the extra options wouldn't be
-> required for booting or using the system.
->
-As I commented above, how about MCT? Samsung has a plan to use MCT on 
-ARMv8, it is not for used for GH7 though...
+No, it is similar to external control (by GPIO) except that regulator is
+controlled by PWREN pin. The PMIC's PWREN is not a GPIO, but instead it
+is directly connected to AP (for Exynos 4212: XPWRRGTON). In AP's normal
+mode the XPWRRGTON/PWREN is high. In sleep mode *AP* sets it low.
 
-- Kukjin
+Best regards,
+Krzysztof
