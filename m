@@ -1,75 +1,85 @@
-From: John Stultz <john.stultz@linaro.org>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
-Date: Tue, 18 Feb 2014 11:52:25 -0800
-Message-ID: <CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
+Date: Tue, 18 Feb 2014 12:00:48 -0800
+Message-ID: <CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
 References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
 	<5302B306.8090503@samsung.com>
 	<CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
 	<6032891.ndY8FikAMY@wuerfel>
+	<CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:33378 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750832AbaBRTw1 (ORCPT
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:42411 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751267AbaBRUAt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Feb 2014 14:52:27 -0500
-Received: by mail-vc0-f171.google.com with SMTP id le5so13619233vcb.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Feb 2014 11:52:26 -0800 (PST)
-In-Reply-To: <6032891.ndY8FikAMY@wuerfel>
+	Tue, 18 Feb 2014 15:00:49 -0500
+Received: by mail-qc0-f174.google.com with SMTP id x13so25838623qcv.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Feb 2014 12:00:48 -0800 (PST)
+In-Reply-To: <CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+To: John Stultz <john.stultz@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Feb 18, 2014 at 10:13 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 18 February 2014 08:16:13 Olof Johansson wrote:
->> On Mon, Feb 17, 2014 at 5:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > On 02/15/14 02:06, Arnd Bergmann wrote:
->> >> My feeling is that we don't need to use the levels for Kconfig, although
->> >> we might want to use them DT compatible strings, even if it ends up
->> >> looking
->> >> a little funny when you do
->> >>
->> >>         compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
->> >>
->> >>> What kind of features are you expecting though? More IP
->> >>> blocks/devices? Those are just kernel config options to enable,
->> >>> ideally as modules.
->> >>
->> >>
->> >> Right, I think we can just put them into defconfig. No need to
->> >> "select" them from Kconfig since the extra options wouldn't be
->> >> required for booting or using the system.
->> >>
->> > As I commented above, how about MCT? Samsung has a plan to use MCT on ARMv8,
->> > it is not for used for GH7 though...
+On Tue, Feb 18, 2014 at 11:52 AM, John Stultz <john.stultz@linaro.org> wrote:
+> On Tue, Feb 18, 2014 at 10:13 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Tuesday 18 February 2014 08:16:13 Olof Johansson wrote:
+>>> On Mon, Feb 17, 2014 at 5:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>>> > On 02/15/14 02:06, Arnd Bergmann wrote:
+>>> >> My feeling is that we don't need to use the levels for Kconfig, although
+>>> >> we might want to use them DT compatible strings, even if it ends up
+>>> >> looking
+>>> >> a little funny when you do
+>>> >>
+>>> >>         compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
+>>> >>
+>>> >>> What kind of features are you expecting though? More IP
+>>> >>> blocks/devices? Those are just kernel config options to enable,
+>>> >>> ideally as modules.
+>>> >>
+>>> >>
+>>> >> Right, I think we can just put them into defconfig. No need to
+>>> >> "select" them from Kconfig since the extra options wouldn't be
+>>> >> required for booting or using the system.
+>>> >>
+>>> > As I commented above, how about MCT? Samsung has a plan to use MCT on ARMv8,
+>>> > it is not for used for GH7 though...
+>>>
+>>> It looks like the clocksource drivers are all based around being
+>>> enabled based on platforms instead of individually selectable. That
+>>> causes a problem here. I think we should change the clocksource
+>>> Kconfig instead. Then it's just a matter of making sure your defconfig
+>>> has the needed driver enabled.
+>>>
+>>> (Adding Daniel and Thomas in case they have objections to that approach)
 >>
->> It looks like the clocksource drivers are all based around being
->> enabled based on platforms instead of individually selectable. That
->> causes a problem here. I think we should change the clocksource
->> Kconfig instead. Then it's just a matter of making sure your defconfig
->> has the needed driver enabled.
+>> +John Stultz
 >>
->> (Adding Daniel and Thomas in case they have objections to that approach)
+>> IIRC it was John who insisted on doing it the current way, although
+>> I can't remember his reasoning.
 >
-> +John Stultz
+> Are we really expecting there to be SoC specific clocksources here? I
+> thought we were getting away from that sort of stuff with the
+> architecture timer?
+
+Unfortunately vendors can do crazy stuff if they want to. But we also
+have an option to choose to enable it. Maybe the answer here is to say
+no to MCT on 64-bit, they get to use the arch timers like everybody
+else. Or at least motivate why they're not good enough.
+
+> I'm fine with clocksources being selected by other functionality
+> options (ie: on x86 ACPI PM timer clocksource doesn't have a prompt,
+> but depends on the ACPI option). I just don't want to force users to
+> have to navigate through tons of deep menus to select clocksource
+> options that logically duplicate other selections already made.
 >
-> IIRC it was John who insisted on doing it the current way, although
-> I can't remember his reasoning.
+> But again, I handed this maintainership over to Daniel, so I can be
+> considered just a crank yelling from the sidelines :)
 
-Are we really expecting there to be SoC specific clocksources here? I
-thought we were getting away from that sort of stuff with the
-architecture timer?
+I think you have a good point. Until we hear why MCT is needed this is
+mostly speculation, so let's see what Kukjin says about that.
 
-I'm fine with clocksources being selected by other functionality
-options (ie: on x86 ACPI PM timer clocksource doesn't have a prompt,
-but depends on the ACPI option). I just don't want to force users to
-have to navigate through tons of deep menus to select clocksource
-options that logically duplicate other selections already made.
 
-But again, I handed this maintainership over to Daniel, so I can be
-considered just a crank yelling from the sidelines :)
-
-thanks
--john
+-Olof
