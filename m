@@ -1,85 +1,77 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] V4L: s5k6a3: Add DT binding documentation
-Date: Tue, 18 Feb 2014 16:43:11 +0100
-Message-ID: <53037F8F.3050302@samsung.com>
-References: <1387747620-24676-1-git-send-email-s.nawrocki@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Tue, 18 Feb 2014 08:16:13 -0800
+Message-ID: <CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+	<52F99056.6010906@samsung.com>
+	<CAOesGMgdDnSc=Y8i6JYeGewCh1RPYZ_AxocxKzSD265fa2-yrA@mail.gmail.com>
+	<201402141806.12711.arnd@arndb.de>
+	<5302B306.8090503@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47247 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755528AbaBRPnQ (ORCPT
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:34512 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756352AbaBRQQO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Feb 2014 10:43:16 -0500
-In-reply-to: <1387747620-24676-1-git-send-email-s.nawrocki@samsung.com>
+	Tue, 18 Feb 2014 11:16:14 -0500
+Received: by mail-qc0-f171.google.com with SMTP id x3so867022qcv.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Feb 2014 08:16:13 -0800 (PST)
+In-Reply-To: <5302B306.8090503@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, devicetree@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On 22/12/13 22:27, Sylwester Nawrocki wrote:
-> This patch adds DT binding documentation for the Samsung S5K6A3(YX)
-> raw image sensor.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> This patch adds missing documentation [1] for the "samsung,s5k6a3"
-> compatible. Rob, can you please merge it through your tree if it 
-> looks OK ?
+On Mon, Feb 17, 2014 at 5:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 02/15/14 02:06, Arnd Bergmann wrote:
+>>
+>> On Thursday 13 February 2014, Olof Johansson wrote:
+>>>
+>>> On Mon, Feb 10, 2014 at 6:52 PM, Kukjin Kim<kgene.kim@samsung.com>
+>>> wrote:
+>>>>
+>>>> On 02/13/14 04:14, Arnd Bergmann wrote:
+>>>>>
+>>>>> On Wednesday 12 February 2014 13:04:40 Kumar Gala wrote:
+>>>>
+>>>> Basically, I agreed with Arnd's suggestion to use ARCH_SBSA. Or we need
+>>>> to
+>>>> define level in Kconfig like ARCH_SBSA_L1 for level1. BTW, how about
+>>>> compliant with SBSA Level1 and having some specific features?
+>>
+>>
+> Well, how about ARMv8 mobile SoC? I think, it is not compatible with SBSA.
+> For example, you know MCT can be used for ARMv8 cores instead of ARCH Timer.
+> So I'm not sure ARCH_SBSA is really good choice...
+>
+>
+>> My feeling is that we don't need to use the levels for Kconfig, although
+>> we might want to use them DT compatible strings, even if it ends up
+>> looking
+>> a little funny when you do
+>>
+>>         compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
+>>
+>>> What kind of features are you expecting though? More IP
+>>> blocks/devices? Those are just kernel config options to enable,
+>>> ideally as modules.
+>>
+>>
+>> Right, I think we can just put them into defconfig. No need to
+>> "select" them from Kconfig since the extra options wouldn't be
+>> required for booting or using the system.
+>>
+> As I commented above, how about MCT? Samsung has a plan to use MCT on ARMv8,
+> it is not for used for GH7 though...
 
-Anyone cares to Ack this patch so it can be merged through the media
-tree ?
+It looks like the clocksource drivers are all based around being
+enabled based on platforms instead of individually selectable. That
+causes a problem here. I think we should change the clocksource
+Kconfig instead. Then it's just a matter of making sure your defconfig
+has the needed driver enabled.
 
-> Thanks,
-> Sylwester
-> 
-> [1] http://www.spinics.net/lists/devicetree/msg10693.html
-> 
-> Changes since v3 (https://linuxtv.org/patch/20429):
->  - rephrased 'clocks' and 'clock-names' properties' description.
-> ---
->  .../devicetree/bindings/media/samsung-s5k6a3.txt   |   33 ++++++++++++++++++++
->  1 files changed, 33 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-> new file mode 100644
-> index 0000000..cce01e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-> @@ -0,0 +1,33 @@
-> +Samsung S5K6A3(YX) raw image sensor
-> +---------------------------------
-> +
-> +S5K6A3(YX) is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
-> +and CCI (I2C compatible) control bus.
-> +
-> +Required properties:
-> +
-> +- compatible	: "samsung,s5k6a3";
-> +- reg		: I2C slave address of the sensor;
-> +- svdda-supply	: core voltage supply;
-> +- svddio-supply	: I/O voltage supply;
-> +- afvdd-supply	: AF (actuator) voltage supply;
-> +- gpios		: specifier of a GPIO connected to the RESET pin;
-> +- clocks	: should contain list of phandle and clock specifier pairs
-> +		  according to common clock bindings for the clocks described
-> +		  in the clock-names property;
-> +- clock-names	: should contain "extclk" entry for the sensor's EXTCLK clock;
-> +
-> +Optional properties:
-> +
-> +- clock-frequency : the frequency at which the "extclk" clock should be
-> +		    configured to operate, in Hz; if this property is not
-> +		    specified default 24 MHz value will be used.
-> +
-> +The common video interfaces bindings (see video-interfaces.txt) should be
-> +used to specify link to the image data receiver. The S5K6A3(YX) device
-> +node should contain one 'port' child node with an 'endpoint' subnode.
-> +
-> +Following properties are valid for the endpoint node:
-> +
-> +- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-> +  video-interfaces.txt.  The sensor supports only one data lane.
+(Adding Daniel and Thomas in case they have objections to that approach)
+
+
+-Olof
