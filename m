@@ -1,71 +1,66 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
- device probe
-Date: Tue, 18 Feb 2014 08:50:13 +0900
-Message-ID: <20140217235013.GD2669@sirena.org.uk>
-References: <20140120100415.GX15937@n2100.arm.linux.org.uk>
- <20140213181216.GB24155@kroah.com>
- <20140213181559.GB30257@n2100.arm.linux.org.uk>
- <20140213182701.GA32578@kroah.com>
- <20140213184249.GC30257@n2100.arm.linux.org.uk>
- <20140213232606.GA27372@kroah.com>
- <20140214000717.GG30257@n2100.arm.linux.org.uk>
- <20140214001436.GA16287@kroah.com>
- <20140214003834.GH30257@n2100.arm.linux.org.uk>
- <20140217153518.30891455@alan.etchedpixels.co.uk>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Tue, 18 Feb 2014 09:35:55 +0900
+Message-ID: <20140218003555.GJ2669@sirena.org.uk>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+ <1392383156.12506.20.camel@AMDC1943>
+ <20140214210502.GX4451@sirena.org.uk>
+ <1392624454.3755.12.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="C+ts3FVlLX8+P6JN"
+	protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52810 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:35634 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751100AbaBQXul (ORCPT
+	with ESMTP id S1751893AbaBRAgf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Feb 2014 18:50:41 -0500
+	Mon, 17 Feb 2014 19:36:35 -0500
 Content-Disposition: inline
-In-Reply-To: <20140217153518.30891455@alan.etchedpixels.co.uk>
+In-Reply-To: <1392624454.3755.12.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
 
---C+ts3FVlLX8+P6JN
+--72k7VsmfIboquFwl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Feb 17, 2014 at 03:35:18PM +0000, One Thousand Gnomes wrote:
+On Mon, Feb 17, 2014 at 09:07:34AM +0100, Krzysztof Kozlowski wrote:
 
-> We've identified a correct working approach which is to simply add a
-> CONFIG entry to the ARM tree and a few ifdefs to the problem drivers to
-> make the "problem" (in fact a complete fictional non-problem) go away and
-> to get rid of the mess over time completely as the drivers are set
-> dynamic and it turns out that all the userspace happens to already handle
-> this just fine.
+> The low power maps to REGULATOR_MODE_IDLE or REGULATOR_MODE_STANDBY
+> (depending on the understanding of "more efficient" and "most efficient"
+> for light loads). However the suspend mode of S5M8767/S2MPS14 is more
+> like automatic regulator disable by SoC.
 
-It's a very real problem which affects actual kernels that distro style
-users are building.
+I don't understand the above?  Are you saying that suspend mode actually
+turns off the regulator or something else?  If it's a separate setting
+for suspend mode then it should be using the core suspend mode stuff.
 
---C+ts3FVlLX8+P6JN
+--72k7VsmfIboquFwl
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTAqAyAAoJELSic+t+oim92UwP/0m0dRoUHXGOGX5r1ff+rubV
-ZY50YbYvRmLF9X2UUYw4V1+eg0Sb0iKZMQZ2MBddZH04A2OY6YEZ/mqbUwHtJKBz
-tLJjmoitQbZfUdenDPer2Sl9uxquyHdr5EMdQCO3qI0AQvVtA5tNRMszopRJTU7o
-/sE+j4HI4tIdsyC7CAms3Upsn1Q6CTvH5w00CfxTlniaomk0dHj1HxKfVVXR9XZ5
-WBYbkTG+1iTMpTD8pdgBKrQzhESaxiBPBEKQIjFyp7xyOFF7l8NUi2rRF0f/Dc4x
-QVT3kz4uLO4C2mICqy8UcNxGpU/OLyqhix/CMP7JVNotqcQ9b1+WYQ1O/c4nx94C
-UI9L2jBRxqTw8rsSYp+Gg+uJVjWKv2IYtrQOxaRFoyiQyGnNwh0XAFaPdpf4uZgg
-ORT6fywjFRdPI9DshWSo8TnpnU+UchEBUNP7oOV1BBz+eOsPVt4KZYc81Hh+sFsK
-JfCUExznM6p2hlxsSoVbgRS6xNxFHit98cmsv7xk2C59wCN3Zlej2Uad4ISIhyJL
-OiJPVEb19w0xP/g8WYB1DcP8n0OMrp+4HtW/MjVON0rCa3tWdaiaiu4GBr/MeTXP
-sswnTBHioiy3CQdQs5aerrSaHd1GoqtdWt+Q7u/9Lkv3LT1ViE/bn6I4IK+57bVy
-OLbyJj69YT3nQts5tFNp
-=lMha
+iQIcBAEBAgAGBQJTAqroAAoJELSic+t+oim9cLAQAJxfSCNtCfAf6DCJKD8rj/sh
+oSd11K8tcZhjxcN9Uyd72rd8v0G9QlSChQEFxh/1Nl96V+bJNQzbP82N9IxjsH6J
+y3EdqyVtwLrpaEfWXqPLtK61yHkYqIm61sj/6JPe5+VKqGaYFWVrY4hYw3ZVWueb
+7uNyHl9IhtTuWmlDr63LbxQAeKHcCI5Fsd03QX/eDEgnDm0eMm6cbyo6b54fwWXx
+NmAxiU5sFo5yXP97/WMUOObHG6h1a9hADBKL0UD7IKOuQCBWCw5+zf7Um7IeFML1
+EhOLmSjnncEInrs/ttqjA6Gfe8fDG7Po2X2qpxKrvp9w5J/AIHvHHQ4sTPUlSMCN
+nUXx6cgUWPN+hfw68xjsg9JhQXPA+VgPYDqDsAcCfIEkagkoBtQaWbHEDpimLsJN
+wI5rITZupKFhOW3Foq0eGmw+7sykGe/ltE9IDuICAuzk83ZQTII/t2VeqqN2KXTj
+islUBV7SaaUG542yF/UxzKxWAVAYXGZ/QDJTsDQDs65Sm0ccOoYoDYhpfjFov+UT
+Npk4d7OECsAZLAyAQlLLkQ4vVY78qcqqTjATc/7FZc+qo3OW2mZv5hq/LZaaHzzh
+p+3zD+rxbI5b3VeqATczNtC3IGvHNnVNo3nxD41Qz0/QlztYF1JikcNWtP/QACUj
+ojs02OIymDhSRQl3NeOl
+=Oc9q
 -----END PGP SIGNATURE-----
 
---C+ts3FVlLX8+P6JN--
+--72k7VsmfIboquFwl--
