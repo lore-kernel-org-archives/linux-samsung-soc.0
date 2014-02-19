@@ -1,77 +1,75 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Wed, 19 Feb 2014 15:19:00 +0100
-Message-ID: <1392819540.12624.14.camel@AMDC1943>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
- <1392383156.12506.20.camel@AMDC1943> <20140214210502.GX4451@sirena.org.uk>
- <1392624454.3755.12.camel@AMDC1943> <20140218003555.GJ2669@sirena.org.uk>
- <1392711129.14646.9.camel@AMDC1943> <20140219040818.GQ2669@sirena.org.uk>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Wed, 19 Feb 2014 14:47:51 +0000
+Message-ID: <20140219144751.75f7fb70@alan.etchedpixels.co.uk>
+References: <20140213181559.GB30257@n2100.arm.linux.org.uk>
+	<20140213182701.GA32578@kroah.com>
+	<20140213184249.GC30257@n2100.arm.linux.org.uk>
+	<20140213232606.GA27372@kroah.com>
+	<20140214000717.GG30257@n2100.arm.linux.org.uk>
+	<20140214001436.GA16287@kroah.com>
+	<20140214003834.GH30257@n2100.arm.linux.org.uk>
+	<20140217153518.30891455@alan.etchedpixels.co.uk>
+	<20140217235013.GD2669@sirena.org.uk>
+	<20140218100943.34f2e186@alan.etchedpixels.co.uk>
+	<20140219135751.GX2669@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34798 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753483AbaBSOTE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Feb 2014 09:19:04 -0500
-In-reply-to: <20140219040818.GQ2669@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <20140219135751.GX2669@sirena.org.uk>
+Sender: linux-serial-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2014-02-19 at 13:08 +0900, Mark Brown wrote:
-> On Tue, Feb 18, 2014 at 09:12:09AM +0100, Krzysztof Kozlowski wrote:
-> > On Tue, 2014-02-18 at 09:35 +0900, Mark Brown wrote:
+> Please try to avoid this sort of misdirected yelling, it's not helping
+
+I don't see any misdirected yelling
+
+> anything to complain that people are following the recommendations of
+> the maintainer or to demand that this somehow gets hacked around in
+> arch/ when we're trying to convince all the architectures to get their
+> drivers merged into subsystem trees so they're reviewed by the subsystem
+> maintainers.
+
+It's not a case of hacking around it in arch. It's a case of fixing up
+problems where they belong, which btw is what Greg has in his tree -
+specifically ef2889f7ffee67f0aed49e854c72be63f1466759 and
+6f134c3c770355b7e930d3ffc558864668f13055 which keep the handling of the
+minor clash cock-up in the drivers affected.
+
+No garbage in the core tty drivers, no racy delayed registration in the
+core uart code. In the longer term we should probably just abolish the
+fixed minor numbers, nothing in the real world cares about them enough to
+justify keeping them forever.
+
+> you're doing here is making disparaging remarks and telling people to
+> adopt bad practices because someone else made a mistake a decade ago.
+
+I'm not telling anyone to adopt bad practices - at least its news to me
+that "stopping the merge of buggy crap" is now a bad practice.
+
+> That is how problems like this get created in the first place.
+
+We were having a discussion about the fact the proposed patch for
+deferring the processing was buggy, and probably unfixably so. That's a
+code correctness discussion. Merging overcomplicated buggy crap causes
+problems.
+
+> > And the proposed change set is buggy as hell - because we register things
+> > like 8250 devices at least four ways on the same x86 machine all of which
+> > could in theory occur in parallel.
 > 
-> > > I don't understand the above?  Are you saying that suspend mode actually
-> > > turns off the regulator or something else? If it's a separate setting
-> > > for suspend mode then it should be using the core suspend mode stuff.
-> 
-> > No, it is similar to external control (by GPIO) except that regulator is
-> > controlled by PWREN pin. The PMIC's PWREN is not a GPIO, but instead it
-> > is directly connected to AP (for Exynos 4212: XPWRRGTON). In AP's normal
-> > mode the XPWRRGTON/PWREN is high. In sleep mode *AP* sets it low.
-> 
-> How is that different to suspend mode then?
+> Then you need to convince Greg of that.  The most recent set of patches
+> are exactly what he asked for.
 
-I found two differences: performance (no need to send I2C commands) and
-possible issues during resume.
+No there's an assumption that when someone asks for patches the proposed
+changes actually *work*. As Russell has demonstrated - the general
+deferral patches for the uart/tty layer are broken. The driver specific
+fixups in -next on the other hand appear to be fine providing the amba
+bus probe remains serialized (and trivially fixed if it doesn't).
 
-Example: regulator which should be disabled during suspend to memory and
-enabled for normal system operation.
+Alan
 
-As I understand the suspend mode (correct me if I'm wrong), the
-regulator core during suspend to mem:
-1. Calls suspend_set_state().
-2. rstate->disabled is true so the ops->set_suspend_disable() is called.
-3. The ops->set_suspend_disable() function (implemented by the driver)
-disables the regulator (e.g. through I2C commands /regmap/).
-4. During resume the regulator is enabled normal way (ops->enable(), I2C
-again).
-
-Possible problems:
-A. What happens if some driver using this regulator resumes earlier then
-regulator_suspend_finish()?
-B. What happens if resuming regulator requires some other driver to be
-resumed earlier (e.g. I2C bus)? If regulator resumes before I2C bus then
-calling ops->enable() would fail.
-
-
-The S5M8767 suspend mode (controlled by PWREN pin) works differently:
-1. To enable regulator set regulator mode to "On/Off controller by
-PWREN". During normal mode it will be enabled.
-2. During suspend the regulator won't be suspended or disabled by
-regulator core but instead the SoC will set PWREN to low and PMIC will
-disable the regulator. No need to send I2C commands.
-3. During resume the PWREN will be set to high and PMIC will enable the
-regulator before resuming other drivers. No need to send I2C commands as
-well.
-
-
-Best regards,
-Krzysztof
