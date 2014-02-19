@@ -1,93 +1,65 @@
-From: John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
-Date: Tue, 18 Feb 2014 12:06:45 -0800
-Message-ID: <CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
-	<5302B306.8090503@samsung.com>
-	<CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
-	<6032891.ndY8FikAMY@wuerfel>
-	<CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
-	<CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Wed, 19 Feb 2014 00:47:36 +0000
+Message-ID: <20140219004736.65beeb08@alan.etchedpixels.co.uk>
+References: <1390208555-27770-1-git-send-email-tushar.behera@linaro.org>
+	<1390208555-27770-3-git-send-email-tushar.behera@linaro.org>
+	<20140120100415.GX15937@n2100.arm.linux.org.uk>
+	<20140213181216.GB24155@kroah.com>
+	<20140213181559.GB30257@n2100.arm.linux.org.uk>
+	<20140213182701.GA32578@kroah.com>
+	<20140213184249.GC30257@n2100.arm.linux.org.uk>
+	<20140213232606.GA27372@kroah.com>
+	<20140214000717.GG30257@n2100.arm.linux.org.uk>
+	<20140214001436.GA16287@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:45158 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbaBRUGu (ORCPT
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:60468 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751600AbaBSAsJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Feb 2014 15:06:50 -0500
-Received: by mail-vc0-f179.google.com with SMTP id lh14so13545564vcb.38
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Feb 2014 12:06:47 -0800 (PST)
-In-Reply-To: <CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
+	Tue, 18 Feb 2014 19:48:09 -0500
+In-Reply-To: <20140214001436.GA16287@kroah.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk, broonie@kernel.org
 
-On Tue, Feb 18, 2014 at 12:00 PM, Olof Johansson <olof@lixom.net> wrote:
-> On Tue, Feb 18, 2014 at 11:52 AM, John Stultz <john.stultz@linaro.org> wrote:
->> On Tue, Feb 18, 2014 at 10:13 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->>> On Tuesday 18 February 2014 08:16:13 Olof Johansson wrote:
->>>> On Mon, Feb 17, 2014 at 5:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>>> > On 02/15/14 02:06, Arnd Bergmann wrote:
->>>> >> My feeling is that we don't need to use the levels for Kconfig, although
->>>> >> we might want to use them DT compatible strings, even if it ends up
->>>> >> looking
->>>> >> a little funny when you do
->>>> >>
->>>> >>         compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
->>>> >>
->>>> >>> What kind of features are you expecting though? More IP
->>>> >>> blocks/devices? Those are just kernel config options to enable,
->>>> >>> ideally as modules.
->>>> >>
->>>> >>
->>>> >> Right, I think we can just put them into defconfig. No need to
->>>> >> "select" them from Kconfig since the extra options wouldn't be
->>>> >> required for booting or using the system.
->>>> >>
->>>> > As I commented above, how about MCT? Samsung has a plan to use MCT on ARMv8,
->>>> > it is not for used for GH7 though...
->>>>
->>>> It looks like the clocksource drivers are all based around being
->>>> enabled based on platforms instead of individually selectable. That
->>>> causes a problem here. I think we should change the clocksource
->>>> Kconfig instead. Then it's just a matter of making sure your defconfig
->>>> has the needed driver enabled.
->>>>
->>>> (Adding Daniel and Thomas in case they have objections to that approach)
->>>
->>> +John Stultz
->>>
->>> IIRC it was John who insisted on doing it the current way, although
->>> I can't remember his reasoning.
->>
->> Are we really expecting there to be SoC specific clocksources here? I
->> thought we were getting away from that sort of stuff with the
->> architecture timer?
->
-> Unfortunately vendors can do crazy stuff if they want to. But we also
-> have an option to choose to enable it. Maybe the answer here is to say
-> no to MCT on 64-bit, they get to use the arch timers like everybody
-> else. Or at least motivate why they're not good enough.
->
->> I'm fine with clocksources being selected by other functionality
->> options (ie: on x86 ACPI PM timer clocksource doesn't have a prompt,
->> but depends on the ACPI option). I just don't want to force users to
->> have to navigate through tons of deep menus to select clocksource
->> options that logically duplicate other selections already made.
->>
->> But again, I handed this maintainership over to Daniel, so I can be
->> considered just a crank yelling from the sidelines :)
->
-> I think you have a good point. Until we hear why MCT is needed this is
-> mostly speculation, so let's see what Kukjin says about that.
+> > The race isn't the uart code, it's the driver model.
+> > 
+> > Consider what happens when this happens:
+> > 
+> > * Two pl011 devices get registered at the same time by two different
+> >   threads.
+> 
+> How?  What two different busses will see this same device?  The amba bus
+> code should prevent that from happening, right?  If not, there's bigger
+> problems in that bus code :)
+> 
+> That's where this problem should be fixed, if there is one, otherwise
+> this same issue would be there for any type of driver that calles into
+> the uart core, right?
 
-Yea. And on x86 (well, i386 actually) there are system specific
-clocksources as well, such as the cyclone timer used by "summit" based
-x440 and similar NUMA systems, but those systems had more general
-config options that had to be enabled which the cyclone clocksource
-depended on.
+I did some more digging into this the problem goes beyond the uart and
+driver model code. Even if you serialize every bus and you serialize
+every bus against every other bus (which you can't do btw as we get
+recursive probes of one bus from a device probe of another) it's still
+racy. We have non bus registering paths for some drivers and those could
+be user triggered.
 
-thanks
--john
+An obvious example is 8250.
+
+If the 8250 driver is loaded on a platform where no device is
+autodetected (which is true on a few wackier PC laptops with touchscreens
+on an 8250) then you hae a race between say a PCMCIA card insertion of an
+8250 and a user who creates the first 8250 device using setserial at the
+same moment.
+
+There are similar races between the various directly created devices on
+some of the serial ports and bus probed ones where the driver mixes bus
+probing with olde worlde straight forward hardcoding.
+
+Alan
