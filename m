@@ -1,74 +1,51 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH RESEND 2/2] clk: clk-s2mps11: Add support for clocks in S5M8767 MFD
-Date: Wed, 19 Feb 2014 11:54:36 +0530
-Message-ID: <1392791076-28301-3-git-send-email-tushar.behera@linaro.org>
-References: <1392791076-28301-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1392791076-28301-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: mturquette@linaro.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Wed, 19 Feb 2014 11:09:40 +0100
+Message-ID: <1392804580.17652.8.camel@AMDC1943>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+ <1392383156.12506.20.camel@AMDC1943> <20140214210502.GX4451@sirena.org.uk>
+ <1392624454.3755.12.camel@AMDC1943> <20140218003555.GJ2669@sirena.org.uk>
+ <1392711129.14646.9.camel@AMDC1943> <20140219040818.GQ2669@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:27768 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950AbaBSKJo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Feb 2014 05:09:44 -0500
+In-reply-to: <20140219040818.GQ2669@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
-Since clock operation within S2MPS11 and S5M8767 are similar, we can
-support both the devices within a single driver.
+On Wed, 2014-02-19 at 13:08 +0900, Mark Brown wrote:
+> On Tue, Feb 18, 2014 at 09:12:09AM +0100, Krzysztof Kozlowski wrote:
+> > On Tue, 2014-02-18 at 09:35 +0900, Mark Brown wrote:
+> 
+> > > I don't understand the above?  Are you saying that suspend mode actually
+> > > turns off the regulator or something else? If it's a separate setting
+> > > for suspend mode then it should be using the core suspend mode stuff.
+> 
+> > No, it is similar to external control (by GPIO) except that regulator is
+> > controlled by PWREN pin. The PMIC's PWREN is not a GPIO, but instead it
+> > is directly connected to AP (for Exynos 4212: XPWRRGTON). In AP's normal
+> > mode the XPWRRGTON/PWREN is high. In sleep mode *AP* sets it low.
+> 
+> How is that different to suspend mode then?
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
----
- drivers/clk/Kconfig       |    6 ++++--
- drivers/clk/clk-s2mps11.c |    5 +++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+Now I see... there is no difference. It seems that the whole idea of
+opmode can be replaced with suspend modes and regulator modes.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 7641965..da1b416 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -65,10 +65,12 @@ config COMMON_CLK_SI570
- 	  clock generators.
- 
- config COMMON_CLK_S2MPS11
--	tristate "Clock driver for S2MPS11 MFD"
-+	tristate "Clock driver for S2MPS11/S5M8767 MFD"
- 	depends on MFD_SEC_CORE
- 	---help---
--	  This driver supports S2MPS11 crystal oscillator clock.
-+	  This driver supports S2MPS11/S5M8767 crystal oscillator clock. These
-+	  multi-function devices have 3 fixed-rate oscillators, clocked at
-+	  32KHz each.
- 
- config CLK_TWL6040
- 	tristate "External McPDM functional clock from twl6040"
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 6f587bc..5088755 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -27,6 +27,7 @@
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- #include <linux/mfd/samsung/s2mps11.h>
-+#include <linux/mfd/samsung/s5m8767.h>
- #include <linux/mfd/samsung/core.h>
- 
- #define s2mps11_name(a) (a->hw.init->name)
-@@ -175,6 +176,9 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
- 		break;
-+	case S5M8767X:
-+		s2mps11_reg = S5M8767_REG_CTRL1;
-+		break;
- 	default:
- 		dev_err(&pdev->dev, "Invalid device type\n");
- 		return -EINVAL;
-@@ -254,6 +258,7 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
- 
- static const struct platform_device_id s2mps11_clk_id[] = {
- 	{ "s2mps11-clk", S2MPS11X},
-+	{ "s5m8767-clk", S5M8767X},
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
--- 
-1.7.9.5
+I can't only find a way to set this from DTS. There are no bindings for
+regulation_constraints->state_{disk,mem,standby}.
+
+Should the driver set manually after obtaining init_data from DTS?
+
+Best regards,
+Krzysztof
