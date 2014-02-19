@@ -1,86 +1,79 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
-Date: Wed, 19 Feb 2014 13:45:45 +0100
-Message-ID: <5304A779.1060702@samsung.com>
-References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Wed, 19 Feb 2014 21:16:41 +0900
+Message-ID: <20140219121641.GL2669@sirena.org.uk>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+ <1392383156.12506.20.camel@AMDC1943>
+ <20140214210502.GX4451@sirena.org.uk>
+ <1392624454.3755.12.camel@AMDC1943>
+ <20140218003555.GJ2669@sirena.org.uk>
+ <1392711129.14646.9.camel@AMDC1943>
+ <20140219040818.GQ2669@sirena.org.uk>
+ <1392804580.17652.8.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="g4yiczO1Q18OVQVC"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:29622 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753431AbaBSMpt (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:43090 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753231AbaBSNF6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Feb 2014 07:45:49 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N1800CLUU4BH760@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Feb 2014 12:45:48 +0000 (GMT)
-In-reply-to: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 19 Feb 2014 08:05:58 -0500
+Content-Disposition: inline
+In-Reply-To: <1392804580.17652.8.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, arnd@arndb.de, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
-Hi Sachin,
 
-[adding linux-arm-kernel ML to CC list]
+--g4yiczO1Q18OVQVC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 19.02.2014 12:34, Sachin Kamat wrote:
-> To avoid modifying the kernel every time a new SoC variant
-> comes out.
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->   arch/arm/mach-exynos/mach-exynos4-dt.c |    1 +
->   arch/arm/mach-exynos/mach-exynos5-dt.c |    1 +
->   2 files changed, 2 insertions(+)
->
-> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> index d3e54b7644d7..5d037b561253 100644
-> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> @@ -28,6 +28,7 @@ static void __init exynos4_dt_machine_init(void)
->   }
->
->   static char const *exynos4_dt_compat[] __initdata = {
-> +	"samsung,exynos4",
->   	"samsung,exynos4210",
->   	"samsung,exynos4212",
->   	"samsung,exynos4412",
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 37ea261f0f6c..ad0db5a93da8 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -50,6 +50,7 @@ static void __init exynos5_dt_machine_init(void)
->   }
->
->   static char const *exynos5_dt_compat[] __initdata = {
-> +	"samsung,exynos5",
->   	"samsung,exynos5250",
->   	"samsung,exynos5420",
->   	"samsung,exynos5440",
->
+On Wed, Feb 19, 2014 at 11:09:40AM +0100, Krzysztof Kozlowski wrote:
 
-Since all Exynos chips can be easily recognized using dedicated chip ID 
-register, I wonder whether we really need to maintain two distinct board 
-files for Exynos 4 and 5 series, especially when both of them are doing 
-mostly the same set up, which can be simply generalized to cover all the 
-cases.
+> I can't only find a way to set this from DTS. There are no bindings for
+> regulation_constraints->state_{disk,mem,standby}.
 
-Instead of adding just another level of artificially fine grained 
-compatible strings, I'd rather suggest merging both board files together 
-and adding a single compatible string identifying all SoCs that can be 
-further differentiated by using hardware chip ID register.
+> Should the driver set manually after obtaining init_data from DTS?
 
-What do you think?
+Someone should work out a suitably abstract way of defining what these
+things mean and create bindings - that's not happened yet.  It's not
+clear that what's in the code at the minute (which is a very direct
+mapping onto Linux stuff) are general things that would apply well to
+other OSs and there's not been much demand for this in general,
+especially given the tendency for system designs to become more dynamic
+and use case driven (or for these things to not be configurable by
+software at all making the whole thing moot).
 
-P.S. Please always keep respective subsystem/arch level MLs on CC list, 
-in this case linux-arm-kernel. The linux-samsung-soc ML is just a 
-convenience tool to group all threads about Samsung SoCs, not a way to 
-bypass respective subsystem MLs.
+Something that defined a single suspend mode configuration suitable for
+all modes would be a bit easier I think, and/or a good work through of
+how things are part of the hardware rather than software configuration.
 
-Best regards,
-Tomasz
+--g4yiczO1Q18OVQVC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTBKCmAAoJELSic+t+oim9zm8P/jC/2chZXD98tpC9O6K7qYt+
+z3eS0T64yLYmZF0yKxihrdjhKdrbaJMEBnxhD3zJ3DY7BbfdhigR4mcW9gDRv5XE
+i6zFcQbNUFgsNoeqb4Mr4THDin7hQzPY0htTtVrU2hET7hb+8SMQxu0uXvxiPAiD
+ewWHaPlTIK9fbbFbE6LW7MSoxrEk0HfTDycPR/JOyCZ94x6Exl7Swj0e3yMhY+Ja
+ucEFOgAsdmyTvAM50JPAoaU07nCBlpnkYmq8ei4Jfh2rnFAsp/KlCFa1uR2wvfvu
+HdyL2ZPB/q2IyheiY1TMd6HJSGyGEjmxedyann4VoFi1XPzUA7HiOzYFUt4QmtdL
+SJFXDWYiDJqt5yucA8cLxcnE5VOnFVv8BjEYStVVkI0BvCXBHkeSBwjQOHGnRddI
+rpVysOn5zidzHnGa4oicBHtkpka2Q+c9FgKY9PQ06kJ3xh/UNQZeAg3slhB+6xp7
+9TeCjupC0rbpXM+j7SnCGjQCmT2FyIzIatO7p9MIJj5u2Y4HshZ84rWSdLPdA3gS
+aoJq1aPpCykq/26A0p3Cjknq8TrYIIKjntTX9VwXauC5UomlBlV0NcpCpkDJcFQu
+aZkekJmhS4wSOgs8WOmbnZtJ1ESYTB8jjr7eJSTjGhVCh5mIVBQubh4AENJed4Pj
+/OiE9PkSR0SY0JW4GqHQ
+=5bLl
+-----END PGP SIGNATURE-----
+
+--g4yiczO1Q18OVQVC--
