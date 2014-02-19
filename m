@@ -1,79 +1,92 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Wed, 19 Feb 2014 21:16:41 +0900
-Message-ID: <20140219121641.GL2669@sirena.org.uk>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
- <1392383156.12506.20.camel@AMDC1943>
- <20140214210502.GX4451@sirena.org.uk>
- <1392624454.3755.12.camel@AMDC1943>
- <20140218003555.GJ2669@sirena.org.uk>
- <1392711129.14646.9.camel@AMDC1943>
- <20140219040818.GQ2669@sirena.org.uk>
- <1392804580.17652.8.camel@AMDC1943>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Wed, 19 Feb 2014 22:57:51 +0900
+Message-ID: <20140219135751.GX2669@sirena.org.uk>
+References: <20140213181559.GB30257@n2100.arm.linux.org.uk>
+ <20140213182701.GA32578@kroah.com>
+ <20140213184249.GC30257@n2100.arm.linux.org.uk>
+ <20140213232606.GA27372@kroah.com>
+ <20140214000717.GG30257@n2100.arm.linux.org.uk>
+ <20140214001436.GA16287@kroah.com>
+ <20140214003834.GH30257@n2100.arm.linux.org.uk>
+ <20140217153518.30891455@alan.etchedpixels.co.uk>
+ <20140217235013.GD2669@sirena.org.uk>
+ <20140218100943.34f2e186@alan.etchedpixels.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="g4yiczO1Q18OVQVC"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:43090 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753231AbaBSNF6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Feb 2014 08:05:58 -0500
+	protocol="application/pgp-signature"; boundary="7aQJ/pUO7E0NVzIB"
+Return-path: <linux-serial-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1392804580.17652.8.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20140218100943.34f2e186@alan.etchedpixels.co.uk>
+Sender: linux-serial-owner@vger.kernel.org
+To: Etched Pixels <sales@etchedpixels.co.uk>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
 
---g4yiczO1Q18OVQVC
+--7aQJ/pUO7E0NVzIB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Feb 19, 2014 at 11:09:40AM +0100, Krzysztof Kozlowski wrote:
+On Tue, Feb 18, 2014 at 10:09:43AM +0000, Etched Pixels wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-> I can't only find a way to set this from DTS. There are no bindings for
-> regulation_constraints->state_{disk,mem,standby}.
+> > It's a very real problem which affects actual kernels that distro style
+> > users are building.
 
-> Should the driver set manually after obtaining init_data from DTS?
+> Only because you persist in trying to keep the old static minor
+> numbers even though they are not needed by anything in the real world
+> that will ever run such kernels. Also only because you are apparently
+> too slack to bother to check whether the driver matches the platform or
+> there is an device tree node before registering it even though that's
+> trivial to code and is already done by some other platforms and serial
+> drivers just fine.
 
-Someone should work out a suitably abstract way of defining what these
-things mean and create bindings - that's not happened yet.  It's not
-clear that what's in the code at the minute (which is a very direct
-mapping onto Linux stuff) are general things that would apply well to
-other OSs and there's not been much demand for this in general,
-especially given the tendency for system designs to become more dynamic
-and use case driven (or for these things to not be configurable by
-software at all making the whole thing moot).
+> It's a core code "problem" that is invented by refusing to do the simple
+> trivial fixes in the ARM tree. Please clean up your own poop instead of
+> trying to shovel it into the street.
 
-Something that defined a single suspend mode configuration suitable for
-all modes would be a bit easier I think, and/or a good work through of
-how things are part of the hardware rather than software configuration.
+Please try to avoid this sort of misdirected yelling, it's not helping
+anything to complain that people are following the recommendations of
+the maintainer or to demand that this somehow gets hacked around in
+arch/ when we're trying to convince all the architectures to get their
+drivers merged into subsystem trees so they're reviewed by the subsystem
+maintainers.
 
---g4yiczO1Q18OVQVC
+If you have some examples of better practice for serial device
+registration that you'd like to identify that'd be helpful, but what
+you're doing here is making disparaging remarks and telling people to
+adopt bad practices because someone else made a mistake a decade ago.
+That is how problems like this get created in the first place.
+
+> And the proposed change set is buggy as hell - because we register things
+> like 8250 devices at least four ways on the same x86 machine all of which
+> could in theory occur in parallel.
+
+Then you need to convince Greg of that.  The most recent set of patches
+are exactly what he asked for.
+
+--7aQJ/pUO7E0NVzIB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTBKCmAAoJELSic+t+oim9zm8P/jC/2chZXD98tpC9O6K7qYt+
-z3eS0T64yLYmZF0yKxihrdjhKdrbaJMEBnxhD3zJ3DY7BbfdhigR4mcW9gDRv5XE
-i6zFcQbNUFgsNoeqb4Mr4THDin7hQzPY0htTtVrU2hET7hb+8SMQxu0uXvxiPAiD
-ewWHaPlTIK9fbbFbE6LW7MSoxrEk0HfTDycPR/JOyCZ94x6Exl7Swj0e3yMhY+Ja
-ucEFOgAsdmyTvAM50JPAoaU07nCBlpnkYmq8ei4Jfh2rnFAsp/KlCFa1uR2wvfvu
-HdyL2ZPB/q2IyheiY1TMd6HJSGyGEjmxedyann4VoFi1XPzUA7HiOzYFUt4QmtdL
-SJFXDWYiDJqt5yucA8cLxcnE5VOnFVv8BjEYStVVkI0BvCXBHkeSBwjQOHGnRddI
-rpVysOn5zidzHnGa4oicBHtkpka2Q+c9FgKY9PQ06kJ3xh/UNQZeAg3slhB+6xp7
-9TeCjupC0rbpXM+j7SnCGjQCmT2FyIzIatO7p9MIJj5u2Y4HshZ84rWSdLPdA3gS
-aoJq1aPpCykq/26A0p3Cjknq8TrYIIKjntTX9VwXauC5UomlBlV0NcpCpkDJcFQu
-aZkekJmhS4wSOgs8WOmbnZtJ1ESYTB8jjr7eJSTjGhVCh5mIVBQubh4AENJed4Pj
-/OiE9PkSR0SY0JW4GqHQ
-=5bLl
+iQIcBAEBAgAGBQJTBLhcAAoJELSic+t+oim9m1sP/3h8AGWjt6SRAJGq0YftYmCI
+2FP4GjglrhURnXEXai2TRb7VQ8E3TKauIalcQkSfrgxVAcTAenT9T0vOOuH5MqLP
+DMmuS+IHZXkfqTvq4aC1zCup/bZ6XdauJqS1dT+cKmybN8dA8TsASazD4xBpDHh2
+29agoop6X7SjNDAWd2E4mXdusDuRw7dBbznDM7s+9B0XHFxQQ8mkElDLtgm7g8YZ
+vrxo1BqsssE4fHXOsv0H9C874offG3xtHzIQF+5z+HZo2Ho7mL/uxvO0rYCbqdNC
+kzgUr1+ZFkTS9lZTvAKDDbgsIM8mPv754DzKvqvCgl4ticFRA7dVs8woUaXEZF+W
+YHYvlDJc0QXH6pHkzCzZI035ni5PHJla5XKh50lH5h/IXi4qGPWawKDvqVSUr1zI
+aQwUPzwtIpa0a0t0VZvsZLT/htBUzzfu/YViXraR0eQ3BnfdMvG5ViRT5/RKiekh
+be5Sla4UWKHJTEixPhwv4DP7YCrOaiFMwPYzePJS5uBDS4XvttmLBw2oNUogfNxM
+7uQ06P883gMUOi1HHuQBkpgS0DWKWCP2knk1jGZDYPwoBf2gMGh3neWp0IN0NQvs
+9bAq32ULro6btx8FOkMbV1ACUItyfc+Pr91pqVvCK+37d5n9klV0xESV8S878EeG
++a0WnYO2XYRbEJc0Vm06
+=dC3o
 -----END PGP SIGNATURE-----
 
---g4yiczO1Q18OVQVC--
+--7aQJ/pUO7E0NVzIB--
