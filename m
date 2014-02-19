@@ -1,89 +1,98 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
- regulators
-Date: Thu, 20 Feb 2014 00:07:29 +0900
-Message-ID: <20140219150729.GF2669@sirena.org.uk>
-References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
- <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
- <1392383156.12506.20.camel@AMDC1943>
- <20140214210502.GX4451@sirena.org.uk>
- <1392624454.3755.12.camel@AMDC1943>
- <20140218003555.GJ2669@sirena.org.uk>
- <1392711129.14646.9.camel@AMDC1943>
- <20140219040818.GQ2669@sirena.org.uk>
- <1392819540.12624.14.camel@AMDC1943>
+Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
+ device probe
+Date: Thu, 20 Feb 2014 00:53:25 +0900
+Message-ID: <20140219155325.GJ2669@sirena.org.uk>
+References: <20140213184249.GC30257@n2100.arm.linux.org.uk>
+ <20140213232606.GA27372@kroah.com>
+ <20140214000717.GG30257@n2100.arm.linux.org.uk>
+ <20140214001436.GA16287@kroah.com>
+ <20140214003834.GH30257@n2100.arm.linux.org.uk>
+ <20140217153518.30891455@alan.etchedpixels.co.uk>
+ <20140217235013.GD2669@sirena.org.uk>
+ <20140218100943.34f2e186@alan.etchedpixels.co.uk>
+ <20140219135751.GX2669@sirena.org.uk>
+ <20140219144751.75f7fb70@alan.etchedpixels.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3RdaoY0kx43CqfUw"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:48930 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753151AbaBSPH5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Feb 2014 10:07:57 -0500
+	protocol="application/pgp-signature"; boundary="o9omvSfeMYbm0Ozc"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1392819540.12624.14.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20140219144751.75f7fb70@alan.etchedpixels.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
 
---3RdaoY0kx43CqfUw
+--o9omvSfeMYbm0Ozc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Feb 19, 2014 at 03:19:00PM +0100, Krzysztof Kozlowski wrote:
+On Wed, Feb 19, 2014 at 02:47:51PM +0000, One Thousand Gnomes wrote:
 
-> As I understand the suspend mode (correct me if I'm wrong), the
-> regulator core during suspend to mem:
-> 1. Calls suspend_set_state().
-> 2. rstate->disabled is true so the ops->set_suspend_disable() is called.
-> 3. The ops->set_suspend_disable() function (implemented by the driver)
-> disables the regulator (e.g. through I2C commands /regmap/).
-> 4. During resume the regulator is enabled normal way (ops->enable(), I2C
-> again).
+> > anything to complain that people are following the recommendations of
+> > the maintainer or to demand that this somehow gets hacked around in
+> > arch/ when we're trying to convince all the architectures to get their
+> > drivers merged into subsystem trees so they're reviewed by the subsystem
+> > maintainers.
 
-No, set_suspend_disable() should *not* disable the regulator, it should
-configure what the regulator will do when the hardware enters suspend
-mode.  If we were just disabling the regulator there would be no point
-in having a special operation, we could just use the normal operation.
+> It's not a case of hacking around it in arch. It's a case of fixing up
+> problems where they belong, which btw is what Greg has in his tree -
+> specifically ef2889f7ffee67f0aed49e854c72be63f1466759 and
+> 6f134c3c770355b7e930d3ffc558864668f13055 which keep the handling of the
+> minor clash cock-up in the drivers affected.
 
-> Possible problems:
-> A. What happens if some driver using this regulator resumes earlier then
-> regulator_suspend_finish()?
+That's more reasonable, what you were saying was to do things in the ARM
+tree which reads like you want changes in arch/arm - those changes are
+in the serial code.
 
-Nothing, if the system is not in suspend mode then configuring suspend
-mode will have no impact.
+> > you're doing here is making disparaging remarks and telling people to
+> > adopt bad practices because someone else made a mistake a decade ago.
 
-> B. What happens if resuming regulator requires some other driver to be
-> resumed earlier (e.g. I2C bus)? If regulator resumes before I2C bus then
-> calling ops->enable() would fail.
+> I'm not telling anyone to adopt bad practices - at least its news to me
+> that "stopping the merge of buggy crap" is now a bad practice.
 
-It is expected that as part of exiting suspend mode the hardware will
-revert to normal operational mode.
+Like I say, it's the "do it in the ARM tree" bit that's bad practice.
 
---3RdaoY0kx43CqfUw
+> > > And the proposed change set is buggy as hell - because we register things
+> > > like 8250 devices at least four ways on the same x86 machine all of which
+> > > could in theory occur in parallel.
+
+> > Then you need to convince Greg of that.  The most recent set of patches
+> > are exactly what he asked for.
+
+> No there's an assumption that when someone asks for patches the proposed
+> changes actually *work*. As Russell has demonstrated - the general
+> deferral patches for the uart/tty layer are broken. The driver specific
+> fixups in -next on the other hand appear to be fine providing the amba
+> bus probe remains serialized (and trivially fixed if it doesn't).
+
+So like I say discuss that with Greg, it's entirely reasonable for a
+submitter to trust the maintainer on something like this so it's not
+helpful to yell at them (or other people who happen to be working on
+the same architecture for that matter).
+
+--o9omvSfeMYbm0Ozc
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTBMiuAAoJELSic+t+oim9n7cQAIGerpe1gXEf56eM6OpC8YvI
-yiIexlbqwGC3+6Ux3sAFob2P/6LlNyxgrD2PMP5ZsodfIdgpLKY1lrkKa4O8UkBH
-3gnKgYxinVBD6HClyJ3p4mLfjZ7Yaf8KiXpATmbIYMMm++sFR7Pn5w/tvlxJslip
-fFRxvIIjvR3H9AdHcf/WPi746O3fp8aZhm7sOiEzLdm0kAgKBSqvRY7TUM84xERE
-BDhA8QyQ9K2qXIqZEEcH19aZzmb8D/D3lZdhy15gGpPBwE4fW9nhTdmXup2re95/
-MAOxZYdHbc/Q8cOVaqEHc0i8hQQzcnthjl3lcnHCGRBl5mDaI9YhvyV8GQHJhCa0
-v5zRLzHKfvQdaVilRgP1f1AC7+bGpl8PyAOcIEWANo3wza3aw8AvoGt/vVDayNSP
-5eLYW3HFwr6462xjujHvjfSYbP32NchvO7DC01n5Plyh+giwdeXCt3LQKwGdJ2y8
-8H6/iUveLI/chpt4xFfesbO8ocA5A4UrH+IWoJzZe1kwn/gh8EazwTMUuL5alSmw
-f3Ee6M7wiHigCsruYpOnDCV7SFFIQENPNpf/yETI/M2OLEoLjEsvWSOLdcCOlZyS
-DdTZiU7DpJVydyN02DA/n31326T6DpyeOUNq0eyXriKUIuYfBfSB5WYhGsgucv/a
-vUMhJIEK8lFsxhRhh7fO
-=aR1Y
+iQIcBAEBAgAGBQJTBNNyAAoJELSic+t+oim9URUP/0y0iTP9SUL77Pn5Uah2rZ6h
+J/AMEkmUC0JXdrpMexYuHp1lLEeM94zrAof8ATgYewIdD5GABUhoH5dhhyeyLecA
+TD8YDPFJaKaUXqpp5GuK025DP3WJUKWC91bSHmB6aM+p23OW/yce3e+mkW21T2SM
+xGcSzFv4p53SRlwB9et/OFWIVmgL4MALylTRpg0VeUGiaXpAbS25OKbulVLOisou
+5r7NqQxIXSXhaMpMk04nP1DOSD20aakGDlOu5a2cLgC2Pt0MfpE0wO0nd2YWvTSQ
+2CDjna3PX6zxPl3rMnHIZUS7Rqpknu5lXlqibaSG73MNsn67JAeA/6z91icIbva0
+s+0G6U2V4/zDM1BnY22ncZiD9PBuCtz5nPq/JWobaJej4ahc2WUiY0KXh+peOTok
+dugkLb02BjwqtQWAD+CC4qCUDYHPEkcsKkre8RoiXGcNrXTeaFnMf5FIMZ0R8qv9
+TGQY8UZHLjV4uQiMsos0IjZc/qUlyM59Z5SM5pyayKePUVE5R+AJmuUkdg6bL/Bi
+2Ycq94Ril1wgULuHPsbwTyj3hqo9uNK8pV090UR/xakFmSlrm7sqds+8d1Nj1nRD
+ACkK0VxwoVqMqPcInvmD1YHdT7psOJ9wiaahdyIhn9+/dVLjttQMlvObBprE50oN
+hVXY1oq04/MfO1vaDkxd
+=xXrx
 -----END PGP SIGNATURE-----
 
---3RdaoY0kx43CqfUw--
+--o9omvSfeMYbm0Ozc--
