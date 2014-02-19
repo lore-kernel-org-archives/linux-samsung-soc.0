@@ -1,92 +1,41 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] V4L: s5k6a3: Add DT binding documentation
-Date: Wed, 19 Feb 2014 17:47:26 +0000
-Message-ID: <20140219174726.GE25079@e106331-lin.cambridge.arm.com>
-References: <1387747620-24676-1-git-send-email-s.nawrocki@samsung.com>
- <53037F8F.3050302@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Adding set_blob ioctl to DRM
+Date: Thu, 20 Feb 2014 00:25:50 +0530
+Message-ID: <CAPdUM4PXxXgywMA8KnLhwAToHqfc0EP7HNDKjKJLK3T1HA7_eQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53037F8F.3050302@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:52326 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754402AbaBSSzv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Feb 2014 13:55:51 -0500
+Received: by mail-wi0-f178.google.com with SMTP id cc10so954793wib.17
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2014 10:55:50 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Tue, Feb 18, 2014 at 03:43:11PM +0000, Sylwester Nawrocki wrote:
-> On 22/12/13 22:27, Sylwester Nawrocki wrote:
-> > This patch adds DT binding documentation for the Samsung S5K6A3(YX)
-> > raw image sensor.
-> > 
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > This patch adds missing documentation [1] for the "samsung,s5k6a3"
-> > compatible. Rob, can you please merge it through your tree if it 
-> > looks OK ?
-> 
-> Anyone cares to Ack this patch so it can be merged through the media
-> tree ?
+Hi All,
 
-It looks fine to me:
+I am working on enabling a Color Enhancement block for primary display
+for Exynos SoC. I need to
+set a bunch of parameters like Color Conversion matrix, Contrast
+Improvement parameters etc ~ 30 parameters from User Space.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+I am planning to use KDS blob property to receive these parameters.
+Currently drivers are not allowed to create a blob property inside
+drm. Neither, user space can set the blob. There is no ioctl provided
+for same.
 
-Thanks,
-Mark.
+How about adding set_blob ioctl in DRM? It seems purposely dropped
+till now. Please help me
+in understanding explains the rationale.
 
-> 
-> > Thanks,
-> > Sylwester
-> > 
-> > [1] http://www.spinics.net/lists/devicetree/msg10693.html
-> > 
-> > Changes since v3 (https://linuxtv.org/patch/20429):
-> >  - rephrased 'clocks' and 'clock-names' properties' description.
-> > ---
-> >  .../devicetree/bindings/media/samsung-s5k6a3.txt   |   33 ++++++++++++++++++++
-> >  1 files changed, 33 insertions(+), 0 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-> > new file mode 100644
-> > index 0000000..cce01e8
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
-> > @@ -0,0 +1,33 @@
-> > +Samsung S5K6A3(YX) raw image sensor
-> > +---------------------------------
-> > +
-> > +S5K6A3(YX) is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
-> > +and CCI (I2C compatible) control bus.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible	: "samsung,s5k6a3";
-> > +- reg		: I2C slave address of the sensor;
-> > +- svdda-supply	: core voltage supply;
-> > +- svddio-supply	: I/O voltage supply;
-> > +- afvdd-supply	: AF (actuator) voltage supply;
-> > +- gpios		: specifier of a GPIO connected to the RESET pin;
-> > +- clocks	: should contain list of phandle and clock specifier pairs
-> > +		  according to common clock bindings for the clocks described
-> > +		  in the clock-names property;
-> > +- clock-names	: should contain "extclk" entry for the sensor's EXTCLK clock;
-> > +
-> > +Optional properties:
-> > +
-> > +- clock-frequency : the frequency at which the "extclk" clock should be
-> > +		    configured to operate, in Hz; if this property is not
-> > +		    specified default 24 MHz value will be used.
-> > +
-> > +The common video interfaces bindings (see video-interfaces.txt) should be
-> > +used to specify link to the image data receiver. The S5K6A3(YX) device
-> > +node should contain one 'port' child node with an 'endpoint' subnode.
-> > +
-> > +Following properties are valid for the endpoint node:
-> > +
-> > +- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-> > +  video-interfaces.txt.  The sensor supports only one data lane.
-> 
-> 
+What alternatives do I have inside drm to set multiple parameters
+otherwise? (other than Exynos specific ioctls)
+
+Please guide me.
+
+Regards,
+Rahul Sharma.
