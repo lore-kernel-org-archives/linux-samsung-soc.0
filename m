@@ -1,92 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] serial: pl011: Move uart_register_driver call to
- device probe
-Date: Wed, 19 Feb 2014 22:57:51 +0900
-Message-ID: <20140219135751.GX2669@sirena.org.uk>
-References: <20140213181559.GB30257@n2100.arm.linux.org.uk>
- <20140213182701.GA32578@kroah.com>
- <20140213184249.GC30257@n2100.arm.linux.org.uk>
- <20140213232606.GA27372@kroah.com>
- <20140214000717.GG30257@n2100.arm.linux.org.uk>
- <20140214001436.GA16287@kroah.com>
- <20140214003834.GH30257@n2100.arm.linux.org.uk>
- <20140217153518.30891455@alan.etchedpixels.co.uk>
- <20140217235013.GD2669@sirena.org.uk>
- <20140218100943.34f2e186@alan.etchedpixels.co.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 11/14] regulator: s2mps11: Add opmode for S2MPS14
+ regulators
+Date: Wed, 19 Feb 2014 15:19:00 +0100
+Message-ID: <1392819540.12624.14.camel@AMDC1943>
+References: <1392282847-25444-1-git-send-email-k.kozlowski@samsung.com>
+ <1392282847-25444-12-git-send-email-k.kozlowski@samsung.com>
+ <CAKew6eWcwVm1EAUAdFu48y_O5puu+eGvGW3k6923MdXfMa3UAw@mail.gmail.com>
+ <1392383156.12506.20.camel@AMDC1943> <20140214210502.GX4451@sirena.org.uk>
+ <1392624454.3755.12.camel@AMDC1943> <20140218003555.GJ2669@sirena.org.uk>
+ <1392711129.14646.9.camel@AMDC1943> <20140219040818.GQ2669@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7aQJ/pUO7E0NVzIB"
-Return-path: <linux-serial-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140218100943.34f2e186@alan.etchedpixels.co.uk>
-Sender: linux-serial-owner@vger.kernel.org
-To: Etched Pixels <sales@etchedpixels.co.uk>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz, ben.dooks@codethink.co.uk
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:34798 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753483AbaBSOTE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Feb 2014 09:19:04 -0500
+In-reply-to: <20140219040818.GQ2669@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+
+On Wed, 2014-02-19 at 13:08 +0900, Mark Brown wrote:
+> On Tue, Feb 18, 2014 at 09:12:09AM +0100, Krzysztof Kozlowski wrote:
+> > On Tue, 2014-02-18 at 09:35 +0900, Mark Brown wrote:
+> 
+> > > I don't understand the above?  Are you saying that suspend mode actually
+> > > turns off the regulator or something else? If it's a separate setting
+> > > for suspend mode then it should be using the core suspend mode stuff.
+> 
+> > No, it is similar to external control (by GPIO) except that regulator is
+> > controlled by PWREN pin. The PMIC's PWREN is not a GPIO, but instead it
+> > is directly connected to AP (for Exynos 4212: XPWRRGTON). In AP's normal
+> > mode the XPWRRGTON/PWREN is high. In sleep mode *AP* sets it low.
+> 
+> How is that different to suspend mode then?
+
+I found two differences: performance (no need to send I2C commands) and
+possible issues during resume.
+
+Example: regulator which should be disabled during suspend to memory and
+enabled for normal system operation.
+
+As I understand the suspend mode (correct me if I'm wrong), the
+regulator core during suspend to mem:
+1. Calls suspend_set_state().
+2. rstate->disabled is true so the ops->set_suspend_disable() is called.
+3. The ops->set_suspend_disable() function (implemented by the driver)
+disables the regulator (e.g. through I2C commands /regmap/).
+4. During resume the regulator is enabled normal way (ops->enable(), I2C
+again).
+
+Possible problems:
+A. What happens if some driver using this regulator resumes earlier then
+regulator_suspend_finish()?
+B. What happens if resuming regulator requires some other driver to be
+resumed earlier (e.g. I2C bus)? If regulator resumes before I2C bus then
+calling ops->enable() would fail.
 
 
---7aQJ/pUO7E0NVzIB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The S5M8767 suspend mode (controlled by PWREN pin) works differently:
+1. To enable regulator set regulator mode to "On/Off controller by
+PWREN". During normal mode it will be enabled.
+2. During suspend the regulator won't be suspended or disabled by
+regulator core but instead the SoC will set PWREN to low and PMIC will
+disable the regulator. No need to send I2C commands.
+3. During resume the PWREN will be set to high and PMIC will enable the
+regulator before resuming other drivers. No need to send I2C commands as
+well.
 
-On Tue, Feb 18, 2014 at 10:09:43AM +0000, Etched Pixels wrote:
-> Mark Brown <broonie@kernel.org> wrote:
 
-> > It's a very real problem which affects actual kernels that distro style
-> > users are building.
-
-> Only because you persist in trying to keep the old static minor
-> numbers even though they are not needed by anything in the real world
-> that will ever run such kernels. Also only because you are apparently
-> too slack to bother to check whether the driver matches the platform or
-> there is an device tree node before registering it even though that's
-> trivial to code and is already done by some other platforms and serial
-> drivers just fine.
-
-> It's a core code "problem" that is invented by refusing to do the simple
-> trivial fixes in the ARM tree. Please clean up your own poop instead of
-> trying to shovel it into the street.
-
-Please try to avoid this sort of misdirected yelling, it's not helping
-anything to complain that people are following the recommendations of
-the maintainer or to demand that this somehow gets hacked around in
-arch/ when we're trying to convince all the architectures to get their
-drivers merged into subsystem trees so they're reviewed by the subsystem
-maintainers.
-
-If you have some examples of better practice for serial device
-registration that you'd like to identify that'd be helpful, but what
-you're doing here is making disparaging remarks and telling people to
-adopt bad practices because someone else made a mistake a decade ago.
-That is how problems like this get created in the first place.
-
-> And the proposed change set is buggy as hell - because we register things
-> like 8250 devices at least four ways on the same x86 machine all of which
-> could in theory occur in parallel.
-
-Then you need to convince Greg of that.  The most recent set of patches
-are exactly what he asked for.
-
---7aQJ/pUO7E0NVzIB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTBLhcAAoJELSic+t+oim9m1sP/3h8AGWjt6SRAJGq0YftYmCI
-2FP4GjglrhURnXEXai2TRb7VQ8E3TKauIalcQkSfrgxVAcTAenT9T0vOOuH5MqLP
-DMmuS+IHZXkfqTvq4aC1zCup/bZ6XdauJqS1dT+cKmybN8dA8TsASazD4xBpDHh2
-29agoop6X7SjNDAWd2E4mXdusDuRw7dBbznDM7s+9B0XHFxQQ8mkElDLtgm7g8YZ
-vrxo1BqsssE4fHXOsv0H9C874offG3xtHzIQF+5z+HZo2Ho7mL/uxvO0rYCbqdNC
-kzgUr1+ZFkTS9lZTvAKDDbgsIM8mPv754DzKvqvCgl4ticFRA7dVs8woUaXEZF+W
-YHYvlDJc0QXH6pHkzCzZI035ni5PHJla5XKh50lH5h/IXi4qGPWawKDvqVSUr1zI
-aQwUPzwtIpa0a0t0VZvsZLT/htBUzzfu/YViXraR0eQ3BnfdMvG5ViRT5/RKiekh
-be5Sla4UWKHJTEixPhwv4DP7YCrOaiFMwPYzePJS5uBDS4XvttmLBw2oNUogfNxM
-7uQ06P883gMUOi1HHuQBkpgS0DWKWCP2knk1jGZDYPwoBf2gMGh3neWp0IN0NQvs
-9bAq32ULro6btx8FOkMbV1ACUItyfc+Pr91pqVvCK+37d5n9klV0xESV8S878EeG
-+a0WnYO2XYRbEJc0Vm06
-=dC3o
------END PGP SIGNATURE-----
-
---7aQJ/pUO7E0NVzIB--
+Best regards,
+Krzysztof
