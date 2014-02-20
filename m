@@ -1,134 +1,115 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 0/4] Bugfix for of_match_node ordering
-Date: Thu, 20 Feb 2014 14:09:08 +0530
-Message-ID: <CAK9yfHwwmZkFMRvxsxjBAfUbVXU3V+iPFDZO=DwQsFvJ3NQyKA@mail.gmail.com>
-References: <1392819290-1044-1-git-send-email-grant.likely@linaro.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Thu, 20 Feb 2014 01:03:30 -0800
+Message-ID: <CAOesGMjSjzZ4iX3NVA6eS4LHJF2MQQ=KJpNgKWikJb6YkQxNpQ@mail.gmail.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+	<5302B306.8090503@samsung.com>
+	<CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
+	<6032891.ndY8FikAMY@wuerfel>
+	<CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
+	<CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
+	<CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1392819290-1044-1-git-send-email-grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hao <haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f52.google.com ([209.85.216.52]:63118 "EHLO
+	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754344AbaBTJDb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Feb 2014 04:03:31 -0500
+Received: by mail-qa0-f52.google.com with SMTP id j15so2558529qaq.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2014 01:03:30 -0800 (PST)
+In-Reply-To: <CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: John Stultz <john.stultz@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-Hi Grant,
+On Tue, Feb 18, 2014 at 12:06 PM, John Stultz <john.stultz@linaro.org> wrote:
+> On Tue, Feb 18, 2014 at 12:00 PM, Olof Johansson <olof@lixom.net> wrote:
+>> On Tue, Feb 18, 2014 at 11:52 AM, John Stultz <john.stultz@linaro.org> wrote:
+>>> On Tue, Feb 18, 2014 at 10:13 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>>> On Tuesday 18 February 2014 08:16:13 Olof Johansson wrote:
+>>>>> On Mon, Feb 17, 2014 at 5:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>>>>> > On 02/15/14 02:06, Arnd Bergmann wrote:
+>>>>> >> My feeling is that we don't need to use the levels for Kconfig, although
+>>>>> >> we might want to use them DT compatible strings, even if it ends up
+>>>>> >> looking
+>>>>> >> a little funny when you do
+>>>>> >>
+>>>>> >>         compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
+>>>>> >>
+>>>>> >>> What kind of features are you expecting though? More IP
+>>>>> >>> blocks/devices? Those are just kernel config options to enable,
+>>>>> >>> ideally as modules.
+>>>>> >>
+>>>>> >>
+>>>>> >> Right, I think we can just put them into defconfig. No need to
+>>>>> >> "select" them from Kconfig since the extra options wouldn't be
+>>>>> >> required for booting or using the system.
+>>>>> >>
+>>>>> > As I commented above, how about MCT? Samsung has a plan to use MCT on ARMv8,
+>>>>> > it is not for used for GH7 though...
+>>>>>
+>>>>> It looks like the clocksource drivers are all based around being
+>>>>> enabled based on platforms instead of individually selectable. That
+>>>>> causes a problem here. I think we should change the clocksource
+>>>>> Kconfig instead. Then it's just a matter of making sure your defconfig
+>>>>> has the needed driver enabled.
+>>>>>
+>>>>> (Adding Daniel and Thomas in case they have objections to that approach)
+>>>>
+>>>> +John Stultz
+>>>>
+>>>> IIRC it was John who insisted on doing it the current way, although
+>>>> I can't remember his reasoning.
+>>>
+>>> Are we really expecting there to be SoC specific clocksources here? I
+>>> thought we were getting away from that sort of stuff with the
+>>> architecture timer?
+>>
+>> Unfortunately vendors can do crazy stuff if they want to. But we also
+>> have an option to choose to enable it. Maybe the answer here is to say
+>> no to MCT on 64-bit, they get to use the arch timers like everybody
+>> else. Or at least motivate why they're not good enough.
+>>
+>>> I'm fine with clocksources being selected by other functionality
+>>> options (ie: on x86 ACPI PM timer clocksource doesn't have a prompt,
+>>> but depends on the ACPI option). I just don't want to force users to
+>>> have to navigate through tons of deep menus to select clocksource
+>>> options that logically duplicate other selections already made.
+>>>
+>>> But again, I handed this maintainership over to Daniel, so I can be
+>>> considered just a crank yelling from the sidelines :)
+>>
+>> I think you have a good point. Until we hear why MCT is needed this is
+>> mostly speculation, so let's see what Kukjin says about that.
+>
+> Yea. And on x86 (well, i386 actually) there are system specific
+> clocksources as well, such as the cyclone timer used by "summit" based
+> x440 and similar NUMA systems, but those systems had more general
+> config options that had to be enabled which the cyclone clocksource
+> depended on.
 
-I observe the following boot failure with today's (next-20140220) linux-next
-tree on Exynos based boards with the default exynos_defconfig.
+So, after giving this some more thought (and getting my hands dirty in
+some of this code), I think I'm going to change my mind on this. For
+mobile platforms I think it might make sense to bring over the
+toplevel platform Kconfig from arch/arm, to simplify dependencies
+without tearing up the driver subtree with churn like this.
 
-Uncompressing Linux... done, booting the kernel.
-[    0.000000] Booting Linux on physical CPU 0x900
-[    0.000000] Linux version 3.14.0-rc3-next-20140220 (sachin@linaro)
-(gcc version 4.8.2 20130805 (prerelease) (crosstool-NG linaro-1.
-13.1-4.8-2013.08 - Linaro GCC 2013.08) ) #1132 SMP PREEMPT Thu Feb 20
-13:49:27 IST 2014
-[    0.000000] CPU: ARMv7 Processor [412fc091] revision 1 (ARMv7), cr=10c5387d
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
-instruction cache
-[    0.000000] Machine model: Insignal Origen evaluation board based
-on Exynos4210
-[    0.000000] bootconsole [earlycon0] enabled
-[    0.000000] Memory policy: Data cache writealloc
-[    0.000000] CPU EXYNOS4210 (id 0x43210011)
-[    0.000000] On node 0 totalpages: 258048
-[    0.000000]   Normal zone: 1520 pages used for memmap
-[    0.000000]   Normal zone: 0 pages reserved
-[    0.000000]   Normal zone: 190464 pages, LIFO batch:31
-[    0.000000]   HighMem zone: 528 pages used for memmap
-[    0.000000]   HighMem zone: 67584 pages, LIFO batch:15
-[    0.000000] BUG: spinlock recursion on CPU#0, swapper/0
-[    0.000000]  lock: devtree_lock+0x0/0x10, .magic: dead4ead, .owner:
-swapper/0, .owner_cpu: 0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
-3.14.0-rc3-next-20140220 #1132
-[    0.000000] [<c0013e9c>] (unwind_backtrace) from [<c0011250>]
-(show_stack+0x10/0x14)
-[    0.000000] [<c0011250>] (show_stack) from [<c0386740>]
-(dump_stack+0x7c/0xbc)
-[    0.000000] [<c0386740>] (dump_stack) from [<c005501c>]
-(do_raw_spin_lock+0x188/0x18c)
-[    0.000000] [<c005501c>] (do_raw_spin_lock) from [<c038b614>]
-(_raw_spin_lock_irqsave+0x20/0x28)
-[    0.000000] [<c038b614>] (_raw_spin_lock_irqsave) from [<c02de37c>]
-(of_find_property+0x20/0x4c)
-[    0.000000] [<c02de37c>] (of_find_property) from [<c02df110>]
-(__of_device_is_compatible+0xb4/0x110)
-[    0.000000] [<c02df110>] (__of_device_is_compatible) from
-[<c02df22c>] (of_find_compatible_node+0x4c/0x7c)
-[    0.000000] [<c02df22c>] (of_find_compatible_node) from
-[<c04cedf4>] (exynos_firmware_init+0x18/0x7c)
-[    0.000000] [<c04cedf4>] (exynos_firmware_init) from [<c04caef0>]
-(setup_arch+0x860/0x898)
-[    0.000000] [<c04caef0>] (setup_arch) from [<c04c7820>]
-(start_kernel+0x80/0x3dc)
-[    0.000000] [<c04c7820>] (start_kernel) from [<40008074>] (0x40008074)
-[    0.000000] BUG: spinlock lockup suspected on CPU#0, swapper/0
-[    0.000000]  lock: devtree_lock+0x0/0x10, .magic: dead4ead, .owner:
-swapper/0, .owner_cpu: 0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
-3.14.0-rc3-next-20140220 #1132
-[    0.000000] [<c0013e9c>] (unwind_backtrace) from [<c0011250>]
-(show_stack+0x10/0x14)
-[    0.000000] [<c0011250>] (show_stack) from [<c0386740>]
-(dump_stack+0x7c/0xbc)
-[    0.000000] [<c0386740>] (dump_stack) from [<c0054fac>]
-(do_raw_spin_lock+0x118/0x18c)
-[    0.000000] [<c0054fac>] (do_raw_spin_lock) from [<c038b614>]
-(_raw_spin_lock_irqsave+0x20/0x28)
-[    0.000000] [<c038b614>] (_raw_spin_lock_irqsave) from [<c02de37c>]
-(of_find_property+0x20/0x4c)
-[    0.000000] [<c02de37c>] (of_find_property) from [<c02df110>]
-(__of_device_is_compatible+0xb4/0x110)
-[    0.000000] [<c02df110>] (__of_device_is_compatible) from
-[<c02df22c>] (of_find_compatible_node+0x4c/0x7c)
-[    0.000000] [<c02df22c>] (of_find_compatible_node) from
-[<c04cedf4>] (exynos_firmware_init+0x18/0x7c)
-[    0.000000] [<c04cedf4>] (exynos_firmware_init) from [<c04caef0>]
-(setup_arch+0x860/0x898)
-[    0.000000] [<c04caef0>] (setup_arch) from [<c04c7820>]
-(start_kernel+0x80/0x3dc)
-[    0.000000] [<c04c7820>] (start_kernel) from [<40008074>] (0x40008074)
+This, of course, only holds true for v8 mobile platforms. Samsung
+isn't saying if GH7 is a server platform and not, and they don't have
+to tell us. But I think we should consider only enabling and bringing
+over the mobile ones (and ideally try to avoid even that, but it might
+make sense to do some of them at least initially -- it does provide
+some convenient ways to enable larger subsets of default drivers per
+platform/vendor family).
 
-Regards,
-Sachin
+I.e. I'd be OK with an
+ARCH_EXYNOS/ARCH_TEGRA/ARCH_IMX/ARCH_<whatever>, but I don't think we
+should add more finegrained options than that globally on ARM64, at
+least not until truly proven to be needed. We're trying to push back
+against new per-SoC Kconfig entries on 32-bit as well right now.
 
 
-
-On 19 February 2014 19:44, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> Hi all,
->
-> I've taken Kevin's latest rework and done even more rework on it. :-) I
-> didn't quite like how it was looking so I rolled his scoring code
-> directly into __of_device_is_compatible() so that the function always
-> returns a score in a way that is still compatible with the existing
-> users (ie. non-zero == successful match). This eliminates the need for a
-> separate pscore argument and it also let me roll the type and name
-> checks into the same function. I'm a lot happier with it overall and it
-> makes for a slightly smaller number of lines of code changed. Please
-> take a look and give it a spin. This is basically a bug fix so I'll need
-> to push it out to Linus in the near future.
->
-> Acks and Tested-bys would be particularly appreciated.
->
-> Thanks,
-> g.
->
-> Kevin Hao (2):
->         Revert "of: search the best compatible match first in __of_match_node()"
->         of: reimplement the matching method for __of_match_node()
->
-> Grant Likely (2):
->         of: Move testcase FDT data into drivers/of
->         of: Add self test for of_match_node()
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Olof
