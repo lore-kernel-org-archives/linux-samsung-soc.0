@@ -1,71 +1,41 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH v4 0/4] Bugfix for of_match_node ordering
-Date: Thu, 20 Feb 2014 11:53:51 +0000
-Message-ID: <20140220115351.0DF7BC4050F@trevor.secretlab.ca>
-References: <1392819290-1044-1-git-send-email-grant.likely@linaro.org> < CAK9yfHwwmZkFMRvxsxjBAfUbVXU3V+iPFDZO=DwQsFvJ3NQyKA@mail.gmail.com> < 20140220101240.GA3745@pek-khao-d1.corp.ad.wrs.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Thu, 20 Feb 2014 13:07:31 +0100
+Message-ID: <116078520.5VTDQYu7BE@wuerfel>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com> <CAOesGMjSjzZ4iX3NVA6eS4LHJF2MQQ=KJpNgKWikJb6YkQxNpQ@mail.gmail.com> <20140220112248.GC32456@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:43798 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753569AbaBTLx4 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:60076 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751854AbaBTMIO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Feb 2014 06:53:56 -0500
-Received: by mail-wg0-f41.google.com with SMTP id l18so492559wgh.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2014 03:53:55 -0800 (PST)
-In-Reply-To: <20140220101240.GA3745@pek-khao-d1.corp.ad.wrs.com>
+	Thu, 20 Feb 2014 07:08:14 -0500
+In-Reply-To: <20140220112248.GC32456@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hao <haokexin@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Olof Johansson <olof@lixom.net>, John Stultz <john.stultz@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Thu, 20 Feb 2014 18:12:40 +0800, Kevin Hao <haokexin@gmail.com> wrote:
-> On Thu, Feb 20, 2014 at 02:09:08PM +0530, Sachin Kamat wrote:
-> > Hi Grant,
-> > 
-> > I observe the following boot failure with today's (next-20140220) linux-next
-> > tree on Exynos based boards with the default exynos_defconfig.
+On Thursday 20 February 2014 11:22:48 Catalin Marinas wrote:
 > 
-> Does this help?
+> I'm fine with this. Do we still need something for ARMv8 server
+> platforms like ARCH_ARM_SBSA? The only advantage would be to make it
+> easier for mobile targeted kernel builds to disable server features but
+> I'm not sure there are so many such features, people can trim the
+> .config manually.
 
-I've merged this in. I could get my unicore test platform to fail to
-boot by turning on lock debugging. I'll leave that option on from now
-one.
+I think in particular for SBSA compliant platforms we should not
+have per-platform options at all the way we do for embedded,
+as they will be much more homogenous.
 
-I've pushed this out to the following branch. Please test and report. It
-will also be picked up by linux-next tomorrow.
-
-git://git.secretlab.ca/git/linux devicetree/merge
-
+> Two additional points:
 > 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 8a27fc907ab6..9cc893530b9a 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -381,12 +381,16 @@ static int __of_device_is_compatible(const struct device_node *device,
->  
->  	/* Compatible match has highest priority */
->  	if (compat && compat[0]) {
-> -		of_property_for_each_string(device, "compatible", prop, cp) {
-> +		prop = __of_find_property(device, "compatible", NULL);
-> +		if (!prop)
-> +			return 0;
+> 1. Single arm64 defconfig file covering everything
+> 2. Modules rather than built-in by default where possible (especially
+>    for server platforms)
 
-The above 2 lines are unnecessary. of_prop_next_string() will return
-NULL if prop is NULL.
++1
 
-g.
-
-> +
-> +		for (cp = of_prop_next_string(prop, NULL); cp;
-> +				cp = of_prop_next_string(prop, cp), index++) {
->  			if (of_compat_cmp(cp, compat, strlen(compat)) == 0) {
->  				score = INT_MAX/2 - (index << 2);
->  				break;
->  			}
-> -			index++;
->  		}
->  		if (!score)
->  			return 0;
-> 
-> 
-> Thanks,
-> Kevin
+	Arnd
