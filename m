@@ -1,71 +1,312 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
-Date: Thu, 20 Feb 2014 09:44:11 +0530
-Message-ID: <CAK9yfHy7YHDLCfUGA-ua4iLzK2PMotVZvC=51t-bMkVZVBQFaA@mail.gmail.com>
-References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org>
-	<5304A779.1060702@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH 1/1] ARM: EXYNOS: Map SYSRAM address through DT
+Date: Thu, 20 Feb 2014 11:35:08 +0530
+Message-ID: <1392876308-4748-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:47738 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753516AbaBTEOM (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:46436 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751261AbaBTGLH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Feb 2014 23:14:12 -0500
-Received: by mail-oa0-f41.google.com with SMTP id o6so1182473oag.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2014 20:14:11 -0800 (PST)
-In-Reply-To: <5304A779.1060702@samsung.com>
+	Thu, 20 Feb 2014 01:11:07 -0500
+Received: by mail-pd0-f181.google.com with SMTP id y10so1384381pdj.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2014 22:11:06 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
 
-Hi Tomasz,
+Instead of hardcoding the SYSRAM details for each SoC,
+pass this information through device tree (DT) and make
+the code SoC agnostic.
 
-On 19 February 2014 18:15, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Sachin,
->
-> [adding linux-arm-kernel ML to CC list]
->
->
-> On 19.02.2014 12:34, Sachin Kamat wrote:
->>
->> To avoid modifying the kernel every time a new SoC variant
->> comes out.
-<snip>
->
-> Since all Exynos chips can be easily recognized using dedicated chip ID
-> register, I wonder whether we really need to maintain two distinct board
-> files for Exynos 4 and 5 series, especially when both of them are doing
-> mostly the same set up, which can be simply generalized to cover all the
-> cases.
->
-> Instead of adding just another level of artificially fine grained compatible
-> strings, I'd rather suggest merging both board files together and adding a
-> single compatible string identifying all SoCs that can be further
-> differentiated by using hardware chip ID register.
->
-> What do you think?
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Based on top of my earlier patch
+"ARM: EXYNOS: Consolidate CPU init code" at
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/26560
+---
+ .../devicetree/bindings/arm/samsung-boards.txt     |   11 +++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |    5 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |   10 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   10 ++
+ arch/arm/boot/dts/exynos5.dtsi                     |    5 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |    5 +
+ arch/arm/mach-exynos/common.c                      |  104 ++++++++------------
+ arch/arm/mach-exynos/include/mach/map.h            |    7 --
+ 8 files changed, 86 insertions(+), 71 deletions(-)
 
-I agree with your idea of merging both the files as there is very little that is
-different for now. However I am not really sure if having a single compatible
-string for all SoCs would be good. What is achieved through compatible string
-can very well be done using chip ID too. But wouldn't we need to maintain some
-unique identity for the SoCs in human readable form at the DT level?
-In the absence
-of any other opinion, can probably experiment with this and see how it
-takes shape.
-
-
-> P.S. Please always keep respective subsystem/arch level MLs on CC list, in
-> this case linux-arm-kernel. The linux-samsung-soc ML is just a convenience
-> tool to group all threads about Samsung SoCs, not a way to bypass respective
-> subsystem MLs.
-
-Nothing to disagree. A valid point at large, but for every trivial or
-exynos specific
-change, including top level MLs would probably amount to spamming :)
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung-boards.txt
+index 2168ed31e1b0..f79710eb7e79 100644
+--- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
+@@ -7,6 +7,17 @@ Required root node properties:
+         (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
+         (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
+ 
++    - sysram node, specifying the type (secure or non-secure) of SYSRAM
++	- compatible: following types are supported
++		"samsung,exynos4210-sysram" : Secure SYSRAM
++		"samsung,exynos4210-sysram-ns" : Non-secure SYSRAM
++	- reg: address of SYSRAM bank
++
++	sysram@02020000 {
++		compatible = "samsung,exynos4210-sysram";
++		reg = <0x02020000 0x1000>;
++	};
++
+ Optional:
+     - firmware node, specifying presence and type of secure firmware:
+         - compatible: only "samsung,secure-firmware" is currently supported
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index d2e3f5f5916d..3ca3fb6aa5f4 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -28,6 +28,11 @@
+ 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
+ 	};
+ 
++	sysram@02020000 {
++		compatible = "samsung,exynos4210-sysram";
++		reg = <0x02025000 0x1000>;
++	};
++
+ 	mct@10050000 {
+ 		compatible = "none";
+ 	};
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 48ecd7a755ab..7f02c029ba68 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -31,6 +31,16 @@
+ 		pinctrl2 = &pinctrl_2;
+ 	};
+ 
++	sysram@02020000 {
++		compatible = "samsung,exynos4210-sysram";
++		reg = <0x02020000 0x1000>;
++	};
++
++	sysram-ns@0203F000 {
++		compatible = "samsung,exynos4210-sysram-ns";
++		reg = <0x0203F000 0x1000>;
++	};
++
+ 	pd_lcd1: lcd1-power-domain@10023CA0 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10023CA0 0x20>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 5c412aa14738..05006cab698b 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -31,6 +31,16 @@
+ 		mshc0 = &mshc_0;
+ 	};
+ 
++	sysram@02020000 {
++		compatible = "samsung,exynos4210-sysram";
++		reg = <0x02020000 0x1000>;
++	};
++
++	sysram-ns@0204F000 {
++		compatible = "samsung,exynos4210-sysram-ns";
++		reg = <0x0204F000 0x1000>;
++	};
++
+ 	pd_isp: isp-power-domain@10023CA0 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10023CA0 0x20>;
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index 258dca441f36..b70a54ec7157 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -18,6 +18,11 @@
+ / {
+ 	interrupt-parent = <&gic>;
+ 
++	sysram@02020000 {
++		compatible = "samsung,exynos4210-sysram";
++		reg = <0x02020000 0x1000>;
++	};
++
+ 	chipid@10000000 {
+ 		compatible = "samsung,exynos4210-chipid";
+ 		reg = <0x10000000 0x100>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index b7dec41e32af..3ecdbd8e2b19 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -70,6 +70,11 @@
+ 		};
+ 	};
+ 
++	sysram-ns@0204F000 {
++		compatible = "samsung,exynos4210-sysram-ns";
++		reg = <0x0204F000 0x1000>;
++	};
++
+ 	pd_gsc: gsc-power-domain@10044000 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044000 0x20>;
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 02d0aaa7af59..6a16f4659ec7 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -131,51 +131,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+ 	},
+ };
+ 
+-static struct map_desc exynos4_iodesc0[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM0),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos4_iodesc1[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM1),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos4210_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+-		.pfn		= __phys_to_pfn(EXYNOS4210_PA_SYSRAM_NS),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos4x12_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+-		.pfn		= __phys_to_pfn(EXYNOS4x12_PA_SYSRAM_NS),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos5250_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+-		.pfn		= __phys_to_pfn(EXYNOS5250_PA_SYSRAM_NS),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+ static struct map_desc exynos5_iodesc[] __initdata = {
+ 	{
+ 		.virtual	= (unsigned long)S3C_VA_SYS,
+@@ -198,11 +153,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+-		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSRAM),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+ 		.virtual	= (unsigned long)S5P_VA_CMU,
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_CMU),
+ 		.length		= 144 * SZ_1K,
+@@ -292,6 +242,44 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 	return 1;
+ }
+ 
++struct __sysram_desc {
++	char name[32];
++	unsigned long addr;
++};
++
++static struct __sysram_desc sysram_desc[] __initdata = {
++	{
++		.name = "samsung,exynos4210-sysram",
++		.addr = (unsigned long)S5P_VA_SYSRAM,
++	}, {
++		.name = "samsung,exynos4210-sysram-ns",
++		.addr = (unsigned long)S5P_VA_SYSRAM_NS,
++	},
++};
++
++static int __init exynos_fdt_map_sysram(unsigned long node, const char *uname,
++					int depth, void *data)
++{
++	struct map_desc iodesc;
++	__be32 *reg;
++	unsigned long len;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(sysram_desc); i++) {
++		if (of_flat_dt_is_compatible(node, sysram_desc[i].name)) {
++			reg = of_get_flat_dt_prop(node, "reg", &len);
++			if (!reg || len != (sizeof(unsigned long) * 2))
++				return -ENODEV;
++			iodesc.virtual = sysram_desc[i].addr;
++			iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
++			iodesc.length = be32_to_cpu(reg[1]);
++			iodesc.type = MT_DEVICE;
++			iotable_init(&iodesc, 1);
++		}
++	}
++	return 0;
++}
++
+ /*
+  * exynos_map_io
+  *
+@@ -308,6 +296,8 @@ void __init exynos_init_io(void)
+ 	s5p_init_cpu(S5P_VA_CHIPID);
+ 
+ 	exynos_map_io();
++
++	of_scan_flat_dt(exynos_fdt_map_sysram, NULL);
+ }
+ 
+ static void __init exynos_map_io(void)
+@@ -317,20 +307,6 @@ static void __init exynos_map_io(void)
+ 
+ 	if (soc_is_exynos5250() || soc_is_exynos5420())
+ 		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+-
+-	if (soc_is_exynos4210()) {
+-		if (samsung_rev() == EXYNOS4210_REV_0)
+-			iotable_init(exynos4_iodesc0,
+-						ARRAY_SIZE(exynos4_iodesc0));
+-		else
+-			iotable_init(exynos4_iodesc1,
+-						ARRAY_SIZE(exynos4_iodesc1));
+-		iotable_init(exynos4210_iodesc, ARRAY_SIZE(exynos4210_iodesc));
+-	}
+-	if (soc_is_exynos4212() || soc_is_exynos4412())
+-		iotable_init(exynos4x12_iodesc, ARRAY_SIZE(exynos4x12_iodesc));
+-	if (soc_is_exynos5250())
+-		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
+ }
+ 
+ struct bus_type exynos_subsys = {
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 7b046b59d9ec..548269a60634 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -23,13 +23,6 @@
+ 
+ #include <plat/map-s5p.h>
+ 
+-#define EXYNOS4_PA_SYSRAM0		0x02025000
+-#define EXYNOS4_PA_SYSRAM1		0x02020000
+-#define EXYNOS5_PA_SYSRAM		0x02020000
+-#define EXYNOS4210_PA_SYSRAM_NS		0x0203F000
+-#define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
+-#define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
+-
+ #define EXYNOS_PA_CHIPID		0x10000000
+ 
+ #define EXYNOS4_PA_SYSCON		0x10010000
 -- 
-With warm regards,
-Sachin
+1.7.9.5
