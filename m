@@ -1,50 +1,84 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC
- family
-Date: Thu, 20 Feb 2014 18:58:05 +0000
-Message-ID: <20140220185805.GI7651@arm.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
- <5302B306.8090503@samsung.com>
- <CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
- <6032891.ndY8FikAMY@wuerfel>
- <CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
- <CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
- <CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
- <CAOesGMjSjzZ4iX3NVA6eS4LHJF2MQQ=KJpNgKWikJb6YkQxNpQ@mail.gmail.com>
- <20140220112248.GC32456@localhost>
- <CAOesGMhfhdqqb4hJ0hC5HbSWWMQc0FDaaZYO0rZ1cdFtuRgdig@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 0/6] mmc: sdhci-s3c: Fix base clock source management
+Date: Thu, 20 Feb 2014 20:26:11 +0100
+Message-ID: <530656D3.7010709@gmail.com>
+References: <1389476346-20396-1-git-send-email-tomasz.figa@gmail.com> <52F4AE40.9050907@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:59097 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754166AbaBTS6R (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Feb 2014 13:58:17 -0500
-Content-Disposition: inline
-In-Reply-To: <CAOesGMhfhdqqb4hJ0hC5HbSWWMQc0FDaaZYO0rZ1cdFtuRgdig@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <52F4AE40.9050907@gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Thu, Feb 20, 2014 at 05:09:59PM +0000, Olof Johansson wrote:
-> On Thu, Feb 20, 2014 at 3:22 AM, Catalin Marinas
-> > Two additional points:
-> >
-> > 1. Single arm64 defconfig file covering everything
-> > 2. Modules rather than built-in by default where possible (especially
-> >    for server platforms)
-> 
-> Sounds good to me. Are you also willing to pick up one defconfig per
-> vendor (but not more)? I think it's been useful to have those on arm,
-> even on multiplatform kernels. We used them on powerpc as well, where
-> we had a two-layer approach (ppc64_defconfig and per-platform configs,
-> pseries/iseries/pasemi/g5/cell).
+Hi Chris,
 
-Initially I would keep a single defconfig with everything just to get
-wider coverage of single Image. Later on, if just deselecting config
-entries doesn't work, we can revisit per-vendor defconfigs.
+On 07.02.2014 10:58, Tomasz Figa wrote:
+> Hi Chris,
+>
+> On 11.01.2014 22:39, Tomasz Figa wrote:
+>> On platforms prior to Exynos the SDHCI block used internal clock
+>> divider controlled by SELFREQ field of CLKCON register to divide base
+>> clock selected from several external clocks fed to the block by
+>> SELBASECLK bitfield of CONTROL2 register. Depending on wanted clock
+>> frequency, different external clock may be the best choice and so
+>> the driver needs to switch the SELBASECLK mux on the fly.
+>>
+>> However the selection logic has been broken for quite some time leaving
+>> the controller using always clock 0, which is not always the right
+>> source and leading to suboptimal performance of the SDHCI block on
+>> affected platforms.
+>>
+>> This series intends to fix the problems mentioned above and also clean-up
+>> clock management code slightly.
+>>
+>> Tested on S3C6410-based Mini6410 board, with following performance
+>> figures:
+>>
+>> * Before this series (133 MHz HCLK always selected, leading to at most
+>>    33 MHz card clock):
+>>
+>> root@tiny6410:~# hdparm -t /dev/mmcblk0
+>>
+>> /dev/mmcblk0:
+>>   Timing buffered disk reads:  42 MB in  3.10 seconds =  13.54 MB/sec
+>> root@tiny6410:~# hdparm -t /dev/mmcblk0
+>>
+>> /dev/mmcblk0:
+>>   Timing buffered disk reads:  44 MB in  3.11 seconds =  14.14 MB/sec
+>> root@tiny6410:~#
+>>
+>> * After this series (48 MHz EPLL clock selected, leading to 48 MHz card
+>>    clock):
+>>
+>> root@tiny6410:~# hdparm -t /dev/mmcblk0
+>>
+>> /dev/mmcblk0:
+>>   Timing buffered disk reads:  56 MB in  3.04 seconds =  18.41 MB/sec
+>> root@tiny6410:~# hdparm -t /dev/mmcblk0
+>>
+>> /dev/mmcblk0:
+>>   Timing buffered disk reads:  60 MB in  3.06 seconds =  19.63 MB/sec
+>> root@tiny6410:~#
+>>
+>> Tomasz Figa (6):
+>>    mmc: sdhci-s3c: Use shifts to divide by powers of two
+>>    mmc: sdhci-s3c: Cache bus clock rates
+>>    mmc: sdhci-s3c: Use correct condition to check for clock presence
+>>    mmc: sdhci-s3c: Simplify min/max clock calculation
+>>    mmc: sdhci-s3c: Fix handling of bus clock switching
+>>    mmc: sdhci-s3c: Do not allow frequencies higher than requested
+>>
+>>   drivers/mmc/host/sdhci-s3c.c | 170
+>> ++++++++++++++++++++-----------------------
+>>   1 file changed, 77 insertions(+), 93 deletions(-)
+>>
+>
+> What do you think about this series?
 
--- 
-Catalin
+Could you take this series for 3.15?
+
+Best regards,
+Tomasz
