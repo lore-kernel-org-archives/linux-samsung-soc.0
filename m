@@ -1,73 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
-Date: Thu, 20 Feb 2014 18:48:25 +0100
-Message-ID: <16785833.BhsvfRuRRo@wuerfel>
-References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org> <201402201800.49425.arnd@arndb.de> <53063C9F.4060307@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] V4L: s5k6a3: Add DT binding documentation
+Date: Thu, 20 Feb 2014 19:35:02 +0100
+Message-ID: <53064AD6.40701@samsung.com>
+References: <1387747620-24676-1-git-send-email-s.nawrocki@samsung.com>
+ <53037F8F.3050302@samsung.com>
+ <20140219174726.GE25079@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:55817 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752341AbaBTRsl (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:27257 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754439AbaBTSfJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Feb 2014 12:48:41 -0500
-In-Reply-To: <53063C9F.4060307@samsung.com>
+	Thu, 20 Feb 2014 13:35:09 -0500
+In-reply-to: <20140219174726.GE25079@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>
 
-On Thursday 20 February 2014 18:34:23 Tomasz Figa wrote:
-> On 20.02.2014 18:00, Arnd Bergmann wrote:
-> >> Of course nothing stops you from retaining more specific compatible
-> >> strings. In fact, this is probably the most appropriate solution,
-> >> because in future you might find out that certain SoCs need some special
-> >> differentiation, e.g. same ID value on two SoCs.
-> >>
-> >> So, to apply this to our case, our Exynos 5250 based Arndale board would
-> >> be changed from
-> >>
-> >> compatible = "insignal,arndale", "samsung,exynos5260";
-> >>
-> >> to
-> >>
-> >> compatible = "insignal,arndale", "samsung,exynos5260", "samsung,exynos";
-> >
-> > Right, this would make sense.
-> >
-> >> Now, the board file will be able to match simply by "samsung,exynos"
-> >> compatible string and SoC-specific code in mach-exynos (hopefully none
-> >> after it gets cleaned up fully) will use soc_is_exynos*() macros (what
-> >> AFAIK it is already doing at the moment).
-> >
-> > On principle, I would not take things out of the match list, if that
-> > would break booting with old DT file that don't list "samsung,exynos"
-> > as compatible. But for new SoCs that would work.
+On 19/02/14 18:47, Mark Rutland wrote:
+> On Tue, Feb 18, 2014 at 03:43:11PM +0000, Sylwester Nawrocki wrote:
+>> > On 22/12/13 22:27, Sylwester Nawrocki wrote:
+>>> > > This patch adds DT binding documentation for the Samsung S5K6A3(YX)
+>>> > > raw image sensor.
+>>> > > 
+>>> > > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> > > ---
+>>> > > This patch adds missing documentation [1] for the "samsung,s5k6a3"
+>>> > > compatible. Rob, can you please merge it through your tree if it 
+>>> > > looks OK ?
+>> > 
+>> > Anyone cares to Ack this patch so it can be merged through the media
+>> > tree ?
+>
+> It looks fine to me:
 > 
-> My proposal was about simply adding a fully generic string, without 
-> removing the specific ones. For already supported SoCs this is pretty 
-> obvious, as existing DTBs would not have this generic string listed. But 
-> the specific strings should be also present in DTSes of new SoCs, even 
-> if not recognized by the kernel, to make sure that in future any 
-> SoC-specific quirks could be easily handled.
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-Yes, that's ideal.
+Thanks for the review. I'm going to post a short series including this
+patch, I would appreciate your (or other DT binding maintainer) review
+of the DT binding part, so this stuff can finally be pushed upstream.
 
-> > Using soc_is_exynos*() too much of course also isn't good. A lot of
-> > the things tested for should probably be checked from individual DT
-> > properties, but again we have to find the right balance. I wouldn't
-> > mind getting rid of the soc_is_exynos*() macros completely, because
-> > a) we can't use them in device drivers
-> > b) all platform code is supposed to be in drivers
-> > c) both rules are enforced for arm64
-> 
-> I fully agree. As I said, after cleaning up mach-exynos/ there should be 
-> no more code left using soc_is_*() macros. Ideally, the whole 
-> mach-exynos/ should collapse into a single, trivial file, with 
-> everything done in dedicated drivers.
-
-Right.
-
-
-	Arnd
+Cheers,
+Sylwester
