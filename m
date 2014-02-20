@@ -1,121 +1,79 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
-Date: Thu, 20 Feb 2014 18:00:49 +0100
-Message-ID: <201402201800.49425.arnd@arndb.de>
-References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHy7YHDLCfUGA-ua4iLzK2PMotVZvC=51t-bMkVZVBQFaA@mail.gmail.com> <5306168F.1080400@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
+Date: Thu, 20 Feb 2014 09:09:59 -0800
+Message-ID: <CAOesGMhfhdqqb4hJ0hC5HbSWWMQc0FDaaZYO0rZ1cdFtuRgdig@mail.gmail.com>
+References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
+	<5302B306.8090503@samsung.com>
+	<CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
+	<6032891.ndY8FikAMY@wuerfel>
+	<CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
+	<CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
+	<CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
+	<CAOesGMjSjzZ4iX3NVA6eS4LHJF2MQQ=KJpNgKWikJb6YkQxNpQ@mail.gmail.com>
+	<20140220112248.GC32456@localhost>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:62703 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755615AbaBTRB3 (ORCPT
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:34754 "EHLO
+	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754315AbaBTRKA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Feb 2014 12:01:29 -0500
-In-Reply-To: <5306168F.1080400@samsung.com>
+	Thu, 20 Feb 2014 12:10:00 -0500
+Received: by mail-qc0-f176.google.com with SMTP id e16so3571946qcx.21
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2014 09:09:59 -0800 (PST)
+In-Reply-To: <20140220112248.GC32456@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Thursday 20 February 2014, Tomasz Figa wrote:
-> On 20.02.2014 05:14, Sachin Kamat wrote:
-> > Hi Tomasz,
-> >
-> > On 19 February 2014 18:15, Tomasz Figa <t.figa@samsung.com> wrote:
-> >> Hi Sachin,
-> >>
-> >> [adding linux-arm-kernel ML to CC list]
-> >>
-> >>
-> >> On 19.02.2014 12:34, Sachin Kamat wrote:
-> >>>
-> >>> To avoid modifying the kernel every time a new SoC variant
-> >>> comes out.
-> > <snip>
-> >>
-> >> Since all Exynos chips can be easily recognized using dedicated chip ID
-> >> register, I wonder whether we really need to maintain two distinct board
-> >> files for Exynos 4 and 5 series, especially when both of them are doing
-> >> mostly the same set up, which can be simply generalized to cover all the
-> >> cases.
-> >>
-> >> Instead of adding just another level of artificially fine grained compatible
-> >> strings, I'd rather suggest merging both board files together and adding a
-> >> single compatible string identifying all SoCs that can be further
-> >> differentiated by using hardware chip ID register.
-> >>
-> >> What do you think?
-> >
-> > I agree with your idea of merging both the files as there is very little that is
-> > different for now. However I am not really sure if having a single compatible
-> > string for all SoCs would be good. What is achieved through compatible string
-> > can very well be done using chip ID too. But wouldn't we need to maintain some
-> > unique identity for the SoCs in human readable form at the DT level?
-> 
-> Well, my understanding of Device Tree is that it should provide the 
-> information that can't be automatically retrieved from the hardware, not 
-> more.
-> 
-> If you have a PCI or USB bus with enumerable devices, you don't list 
-> them in DT, but instead limit the description to just the host 
-> controller, if it can't be enumerated.
-> 
-> Same goes for compatible string. My interpretation of it is that if you 
-> can identify the hardware by some automatic means, e.g. querying some ID 
-> register, then the compatible should be specific enough to identify the 
-> class of devices with the same method of querying such register, with no 
-> need for any additional redundant data in DT.
+On Thu, Feb 20, 2014 at 3:22 AM, Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+> On Thu, Feb 20, 2014 at 09:03:30AM +0000, Olof Johansson wrote:
+>> So, after giving this some more thought (and getting my hands dirty in
+>> some of this code), I think I'm going to change my mind on this. For
+>> mobile platforms I think it might make sense to bring over the
+>> toplevel platform Kconfig from arch/arm, to simplify dependencies
+>> without tearing up the driver subtree with churn like this.
+>>
+>> This, of course, only holds true for v8 mobile platforms. Samsung
+>> isn't saying if GH7 is a server platform and not, and they don't have
+>> to tell us. But I think we should consider only enabling and bringing
+>> over the mobile ones (and ideally try to avoid even that, but it might
+>> make sense to do some of them at least initially -- it does provide
+>> some convenient ways to enable larger subsets of default drivers per
+>> platform/vendor family).
+>>
+>> I.e. I'd be OK with an
+>> ARCH_EXYNOS/ARCH_TEGRA/ARCH_IMX/ARCH_<whatever>, but I don't think we
+>> should add more finegrained options than that globally on ARM64, at
+>> least not until truly proven to be needed. We're trying to push back
+>> against new per-SoC Kconfig entries on 32-bit as well right now.
+>
+> I'm fine with this. Do we still need something for ARMv8 server
+> platforms like ARCH_ARM_SBSA? The only advantage would be to make it
+> easier for mobile targeted kernel builds to disable server features but
+> I'm not sure there are so many such features, people can trim the
+> .config manually.
 
-There are some limitations to that, and you also have to apply common
-sense and taste. In theory you could argue that a compatible string can
-identify a board uniquely the same way that a board number did, and
-everything else is implied by that. Clearly that's not what we want.
-On the other end of the scale, you could eliminate a lot of compatible
-strings if you describe each register or each bit in some cases in
-DT properties, and that would be just as wrong.
+I don't think there's all that much that's unique to SBSA for a
+Kconfig entry. If anything it could be useful to describe dependencies
+(i.e. you very likely don't want to turn off the standardized UART
+driver, etc). But doing that through Kconfig is a bit clumsy, we might
+be better off doing it through example defconfigs. I'm not sure we
+want to do it through selects.
 
-> Of course nothing stops you from retaining more specific compatible 
-> strings. In fact, this is probably the most appropriate solution, 
-> because in future you might find out that certain SoCs need some special 
-> differentiation, e.g. same ID value on two SoCs.
-> 
-> So, to apply this to our case, our Exynos 5250 based Arndale board would 
-> be changed from
-> 
-> compatible = "insignal,arndale", "samsung,exynos5260";
-> 
-> to
-> 
-> compatible = "insignal,arndale", "samsung,exynos5260", "samsung,exynos";
+> Two additional points:
+>
+> 1. Single arm64 defconfig file covering everything
+> 2. Modules rather than built-in by default where possible (especially
+>    for server platforms)
 
-Right, this would make sense.
+Sounds good to me. Are you also willing to pick up one defconfig per
+vendor (but not more)? I think it's been useful to have those on arm,
+even on multiplatform kernels. We used them on powerpc as well, where
+we had a two-layer approach (ppc64_defconfig and per-platform configs,
+pseries/iseries/pasemi/g5/cell).
 
-> Now, the board file will be able to match simply by "samsung,exynos" 
-> compatible string and SoC-specific code in mach-exynos (hopefully none 
-> after it gets cleaned up fully) will use soc_is_exynos*() macros (what 
-> AFAIK it is already doing at the moment).
 
-On principle, I would not take things out of the match list, if that
-would break booting with old DT file that don't list "samsung,exynos"
-as compatible. But for new SoCs that would work.
-
-Using soc_is_exynos*() too much of course also isn't good. A lot of
-the things tested for should probably be checked from individual DT
-properties, but again we have to find the right balance. I wouldn't
-mind getting rid of the soc_is_exynos*() macros completely, because
-a) we can't use them in device drivers
-b) all platform code is supposed to be in drivers
-c) both rules are enforced for arm64
-
-> Another benefit of this would be increased safety, because you are 
-> reading SoC type from actual hardware, not from externally supplied 
-> data. In conjunction with the more specific compatible string (e.g. 
-> "samsung,exynos5260") some validation could be performed at boot-up time 
-> to make sure that DT for correct SoC is used.
-
-I don't think that's necessary. If you get that part wrong, normally
-all your hopes are lost with the rest of the information in DT. ;-)
-
-	Arnd
+-Olof
