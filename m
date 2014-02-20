@@ -1,312 +1,134 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: EXYNOS: Map SYSRAM address through DT
-Date: Thu, 20 Feb 2014 11:35:08 +0530
-Message-ID: <1392876308-4748-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:46436 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751261AbaBTGLH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Feb 2014 01:11:07 -0500
-Received: by mail-pd0-f181.google.com with SMTP id y10so1384381pdj.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2014 22:11:06 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 0/4] Bugfix for of_match_node ordering
+Date: Thu, 20 Feb 2014 14:09:08 +0530
+Message-ID: <CAK9yfHwwmZkFMRvxsxjBAfUbVXU3V+iPFDZO=DwQsFvJ3NQyKA@mail.gmail.com>
+References: <1392819290-1044-1-git-send-email-grant.likely@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1392819290-1044-1-git-send-email-grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hao <haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
 
-Instead of hardcoding the SYSRAM details for each SoC,
-pass this information through device tree (DT) and make
-the code SoC agnostic.
+Hi Grant,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Based on top of my earlier patch
-"ARM: EXYNOS: Consolidate CPU init code" at
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/26560
----
- .../devicetree/bindings/arm/samsung-boards.txt     |   11 +++
- arch/arm/boot/dts/exynos4210-universal_c210.dts    |    5 +
- arch/arm/boot/dts/exynos4210.dtsi                  |   10 ++
- arch/arm/boot/dts/exynos4x12.dtsi                  |   10 ++
- arch/arm/boot/dts/exynos5.dtsi                     |    5 +
- arch/arm/boot/dts/exynos5250.dtsi                  |    5 +
- arch/arm/mach-exynos/common.c                      |  104 ++++++++------------
- arch/arm/mach-exynos/include/mach/map.h            |    7 --
- 8 files changed, 86 insertions(+), 71 deletions(-)
+I observe the following boot failure with today's (next-20140220) linux-next
+tree on Exynos based boards with the default exynos_defconfig.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-index 2168ed31e1b0..f79710eb7e79 100644
---- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-@@ -7,6 +7,17 @@ Required root node properties:
-         (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
-         (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
- 
-+    - sysram node, specifying the type (secure or non-secure) of SYSRAM
-+	- compatible: following types are supported
-+		"samsung,exynos4210-sysram" : Secure SYSRAM
-+		"samsung,exynos4210-sysram-ns" : Non-secure SYSRAM
-+	- reg: address of SYSRAM bank
-+
-+	sysram@02020000 {
-+		compatible = "samsung,exynos4210-sysram";
-+		reg = <0x02020000 0x1000>;
-+	};
-+
- Optional:
-     - firmware node, specifying presence and type of secure firmware:
-         - compatible: only "samsung,secure-firmware" is currently supported
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d2e3f5f5916d..3ca3fb6aa5f4 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -28,6 +28,11 @@
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
- 	};
- 
-+	sysram@02020000 {
-+		compatible = "samsung,exynos4210-sysram";
-+		reg = <0x02025000 0x1000>;
-+	};
-+
- 	mct@10050000 {
- 		compatible = "none";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 48ecd7a755ab..7f02c029ba68 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -31,6 +31,16 @@
- 		pinctrl2 = &pinctrl_2;
- 	};
- 
-+	sysram@02020000 {
-+		compatible = "samsung,exynos4210-sysram";
-+		reg = <0x02020000 0x1000>;
-+	};
-+
-+	sysram-ns@0203F000 {
-+		compatible = "samsung,exynos4210-sysram-ns";
-+		reg = <0x0203F000 0x1000>;
-+	};
-+
- 	pd_lcd1: lcd1-power-domain@10023CA0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023CA0 0x20>;
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 5c412aa14738..05006cab698b 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -31,6 +31,16 @@
- 		mshc0 = &mshc_0;
- 	};
- 
-+	sysram@02020000 {
-+		compatible = "samsung,exynos4210-sysram";
-+		reg = <0x02020000 0x1000>;
-+	};
-+
-+	sysram-ns@0204F000 {
-+		compatible = "samsung,exynos4210-sysram-ns";
-+		reg = <0x0204F000 0x1000>;
-+	};
-+
- 	pd_isp: isp-power-domain@10023CA0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023CA0 0x20>;
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 258dca441f36..b70a54ec7157 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -18,6 +18,11 @@
- / {
- 	interrupt-parent = <&gic>;
- 
-+	sysram@02020000 {
-+		compatible = "samsung,exynos4210-sysram";
-+		reg = <0x02020000 0x1000>;
-+	};
-+
- 	chipid@10000000 {
- 		compatible = "samsung,exynos4210-chipid";
- 		reg = <0x10000000 0x100>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index b7dec41e32af..3ecdbd8e2b19 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -70,6 +70,11 @@
- 		};
- 	};
- 
-+	sysram-ns@0204F000 {
-+		compatible = "samsung,exynos4210-sysram-ns";
-+		reg = <0x0204F000 0x1000>;
-+	};
-+
- 	pd_gsc: gsc-power-domain@10044000 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044000 0x20>;
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 02d0aaa7af59..6a16f4659ec7 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -131,51 +131,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
- 	},
- };
- 
--static struct map_desc exynos4_iodesc0[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_SYSRAM,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM0),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
--static struct map_desc exynos4_iodesc1[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_SYSRAM,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM1),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
--static struct map_desc exynos4210_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
--		.pfn		= __phys_to_pfn(EXYNOS4210_PA_SYSRAM_NS),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
--static struct map_desc exynos4x12_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
--		.pfn		= __phys_to_pfn(EXYNOS4x12_PA_SYSRAM_NS),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
--static struct map_desc exynos5250_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
--		.pfn		= __phys_to_pfn(EXYNOS5250_PA_SYSRAM_NS),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
- static struct map_desc exynos5_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S3C_VA_SYS,
-@@ -198,11 +153,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S5P_VA_SYSRAM,
--		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSRAM),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S5P_VA_CMU,
- 		.pfn		= __phys_to_pfn(EXYNOS5_PA_CMU),
- 		.length		= 144 * SZ_1K,
-@@ -292,6 +242,44 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
- 	return 1;
- }
- 
-+struct __sysram_desc {
-+	char name[32];
-+	unsigned long addr;
-+};
-+
-+static struct __sysram_desc sysram_desc[] __initdata = {
-+	{
-+		.name = "samsung,exynos4210-sysram",
-+		.addr = (unsigned long)S5P_VA_SYSRAM,
-+	}, {
-+		.name = "samsung,exynos4210-sysram-ns",
-+		.addr = (unsigned long)S5P_VA_SYSRAM_NS,
-+	},
-+};
-+
-+static int __init exynos_fdt_map_sysram(unsigned long node, const char *uname,
-+					int depth, void *data)
-+{
-+	struct map_desc iodesc;
-+	__be32 *reg;
-+	unsigned long len;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(sysram_desc); i++) {
-+		if (of_flat_dt_is_compatible(node, sysram_desc[i].name)) {
-+			reg = of_get_flat_dt_prop(node, "reg", &len);
-+			if (!reg || len != (sizeof(unsigned long) * 2))
-+				return -ENODEV;
-+			iodesc.virtual = sysram_desc[i].addr;
-+			iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
-+			iodesc.length = be32_to_cpu(reg[1]);
-+			iodesc.type = MT_DEVICE;
-+			iotable_init(&iodesc, 1);
-+		}
-+	}
-+	return 0;
-+}
-+
- /*
-  * exynos_map_io
-  *
-@@ -308,6 +296,8 @@ void __init exynos_init_io(void)
- 	s5p_init_cpu(S5P_VA_CHIPID);
- 
- 	exynos_map_io();
-+
-+	of_scan_flat_dt(exynos_fdt_map_sysram, NULL);
- }
- 
- static void __init exynos_map_io(void)
-@@ -317,20 +307,6 @@ static void __init exynos_map_io(void)
- 
- 	if (soc_is_exynos5250() || soc_is_exynos5420())
- 		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
--
--	if (soc_is_exynos4210()) {
--		if (samsung_rev() == EXYNOS4210_REV_0)
--			iotable_init(exynos4_iodesc0,
--						ARRAY_SIZE(exynos4_iodesc0));
--		else
--			iotable_init(exynos4_iodesc1,
--						ARRAY_SIZE(exynos4_iodesc1));
--		iotable_init(exynos4210_iodesc, ARRAY_SIZE(exynos4210_iodesc));
--	}
--	if (soc_is_exynos4212() || soc_is_exynos4412())
--		iotable_init(exynos4x12_iodesc, ARRAY_SIZE(exynos4x12_iodesc));
--	if (soc_is_exynos5250())
--		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
- }
- 
- struct bus_type exynos_subsys = {
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 7b046b59d9ec..548269a60634 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -23,13 +23,6 @@
- 
- #include <plat/map-s5p.h>
- 
--#define EXYNOS4_PA_SYSRAM0		0x02025000
--#define EXYNOS4_PA_SYSRAM1		0x02020000
--#define EXYNOS5_PA_SYSRAM		0x02020000
--#define EXYNOS4210_PA_SYSRAM_NS		0x0203F000
--#define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
--#define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
--
- #define EXYNOS_PA_CHIPID		0x10000000
- 
- #define EXYNOS4_PA_SYSCON		0x10010000
--- 
-1.7.9.5
+Uncompressing Linux... done, booting the kernel.
+[    0.000000] Booting Linux on physical CPU 0x900
+[    0.000000] Linux version 3.14.0-rc3-next-20140220 (sachin@linaro)
+(gcc version 4.8.2 20130805 (prerelease) (crosstool-NG linaro-1.
+13.1-4.8-2013.08 - Linaro GCC 2013.08) ) #1132 SMP PREEMPT Thu Feb 20
+13:49:27 IST 2014
+[    0.000000] CPU: ARMv7 Processor [412fc091] revision 1 (ARMv7), cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+instruction cache
+[    0.000000] Machine model: Insignal Origen evaluation board based
+on Exynos4210
+[    0.000000] bootconsole [earlycon0] enabled
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] CPU EXYNOS4210 (id 0x43210011)
+[    0.000000] On node 0 totalpages: 258048
+[    0.000000]   Normal zone: 1520 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 190464 pages, LIFO batch:31
+[    0.000000]   HighMem zone: 528 pages used for memmap
+[    0.000000]   HighMem zone: 67584 pages, LIFO batch:15
+[    0.000000] BUG: spinlock recursion on CPU#0, swapper/0
+[    0.000000]  lock: devtree_lock+0x0/0x10, .magic: dead4ead, .owner:
+swapper/0, .owner_cpu: 0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
+3.14.0-rc3-next-20140220 #1132
+[    0.000000] [<c0013e9c>] (unwind_backtrace) from [<c0011250>]
+(show_stack+0x10/0x14)
+[    0.000000] [<c0011250>] (show_stack) from [<c0386740>]
+(dump_stack+0x7c/0xbc)
+[    0.000000] [<c0386740>] (dump_stack) from [<c005501c>]
+(do_raw_spin_lock+0x188/0x18c)
+[    0.000000] [<c005501c>] (do_raw_spin_lock) from [<c038b614>]
+(_raw_spin_lock_irqsave+0x20/0x28)
+[    0.000000] [<c038b614>] (_raw_spin_lock_irqsave) from [<c02de37c>]
+(of_find_property+0x20/0x4c)
+[    0.000000] [<c02de37c>] (of_find_property) from [<c02df110>]
+(__of_device_is_compatible+0xb4/0x110)
+[    0.000000] [<c02df110>] (__of_device_is_compatible) from
+[<c02df22c>] (of_find_compatible_node+0x4c/0x7c)
+[    0.000000] [<c02df22c>] (of_find_compatible_node) from
+[<c04cedf4>] (exynos_firmware_init+0x18/0x7c)
+[    0.000000] [<c04cedf4>] (exynos_firmware_init) from [<c04caef0>]
+(setup_arch+0x860/0x898)
+[    0.000000] [<c04caef0>] (setup_arch) from [<c04c7820>]
+(start_kernel+0x80/0x3dc)
+[    0.000000] [<c04c7820>] (start_kernel) from [<40008074>] (0x40008074)
+[    0.000000] BUG: spinlock lockup suspected on CPU#0, swapper/0
+[    0.000000]  lock: devtree_lock+0x0/0x10, .magic: dead4ead, .owner:
+swapper/0, .owner_cpu: 0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
+3.14.0-rc3-next-20140220 #1132
+[    0.000000] [<c0013e9c>] (unwind_backtrace) from [<c0011250>]
+(show_stack+0x10/0x14)
+[    0.000000] [<c0011250>] (show_stack) from [<c0386740>]
+(dump_stack+0x7c/0xbc)
+[    0.000000] [<c0386740>] (dump_stack) from [<c0054fac>]
+(do_raw_spin_lock+0x118/0x18c)
+[    0.000000] [<c0054fac>] (do_raw_spin_lock) from [<c038b614>]
+(_raw_spin_lock_irqsave+0x20/0x28)
+[    0.000000] [<c038b614>] (_raw_spin_lock_irqsave) from [<c02de37c>]
+(of_find_property+0x20/0x4c)
+[    0.000000] [<c02de37c>] (of_find_property) from [<c02df110>]
+(__of_device_is_compatible+0xb4/0x110)
+[    0.000000] [<c02df110>] (__of_device_is_compatible) from
+[<c02df22c>] (of_find_compatible_node+0x4c/0x7c)
+[    0.000000] [<c02df22c>] (of_find_compatible_node) from
+[<c04cedf4>] (exynos_firmware_init+0x18/0x7c)
+[    0.000000] [<c04cedf4>] (exynos_firmware_init) from [<c04caef0>]
+(setup_arch+0x860/0x898)
+[    0.000000] [<c04caef0>] (setup_arch) from [<c04c7820>]
+(start_kernel+0x80/0x3dc)
+[    0.000000] [<c04c7820>] (start_kernel) from [<40008074>] (0x40008074)
+
+Regards,
+Sachin
+
+
+
+On 19 February 2014 19:44, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Hi all,
+>
+> I've taken Kevin's latest rework and done even more rework on it. :-) I
+> didn't quite like how it was looking so I rolled his scoring code
+> directly into __of_device_is_compatible() so that the function always
+> returns a score in a way that is still compatible with the existing
+> users (ie. non-zero == successful match). This eliminates the need for a
+> separate pscore argument and it also let me roll the type and name
+> checks into the same function. I'm a lot happier with it overall and it
+> makes for a slightly smaller number of lines of code changed. Please
+> take a look and give it a spin. This is basically a bug fix so I'll need
+> to push it out to Linus in the near future.
+>
+> Acks and Tested-bys would be particularly appreciated.
+>
+> Thanks,
+> g.
+>
+> Kevin Hao (2):
+>         Revert "of: search the best compatible match first in __of_match_node()"
+>         of: reimplement the matching method for __of_match_node()
+>
+> Grant Likely (2):
+>         of: Move testcase FDT data into drivers/of
+>         of: Add self test for of_match_node()
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
