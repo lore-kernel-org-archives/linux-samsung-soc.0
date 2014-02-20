@@ -1,115 +1,77 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] arm64: Add Kconfig option for Samsung GH7 SoC family
-Date: Thu, 20 Feb 2014 01:03:30 -0800
-Message-ID: <CAOesGMjSjzZ4iX3NVA6eS4LHJF2MQQ=KJpNgKWikJb6YkQxNpQ@mail.gmail.com>
-References: <1392100183-30930-1-git-send-email-kgene.kim@samsung.com>
-	<5302B306.8090503@samsung.com>
-	<CAOesGMhnUDcUL7hREV=EYEGr5YG-ZLL6v9NiGcrBr6477WfdyQ@mail.gmail.com>
-	<6032891.ndY8FikAMY@wuerfel>
-	<CALAqxLX6STNqUeVO2G18bm_HKabpoRxZTa3uK6i-JP97zEYVZg@mail.gmail.com>
-	<CAOesGMjLR3PGXeyJPAvGwam4yK97+vnDfq5MVutJz75aKPX8gw@mail.gmail.com>
-	<CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
+From: Kevin Hao <haokexin@gmail.com>
+Subject: Re: [PATCH v4 0/4] Bugfix for of_match_node ordering
+Date: Thu, 20 Feb 2014 18:12:40 +0800
+Message-ID: <20140220101240.GA3745@pek-khao-d1.corp.ad.wrs.com>
+References: <1392819290-1044-1-git-send-email-grant.likely@linaro.org>
+ <CAK9yfHwwmZkFMRvxsxjBAfUbVXU3V+iPFDZO=DwQsFvJ3NQyKA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f52.google.com ([209.85.216.52]:63118 "EHLO
-	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754344AbaBTJDb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Feb 2014 04:03:31 -0500
-Received: by mail-qa0-f52.google.com with SMTP id j15so2558529qaq.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2014 01:03:30 -0800 (PST)
-In-Reply-To: <CALAqxLU7ehHfvQa58HpdzojRU-2zhNpEgkr9KEJ3cf550WcnWw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK9yfHwwmZkFMRvxsxjBAfUbVXU3V+iPFDZO=DwQsFvJ3NQyKA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: John Stultz <john.stultz@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Ilho Lee <ilho215.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-
-On Tue, Feb 18, 2014 at 12:06 PM, John Stultz <john.stultz@linaro.org> wrote:
-> On Tue, Feb 18, 2014 at 12:00 PM, Olof Johansson <olof@lixom.net> wrote:
->> On Tue, Feb 18, 2014 at 11:52 AM, John Stultz <john.stultz@linaro.org> wrote:
->>> On Tue, Feb 18, 2014 at 10:13 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->>>> On Tuesday 18 February 2014 08:16:13 Olof Johansson wrote:
->>>>> On Mon, Feb 17, 2014 at 5:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>>>> > On 02/15/14 02:06, Arnd Bergmann wrote:
->>>>> >> My feeling is that we don't need to use the levels for Kconfig, although
->>>>> >> we might want to use them DT compatible strings, even if it ends up
->>>>> >> looking
->>>>> >> a little funny when you do
->>>>> >>
->>>>> >>         compatible = "arm,sbsa-l3", "arm,sbsa-l2", "arm,sbsa-l1";
->>>>> >>
->>>>> >>> What kind of features are you expecting though? More IP
->>>>> >>> blocks/devices? Those are just kernel config options to enable,
->>>>> >>> ideally as modules.
->>>>> >>
->>>>> >>
->>>>> >> Right, I think we can just put them into defconfig. No need to
->>>>> >> "select" them from Kconfig since the extra options wouldn't be
->>>>> >> required for booting or using the system.
->>>>> >>
->>>>> > As I commented above, how about MCT? Samsung has a plan to use MCT on ARMv8,
->>>>> > it is not for used for GH7 though...
->>>>>
->>>>> It looks like the clocksource drivers are all based around being
->>>>> enabled based on platforms instead of individually selectable. That
->>>>> causes a problem here. I think we should change the clocksource
->>>>> Kconfig instead. Then it's just a matter of making sure your defconfig
->>>>> has the needed driver enabled.
->>>>>
->>>>> (Adding Daniel and Thomas in case they have objections to that approach)
->>>>
->>>> +John Stultz
->>>>
->>>> IIRC it was John who insisted on doing it the current way, although
->>>> I can't remember his reasoning.
->>>
->>> Are we really expecting there to be SoC specific clocksources here? I
->>> thought we were getting away from that sort of stuff with the
->>> architecture timer?
->>
->> Unfortunately vendors can do crazy stuff if they want to. But we also
->> have an option to choose to enable it. Maybe the answer here is to say
->> no to MCT on 64-bit, they get to use the arch timers like everybody
->> else. Or at least motivate why they're not good enough.
->>
->>> I'm fine with clocksources being selected by other functionality
->>> options (ie: on x86 ACPI PM timer clocksource doesn't have a prompt,
->>> but depends on the ACPI option). I just don't want to force users to
->>> have to navigate through tons of deep menus to select clocksource
->>> options that logically duplicate other selections already made.
->>>
->>> But again, I handed this maintainership over to Daniel, so I can be
->>> considered just a crank yelling from the sidelines :)
->>
->> I think you have a good point. Until we hear why MCT is needed this is
->> mostly speculation, so let's see what Kukjin says about that.
->
-> Yea. And on x86 (well, i386 actually) there are system specific
-> clocksources as well, such as the cyclone timer used by "summit" based
-> x440 and similar NUMA systems, but those systems had more general
-> config options that had to be enabled which the cyclone clocksource
-> depended on.
-
-So, after giving this some more thought (and getting my hands dirty in
-some of this code), I think I'm going to change my mind on this. For
-mobile platforms I think it might make sense to bring over the
-toplevel platform Kconfig from arch/arm, to simplify dependencies
-without tearing up the driver subtree with churn like this.
-
-This, of course, only holds true for v8 mobile platforms. Samsung
-isn't saying if GH7 is a server platform and not, and they don't have
-to tell us. But I think we should consider only enabling and bringing
-over the mobile ones (and ideally try to avoid even that, but it might
-make sense to do some of them at least initially -- it does provide
-some convenient ways to enable larger subsets of default drivers per
-platform/vendor family).
-
-I.e. I'd be OK with an
-ARCH_EXYNOS/ARCH_TEGRA/ARCH_IMX/ARCH_<whatever>, but I don't think we
-should add more finegrained options than that globally on ARM64, at
-least not until truly proven to be needed. We're trying to push back
-against new per-SoC Kconfig entries on 32-bit as well right now.
 
 
--Olof
+--h31gzZEtNLTqOjlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Feb 20, 2014 at 02:09:08PM +0530, Sachin Kamat wrote:
+> Hi Grant,
+>=20
+> I observe the following boot failure with today's (next-20140220) linux-n=
+ext
+> tree on Exynos based boards with the default exynos_defconfig.
+
+Does this help?
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 8a27fc907ab6..9cc893530b9a 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -381,12 +381,16 @@ static int __of_device_is_compatible(const struct dev=
+ice_node *device,
+=20
+ 	/* Compatible match has highest priority */
+ 	if (compat && compat[0]) {
+-		of_property_for_each_string(device, "compatible", prop, cp) {
++		prop =3D __of_find_property(device, "compatible", NULL);
++		if (!prop)
++			return 0;
++
++		for (cp =3D of_prop_next_string(prop, NULL); cp;
++				cp =3D of_prop_next_string(prop, cp), index++) {
+ 			if (of_compat_cmp(cp, compat, strlen(compat)) =3D=3D 0) {
+ 				score =3D INT_MAX/2 - (index << 2);
+ 				break;
+ 			}
+-			index++;
+ 		}
+ 		if (!score)
+ 			return 0;
+
+
+Thanks,
+Kevin
+
+--h31gzZEtNLTqOjlF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQEcBAEBAgAGBQJTBdUYAAoJEJNY7TDerrFxGIIH/j6nTq5k3QJJdqpPeokBFEhQ
+G0nt02MLeaYQkL1rvf0geRlq8UJUefbu+BR6BQsbUn9hnZ7XQVJkzKqtzMi380w6
+HhEWLc2fhkcf/CG7ZhEzN8A0D+88PVe09DRa9aoYzuscEA3/LZIiHa0X+Yrd9ouy
+JvToiN8lLmCR6rplNHR1ZvLdTGDEupafpx/T8OzZ7sKpAuu+n2XchEY62jeWLjFs
+MGJogds8AjtR5Sram61EiFd5MkVXEDsMm9FPsGk9e5hgkTF/wqDqlK+KDXbqpn1c
+r3RJkmbL/N4FAjf6gtJrCD/IPUQEyeS+dR9mfDu8CHQ5pMGgCxUslILq20cf168=
+=YSCa
+-----END PGP SIGNATURE-----
+
+--h31gzZEtNLTqOjlF--
