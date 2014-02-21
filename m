@@ -1,111 +1,43 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Consolidate CPU init code
-Date: Fri, 21 Feb 2014 17:45:34 +0100
-Message-ID: <530782AE.4060500@samsung.com>
-References: <1390391342-4344-1-git-send-email-sachin.kamat@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 2/2] phy: Select PHY_EXYNOS_DP_VIDEO by default for
+ ARCH_EXYNOS
+Date: Fri, 21 Feb 2014 17:50:44 +0100
+Message-ID: <530783E4.6090206@samsung.com>
+References: <1392997802-29050-1-git-send-email-s.nawrocki@samsung.com>
+ <1753680.KKj0Q1erxA@wuerfel> <53077DE0.7080108@samsung.com>
+ <1888663.ccFYmJ9QJl@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:64943 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932740AbaBUQpj (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:18360 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932141AbaBUQuv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Feb 2014 11:45:39 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N1C005OEUJXQU20@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Feb 2014 16:45:33 +0000 (GMT)
-In-reply-to: <1390391342-4344-1-git-send-email-sachin.kamat@linaro.org>
+	Fri, 21 Feb 2014 11:50:51 -0500
+In-reply-to: <1888663.ccFYmJ9QJl@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, kishon@ti.com, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, linux-kernel@vger.kernel.org
 
-Hi Sachin,
-
-On 22.01.2014 12:49, Sachin Kamat wrote:
-> cpu_table was used to distinguish between different Exynos4 and 5 SoCs
-> and assign the the initialization and io mapping pointers based on type.
-> exynos_init is dummy and no longer needed as we do a DT based booting.
-> By having a common io mapping function we can get rid of the whole
-> table and avoid populating it for every SoC.
+On 21/02/14 17:41, Arnd Bergmann wrote:
+> On Friday 21 February 2014 17:25:04 Sylwester Nawrocki wrote:
+>> > 
+>> > Hmm, good point, I will modify it that way.
+>> > 
+>> > For patch 1/2 I guess it should be:
+>> > 
+>> > "default ARCH_S5PV210 || ARCH_EXYNOS"
+>> > 
+>> > or rather
+>> > 
+>> > "default y if ARCH_S5PV210 || ARCH_EXYNOS" ?
 >
-> Tested on Exynos4210, 5250 and 5420 based boards.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->   arch/arm/mach-exynos/common.c |   93 ++++++++---------------------------------
->   1 file changed, 17 insertions(+), 76 deletions(-)
+> Right. I'd probably use the first syntax, but it doesn't really matter.
 
-On Exynos4412-based Trats2 board:
+Oops, I've already sent patch using the second one, as it seemed
+more common.
 
-Tested-by: Tomasz Figa <t.figa@samsung.com>
-
-However, please see one minor comment inline.
-
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index f18be40e5b21..02d0aaa7af59 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -48,55 +48,7 @@
->   #define L2_AUX_VAL 0x7C470001
->   #define L2_AUX_MASK 0xC200ffff
->
-> -static const char name_exynos4210[] = "EXYNOS4210";
-> -static const char name_exynos4212[] = "EXYNOS4212";
-> -static const char name_exynos4412[] = "EXYNOS4412";
-> -static const char name_exynos5250[] = "EXYNOS5250";
-> -static const char name_exynos5420[] = "EXYNOS5420";
-> -static const char name_exynos5440[] = "EXYNOS5440";
-> -
-> -static void exynos4_map_io(void);
-> -static void exynos5_map_io(void);
-> -static int exynos_init(void);
-> -
-> -static struct cpu_table cpu_ids[] __initdata = {
-> -	{
-> -		.idcode		= EXYNOS4210_CPU_ID,
-> -		.idmask		= EXYNOS4_CPU_MASK,
-> -		.map_io		= exynos4_map_io,
-> -		.init		= exynos_init,
-> -		.name		= name_exynos4210,
-> -	}, {
-> -		.idcode		= EXYNOS4212_CPU_ID,
-> -		.idmask		= EXYNOS4_CPU_MASK,
-> -		.map_io		= exynos4_map_io,
-> -		.init		= exynos_init,
-> -		.name		= name_exynos4212,
-> -	}, {
-> -		.idcode		= EXYNOS4412_CPU_ID,
-> -		.idmask		= EXYNOS4_CPU_MASK,
-> -		.map_io		= exynos4_map_io,
-> -		.init		= exynos_init,
-> -		.name		= name_exynos4412,
-> -	}, {
-> -		.idcode		= EXYNOS5250_SOC_ID,
-> -		.idmask		= EXYNOS5_SOC_MASK,
-> -		.map_io		= exynos5_map_io,
-> -		.init		= exynos_init,
-> -		.name		= name_exynos5250,
-> -	}, {
-> -		.idcode		= EXYNOS5420_SOC_ID,
-> -		.idmask		= EXYNOS5_SOC_MASK,
-> -		.map_io		= exynos5_map_io,
-> -		.init		= exynos_init,
-> -		.name		= name_exynos5420,
-> -	}, {
-> -		.idcode		= EXYNOS5440_SOC_ID,
-> -		.idmask		= EXYNOS5_SOC_MASK,
-> -		.init		= exynos_init,
-> -		.name		= name_exynos5440,
-> -	},
-> -};
-> +static void exynos_map_io(void);
-
-cosmetic: Instead of adding forward declaration, the resulting 
-exynos_map_io() function could be simply merged with exynos_init_io().
-
-Best regards,
-Tomasz
+Thanks,
+Sylwester
