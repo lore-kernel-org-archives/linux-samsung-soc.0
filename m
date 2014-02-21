@@ -1,51 +1,87 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 0/4] Bugfix for of_match_node ordering
-Date: Thu, 20 Feb 2014 17:22:51 -0800
-Message-ID: <91d21c6c-a87a-46bf-8036-c8f769e32399@VA3EHSMHS018.ehs.local>
-References: <1392819290-1044-1-git-send-email-grant.likely@linaro.org>
- <CAK9yfHwwmZkFMRvxsxjBAfUbVXU3V+iPFDZO=DwQsFvJ3NQyKA@mail.gmail.com>
- <CACxGe6sg7FpJqAUjkU5DkUpiV_mDbtSV3RETtiQdACUXhRtRrg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
+Date: Fri, 21 Feb 2014 11:38:08 +0530
+Message-ID: <CAK9yfHyWG1ac6isTRSB3VWfxER9cSuDJHwY3b7svyEk9EozpWQ@mail.gmail.com>
+References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org>
+	<201402201800.49425.arnd@arndb.de>
+	<53063C9F.4060307@samsung.com>
+	<16785833.BhsvfRuRRo@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACxGe6sg7FpJqAUjkU5DkUpiV_mDbtSV3RETtiQdACUXhRtRrg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hao <haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:49751 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752152AbaBUGII (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Feb 2014 01:08:08 -0500
+Received: by mail-ob0-f176.google.com with SMTP id gq1so3487699obb.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2014 22:08:08 -0800 (PST)
+In-Reply-To: <16785833.BhsvfRuRRo@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 
-Hi Grant,
+On 20 February 2014 23:18, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 20 February 2014 18:34:23 Tomasz Figa wrote:
+>> On 20.02.2014 18:00, Arnd Bergmann wrote:
+>> >> Of course nothing stops you from retaining more specific compatible
+>> >> strings. In fact, this is probably the most appropriate solution,
+>> >> because in future you might find out that certain SoCs need some special
+>> >> differentiation, e.g. same ID value on two SoCs.
+>> >>
+>> >> So, to apply this to our case, our Exynos 5250 based Arndale board would
+>> >> be changed from
+>> >>
+>> >> compatible = "insignal,arndale", "samsung,exynos5260";
+>> >>
+>> >> to
+>> >>
+>> >> compatible = "insignal,arndale", "samsung,exynos5260", "samsung,exynos";
+>> >
+>> > Right, this would make sense.
+>> >
+>> >> Now, the board file will be able to match simply by "samsung,exynos"
+>> >> compatible string and SoC-specific code in mach-exynos (hopefully none
+>> >> after it gets cleaned up fully) will use soc_is_exynos*() macros (what
+>> >> AFAIK it is already doing at the moment).
+>> >
+>> > On principle, I would not take things out of the match list, if that
+>> > would break booting with old DT file that don't list "samsung,exynos"
+>> > as compatible. But for new SoCs that would work.
+>>
+>> My proposal was about simply adding a fully generic string, without
+>> removing the specific ones. For already supported SoCs this is pretty
+>> obvious, as existing DTBs would not have this generic string listed. But
+>> the specific strings should be also present in DTSes of new SoCs, even
+>> if not recognized by the kernel, to make sure that in future any
+>> SoC-specific quirks could be easily handled.
+>
+> Yes, that's ideal.
+>
+>> > Using soc_is_exynos*() too much of course also isn't good. A lot of
+>> > the things tested for should probably be checked from individual DT
+>> > properties, but again we have to find the right balance. I wouldn't
+>> > mind getting rid of the soc_is_exynos*() macros completely, because
+>> > a) we can't use them in device drivers
+>> > b) all platform code is supposed to be in drivers
+>> > c) both rules are enforced for arm64
+>>
+>> I fully agree. As I said, after cleaning up mach-exynos/ there should be
+>> no more code left using soc_is_*() macros. Ideally, the whole
+>> mach-exynos/ should collapse into a single, trivial file, with
+>> everything done in dedicated drivers.
+>
+> Right.
 
-On Thu, 2014-02-20 at 11:29AM +0000, Grant Likely wrote:
-> On Thu, Feb 20, 2014 at 8:39 AM, Sachin Kamat <sachin.kamat-QSEj5FYQhm5QFI55V6+gNQ@public.gmane.org=
-g> wrote:
-> > Hi Grant,
-> >
-> > I observe the following boot failure with today's (next-20140220) l=
-inux-next
-> > tree on Exynos based boards with the default exynos_defconfig.
->=20
-> Ugh, nested locking. that is not good. Kevin's patch looks correct an=
-d
-> I'll merge it in. I'm a little disturbed though that you're the only
-> one who has reported problems. Looking at what it does I would expect
-> pretty much every SMP platform for freak out about this, but I've
-> heard nothing from the powerpc guys.
->=20
-> I'll merge in the fix of course, but I'd like to know what I'm missin=
-g.
+Now that we have a broader agreement on this, I think we can go ahead with the
+following steps as an initial approach:
+1. Have a common machine file for both exynos4 and 5 files, mach-exynos-dt.c.
+2. Introduce a generic compatible string "samsung,exynos".
+3. Append this to the compatible property list for existing boards.
 
-=46WIW, I see a deadlock on Zynq (ARM) as well. The proposed patch
-resolves it. Feel free to add my
-Tested-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+If this plan looks OK, I can send across patches doing this.
 
-	S=C3=B6ren
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+With warm regards,
+Sachin
