@@ -1,90 +1,41 @@
-From: Tomasz Figa <t.figa@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
-Date: Fri, 21 Feb 2014 14:18:49 +0100
-Message-ID: <53075239.4010603@samsung.com>
-References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org>
- <201402201800.49425.arnd@arndb.de> <53063C9F.4060307@samsung.com>
- <16785833.BhsvfRuRRo@wuerfel>
- <CAK9yfHyWG1ac6isTRSB3VWfxER9cSuDJHwY3b7svyEk9EozpWQ@mail.gmail.com>
+Date: Fri, 21 Feb 2014 15:48:04 +0100
+Message-ID: <2200834.G3JJLYQl5i@wuerfel>
+References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHyWG1ac6isTRSB3VWfxER9cSuDJHwY3b7svyEk9EozpWQ@mail.gmail.com> <53075239.4010603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:59042 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753958AbaBUNSz (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:54882 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755839AbaBUOs0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Feb 2014 08:18:55 -0500
-In-reply-to: <CAK9yfHyWG1ac6isTRSB3VWfxER9cSuDJHwY3b7svyEk9EozpWQ@mail.gmail.com>
+	Fri, 21 Feb 2014 09:48:26 -0500
+In-Reply-To: <53075239.4010603@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 
-On 21.02.2014 07:08, Sachin Kamat wrote:
-> On 20 February 2014 23:18, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Thursday 20 February 2014 18:34:23 Tomasz Figa wrote:
->>> On 20.02.2014 18:00, Arnd Bergmann wrote:
->>>>> Of course nothing stops you from retaining more specific compatible
->>>>> strings. In fact, this is probably the most appropriate solution,
->>>>> because in future you might find out that certain SoCs need some special
->>>>> differentiation, e.g. same ID value on two SoCs.
->>>>>
->>>>> So, to apply this to our case, our Exynos 5250 based Arndale board would
->>>>> be changed from
->>>>>
->>>>> compatible = "insignal,arndale", "samsung,exynos5260";
->>>>>
->>>>> to
->>>>>
->>>>> compatible = "insignal,arndale", "samsung,exynos5260", "samsung,exynos";
->>>>
->>>> Right, this would make sense.
->>>>
->>>>> Now, the board file will be able to match simply by "samsung,exynos"
->>>>> compatible string and SoC-specific code in mach-exynos (hopefully none
->>>>> after it gets cleaned up fully) will use soc_is_exynos*() macros (what
->>>>> AFAIK it is already doing at the moment).
->>>>
->>>> On principle, I would not take things out of the match list, if that
->>>> would break booting with old DT file that don't list "samsung,exynos"
->>>> as compatible. But for new SoCs that would work.
->>>
->>> My proposal was about simply adding a fully generic string, without
->>> removing the specific ones. For already supported SoCs this is pretty
->>> obvious, as existing DTBs would not have this generic string listed. But
->>> the specific strings should be also present in DTSes of new SoCs, even
->>> if not recognized by the kernel, to make sure that in future any
->>> SoC-specific quirks could be easily handled.
->>
->> Yes, that's ideal.
->>
->>>> Using soc_is_exynos*() too much of course also isn't good. A lot of
->>>> the things tested for should probably be checked from individual DT
->>>> properties, but again we have to find the right balance. I wouldn't
->>>> mind getting rid of the soc_is_exynos*() macros completely, because
->>>> a) we can't use them in device drivers
->>>> b) all platform code is supposed to be in drivers
->>>> c) both rules are enforced for arm64
->>>
->>> I fully agree. As I said, after cleaning up mach-exynos/ there should be
->>> no more code left using soc_is_*() macros. Ideally, the whole
->>> mach-exynos/ should collapse into a single, trivial file, with
->>> everything done in dedicated drivers.
->>
->> Right.
->
-> Now that we have a broader agreement on this, I think we can go ahead with the
-> following steps as an initial approach:
-> 1. Have a common machine file for both exynos4 and 5 files, mach-exynos-dt.c.
-> 2. Introduce a generic compatible string "samsung,exynos".
-> 3. Append this to the compatible property list for existing boards.
->
-> If this plan looks OK, I can send across patches doing this.
->
+On Friday 21 February 2014 14:18:49 Tomasz Figa wrote:
+> 
+> > Now that we have a broader agreement on this, I think we can go ahead with the
+> > following steps as an initial approach:
+> > 1. Have a common machine file for both exynos4 and 5 files, mach-exynos-dt.c.
+> > 2. Introduce a generic compatible string "samsung,exynos".
+> > 3. Append this to the compatible property list for existing boards.
+> >
+> > If this plan looks OK, I can send across patches doing this.
+> >
+> 
+> Looks good. I would also merge common.c with this resulting 
+> mach-exynos-dt.c, as it would be the only user of the code there.
 
-Looks good. I would also merge common.c with this resulting 
-mach-exynos-dt.c, as it would be the only user of the code there.
+Sounds good. While the naming is not important, I would just call the
+file 'exynos.c', in line with some of the other platforms we have.
+Both the 'mach-' and the '-dt' part of the file name are redundant.
 
-Best regards,
-Tomasz
+Alternatively, you could merge it all into common.c.
+
+	Arnd
