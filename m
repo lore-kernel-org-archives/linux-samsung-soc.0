@@ -1,85 +1,40 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain
- look-up
-Date: Sun, 23 Feb 2014 18:07:43 +0100
-Message-ID: <530A2ADF.902@gmail.com>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>	 <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com> <1392828827.3445.54.camel@pizza.hi.pengutronix.de>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v3 2/2] phy: Select PHY_EXYNOS_DP_VIDEO by default for
+ ARCH_EXYNOS
+Date: Sun, 23 Feb 2014 23:46:02 +0000 (GMT)
+Message-ID: <29724573.104451393199161967.JavaMail.weblogic@epml01>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1392828827.3445.54.camel@pizza.hi.pengutronix.de>
+MIME-version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, "kishon@ti.com" <kishon@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Philipp,
-
-On 19.02.2014 17:53, Philipp Zabel wrote:
-> Am Samstag, den 11.01.2014, 20:42 +0100 schrieb Tomasz Figa:
-
-[snip]
-
->> +	pd = of_genpd_get_from_provider(&pd_args);
->> +	if (IS_ERR(pd))
->> +		return PTR_ERR(pd);
->> +
->> +	dev_dbg(dev, "adding to power domain %s\n", pd->name);
->> +
->> +	while (1) {
->> +		ret = pm_genpd_add_device(pd, dev);
->
-> Since pm_genpd_add_device is used here, no gpd_timing_data can be
-> provided. Do you have a plan to solve this? Should the timing data be
-> provided from the device tree?
-
-Hmm, a quick grep over kernel sources for genpd_.*_add_device
-gives just a single user of __pm_genpd_name_add_device(), with custom 
-timing data:
-
-> arch/arm/mach-shmobile/pm-rmobile.c-void rmobile_add_device_to_domain_td(const char *domain_name,
-> arch/arm/mach-shmobile/pm-rmobile.c-                                 struct platform_device *pdev,
-> arch/arm/mach-shmobile/pm-rmobile.c-                                 struct gpd_timing_data *td)
-> arch/arm/mach-shmobile/pm-rmobile.c-{
-> arch/arm/mach-shmobile/pm-rmobile.c-    struct device *dev = &pdev->dev;
-> arch/arm/mach-shmobile/pm-rmobile.c-
-> arch/arm/mach-shmobile/pm-rmobile.c:    __pm_genpd_name_add_device(domain_name, dev, td);
-> arch/arm/mach-shmobile/pm-rmobile.c-    if (pm_clk_no_clocks(dev))
-> arch/arm/mach-shmobile/pm-rmobile.c-            pm_clk_add(dev, NULL);
-> arch/arm/mach-shmobile/pm-rmobile.c-}
-> arch/arm/mach-shmobile/pm-rmobile.c-
-> arch/arm/mach-shmobile/pm-rmobile.c-void rmobile_add_devices_to_domains(struct pm_domain_device data[],
-> arch/arm/mach-shmobile/pm-rmobile.c-                                int size)
-> arch/arm/mach-shmobile/pm-rmobile.c-{
-> arch/arm/mach-shmobile/pm-rmobile.c-    struct gpd_timing_data latencies = {
-> arch/arm/mach-shmobile/pm-rmobile.c-            .stop_latency_ns = DEFAULT_DEV_LATENCY_NS,
-> arch/arm/mach-shmobile/pm-rmobile.c-            .start_latency_ns = DEFAULT_DEV_LATENCY_NS,
-> arch/arm/mach-shmobile/pm-rmobile.c-            .save_state_latency_ns = DEFAULT_DEV_LATENCY_NS,
-> arch/arm/mach-shmobile/pm-rmobile.c-            .restore_state_latency_ns = DEFAULT_DEV_LATENCY_NS,
-> arch/arm/mach-shmobile/pm-rmobile.c-    };
-> arch/arm/mach-shmobile/pm-rmobile.c-    int j;
-> arch/arm/mach-shmobile/pm-rmobile.c-
-> arch/arm/mach-shmobile/pm-rmobile.c-    for (j = 0; j < size; j++)
-> arch/arm/mach-shmobile/pm-rmobile.c-            rmobile_add_device_to_domain_td(data[j].domain_name,
-> arch/arm/mach-shmobile/pm-rmobile.c-                                            data[j].pdev, &latencies);
-> arch/arm/mach-shmobile/pm-rmobile.c-}
-
-Moreover the timings used there are just defaults, which makes me wonder 
-if there is any reason to specify them explicitly. Even more interesting 
-is the fact that genpd code can measure those latencies itself.
-
-Do you have a particular use case for those timing data or just 
-wondering? I don't think we need to implement support for them right 
-away, if there is no real need to do so. The code and bindings can be 
-extended later to handle them, if needed.
-
-As for whether DT is appropriate place to define them, I'm not quite 
-sure. Stop and start latencies look like hardware parameters, but state 
-save and restore are likely to be driver-specific, as it depends on 
-driver code how much time it takes to save and restore needed state 
-(e.g. driver with register cache will not need to do any state save), if 
-I understand these timing data correctly.
-
-Best regards,
-Tomasz
+T24gU2F0dXJkYXksIEZlYnJ1YXJ5IDIyLCAyMDE0IDE6NDQgQU0sIFN5bHdlc3RlciBOYXdyb2Nr
+aSB3cm90ZToNCj4gDQo+IEluc3RlYWQgb2YgcmVxdWlyaW5nIHVzZXIgdG8gZmlndXJlIG91dCB3
+aGVuIFBIWV9FWFlOT1NfRFBfVklERU8gbmVlZHMNCj4gdG8gYmUgc2VsZWN0ZWQgc2VsZWN0IGl0
+IGJ5IGRlZmF1bHQgZm9yIEV4eW5vcyBTb0NzLiBBbHNvIGVuYWJsZSBpdA0KPiB3aGVuIENPTVBJ
+TEVfVEVTVCBpcyBzZWxlY3RlZC4gSWYgcmVxdWlyZWQgdGhlIGRpc3BsYXkgcG9ydCBQSFkgZHJp
+dmVyDQo+IGNhbiBiZSB0aGVuIGRpc2FibGVkIG9yIGNvbXBpbGVkIGluIGFzIG1vZHVsZS4NCj4g
+DQo+IENjOiBKaW5nb28gSGFuIDxqZzEuaGFuQHNhbXN1bmcuY29tPg0KDQpBY2tlZC1ieTogSmlu
+Z29vIEhhbiA8amcxLmhhbkBzYW1zdW5nLmNvbT4NCg0KQmVzdCByZWdhcmRzLA0KSmluZ29vIEhh
+bg0KDQo+IFNpZ25lZC1vZmYtYnk6IFN5bHdlc3RlciBOYXdyb2NraSA8cy5uYXdyb2NraUBzYW1z
+dW5nLmNvbT4NCj4gQWNrZWQtYnk6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3Vu
+Zy5jb20+DQo+IC0tLQ0KPiBDaGFuZ2VzIHNpbmNlIHYyOg0KPiAgLSBzL2RlZmF1bHQgeS9kZWZh
+dWx0IEFSQ0hfRVhZTk9TDQo+IA0KPiBDaGFuZ2VzIHNpbmNlIGZpcnN0IHZlcnNpb246DQo+ICAt
+IHVzZSBBUkNIX0VYWU5PUyBpbnN0ZWFkIG9mICJBUkNIX0VYWU5PUzQgfHwgQVJDSF9FWFlOT1M1
+Ig0KPiAgLSBhZGQgZGVwZW5kZW5jeSBvbiBDT01QSUxFX1RFU1QNCj4gLS0tDQo+ICBkcml2ZXJz
+L3BoeS9LY29uZmlnIHwgICAgMiArKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGh5L0tjb25maWcgYi9kcml2ZXJzL3BoeS9L
+Y29uZmlnDQo+IGluZGV4IGQ3MWJlOTUuLmZlMWIxZjQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
+cGh5L0tjb25maWcNCj4gKysrIGIvZHJpdmVycy9waHkvS2NvbmZpZw0KPiBAQCAtNTcsNiArNTcs
+OCBAQCBjb25maWcgVFdMNDAzMF9VU0INCj4gIGNvbmZpZyBQSFlfRVhZTk9TX0RQX1ZJREVPDQo+
+ICAJdHJpc3RhdGUgIkVYWU5PUyBTb0Mgc2VyaWVzIERpc3BsYXkgUG9ydCBQSFkgZHJpdmVyIg0K
+PiAgCWRlcGVuZHMgb24gT0YNCj4gKwlkZXBlbmRzIG9uIEFSQ0hfRVhZTk9TIHx8IENPTVBJTEVf
+VEVTVA0KPiArCWRlZmF1bHQgQVJDSF9FWFlOT1MNCj4gIAlzZWxlY3QgR0VORVJJQ19QSFkNCj4g
+IAloZWxwDQo+ICAJICBTdXBwb3J0IGZvciBEaXNwbGF5IFBvcnQgUEhZIGZvdW5kIG9uIFNhbXN1
+bmcgRVhZTk9TIFNvQ3MuDQo+IC0tDQo+IDEuNy45LjU=
