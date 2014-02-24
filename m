@@ -1,208 +1,73 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power domain look-up
-Date: Mon, 24 Feb 2014 13:11:00 +0100
-Message-ID: <CAPDyKFrvewrPKuhW8BTxcqH=SOxc8oWfrUuN-aZYnP2Kv+We7A@mail.gmail.com>
-References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
-	<1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
-	<20140123001802.GF13785@codeaurora.org>
-	<52E062D8.1060206@gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
+Date: Mon, 24 Feb 2014 13:59:33 +0100
+Message-ID: <530B4235.6070108@samsung.com>
+References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com>
+ <CAK9yfHx+=X+DiLe_WsiDkYonKCssPTOGqR76=+7N6eyAHXyQGQ@mail.gmail.com>
+ <52CFC5C9.4000006@samsung.com>
+ <CAK9yfHxnrM--A_SZSBWzQ2B7zrtU+=n77H61bzq4ddtLrpHMBg@mail.gmail.com>
+ <52F8E9E8.8060408@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <52E062D8.1060206@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:64126 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751509AbaBXM7k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Feb 2014 07:59:40 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N1I006PN439D270@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Feb 2014 12:59:34 +0000 (GMT)
+In-reply-to: <52F8E9E8.8060408@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On 23 January 2014 01:31, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Stephen,
->
->
-> On 23.01.2014 01:18, Stephen Boyd wrote:
->>
->> On 01/11, Tomasz Figa wrote:
->>>
->>> +
->>> +/**
->>> + * of_genpd_lock() - Lock access to of_genpd_providers list
->>> + */
->>> +static void of_genpd_lock(void)
->>> +{
->>> +       mutex_lock(&of_genpd_mutex);
->>> +}
->>> +
->>> +/**
->>> + * of_genpd_unlock() - Unlock access to of_genpd_providers list
->>> + */
->>> +static void of_genpd_unlock(void)
->>> +{
->>> +       mutex_unlock(&of_genpd_mutex);
->>> +}
->>
->>
->> Why do we need these functions? Can't we just call
->> mutex_lock/unlock directly?
->
->
-> That would be fine as well, I guess. Just duplicated the pattern used in
-> CCF, but can remove them in next version if it's found to be better.
->
->
->>
->>> +
->>> +/**
->>> + * of_genpd_add_provider() - Register a domain provider for a node
->>> + * @np: Device node pointer associated with domain provider
->>> + * @genpd_src_get: callback for decoding domain
->>> + * @data: context pointer for @genpd_src_get callback.
->>
->>
->> These look a little outdated.
->
->
-> Oops, missed this.
->
->
->>
->>> + */
->>> +int of_genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
->>> +                         void *data)
->>> +{
->>> +       struct of_genpd_provider *cp;
->>> +
->>> +       cp = kzalloc(sizeof(struct of_genpd_provider), GFP_KERNEL);
->>
->>
->> Please use sizeof(*cp) instead.
->
->
-> Right.
->
->
->>
->>> +       if (!cp)
->>> +               return -ENOMEM;
->>> +
->>> +       cp->node = of_node_get(np);
->>> +       cp->data = data;
->>> +       cp->xlate = xlate;
->>> +
->>> +       of_genpd_lock();
->>> +       list_add(&cp->link, &of_genpd_providers);
->>> +       of_genpd_unlock();
->>> +       pr_debug("Added domain provider from %s\n", np->full_name);
->>> +
->>> +       return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(of_genpd_add_provider);
->>> +
->>
->> [...]
->>>
->>> +
->>> +/* See of_genpd_get_from_provider(). */
->>> +static struct generic_pm_domain *__of_genpd_get_from_provider(
->>> +                                       struct of_phandle_args
->>> *genpdspec)
->>> +{
->>> +       struct of_genpd_provider *provider;
->>> +       struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
->>
->>
->> Can this be -EPROBE_DEFER so that we can defer probe until a
->> later time if the power domain provider hasn't registered yet?
->
->
-> Yes, this could be useful. Makes me wonder why clock code (on which I based
-> this code) doesn't have it done this way.
->
->
->>
->>> +
->>> +       /* Check if we have such a provider in our array */
->>> +       list_for_each_entry(provider, &of_genpd_providers, link) {
->>> +               if (provider->node == genpdspec->np)
->>> +                       genpd = provider->xlate(genpdspec,
->>> provider->data);
->>> +               if (!IS_ERR(genpd))
->>> +                       break;
->>> +       }
->>> +
->>> +       return genpd;
->>> +}
->>> +
->>
->> [...]
->>>
->>> +static int of_genpd_notifier_call(struct notifier_block *nb,
->>> +                                 unsigned long event, void *data)
->>> +{
->>> +       struct device *dev = data;
->>> +       int ret;
->>> +
->>> +       if (!dev->of_node)
->>> +               return NOTIFY_DONE;
->>> +
->>> +       switch (event) {
->>> +       case BUS_NOTIFY_BIND_DRIVER:
->>> +               ret = of_genpd_add_to_domain(dev);
->>> +               break;
->>> +
->>> +       case BUS_NOTIFY_UNBOUND_DRIVER:
->>> +               ret = of_genpd_del_from_domain(dev);
->>> +               break;
->>> +
->>> +       default:
->>> +               return NOTIFY_DONE;
->>> +       }
->>> +
->>> +       return notifier_from_errno(ret);
->>> +}
->>> +
->>> +static struct notifier_block of_genpd_notifier_block = {
->>> +       .notifier_call = of_genpd_notifier_call,
->>> +};
->>> +
->>> +static int of_genpd_init(void)
->>> +{
->>> +       return bus_register_notifier(&platform_bus_type,
->>> +                                       &of_genpd_notifier_block);
->>> +}
->>> +core_initcall(of_genpd_init);
->>
->>
->> Would it be possible to call the of_genpd_add_to_domain() and
->> of_genpd_del_from_domain() functions directly in the driver core,
->> similar to how the pinctrl framework has a hook in there? That
->> way we're not relying on any initcall ordering for this.
->
->
-> Hmm, the initcall here just registers a notifier, which needs to be done
-> just before any driver registers. So, IMHO, current variant is safe, given
-> an early enough initcall level is used.
->
-> However, doing it the pinctrl way might still have an advantage of not
-> relying on specific bus type, so this is worth consideration indeed. I'd
-> like to hear Rafael's and Kevin's opinions on this (and other comments above
-> too).
+Mike,
 
-As you say; certainly there will be other bus types that we need to
-support as well. For example the amba bus (drivers/amba/bus.c).
-
-Additionally I believe similar reasons, why we added the pinctrl
-handling to driver core, applies to generic power domains. So I think
-we should give it a try!
-
-Kind regards
-Ulf Hansson
-
+On 10.02.2014 16:02, Sylwester Nawrocki wrote:
+> On 30/01/14 05:50, Sachin Kamat wrote:
+>> On 10 January 2014 15:34, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>>>> On 08/01/14 05:44, Sachin Kamat wrote:
+>>>>>> Hi Sylwester,
+>>>>>>
+>>>>>> On 7 January 2014 17:33, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>>>>>>>> Ensure clk->kref is dereferenced only when clk is not NULL.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>>>>>>> ---
+>>>>>>>> Hi Sachin,
+>>>>>>>>
+>>>>>>>> please try if this patch fixes the exyno5420 boot crash.
+>>>>>>
+>>>>>> Confirmed that this patch works fine on 5420 as well as already
+>>>>>> working 4210 and 5250 boards.
+>>>>>> Thanks for the quick fix.
+>>>>>>
+>>>>>> Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>>>
+>>>> Thanks Sachin. Mike, it seems we need this patch on top of
+>>>> my clk-unregister branch. Sorry for overlooking this issue.
+>>>> Could you add the $subject patch to your clk-next tree ?
+>>
+>> Gentle ping Mike. Hope we can have this patch in rc-2.
 >
-> Best regards,
-> Tomasz
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> A gentle reminder, this patch is still not in current -rc and is required
+> to fix booting of some exynos platforms.
+
+It's been one and a half of a month since Sylwester posted this patch. 
+Sorry for nagging, but for this whole period we've been observing 
+complete breakage of several platforms, including Exynos4412-Trats2 
+board, due to NULL pointer dereference at boot-up time, so I'd consider 
+this patch a _critical_ fix.
+
+Can we expect this patch to be applied to your tree and sent for next rc 
+release or I should apply it to my tree and send a pull request to Linus 
+directly?
+
+Best regards,
+Tomasz
