@@ -1,140 +1,98 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 0/5] ARM: S3C24XX: convert s3c2412 to common clock framework
-Date: Sun, 23 Feb 2014 16:06:03 -0800
-Message-ID: <20140224000603.22529.1282@quantum>
-References: <1835515.oOiOlPWUhB@phil> <530937A4.3010301@gmail.com>
- <2112473.9LIChJWDSQ@phil> <5309456D.3040805@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Add regulator entries to Exynos5420 SMDK
+ board
+Date: Mon, 24 Feb 2014 09:18:48 +0900
+Message-ID: <530A8FE8.4020903@samsung.com>
+References: <1386236664-27763-1-git-send-email-sachin.kamat@linaro.org>	<6615089.743e1d93MS@amdc1227>	<CAK9yfHy8iKr8n5OVLm3QbiO3cL_hx-kr8f=gZ2VsBmuXLgHvgg@mail.gmail.com>	<1604811.B6Si6qrpKm@flatron> <CAK9yfHyu=ZKrPqb_VC-6RoJOF=W45jJrZ95=zYmvkMzd_oEooQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:61167 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750976AbaBXAGJ convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:39330 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbaBXAS5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Feb 2014 19:06:09 -0500
-Received: by mail-pd0-f169.google.com with SMTP id v10so5599691pde.28
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Feb 2014 16:06:09 -0800 (PST)
-In-Reply-To: <5309456D.3040805@gmail.com>
+	Sun, 23 Feb 2014 19:18:57 -0500
+Received: by mail-pa0-f54.google.com with SMTP id fa1so5785513pad.27
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Feb 2014 16:18:55 -0800 (PST)
+In-Reply-To: <CAK9yfHyu=ZKrPqb_VC-6RoJOF=W45jJrZ95=zYmvkMzd_oEooQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Quoting Tomasz Figa (2014-02-22 16:48:45)
-> On 23.02.2014 01:29, Heiko St=C3=BCbner wrote:
-> > Hi Tomasz,
-> >
-> > Am Sonntag, 23. Februar 2014, 00:49:56 schrieb Tomasz Figa:
-> >> Hi,
-> >>
-> >> On 22.02.2014 23:45, Heiko St=C3=BCbner wrote:
-> >>> Second incarnation of the series converting s3c2412/s3c2413 to th=
-e common
-> >>> clock framework. As before the conversion is done by a mix of dat=
-asheet
-> >>> data and the pre-existing clock code and as this time I have no h=
-ardware
-> >>> of this type, it is compile-tested only. So hopefully somebody wi=
-th
-> >>> s3c2412
-> >>> hw will be able to test it for real.
-> >>>
-> >>> The conversion of s3c2412 now moved in front of the
-> >>> s3c2410/s3c2440/s3c2442
-> >>> one, as I'll need a bit more time for the clockout changes sugges=
-ted by
-> >>> Tomasz Figa.
-> >>>
-> >>> This series builds on top of the previous submitted s3c2443/s3c24=
-16
-> >>> series.
-> >>>
-> >>>
-> >>> Changes since v1:
-> >>> - move in front of s3c2410 conversion, therefore move 2 necessary=
- patches
-> >>>
-> >>>     that also got ACKs, from there into this series
-> >>>
-> >>> - adapt to Samsung clock pm rework from Tomasz Figa
-> >>> - apply some changes suggested by Tomasz Figa in the s3c2410 cloc=
-k driver
-> >>>
-> >>>     that also apply to this driver.
-> >>>
-> >>> Heiko Stuebner (5):
-> >>>     ARM: S3C24XX: only store clock registers when old clock code =
-is active
-> >>>     clk: samsung: add plls used by the early s3c24xx cpus
-> >>>     dt-bindings: add documentation for s3c2412 clock controller
-> >>>     clk: samsung: add clock controller driver for s3c2412
-> >>>     ARM: S3C24XX: convert s3c2412 to common clock framework
-> >>>
-> >>>    .../bindings/clock/samsung,s3c2412-clock.txt       |  50 ++
-> >>>    arch/arm/mach-s3c24xx/Kconfig                      |   8 +-
-> >>>    arch/arm/mach-s3c24xx/Makefile                     |   2 +-
-> >>>    arch/arm/mach-s3c24xx/clock-s3c2412.c              | 761
-> >>>    --------------------- arch/arm/mach-s3c24xx/common.c
-> >>>     |   9 +-
-> >>>    arch/arm/mach-s3c24xx/common.h                     |   4 +
-> >>>    arch/arm/mach-s3c24xx/mach-jive.c                  |   9 +-
-> >>>    arch/arm/mach-s3c24xx/mach-smdk2413.c              |   9 +-
-> >>>    arch/arm/mach-s3c24xx/mach-vstms.c                 |   9 +-
-> >>>    arch/arm/mach-s3c24xx/pm.c                         |  13 +-
-> >>>    arch/arm/mach-s3c24xx/s3c2412.c                    |  43 --
-> >>>    drivers/clk/samsung/Makefile                       |   1 +
-> >>>    drivers/clk/samsung/clk-pll.c                      | 182 +++++
-> >>>    drivers/clk/samsung/clk-pll.h                      |   3 +
-> >>>    drivers/clk/samsung/clk-s3c2412.c                  | 268 +++++=
-+++
-> >>>    include/dt-bindings/clock/s3c2412.h                |  73 ++
-> >>>    16 files changed, 627 insertions(+), 817 deletions(-)
-> >>>    create mode 100644
-> >>>    Documentation/devicetree/bindings/clock/samsung,s3c2412-clock.=
-txt
-> >>>    delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2412.c
-> >>>    create mode 100644 drivers/clk/samsung/clk-s3c2412.c
-> >>>    create mode 100644 include/dt-bindings/clock/s3c2412.h
-> >>
-> >> For mach and DT patches:
-> >>
-> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >>
-> >> Kukjin, I'll take binding and clock patches to Samsung clock tree =
-as
-> >> soon as DT bindings get acked by one of DT maintainers. I will pre=
-pare a
-> >> branch for you to apply mach patches on top. Is it fine for you?
-> >
-> > I think Kukjin already applied the s3c2416/s3c2443 series on top of=
- your
-> > clock-pm-changes in the linux-samsung tree [1], so it might be best=
- to just
-> > pile this series on top of it.
->=20
-> I'm aware of this, but I'm afraid this might cause conflicts with=20
-> remaining patches that I might have to apply in this release cycle.
->=20
-> Patch clk/samsung: add support for multiple clock providers[1] is mos=
-tly=20
-> what I have in my mind, but there is also at least one patch that is=20
-> based on top of PM rework floating on the list.
->=20
-> I'd try to sort this out first with Kukjin and if we fail we will hav=
-e=20
-> to fall back to merging any clock patches through Samsung tree for th=
-is=20
-> release cycle.
+On 01/03/14 19:07, Sachin Kamat wrote:
+> On 21 December 2013 02:40, Tomasz Figa<tomasz.figa@gmail.com>  wrote:
+>> On Thursday 19 of December 2013 10:05:52 Sachin Kamat wrote:
+>>> Hi Tomasz,
+>>>
+>>> On 18 December 2013 20:46, Tomasz Figa<t.figa@samsung.com>  wrote:
+>>>> Hi Sachin,
+>>>>
+>>>> On Thursday 05 of December 2013 15:14:24 Sachin Kamat wrote:
+>>>>> Added regulator entries to Exynos5420 SMDK board.
+>>>>>
+>>>>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>>>>> ---
+>>>>> Changes since v1:
+>>>>> Changed node name
+>>>>> ---
+>>>>>   arch/arm/boot/dts/exynos5420-smdk5420.dts |  216 +++++++++++++++++++++++++++++
+>>>>>   1 file changed, 216 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>>>> index fb5a1e25c632..62e1ebe4e989 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>>>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>>>> @@ -120,4 +120,220 @@
+>>>>>                        reg =<0x50>;
+>>>>>                };
+>>>>>        };
+>>>>> +
+>>>>> +     hsi2c_4: i2c@12CA0000 {
+>>>>> +             status = "okay";
+>>>>> +
+>>>>> +             s2mps11_pmic@66 {
+>>>>
+>>>> Just pmic@66 is enough.
+>>>
+>>> Please see my comment below.
+>>>
+>>>>
+>>>>> +                     compatible = "samsung,s2mps11-pmic";
+>>>>> +                     reg =<0x66>;
+>>>>> +                     s2mps11,buck2-ramp-delay =<12>;
+>>>>> +                     s2mps11,buck34-ramp-delay =<12>;
+>>>>> +                     s2mps11,buck16-ramp-delay =<12>;
+>>>>> +                     s2mps11,buck6-ramp-enable =<1>;
+>>>>> +                     s2mps11,buck2-ramp-enable =<1>;
+>>>>> +                     s2mps11,buck3-ramp-enable =<1>;
+>>>>> +                     s2mps11,buck4-ramp-enable =<1>;
+>>>>> +
+>>>>> +                     s2mps11_osc: clocks {
+>>>>> +                             #clock-cells =<1>;
+>>>>> +                             clock-output-names = "s2mps11_ap",
+>>>>> +                                             "s2mps11_cp", "s2mps11_bt";
+>>>>> +                     };
+>>>>> +
+>>>>> +                     regulators {
+>>>>> +                             ldo1_reg: LDO1 {
+>>>>> +                                     regulator-name = "vdd_ldo1";
+>>>>
+>>>> Is this the name as written on the PCB or board schematics?
+>>>> + the same for all regulators below.
+>>>
+>>> Yes, the schematic refers to these just as above (with no specific names).
+>>> Unless you have strong objections or a re-spin of this patch becomes
+>>> necessary, I
+>>> wouldn't want to change the name you pointed above. :)
+>>
+>> OK.
+>>
+>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+>
+> Ping Kukjin.
+>
+Applied, thanks.
 
-Better if we can sort it out, but if these patches must go through the
-samsung tree then please add my Ack.
-
-Regards,
-Mike
-
->=20
-> [1] http://www.spinics.net/lists/linux-samsung-soc/msg26695.html
->=20
-> Best regards,
-> Tomasz
+- Kukjin
