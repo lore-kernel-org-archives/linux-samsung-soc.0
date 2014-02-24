@@ -1,61 +1,38 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Add wake up key to Arndale octa board
-Date: Mon, 24 Feb 2014 09:25:05 +0900
-Message-ID: <530A9161.5090206@samsung.com>
-References: <1387356339-14082-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: Exynos: Use generic uncompress.h
+Date: Mon, 24 Feb 2014 09:39:53 +0900
+Message-ID: <530A94D9.1060500@samsung.com>
+References: <1388998975-32362-1-git-send-email-sachin.kamat@linaro.org> <201401061649.36364.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:46806 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbaBXAZM (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:36152 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897AbaBXAkA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Feb 2014 19:25:12 -0500
-Received: by mail-pb0-f52.google.com with SMTP id rp16so1226937pbb.25
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Feb 2014 16:25:12 -0800 (PST)
-In-Reply-To: <1387356339-14082-1-git-send-email-sachin.kamat@linaro.org>
+	Sun, 23 Feb 2014 19:40:00 -0500
+Received: by mail-pd0-f170.google.com with SMTP id y10so2367885pdj.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Feb 2014 16:40:00 -0800 (PST)
+In-Reply-To: <201401061649.36364.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On 12/18/13 17:45, Sachin Kamat wrote:
-> Added GPIO based wake up key to Arndale octa board.
+On 01/07/14 00:49, Arnd Bergmann wrote:
+> On Monday 06 January 2014, Sachin Kamat wrote:
+>> As a pre-requisite step towards enabling multi-platform support
+>> for Exynos, enable it to use generic uncompress.h instead of the
+>> one provided in machine code.
+>>
+>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
->   arch/arm/boot/dts/exynos5420-arndale-octa.dts |   11 +++++++++++
->   1 file changed, 11 insertions(+)
+> Both patches
 >
-> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> index edd933feaf48..240caab5129f 100644
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> @@ -12,6 +12,7 @@
->   /dts-v1/;
->   #include "exynos5420.dtsi"
->   #include<dt-bindings/interrupt-controller/irq.h>
-> +#include<dt-bindings/input/input.h>
+> Acked-by: Arnd Bergmann<arnd@arndb.de>
 >
->   / {
->   	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
-> @@ -349,4 +350,14 @@
->   		};
->   	};
->
-> +	gpio_keys {
-> +		compatible = "gpio-keys";
-> +
-> +		wakeup {
-> +			label = "SW-TACT1";
-> +			gpios =<&gpx2 7 1>;
-> +			linux,code =<KEY_WAKEUP>;
-> +			gpio-key,wakeup;
-> +		};
-> +	};
->   };
+Applied both.
 
-Applied with 2/2 patch, thanks.
-
-- Kukjin
+Thanks,
+Kukjin
