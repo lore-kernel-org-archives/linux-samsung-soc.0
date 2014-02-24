@@ -1,51 +1,57 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Fix a config option
-Date: Mon, 24 Feb 2014 09:21:17 +0900
-Message-ID: <530A907D.6080901@samsung.com>
-References: <1388140690-30668-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Add ADMA node to Exynos5420
+Date: Mon, 24 Feb 2014 09:22:49 +0900
+Message-ID: <530A90D9.8060006@samsung.com>
+References: <1391599711-30328-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:34691 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750976AbaBXAVX (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:63586 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbaBXAW4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Feb 2014 19:21:23 -0500
-Received: by mail-pb0-f48.google.com with SMTP id md12so1591696pbc.7
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Feb 2014 16:21:23 -0800 (PST)
-In-Reply-To: <1388140690-30668-1-git-send-email-sachin.kamat@linaro.org>
+	Sun, 23 Feb 2014 19:22:56 -0500
+Received: by mail-pa0-f43.google.com with SMTP id rd3so5795616pab.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Feb 2014 16:22:56 -0800 (PST)
+In-Reply-To: <1391599711-30328-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, broonie@linaro.org
 
-On 12/27/13 19:38, Sachin Kamat wrote:
-> CONFIG_MACH_EXYNOS4_DT does not exist. Use ARCH_EXYNOS4 instead.
+On 02/05/14 20:28, Sachin Kamat wrote:
+> Added ADMA mode to Exynos5420 DT file.
 >
 > Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
 > ---
->   arch/arm/configs/exynos_defconfig |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
+>   1 file changed, 11 insertions(+)
 >
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index dbe1f1c47bb0..dff01ecf78cc 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -10,8 +10,8 @@ CONFIG_PARTITION_ADVANCED=y
->   CONFIG_ARCH_EXYNOS=y
->   CONFIG_S3C_LOWLEVEL_UART_PORT=3
->   CONFIG_S3C24XX_PWM=y
-> +CONFIG_ARCH_EXYNOS4=y
->   CONFIG_ARCH_EXYNOS5=y
-> -CONFIG_MACH_EXYNOS4_DT=y
->   CONFIG_SMP=y
->   CONFIG_NR_CPUS=8
->   CONFIG_PREEMPT=y
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index cb9612fd2190..376d177e8810 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -281,6 +281,17 @@
+>   		interrupt-parent =<&gic>;
+>   		ranges;
+>
+> +		adma: adma@03880000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg =<0x03880000 0x1000>;
+> +			interrupts =<0 110 0>;
+> +			clocks =<&clock_audss EXYNOS_ADMA>;
+> +			clock-names = "apb_pclk";
+> +			#dma-cells =<1>;
+> +			#dma-channels =<6>;
+> +			#dma-requests =<16>;
+> +		};
+> +
+>   		pdma0: pdma@121A0000 {
+>   			compatible = "arm,pl330", "arm,primecell";
+>   			reg =<0x121A0000 0x1000>;
 
-Well, this is not required because it should be fine without this 
-change. ARCH_EXYNOS4 will be selected when ARCH_EXYNOS is enabled and 
-non-exist CONFIG (MACH_EXYNOS4_DT) will be ignored.
+OK, applied with 2/2 patch.
 
 Thanks,
 Kukjin
