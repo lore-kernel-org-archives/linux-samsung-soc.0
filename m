@@ -1,263 +1,86 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: [PATCH v7 3/3] ARM: dts: Add initial device tree support for EXYNOS5410
-Date: Mon, 24 Feb 2014 12:43:55 +0900
-Message-ID: <1393213435-20863-4-git-send-email-t.dakhran@samsung.com>
-References: <1393213435-20863-1-git-send-email-t.dakhran@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1393213435-20863-1-git-send-email-t.dakhran@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH RFC 04/10] base: power: Add generic OF-based power
+ domain look-up
+Date: Mon, 24 Feb 2014 11:56:19 +0100
+Message-ID: <1393239379.3091.26.camel@pizza.hi.pengutronix.de>
+References: <1389469372-17199-1-git-send-email-tomasz.figa@gmail.com>
+		 <1389469372-17199-5-git-send-email-tomasz.figa@gmail.com>
+	 <1392828827.3445.54.camel@pizza.hi.pengutronix.de> <530A2ADF.902@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <530A2ADF.902@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add initial device tree nodes for EXYNOS5410 SoC and SMDK5410 board.
+Hi Tomasz,
 
-Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/Makefile                |    1 +
- arch/arm/boot/dts/exynos5410-smdk5410.dts |   72 +++++++++++++++
- arch/arm/boot/dts/exynos5410.dtsi         |  140 +++++++++++++++++++++++++++++
- 3 files changed, 213 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
- create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+Am Sonntag, den 23.02.2014, 18:07 +0100 schrieb Tomasz Figa:
+> Hi Philipp,
+> 
+> On 19.02.2014 17:53, Philipp Zabel wrote:
+> > Am Samstag, den 11.01.2014, 20:42 +0100 schrieb Tomasz Figa:
+> 
+> [snip]
+> 
+> >> +	pd = of_genpd_get_from_provider(&pd_args);
+> >> +	if (IS_ERR(pd))
+> >> +		return PTR_ERR(pd);
+> >> +
+> >> +	dev_dbg(dev, "adding to power domain %s\n", pd->name);
+> >> +
+> >> +	while (1) {
+> >> +		ret = pm_genpd_add_device(pd, dev);
+> >
+> > Since pm_genpd_add_device is used here, no gpd_timing_data can be
+> > provided. Do you have a plan to solve this? Should the timing data be
+> > provided from the device tree?
+> 
+> Hmm, a quick grep over kernel sources for genpd_.*_add_device
+> gives just a single user of __pm_genpd_name_add_device(), with custom 
+> timing data:
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b9d6a8b..693dcdc 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -73,6 +73,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos5250-smdk5250.dtb \
- 	exynos5250-snow.dtb \
- 	exynos5420-arndale-octa.dtb \
-+	exynos5410-smdk5410.dtb \
- 	exynos5420-smdk5420.dtb \
- 	exynos5440-sd5v1.dtb \
- 	exynos5440-ssdk5440.dtb
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-new file mode 100644
-index 0000000..7ffd351
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -0,0 +1,72 @@
-+/*
-+ * SAMSUNG SMDK5410 board device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos5410.dtsi"
-+/ {
-+	model = "Samsung SMDK5410 board based on EXYNOS5410";
-+	compatible = "samsung,smdk5410", "samsung,exynos5410";
-+
-+	memory {
-+		reg = <0x40000000 0x80000000>;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttySAC2,115200";
-+	};
-+
-+	clocks {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		fin_pll: clock-fin-pll {
-+			compatible = "fixed-clock";
-+			reg = <0>;
-+			#clock-cells = <0>;
-+			clock-frequency = <24000000>;
-+			clock-output-names = "fin_pll";
-+		};
-+	};
-+
-+	mmc@12200000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		supports-highspeed;
-+		broken-cd;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	mmc@12220000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		supports-highspeed;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+			disable-wp;
-+		};
-+	};
-+
-+};
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-new file mode 100644
-index 0000000..56b44d1
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -0,0 +1,140 @@
-+/*
-+ * SAMSUNG EXYNOS5410 SoC device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * SAMSUNG EXYNOS5410 SoC device nodes are listed in this file.
-+ * EXYNOS5410 based board files can include this file and provide
-+ * values for board specfic bindings.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <dt-bindings/clock/exynos5410.h>
-+#include "exynos5.dtsi"
-+/ {
-+	compatible = "samsung,exynos5410";
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1600000000>;
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1600000000>;
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <2>;
-+			clock-frequency = <1600000000>;
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <3>;
-+			clock-frequency = <1600000000>;
-+		};
-+	};
-+
-+	clock: clock-controller@10010000 {
-+		compatible = "samsung,exynos5410-clock";
-+		reg = <0x10010000 0x30000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	timer@101C0000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x101C0000 0xB00>;
-+		interrupt-parent = <&interrupt_map>;
-+		interrupts = <0>, <1>, <2>, <3>,
-+			<4>, <5>, <6>, <7>,
-+			<8>, <9>, <10>, <11>;
-+		clocks = <&fin_pll>, <&clock CLK_MCT>;
-+		clock-names = "fin_pll", "mct";
-+
-+		interrupt_map: interrupt-map {
-+			#interrupt-cells = <1>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0 &combiner 23 3>,
-+					<1 &combiner 23 4>,
-+					<2 &combiner 25 2>,
-+					<3 &combiner 25 3>,
-+					<4 &gic 0 120 0>,
-+					<5 &gic 0 121 0>,
-+					<6 &gic 0 122 0>,
-+					<7 &gic 0 123 0>,
-+					<8 &gic 0 128 0>,
-+					<9 &gic 0 129 0>,
-+					<10 &gic 0 130 0>,
-+					<11 &gic 0 131 0>;
-+		};
-+	};
-+
-+	mmc_0: mmc@12200000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12200000 0x1000>;
-+		clocks = <&clock CLK_MMC0>, <&clock CLK_SCLK_MMC0>;
-+		clock-names = "biu", "ciu";
-+		fifo-depth = <0x80>;
-+		status = "disabled";
-+	};
-+
-+	mmc_1: mmc@12210000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12210000 0x1000>;
-+		clocks = <&clock CLK_MMC1>, <&clock CLK_SCLK_MMC1>;
-+		clock-names = "biu", "ciu";
-+		fifo-depth = <0x80>;
-+		status = "disabled";
-+	};
-+
-+	mmc_2: mmc@12220000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12220000 0x1000>;
-+		clocks = <&clock CLK_MMC2>, <&clock CLK_SCLK_MMC2>;
-+		clock-names = "biu", "ciu";
-+		fifo-depth = <0x80>;
-+		status = "disabled";
-+	};
-+
-+	serial@12C00000 {
-+		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
-+
-+	serial@12C10000 {
-+		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
-+
-+	serial@12C20000 {
-+		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
-+
-+};
--- 
-1.7.10.4
+I had added this to my work progress i.MX patches to silence the noisy
+"... latency exceeded, new value ..." warnings emitted by the power
+domain framework: http://patchwork.ozlabs.org/patch/320084/
+
+[...]
+> Moreover the timings used there are just defaults, which makes me wonder 
+> if there is any reason to specify them explicitly. Even more interesting 
+> is the fact that genpd code can measure those latencies itself.
+> 
+> Do you have a particular use case for those timing data or just 
+> wondering? I don't think we need to implement support for them right 
+> away, if there is no real need to do so. The code and bindings can be 
+> extended later to handle them, if needed.
+
+You are right, this is just superficial.
+
+> As for whether DT is appropriate place to define them, I'm not quite 
+> sure. Stop and start latencies look like hardware parameters, but state 
+> save and restore are likely to be driver-specific, as it depends on 
+> driver code how much time it takes to save and restore needed state 
+> (e.g. driver with register cache will not need to do any state save), if 
+> I understand these timing data correctly.
+
+I have one more, on i.MX6 I manually need to enable the clocks of
+devices in the power domain during the power-up sequence so that the
+reset signals can propagate.
+So far, I have implemented this by registering the device clocks of
+devices in the power domain with pm_clk_add and then let the genpd
+power_on callback temporarily enable them using pm_clk_resume:
+
+http://patchwork.ozlabs.org/patch/320085/
+
+Whether this is needed seems to me to be a property of the power domain.
+Do you think this is something we could add to of_genpd_add_to_domain,
+depending on some flag set in struct generic_pm_domain?
+I'd like to avoid having to register my own bus notifier and to deal
+with ordering issues between that and of_genpd_notifier_call.
+
+regards
+Philipp
+
