@@ -1,81 +1,52 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH v5 04/10] V4L: Add driver for s5k6a3 image sensor
-Date: Tue, 25 Feb 2014 11:55:15 +0200
-Message-ID: <20140225095515.GV4869@tarshish>
-References: <1393263322-28215-1-git-send-email-s.nawrocki@samsung.com>
- <1393263322-28215-5-git-send-email-s.nawrocki@samsung.com>
- <20140224193838.GL4869@tarshish>
- <530C6692.6090307@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
+Date: Tue, 25 Feb 2014 12:42:30 +0100
+Message-ID: <201402251242.30654.arnd@arndb.de>
+References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHxXTbNmgTYqFH1Mm-X_sN2GpfLPp0MKixU=g2bKxz8e=g@mail.gmail.com> <CAOesGMiZXKRbrbmvKs4pF7HiXM1hsGjzbFUQmJ-n5-nar5uMBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:50482 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752430AbaBYJzU (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.130]:56419 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751848AbaBYLnL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Feb 2014 04:55:20 -0500
-Content-Disposition: inline
-In-Reply-To: <530C6692.6090307@samsung.com>
+	Tue, 25 Feb 2014 06:43:11 -0500
+In-Reply-To: <CAOesGMiZXKRbrbmvKs4pF7HiXM1hsGjzbFUQmJ-n5-nar5uMBw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Sylwester,
+On Tuesday 25 February 2014, Olof Johansson wrote:
+> I disagree. I don't know what Samsung has in mind, but the revision of
+> the CPU doesn't have all that much to do with the rest of the SoC.
+> It's quite likely that some vendors (maybe not Samsung, but the same
+> concept applies) will ship 64-bit SoCs that are very similar to their
+> preceding 32-bit ones, same IP, similar busses, etc. I'm pretty sure
+> at least some vendors will do very close to that.
 
-On Tue, Feb 25, 2014 at 10:46:58AM +0100, Sylwester Nawrocki wrote:
-> On 24/02/14 20:38, Baruch Siach wrote:
-> > On Mon, Feb 24, 2014 at 06:35:16PM +0100, Sylwester Nawrocki wrote:
-> >> > This patch adds subdev driver for Samsung S5K6A3 raw image sensor.
-> >> > As it is intended at the moment to be used only with the Exynos
-> >> > FIMC-IS (camera ISP) subsystem it is pretty minimal subdev driver.
-> >> > It doesn't do any I2C communication since the sensor is controlled
-> >> > by the ISP and its own firmware.
-> >> > This driver, if needed, can be updated in future into a regular
-> >> > subdev driver where the main CPU communicates with the sensor
-> >> > directly.
-> >> > 
-> >> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >
-> > [...]
-> > 
-> >> > +static int s5k6a3_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-> >> > +{
-> >> > +	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(fh, 0);
-> >> > +
-> >> > +	*format		= s5k6a3_formats[0];
-> >> > +	format->width	= S5K6A3_DEFAULT_WIDTH;
-> >> > +	format->height	= S5K6A3_DEFAULT_HEIGHT;
-> >> > +
-> >> > +	return 0;
-> >> > +}
-> >> > +
-> >> > +static const struct v4l2_subdev_internal_ops s5k6a3_sd_internal_ops = {
-> >> > +	.open = s5k6a3_open,
-> >> > +};
-> >
-> > Where is this used?
-> 
-> This will be called when user process opens the corresponding /dev/v4l-subdev*
-> device node. More details on the v4l2 sub-device interface can be found at [1],
-> [2]. The device node is created by an aggregate media device driver, once all
-> required sub-devices are registered to it.
-> The above v4l2_subdev_internal_ops::open() implementation is pretty simple,
-> it just sets V4L2_SUBDEV_FORMAT_TRY format to some initial default value.
-> That's a per file handle value, so each process opening a set of sub-devices
-> can try pipeline configuration independently. 
-> 
-> [1] http://linuxtv.org/downloads/v4l-dvb-apis/subdev.html
-> [2] http://linuxtv.org/downloads/v4l-dvb-apis/vidioc-subdev-g-fmt.html
+Right.
 
-Thanks for the explanation. However, I've found no reference to the 
-s5k6a3_sd_internal_ops struct in the driver code. There surly has to be at 
-least one reference for the upper layer to access these ops.
+> So, if EXYNOS4 and EXYNOS5 can share a compatible value when they use
+> different CPUs, then there's no reason that whatever future 64-bit
+> ones can also share it.
 
-baruch
+How about putting both 'samsung,exynos' and 'samsung,exynos4' in DT then
+and having the platform code match exynos4 and exynos5 but not exynos?
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+That way, I think we are consistent and future-proof. Any code that needs
+to know if it's running on some exynos version can just check for the
+'samsung,exynos' compatible value and that will work on both arm32 and
+arm64. Also, if we ever decide we want to run a 32-bit kernel on a 64-bit
+exynos, we can just add 'samsung,exynos6' (or whatever number that will
+be) to the list.
+
+My usual disclaimer for this: You should never ever consider actually
+running a 32-bit kernel on a 64-bit CPU, but at the same time there
+shouldn't be any reason why it won't work either, given that we require
+arm64 based systems to have all SoC specific code in drivers and we
+can use the same drivers on arm32.
+
+	Arnd
