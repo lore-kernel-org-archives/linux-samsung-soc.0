@@ -1,91 +1,52 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: Correct handling of NULL clk in __clk_{get, put}
-Date: Tue, 25 Feb 2014 18:34:01 +0100
-Message-ID: <530CD409.80000@gmail.com>
-References: <1389096223-23934-1-git-send-email-s.nawrocki@samsung.com> <20140225061614.22529.61524@quantum>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/2] ARM: SAMSUNG: remove the rest of local uncompress.h files
+Date: Tue, 25 Feb 2014 20:36:48 +0100
+Message-ID: <6973248.vNO4T7GhE6@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f51.google.com ([74.125.83.51]:52650 "EHLO
-	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753148AbaBYReO (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:37883 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752734AbaBYThh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Feb 2014 12:34:14 -0500
-Received: by mail-ee0-f51.google.com with SMTP id t10so865004eei.24
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Feb 2014 09:34:13 -0800 (PST)
-In-Reply-To: <20140225061614.22529.61524@quantum>
+	Tue, 25 Feb 2014 14:37:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sachin.kamat@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-Hi Mike,
+Two patches from Sachin Kamat already removed the Exynos-uncompress.h .
+But in fact all Samsung platforms can use the generic uncompress code
+without needing local implementation.
 
-On 25.02.2014 07:16, Mike Turquette wrote:
-> Quoting Sylwester Nawrocki (2014-01-07 04:03:43)
->> Ensure clk->kref is dereferenced only when clk is not NULL.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> Taken into clk-fixes toward -rc5.
+Therefore this two-part series removes the rest of the uncompress.h files
+from all Samsung platforms.
 
-Thanks! \o/
+Tested on a s3c2416 and s3c2442 based machine.
 
-Best regards,
-Tomasz
+The patches should be applied on top of the patches from Sachin Kamat in
+the v3.15-next/cleanup-samsung branch in the linux-samsung.git
 
->
-> Thanks!
-> Mike
->
->> ---
->> Hi Sachin,
->>
->> please try if this patch fixes the exyno5420 boot crash.
->>
->> Thanks,
->> Sylwester
->>
->>   drivers/clk/clk.c |   13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index e3e0327..a1fe86f 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2179,24 +2179,25 @@ EXPORT_SYMBOL_GPL(devm_clk_unregister);
->>    */
->>   int __clk_get(struct clk *clk)
->>   {
->> -       if (clk && !try_module_get(clk->owner))
->> -               return 0;
->> +       if (clk) {
->> +               if (!try_module_get(clk->owner))
->> +                       return 0;
->>
->> -       kref_get(&clk->ref);
->> +               kref_get(&clk->ref);
->> +       }
->>          return 1;
->>   }
->>
->>   void __clk_put(struct clk *clk)
->>   {
->> -       if (WARN_ON_ONCE(IS_ERR(clk)))
->> +       if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
->>                  return;
->>
->>          clk_prepare_lock();
->>          kref_put(&clk->ref, __clk_release);
->>          clk_prepare_unlock();
->>
->> -       if (clk)
->> -               module_put(clk->owner);
->> +       module_put(clk->owner);
->>   }
->>
->>   /***        clk rate change notifiers        ***/
->> --
->> 1.7.9.5
->>
+
+Heiko Stuebner (2):
+  ARM: SAMSUNG: use generic uncompress.h
+  ARM: SAMSUNG: remove all custom uncompress.h
+
+ arch/arm/Kconfig.debug                          |   4 +-
+ arch/arm/mach-s3c24xx/include/mach/uncompress.h |  57 --------
+ arch/arm/mach-s3c64xx/include/mach/uncompress.h |  31 -----
+ arch/arm/mach-s5p64x0/include/mach/uncompress.h |  34 -----
+ arch/arm/mach-s5pc100/include/mach/uncompress.h |  30 ----
+ arch/arm/mach-s5pv210/include/mach/uncompress.h |  28 ----
+ arch/arm/plat-samsung/include/plat/uncompress.h | 175 ------------------------
+ 7 files changed, 2 insertions(+), 357 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/uncompress.h
+ delete mode 100644 arch/arm/mach-s3c64xx/include/mach/uncompress.h
+ delete mode 100644 arch/arm/mach-s5p64x0/include/mach/uncompress.h
+ delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
+ delete mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/uncompress.h
+
+-- 
+1.8.5.3
