@@ -1,55 +1,71 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 0/9 v7] crypto:s5p-sss: Add DT and Exynos support
-Date: Tue, 25 Feb 2014 14:16:31 +0800
-Message-ID: <20140225061630.GA9934@gondor.apana.org.au>
-References: <1392630275-8667-1-git-send-email-ch.naveen@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v5 04/10] V4L: Add driver for s5k6a3 image sensor
+Date: Tue, 25 Feb 2014 10:46:58 +0100
+Message-ID: <530C6692.6090307@samsung.com>
+References: <1393263322-28215-1-git-send-email-s.nawrocki@samsung.com>
+ <1393263322-28215-5-git-send-email-s.nawrocki@samsung.com>
+ <20140224193838.GL4869@tarshish>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ringil.hengli.com.au ([178.18.16.133]:43112 "EHLO
-	ringil.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbaBYGQe (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:48637 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708AbaBYJrJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Feb 2014 01:16:34 -0500
-Content-Disposition: inline
-In-Reply-To: <1392630275-8667-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 25 Feb 2014 04:47:09 -0500
+In-reply-to: <20140224193838.GL4869@tarshish>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, naveenkrishna.ch@gmail.com, cpgs@samsung.com, davem@davemloft.net
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Mon, Feb 17, 2014 at 03:14:26PM +0530, Naveen Krishna Chatradhi wrote:
-> SSS module on Exynos4210, Exynos5250 and Exynos5420 SoCs has added
-> features to the one on S5PV210. However with minor changes the s5p-sss.c
-> driver can be reused to support SSS modules on Exynos4 and 5 SoCs.
+Hi Baruch,
+
+On 24/02/14 20:38, Baruch Siach wrote:
+> On Mon, Feb 24, 2014 at 06:35:16PM +0100, Sylwester Nawrocki wrote:
+>> > This patch adds subdev driver for Samsung S5K6A3 raw image sensor.
+>> > As it is intended at the moment to be used only with the Exynos
+>> > FIMC-IS (camera ISP) subsystem it is pretty minimal subdev driver.
+>> > It doesn't do any I2C communication since the sensor is controlled
+>> > by the ISP and its own firmware.
+>> > This driver, if needed, can be updated in future into a regular
+>> > subdev driver where the main CPU communicates with the sensor
+>> > directly.
+>> > 
+>> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>
+> [...]
 > 
-> This patch set
-> 1. Adds device tree support to the s5p-sss.c driver and Documentation
-> 2. Adds code to support SSS module on Exynos4 and 5 SoCs
-> 3. Adds device tree node to Exynos5250 and Exynos5420
-> 4. Adds variant struct to handle the differences in SSS modules
-> 5. Adds clk_prepare/clk_unprepare clocks to the s5p-sss.c driver
-> 
-> Note: Compatible "exynos4210-secss" should work for Exynos4412 and
->       Exynos5260 (Exynos5260, for which ARCH code is under review)
-> I couldn't test on Exynos4412 and Exynos4210 boards, Should be able to
-> test with addition of DT node and clocks support.
-> 
-> Naveen Krishna Ch (7): [crypto-2.6.git]
->   crypto:s5p-sss: Use platform_get_irq() instead of _byname()
->   crypto:s5p-sss: Kconfig: Let Exynos SoCs select SSS driver
->   crypto:s5p-sss: Look for the next request in the queue
->   crypto:s5p-sss: Add device tree support
->   crypto:s5p-sss: Add support for SSS module on Exynos
->   crypto:s5p-sss: validate iv before memcpy
->   crypto:s5p-sss: Use clk_prepare/clk_unprepare
+>> > +static int s5k6a3_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+>> > +{
+>> > +	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(fh, 0);
+>> > +
+>> > +	*format		= s5k6a3_formats[0];
+>> > +	format->width	= S5K6A3_DEFAULT_WIDTH;
+>> > +	format->height	= S5K6A3_DEFAULT_HEIGHT;
+>> > +
+>> > +	return 0;
+>> > +}
+>> > +
+>> > +static const struct v4l2_subdev_internal_ops s5k6a3_sd_internal_ops = {
+>> > +	.open = s5k6a3_open,
+>> > +};
+>
+> Where is this used?
 
-FWIW these patches are fine by me.
+This will be called when user process opens the corresponding /dev/v4l-subdev*
+device node. More details on the v4l2 sub-device interface can be found at [1],
+[2]. The device node is created by an aggregate media device driver, once all
+required sub-devices are registered to it.
+The above v4l2_subdev_internal_ops::open() implementation is pretty simple,
+it just sets V4L2_SUBDEV_FORMAT_TRY format to some initial default value.
+That's a per file handle value, so each process opening a set of sub-devices
+can try pipeline configuration independently. 
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+[1] http://linuxtv.org/downloads/v4l-dvb-apis/subdev.html
+[2] http://linuxtv.org/downloads/v4l-dvb-apis/vidioc-subdev-g-fmt.html
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Regards,
+Sylwester
