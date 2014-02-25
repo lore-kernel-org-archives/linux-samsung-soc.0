@@ -1,52 +1,53 @@
 From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 0/2] ARM: SAMSUNG: remove the rest of local uncompress.h files
-Date: Tue, 25 Feb 2014 20:36:48 +0100
-Message-ID: <6973248.vNO4T7GhE6@phil>
+Subject: [PATCH v2 1/2] ARM: SAMSUNG: use generic uncompress.h
+Date: Tue, 25 Feb 2014 20:38:17 +0100
+Message-ID: <2544454.5zxXse5cEm@phil>
+References: <6973248.vNO4T7GhE6@phil>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:37883 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:37902 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752734AbaBYThh (ORCPT
+	id S1752522AbaBYTi7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Feb 2014 14:37:37 -0500
+	Tue, 25 Feb 2014 14:38:59 -0500
+In-Reply-To: <6973248.vNO4T7GhE6@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-Two patches from Sachin Kamat already removed the Exynos-uncompress.h .
-But in fact all Samsung platforms can use the generic uncompress code
-without needing local implementation.
+All Samsung platforms, not only Exynos, use the custom uncompress.h
+simply to setup the uart for the initial debug output. This can also
+be done using the generic uncompress.h.
 
-Therefore this two-part series removes the rest of the uncompress.h files
-from all Samsung platforms.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/Kconfig.debug | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tested on a s3c2416 and s3c2442 based machine.
-
-The patches should be applied on top of the patches from Sachin Kamat in
-the v3.15-next/cleanup-samsung branch in the linux-samsung.git
-
-
-Heiko Stuebner (2):
-  ARM: SAMSUNG: use generic uncompress.h
-  ARM: SAMSUNG: remove all custom uncompress.h
-
- arch/arm/Kconfig.debug                          |   4 +-
- arch/arm/mach-s3c24xx/include/mach/uncompress.h |  57 --------
- arch/arm/mach-s3c64xx/include/mach/uncompress.h |  31 -----
- arch/arm/mach-s5p64x0/include/mach/uncompress.h |  34 -----
- arch/arm/mach-s5pc100/include/mach/uncompress.h |  30 ----
- arch/arm/mach-s5pv210/include/mach/uncompress.h |  28 ----
- arch/arm/plat-samsung/include/plat/uncompress.h | 175 ------------------------
- 7 files changed, 2 insertions(+), 357 deletions(-)
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s3c64xx/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s5p64x0/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
- delete mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/uncompress.h
-
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 3e988f6..a160744 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1145,7 +1145,7 @@ config DEBUG_UART_8250_FLOW_CONTROL
+ 
+ config DEBUG_UNCOMPRESS
+ 	bool
+-	depends on ARCH_MULTIPLATFORM || ARCH_MSM || ARCH_EXYNOS
++	depends on ARCH_MULTIPLATFORM || ARCH_MSM || PLAT_SAMSUNG
+ 	default y if DEBUG_LL && !DEBUG_OMAP2PLUS_UART && \
+ 		     (!DEBUG_TEGRA_UART || !ZBOOT_ROM)
+ 	help
+@@ -1162,7 +1162,7 @@ config DEBUG_UNCOMPRESS
+ config UNCOMPRESS_INCLUDE
+ 	string
+ 	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
+-					ARCH_EXYNOS
++					PLAT_SAMSUNG
+ 	default "mach/uncompress.h"
+ 
+ config EARLY_PRINTK
 -- 
 1.8.5.3
