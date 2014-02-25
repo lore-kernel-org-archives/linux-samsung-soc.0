@@ -1,34 +1,39 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v5 04/10] V4L: Add driver for s5k6a3 image sensor
-Date: Tue, 25 Feb 2014 14:37:17 +0100
-Message-ID: <530C9C8D.2040800@samsung.com>
-References: <1393263322-28215-1-git-send-email-s.nawrocki@samsung.com>
- <1393263322-28215-5-git-send-email-s.nawrocki@samsung.com>
- <20140224193838.GL4869@tarshish> <530C6692.6090307@samsung.com>
- <20140225095515.GV4869@tarshish>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 0/2] ARM: SAMSUNG: move all arches to generic uncompress.h
+Date: Tue, 25 Feb 2014 15:17:05 +0100
+Message-ID: <3158811.UU2ZyPShVi@phil>
+References: <3594365.ORKU4Q2jDp@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12117 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314AbaBYNh0 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:34960 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752072AbaBYORq convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Feb 2014 08:37:26 -0500
-In-reply-to: <20140225095515.GV4869@tarshish>
+	Tue, 25 Feb 2014 09:17:46 -0500
+In-Reply-To: <3594365.ORKU4Q2jDp@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: kgene@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-On 25/02/14 10:55, Baruch Siach wrote:
-> Thanks for the explanation. However, I've found no reference to the 
-> s5k6a3_sd_internal_ops struct in the driver code. There surly has to be at 
-> least one reference for the upper layer to access these ops.
+Am Sonntag, 16. Februar 2014, 18:32:24 schrieb Heiko St=FCbner:
+> On 2014-01-06 Sachin Kamat posted two patches converting Exynos to us=
+e
+> the generic uncompress.h.
+>=20
+> But in fact all Samsung platforms can go this route, as all Samsung
+> uncompress.h files are simply used to set up the serial port.
+>=20
+> As the original patches were not yet applied, this series includes th=
+e
+> original Exynos-specific change.
+>=20
+> Tested on a s3c2416 and s3c2442 based machine.
 
-There is indeed an assignment missing to sd->internal_ops in probe().
-Thanks for spotting this, I've corrected that for next iteration.
+ping?
 
---
-Regards,
-Sylwester
+
+Thanks
+Heiko
