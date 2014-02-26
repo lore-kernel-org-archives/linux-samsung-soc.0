@@ -1,41 +1,42 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH] clk: samsung: remove parentheses from return statements
-Date: Wed, 26 Feb 2014 14:15:43 +0900
-Message-ID: <530D787F.9080501@samsung.com>
-References: <1393382688-5429-1-git-send-email-pankaj.dubey@samsung.com>
- <CAK9yfHyjQmFnJaM0v638X-K+jHveofOkf=2bWQ9-cyQ1y39Hmw@mail.gmail.com>
+Subject: [PATCH 0/3] introduce new config option for samsung common clock
+Date: Wed, 26 Feb 2014 14:24:04 +0900
+Message-ID: <1393392247-6247-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54839 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751787AbaBZE7e (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Feb 2014 23:59:34 -0500
-In-reply-to: <CAK9yfHyjQmFnJaM0v638X-K+jHveofOkf=2bWQ9-cyQ1y39Hmw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
 
-Hi Sachin,
+This patchset introduces a new config option for Samsung
+common clock infrastructure as COMMON_CLK_SAMSUNG. As current
+samsung common clock gets compiled based on PLAT_SAMSUNG, but moving 
+ahead with ARM64 we can not have any more such config options, so 
+better we introduce new COMMON_CLK_SAMSUNG and make it dependent
+on existing ARCH_XXXX which needs SAMSUNG common clock infrastructure, also
+on ARM64.
 
-On 02/26/2014 01:12 PM, Sachin Kamat wrote:
-> Hi Pankaj,
->
-> On 26 February 2014 08:14, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> fixed following checkpatch warning message
->> "return is not a function, parentheses are not required"
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Similar patch has already been submitted:
-> http://comments.gmane.org/gmane.linux.ports.arm.kernel/294530
->
->
-Sorry I missed that.
-Since same change already submitted we can ignore my patch.
+Pankaj Dubey (3):
+  drivers: clk: add samsung common clock config option
+  ARM: select COMMON_CLK_SAMSUNG for ARCH_EXYNOS and ARCH_S3C64XX
+  ARM: S3C24XX: select COMMON_CLK_SAMSUNG for S3C24XX
+
+ arch/arm/Kconfig              |    2 ++
+ arch/arm/mach-s3c24xx/Kconfig |    3 +++
+ drivers/clk/Kconfig           |   10 ++++++++++
+ drivers/clk/Makefile          |    2 +-
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
 -- 
-Best Regards,
-Pankaj Dubey
+1.7.9.5
