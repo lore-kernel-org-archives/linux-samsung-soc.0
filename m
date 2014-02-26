@@ -1,41 +1,58 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 2/3] ARM: select COMMON_CLK_SAMSUNG for ARCH_EXYNOS and
- ARCH_S3C64XX
-Date: Wed, 26 Feb 2014 14:24:06 +0900
-Message-ID: <1393392247-6247-3-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH 1/3] drivers: clk: add samsung common clock config option
+Date: Wed, 26 Feb 2014 14:24:05 +0900
+Message-ID: <1393392247-6247-2-git-send-email-pankaj.dubey@samsung.com>
 References: <1393392247-6247-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1393392247-6247-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Mike Turquette <mturquette@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CC: Russell King <linux@arm.linux.org.uk>
+add samsung common clock config option and let ARCH_EXYNOS or ARCH_S3CXXXX
+select this if they want to use samsung common clock infrastructure.
+
+CC: Mike Turquette <mturquette@linaro.org>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/Kconfig  |   10 ++++++++++
+ drivers/clk/Makefile |    2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index e254198..cc8868d 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -756,6 +756,7 @@ config ARCH_S3C64XX
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_SAMSUNG_PWM
- 	select COMMON_CLK
-+	select COMMON_CLK_SAMSUNG
- 	select CPU_V6K
- 	select GENERIC_CLOCKEVENTS
- 	select GPIO_SAMSUNG
-@@ -835,6 +836,7 @@ config ARCH_EXYNOS
- 	select ARCH_SPARSEMEM_ENABLE
- 	select ARM_GIC
- 	select COMMON_CLK
-+	select COMMON_CLK_SAMSUNG
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
- 	select HAVE_S3C2410_I2C if I2C
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 7641965..d93a325 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -23,6 +23,16 @@ config COMMON_CLK
+ menu "Common Clock Framework"
+ 	depends on COMMON_CLK
+ 
++config COMMON_CLK_SAMSUNG
++	bool "Clock driver for Samsung SoCs"
++	depends on ARCH_S3C64XX || ARCH_S3C24XX || ARCH_EXYNOS || ARM64
++	---help---
++          Supports clocking on Exynos SoCs:
++	  - Exynos5250, Exynos5420 board.
++	  - Exynos4 boards.
++	  - S3C2412, S3C2416, S3C2466 boards.
++	  - S3C64XX boards.
++
+ config COMMON_CLK_WM831X
+ 	tristate "Clock driver for WM831x/2x PMICs"
+ 	depends on MFD_WM831X
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index a367a98..f1da6ee 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -38,7 +38,7 @@ obj-$(CONFIG_PLAT_ORION)		+= mvebu/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+-obj-$(CONFIG_PLAT_SAMSUNG)		+= samsung/
++obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
 -- 
 1.7.9.5
