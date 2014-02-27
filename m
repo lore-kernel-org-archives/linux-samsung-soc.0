@@ -1,104 +1,51 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 3/3] ARM: S3C24XX: select COMMON_CLK_SAMSUNG for S3C24XX
-Date: Thu, 27 Feb 2014 07:59:49 +0100
-Message-ID: <17644043.UHm3oirvbC@phil>
-References: <1393392247-6247-1-git-send-email-pankaj.dubey@samsung.com> <20140227001620.12081.28601@quantum> <530E996A.9080208@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2 0/2] Add support for clocks in S5M8767
+Date: Thu, 27 Feb 2014 14:05:18 +0530
+Message-ID: <CAHbNUh3JA0_AL_OdX3prp-=Y9xby7-96NPgEQUiyDQ=NEsb7hg@mail.gmail.com>
+References: <1392791076-28301-1-git-send-email-tushar.behera@linaro.org>
+	<20140226211150.12081.99155@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53422 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750745AbaB0HAf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Feb 2014 02:00:35 -0500
-In-Reply-To: <530E996A.9080208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140226211150.12081.99155@quantum>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-Am Donnerstag, 27. Februar 2014, 10:48:26 schrieb Pankaj Dubey:
-> On 02/27/2014 09:16 AM, Mike Turquette wrote:
-> > Quoting Pankaj Dubey (2014-02-25 21:24:07)
-> > 
-> >> CC: Ben Dooks <ben-linux@fluff.org>
-> >> CC: Kukjin Kim <kgene.kim@samsung.com>
-> >> CC: Russell King <linux@arm.linux.org.uk>
-> >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> >> ---
-> >> 
-> >>   arch/arm/mach-s3c24xx/Kconfig |    3 +++
-> >>   1 file changed, 3 insertions(+)
-> >> 
-> >> diff --git a/arch/arm/mach-s3c24xx/Kconfig
-> >> b/arch/arm/mach-s3c24xx/Kconfig
-> >> index 80373da..5cf82a1 100644
-> >> --- a/arch/arm/mach-s3c24xx/Kconfig
-> >> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> >> @@ -40,6 +40,7 @@ config CPU_S3C2410
-> >> 
-> >>   config CPU_S3C2412
-> >>   
-> >>          bool "SAMSUNG S3C2412"
-> >>          select COMMON_CLK
-> >> 
-> >> +       select COMMON_CLK_SAMSUNG
-> > 
-> > I guess this depends on Heiko's "[PATCH 00/12] ARM: S3C24XX: convert
-> > s3c2410, s3c2440 s3c2442 to common clock framework" series?
-> > 
-> > Regards,
-> > Mike
-> 
-> Yes, this series is based on latest kgene/for-next branch where Heiko's
-> series is merged.
+On 27 February 2014 02:41, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Tushar Behera (2014-02-18 22:24:34)
+>> S5M8767 chip has 3 crystal oscillators which are operated in the same
+>> as the crystal oscillators in S2MPS11. Extend s2mps11-clk driver to
+>> support clocks in S5M8767.
+>>
+>> The patches are rebased on top of next-20130218.
+>
+> These changes look good to me. Will these get picked up as part of a
+> Samsung clk pull request or would you prefer that I pick them
+> individually?
+>
+Mike,
 
-Just to clarify, converted are the s3c2416/s3c2443 (first series) and s3c2412 
-(second series), because the clockout for s3c2410 etc seems to need a bit more 
-work. I've just moved two comon patches (shared plls and a platform change) 
-from the s3c2410,et-all series into the s3c2412 one.
+Please pick these patches. They won't be part of Samsung clk pull request.
 
-Both of these series are merged in kgenes tree as mentioned. And at this point 
-I'm not sure if I will have the time to respin the s3c2410 series for 3.15.
-Which might also be good to let all the other series touching samsung clock 
-code settle.
+> Regards,
+> Mike
+>
+>>
+>> Tushar Behera (2):
+>>   clk: clk-s2mps11: Refactor for including support for other MFD clocks
+>>   clk: clk-s2mps11: Add support for clocks in S5M8767 MFD
+>>
+>>  drivers/clk/Kconfig       |    6 ++++--
+>>  drivers/clk/clk-s2mps11.c |   25 +++++++++++++++++++++----
+>>  2 files changed, 25 insertions(+), 6 deletions(-)
+>>
+>> --
+>> 1.7.9.5
+>>
 
 
-Heiko
 
-> 
-> >>          select CPU_ARM926T
-> >>          select CPU_LLSERIAL_S3C2440
-> >>          select S3C2412_COMMON_CLK
-> >> 
-> >> @@ -51,6 +52,7 @@ config CPU_S3C2412
-> >> 
-> >>   config CPU_S3C2416
-> >>   
-> >>          bool "SAMSUNG S3C2416/S3C2450"
-> >>          select COMMON_CLK
-> >> 
-> >> +       select COMMON_CLK_SAMSUNG
-> >> 
-> >>          select CPU_ARM926T
-> >>          select CPU_LLSERIAL_S3C2440
-> >>          select S3C2416_PM if PM
-> >> 
-> >> @@ -89,6 +91,7 @@ config CPU_S3C244X
-> >> 
-> >>   config CPU_S3C2443
-> >>   
-> >>          bool "SAMSUNG S3C2443"
-> >>          select COMMON_CLK
-> >> 
-> >> +       select COMMON_CLK_SAMSUNG
-> >> 
-> >>          select CPU_ARM920T
-> >>          select CPU_LLSERIAL_S3C2440
-> >>          select S3C2443_COMMON_CLK
-> >> 
-> >> _______________________________________________
-> >> linux-arm-kernel mailing list
-> >> linux-arm-kernel@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Tushar Behera
