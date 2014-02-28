@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/4] mfd: sec: Select different RTC regmaps for devices
-Date: Fri, 28 Feb 2014 11:41:42 +0100
-Message-ID: <1393584104-18912-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 1/4] mfd: sec: Add maximum RTC register for regmap config
+Date: Fri, 28 Feb 2014 11:41:41 +0100
+Message-ID: <1393584104-18912-2-git-send-email-k.kozlowski@samsung.com>
 References: <1393584104-18912-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1393584104-18912-1-git-send-email-k.kozlowski@samsung.com>
@@ -10,63 +10,40 @@ To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Le
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch prepares for adding support for S2MPS14 RTC driver by
-selecting different regmaps for S2MPS1X/S5M876X RTC devices.
+Add maximum register to the regmap used by rtc-s5m driver.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/mfd/sec-core.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/mfd/sec-core.c          |    2 ++
+ include/linux/mfd/samsung/rtc.h |    2 ++
+ 2 files changed, 4 insertions(+)
 
 diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 074939c9bd42..e717c6dfb105 100644
+index a76cd85a2868..074939c9bd42 100644
 --- a/drivers/mfd/sec-core.c
 +++ b/drivers/mfd/sec-core.c
-@@ -199,7 +199,7 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 			    const struct i2c_device_id *id)
- {
- 	struct sec_platform_data *pdata = dev_get_platdata(&i2c->dev);
--	const struct regmap_config *regmap;
-+	const struct regmap_config *regmap, *regmap_rtc;
- 	struct sec_pmic_dev *sec_pmic;
- 	int ret;
+@@ -141,6 +141,8 @@ static const struct regmap_config s5m8767_regmap_config = {
+ static const struct regmap_config sec_rtc_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
++
++	.max_register = SEC_RTC_REG_MAX,
+ };
  
-@@ -233,15 +233,25 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 	switch (sec_pmic->device_type) {
- 	case S2MPS11X:
- 		regmap = &s2mps11_regmap_config;
-+		/*
-+		 * The rtc-s5m driver does not support S2MPS11 and there
-+		 * is no mfd_cell for S2MPS11 RTC device.
-+		 * However we must pass something to devm_regmap_init_i2c()
-+		 * so use S5M-like regmap config even though it wouldn't work.
-+		 */
-+		regmap_rtc = &sec_rtc_regmap_config;
- 		break;
- 	case S5M8763X:
- 		regmap = &s5m8763_regmap_config;
-+		regmap_rtc = &sec_rtc_regmap_config;
- 		break;
- 	case S5M8767X:
- 		regmap = &s5m8767_regmap_config;
-+		regmap_rtc = &sec_rtc_regmap_config;
- 		break;
- 	default:
- 		regmap = &sec_regmap_config;
-+		regmap_rtc = &sec_rtc_regmap_config;
- 		break;
- 	}
+ #ifdef CONFIG_OF
+diff --git a/include/linux/mfd/samsung/rtc.h b/include/linux/mfd/samsung/rtc.h
+index 94b7cd6d8891..4627f59ebd84 100644
+--- a/include/linux/mfd/samsung/rtc.h
++++ b/include/linux/mfd/samsung/rtc.h
+@@ -43,6 +43,8 @@ enum sec_rtc_reg {
+ 	SEC_RTC_STATUS,
+ 	SEC_WTSR_SMPL_CNTL,
+ 	SEC_RTC_UDR_CON,
++
++	SEC_RTC_REG_MAX,
+ };
  
-@@ -260,8 +270,7 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 	}
- 	i2c_set_clientdata(sec_pmic->rtc, sec_pmic);
- 
--	sec_pmic->regmap_rtc = devm_regmap_init_i2c(sec_pmic->rtc,
--			&sec_rtc_regmap_config);
-+	sec_pmic->regmap_rtc = devm_regmap_init_i2c(sec_pmic->rtc, regmap_rtc);
- 	if (IS_ERR(sec_pmic->regmap_rtc)) {
- 		ret = PTR_ERR(sec_pmic->regmap_rtc);
- 		dev_err(&i2c->dev, "Failed to allocate RTC register map: %d\n",
+ #define RTC_I2C_ADDR		(0x0C >> 1)
 -- 
 1.7.9.5
