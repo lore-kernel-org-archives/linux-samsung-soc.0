@@ -1,52 +1,49 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH 5/7] ARM: dts: imx6: add PCIe interrupt mapping properties
-Date: Fri, 28 Feb 2014 18:28:41 +0100
-Message-ID: <1393608523-17509-6-git-send-email-l.stach@pengutronix.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
+Date: Fri, 28 Feb 2014 21:03:01 +0100
+Message-ID: <201402282103.01897.arnd@arndb.de>
 References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tim Harvey <tharvey@gateworks.com>, Richard Zhu <r65037@freescale.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+ <1393608523-17509-8-git-send-email-l.stach@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1393608523-17509-8-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, kernel@pengutronix.de, linux-sh@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As defined by the common PCI bindings.
+On Friday 28 February 2014, Lucas Stach wrote:
+> +Required properties:
+> +- compatible: "fsl,imx6q-pcie"
+> +- reg: base addresse and length of the pcie controller
+> +- interrupts: First entry must contain interrupt handle for controller
+> +  INTA output.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- arch/arm/boot/dts/imx6qdl.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I think this should be documented as "optional" and only for
+backwards compatibility with old kernels.
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index fb28b2ecb1db..db3339e7d3a2 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -10,6 +10,8 @@
-  * http://www.gnu.org/copyleft/gpl.html
-  */
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #include "skeleton.dtsi"
- 
- / {
-@@ -126,7 +128,16 @@
- 				  0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
- 				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
- 			num-lanes = <1>;
-+
- 			interrupts = <0 123 0x04>;
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
-+
- 			clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
- 			clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
- 			status = "disabled";
--- 
-1.8.5.3
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +       See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries: 
+> +       - "pcie_ref_125m"
+> +       - "sata_ref_100m"
+> +       - "lvds_gate"
+> +       - "pcie_axi"
 
+I don't understand why you have completely different clocks here
+from the exynos documentation. The clock names should really be
+the same. Also, why do you have a "sata_ref_100m" clock?
+Is this just driving a device that happens to be on-board
+for a specific machine? Same for the "lvds_gate".
+
+	Arnd
