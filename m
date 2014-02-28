@@ -1,187 +1,54 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 3/3] regulator: s2mps11: Copy supported regulators from
- initconst
-Date: Fri, 28 Feb 2014 11:01:50 +0100
-Message-ID: <1393581710-17754-4-git-send-email-k.kozlowski@samsung.com>
-References: <1393581710-17754-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1393581710-17754-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: [PATCH 0/4] mfd: sec: Add support for S2MPS14
+Date: Fri, 28 Feb 2014 11:41:40 +0100
+Message-ID: <1393584104-18912-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20302 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751263AbaB1Klx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 28 Feb 2014 05:41:53 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Add __initconst to 'regulator_desc' array with supported regulators.
-During probe choose how many and which regulators will be supported
-according to device ID. Then copy the 'regulator_desc' array to
-allocated memory so the regulator core can use it.
+Hi,
 
-Additionally allocate array of of_regulator_match() dynamically (based
-on number of regulators) instead of allocation on the stack.
+Few days ago I sent patches adding support for S2MPS14 device to the
+sec-core/s2mps11 drivers. These patches were rather large as they covered
+multiple subsystems so I decided to split everything into smaller, separate
+patches.
 
-This is needed for supporting different devices in s2mps11
-driver and actually prepares the regulator driver for supporting the
-S2MPS14 device.
+The original patchset (version 3) can be found here:
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/27194/focus=1649217
 
-Code for supporting the S2MPS14 device will add its own array of
-'regulator_desc' (also marked as __initconst). This way memory footprint
-of the driver will be reduced (approximately 'regulators_desc' array for
-S2MPS11 occupies 5 kB on 32-bit ARM, for S2MPS14 will occupy 3 kB).
+This patchset is a small subset of the patchset related to the MFD core
+driver. It adds support for the S2MPS14 device only to the MFD core driver.
+I already obtained acks from Lee Jones during previous reviews.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
----
- drivers/regulator/s2mps11.c |   75 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 62 insertions(+), 13 deletions(-)
+The patchset is based on current Linus' tree *with* patch:
+mfd: sec-core: Fix possible NULL pointer dereference when i2c_new_dummy error
+(which is already in Lee Jones' MFD tree)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 189038aecbf5..ca66fc56fa58 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -25,9 +25,8 @@
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mps11.h>
- 
--#define S2MPS11_REGULATOR_CNT ARRAY_SIZE(regulators)
--
- struct s2mps11_info {
-+	unsigned int rdev_num;
- 	int ramp_delay2;
- 	int ramp_delay34;
- 	int ramp_delay5;
-@@ -343,7 +342,7 @@ static struct regulator_ops s2mps11_buck_ops = {
- 	.enable_mask	= S2MPS11_ENABLE_MASK			\
- }
- 
--static const struct regulator_desc regulators[] = {
-+static const struct regulator_desc s2mps11_regulators[] __initconst = {
- 	regulator_desc_ldo2(1),
- 	regulator_desc_ldo1(2),
- 	regulator_desc_ldo1(3),
-@@ -394,21 +393,62 @@ static const struct regulator_desc regulators[] = {
- 	regulator_desc_buck10,
- };
- 
-+/*
-+ * Allocates memory under 'regulators' pointer and copies there array
-+ * of regulator_desc for given device.
-+ *
-+ * Returns number of regulators or negative ERRNO on error.
-+ */
-+static int __init
-+s2mps11_pmic_init_regulators_desc(struct platform_device *pdev,
-+		struct regulator_desc **regulators)
-+{
-+	const struct regulator_desc *regulators_init;
-+	enum sec_device_type dev_type;
-+	int rdev_num;
-+
-+	dev_type = platform_get_device_id(pdev)->driver_data;
-+	switch (dev_type) {
-+	case S2MPS11X:
-+		rdev_num = ARRAY_SIZE(s2mps11_regulators);
-+		regulators_init = s2mps11_regulators;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "Invalid device type: %u\n", dev_type);
-+		return -EINVAL;
-+	};
-+
-+	*regulators = devm_kzalloc(&pdev->dev,
-+			sizeof(**regulators) * rdev_num, GFP_KERNEL);
-+	if (!*regulators)
-+		return -ENOMEM;
-+
-+	memcpy(*regulators, regulators_init, sizeof(**regulators) * rdev_num);
-+
-+	return rdev_num;
-+}
-+
- static int s2mps11_pmic_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct sec_platform_data *pdata = dev_get_platdata(iodev->dev);
--	struct of_regulator_match rdata[S2MPS11_REGULATOR_MAX];
-+	struct sec_platform_data *pdata = iodev->pdata;
-+	struct of_regulator_match *rdata = NULL;
- 	struct device_node *reg_np = NULL;
- 	struct regulator_config config = { };
- 	struct s2mps11_info *s2mps11;
--	int i, ret;
-+	int i, ret = 0;
-+	struct regulator_desc *regulators = NULL;
-+	int rdev_num;
- 
- 	s2mps11 = devm_kzalloc(&pdev->dev, sizeof(struct s2mps11_info),
- 				GFP_KERNEL);
- 	if (!s2mps11)
- 		return -ENOMEM;
- 
-+	rdev_num = s2mps11_pmic_init_regulators_desc(pdev, &regulators);
-+	if (rdev_num < 0)
-+		return rdev_num;
-+
- 	if (!iodev->dev->of_node) {
- 		if (pdata) {
- 			goto common_reg;
-@@ -419,24 +459,30 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	for (i = 0; i < S2MPS11_REGULATOR_CNT; i++)
-+	rdata = kzalloc(sizeof(*rdata) * rdev_num, GFP_KERNEL);
-+	if (!rdata)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < rdev_num; i++)
- 		rdata[i].name = regulators[i].name;
- 
- 	reg_np = of_find_node_by_name(iodev->dev->of_node, "regulators");
- 	if (!reg_np) {
- 		dev_err(&pdev->dev, "could not find regulators sub-node\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out;
- 	}
- 
--	of_regulator_match(&pdev->dev, reg_np, rdata, S2MPS11_REGULATOR_MAX);
-+	of_regulator_match(&pdev->dev, reg_np, rdata, rdev_num);
- 
- common_reg:
- 	platform_set_drvdata(pdev, s2mps11);
-+	s2mps11->rdev_num = rdev_num;
- 
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
--	for (i = 0; i < S2MPS11_REGULATOR_MAX; i++) {
-+	for (i = 0; i < rdev_num; i++) {
- 		struct regulator_dev *regulator;
- 
- 		if (!reg_np) {
-@@ -453,15 +499,18 @@ common_reg:
- 			ret = PTR_ERR(regulator);
- 			dev_err(&pdev->dev, "regulator init failed for %d\n",
- 				i);
--			return ret;
-+			goto out;
- 		}
- 	}
- 
--	return 0;
-+out:
-+	kfree(rdata);
-+
-+	return ret;
- }
- 
- static const struct platform_device_id s2mps11_pmic_id[] = {
--	{ "s2mps11-pmic", 0},
-+	{ "s2mps11-pmic", S2MPS11X},
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_pmic_id);
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (4):
+  mfd: sec: Add maximum RTC register for regmap config
+  mfd: sec: Select different RTC regmaps for devices
+  mfd: sec: Use consistent S2MPS11 RTC alarm interrupt indexes
+  mfd: sec: Add support for S2MPS14
+
+ drivers/mfd/sec-core.c              |   57 ++++++++++++-
+ drivers/mfd/sec-irq.c               |   97 ++++++++++++++++++++--
+ include/linux/mfd/samsung/core.h    |    1 +
+ include/linux/mfd/samsung/irq.h     |   31 ++++++-
+ include/linux/mfd/samsung/rtc.h     |   57 +++++++++++--
+ include/linux/mfd/samsung/s2mps14.h |  152 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 378 insertions(+), 17 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps14.h
+
 -- 
 1.7.9.5
