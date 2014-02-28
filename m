@@ -1,83 +1,121 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 0/4] mfd: sec: Add support for S2MPS14
-Date: Fri, 28 Feb 2014 11:11:53 +0000
-Message-ID: <20140228111153.GC31720@lee--X1>
-References: <1393584104-18912-1-git-send-email-k.kozlowski@samsung.com>
- <20140228104927.GB31720@lee--X1>
- <1393585526.31997.1.camel@AMDC1943>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [RFC PATCH v2 19/21] ARM: dts: exynos5250-arndale: add dsi and
+ panel nodes
+Date: Fri, 28 Feb 2014 15:31:12 +0200
+Message-ID: <53108FA0.4040903@ti.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com> <1392204688-4591-20-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="uAMkR61uDAfn7MkQBP2MiuFTNTrrv3oc2"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:62102 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083AbaB1LMA (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:52171 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751915AbaB1Nbg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Feb 2014 06:12:00 -0500
-Received: by mail-we0-f176.google.com with SMTP id x48so415551wes.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Feb 2014 03:11:59 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1393585526.31997.1.camel@AMDC1943>
+	Fri, 28 Feb 2014 08:31:36 -0500
+In-Reply-To: <1392204688-4591-20-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-> > > Few days ago I sent patches adding support for S2MPS14 device to =
-the
-> > > sec-core/s2mps11 drivers. These patches were rather large as they=
- covered
-> > > multiple subsystems so I decided to split everything into smaller=
-, separate
-> > > patches.
-> > >=20
-> > > The original patchset (version 3) can be found here:
-> > > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/27194/focu=
-s=3D1649217
-> > >=20
-> > > This patchset is a small subset of the patchset related to the MF=
-D core
-> > > driver. It adds support for the S2MPS14 device only to the MFD co=
-re driver.
-> > > I already obtained acks from Lee Jones during previous reviews.
-> > >=20
-> > > The patchset is based on current Linus' tree *with* patch:
-> > > mfd: sec-core: Fix possible NULL pointer dereference when i2c_new=
-_dummy error
-> > > (which is already in Lee Jones' MFD tree)
-> >=20
-> > Can all of these patches be applied as they are?
-> >=20
-> > Is anything going to break as a result?
+--uAMkR61uDAfn7MkQBP2MiuFTNTrrv3oc2
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On 12/02/14 13:31, Andrzej Hajda wrote:
+> The patch adds bridge and panel nodes.
+> It adds also DSI properties specific for arndale board.
 >=20
-> Yes, they can be applied as they are. That was the reason behind
-> splitting everything. Nothing should break, as far as I reviewed this
-> and tested.
-
-Very well, all applied, thanks.
-
-> > > Krzysztof Kozlowski (4):
-> > >   mfd: sec: Add maximum RTC register for regmap config
-> > >   mfd: sec: Select different RTC regmaps for devices
-> > >   mfd: sec: Use consistent S2MPS11 RTC alarm interrupt indexes
-> > >   mfd: sec: Add support for S2MPS14
-> > >=20
-> > >  drivers/mfd/sec-core.c              |   57 ++++++++++++-
-> > >  drivers/mfd/sec-irq.c               |   97 ++++++++++++++++++++-=
--
-> > >  include/linux/mfd/samsung/core.h    |    1 +
-> > >  include/linux/mfd/samsung/irq.h     |   31 ++++++-
-> > >  include/linux/mfd/samsung/rtc.h     |   57 +++++++++++--
-> > >  include/linux/mfd/samsung/s2mps14.h |  152 +++++++++++++++++++++=
-++++++++++++++
-> > >  6 files changed, 378 insertions(+), 17 deletions(-)
-> > >  create mode 100644 include/linux/mfd/samsung/s2mps14.h
-> > >=20
-> >=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-arndale.dts | 39 ++++++++++++++++++++++++=
+++++++++
+>  1 file changed, 39 insertions(+)
 >=20
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/d=
+ts/exynos5250-arndale.dts
+> index a0a985d..7d666b1 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -584,6 +584,45 @@
+>  		};
+>  	};
+> =20
+> +	panel: panel {
+> +		compatible =3D "boe,hv070wsa-100";
+> +		power-supply =3D <&vcc_3v3_reg>;
+> +		enable-gpios =3D <&gpd1 3 0>;
+> +		port {
+> +			panel_ep: endpoint {
+> +				remote-endpoint =3D <&bridge_out_ep>;
+> +			};
+> +		};
+> +	};
+> +
+> +	dsi_0: dsi@14500000 {
+> +		vddcore-supply =3D <&ldo8_reg>;
+> +		vddio-supply =3D <&ldo10_reg>;
+> +		samsung,pll-clock-frequency =3D <24000000>;
+> +		samsung,burst-clock-frequency =3D <320000000>;
+> +		samsung,esc-clock-frequency =3D <10000000>;
+> +		status =3D "okay";
+> +
+> +		bridge@0 {
+> +			reg =3D <0>;
+> +			compatible =3D "toshiba,tc358764";
+> +			vddc-supply =3D <&vcc_1v2_reg>;
+> +			vddio-supply =3D <&vcc_1v8_reg>;
+> +			vddmipi-supply =3D <&vcc_1v2_reg>;
+> +			vddlvds133-supply =3D <&vcc_3v3_reg>;
+> +			vddlvds112-supply =3D <&vcc_1v2_reg>;
+> +			reset-gpio =3D <&gpd1 6 1>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			port@1 {
+> +				reg =3D <1>;
+> +				bridge_out_ep: endpoint {
+> +					remote-endpoint =3D <&panel_ep>;
+> +				};
+> +			};
+> +		};
+> +	};
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Compared to what I've done on OMAP, you don't seem to specify the video
+inputs for the tc358764 at all. In this case it's obvious, as the chip
+is a child of the DSI master. But the chip could as well be controlled
+via i2c, and so be placed as a child of the i2c nodes.
+
+So even if the driver doesn't use it, maybe it would be more future
+proof to have both input and output endpoints for the tc358764?
+
+ Tomi
+
+
+
+--uAMkR61uDAfn7MkQBP2MiuFTNTrrv3oc2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJTEI+gAAoJEPo9qoy8lh71wZYQAJusntlm939iLvqxgjXUtYx/
+rI3ED+GdEIkG3vI7e4CxH9EgWBpEKEHV8onY88aGhOwv8vtXhogPWg/sGJxFxCFZ
+8j5lqZDwzx7xeOqNgyToA7xTmKO7qLF1eQn02Fa7nrlVM1Z+JSifPEzG4Gykfqiv
+W4ciHwYoUAbfiZQCXdam7zakGJYhIq8wzUDPEiCovcMjXOdPmIFrO8n13vDMdOOy
+bqMr8L2/xar8Yjf1tKjrFLlrp59zVzGJdeS4djs4tv8IedSBD1pVVDJ1E8f5AYXI
+Tyn/bsg/zCdZEuB2Orb2v2V5EzHT9CZTgW7++IZh5D+CZfkTj+tCr8/2Da7nMVhl
+GfCOg/klc3Eb7rbUsr+KmmORBNT8wVH4e1HBf4+RRXPmNw4sUfepEGmzncLpBy0K
+wi1jac39QO9vbCXJAAZeAR9P0LVQQDF0mlL0rCdS9E2hLClhBGx9YcqHnU+9Atf2
+JNB8VrxqsI6VqFWcWggvvA8xIVdXmfnGlz3JvaAOCmBBeO9/kzom75KFBrM9vTgh
+uZalrdfbKcYz7lC8j3F0i2dLpruU3GpWUJ++XDPhD7++NAxmK36J9RFRQWzgwMmc
+j0gGR19oBXdMH0nUzLIuQz+gD8afmWqb5tvlVxRy1kkLv+a1fugWxiujSG0QASPq
+iAp8mojT6FNxmvngXELz
+=KmsM
+-----END PGP SIGNATURE-----
+
+--uAMkR61uDAfn7MkQBP2MiuFTNTrrv3oc2--
