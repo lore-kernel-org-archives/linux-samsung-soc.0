@@ -1,23 +1,56 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/7] ARM: dts: tegra: add PCIe interrupt mapping properties
-Date: Fri, 28 Feb 2014 13:27:24 -0700
-Message-ID: <5310F12C.7030500@wwwdotorg.org>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de> <1393608523-17509-2-git-send-email-l.stach@pengutronix.de>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 14/28] Remove MACH_SMDKC210
+Date: Fri, 28 Feb 2014 22:43:09 +0100
+Message-ID: <1393623789.4052.17.camel@x220>
+References: <1391971686-9517-1-git-send-email-richard@nod.at>
+	 <1391971686-9517-15-git-send-email-richard@nod.at>
+	 <20140210114154.GQ1757@sirena.org.uk> <1392039072.3585.15.camel@x220>
+	 <20140210141255.GI1757@sirena.org.uk> <1392046242.3585.41.camel@x220>
+	 <20140210163621.GA13533@sirena.org.uk> <1392070159.27939.34.camel@x220>
+	 <20140212160431.GB28112@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393608523-17509-2-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:60610 "EHLO
+	cpsmtpb-ews01.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751729AbaB1VnQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 28 Feb 2014 16:43:16 -0500
+In-Reply-To: <20140212160431.GB28112@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On 02/28/2014 10:28 AM, Lucas Stach wrote:
-> Those are defined by the common PCI binding.
+On Wed, 2014-02-12 at 16:04 +0000, Mark Brown wrote:
+> On Mon, Feb 10, 2014 at 11:09:19PM +0100, Paul Bolle wrote:
+> > See, if you scan v3.10:arch/arm/mach-exynos/mach-smdkv310.c you'll
+> > notice the string "smdk-audio". If you grep that string you get a few
+> > hits. But none in v3.10:sound/soc/samsung/smdk_wm9713.c. And if you scan
+> > v3.10:sound/soc/samsung/smdk_wm9713.c for strings you'll find stuff like
+> > "wm9713-hifi",  "wm9713-codec", and "soc-audio". But these don't show up
+> > in v3.10:arch/arm/mach-exynos/mach-smdkv310.c. So it's not obvious how
+> > these two files relate.
+> 
+> > And I'm left wondering why SND_SOC_SAMSUNG_SMDK_WM9713 actually depends
+> > on (among other symbols) MACH_SMDKV310 and MACH_SMDKC210 in v3.10.
+> 
+> The hardware is physically present on those boards but must be selected
+> with DIP switches, the device registration needs to be changed in the
+> kernel when that happens (as the DT must be when it is in use).
 
-I have no reason to object to the two Tegra patches, but I'll wait for
-Thierry to take a closer look.
+In v3.14-rc4 these two symbols suddenly got removed, see commit
+eaff64705dd5 ("ASoC: samsung: Remove invalid dependencies"). It does
+exactly what I proposed last year, see
+https://lkml.org/lkml/2013/7/14/27 . (That link currently shows a rather
+empty page; is lkml.org having problems again?)
 
-I expect once he does, I would apply patch 1/7 through the Tegra tree,
-and Bjorn would take patch 2/7 through the PCI tree. Does that make sense?
+That commit is fine with me, of course. I now see no reason to continue
+my, rather slowly progressing, search for the problem that you wanted to
+get properly fixed. I suppose another commit already fixed it.
+
+Thanks,
+
+
+Paul Bolle
