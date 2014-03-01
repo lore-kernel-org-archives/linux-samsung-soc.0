@@ -1,74 +1,92 @@
-From: Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
-Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
-Date: Fri, 28 Feb 2014 16:53:33 -0800
-Message-ID: <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 14/28] Remove MACH_SMDKC210
+Date: Sat, 1 Mar 2014 12:53:39 +0900
+Message-ID: <20140301035339.GK29849@sirena.org.uk>
+References: <1391971686-9517-1-git-send-email-richard@nod.at>
+ <1391971686-9517-15-git-send-email-richard@nod.at>
+ <20140210114154.GQ1757@sirena.org.uk>
+ <1392039072.3585.15.camel@x220>
+ <20140210141255.GI1757@sirena.org.uk>
+ <1392046242.3585.41.camel@x220>
+ <20140210163621.GA13533@sirena.org.uk>
+ <1392070159.27939.34.camel@x220>
+ <20140212160431.GB28112@sirena.org.uk>
+ <1393623789.4052.17.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393608523-17509-1-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============3962212965927967114=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1393623789.4052.17.camel@x220>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Richard Weinberger <richard@nod.at>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 28, 2014 at 9:28 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> This series cleans up the PCI irq mapping for all
-> the ARM PCI host drivers, so they handle it in the
-> way defined in the common PCI bindings.
->
-> Testing appreciated.
->
-> Lucas Stach (7):
->   ARM: dts: tegra: add PCIe interrupt mapping properties
->   PCI: tegra: use new OF interrupt mapping when possible
->   PCI: rcar: use new OF interrupt mapping when possible
->   ARM: dts: exynos5440: fix PCIe interrupt mapping
->   ARM: dts: imx6: add PCIe interrupt mapping properties
->   PCI: designware: use new OF interrupt mapping when possible
->   PCI: designware: split samsung and fsl bindings
->
->  .../devicetree/bindings/pci/designware-pcie.txt    | 69 +--------------------
->  .../devicetree/bindings/pci/fsl,imx6q-pcie.txt     | 48 +++++++++++++++
->  .../bindings/pci/nvidia,tegra20-pcie.txt           |  8 +++
->  .../bindings/pci/samsung,exynos5440-pcie.txt       | 70 ++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5440.dtsi                  |  4 +-
->  arch/arm/boot/dts/imx6qdl.dtsi                     | 11 ++++
->  arch/arm/boot/dts/tegra20.dtsi                     |  4 ++
->  arch/arm/boot/dts/tegra30.dtsi                     |  4 ++
->  drivers/pci/host/pci-rcar-gen2.c                   |  8 ++-
->  drivers/pci/host/pci-tegra.c                       |  7 ++-
->  drivers/pci/host/pcie-designware.c                 |  8 ++-
->  11 files changed, 168 insertions(+), 73 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
->
-> --
-> 1.8.5.3
->
 
-Lucas,
+--===============3962212965927967114==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+HmK7y6O+lKZIGkr"
+Content-Disposition: inline
 
-In testing this on IMX6 I'm finding that 'of_irq_parse_and_map_pci()'
-always returns -EINVAL because it can't find a dt node for the host
-bridge: http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/of/of_pci_irq.c#n60.
 
-So it seems there is still something missing in the imx6 devicetree
-regarding a 'host bridge'?  Is this solution expecting the
-range/interrupt data from the PCI host controller to be encapsulated
-in a host-bridge node such as
-http://lxr.missinglinkelectronics.com/linux/Documentation/devicetree/bindings/pci/ralink,rt3883-pci.txt#L124?
- If so, thats not how the imx6 host controller node is currently
-defined.
+--+HmK7y6O+lKZIGkr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In my particular test case I have a baseboard with a socket on it and
-a PLX PEX860x PCIe switch on an add-in card.  So I don't think it
-makes sense to me to describe the add-in card in the baseboard DT -
-that wouldn't be very plug-n-play.   By the way, I'm not referring to
-the add-in card with the TI-XIO2001 PCIe-to-PCI bridge with the
-mismapped IRQ's - I'm aware that I would need to deal with that
-somehow in devicetree (still trying to understand how).
+On Fri, Feb 28, 2014 at 10:43:09PM +0100, Paul Bolle wrote:
 
-Thanks,
+> That commit is fine with me, of course. I now see no reason to continue
+> my, rather slowly progressing, search for the problem that you wanted to
+> get properly fixed. I suppose another commit already fixed it.
 
-Tim
+No, but it's someone from Samsung (Sachin works with the Samsung landing
+team at Linaro) not caring about those drivers on these boards any more
+and mentioning the DT conversion which is rather different to someone
+doing mechanical cleanup with no mention of where the symbols went.
+
+It should be fairly obvious that if the reason symbols are being removed
+due to DT conversion of the platforms then the default thing should be
+that the drivers be being converted to DT and appropriate DT entries
+being added to the board DTS files, but more generally the important
+thing is that some understanding is shown as to why the symbols vanished
+and why the mechanical fix suggested is OK.
+
+--+HmK7y6O+lKZIGkr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTEVnAAAoJELSic+t+oim9UeAP/3AbCx0eUSUgyA/4YbVeg6L0
+9YJ9ENAhOqioM6FxchvKxAFRUJ5bbEt3dYl0jzsdjcQMM0DGjunY/MHnAiaEXYaQ
+JYE0ccDRdNSZUf8HWGv1O4rrwfiPQespwImgYT+JSq6GrFCQdHVwbGjX+XCW9kDD
+LP1ywiNn3JdPHPi6N9yX8THDIefu475zc7i0UqBEhnliRIi6I2TfUutXczdKg3wI
+TnyE7eXHIr9lctDTkaIHbfVyntXrUZy2GHgVjBitNObSrmccfG/R2/3e3d/uyblS
+QmkyLpdi/7GdjZI3JrwmdLEf6tUwNon/0j9gaWZbrKGEN77ub5BKUdJN9toj986f
+82/yt922OfnksAQVNlEL8OC/nxrRPXG0pe7b6fn6dUxN829l5upBBX62bBrwHqw1
+MON0nuv5EEsxLAFt60wO+vjI8W+FZnRSry2RjRPhkehTrILsqcp/HNnX0k2mduex
+Rz9aDxF1INXIcwci5lGZgLKzzk9LWS2MVC3Z3GhV/7N5em8yD6uilvPU+gu4mLtF
+y1hcNNTefJ6/Ioy7Nr/yoU2aLdc80aAA15lNQrqgIzD212JRXTBElU5h21OLJeaP
+1q0/ROANqiNDP0yk7pLLQzZLj3TT7rotldRWONk+1zi1o32Pi7YwQKFO1BUgeLkT
+0TzOhwSK4IfG+ULtqc9D
+=TpnJ
+-----END PGP SIGNATURE-----
+
+--+HmK7y6O+lKZIGkr--
+
+--===============3962212965927967114==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============3962212965927967114==--
