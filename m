@@ -1,37 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] clocksource: exynos_mct: silence a static checker warning
-Date: Sat, 1 Mar 2014 16:57:14 +0300
-Message-ID: <20140301135714.GD23929@elgon.mountain>
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
+Date: Sat, 1 Mar 2014 11:30:59 -0700
+Message-ID: <20140301183059.GA6315@obsidianresearch.com>
+References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+ <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:21745 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752566AbaCAN6C (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Mar 2014 08:58:02 -0500
+Return-path: <linux-sh-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My guess is we aren't going to have a 2 digit cpuid here any time soon
-but the static checkers don't know that and complain that the snprintf()
-could overflow.
+On Fri, Feb 28, 2014 at 04:53:33PM -0800, Tim Harvey wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> In testing this on IMX6 I'm finding that 'of_irq_parse_and_map_pci()'
+> always returns -EINVAL because it can't find a dt node for the host
+> bridge: http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/of/of_pci_irq.c#n60.
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index ed49b25fa552..a6ee6d7cd63f 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -408,7 +408,7 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
- 	mevt = container_of(evt, struct mct_clock_event_device, evt);
- 
- 	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
--	sprintf(mevt->name, "mct_tick%d", cpu);
-+	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
- 
- 	evt->name = mevt->name;
- 	evt->cpumask = cpumask_of(cpu);
+There may be some kind of issue in the pcie-designware.c:
+
+static struct pci_bus *dw_pcie_scan_bus(int nr, struct pci_sys_data *sys)
+{
+        struct pci_bus *bus;
+        struct pcie_port *pp = sys_to_pcie(sys);
+
+        if (pp) {
+                pp->root_bus_nr = sys->busnr;
+                bus = pci_scan_root_bus(NULL, sys->busnr, &dw_pcie_ops,
+                                     ^^^^^^^^^^^
+                                     Shouldn't be null for DT cases.
+
+Perhaps since the driver doesn't pass in a parent pointer, no parent
+device is associated with the struct pci_bus that gets created, so
+pci_bus_to_OF_node will always fail and the DT PCI mechanisms become
+broken.
+
+Jason
