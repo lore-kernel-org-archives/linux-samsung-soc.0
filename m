@@ -1,80 +1,45 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 4/7] ARM: dts: exynos5440: fix PCIe interrupt mapping
-Date: Mon, 03 Mar 2014 10:26:23 +0100
-Message-ID: <1393838783.4714.0.camel@weser.hi.pengutronix.de>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-	 <1393608523-17509-5-git-send-email-l.stach@pengutronix.de>
-	 <000401cf36b3$e4aa0fb0$adfe2f10$%han@samsung.com>
-	 <000501cf36b5$b0a27110$11e75330$%han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 2/6] Samsung drivers for v3.15
+Date: Mon, 03 Mar 2014 09:51:54 +0000 (GMT)
+Message-ID: <15399641.260291393840311352.JavaMail.weblogic@epml16>
+Reply-To: kgene.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:48295 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753566AbaCCJ1D (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57780 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752988AbaCCJvz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Mar 2014 04:27:03 -0500
-In-Reply-To: <000501cf36b5$b0a27110$11e75330$%han@samsung.com>
+	Mon, 3 Mar 2014 04:51:55 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N1U00IT5U2IMRC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 03 Mar 2014 18:51:54 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Simon Horman' <horms@verge.net.au>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Tim Harvey' <tharvey@gateworks.com>, 'Richard Zhu' <r65037@freescale.com>, 'Arnd Bergmann' <arnd@arndb.de>, kernel@pengutronix.de
+To: "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, "khilman@linaro.org" <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Am Montag, den 03.03.2014, 16:53 +0900 schrieb Jingoo Han:
-> On Monday, March 03, 2014 4:41 PM, Jingoo Han wrote:
-> > On Saturday, March 01, 2014 2:29 AM, Lucas Stach wrote:
-> > >
-> > > So it actually works.
-> > >
-> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > > ---
-> > >  arch/arm/boot/dts/exynos5440.dtsi | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> > > index 02a0a1226cef..65d425d9ec27 100644
-> > > --- a/arch/arm/boot/dts/exynos5440.dtsi
-> > > +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> > > @@ -274,7 +274,7 @@
-> > >  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-> > >  		#interrupt-cells = <1>;
-> > >  		interrupt-map-mask = <0 0 0 0>;
-> > > -		interrupt-map = <0x0 0 &gic 53>;
-> > > +		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> > 
-> > It makes build errors as below:
-> > 
-> > DTC     arch/arm/boot/dts/exynos5440-ssdk5440.dtb
-> > Error: arch/arm/boot/dts/exynos5440.dtsi:289.33-34 syntax error
-> > FATAL ERROR: Unable to parse input tree
-> > make[1]: *** [arch/arm/boot/dts/exynos5440-ssdk5440.dtb] Error 1
-> > make: *** [exynos5440-ssdk5440.dtb] Error 2
-> > 
-> > Would you fix it?
-> 
-> I fixed build errors after including 'arm-gic.h' as below:
-> 
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -9,6 +9,8 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
->  #include "skeleton.dtsi"
-> 
-> Would you confirm this?
-
-That's the right fix, I'll include this (together with the other
-feedback I received) in v2 of the series.
-
-Regards,
-Lucas
-
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+VGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCAzOGRiZmI1OWQxMTc1ZWY0NThkMDA2
+NTU2MDYxYWRlYWE4NzUxYjcyOg0KDQogIExpbnVzIDMuMTQtcmMxICgyMDE0LTAyLTAyIDE2OjQy
+OjEzIC0wODAwKQ0KDQphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoNCg0K
+ICBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2tnZW5lL2xp
+bnV4LXNhbXN1bmcuZ2l0IHRhZ3Mvc2Ftc3VuZy1kcml2ZXJzDQoNCmZvciB5b3UgdG8gZmV0Y2gg
+Y2hhbmdlcyB1cCB0byBhODM3ODQ4NTljY2RlMDdlYmRjM2E3YWNmYmIyZjc0Y2I2Yzc1YTgwOg0K
+DQogIGlycWNoaXA6IGV4eW5vcy1jb21iaW5lcjogY2FsbCBoYW5kbGVfYmFkX2lycSBkaXJlY3Rs
+eSAoMjAxNC0wMi0xNCAwNzoyNzo0MCArMDkwMCkNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KU2Ftc3VuZyBkcml2ZXJz
+IHVwZGF0ZSBmb3IgdjMuMTUNCi0gcmVtb3ZlIGluY2x1c2lvbiBmcm9tIGV4eW5vc19tY3QuYw0K
+LSByZW1vdmUgaW5jbHVzaW9uIGZyb20gZXh5bm9zLWNvbWJpbmVyLmMNCiAgYW5kIHVzZSBjYWxs
+aW5nIGhhbmRsZV9iYWRfaXJxKCkgaW5zdGVhZCBvZiBkb19iYWRfSVJRKCkNCg0KLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+UGFua2FqIER1YmV5ICgyKToNCiAgICAgIGNsb2Nrc291cmNlOiBleHlub3NfbWN0OiByZW1vdmUg
+dW53YW50ZWQgaGVhZGVyIGZpbGUgaW5jbHVzaW9uDQogICAgICBpcnFjaGlwOiBleHlub3MtY29t
+YmluZXI6IGNhbGwgaGFuZGxlX2JhZF9pcnEgZGlyZWN0bHkNCg0KZHJpdmVycy9jbG9ja3NvdXJj
+ZS9leHlub3NfbWN0LmMgIHwgICAgMiAtLQ0KZHJpdmVycy9pcnFjaGlwL2V4eW5vcy1jb21iaW5l
+ci5jIHwgICAgMyArLS0NCjIgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDQgZGVsZXRp
+b25zKC0pIA==
