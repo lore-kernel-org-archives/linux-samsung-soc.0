@@ -1,41 +1,55 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
-Date: Sat, 1 Mar 2014 11:30:59 -0700
-Message-ID: <20140301183059.GA6315@obsidianresearch.com>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
- <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/3] regulator: s2mps11: Constify regulator_desc array
+Date: Mon, 3 Mar 2014 10:09:22 +0800
+Message-ID: <20140303020922.GZ2411@sirena.org.uk>
+References: <1393581710-17754-1-git-send-email-k.kozlowski@samsung.com>
+ <1393581710-17754-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WeojGOqAOUQyw5FN"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54528 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751452AbaCCCJZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 2 Mar 2014 21:09:25 -0500
 Content-Disposition: inline
-In-Reply-To: <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1393581710-17754-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-On Fri, Feb 28, 2014 at 04:53:33PM -0800, Tim Harvey wrote:
 
-> In testing this on IMX6 I'm finding that 'of_irq_parse_and_map_pci()'
-> always returns -EINVAL because it can't find a dt node for the host
-> bridge: http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/of/of_pci_irq.c#n60.
+--WeojGOqAOUQyw5FN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-There may be some kind of issue in the pcie-designware.c:
+On Fri, Feb 28, 2014 at 11:01:49AM +0100, Krzysztof Kozlowski wrote:
+> Constify the regulator_desc 'regulators' array.
 
-static struct pci_bus *dw_pcie_scan_bus(int nr, struct pci_sys_data *sys)
-{
-        struct pci_bus *bus;
-        struct pcie_port *pp = sys_to_pcie(sys);
+Applied, thanks.
 
-        if (pp) {
-                pp->root_bus_nr = sys->busnr;
-                bus = pci_scan_root_bus(NULL, sys->busnr, &dw_pcie_ops,
-                                     ^^^^^^^^^^^
-                                     Shouldn't be null for DT cases.
+--WeojGOqAOUQyw5FN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Perhaps since the driver doesn't pass in a parent pointer, no parent
-device is associated with the struct pci_bus that gets created, so
-pci_bus_to_OF_node will always fail and the DT PCI mechanisms become
-broken.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Jason
+iQIcBAEBAgAGBQJTE+RPAAoJELSic+t+oim99SYQAIq5KPXY9NUpmURYijr7Zt1c
+VI+n6xO/FbvIjP5UtZSk3U120h4arKrycry98isU1JO1zimxS6qhAvMUqJfeoQzK
+a3KBZtkZZ4APJCzfmhFC92sskrTZQZACidkW4dYNQqsX+/DhRSKwvD3xD4r3Prw3
+JQuRgVUQD/i8wakbdWctKlF8wby0icPjouH3fCfXoA+NokdPneyuM2yGBCavDAv4
+RxVyjPpZNkJzMYXO0A5MOHuL8nSDgN9o4ZuWsZi7F8lwX1oxUomELNaYO3VfxSiL
+0KVqILClIsIUfuZdY2kZW7n7tstaxuk72Ej/sY6xyvSgL62dI6MOS/g9r0uIo7gz
+hPpz/XIQDH9GV/Q0XGZJVqh4w1q/IIKCULNh2hEbTLFzbLWTIW6KzsAZ1Zkjl6Gi
+ImpWCjp7yspwNi6fER9xFflE3ZukdlDf7j8HafDvWOXiOzjIgcT3h9VwIcyCYCzS
+a62RfpaLyb3D2Z44CRrzGrBEKLRRNWpUN+4nNNvLphxL6/YiGd37k95mjZgr6vGd
+FT2olNciS2MXdZoDcem18rChVeJGt3ZUVSv/M3xxxq3cqOuv+m218XH5toz6eas1
+ymXtZwl8krIt3gTeJ/ErOymXA+SZPHEXlypqW4cJ2aoQLmvkqwKviyWJXeI9My4W
+A9WhMH5wstvgfSoM5Puo
+=/m07
+-----END PGP SIGNATURE-----
+
+--WeojGOqAOUQyw5FN--
