@@ -1,29 +1,80 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/6] mmc: sdhci-s3c: Fix base clock source management
-Date: Mon, 03 Mar 2014 16:25:46 +0100
-Message-ID: <53149EFA.9000802@gmail.com>
-References: <1389476346-20396-1-git-send-email-tomasz.figa@gmail.com>	<52F4AE40.9050907@gmail.com> <530656D3.7010709@gmail.com>	<53149A91.4030509@gmail.com> <86zjl7qp8c.fsf@void.printf.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <86zjl7qp8c.fsf@void.printf.net>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <chris@printf.net>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 00/11] Generic Device Tree based power domain look-up
+Date: Mon,  3 Mar 2014 17:02:05 +0100
+Message-ID: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>Tomas
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03.03.2014 16:24, Chris Ball wrote:
-> Hi,
->
-> On Mon, Mar 03 2014, Tomasz Figa wrote:
->> It's been almost two months since I posted this series, it's been
->> already ACKed and it would be nice to have it applied for upcoming
->> release.
->
-> Sorry about this, Tomasz -- now pushed to mmc-next for 3.15, thanks.
+Up till now there was no single generic method to bind devices to their
+power domains using Device Tree. Each platform has been doing this using
+its own way, example of which are Exynos power domain bindings [1] and
+look-up code [2].
 
-Thanks. \o/
+This series is intended to change this and provide generic DT bindings for
+power domain specification and generic code performing look-up of power
+domains and binding them to devices.
 
-Best regards,
-Tomasz
+First two patches are the most important part of this series, as they
+introduce $subject. Patch 3 converts mach-exynos to use the new generic
+method. Further patches are adding one more user of the new code,
+mach-s3c64xx, with first 3 patches (4-6) required to clean-up its power
+domain driver a bit and last 3 patches (9-11) adding display support for
+Mini6410 board, including a node for display controller (FIMD) which is
+a power domain consumer.
+
+The design of DT bindings and provider code is heavily inspired by
+implementation of clock providers in Common Clock Framework, while
+the code binding devices to power domains by my Exynos power domain
+implementation (now removed by this series ;)).
+
+Successfully tested on S3C6410-based Mini6410 board.
+
+[1] Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+[2] arch/arm/mach-exynos/pm_domains.c
+
+Changes since v1 (RFC):
+[https://lkml.org/lkml/2014/1/11/141]
+ - rebased onto current Rafael's linux-pm bleeding-edge branch,
+ - reordered the patches a bit (to have the generic ones first),
+ - dropped renaming of S3C64xx power domains (as suggested by Mark Brown),
+ - added support for deferred probing (as suggested by Stephen Boyd),
+ - fixed several minor issues pointed by Stephen Boyd,
+ - replaced notifiers with direct hooks in driver core to make power domain
+   support independent from specific bus type and allow error handling.
+
+Tomasz Figa (11):
+  base: power: Add generic OF-based power domain look-up
+  drivercore: Bind/unbind power domain on probe/remove
+  ARM: exynos: Move to generic power domain bindings
+  ARM: s3c64xx: pm: Use name field of generic_pm_domain
+  ARM: s3c64xx: pm: Add always_on field to s3c64xx_pm_domain struct
+  ARM: s3c64xx: pm: Add pwr_stat bit for domain G
+  ARM: s3c64xx: pm: Add device tree based power domain instantiation
+  ARM: s3c64xx: dt: Enable SoC-level power management
+  ARM: dts: s3c64xx: Add nodes for power domains
+  ARM: dts: s3c64xx: Add node for display controller
+  ARM: dts: s3c6410-mini6410: Add support for LCD screen
+
+ .../bindings/arm/exynos/power_domain.txt           |  12 +-
+ .../devicetree/bindings/power/power_domain.txt     |  51 ++++
+ arch/arm/boot/dts/s3c6400.dtsi                     |   1 +
+ arch/arm/boot/dts/s3c6410-mini6410.dts             |  33 +++
+ arch/arm/boot/dts/s3c6410.dtsi                     |   1 +
+ arch/arm/boot/dts/s3c64xx.dtsi                     |  13 +
+ arch/arm/mach-exynos/pm_domains.c                  |  80 +-----
+ arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c            |   8 +
+ arch/arm/mach-s3c64xx/pm.c                         | 106 ++++++--
+ drivers/base/dd.c                                  |   9 +-
+ drivers/base/power/domain.c                        | 298 +++++++++++++++++++++
+ include/dt-bindings/arm/s3c64xx-power-domains.h    |  26 ++
+ include/linux/pm_domain.h                          |  46 ++++
+ kernel/power/Kconfig                               |   4 +
+ 14 files changed, 576 insertions(+), 112 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/power_domain.txt
+ create mode 100644 include/dt-bindings/arm/s3c64xx-power-domains.h
+
+-- 
+1.9.0
