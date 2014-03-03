@@ -1,111 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 6/6] Samsung clk-s3c24xx updates for v3.15
-Date: Mon, 03 Mar 2014 09:57:25 +0000 (GMT)
-Message-ID: <31063545.260671393840643330.JavaMail.weblogic@epml16>
-Reply-To: kgene.kim@samsung.com
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] regulator: s2mps11: Copy supported regulators from
+ initconst
+Date: Mon, 03 Mar 2014 12:53:41 +0100
+Message-ID: <1393847621.4267.8.camel@AMDC1943>
+References: <1393581710-17754-1-git-send-email-k.kozlowski@samsung.com>
+ <1393581710-17754-4-git-send-email-k.kozlowski@samsung.com>
+ <20140303020933.GA2411@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58820 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752263AbaCCJ5a (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:18734 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754109AbaCCLxq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Mar 2014 04:57:30 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N1U00IBYUBQMRD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Mar 2014 18:57:26 +0900 (KST)
-MIME-version: 1.0
+	Mon, 3 Mar 2014 06:53:46 -0500
+In-reply-to: <20140303020933.GA2411@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, "khilman@linaro.org" <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
 
-VGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCBlMTFkOTE5ZTRhYTIwMDkwNzdlM2U0
-ZjgyOWZmOTkxZDM3YWRjYTYxOg0KDQogIEFSTTogRVhZTk9TOiBEcm9wIGxlZ2FjeSBFeHlub3M0
-IGNsb2NrIHN1c3BlbmQvcmVzdW1lIGNvZGUgKDIwMTQtMDItMTQgMDg6MTY6MDEgKzA5MDApDQoN
-CmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0Og0KDQogIGh0dHA6Ly9naXQu
-a2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQva2dlbmUvbGludXgtc2Ftc3VuZy5n
-aXQgdGFncy9zM2MyNHh4LWNsaw0KDQpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMzE1
-YzYyYzc1MGU4MmNiMjA4NDVjYmVmNTg1MTQxY2JmOThhYTFhMDoNCg0KICBBUk06IFMzQzI0WFg6
-IGNvbnZlcnQgczNjMjQxMiB0byBjb21tb24gY2xvY2sgZnJhbWV3b3JrICgyMDE0LTAzLTAzIDA5
-OjE4OjQ5ICswOTAwKQ0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpTYW1zdW5nIFMzQzI0WFggdG8gdXNlIHRoZSBjb21t
-b24gY2xvY2sgZnJhbWV3b3JrDQotIFMzQzI0MTIsIFMzQzI0MTMsIFMzQzI0MTYgYW5kIFMzQzI0
-NDMgdG8gdXNlIENDRg0KDQpIZWlrbyBTdHVlYm5lciAoMTIpOg0KICBjbGs6IHNhbXN1bmc6IGFk
-ZCBwbGxfNjU1MiB2YXJpYW50IGZvciBzM2MyNDE2DQogIGNsazogc2Ftc3VuZzogYWRkIHBsbHMg
-dXNlZCBieSB0aGUgczNjMjQ0Mw0KICBkdC1iaW5kaW5nczogYWRkIGJpbmRpbmcgZm9yIGNsb2Nr
-LWNvbnRyb2xsZXIgb2YgczNjMjQ0MyBhbmQgZm9sbG93aW5nDQogIGNsazogc2Ftc3VuZzogYWRk
-IGNsb2NrLWRyaXZlciBmb3IgczNjMjQxNiwgczNjMjQ0MyBhbmQgczNjMjQ1MA0KICBBUk06IFMz
-QzI0WFg6IHByZXZlbnQgY29uZmxpY3RzIGJldHdlZW4gY2NmIGFuZCBub24tY2NmIHMzYzI0eHgt
-c29jcw0KICBBUk06IGR0czogYWRkIGNsb2NrIGRhdGEgZm9yIHMzYzI0MTYNCiAgQVJNOiBTM0My
-NFhYOiBDb252ZXJ0IHMzYzI0MTYgYW5kIHMzYzI0NDMgdG8gY29tbW9uIGNsb2NrIGZyYW1ld29y
-aw0KICBBUk06IFMzQzI0WFg6IG9ubHkgc3RvcmUgY2xvY2sgcmVnaXN0ZXJzIHdoZW4gb2xkIGNs
-b2NrIGNvZGUgaXMgYWN0aXZlDQogIGNsazogc2Ftc3VuZzogYWRkIHBsbHMgdXNlZCBieSB0aGUg
-ZWFybHkgczNjMjR4eCBjcHVzDQogIGR0LWJpbmRpbmdzOiBhZGQgZG9jdW1lbnRhdGlvbiBmb3Ig
-czNjMjQxMiBjbG9jayBjb250cm9sbGVyDQogIGNsazogc2Ftc3VuZzogYWRkIGNsb2NrIGNvbnRy
-b2xsZXIgZHJpdmVyIGZvciBzM2MyNDEyDQogIEFSTTogUzNDMjRYWDogY29udmVydCBzM2MyNDEy
-IHRvIGNvbW1vbiBjbG9jayBmcmFtZXdvcmsNCg0KTm90ZToNCi0gVGhpcyBicmFuY2ggaXMgYmFz
-ZWQgb24gdjMuMTUtbmV4dC9zMnItcG0tc2Ftc3VuZw0KLSBjbG9jayByZWxhdGVkIHN0dWZmIGdv
-dCBhY2sgZnJvbSBNaWtlIGFuZCBUb21hc3oNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KSGVpa28gU3R1ZWJuZXIgKDEy
-KToNCiAgICAgIGNsazogc2Ftc3VuZzogYWRkIHBsbF82NTUyIHZhcmlhbnQgZm9yIHMzYzI0MTYN
-CiAgICAgIGNsazogc2Ftc3VuZzogYWRkIHBsbHMgdXNlZCBieSB0aGUgczNjMjQ0Mw0KICAgICAg
-ZHQtYmluZGluZ3M6IGFkZCBiaW5kaW5nIGZvciBjbG9jay1jb250cm9sbGVyIG9mIHMzYzI0NDMg
-YW5kIGZvbGxvd2luZw0KICAgICAgY2xrOiBzYW1zdW5nOiBhZGQgY2xvY2stZHJpdmVyIGZvciBz
-M2MyNDE2LCBzM2MyNDQzIGFuZCBzM2MyNDUwDQogICAgICBBUk06IFMzQzI0WFg6IHByZXZlbnQg
-Y29uZmxpY3RzIGJldHdlZW4gY2NmIGFuZCBub24tY2NmIHMzYzI0eHgtc29jcw0KICAgICAgQVJN
-OiBkdHM6IGFkZCBjbG9jayBkYXRhIGZvciBzM2MyNDE2DQogICAgICBBUk06IFMzQzI0WFg6IENv
-bnZlcnQgczNjMjQxNiBhbmQgczNjMjQ0MyB0byBjb21tb24gY2xvY2sgZnJhbWV3b3JrDQogICAg
-ICBBUk06IFMzQzI0WFg6IG9ubHkgc3RvcmUgY2xvY2sgcmVnaXN0ZXJzIHdoZW4gb2xkIGNsb2Nr
-IGNvZGUgaXMgYWN0aXZlDQogICAgICBjbGs6IHNhbXN1bmc6IGFkZCBwbGxzIHVzZWQgYnkgdGhl
-IGVhcmx5IHMzYzI0eHggY3B1cw0KICAgICAgZHQtYmluZGluZ3M6IGFkZCBkb2N1bWVudGF0aW9u
-IGZvciBzM2MyNDEyIGNsb2NrIGNvbnRyb2xsZXINCiAgICAgIGNsazogc2Ftc3VuZzogYWRkIGNs
-b2NrIGNvbnRyb2xsZXIgZHJpdmVyIGZvciBzM2MyNDEyDQogICAgICBBUk06IFMzQzI0WFg6IGNv
-bnZlcnQgczNjMjQxMiB0byBjb21tb24gY2xvY2sgZnJhbWV3b3JrDQoNCiAuLi4vYmluZGluZ3Mv
-Y2xvY2svc2Ftc3VuZyxzM2MyNDEyLWNsb2NrLnR4dCAgICAgICB8ICAgNTAgKysNCiAuLi4vYmlu
-ZGluZ3MvY2xvY2svc2Ftc3VuZyxzM2MyNDQzLWNsb2NrLnR4dCAgICAgICB8ICAgNTYgKysNCiBh
-cmNoL2FybS9ib290L2R0cy9zM2MyNDE2LXNtZGsyNDE2LmR0cyAgICAgICAgICAgICB8ICAgMTMg
-Kw0KIGFyY2gvYXJtL2Jvb3QvZHRzL3MzYzI0MTYuZHRzaSAgICAgICAgICAgICAgICAgICAgIHwg
-ICA0MiArKw0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9LY29uZmlnICAgICAgICAgICAgICAgICAg
-ICAgIHwgICAyNCArLQ0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9NYWtlZmlsZSAgICAgICAgICAg
-ICAgICAgICAgIHwgICAgNyArLQ0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9jbG9jay1zM2MyNDEy
-LmMgICAgICAgICAgICAgIHwgIDc2MSAtLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIGFyY2gvYXJtL21h
-Y2gtczNjMjR4eC9jbG9jay1zM2MyNDE2LmMgICAgICAgICAgICAgIHwgIDE3MSAtLS0tLQ0KIGFy
-Y2gvYXJtL21hY2gtczNjMjR4eC9jbG9jay1zM2MyNDQzLmMgICAgICAgICAgICAgIHwgIDIxMiAt
-LS0tLS0NCiBhcmNoL2FybS9tYWNoLXMzYzI0eHgvY29tbW9uLXMzYzI0NDMuYyAgICAgICAgICAg
-ICB8ICA2NzUgLS0tLS0tLS0tLS0tLS0tLS0NCiBhcmNoL2FybS9tYWNoLXMzYzI0eHgvY29tbW9u
-LmMgICAgICAgICAgICAgICAgICAgICB8ICAgMjcgKy0NCiBhcmNoL2FybS9tYWNoLXMzYzI0eHgv
-Y29tbW9uLmggICAgICAgICAgICAgICAgICAgICB8ICAgMTAgKw0KIGFyY2gvYXJtL21hY2gtczNj
-MjR4eC9tYWNoLWppdmUuYyAgICAgICAgICAgICAgICAgIHwgICAgOSArLQ0KIGFyY2gvYXJtL21h
-Y2gtczNjMjR4eC9tYWNoLXMzYzI0MTYtZHQuYyAgICAgICAgICAgIHwgICAzOSArLQ0KIGFyY2gv
-YXJtL21hY2gtczNjMjR4eC9tYWNoLXNtZGsyNDEzLmMgICAgICAgICAgICAgIHwgICAgOSArLQ0K
-IGFyY2gvYXJtL21hY2gtczNjMjR4eC9tYWNoLXNtZGsyNDE2LmMgICAgICAgICAgICAgIHwgICAg
-OSArLQ0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9tYWNoLXNtZGsyNDQzLmMgICAgICAgICAgICAg
-IHwgICAgOSArLQ0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9tYWNoLXZzdG1zLmMgICAgICAgICAg
-ICAgICAgIHwgICAgOSArLQ0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9wbS5jICAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgICAxMyArLQ0KIGFyY2gvYXJtL21hY2gtczNjMjR4eC9zM2MyNDEyLmMg
-ICAgICAgICAgICAgICAgICAgIHwgICA0MyAtLQ0KIGRyaXZlcnMvY2xrL3NhbXN1bmcvTWFrZWZp
-bGUgICAgICAgICAgICAgICAgICAgICAgIHwgICAgMiArDQogZHJpdmVycy9jbGsvc2Ftc3VuZy9j
-bGstcGxsLmMgICAgICAgICAgICAgICAgICAgICAgfCAgMjY2ICsrKysrKy0NCiBkcml2ZXJzL2Ns
-ay9zYW1zdW5nL2Nsay1wbGwuaCAgICAgICAgICAgICAgICAgICAgICB8ICAgIDYgKw0KIGRyaXZl
-cnMvY2xrL3NhbXN1bmcvY2xrLXMzYzI0MTIuYyAgICAgICAgICAgICAgICAgIHwgIDI2OSArKysr
-KysrDQogZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstczNjMjQ0My5jICAgICAgICAgICAgICAgICAg
-fCAgNDYyICsrKysrKysrKysrKw0KIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svczNjMjQxMi5o
-ICAgICAgICAgICAgICAgIHwgICA3MyArKw0KIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svczNj
-MjQ0My5oICAgICAgICAgICAgICAgIHwgICA5MiArKysNCiAyNyBmaWxlcyBjaGFuZ2VkLCAxNDI4
-IGluc2VydGlvbnMoKyksIDE5MzAgZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0IERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zYW1zdW5nLHMzYzI0MTItY2xv
-Y2sudHh0DQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9jbG9jay9zYW1zdW5nLHMzYzI0NDMtY2xvY2sudHh0DQogZGVsZXRlIG1vZGUgMTAwNjQ0
-IGFyY2gvYXJtL21hY2gtczNjMjR4eC9jbG9jay1zM2MyNDEyLmMNCiBkZWxldGUgbW9kZSAxMDA2
-NDQgYXJjaC9hcm0vbWFjaC1zM2MyNHh4L2Nsb2NrLXMzYzI0MTYuYw0KIGRlbGV0ZSBtb2RlIDEw
-MDY0NCBhcmNoL2FybS9tYWNoLXMzYzI0eHgvY2xvY2stczNjMjQ0My5jDQogZGVsZXRlIG1vZGUg
-MTAwNjQ0IGFyY2gvYXJtL21hY2gtczNjMjR4eC9jb21tb24tczNjMjQ0My5jDQogY3JlYXRlIG1v
-ZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3NhbXN1bmcvY2xrLXMzYzI0MTIuYw0KIGNyZWF0ZSBtb2Rl
-IDEwMDY0NCBkcml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1zM2MyNDQzLmMNCiBjcmVhdGUgbW9kZSAx
-MDA2NDQgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zM2MyNDEyLmgNCiBjcmVhdGUgbW9kZSAx
-MDA2NDQgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zM2MyNDQzLmgNCg==
+Hi,
+
+On Mon, 2014-03-03 at 10:09 +0800, Mark Brown wrote:
+> On Fri, Feb 28, 2014 at 11:01:50AM +0100, Krzysztof Kozlowski wrote:
+> > Add __initconst to 'regulator_desc' array with supported regulators.
+> > During probe choose how many and which regulators will be supported
+> > according to device ID. Then copy the 'regulator_desc' array to
+> > allocated memory so the regulator core can use it.
+> 
+> Applied, thanks.
+
+Thanks! Unfortunately I wonder now whether it was a good idea to mark
+the regulator_desc array as __initconst. I've seen the warning from
+kbuild test robot:
+--------
+>> WARNING: vmlinux.o(.text+0xf0faab): Section mismatch in reference
+from the function s2mps11_pmic_probe() to the
+variable .init.rodata:s2mps11_regulators
+   The function s2mps11_pmic_probe() references
+   the variable __initconst s2mps11_regulators.
+   This is often because s2mps11_pmic_probe lacks a __initconst
+   annotation or the annotation of s2mps11_regulators is wrong.
+--------
+
+I have two ideas for fixing this:
+1. The s2mps11_pmic_probe() could be marked with __init and 
+platform_driver_probe() should be used. Unfortunately this does not work
+because the driver is registered and probed a little later after
+s2mps11_pmic_init() when I2C bus driver is probed. During that time the
+drv->probe() is actually NULL.
+
+2. The s2mps11_pmic_probe() won't be marked as __init and could copy the
+regulator_desc (__initconst) array to local static variable. This way if
+it would be called twice the mentioned array __initconst won't be
+dereferenced. Unfortunately this won't remove the warning.
+
+Any ideas for solving this?
+
+Best regards,
+Krzysztof
