@@ -1,130 +1,71 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v2 04/11] ARM: s3c64xx: pm: Use name field of generic_pm_domain
-Date: Mon,  3 Mar 2014 17:02:09 +0100
-Message-ID: <1393862536-9842-5-git-send-email-tomasz.figa@gmail.com>
-References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>Tomas
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] regulator: s2mps11: Copy supported regulators from
+ initconst
+Date: Mon, 03 Mar 2014 17:20:57 +0100
+Message-ID: <1393863657.4267.17.camel@AMDC1943>
+References: <1393581710-17754-1-git-send-email-k.kozlowski@samsung.com>
+ <1393581710-17754-4-git-send-email-k.kozlowski@samsung.com>
+ <20140303020933.GA2411@sirena.org.uk> <1393847621.4267.8.camel@AMDC1943>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43761 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754024AbaCCQVC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Mar 2014 11:21:02 -0500
+In-reply-to: <1393847621.4267.8.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
 
-This patch removes name field from private s3c64xx_pm_domain struct and
-moves domain name to dedicated field of generic_pm_domain struct.
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- arch/arm/mach-s3c64xx/pm.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+> 
+> Hi,
+> 
+> On Mon, 2014-03-03 at 10:09 +0800, Mark Brown wrote:
+> > On Fri, Feb 28, 2014 at 11:01:50AM +0100, Krzysztof Kozlowski wrote:
+> > > Add __initconst to 'regulator_desc' array with supported regulators.
+> > > During probe choose how many and which regulators will be supported
+> > > according to device ID. Then copy the 'regulator_desc' array to
+> > > allocated memory so the regulator core can use it.
+> > 
+> > Applied, thanks.
+> 
+> Thanks! Unfortunately I wonder now whether it was a good idea to mark
+> the regulator_desc array as __initconst. I've seen the warning from
+> kbuild test robot:
+> --------
+> >> WARNING: vmlinux.o(.text+0xf0faab): Section mismatch in reference
+> from the function s2mps11_pmic_probe() to the
+> variable .init.rodata:s2mps11_regulators
+>    The function s2mps11_pmic_probe() references
+>    the variable __initconst s2mps11_regulators.
+>    This is often because s2mps11_pmic_probe lacks a __initconst
+>    annotation or the annotation of s2mps11_regulators is wrong.
+> --------
+> 
+> I have two ideas for fixing this:
+> 1. The s2mps11_pmic_probe() could be marked with __init and 
+> platform_driver_probe() should be used. Unfortunately this does not work
+> because the driver is registered and probed a little later after
+> s2mps11_pmic_init() when I2C bus driver is probed. During that time the
+> drv->probe() is actually NULL.
+> 
+> 2. The s2mps11_pmic_probe() won't be marked as __init and could copy the
+> regulator_desc (__initconst) array to local static variable. This way if
+> it would be called twice the mentioned array __initconst won't be
+> dereferenced. Unfortunately this won't remove the warning.
+> 
+> Any ideas for solving this?
 
-diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
-index b5a6698..df4b7b2 100644
---- a/arch/arm/mach-s3c64xx/pm.c
-+++ b/arch/arm/mach-s3c64xx/pm.c
-@@ -36,7 +36,6 @@
- #include "regs-syscon-power.h"
- 
- struct s3c64xx_pm_domain {
--	char *const name;
- 	u32 ena;
- 	u32 pwr_stat;
- 	struct generic_pm_domain pd;
-@@ -77,7 +76,7 @@ static int s3c64xx_pd_on(struct generic_pm_domain *domain)
- 		} while (retry--);
- 
- 		if (!retry) {
--			pr_err("Failed to start domain %s\n", pd->name);
-+			pr_err("Failed to start domain %s\n", pd->pd.name);
- 			return -EBUSY;
- 		}
- 	}
-@@ -86,78 +85,78 @@ static int s3c64xx_pd_on(struct generic_pm_domain *domain)
- }
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_irom = {
--	.name = "IROM",
- 	.ena = S3C64XX_NORMALCFG_IROM_ON,
- 	.pd = {
-+		.name = "IROM",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_etm = {
--	.name = "ETM",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_ETM_ON,
- 	.pwr_stat = S3C64XX_BLKPWRSTAT_ETM,
- 	.pd = {
-+		.name = "ETM",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_s = {
--	.name = "S",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_S_ON,
- 	.pwr_stat = S3C64XX_BLKPWRSTAT_S,
- 	.pd = {
-+		.name = "S",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_f = {
--	.name = "F",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_F_ON,
- 	.pwr_stat = S3C64XX_BLKPWRSTAT_F,
- 	.pd = {
-+		.name = "F",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_p = {
--	.name = "P",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_P_ON,
- 	.pwr_stat = S3C64XX_BLKPWRSTAT_P,
- 	.pd = {
-+		.name = "P",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_i = {
--	.name = "I",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_I_ON,
- 	.pwr_stat = S3C64XX_BLKPWRSTAT_I,
- 	.pd = {
-+		.name = "I",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_g = {
--	.name = "G",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_G_ON,
- 	.pd = {
-+		.name = "G",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
- };
- 
- static struct s3c64xx_pm_domain s3c64xx_pm_v = {
--	.name = "V",
- 	.ena = S3C64XX_NORMALCFG_DOMAIN_V_ON,
- 	.pwr_stat = S3C64XX_BLKPWRSTAT_V,
- 	.pd = {
-+		.name = "V",
- 		.power_off = s3c64xx_pd_off,
- 		.power_on = s3c64xx_pd_on,
- 	},
--- 
-1.9.0
+I sent a patch removing the __initconst. From my point of view these two
+patches can be squashed, so effectively only choosing number of
+supported regulators is introduced (as it was in my original patch from
+11th of February).
+
+
+Best regards,
+Krzysztof
