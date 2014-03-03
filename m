@@ -1,173 +1,168 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [REGRESSION] Arndale Octa panics when booting 3.14-rc1
-Date: Mon, 03 Mar 2014 21:53:31 +0100
-Message-ID: <5314EBCB.3060400@gmail.com>
-References: <20140303185755.GA11460@e102654-lin.cambridge.arm.com> <5314D239.7090001@gmail.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
+Date: Mon, 3 Mar 2014 15:40:43 -0800
+Message-ID: <CAJ+vNU2ojt_o9=AOGfpbx6NCOE_kE6tsV8FvjoGYk9BBwP_OFQ@mail.gmail.com>
+References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+	<CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
+	<20140301183059.GA6315@obsidianresearch.com>
+	<000601cf36b8$330b3a90$9921afb0$%han@samsung.com>
+	<CAJ+vNU3UL+LTWnoxW7scAig19=z2xoYCA-HZ6a7GUyGEXtKK9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:56049 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753590AbaCCUxf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Mar 2014 15:53:35 -0500
-Received: by mail-ee0-f42.google.com with SMTP id d17so4427568eek.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Mar 2014 12:53:34 -0800 (PST)
-In-Reply-To: <5314D239.7090001@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAJ+vNU3UL+LTWnoxW7scAig19=z2xoYCA-HZ6a7GUyGEXtKK9Q@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Lucas Stach <l.stach@pengutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javi Merino <javi.merino@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Jiada Wang <jiada_wang@mentor.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 03/03/2014 08:04 PM, Tomasz Figa wrote:
-> On 03.03.2014 19:57, Javi Merino wrote:
->> Hi,
->>
->> Commit fcb0ee6a3d (clk: Implement clk_unregister) added calls to
->> kref_get() and kref_put() to __clk_get() and __clk_put() without
->> checking if clk is not NULL:
->>
->>> @@ -1987,6 +2097,7 @@ int __clk_get(struct clk *clk)
->>>          if (clk && !try_module_get(clk->owner))
->>>                  return 0;
+On Mon, Mar 3, 2014 at 9:49 AM, Tim Harvey <tharvey@gateworks.com> wrote:
+> On Mon, Mar 3, 2014 at 12:11 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+>> On Sunday, March 02, 2014 3:31 AM, Jason Gunthorpe wrote:
+>>> On Fri, Feb 28, 2014 at 04:53:33PM -0800, Tim Harvey wrote:
 >>>
->>> +       kref_get(&clk->ref);
->>>          return 1;
->>>   }
->>>
->>> @@ -1995,6 +2106,10 @@ void __clk_put(struct clk *clk)
->>>          if (WARN_ON_ONCE(IS_ERR(clk)))
->>>                  return;
->>>
->>> +       clk_prepare_lock();
->>> +       kref_put(&clk->ref, __clk_release);
->>> +       clk_prepare_unlock();
->>> +
->>>          if (clk)
->>>                  module_put(clk->owner);
->>>   }
->>
->> Before this commit, these functions allowed clk to be NULL.  In
->> particular, the "if (clk)" in __clk_put() is now useless, as clk has
->> been dereferenced by the time you reach it.
->>
->> This causes Arndale Octa to panic on boot:
->>
->> 8<---
->>      [    7.430000] Creating amba device /amba/pdma@121B0000
->>      [    7.435000]    create child: /amba/mdma@10800000
->>      [    7.440000] Creating amba device /amba/mdma@10800000
->>      [    7.445000] Unable to handle kernel NULL pointer dereference at virtual address 00000050
->>
->>      [    7.450000] pgd = c0004000
->>      [    7.450000] [00000050] *pgd=00000000
->>      [    7.455000] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
->>      [    7.455000] Modules linked in:
->>      [    7.455000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.14.0-rc3-00003-gb6026fe-dirty #23
->>
->>      [    7.455000] task: ee0a8000 ti: ee0a6000 task.ti: ee0a6000
->>      [    7.455000] PC is at __clk_get+0x24/0x84
->>      [    7.455000] LR is at of_clk_get+0x5c/0x74
-[...]
->>
->>      [    7.455000] [<c02e5cc8>] (__clk_get) from [<c02e34b8>] (of_clk_get+0x5c/0x74)
->>
->>      [    7.455000] [<c02e34b8>] (of_clk_get) from [<c02e350c>] (of_clk_get_by_name+0x3c/0xb0)
->>
->>      [    7.455000] [<c02e350c>] (of_clk_get_by_name) from [<c02e35a4>] (clk_get+0x24/0x44)
->>
->>      [    7.455000] [<c02e35a4>] (clk_get) from [<c01ee6fc>] (amba_get_enable_pclk+0x10/0x60)
->>
->>      [    7.455000] [<c01ee6fc>] (amba_get_enable_pclk) from [<c01ee7ec>] (amba_device_add+0xa0/0x1e0)
->>
->>      [    7.455000] [<c01ee7ec>] (amba_device_add) from [<c02e0f94>] (of_platform_bus_create+0x190/0x308)
->>
->>      [    7.455000] [<c02e0f94>] (of_platform_bus_create) from [<c02e103c>] (of_platform_bus_create+0x238
->>
->>      [    7.455000] [<c02e103c>] (of_platform_bus_create) from [<c02e116c>] (of_platform_populate+0x60/0x
->>
->>      [    7.455000] [<c02e116c>] (of_platform_populate) from [<c04cc280>] (customize_machine+0x1c/0x40)
->>
->>      [    7.455000] [<c04cc280>] (customize_machine) from [<c00088e8>] (do_one_initcall+0xe4/0x140)
->>
->>      [    7.455000] [<c00088e8>] (do_one_initcall) from [<c04c9c50>] (kernel_init_freeable+0xfc/0x1c8)
->>
->>      [    7.455000] [<c04c9c50>] (kernel_init_freeable) from [<c038447c>] (kernel_init+0x8/0xe4)
->>
->>      [    7.455000] [<c038447c>] (kernel_init) from [<c000e4b8>] (ret_from_fork+0x14/0x3c)
->>
->>      [    7.455000] Code: e3500000 08bd8010 e2843050 f57ff05b (e1932f9f)
->>      [    7.460000] ---[ end trace fe5cfa405506a77d ]---
->>      [    7.460000] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->>
->> 8<---
->>
->> I've tried putting "if (clk)" around the calls to kref_get() and
->> kref_put(), but that makes the Octa fail to boot like 3.13 did: when
->> tries to mount root.
->>
->> What works for me so far is to remove the offending nodes from the DT:
->>
->> 8<---
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->>
->> index 8db792b..c4ab992 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -303,27 +303,6 @@
->>                          #dma-requests = <32>;
->>                  };
->>
->> -               mdma0: mdma@10800000 {
->> -                       compatible = "arm,pl330", "arm,primecell";
->> -                       reg = <0x10800000 0x1000>;
->> -                       interrupts = <0 33 0>;
->> -                       clocks = <&clock 473>;
->> -                       clock-names = "apb_pclk";
->> -                       #dma-cells = <1>;
->> -                       #dma-channels = <8>;
->> -                       #dma-requests = <1>;
->> -               };
->> -
->> -               mdma1: mdma@11C10000 {
->> -                       compatible = "arm,pl330", "arm,primecell";
->> -                       reg = <0x11C10000 0x1000>;
->> -                       interrupts = <0 124 0>;
->> -                       clocks = <&clock 442>;
->> -                       clock-names = "apb_pclk";
->> -                       #dma-cells = <1>;
->> -                       #dma-channels = <8>;
->> -                       #dma-requests = <1>;
->> -               };
->>          };
->>
->>          spi_0: spi@12d20000 {
->> 8<---
->>
->> With this the Arndale Octa boots.  This issue is present from 3.14-rc1
->> to 3.14-rc5.  Any idea how this should be properly fixed in mainline?
+<snip>
+> The configuration I'm testing is:
+> root@OpenWrt:/# lspci -n
+> 00:00.0 0604: 16c3:abcd (rev 01)
+> 01:00.0 0604: 10b5:8609 (rev ba)
+> 01:00.1 0880: 10b5:8609 (rev ba)
+> 02:01.0 0604: 10b5:8609 (rev ba)
+> 02:04.0 0604: 10b5:8609 (rev ba)
+> 02:05.0 0604: 10b5:8609 (rev ba)
+> 02:06.0 0604: 10b5:8609 (rev ba)
+> 02:07.0 0604: 10b5:8609 (rev ba)
+> 02:08.0 0604: 10b5:8609 (rev ba)
+> 02:09.0 0604: 10b5:8609 (rev ba)
+> 07:00.0 0280: 168c:002b (rev 01)
+> 08:00.0 0200: 11ab:4380
+> root@OpenWrt:/# lspci -tnv
+> -[0000:00]---00.0-[01-09]--+-00.0-[02-09]--+-01.0-[03]--
+>                            |               +-04.0-[04]--
+>                            |               +-05.0-[05]--
+>                            |               +-06.0-[06]--
+>                            |               +-07.0-[07]----00.0  168c:002b
+>                            |               +-08.0-[08]----00.0  11ab:4380
+>                            |               \-09.0-[09]--
+>                            \-00.1  10b5:8609
 >
-> This should be fixed with [1], which was supposed to be merged for
-> 3.14-rc5. Mike?
 >
-> [1] https://git.linaro.org/people/mike.turquette/linux.git/commit/00efcb1c8e1c3c5e5d3ce6f0682d66402911a84f
+> The dev_info showing what of_irq_parse_and_map_pci() above produces:
+> [    1.818485] pci 0000:00:00.0: dw_pcie_map_irq: 16c3:abcd slot0 pin1 irq20
+> [    1.818703] pci 0000:01:00.0: dw_pcie_map_irq: 10b5:8609 slot0 pin1 irq20
+> [    1.818939] pci 0000:01:00.1: dw_pcie_map_irq: 10b5:8609 slot0 pin2 irq0
+> [    1.819179] pci 0000:02:01.0: dw_pcie_map_irq: 10b5:8609 slot0 pin2 irq0
+> [    1.819395] pci 0000:02:04.0: dw_pcie_map_irq: 10b5:8609 slot0 pin1 irq20
+> [    1.819631] pci 0000:02:05.0: dw_pcie_map_irq: 10b5:8609 slot0 pin2 irq0
+> [    1.819859] pci 0000:02:06.0: dw_pcie_map_irq: 10b5:8609 slot0 pin3 irq0
+> [    1.820087] pci 0000:02:07.0: dw_pcie_map_irq: 10b5:8609 slot0 pin4 irq0
+> [    1.820404] pci 0000:02:08.0: dw_pcie_map_irq: 10b5:8609 slot0 pin1 irq20
+> [    1.820650] pci 0000:02:09.0: dw_pcie_map_irq: 10b5:8609 slot0 pin2 irq0
+> [    1.820881] pci 0000:07:00.0: dw_pcie_map_irq: 168c:002b slot0 pin4 irq0
+> [    1.821100] pci 0000:08:00.0: dw_pcie_map_irq: 11ab:4380 slot0 pin1 irq20
+>
+> I'm not clear why irq 20 is getting returned for all the slots with
+> (slot%4)=0 and func=0.  If I start debugging of_irq_parse_pci() I see
+> that it walks up the tree until it gets to the pcie host controller
+> then calls of_irq_parse_raw() which is returning irq20 or -EINVAL.
 
-You may also want to consider this patch:
-https://patchwork.kernel.org/patch/3597711
+For the slots above that are swizzling to pin1 this appears to be an
+issue with irq_create_of_mapping() called form
+of_irq_parse_and_map_pci().  The GIC function that translates the
+interrupt per domain is given irq_data: 0x123 0x04 0x00 (meaning GIC
+IRQ 123, which should get 32 added to it for irq155).  Instead, the
+implementation of gic_irq_domain_xlate()
+(http://lxr.missinglinkelectronics.com/linux/drivers/irqchip/irq-gic.c#L832)
+adds 32 to the 0x04 returning 20:
+[    1.841781] of_irq_parse_raw:  /soc/pcie@0x01000000:00000001
+[    1.841813] of_irq_parse_raw: ipar=/soc/pcie@0x01000000, size=1
+[    1.841838]  -> addrsize=3
+[    1.841870]  -> match=1 (imaplen=28)
+[    1.841903]  -> newintsize=3, newaddrsize=1
+[    1.841916]  -> imaplen=23
+[    1.841928]  -> new parent: /interrupt-controller@00a01000
+[    1.841946]  -> got it !
+[    1.841972] irq_create_of_mapping: calling xlate for 123/4/0 3
+[    1.841984] irq_create_of_mapping got irq from xlate: 20
+^^^^^ added debugging shows 3 u32's passed to xlate and returned value of 20
+[    1.841998] irq: irq_create_mapping(0xbec10400, 0x14)
+[    1.842009] irq: -> using domain @bec10400
+[    1.842021] irq: -> existing mapping on virq 20
+[    1.842032] irq_create_of_mapping created virq=20
+[    1.842042] irq_create_of_mapping returning virq=20
+[    1.842059] pci 0000:00:00.0: dw_pcie_map_irq: 16c3:abcd slot0 pin1 irq20
 
-It looks like there is no clock registered for the mdm0 PL330 device
-in exynos5420 clocks driver (drivers/clk/samsung/clk-exynos5420.c).
+Perhaps this is a byte-ordering issue?  I'm wondering if the args
+created in of_irq_parse_pci are getting put in the wrong place for
+what irq_create_of_mapping() expects.
 
-So a proper fix, except of a patch pointed out by Tomasz, would be to
-add a corresponding entry to exynos5420_gate_clocks[] array (the mdm0
-gate clock seems to be already documented in Documentation/devicetree/
-bindings/clock/exynos5420-clock.txt).
+For the slots above that swizzle to pin2,3,4 of_irq_parse_raw()
+returns -EINVAL because for some reason it can't match an interrupt
+mapping for the pcie host controller:
+[    1.842996] of_irq_parse_raw:  /soc/pcie@0x01000000/pcie@0,0:00000002
+[    1.843046] of_irq_parse_raw: ipar=/soc/pcie@0x01000000, size=1
+[    1.843070]  -> addrsize=3
+[    1.843100]  -> match=0 (imaplen=28)
+^^^^^ indicates no match in interrupt map.
 
-AFAIU, you're still having problems even with patch [1] applied ?
+I think this is because size=1 above, when we should see an
+interrupt-map of size 4.  I'm guessing that the function is confused
+between the single interrupt in the DT for the host controller, vs the
+interrupt-map for the PCI interrupts.
 
---
-Regards,
-Sylwester
+At this point, with no match, of_irq_parse_raw() will travel up to the
+parent of the interrupt which is wrong.
+
+Note the pcie host controller DT is:
+
+    pcie: pcie@0x01000000 {
+      compatible = "fsl,imx6q-pcie", "snps,dw-pcie";
+      reg = <0x01ffc000 0x4000>; /* DBI */
+      #address-cells = <3>;
+      #size-cells = <2>;
+      device_type = "pci";
+      ranges = <0x00000800 0 0x01f00000 0x01f00000 0 0x00080000 /*
+configuration space */
+          0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
+          0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /*
+non-prefetchable memory */
+      num-lanes = <1>;
+
+      interrupts = <0 123 0x04>;
+
+      #interrupt-cells = <1>;
+      interrupt-map-mask = <0 0 0 0x7>;
+      interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+                      <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+                      <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+                      <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+
+      clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
+      clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
+      status = "disabled";
+    };
+
+Tim
+
+>
+> Tim
+>
+>> You can test i.MX PCIe with this.
+>>
+>> ./drivers/pci/host/pcie-designware.c
+>> @@ -726,7 +727,7 @@ static struct pci_bus *dw_pcie_scan_bus(int nr, struct pci_sys_data *sys)
+>>
+>>         if (pp) {
+>>                 pp->root_bus_nr = sys->busnr;
+>> -               bus = pci_scan_root_bus(NULL, sys->busnr, &dw_pcie_ops,
+>> +               bus = pci_scan_root_bus(pp->dev, sys->busnr, &dw_pcie_ops,
+>>                                         sys, &sys->resources);
+>>         } else {
+>>                 bus = NULL;
+>>
+>> However, I think that we may need to replace 'pci_common_init()'
+>> with 'pci_common_init_dev()'.
+>>
+>> Best regards,
+>> Jingoo Han
+>>
