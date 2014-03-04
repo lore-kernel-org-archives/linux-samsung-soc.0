@@ -1,43 +1,45 @@
-From: Philipp Zabel <philipp.zabel@gmail.com>
-Subject: Re: [PATCH v2 02/11] drivercore: Bind/unbind power domain on probe/remove
-Date: Tue, 4 Mar 2014 20:17:41 +0100
-Message-ID: <CA+gwMceHSD6-dqsehDuwhVLwdNxdaRVteA=EA9UvhYMjB+xKWQ@mail.gmail.com>
-References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
-	<1393862536-9842-3-git-send-email-tomasz.figa@gmail.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH 1/2] of/irq: Fix irq-mapping in of_irq_parse_raw()
+Date: Tue, 4 Mar 2014 11:40:46 -0800
+Message-ID: <CAJ+vNU07D-u+-Lj5nOSveO94S93d_5=FKq34Gk2O2OVDRexWww@mail.gmail.com>
+References: <1393944864-28113-1-git-send-email-tharvey@gateworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1393862536-9842-3-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@ke>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f181.google.com ([74.125.82.181]:47676 "EHLO
+	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755001AbaCDTkr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Mar 2014 14:40:47 -0500
+Received: by mail-we0-f181.google.com with SMTP id q58so5509226wes.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Mar 2014 11:40:46 -0800 (PST)
+In-Reply-To: <1393944864-28113-1-git-send-email-tharvey@gateworks.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jingoo Han <jg1.han@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra <linux-tegra@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Grant Likely <grant.likely@linaro.org>
 
-Hi Tomasz,
-
-On Mon, Mar 3, 2014 at 5:02 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On a number of platforms, devices are part of controllable power
-> domains, which need to be enabled before such devices can be accessed
-> and may be powered down when the device is idle to save some power.
-> This means that on systems that support power domain control using
-> generic power domains subsystem, it is necessary to add device to its
-> power domain before binding a driver to it and remove it from its power
-> domain after its driver is unbound to make sure that an unused device
-> does not affect power domain state.
+On Tue, Mar 4, 2014 at 6:54 AM, Tim Harvey <tharvey@gateworks.com> wrote:
+> When an interrupt-map contains multiple entries an imap pointer arithmetic
+> bug can cause only the first entry to be properly evaluated and causes
+> the out_irq parameters to be incorrect depending on the #interrupt-cells
+> and #address-cells of the parent interrupt controller.
 >
-> Since this is not limited to particular busses and specific
-> archs/platforms, it is more convenient to do the above directly in
-> driver core, just as done with pinctrl default configuration. This patch
-> adds necessary code to really_probe() and __device_release_driver() to
-> achieve this and maintain consistent stack-like ordering of operations
-> happening when binding and unbinding a driver.
+> Specifically, the imap pointer into the interrupt-map table should be
+> adjusted by the parent interrupt controller #interrupt-cells size only
+> as at this point the only the parent unit interrupt specifier needs to be
+> stepped over.
 >
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> This resolves an issue encountered when using the of_irq_parse_and_map_pci()
+> for the imx6 pcie host controller driver map_irq function where a P2P bridge
+> is on the bus and legacy PCI interrupts are to be used.
+>
 
-patches 01 and 02
-Reviewed-by: Philipp Zabel <philipp.zabel@gmail.com>
-Tested-by: Philipp Zabel <philipp.zabel@gmail.com>
-on i.MX6 GK802.
+Note the subject of my patch was incorrect - its a single patch, not a
+series.  The subject should read:
 
-regards
-Philipp
+[PATCH] of/irq: Fix irq-mapping in of_irq_parse_raw()
+
+Sorry for the confusion,
+
+Tim
