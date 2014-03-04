@@ -1,66 +1,60 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 5/5] clk/exynos5260: add clock file for exynos5260
-Date: Tue, 04 Mar 2014 13:16:28 +0100
-Message-ID: <5315C41C.1030200@gmail.com>
-References: <1392724570-27977-1-git-send-email-rahul.sharma@samsung.com>	<1392724570-27977-6-git-send-email-rahul.sharma@samsung.com>	<53095A9A.4080606@gmail.com> <CAPdUM4PL9p-fNaim_YFFMV_bA4higxQa6ppSNUGg5nmMc7a6Mw@mail.gmail.com> <5315C2CA.60206@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Fix a config option
+Date: Tue, 4 Mar 2014 17:53:36 +0530
+Message-ID: <CAK9yfHyumQ8=6SPd2urZxa=jZngdn5HjrfJpJWmnADUSHVBaKw@mail.gmail.com>
+References: <1388140690-30668-1-git-send-email-sachin.kamat@linaro.org>
+	<530A907D.6080901@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:51894 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756940AbaCDMQl (ORCPT
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:54245 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756976AbaCDMXh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Mar 2014 07:16:41 -0500
-Received: by mail-ee0-f42.google.com with SMTP id d17so4726489eek.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Mar 2014 04:16:40 -0800 (PST)
-In-Reply-To: <5315C2CA.60206@gmail.com>
+	Tue, 4 Mar 2014 07:23:37 -0500
+Received: by mail-oa0-f45.google.com with SMTP id o6so2855559oag.32
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Mar 2014 04:23:36 -0800 (PST)
+In-Reply-To: <530A907D.6080901@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 04.03.2014 13:10, Tomasz Figa wrote:
-> On 04.03.2014 05:14, Rahul Sharma wrote:
->> On 23 February 2014 07:49, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>> On 18.02.2014 12:56, Rahul Sharma wrote:
->>>> +       FRATE(ID_NONE, "phyclk_hdmi_link_o_tmds_clkhi", NULL,
->>>> +                       CLK_IS_ROOT, 125000000),
->>>> +       FRATE(ID_NONE, "phyclk_mipi_dphy_4l_m_txbyteclkhs", NULL,
->>>> +                       CLK_IS_ROOT, 187500000),
->>>> +       FRATE(ID_NONE, "phyclk_dptx_phy_o_ref_clk_24m", NULL,
->>>> +                       CLK_IS_ROOT, 24000000),
->>>> +       FRATE(ID_NONE, "phyclk_dptx_phy_clk_div2", NULL,
->>>> +                       CLK_IS_ROOT, 135000000),
->>>> +       FRATE(ID_NONE, "phyclk_mipi_dphy_4l_m_rxclkesc0", NULL,
->>>> +                       CLK_IS_ROOT, 20000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbhost20_phy_phyclock", NULL,
->>>> +                       CLK_IS_ROOT, 60000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbhost20_phy_freeclk", NULL,
->>>> +                       CLK_IS_ROOT, 60000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbhost20_phy_clk48mohci", NULL,
->>>> +                       CLK_IS_ROOT, 48000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbdrd30_udrd30_pipe_pclk", NULL,
->>>> +                       CLK_IS_ROOT, 125000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbdrd30_udrd30_phyclock", NULL,
->>>> +                       CLK_IS_ROOT, 60000000),
->>>
->>>
->>> Are these really fixed rate clocks? It looks strange, because it's a bit
->>> unlike previous Samsung SoCs, which used to have up 5 fixed rate
->>> clocks in
->>> average.
->>>
+On 24 February 2014 05:51, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 12/27/13 19:38, Sachin Kamat wrote:
 >>
->> These are outputs of various phys. If these are removed we will be
->> left with
->> many orphan clocks.
+>> CONFIG_MACH_EXYNOS4_DT does not exist. Use ARCH_EXYNOS4 instead.
 >>
+>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>> ---
+>>   arch/arm/configs/exynos_defconfig |    2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig
+>> b/arch/arm/configs/exynos_defconfig
+>> index dbe1f1c47bb0..dff01ecf78cc 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -10,8 +10,8 @@ CONFIG_PARTITION_ADVANCED=y
+>>   CONFIG_ARCH_EXYNOS=y
+>>   CONFIG_S3C_LOWLEVEL_UART_PORT=3
+>>   CONFIG_S3C24XX_PWM=y
+>> +CONFIG_ARCH_EXYNOS4=y
+>>   CONFIG_ARCH_EXYNOS5=y
+>> -CONFIG_MACH_EXYNOS4_DT=y
+>>   CONFIG_SMP=y
+>>   CONFIG_NR_CPUS=8
+>>   CONFIG_PREEMPT=y
 >
-> OK. Just wanted to make sure that they are real clocks found in the SoC,
-> as I don't have access to Exynos 5420 datasheet yet.
+>
+> Well, this is not required because it should be fine without this change.
+> ARCH_EXYNOS4 will be selected when ARCH_EXYNOS is enabled and non-exist
+> CONFIG (MACH_EXYNOS4_DT) will be ignored.
 
-Exynos 5260 of course.
+Functionally this might not be needed as Exynos4 is selected by
+default. However, I don't see
+any point in retaining non-existent symbols.
 
-Best regards,
-Tomasz
+-- 
+With warm regards,
+Sachin
