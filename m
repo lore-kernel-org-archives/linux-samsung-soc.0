@@ -1,71 +1,71 @@
-From: Javi Merino <javi.merino@arm.com>
-Subject: Re: [REGRESSION] Arndale Octa panics when booting 3.14-rc1
-Date: Tue, 4 Mar 2014 10:39:37 +0000
-Message-ID: <20140304103936.GA10559@e102654-lin.cambridge.arm.com>
-References: <20140303185755.GA11460@e102654-lin.cambridge.arm.com>
- <5314D239.7090001@gmail.com>
- <5314EBCB.3060400@gmail.com>
- <20140304101608.GA3852@e102654-lin.cambridge.arm.com>
- <5315AB3B.5080207@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/5] clk: exynos: add support for exynos5260 SoC
+Date: Tue, 04 Mar 2014 16:42:33 +0530
+Message-ID: <1393931558-23502-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:60040 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756709AbaCDKjm convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40912 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756682AbaCDLNV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Mar 2014 05:39:42 -0500
-In-Reply-To: <5315AB3B.5080207@samsung.com>
-Content-Disposition: inline
+	Tue, 4 Mar 2014 06:13:21 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Chander Kashyap <chander.kashyap@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Tue, Mar 04, 2014 at 10:30:19AM +0000, Sylwester Nawrocki wrote:
-> On 04/03/14 11:16, Javi Merino wrote:
-> > Yes, with [1] applied I don't get a kernel panic but the kernel fails
-> > to boot later on with an Imprecise external abort.  Removing the mdma
-> > nodes from the dts gets rid of that.  I guess what's missing is what
-> > you said: clocks for the mdma devices.
-> 
-> Is removing mdm0 node enough to fix the boot failure, or both have to be
-> removed ?
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Actually, you it's only mdma1.  Just removing the mdma1 node from the
-dt fixes the imprecise external abort.
+Add clock support for exynos5260 SoC.
 
-> Unfortunately I don't access to exynos5420 datasheet at the moment, I've
-> added guys from Samsung Linaro Landing Team at cc, hopefully they can
-> provide a patch for the clocks driver to fix this.
+This series is based on Kukjin's for-next and
+Mike's clk-next branches.
 
-Thanks,
-Javi
+V4:
+  1) Rework clock file as per Tomasz review comments at
+  	http://www.spinics.net/lists/arm-kernel/msg310116.html.
 
-> > 8<---
-> > [    8.060000] mmc_host mmc0: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ d)
-> > [    8.070000] Registering SWP/SWPB emulation handler
-> > [    8.075000] s3c-rtc 101e0000.rtc: setting system clock to 2000-01-01 00:00:00 UTC (946684800)
-> > [    8.080000] mmc_host mmc0: Bus speed (slot 0) = 100000000Hz (slot req 52000000Hz, actual 50000000HZ )
-> > [    8.090000] Freeing unused kernel memory: 220K (c04c1000 - c04f8000)
-> > [    8.100000] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-> > [    8.105000] mmc0: new high speed DDR MMC card at address 0001
-> > [    8.110000] mmcblk0: mmc0:0001 M4G1FB 3.64 GiB 
-> > [    8.115000] mmcblk0boot0: mmc0:0001 M4G1FB partition 1 1.00 MiB
-> > [    8.120000] mmcblk0boot1: mmc0:0001 M4G1FB partition 2 1.00 MiB
-> > [    8.125000] mmcblk0rpmb: mmc0:0001 M4G1FB partition 3 128 KiB
-> > [    8.135000]  mmcblk0: p1 p2 p3 p4
-> > [    8.140000] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
-> > [    8.140000] 
-> > [    8.140000] CPU: 0 PID: 1 Comm: init Not tainted 3.14.0-rc5-00002-g691b10f #189
-> > [    8.140000] [<c0013e24>] (unwind_backtrace) from [<c0011238>] (show_stack+0x10/0x14)
-> > [    8.140000] [<c0011238>] (show_stack) from [<c038218c>] (dump_stack+0x64/0xb4)
-> > [    8.140000] [<c038218c>] (dump_stack) from [<c037f6f4>] (panic+0x8c/0x1dc)
-> > [    8.140000] [<c037f6f4>] (panic) from [<c001f178>] (do_exit+0x80c/0x8b8)
-> > [    8.140000] [<c001f178>] (do_exit) from [<c001f310>] (do_group_exit+0x3c/0xb0)
-> > [    8.140000] [<c001f310>] (do_group_exit) from [<c00298a0>] (get_signal_to_deliver+0x278/0x500)
-> > [    8.140000] [<c00298a0>] (get_signal_to_deliver) from [<c001076c>] (do_signal+0x78/0x398)
-> > [    8.140000] [<c001076c>] (do_signal) from [<c0010db4>] (do_work_pending+0x64/0xac)
-> > [    8.140000] [<c0010db4>] (do_work_pending) from [<c000e460>] (work_pending+0xc/0x20)
-> > 8<---
+V3:
+  1) Removed "samsung,exynos5260-clock" property from clock files.
+  2) Replaced "__SPIN_LOCK_UNLOCKED(lock)" with spin_lock_init.
+  3) Removed '(' and ')' around numeric constants in macros.
+
+V2:
+  1) Move suspend resume handling to Exynos5410 Clock file.
+  2) Removed Unused Macros and Condition checks for Exynos5260.
+  3) Add spin lock to clock provider context.
+  4) Add clock provider context for Exynos5410.
+  5) Uniform implementation for callbacks for PLL2550xx.
+  6) Split Exynos5260 clock file patch to bring it under 100 Kb limit.
+  7) Replace aclk/pclk/hclk gates with combined gates.
+  8) Remove CLK_IGNORE_UNUSED flag for gate clocks.
+Pankaj Dubey (1):
+  clk/samsung: add support for pll2550xx
+
+Rahul Sharma (4):
+  clk/samsung: add support for multiple clock providers
+  clk/samsung: add support for pll2650xx
+  clk/exynos5260: add macros and documentation for exynos5260
+  clk/exynos5260: add clock file for exynos5260
+
+ .../devicetree/bindings/clock/exynos5260-clock.txt |   55 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos4.c                  |   47 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   25 +-
+ drivers/clk/samsung/clk-exynos5260.c               | 1933 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5260.h               |  448 +++++
+ drivers/clk/samsung/clk-exynos5420.c               |   24 +-
+ drivers/clk/samsung/clk-exynos5440.c               |   18 +-
+ drivers/clk/samsung/clk-pll.c                      |  222 ++-
+ drivers/clk/samsung/clk-pll.h                      |    2 +
+ drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
+ drivers/clk/samsung/clk.c                          |  115 +-
+ drivers/clk/samsung/clk.h                          |   72 +-
+ include/dt-bindings/clk/exynos5260-clk.h           |  233 +++
+ 14 files changed, 3090 insertions(+), 149 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+ create mode 100644 include/dt-bindings/clk/exynos5260-clk.h
+
+-- 
+1.7.9.5
