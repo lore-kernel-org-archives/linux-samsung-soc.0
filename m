@@ -1,81 +1,64 @@
-From: Bob Paauwe <bob.j.paauwe@intel.com>
-Subject: Re: Adding set_blob ioctl to DRM
-Date: Tue, 4 Mar 2014 09:39:55 -0800
-Message-ID: <20140304093955.5df67721@bpaauwe-desk.fm.intel.com>
-References: <CAPdUM4PXxXgywMA8KnLhwAToHqfc0EP7HNDKjKJLK3T1HA7_eQ@mail.gmail.com>
-	<CAPM=9tz6TzVyyCsNAGqt4Vy+WoKjcc-yvq7fSiLhNUKeWFO6bA@mail.gmail.com>
-	<20140304083557.GM17001@phenom.ffwll.local>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 01/11] base: power: Add generic OF-based power domain
+ look-up
+Date: Tue, 4 Mar 2014 10:23:10 -0800
+Message-ID: <20140304182310.GA9985@codeaurora.org>
+References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
+ <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140304083557.GM17001@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Prashanth G <prashanth.g@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 4 Mar 2014 09:35:57 +0100
-Daniel Vetter <daniel@ffwll.ch> wrote:
+On 03/03, Tomasz Figa wrote:
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index dc127e5..006b455 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -3,12 +3,16 @@
+>   *
+>   * Copyright (C) 2011 Rafael J. Wysocki <rjw@sisk.pl>, Renesas Electronics Corp.
+>   *
+> + * Support for Device Tree based power domain providers:
+> + * Copyright (C) 2014 Tomasz Figa <tomasz.figa@gmail.com>
+> + *
+>   * This file is released under the GPLv2.
+>   */
+>  
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/io.h>
+> +#include <linux/platform_device.h>
 
-> On Thu, Feb 20, 2014 at 11:24:40AM +1000, Dave Airlie wrote:
-> > > I am working on enabling a Color Enhancement block for primary display
-> > > for Exynos SoC. I need to
-> > > set a bunch of parameters like Color Conversion matrix, Contrast
-> > > Improvement parameters etc ~ 30 parameters from User Space.
-> > >
-> > > I am planning to use KDS blob property to receive these parameters.
-> > > Currently drivers are not allowed to create a blob property inside
-> > > drm. Neither, user space can set the blob. There is no ioctl provided
-> > > for same.
-> > 
-> > I don't really like the idea of sticking unstructured data into an
-> > ioctl, for the driver to interpret,
-> > 
-> > it opens the door to all kinds of ugly driver hacks, so I think we
-> > should have writable blobs,
-> > but with well defined structures inside them, not per-driver ones.
-> > 
-> > Per-driver structures will lead to binary userspace drivers that start
-> > sticking a pll timings blob on the end and require it to set a mode,
-> > because I know driver developers will abuse any interface in the worst
-> > way possible.
-> > 
-> > Currently the only blob we really have is EDID and its well defined,
-> > so if we are going to add writable blobs, they need to be well defined
-> > and as little as possible driver specific, just to avoid driver
-> > writings doing what driver writers do.
-> 
-> tbh I don't see a use for structured blobs at all and would much more
-> prefer a pile of properties. With the atomic modeset ioctl proposals
-> floating around we could then pass in an entire sets of properties, which
-> is essentially what the blob prop would be doing.
-> 
-> The upshot of going all-in with explicitly named properties is that we can
-> shovel kms configuration descriptions into different formats. I'm thinking
-> of shovelling an initial config into DT or something similar as an
-> example.  For i915 we have some experimental patches which load a DT blob
-> as a firmware file and use the property values to set things up.
+Is this still needed?
 
-I have most of this working with i915 now.  Using a DT configuration I
-can set module parameters, select which crtc's to enable, which
-connectors to enable, set connector properties at init time.  I'm
-working on some plane property code now.
+>  #include <linux/pm_runtime.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_qos.h>
+[...]
+> +
+> +/*
+> + * DEVICE<->DOMAIN BINDING USING DEVICE TREE LOOK-UP
+> + *
+> + * The code below registers a notifier for platform bus devices'
+> + * BUS_NOTIFY_BIND_DRIVER events and tries to attach devices to their power
+> + * domains by looking them up using Device Tree.
+> + *
+> + * Similarly in BUS_NOTIFY_UNBOUND_DRIVER the device is detached from its
+> + * domain, since it no longer supports runtime PM without any driver bound
+> + * to it.
 
-It's close to being ready for initial review/feedback but there's one
-problem, you can't currently build an x86_64 (32 bit is fine) kernel
-with DT enabled because of an unresolved symbol in the apic code. 
+This looks outdated.
 
-> 
-> So imo a blob property needs some _really_ good justification. My default
-> stance is to oppose it ;-)
-> 
-> Cheers, Daniel
+> + *
+> + * Both generic and legacy Samsung-specific DT bindings are supported to
+> + * keep backwards compatibility with existing DTBs.
+> + */
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
