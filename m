@@ -1,74 +1,81 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
-Date: Tue, 04 Mar 2014 16:34:19 +0100
-Message-ID: <1393947259.9405.18.camel@weser.hi.pengutronix.de>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-	 <201402282103.01897.arnd@arndb.de>
-	 <1393942383.9405.8.camel@weser.hi.pengutronix.de>
-	 <201403041553.40202.arnd@arndb.de>
+From: Bob Paauwe <bob.j.paauwe@intel.com>
+Subject: Re: Adding set_blob ioctl to DRM
+Date: Tue, 4 Mar 2014 09:39:55 -0800
+Message-ID: <20140304093955.5df67721@bpaauwe-desk.fm.intel.com>
+References: <CAPdUM4PXxXgywMA8KnLhwAToHqfc0EP7HNDKjKJLK3T1HA7_eQ@mail.gmail.com>
+	<CAPM=9tz6TzVyyCsNAGqt4Vy+WoKjcc-yvq7fSiLhNUKeWFO6bA@mail.gmail.com>
+	<20140304083557.GM17001@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:56096 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751780AbaCDPfE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Mar 2014 10:35:04 -0500
-In-Reply-To: <201403041553.40202.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140304083557.GM17001@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Prashanth G <prashanth.g@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, kernel@pengutronix.de, linux-sh@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-Am Dienstag, den 04.03.2014, 15:53 +0100 schrieb Arnd Bergmann:
-> On Tuesday 04 March 2014, Lucas Stach wrote:
-> > Right, we should be able to reuse the clock names. Though I'm not really
-> > sure how the Samsung clocks maps to those used on i.MX, as the names are
-> > a bit generic. Maybe someone from Samsung could shed a bit of light on
-> > this.
+On Tue, 4 Mar 2014 09:35:57 +0100
+Daniel Vetter <daniel@ffwll.ch> wrote:
+
+> On Thu, Feb 20, 2014 at 11:24:40AM +1000, Dave Airlie wrote:
+> > > I am working on enabling a Color Enhancement block for primary display
+> > > for Exynos SoC. I need to
+> > > set a bunch of parameters like Color Conversion matrix, Contrast
+> > > Improvement parameters etc ~ 30 parameters from User Space.
+> > >
+> > > I am planning to use KDS blob property to receive these parameters.
+> > > Currently drivers are not allowed to create a blob property inside
+> > > drm. Neither, user space can set the blob. There is no ioctl provided
+> > > for same.
 > > 
-> > On i.MX6 the clock names (which I have to agree are pretty bad) map as
-> > follows:
-> > pcie_axi: host controller main register/bus access clock
-> > pcie_ref_125m: pcie phy reference clock
+> > I don't really like the idea of sticking unstructured data into an
+> > ioctl, for the driver to interpret,
 > > 
-> > sata_ref_100m: pcie bus 100MHz reference clock
+> > it opens the door to all kinds of ugly driver hacks, so I think we
+> > should have writable blobs,
+> > but with well defined structures inside them, not per-driver ones.
+> > 
+> > Per-driver structures will lead to binary userspace drivers that start
+> > sticking a pll timings blob on the end and require it to set a mode,
+> > because I know driver developers will abuse any interface in the worst
+> > way possible.
+> > 
+> > Currently the only blob we really have is EDID and its well defined,
+> > so if we are going to add writable blobs, they need to be well defined
+> > and as little as possible driver specific, just to avoid driver
+> > writings doing what driver writers do.
 > 
-> That doesn't explain why it's called "sata_ref_100m".
+> tbh I don't see a use for structured blobs at all and would much more
+> prefer a pile of properties. With the atomic modeset ioctl proposals
+> floating around we could then pass in an entire sets of properties, which
+> is essentially what the blob prop would be doing.
 > 
-I agree this is bad naming. It's called this way because someone decided
-to name it like the internal clock it is sourced from on most boards.
-This really should be pcie_ref, or something. I suspect this corresponds
-to the pcie_bus clock in the Exynos binding in which case we should just
-name it this way.
+> The upshot of going all-in with explicitly named properties is that we can
+> shovel kms configuration descriptions into different formats. I'm thinking
+> of shovelling an initial config into DT or something similar as an
+> example.  For i915 we have some experimental patches which load a DT blob
+> as a firmware file and use the property values to set things up.
 
-> > lvds_gate: bad abstraction. Decides if the reference clock is sourced
-> > internal (i.e. the 100MHz ref clock above) or from an SoC external
-> > source. We should really find a better way of representing this in the
-> > clock tree.
-> 
-> I don't understand this description at all. Can you try to explain that
-> with different words?
-> 
-On i.MX6 the PCIe reference clock is routed through a generic clock pad,
-which can be configured either as input or output. When the i.MX is the
-PCI master we source the clock from sata_ref_100m and configure this pad
-as clock output.
-Somebody decided to abstract the input/output switch as a gate, which is
-arguably wrong, this should be a mux deciding between internal or
-external clock source.
+I have most of this working with i915 now.  Using a DT configuration I
+can set module parameters, select which crtc's to enable, which
+connectors to enable, set connector properties at init time.  I'm
+working on some plane property code now.
 
-The PCIe host driver should really only need the clk pad clock,
-activation of the sata_ref_100m clock should be handled through
-parent<->child relationship of those clocks in the clock tree, which
-isn't properly handled right now. I'll try to fix this up, but it won't
-be backward compatible in any way.
+It's close to being ready for initial review/feedback but there's one
+problem, you can't currently build an x86_64 (32 bit is fine) kernel
+with DT enabled because of an unresolved symbol in the apic code. 
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> 
+> So imo a blob property needs some _really_ good justification. My default
+> stance is to oppose it ;-)
+> 
+> Cheers, Daniel
