@@ -1,65 +1,125 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 01/11] base: power: Add generic OF-based power domain
- look-up
-Date: Wed, 05 Mar 2014 12:53:16 +0100
-Message-ID: <5317102C.7000007@gmail.com>
-References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com> <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com> <20140304182310.GA9985@codeaurora.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC PATCH v2 19/21] ARM: dts: exynos5250-arndale: add dsi and
+ panel nodes
+Date: Wed, 5 Mar 2014 21:06:20 +0900
+Message-ID: <CAAQKjZPVvAxC7=voKJ1Jid3Ynnrjcg6s5m95fwetx7iDeZUN+w@mail.gmail.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+	<1392204688-4591-20-git-send-email-a.hajda@samsung.com>
+	<53108FA0.4040903@ti.com>
+	<53109193.3000604@ti.com>
+	<5315C07B.3090705@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140304182310.GA9985@codeaurora.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f171.google.com ([74.125.82.171]:37218 "EHLO
+	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755781AbaCEMG2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Mar 2014 07:06:28 -0500
+In-Reply-To: <5315C07B.3090705@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 04.03.2014 19:23, Stephen Boyd wrote:
-> On 03/03, Tomasz Figa wrote:
->> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> index dc127e5..006b455 100644
->> --- a/drivers/base/power/domain.c
->> +++ b/drivers/base/power/domain.c
->> @@ -3,12 +3,16 @@
->>    *
->>    * Copyright (C) 2011 Rafael J. Wysocki <rjw@sisk.pl>, Renesas Electronics Corp.
->>    *
->> + * Support for Device Tree based power domain providers:
->> + * Copyright (C) 2014 Tomasz Figa <tomasz.figa@gmail.com>
->> + *
->>    * This file is released under the GPLv2.
->>    */
+Sorry for interrupting,
+
+
+2014-03-04 21:00 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> On 02/28/2014 02:39 PM, Tomi Valkeinen wrote:
+>> On 28/02/14 15:31, Tomi Valkeinen wrote:
 >>
->>   #include <linux/init.h>
->>   #include <linux/kernel.h>
->>   #include <linux/io.h>
->> +#include <linux/platform_device.h>
->
-> Is this still needed?
->
+>>> Compared to what I've done on OMAP, you don't seem to specify the video
+>>> inputs for the tc358764 at all. In this case it's obvious, as the chip
+>>> is a child of the DSI master. But the chip could as well be controlled
+>>> via i2c, and so be placed as a child of the i2c nodes.
+>>>
+>>> So even if the driver doesn't use it, maybe it would be more future
+>>> proof to have both input and output endpoints for the tc358764?
+>> Oh, and one addition: how me and Laurent see the DSI case (and other
+>> similar ones), the child/parent relationship gives the control bus path,
+>> and the video ports give the video data path.
+>>
+>> So both are always needed. A DSI panel may be controlled via DSI, i2c,
+>> spi, but the video path will always go from DSI master to the panel.
+> I have made video path binding optional, in case of video bus
+> if the specific video path is not present driver uses the bus it is
+> connected to.
 
-Probably not.
+You mean the case that video path isn't wrote in dt file for some
+machine? If so, shouldn't we always write video patch in the dt file
+correctly? I'm not sure the optional binding is needed because which
+bus and which panel are used depends on machine.
 
->>   #include <linux/pm_runtime.h>
->>   #include <linux/pm_domain.h>
->>   #include <linux/pm_qos.h>
-> [...]
->> +
->> +/*
->> + * DEVICE<->DOMAIN BINDING USING DEVICE TREE LOOK-UP
->> + *
->> + * The code below registers a notifier for platform bus devices'
->> + * BUS_NOTIFY_BIND_DRIVER events and tries to attach devices to their power
->> + * domains by looking them up using Device Tree.
->> + *
->> + * Similarly in BUS_NOTIFY_UNBOUND_DRIVER the device is detached from its
->> + * domain, since it no longer supports runtime PM without any driver bound
->> + * to it.
+And If I understood correctly the video interfaces document, it seems
+that you don't deal with the document.
+
+The below is simple dt binding I think in case that video path goes
+from MIPI-DSI to LVDS bridge, and then from LVDS bridge to LCD Panel,
+
+panel {
+        ...
+        port {
+                ...
+                panel_0: endpoint {
+                        remote-endpoint=<&lvds_1>;
+                };
+        };
+};
+
+lvds {
+       ...
+       port@1 {
+               ...
+               lvds_0: endpoint {
+                       remote-endpoint=<&dsi_0>;
+               };
+       };
+       port@2 {
+              ...
+              lvds_1: endpoint {
+                       remote-endpoint=<&panel_0>;
+              };
+       };
+};
+
+dsi {
+        ...
+        port {
+                dsi_0: endpoint {
+                        remote-endpoint=<&lvds_0>;
+                };
+        };
+};
+
+panel and lvds node could be a child of other masters, maybe i2c or spi.
+
+Thanks,
+Inki Dae
+
+
+> In case DSI panel is controlled via different bus the path should be
+> specified
+> explicitly.
 >
-> This looks outdated.
+> I have no strong feelings against making this binding required but as
+> you have
+> stated above "in this case it's obvious" and for me quite redundant.
 >
-
-Oops, missed this one. Thanks for pointing out.
-
-Best regards,
-Tomasz
+> What is the gain in specifying explicitly video paths in such cases?
+>
+>
+>> Or, as a theoretical panel, you could have a DSI controlled panel, being
+>> a child of the DSI master, but the video data would come via, say,
+>> parallel RGB. You can actually do that with some panels/encoders, even
+>> if the concept is silly.
+>
+> In this case explicit binding will work also.
+>
+> Regards
+> Andrzej
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
