@@ -1,33 +1,67 @@
-From: Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
-Subject: Re: [PATCH v9 0/4] phy: Add new Exynos USB 2.0 PHY driver
-Date: Thu, 06 Mar 2014 00:08:23 +0100
-Message-ID: <5317AE67.3040503@math.uni-bielefeld.de>
-References: <1394033288-5551-1-git-send-email-k.debski@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] iommu/exynos: Remove driver
+Date: Thu, 6 Mar 2014 08:48:17 +0900
+Message-ID: <CAH9JG2WtV7HeJmjGDaNfHVbZiKG5aDznqxK+AYaTzK_bCud-TQ@mail.gmail.com>
+References: <1391716317-20300-1-git-send-email-olof@lixom.net>
+	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
+	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+	<52F4E481.3050902@samsung.com>
+	<CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
+	<CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
+	<001301cf291a$233fdc70$69bf9550$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1394033288-5551-1-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, sander-7Kwe/DFdFGvR7s880joybQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:33389 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754511AbaCEXsS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Mar 2014 18:48:18 -0500
+Received: by mail-ob0-f170.google.com with SMTP id uz6so1812873obc.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2014 15:48:17 -0800 (PST)
+In-Reply-To: <001301cf291a$233fdc70$69bf9550$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hello Kamil,
+On Fri, Feb 14, 2014 at 9:17 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+>> -----Original Message-----
+>> From: Olof Johansson [mailto:olof@lixom.net]
+>> Sent: Friday, February 14, 2014 4:34 AM
+>>
+>> On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
+>>
+>> > Just adding KyongHo Cho.
+>> >
+>> > If he can fixup for this time, it would be best solution because he knows
+>> > well than others, I think.
+>>
+>> It's not so much a matter of "fixup for this time", it's a about
+>> having ownership of the driver, making sure it works (and keeps
+>> working if there is related development). The posted patches have not
+>> been followed through on and the result is a broken driver. :(
+>>
+>> I definitely appreciate his expertise, and we should make sure that he
+>> gets to review the code, but if someone else is able to spend time on
+>> reworking the driver (or rewriting a newer one) and maintaining it
+>> longer-term, then we should not stop them from doing so. And there is
+>> no reason to keep broken stale code in the kernel meanwhile.
+>>
+>
+> Thank you for your concerning.
+> I also definitely agree with you that the driver must work.
+> I am always concerning about it but it was not easy to make some time
+> for the patches.
+>
+> I will continue to post the next version of patches, of course.
+> I think it is not far from now to show it.
 
-this looks very good. I just tested the patchset on my ODROID-X2
-(Exynos4412-based board) and the USB stability issues I mentioned to you
-before (with the older patchset) seem to be gone.
+Lots of time is going from last reply. there are two options.
+1. just waiting more
+2. remove it as patch and start it again by someone.
 
-All devices on the USB behave normally (mass storage, ethernet and
-bluetooth).
+what's the opinions?
 
-
-With best wishes,
-Tobias
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thank you,
+Kyungmin Park
