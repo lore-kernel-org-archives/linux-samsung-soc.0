@@ -1,45 +1,41 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH v2 0/6] PCI irq mapping fixes and cleanups
-Date: Wed,  5 Mar 2014 14:25:45 +0100
-Message-ID: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+From: Andreas Oberritter <obi@saftware.de>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Map SYSRAM address through DT
+Date: Wed, 05 Mar 2014 14:26:01 +0100
+Message-ID: <531725E9.5010307@saftware.de>
+References: <1392876308-4748-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHz6wJPdC=DjgaiNOsPHY8k9zaB+p3-ahpwOOcPQtoWEHw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:33575 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754321AbaCEN0m (ORCPT
+Received: from mail.saftware.de ([83.141.3.46]:48864 "EHLO mail.saftware.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751564AbaCENe6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 08:26:42 -0500
+	Wed, 5 Mar 2014 08:34:58 -0500
+In-Reply-To: <CAK9yfHz6wJPdC=DjgaiNOsPHY8k9zaB+p3-ahpwOOcPQtoWEHw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 
-This series cleans up the PCI irq mapping for all
-the ARM PCI host drivers, so they handle it in the
-way defined in the common PCI bindings.
+On 05.03.2014 09:23, Sachin Kamat wrote:
+>> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>> index d2e3f5f5916d..3ca3fb6aa5f4 100644
+>> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>> @@ -28,6 +28,11 @@
+>>                 bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
+>>         };
+>>
+>> +       sysram@02020000 {
+                  ^
+>> +               compatible = "samsung,exynos4210-sysram";
+>> +               reg = <0x02025000 0x1000>;
+                          ^
+>> +       };
+>> +
 
-I've worked in all the feedback I received on the first
-round of this series and left out the i.MX pcie driver
-changes, as these need more work includig breaking
-of the existing binding, which I'll send as a separate
-series.
+Shouldn't these two addresses match?
 
-Lucas Stach (6):
-  ARM: dts: tegra: add PCIe interrupt mapping properties
-  PCI: tegra: use new OF interrupt mapping when possible
-  PCI: rcar: use new OF interrupt mapping when possible
-  ARM: dts: exynos5440: fix PCIe interrupt mapping
-  ARM: dts: imx6: add PCIe interrupt mapping properties
-  PCI: designware: use new OF interrupt mapping when possible
-
- .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt          |  8 ++++++++
- arch/arm/boot/dts/exynos5440.dtsi                            |  6 ++++--
- arch/arm/boot/dts/imx6qdl.dtsi                               |  8 ++++++++
- arch/arm/boot/dts/tegra20.dtsi                               |  4 ++++
- arch/arm/boot/dts/tegra30.dtsi                               |  4 ++++
- drivers/pci/host/pci-rcar-gen2.c                             | 12 +++++++++---
- drivers/pci/host/pci-tegra.c                                 |  7 ++++++-
- drivers/pci/host/pcie-designware.c                           | 12 +++++++++---
- 8 files changed, 52 insertions(+), 9 deletions(-)
-
--- 
-1.9.0
+Regards,
+Andreas
