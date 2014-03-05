@@ -1,46 +1,73 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v9 3/4] phy: Add new Exynos USB 2.0 PHY driver
-Date: Wed, 05 Mar 2014 17:04:41 +0100
-Message-ID: <53174B19.9020009@gmail.com>
-References: <1394033288-5551-1-git-send-email-k.debski@samsung.com> <1394033288-5551-4-git-send-email-k.debski@samsung.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 1/7] net: xgmac: add basic framework for Samsung 10Gb
+ ethernet driver
+Date: Wed, 05 Mar 2014 08:11:58 -0800
+Message-ID: <1394035918.3271.67.camel@joe-AO722>
+References: <007b01cf3866$009f1900$01dd4b00$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f54.google.com ([74.125.83.54]:49102 "EHLO
-	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755194AbaCEQE5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 11:04:57 -0500
-In-Reply-To: <1394033288-5551-4-git-send-email-k.debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <007b01cf3866$009f1900$01dd4b00$%an@samsung.com>
+Sender: netdev-owner@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu, sander@humilis.net
 
-On 05.03.2014 16:28, Kamil Debski wrote:
-> Add a new driver for the Exynos USB 2.0 PHY. The new driver uses the generic
-> PHY framework. The driver includes support for the Exynos 4x10 and 4x12
-> SoC families.
->
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> ---
->   .../devicetree/bindings/phy/samsung-phy.txt        |   53 ++++
->   Documentation/phy/samsung-usb2.txt                 |  134 ++++++++
->   drivers/phy/Kconfig                                |   29 ++
->   drivers/phy/Makefile                               |    3 +
->   drivers/phy/phy-exynos4210-usb2.c                  |  261 ++++++++++++++++
->   drivers/phy/phy-exynos4x12-usb2.c                  |  328 ++++++++++++++++++++
->   drivers/phy/phy-samsung-usb2.c                     |  222 +++++++++++++
->   drivers/phy/phy-samsung-usb2.h                     |   66 ++++
->   8 files changed, 1096 insertions(+)
->   create mode 100644 Documentation/phy/samsung-usb2.txt
->   create mode 100644 drivers/phy/phy-exynos4210-usb2.c
->   create mode 100644 drivers/phy/phy-exynos4x12-usb2.c
->   create mode 100644 drivers/phy/phy-samsung-usb2.c
->   create mode 100644 drivers/phy/phy-samsung-usb2.h
+On Wed, 2014-03-05 at 20:28 +0900, Byungho An wrote:
+> From: Siva Reddy <siva.kallam@samsung.com>
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Just a few trivial comments on a brief scan.
 
-Best regards,
-Tomasz
+> +/* Context descriptor structure */
+> +struct xgmac_tx_ctxt_desc {
+> +	u32 tstamp_lo:32;
+> +	u32 tstamp_hi:32;
+
+I think u32 foo:32; is odd at best
+and may cause compiler oddities.
+
+> diff --git a/drivers/net/ethernet/samsung/xgmac_main.c b/drivers/net/ethernet/samsung/xgmac_main.c
+[]
+> +static void print_pkt(unsigned char *buf, int len)
+> +{
+> +	int j;
+> +	pr_debug("len = %d byte, buf addr: 0x%p", len, buf);
+> +	for (j = 0; j < len; j++) {
+> +		if ((j % 16) == 0)
+> +			pr_debug("\n %03x:", j);
+> +		pr_debug(" %02x", buf[j]);
+> +	}
+> +	pr_debug("\n");
+> +}
+
+This will make a mess.  Use print_hex_dump_debug.
+
+> +static int xgmac_open(struct net_device *dev)
+> +{
+[]
+> 	if (ret) {
+> +		pr_err("%s: Cannot attach to PHY (error: %d)\n",
+> +				__func__, ret);
+
+A lot of the message logging would be better using
+more verbose forms like;
+
+	netdev_<level>(dev, etc...)
+
+[]
+
+> +/* xgmac_config - entry point for changing configuration mode passed on by
+> + * ifconfig
+> + * @dev : pointer to the device structure
+> + * @map : pointer to the device mapping structure
+> + * Description:
+> + * This function is a driver entry point which gets called by the kernel
+> + * whenever some device configuration is changed.
+> + * Return value:
+> + * This function returns 0 if success and appropriate error otherwise.
+> + */
+
+It might be nicer if you used kernel-doc forms startig with
+/**
+for these comments everywhere.
