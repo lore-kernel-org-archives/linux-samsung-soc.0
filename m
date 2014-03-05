@@ -1,65 +1,65 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: Exynos: Add generic compatible string
-Date: Wed, 05 Mar 2014 13:12:52 +0100
-Message-ID: <531714C4.2040200@gmail.com>
-References: <1392809645-631-1-git-send-email-sachin.kamat@linaro.org>	<CAK9yfHxXTbNmgTYqFH1Mm-X_sN2GpfLPp0MKixU=g2bKxz8e=g@mail.gmail.com>	<CAOesGMiZXKRbrbmvKs4pF7HiXM1hsGjzbFUQmJ-n5-nar5uMBw@mail.gmail.com>	<201402251242.30654.arnd@arndb.de> <CAK9yfHxg8kwL2zFy7ErW4kR1_5BerxqaLyaJx3Jko8wLRGdCkw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] base: power: Add generic OF-based power domain
+ look-up
+Date: Wed, 05 Mar 2014 13:44:34 +0100
+Message-ID: <53171C32.20107@gmail.com>
+References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>	<1393862536-9842-2-git-send-email-tomasz.figa@gmail.com> <CAPDyKFqK1JqxeJ_L_bzduixRLGA5m_FFPq_of2r6y0aCpS7z9A@mail.gmail.com> <53170EC2.6090908@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:46750 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751754AbaCEMNI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 07:13:08 -0500
-In-Reply-To: <CAK9yfHxg8kwL2zFy7ErW4kR1_5BerxqaLyaJx3Jko8wLRGdCkw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53170EC2.6090908@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Loren
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 05.03.2014 09:25, Sachin Kamat wrote:
-> On 25 February 2014 17:12, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Tuesday 25 February 2014, Olof Johansson wrote:
->>> I disagree. I don't know what Samsung has in mind, but the revision of
->>> the CPU doesn't have all that much to do with the rest of the SoC.
->>> It's quite likely that some vendors (maybe not Samsung, but the same
->>> concept applies) will ship 64-bit SoCs that are very similar to their
->>> preceding 32-bit ones, same IP, similar busses, etc. I'm pretty sure
->>> at least some vendors will do very close to that.
->>
->> Right.
->>
->>> So, if EXYNOS4 and EXYNOS5 can share a compatible value when they use
->>> different CPUs, then there's no reason that whatever future 64-bit
->>> ones can also share it.
->>
->> How about putting both 'samsung,exynos' and 'samsung,exynos4' in DT then
->> and having the platform code match exynos4 and exynos5 but not exynos?
->>
->> That way, I think we are consistent and future-proof. Any code that needs
->> to know if it's running on some exynos version can just check for the
->> 'samsung,exynos' compatible value and that will work on both arm32 and
->> arm64. Also, if we ever decide we want to run a 32-bit kernel on a 64-bit
->> exynos, we can just add 'samsung,exynos6' (or whatever number that will
->> be) to the list.
->>
->> My usual disclaimer for this: You should never ever consider actually
->> running a 32-bit kernel on a 64-bit CPU, but at the same time there
->> shouldn't be any reason why it won't work either, given that we require
->> arm64 based systems to have all SoC specific code in drivers and we
->> can use the same drivers on arm32.
+On 05.03.2014 12:47, Tomasz Figa wrote:
+> Hi Ulf,
 >
-> Kukjin, Tomasz,
+> On 05.03.2014 08:19, Ulf Hansson wrote:
+>>> @@ -2177,3 +2181,297 @@ void pm_genpd_init(struct generic_pm_domain
+>>> *genpd,
+>>>          list_add(&genpd->gpd_list_node, &gpd_list);
+>>>          mutex_unlock(&gpd_list_lock);
+>>>   }
+>>> +
+>>> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+>>
+>> Do we need a new config for this? Can't we just use CONFIG_OF?
+>>
 >
-> What is your opinion about Arnd's suggestion?
+> I guess we could, but initially it would have to be CONFIG_OF &&
+> !CONFIG_ARCH_EXYNOS until patch 03/11 converts Exynos to use the common
+> code.
 >
+>>> +       if (ret < 0) {
+>>> +               dev_err(dev, "failed to add to power domain %s: %d",
+>>> +                       pd->name, ret);
+>>> +               return ret;
+>>> +       }
+>>> +
+>>> +       pm_genpd_dev_need_restore(dev, true);
+>>
+>> So this will reflect the device as being inactive, which I think is
+>> the wrong approach.
+>>
+>> Usually we should expect drivers that's being probed successfully to
+>> leave their devices in active state, right?
+>
+> It depends on domain power state, but actually it seems to be already
+> handled in __pm_genpd_add_device(), so this line might be not needed
+> indeed.
+>
+> Strangely enough, it seemed to be needed on Exynos for correct
+> operation, but maybe in the meantime some fixes in genpd code showed up.
+> This will need some extra testing.
 
-I would still prefer introducing a generic string for 32-bit Exynos 
-SoCs, but I don't think it really matters a lot. I guess we can stick to 
-just exynos4 and exynos5 compatible strings then, as long as we can 
-merge the "board"-files and common.c together, since the code is pretty 
-much SoC-independent now.
+Hmm, after removing this line, power domains no longer work correctly on 
+Exynos (thanks Marek for testing). Unfortunately I'm on a sick leave 
+right now and I won't be able to debug this issue on Exynos for some 
+time, but I'll see if I can reproduce it on s3c64xx board I have here at 
+home.
 
 Best regards,
 Tomasz
