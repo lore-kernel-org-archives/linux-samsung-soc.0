@@ -1,35 +1,36 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping
- when possible
-Date: Wed, 5 Mar 2014 11:42:19 -0700
-Message-ID: <20140305184219.GA29903@obsidianresearch.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from quartz.orcorp.ca ([184.70.90.242]:51987 "EHLO quartz.orcorp.ca"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752791AbaCESmo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 13:42:44 -0500
-Content-Disposition: inline
-In-Reply-To: <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH 0/5] samsung: xgmac:
+Date: Wed,  5 Mar 2014 11:20:14 -0800
+Message-ID: <cover.1394046997.git.joe@perches.com>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, davem@davemloft.net, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com, netdev@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, kernel@pengutronix.de
 
-On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
-> -	return pp->irq;
-> +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
-> +	if (!irq)
-> +		irq = pp->irq;
+Mostly neatening and logging cleanups on top of the initial submittal.
 
-In light of the two bugs that Tim found, it might be wise to throw a
-'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
-path, so it doesn't continue to silently cover up errors on the OF/DT
-side..
+Joe Perches (5):
+  samsung: xgmac: Neatening
+  samsung: xgmac: Fix pr_<level> uses
+  samsung: xgmac: Use more current logging style
+  samsung: xgmac: Neaten comments
+  samsung: xgmac: Mostly whitespace neatening
 
-Regards,
-Jason
+ drivers/net/ethernet/samsung/xgmac_common.h   |  56 ++--
+ drivers/net/ethernet/samsung/xgmac_core.c     |  28 +-
+ drivers/net/ethernet/samsung/xgmac_desc.c     |  39 ++-
+ drivers/net/ethernet/samsung/xgmac_desc.h     |  16 +-
+ drivers/net/ethernet/samsung/xgmac_dma.c      |  49 ++--
+ drivers/net/ethernet/samsung/xgmac_dma.h      |  12 +-
+ drivers/net/ethernet/samsung/xgmac_ethtool.c  |  95 ++++---
+ drivers/net/ethernet/samsung/xgmac_main.c     | 389 +++++++++++++-------------
+ drivers/net/ethernet/samsung/xgmac_mdio.c     |  58 ++--
+ drivers/net/ethernet/samsung/xgmac_mtl.c      |  15 +-
+ drivers/net/ethernet/samsung/xgmac_mtl.h      |  14 +-
+ drivers/net/ethernet/samsung/xgmac_platform.c |  45 +--
+ drivers/net/ethernet/samsung/xgmac_reg.h      | 190 ++++++-------
+ 13 files changed, 502 insertions(+), 504 deletions(-)
+
+-- 
+1.8.1.2.459.gbcd45b4.dirty
