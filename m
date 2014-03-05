@@ -1,85 +1,76 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 3/3] Documentation: mfd: s2mps11: Document support for S2MPS14
-Date: Wed, 5 Mar 2014 15:34:18 +0530
-Message-ID: <CAK9yfHxFciupJPw9XbVRsBUmY7bUT8L4goGW+TYPwQRUUqsKew@mail.gmail.com>
-References: <1394011373-4057-1-git-send-email-k.kozlowski@samsung.com>
-	<1394011373-4057-4-git-send-email-k.kozlowski@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v7 0/4] phy: Add new Exynos USB 2.0 PHY driver
+Date: Wed, 5 Mar 2014 16:51:41 +0530
+Message-ID: <531708C5.6010506@ti.com>
+References: <1393946616-20062-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1394011373-4057-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:43662 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754811AbaCELWD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Mar 2014 06:22:03 -0500
+In-Reply-To: <1393946616-20062-1-git-send-email-k.debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu
 
-Hi Krzysztof,
+Hi,
 
-On 5 March 2014 14:52, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> Add bindings documentation for S2MPS14 device to the s2mps11 driver.
+On Tuesday 04 March 2014 08:53 PM, Kamil Debski wrote:
+> Hi,
+>
+> This is the seventh version of this patchset. First and most significant change
+> is that this patchset includes only patches touching the Generic PHY Framework.
+> Patches to the USB controllers were stripped as they require additional work.
+> S5PV210 support is also omitted - it requires more testing.
+>
+> Thank you to everyone who joined the discussion, reviewed the patched and
+> contributed to making the code and consequently the Linux Kernel better.
 
-nit: s/s2mps11/S2MPS11
+Can you refresh your patches on
+git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
+It's not applying cleanly.
 
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
-> ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt |   12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> index 15ee89c3cc7b..f69bec294f02 100644
-> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> @@ -1,5 +1,5 @@
->
-> -* Samsung S2MPS11 Voltage and Current Regulator
-> +* Samsung S2MPS11 and S2MPS14 Voltage and Current Regulator
->
->  The Samsung S2MPS11 is a multi-function device which includes voltage and
->  current regulators, RTC, charger controller and other sub-blocks. It is
-> @@ -7,7 +7,7 @@ interfaced to the host controller using an I2C interface. Each sub-block is
->  addressed by the host system using different I2C slave addresses.
->
->  Required properties:
-> -- compatible: Should be "samsung,s2mps11-pmic".
-> +- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps14-pmic".
->  - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
->
->  Optional properties:
-> @@ -59,10 +59,14 @@ supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
->  as per the datasheet of s2mps11.
->
->         - LDOn
-> -                 - valid values for n are 1 to 38
-> +                 - valid values for n are:
-> +                       - S2MPS11: 1 to 38
-> +                       - S2MPS14: 1 to 25
->                   - Example: LDO1, LD02, LDO28
->         - BUCKn
-> -                 - valid values for n are 1 to 10.
-> +                 - valid values for n are:
-> +                       - S2MPS11: 1 to 10
-> +                       - S2MPS14: 1 to 5
->                   - Example: BUCK1, BUCK2, BUCK9
->
->  Example:
-> --
-> 1.7.9.5
->
-Looks good.
-Acked-by: Sachin Kamat <sachin.kamat@linaro.org>
+While at that pls fix these checkpatch errors/warnings
 
+on patch 3.
+ERROR: code indent should use tabs where possible
+#854: FILE: drivers/phy/phy-exynos4x12-usb2.c:233:
++^I^I^I        EXYNOS_4x12_MODE_SWITCH_OFFSET,$
 
--- 
-With warm regards,
-Sachin
+CHECK: Alignment should match open parenthesis
+#854: FILE: drivers/phy/phy-exynos4x12-usb2.c:233:
++			regmap_update_bits(drv->reg_sys,
++			        EXYNOS_4x12_MODE_SWITCH_OFFSET,
+
+ERROR: code indent should use tabs where possible
+#855: FILE: drivers/phy/phy-exynos4x12-usb2.c:234:
++^I^I^I        EXYNOS_4x12_MODE_SWITCH_MASK,$
+
+CHECK: Alignment should match open parenthesis
+#986: FILE: drivers/phy/phy-samsung-usb2.c:29:
++	dev_dbg(drv->dev, "Request to power_on \"%s\" usb phy\n",
++							inst->cfg->label);
+
+CHECK: Alignment should match open parenthesis
+#1014: FILE: drivers/phy/phy-samsung-usb2.c:57:
++	dev_dbg(drv->dev, "Request to power_off \"%s\" usb phy\n",
++							inst->cfg->label);
+
+CHECK: Alignment should match open parenthesis
+#1146: FILE: drivers/phy/phy-samsung-usb2.c:189:
++			dev_err(drv->dev, "Failed to create usb2_phy \"%s\"\n",
++
+
+And on patch 4
+
+CHECK: Alignment should match open parenthesis
+#350: FILE: drivers/phy/phy-exynos5250-usb2.c:212:
++		regmap_update_bits(drv->reg_sys,
++			EXYNOS_5250_MODE_SWITCH_OFFSET,
+
+-Kishon
