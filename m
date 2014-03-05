@@ -1,63 +1,109 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH 5/7] ARM: dts: imx6: add PCIe interrupt mapping properties
-Date: Wed, 5 Mar 2014 13:43:35 +0800
-Message-ID: <20140305054333.GF8784@S2101-09.ap.freescale.net>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
- <1393608523-17509-6-git-send-email-l.stach@pengutronix.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC PATCH v2 03/21] exynos/dsim: add DT bindings
+Date: Wed, 5 Mar 2014 14:56:38 +0900
+Message-ID: <CAAQKjZPO80-+-9kMufJGimjS8bAJBgHBS=DNESro_cvMmzqbgg@mail.gmail.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+	<1392204688-4591-4-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1393608523-17509-6-git-send-email-l.stach@pengutronix.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tim Harvey <tharvey@gateworks.com>, Richard Zhu <r65037@freescale.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:45896 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752503AbaCEF4k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Mar 2014 00:56:40 -0500
+In-Reply-To: <1392204688-4591-4-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, Feb 28, 2014 at 06:28:41PM +0100, Lucas Stach wrote:
-> As defined by the common PCI bindings.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+2014-02-12 20:31 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> The patch adds DT bindings for Exynos DSI Master. DSIM follows rules
+> for DSI bus host bindings [1].
+> Properties describes its resources: memory, interrupt, clocks,
+> phy, regulators and frequencies of clocks.
+>
+> [1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
->  arch/arm/boot/dts/imx6qdl.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-> index fb28b2ecb1db..db3339e7d3a2 100644
-> --- a/arch/arm/boot/dts/imx6qdl.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
-> @@ -10,6 +10,8 @@
->   * http://www.gnu.org/copyleft/gpl.html
->   */
->  
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> v2
+> - added burst and esc clock frequency properties
+> - add samsung prefix to all frequency props
+> ---
+>  .../devicetree/bindings/video/exynos_dsim.txt      | 53 ++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
+>
+> diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+> new file mode 100644
+> index 0000000..2a49704
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+> @@ -0,0 +1,53 @@
+> +Exynos MIPI DSI Master
 > +
->  #include "skeleton.dtsi"
->  
->  / {
-> @@ -126,7 +128,16 @@
->  				  0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
->  				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
->  			num-lanes = <1>;
+> +Required properties:
+> +  - compatible: "samsung,exynos4210-mipi-dsi"
+> +  - reg: physical base address and length of the registers set for the device
+> +  - interrupts: should contain DSI interrupt
+> +  - clocks: list of clock specifiers, must contain an entry for each required
+> +    entry in clock-names
+> +  - clock-names: should include "bus_clk"and "pll_clk" entries
+> +  - phys: list of phy specifiers, must contain an entry for each required
+> +    entry in phy-names
+> +  - phy-names: should include "dsim" entry
+> +  - vddcore-supply: MIPI DSIM Core voltage supply (e.g. 1.1V)
+> +  - vddio-supply: MIPI DSIM I/O and PLL voltage supply (e.g. 1.8V)
+> +  - samsung,pll-clock-frequency: specifies frequency of the "pll_clk" clock
+> +  - samsung,burst-clock-frequency: specifies DSI frequency in high-speed burst
+> +    mode
+> +  - samsung,esc-clock-frequency: specifies DSI frequency in escape mode
+> +  - #address-cells, #size-cells: should be set respectively to <1> and <0>
+> +    according to DSI host bindings (see MIPI DSI bindings [1])
 > +
-
-Please drop these blank lines between properties.
-
-Shawn
-
->  			interrupts = <0 123 0x04>;
+> +Optional properties:
+> +  - samsung,power-domain: a phandle to DSIM power domain node
 > +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +			                <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +			                <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-> +			                <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+> +Child nodes:
+> +  Should contain DSI peripheral nodes (see DSI bindings [1])
 > +
->  			clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
->  			clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
->  			status = "disabled";
-> -- 
-> 1.8.5.3
-> 
+> +[1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
+> +
+> +Example:
+> +
+> +       dsi@11C80000 {
+> +               compatible = "samsung,exynos4210-mipi-dsi";
+> +               reg = <0x11C80000 0x10000>;
+> +               interrupts = <0 79 0>;
+> +               clocks = <&clock 286>, <&clock 143>;
+> +               clock-names = "bus_clk", "pll_clk";
+> +               phys = <&mipi_phy 1>;
+> +               phy-names = "dsim";
+> +               vddcore-supply = <&vusb_reg>;
+> +               vddio-supply = <&vmipi_reg>;
+> +               samsung,power-domain = <&pd_lcd0>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               samsung,pll-clock-frequency = <24000000>;
+> +               samsung,burst-clock-frequency = <500000000>;
+> +               samsung,esc-clock-frequency = <20000000>;
 
+Isn't a property indicating cpu or video mode needed for the future
+even though now DSI driver doesn't support CPU interface yet? Which
+mode is used would depend on machine.
+
+> +
+> +               panel@0 {
+> +                       reg = <0>;
+> +                       ...
+> +               };
+> +       };
+> --
+> 1.8.3.2
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
