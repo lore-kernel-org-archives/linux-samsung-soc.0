@@ -1,61 +1,34 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Map SYSRAM address through DT
-Date: Wed, 05 Mar 2014 16:57:35 +0100
-Message-ID: <5317496F.5050702@gmail.com>
-References: <1392876308-4748-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHz6wJPdC=DjgaiNOsPHY8k9zaB+p3-ahpwOOcPQtoWEHw@mail.gmail.com> <531725E9.5010307@saftware.de> <CAK9yfHw2adag+J1B=te4QvTG-PMJzvbrMe7NwFZsUGJrJFjmSA@mail.gmail.com>
+Subject: Re: [PATCH v9 1/4] phy: core: Add an exported of_phy_get function
+Date: Wed, 05 Mar 2014 17:03:31 +0100
+Message-ID: <53174AD3.7040302@gmail.com>
+References: <1394033288-5551-1-git-send-email-k.debski@samsung.com> <1394033288-5551-2-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:47747 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756635AbaCEP5w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 10:57:52 -0500
-In-Reply-To: <CAK9yfHw2adag+J1B=te4QvTG-PMJzvbrMe7NwFZsUGJrJFjmSA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1394033288-5551-2-git-send-email-k.debski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu, sander@humilis.net
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, Andreas Oberritter <obi@saftware.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-
-
-On 05.03.2014 16:36, Sachin Kamat wrote:
-> On 5 March 2014 18:56, Andreas Oberritter <obi@saftware.de> wrote:
->> On 05.03.2014 09:23, Sachin Kamat wrote:
->>>> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
->>>> index d2e3f5f5916d..3ca3fb6aa5f4 100644
->>>> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
->>>> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
->>>> @@ -28,6 +28,11 @@
->>>>                  bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
->>>>          };
->>>>
->>>> +       sysram@02020000 {
->>                    ^
->>>> +               compatible = "samsung,exynos4210-sysram";
->>>> +               reg = <0x02025000 0x1000>;
->>                            ^
->>>> +       };
->>>> +
->>
->> Shouldn't these two addresses match?
+On 05.03.2014 16:28, Kamil Debski wrote:
+> Previously the of_phy_get function took a struct device * and
+> was declared static. It was impossible to call it from
+> another driver and thus it was impossible to get phy defined
+> for a given node. The old function was renamed to _of_phy_get
+> and was left for internal use. of_phy_get function was added
+> and it was exported. The function enables to get a phy for
+> a given device tree node.
 >
-> Ideally they should. However in this case, this particular board uses
-> older revision
-> of the SoC which has a different register address. I did not want to
-> create a compatible
-> string just for this (exceptional) case alone and hence did it this
-> way to override the reg. address.
-> Other option was not to have the register address in the node name.
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> ---
+>   drivers/phy/phy-core.c  |   45 ++++++++++++++++++++++++++++++++++++---------
+>   include/linux/phy/phy.h |    6 ++++++
+>   2 files changed, 42 insertions(+), 9 deletions(-)
 
-What about overriding status of sysram@02020000 node to "disabled" and 
-adding a new sysram@02025000 node in universal C210 dts?
-
-However, I'm still a bit concerned about using such platform and 
-use-case specific compatible strings here. SYSRAM is basically a normal 
-SRAM memory and usually just some specific areas of it are reserved for 
-special purposes.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
