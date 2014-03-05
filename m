@@ -1,93 +1,53 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 02/11] drivercore: Bind/unbind power domain on probe/remove
-Date: Wed, 5 Mar 2014 08:22:48 +0100
-Message-ID: <CAPDyKFpMSwXG0e1Q38wMwBocXgMb4_v9y=1kNeNi6t0GXDGN2A@mail.gmail.com>
-References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
-	<1393862536-9842-3-git-send-email-tomasz.figa@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH 1/2] ARM: dts: Disable MDMA1 node for Arndale-octa board
+Date: Wed,  5 Mar 2014 13:39:06 +0530
+Message-ID: <1394006947-26126-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:36902 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751919AbaCEHWt (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:52014 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751441AbaCEIPC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 02:22:49 -0500
-Received: by mail-qc0-f170.google.com with SMTP id e9so708999qcy.29
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Mar 2014 23:22:48 -0800 (PST)
-In-Reply-To: <1393862536-9842-3-git-send-email-tomasz.figa@gmail.com>
+	Wed, 5 Mar 2014 03:15:02 -0500
+Received: by mail-pd0-f171.google.com with SMTP id r10so740026pdi.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2014 00:15:01 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Loren
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-On 3 March 2014 17:02, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On a number of platforms, devices are part of controllable power
-> domains, which need to be enabled before such devices can be accessed
-> and may be powered down when the device is idle to save some power.
-> This means that on systems that support power domain control using
-> generic power domains subsystem, it is necessary to add device to its
-> power domain before binding a driver to it and remove it from its power
-> domain after its driver is unbound to make sure that an unused device
-> does not affect power domain state.
->
-> Since this is not limited to particular busses and specific
-> archs/platforms, it is more convenient to do the above directly in
-> driver core, just as done with pinctrl default configuration. This patch
-> adds necessary code to really_probe() and __device_release_driver() to
-> achieve this and maintain consistent stack-like ordering of operations
-> happening when binding and unbinding a driver.
->
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+MDMA1 can support both secure and non-secure AXI transactions. When this
+is enabled in the kernel for boards that run in secure mode, we get
+imprecise external aborts causing the kernel to oops.
 
-This definitely makes sense to me!
+Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Suggested-by: Javi Merino <javi.merino@arm.com>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> ---
->  drivers/base/dd.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 0605176..78e5b36 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -23,6 +23,7 @@
->  #include <linux/kthread.h>
->  #include <linux/wait.h>
->  #include <linux/async.h>
-> +#include <linux/pm_domain.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/pinctrl/devinfo.h>
->
-> @@ -273,6 +274,11 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->
->         dev->driver = drv;
->
-> +       /* If using genpd, bind power domain now before probing */
-> +       ret = genpd_bind_domain(dev);
-> +       if (ret)
-> +               goto probe_failed;
-> +
->         /* If using pinctrl, bind pins now before probing */
->         ret = pinctrl_bind_pins(dev);
->         if (ret)
-> @@ -303,6 +309,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->  probe_failed:
->         devres_release_all(dev);
->         driver_sysfs_remove(dev);
-> +       genpd_unbind_domain(dev);
->         dev->driver = NULL;
->         dev_set_drvdata(dev, NULL);
->
-> @@ -513,7 +520,7 @@ static void __device_release_driver(struct device *dev)
->                         blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->                                                      BUS_NOTIFY_UNBOUND_DRIVER,
->                                                      dev);
-> -
-> +               genpd_unbind_domain(dev);
->         }
->  }
->
-> --
-> 1.9.0
->
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index f509e8f..810ec73 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -361,4 +361,16 @@
+ 			gpio-key,wakeup;
+ 		};
+ 	};
++
++	amba {
++		mdma1: mdma@11C10000 {
++			/*
++			 * MDMA1 can support both secure and non-secure
++			 * AXI transactions. When this is enabled in the kernel
++			 * for boards that run in secure mode, we are getting
++			 * imprecise external aborts causing the kernel to oops.
++			 */
++			status = "disabled";
++		};
++	};
+ };
+-- 
+1.7.9.5
