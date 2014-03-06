@@ -1,89 +1,130 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2 3/6] PCI: rcar: use new OF interrupt mapping when
- possible
-Date: Thu, 6 Mar 2014 13:12:28 +0900
-Message-ID: <20140306041228.GA28351@verge.net.au>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-4-git-send-email-l.stach@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1394025951-32438-4-git-send-email-l.stach@pengutronix.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH] [media] s5p-mfc: Add a control for IVF format for VP8 encoder
+Date: Thu,  6 Mar 2014 11:33:39 +0530
+Message-ID: <1394085820-3784-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:42550 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751190AbaCFGDt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Mar 2014 01:03:49 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-On Wed, Mar 05, 2014 at 02:25:48PM +0100, Lucas Stach wrote:
-> This is the recommended method of doing the IRQ
-> mapping. Still fall back to the old method in order
-> to not break the just submitted board files.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+From: Pawel Osciak <posciak@chromium.org>
 
-Assuming that it does what it says on the wrapper:
+Add a control to enable/disable IVF output stream format for VP8 encode.
+Set the IVF format output to disabled as default.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Pawel Osciak <posciak@chromium.org>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+ Documentation/DocBook/media/v4l/controls.xml    |    8 ++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   11 +++++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    2 ++
+ drivers/media/v4l2-core/v4l2-ctrls.c            |    1 +
+ include/uapi/linux/v4l2-controls.h              |    1 +
+ 6 files changed, 24 insertions(+)
 
-
-> ---
-> v2: pass in parent device to pci_common_init(), to
->     make DT parsing work.
-> ---
->  drivers/pci/host/pci-rcar-gen2.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
-> index ceec147baec3..3a0914163ad0 100644
-> --- a/drivers/pci/host/pci-rcar-gen2.c
-> +++ b/drivers/pci/host/pci-rcar-gen2.c
-> @@ -15,6 +15,7 @@
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/of_pci.h>
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> @@ -160,8 +161,13 @@ static int __init rcar_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
->  {
->  	struct pci_sys_data *sys = dev->bus->sysdata;
->  	struct rcar_pci_priv *priv = sys->private_data;
-> +	int irq;
-> +
-> +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
-> +	if (!irq)
-> +		irq = priv->irq;
->  
-> -	return priv->irq;
-> +	return irq;
->  }
->  
->  /* PCI host controller setup */
-> @@ -249,6 +255,8 @@ static int __init rcar_pci_add_controller(struct rcar_pci_priv *priv)
->  	void **private_data;
->  	int count;
->  
-> +	pci_common_init_dev(priv->dev, &rcar_hw_pci);
-> +
->  	if (rcar_hw_pci.nr_controllers < rcar_pci_count)
->  		goto add_priv;
->  
-> @@ -322,8 +330,6 @@ static int __init rcar_pci_init(void)
->  	int retval;
->  
->  	retval = platform_driver_probe(&rcar_pci_driver, rcar_pci_probe);
-> -	if (!retval)
-> -		pci_common_init(&rcar_hw_pci);
->  
->  	/* Private data pointer array is not needed any more */
->  	kfree(rcar_hw_pci.private_data);
-> -- 
-> 1.9.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+index 0e1770c..07fb64a 100644
+--- a/Documentation/DocBook/media/v4l/controls.xml
++++ b/Documentation/DocBook/media/v4l/controls.xml
+@@ -3222,6 +3222,14 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD as a golden frame.</entry>
+ Acceptable values are 0, 1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.</entry>
+ 	      </row>
+ 
++	      <row><entry></entry></row>
++	      <row>
++		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT</constant>&nbsp;</entry>
++		<entry>boolean</entry>
++	      </row>
++	      <row><entry spanname="descr">Outputs the VP8 encoded stream in IVF file format.</entry>
++	      </row>
++
+           <row><entry></entry></row>
+         </tbody>
+       </tgroup>
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index 5c28cc3..4d17df9 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -418,6 +418,7 @@ struct s5p_mfc_vp8_enc_params {
+ 	u8 rc_frame_qp;
+ 	u8 rc_p_frame_qp;
+ 	u8 profile;
++	bool ivf;
+ };
+ 
+ /**
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+index df83cd1..a67913e 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+@@ -676,6 +676,14 @@ static struct mfc_control controls[] = {
+ 		.step = 1,
+ 		.default_value = 0,
+ 	},
++	{
++		.id = V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT,
++		.type = V4L2_CTRL_TYPE_BOOLEAN,
++		.minimum = 0,
++		.maximum = 1,
++		.step = 1,
++		.default_value = 0,
++	},
+ };
+ 
+ #define NUM_CTRLS ARRAY_SIZE(controls)
+@@ -1636,6 +1644,9 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
+ 		p->codec.vp8.profile = ctrl->val;
+ 		break;
++	case V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT:
++		p->codec.vp8.ivf = ctrl->val;
++		break;
+ 	default:
+ 		v4l2_err(&dev->v4l2_dev, "Invalid control, id=%d, val=%d\n",
+ 							ctrl->id, ctrl->val);
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+index f64621a..90edb19 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -1243,6 +1243,8 @@ static int s5p_mfc_set_enc_params_vp8(struct s5p_mfc_ctx *ctx)
+ 
+ 	/* VP8 specific params */
+ 	reg = 0;
++	/* Bit set to 1 disables IVF stream format. */
++	reg |= p_vp8->ivf ? 0 : (0x1 << 12);
+ 	reg |= (p_vp8->imd_4x4 & 0x1) << 10;
+ 	switch (p_vp8->num_partitions) {
+ 	case V4L2_CID_MPEG_VIDEO_VPX_1_PARTITION:
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index e9e12c4..19e78df 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -752,6 +752,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:			return "VPX Profile";
++	case V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT:		return "VPX Output stream in IVF format";
+ 
+ 	/* CAMERA controls */
+ 	/* Keep the order of the 'case's the same as in videodev2.h! */
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index cda6fa0..b2763d6 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -565,6 +565,7 @@ enum v4l2_vp8_golden_frame_sel {
+ #define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP		(V4L2_CID_MPEG_BASE+509)
+ #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
+ #define V4L2_CID_MPEG_VIDEO_VPX_PROFILE			(V4L2_CID_MPEG_BASE+511)
++#define V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT		(V4L2_CID_MPEG_BASE+512)
+ 
+ /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
+ #define V4L2_CID_MPEG_CX2341X_BASE 				(V4L2_CTRL_CLASS_MPEG | 0x1000)
+-- 
+1.7.9.5
