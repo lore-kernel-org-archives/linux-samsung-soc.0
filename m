@@ -1,73 +1,57 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
-Date: Thu,  6 Mar 2014 11:34:44 +0530
-Message-ID: <1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
-References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net, linux@maxim.org.za, plagnioj@jcrosoft.com, kgene.kim@samsung.com, t.figa@samsung.com
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [RFC 0/4] drm: add generic KMS blob properties for image enhancement
+Date: Thu, 06 Mar 2014 11:42:10 +0530
+Message-ID: <1394086334-20967-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:26141 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714AbaCFGM7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Mar 2014 01:12:59 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N200054V3XMA680@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Mar 2014 15:12:58 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@gmail.com, inki.dae@samsung.com, prashanth.g@samsung.com, seanpaul@chromium.org, marcheu@chromium.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, r.sh.open@google.com, ajaykumar.rs@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Most of the clock related dt-binding header files are located in
-dt-bindings/clock folder. It would be good to keep all the similar
-header files at a single location.
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-CC: Kukjin Kim <kgene.kim@samsung.com>
-CC: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi                  |    2 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |    2 +-
- drivers/clk/samsung/clk-exynos-audss.c             |    2 +-
- .../dt-bindings/{clk => clock}/exynos-audss-clk.h  |    0
- 4 files changed, 3 insertions(+), 3 deletions(-)
- rename include/dt-bindings/{clk => clock}/exynos-audss-clk.h (100%)
+Patch set has following proposal.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 8f6300f..2048012 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -20,7 +20,7 @@
- #include "exynos5.dtsi"
- #include "exynos5250-pinctrl.dtsi"
- 
--#include <dt-bindings/clk/exynos-audss-clk.h>
-+#include <dt-bindings/clock/exynos-audss-clk.h>
- 
- / {
- 	compatible = "samsung,exynos5250";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 45e2e65..64c7f6d 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -16,7 +16,7 @@
- #include "exynos5.dtsi"
- #include "exynos5420-pinctrl.dtsi"
- 
--#include <dt-bindings/clk/exynos-audss-clk.h>
-+#include <dt-bindings/clock/exynos-audss-clk.h>
- 
- / {
- 	compatible = "samsung,exynos5420";
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 884187f..13eae14c 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -17,7 +17,7 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- 
--#include <dt-bindings/clk/exynos-audss-clk.h>
-+#include <dt-bindings/clock/exynos-audss-clk.h>
- 
- enum exynos_audss_clk_type {
- 	TYPE_EXYNOS4210,
-diff --git a/include/dt-bindings/clk/exynos-audss-clk.h b/include/dt-bindings/clock/exynos-audss-clk.h
-similarity index 100%
-rename from include/dt-bindings/clk/exynos-audss-clk.h
-rename to include/dt-bindings/clock/exynos-audss-clk.h
+1) Add writable KMS blob properties
+	patch 1: drm: allow to create blank writable blob properties
+	patch 2: drm: add ioctl to write into binary blob KMS properties
+
+2) Add generic image enhancement properties. Added as per exynos hardware
+	requirements (to start).
+	patch 3: drm: add generic blob properties for image enhancement
+
+3) Allow drivers to create writable blob properties
+	patch 4: drm: export create and destroy function for blob properties
+
+Initial discussion before preparing this RFC is at
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/27278
+
+This series is based on Dave's drm-next branch at
+http://cgit.freedesktop.org/~airlied/linux/
+
+Rahul Sharma (4):
+  drm: allow to create blank writable blob properties
+  drm: add ioctl to write into binary blob KMS properties
+  drm: add generic blob properties for image enhancement
+  drm: export create and destroy function for blob properties
+
+ drivers/gpu/drm/drm_crtc.c  |  201 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/gpu/drm/drm_drv.c   |    1 +
+ include/drm/drm_crtc.h      |   19 ++++
+ include/uapi/drm/drm.h      |    1 +
+ include/uapi/drm/drm_mode.h |   49 +++++++++++
+ 5 files changed, 265 insertions(+), 6 deletions(-)
+
 -- 
 1.7.9.5
-
