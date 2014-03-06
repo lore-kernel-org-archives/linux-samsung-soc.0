@@ -1,71 +1,41 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/3] regulator: s2mps11: Add set_suspend_disable for S2MPS14
-Date: Thu, 06 Mar 2014 15:42:22 +0100
-Message-ID: <1394116942.25853.14.camel@AMDC1943>
-References: <1394011373-4057-1-git-send-email-k.kozlowski@samsung.com>
- <1394011373-4057-3-git-send-email-k.kozlowski@samsung.com>
- <20140306093826.GO13126@sirena.org.uk>
+From: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when possible
+Date: Thu, 6 Mar 2014 16:33:31 +0100
+Message-ID: <201403061633.31260.marex@denx.de>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de> <1394025951-32438-7-git-send-email-l.stach@pengutronix.de> <000201cf38e6$5b02d6e0$110884a0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140306093826.GO13126@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <000201cf38e6$5b02d6e0$110884a0$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Troy Kisky <troy.kisky-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>
+Cc: 'Lucas Stach' <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Simon Horman' <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, 'Shawn Guo' <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, 'Mohit KUMAR DCG' <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Pratyush Anand' <pratyush.anand-qxv4g6HH51o@public.gmane.org>, 'Richard Zhu' <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 2014-03-06 at 17:38 +0800, Mark Brown wrote:
-> On Wed, Mar 05, 2014 at 10:22:52AM +0100, Krzysztof Kozlowski wrote:
+On Thursday, March 06, 2014 at 03:47:03 AM, Jingoo Han wrote:
+> On Wednesday, March 05, 2014 10:26 PM, Lucas Stach wrote:
+> > This is the recommended method of doing the IRQ
+> > mapping. For old devicetrees we fall back to the
+> > previous practice.
+> > 
+> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> > Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 > 
-> > +	ret = regmap_read(rdev->regmap, rdev->desc->enable_reg, &data);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	/*
-> > +	 * Don't enable suspend mode if regulator is already disabled because
-> > +	 * this would effectively for a short time turn on the regulator after
-> > +	 * resuming.
-> > +	 */
-> > +	if (!(data & rdev->desc->enable_mask))
-> > +		return 0;
-> > +
-> > +	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-> > +			rdev->desc->enable_mask, S2MPS14_ENABLE_SUSPEND);
-> > +}
+> (+cc Mohit KUMAR, Richard Zhu, Pratyush Anand, Marek Vasut,
+>        Kishon Vijay Abraham I)
 > 
-> What happens if the regulator gets enabled between this being called
-> and the device suspending?  I'd expect this to be storing the state and
-> then changing what gets written during enable and disable operations (if
-> the hardware does what I think it does).
+> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> It works properly on Exynos platform.
+> Thank you.
 
-It seems that none of the regulators implementing set_suspend_disable()
-work that way. They just write the suspend value to device. Of course
-this is not an issue - the S2MPS14 may be the first :).
+Looks reasonable,
 
-However in that case the driver won't be able later to change that value
-back to "normal enable" (enable_mask). Consider such flow:
-1. System is going to suspend.
-2. Some regulator has "rstate->disabled" so set_suspend_disable() is
-called on it.
-3. The "suspend" value is written to the device for given regulator and
-it is stored as "enable" value.
-4. If regulator is enabled during here then the same "suspend" value
-will be written.
-5. System is suspended.
-6. After resuming regulator_suspend_finish() calls
-_regulator_do_enable() on the regulator... which will write the
-"suspend" value because the driver cannot differentiate between this
-enable and previous.
+Reviewed-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
 
-I assume that this may not be a problem because:
-1. Regulator will be still turned on (the "suspend" value tells PMIC to
-enable the regulator when SoC enables power).
-2. The first disable of regulator may bring back "enable" value back to
-normal mode.
-
-Am I thinking here correctly? 
-
++CC Troy if he wants to test it on SL/N6X .
 
 Best regards,
-Krzysztof
+Marek Vasut
