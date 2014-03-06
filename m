@@ -1,48 +1,99 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
-Date: Thu, 6 Mar 2014 13:47:31 +0530
-Message-ID: <CAHbNUh0ty7ZiLkQLX6tDN3tojN9feOudkr=jgPHwP26OR6Yosw@mail.gmail.com>
-References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
-	<1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
-	<CAK9yfHwLRV_Wj+O=tNEGWw2g4oR9t1-O9bNwozfwv+WOPkjpoQ@mail.gmail.com>
+From: Anton Tikhomirov <av.tikhomirov@samsung.com>
+Subject: RE: [PATCH v9 3/4] phy: Add new Exynos USB 2.0 PHY driver
+Date: Thu, 06 Mar 2014 17:26:28 +0900
+Message-ID: <005c01cf3915$c53476c0$4f9d6440$%tikhomirov@samsung.com>
+References: <1394033288-5551-1-git-send-email-k.debski@samsung.com>
+ <1394033288-5551-4-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAK9yfHwLRV_Wj+O=tNEGWw2g4oR9t1-O9bNwozfwv+WOPkjpoQ@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, linux <linux@maxim.org.za>, plagnioj <plagnioj@jcrosoft.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1394033288-5551-4-git-send-email-k.debski@samsung.com>
+Content-language: en-us
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Kamil Debski' <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu, sander@humilis.net
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 6 March 2014 12:04, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> On 6 March 2014 11:34, Tushar Behera <tushar.behera@linaro.org> wrote:
->> Most of the clock related dt-binding header files are located in
->> dt-bindings/clock folder. It would be good to keep all the similar
->> header files at a single location.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> CC: Kukjin Kim <kgene.kim@samsung.com>
->> CC: Tomasz Figa <t.figa@samsung.com>
->> ---
->
-> Sensible move.
-> Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
->
+Hi Kamil,
 
-Thanks for the review.
+...
 
-> Now that the dt-bindings/clk folder is empty (with these 2 patches
-> applied), it can be deleted as well.
->
+> +| 3. Supporting SoCs
+> ++--------------------
+> +
+> +To support a new SoC a new file should be added to the drivers/phy
+> +directory. Each SoC's configuration is stored in an instance of the
+> +struct samsung_usb2_phy_config.
+> +
+> +struct samsung_usb2_phy_config {
+> +	const struct samsung_usb2_common_phy *phys;
+> +	unsigned int num_phys;
+> +	bool has_mode_switch;
 
-Sure, I will wait till both these patches are merged and send another
-patch for that later.
+You missed rate_to_clk here.
 
-> --
-> With warm regards,
-> Sachin
+> +};
+> +
 
+...
 
+> diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-
+> usb2.c
+> new file mode 100644
+> index 0000000..c3b7719
+> --- /dev/null
+> +++ b/drivers/phy/phy-samsung-usb2.c
+> @@ -0,0 +1,222 @@
+> +/*
+> + * Samsung SoC USB 1.1/2.0 PHY driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Author: Kamil Debski <k.debski@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include "phy-samsung-usb2.h"
+> +
+> +static int samsung_usb2_phy_power_on(struct phy *phy)
+> +{
+> +	struct samsung_usb2_phy_instance *inst = phy_get_drvdata(phy);
+> +	struct samsung_usb2_phy_driver *drv = inst->drv;
+> +	int ret;
+> +
+> +	dev_dbg(drv->dev, "Request to power_on \"%s\" usb phy\n",
+> +		inst->cfg->label);
+> +	ret = clk_prepare_enable(drv->clk);
 
--- 
-Tushar Behera
+clk_prepare_enable() can sleep, and therefore doesn't allow
+samusng_usb2_phy_power_on() to be used in atomic context
+(e.g. inside spin_lock-ed area), what sometimes may be desirable.
+What about to prepare clock in probe, and just enable it here
+(note: clk_enable() doesn't sleep).
+
+> +	if (ret)
+> +		goto err_main_clk;
+> +	ret = clk_prepare_enable(drv->ref_clk);
+> +	if (ret)
+> +		goto err_instance_clk;
+> +	if (inst->cfg->power_on) {
+> +		spin_lock(&drv->lock);
+> +		ret = inst->cfg->power_on(inst);
+> +		spin_unlock(&drv->lock);
+> +	}
+> +
+> +	return 0;
+
+Thank you
