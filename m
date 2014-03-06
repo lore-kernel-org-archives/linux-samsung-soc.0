@@ -1,130 +1,46 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: Add a control for IVF format for VP8 encoder
-Date: Thu,  6 Mar 2014 11:33:39 +0530
-Message-ID: <1394085820-3784-1-git-send-email-arun.kk@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH 0/2] Move header files from dt-bindings/clk to dt-bindings/clock
+Date: Thu,  6 Mar 2014 11:34:42 +0530
+Message-ID: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:42550 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190AbaCFGDt (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:54569 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751417AbaCFGKm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Mar 2014 01:03:49 -0500
+	Thu, 6 Mar 2014 01:10:42 -0500
+Received: by mail-pb0-f45.google.com with SMTP id uo5so2144357pbc.18
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2014 22:10:41 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, arunkk.samsung@gmail.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net, linux@maxim.org.za, plagnioj@jcrosoft.com, kgene.kim@samsung.com, t.figa@samsung.com
 
-From: Pawel Osciak <posciak@chromium.org>
+Clock related headers files are mostly located in include/dt-bindings/clock
+folder. There are only 2 header files left in include/dt-bindings/clk. Move them
+to the most used folder.
 
-Add a control to enable/disable IVF output stream format for VP8 encode.
-Set the IVF format output to disabled as default.
+All changes related to a single file movement are contained in a single patch
+to avoid any build breakage.
 
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- Documentation/DocBook/media/v4l/controls.xml    |    8 ++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   11 +++++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    2 ++
- drivers/media/v4l2-core/v4l2-ctrls.c            |    1 +
- include/uapi/linux/v4l2-controls.h              |    1 +
- 6 files changed, 24 insertions(+)
+The patches are based next-20140305.
 
-diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
-index 0e1770c..07fb64a 100644
---- a/Documentation/DocBook/media/v4l/controls.xml
-+++ b/Documentation/DocBook/media/v4l/controls.xml
-@@ -3222,6 +3222,14 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD as a golden frame.</entry>
- Acceptable values are 0, 1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.</entry>
- 	      </row>
- 
-+	      <row><entry></entry></row>
-+	      <row>
-+		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT</constant>&nbsp;</entry>
-+		<entry>boolean</entry>
-+	      </row>
-+	      <row><entry spanname="descr">Outputs the VP8 encoded stream in IVF file format.</entry>
-+	      </row>
-+
-           <row><entry></entry></row>
-         </tbody>
-       </tgroup>
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 5c28cc3..4d17df9 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -418,6 +418,7 @@ struct s5p_mfc_vp8_enc_params {
- 	u8 rc_frame_qp;
- 	u8 rc_p_frame_qp;
- 	u8 profile;
-+	bool ivf;
- };
- 
- /**
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index df83cd1..a67913e 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -676,6 +676,14 @@ static struct mfc_control controls[] = {
- 		.step = 1,
- 		.default_value = 0,
- 	},
-+	{
-+		.id = V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT,
-+		.type = V4L2_CTRL_TYPE_BOOLEAN,
-+		.minimum = 0,
-+		.maximum = 1,
-+		.step = 1,
-+		.default_value = 0,
-+	},
- };
- 
- #define NUM_CTRLS ARRAY_SIZE(controls)
-@@ -1636,6 +1644,9 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
- 		p->codec.vp8.profile = ctrl->val;
- 		break;
-+	case V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT:
-+		p->codec.vp8.ivf = ctrl->val;
-+		break;
- 	default:
- 		v4l2_err(&dev->v4l2_dev, "Invalid control, id=%d, val=%d\n",
- 							ctrl->id, ctrl->val);
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index f64621a..90edb19 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -1243,6 +1243,8 @@ static int s5p_mfc_set_enc_params_vp8(struct s5p_mfc_ctx *ctx)
- 
- 	/* VP8 specific params */
- 	reg = 0;
-+	/* Bit set to 1 disables IVF stream format. */
-+	reg |= p_vp8->ivf ? 0 : (0x1 << 12);
- 	reg |= (p_vp8->imd_4x4 & 0x1) << 10;
- 	switch (p_vp8->num_partitions) {
- 	case V4L2_CID_MPEG_VIDEO_VPX_1_PARTITION:
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index e9e12c4..19e78df 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -752,6 +752,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:			return "VPX Profile";
-+	case V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT:		return "VPX Output stream in IVF format";
- 
- 	/* CAMERA controls */
- 	/* Keep the order of the 'case's the same as in videodev2.h! */
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index cda6fa0..b2763d6 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -565,6 +565,7 @@ enum v4l2_vp8_golden_frame_sel {
- #define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP		(V4L2_CID_MPEG_BASE+509)
- #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
- #define V4L2_CID_MPEG_VIDEO_VPX_PROFILE			(V4L2_CID_MPEG_BASE+511)
-+#define V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT		(V4L2_CID_MPEG_BASE+512)
- 
- /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
- #define V4L2_CID_MPEG_CX2341X_BASE 				(V4L2_CTRL_CLASS_MPEG | 0x1000)
+Tushar Behera (2):
+  dt-bindings: clock: Move at91.h to dt-bindigs/clock
+  dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
+
+ .../devicetree/bindings/clock/at91-clock.txt       |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |    2 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |    2 +-
+ arch/arm/boot/dts/sama5d3.dtsi                     |    2 +-
+ arch/arm/boot/dts/sama5d3_mci2.dtsi                |    2 +-
+ arch/arm/boot/dts/sama5d3_tcb1.dtsi                |    2 +-
+ arch/arm/boot/dts/sama5d3_uart.dtsi                |    2 +-
+ drivers/clk/samsung/clk-exynos-audss.c             |    2 +-
+ include/dt-bindings/{clk => clock}/at91.h          |    0
+ .../dt-bindings/{clk => clock}/exynos-audss-clk.h  |    0
+ 10 files changed, 8 insertions(+), 8 deletions(-)
+ rename include/dt-bindings/{clk => clock}/at91.h (100%)
+ rename include/dt-bindings/{clk => clock}/exynos-audss-clk.h (100%)
+
 -- 
 1.7.9.5
