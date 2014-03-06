@@ -1,41 +1,67 @@
-From: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when possible
-Date: Thu, 6 Mar 2014 16:33:31 +0100
-Message-ID: <201403061633.31260.marex@denx.de>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de> <1394025951-32438-7-git-send-email-l.stach@pengutronix.de> <000201cf38e6$5b02d6e0$110884a0$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <000201cf38e6$5b02d6e0$110884a0$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Troy Kisky <troy.kisky-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>
-Cc: 'Lucas Stach' <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Simon Horman' <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, 'Shawn Guo' <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, 'Mohit KUMAR DCG' <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Pratyush Anand' <pratyush.anand-qxv4g6HH51o@public.gmane.org>, 'Richard Zhu' <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v6 00/10] Add device tree support for Exynos4 camera interface
+Date: Thu, 06 Mar 2014 17:20:09 +0100
+Message-ID: <1394122819-9582-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:53634 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751415AbaCFQUq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Mar 2014 11:20:46 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, galak@codeaurora.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, a.hajda@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thursday, March 06, 2014 at 03:47:03 AM, Jingoo Han wrote:
-> On Wednesday, March 05, 2014 10:26 PM, Lucas Stach wrote:
-> > This is the recommended method of doing the IRQ
-> > mapping. For old devicetrees we fall back to the
-> > previous practice.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> > Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> 
-> (+cc Mohit KUMAR, Richard Zhu, Pratyush Anand, Marek Vasut,
->        Kishon Vijay Abraham I)
-> 
-> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> It works properly on Exynos platform.
-> Thank you.
+This series adds devicetree support for the front and rear camera of
+the Exynos4412 SoC Trats2 board. It converts related drivers to use
+the v4l2-async API. The SoC output clocks are provided to external image
+image sensors through the common clock API.
 
-Looks reasonable,
+This iteration includes three small fixes, detailed description can
+be found in patches 7/10, 8/10.
 
-Reviewed-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+I'd like to ask for a DT binding maintainer review/Ack of patch 3/10.
+I'm  going to push this series to the media tree on beginning of next
+week.
 
-+CC Troy if he wants to test it on SL/N6X .
+Thanks,
+Sylwester
 
-Best regards,
-Marek Vasut
+Sylwester Nawrocki (10):
+  Documentation: dt: Add binding documentation for S5K6A3 image sensor
+  Documentation: dt: Add binding documentation for S5C73M3 camera
+  Documentation: devicetree: Update Samsung FIMC DT binding
+  V4L: Add driver for s5k6a3 image sensor
+  V4L: s5c73m3: Add device tree support
+  exynos4-is: Use external s5k6a3 sensor driver
+  exynos4-is: Add clock provider for the SCLK_CAM clock outputs
+  exynos4-is: Add support for asynchronous subdevices registration
+  ARM: dts: Add rear camera nodes for Exynos4412 TRATS2 board
+  ARM: dts: exynos4: Update camera clk provider and s5k6a3 sensor node
+
+ .../devicetree/bindings/media/samsung-fimc.txt     |   34 +-
+ .../devicetree/bindings/media/samsung-s5c73m3.txt  |   97 +++++
+ .../devicetree/bindings/media/samsung-s5k6a3.txt   |   33 ++
+ arch/arm/boot/dts/exynos4.dtsi                     |    6 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |   86 ++++-
+ drivers/media/i2c/Kconfig                          |    8 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c           |  207 ++++++++---
+ drivers/media/i2c/s5c73m3/s5c73m3-spi.c            |    6 +
+ drivers/media/i2c/s5c73m3/s5c73m3.h                |    4 +
+ drivers/media/i2c/s5k6a3.c                         |  389 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-is-regs.c   |    2 +-
+ drivers/media/platform/exynos4-is/fimc-is-sensor.c |  285 +-------------
+ drivers/media/platform/exynos4-is/fimc-is-sensor.h |   49 +--
+ drivers/media/platform/exynos4-is/fimc-is.c        |   97 ++---
+ drivers/media/platform/exynos4-is/fimc-is.h        |    4 +-
+ drivers/media/platform/exynos4-is/media-dev.c      |  340 ++++++++++++-----
+ drivers/media/platform/exynos4-is/media-dev.h      |   32 +-
+ 18 files changed, 1136 insertions(+), 544 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+ create mode 100644 drivers/media/i2c/s5k6a3.c
+
+--
+1.7.9.5
