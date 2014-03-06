@@ -1,311 +1,110 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v3 5/5] clk/exynos5260: add clock file for exynos5260
-Date: Thu, 6 Mar 2014 14:17:58 +0530
-Message-ID: <CAPdUM4Of1ZxWysqHaDMqrNUKzXAvEMnWfgz9yBdHVTXpqEqsyA@mail.gmail.com>
-References: <1392724570-27977-1-git-send-email-rahul.sharma@samsung.com>
-	<1392724570-27977-6-git-send-email-rahul.sharma@samsung.com>
-	<53095A9A.4080606@gmail.com>
-	<CAPdUM4PL9p-fNaim_YFFMV_bA4higxQa6ppSNUGg5nmMc7a6Mw@mail.gmail.com>
-	<5315C2CA.60206@gmail.com>
+From: Anton Tikhomirov <av.tikhomirov@samsung.com>
+Subject: RE: [PATCH v9 3/4] phy: Add new Exynos USB 2.0 PHY driver
+Date: Thu, 06 Mar 2014 17:52:15 +0900
+Message-ID: <006201cf3919$5f760750$1e6215f0$%tikhomirov@samsung.com>
+References: <1394033288-5551-1-git-send-email-k.debski@samsung.com>
+ <1394033288-5551-4-git-send-email-k.debski@samsung.com>
+ <005c01cf3915$c53476c0$4f9d6440$%tikhomirov@samsung.com>
+ <53183220.3040606@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:62092 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750714AbaCFIr7 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55481 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752211AbaCFIwX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Mar 2014 03:47:59 -0500
-Received: by mail-we0-f179.google.com with SMTP id x48so2603984wes.24
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Mar 2014 00:47:58 -0800 (PST)
-In-Reply-To: <5315C2CA.60206@gmail.com>
+	Thu, 6 Mar 2014 03:52:23 -0500
+In-reply-to: <53183220.3040606@ti.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
+To: 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Kamil Debski' <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, tjakobi@math.uni-bielefeld.de, stern@rowland.harvard.edu, sander@humilis.net
 
-Hi Tomasz,
+Hello,
 
-On 4 March 2014 17:40, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Rahul,
->
->
-> On 04.03.2014 05:14, Rahul Sharma wrote:
->>
->> On 23 February 2014 07:49, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>
->>> On 18.02.2014 12:56, Rahul Sharma wrote:
->>>>
->>>> +/*
->>>> + * List of parent clocks for muses in CMU_DISP
->>>> +*/
->>>> +PNAME(mout_phyclk_dptx_phy_ch3_txd_clk_user_p) = {"fin_pll",
->>>> +                       "phyclk_dptx_phy_ch3_txd_clk"};
->>>> +PNAME(mout_phyclk_dptx_phy_ch2_txd_clk_user_p) = {"fin_pll",
->>>> +                       "phyclk_dptx_phy_ch2_txd_clk"};
->>>> +PNAME(mout_phyclk_dptx_phy_ch1_txd_clk_user_p) = {"fin_pll",
->>>> +                       "phyclk_dptx_phy_ch1_txd_clk"};
->>>> +PNAME(mout_phyclk_dptx_phy_ch0_txd_clk_user_p) = {"fin_pll",
->>>> +                       "phyclk_dptx_phy_ch0_txd_clk"};
->>>
->>>
->>>
->>> Whoa, these clock names are incredibly long. Are they real names from SoC
->>> User's Manual?
->>>
->> Yea, these are same in manual. I kept the name similar, otherwise not easy
->> to
->> search them in UM.
->>
->
-> OK.
->
->
->>>
->>>> +
->>>> +PNAME(mout_aclk_disp_222_user_p) = {"fin_pll", "dout_aclk_disp_222"};
->>>> +PNAME(mout_sclk_disp_pixel_user_p) = {"fin_pll",
->>>> "dout_sclk_disp_pixel"};
->>>
->>>
->>>
->>> [snip]
->>>
->>>
->>>> +/* fixed rate clocks generated outside the soc */
->>>
->>>
->>>
->>> Huh? If they are generated outside the SoC, they shouldn't be registered
->>> by
->>> this driver, but rather by respective fixed rate clock nodes in DT.
->>
->>
->> I tried but system doesn't boot if fin_plll is registered from DT as
->> "fixed-clock".
->> of_fixed_clk_setup hits after the registration of other CMUs. System
->> asserts
->> in many places due to div by zero error. It is exactly same for
->> Exynos5420.
->> So I took 5420 as example and defined fin_pll as osc clock of compatible
->> type
->> "samsung,exynos5260-oscclk". Rest of the ext clocks are registered as
->> "fixed-clock". What you say on this ?
->>
->
-> Hmm, the common clock framework is designed to account for late registration
-> of parent clocks. Fixed rate clocks defined from DT seem to work fine for
-> S3C64xx and Exynos5410 (patches posted some time ago by Tarek Dakhran). I'm
-> not sure why it doesn't work for you.
->
->
->>>> +       FRATE(ID_NONE, "phyclk_hdmi_link_o_tmds_clkhi", NULL,
->>>> +                       CLK_IS_ROOT, 125000000),
->>>> +       FRATE(ID_NONE, "phyclk_mipi_dphy_4l_m_txbyteclkhs", NULL,
->>>> +                       CLK_IS_ROOT, 187500000),
->>>> +       FRATE(ID_NONE, "phyclk_dptx_phy_o_ref_clk_24m", NULL,
->>>> +                       CLK_IS_ROOT, 24000000),
->>>> +       FRATE(ID_NONE, "phyclk_dptx_phy_clk_div2", NULL,
->>>> +                       CLK_IS_ROOT, 135000000),
->>>> +       FRATE(ID_NONE, "phyclk_mipi_dphy_4l_m_rxclkesc0", NULL,
->>>> +                       CLK_IS_ROOT, 20000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbhost20_phy_phyclock", NULL,
->>>> +                       CLK_IS_ROOT, 60000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbhost20_phy_freeclk", NULL,
->>>> +                       CLK_IS_ROOT, 60000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbhost20_phy_clk48mohci", NULL,
->>>> +                       CLK_IS_ROOT, 48000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbdrd30_udrd30_pipe_pclk", NULL,
->>>> +                       CLK_IS_ROOT, 125000000),
->>>> +       FRATE(ID_NONE, "phyclk_usbdrd30_udrd30_phyclock", NULL,
->>>> +                       CLK_IS_ROOT, 60000000),
->>>
->>>
->>>
->>> Are these really fixed rate clocks? It looks strange, because it's a bit
->>> unlike previous Samsung SoCs, which used to have up 5 fixed rate clocks
->>> in
->>> average.
->>>
->>
->> These are outputs of various phys. If these are removed we will be left
->> with
->> many orphan clocks.
->>
->
-> OK. Just wanted to make sure that they are real clocks found in the SoC, as
-> I don't have access to Exynos 5420 datasheet yet.
->
->
->>>> +};
->>>> +
->>>> +/*
->>>> + * List of Gate clocks for CMU_DISP
->>>> +*/
->>>> +struct samsung_gate_clock exynos5260_disp_gate_clks[] __initdata = {
->>>> +       GATE(DISP_CLK_SMMU_TV, "clk_smmu3_tv",
->>>> "mout_aclk_disp_222_user",
->>>> +                       EN_IP_DISP, 25, 0, 0),
->>>> +       GATE(DISP_CLK_SMMU_FIMD1M1, "clk_smmu3_fimd1m1",
->>>> +                       "mout_aclk_disp_222_user",
->>>> +                       EN_IP_DISP, 23, 0, 0),
->>>> +       GATE(DISP_CLK_SMMU_FIMD1M0, "clk_smmu3_fimd1m0",
->>>> +                       "mout_aclk_disp_222_user",
->>>> +                       EN_IP_DISP, 22, 0, 0),
->>>> +       GATE(ID_NONE, "clk_pixel_mixer", "mout_aclk_disp_222_user",
->>>> +                       EN_IP_DISP, 13, CLK_IGNORE_UNUSED, 0),
->>>> +       GATE(ID_NONE, "clk_pixel_disp", "mout_aclk_disp_222_user",
->>>> +                       EN_IP_DISP, 12, CLK_IGNORE_UNUSED, 0),
->>>
->>>
->>>
->>> Why CLK_IGNORE_UNUSED?
->>
->>
->> these clocks are required for correct representation of clock tree but
->> they are
->> not enabled by the drivers. like sclk_uart clock is only used for set rate
->> and
->> never enable by the driver. Second category is clock like lpddr which will
->> be
->> used by mif dvfs for lpddr only. These needs to left ingnored for Non
->> lpddr
->> boards. I treid to kept them to minimum.
->>
->
-> It's OK for core system peripherals, such as lpddr, monocnt, mif, drex,
-> intmem, etc. I'm not sure about the two display clocks. Respective drivers
-> should be fixed to gate them correctly, but for now maybe it's OK to keep
-> them enabled. However I believe it's wrong for sclk_uart's.
->
-> Looking at the code, Samsung serial driver enables selected baud clock
-> properly, so I don't see any reason why sclk_uart clocks should have this
-> flag set. Are you sure you have correct clock look-up in your DT?
->
+> Subject: Re: [PATCH v9 3/4] phy: Add new Exynos USB 2.0 PHY driver
+> 
+> 
+> 
+> On Thursday 06 March 2014 01:56 PM, Anton Tikhomirov wrote:
+> > Hi Kamil,
+> >
+> > ...
+> >
+> >> +| 3. Supporting SoCs
+> >> ++--------------------
+> >> +
+> >> +To support a new SoC a new file should be added to the drivers/phy
+> >> +directory. Each SoC's configuration is stored in an instance of the
+> >> +struct samsung_usb2_phy_config.
+> >> +
+> >> +struct samsung_usb2_phy_config {
+> >> +	const struct samsung_usb2_common_phy *phys;
+> >> +	unsigned int num_phys;
+> >> +	bool has_mode_switch;
+> >
+> > You missed rate_to_clk here.
+> >
+> >> +};
+> >> +
+> >
+> > ...
+> >
+> >> diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-
+> samsung-
+> >> usb2.c
+> >> new file mode 100644
+> >> index 0000000..c3b7719
+> >> --- /dev/null
+> >> +++ b/drivers/phy/phy-samsung-usb2.c
+> >> @@ -0,0 +1,222 @@
+> >> +/*
+> >> + * Samsung SoC USB 1.1/2.0 PHY driver
+> >> + *
+> >> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> >> + * Author: Kamil Debski <k.debski@samsung.com>
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or
+> >> modify
+> >> + * it under the terms of the GNU General Public License version 2
+> as
+> >> + * published by the Free Software Foundation.
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> >> +#include <linux/mfd/syscon.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_address.h>
+> >> +#include <linux/phy/phy.h>
+> >> +#include <linux/platform_device.h>
+> >> +#include <linux/spinlock.h>
+> >> +#include "phy-samsung-usb2.h"
+> >> +
+> >> +static int samsung_usb2_phy_power_on(struct phy *phy)
+> >> +{
+> >> +	struct samsung_usb2_phy_instance *inst = phy_get_drvdata(phy);
+> >> +	struct samsung_usb2_phy_driver *drv = inst->drv;
+> >> +	int ret;
+> >> +
+> >> +	dev_dbg(drv->dev, "Request to power_on \"%s\" usb phy\n",
+> >> +		inst->cfg->label);
+> >> +	ret = clk_prepare_enable(drv->clk);
+> >
+> > clk_prepare_enable() can sleep, and therefore doesn't allow
+> > samusng_usb2_phy_power_on() to be used in atomic context
+> > (e.g. inside spin_lock-ed area), what sometimes may be desirable.
+> > What about to prepare clock in probe, and just enable it here
+> > (note: clk_enable() doesn't sleep).
+> 
+> The PHY power-on callback is anyway called with mutex held, so I guess
+> it's fine to have clk_prepare_enable() here.
 
-I checked. sclk_uart is enabled properly by serial driver. But for some reason,
-if I remove INGNORE flag, system throws "imprecise external abort (0x1406) at
-0x00000000".
+If we rely totally on generic PHY functions such as phy_power_on()
+and friends, why do we need to use locking in callbacks at all.
 
-    1.870000] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-[    1.870000] Internal error: : 1406 [#1] SMP ARM
-[    1.870000] Modules linked in:
-[    1.870000] CPU: 0 PID: 72 Comm: init Not tainted 3.14.0-rc4+ #49
-[    1.870000] task: ed81d140 ti: ed84e000 task.ti: ed84e000
-[    1.870000] PC is at s3c64xx_serial_startup+0xa8/0xbc
-[    1.870000] LR is at _raw_spin_unlock+0x18/0x1c
-[    1.870000] ffa0: c000e280 c00fec14 01797b29 00000005 01797b29
-00020802 00000000 00000000
-[    1.870000] ffc0: 01797b29 00000005 00000802 00000005 01797b29
-00000000 b6eed000 00000000
-[    1.870000] ffe0: 000a23f4 be969c08 0006d780 b6e706c4 60000010
-01797b29 e7f7fb3f ffffffff
-[    1.870000] [<c027ecdc>] (s3c64xx_serial_startup) from [<c02790b0>]
-(uart_startup.part.3+0x78/0x1a0)
-[    1.870000] [<c02790b0>] (uart_startup.part.3) from [<c0279bb0>]
-(uart_open+0xe4/0x13c)
-[    1.870000] [<c0279bb0>] (uart_open) from [<c025f120>] (tty_open+0x39c/0x544)
-[    1.870000] [<c025f120>] (tty_open) from [<c01034fc>]
-(chrdev_open+0x140/0x16c)
-[    1.870000] [<c01034fc>] (chrdev_open) from [<c00fd598>]
-(do_dentry_open+0x1c4/0x284)
-[    1.870000] [<c00fd598>] (do_dentry_open) from [<c00fd964>]
-(finish_open+0x48/0x5c)
-[    1.870000] [<c00fd964>] (finish_open) from [<c010cbe0>]
-(do_last.isra.19+0x958/0xb44)
-
-But it is completely fine with sclk_uartX are declared with IGNORE
-flag. I am not
-able to find any clue at software level. Probably we can accept Uart clocks with
-this flag for exynos5260.
-
-I have already posted V4 for this series where I addressed most of
-your review comments.
-Please review.
-
-Regards,
-Rahul Sharma.
-
->
->>>> +
->>>> +/*
->>>> +* Applicable for all 2550 Type PLLS for Exynos5260, listed below
->>>> +* DISP_PLL, EGL_PLL, KFC_PLL, MEM_PLL,
->>>> +* BUS_PLL, MEDIA_PLL, G3D_PLL.
->>>> +*/
->>>> +static const struct samsung_pll_rate_table
->>>> exynos5260_pll2550_24mhz_tbl[]
->>>> = {
->>>> +       PLL_35XX_RATE(1700000000, 425, 6, 0),
->>>> +       PLL_35XX_RATE(1600000000, 200, 3, 0),
->>>> +       PLL_35XX_RATE(1500000000, 250, 4, 0),
->>>> +       PLL_35XX_RATE(1400000000, 175, 3, 0),
->>>> +       PLL_35XX_RATE(1300000000, 325, 6, 0),
->>>> +       PLL_35XX_RATE(1200000000, 400, 4, 1),
->>>> +       PLL_35XX_RATE(1100000000, 275, 3, 1),
->>>> +       PLL_35XX_RATE(1000000000, 250, 3, 1),
->>>> +       PLL_35XX_RATE(933000000, 311, 4, 1),
->>>> +       PLL_35XX_RATE(900000000, 300, 4, 1),
->>>> +       PLL_35XX_RATE(800000000, 200, 3, 1),
->>>> +       PLL_35XX_RATE(733000000, 733, 12, 1),
->>>> +       PLL_35XX_RATE(700000000, 175, 3, 1),
->>>> +       PLL_35XX_RATE(667000000, 667, 12, 1),
->>>> +       PLL_35XX_RATE(633000000, 211, 4, 1),
->>>> +       PLL_35XX_RATE(620000000, 310, 3, 2),
->>>> +       PLL_35XX_RATE(600000000, 400, 4, 2),
->>>> +       PLL_35XX_RATE(543000000, 362, 4, 2),
->>>> +       PLL_35XX_RATE(533000000, 533, 6, 2),
->>>> +       PLL_35XX_RATE(500000000, 250, 3, 2),
->>>> +       PLL_35XX_RATE(450000000, 300, 4, 2),
->>>> +       PLL_35XX_RATE(400000000, 200, 3, 2),
->>>> +       PLL_35XX_RATE(350000000, 175, 3, 2),
->>>> +       PLL_35XX_RATE(300000000, 400, 4, 3),
->>>> +       PLL_35XX_RATE(266000000, 266, 3, 3),
->>>> +       PLL_35XX_RATE(200000000, 200, 3, 3),
->>>> +       PLL_35XX_RATE(160000000, 160, 3, 3),
->>>
->>>
->>>
->>> Are all of those exact values, without any (incorrect) rounding? This is
->>> imporant for the rate setting code to work correctly.
->>>
->>
->> I verfied; all of them are correct other than this:
->> PLL_36XX_RATE(394216000, 459, 7, 2, 49282),
->>
->> Its computed values is coming to be 394073128. I will replace
->> 394216000 with 394073128 in the above entry.
->>
->
-> OK.
->
->
->>>> +struct of_device_id __clk_of_table_exynos5260[]
->>>> +               __used __section(__clk_of_table) = {
->>>
->>>
->>>
->>> I don't think this is a good idea. This construct should not be used
->>> directly. This is what CLK_OF_DECLARE() macro is for.
->>>
->>> If you define a struct as mentioned above for every CMU, then you should
->>> end
->>> up with following code:
->>>
->>> static const struct exynos5260_cmu_type cmu_xxx = {
->>>          // ...
->>> };
->>>
->>> static void __init cmu_xxx_init(struct device_node *np)
->>> {
->>>          exynos5260_cmu_register_one(np, &cmu_xxx);
->>> }
->>> CLK_OF_DECLARE(cmu_xxx, "samsung,exynos5260-clock-xxx", cmu_xxx_init);
->>>
->>
->> I will be filling cmu_xxx struct in cmu_xxx_init. I hope that is fine.
->
->
-> Should be fine.
->
-> Best regards,
-> Tomasz
+> 
+> Thanks
+> Kishon
