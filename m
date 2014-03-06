@@ -1,245 +1,187 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [RFC 3/4] drm: add generic blob properties for image enhancement
-Date: Thu, 06 Mar 2014 11:42:13 +0530
-Message-ID: <1394086334-20967-4-git-send-email-rahul.sharma@samsung.com>
+Subject: [RFC 2/4] drm: add ioctl to write into binary blob KMS properties
+Date: Thu, 06 Mar 2014 11:42:12 +0530
+Message-ID: <1394086334-20967-3-git-send-email-rahul.sharma@samsung.com>
 References: <1394086334-20967-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:26169 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751169AbaCFGNF (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:48320 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751440AbaCFGND (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Mar 2014 01:13:05 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 6 Mar 2014 01:13:03 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N20005573XRA680@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 Mar 2014 15:13:04 +0900 (KST)
+ with ESMTP id <0N2000LGS3XP88C0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Mar 2014 15:13:01 +0900 (KST)
 In-reply-to: <1394086334-20967-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: airlied@gmail.com, inki.dae@samsung.com, prashanth.g@samsung.com, seanpaul@chromium.org, marcheu@chromium.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, r.sh.open@google.com, ajaykumar.rs@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Add generic KMS blob properties to core drm framework. These
-are writable blob properties which can be used to set Image
-Enhancement parameters. The properties which are added here
-are meant for color reproduction, color saturation and edge
-enhancement.
+Add a new ioctl to common drm framework which can be used to
+set variable length binary data from the user space. 'Blob'
+is the only KMS property which can hold more than 64 bits. So
+far, it has been implemented as read only property for user
+application (only used for EDID data).
 
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- drivers/gpu/drm/drm_crtc.c  |  115 +++++++++++++++++++++++++++++++++++++++++++
- include/drm/drm_crtc.h      |   13 +++++
- include/uapi/drm/drm_mode.h |   41 +++++++++++++++
- 3 files changed, 169 insertions(+)
+ drivers/gpu/drm/drm_crtc.c  |   73 ++++++++++++++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/drm_drv.c   |    1 +
+ include/drm/drm_crtc.h      |    2 ++
+ include/uapi/drm/drm.h      |    1 +
+ include/uapi/drm/drm_mode.h |    8 +++++
+ 5 files changed, 84 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index a2b87a5..8771abf 100644
+index 9a2215c..a2b87a5 100644
 --- a/drivers/gpu/drm/drm_crtc.c
 +++ b/drivers/gpu/drm/drm_crtc.c
-@@ -1260,6 +1260,121 @@ int drm_mode_create_dirty_info_property(struct drm_device *dev)
+@@ -3300,7 +3300,6 @@ static bool drm_property_change_is_valid(struct drm_property *property,
+ 			valid_mask |= (1ULL << property->values[i]);
+ 		return !(value & ~valid_mask);
+ 	} else if (property->flags & DRM_MODE_PROP_BLOB) {
+-		/* Only the driver knows */
+ 		return true;
+ 	} else {
+ 		int i;
+@@ -3492,6 +3491,78 @@ out:
+ 	return ret;
  }
- EXPORT_SYMBOL(drm_mode_create_dirty_info_property);
  
-+/**
-+ * drm_mode_create_color_saturation_property - create property for color saturation
-+ * @dev: DRM device
-+ *
-+ */
-+int drm_mode_create_color_saturation_property(
-+			struct drm_device *dev)
++int drm_mode_setblob_ioctl(struct drm_device *dev, void *data,
++			      struct drm_file *file_priv)
 +{
-+	struct drm_mode_color_saturation *params;
-+	struct drm_property *prop;
-+	char prop_name[] = "color saturation";
++	struct drm_mode_object *arg_obj;
++	struct drm_mode_object *blob_obj;
++	struct drm_mode_object *prop_obj;
++	struct drm_property *property;
++	struct drm_mode_set_blob *arg = data;
++	struct drm_property_blob *blob;
++	int ret = -EINVAL, i;
++	void __user *blob_ptr;
 +
-+	if (dev->mode_config.color_saturation_property ||
-+		dev->mode_config.color_saturation_blob_ptr)
-+		return -EEXIST;
++	if (!drm_core_check_feature(dev, DRIVER_MODESET))
++		return -EINVAL;
 +
-+	prop = drm_property_create(dev, DRM_MODE_PROP_BLOB,
-+			prop_name, 0);
-+	if (!prop) {
-+		DRM_ERROR("fail to create %s property.\n", prop_name);
-+		return -ENOMEM;
++	drm_modeset_lock_all(dev);
++
++	blob_obj = drm_mode_object_find(dev, arg->blob_id, DRM_MODE_OBJECT_BLOB);
++	if (!blob_obj)
++		goto done;
++
++	blob = obj_to_blob(blob_obj);
++
++	arg_obj = drm_mode_object_find(dev, arg->obj_id, arg->obj_type);
++	if (!arg_obj)
++		goto done;
++
++	if (!arg_obj->properties)
++		goto done;
++
++	for (i = 0; i < arg_obj->properties->count; i++)
++		if (arg_obj->properties->values[i] == arg->blob_id)
++			break;
++
++	if (i == arg_obj->properties->count)
++		goto done;
++
++	prop_obj = drm_mode_object_find(dev, arg_obj->properties->ids[i],
++					DRM_MODE_OBJECT_PROPERTY);
++	if (!prop_obj)
++		goto done;
++	property = obj_to_property(prop_obj);
++
++	if (!drm_property_change_is_valid(property, arg->blob_id))
++		goto done;
++
++	if (arg->length == blob->length) {
++		blob_ptr = (void __user *)(unsigned long)arg->data;
++		if (copy_from_user(blob->data, blob_ptr, blob->length)) {
++			ret = -EFAULT;
++			goto done;
++		}
 +	}
 +
-+	dev->mode_config.color_saturation_blob_ptr =
-+		drm_property_create_blob(dev, sizeof(*params),
-+			NULL);
-+	if (!dev->mode_config.color_saturation_blob_ptr) {
-+		DRM_ERROR("failed to allocate blob for %s.\n", prop_name);
-+		drm_property_destroy(dev, prop);
-+		return -ENOMEM;
++	switch (arg_obj->type) {
++	case DRM_MODE_OBJECT_CONNECTOR:
++		ret = drm_mode_connector_set_obj_prop(arg_obj, property,
++						      arg->blob_id);
++		break;
++	case DRM_MODE_OBJECT_CRTC:
++		ret = drm_mode_crtc_set_obj_prop(arg_obj, property, arg->blob_id);
++		break;
++	case DRM_MODE_OBJECT_PLANE:
++		ret = drm_mode_plane_set_obj_prop(arg_obj, property, arg->blob_id);
++		break;
 +	}
 +
-+	dev->mode_config.color_saturation_property = prop;
-+
-+	return 0;
++done:
++	drm_modeset_unlock_all(dev);
++	return ret;
 +}
-+EXPORT_SYMBOL(drm_mode_create_color_saturation_property);
 +
-+/**
-+ * drm_mode_create_color_reproduction_property - create property for color reproduction
-+ * @dev: DRM device
-+ *
-+ */
-+int drm_mode_create_color_reproduction_property(
-+			struct drm_device *dev)
-+{
-+	struct drm_mode_color_reproduction *params;
-+	struct drm_property *prop;
-+	char prop_name[] = "color reproduction";
-+
-+	if (dev->mode_config.color_reproduction_property ||
-+		dev->mode_config.color_reproduction_blob_ptr)
-+		return -EEXIST;
-+
-+	prop = drm_property_create(dev, DRM_MODE_PROP_BLOB,
-+			prop_name, 0);
-+	if (!prop) {
-+		DRM_ERROR("fail to create %s property.\n", prop_name);
-+		return -ENOMEM;
-+	}
-+
-+	dev->mode_config.color_reproduction_blob_ptr =
-+		drm_property_create_blob(dev, sizeof(*params),
-+			NULL);
-+	if (!dev->mode_config.color_reproduction_blob_ptr) {
-+		DRM_ERROR("failed to allocate blob for %s\n", prop_name);
-+		drm_property_destroy(dev, prop);
-+		return -ENOMEM;
-+	}
-+
-+	dev->mode_config.color_reproduction_property = prop;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_mode_create_color_reproduction_property);
-+
-+
-+/**
-+ * drm_mode_create_edge_enhancement_property - create property for edge enhancement
-+ * @dev: DRM device
-+ *
-+ */
-+int drm_mode_create_edge_enhancement_property(
-+			struct drm_device *dev)
-+{
-+	struct drm_mode_edge_enhancement *params;
-+	struct drm_property *prop;
-+	char prop_name[] = "edge enhancement";
-+
-+	if (dev->mode_config.edge_enhancement_property ||
-+		dev->mode_config.edge_enhancement_blob_ptr)
-+		return -EEXIST;
-+
-+	prop = drm_property_create(dev, DRM_MODE_PROP_BLOB,
-+			prop_name, 0);
-+	if (!prop) {
-+		DRM_ERROR("fail to create %s property.\n", prop_name);
-+		return -ENOMEM;
-+	}
-+
-+	dev->mode_config.edge_enhancement_blob_ptr =
-+		drm_property_create_blob(dev, sizeof(*params),
-+			NULL);
-+	if (!dev->mode_config.edge_enhancement_blob_ptr) {
-+		DRM_ERROR("failed to allocate blob for %s\n", prop_name);
-+		drm_property_destroy(dev, prop);
-+		return -ENOMEM;
-+	}
-+
-+	dev->mode_config.edge_enhancement_property = prop;
-+
-+	return  0;
-+}
-+EXPORT_SYMBOL(drm_mode_create_edge_enhancement_property);
-+
- static int drm_mode_group_init(struct drm_device *dev, struct drm_mode_group *group)
+ int drm_mode_connector_attach_encoder(struct drm_connector *connector,
+ 				      struct drm_encoder *encoder)
  {
- 	uint32_t total_objects = 0;
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index 82f2016..df7b178 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -901,6 +901,13 @@ struct drm_mode_config {
- 	/* Optional properties */
- 	struct drm_property *scaling_mode_property;
- 	struct drm_property *dirty_info_property;
-+	struct drm_property *color_saturation_property;
-+	struct drm_property *color_reproduction_property;
-+	struct drm_property *edge_enhancement_property;
-+
-+	struct drm_property_blob *color_saturation_blob_ptr;
-+	struct drm_property_blob *color_reproduction_blob_ptr;
-+	struct drm_property_blob *edge_enhancement_blob_ptr;
- 
- 	/* dumb ioctl parameters */
- 	uint32_t preferred_depth, prefer_shadow;
-@@ -1079,6 +1086,12 @@ extern int drm_mode_create_tv_properties(struct drm_device *dev, int num_formats
- extern int drm_mode_create_scaling_mode_property(struct drm_device *dev);
- extern int drm_mode_create_dirty_info_property(struct drm_device *dev);
- extern const char *drm_get_encoder_name(const struct drm_encoder *encoder);
-+extern int drm_mode_create_color_saturation_property(
-+		struct drm_device *dev);
-+extern int drm_mode_create_color_reproduction_property(
-+		struct drm_device *dev);
-+extern int drm_mode_create_edge_enhancement_property(
-+		struct drm_device *dev);
- 
- extern int drm_mode_connector_attach_encoder(struct drm_connector *connector,
- 					     struct drm_encoder *encoder);
-diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-index 1d8216d..d28f82d 100644
---- a/include/uapi/drm/drm_mode.h
-+++ b/include/uapi/drm/drm_mode.h
-@@ -504,4 +504,45 @@ struct drm_mode_destroy_dumb {
- 	uint32_t handle;
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 345be03..7cdb501 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -167,6 +167,7 @@ static const struct drm_ioctl_desc drm_ioctls[] = {
+ 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_OBJ_GETPROPERTIES, drm_mode_obj_get_properties_ioctl, DRM_CONTROL_ALLOW|DRM_UNLOCKED),
+ 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_OBJ_SETPROPERTY, drm_mode_obj_set_property_ioctl, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
+ 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_CURSOR2, drm_mode_cursor2_ioctl, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
++	DRM_IOCTL_DEF(DRM_IOCTL_MODE_SETPROPBLOB, drm_mode_setblob_ioctl, DRM_MASTER|DRM_CONTROL_ALLOW|DRM_UNLOCKED),
  };
  
-+/* set up parameters for finer color saturation */
-+struct drm_mode_color_saturation {
-+	/* hue gain for individual colors */
-+	uint16_t hue_gain_red;
-+	uint16_t hue_gain_green;
-+	uint16_t hue_gain_blue;
-+	uint16_t hue_gain_cyan;
-+	uint16_t hue_gain_magenta;
-+	uint16_t hue_gain_yellow;
-+	/* hue gain for overall display */
-+	uint16_t hue_gain_overall;
+ #define DRM_CORE_IOCTL_COUNT	ARRAY_SIZE( drm_ioctls )
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index f764654..82f2016 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -1124,6 +1124,8 @@ extern int drm_mode_getproperty_ioctl(struct drm_device *dev,
+ 				      void *data, struct drm_file *file_priv);
+ extern int drm_mode_getblob_ioctl(struct drm_device *dev,
+ 				  void *data, struct drm_file *file_priv);
++extern int drm_mode_setblob_ioctl(struct drm_device *dev,
++				void *data, struct drm_file *file_priv);
+ extern int drm_mode_connector_property_set_ioctl(struct drm_device *dev,
+ 					      void *data, struct drm_file *file_priv);
+ extern int drm_mode_getencoder(struct drm_device *dev,
+diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+index b06c8ed..d91139b 100644
+--- a/include/uapi/drm/drm.h
++++ b/include/uapi/drm/drm.h
+@@ -760,6 +760,7 @@ struct drm_prime_handle {
+ #define DRM_IOCTL_MODE_OBJ_GETPROPERTIES	DRM_IOWR(0xB9, struct drm_mode_obj_get_properties)
+ #define DRM_IOCTL_MODE_OBJ_SETPROPERTY	DRM_IOWR(0xBA, struct drm_mode_obj_set_property)
+ #define DRM_IOCTL_MODE_CURSOR2		DRM_IOWR(0xBB, struct drm_mode_cursor2)
++#define DRM_IOCTL_MODE_SETPROPBLOB	DRM_IOWR(0xBC, struct drm_mode_set_blob)
+ 
+ /**
+  * Device specific ioctls should only be in their respective headers
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index f104c26..1d8216d 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -295,6 +295,14 @@ struct drm_mode_get_blob {
+ 	__u64 data;
+ };
+ 
++struct drm_mode_set_blob {
++	__u32 blob_id;
++	__u32 obj_id;
++	__u32 obj_type;
++	__u32 length;
++	__u64 data;
 +};
 +
-+/* set up parameters for standard color reproduction */
-+struct drm_mode_color_reproduction {
-+	/* 16 bit rgb value for primary colors */
-+	uint16_t red_rgb[3];
-+	uint16_t green_rgb[3];
-+	uint16_t blue_rgb[3];
-+	uint16_t cyan_rgb[3];
-+	uint16_t magenta_rgb[3];
-+	uint16_t yellow_rgb[3];
-+	uint16_t white_rgb[3];
-+	uint16_t black_rgb[3];
-+};
-+
-+/* set up parameters for edge enhancement */
-+struct drm_mode_edge_enhancement {
-+	/* threshold values for edge and background*/
-+	uint16_t edge_th;
-+	uint16_t background_th;
-+	/* postive gain */
-+	uint16_t pg_edge;
-+	uint16_t pg_flat;
-+	uint16_t pg_background;
-+	/* negative gain */
-+	uint16_t ng_edge;
-+	uint16_t ng_flat;
-+	uint16_t ng_background;
-+};
-+
- #endif
+ struct drm_mode_fb_cmd {
+ 	__u32 fb_id;
+ 	__u32 width, height;
 -- 
 1.7.9.5
