@@ -1,82 +1,41 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [RFC 4/4] drm: export create and destroy function for blob properties
-Date: Thu, 06 Mar 2014 11:42:14 +0530
-Message-ID: <1394086334-20967-5-git-send-email-rahul.sharma@samsung.com>
-References: <1394086334-20967-1-git-send-email-rahul.sharma@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
+Date: Thu, 6 Mar 2014 12:04:07 +0530
+Message-ID: <CAK9yfHwLRV_Wj+O=tNEGWw2g4oR9t1-O9bNwozfwv+WOPkjpoQ@mail.gmail.com>
+References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
+	<1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63277 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751440AbaCFGNG (ORCPT
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:64166 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750947AbaCFGeI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Mar 2014 01:13:06 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N2000CBO3XTFXB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 Mar 2014 15:13:05 +0900 (KST)
-In-reply-to: <1394086334-20967-1-git-send-email-rahul.sharma@samsung.com>
+	Thu, 6 Mar 2014 01:34:08 -0500
+Received: by mail-ob0-f182.google.com with SMTP id uz6so2144423obc.41
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2014 22:34:07 -0800 (PST)
+In-Reply-To: <1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: airlied@gmail.com, inki.dae@samsung.com, prashanth.g@samsung.com, seanpaul@chromium.org, marcheu@chromium.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, r.sh.open@google.com, ajaykumar.rs@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, linux@maxim.org.za, plagnioj@jcrosoft.com, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Drm drivers can also create and attach private blob properties.
-This patch exports functions to create and destroy blob properties.
+On 6 March 2014 11:34, Tushar Behera <tushar.behera@linaro.org> wrote:
+> Most of the clock related dt-binding header files are located in
+> dt-bindings/clock folder. It would be good to keep all the similar
+> header files at a single location.
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> CC: Kukjin Kim <kgene.kim@samsung.com>
+> CC: Tomasz Figa <t.figa@samsung.com>
+> ---
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- drivers/gpu/drm/drm_crtc.c |    8 +++++---
- include/drm/drm_crtc.h     |    4 ++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+Sensible move.
+Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
 
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index 8771abf..f1939c2 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -3299,8 +3299,8 @@ done:
- 	return ret;
- }
- 
--static struct drm_property_blob *drm_property_create_blob(struct drm_device *dev, int length,
--							  void *data)
-+struct drm_property_blob *drm_property_create_blob(struct drm_device *dev,
-+			int length, void *data)
- {
- 	struct drm_property_blob *blob;
- 	int ret;
-@@ -3326,14 +3326,16 @@ static struct drm_property_blob *drm_property_create_blob(struct drm_device *dev
- 	list_add_tail(&blob->head, &dev->mode_config.property_blob_list);
- 	return blob;
- }
-+EXPORT_SYMBOL(drm_property_create_blob);
- 
--static void drm_property_destroy_blob(struct drm_device *dev,
-+void drm_property_destroy_blob(struct drm_device *dev,
- 			       struct drm_property_blob *blob)
- {
- 	drm_mode_object_put(dev, &blob->base);
- 	list_del(&blob->head);
- 	kfree(blob);
- }
-+EXPORT_SYMBOL(drm_property_destroy_blob);
- 
- int drm_mode_getblob_ioctl(struct drm_device *dev,
- 			   void *data, struct drm_file *file_priv)
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index df7b178..8bf7fb2 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -1077,6 +1077,10 @@ struct drm_property *drm_property_create_bitmask(struct drm_device *dev,
- struct drm_property *drm_property_create_range(struct drm_device *dev, int flags,
- 					 const char *name,
- 					 uint64_t min, uint64_t max);
-+extern struct drm_property_blob *drm_property_create_blob(struct drm_device *dev,
-+					int length, void *data);
-+extern void drm_property_destroy_blob(struct drm_device *dev,
-+					struct drm_property_blob *blob);
- extern void drm_property_destroy(struct drm_device *dev, struct drm_property *property);
- extern int drm_property_add_enum(struct drm_property *property, int index,
- 				 uint64_t value, const char *name);
+Now that the dt-bindings/clk folder is empty (with these 2 patches
+applied), it can be deleted as well.
+
 -- 
-1.7.9.5
+With warm regards,
+Sachin
