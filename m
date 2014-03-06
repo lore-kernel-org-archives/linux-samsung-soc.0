@@ -1,67 +1,72 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] iommu/exynos: Remove driver
-Date: Thu, 6 Mar 2014 08:48:17 +0900
-Message-ID: <CAH9JG2WtV7HeJmjGDaNfHVbZiKG5aDznqxK+AYaTzK_bCud-TQ@mail.gmail.com>
-References: <1391716317-20300-1-git-send-email-olof@lixom.net>
-	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
-	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
-	<52F4E481.3050902@samsung.com>
-	<CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
-	<CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
-	<001301cf291a$233fdc70$69bf9550$@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v2 4/6] ARM: dts: exynos5440: fix PCIe interrupt mapping
+Date: Thu, 06 Mar 2014 11:38:07 +0900
+Message-ID: <000101cf38e5$1b9fd6c0$52df8440$%han@samsung.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+ <1394025951-32438-5-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:33389 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754511AbaCEXsS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Mar 2014 18:48:18 -0500
-Received: by mail-ob0-f170.google.com with SMTP id uz6so1812873obc.29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Mar 2014 15:48:17 -0800 (PST)
-In-Reply-To: <001301cf291a$233fdc70$69bf9550$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-reply-to: <1394025951-32438-5-git-send-email-l.stach@pengutronix.de>
+Content-language: ko
+Sender: linux-sh-owner@vger.kernel.org
+To: 'Lucas Stach' <l.stach@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Simon Horman' <horms@verge.net.au>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Arnd Bergmann' <arnd@arndb.de>, kernel@pengutronix.de, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Feb 14, 2014 at 9:17 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
->> -----Original Message-----
->> From: Olof Johansson [mailto:olof@lixom.net]
->> Sent: Friday, February 14, 2014 4:34 AM
->>
->> On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
->>
->> > Just adding KyongHo Cho.
->> >
->> > If he can fixup for this time, it would be best solution because he knows
->> > well than others, I think.
->>
->> It's not so much a matter of "fixup for this time", it's a about
->> having ownership of the driver, making sure it works (and keeps
->> working if there is related development). The posted patches have not
->> been followed through on and the result is a broken driver. :(
->>
->> I definitely appreciate his expertise, and we should make sure that he
->> gets to review the code, but if someone else is able to spend time on
->> reworking the driver (or rewriting a newer one) and maintaining it
->> longer-term, then we should not stop them from doing so. And there is
->> no reason to keep broken stale code in the kernel meanwhile.
->>
->
-> Thank you for your concerning.
-> I also definitely agree with you that the driver must work.
-> I am always concerning about it but it was not easy to make some time
-> for the patches.
->
-> I will continue to post the next version of patches, of course.
-> I think it is not far from now to show it.
+On Wednesday, March 05, 2014 10:26 PM, Lucas Stach wrote:
+> 
+> So it actually works.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Lots of time is going from last reply. there are two options.
-1. just waiting more
-2. remove it as patch and start it again by someone.
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-what's the opinions?
+It works properly on Exynos platform.
+Thank you.
 
-Thank you,
-Kyungmin Park
+Best regards,
+Jingoo Han
+
+> ---
+> v2: fix build breakage by including arm-gic.h
+> ---
+>  arch/arm/boot/dts/exynos5440.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+> index 02a0a1226cef..7628e2edf1b6 100644
+> --- a/arch/arm/boot/dts/exynos5440.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> @@ -9,6 +9,8 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+>  #include "skeleton.dtsi"
+> 
+>  / {
+> @@ -274,7 +276,7 @@
+>  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
+>  		#interrupt-cells = <1>;
+>  		interrupt-map-mask = <0 0 0 0>;
+> -		interrupt-map = <0x0 0 &gic 53>;
+> +		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+>  		num-lanes = <4>;
+>  		status = "disabled";
+>  	};
+> @@ -295,7 +297,7 @@
+>  			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
+>  		#interrupt-cells = <1>;
+>  		interrupt-map-mask = <0 0 0 0>;
+> -		interrupt-map = <0x0 0 &gic 56>;
+> +		interrupt-map = <0 0 0 0 &gic GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+>  		num-lanes = <4>;
+>  		status = "disabled";
+>  	};
+> --
+> 1.9.0
+
