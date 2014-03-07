@@ -1,105 +1,181 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [RFC PATCH v2 19/21] ARM: dts: exynos5250-arndale: add dsi and
- panel nodes
-Date: Fri, 7 Mar 2014 16:36:59 +0200
-Message-ID: <5319D98B.4080709@ti.com>
-References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com> <1392204688-4591-20-git-send-email-a.hajda@samsung.com> <53108FA0.4040903@ti.com> <53109193.3000604@ti.com> <5315C07B.3090705@samsung.com> <CAAQKjZPVvAxC7=voKJ1Jid3Ynnrjcg6s5m95fwetx7iDeZUN+w@mail.gmail.com> <5319B9FF.50201@samsung.com> <5319BC45.4040308@ti.com> <5319C4A8.8080900@samsung.com> <5319C976.3060908@ti.com> <5319D4FC.5090703@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v4 5/5] clk/exynos5260: add clock file for exynos5260
+Date: Sat, 8 Mar 2014 00:10:20 +0900
+Message-ID: <CAGcde9GetFjdRxqJfPY_1qdxzKb+4cqjsc+ALnN0PxSrApjyxg@mail.gmail.com>
+References: <1394113551-2134-1-git-send-email-rahul.sharma@samsung.com>
+ <CAGcde9Hqs92bri0Fu3y7rvMhiFMYe+N7YWT-mxL2HTsnJTvz2w@mail.gmail.com> <5319D3E5.4000001@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="HkiL4VlBwLR7XNghgEJHPC4mBiiS5jk68"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:59602 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751545AbaCGOhW (ORCPT
+Received: from mail-we0-f179.google.com ([74.125.82.179]:50149 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751646AbaCGPKn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Mar 2014 09:37:22 -0500
-In-Reply-To: <5319D4FC.5090703@samsung.com>
+	Fri, 7 Mar 2014 10:10:43 -0500
+In-Reply-To: <5319D3E5.4000001@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, joshi@samsung.com, kgene.kim@samsung.com, r.sh.open@gmail.com, linux-arm-kernel@lists.infradead.org
 
---HkiL4VlBwLR7XNghgEJHPC4mBiiS5jk68
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hi Tomasz,
 
-On 07/03/14 16:17, Andrzej Hajda wrote:
-> On 03/07/2014 02:28 PM, Tomi Valkeinen wrote:
-> (...)
->> There are many possible connections from FIMD, some of them:
->> FIMD ---> RGB panel, external
->> FIMD ---> DSI, on SoC
->> FIMD ---> eDP, on SoC
->> FIMD ---> ImageEnhacer, on SoC
->> This sounds similar to OMAP, at least roughly.
+
+On Fri, Mar 7, 2014 at 11:12 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Pankaj,
+>
+>
+> On 07.03.2014 14:56, Pankaj Dubey wrote:
+>>>
+>>> +static void __init exynos5260_clk_top_init(struct device_node *np)
+>>> +{
+>>> +       struct exynos5260_cmu_info cmu;
+>>> +       struct samsung_clk_provider *ctx;
+>>> +
+>>> +       memset(&cmu, 0, sizeof(cmu));
+>>> +
+>>> +       cmu.pll_clks = top_pll_clks;
+>>> +       cmu.nr_pll_clks =  ARRAY_SIZE(top_pll_clks);
+>>> +       cmu.mux_clks = top_mux_clks;
+>>> +       cmu.nr_mux_clks = ARRAY_SIZE(top_mux_clks);
+>>> +       cmu.div_clks = top_div_clks;
+>>> +       cmu.nr_div_clks = ARRAY_SIZE(top_div_clks);
+>>> +       cmu.gate_clks = top_gate_clks;
+>>> +       cmu.nr_gate_clks = ARRAY_SIZE(top_gate_clks);
+>>> +       cmu.nr_clk_ids = TOP_NR_CLK;
+>>> +       cmu.clk_regs = top_clk_regs;
+>>> +       cmu.nr_clk_regs = ARRAY_SIZE(top_clk_regs);
+>>> +
+>>> +       ctx = exynos5260_cmu_register_one(np, &cmu);
+>>> +
+>>> +       samsung_clk_of_register_fixed_ext(ctx, fixed_rate_ext_clks,
+>>> +                       ARRAY_SIZE(fixed_rate_ext_clks),
+>>> +                       ext_clk_match);
+>>> +}
+>>> +
+>>> +CLK_OF_DECLARE(exynos5260_clk_top, "samsung,exynos5260-clock-top",
+>>> +               exynos5260_clk_top_init);
 >>
->>> In the first case port should be created.
->>> In other cases connection could be determined by presence/absence
->>> of specific nodes, so in fact the port can be optional, almost like i=
-n
->>> my proposal :)
->> Well, I think not.
 >>
->> In the external encoder case, the ports are there, and they are used.
->> You just didn't specify them, and thus make the driver deduce them fro=
-m
->> the DT.
+>> Well with this approach we end up adding 14 such
+>> exynosxxx_clk_xxx_init functions all of which has similar lines of
+>> code. As I know there are many upcoming Exynos SoC which will also
+>> have similar multiple clock controllers (in some of them there are
+>> upto 25 clock domains, and in that case we will end up writing 25 such
+>> init functions) so I have following suggestion where we can have one
+>> more structure which will hold all static data and match_table to
+>> match compatibility string and return CMU_TYPE which can be mapped to
+>> get proper clock_data which can be used in single clock_init function.
+>> Following is some sample code which I have implemented and tested on
+>> one of Exynos SoC. Please let me know your opinion about this.
+>
+>
+> Yes, this looks better indeed, however there is still a room for
+> improvement. Please see my comments below.
+>
+>
 >>
->> In the FIMD case, if the the RGB port is needed, you need to specify i=
-t
->> in the DT data, and it's used. If you only need, say, DSI, the RGB por=
-t
->> is not used and thus it doesn't need to be present in the DT data.
+>> =============================
 >>
->> It's fine to leave the port definition out if it is not used at all.
-> On Exynos, DSI is in fact RGB/DSI encoder (or I80/DSI). DSI and RGB pin=
-s
-> are connected to the same FIMD output. So from FIMD point of view
-> RGB port is used in both cases.
+>> static struct exynosxxxx_clock_data exynosxxxx_clk_data[] __initdata = {
+>
+>
+> Instead of making this an array, particular elements could be separate
+> structures. This would simplify the code below.
+>
+>
+>>          {
+>>                  .cmu_type = CMU_TYPE_TOP,
+>>                  .mux_clocks = top_mux_clks,
+>>                  .div_clocks = top_div_clks,
+>>                  .pll_clocks = top_pll_clks,
+>>                  .clk_regs = top_clk_regs,
+>>                  .nr_mux_clocks = ARRAY_SIZE(top_mux_clks),
+>>                  .nr_div_clocks = ARRAY_SIZE(top_div_clks),
+>>                  .nr_pll_clocks = ARRAY_SIZE(top_pll_clks),
+>>                  .nr_clk_regs = ARRAY_SIZE(top_clk_regs),
+>>                  .nr_clks  = TOP_NR_CLK,
+>>          }, {
+>>                  .cmu_type = CMU_TYPE_EGL,
+>>                  .mux_clocks = egl_mux_clks,
+>>                  .div_clocks = egl_div_clks,
+>>                  .pll_clocks = egl_pll_clks,
+>>                   .clk_regs = egl_clk_regs,
+>>                  .nr_mux_clocks = ARRAY_SIZE(egl_mux_clks),
+>>                  .nr_div_clocks = ARRAY_SIZE(egl_div_clks),
+>>                  .nr_pll_clocks = ARRAY_SIZE(egl_pll_clks),
+>>                  .nr_clk_regs = ARRAY_SIZE(egl_clk_regs),
+>>                  .nr_clks  = EGL_NR_CLK,
+>>          }, {
+>>         /* Add similar elements here */
+>> };
+>>
+>> static struct of_device_id cmu_subtype_match_table[] = {
+>>          {
+>>                  .compatible = "exynosxxxx-cmu-top",
+>>                  .data   = (void *)CMU_TYPE_TOP,
+>
+>
+> Here the data would be just a pointer to respective clock data struct
+> defined above.
+>
+>
+>>          }, {
+>>                  .compatible = "exynosxxx-cmu-peris",
+>>                  .data   = (void *)CMU_TYPE_PERIS,
+>>          }, {
+>>         /* Add similar elements here */
+>> };
+>>
+>> void __init exynosxxx_clk_init(struct device_node *np)
+>> {
+>>           [snip]
+>>
+>>          match = of_match_node(cmu_subtype_match_table, np);
+>>
+>>          if (!match)
+>>                  panic("%s: cmu type (%s) is not supported.\n", __func__,
+>>                                  np->name);
+>
+>
+> This can't happen, because this function won't be called for any node with
+> compatible string not declared using CLK_OF_DECLARE().
 
-I guessed as much, as it's the same on OMAP.
+Agreed.
 
-But I think it's still fine to have a port only for RGB panel. For the
-RGB panel, you have pins on the SoC to which the RGB data goes to. The
-RGB port in DT represents these pins. You don't have pins for the
-FIMD->DSI case.
+>
+>
+>>
+>>          reg_base = of_iomap(np, 0);
+>>          if (!reg_base)
+>>                  panic("%s: failed to map registers\n", __func__);
+>>
+>>          cmu_type = (unsigned long) match->data;
+>>
+>>          for (; i < CMU_TYPE_ALL; i++) {
+>>                  clk_data = &exynosxxxx_clk_data[i];
+>>                  if (cmu_type == clk_data->cmu_type)
+>>                          break;
+>>          }
+>
+>
+> Now clk_data could be taken directly from match->data, without the need to
+> iterate over an array.
 
-But as I said, it's fine to use ports for internal connections also if
-it works for you.
+Good point. Let me change as per your suggestion and test. And then we
+will go for this change in next new version of patch. Also please
+review rest patch also and let us know if anything still can be
+improved.
 
-I still don't like the idea of having the port as optional in DT for
-cases where the port comes from the parent device. Sure, it removes some
-lines from the DT, but I think it makes it more confusing. Especially as
-I think it's a very rare case where you could use that optional format,
-as usually you will have some properties in the endpoint node.
+Thanks,
+Pankaj Dubey
 
- Tomi
-
-
-
---HkiL4VlBwLR7XNghgEJHPC4mBiiS5jk68
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJTGdmLAAoJEPo9qoy8lh71t7IP/1dj2iZMo3hKpJNX6+Avbm67
-R9nUhgRy7+cP3gxQIPScrdngit+TayjDij2Tnb5RX3ExAoR5EFsRJGm+OM2GTYSS
-vKCX3muHoHK0kWho1EWVEyOWQroIHjyzybQEm11Gzn3HGfwtARtD2FzjFW3omdrO
-WJSFNOelMNj5YwowL+RZiv1RzmsgRulRb2igC7YbIOTyqBn48Gy9P99Ow1rygazA
-WW/Z2HaoBMKgmrsjVDO9OjKi7a04n7GtYjGSVvOrs/4tNgqH+tgJHxiXK19b589V
-dOYAY8YYj9CkYlpqUrG5RBvmSLs/GaSxhh7/7xdjfXHhqAMHsuVBVu5+noWY3llU
-Mq86o63ey1RM7fad9pvWBtJ08rVBWqBmlqDaKeGND4J9E6LymktVb4ZrL/BZYvbe
-Poc3i/OQbVmZnix6GBwjWINrVDDOGwg/taqZmUaimPJgnkOQcUckLiNjaYYd8Yta
-+W/7lkbUg3zrwOFKFUc50ujqpdxqAYd4b5HFOcavq2vgTOhrwAe9XVUapMdph0cR
-lt93j9agV51BWI3SQrWdxOrFO1HvWt2+R7QEvzR1l5QCkHdzye9pR/mMYrwu6Hl0
-1bLJcQqvqidSEueFSesGUk9mb+s4AtqzuB6YYdaowulhRvJk9/LBj+WvXtfFRzfZ
-ZwV4qmyM7K8BSGilEJ+9
-=hcR/
------END PGP SIGNATURE-----
-
---HkiL4VlBwLR7XNghgEJHPC4mBiiS5jk68--
+>
+> Best regards,
+> Tomasz
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
