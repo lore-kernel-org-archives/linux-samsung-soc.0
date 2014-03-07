@@ -1,118 +1,46 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC PATCH v2 03/21] exynos/dsim: add DT bindings
-Date: Fri, 07 Mar 2014 11:54:14 +0100
-Message-ID: <5319A556.7000907@samsung.com>
-References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-	<1392204688-4591-4-git-send-email-a.hajda@samsung.com>
-	<CAAQKjZPO80-+-9kMufJGimjS8bAJBgHBS=DNESro_cvMmzqbgg@mail.gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH] [media] s5p-mfc: add init buffer cmd to MFCV6
+Date: Fri, 7 Mar 2014 16:39:58 +0530
+Message-ID: <CALt3h7_8=jHq821D_7Fi69bFRNk67S18W6T_SFQeSimpHTdOUA@mail.gmail.com>
+References: <1394181090-16446-1-git-send-email-arun.kk@samsung.com>
+	<53199175.6030606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAAQKjZPO80-+-9kMufJGimjS8bAJBgHBS=DNESro_cvMmzqbgg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <53199175.6030606@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "avnd.kiran" <avnd.kiran@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Pawel Osciak <posciak@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 03/05/2014 06:56 AM, Inki Dae wrote:
-> 2014-02-12 20:31 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->> The patch adds DT bindings for Exynos DSI Master. DSIM follows rules
->> for DSI bus host bindings [1].
->> Properties describes its resources: memory, interrupt, clocks,
->> phy, regulators and frequencies of clocks.
+Hi Sylwester,
+
+On Fri, Mar 7, 2014 at 2:59 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi,
+>
+> On 07/03/14 09:31, Arun Kumar K wrote:
+>> From: avnd kiran <avnd.kiran@samsung.com>
 >>
->> [1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
+>> Latest MFC v6 firmware requires tile mode and loop filter
+>> setting to be done as part of Init buffer command, in sync
+>> with v7. So, move these settings out of decode options reg.
+>> Also, make this register definition applicable from v6 onwards.
 >>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->> v2
->> - added burst and esc clock frequency properties
->> - add samsung prefix to all frequency props
->> ---
->>  .../devicetree/bindings/video/exynos_dsim.txt      | 53 ++++++++++++++++++++++
->>  1 file changed, 53 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
->>
->> diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
->> new file mode 100644
->> index 0000000..2a49704
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
->> @@ -0,0 +1,53 @@
->> +Exynos MIPI DSI Master
->> +
->> +Required properties:
->> +  - compatible: "samsung,exynos4210-mipi-dsi"
->> +  - reg: physical base address and length of the registers set for the device
->> +  - interrupts: should contain DSI interrupt
->> +  - clocks: list of clock specifiers, must contain an entry for each required
->> +    entry in clock-names
->> +  - clock-names: should include "bus_clk"and "pll_clk" entries
->> +  - phys: list of phy specifiers, must contain an entry for each required
->> +    entry in phy-names
->> +  - phy-names: should include "dsim" entry
->> +  - vddcore-supply: MIPI DSIM Core voltage supply (e.g. 1.1V)
->> +  - vddio-supply: MIPI DSIM I/O and PLL voltage supply (e.g. 1.8V)
->> +  - samsung,pll-clock-frequency: specifies frequency of the "pll_clk" clock
->> +  - samsung,burst-clock-frequency: specifies DSI frequency in high-speed burst
->> +    mode
->> +  - samsung,esc-clock-frequency: specifies DSI frequency in escape mode
->> +  - #address-cells, #size-cells: should be set respectively to <1> and <0>
->> +    according to DSI host bindings (see MIPI DSI bindings [1])
->> +
->> +Optional properties:
->> +  - samsung,power-domain: a phandle to DSIM power domain node
->> +
->> +Child nodes:
->> +  Should contain DSI peripheral nodes (see DSI bindings [1])
->> +
->> +[1]: Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
->> +
->> +Example:
->> +
->> +       dsi@11C80000 {
->> +               compatible = "samsung,exynos4210-mipi-dsi";
->> +               reg = <0x11C80000 0x10000>;
->> +               interrupts = <0 79 0>;
->> +               clocks = <&clock 286>, <&clock 143>;
->> +               clock-names = "bus_clk", "pll_clk";
->> +               phys = <&mipi_phy 1>;
->> +               phy-names = "dsim";
->> +               vddcore-supply = <&vusb_reg>;
->> +               vddio-supply = <&vmipi_reg>;
->> +               samsung,power-domain = <&pd_lcd0>;
->> +               #address-cells = <1>;
->> +               #size-cells = <0>;
->> +               samsung,pll-clock-frequency = <24000000>;
->> +               samsung,burst-clock-frequency = <500000000>;
->> +               samsung,esc-clock-frequency = <20000000>;
-> Isn't a property indicating cpu or video mode needed for the future
-> even though now DSI driver doesn't support CPU interface yet? Which
-> mode is used would depend on machine.
-Mode is determined by panel, ie. by dsi slave.
+>> Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>
+> Will the driver also work with older version of the firmware
+> after this change ? If not, shouldn't things like this be done
+> depending on what firmware version is loaded ?
+>
+
+The original code was for the initial version of v6 firmware.
+After that the v6 firmware has got many fixes and updates which
+also got updated in the products running the same.
+As such there are no official multiple versions of v6 firmware, but only
+fixes / updates to older version. I will update the s5p-mfc-v6.fw in the
+linux-firmware also with the newer version. Hope that will be fine.
 
 Regards
-Andrzej
->
->> +
->> +               panel@0 {
->> +                       reg = <0>;
->> +                       ...
->> +               };
->> +       };
->> --
->> 1.8.3.2
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Arun
