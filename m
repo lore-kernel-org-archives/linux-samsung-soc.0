@@ -1,132 +1,84 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 03/11] ARM: exynos: Move to generic power domain bindings
-Date: Fri, 07 Mar 2014 14:04:16 +0100
-Message-ID: <19118595.DYTBeEpFjL@amdc1032>
-References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
- <1713847.uSatLFRtJj@amdc1032> <53174EB5.1090803@gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC PATCH v2 19/21] ARM: dts: exynos5250-arndale: add dsi and
+ panel nodes
+Date: Fri, 07 Mar 2014 14:07:52 +0100
+Message-ID: <5319C4A8.8080900@samsung.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+ <1392204688-4591-20-git-send-email-a.hajda@samsung.com>
+ <53108FA0.4040903@ti.com> <53109193.3000604@ti.com>
+ <5315C07B.3090705@samsung.com>
+ <CAAQKjZPVvAxC7=voKJ1Jid3Ynnrjcg6s5m95fwetx7iDeZUN+w@mail.gmail.com>
+ <5319B9FF.50201@samsung.com> <5319BC45.4040308@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <53174EB5.1090803@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30694 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751929AbaCGNIK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Mar 2014 08:08:10 -0500
+In-reply-to: <5319BC45.4040308@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Inki Dae <inki.dae@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+
+On 03/07/2014 01:32 PM, Tomi Valkeinen wrote:
+> On 07/03/14 14:22, Andrzej Hajda wrote:
+>
+>> I think we should even extend the bindings to fimd:
+>> dsi {
+>>     port@0 {
+>>         dsi_0: endpoint {
+>>             remote-endpoint=<&fimd_0>;
+>>         }
+>>     }
+>>     port@1 {
+>>         dsi_1: endpoint {
+>>             remote-endpoint=<&lvds_0>;
+>>         }
+>>     }
+>> }
+>>
+>> fimd {
+>>     port@0 {
+>>         fimd_0: endpoint {
+>>             remote-endpoint=<&dsi_0>;
+>>         }
+>>     }
+>> }
+> If both fimd and dsi are SoC components, I don't see any strict need for
+> that. I think the ports/endpoints are only important when dealing with
+> external components, which can be used on any platform. For SoC internal
+> components you can have relevant data directly in the drivers, as it is
+> fixed (for that SoC).
+>
+> Of course, if using ports for SoC internal components makes things
+> easier for you, I don't see any problems with it either.
+There are many possible connections from FIMD, some of them:
+FIMD ---> RGB panel, external
+FIMD ---> DSI, on SoC
+FIMD ---> eDP, on SoC
+FIMD ---> ImageEnhacer, on SoC
+
+In the first case port should be created.
+In other cases connection could be determined by presence/absence
+of specific nodes, so in fact the port can be optional, almost like in
+my proposal :)
 
 
-On Wednesday, March 05, 2014 05:20:05 PM Tomasz Figa wrote:
-> Hi Bartek,
-> 
-> On 05.03.2014 17:15, Bartlomiej Zolnierkiewicz wrote:
-> >
-> > Hi Tomek,
-> >
-> > On Monday, March 03, 2014 05:02:08 PM Tomasz Figa wrote:
-> >> This patch moves Exynos power domain code to use the new generic power
-> >> domain look-up framework introduced by previous patch, allowing the new
-> >> code to be compiled with CONFIG_ARCH_EXYNOS selected as well.
-> >>
-> >> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> >> ---
-> >>   .../bindings/arm/exynos/power_domain.txt           | 12 ++--
-> >>   arch/arm/mach-exynos/pm_domains.c                  | 80 +---------------------
-> >>   kernel/power/Kconfig                               |  2 +-
-> >>   3 files changed, 7 insertions(+), 87 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> >> index 5216b41..60f26a8 100644
-> >> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> >> @@ -8,6 +8,8 @@ Required Properties:
-> >>       * samsung,exynos4210-pd - for exynos4210 type power domain.
-> >>   - reg: physical base address of the controller and length of memory mapped
-> >>       region.
-> >> +- #power-domain-cells: number of cells in power domain specifier;
-> >> +    must be 0.
-> >>
-> >>   Node of a device using power domains must have a samsung,power-domain property
-> >>   defined with a phandle to respective power domain.
-> >> @@ -17,12 +19,8 @@ Example:
-> >>   	lcd0: power-domain-lcd0 {
-> >>   		compatible = "samsung,exynos4210-pd";
-> >>   		reg = <0x10023C00 0x10>;
-> >> +		#power-domain-cells = <0>;
-> >>   	};
-> >>
-> >> -Example of the node using power domain:
-> >> -
-> >> -	node {
-> >> -		/* ... */
-> >> -		samsung,power-domain = <&lcd0>;
-> >> -		/* ... */
-> >> -	};
-> >> +See Documentation/devicetree/bindings/power/power_domain.txt for description
-> >> +of consumer-side bindings.
-> >> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> >> index 8fd2488..48ee6c9 100644
-> >> --- a/arch/arm/mach-exynos/pm_domains.c
-> >> +++ b/arch/arm/mach-exynos/pm_domains.c
-> >> @@ -75,78 +75,6 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
-> >>   	return exynos_pd_power(domain, false);
-> >>   }
-> >>
-> >> -static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
-> >> -					 struct device *dev)
-> >> -{
-> >> -	int ret;
-> >> -
-> >> -	dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
-> >> -
-> >> -	while (1) {
-> >> -		ret = pm_genpd_add_device(&pd->pd, dev);
-> >> -		if (ret != -EAGAIN)
-> >> -			break;
-> >> -		cond_resched();
-> >> -	}
-> >> -
-> >> -	pm_genpd_dev_need_restore(dev, true);
-> >> -}
-> >> -
-> >> -static void exynos_remove_device_from_domain(struct device *dev)
-> >> -{
-> >> -	struct generic_pm_domain *genpd = dev_to_genpd(dev);
-> >> -	int ret;
-> >> -
-> >> -	dev_dbg(dev, "removing from power domain %s\n", genpd->name);
-> >> -
-> >> -	while (1) {
-> >> -		ret = pm_genpd_remove_device(genpd, dev);
-> >> -		if (ret != -EAGAIN)
-> >> -			break;
-> >> -		cond_resched();
-> >> -	}
-> >> -}
-> >> -
-> >> -static void exynos_read_domain_from_dt(struct device *dev)
-> >> -{
-> >> -	struct platform_device *pd_pdev;
-> >> -	struct exynos_pm_domain *pd;
-> >> -	struct device_node *node;
-> >> -
-> >> -	node = of_parse_phandle(dev->of_node, "samsung,power-domain", 0);
-> >
-> > This removes "samsung,power-domain" phandle handling but I cannot find
-> > in your patch series updates to existing EXYNOS dts files converting
-> > them to use the new "power-domain" property.  Am I missing something?
-> 
-> Patch 01/11 adds generic parsing code along with fallback to the legacy 
-> "samsung,power-domain" property, if the generic one is not present, as 
-> it was pretty straightforward to implement it there.
+>
+> For OMAP, the SoC's display blocks are all inside one bigger DSS
+> "container", so I have not seen need to represent the connections
+> between the internal components in the DT data.
+How do you deal with situation when IPs in SoC can be connected in
+different ways ?
 
-Ah, silly me, I should have looked more closely at patch #1.  Anyway,
-I tested your patchset on Exynos4412 Trats2 target and it works fine
-(BTW it also seems that your patchset fixed the issue of device not
-being removed from power domain on ->probe failure).
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Andrzej
+> If the display components were truly independent IPs on the SoC, then
+> using ports might make things easier.
+>
+>  Tomi
+>
+>
