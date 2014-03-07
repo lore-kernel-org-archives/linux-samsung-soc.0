@@ -1,86 +1,132 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH] [media] s5p-mfc: add init buffer cmd to MFCV6
-Date: Fri, 07 Mar 2014 13:48:34 +0100
-Message-ID: <19dc01cf3a03$8dba8d80$a92fa880$%debski@samsung.com>
-References: <1394181090-16446-1-git-send-email-arun.kk@samsung.com>
- <53199175.6030606@samsung.com>
- <CALt3h7_8=jHq821D_7Fi69bFRNk67S18W6T_SFQeSimpHTdOUA@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 03/11] ARM: exynos: Move to generic power domain bindings
+Date: Fri, 07 Mar 2014 14:04:16 +0100
+Message-ID: <19118595.DYTBeEpFjL@amdc1032>
+References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
+ <1713847.uSatLFRtJj@amdc1032> <53174EB5.1090803@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29539 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751669AbaCGMsi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Mar 2014 07:48:38 -0500
-In-reply-to: <CALt3h7_8=jHq821D_7Fi69bFRNk67S18W6T_SFQeSimpHTdOUA@mail.gmail.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <53174EB5.1090803@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arun Kumar K' <arunkk.samsung@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "'avnd.kiran'" <avnd.kiran@samsung.com>, 'LMML' <linux-media@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Pawel Osciak' <posciak@chromium.org>
 
-Hi Arun, 
 
-> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com]
-> Sent: Friday, March 07, 2014 12:10 PM
+On Wednesday, March 05, 2014 05:20:05 PM Tomasz Figa wrote:
+> Hi Bartek,
 > 
-> Hi Sylwester,
-> 
-> On Fri, Mar 7, 2014 at 2:59 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
-> > Hi,
+> On 05.03.2014 17:15, Bartlomiej Zolnierkiewicz wrote:
 > >
-> > On 07/03/14 09:31, Arun Kumar K wrote:
-> >> From: avnd kiran <avnd.kiran@samsung.com>
+> > Hi Tomek,
+> >
+> > On Monday, March 03, 2014 05:02:08 PM Tomasz Figa wrote:
+> >> This patch moves Exynos power domain code to use the new generic power
+> >> domain look-up framework introduced by previous patch, allowing the new
+> >> code to be compiled with CONFIG_ARCH_EXYNOS selected as well.
 > >>
-> >> Latest MFC v6 firmware requires tile mode and loop filter setting to
-> >> be done as part of Init buffer command, in sync with v7. So, move
-> >> these settings out of decode options reg.
-> >> Also, make this register definition applicable from v6 onwards.
+> >> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> >> ---
+> >>   .../bindings/arm/exynos/power_domain.txt           | 12 ++--
+> >>   arch/arm/mach-exynos/pm_domains.c                  | 80 +---------------------
+> >>   kernel/power/Kconfig                               |  2 +-
+> >>   3 files changed, 7 insertions(+), 87 deletions(-)
 > >>
-> >> Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
-> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> >> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> >> index 5216b41..60f26a8 100644
+> >> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> >> @@ -8,6 +8,8 @@ Required Properties:
+> >>       * samsung,exynos4210-pd - for exynos4210 type power domain.
+> >>   - reg: physical base address of the controller and length of memory mapped
+> >>       region.
+> >> +- #power-domain-cells: number of cells in power domain specifier;
+> >> +    must be 0.
+> >>
+> >>   Node of a device using power domains must have a samsung,power-domain property
+> >>   defined with a phandle to respective power domain.
+> >> @@ -17,12 +19,8 @@ Example:
+> >>   	lcd0: power-domain-lcd0 {
+> >>   		compatible = "samsung,exynos4210-pd";
+> >>   		reg = <0x10023C00 0x10>;
+> >> +		#power-domain-cells = <0>;
+> >>   	};
+> >>
+> >> -Example of the node using power domain:
+> >> -
+> >> -	node {
+> >> -		/* ... */
+> >> -		samsung,power-domain = <&lcd0>;
+> >> -		/* ... */
+> >> -	};
+> >> +See Documentation/devicetree/bindings/power/power_domain.txt for description
+> >> +of consumer-side bindings.
+> >> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> >> index 8fd2488..48ee6c9 100644
+> >> --- a/arch/arm/mach-exynos/pm_domains.c
+> >> +++ b/arch/arm/mach-exynos/pm_domains.c
+> >> @@ -75,78 +75,6 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+> >>   	return exynos_pd_power(domain, false);
+> >>   }
+> >>
+> >> -static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
+> >> -					 struct device *dev)
+> >> -{
+> >> -	int ret;
+> >> -
+> >> -	dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
+> >> -
+> >> -	while (1) {
+> >> -		ret = pm_genpd_add_device(&pd->pd, dev);
+> >> -		if (ret != -EAGAIN)
+> >> -			break;
+> >> -		cond_resched();
+> >> -	}
+> >> -
+> >> -	pm_genpd_dev_need_restore(dev, true);
+> >> -}
+> >> -
+> >> -static void exynos_remove_device_from_domain(struct device *dev)
+> >> -{
+> >> -	struct generic_pm_domain *genpd = dev_to_genpd(dev);
+> >> -	int ret;
+> >> -
+> >> -	dev_dbg(dev, "removing from power domain %s\n", genpd->name);
+> >> -
+> >> -	while (1) {
+> >> -		ret = pm_genpd_remove_device(genpd, dev);
+> >> -		if (ret != -EAGAIN)
+> >> -			break;
+> >> -		cond_resched();
+> >> -	}
+> >> -}
+> >> -
+> >> -static void exynos_read_domain_from_dt(struct device *dev)
+> >> -{
+> >> -	struct platform_device *pd_pdev;
+> >> -	struct exynos_pm_domain *pd;
+> >> -	struct device_node *node;
+> >> -
+> >> -	node = of_parse_phandle(dev->of_node, "samsung,power-domain", 0);
 > >
-> > Will the driver also work with older version of the firmware after
-> > this change ? If not, shouldn't things like this be done depending on
-> > what firmware version is loaded ?
-> >
+> > This removes "samsung,power-domain" phandle handling but I cannot find
+> > in your patch series updates to existing EXYNOS dts files converting
+> > them to use the new "power-domain" property.  Am I missing something?
 > 
-> The original code was for the initial version of v6 firmware.
-> After that the v6 firmware has got many fixes and updates which also
-> got updated in the products running the same.
-> As such there are no official multiple versions of v6 firmware, but
-> only fixes / updates to older version. I will update the s5p-mfc-v6.fw
-> in the linux-firmware also with the newer version. Hope that will be
-> fine.
+> Patch 01/11 adds generic parsing code along with fallback to the legacy 
+> "samsung,power-domain" property, if the generic one is not present, as 
+> it was pretty straightforward to implement it there.
 
-Unfortunately, I share the same concerns as Sylwester. We have two problems:
-1) new kernel + old firmware
+Ah, silly me, I should have looked more closely at patch #1.  Anyway,
+I tested your patchset on Exynos4412 Trats2 target and it works fine
+(BTW it also seems that your patchset fixed the issue of device not
+being removed from power domain on ->probe failure).
 
-In this case, someone will update the kernel and find out that video
-decoding is not working. An assumption that I think is common, is that
-updating the kernel should not break anything. If it was working with the
-previous version it should work with the next.
-
-The solution I can suggest is that a check which firmware version is used
-has to be implemented. Maybe you can use the date of firmware to do this
-check?
-
-2) old kernel + new firmware
-
-I see no clear solution to this problem. If the kernel is old and the
-firmware is behaving differently, the video decoding will not work. I can
-guess that this case would be less common, but still a person can update the
-firmware and leave the old kernel. Changing the firmware can be done by
-replacing a single file.
-
-In addition to the above, you need to clearly specify in the
-linux-firmware.git what is going on. A readme file is a must. Maybe a second
-v6 firmware file should be included?
-
-Best wishes,
--- 
-Kamil Debski
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
+Samsung Electronics
+
