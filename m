@@ -1,56 +1,38 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFT][PATCH 1/2] spi: s3c24xx: Add missing
- spi_master_{resume,suspend} calls to PM callbacks
-Date: Fri, 7 Mar 2014 13:59:41 +0800
-Message-ID: <20140307055941.GD13126@sirena.org.uk>
-References: <1394003843.18343.2.camel@phoenix>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/3] regulator: s2mps11: Add set_suspend_disable for S2MPS14
+Date: Fri, 07 Mar 2014 08:28:11 +0100
+Message-ID: <1394177291.20224.1.camel@AMDC1943>
+References: <1394011373-4057-1-git-send-email-k.kozlowski@samsung.com>
+ <1394011373-4057-3-git-send-email-k.kozlowski@samsung.com>
+ <20140306093826.GO13126@sirena.org.uk> <1394099334.25853.1.camel@AMDC1943>
+ <20140307015139.GS13126@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MWYTdRocNKEnFB5K"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1394003843.18343.2.camel@phoenix>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17166 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750834AbaCGH2P (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Mar 2014 02:28:15 -0500
+In-reply-to: <20140307015139.GS13126@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
 
+On Fri, 2014-03-07 at 09:51 +0800, Mark Brown wrote:
+> On Thu, Mar 06, 2014 at 10:48:54AM +0100, Krzysztof Kozlowski wrote:
+> 
+> > Anyway can you look at other two patches and apply them if they are OK?
+> > They don't depend on this.
+> 
+> There appears to be some external dependency for the definition of
+> macros like S2MPS14X?
+The patchset depends on S2MPS14 support for MFD driver. This was applied
+by Lee here:
+https://git.linaro.org/people/lee.jones/mfd.git/shortlog/refs/heads/for-mfd-next
+and merged into linux-next.
 
---MWYTdRocNKEnFB5K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Mar 05, 2014 at 03:17:23PM +0800, Axel Lin wrote:
-> This is required since commit 2025172e3280 "spi/bitbang: Use core message pump".
-> spi-bitbang now uses core message pump, so it needs to call spi_master_suspend/
-> spi_master_resume to start/stop the queue while suspend/resume.
-
-Applied, thanks.
-
---MWYTdRocNKEnFB5K
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTGWBEAAoJELSic+t+oim99iAP/3xl73G2KwbTlgRnmVlShEfW
-EeMK47kt3fEC/vfu8P0pKrlGzYGPZH6wTF1/zNigGngI+34pw8nGSKuiBTJ2+IFd
-ahTL+FlKdhGiFy6afnvCkmDfDEKZNBG4eex8SpcaHsAAXFUXuZEV3kfS85BgQo0S
-JCxRfj10NUvcGUO31Jxu1xh+3W4VpyYAZdkaQ5LLpHlL7VobAvdQIr6eqH/aInUA
-l5bO5vjrYngn6UxUnZUDSjw+BWzU9SV9zb9k9rnrKFjmBaDqC+AAO+aIzEOXk1xk
-ywu4zeqOecKFe/fdmJSY+DI2wmceb9kitj+jpgnIVH193H9kW1BQVIfOIrTJs+kB
-ul0bT5EhReYQ5rLzpsHEciGakjZysft100920lnaEAMKBhryivwyxVlzrhELIcxj
-De6L3wgeCevhdIEQ2g9O8UlTxcAzRSy5zWgemtX4drWojVJlUdYM+Pm8YWUmc874
-hkHbEc03CRmhLuAOvwTSglxPwShrkAksAMOeTLXElE+E9CkeU4FsWtqS9wndN1Og
-WLnIMVXLkuwZF90BXJdrWXQjDIcSG0UTUl5pcA3y+dcxQxzDbhx/iGVlAH4ilXjf
-VWyoBmYEUjr8IZ3UtNsz8LstuYvOydomAnXeLYhThwMRCSeYi9P+Sc/uMMEdb1WC
-XHZ5Im5JlRgLLJ0nKnIu
-=SYCt
------END PGP SIGNATURE-----
-
---MWYTdRocNKEnFB5K--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
