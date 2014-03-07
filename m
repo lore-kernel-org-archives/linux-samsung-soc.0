@@ -1,129 +1,273 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [RFC PATCH v2 19/21] ARM: dts: exynos5250-arndale: add dsi and
- panel nodes
-Date: Fri, 7 Mar 2014 15:28:22 +0200
-Message-ID: <5319C976.3060908@ti.com>
-References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com> <1392204688-4591-20-git-send-email-a.hajda@samsung.com> <53108FA0.4040903@ti.com> <53109193.3000604@ti.com> <5315C07B.3090705@samsung.com> <CAAQKjZPVvAxC7=voKJ1Jid3Ynnrjcg6s5m95fwetx7iDeZUN+w@mail.gmail.com> <5319B9FF.50201@samsung.com> <5319BC45.4040308@ti.com> <5319C4A8.8080900@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v4 5/5] clk/exynos5260: add clock file for exynos5260
+Date: Fri, 7 Mar 2014 22:56:23 +0900
+Message-ID: <CAGcde9Hqs92bri0Fu3y7rvMhiFMYe+N7YWT-mxL2HTsnJTvz2w@mail.gmail.com>
+References: <1394113551-2134-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="72FC8TDHKnxuR5Td4AE0lqxuO2KcGXrR1"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:59907 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752011AbaCGN2n (ORCPT
+Received: from mail-we0-f172.google.com ([74.125.82.172]:48134 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751646AbaCGN4q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Mar 2014 08:28:43 -0500
-In-Reply-To: <5319C4A8.8080900@samsung.com>
+	Fri, 7 Mar 2014 08:56:46 -0500
+In-Reply-To: <1394113551-2134-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
 
---72FC8TDHKnxuR5Td4AE0lqxuO2KcGXrR1
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hi Rahul,
 
-On 07/03/14 15:07, Andrzej Hajda wrote:
-> On 03/07/2014 01:32 PM, Tomi Valkeinen wrote:
->> On 07/03/14 14:22, Andrzej Hajda wrote:
->>
->>> I think we should even extend the bindings to fimd:
->>> dsi {
->>>     port@0 {
->>>         dsi_0: endpoint {
->>>             remote-endpoint=3D<&fimd_0>;
->>>         }
->>>     }
->>>     port@1 {
->>>         dsi_1: endpoint {
->>>             remote-endpoint=3D<&lvds_0>;
->>>         }
->>>     }
->>> }
->>>
->>> fimd {
->>>     port@0 {
->>>         fimd_0: endpoint {
->>>             remote-endpoint=3D<&dsi_0>;
->>>         }
->>>     }
->>> }
->> If both fimd and dsi are SoC components, I don't see any strict need f=
-or
->> that. I think the ports/endpoints are only important when dealing with=
+On Thu, Mar 6, 2014 at 10:45 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> Add support for exynos5260 clocks in clock driver.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
->> external components, which can be used on any platform. For SoC intern=
-al
->> components you can have relevant data directly in the drivers, as it i=
-s
->> fixed (for that SoC).
->>
->> Of course, if using ports for SoC internal components makes things
->> easier for you, I don't see any problems with it either.
-> There are many possible connections from FIMD, some of them:
-> FIMD ---> RGB panel, external
-> FIMD ---> DSI, on SoC
-> FIMD ---> eDP, on SoC
-> FIMD ---> ImageEnhacer, on SoC
+Even though my signed-off-by is present in this patch I can't see my
+email-id in cc list. Please check why?
 
-This sounds similar to OMAP, at least roughly.
+[snip]
 
-> In the first case port should be created.
-> In other cases connection could be determined by presence/absence
-> of specific nodes, so in fact the port can be optional, almost like in
-> my proposal :)
+> +#include "clk-exynos5260.h"
+> +#include "clk.h"
+> +#include "clk-pll.h"
+> +
+> +#include <dt-bindings/clk/exynos5260-clk.h>
 
-Well, I think not.
+Better to move "exynos5260-clk.h" from "dt-bindings/clk" to "dt-bindings/clock"
+as patch for moving all such headers already landed and looks good also.
 
-In the external encoder case, the ports are there, and they are used.
-You just didn't specify them, and thus make the driver deduce them from
-the DT.
+[snip]
 
-In the FIMD case, if the the RGB port is needed, you need to specify it
-in the DT data, and it's used. If you only need, say, DSI, the RGB port
-is not used and thus it doesn't need to be present in the DT data.
+> +/*
+> + * Applicable for all 2550 Type PLLS for Exynos5260, listed below
+> + * DISP_PLL, EGL_PLL, KFC_PLL, MEM_PLL,
+> + * BUS_PLL, MEDIA_PLL, G3D_PLL.
+> + */
+> +static const struct samsung_pll_rate_table pll2550_24mhz_tbl[] = {
 
-It's fine to leave the port definition out if it is not used at all.
+shouldn't we mark rate_table with __initconst?
 
->> For OMAP, the SoC's display blocks are all inside one bigger DSS
->> "container", so I have not seen need to represent the connections
->> between the internal components in the DT data.
-> How do you deal with situation when IPs in SoC can be connected in
-> different ways ?
+[snip]
 
-Basically so that (using exynos terms) if, say DSI panel is to be
-enabled, the DSI panel driver will reserve the DSI master for itself,
-and the DSI master will reserve the FIMD for itself, presuming FIMD has
-not already been reserved. When the DSI panel is disabled, FIMD is freed.=
+> + * Applicable for 2650 Type PLL for AUD_PLL.
+> + */
+> +static const struct samsung_pll_rate_table pll2650_24mhz_tbl[] = {
+
+Ditto.
+
+[snip]
+
+> +#else
+> +static void exynos5260_clk_sleep_init(void) {}
+
+This will fail to compile if CONFIG_PM_SLEEP is not defined. Keep function
+signature same.
+
+> +#endif
+> +
+> +static struct samsung_clk_provider *
+> +__init exynos5260_cmu_register_one(struct device_node *np,
+> +                       struct exynos5260_cmu_info *cmu)
+> +{
+> +       void __iomem *reg_base;
+> +       struct samsung_clk_provider *ctx;
+> +
+> +       reg_base = of_iomap(np, 0);
+> +       if (!reg_base)
+> +               panic("%s: failed to map registers\n", __func__);
+> +
+> +       ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
+> +       if (!ctx)
+> +               panic("%s: unable to alllocate ctx\n", __func__);
+> +
+> +       if (cmu->pll_clks)
+> +               samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks,
+> +                       reg_base);
+> +       if (cmu->mux_clks)
+> +               samsung_clk_register_mux(ctx,  cmu->mux_clks,
+> +                       cmu->nr_mux_clks);
+> +       if (cmu->div_clks)
+> +               samsung_clk_register_div(ctx, cmu->div_clks, cmu->nr_div_clks);
+> +       if (cmu->gate_clks)
+> +               samsung_clk_register_gate(ctx, cmu->gate_clks,
+> +                       cmu->nr_gate_clks);
+> +       if (cmu->clk_regs)
+> +               exynos5260_clk_sleep_init(reg_base, cmu->clk_regs,
+> +                       cmu->nr_clk_regs);
+> +
+> +       return ctx;
+
+As far as I can see only one user of this return "ctx" is only
+"exynos5260_clk_top_init", other init functions just ignoring this
+return value.
+This can be avoided if we register "fin_pll" (as well as all phyclocks
+as they are also fixed rate clocks) clock via DT.
+As I have already done it for another ExynosXXX SoC and it worked for
+me, on the same hand when today I tried this on Exynos5260, I can see
+it's working well and I can register "fin_pll" as "fixed_clock" via DT
+and kernel booted without any issues. Late registration of parent
+clock does not causing any issues and CCF takes care of that.
+If required I can send the changes internally or if you are OK I can
+also upload next version of this patch with this fix, along with
+addressing all other comments .
+
+[snip]
+
+> +struct samsung_fixed_rate_clock fixed_rate_ext_clks[] __initdata = {
+> +       FRATE(FIN_PLL, "fin_pll", NULL, CLK_IS_ROOT, 0),
+> +};
+
+In this version you removed other fixed clocks (phyclks and ioclks)
+but I can not see corresponding DT patches where it has been moved.
+Or am I missing anything here?
+
+[snip]
+
+> +static void __init exynos5260_clk_top_init(struct device_node *np)
+> +{
+> +       struct exynos5260_cmu_info cmu;
+> +       struct samsung_clk_provider *ctx;
+> +
+> +       memset(&cmu, 0, sizeof(cmu));
+> +
+> +       cmu.pll_clks = top_pll_clks;
+> +       cmu.nr_pll_clks =  ARRAY_SIZE(top_pll_clks);
+> +       cmu.mux_clks = top_mux_clks;
+> +       cmu.nr_mux_clks = ARRAY_SIZE(top_mux_clks);
+> +       cmu.div_clks = top_div_clks;
+> +       cmu.nr_div_clks = ARRAY_SIZE(top_div_clks);
+> +       cmu.gate_clks = top_gate_clks;
+> +       cmu.nr_gate_clks = ARRAY_SIZE(top_gate_clks);
+> +       cmu.nr_clk_ids = TOP_NR_CLK;
+> +       cmu.clk_regs = top_clk_regs;
+> +       cmu.nr_clk_regs = ARRAY_SIZE(top_clk_regs);
+> +
+> +       ctx = exynos5260_cmu_register_one(np, &cmu);
+> +
+> +       samsung_clk_of_register_fixed_ext(ctx, fixed_rate_ext_clks,
+> +                       ARRAY_SIZE(fixed_rate_ext_clks),
+> +                       ext_clk_match);
+> +}
+> +
+> +CLK_OF_DECLARE(exynos5260_clk_top, "samsung,exynos5260-clock-top",
+> +               exynos5260_clk_top_init);
+
+Well with this approach we end up adding 14 such
+exynosxxx_clk_xxx_init functions all of which has similar lines of
+code. As I know there are many upcoming Exynos SoC which will also
+have similar multiple clock controllers (in some of them there are
+upto 25 clock domains, and in that case we will end up writing 25 such
+init functions) so I have following suggestion where we can have one
+more structure which will hold all static data and match_table to
+match compatibility string and return CMU_TYPE which can be mapped to
+get proper clock_data which can be used in single clock_init function.
+Following is some sample code which I have implemented and tested on
+one of Exynos SoC. Please let me know your opinion about this.
+
+=============================
+
+static struct exynosxxxx_clock_data exynosxxxx_clk_data[] __initdata = {
+        {
+                .cmu_type = CMU_TYPE_TOP,
+                .mux_clocks = top_mux_clks,
+                .div_clocks = top_div_clks,
+                .pll_clocks = top_pll_clks,
+                .clk_regs = top_clk_regs,
+                .nr_mux_clocks = ARRAY_SIZE(top_mux_clks),
+                .nr_div_clocks = ARRAY_SIZE(top_div_clks),
+                .nr_pll_clocks = ARRAY_SIZE(top_pll_clks),
+                .nr_clk_regs = ARRAY_SIZE(top_clk_regs),
+                .nr_clks  = TOP_NR_CLK,
+        }, {
+                .cmu_type = CMU_TYPE_EGL,
+                .mux_clocks = egl_mux_clks,
+                .div_clocks = egl_div_clks,
+                .pll_clocks = egl_pll_clks,
+                 .clk_regs = egl_clk_regs,
+                .nr_mux_clocks = ARRAY_SIZE(egl_mux_clks),
+                .nr_div_clocks = ARRAY_SIZE(egl_div_clks),
+                .nr_pll_clocks = ARRAY_SIZE(egl_pll_clks),
+                .nr_clk_regs = ARRAY_SIZE(egl_clk_regs),
+                .nr_clks  = EGL_NR_CLK,
+        }, {
+       /* Add similar elements here */
+};
+
+static struct of_device_id cmu_subtype_match_table[] = {
+        {
+                .compatible = "exynosxxxx-cmu-top",
+                .data   = (void *)CMU_TYPE_TOP,
+        }, {
+                .compatible = "exynosxxx-cmu-peris",
+                .data   = (void *)CMU_TYPE_PERIS,
+        }, {
+       /* Add similar elements here */
+};
+
+void __init exynosxxx_clk_init(struct device_node *np)
+{
+         [snip]
+
+        match = of_match_node(cmu_subtype_match_table, np);
+
+        if (!match)
+                panic("%s: cmu type (%s) is not supported.\n", __func__,
+                                np->name);
+
+        reg_base = of_iomap(np, 0);
+        if (!reg_base)
+                panic("%s: failed to map registers\n", __func__);
+
+        cmu_type = (unsigned long) match->data;
+
+        for (; i < CMU_TYPE_ALL; i++) {
+                clk_data = &exynosxxxx_clk_data[i];
+                if (cmu_type == clk_data->cmu_type)
+                        break;
+        }
+
+        ctx = samsung_clk_init(np, reg_base, clk_data->nr_clks);
+        if (!ctx)
+                panic("%s: unable to alllocate ctx\n", __func__);
+
+        if (clk_data->nr_pll_clocks)
+          samsung_clk_register_pll(ctx, clk_data->pll_clocks,
+                                clk_data->nr_pll_clocks,
+                                reg_base);
+        if (clk_data->nr_mux_clocks)
+                samsung_clk_register_mux(ctx, clk_data->mux_clocks,
+                                clk_data->nr_mux_clocks);
+        if (clk_data->nr_div_clocks)
+                samsung_clk_register_div(ctx, clk_data->div_clocks,
+                                clk_data->nr_div_clocks);
+        if (clk_data->nr_gate_clocks)
+                samsung_clk_register_gate(ctx, clk_data->gate_clocks,
+                                clk_data->nr_gate_clocks);
+          if (cmu->nr_clk_regs)
+             exynosxxx_clk_sleep_init(reg_base, cmu->clk_regs,
+                       cmu->nr_clk_regs);
+         [snip]
+
+ }
+CLK_OF_DECLARE(cmu_top, "exynosxxxx-cmu-top", exynosxxxx_clk_init);
+CLK_OF_DECLARE(cmu_egl, "exynosxxxx-cmu-egl", exynosxxxx_clk_init);
+/* add more clock domain entries here */
+
+=======================================================
+
+> diff --git a/drivers/clk/samsung/clk-exynos5260.h b/drivers/clk/samsung/clk-exynos5260.h
+> new file mode 100644
+> index 0000000..7c3717a
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-exynos5260.h
+> @@ -0,0 +1,448 @@
+> +#ifndef __CLK_EXYNOS5260_H
+> +#define __CLK_EXYNOS5260_H
+> +
 
 
- Tomi
-
-
-
---72FC8TDHKnxuR5Td4AE0lqxuO2KcGXrR1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJTGcl2AAoJEPo9qoy8lh71IngQAIeYDM3OiKUfbofy6o96pQvU
-P1OVqZgM2WDPwhwu+uzHIw76S4XcMRSCmJSZnVrFs3/HlVaU8NoZran20b6aU7ZR
-4y2HO5rjTnz0W6Hc72EyTztp3j+ZxuVdghb1NuiAwcFuvyeF8zwYtFvBOIt2xM+N
-RSVMpRdzSlWoTZIiCsinJsFAnldy/9Rj3hDHzv7PbkcLdkKUMqFKh7yQ27KOJ5Qg
-3oipWKdl4Jwuyg6VjV737R0CFAwwIE9Y6rNsm78WdiX9xjzVm5D6s4ImxxdXOBjv
-68XrcyxXHl0k6JpWp7dPKNXfYsPuYyYEht3SmJKmR0+ssgXwxKpGQKcSO7difrTY
-M7+IBzpEQmy7Kdp1htc9J6yZxTqQOID3n7ERms6fdVmrNs38pDdf4h5ZAmjmTxuo
-2uYdgWLyl23rTYdjzefuN3r5kiIdFJwefzYaGhN6BcWC6u+Ogge6+AnAdxvhD5Dw
-MlzwAjalJLV/pqVbBlOLr0xzvYq6EfVF/2I36o3MGu/pmt1VW1CHwAqPIGa/w0wg
-koZ4Lz5VoJa05cPeB9sb+8/xPLjemur4tZm6wyGbFIzABUhxG7JgbvgrMlYJEFio
-+Mtl49X4ivQEGdDu/EY4owznuSydasthAqWSH0Wc8F1A+SmqvigQBMuHPv27d4Lf
-fYJ8WJ6t0oUBXCpS0Zf5
-=YwRk
------END PGP SIGNATURE-----
-
---72FC8TDHKnxuR5Td4AE0lqxuO2KcGXrR1--
+Thanks,
+Pankaj Dubey
