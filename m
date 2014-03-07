@@ -1,39 +1,46 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v6 09/10] ARM: dts: Add rear camera nodes for Exynos4412
- TRATS2 board
-Date: Fri, 07 Mar 2014 11:07:51 +0100
-Message-ID: <53199A77.9090602@samsung.com>
-References: <1394122819-9582-1-git-send-email-s.nawrocki@samsung.com>
- <1394122819-9582-10-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:16981 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751027AbaCGKH4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Mar 2014 05:07:56 -0500
-In-reply-to: <1394122819-9582-10-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 0/3] regulator: s2mps11: Add support for S2MPS14 regulators
+Date: Fri, 07 Mar 2014 11:10:49 +0100
+Message-ID: <1394187052-591-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, galak@codeaurora.org, kyungmin.park@samsung.com, a.hajda@samsung.com
 
-Hi Kukjin,
+Hi,
 
-On 06/03/14 17:20, Sylwester Nawrocki wrote:
-> This patch enables the rear facing camera (s5c73m3) on TRATS2 board
-> by adding the I2C0 bus controller, s5c73m3 sensor, MIPI CSI-2 receiver
-> and the sensor's voltage regulator supply nodes.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This patchset adds support for the S2MPS14 device to the s2mps11 regulator
+driver. It's a subset of previously sent patches for S2MPS14 device:
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/27194/focus=1649217
+along with one new patch:
+ - PATCH 2/3: regulator: s2mps11: Add set_suspend_disable for S2MPS14
+which replaces previous "opmode" idea.
 
-Could still patches 9, 10 be queued for v3.15, or is arm-soc
-already closed for this merge windiw ?
 
---
-Thanks,
-Sylwester
+These patches are rebased against linux-next tree (next-20140305) because
+they depend on changes in main MFD sec-core and s2mps11 regulator driver.
+
+
+Changes since v1
+================
+1. Patch 2/3: Store information that regulator was suspended.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  regulator: s2mps11: Add support for S2MPS14 regulators
+  regulator: s2mps11: Add set_suspend_disable for S2MPS14
+  Documentation: mfd: s2mps11: Document support for S2MPS14
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   12 +-
+ drivers/regulator/Kconfig                         |    9 +-
+ drivers/regulator/s2mps11.c                       |  301 ++++++++++++++++-----
+ include/linux/mfd/samsung/s2mps14.h               |    2 +
+ 4 files changed, 255 insertions(+), 69 deletions(-)
+
+-- 
+1.7.9.5
