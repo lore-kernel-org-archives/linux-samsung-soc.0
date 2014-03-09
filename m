@@ -1,62 +1,39 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 0/7] add new Samsung xgmac driver
-Date: Sun, 09 Mar 2014 17:26:11 +0000
-Message-ID: <1394385971.2861.169.camel@deadeye.wl.decadent.org.uk>
-References: <007a01cf3865$fefc1760$fcf44620$%an@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 2/6] Samsung drivers for v3.15
+Date: Sun, 9 Mar 2014 11:22:02 -0700
+Message-ID: <20140309182202.GA22881@quad.lixom.net>
+References: <15399641.260291393840311352.JavaMail.weblogic@epml16>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-xE7Sce7QENoAvy+rEEB7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51018 "EHLO
-	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751207AbaCIR0O (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:60733 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752047AbaCISV4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Mar 2014 13:26:14 -0400
-In-Reply-To: <007a01cf3865$fefc1760$fcf44620$%an@samsung.com>
+	Sun, 9 Mar 2014 14:21:56 -0400
+Received: by mail-pd0-f175.google.com with SMTP id x10so6091531pdj.6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Mar 2014 11:21:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <15399641.260291393840311352.JavaMail.weblogic@epml16>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Byungho An <bh74.an@samsung.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, "khilman@linaro.org" <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+
+On Mon, Mar 03, 2014 at 09:51:51AM +0000, Kukjin Kim wrote:
+> The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
+> 
+>   Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
+> 
+> are available in the git repository at:
+> 
+>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git tags/samsung-drivers
+> 
+> for you to fetch changes up to a83784859ccde07ebdc3a7acfbb2f74cb6c75a80:
+> 
+>   irqchip: exynos-combiner: call handle_bad_irq directly (2014-02-14 07:27:40 +0900)
+
+Pulled into next/cleanup, thanks for splitting off into a separate branch.
 
 
---=-xE7Sce7QENoAvy+rEEB7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2014-03-05 at 20:28 +0900, Byungho An wrote:
-> Hi all,
->=20
-> This series adds Samsung xgmac driver.
-[...]
-
-Calxeda already took that driver name.  Be more original.
-
-Ben.
-
---=20
-Ben Hutchings
-I say we take off; nuke the site from orbit.  It's the only way to be sure.
-
---=-xE7Sce7QENoAvy+rEEB7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIVAwUAUxykM+e/yOyVhhEJAQpWkg/+OHp2paM1HMjF2T69bqCkHAnWTu9RdcFC
-GKfq2CcSf6KgZ19csgndfg7gDhbKBlxXw+bN8Yy8t0VUU0Q0PwgdRhVfx3qEuQrn
-rCx7hpGC6krmIKNC5qZ45hzW1X4sIVjay4lJIjjtlmIfGXBebhNCmkEu6FQr3GYu
-wCSA8g3dav9BS6QvCvbtWKwxVjvQR2mnIJV6pHbI+6tDNSB98nAefIIEDnwo/Jwe
-HMvC0hqFWjsHM3KSbnMcWjXScUKiSYof0ywDx4+TTkioO+w8XlLB4bGrgks/3kYG
-Yh9zTJe9oT7W4X4YJV/NikbD2/dCH3TZAzT4v/TXvU3ev8KS9MVTnLZRmZ/KEnPy
-oYYifuowFj2Ek5D7kroJEMv3aNzGbU0j0rq7eyWu6OBwz6KNbaUErvk9v8aEIA90
-OugLjgE5hKHD0MrvRsjDk1A3IUOdNcswMOZfacbNlsTuiED8hf9VAr+qgVb6mBDk
-CKYjG3a765ZXgWRMKiTk/ldaWtZQcLoa6Rkq1olBVLTsO9ZW9bGKXL0IwGjVqyXx
-JlO+bIh7Zny6uyY01e8fSwIVIKgkIgRRbu8fdTyVwn5wBNIVYihtvoc7q6PfjwpX
-B/+1zs/QfA4hQ0yHwxL9S8cT4m3QglklTFf17kfgGOcu0t7LiV1DMXGNpELLrmUe
-qQDxhCxvTTs=
-=nb7K
------END PGP SIGNATURE-----
-
---=-xE7Sce7QENoAvy+rEEB7--
+-Olof
