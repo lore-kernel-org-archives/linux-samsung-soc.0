@@ -1,80 +1,62 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH] iommu/exynos: Remove driver
-Date: Sun, 9 Mar 2014 22:54:09 +0900
-Message-ID: <CAHQjnOP=cq4+wxjuOzKKHmp2vC1DUTwogiQkL=8NtNWZiBJ4jg@mail.gmail.com>
-References: <1391716317-20300-1-git-send-email-olof@lixom.net>
-	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
-	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
-	<52F4E481.3050902@samsung.com>
-	<CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
-	<CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
-	<001301cf291a$233fdc70$69bf9550$@samsung.com>
-	<CAH9JG2WtV7HeJmjGDaNfHVbZiKG5aDznqxK+AYaTzK_bCud-TQ@mail.gmail.com>
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH 0/7] add new Samsung xgmac driver
+Date: Sun, 09 Mar 2014 17:26:11 +0000
+Message-ID: <1394385971.2861.169.camel@deadeye.wl.decadent.org.uk>
+References: <007a01cf3865$fefc1760$fcf44620$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-xE7Sce7QENoAvy+rEEB7"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:43035 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752331AbaCINyK (ORCPT
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51018 "EHLO
+	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751207AbaCIR0O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Mar 2014 09:54:10 -0400
-Received: by mail-we0-f179.google.com with SMTP id x48so7372000wes.10
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Mar 2014 06:54:09 -0700 (PDT)
-In-Reply-To: <CAH9JG2WtV7HeJmjGDaNfHVbZiKG5aDznqxK+AYaTzK_bCud-TQ@mail.gmail.com>
+	Sun, 9 Mar 2014 13:26:14 -0400
+In-Reply-To: <007a01cf3865$fefc1760$fcf44620$%an@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@gmail.com>, Sean Paul <seanpaul@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <t.figa@samsung.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>
+To: Byungho An <bh74.an@samsung.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com
 
-On Thu, Mar 6, 2014 at 8:48 AM, Kyungmin Park <kmpark@infradead.org> wrote:
-> On Fri, Feb 14, 2014 at 9:17 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
->>> -----Original Message-----
->>> From: Olof Johansson [mailto:olof@lixom.net]
->>> Sent: Friday, February 14, 2014 4:34 AM
->>>
->>> On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
->>>
->>> > Just adding KyongHo Cho.
->>> >
->>> > If he can fixup for this time, it would be best solution because he knows
->>> > well than others, I think.
->>>
->>> It's not so much a matter of "fixup for this time", it's a about
->>> having ownership of the driver, making sure it works (and keeps
->>> working if there is related development). The posted patches have not
->>> been followed through on and the result is a broken driver. :(
->>>
->>> I definitely appreciate his expertise, and we should make sure that he
->>> gets to review the code, but if someone else is able to spend time on
->>> reworking the driver (or rewriting a newer one) and maintaining it
->>> longer-term, then we should not stop them from doing so. And there is
->>> no reason to keep broken stale code in the kernel meanwhile.
->>>
->>
->> Thank you for your concerning.
->> I also definitely agree with you that the driver must work.
->> I am always concerning about it but it was not easy to make some time
->> for the patches.
->>
->> I will continue to post the next version of patches, of course.
->> I think it is not far from now to show it.
->
-> Lots of time is going from last reply. there are two options.
-> 1. just waiting more
-> 2. remove it as patch and start it again by someone.
->
-> what's the opinions?
->
 
-Please be patient until the patches are OK enough to post.
+--=-xE7Sce7QENoAvy+rEEB7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The patches have lots of improvements and workarounds.
+On Wed, 2014-03-05 at 20:28 +0900, Byungho An wrote:
+> Hi all,
+>=20
+> This series adds Samsung xgmac driver.
+[...]
 
-Sorry for delaying the patches.
+Calxeda already took that driver name.  Be more original.
 
-One thing is certain, starting from scratch is not a good idea.
-Why not discuss with me to make exynos-iommu driver better?
+Ben.
 
-Thank you.
+--=20
+Ben Hutchings
+I say we take off; nuke the site from orbit.  It's the only way to be sure.
 
-KyongHo
+--=-xE7Sce7QENoAvy+rEEB7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIVAwUAUxykM+e/yOyVhhEJAQpWkg/+OHp2paM1HMjF2T69bqCkHAnWTu9RdcFC
+GKfq2CcSf6KgZ19csgndfg7gDhbKBlxXw+bN8Yy8t0VUU0Q0PwgdRhVfx3qEuQrn
+rCx7hpGC6krmIKNC5qZ45hzW1X4sIVjay4lJIjjtlmIfGXBebhNCmkEu6FQr3GYu
+wCSA8g3dav9BS6QvCvbtWKwxVjvQR2mnIJV6pHbI+6tDNSB98nAefIIEDnwo/Jwe
+HMvC0hqFWjsHM3KSbnMcWjXScUKiSYof0ywDx4+TTkioO+w8XlLB4bGrgks/3kYG
+Yh9zTJe9oT7W4X4YJV/NikbD2/dCH3TZAzT4v/TXvU3ev8KS9MVTnLZRmZ/KEnPy
+oYYifuowFj2Ek5D7kroJEMv3aNzGbU0j0rq7eyWu6OBwz6KNbaUErvk9v8aEIA90
+OugLjgE5hKHD0MrvRsjDk1A3IUOdNcswMOZfacbNlsTuiED8hf9VAr+qgVb6mBDk
+CKYjG3a765ZXgWRMKiTk/ldaWtZQcLoa6Rkq1olBVLTsO9ZW9bGKXL0IwGjVqyXx
+JlO+bIh7Zny6uyY01e8fSwIVIKgkIgRRbu8fdTyVwn5wBNIVYihtvoc7q6PfjwpX
+B/+1zs/QfA4hQ0yHwxL9S8cT4m3QglklTFf17kfgGOcu0t7LiV1DMXGNpELLrmUe
+qQDxhCxvTTs=
+=nb7K
+-----END PGP SIGNATURE-----
+
+--=-xE7Sce7QENoAvy+rEEB7--
