@@ -1,253 +1,80 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 5/5] clk/exynos5260: add clock file for exynos5260
-Date: Sat, 08 Mar 2014 18:24:29 +0900
-Message-ID: <531AE1CD.2070203@samsung.com>
-References: <1394113551-2134-1-git-send-email-rahul.sharma@samsung.com>
- <CAGcde9Hqs92bri0Fu3y7rvMhiFMYe+N7YWT-mxL2HTsnJTvz2w@mail.gmail.com>
- <5319D3E5.4000001@gmail.com>
- <CAGcde9GetFjdRxqJfPY_1qdxzKb+4cqjsc+ALnN0PxSrApjyxg@mail.gmail.com>
- <5319E445.9000409@gmail.com>
- <CAPdUM4Pt0Ofh=M5pwdj+0NwSvfK4JvZbpWUS6JfD3vnTi2JaGg@mail.gmail.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH] iommu/exynos: Remove driver
+Date: Sun, 9 Mar 2014 22:54:09 +0900
+Message-ID: <CAHQjnOP=cq4+wxjuOzKKHmp2vC1DUTwogiQkL=8NtNWZiBJ4jg@mail.gmail.com>
+References: <1391716317-20300-1-git-send-email-olof@lixom.net>
+	<CAAQKjZMo6=dtur6NfvDY9=jVF=7VxHub=isnEwPw0+RKCq6xAg@mail.gmail.com>
+	<CAH9JG2Xoz1_Y7CV6FUiGAO9o5T7jtFUYqJpcAysLttwu4527zQ@mail.gmail.com>
+	<52F4E481.3050902@samsung.com>
+	<CAL5jtJmfwajFD0cnYt6gOfFsZ5hGbFi=5kv8g4x23fY6qGBOew@mail.gmail.com>
+	<CAOesGMhH2WHvkaobewdnPeiThrWTfw0m4WWAZW98-iS2xdr+ow@mail.gmail.com>
+	<001301cf291a$233fdc70$69bf9550$@samsung.com>
+	<CAH9JG2WtV7HeJmjGDaNfHVbZiKG5aDznqxK+AYaTzK_bCud-TQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAPdUM4Pt0Ofh=M5pwdj+0NwSvfK4JvZbpWUS6JfD3vnTi2JaGg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:43035 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752331AbaCINyK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 9 Mar 2014 09:54:10 -0400
+Received: by mail-we0-f179.google.com with SMTP id x48so7372000wes.10
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Mar 2014 06:54:09 -0700 (PDT)
+In-Reply-To: <CAH9JG2WtV7HeJmjGDaNfHVbZiKG5aDznqxK+AYaTzK_bCud-TQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@gmail.com>, Sean Paul <seanpaul@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <t.figa@samsung.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi Rahul,
-
-On 03/08/2014 04:20 AM, Rahul Sharma wrote:
-> Hi Tomasz,
->
-> On 7 March 2014 20:52, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On 07.03.2014 16:10, Pankaj Dubey wrote:
->>> Hi Tomasz,
+On Thu, Mar 6, 2014 at 8:48 AM, Kyungmin Park <kmpark@infradead.org> wrote:
+> On Fri, Feb 14, 2014 at 9:17 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+>>> -----Original Message-----
+>>> From: Olof Johansson [mailto:olof@lixom.net]
+>>> Sent: Friday, February 14, 2014 4:34 AM
 >>>
+>>> On Mon, Feb 10, 2014 at 10:21 PM, Kukjin Kim <kgene.kim@gmail.com> wrote:
 >>>
->>> On Fri, Mar 7, 2014 at 11:12 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> wrote:
->>>> Hi Pankaj,
->>>>
->>>>
->>>> On 07.03.2014 14:56, Pankaj Dubey wrote:
->>>>>>
->>>>>> +static void __init exynos5260_clk_top_init(struct device_node *np)
->>>>>> +{
->>>>>> +       struct exynos5260_cmu_info cmu;
->>>>>> +       struct samsung_clk_provider *ctx;
->>>>>> +
->>>>>> +       memset(&cmu, 0, sizeof(cmu));
->>>>>> +
->>>>>> +       cmu.pll_clks = top_pll_clks;
->>>>>> +       cmu.nr_pll_clks =  ARRAY_SIZE(top_pll_clks);
->>>>>> +       cmu.mux_clks = top_mux_clks;
->>>>>> +       cmu.nr_mux_clks = ARRAY_SIZE(top_mux_clks);
->>>>>> +       cmu.div_clks = top_div_clks;
->>>>>> +       cmu.nr_div_clks = ARRAY_SIZE(top_div_clks);
->>>>>> +       cmu.gate_clks = top_gate_clks;
->>>>>> +       cmu.nr_gate_clks = ARRAY_SIZE(top_gate_clks);
->>>>>> +       cmu.nr_clk_ids = TOP_NR_CLK;
->>>>>> +       cmu.clk_regs = top_clk_regs;
->>>>>> +       cmu.nr_clk_regs = ARRAY_SIZE(top_clk_regs);
->>>>>> +
->>>>>> +       ctx = exynos5260_cmu_register_one(np, &cmu);
->>>>>> +
->>>>>> +       samsung_clk_of_register_fixed_ext(ctx, fixed_rate_ext_clks,
->>>>>> +                       ARRAY_SIZE(fixed_rate_ext_clks),
->>>>>> +                       ext_clk_match);
->>>>>> +}
->>>>>> +
->>>>>> +CLK_OF_DECLARE(exynos5260_clk_top, "samsung,exynos5260-clock-top",
->>>>>> +               exynos5260_clk_top_init);
->>>>>
->>>>>
->>>>> Well with this approach we end up adding 14 such
->>>>> exynosxxx_clk_xxx_init functions all of which has similar lines of
->>>>> code. As I know there are many upcoming Exynos SoC which will also
->>>>> have similar multiple clock controllers (in some of them there are
->>>>> upto 25 clock domains, and in that case we will end up writing 25 such
->>>>> init functions) so I have following suggestion where we can have one
->>>>> more structure which will hold all static data and match_table to
->>>>> match compatibility string and return CMU_TYPE which can be mapped to
->>>>> get proper clock_data which can be used in single clock_init function.
->>>>> Following is some sample code which I have implemented and tested on
->>>>> one of Exynos SoC. Please let me know your opinion about this.
->>>>
->>>>
->>>> Yes, this looks better indeed, however there is still a room for
->>>> improvement. Please see my comments below.
->>>>
->>>>
->>>>> =============================
->>>>>
->>>>> static struct exynosxxxx_clock_data exynosxxxx_clk_data[] __initdata = {
->>>>
->>>>
->>>> Instead of making this an array, particular elements could be separate
->>>> structures. This would simplify the code below.
->>>>
->>>>
->>>>>            {
->>>>>                    .cmu_type = CMU_TYPE_TOP,
->>>>>                    .mux_clocks = top_mux_clks,
->>>>>                    .div_clocks = top_div_clks,
->>>>>                    .pll_clocks = top_pll_clks,
->>>>>                    .clk_regs = top_clk_regs,
->>>>>                    .nr_mux_clocks = ARRAY_SIZE(top_mux_clks),
->>>>>                    .nr_div_clocks = ARRAY_SIZE(top_div_clks),
->>>>>                    .nr_pll_clocks = ARRAY_SIZE(top_pll_clks),
->>>>>                    .nr_clk_regs = ARRAY_SIZE(top_clk_regs),
->>>>>                    .nr_clks  = TOP_NR_CLK,
->>>>>            }, {
->>>>>                    .cmu_type = CMU_TYPE_EGL,
->>>>>                    .mux_clocks = egl_mux_clks,
->>>>>                    .div_clocks = egl_div_clks,
->>>>>                    .pll_clocks = egl_pll_clks,
->>>>>                     .clk_regs = egl_clk_regs,
->>>>>                    .nr_mux_clocks = ARRAY_SIZE(egl_mux_clks),
->>>>>                    .nr_div_clocks = ARRAY_SIZE(egl_div_clks),
->>>>>                    .nr_pll_clocks = ARRAY_SIZE(egl_pll_clks),
->>>>>                    .nr_clk_regs = ARRAY_SIZE(egl_clk_regs),
->>>>>                    .nr_clks  = EGL_NR_CLK,
->>>>>            }, {
->>>>>           /* Add similar elements here */
->>>>> };
->>>>>
->>>>> static struct of_device_id cmu_subtype_match_table[] = {
->>>>>            {
->>>>>                    .compatible = "exynosxxxx-cmu-top",
->>>>>                    .data   = (void *)CMU_TYPE_TOP,
->>>>
->>>>
->>>> Here the data would be just a pointer to respective clock data struct
->>>> defined above.
->>>>
->>>>
->>>>>            }, {
->>>>>                    .compatible = "exynosxxx-cmu-peris",
->>>>>                    .data   = (void *)CMU_TYPE_PERIS,
->>>>>            }, {
->>>>>           /* Add similar elements here */
->>>>> };
->>>>>
->>>>> void __init exynosxxx_clk_init(struct device_node *np)
->>>>> {
->>>>>             [snip]
->>>>>
->>>>>            match = of_match_node(cmu_subtype_match_table, np);
->>>>>
->>>>>            if (!match)
->>>>>                    panic("%s: cmu type (%s) is not supported.\n",
->>>>> __func__,
->>>>>                                    np->name);
->>>>
->>>>
->>>> This can't happen, because this function won't be called for any node
->>>> with
->>>> compatible string not declared using CLK_OF_DECLARE().
+>>> > Just adding KyongHo Cho.
+>>> >
+>>> > If he can fixup for this time, it would be best solution because he knows
+>>> > well than others, I think.
 >>>
->>> Agreed.
+>>> It's not so much a matter of "fixup for this time", it's a about
+>>> having ownership of the driver, making sure it works (and keeps
+>>> working if there is related development). The posted patches have not
+>>> been followed through on and the result is a broken driver. :(
 >>>
->>>>
->>>>>            reg_base = of_iomap(np, 0);
->>>>>            if (!reg_base)
->>>>>                    panic("%s: failed to map registers\n", __func__);
->>>>>
->>>>>            cmu_type = (unsigned long) match->data;
->>>>>
->>>>>            for (; i < CMU_TYPE_ALL; i++) {
->>>>>                    clk_data = &exynosxxxx_clk_data[i];
->>>>>                    if (cmu_type == clk_data->cmu_type)
->>>>>                            break;
->>>>>            }
->>>>
->>>>
->>>> Now clk_data could be taken directly from match->data, without the need
->>>> to
->>>> iterate over an array.
-> I am just curious, is it really a worth to replace 14 init functions
-> with 14 same
-> sized isolated structures. We will also be adding a array of these structure
-> pointers and little overhead to parse this array based on compatible
-> string for each cmu probe.
->
-> IMHO, calling correct function meant for the given CMU, looks more
-> straight and crisp. Most of the duplication is already addressed in
-> exynos5260_cmu_register_one.
->
-> Please, let me know if we are still looking for this change. It should
-> be easy to
-> change it that way.
->
->>> Good point. Let me change as per your suggestion and test. And then we
->>> will go for this change in next new version of patch.
+>>> I definitely appreciate his expertise, and we should make sure that he
+>>> gets to review the code, but if someone else is able to spend time on
+>>> reworking the driver (or rewriting a newer one) and maintaining it
+>>> longer-term, then we should not stop them from doing so. And there is
+>>> no reason to keep broken stale code in the kernel meanwhile.
+>>>
 >>
->> OK, thanks.
+>> Thank you for your concerning.
+>> I also definitely agree with you that the driver must work.
+>> I am always concerning about it but it was not easy to make some time
+>> for the patches.
 >>
->>
->>> Also please
->>> review rest patch also and let us know if anything still can be
->>> improved.
->>
->> I had reviewed version 3 of this series and most of my comments have been
->> addressed. I'm waiting for remaining two to be addressed, but they are
->> covered by your comments for v4.
-> I will address the fixes for fin_pll and sclk_uart in the next
-> version. Thanks for the
-> review.
-One update from my end.
-Today I verified that even though I removed CLK_IGNORE_UNUSED flag from 
-sclk_uartX I can
-see kernel is booting fine and no issues as you mentioned. FYI I am 
-using 3.14_rc1 tag and
-applied all patches on top of it. For reference I have mailed all 
-related patches to you.
-
-@Tomasz,
-
-I modified code as per our discussion and addressed all comments 
-including moving fixed clock to DT
-and found it's working well, so we can now finalize which way to  go ahead.
-Following is some data between V4 and probable next version, which might 
-help in making decision.
-
-drivers/clk/samsung/exynos5260-clock.c
-
-Before Change
-LoC: 1890
-size drivers/clk/samsung/clk-exynos5260.o
-    text       data        bss        dec        hex    filename
-   14226      14956          0      29182       71fe 
-drivers/clk/samsung/clk-exynos5260.o
-
-After Change:
-LoC: 1806
-size drivers/clk/samsung/clk-exynos5260.o
-    text       data        bss        dec        hex    filename
-   15446      14544          0      29990       7526 
-drivers/clk/samsung/clk-exynos5260.o
-
-
+>> I will continue to post the next version of patches, of course.
+>> I think it is not far from now to show it.
 >
-> Regards,
-> Rahul Sharma.
+> Lots of time is going from last reply. there are two options.
+> 1. just waiting more
+> 2. remove it as patch and start it again by someone.
 >
->> A link to v3 thread for reference:
->> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/27249
->>
->> Best regards,
->> Tomasz
+> what's the opinions?
+>
 
+Please be patient until the patches are OK enough to post.
 
--- 
-Best Regards,
-Pankaj Dubey
+The patches have lots of improvements and workarounds.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sorry for delaying the patches.
+
+One thing is certain, starting from scratch is not a good idea.
+Why not discuss with me to make exynos-iommu driver better?
+
+Thank you.
+
+KyongHo
