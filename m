@@ -1,126 +1,96 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [RFC 3/4] drm: add generic blob properties for image enhancement
-Date: Mon, 10 Mar 2014 09:50:14 +0530
-Message-ID: <CAPdUM4OyQjtOsW1KZRJP0SU2FbFEm+FUFg18r9aiAqvTM7SqEA@mail.gmail.com>
-References: <1394086334-20967-1-git-send-email-rahul.sharma@samsung.com>
-	<1394086334-20967-4-git-send-email-rahul.sharma@samsung.com>
-	<20140307083624.GB25837@phenom.ffwll.local>
-	<CAPdUM4NGC_KHxt4GmRxvT9z_AM5G9_AhrnXXrSAWb3yjfv5W5Q@mail.gmail.com>
-	<20140308004633.GD3546@intel.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH] [media] s5p-mfc: add init buffer cmd to MFCV6
+Date: Mon, 10 Mar 2014 10:33:41 +0530
+Message-ID: <CALt3h7-jiEm_CTCFT83RhF_oV0YuCkxGcfgKv1PDrmmkwn5T-A@mail.gmail.com>
+References: <1394181090-16446-1-git-send-email-arun.kk@samsung.com>
+	<53199175.6030606@samsung.com>
+	<CALt3h7_8=jHq821D_7Fi69bFRNk67S18W6T_SFQeSimpHTdOUA@mail.gmail.com>
+	<19dc01cf3a03$8dba8d80$a92fa880$%debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:43298 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750893AbaCJEUQ (ORCPT
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:52514 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752885AbaCJFDm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Mar 2014 00:20:16 -0400
-Received: by mail-we0-f178.google.com with SMTP id u56so7704091wes.23
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Mar 2014 21:20:14 -0700 (PDT)
-In-Reply-To: <20140308004633.GD3546@intel.com>
+	Mon, 10 Mar 2014 01:03:42 -0400
+In-Reply-To: <19dc01cf3a03$8dba8d80$a92fa880$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Matt Roper <matthew.d.roper@intel.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, marcheu@chromium.org, Prashanth G <prashanth.g@samsung.com>, ajaykumar.rs@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Kamil Debski <k.debski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, "avnd.kiran" <avnd.kiran@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Osciak <posciak@chromium.org>
 
-On 8 March 2014 06:16, Matt Roper <matthew.d.roper@intel.com> wrote:
-> On Fri, Mar 07, 2014 at 03:50:54PM +0530, Rahul Sharma wrote:
->> Hi Daniel,
+Hi Kamil,
+
+On Fri, Mar 7, 2014 at 6:18 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi Arun,
+>
+>> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com]
+>> Sent: Friday, March 07, 2014 12:10 PM
 >>
->> On 7 March 2014 14:06, Daniel Vetter <daniel@ffwll.ch> wrote:
->> > On Thu, Mar 06, 2014 at 11:42:13AM +0530, Rahul Sharma wrote:
->> >> Add generic KMS blob properties to core drm framework. These
->> >> are writable blob properties which can be used to set Image
->> >> Enhancement parameters. The properties which are added here
->> >> are meant for color reproduction, color saturation and edge
->> >> enhancement.
->> >>
->> >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ...
->> > Tbh I don't really understand why we can't use normal properties for this.
->> > We might want to add a new RBG type of property (or YUV fwiw, both with
->> > and without alpha) to make this standardized (maybe with some fixed point
->> > value for non-normalizes).
+>> Hi Sylwester,
 >>
->> I dropped Normal properties (the ones which accepts 64 bit data)
->> because there will be too many of them. As you can see the
->> count is going upto 24 parameters, means 24 such properties, as
->> each can carry one parameter. This is too much of overhead.
->> Please correct me if you mean something different.
->>
->> I am not sure what are RGB type properties? I know only about 64-bit
->> normal properties which are too compact to carry above structures. Are
->> you talking about set_gamma type of ioctls. Each "set_gamma" type
->> ioctl needs a addition in callbacks till down the layer which looks bit
->> unnecessary, while writable blob properties are using same set_property
->> and get_property infrastructure.
->>
+>> On Fri, Mar 7, 2014 at 2:59 PM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>> > Hi,
 >> >
->> > If the only reason you group them is to atomically commit them, then the
->> > only thing we need is the atomic ioctl, which can shovel entire groups of
->> > properties over the wire at once.
+>> > On 07/03/14 09:31, Arun Kumar K wrote:
+>> >> From: avnd kiran <avnd.kiran@samsung.com>
+>> >>
+>> >> Latest MFC v6 firmware requires tile mode and loop filter setting to
+>> >> be done as part of Init buffer command, in sync with v7. So, move
+>> >> these settings out of decode options reg.
+>> >> Also, make this register definition applicable from v6 onwards.
+>> >>
+>> >> Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
+>> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> >
+>> > Will the driver also work with older version of the firmware after
+>> > this change ? If not, shouldn't things like this be done depending on
+>> > what firmware version is loaded ?
+>> >
 >>
->> Atomic commit is not an explicit requirement. But splitting them to
->> many small pieces (in case of normal properties) are resulting into
->> many user-kernel switching overhead, which seems avoidable.
+>> The original code was for the initial version of v6 firmware.
+>> After that the v6 firmware has got many fixes and updates which also
+>> got updated in the products running the same.
+>> As such there are no official multiple versions of v6 firmware, but
+>> only fixes / updates to older version. I will update the s5p-mfc-v6.fw
+>> in the linux-firmware also with the newer version. Hope that will be
+>> fine.
 >
-> The idea with atomic modeset / nuclear pageflip is that you collect a
-> whole bunch of individual property updates into a "property set"
-> container in userspace (libdrm).  When you're done setting all the
-> values you want and "commit" the property set, all of the values that
-> you collected get passed to the kernel in one go via a new ioctl (and
-> are then updated in an atomic manner by the DRM driver).  So performing
-> your 24 different property updates via the upcoming atomic API's
-> shouldn't be a problem and shouldn't add any unnecessary overhead.
+> Unfortunately, I share the same concerns as Sylwester. We have two problems:
+> 1) new kernel + old firmware
 >
-> The kernel-side of atomic modeset / nuclear pageflip is still a WIP, so
-> it isn't upstream yet, but you can see the userspace-facing API in Rob
-> Clark's repo here:
+> In this case, someone will update the kernel and find out that video
+> decoding is not working. An assumption that I think is common, is that
+> updating the kernel should not break anything. If it was working with the
+> previous version it should work with the next.
 >
->         https://github.com/robclark/libdrm/blob/atomic/xf86drmMode.h
->
-> Note the drmModePropertySet{Alloc,Add,Commit,Free}() functions near the
-> bottom.
+> The solution I can suggest is that a check which firmware version is used
+> has to be implemented. Maybe you can use the date of firmware to do this
+> check?
 >
 
-Thanks Matt,
+Yes this concern is valid. I think its better to check for firmware date as the
+old firmware is already submitted in mainline.
 
-I went through the share link. Got the idea of atomic
-modeset. It is a good solution for setting 24 properties
-in one go. But another issue is still unaddressed. I
-mean still need to declare 24 properties which are not
-"Really 24 different properties".
-
-These are sub-parameters to 3 properties (color
-reproduction, color saturation and edge enhancement).
-Splitting them to 24 pieces, just because we don't have a
-a provision in KMS, is a work around to get things
-working. And, properties like "saturation_hue_gain_red",
-"saturation_hue_gain_green" ... will be undoubtedly ugly.
-
-In Rob Clark's tree, I noticed
-
-extern int drmModePropertySetAddBlob(drmModePropertySetPtr set,
-    uint32_t object_id,
-    uint32_t property_id,
-    uint64_t length,
-    void *blob);
-
-Seems, already some implementation of writable blobs is
-there. I am not able to see the kernel though.
-
-I request experts, to review this solution again. I found it
-quite useful and hold good with the idea of Atomic modeset.
-
-Regards,
-Rahul Sharma
-
+> 2) old kernel + new firmware
 >
-> Matt
+> I see no clear solution to this problem. If the kernel is old and the
+> firmware is behaving differently, the video decoding will not work. I can
+> guess that this case would be less common, but still a person can update the
+> firmware and leave the old kernel. Changing the firmware can be done by
+> replacing a single file.
 >
-> --
-> Matt Roper
-> Graphics Software Engineer
-> ISG Platform Enabling & Development
-> Intel Corporation
-> (916) 356-2795
+> In addition to the above, you need to clearly specify in the
+> linux-firmware.git what is going on. A readme file is a must. Maybe a second
+> v6 firmware file should be included?
+>
+
+
+Yes I can put the newer version of v6 firmware also in linux-firmware with a
+readme detailing the difference between the same.
+I hope this is a valid solution.
+
+Regards
+Arun
