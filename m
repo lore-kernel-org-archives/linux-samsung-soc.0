@@ -1,43 +1,35 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 5/9 v7] clk: samsung exynos5250/5420: Add gate clock for
- SSS module
-Date: Mon, 10 Mar 2014 01:19:18 +0100
-Message-ID: <531D0506.7080209@gmail.com>
-References: <1392630275-8667-1-git-send-email-ch.naveen@samsung.com> <1392630275-8667-6-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
+Date: Mon, 10 Mar 2014 01:20:30 +0100
+Message-ID: <531D054E.70008@gmail.com>
+References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org> <1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <1392630275-8667-6-git-send-email-ch.naveen@samsung.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, davem@davemloft.net, Kukjin Kim <kgene.kim@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: mark.rutland@arm.com, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, t.figa@samsung.com, robh+dt@kernel.org, rob@landley.net, galak@codeaurora.org, plagnioj@jcrosoft.com, linux@maxim.org.za
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17.02.2014 10:44, Naveen Krishna Chatradhi wrote:
-> This patch adds gating clock for SSS(Security SubSystem)
-> module on Exynos5250/5420.
+On 06.03.2014 07:04, Tushar Behera wrote:
+> Most of the clock related dt-binding header files are located in
+> dt-bindings/clock folder. It would be good to keep all the similar
+> header files at a single location.
 >
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> TO: <linux-samsung-soc@vger.kernel.org>
-> TO: Tomasz Figa <t.figa@samsung.com>
-> CC: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > CC: Kukjin Kim <kgene.kim@samsung.com>
-> CC: <linux-crypto@vger.kernel.org>
+> CC: Tomasz Figa <t.figa@samsung.com>
 > ---
-> changes since v6:
-> None
-> changes since v5:
-> 1. Added Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
->   .../devicetree/bindings/clock/exynos5250-clock.txt |    1 +
->   drivers/clk/samsung/clk-exynos5250.c               |    1 +
->   drivers/clk/samsung/clk-exynos5420.c               |    4 ++++
->   include/dt-bindings/clock/exynos5250.h             |    1 +
->   4 files changed, 7 insertions(+)
+>   arch/arm/boot/dts/exynos5250.dtsi                  |    2 +-
+>   arch/arm/boot/dts/exynos5420.dtsi                  |    2 +-
+>   drivers/clk/samsung/clk-exynos-audss.c             |    2 +-
+>   .../dt-bindings/{clk => clock}/exynos-audss-clk.h  |    0
+>   4 files changed, 3 insertions(+), 3 deletions(-)
+>   rename include/dt-bindings/{clk => clock}/exynos-audss-clk.h (100%)
 
-Applied to samsung-clk tree.
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
