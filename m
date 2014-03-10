@@ -1,53 +1,43 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 1/5] clk/samsung: add support for multiple clock providers
-Date: Mon, 10 Mar 2014 01:12:43 +0100
-Message-ID: <531D037B.2080708@gmail.com>
-References: <1393931558-23502-1-git-send-email-rahul.sharma@samsung.com> <1393931558-23502-2-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH 5/9 v7] clk: samsung exynos5250/5420: Add gate clock for
+ SSS module
+Date: Mon, 10 Mar 2014 01:19:18 +0100
+Message-ID: <531D0506.7080209@gmail.com>
+References: <1392630275-8667-1-git-send-email-ch.naveen@samsung.com> <1392630275-8667-6-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f180.google.com ([209.85.215.180]:49952 "EHLO
-	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751846AbaCJAMr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Mar 2014 20:12:47 -0400
-In-Reply-To: <1393931558-23502-2-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <1392630275-8667-6-git-send-email-ch.naveen@samsung.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, davem@davemloft.net, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-Hi Rahul,
-
-On 04.03.2014 12:12, Rahul Sharma wrote:
-> Samsung CCF helper functions do not provide support to
-> register multiple Clock Providers for a given SoC. Due to
-> this limitation SoC platforms are not able to use these
-> helpers for registering multiple clock providers and are
-> forced to bypass this layer.
+On 17.02.2014 10:44, Naveen Krishna Chatradhi wrote:
+> This patch adds gating clock for SSS(Security SubSystem)
+> module on Exynos5250/5420.
 >
-> This layer is modified accordingly to enable the support.
->
-> Clock file for exynos4, exynos5250, exynos5420, exynos5440
-> and S3c64xx are also modified as per changed helper functions.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> TO: <linux-samsung-soc@vger.kernel.org>
+> TO: Tomasz Figa <t.figa@samsung.com>
+> CC: David S. Miller <davem@davemloft.net>
+> CC: Kukjin Kim <kgene.kim@samsung.com>
+> CC: <linux-crypto@vger.kernel.org>
 > ---
->   drivers/clk/samsung/clk-exynos4.c    |   47 +++++++-------
->   drivers/clk/samsung/clk-exynos5250.c |   25 +++++---
->   drivers/clk/samsung/clk-exynos5420.c |   24 ++++---
->   drivers/clk/samsung/clk-exynos5440.c |   18 +++---
->   drivers/clk/samsung/clk-pll.c        |   14 +++--
->   drivers/clk/samsung/clk-s3c64xx.c    |   44 +++++++------
->   drivers/clk/samsung/clk.c            |  115 +++++++++++++++++++---------------
->   drivers/clk/samsung/clk.h            |   72 ++++++++++++++-------
->   8 files changed, 210 insertions(+), 149 deletions(-)
+> changes since v6:
+> None
+> changes since v5:
+> 1. Added Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>
+>   .../devicetree/bindings/clock/exynos5250-clock.txt |    1 +
+>   drivers/clk/samsung/clk-exynos5250.c               |    1 +
+>   drivers/clk/samsung/clk-exynos5420.c               |    4 ++++
+>   include/dt-bindings/clock/exynos5250.h             |    1 +
+>   4 files changed, 7 insertions(+)
 
-This patch looks good. However in the meantime two series adding s3c2412 
-and s3c2416 clock drivers have been merged through Kgene's tree and this 
-patch should be rebased on top of this. I have pulled those drivers to 
-my tree as well, to samsung-next branch.
+Applied to samsung-clk tree.
 
 Best regards,
 Tomasz
