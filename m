@@ -1,62 +1,39 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/3] drivers: clk: add samsung common clock config option
-Date: Mon, 10 Mar 2014 01:28:08 +0100
-Message-ID: <531D0718.8000305@gmail.com>
-References: <1393392247-6247-1-git-send-email-pankaj.dubey@samsung.com> <1393392247-6247-2-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v4 2/5] clk/samsung: add support for pll2550xx
+Date: Mon, 10 Mar 2014 01:29:21 +0100
+Message-ID: <531D0761.6070502@gmail.com>
+References: <1393931558-23502-1-git-send-email-rahul.sharma@samsung.com> <1393931558-23502-3-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:45249 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864AbaCJA2M (ORCPT
+Received: from mail-ee0-f41.google.com ([74.125.83.41]:36978 "EHLO
+	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750783AbaCJA3Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Mar 2014 20:28:12 -0400
-In-Reply-To: <1393392247-6247-2-git-send-email-pankaj.dubey@samsung.com>
+	Sun, 9 Mar 2014 20:29:25 -0400
+In-Reply-To: <1393931558-23502-3-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Mike Turquette <mturquette@linaro.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi Pankaj,
-
-On 26.02.2014 06:24, Pankaj Dubey wrote:
-> add samsung common clock config option and let ARCH_EXYNOS or ARCH_S3CXXXX
-> select this if they want to use samsung common clock infrastructure.
+On 04.03.2014 12:12, Rahul Sharma wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
 >
-> CC: Mike Turquette <mturquette@linaro.org>
+> exynos5260 use pll2550xx and it has different bit fields
+> for P,M,S values as compared to pll2550. Support for
+> pll2550xx is added here.
+>
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > ---
->   drivers/clk/Kconfig  |   10 ++++++++++
->   drivers/clk/Makefile |    2 +-
->   2 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 7641965..d93a325 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -23,6 +23,16 @@ config COMMON_CLK
->   menu "Common Clock Framework"
->   	depends on COMMON_CLK
->
-> +config COMMON_CLK_SAMSUNG
-> +	bool "Clock driver for Samsung SoCs"
-> +	depends on ARCH_S3C64XX || ARCH_S3C24XX || ARCH_EXYNOS || ARM64
-> +	---help---
-> +          Supports clocking on Exynos SoCs:
-> +	  - Exynos5250, Exynos5420 board.
-> +	  - Exynos4 boards.
-> +	  - S3C2412, S3C2416, S3C2466 boards.
-> +	  - S3C64XX boards.
+>   drivers/clk/samsung/clk-pll.c |  107 +++++++++++++++++++++++++++++++++++++++++
+>   drivers/clk/samsung/clk-pll.h |    1 +
+>   2 files changed, 108 insertions(+)
 
-I don't think listing the platforms here explicitly is a good idea, as 
-this option shouldn't generally be user-visible (related platforms would 
-not work without this option enabled) and adding support for every new 
-SoC would require changing the help string.
-
-I wonder if we really need this to be user-visible. What about moving it 
-out of this menu, making the symbol select COMMON_CLK and let the 
-platforms just select COMMON_CLK_SAMSUNG alone?
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
