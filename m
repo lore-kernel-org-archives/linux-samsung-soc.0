@@ -1,58 +1,88 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 5/5] clk/exynos5260: add clock file for exynos5260
-Date: Mon, 10 Mar 2014 00:59:59 +0100
-Message-ID: <531D007F.4030800@gmail.com>
-References: <1394113551-2134-1-git-send-email-rahul.sharma@samsung.com> <CAGcde9Hqs92bri0Fu3y7rvMhiFMYe+N7YWT-mxL2HTsnJTvz2w@mail.gmail.com> <5319D3E5.4000001@gmail.com> <CAGcde9GetFjdRxqJfPY_1qdxzKb+4cqjsc+ALnN0PxSrApjyxg@mail.gmail.com> <5319E445.9000409@gmail.com> <CAPdUM4Pt0Ofh=M5pwdj+0NwSvfK4JvZbpWUS6JfD3vnTi2JaGg@mail.gmail.com> <531AE1CD.2070203@samsung.com>
+Subject: Re: [PATCH v4 4/5] clk/exynos5260: add macros and documentation for
+ exynos5260
+Date: Mon, 10 Mar 2014 01:07:05 +0100
+Message-ID: <531D0229.5070209@gmail.com>
+References: <1393931558-23502-1-git-send-email-rahul.sharma@samsung.com> <1393931558-23502-5-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:58019 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751833AbaCJAAE (ORCPT
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:39985 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751833AbaCJAHJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Mar 2014 20:00:04 -0400
-In-Reply-To: <531AE1CD.2070203@samsung.com>
+	Sun, 9 Mar 2014 20:07:09 -0400
+In-Reply-To: <1393931558-23502-5-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, sunil joshi <joshi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-On 08.03.2014 10:24, Pankaj Dubey wrote:
-> Hi Rahul,
+Hi Rahul,
 
-> I modified code as per our discussion and addressed all comments
-> including moving fixed clock to DT
-> and found it's working well, so we can now finalize which way to  go ahead.
-> Following is some data between V4 and probable next version, which might
-> help in making decision.
+Please see some minor comments below.
+
+On 04.03.2014 12:12, Rahul Sharma wrote:
+> Add macros which are used as Clock IDs in DT and clock file.
+> It also adds the documentation for the exynos5260 clocks.
 >
-> drivers/clk/samsung/exynos5260-clock.c
->
-> Before Change
-> LoC: 1890
-> size drivers/clk/samsung/clk-exynos5260.o
->     text       data        bss        dec        hex    filename
->    14226      14956          0      29182       71fe
-> drivers/clk/samsung/clk-exynos5260.o
->
-> After Change:
-> LoC: 1806
-> size drivers/clk/samsung/clk-exynos5260.o
->     text       data        bss        dec        hex    filename
->    15446      14544          0      29990       7526
-> drivers/clk/samsung/clk-exynos5260.o
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+>   .../devicetree/bindings/clock/exynos5260-clock.txt |   55 +++++
+>   include/dt-bindings/clk/exynos5260-clk.h           |  233 ++++++++++++++++++++
+>   2 files changed, 288 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+>   create mode 100644 include/dt-bindings/clk/exynos5260-clk.h
 
-Well, somehow I've been under impression that the change would bring 
-more significant results. Here we can see slight reduction in lines of 
-code, but also slight increase of kernel image size. Still, in general, 
-nothing extreme.
+[snip]
 
-In this case I'd probably go with Rahul's original code, as it doesn't 
-require second matching and separate match table, which adds redundant 
-compatible strings used just for this extra matching pass.
+> diff --git a/include/dt-bindings/clk/exynos5260-clk.h b/include/dt-bindings/clk/exynos5260-clk.h
+> new file mode 100644
+> index 0000000..4dc20a8
+> --- /dev/null
+> +++ b/include/dt-bindings/clk/exynos5260-clk.h
 
-I guess this is all just bike shedding, though.
+Please use dt-bindings/clock directory.
+
+> @@ -0,0 +1,233 @@
+> +/*
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * Provides Constants for Exynos5260 clocks.
+> +*/
+
+nit: Misaligned star.
+
+> +
+> +#ifndef _DT_BINDINGS_CLK_EXYNOS5260_H
+> +#define _DT_BINDINGS_CLK_EXYNOS5260_H
+> +
+> +/*
+> + * Clock names: XXXXXX_YYYYY_ZZZZZ
+> + *                    |------| |----| |----|
+> + *                       cmu       type      IP
+
+The alignment looks wrong. Also tabs should be used.
+
+> +*/
+
+nit: Misaligned star.
+
+> +
+> +/* list of clocks for CMU_TOP */
+
+nit: Please properly capitalize comments and end them with a dot, e.g.
+
+/* List of clocks for CMU_TOP. */
+
+> +#define	FIN_PLL			1
+
+nit: No tabs between #define and DEF_NAME, please.
 
 Best regards,
 Tomasz
