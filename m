@@ -1,68 +1,53 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 5/6] Samsung PM updates for v3.15
-Date: Sun, 9 Mar 2014 17:08:28 -0700
-Message-ID: <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
-References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
-	<20140309183523.GD22881@quad.lixom.net>
-	<531CFA28.9020600@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 1/5] clk/samsung: add support for multiple clock providers
+Date: Mon, 10 Mar 2014 01:12:43 +0100
+Message-ID: <531D037B.2080708@gmail.com>
+References: <1393931558-23502-1-git-send-email-rahul.sharma@samsung.com> <1393931558-23502-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f180.google.com ([209.85.216.180]:51298 "EHLO
-	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751846AbaCJAI3 (ORCPT
+Received: from mail-ea0-f180.google.com ([209.85.215.180]:49952 "EHLO
+	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751846AbaCJAMr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Mar 2014 20:08:29 -0400
-Received: by mail-qc0-f180.google.com with SMTP id x3so6918674qcv.25
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Mar 2014 17:08:28 -0700 (PDT)
-In-Reply-To: <531CFA28.9020600@gmail.com>
+	Sun, 9 Mar 2014 20:12:47 -0400
+In-Reply-To: <1393931558-23502-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "khilman@linaro.org" <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-On Sun, Mar 9, 2014 at 4:32 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 09.03.2014 19:35, Olof Johansson wrote:
->>
->> On Mon, Mar 03, 2014 at 09:56:11AM +0000, Kukjin Kim wrote:
->>>
->>> The following changes since commit
->>> 38dbfb59d1175ef458d006556061adeaa8751b72:
->>>
->>>    Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
->>>
->>> are available in the git repository at:
->>>
->>>    http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>> tags/samsung-pm-1
->>>
->>> for you to fetch changes up to e11d919e4aa2009077e3e4f829ff991d37adca61:
->>>
->>>    ARM: EXYNOS: Drop legacy Exynos4 clock suspend/resume code (2014-02-14
->>> 08:16:01 +0900)
->>
->>
->> Hi,
->>
->> I don't see a single cc or acked-by line from Mike Turquette here. I'll
->> hold
->> off until he's had a chance to take a look at these ones; I suspect
->> they'll be
->> fine since it's mostly code refactoring though.
+Hi Rahul,
+
+On 04.03.2014 12:12, Rahul Sharma wrote:
+> Samsung CCF helper functions do not provide support to
+> register multiple Clock Providers for a given SoC. Due to
+> this limitation SoC platforms are not able to use these
+> helpers for registering multiple clock providers and are
+> forced to bypass this layer.
 >
+> This layer is modified accordingly to enable the support.
 >
-> I guess I should have ACKed them too, but it felt kind of strange to ACK my
-> own patches. ;)
+> Clock file for exynos4, exynos5250, exynos5420, exynos5440
+> and S3c64xx are also modified as per changed helper functions.
 >
-> Anyway, for all samsung-clk patches:
->
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>   drivers/clk/samsung/clk-exynos4.c    |   47 +++++++-------
+>   drivers/clk/samsung/clk-exynos5250.c |   25 +++++---
+>   drivers/clk/samsung/clk-exynos5420.c |   24 ++++---
+>   drivers/clk/samsung/clk-exynos5440.c |   18 +++---
+>   drivers/clk/samsung/clk-pll.c        |   14 +++--
+>   drivers/clk/samsung/clk-s3c64xx.c    |   44 +++++++------
+>   drivers/clk/samsung/clk.c            |  115 +++++++++++++++++++---------------
+>   drivers/clk/samsung/clk.h            |   72 ++++++++++++++-------
+>   8 files changed, 210 insertions(+), 149 deletions(-)
 
-Yeah, self-acking doesn't make much sense. :)
+This patch looks good. However in the meantime two series adding s3c2412 
+and s3c2416 clock drivers have been merged through Kgene's tree and this 
+patch should be rebased on top of this. I have pulled those drivers to 
+my tree as well, to samsung-next branch.
 
-I'm mostly worried about patches touching other subsystems without the
-other maintainer being aware of it or having reviewed them. As I said,
-these mostly look like refactorings but it's still good habit.
-
-
--Olof
+Best regards,
+Tomasz
