@@ -1,50 +1,116 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] Documentation: mfd: s2mps11: Document support for
- S2MPS14
-Date: Mon, 10 Mar 2014 09:51:19 +0000
-Message-ID: <20140310095119.GG14976@lee--X1>
-References: <1394187052-591-1-git-send-email-k.kozlowski@samsung.com>
- <1394187052-591-4-git-send-email-k.kozlowski@samsung.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Move at91.h to dt-bindigs/clock
+Date: Mon, 10 Mar 2014 12:05:33 +0100
+Message-ID: <531D9C7D.6020401@atmel.com>
+References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org> <1394085884-13081-2-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1394187052-591-4-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:1533 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752161AbaCJLFZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 10 Mar 2014 07:05:25 -0400
+In-Reply-To: <1394085884-13081-2-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net, linux@maxim.org.za, plagnioj@jcrosoft.com, kgene.kim@samsung.com, t.figa@samsung.com
 
-> Add bindings documentation for S2MPS14 device to the s2mps11 driver.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Acked-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On 06/03/2014 07:04, Tushar Behera :
+> Most of the clock related dt-binding header files are located in
+> dt-bindings/clock folder. It would be good to keep all the similar
+> header files at a single location.
+> 
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> CC: Rob Landley <rob@landley.net>
+> CC: Andrew Victor <linux@maxim.org.za>
+> CC: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+
 > ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt |   12 ++++++++---=
--
->  1 file changed, 8 insertions(+), 4 deletions(-)
+>  .../devicetree/bindings/clock/at91-clock.txt       |    2 +-
+>  arch/arm/boot/dts/sama5d3.dtsi                     |    2 +-
+>  arch/arm/boot/dts/sama5d3_mci2.dtsi                |    2 +-
+>  arch/arm/boot/dts/sama5d3_tcb1.dtsi                |    2 +-
+>  arch/arm/boot/dts/sama5d3_uart.dtsi                |    2 +-
+>  include/dt-bindings/{clk => clock}/at91.h          |    0
+>  6 files changed, 5 insertions(+), 5 deletions(-)
+>  rename include/dt-bindings/{clk => clock}/at91.h (100%)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+> index cd5e239..6794cdc 100644
+> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+> @@ -62,7 +62,7 @@ Required properties for PMC node:
+>  - interrupt-controller : tell that the PMC is an interrupt controller.
+>  - #interrupt-cells : must be set to 1. The first cell encodes the interrupt id,
+>  	and reflect the bit position in the PMC_ER/DR/SR registers.
+> -	You can use the dt macros defined in dt-bindings/clk/at91.h.
+> +	You can use the dt macros defined in dt-bindings/clock/at91.h.
+>  	0 (AT91_PMC_MOSCS) -> main oscillator ready
+>  	1 (AT91_PMC_LOCKA) -> PLL A ready
+>  	2 (AT91_PMC_LOCKB) -> PLL B ready
+> diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
+> index 3d5faf8..8c977b5 100644
+> --- a/arch/arm/boot/dts/sama5d3.dtsi
+> +++ b/arch/arm/boot/dts/sama5d3.dtsi
+> @@ -13,7 +13,7 @@
+>  #include <dt-bindings/pinctrl/at91.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/gpio/gpio.h>
+> -#include <dt-bindings/clk/at91.h>
+> +#include <dt-bindings/clock/at91.h>
+>  
+>  / {
+>  	model = "Atmel SAMA5D3 family SoC";
+> diff --git a/arch/arm/boot/dts/sama5d3_mci2.dtsi b/arch/arm/boot/dts/sama5d3_mci2.dtsi
+> index b029fe7..1b02208 100644
+> --- a/arch/arm/boot/dts/sama5d3_mci2.dtsi
+> +++ b/arch/arm/boot/dts/sama5d3_mci2.dtsi
+> @@ -9,7 +9,7 @@
+>  
+>  #include <dt-bindings/pinctrl/at91.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> -#include <dt-bindings/clk/at91.h>
+> +#include <dt-bindings/clock/at91.h>
+>  
+>  / {
+>  	ahb {
+> diff --git a/arch/arm/boot/dts/sama5d3_tcb1.dtsi b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+> index 382b044..0284845 100644
+> --- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+> +++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
+> @@ -9,7 +9,7 @@
+>  
+>  #include <dt-bindings/pinctrl/at91.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> -#include <dt-bindings/clk/at91.h>
+> +#include <dt-bindings/clock/at91.h>
+>  
+>  / {
+>  	aliases {
+> diff --git a/arch/arm/boot/dts/sama5d3_uart.dtsi b/arch/arm/boot/dts/sama5d3_uart.dtsi
+> index a9fa75e..7a8d4c6 100644
+> --- a/arch/arm/boot/dts/sama5d3_uart.dtsi
+> +++ b/arch/arm/boot/dts/sama5d3_uart.dtsi
+> @@ -9,7 +9,7 @@
+>  
+>  #include <dt-bindings/pinctrl/at91.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> -#include <dt-bindings/clk/at91.h>
+> +#include <dt-bindings/clock/at91.h>
+>  
+>  / {
+>  	aliases {
+> diff --git a/include/dt-bindings/clk/at91.h b/include/dt-bindings/clock/at91.h
+> similarity index 100%
+> rename from include/dt-bindings/clk/at91.h
+> rename to include/dt-bindings/clock/at91.h
+> 
 
-Looks fine to me. If you don't hear back from the DT guys soon I'll
-apply it:
-  Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Nicolas Ferre
