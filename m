@@ -1,74 +1,60 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/2] ARM: SAMSUNG: remove the rest of local uncompress.h
- files
-Date: Tue, 11 Mar 2014 10:56:49 +0900
-Message-ID: <025401cf3ccd$2a38ee10$7eaaca30$@samsung.com>
-References: <6973248.vNO4T7GhE6@phil>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 5/6] Samsung PM updates for v3.15
+Date: Mon, 10 Mar 2014 19:52:01 -0700
+Message-ID: <CAOesGMiYJa7uM21ot_h6mGRTQX+HLcOsmTjk78WS0KZD6=piyw@mail.gmail.com>
+References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
+	<20140309183523.GD22881@quad.lixom.net>
+	<531CFA28.9020600@gmail.com>
+	<CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
+	<01d001cf3ccc$39f339b0$add9ad10$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29556 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752567AbaCKB4v convert rfc822-to-8bit (ORCPT
+Received: from mail-qa0-f49.google.com ([209.85.216.49]:50340 "EHLO
+	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752801AbaCKCwC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Mar 2014 21:56:51 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N29004CS1EPXXA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Mar 2014 10:56:49 +0900 (KST)
-In-reply-to: <6973248.vNO4T7GhE6@phil>
-Content-language: ko
+	Mon, 10 Mar 2014 22:52:02 -0400
+Received: by mail-qa0-f49.google.com with SMTP id j7so430057qaq.36
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Mar 2014 19:52:01 -0700 (PDT)
+In-Reply-To: <01d001cf3ccc$39f339b0$add9ad10$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Heiko St=FCbner wrote:
->=20
-> Two patches from Sachin Kamat already removed the Exynos-uncompress.h=
- .
-> But in fact all Samsung platforms can use the generic uncompress code
-> without needing local implementation.
->=20
-> Therefore this two-part series removes the rest of the uncompress.h f=
-iles
-> from all Samsung platforms.
->=20
-> Tested on a s3c2416 and s3c2442 based machine.
->=20
-> The patches should be applied on top of the patches from Sachin Kamat=
- in
-> the v3.15-next/cleanup-samsung branch in the linux-samsung.git
->=20
->=20
-> Heiko Stuebner (2):
->   ARM: SAMSUNG: use generic uncompress.h
->   ARM: SAMSUNG: remove all custom uncompress.h
->=20
->  arch/arm/Kconfig.debug                          |   4 +-
->  arch/arm/mach-s3c24xx/include/mach/uncompress.h |  57 --------
->  arch/arm/mach-s3c64xx/include/mach/uncompress.h |  31 -----
->  arch/arm/mach-s5p64x0/include/mach/uncompress.h |  34 -----
->  arch/arm/mach-s5pc100/include/mach/uncompress.h |  30 ----
->  arch/arm/mach-s5pv210/include/mach/uncompress.h |  28 ----
->  arch/arm/plat-samsung/include/plat/uncompress.h | 175 --------------=
------
-> -----
->  7 files changed, 2 insertions(+), 357 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/uncompress.h
->  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/uncompress.h
->  delete mode 100644 arch/arm/mach-s5p64x0/include/mach/uncompress.h
->  delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
->  delete mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
->  delete mode 100644 arch/arm/plat-samsung/include/plat/uncompress.h
->=20
-> --
-> 1.8.5.3
+On Mon, Mar 10, 2014 at 6:50 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Olof Johansson wrote:
+>>
+>> >> Hi,
+>> >>
+>> >> I don't see a single cc or acked-by line from Mike Turquette here. I'll
+>> >> hold
+>> >> off until he's had a chance to take a look at these ones; I suspect
+>> >> they'll be
+>> >> fine since it's mostly code refactoring though.
+>> >
+>> >
+>> > I guess I should have ACKed them too, but it felt kind of strange to ACK
+>> my
+>> > own patches. ;)
+>> >
+>> > Anyway, for all samsung-clk patches:
+>> >
+>> > Acked-by: Tomasz Figa <t.figa@samsung.com>
+>>
+>> Yeah, self-acking doesn't make much sense. :)
+>>
+>> I'm mostly worried about patches touching other subsystems without the
+>> other maintainer being aware of it or having reviewed them. As I said,
+>> these mostly look like refactorings but it's still good habit.
+>>
+> OK, agreed, I think Mike knew about that though. Let's wait for Mike's
+> response.
+>
+> BTW, should I sort out the branch again if Mike gives ack on that?
 
-Looks good to me, will apply.
+If I hear from Mike that he's OK with it then I can merge it, no need to rebase.
 
-Thanks,
-Kukjin
+
+-Olof
