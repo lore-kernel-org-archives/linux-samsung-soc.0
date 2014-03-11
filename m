@@ -1,78 +1,54 @@
-From: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Subject: Re: [PATCH 1/2] of/irq: Fix irq-mapping in of_irq_parse_raw()
-Date: Tue, 11 Mar 2014 14:15:33 -0600
-Message-ID: <20140311201533.GF31835@obsidianresearch.com>
-References: <1393944864-28113-1-git-send-email-tharvey@gateworks.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 2/3] arm64: defconfig: Enable ARCH_GH7 by default
+Date: Wed, 12 Mar 2014 07:45:18 +0900
+Message-ID: <531F91FE.4010609@samsung.com>
+References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com> <1394491879-5320-3-git-send-email-kgene.kim@samsung.com> <20140311120145.GE31104@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1393944864-28113-1-git-send-email-tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:46461 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755583AbaCKWpZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Mar 2014 18:45:25 -0400
+Received: by mail-pb0-f48.google.com with SMTP id md12so194843pbc.35
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Mar 2014 15:45:24 -0700 (PDT)
+In-Reply-To: <20140311120145.GE31104@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Ilho Lee <ilho215.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Mar 04, 2014 at 06:54:24AM -0800, Tim Harvey wrote:
-> When an interrupt-map contains multiple entries an imap pointer arithmetic
-> bug can cause only the first entry to be properly evaluated and causes
-> the out_irq parameters to be incorrect depending on the #interrupt-cells
-> and #address-cells of the parent interrupt controller.
+On 03/11/14 21:01, Catalin Marinas wrote:
+> On Mon, Mar 10, 2014 at 10:51:18PM +0000, Kukjin Kim wrote:
+>> This patch adds support for Samsung GH7 SoC in arm64/Kconfig and
+>> enable Samsung GH7 based SSDK_GH7 in single defconfig for arm64.
+>>
+>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+>> Cc: Catalin Marinas<catalin.marinas@arm.com>
+>> ---
+>>   arch/arm64/Kconfig           | 3 +++
+>>   arch/arm64/boot/dts/Makefile | 1 +
+>>   arch/arm64/configs/defconfig | 1 +
+>>   3 files changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index dd4327f..f0f2bf2 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -111,6 +111,9 @@ source "kernel/Kconfig.freezer"
+>>
+>>   menu "Platform selection"
+>>
+>> +config ARCH_GH7
+>> +	bool
+>
+> You should add some text here so that people can disable it. The aim is
+> single Image by default but I think we should let people disable certain
+> platforms for more targeted deployments.
+>
+OK, I'll add and re-submit with Cc'ing dt mailing list.
 
-Tim,
-
-I took a bit closer look at this for you, and I suspect the root fix
-is this:
-
---- a/Documentation/devicetree/bindings/arm/gic.txt
-+++ b/Documentation/devicetree/bindings/arm/gic.txt
-@@ -55,7 +55,6 @@ Example:
-        intc: interrupt-controller@fff11000 {
-                compatible = "arm,cortex-a9-gic";
-                #interrupt-cells = <3>;
--               #address-cells = <1>;
-                interrupt-controller;
-                reg = <0xfff11000 0x1000>,
-                      <0xfff10100 0x100>;
-(plus the corresponding purge from the .dt files)
-
-It looks like the implementation does follow the OF specification:
-
- Each mapping entry consists of a 3-tuple of (child-interrupt,
- interrupt-parent, parent-interrupt). The number of cells for the
- child-interrupt specifier is determined by the "#address-cells" and
- "#interrupt-cells"property of this node. The number of cells for the
- parent-interrupt value is determined by the "#address-cells"and
- "#interrupt-cells"property values of this node's
- interrupt-parent.
-
-So by specifying interrupt-cells = 3, address-cells = 1, the GIC is
-requiring 4 DWs for its interrupt specifier.
-
-I see no reason why it doesn't have an address-cells = 0 like other
-interrupt controllers..
-
-Setting #address-cells to 0 in the GIC node should be functionally
-equivalent to your patch below, since newaddrsize will == 0.
-
-Regards,
-Jason
-
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index 9bcf2cf..8829197 100644
-> +++ b/drivers/of/irq.c
-> @@ -237,11 +237,11 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
->  			/* Check for malformed properties */
->  			if (WARN_ON(newaddrsize + newintsize > MAX_PHANDLE_ARGS))
->  				goto fail;
-> -			if (imaplen < (newaddrsize + newintsize))
-> +			if (imaplen < newintsize)
->  				goto fail;
->  
-> -			imap += newaddrsize + newintsize;
-> -			imaplen -= newaddrsize + newintsize;
-> +			imap += newintsize;
-> +			imaplen -= newintsize;
->  
->  			pr_debug(" -> imaplen=%d\n", imaplen);
->  		}
+Thanks,
+Kukjin
