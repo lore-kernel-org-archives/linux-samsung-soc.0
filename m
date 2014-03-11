@@ -1,155 +1,123 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v6 03/10] Documentation: devicetree: Update Samsung FIMC DT binding
-Date: Tue, 11 Mar 2014 13:30:39 +0100
-Message-ID: <1608087.RUCeTiNcRR@avalon>
-References: <1394122819-9582-1-git-send-email-s.nawrocki@samsung.com> <1394122819-9582-4-git-send-email-s.nawrocki@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: Move common dt data for interrupt
+ combiner controller
+Date: Tue, 11 Mar 2014 13:33:52 +0100
+Message-ID: <531F02B0.6060302@samsung.com>
+References: <1394524494-30641-1-git-send-email-cw00.choi@samsung.com>
+ <1394524494-30641-5-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1394122819-9582-4-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, galak@codeaurora.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, a.hajda@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:22385 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752853AbaCKMeJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Mar 2014 08:34:09 -0400
+In-reply-to: <1394524494-30641-5-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk
 
-Hi Sylwester,
+Hi Chanwoo,
 
-Thank you for the patch.
-
-On Thursday 06 March 2014 17:20:12 Sylwester Nawrocki wrote:
-> This patch documents following updates of the Exynos4 SoC camera subsystem
-> devicetree binding:
-> 
->  - addition of #clock-cells property to 'camera' node - the #clock-cells
->    property is needed when the sensor sub-devices use clock provided by
->    the camera host interface,
->  - addition of an optional clock-output-names property,
->  - change of the clock-frequency at image sensor node from mandatory to
->    an optional property - the sensor devices can now control their clock
->    themselves and there should be no need to require this property by the
->    camera host device binding, a default frequency value can often be used.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+On 11.03.2014 08:54, Chanwoo Choi wrote:
+> This patch move common dt data of interrupt combiner controller to
+> exynos4x12.dtsi. Each Exynos4x12 SoC has different number of interrput combiner
+> as following:
+> - Exynos4212 : interrput combiner 18(0 ~ 17)
+> - Exynos4412 : interrput combiner 20(0 ~ 19)
+>
+> The exynos combiner driver initialize interrupt according to specific number
+> of interrput combiner.
+> - samsung,combiner-nr : The number of interrput combiners supported.
+>
+> Also,
+> This patch arrange again the dt data according to register address
+> in exynos4212/exynos4412.dtsi.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
-> Changes since v5:
->  - none.
-> 
-> Changes since v4:
->  - dropped a requirement of specific order of values in clocks/
->    clock-names properties (Mark) and reference to clock-names in
->    clock-output-names property description (Mark).
-> ---
->  .../devicetree/bindings/media/samsung-fimc.txt     |   34 ++++++++++++-----
->  1 file changed, 26 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> b/Documentation/devicetree/bindings/media/samsung-fimc.txt index
-> 96312f6..dbd4020 100644
-> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> @@ -32,6 +32,21 @@ way around.
-> 
->  The 'camera' node must include at least one 'fimc' child node.
-> 
-> +Optional properties:
-> +
-> +- #clock-cells: from the common clock bindings
-> (../clock/clock-bindings.txt),
-> +  must be 1. A clock provider is associated with the 'camera' node and it
-> should
-> +  be referenced by external sensors that use clocks provided by the SoC on
-> +  CAM_*_CLKOUT pins. The clock specifier cell stores an index of a clock.
-> +  The indices are 0, 1 for CAM_A_CLKOUT, CAM_B_CLKOUT clocks respectively.
-> +
-> +- clock-output-names: from the common clock bindings, should contain names
-> of
-> +  clocks registered by the camera subsystem corresponding to CAM_A_CLKOUT,
-> +  CAM_B_CLKOUT output clocks respectively.
+>   arch/arm/boot/dts/exynos4212.dtsi | 13 ++++---------
+>   arch/arm/boot/dts/exynos4412.dtsi | 14 ++++----------
+>   arch/arm/boot/dts/exynos4x12.dtsi |  8 ++++++++
+>   3 files changed, 16 insertions(+), 19 deletions(-)
 
-Wouldn't it be better to document the "cam_mclk_a" and "cam_mclk_b" names 
-explicitly ? Or do you expect different names to be used in different DT files 
-? And as they correspond to the CAM_A_CLKOUT and CAM_B_CLKOUT pins, shouldn't 
-they be named "cam_a_clkout" and "cam_b_clkout" ?
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-> +
-> +Note: #clock-cells and clock-output-names are mandatory properties if
-> external
-> +image sensor devices reference 'camera' device node as a clock provider.
-> +
+Best regards,
+Tomasz
 
-What's the reason not to make them always mandatory ? Backward compatibility 
-only ? If so wouldn't it make sense to document the properties as mandatory 
-from now on, and treating them as optional in the driver for backward 
-compatibility ?
-
->  'fimc' device nodes
->  -------------------
-> 
-> @@ -97,8 +112,8 @@ Image sensor nodes
->  The sensor device nodes should be added to their control bus controller
-> (e.g. I2C0) nodes and linked to a port node in the csis or the
-> parallel-ports node, using the common video interfaces bindings, defined in
-> video-interfaces.txt.
-> -The implementation of this bindings requires clock-frequency property to be
-> -present in the sensor device nodes.
-> +An optional clock-frequency property needs to be present in the sensor
-> device
-> +nodes. Default value when this property is not present is 24 MHz.
-
-This bothers me. Having the FIMC driver read the clock-frequence property from 
-the sensor DT nodes feels like a layering violation. Shouldn't the sensor 
-drivers call clk_set_rate() explicitly instead ?
-
->  Example:
-> 
-> @@ -114,7 +129,7 @@ Example:
->  			vddio-supply = <...>;
-> 
->  			clock-frequency = <24000000>;
-> -			clocks = <...>;
-> +			clocks = <&camera 1>;
->  			clock-names = "mclk";
-> 
->  			port {
-> @@ -135,7 +150,7 @@ Example:
->  			vddio-supply = <...>;
-> 
->  			clock-frequency = <24000000>;
-> -			clocks = <...>;
-> +			clocks = <&camera 0>;
->  			clock-names = "mclk";
-> 
->  			port {
-> @@ -149,12 +164,15 @@ Example:
-> 
->  	camera {
->  		compatible = "samsung,fimc", "simple-bus";
-> -		#address-cells = <1>;
-> -		#size-cells = <1>;
-> -		status = "okay";
+> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+> index 94a43f9..ceefc71 100644
+> --- a/arch/arm/boot/dts/exynos4212.dtsi
+> +++ b/arch/arm/boot/dts/exynos4212.dtsi
+> @@ -22,16 +22,11 @@
+>   / {
+>   	compatible = "samsung,exynos4212";
+>
+> -	gic: interrupt-controller@10490000 {
+> -		cpu-offset = <0x8000>;
+> +	combiner: interrupt-controller@10440000 {
+> +		samsung,combiner-nr = <18>;
+>   	};
+>
+> -	interrupt-controller@10440000 {
+> -		samsung,combiner-nr = <18>;
+> -		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+> -			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+> -			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+> -			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+> -			     <0 107 0>, <0 108 0>;
+> +	gic: interrupt-controller@10490000 {
+> +		cpu-offset = <0x8000>;
+>   	};
+>   };
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index 87b339c..a40b6e2 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -22,17 +22,11 @@
+>   / {
+>   	compatible = "samsung,exynos4412";
+>
+> -	gic: interrupt-controller@10490000 {
+> -		cpu-offset = <0x4000>;
+> -	};
 > -
-> +		clocks = <&clock 132>, <&clock 133>;
-> +		clock-names = "sclk_cam0", "sclk_cam1";
-
-The documentation mentions that clock-names must contain "sclk_cam0", 
-"sclk_cam1", "pxl_async0", "pxl_async1". Are the last two optional ? If so I 
-think you should clarify the description of the clock-names property. This can 
-be done in a separate patch.
-
-> +		#clock-cells = <1>;
-> +		clock-output-names = "cam_mclk_a", "cam_mclk_b";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&cam_port_a_clk_active>;
-> +		status = "okay";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> 
->  		/* parallel camera ports */
->  		parallel-ports {
-
--- 
-Regards,
-
-Laurent Pinchart
+> -	interrupt-controller@10440000 {
+> +	combiner: interrupt-controller@10440000 {
+>   		samsung,combiner-nr = <20>;
+> -		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+> -			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+> -			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+> -			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+> -			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+>   	};
+>
+> +	gic: interrupt-controller@10490000 {
+> +		cpu-offset = <0x4000>;
+> +	};
+>   };
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index 066eb35..6e17034 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -73,6 +73,14 @@
+>   		};
+>   	};
+>
+> +	combiner: interrupt-controller@10440000 {
+> +		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+> +			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+> +			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+> +			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+> +			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+> +	};
+> +
+>   	pinctrl_0: pinctrl@11400000 {
+>   		compatible = "samsung,exynos4x12-pinctrl";
+>   		reg = <0x11400000 0x1000>;
+>
