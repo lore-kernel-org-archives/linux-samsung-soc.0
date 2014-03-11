@@ -1,75 +1,155 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
-Date: Tue, 11 Mar 2014 14:34:38 +0100
-Message-ID: <201403111434.38834.arnd@arndb.de>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
- <201403041553.40202.arnd@arndb.de>
- <1393947259.9405.18.camel@weser.hi.pengutronix.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v6 03/10] Documentation: devicetree: Update Samsung FIMC DT
+ binding
+Date: Tue, 11 Mar 2014 14:38:37 +0100
+Message-ID: <531F11DD.5040300@samsung.com>
+References: <1394122819-9582-1-git-send-email-s.nawrocki@samsung.com>
+ <1394122819-9582-4-git-send-email-s.nawrocki@samsung.com>
+ <1608087.RUCeTiNcRR@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1393947259.9405.18.camel@weser.hi.pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-sh@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>, Jingoo Han <jg1.han@samsung.com>, Richard Zhu <r65037@freescale.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, kernel@pengutronix.de, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1608087.RUCeTiNcRR@avalon>
+Sender: linux-media-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, galak@codeaurora.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, a.hajda@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 04 March 2014, Lucas Stach wrote:
-> > > On i.MX6 the clock names (which I have to agree are pretty bad) map as
-> > > follows:
-> > > pcie_axi: host controller main register/bus access clock
-> > > pcie_ref_125m: pcie phy reference clock
-> > > 
-> > > sata_ref_100m: pcie bus 100MHz reference clock
-> > 
-> > That doesn't explain why it's called "sata_ref_100m".
-> > 
-> I agree this is bad naming. It's called this way because someone decided
-> to name it like the internal clock it is sourced from on most boards.
-> This really should be pcie_ref, or something. I suspect this corresponds
-> to the pcie_bus clock in the Exynos binding in which case we should just
-> name it this way.
+Hi Laurent,
 
-Ok, so Exynos is missing one of the other clocks then? Or is the 
-pcie_ref_125m clock something that should actually be listed under
-the node of the PHY?
+Thanks for your review.
 
-> > > lvds_gate: bad abstraction. Decides if the reference clock is sourced
-> > > internal (i.e. the 100MHz ref clock above) or from an SoC external
-> > > source. We should really find a better way of representing this in the
-> > > clock tree.
-> > 
-> > I don't understand this description at all. Can you try to explain that
-> > with different words?
-> > 
-> On i.MX6 the PCIe reference clock is routed through a generic clock pad,
-> which can be configured either as input or output. When the i.MX is the
-> PCI master we source the clock from sata_ref_100m and configure this pad
-> as clock output.
-> Somebody decided to abstract the input/output switch as a gate, which is
-> arguably wrong, this should be a mux deciding between internal or
-> external clock source.
+On 11/03/14 13:30, Laurent Pinchart wrote:
+[...]
+>> ---
+>>  .../devicetree/bindings/media/samsung-fimc.txt     |   34 ++++++++++++-----
+>>  1 file changed, 26 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>> b/Documentation/devicetree/bindings/media/samsung-fimc.txt index
+>> 96312f6..dbd4020 100644
+>> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+>> @@ -32,6 +32,21 @@ way around.
+>>
+>>  The 'camera' node must include at least one 'fimc' child node.
+>>
+>> +Optional properties:
+>> +
+>> +- #clock-cells: from the common clock bindings
+>> (../clock/clock-bindings.txt),
+>> +  must be 1. A clock provider is associated with the 'camera' node and it
+>> should
+>> +  be referenced by external sensors that use clocks provided by the SoC on
+>> +  CAM_*_CLKOUT pins. The clock specifier cell stores an index of a clock.
+>> +  The indices are 0, 1 for CAM_A_CLKOUT, CAM_B_CLKOUT clocks respectively.
+>> +
+>> +- clock-output-names: from the common clock bindings, should contain names
+>> of
+>> +  clocks registered by the camera subsystem corresponding to CAM_A_CLKOUT,
+>> +  CAM_B_CLKOUT output clocks respectively.
 > 
-> The PCIe host driver should really only need the clk pad clock,
-> activation of the sata_ref_100m clock should be handled through
-> parent<->child relationship of those clocks in the clock tree, which
-> isn't properly handled right now. I'll try to fix this up, but it won't
-> be backward compatible in any way.
+> Wouldn't it be better to document the "cam_mclk_a" and "cam_mclk_b" names 
+> explicitly ? Or do you expect different names to be used in different DT files 
+> ? And as they correspond to the CAM_A_CLKOUT and CAM_B_CLKOUT pins, shouldn't 
+> they be named "cam_a_clkout" and "cam_b_clkout" ?
 
-Is it possible to treat this clock as a "global" clock rather than a device
-specific one, and pass NULL as the device for clk_get?
+Basically I could use fixed names for these clocks, I just wanted to keep
+a possibility to override them in dts to avoid any possible clock name
+collisions, rather than keep a list of different names per SoC in the driver. 
+Right now fixed names could also be used for all SoCs I'm aware of, 
+nevertheless I would prefer to keep the clock-output-names property.
+"cam_a_clkout", "cam_b_clkout" may be indeed better names, I'll change
+that.
 
-That's not nice, but at least it gives you a way to keep it out of the
-binding, and "just" creates a dependency between the specific PCI host
-controller and the way that clock is wired up on a particular SoC.
+>> +Note: #clock-cells and clock-output-names are mandatory properties if
+>> external
+>> +image sensor devices reference 'camera' device node as a clock provider.
+>> +
+> 
+> What's the reason not to make them always mandatory ? Backward compatibility 
+> only ? If so wouldn't it make sense to document the properties as mandatory 
+> from now on, and treating them as optional in the driver for backward 
+> compatibility ?
 
-	Arnd
+Yes, it's for backwards compatibility only. It may be a good idea to just 
+document them as required, since this is how the device is expected to be 
+described in DT from now. I'll just make these a required properties, 
+the driver already handles them as optional.
+
+>>  'fimc' device nodes
+>>  -------------------
+>>
+>> @@ -97,8 +112,8 @@ Image sensor nodes
+>>  The sensor device nodes should be added to their control bus controller
+>> (e.g. I2C0) nodes and linked to a port node in the csis or the
+>> parallel-ports node, using the common video interfaces bindings, defined in
+>> video-interfaces.txt.
+>> -The implementation of this bindings requires clock-frequency property to be
+>> -present in the sensor device nodes.
+>> +An optional clock-frequency property needs to be present in the sensor
+>> device
+>> +nodes. Default value when this property is not present is 24 MHz.
+> 
+> This bothers me. Having the FIMC driver read the clock-frequence property from 
+> the sensor DT nodes feels like a layering violation. Shouldn't the sensor 
+> drivers call clk_set_rate() explicitly instead ?
+
+It is supposed to do so, after this whole patch series. So the camera
+controller driver will not need such properties. What do you think about
+removing this sentence altogether ?
+
+>>  Example:
+>>
+>> @@ -114,7 +129,7 @@ Example:
+>>  			vddio-supply = <...>;
+>>
+>>  			clock-frequency = <24000000>;
+>> -			clocks = <...>;
+>> +			clocks = <&camera 1>;
+>>  			clock-names = "mclk";
+>>
+>>  			port {
+>> @@ -135,7 +150,7 @@ Example:
+>>  			vddio-supply = <...>;
+>>
+>>  			clock-frequency = <24000000>;
+>> -			clocks = <...>;
+>> +			clocks = <&camera 0>;
+>>  			clock-names = "mclk";
+>>
+>>  			port {
+>> @@ -149,12 +164,15 @@ Example:
+>>
+>>  	camera {
+>>  		compatible = "samsung,fimc", "simple-bus";
+>> -		#address-cells = <1>;
+>> -		#size-cells = <1>;
+>> -		status = "okay";
+>> -
+>> +		clocks = <&clock 132>, <&clock 133>;
+>> +		clock-names = "sclk_cam0", "sclk_cam1";
+> 
+> The documentation mentions that clock-names must contain "sclk_cam0", 
+> "sclk_cam1", "pxl_async0", "pxl_async1". Are the last two optional ? If so I 
+> think you should clarify the description of the clock-names property. This can 
+> be done in a separate patch.
+
+"pxl_async0", "pxl_async1" are mandatory, I'll add them also into
+this example dts.
+
+>> +		#clock-cells = <1>;
+>> +		clock-output-names = "cam_mclk_a", "cam_mclk_b";
+>>  		pinctrl-names = "default";
+>>  		pinctrl-0 = <&cam_port_a_clk_active>;
+>> +		status = "okay";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>>
+>>  		/* parallel camera ports */
+>>  		parallel-ports {
+
+--
+Regards,
+Sylwester
