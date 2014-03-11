@@ -1,51 +1,68 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/5] ARM: dts: exynos4x12: Add GPS_ALIVE power domain
-Date: Tue, 11 Mar 2014 16:54:52 +0900
-Message-ID: <1394524494-30641-4-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 1/5] ARM: dts: exynos4x12: Add ADC's dt data to read raw data
+Date: Tue, 11 Mar 2014 16:54:50 +0900
+Message-ID: <1394524494-30641-2-git-send-email-cw00.choi@samsung.com>
 References: <1394524494-30641-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1394524494-30641-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1394524494-30641-1-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene.kim@samsung.com, t.figa@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add GPS_ALIVE power domain for Exynos4x12 SoC. GPS_ALIVE power domain
-include GPS_BLK for GPS IP. Exynos SoC used generic power-domain driver to
-control power domain. After completed kernel booting, Exynos power-domain driver
-disable un-used power domain to reduce power-consumption/leak.
+This patch add ADC(Analog to Digital Converter)'s dt data to get raw data
+with IIO subsystem. Usually, ADC is used to check temperature, jack type, and
+so on.
 
-If GPS_ALIVE power domain isn't registered to Exynos power-domain driver,
-happen power-leakage because GPS_ALIVE_CONFIGURATION is default power on state.
+Register map
+- <0x126C0000 0x100> : ADC register's base address
+- <0x10020718 0x4> : ADC_PHY_CONTROL, TS-ADC control register address
 
-- 0x10023D00 : GPS_ALIVE_CONFIGURATION register address
+Clock
+- <&clock 326> : ADC clock (clock name :'tsadc')
 
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Interrupt
+- INTG10[3] : ADC for General ADC
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos4x12.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 1ec77f6..066eb35 100644
+index 5c412aa..5a3e551 100644
 --- a/arch/arm/boot/dts/exynos4x12.dtsi
 +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -41,6 +41,11 @@
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023CA0 0x20>;
+@@ -80,6 +80,18 @@
+ 		};
  	};
-+	
-+	pd_gps_alive: gps-alive-power-domain@10023D00 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023D00 0x20>;
-+	};
  
- 	clock: clock-controller@10030000 {
- 		compatible = "samsung,exynos4412-clock";
++	adc: adc@126C0000 {
++		compatible = "samsung,exynos-adc-v1";
++		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
++		interrupt-parent = <&combiner>;
++		interrupts = <10 3>;
++		clocks = <&clock 326>;
++		clock-names = "adc";
++		#io-channel-cells = <1>;
++		io-channel-ranges;
++		status = "disabled";
++	};
++
+ 	pinctrl_2: pinctrl@03860000 {
+ 		compatible = "samsung,exynos4x12-pinctrl";
+ 		reg = <0x03860000 0x1000>;
 -- 
 1.8.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
