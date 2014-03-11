@@ -1,45 +1,60 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 3/3] Documentation: DT: add new entry for Samsung GH7 SoC and SSDK board
-Date: Tue, 11 Mar 2014 07:51:19 +0900
-Message-ID: <1394491879-5320-4-git-send-email-kgene.kim@samsung.com>
-References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 5/6] Samsung PM updates for v3.15
+Date: Tue, 11 Mar 2014 10:50:03 +0900
+Message-ID: <01d001cf3ccc$39f339b0$add9ad10$@samsung.com>
+References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
+ <20140309183523.GD22881@quad.lixom.net> <531CFA28.9020600@gmail.com>
+ <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:51550 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752439AbaCJWwA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:20829 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753562AbaCKBuJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Mar 2014 18:52:00 -0400
-Received: by mail-pb0-f44.google.com with SMTP id rp16so7897732pbb.17
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Mar 2014 15:52:00 -0700 (PDT)
-In-Reply-To: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
+	Mon, 10 Mar 2014 21:50:09 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N290040W13IRN00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Mar 2014 10:50:06 +0900 (KST)
+In-reply-to: <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Ilho Lee <ilho215.lee@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Olof Johansson' <olof@lixom.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Mike Turquette' <mturquette@linaro.org>, arm@kernel.org, arnd@arndb.de, khilman@linaro.org, linux-arm-kernel@lists.infradead.org
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
----
- Documentation/devicetree/bindings/arm/samsung-boards.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Olof Johansson wrote:
+> 
+> >> Hi,
+> >>
+> >> I don't see a single cc or acked-by line from Mike Turquette here. I'll
+> >> hold
+> >> off until he's had a chance to take a look at these ones; I suspect
+> >> they'll be
+> >> fine since it's mostly code refactoring though.
+> >
+> >
+> > I guess I should have ACKed them too, but it felt kind of strange to ACK
+> my
+> > own patches. ;)
+> >
+> > Anyway, for all samsung-clk patches:
+> >
+> > Acked-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> Yeah, self-acking doesn't make much sense. :)
+> 
+> I'm mostly worried about patches touching other subsystems without the
+> other maintainer being aware of it or having reviewed them. As I said,
+> these mostly look like refactorings but it's still good habit.
+> 
+OK, agreed, I think Mike knew about that though. Let's wait for Mike's
+response.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-index 2168ed3..d6b5493 100644
---- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-@@ -16,3 +16,12 @@ Optional:
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0203F000 0x1000>;
- 	};
-+
-+* Samsung's GH7 based SSDK-GH7 evaluation board
-+
-+SSDK-GH7 evaluation board is based on Samsung's GH7 SoC which has ARMv8 cores.
-+
-+Required root node properties:
-+    - compatible = should be one or more of the following.
-+        (a) "samsung,ssdk-gh7" - for Samsung's SSDK-GH7 eval board.
-+        (b) "samsung,gh7"  - for boards based on GH7 SoC.
--- 
-1.8.2.1.339.g52a3e01
+BTW, should I sort out the branch again if Mike gives ack on that?
+
+- Kukjin
