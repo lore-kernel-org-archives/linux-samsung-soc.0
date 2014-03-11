@@ -1,123 +1,140 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 4/5] ARM: dts: exynos: Move common dt data for interrupt
- combiner controller
-Date: Tue, 11 Mar 2014 13:33:52 +0100
-Message-ID: <531F02B0.6060302@samsung.com>
-References: <1394524494-30641-1-git-send-email-cw00.choi@samsung.com>
- <1394524494-30641-5-git-send-email-cw00.choi@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH] [media] s5p-mfc: Don't try to resubmit VP8 bitstream
+ buffer for decode.
+Date: Tue, 11 Mar 2014 18:07:29 +0530
+Message-ID: <CALt3h7-d1Q8uBANcjp7Ar+3_5tJS4UodEfAiRGGwaCdX8wBdLg@mail.gmail.com>
+References: <1394180752-16348-1-git-send-email-arun.kk@samsung.com>
+	<1d2001cf3d1d$25bd90c0$7138b240$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22385 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752853AbaCKMeJ (ORCPT
+Received: from mail-ve0-f182.google.com ([209.85.128.182]:33374 "EHLO
+	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755126AbaCKMhb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Mar 2014 08:34:09 -0400
-In-reply-to: <1394524494-30641-5-git-send-email-cw00.choi@samsung.com>
+	Tue, 11 Mar 2014 08:37:31 -0400
+In-Reply-To: <1d2001cf3d1d$25bd90c0$7138b240$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk
+To: Kamil Debski <k.debski@samsung.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@chromium.org>
 
-Hi Chanwoo,
+Hi Kamil,
 
-On 11.03.2014 08:54, Chanwoo Choi wrote:
-> This patch move common dt data of interrupt combiner controller to
-> exynos4x12.dtsi. Each Exynos4x12 SoC has different number of interrput combiner
-> as following:
-> - Exynos4212 : interrput combiner 18(0 ~ 17)
-> - Exynos4412 : interrput combiner 20(0 ~ 19)
+On Tue, Mar 11, 2014 at 4:59 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi Arun,
 >
-> The exynos combiner driver initialize interrupt according to specific number
-> of interrput combiner.
-> - samsung,combiner-nr : The number of interrput combiners supported.
+>> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+>> Kumar K
+>> Sent: Friday, March 07, 2014 9:26 AM
+>>
+>> From: Pawel Osciak <posciak@chromium.org>
+>>
+>> Currently, for formats that are not H264, MFC driver will check the
+>> consumed stream size returned by the firmware and, based on that, will
+>> try to decide whether the bitstream buffer contained more than one
+>> frame. If the size of the buffer is larger than the consumed stream, it
+>> assumes that there are more frames in the buffer and that the buffer
+>> should be resubmitted for decode. This rarely works though and actually
+>> introduces problems, because:
+>>
+>> - v7 firmware will always return consumed stream size equal to whatever
+>> the driver passed to it when running decode (which is the size of the
+>> whole buffer), which means we will never try to resubmit, because the
+>> firmware will always tell us that it consumed all the data we passed to
+>> it;
 >
-> Also,
-> This patch arrange again the dt data according to register address
-> in exynos4212/exynos4412.dtsi.
+> This does sound like a hardware bug/feature. So in v7 the buffer is never
+> resubmitted, yes? And this patch makes no difference for v7?
 >
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos4212.dtsi | 13 ++++---------
->   arch/arm/boot/dts/exynos4412.dtsi | 14 ++++----------
->   arch/arm/boot/dts/exynos4x12.dtsi |  8 ++++++++
->   3 files changed, 16 insertions(+), 19 deletions(-)
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+To give some background to this - I have added this patch [1] so that
+multi-frame input buffer is supported by the driver.
+[1] https://patchwork.linuxtv.org/patch/15448/
 
-Best regards,
-Tomasz
+This patch was added to address one test case in VP8 decoding where
+2 frames used to come in a single buffer. Without this patch, it used to
+skip decoding of the 2nd frame even though firmware returned
+consumed bytes as only 1 frame size.
 
-> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-> index 94a43f9..ceefc71 100644
-> --- a/arch/arm/boot/dts/exynos4212.dtsi
-> +++ b/arch/arm/boot/dts/exynos4212.dtsi
-> @@ -22,16 +22,11 @@
->   / {
->   	compatible = "samsung,exynos4212";
+Now this concept gave issues when we tried to decode the VP8 stream
+encoded using v7 firmware. In that case, an arbitrary amount of padding
+bytes were added by the firmware after every frame which is allowed as
+per VP8 standard. While decoding this using v6, firmware returns less
+consumed bytes than the input buffer, but the remaining bytes are just
+padding. So firmware used to throw error if we re-submit this stuffing bytes
+as a new frame. In v7 firmware, this problem doesnt exist as it consumes
+(atleast indicates that it consumed) all the input buffer.
+
+So we came to the conclusion that the testcase of giving multiple frames
+in one input buffer itself was wrong and hence it was removed.
+Now this concept is needed only for MPEG4 packed PB case which this
+code for resubmitting input buffer was meant for (before my patch made
+it generic).
+
+>>
+>> - v6 firmware will return the number of consumed bytes, but will not
+>> include the padding ("stuffing") bytes that are allowed after the frame
+>> in VP8. Since there is no way of figuring out how many of those bytes
+>> follow the frame without getting the frame size from IVF headers (or
+>> somewhere else, but not from the stream itself), the driver tries to
+>> guess that padding size is not larger than 4 bytes, which is not always
+>> true;
 >
-> -	gic: interrupt-controller@10490000 {
-> -		cpu-offset = <0x8000>;
-> +	combiner: interrupt-controller@10440000 {
-> +		samsung,combiner-nr = <18>;
->   	};
+> How about v5 of MFC? I need to do some additional testing, as I don't want
+> to introduce any regressions. I remember that this check was a result of a
+> fair amount of work and testing with v5.
 >
-> -	interrupt-controller@10440000 {
-> -		samsung,combiner-nr = <18>;
-> -		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> -			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-> -			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> -			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-> -			     <0 107 0>, <0 108 0>;
-> +	gic: interrupt-controller@10490000 {
-> +		cpu-offset = <0x8000>;
->   	};
->   };
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index 87b339c..a40b6e2 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -22,17 +22,11 @@
->   / {
->   	compatible = "samsung,exynos4412";
+
+I hope it wont give any issues in v5 also as it was never meant to handle
+multiple frames in one input buffer.
+
+
+>> The only way to make it work is to queue only one frame per buffer from
+>> userspace and the check in the kernel is useless and wrong for VP8.
+>> MPEG4 still seems to require it, so keep it only for that format.
 >
-> -	gic: interrupt-controller@10490000 {
-> -		cpu-offset = <0x4000>;
-> -	};
-> -
-> -	interrupt-controller@10440000 {
-> +	combiner: interrupt-controller@10440000 {
->   		samsung,combiner-nr = <20>;
-> -		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> -			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-> -			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> -			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-> -			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
->   	};
+> Is your goal to give more than one frame in a single buffer and have the
+> buffer resubmitted? Or the opposite - you are getting the frame resubmitted
+> without the need? By the contents of this patch I guess the latter, on the
+> other hand I do remember that at some point the idea was to be able to queue
+> more than one frame per buffer. I don't remember exactly who was opting for
+> the ability to queue more frames in a single buffer...
 >
-> +	gic: interrupt-controller@10490000 {
-> +		cpu-offset = <0x4000>;
-> +	};
->   };
-> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-> index 066eb35..6e17034 100644
-> --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> @@ -73,6 +73,14 @@
->   		};
->   	};
+
+I hope now it is clear. We want to disallow multiple frames in one buffer as the
+behavior is not consistent in v6 and its not allowed anyway from v7 onwards.
+
+Regards
+Arun
+
+> Best wishes,
+> --
+> Kamil Debski
+> Samsung R&D Institute Poland
 >
-> +	combiner: interrupt-controller@10440000 {
-> +		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> +			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-> +			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> +			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-> +			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
-> +	};
-> +
->   	pinctrl_0: pinctrl@11400000 {
->   		compatible = "samsung,exynos4x12-pinctrl";
->   		reg = <0x11400000 0x1000>;
+>>
+>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>  drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> index e2aac59..66c1775 100644
+>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> @@ -360,7 +360,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx
+>> *ctx,
+>>                                                               list);
+>>               ctx->consumed_stream += s5p_mfc_hw_call(dev->mfc_ops,
+>>                                               get_consumed_stream, dev);
+>> -             if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
+>> +             if (ctx->codec_mode == S5P_MFC_CODEC_MPEG4_DEC &&
+>>                       ctx->consumed_stream + STUFF_BYTE <
+>>                       src_buf->b->v4l2_planes[0].bytesused) {
+>>                       /* Run MFC again on the same buffer */
+>> --
+>> 1.7.9.5
 >
