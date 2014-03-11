@@ -1,68 +1,107 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/5] ARM: dts: exynos4x12: Add ADC's dt data to read raw data
-Date: Tue, 11 Mar 2014 16:54:50 +0900
-Message-ID: <1394524494-30641-2-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 4/5] ARM: dts: exynos: Move common dt data for interrupt
+ combiner controller
+Date: Tue, 11 Mar 2014 16:54:53 +0900
+Message-ID: <1394524494-30641-5-git-send-email-cw00.choi@samsung.com>
 References: <1394524494-30641-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1394524494-30641-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene.kim@samsung.com, t.figa@samsung.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add ADC(Analog to Digital Converter)'s dt data to get raw data
-with IIO subsystem. Usually, ADC is used to check temperature, jack type, and
-so on.
+This patch move common dt data of interrupt combiner controller to
+exynos4x12.dtsi. Each Exynos4x12 SoC has different number of interrput combiner
+as following:
+- Exynos4212 : interrput combiner 18(0 ~ 17)
+- Exynos4412 : interrput combiner 20(0 ~ 19)
 
-Register map
-- <0x126C0000 0x100> : ADC register's base address
-- <0x10020718 0x4> : ADC_PHY_CONTROL, TS-ADC control register address
+The exynos combiner driver initialize interrupt according to specific number
+of interrput combiner.
+- samsung,combiner-nr : The number of interrput combiners supported.
 
-Clock
-- <&clock 326> : ADC clock (clock name :'tsadc')
-
-Interrupt
-- INTG10[3] : ADC for General ADC
+Also,
+This patch arrange again the dt data according to register address
+in exynos4212/exynos4412.dtsi.
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4x12.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/exynos4212.dtsi | 13 ++++---------
+ arch/arm/boot/dts/exynos4412.dtsi | 14 ++++----------
+ arch/arm/boot/dts/exynos4x12.dtsi |  8 ++++++++
+ 3 files changed, 16 insertions(+), 19 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index 94a43f9..ceefc71 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -22,16 +22,11 @@
+ / {
+ 	compatible = "samsung,exynos4212";
+ 
+-	gic: interrupt-controller@10490000 {
+-		cpu-offset = <0x8000>;
++	combiner: interrupt-controller@10440000 {
++		samsung,combiner-nr = <18>;
+ 	};
+ 
+-	interrupt-controller@10440000 {
+-		samsung,combiner-nr = <18>;
+-		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+-			     <0 107 0>, <0 108 0>;
++	gic: interrupt-controller@10490000 {
++		cpu-offset = <0x8000>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 87b339c..a40b6e2 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -22,17 +22,11 @@
+ / {
+ 	compatible = "samsung,exynos4412";
+ 
+-	gic: interrupt-controller@10490000 {
+-		cpu-offset = <0x4000>;
+-	};
+-
+-	interrupt-controller@10440000 {
++	combiner: interrupt-controller@10440000 {
+ 		samsung,combiner-nr = <20>;
+-		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+-			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+ 	};
+ 
++	gic: interrupt-controller@10490000 {
++		cpu-offset = <0x4000>;
++	};
+ };
 diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 5c412aa..5a3e551 100644
+index 066eb35..6e17034 100644
 --- a/arch/arm/boot/dts/exynos4x12.dtsi
 +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -80,6 +80,18 @@
+@@ -73,6 +73,14 @@
  		};
  	};
  
-+	adc: adc@126C0000 {
-+		compatible = "samsung,exynos-adc-v1";
-+		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <10 3>;
-+		clocks = <&clock 326>;
-+		clock-names = "adc";
-+		#io-channel-cells = <1>;
-+		io-channel-ranges;
-+		status = "disabled";
++	combiner: interrupt-controller@10440000 {
++		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
++			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
++			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
++			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
++			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
 +	};
 +
- 	pinctrl_2: pinctrl@03860000 {
+ 	pinctrl_0: pinctrl@11400000 {
  		compatible = "samsung,exynos4x12-pinctrl";
- 		reg = <0x03860000 0x1000>;
+ 		reg = <0x11400000 0x1000>;
 -- 
 1.8.0
