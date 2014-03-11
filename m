@@ -1,203 +1,78 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
- and SSDK-GH7 board
-Date: Tue, 11 Mar 2014 18:29:23 +0000
-Message-ID: <20140311182922.GD3263@e106331-lin.cambridge.arm.com>
-References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
- <1394491879-5320-2-git-send-email-kgene.kim@samsung.com>
+From: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+Subject: Re: [PATCH 1/2] of/irq: Fix irq-mapping in of_irq_parse_raw()
+Date: Tue, 11 Mar 2014 14:15:33 -0600
+Message-ID: <20140311201533.GF31835@obsidianresearch.com>
+References: <1393944864-28113-1-git-send-email-tharvey@gateworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:47016 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754351AbaCKS3y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Mar 2014 14:29:54 -0400
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1394491879-5320-2-git-send-email-kgene.kim@samsung.com>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1393944864-28113-1-git-send-email-tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Ilho Lee <ilho215.lee@samsung.com>
 
-On Mon, Mar 10, 2014 at 10:51:17PM +0000, Kukjin Kim wrote:
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> ---
->  arch/arm64/boot/dts/samsung-gh7.dtsi     | 106 +++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/samsung-ssdk-gh7.dts |  26 ++++++++
->  2 files changed, 132 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/samsung-gh7.dtsi
->  create mode 100644 arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> 
-> diff --git a/arch/arm64/boot/dts/samsung-gh7.dtsi b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> new file mode 100644
-> index 0000000..b5e8488
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> @@ -0,0 +1,106 @@
-> +/*
-> + * SAMSUNG GH7 SoC device tree source
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/memreserve/ 0x80000000 0x0C400000;
+On Tue, Mar 04, 2014 at 06:54:24AM -0800, Tim Harvey wrote:
+> When an interrupt-map contains multiple entries an imap pointer arithmetic
+> bug can cause only the first entry to be properly evaluated and causes
+> the out_irq parameters to be incorrect depending on the #interrupt-cells
+> and #address-cells of the parent interrupt controller.
 
-Please have a comment as to what this memreserve is intended to protect.
-This is very large, and we don't want pointless memreserves.
+Tim,
 
-What address does the kernel end up getting loaded at on this board?
+I took a bit closer look at this for you, and I suspect the root fix
+is this:
 
-> +
-> +/ {
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	aliases {
-> +		serial0 = "/amba/uart@12c00000";
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +
-> +		cpu@000 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
+--- a/Documentation/devicetree/bindings/arm/gic.txt
++++ b/Documentation/devicetree/bindings/arm/gic.txt
+@@ -55,7 +55,6 @@ Example:
+        intc: interrupt-controller@fff11000 {
+                compatible = "arm,cortex-a9-gic";
+                #interrupt-cells = <3>;
+-               #address-cells = <1>;
+                interrupt-controller;
+                reg = <0xfff11000 0x1000>,
+                      <0xfff10100 0x100>;
+(plus the corresponding purge from the .dt files)
 
-The "arm,armv8" should be a fallback rather than the only entry. The
-precise core should be first (see arch/arm64/boot/dts/apm-storm.dtsi for
-an example).
+It looks like the implementation does follow the OF specification:
 
-> +			reg = <0x0 0x000>;
+ Each mapping entry consists of a 3-tuple of (child-interrupt,
+ interrupt-parent, parent-interrupt). The number of cells for the
+ child-interrupt specifier is determined by the "#address-cells" and
+ "#interrupt-cells"property of this node. The number of cells for the
+ parent-interrupt value is determined by the "#address-cells"and
+ "#interrupt-cells"property values of this node's
+ interrupt-parent.
 
-Any reason for padding these to three hexadecimal digits (in both the
-reg and unit-address)?
+So by specifying interrupt-cells = 3, address-cells = 1, the GIC is
+requiring 4 DWs for its interrupt specifier.
 
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@001 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x001>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@002 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x002>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@003 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x003>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +	};
-> +
-> +	gic: interrupt-controller@1C000000 {
-> +		compatible = "arm,cortex-a15-gic";
+I see no reason why it doesn't have an address-cells = 0 like other
+interrupt controllers..
 
-We should have a more specific compatible string early in the list here
-too.
+Setting #address-cells to 0 in the GIC node should be functionally
+equivalent to your patch below, since newaddrsize will == 0.
 
-> +		#interrupt-cells = <3>;
-> +		interrupt-controller;
-> +		reg = <0x0 0x1C001000 0 0x1000>,	/* GIC Dist */
-> +		      <0x0 0x1C002000 0 0x1000>,	/* GIC CPU */
-> +		      <0x0 0x1C004000 0 0x2000>,	/* GIC VCPU Control */
-> +		      <0x0 0x1C006000 0 0x2000>;	/* GIC VCPU */
-> +		interrupts = <1 9 0xf04>;	/* GIC Maintenence IRQ */
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <1 13 0xff01>,	/* Secure Phys IRQ */
-> +			     <1 14 0xff01>,	/* Non-secure Phys IRQ */
-> +			     <1 11 0xff01>,	/* Virt IRQ */
-> +			     <1 10 0xff01>;	/* Hyp IRQ */
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,armv8-pmuv3";
+Regards,
+Jason
 
-This is missing a specific compatible string.
-
-> +		interrupts = <0 294 0>,
-> +			     <0 295 0>,
-> +			     <0 296 0>,
-> +			     <0 297 0>,
-> +			     <0 298 0>,
-> +			     <0 299 0>,
-> +			     <0 300 0>,
-> +			     <0 301 0>;
-> +	};
-
-There are four CPUs described, yet eight interrupts here. There should
-be one per CPU.
-
-> +
-> +	amba {
-> +		compatible = "arm,amba-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		serial@12c00000 {
-> +			compatible = "arm,pl011", "arm,primecell";
-> +			reg = <0 0x12c00000 0 0x10000>;
-> +			interrupts = <0 418 0>;
-> +		};
-> +
-> +		serial@12c20000 {
-> +			compatible = "arm,pl011", "arm,primecell";
-> +			reg = <0 0x12c20000 0 0x10000>;
-> +			interrupts = <0 420 0>;
-> +		};
-
-These are both missing required clocks.
-
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/samsung-ssdk-gh7.dts b/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> new file mode 100644
-> index 0000000..47afbc4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> @@ -0,0 +1,26 @@
-> +/*
-> + * SAMSUNG SSDK-GH7 board device tree source
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +#include "samsung-gh7.dtsi"
-> +
-> +/ {
-> +	model = "SAMSUNG SSDK-GH7 board based on GH7 SoC";
-
-Is the "based on GH7 SoC" part necessary? Does the "SSDK-GH7" not give
-that away?
-
-Thanks,
-Mark.
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index 9bcf2cf..8829197 100644
+> +++ b/drivers/of/irq.c
+> @@ -237,11 +237,11 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+>  			/* Check for malformed properties */
+>  			if (WARN_ON(newaddrsize + newintsize > MAX_PHANDLE_ARGS))
+>  				goto fail;
+> -			if (imaplen < (newaddrsize + newintsize))
+> +			if (imaplen < newintsize)
+>  				goto fail;
+>  
+> -			imap += newaddrsize + newintsize;
+> -			imaplen -= newaddrsize + newintsize;
+> +			imap += newintsize;
+> +			imaplen -= newintsize;
+>  
+>  			pr_debug(" -> imaplen=%d\n", imaplen);
+>  		}
