@@ -1,43 +1,28 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH V2 7/7] MAINTAINERS: add maintainer for Samsung sxgbe driver
-Date: Wed, 12 Mar 2014 22:28:11 +0900
-Message-ID: <005701cf3df6$ea5a4f70$bf0eee50$%an@samsung.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH V2 0/7] add new Samsung sxgbe driver
+Date: Wed, 12 Mar 2014 07:09:17 -0700
+Message-ID: <1394633357.28839.52.camel@joe-AO722>
+References: <005001cf3df6$e2678d00$a736a700$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <netdev-owner@vger.kernel.org>
-Content-language: ko
+In-Reply-To: <005001cf3df6$e2678d00$a736a700$%an@samsung.com>
 Sender: netdev-owner@vger.kernel.org
-To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davem@davemloft.net, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com
+To: Byungho An <bh74.an@samsung.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Byungho An <bh74.an@samsung.com>
+On Wed, 2014-03-12 at 22:27 +0900, Byungho An wrote:
+> Hi all,
+[]
+>  drivers/net/ethernet/samsung/sxgbe_main.c          | 2447
+> ++++++++++++++++++++
 
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- MAINTAINERS |    9 +++++++++
- 1 file changed, 9 insertions(+)
+The patch set is word wrapped and can not be applied.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b2cf5cf..d4ce0a5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7497,6 +7497,15 @@ S:	Supported
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- F:	drivers/clk/samsung/
- 
-+SAMSUNG SXGBE DRIVERS
-+M:	Byungho An <bh74.an@samsung.com>
-+M:	Girish K S <ks.giri@samsung.com>
-+M:	Siva Reddy Kallam <siva.kallam@samsung.com>
-+M:	Vipul Pandya <vipul.pandya@samsung.com>
-+S:	Supported
-+L:	netdev@vger.kernel.org
-+F:	drivers/net/ethernet/samsung/
-+
- SERIAL DRIVERS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- L:	linux-serial@vger.kernel.org
--- 
-1.7.10.4
+Please resend without the word wrapping.
+
+Using Outlook can make this difficult.
+
+If possible, use git send-email.
