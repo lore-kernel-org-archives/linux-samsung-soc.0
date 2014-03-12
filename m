@@ -1,62 +1,196 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCHv2 0/5] ARM: dts: exynos: Add missing dt data to bring
- kernel of Exynos4x12
-Date: Wed, 12 Mar 2014 12:21:12 +0100
-Message-ID: <53204328.7070607@samsung.com>
-References: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH 1/3] clk: s2mps11: Add support for S2MPS14 clocks
+Date: Wed, 12 Mar 2014 17:00:48 +0530
+Message-ID: <CAKew6eVEAmxg+fMeeduOwZvxjDdv3Zbu8cNCq7krk5mEq4BKmw@mail.gmail.com>
+References: <1394454858-3139-1-git-send-email-k.kozlowski@samsung.com>
+	<1394454858-3139-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54279 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753655AbaCLLV3 (ORCPT
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:63639 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754180AbaCLLat (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Mar 2014 07:21:29 -0400
-In-reply-to: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
+	Wed, 12 Mar 2014 07:30:49 -0400
+In-Reply-To: <1394454858-3139-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Hi Chanwoo,
+On Mon, Mar 10, 2014 at 6:04 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> This patch adds support for S2MPS14 PMIC clocks (BT and AP) to the
+> s2mps11 clock driver.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
 
-On 12.03.2014 07:19, Chanwoo Choi wrote:
-> This patch add missing dt data of Exynos4x12 to bring up kernel feature and
-> code clean. This patchset is based on 'v3.15-next/dt-clk-exynos' branch.
-> - git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->
-> exynos4x12/exynos4412/exynos4212.dtsi
-> - Add ADC (Analog and Digital Converter) to get raw data
-> - Add PMU (Performance Monitoring Unit) for perf event
-> - Add gps_alive power domain to remove power leakage when gps-alive isn't used
-> - Remove duplicate dt data of interrput combiner controller
->
-> exynos4412-trats.dts
-> - Add ADC dt data with ntc thermistor child to read temperature
->
-> Changes from v1:
-> - Use clock macro name for Exynos4 instead of constant for ADC
-> - Remove unnecessary description about patch content
-> - Move gps-alive power domain's dt data from exynos4x12.dts to exynos4.dts
-> - Move thermistor dt node outside of ADC dt node and modify node name of thermistor
->
-> Chanwoo Choi (5):
->    ARM: dts: exynos4x12: Add ADC's dt data to read raw data
->    ARM: dts: exynos4x12: Add PMU dt data to support PMU(Perforamnce Monitoring Unit)
->    ARM: dts: exynos4x12: Add GPS_ALIVE power domain
->    ARM: dts: exynos: Move common dt data for interrupt combiner controller
->    ARM: dts: exynos4412-trats2: Add ADC/themistor dt data to get temperature of SoC/battery
->
->   arch/arm/boot/dts/exynos4.dtsi          |  5 +++++
->   arch/arm/boot/dts/exynos4212.dtsi       | 13 ++++---------
->   arch/arm/boot/dts/exynos4412-trats2.dts | 21 +++++++++++++++++++++
->   arch/arm/boot/dts/exynos4412.dtsi       | 14 ++++----------
->   arch/arm/boot/dts/exynos4x12.dtsi       | 26 ++++++++++++++++++++++++++
->   5 files changed, 60 insertions(+), 19 deletions(-)
->
+Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Just a trivial thing, Kconfig description can also be updated.
 
-Best regards,
-Tomasz
+Regards,
+Yadwinder
+
+>  drivers/clk/clk-s2mps11.c |   61 ++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 46 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index 508875535e1e..8dafb552274f 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -1,7 +1,7 @@
+>  /*
+>   * clk-s2mps11.c - Clock driver for S2MPS11.
+>   *
+> - * Copyright (C) 2013 Samsung Electornics
+> + * Copyright (C) 2013,2014 Samsung Electornics
+>   *
+>   * This program is free software; you can redistribute  it and/or modify it
+>   * under  the terms of  the GNU General  Public License as published by the
+> @@ -13,10 +13,6 @@
+>   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   * GNU General Public License for more details.
+>   *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+> - *
+>   */
+>
+>  #include <linux/module.h>
+> @@ -27,6 +23,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mfd/samsung/s2mps11.h>
+> +#include <linux/mfd/samsung/s2mps14.h>
+>  #include <linux/mfd/samsung/s5m8767.h>
+>  #include <linux/mfd/samsung/core.h>
+>
+> @@ -125,7 +122,21 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>         },
+>  };
+>
+> -static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
+> +static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+> +       [S2MPS11_CLK_AP] = {
+> +               .name = "s2mps14_ap",
+> +               .ops = &s2mps11_clk_ops,
+> +               .flags = CLK_IS_ROOT,
+> +       },
+> +       [S2MPS11_CLK_BT] = {
+> +               .name = "s2mps14_bt",
+> +               .ops = &s2mps11_clk_ops,
+> +               .flags = CLK_IS_ROOT,
+> +       },
+> +};
+> +
+> +static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+> +               struct clk_init_data *clks_init)
+>  {
+>         struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>         struct device_node *clk_np;
+> @@ -145,9 +156,12 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
+>         if (!clk_table)
+>                 return ERR_PTR(-ENOMEM);
+>
+> -       for (i = 0; i < S2MPS11_CLKS_NUM; i++)
+> +       for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+> +               if (!clks_init[i].name)
+> +                       continue; /* Skip clocks not present in some devices */
+>                 of_property_read_string_index(clk_np, "clock-output-names", i,
+> -                               &s2mps11_clks_init[i].name);
+> +                               &clks_init[i].name);
+> +       }
+>
+>         return clk_np;
+>  }
+> @@ -158,6 +172,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>         struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
+>         struct device_node *clk_np = NULL;
+>         unsigned int s2mps11_reg;
+> +       struct clk_init_data *clks_init;
+>         int i, ret = 0;
+>         u32 val;
+>
+> @@ -168,25 +183,33 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>
+>         s2mps11_clk = s2mps11_clks;
+>
+> -       clk_np = s2mps11_clk_parse_dt(pdev);
+> -       if (IS_ERR(clk_np))
+> -               return PTR_ERR(clk_np);
+> -
+>         switch (platform_get_device_id(pdev)->driver_data) {
+>         case S2MPS11X:
+>                 s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+> +               clks_init = s2mps11_clks_init;
+> +               break;
+> +       case S2MPS14X:
+> +               s2mps11_reg = S2MPS14_REG_RTCCTRL;
+> +               clks_init = s2mps14_clks_init;
+>                 break;
+>         case S5M8767X:
+>                 s2mps11_reg = S5M8767_REG_CTRL1;
+> +               clks_init = s2mps11_clks_init;
+>                 break;
+>         default:
+>                 dev_err(&pdev->dev, "Invalid device type\n");
+>                 return -EINVAL;
+>         };
+>
+> +       clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
+> +       if (IS_ERR(clk_np))
+> +               return PTR_ERR(clk_np);
+> +
+>         for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
+> +               if (!clks_init[i].name)
+> +                       continue; /* Skip clocks not present in some devices */
+>                 s2mps11_clk->iodev = iodev;
+> -               s2mps11_clk->hw.init = &s2mps11_clks_init[i];
+> +               s2mps11_clk->hw.init = &clks_init[i];
+>                 s2mps11_clk->mask = 1 << i;
+>                 s2mps11_clk->reg = s2mps11_reg;
+>
+> @@ -220,8 +243,12 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>         }
+>
+>         if (clk_table) {
+> -               for (i = 0; i < S2MPS11_CLKS_NUM; i++)
+> +               for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+> +                       /* Skip clocks not present on S2MPS14 */
+> +                       if (!clks_init[i].name)
+> +                               continue;
+>                         clk_table[i] = s2mps11_clks[i].clk;
+> +               }
+>
+>                 clk_data.clks = clk_table;
+>                 clk_data.clk_num = S2MPS11_CLKS_NUM;
+> @@ -250,14 +277,18 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
+>         struct s2mps11_clk *s2mps11_clks = platform_get_drvdata(pdev);
+>         int i;
+>
+> -       for (i = 0; i < S2MPS11_CLKS_NUM; i++)
+> +       for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+> +               if (!s2mps11_clks[i].lookup)
+> +                       continue; /* Skip clocks not present in some devices */
+>                 clkdev_drop(s2mps11_clks[i].lookup);
+> +       }
+>
+>         return 0;
+>  }
+>
+>  static const struct platform_device_id s2mps11_clk_id[] = {
+>         { "s2mps11-clk", S2MPS11X},
+> +       { "s2mps14-clk", S2MPS14X},
+>         { "s5m8767-clk", S5M8767X},
+>         { },
+>  };
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
