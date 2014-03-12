@@ -1,71 +1,87 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH] i2c: s3c2410: do not put a default class for the adapter
-Date: Wed, 12 Mar 2014 20:23:04 +0100
-Message-ID: <20140312192304.GD28891@katana>
-References: <1391761795-28384-1-git-send-email-ch.naveen@samsung.com>
- <20140215151039.GE2579@katana>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c-s3c2410: Leave the bus disabled unless it is in use
+Date: Wed, 12 Mar 2014 20:27:14 +0100
+Message-ID: <20140312192714.GE28891@katana>
+References: <1354165536-18529-2-git-send-email-ch.naveen@samsung.com>
+ <1391763249-28964-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6WlEvdN9Dv0WHSBl"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="phCU5ROyZO6kBE05"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:57203 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750736AbaCLT1R (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Mar 2014 15:27:17 -0400
 Content-Disposition: inline
-In-Reply-To: <20140215151039.GE2579@katana>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1391763249-28964-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, ben-linux@fluff.org, cpgs@samsung.com, sjg@chromium.org, grundler@chromium.org
 
 
---6WlEvdN9Dv0WHSBl
+--phCU5ROyZO6kBE05
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 15, 2014 at 04:10:39PM +0100, Wolfram Sang wrote:
-> On Fri, Feb 07, 2014 at 01:59:55PM +0530, Naveen Krishna Chatradhi wrote:
-> > From: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> >=20
-> > Avoid adding I2C_CLASS_HWMON and I2C_CLASS_SPD class flags to all
-> > Samsung I2C adapters when the I2C mappings are defined in a device tree.
-> > So the drivers doing an auto-detection by probing busses won't mess-up
-> > sensitive I2C devices or trigger long timeouts on non-functional busses.
-> >=20
-> > Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > Reviewed-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > Tested-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-
-Your Signed-off was missing BTW.
-
+On Fri, Feb 07, 2014 at 02:24:09PM +0530, Naveen Krishna Chatradhi wrote:
+> From: Simon Glass <sjg@chromium.org>
 >=20
-> I'd prefer to drop it in favour of this series:
+> There is a rather odd feature of the exynos i2c controller that if it
+> is left enabled, it can lock itself up with the clk line held low.
+> This makes the bus unusable.
 >=20
-> http://lkml.org/lkml/2014/2/10/836
+> Unfortunately, the s3c24xx_i2c_set_master() function does not notice
+> this, and reports a timeout. From then on the bus cannot be used until
+> the AP is rebooted.
 >=20
+> The problem happens when any sort of interrupt occurs (e.g. due to a
+> bus transition) when we are not in the middle of a transaction. We
+> have seen many instances of this when U-Boot leaves the bus apparently
+> happy, but Linux cannot access it.
+>=20
+> The current code is therefore pretty fragile.
+>=20
+> This fixes things by leaving the bus disabled unless we are actually
+> in a transaction. We enable the bus at the start of the transaction and
+> disable it at the end. That way we won't get interrupts and will not
+> lock up the bus.
+>=20
+> It might be possible to clear pending interrupts on start-up, but this
+> seems to be a more robust solution. We can't service interrupts when
+> we are not in a transaction, and anyway would rather not lock up the
+> bus while we try.
+>=20
+> Signed-off-by: Simon Glass <sjg@chromium.org>
+> Cc: Grant Grundler <grundler@chromium.org>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-I'll go ahead and apply my patch.
+Applied to for-next, thanks!
 
 
---6WlEvdN9Dv0WHSBl
+--phCU5ROyZO6kBE05
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.15 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTILQXAAoJEBQN5MwUoCm2GuIQALXx6XypBve6h1SUM8QhgZHc
-RoJ91edCUF2fC4KNfesKL8tvT/9NA2VYgMFwPBrfl7sl1RA4nmHwgDdhAz9dnTKH
-SJmezMPJxznH8mlTR48gSYl1HsvyBPH0D4o/lNAnfSySOuiqpwRxqsHwfpYkwmSe
-0xQntw0y3iHGH/TOtA6I7OkFW/006SjE9j6+1Ykxq0AJA8QdTt12Fg6Okj2Jn0fR
-gZSYL4/KXEkWfQ4MMVVeE+JhqIEShpoNtcBGTL4Fyydiw2Oh+ce23IqCCYM6XXNf
-XyYGHshYRR9GaU8+I+RVQfh8eeN5wFOW8IplJkWJPnwmJHT52Ntn9wZW5hGFll/h
-kxyLQvf1RQDYJfpnb7fJ9gyo8FCCpwHvVzSClY/i9Xu9vhJy5MUYB+j3QYOM6ffm
-w2wIuQ9pIzt/beA+EUUbD8GuYqXsWtkx5zOfGBa/q5TbMRszYpjw2bTyf/fskRUF
-Y3Kslt1O1ukDGQztILSXSqpNXRE59ikOJoXRkdn1Quu5IgkXzTChKwVGVPR4cdYG
-jsnKKNJKL8cL8oorKVSHwakw/UtPwzHXQaNVcTICwtgfydJOU5chTlwIaBUfEEhZ
-jA9IrAyPHWGVZcfG3ToJfbF5CaZIQbOaKScbswy0SNWnFuOz8GXoTa/OsFfTSA3S
-HBWkQ8RCX23vnB3Kqm5d
-=e6rm
+iQIcBAEBAgAGBQJTILUSAAoJEBQN5MwUoCm2NL8P/0Zn0P3ySKQ5L3nMyguCDbx6
+HEAx5VsO4GdEHs03f8LzdoEK05QJ8vquaArx39mmPKcKH49GOgk/X9gk2FWLgdpu
+3wW3MaMYZEce2Odt2DYF5gnCQdu9v7O/VwXl8UHCxMkD444Rg5M3M2F1Hpbjr/s3
+Ubi/9kSTkUixLLPULeMByIgXVEk8KjJ6LQY8M2KutIGERN0/ENq4LmTqnUwuUDm4
+DNElK+wFnz2yREsWGngxYsX50mg3cSGCDeeQ3GBEY0tmLwO2SLNkMKmbFWgknTMs
+6MKKCIjJT1oJOK+OYCFbVA+wXg0O0Z/ZrmP6D52Q0ep7el3UsY/cR+tki+Lxf7fm
+xHcqkzXOa0c73QC8ubCQyJ1sTHN/YrjN0uRkMQCIlnPWZCL/FAoekefrcrQYpl0z
+AhTJ+d14irhLHCavGVRxelCGjr38ktFd5OV6g0BpXoozgAslOFrpWKNgzL81FRgG
+lvMzh8MPIrs9q+HNbhg8h12At7ceCAkv5f14GjgsWrVQJHqPQz1T8UZzrUcKJCyT
+ISy+cpi0Epi8ub20zOXyPu0PQS1//elIVTPzHsCITRIeFuSs6Y0JHIkjR5/r4ylP
+Sp5Kja1g6LGzhQmACQyl0KVgTCd2J5+rpGyLrl6zUZ0BrSIthhqriCr4c2ZthxMj
+wXAt5afQ9KsjjtWf8oR7
+=k9Ph
 -----END PGP SIGNATURE-----
 
---6WlEvdN9Dv0WHSBl--
+--phCU5ROyZO6kBE05--
