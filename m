@@ -1,54 +1,42 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 2/4] drivers: clk: use CONFIG_COMMON_CLK_SAMSUNG for Samsung
- clock support
-Date: Wed, 12 Mar 2014 13:32:59 +0900
-Message-ID: <1394598781-3848-3-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v2 1/4] clk: samsung: add new Kconfig for Samsung common clock
+ options
+Date: Wed, 12 Mar 2014 13:32:58 +0900
+Message-ID: <1394598781-3848-2-git-send-email-pankaj.dubey@samsung.com>
 References: <1394598781-3848-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29800 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750718AbaCLEQv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Mar 2014 00:16:51 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1394598781-3848-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch includes Samsung clock Kconfig file, and replaces PLAT_SAMSUNG
-with COMMON_CLK_SAMSUNG for Samsung common clock support.
-Any Samsung SoC want to use Samsung common clock infrastructure can simply
-select COMMON_CLK_SAMSUNG.
+This patch adds new Kconfig file for adding new config option
+as COMMON_CLK_SAMSUNG for Samsung common clock. This patch also
+moves S3C24XX specific clock options here in this file.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- drivers/clk/Kconfig  |    2 ++
- drivers/clk/Makefile |    2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/Kconfig |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 drivers/clk/samsung/Kconfig
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 7641965..f2b6179 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -112,3 +112,5 @@ source "drivers/clk/qcom/Kconfig"
- endmenu
- 
- source "drivers/clk/mvebu/Kconfig"
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+new file mode 100644
+index 0000000..26eb446
+--- /dev/null
++++ b/drivers/clk/samsung/Kconfig
+@@ -0,0 +1,11 @@
++config COMMON_CLK_SAMSUNG
++	bool
++	select COMMON_CLK
 +
-+source "drivers/clk/samsung/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a367a98..f1da6ee 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -38,7 +38,7 @@ obj-$(CONFIG_PLAT_ORION)		+= mvebu/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
- obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
--obj-$(CONFIG_PLAT_SAMSUNG)		+= samsung/
-+obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
++config S3C2412_COMMON_CLK
++	bool
++	select COMMON_CLK_SAMSUNG
++
++config S3C2443_COMMON_CLK
++	bool
++	select COMMON_CLK_SAMSUNG
 -- 
 1.7.9.5
