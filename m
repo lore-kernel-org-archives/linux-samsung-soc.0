@@ -1,51 +1,52 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCHv2 0/5] ARM: dts: exynos: Add missing dt data to bring kernel of
- Exynos4x12
-Date: Wed, 12 Mar 2014 15:19:11 +0900
-Message-ID: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 2/5] ARM: dts: exynos4x12: Add PMU dt data to support
+ PMU(Perforamnce Monitoring Unit)
+Date: Wed, 12 Mar 2014 15:19:13 +0900
+Message-ID: <1394605156-7768-3-git-send-email-cw00.choi@samsung.com>
+References: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene.kim@samsung.com, t.figa@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add missing dt data of Exynos4x12 to bring up kernel feature and
-code clean. This patchset is based on 'v3.15-next/dt-clk-exynos' branch.
-- git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+ARM CPU has its own performance profiling unit(PMU, Perforamnce Monitoring Unit).
+This patch add PMU dt data to support PMU which count cache hit and miss events.
 
-exynos4x12/exynos4412/exynos4212.dtsi
-- Add ADC (Analog and Digital Converter) to get raw data
-- Add PMU (Performance Monitoring Unit) for perf event
-- Add gps_alive power domain to remove power leakage when gps-alive isn't used
-- Remove duplicate dt data of interrput combiner controller
+PMU interrput list of Exynos4212
+- <2 2> : INTG2[2] - PMUIRQ[0] for CPU0
+- <3 2> : INTG3[2] - PMUIRQ[1] for CPU1
 
-exynos4412-trats.dts
-- Add ADC dt data with ntc thermistor child to read temperature
+PMU interrput list of Exynos4412
+- <2 2> : INTG2[2], PMUIRQ[0] for CPU0
+- <3 2> : INTG3[2], PMUIRQ[1] for CPU1
+- <18 2> : INTG18[2], PMUIRQ[2] : CPU2
+- <19 2> : INTG19[2], PMUIRQ[3] : CPU3
 
-Changes from v1:
-- Use clock macro name for Exynos4 instead of constant for ADC
-- Remove unnecessary description about patch content
-- Move gps-alive power domain's dt data from exynos4x12.dts to exynos4.dts
-- Move thermistor dt node outside of ADC dt node and modify node name of thermistor
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/boot/dts/exynos4x12.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Chanwoo Choi (5):
-  ARM: dts: exynos4x12: Add ADC's dt data to read raw data
-  ARM: dts: exynos4x12: Add PMU dt data to support PMU(Perforamnce Monitoring Unit)
-  ARM: dts: exynos4x12: Add GPS_ALIVE power domain
-  ARM: dts: exynos: Move common dt data for interrupt combiner controller
-  ARM: dts: exynos4412-trats2: Add ADC/themistor dt data to get temperature of SoC/battery
-
- arch/arm/boot/dts/exynos4.dtsi          |  5 +++++
- arch/arm/boot/dts/exynos4212.dtsi       | 13 ++++---------
- arch/arm/boot/dts/exynos4412-trats2.dts | 21 +++++++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi       | 14 ++++----------
- arch/arm/boot/dts/exynos4x12.dtsi       | 26 ++++++++++++++++++++++++++
- 5 files changed, 60 insertions(+), 19 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index eec1e30..a1e76ec 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -31,6 +31,12 @@
+ 		mshc0 = &mshc_0;
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
++	};
++
+ 	pd_isp: isp-power-domain@10023CA0 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10023CA0 0x20>;
 -- 
 1.8.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
