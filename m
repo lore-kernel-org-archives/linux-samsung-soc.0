@@ -1,8 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 2/5] ARM: dts: exynos4x12: Add PMU dt data to support
- PMU(Perforamnce Monitoring Unit)
-Date: Wed, 12 Mar 2014 15:19:13 +0900
-Message-ID: <1394605156-7768-3-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCHv2 1/5] ARM: dts: exynos4x12: Add ADC's dt data to read raw data
+Date: Wed, 12 Mar 2014 15:19:12 +0900
+Message-ID: <1394605156-7768-2-git-send-email-cw00.choi@samsung.com>
 References: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
@@ -11,42 +10,38 @@ To: kgene.kim@samsung.com, t.figa@samsung.com
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-ARM CPU has its own performance profiling unit(PMU, Perforamnce Monitoring Unit).
-This patch add PMU dt data to support PMU which count cache hit and miss events.
-
-PMU interrput list of Exynos4212
-- <2 2> : INTG2[2] - PMUIRQ[0] for CPU0
-- <3 2> : INTG3[2] - PMUIRQ[1] for CPU1
-
-PMU interrput list of Exynos4412
-- <2 2> : INTG2[2], PMUIRQ[0] for CPU0
-- <3 2> : INTG3[2], PMUIRQ[1] for CPU1
-- <18 2> : INTG18[2], PMUIRQ[2] : CPU2
-- <19 2> : INTG19[2], PMUIRQ[3] : CPU3
+This patch add ADC(Analog to Digital Converter)'s dt data to get raw data
+with IIO subsystem. Usually, ADC is used to check temperature, jack type
+and so on.
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos4x12.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/exynos4x12.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index eec1e30..a1e76ec 100644
+index e0eb6bb..eec1e30 100644
 --- a/arch/arm/boot/dts/exynos4x12.dtsi
 +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -31,6 +31,12 @@
- 		mshc0 = &mshc_0;
+@@ -80,6 +80,18 @@
+ 		};
  	};
  
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
++	adc: adc@126C0000 {
++		compatible = "samsung,exynos-adc-v1";
++		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
 +		interrupt-parent = <&combiner>;
-+		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
++		interrupts = <10 3>;
++		clocks = <&clock CLK_TSADC>;
++		clock-names = "adc";
++		#io-channel-cells = <1>;
++		io-channel-ranges;
++		status = "disabled";
 +	};
 +
- 	pd_isp: isp-power-domain@10023CA0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023CA0 0x20>;
+ 	pinctrl_2: pinctrl@03860000 {
+ 		compatible = "samsung,exynos4x12-pinctrl";
+ 		reg = <0x03860000 0x1000>;
 -- 
 1.8.0
