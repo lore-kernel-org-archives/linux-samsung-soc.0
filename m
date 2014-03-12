@@ -1,8 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 4/5] ARM: dts: exynos: Move common dt data for interrupt
- combiner controller
-Date: Wed, 12 Mar 2014 15:19:15 +0900
-Message-ID: <1394605156-7768-5-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCHv2 3/5] ARM: dts: exynos4x12: Add GPS_ALIVE power domain
+Date: Wed, 12 Mar 2014 15:19:14 +0900
+Message-ID: <1394605156-7768-4-git-send-email-cw00.choi@samsung.com>
 References: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1394605156-7768-1-git-send-email-cw00.choi@samsung.com>
@@ -11,98 +10,37 @@ To: kgene.kim@samsung.com, t.figa@samsung.com
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch move common dt data of interrupt combiner controller to
-exynos4x12.dtsi. Each Exynos4x12 SoC has different number of interrput combiner
-as following:
-- Exynos4212 : interrput combiner 18(0 ~ 17)
-- Exynos4412 : interrput combiner 20(0 ~ 19)
+This patch add GPS_ALIVE power domain for Exynos4x12 SoC. GPS_ALIVE power domain
+include GPS_BLK for GPS IP. Exynos SoC used generic power-domain driver to
+control power domain. After completed kernel booting, Exynos power-domain driver
+disable un-used power domain to reduce power-consumption/leak.
 
-The exynos combiner driver initialize interrupt according to specific number
-of interrput combiner.
-- samsung,combiner-nr : The number of interrput combiners supported.
+If GPS_ALIVE power domain isn't registered to Exynos power-domain driver,
+happen power-leakage because GPS_ALIVE_CONFIGURATION is default power on state.
 
-Also,
-This patch arrange again the dt data according to register address
-in exynos4212/exynos4412.dtsi.
+- 0x10023D00 : GPS_ALIVE_CONFIGURATION register address
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos4212.dtsi | 13 ++++---------
- arch/arm/boot/dts/exynos4412.dtsi | 14 ++++----------
- arch/arm/boot/dts/exynos4x12.dtsi |  8 ++++++++
- 3 files changed, 16 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/exynos4.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 94a43f9..ceefc71 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -22,16 +22,11 @@
- / {
- 	compatible = "samsung,exynos4212";
- 
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x8000>;
-+	combiner: interrupt-controller@10440000 {
-+		samsung,combiner-nr = <18>;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 28b5ec7..0401f4d 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -86,6 +86,11 @@
+ 		reg = <0x10023CE0 0x20>;
  	};
  
--	interrupt-controller@10440000 {
--		samsung,combiner-nr = <18>;
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--			     <0 107 0>, <0 108 0>;
-+	gic: interrupt-controller@10490000 {
-+		cpu-offset = <0x8000>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 87b339c..a40b6e2 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -22,17 +22,11 @@
- / {
- 	compatible = "samsung,exynos4412";
- 
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x4000>;
--	};
--
--	interrupt-controller@10440000 {
-+	combiner: interrupt-controller@10440000 {
- 		samsung,combiner-nr = <20>;
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
- 	};
- 
-+	gic: interrupt-controller@10490000 {
-+		cpu-offset = <0x4000>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index a1e76ec..c4a9306 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -68,6 +68,14 @@
- 		};
- 	};
- 
-+	combiner: interrupt-controller@10440000 {
-+		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-+			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
++	pd_gps_alive: gps-alive-power-domain@10023D00 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x10023D00 0x20>;
 +	};
 +
- 	pinctrl_0: pinctrl@11400000 {
- 		compatible = "samsung,exynos4x12-pinctrl";
- 		reg = <0x11400000 0x1000>;
+ 	gic: interrupt-controller@10490000 {
+ 		compatible = "arm,cortex-a9-gic";
+ 		#interrupt-cells = <3>;
 -- 
 1.8.0
