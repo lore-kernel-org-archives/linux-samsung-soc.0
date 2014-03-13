@@ -1,39 +1,42 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] clk: exynos-5420: Fix VPLL lock offset
-Date: Thu, 13 Mar 2014 08:57:02 +0530
-Message-ID: <1394681222-27882-1-git-send-email-sachin.kamat@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: How to get the complete reference manual for a samsung exynos5 Soc
+Date: Thu, 13 Mar 2014 09:30:45 +0530
+Message-ID: <CAHbNUh3p9RD449WHyFo9-Km6MBBAdxwqP8ERE+fTU-cWVRBFFw@mail.gmail.com>
+References: <86368E72-16D9-448E-9C3B-5FF88A5ED9AF@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:37574 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752966AbaCMDdN (ORCPT
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:35715 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716AbaCMEAp convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Mar 2014 23:33:13 -0400
-Received: by mail-pd0-f170.google.com with SMTP id v10so458684pde.29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Mar 2014 20:33:12 -0700 (PDT)
+	Thu, 13 Mar 2014 00:00:45 -0400
+Received: by mail-oa0-f46.google.com with SMTP id i7so487209oag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Mar 2014 21:00:45 -0700 (PDT)
+In-Reply-To: <86368E72-16D9-448E-9C3B-5FF88A5ED9AF@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, mturquette@linaro.org, sachin.kamat@linaro.org
+To: armdev <armdev.ftm@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Set it as per the user manual.
+On 12 March 2014 22:07, armdev <armdev.ftm@gmail.com> wrote:
+> Hi,
+>
+> Our team is working on 3 samsung exynos boards (5250/5410/5420), But we were not able to find a reference manual that describes the hardware in detail. As this is the samsung soc mailing list, kindly advice us the means by which we can get a copy of the manual.
+>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/clk/samsung/clk-exynos5420.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You can find the user manual for Exynos5250 here[1].
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 60b26819bed5..7fd6bea467fd 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -33,7 +33,7 @@
- #define RPLL_LOCK		0x10050
- #define IPLL_LOCK		0x10060
- #define SPLL_LOCK		0x10070
--#define VPLL_LOCK		0x10070
-+#define VPLL_LOCK		0x10080
- #define MPLL_LOCK		0x10090
- #define CPLL_CON0		0x10120
- #define DPLL_CON0		0x10128
+[1] http://www.samsung.com/global/business/semiconductor/file/product/Exynos_5_Dual_User_Manaul_Public_REV100-0.pdf
+
+> Regards
+> armdev team--
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-1.7.9.5
+Tushar Behera
