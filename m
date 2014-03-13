@@ -1,42 +1,49 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] clk: exynos-5420: Fix VPLL lock offset
-Date: Thu, 13 Mar 2014 20:27:04 +0530
-Message-ID: <CAK9yfHyVVjfip2p6gDM8ghJ301NH9kTtVK1La53WPFfxxLD9nQ@mail.gmail.com>
-References: <1394681222-27882-1-git-send-email-sachin.kamat@linaro.org>
-	<53219C1C.1030501@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v5 2/3] ARM: dts: add dts files for exynos5260 SoC
+Date: Thu, 13 Mar 2014 16:33:57 +0100
+Message-ID: <5321CFE5.2000907@samsung.com>
+References: <1394637394-3960-1-git-send-email-rahul.sharma@samsung.com>
+ <1394637394-3960-3-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:33667 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751335AbaCMO5F (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:64762 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753180AbaCMPeB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 10:57:05 -0400
-Received: by mail-oa0-f45.google.com with SMTP id o6so1164187oag.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Mar 2014 07:57:04 -0700 (PDT)
-In-Reply-To: <53219C1C.1030501@samsung.com>
+	Thu, 13 Mar 2014 11:34:01 -0400
+In-reply-to: <1394637394-3960-3-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, pankaj.dubey@samsung.com, Arun Kumar K <arun.kk@samsung.com>
 
-On 13 March 2014 17:23, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Sachin,
+Hi,
+
+On 12.03.2014 16:16, Rahul Sharma wrote:
+> The patch adds the dts files for exynos5260.
 >
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos5260-pinctrl.dtsi |  574 +++++++++++++++++++++++++++++
+>   arch/arm/boot/dts/exynos5260.dtsi         |  400 ++++++++++++++++++++
+>   2 files changed, 974 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+>   create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
 >
-> On 13.03.2014 04:27, Sachin Kamat wrote:
->>
->> Set it as per the user manual.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> ---
 
->
-> Looks fine. Will queue for 3.15, since ATM there is no support for PLL rate
-> setting on Exynos 5420 (no rate tables registered).
+[snip]
 
-Yes, that is correct. Thanks Tomasz.
 
--- 
-With warm regards,
-Sachin
+> +		mmc_0: mmc0@12140000 {
+
+Node names should specify type of the device, so unit-specific IDs 
+should be avoided. Please simply use mmc@12140000. The same comment for 
+remaining MMC nodes below.
+
+Best regards,
+Tomasz
