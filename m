@@ -1,149 +1,185 @@
-From: armdev <armdev.ftm@gmail.com>
-Subject: Re: ref: virt-v7.c switching to non_secure mode
-Date: Thu, 13 Mar 2014 12:27:45 +0530
-Message-ID: <42C5F6B1-3090-422D-A494-9B6F3769DE0A@gmail.com>
-References: <99DDD4A2-0B44-4C6D-A0B5-4A18CC9EF21F@gmail.com> <1A481609-5D5F-4E89-92D1-2C698128FA84@gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:49640 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751205AbaCMG5z convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 02:57:55 -0400
-Received: by mail-pa0-f42.google.com with SMTP id fb1so687009pad.29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Mar 2014 23:57:52 -0700 (PDT)
-In-Reply-To: <1A481609-5D5F-4E89-92D1-2C698128FA84@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC PATCH v2 00/21] Add DSI display support for Exynos based
+	boards
+Date: Thu, 13 Mar 2014 16:08:20 +0900
+Message-ID: <CAAQKjZP5we8vdpNaDE87fVQjqxcxT5RF3My-2fJ5wtobC4uvgA@mail.gmail.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+	<CAAQKjZOEAWG3jwTPOP7aBnpjyg8qLfq-Fcv_Mec2+fgmOULqEg@mail.gmail.com>
+	<531998B5.7040002@samsung.com>
+	<CAAQKjZN3PoXoEFRXzHA+vrMCLfTRYJ9g3rFjzodNRNh62hPuDw@mail.gmail.com>
+	<532041FA.7070300@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <532041FA.7070300@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: andre.przywara@linaro.org, christoffer.dall@linaro.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: u-boot@lists.denx.de
 
-Hi Christoffer / uboot,
+2014-03-12 20:16 GMT+09:00 Tomasz Figa <t.figa@samsung.com>:
+> On 12.03.2014 11:08, Inki Dae wrote:
+>>
+>> 2014-03-07 19:00 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+>>>
+>>> On 03/05/2014 03:56 AM, Inki Dae wrote:
+>>>>
+>>>> Hi Andrzej,
+>>>>
+>>>> Thanks for your contributions.
+>>>>
+>>>> 2014-02-12 20:31 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> This patchset adds drivers and bindings to the following devices:
+>>>>> - Exynos DSI master,
+>>>>> - S6E8AA0 DSI panel,
+>>>>> - TC358764 DSI/LVDS bridge,
+>>>>> - HV070WSA-100 LVDS panel.
+>>>>>
+>>>>> It adds also display support in DTS files for the following boards:
+>>>>> - Exynos4210/Trats,
+>>>>> - Exynos4412/Trats2,
+>>>>> - Exynos5250/Arndale.
+>>>>>
+>>>>> Things worth mentioning:
+>>>>>
+>>>>> 1. I have implemented DSI/LVDS bridge using drm_panel framework, ie.
+>>>>> the driver exposes drm_panel interface on DSI side, and interact with
+>>>>> panels on LVDS side using drm_panel framework. This approach seems to
+>>>>> me simpler and more natural than using drm_bridge.
+>>>>
+>>>> Can you give me more details about why you think better to use panel
+>>>> framework than using drm_bridge?  "Simpler" and "more natural" are
+>>>> ambiguous to me.
+>>>
+>>> In this particular case DSI master expects on the other end
+>>> any device having DSI slave interface, it could be panel or bridge.
+>>> So it seems natural that both types of slave devices should expose
+>>> the same interface also  on programming level.
+>>> Another problem with drm_bridge is that it is not scalable -
+>>> if some manufacturer will decide to add another block between the bridge
+>>> and the panel there is no drm component which can be used for it.
+>>> Using drm_panel the way I have used in toshiba bridge makes scalability
+>>> possible,
+>>> it will be only a matter of adding a driver for new block and making
+>>> proper links in device tree, I see no easy way of doing it with
+>>> drm_bridge approach.
+>>
+>>
+>> Now drm_bridge may not cover all hardware. However drm_bridge has
+>> already been merged to mainline so I think we need to use drm_bridge
+>> somehow instead of using other one, and also we could extend
+>> drm_bridge if needed. It would be definitely impossible for a new
+>> framework to cover all hardware because there may be other hardware
+>> not appeared yet. That is what we are doing for mainline until now.
+>>
+>
+> Well, maybe drm_bridge has been merged, but so has been drm_panel. Moreover,
+> merged code is not carved in stone, if there is a better option that could
+> replace it, users of it can be converted to the new approach and the old one
+> can be removed.
+>
+> As I believe Andrzej has demonstrated, drm_panel framework is clearly
+> superior over drm_bridge and I can't think of any good reason why it
+> couldn't become more generic and replace drm_bridge. Of course it can be
+> renamed then to something more generic appropriately.
+>
+>
+>>>
+>>>
+>>>>
+>>>> Using same drm_panel framework for LDVS bridge and real panel drivers
+>>>> isn't reasonable to me as now because drm_panel framework would be for
+>>>> real panel device even if the use of drm_panel framework looks like
+>>>> suitable to LVDS bridge driver. I thought Sean's way, ptn3460 driver
+>>>> using drm_bride stuff, is good enough, and that would be why
+>>>> drm_bridge exists and why drm_encoder has drm_bridge.
+>>>>
+>>>> And I'm finding more generic way, how to handle LVDS bridge using
+>>>> super node so that  LVDS bridge driver isn't embedded to connector
+>>>> drivers such as eDP and MIPI-DSI, and dt binding of LVDS bridge can be
+>>>> done at top level of Exynos drm. Once the binding is done, encoder of
+>>>> display bus driver will have drm_bridge object of LVDS bridge driver
+>>>> so that display bus driver can handle LVDS bridge driver.
+>>>
+>>> Could you explain what you mean by "dt binding of LVDS bridge can be
+>>> done at top level of Exynos drm" ? How it will look like if there
+>>> will be more bridges, one for DSI, one for HDMI, etc... What if there
+>>> will be two
+>>> bridges in one chain. How it will cope with video pipeline bindings?
+>>
+>>
+>> it was just my idea so I have no implementation about it yet.
+>>
+>> My idea is that crtc and encoder are binded at top level of Exynos drm
+>> as is. And for bridge support, the only difference is, in case that
+>> encoder driver has bridge, the dt binding of the encoder driver is
+>> done once last one between encoder and bridge driver is binded. It
+>> would mean that bridge driver can use driver model and it doesn't need
+>> to concern about probe order issue.
+>>
+>> For this, encoder driver with bridge, MIPI-DSI or eDP, would need to
+>> use component interfaces specific to Exynos drm. As a result, once the
+>> dt bindings of crtc and encoder are completed at top level, encoder
+>> driver has its own drm_bridge for bridge, and dt binding you proposed
+>> could be used without any change, and drm_panel could also be used
+>> only for real lcd panel driver.
+>>
+>> And below is a block diagram I think,
+>>
+>>                                    DRM KMS
+>>                     /                      |                 \
+>>                /                           |                      \
+>>           crtc                      encoder              connector
+>>             |                           /     \                          |
+>>             |                       /             \                      |
+>>             |                      |           drm_bridge   drm_panel
+>>             |                      |                   |                 |
+>>             |                      |                   |                 |
+>>          FIMD         MIPI-DSI    LVDS bridge    Panel
+>>
+>
+> Hmm, this doesn't seem to be complete. Several bridges can be chained
+> together. Also I believe "Panel" and "drm_panel" on your diagram should be
+> basically the same. This leads to obvious conclusion that drm_bridge and
+> drm_panel should be merged and Andrzej has shown an example (and IMHO good)
+> way to do it, as drm_panel already provides a significant amount of existing
+> infrastructure.
+>
 
-We are able to figure out the issue. PERIPHBASE returned on ARNDALE board was 0x10500000 and adding GIC offset was creating an incorrect address. 
+Not opposite to using drm_panel framework. What I disagree is to
+implement encoder/connector to crtc driver, and to use drm_panel
+framework for bridge device.
+I tend to believe that obvious fact is that crtc driver, fimd, is not
+proper place that encoder and connector should be implemented. Is
+there other SoC using such way? I think other SoC guys had ever
+agonized about same issue.
 
-Setting CONFIG_ARM_GIC_BASE_ADDRESS as 0x10480000 in arndale.h solves the issue.
+And I'm not sure that how several bridges can be chained together so
+can you show me the real case, real hardware? If there is my missing
+something and we cannot really cover such hardware support with
+drm_bridge framework, I think we could consider to use drm_panel
+framework instead of drm_bridge. And maybe, we may need opinions from
+other maintainers.
 
-The u-boot code needs to be fixed for arndale right ? Please confirm
+Thanks,
+Inki Dae
 
-Regards
-Manish
-armdev Team @FTM
-
-On 13-Mar-2014, at 11:20 am, armdev <armdev.ftm@gmail.com> wrote:
-
-> Got a mail that Andre is not with linaro, Adding Christoffer Dall 
-> 
-> On 13-Mar-2014, at 11:17 am, armdev <armdev.ftm@gmail.com> wrote:
-> 
->> Hi Andrey ,
->> 
->> This is wrt your patch set which enabled the switch to non-sec and hip mode in armv7.
->> We have a small piece of code which we run in hypmode using the bootm command on arndale board
->> 
->> While this code was trying to access the GICD_ISENABLR0 (0x10481100), read was always returning 0, while as per the reset value it should be 0x0000ffff. Debugged more in u-boot and added prints.
->> 
->> This is the log, our observation is that in _nonsec_init() there is something that is causing the issue. Now It can be an issue or a gap in our understanding. Ideally we should be able to read the GICD_ISENABLR value as 0xffff.
->> Can you please help us in find out how to read GIC values properly in hyp mode.
->> 
->> armv7_switch_nonsec 
->> cpsr =600001d3
->> REGS ffff 
->> Before write to group regs 
->> cpsr =600001d3
->> REGS ffff 
->> Before _nonsec_init() 
->> cpsr =600001d3
->> REGS ffff 
->> After _nonsec_init() 
->> cpsr =600001d3
->> REGS 0 
->> 
->> HYP mode: successful.
->> armv7_switch_hyp 
->> cpsr =600001da
->> REGS 0 
->> 
->> Here is the diff of our modifications. (just added prints)
->> diff --git a/arch/arm/cpu/armv7/virt-v7.c b/arch/arm/cpu/armv7/virt-v7.c
->> index 2cd604f..f38f125 100644
->> --- a/arch/arm/cpu/armv7/virt-v7.c
->> +++ b/arch/arm/cpu/armv7/virt-v7.c
->> @@ -107,6 +107,10 @@ int armv7_switch_hyp(void)
->> 		printf("HYP mode: switch not successful.\n");
->> 		return -1;
->> 	}
->> +	printf("HYP mode: successful.\n");
->> +	printf("%s \r\n",__FUNCTION__);
->> +	printf("cpsr =%x\n", read_cpsr());
->> +	printf("REGS %x \n", *(uint32_t*)0x10481100);
->> 
->> 	return 0;
->> }
->> @@ -116,6 +120,10 @@ int armv7_switch_nonsec(void)
->> 	unsigned int reg;
->> 	unsigned itlinesnr, i;
->> 
->> +	printf("%s \r\n",__FUNCTION__);
->> +	printf("cpsr =%x\n", read_cpsr());
->> +	printf("REGS %x \n", *(uint32_t*)0x10481100);
->> +	
->> 	/* check whether the CPU supports the security extensions */
->> 	reg = read_id_pfr1();
->> 	if ((reg & 0xF0) == 0) {
->> @@ -140,6 +148,9 @@ int armv7_switch_nonsec(void)
->> 	/* TYPER[4:0] contains an encoded number of available interrupts */
->> 	itlinesnr = readl(gic_dist_addr + GICD_TYPER) & 0x1f;
->> 
->> +	printf("Before write to group regs \r\n");
->> +	printf("cpsr =%x\n", read_cpsr());
->> +	printf("REGS %x \n", *(uint32_t*)0x10481100);
->> 	/* set all bits in the GIC group registers to one to allow access
->> 	 * from non-secure state. The first 32 interrupts are private per
->> 	 * CPU and will be set later when enabling the GIC for each core
->> @@ -147,11 +158,19 @@ int armv7_switch_nonsec(void)
->> 	for (i = 1; i <= itlinesnr; i++)
->> 		writel((unsigned)-1, gic_dist_addr + GICD_IGROUPRn + 4 * i);
->> 
->> -	smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
->> -	smp_kick_all_cpus();
->> +	//smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
->> +	//smp_kick_all_cpus();
->> 
->> +	printf("Before _nonsec_init() \r\n");
->> +	printf("cpsr =%x\n", read_cpsr());
->> +	printf("REGS %x \n", *(uint32_t*)0x10481100);
->> 	/* call the non-sec switching code on this CPU also */
->> 	_nonsec_init();
->> 
->> +	printf("After _nonsec_init() \r\n");
->> +	printf("cpsr =%x\n", read_cpsr());
->> +	printf("REGS %x \n", *(uint32_t*)0x10481100);
->> +
->> +
->> 	return 0;
->> }
->> diff --git a/include/configs/arndale.h b/include/configs/arndale.h
->> index 515facf..53a1212 100644
->> --- a/include/configs/arndale.h
->> +++ b/include/configs/arndale.h
->> @@ -62,7 +62,6 @@
->> /* select serial console configuration */
->> #define CONFIG_BAUDRATE			115200
->> #define EXYNOS5_DEFAULT_UART_OFFSET	0x010000
->> -#define CONFIG_SILENT_CONSOLE
->> 
->> /* Console configuration */
->> #define CONFIG_CONSOLE_MUX
->> @@ -249,4 +248,7 @@
->> /* Enable Time Command */
->> #define CONFIG_CMD_TIME
->> 
->> +/* Enable jump to hypervisor */
->> +#define CONFIG_ARMV7_VIRT
->> +#define CONFIG_SMP_PEN_ADDR 0x0
->> #endif	/* __CONFIG_H */
->> 
-> 
+> Best regards,
+> Tomasz
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
