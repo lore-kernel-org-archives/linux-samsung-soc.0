@@ -1,91 +1,176 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c-s3c2410: Leave the bus disabled unless it is in use
-Date: Wed, 12 Mar 2014 20:29:32 +0100
-Message-ID: <20140312192932.GF28891@katana>
-References: <1354165536-18529-2-git-send-email-ch.naveen@samsung.com>
- <1391763249-28964-1-git-send-email-ch.naveen@samsung.com>
- <20140312192714.GE28891@katana>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v5 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Thu, 13 Mar 2014 09:49:16 +0900
+Message-ID: <5321008C.3090203@samsung.com>
+References: <1394637394-3960-1-git-send-email-rahul.sharma@samsung.com>
+ <1394637394-3960-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s5/bjXLgkIwAv6Hi"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57485 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752619AbaCLT3e (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:12920 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951AbaCMAco (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Mar 2014 15:29:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20140312192714.GE28891@katana>
+	Wed, 12 Mar 2014 20:32:44 -0400
+In-reply-to: <1394637394-3960-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, ben-linux@fluff.org, cpgs@samsung.com, sjg@chromium.org, grundler@chromium.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
+
+Hi Rahul,
+
+On 03/13/2014 12:16 AM, Rahul Sharma wrote:
+> The patch adds the dts files for xyref5260 board which
+> is based on Exynos5260 Evt0 sample.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>   arch/arm/boot/dts/Makefile                      |    1 +
+>   arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  110 +++++++++++++++++++++++
+>   2 files changed, 111 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index b9d6a8b..5a391bf 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>   	exynos5250-arndale.dtb \
+>   	exynos5250-smdk5250.dtb \
+>   	exynos5250-snow.dtb \
+> +	exynos5260-xyref5260-evt0.dtb \
+>   	exynos5420-arndale-octa.dtb \
+>   	exynos5420-smdk5420.dtb \
+>   	exynos5440-sd5v1.dtb \
+> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+> new file mode 100644
+> index 0000000..d7d0aeb
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+> @@ -0,0 +1,110 @@
+> +/*
+> + * SAMSUNG XYREF5260 EVT0 board device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +#include "exynos5260.dtsi"
+> +
+> +/ {
+> +	model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
+> +	compatible = "samsung,xyref5260", "samsung,exynos5260";
+> +
+> +	memory {
+> +		reg = <0x20000000 0x80000000>;
+> +	};
+> +
+> +	chosen {
+> +		bootargs = "console=ttySAC2,115200";
+> +	};
+> +
+> +	clocks {
+> +		fin_pll: xxti {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <24000000>;
+> +			clock-output-names = "fin_pll";
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		xrtcxti: xrtcxti {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32768>;
+> +			clock-output-names = "xrtcxti";
+> +		};
+
+clock-cells property is missing here.
+
+> +
+> +		spdif_extclk: ioclk_spdif_extclk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <49152000>;
+> +			clock-output-names = "ioclk_spdif_extclk";
+> +		};
+
+ditto.
+
+> +	};
+> +};
+
+May I know why other phyclocks and ioclks have not been added?
+
+> +
+> +&pinctrl_0 {
+> +	hdmi_hpd_irq: hdmi-hpd-irq {
+> +		samsung,pins = "gpx3-7";
+> +		samsung,pin-function = <0>;
+> +		samsung,pin-pud = <1>;
+> +		samsung,pin-drv = <0>;
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> +
+> +&uart3 {
+> +	status = "okay";
+> +};
+> +
+> +&mmc_0 {
+> +	status = "okay";
+> +	num-slots = <1>;
+> +	broken-cd;
+> +	bypass-smu;
+> +	supports-highspeed;
+> +	supports-hs200-mode; /* 200 Mhz */
+> +	card-detect-delay = <200>;
+> +	samsung,dw-mshc-ciu-div = <3>;
+> +	samsung,dw-mshc-sdr-timing = <0 4>;
+> +	samsung,dw-mshc-ddr-timing = <0 2>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+> +
+> +	slot@0 {
+> +		reg = <0>;
+> +		bus-width = <8>;
+> +	};
+> +};
+> +
+> +&mmc_2 {
+> +	status = "okay";
+> +	num-slots = <1>;
+> +	supports-highspeed;
+> +	card-detect-delay = <200>;
+> +	samsung,dw-mshc-ciu-div = <3>;
+> +	samsung,dw-mshc-sdr-timing = <2 3>;
+> +	samsung,dw-mshc-ddr-timing = <1 2>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+> +
+> +	slot@0 {
+> +		reg = <0>;
+> +		bus-width = <4>;
+> +		disable-wp;
+> +	};
+> +};
 
 
---s5/bjXLgkIwAv6Hi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 12, 2014 at 08:27:14PM +0100, Wolfram Sang wrote:
-> On Fri, Feb 07, 2014 at 02:24:09PM +0530, Naveen Krishna Chatradhi wrote:
-> > From: Simon Glass <sjg@chromium.org>
-> >=20
-> > There is a rather odd feature of the exynos i2c controller that if it
-> > is left enabled, it can lock itself up with the clk line held low.
-> > This makes the bus unusable.
-> >=20
-> > Unfortunately, the s3c24xx_i2c_set_master() function does not notice
-> > this, and reports a timeout. From then on the bus cannot be used until
-> > the AP is rebooted.
-> >=20
-> > The problem happens when any sort of interrupt occurs (e.g. due to a
-> > bus transition) when we are not in the middle of a transaction. We
-> > have seen many instances of this when U-Boot leaves the bus apparently
-> > happy, but Linux cannot access it.
-> >=20
-> > The current code is therefore pretty fragile.
-> >=20
-> > This fixes things by leaving the bus disabled unless we are actually
-> > in a transaction. We enable the bus at the start of the transaction and
-> > disable it at the end. That way we won't get interrupts and will not
-> > lock up the bus.
-> >=20
-> > It might be possible to clear pending interrupts on start-up, but this
-> > seems to be a more robust solution. We can't service interrupts when
-> > we are not in a transaction, and anyway would rather not lock up the
-> > bus while we try.
-> >=20
-> > Signed-off-by: Simon Glass <sjg@chromium.org>
-> > Cc: Grant Grundler <grundler@chromium.org>
-> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->=20
-> Applied to for-next, thanks!
-
-Do you consider this relevant for stable?
-
-
---s5/bjXLgkIwAv6Hi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTILWbAAoJEBQN5MwUoCm29twQAKARD46nhzr6228nAQ6s6Ubo
-JBKeKtEOmiC8wLIq/khfW4EIHplgdujqxmETWUU/JNuEWQeL1cV9+1PO0Guorsbx
-0UQYFrEVOWuEB0vaONRon551FWlI1BPlzldkZ74u2ZoeP9268v4Yyo386c/qnqNX
-6PjoiSFHo3mLNv+56y896gZrkRDWprzyuDM+Car8K4Qsxa7HBU/Ww0dN+I+wCtXt
-plkfAmh/tbvEaaB0S6zUHa7sisEe7XPcoeK/0l6jJrfVW8xJTJbadx3bYExcPl6M
-punoCUKfCk1sqyvKn45Dvy5WOyEas99jJQTzW7yvwza5AW9Dzbx8+a5Teg9rlCqh
-MISHsqaa7g3dRTvi/dApfeQIBABA7HERpqU9lKvLtM78FIvV7PCMN2VIjkkv/1Vl
-IgemCwFgNuNw9wP1v9MsjYL/uJgbIsetfBIQsmC/4KaBIgrvebPgbbJIuJzrhE6/
-c0KEU/sWBK59s9rgat9pTWMh/7sma5bbSGgzwO0DolnfcqVe0l40hOXpTacBbg/T
-3o9G7j5u5tXGPP4tXkjJT8/Uc3uyo8tB9jHrmO6CHEcp62UU2H8u+VbYhy3qgjWs
-fSqs0NytXX1r3p88smhcpkdHkJu5Pj6pLkOUF0AvwW7h5AL38OVPyrz1MLnfx5nb
-o6F8D7Y7JwiZaukGV9iO
-=0cBN
------END PGP SIGNATURE-----
-
---s5/bjXLgkIwAv6Hi--
+-- 
+Best Regards,
+Pankaj Dubey
