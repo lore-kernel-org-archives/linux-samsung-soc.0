@@ -1,53 +1,216 @@
-From: armdev <armdev.ftm@gmail.com>
-Subject: Re: How to get the complete reference manual for a samsung exynos5 Soc
-Date: Thu, 13 Mar 2014 09:37:36 +0530
-Message-ID: <6B6467EE-92A8-4723-A251-407C93F6C352@gmail.com>
-References: <86368E72-16D9-448E-9C3B-5FF88A5ED9AF@gmail.com> <CAHbNUh3p9RD449WHyFo9-Km6MBBAdxwqP8ERE+fTU-cWVRBFFw@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v5 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Thu, 13 Mar 2014 10:31:49 +0530
+Message-ID: <CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
+References: <1394637394-3960-1-git-send-email-rahul.sharma@samsung.com>
+	<1394637394-3960-4-git-send-email-rahul.sharma@samsung.com>
+	<5321008C.3090203@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:55915 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750723AbaCMEHm convert rfc822-to-8bit (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:62073 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbaCMFBw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 00:07:42 -0400
-Received: by mail-pa0-f50.google.com with SMTP id kq14so516363pab.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Mar 2014 21:07:42 -0700 (PDT)
-In-Reply-To: <CAHbNUh3p9RD449WHyFo9-Km6MBBAdxwqP8ERE+fTU-cWVRBFFw@mail.gmail.com>
+	Thu, 13 Mar 2014 01:01:52 -0400
+In-Reply-To: <5321008C.3090203@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-Dear Tushar,
+Thanks Pankaj,
 
-Thanks for replying.
-We already have that basic version, also it is for the dual core.
-Can you please point to the version which is specific to each Soc (like the one for 5250 / 5410 / 5420).
+On 13 March 2014 06:19, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Hi Rahul,
+>
+>
+> On 03/13/2014 12:16 AM, Rahul Sharma wrote:
+>>
+>> The patch adds the dts files for xyref5260 board which
+>> is based on Exynos5260 Evt0 sample.
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/Makefile                      |    1 +
+>>   arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  110
+>> +++++++++++++++++++++++
+>>   2 files changed, 111 insertions(+)
+>>   create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index b9d6a8b..5a391bf 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>>         exynos5250-arndale.dtb \
+>>         exynos5250-smdk5250.dtb \
+>>         exynos5250-snow.dtb \
+>> +       exynos5260-xyref5260-evt0.dtb \
+>>         exynos5420-arndale-octa.dtb \
+>>         exynos5420-smdk5420.dtb \
+>>         exynos5440-sd5v1.dtb \
+>> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>> b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>> new file mode 100644
+>> index 0000000..d7d0aeb
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>> @@ -0,0 +1,110 @@
+>> +/*
+>> + * SAMSUNG XYREF5260 EVT0 board device tree source
+>> + *
+>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>> + *             http://www.samsung.com
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> +*/
+>> +
+>> +/dts-v1/;
+>> +#include "exynos5260.dtsi"
+>> +
+>> +/ {
+>> +       model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
+>> +       compatible = "samsung,xyref5260", "samsung,exynos5260";
+>> +
+>> +       memory {
+>> +               reg = <0x20000000 0x80000000>;
+>> +       };
+>> +
+>> +       chosen {
+>> +               bootargs = "console=ttySAC2,115200";
+>> +       };
+>> +
+>> +       clocks {
+>> +               fin_pll: xxti {
+>> +                       compatible = "fixed-clock";
+>> +                       clock-frequency = <24000000>;
+>> +                       clock-output-names = "fin_pll";
+>> +                       #clock-cells = <0>;
+>> +               };
+>> +
+>> +               xrtcxti: xrtcxti {
+>> +                       compatible = "fixed-clock";
+>> +                       clock-frequency = <32768>;
+>> +                       clock-output-names = "xrtcxti";
+>> +               };
+>
+>
+> clock-cells property is missing here.
+>
 
-Best Regards
-armdev team
+I have added #clock-cells only for clocks which
+are supposed to be referred. IMO we need it otherwise.
 
-On 13-Mar-2014, at 9:30 am, Tushar Behera <tushar.behera@linaro.org> wrote:
+>
+>> +
+>> +               spdif_extclk: ioclk_spdif_extclk {
+>> +                       compatible = "fixed-clock";
+>> +                       clock-frequency = <49152000>;
+>> +                       clock-output-names = "ioclk_spdif_extclk";
+>> +               };
+>
+>
+> ditto.
+>
+>> +       };
+>> +};
+>
+>
+> May I know why other phyclocks and ioclks have not been added?
+>
 
-> On 12 March 2014 22:07, armdev <armdev.ftm@gmail.com> wrote:
->> Hi,
->> 
->> Our team is working on 3 samsung exynos boards (5250/5410/5420), But we were not able to find a reference manual that describes the hardware in detail. As this is the samsung soc mailing list, kindly advice us the means by which we can get a copy of the manual.
->> 
-> 
-> You can find the user manual for Exynos5250 here[1].
-> 
-> [1] http://www.samsung.com/global/business/semiconductor/file/product/Exynos_5_Dual_User_Manaul_Public_REV100-0.pdf
-> 
->> Regards
->> armdev team--
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
-> -- 
-> Tushar Behera
+Phyclocks should be added in SoC file. Please refer the other patch.
+
+Ioclocks have 2 dimensions. 1) A board may or may not have these.
+But if board doesn't have them, we may end up with orphans in clock
+tree. 2) Adding them in SoC is not meaningful because rate is board
+dependent and cannot be mentioned in SoC file. Without rate, probe
+will not be successful.
+
+What I followed here is adding IO clocks which are resulting into
+orphan clocks.
+
+What we can do is to allow the registration of fixed-io-clocks in clock
+driver which are provided without RATE? If this looks good, I can post
+the respective patch for clock driver and dt correction.
+
+I want to request experts to comment on this.
+
+Regards,
+Rahul Sharma
+
+>
+>> +
+>> +&pinctrl_0 {
+>> +       hdmi_hpd_irq: hdmi-hpd-irq {
+>> +               samsung,pins = "gpx3-7";
+>> +               samsung,pin-function = <0>;
+>> +               samsung,pin-pud = <1>;
+>> +               samsung,pin-drv = <0>;
+>> +       };
+>> +};
+>> +
+>> +&uart0 {
+>> +       status = "okay";
+>> +};
+>> +
+>> +&uart1 {
+>> +       status = "okay";
+>> +};
+>> +
+>> +&uart2 {
+>> +       status = "okay";
+>> +};
+>> +
+>> +&uart3 {
+>> +       status = "okay";
+>> +};
+>> +
+>> +&mmc_0 {
+>> +       status = "okay";
+>> +       num-slots = <1>;
+>> +       broken-cd;
+>> +       bypass-smu;
+>> +       supports-highspeed;
+>> +       supports-hs200-mode; /* 200 Mhz */
+>> +       card-detect-delay = <200>;
+>> +       samsung,dw-mshc-ciu-div = <3>;
+>> +       samsung,dw-mshc-sdr-timing = <0 4>;
+>> +       samsung,dw-mshc-ddr-timing = <0 2>;
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4
+>> &sd0_bus8>;
+>> +
+>> +       slot@0 {
+>> +               reg = <0>;
+>> +               bus-width = <8>;
+>> +       };
+>> +};
+>> +
+>> +&mmc_2 {
+>> +       status = "okay";
+>> +       num-slots = <1>;
+>> +       supports-highspeed;
+>> +       card-detect-delay = <200>;
+>> +       samsung,dw-mshc-ciu-div = <3>;
+>> +       samsung,dw-mshc-sdr-timing = <2 3>;
+>> +       samsung,dw-mshc-ddr-timing = <1 2>;
+>> +       pinctrl-names = "default";
+>> +       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+>> +
+>> +       slot@0 {
+>> +               reg = <0>;
+>> +               bus-width = <4>;
+>> +               disable-wp;
+>> +       };
+>> +};
+>
+>
+>
+> --
+> Best Regards,
+> Pankaj Dubey
+>
