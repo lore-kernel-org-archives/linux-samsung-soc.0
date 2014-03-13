@@ -1,619 +1,210 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v5 5/5] clk/exynos5260: add clock file for exynos5260
-Date: Thu, 13 Mar 2014 14:10:43 +0100
-Message-ID: <5321AE53.7050907@samsung.com>
-References: <1394636208-3125-1-git-send-email-rahul.sharma@samsung.com>
- <1394636208-3125-6-git-send-email-rahul.sharma@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC PATCH v2 00/21] Add DSI display support for Exynos based
+ boards
+Date: Thu, 13 Mar 2014 14:41:10 +0100
+Message-ID: <5321B576.5070409@samsung.com>
+References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
+ <CAAQKjZOEAWG3jwTPOP7aBnpjyg8qLfq-Fcv_Mec2+fgmOULqEg@mail.gmail.com>
+ <531998B5.7040002@samsung.com>
+ <CAAQKjZN3PoXoEFRXzHA+vrMCLfTRYJ9g3rFjzodNRNh62hPuDw@mail.gmail.com>
+ <532041FA.7070300@samsung.com>
+ <CAAQKjZP5we8vdpNaDE87fVQjqxcxT5RF3My-2fJ5wtobC4uvgA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47800 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753180AbaCMNKr (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:52928 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751262AbaCMNlk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 09:10:47 -0400
-In-reply-to: <1394636208-3125-6-git-send-email-rahul.sharma@samsung.com>
+	Thu, 13 Mar 2014 09:41:40 -0400
+In-reply-to: <CAAQKjZP5we8vdpNaDE87fVQjqxcxT5RF3My-2fJ5wtobC4uvgA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, pankaj.dubey@samsung.com
+To: Inki Dae <inki.dae@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 12.03.2014 15:56, Rahul Sharma wrote:
-> Add support for exynos5260 clocks in clock driver.
+On 03/13/2014 08:08 AM, Inki Dae wrote:
+> 2014-03-12 20:16 GMT+09:00 Tomasz Figa <t.figa@samsung.com>:
+>> On 12.03.2014 11:08, Inki Dae wrote:
+>>> 2014-03-07 19:00 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+>>>> On 03/05/2014 03:56 AM, Inki Dae wrote:
+>>>>> Hi Andrzej,
+>>>>>
+>>>>> Thanks for your contributions.
+>>>>>
+>>>>> 2014-02-12 20:31 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+>>>>>> Hi,
+>>>>>>
+>>>>>> This patchset adds drivers and bindings to the following devices:
+>>>>>> - Exynos DSI master,
+>>>>>> - S6E8AA0 DSI panel,
+>>>>>> - TC358764 DSI/LVDS bridge,
+>>>>>> - HV070WSA-100 LVDS panel.
+>>>>>>
+>>>>>> It adds also display support in DTS files for the following boards:
+>>>>>> - Exynos4210/Trats,
+>>>>>> - Exynos4412/Trats2,
+>>>>>> - Exynos5250/Arndale.
+>>>>>>
+>>>>>> Things worth mentioning:
+>>>>>>
+>>>>>> 1. I have implemented DSI/LVDS bridge using drm_panel framework, ie.
+>>>>>> the driver exposes drm_panel interface on DSI side, and interact with
+>>>>>> panels on LVDS side using drm_panel framework. This approach seems to
+>>>>>> me simpler and more natural than using drm_bridge.
+>>>>> Can you give me more details about why you think better to use panel
+>>>>> framework than using drm_bridge?  "Simpler" and "more natural" are
+>>>>> ambiguous to me.
+>>>> In this particular case DSI master expects on the other end
+>>>> any device having DSI slave interface, it could be panel or bridge.
+>>>> So it seems natural that both types of slave devices should expose
+>>>> the same interface also  on programming level.
+>>>> Another problem with drm_bridge is that it is not scalable -
+>>>> if some manufacturer will decide to add another block between the bridge
+>>>> and the panel there is no drm component which can be used for it.
+>>>> Using drm_panel the way I have used in toshiba bridge makes scalability
+>>>> possible,
+>>>> it will be only a matter of adding a driver for new block and making
+>>>> proper links in device tree, I see no easy way of doing it with
+>>>> drm_bridge approach.
+>>>
+>>> Now drm_bridge may not cover all hardware. However drm_bridge has
+>>> already been merged to mainline so I think we need to use drm_bridge
+>>> somehow instead of using other one, and also we could extend
+>>> drm_bridge if needed. It would be definitely impossible for a new
+>>> framework to cover all hardware because there may be other hardware
+>>> not appeared yet. That is what we are doing for mainline until now.
+>>>
+>> Well, maybe drm_bridge has been merged, but so has been drm_panel. Moreover,
+>> merged code is not carved in stone, if there is a better option that could
+>> replace it, users of it can be converted to the new approach and the old one
+>> can be removed.
+>>
+>> As I believe Andrzej has demonstrated, drm_panel framework is clearly
+>> superior over drm_bridge and I can't think of any good reason why it
+>> couldn't become more generic and replace drm_bridge. Of course it can be
+>> renamed then to something more generic appropriately.
+>>
+>>
+>>>>
+>>>>> Using same drm_panel framework for LDVS bridge and real panel drivers
+>>>>> isn't reasonable to me as now because drm_panel framework would be for
+>>>>> real panel device even if the use of drm_panel framework looks like
+>>>>> suitable to LVDS bridge driver. I thought Sean's way, ptn3460 driver
+>>>>> using drm_bride stuff, is good enough, and that would be why
+>>>>> drm_bridge exists and why drm_encoder has drm_bridge.
+>>>>>
+>>>>> And I'm finding more generic way, how to handle LVDS bridge using
+>>>>> super node so that  LVDS bridge driver isn't embedded to connector
+>>>>> drivers such as eDP and MIPI-DSI, and dt binding of LVDS bridge can be
+>>>>> done at top level of Exynos drm. Once the binding is done, encoder of
+>>>>> display bus driver will have drm_bridge object of LVDS bridge driver
+>>>>> so that display bus driver can handle LVDS bridge driver.
+>>>> Could you explain what you mean by "dt binding of LVDS bridge can be
+>>>> done at top level of Exynos drm" ? How it will look like if there
+>>>> will be more bridges, one for DSI, one for HDMI, etc... What if there
+>>>> will be two
+>>>> bridges in one chain. How it will cope with video pipeline bindings?
+>>>
+>>> it was just my idea so I have no implementation about it yet.
+>>>
+>>> My idea is that crtc and encoder are binded at top level of Exynos drm
+>>> as is. And for bridge support, the only difference is, in case that
+>>> encoder driver has bridge, the dt binding of the encoder driver is
+>>> done once last one between encoder and bridge driver is binded. It
+>>> would mean that bridge driver can use driver model and it doesn't need
+>>> to concern about probe order issue.
+>>>
+>>> For this, encoder driver with bridge, MIPI-DSI or eDP, would need to
+>>> use component interfaces specific to Exynos drm. As a result, once the
+>>> dt bindings of crtc and encoder are completed at top level, encoder
+>>> driver has its own drm_bridge for bridge, and dt binding you proposed
+>>> could be used without any change, and drm_panel could also be used
+>>> only for real lcd panel driver.
+>>>
+>>> And below is a block diagram I think,
+>>>
+>>>                                    DRM KMS
+>>>                     /                      |                 \
+>>>                /                           |                      \
+>>>           crtc                      encoder              connector
+>>>             |                           /     \                          |
+>>>             |                       /             \                      |
+>>>             |                      |           drm_bridge   drm_panel
+>>>             |                      |                   |                 |
+>>>             |                      |                   |                 |
+>>>          FIMD         MIPI-DSI    LVDS bridge    Panel
+>>>
+>> Hmm, this doesn't seem to be complete. Several bridges can be chained
+>> together. Also I believe "Panel" and "drm_panel" on your diagram should be
+>> basically the same. This leads to obvious conclusion that drm_bridge and
+>> drm_panel should be merged and Andrzej has shown an example (and IMHO good)
+>> way to do it, as drm_panel already provides a significant amount of existing
+>> infrastructure.
+>>
+> Not opposite to using drm_panel framework. What I disagree is to
+> implement encoder/connector to crtc driver, and to use drm_panel
+> framework for bridge device.
+> I tend to believe that obvious fact is that crtc driver, fimd, is not
+> proper place that encoder and connector should be implemented. Is
+> there other SoC using such way? I think other SoC guys had ever
+> agonized about same issue.
+Quick look at some mobile drm drivers:
+1. tegra - in rgb pseudo-driver encoder/connector is bound to crtc device,
+    it is separate file but the same device driver.
+2. imx - crtc and encoder are separated, but parallel driver is a pure
+    virtual device driver, no hw associated with it.
+3. shmob - crtc, encoder and connector are in the same device.
+4. omap - all drm components are created in omap_drv, physical devices
+    are bound to them using internal framework.
+
+I prefer to avoid creating virtual devices, I think the simpler solution
+for parallel output for now could be something like in tegra.
+
+Generally I tend to omap solution but instead of creating internal
+framework use what we have already, ie drm_panel.
+
+Btw I do not see drm_panel as sth strange in this context,
+for example in the chain:
+FIMD --> DSIM --> DSI/LVDS --> Panel
+any device in the chain sees device on the right side of the link as a
+panel. Ie.
+FIMD sees RGB panel,
+DSIM sees DSI panel,
+bridge sees LVDS panel.
+
 >
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->   drivers/clk/samsung/Makefile         |    1 +
->   drivers/clk/samsung/clk-exynos5260.c | 1805 ++++++++++++++++++++++++++++++++++
->   drivers/clk/samsung/clk-exynos5260.h |  448 +++++++++
->   3 files changed, 2254 insertions(+)
->   create mode 100644 drivers/clk/samsung/clk-exynos5260.c
->   create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+> And I'm not sure that how several bridges can be chained together so
+> can you show me the real case, real hardware? If there is my missing
+> something and we cannot really cover such hardware support with
+> drm_bridge framework, I think we could consider to use drm_panel
+> framework instead of drm_bridge. And maybe, we may need opinions from
+> other maintainers.
 
-[snip]
+Real cases I have showed in another thread:
+FIMD --> MIE --> DSI --> DSI/LVDS --> Panel
 
-> diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-> new file mode 100644
-> index 0000000..f72ad6a
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-exynos5260.c
+Five hw devices in the chain, we are not able to map them
+to 3+1 drm components 1:1, something should be squashed.
+Probably squashing MIE with FIMD would be a some solution.
+But in place of MIE there can be also mDNIe --> FIMDlite.
+So we need another sub-framework or bunch of conditionals
+to handle it.
+On the other side drm_panel would solve these problems
+in generic way.
 
-[snip]
+Regards
+Andrzej
 
-> +struct samsung_gate_clock aud_gate_clks[] __initdata = {
-> +	GATE(AUD_CLK_AUD_UART, "clk_aud_uart", "dout_aclk_aud_131",
-> +			EN_IP_AUD, 4, 0, 0),
-> +	GATE(AUD_CLK_PCM, "clk_pcm", "dout_aclk_aud_131", EN_IP_AUD, 3, 0, 0),
-> +	GATE(AUD_CLK_I2S, "clk_i2s", "dout_aclk_aud_131", EN_IP_AUD, 2, 0, 0),
-> +	GATE(AUD_CLK_DMAC, "clk_dmac", "dout_aclk_aud_131",
-> +			EN_IP_AUD, 1, 0, 0),
-> +	GATE(0, "clk_sramc", "dout_aclk_aud_131", EN_IP_AUD, 0, 0, 0),
-> +
-> +	GATE(AUD_SCLK_AUD_UART, "sclk_aud_uart", "dout_sclk_aud_uart",
-> +			EN_SCLK_AUD, 2, CLK_SET_RATE_PARENT, 0),
-> +	GATE(AUD_SCLK_PCM, "sclk_aud_pcm", "dout_sclk_aud_pcm",
-> +			EN_SCLK_AUD, 1, CLK_SET_RATE_PARENT, 0),
-> +	GATE(AUD_SCLK_I2S, "sclk_aud_i2s", "dout_sclk_aud_i2s",
-> +			EN_SCLK_AUD, 0, CLK_SET_RATE_PARENT, 0),
-
-Please keep the clocks sorted by the register offsets ascending as well, 
-to match the order in UM.
-
-[snip]
-
-> +
-> +struct samsung_mux_clock disp_mux_clks[] __initdata = {
-> +	MUX(0, "mout_sclk_hdmi_spdif", mout_sclk_hdmi_spdif_p,
-> +			MUX_SEL_DISP4, 4, 2),
-> +
-> +	MUX(0, "mout_sclk_dsim1_tx_clk_esc_clk_user",
-> +			mout_sclk_dsim1_tx_clk_esc_clk_user_p,
-> +			MUX_SEL_DISP2, 28, 1),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_gate_clock disp_gate_clks[] __initdata = {
-> +	GATE(DISP_CLK_SMMU_TV, "clk_smmu3_tv", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 25, 0, 0),
-> +	GATE(DISP_CLK_SMMU_FIMD1M1, "clk_smmu3_fimd1m1",
-> +			"mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 23, 0, 0),
-> +	GATE(DISP_CLK_SMMU_FIMD1M0, "clk_smmu3_fimd1m0",
-> +			"mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 22, 0, 0),
-> +	GATE(0, "clk_pixel_mixer", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 13, CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_pixel_disp", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 12, CLK_IGNORE_UNUSED, 0),
-> +	GATE(DISP_CLK_MIXER, "clk_mixer", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 11, 0, 0),
-> +	GATE(DISP_CLK_MIPIPHY, "clk_mipi_dphy", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 10, 0, 0),
-> +	GATE(DISP_CLK_HDMIPHY, "clk_hdmiphy", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 9, 0, 0),
-> +	GATE(DISP_CLK_HDMI, "clk_hdmi", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 8, 0, 0),
-> +	GATE(DISP_CLK_FIMD1, "clk_fimd1", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 7, 0, 0),
-> +	GATE(DISP_CLK_DSIM1, "clk_dsim1", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 6, 0, 0),
-> +	GATE(DISP_CLK_DPPHY, "clk_dptx_phy", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 5, 0, 0),
-> +	GATE(DISP_CLK_DP, "clk_dptx_link", "mout_aclk_disp_222_user",
-> +			EN_IP_DISP, 4, 0, 0),
-> +	GATE(DISP_SCLK_PIXEL, "sclk_hdmi_phy_pixel_clki",
-> +			"dout_sclk_hdmi_phy_pixel_clki",
-> +			EN_SCLK_DISP0, 29, CLK_SET_RATE_PARENT, 0),
-> +	GATE(DISP_MOUT_HDMI_PHY_PIXEL_USER, "sclk_hdmi_link_i_pixel",
-> +			"mout_phyclk_hdmi_phy_pixel_clko_user",
-> +			EN_SCLK_DISP0, 26, CLK_SET_RATE_PARENT, 0),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_gate_clock fsys_gate_clks[] __initdata = {
-> +	GATE(FSYS_CLK_TSI, "clk_tsi", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 20, 0, 0),
-> +	GATE(FSYS_CLK_USBLINK, "clk_usblink", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 18, 0, 0),
-> +	GATE(FSYS_CLK_USBHOST20, "clk_usbhost20", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 15, 0, 0),
-> +	GATE(FSYS_CLK_USBDRD30, "clk_usbdrd30", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 14, 0, 0),
-> +	GATE(FSYS_CLK_SROMC, "clk_sromc", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 13, 0, 0),
-> +	GATE(FSYS_CLK_PDMA, "clk_pdma", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 9, 0, 0),
-> +	GATE(FSYS_CLK_MMC2, "clk_mmc2", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 8, 0, 0),
-> +	GATE(FSYS_CLK_MMC1, "clk_mmc1", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 7, 0, 0),
-> +	GATE(FSYS_CLK_MMC0, "clk_mmc0", "dout_aclk_fsys_200",
-> +			EN_IP_FSYS, 6, 0, 0),
-> +	GATE(FSYS_CLK_RTIC, "clk_rtic", "mout_bustop_pll_user",
-> +			EN_IP_FSYS_SECURE_RTIC, 11, 0, 0),
-> +	GATE(FSYS_CLK_SMMU_RTIC, "clk_smmu_rtic", "mout_bustop_pll_user",
-> +			EN_IP_FSYS_SECURE_SMMU_RTIC, 12, 0, 0),
-> +	GATE(FSYS_PHYCLK_USBDRD30, "phyclk_usbdrd30_udrd30_phyclock_g",
-> +			"mout_phyclk_usbdrd30_phyclock_user",
-> +			EN_SCLK_FSYS, 7, 0, 0),
-> +	GATE(FSYS_PHYCLK_USBHOST20, "phyclk_usbhost20_phyclock",
-> +			"mout_phyclk_usbdrd30_phyclock_user",
-> +			EN_SCLK_FSYS, 1, 0, 0),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_gate_clock gscl_gate_clks[] __initdata = {
-> +	GATE(GSCL_CLK_PIXEL_GSCL1, "clk_pixel_gscl1", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL, 9, 0, 0),
-> +	GATE(GSCL_CLK_PIXEL_GSCL0, "clk_pixel_gscl0", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL, 8, 0, 0),
-> +	GATE(GSCL_CLK_MSCL1, "clk_mscl1", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL, 5, 0, 0),
-> +	GATE(GSCL_CLK_MSCL0, "clk_mscl0", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL, 4, 0, 0),
-> +	GATE(GSCL_CLK_GSCL1, "clk_gscl1", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL, 3, 0, 0),
-> +	GATE(GSCL_CLK_GSCL0, "clk_gscl0", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL, 2, 0, 0),
-> +	GATE(GSCL_CLK_FIMC_LITE_D, "clk_fimc_lite_d",
-> +			"mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 12, 0, 0),
-> +	GATE(GSCL_CLK_FIMC_LITE_B, "clk_fimc_lite_b",
-> +			"mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 11, 0, 0),
-> +	GATE(GSCL_CLK_FIMC_LITE_A, "clk_fimc_lite_a",
-> +			"mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 10, 0, 0),
-> +	GATE(GSCL_CLK_CSIS1, "clk_csis1", "mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 9, 0, 0),
-> +	GATE(GSCL_CLK_CSIS0, "clk_csis0", "mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 8, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_LITE_D, "clk_smmu3_lite_d",
-> +			"mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 7, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_LITE_B, "clk_smmu3_lite_b",
-> +			"mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 6, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_LITE_A, "clk_smmu3_lite_a",
-> +			"mout_aclk_gscl_fimc_user",
-> +			EN_IP_GSCL_FIMC, 5, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_GSCL0, "clk_smmu3_gscl0",
-> +			"mout_aclk_gscl_333",
-> +			EN_IP_GSCL_SECURE_SMMU_GSCL0, 17, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_GSCL1, "clk_smmu3_gscl1", "mout_aclk_gscl_333",
-> +			EN_IP_GSCL_SECURE_SMMU_GSCL1, 18, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_MSCL0, "clk_smmu3_mscl0",
-> +			"mout_aclk_m2m_400_user",
-> +			EN_IP_GSCL_SECURE_SMMU_MSCL0, 19, 0, 0),
-> +	GATE(GSCL_CLK_SMMU3_MSCL1, "clk_smmu3_mscl1",
-> +			"mout_aclk_m2m_400_user",
-> +			EN_IP_GSCL_SECURE_SMMU_MSCL1, 20, 0, 0),
-> +	GATE(GSCL_SCLK_CSIS1_WRAP, "sclk_csis1_wrap", "dout_aclk_csis_200",
-> +			EN_SCLK_GSCL_FIMC, 1, CLK_SET_RATE_PARENT, 0),
-> +	GATE(GSCL_SCLK_CSIS0_WRAP, "sclk_csis0_wrap", "dout_aclk_csis_200",
-> +			EN_SCLK_GSCL_FIMC, 0, CLK_SET_RATE_PARENT, 0),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_gate_clock isp_gate_clks[] __initdata = {
-> +	GATE(ISP_CLK_GIC, "clk_isp_gic", "mout_aclk_isp1_266",
-> +			EN_IP_ISP0, 15, 0, 0),
-> +	GATE(ISP_CLK_WDT, "clk_isp_wdt", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 31, 0, 0),
-> +	GATE(ISP_CLK_UART, "clk_isp_uart", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 30, 0, 0),
-> +	GATE(ISP_CLK_SPI1, "clk_isp_spi1", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 28, 0, 0),
-> +	GATE(ISP_CLK_SPI0, "clk_isp_spi0", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 27, 0, 0),
-> +	GATE(ISP_CLK_SMMU_SCALERP, "clk_isp_smmu_scalerp",
-> +			"mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 26, 0, 0),
-> +	GATE(ISP_CLK_SMMU_SCALERC, "clk_isp_smmu_scalerc",
-> +			"mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 25, 0, 0),
-> +	GATE(ISP_CLK_SMMU_ISPCX, "clk_smmu_ispcx", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 24, 0, 0),
-> +	GATE(ISP_CLK_SMMU_ISP, "clk_smmu_isp", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 23, 0, 0),
-> +	GATE(ISP_CLK_SMMU_FD, "clk_smmu_fd", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 22, 0, 0),
-> +	GATE(ISP_CLK_SMMU_DRC, "clk_smmu_drc", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 21, 0, 0),
-> +	GATE(ISP_CLK_PWM, "clk_isp_pwm", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 14, 0, 0),
-> +	GATE(ISP_CLK_MTCADC, "clk_isp_mtcadc", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 11, 0, 0),
-> +	GATE(ISP_CLK_MPWM, "clk_isp_mpwm", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 10, 0, 0),
-> +	GATE(ISP_CLK_MCUCTL, "clk_isp_mcuctl", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 9, 0, 0),
-> +	GATE(ISP_CLK_I2C1, "clk_isp_i2c1", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 8, 0, 0),
-> +	GATE(ISP_CLK_I2C0, "clk_isp_i2c0", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 7, 0, 0),
-> +	GATE(ISP_CLK_FIMC_SCALERP, "clk_isp_fimc_scalerp",
-> +			"mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 6, 0, 0),
-> +	GATE(ISP_CLK_FIMC_SCALERC, "clk_isp_fimc_scalerc",
-> +			"mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 5, 0, 0),
-> +	GATE(ISP_CLK_FIMC, "clk_isp_fimc", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 4, 0, 0),
-> +	GATE(ISP_CLK_FIMC_FD, "clk_isp_fimc_fd", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 3, 0, 0),
-> +	GATE(ISP_CLK_FIMC_DRC, "clk_isp_fimc_drc", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 2, 0, 0),
-> +	GATE(ISP_CLK_CA5, "clk_isp_ca5", "mout_aclk_isp1_266",
-> +			EN_IP_ISP1, 1, 0, 0),
-> +	GATE(ISP_SCLK_SPI0_EXT, "sclk_isp_spi0_ext", "fin_pll",
-> +			EN_SCLK_ISP, 9, CLK_SET_RATE_PARENT, 0),
-> +	GATE(ISP_SCLK_SPI1_EXT, "sclk_isp_spi1_ext", "fin_pll",
-> +			EN_SCLK_ISP, 8, CLK_SET_RATE_PARENT, 0),
-> +	GATE(ISP_SCLK_UART_EXT, "sclk_isp_uart_ext", "fin_pll",
-> +			EN_SCLK_ISP, 7, CLK_SET_RATE_PARENT, 0),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_gate_clock mif_gate_clks[] __initdata = {
-> +	GATE(0, "clk_lpddr3phy_wrap1", "dout_clk2x_phy",
-> +			EN_IP_MIF, 13, CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_lpddr3phy_wrap0", "dout_clk2x_phy",
-> +			EN_IP_MIF, 12, CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_monocnt", "dout_aclk_bus_100",
-> +			EN_IP_MIF_SECURE_MONOCNT, 22,
-> +			CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_mif_rtc", "dout_aclk_bus_100",
-> +			EN_IP_MIF_SECURE_RTC_APBIF, 23,
-> +			CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_drex1", "dout_aclk_mif_466",
-> +			EN_IP_MIF_SECURE_DREX1_TZ, 9,
-> +			CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_drex0", "dout_aclk_mif_466",
-> +			EN_IP_MIF_SECURE_DREX0_TZ, 9,
-> +			CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "clk_intmem", "dout_aclk_bus_200",
-> +			EN_IP_MIF_SECURE_INTEMEM, 11,
-> +			CLK_IGNORE_UNUSED, 0),
-> +	GATE(0, "sclk_lpddr3phy_wrap_u1", "dout_clkm_phy",
-> +			EN_SCLK_MIF, 0, CLK_IGNORE_UNUSED |
-> +				CLK_SET_RATE_PARENT, 0),
-> +	GATE(0, "sclk_lpddr3phy_wrap_u0", "dout_clkm_phy",
-> +			EN_SCLK_MIF, 0, CLK_IGNORE_UNUSED |
-> +				CLK_SET_RATE_PARENT, 0),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_gate_clock peri_gate_clks[] __initdata = {
-
-[snip]
-
-> +		EN_IP_PERI_SECURE_TZPC, 13, 0, 0),
-> +	GATE(PERI_CLK_TZPC2, "clk_tzpc2", "dout_aclk_peri_66",
-> +		EN_IP_PERI_SECURE_TZPC, 12, 0, 0),
-> +	GATE(PERI_CLK_TZPC1, "clk_tzpc1", "dout_aclk_peri_66",
-> +		EN_IP_PERI_SECURE_TZPC, 11, 0, 0),
-> +	GATE(PERI_CLK_TZPC0, "clk_tzpc0", "dout_aclk_peri_66",
-> +		EN_IP_PERI_SECURE_TZPC, 10, 0, 0),
-> +	GATE(PERI_SCLK_UART2, "sclk_uart2", "dout_sclk_peri_uart2",
-> +			EN_SCLK_PERI, 12, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_UART1, "sclk_uart1", "dout_sclk_peri_uart1",
-> +			EN_SCLK_PERI, 11, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_UART0, "sclk_uart0", "dout_sclk_peri_uart0",
-> +			EN_SCLK_PERI, 10, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_SPI2, "sclk_spi2", "dout_sclk_peri_spi2_b",
-> +			EN_SCLK_PERI, 9, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_SPI1, "sclk_spi1", "dout_sclk_peri_spi1_b",
-> +			EN_SCLK_PERI, 8, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_SPI0, "sclk_spi0", "dout_sclk_peri_spi0_b",
-> +			EN_SCLK_PERI, 7, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_SPDIF, "sclk_spdif", "dout_sclk_peri_spi0_b",
-> +			EN_SCLK_PERI, 2, CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_I2S, "sclk_i2s", "dout_i2s", EN_SCLK_PERI, 1,
-> +			CLK_SET_RATE_PARENT, 0),
-> +	GATE(PERI_SCLK_PCM1, "sclk_pcm1", "dout_pcm", EN_SCLK_PERI, 0,
-> +			CLK_SET_RATE_PARENT, 0),
-
-Ditto.
-
-[snip]
-
-> +struct samsung_mux_clock top_mux_clks[] __initdata = {
-> +	MUX(0, "mout_audtop_pll_user", mout_audtop_pll_user_p,
-> +			MUX_SEL_TOP_PLL0, 24, 1),
-> +	MUX(0, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP_PLL0, 16, 1),
-> +	MUX(TOP_MOUT_DISP_PLL, "mout_disp_pll", mout_disp_pll_p,
-> +			MUX_SEL_TOP_PLL0, 12, 1),
-> +	MUX(0, "mout_bustop_pll_user", mout_bustop_pll_user_p,
-> +			MUX_SEL_TOP_PLL0, 8, 1),
-> +	MUX(0, "mout_memtop_pll_user", mout_memtop_pll_user_p,
-> +			MUX_SEL_TOP_PLL0, 4, 1),
-> +	MUX(0, "mout_mediatop_pll_user", mout_mediatop_pll_user_p,
-> +			MUX_SEL_TOP_PLL0, 0, 1),
-> +	MUX(0, "mout_disp_disp_333", mout_disp_disp_333_p,
-> +			MUX_SEL_TOP_DISP0, 0, 1),
-> +	MUX(0, "mout_aclk_disp_333", mout_aclk_disp_333_p,
-> +			MUX_SEL_TOP_DISP0, 8, 1),
-> +	MUX(0, "mout_disp_disp_222", mout_disp_disp_222_p,
-> +			MUX_SEL_TOP_DISP0, 12, 1),
-> +	MUX(0, "mout_aclk_disp_222", mout_aclk_disp_222_p,
-> +			MUX_SEL_TOP_DISP0, 20, 1),
-> +	MUX(0, "mout_disp_media_pixel", mout_disp_media_pixel_p,
-> +			MUX_SEL_TOP_DISP1, 8, 1),
-> +	MUX(TOP_MOUT_FIMD1, "mout_sclk_disp_pixel", mout_sclk_disp_pixel_p,
-> +			MUX_SEL_TOP_DISP1, 0, 1),
-> +	MUX(0, "mout_sclk_peri_spi0_clk", mout_sclk_peri_spi_clk_p,
-> +			MUX_SEL_TOP_PERI1, 8, 1),
-> +	MUX(0, "mout_sclk_peri_spi1_clk", mout_sclk_peri_spi_clk_p,
-> +			MUX_SEL_TOP_PERI1, 4, 1),
-> +	MUX(0, "mout_sclk_peri_spi2_clk", mout_sclk_peri_spi_clk_p,
-> +			MUX_SEL_TOP_PERI1, 0, 1),
-> +	MUX(0, "mout_sclk_peri_uart0_uclk", mout_sclk_peri_uart_uclk_p,
-> +			MUX_SEL_TOP_PERI1, 20, 1),
-> +	MUX(0, "mout_sclk_peri_uart2_uclk", mout_sclk_peri_uart_uclk_p,
-> +			MUX_SEL_TOP_PERI1, 16, 1),
-> +	MUX(0, "mout_sclk_peri_uart1_uclk", mout_sclk_peri_uart_uclk_p,
-> +			MUX_SEL_TOP_PERI1, 12, 1),
-> +	MUX(0, "mout_bus4_bustop_100", mout_bus_bustop_100_p,
-> +			MUX_SEL_TOP_BUS, 28, 1),
-> +	MUX(0, "mout_bus4_bustop_400", mout_bus_bustop_400_p,
-> +			MUX_SEL_TOP_BUS, 24, 1),
-> +	MUX(0, "mout_bus3_bustop_100", mout_bus_bustop_100_p,
-> +			MUX_SEL_TOP_BUS, 20, 1),
-> +	MUX(0, "mout_bus3_bustop_400", mout_bus_bustop_400_p,
-> +			MUX_SEL_TOP_BUS, 16, 1),
-> +	MUX(0, "mout_bus2_bustop_400", mout_bus_bustop_400_p,
-> +			MUX_SEL_TOP_BUS, 12, 1),
-> +	MUX(0, "mout_bus2_bustop_100", mout_bus_bustop_100_p,
-> +			MUX_SEL_TOP_BUS, 8, 1),
-> +	MUX(0, "mout_bus1_bustop_100", mout_bus_bustop_100_p,
-> +			MUX_SEL_TOP_BUS, 4, 1),
-> +	MUX(0, "mout_bus1_bustop_400", mout_bus_bustop_400_p,
-> +			MUX_SEL_TOP_BUS, 0, 1),
-
-Ditto.
-
-> +	MUX(0, "mout_sclk_fsys_usb", mout_sclk_fsys_usb_p,
-> +			MUX_SEL_TOP_FSYS, 0, 1),
-> +	MUX(0, "mout_sclk_fsys_mmc0_sdclkin_a",
-> +			mout_sclk_fsys_mmc_sdclkin_a_p,
-> +			MUX_SEL_TOP_FSYS, 20, 1),
-> +	MUX(0, "mout_sclk_fsys_mmc1_sdclkin_a",
-> +			mout_sclk_fsys_mmc_sdclkin_a_p,
-> +			MUX_SEL_TOP_FSYS, 12, 1),
-> +	MUX(0, "mout_sclk_fsys_mmc2_sdclkin_a",
-> +			mout_sclk_fsys_mmc_sdclkin_a_p,
-> +			MUX_SEL_TOP_FSYS, 4, 1),
-> +	MUX(0, "mout_sclk_fsys_mmc0_sdclkin_b",
-> +			mout_sclk_fsys_mmc0_sdclkin_b_p,
-> +			MUX_SEL_TOP_FSYS, 24, 1),
-> +	MUX(0, "mout_sclk_fsys_mmc1_sdclkin_b",
-> +			mout_sclk_fsys_mmc1_sdclkin_b_p,
-> +			MUX_SEL_TOP_FSYS, 16, 1),
-> +	MUX(0, "mout_sclk_fsys_mmc2_sdclkin_b",
-> +			mout_sclk_fsys_mmc2_sdclkin_b_p,
-> +			MUX_SEL_TOP_FSYS, 8, 1),
-> +	MUX(0, "mout_aclk_isp1_266", mout_aclk_isp1_266_p,
-> +			MUX_SEL_TOP_ISP10, 20, 1),
-> +	MUX(0, "mout_isp1_media_266", mout_isp1_media_266_p,
-> +			MUX_SEL_TOP_ISP10, 16, 1),
-> +	MUX(0, "mout_aclk_isp1_400", mout_aclk_isp1_400_p,
-> +			MUX_SEL_TOP_ISP10, 8 , 1),
-> +	MUX(0, "mout_isp1_media_400", mout_isp1_media_400_p,
-> +			MUX_SEL_TOP_ISP10, 4, 1),
-> +	MUX(0, "mout_sclk_isp1_spi0", mout_sclk_isp_spi_p,
-> +			MUX_SEL_TOP_ISP11, 4, 1),
-> +	MUX(0, "mout_sclk_isp1_spi1", mout_sclk_isp_spi_p,
-> +			MUX_SEL_TOP_ISP11, 8, 1),
-> +	MUX(0, "mout_sclk_isp1_uart", mout_sclk_isp_uart_p,
-> +			MUX_SEL_TOP_ISP11, 12, 1),
-> +	MUX(0, "mout_sclk_isp1_sensor2", mout_sclk_isp_sensor_p,
-> +			MUX_SEL_TOP_ISP11, 24, 1),
-> +	MUX(0, "mout_sclk_isp1_sensor1", mout_sclk_isp_sensor_p,
-> +			MUX_SEL_TOP_ISP11, 20, 1),
-> +	MUX(0, "mout_sclk_isp1_sensor0", mout_sclk_isp_sensor_p,
-> +			MUX_SEL_TOP_ISP11, 16, 1),
-
-Ditto.
-
-> +	MUX(0, "mout_aclk_mfc_333", mout_aclk_mfc_333_p,
-> +			MUX_SEL_TOP_MFC, 8, 1),
-> +	MUX(0, "mout_mfc_bustop_333", mout_mfc_bustop_333_p,
-> +			MUX_SEL_TOP_MFC, 4, 1),
-> +	MUX(0, "mout_aclk_g2d_333", mout_aclk_g2d_333_p,
-> +			MUX_SEL_TOP_G2D, 8, 1),
-> +	MUX(0, "mout_g2d_bustop_333", mout_g2d_bustop_333_p,
-> +			MUX_SEL_TOP_G2D, 4, 1),
-> +	MUX(0, "mout_aclk_gscl_fimc", mout_aclk_gscl_fimc_p,
-> +			MUX_SEL_TOP_GSCL, 20, 1),
-> +	MUX(0, "mout_gscl_bustop_fimc", mout_gscl_bustop_fimc_p,
-> +			MUX_SEL_TOP_GSCL, 16, 1),
-> +	MUX(0, "mout_aclk_gscl_333", mout_aclk_gscl_333_p,
-> +			MUX_SEL_TOP_GSCL, 12, 1),
-> +	MUX(0, "mout_gscl_bustop_333", mout_gscl_bustop_333_p,
-> +			MUX_SEL_TOP_GSCL, 8, 1),
-> +	MUX(0, "mout_aclk_gscl_400", mout_aclk_gscl_400_p,
-> +			MUX_SEL_TOP_GSCL, 4, 1),
-> +	MUX(0, "mout_m2m_mediatop_400", mout_m2m_mediatop_400_p,
-> +			MUX_SEL_TOP_GSCL, 0, 1),
-
-Ditto.
-
-> +};
-> +
-> +struct samsung_div_clock top_div_clks[] __initdata = {
-> +	DIV(0, "dout_aclk_mfc_333", "mout_aclk_mfc_333",
-> +			DIV_TOP_G2D_MFC, 4, 3),
-> +	DIV(0, "dout_aclk_g2d_333", "mout_aclk_g2d_333",
-> +			DIV_TOP_GSCL_ISP0, 0, 3),
-
-This looks wrong. The register and bit field are the same as 
-"dout_aclk_gscl_333" below.
-
-> +	DIV(0, "dout_sclk_isp1_sensor2_a", "mout_aclk_gscl_fimc",
-> +			DIV_TOP_GSCL_ISP0, 24, 4),
-> +	DIV(0, "dout_sclk_isp1_sensor1_a", "mout_aclk_gscl_400",
-> +			DIV_TOP_GSCL_ISP0, 20, 4),
-> +	DIV(0, "dout_sclk_isp1_sensor0_a", "mout_aclk_gscl_fimc",
-> +			DIV_TOP_GSCL_ISP0, 16, 4),
-> +	DIV(0, "dout_aclk_gscl_fimc", "mout_aclk_gscl_fimc",
-> +			DIV_TOP_GSCL_ISP0, 8, 3),
-> +	DIV(0, "dout_aclk_gscl_400", "mout_aclk_gscl_400",
-> +			DIV_TOP_GSCL_ISP0, 4, 3),
-> +	DIV(0, "dout_aclk_gscl_333", "mout_aclk_gscl_333",
-> +			DIV_TOP_GSCL_ISP0, 0, 3),
-> +	DIV(0, "dout_sclk_isp1_spi0_b", "dout_sclk_isp1_spi0_a",
-> +			DIV_TOP_ISP10, 16, 8),
-> +	DIV(0, "dout_sclk_isp1_spi0_a", "mout_sclk_isp1_spi0",
-> +			DIV_TOP_ISP10, 12, 4),
-> +	DIV(0, "dout_aclk_isp1_400", "mout_aclk_isp1_400",
-> +			DIV_TOP_ISP10, 4, 3),
-> +	DIV(0, "dout_aclk_isp1_266", "mout_aclk_isp1_266",
-> +			DIV_TOP_ISP10, 0, 3),
-> +	DIV(0, "dout_sclk_isp1_uart", "mout_sclk_isp1_uart",
-> +			DIV_TOP_ISP11, 12, 4),
-> +	DIV(0, "dout_sclk_isp1_spi1_b", "dout_sclk_isp1_spi1_a",
-> +			DIV_TOP_ISP11, 4, 8),
-> +	DIV(0, "dout_sclk_isp1_spi1_a", "mout_sclk_isp1_spi1",
-> +			DIV_TOP_ISP11, 0, 4),
-> +	DIV(0, "dout_sclk_isp1_sensor2_b", "dout_sclk_isp1_sensor2_a",
-> +			DIV_TOP_ISP11, 24, 4),
-> +	DIV(0, "dout_sclk_isp1_sensor1_b", "dout_sclk_isp1_sensor1_a",
-> +			DIV_TOP_ISP11, 20, 4),
-> +	DIV(0, "dout_sclk_isp1_sensor0_b", "dout_sclk_isp1_sensor0_a",
-> +			DIV_TOP_ISP11, 16, 4),
-> +	DIV(0, "dout_sclk_hpm_targetclk", "mout_bustop_pll_user",
-> +			DIV_TOP_HPM, 0, 3),
-> +	DIV(0, "dout_sclk_disp_pixel", "mout_sclk_disp_pixel",
-> +			DIV_TOP_DISP, 8, 3),
-> +	DIV(0, "dout_aclk_disp_222", "mout_aclk_disp_222",
-> +			DIV_TOP_DISP, 4, 3),
-> +	DIV(0, "dout_aclk_disp_333", "mout_aclk_disp_333",
-> +			DIV_TOP_DISP, 0, 3),
-
-Sorting order.
-
-> +	DIV(0, "dout_aclk_bus4_100", "mout_bus4_bustop_100",
-> +			DIV_TOP_BUS, 28, 4),
-> +	DIV(0, "dout_aclk_bus4_400", "mout_bus4_bustop_400",
-> +			DIV_TOP_BUS, 24, 3),
-> +	DIV(0, "dout_aclk_bus3_100", "mout_bus3_bustop_100",
-> +			DIV_TOP_BUS, 20, 4),
-> +	DIV(0, "dout_aclk_bus3_400", "mout_bus3_bustop_400",
-> +			DIV_TOP_BUS, 16, 3),
-> +	DIV(0, "dout_aclk_bus2_100", "mout_bus2_bustop_100",
-> +			DIV_TOP_BUS, 12, 4),
-> +	DIV(0, "dout_aclk_bus2_400", "mout_bus2_bustop_400",
-> +			DIV_TOP_BUS, 8, 3),
-> +	DIV(0, "dout_aclk_bus1_100", "mout_bus1_bustop_100",
-> +			DIV_TOP_BUS, 4, 4),
-> +	DIV(0, "dout_aclk_bus1_400", "mout_bus1_bustop_400",
-> +			DIV_TOP_BUS, 0, 3),
-> +	DIV(0, "dout_sclk_peri_spi1_b", "dout_sclk_peri_spi1_a",
-> +			DIV_TOP_PERI0, 20, 8),
-> +	DIV(0, "dout_sclk_peri_spi1_a", "mout_sclk_peri_spi1_clk",
-> +			DIV_TOP_PERI0, 16, 4),
-> +	DIV(0, "dout_sclk_peri_spi0_b", "dout_sclk_peri_spi0_a",
-> +			DIV_TOP_PERI0, 8, 8),
-> +	DIV(0, "dout_sclk_peri_spi0_a", "mout_sclk_peri_spi0_clk",
-> +			DIV_TOP_PERI0, 4, 4),
-> +	DIV(0, "dout_sclk_peri_uart0", "mout_sclk_peri_uart0_uclk",
-> +			DIV_TOP_PERI1, 24, 4),
-> +	DIV(0, "dout_sclk_peri_uart2", "mout_sclk_peri_uart2_uclk",
-> +			DIV_TOP_PERI1, 20, 4),
-> +	DIV(0, "dout_sclk_peri_uart1", "mout_sclk_peri_uart1_uclk",
-> +			DIV_TOP_PERI1, 16, 4),
-> +	DIV(0, "dout_sclk_peri_spi2_b", "dout_sclk_peri_spi2_a",
-> +			DIV_TOP_PERI1, 4, 8),
-> +	DIV(0, "dout_sclk_peri_spi2_a", "mout_sclk_peri_spi2_clk",
-> +			DIV_TOP_PERI1, 0, 4),
-> +	DIV(0, "dout_aclk_peri_aud", "mout_audtop_pll_user",
-> +			DIV_TOP_PERI2, 24, 3),
-> +	DIV(0, "dout_aclk_peri_66", "mout_bustop_pll_user",
-> +			DIV_TOP_PERI2, 20, 4),
-> +	DIV(0, "dout_sclk_fsys_mmc0_sdclkin_b",
-> +			"dout_sclk_fsys_mmc0_sdclkin_a",
-> +			DIV_TOP_FSYS0, 16, 8),
-> +	DIV(0, "dout_sclk_fsys_mmc0_sdclkin_a",
-> +			"mout_sclk_fsys_mmc0_sdclkin_b",
-> +			DIV_TOP_FSYS0, 12, 4),
-> +	DIV(0, "dout_sclk_fsys_usbdrd30_suspend_clk",
-> +			"mout_sclk_fsys_usb",
-> +			DIV_TOP_FSYS0, 4, 4),
-> +	DIV(0, "dout_aclk_fsys_200", "mout_bustop_pll_user",
-> +			DIV_TOP_FSYS0, 0, 3),
-> +
-> +	DIV(0, "dout_sclk_fsys_mmc2_sdclkin_b",
-> +			"dout_sclk_fsys_mmc2_sdclkin_a",
-> +			DIV_TOP_FSYS1, 16, 8),
-> +	DIV(0, "dout_sclk_fsys_mmc2_sdclkin_a",
-> +			"mout_sclk_fsys_mmc2_sdclkin_b",
-> +			DIV_TOP_FSYS1, 12, 4),
-> +	DIV(0, "dout_sclk_fsys_mmc1_sdclkin_b",
-> +			"dout_sclk_fsys_mmc1_sdclkin_a",
-> +			DIV_TOP_FSYS1, 4, 8),
-> +	DIV(0, "dout_sclk_fsys_mmc1_sdclkin_a",
-> +			"mout_sclk_fsys_mmc1_sdclkin_b",
-> +			DIV_TOP_FSYS1, 0, 4),
-> +};
-> +
-> +struct samsung_gate_clock top_gate_clks[] __initdata = {
-> +	GATE(TOP_SCLK_FIMD1, "sclk_disp_pixel", "dout_sclk_disp_pixel",
-> +			EN_ACLK_TOP, 10, CLK_IGNORE_UNUSED |
-> +			CLK_SET_RATE_PARENT, 0),
-
-Is this the right register? Enabling an SCLK in an ACLK enable register 
-seems a bit strange. Could you confirm in the UM?
-
-> +	GATE(TOP_SCLK_MMC2, "sclk_fsys_mmc2_sdclkin",
-> +			"dout_sclk_fsys_mmc2_sdclkin_b",
-> +			EN_SCLK_TOP, 9, CLK_SET_RATE_PARENT, 0),
-> +	GATE(TOP_SCLK_MMC1, "sclk_fsys_mmc1_sdclkin",
-> +			"dout_sclk_fsys_mmc1_sdclkin_b",
-> +			EN_SCLK_TOP, 8, CLK_SET_RATE_PARENT,
-> +			0),
-> +	GATE(TOP_SCLK_MMC0, "sclk_fsys_mmc0_sdclkin",
-> +			"dout_sclk_fsys_mmc0_sdclkin_b",
-> +			EN_SCLK_TOP, 7, CLK_SET_RATE_PARENT, 0),
-> +};
-
-[snip]
-
-> diff --git a/drivers/clk/samsung/clk-exynos5260.h b/drivers/clk/samsung/clk-exynos5260.h
-> new file mode 100644
-> index 0000000..7c3717a
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-exynos5260.h
-
-[snip]
-
-> +#define CLKOUT_CMU_EGL		0x0c00
-> +#define CLKOUT_CMU_EGL_DIV_STAT	0x0c04
-> +#define ARMCLK_STOPCTRL		0x1000
-> +#define EAGLE_EMA_CTRL		0x1008
-> +#define EAGLE_EMA_STATUS	0x100c
-> +#define PWR_CTRL		0x1020
-> +#define PWR_CTRL2		0x1024
-> +#define CLKSTOP_CTRL		0x1028
-> +#define INTR_SPREAD_EN		0x1080
-> +#define INTR_SPREAD_USE_STANDBYWFI	0x1084
-> +#define INTR_SPREAD_BLOCKING_DURATION	0x1088
-
-Please align indentation of values to the highest common one.
-
-Best regards,
-Tomasz
+>
+> Thanks,
+> Inki Dae
+>
+>> Best regards,
+>> Tomasz
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
