@@ -1,63 +1,181 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/3] mfd: sec-core: Add of_compatible strings for MFD cells
-Date: Thu, 13 Mar 2014 10:37:03 +0100
-Message-ID: <1394703425-6462-3-git-send-email-k.kozlowski@samsung.com>
-References: <1394703425-6462-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1394703425-6462-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [U-Boot] ref: virt-v7.c switching to non_secure mode
+Date: Thu, 13 Mar 2014 09:41:58 +0000
+Message-ID: <53217D66.6020901@arm.com>
+References: <99DDD4A2-0B44-4C6D-A0B5-4A18CC9EF21F@gmail.com>	<1A481609-5D5F-4E89-92D1-2C698128FA84@gmail.com> <42C5F6B1-3090-422D-A494-9B6F3769DE0A@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:56743 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753437AbaCMJs2 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Mar 2014 05:48:28 -0400
+In-Reply-To: <42C5F6B1-3090-422D-A494-9B6F3769DE0A@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: armdev <armdev.ftm@gmail.com>, christoffer.dall@linaro.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: u-boot@lists.denx.de
 
-Add of_compatible strings for MFD cells for regulator, clock and RTC
-drivers in S5M8767, S2MPS11 and S2MPS14 PMIC-s.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/mfd/sec-core.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+> We are able to figure out the issue. PERIPHBASE returned on ARNDALE
+> board was 0x10500000 and adding GIC offset was creating an incorrect
+> address.
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index d163c66edebb..c5b9b95b2099 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -55,28 +55,36 @@ static const struct mfd_cell s5m8763_devs[] = {
- static const struct mfd_cell s5m8767_devs[] = {
- 	{
- 		.name = "s5m8767-pmic",
-+		.of_compatible = "samsung,s5m8767-regulators",
- 	}, {
- 		.name = "s5m-rtc",
-+		.of_compatible = "samsung,s5m8767-rtc",
- 	}, {
- 		.name = "s5m8767-clk",
-+		.of_compatible = "samsung,s5m8767-clk",
- 	}
- };
- 
- static const struct mfd_cell s2mps11_devs[] = {
- 	{
- 		.name = "s2mps11-pmic",
-+		.of_compatible = "samsung,s2mps11-regulators",
- 	}, {
- 		.name = "s2mps11-clk",
-+		.of_compatible = "samsung,s2mps11-clk",
- 	}
- };
- 
- static const struct mfd_cell s2mps14_devs[] = {
- 	{
- 		.name = "s2mps14-pmic",
-+		.of_compatible = "samsung,s2mps14-regulators",
- 	}, {
- 		.name = "s2mps14-rtc",
-+		.of_compatible = "samsung,s2mps14-rtc",
- 	}, {
- 		.name = "s2mps14-clk",
-+		.of_compatible = "samsung,s2mps14-clk",
- 	}
- };
- 
--- 
-1.7.9.5
+please see:
+https://github.com/apritzel/u-boot-hypmode/commit/5d9c4209907c6d67dadd033887a30c2f10efeb4c
+
+>
+> Setting CONFIG_ARM_GIC_BASE_ADDRESS as 0x10480000 in arndale.h solves the issue.
+
+Yes, I spotted that before and deliberately introduced that variable for
+the Exynos SoCs.
+
+> The u-boot code needs to be fixed for arndale right ? Please confirm
+
+I could get the Arndale to boot with this above patch. But only after a
+warm reboot:
+1) boot the board up, load the kernel and launch it: Linux will reboot
+very early (before any useful output via earlyprintk)
+2) (back in u-boot:) load the kernel again and launch it: works
+
+I got both cores in HYP mode and KVM initialized fine.
+
+I lost access to my board, so if you could debug this I would be grateful.
+
+Thanks,
+Andre.
+
+>
+> Regards
+> Manish
+> armdev Team @FTM
+>
+> On 13-Mar-2014, at 11:20 am, armdev <armdev.ftm@gmail.com> wrote:
+>
+>> Got a mail that Andre is not with linaro, Adding Christoffer Dall
+>>
+>> On 13-Mar-2014, at 11:17 am, armdev <armdev.ftm@gmail.com> wrote:
+>>
+>>> Hi Andrey ,
+>>>
+>>> This is wrt your patch set which enabled the switch to non-sec and hip mode in armv7.
+>>> We have a small piece of code which we run in hypmode using the bootm command on arndale board
+>>>
+>>> While this code was trying to access the GICD_ISENABLR0 (0x10481100), read was always returning 0, while as per the reset value it should be 0x0000ffff. Debugged more in u-boot and added prints.
+>>>
+>>> This is the log, our observation is that in _nonsec_init() there is something that is causing the issue. Now It can be an issue or a gap in our understanding. Ideally we should be able to read the GICD_ISENABLR value as 0xffff.
+>>> Can you please help us in find out how to read GIC values properly in hyp mode.
+>>>
+>>> armv7_switch_nonsec
+>>> cpsr =600001d3
+>>> REGS ffff
+>>> Before write to group regs
+>>> cpsr =600001d3
+>>> REGS ffff
+>>> Before _nonsec_init()
+>>> cpsr =600001d3
+>>> REGS ffff
+>>> After _nonsec_init()
+>>> cpsr =600001d3
+>>> REGS 0
+>>>
+>>> HYP mode: successful.
+>>> armv7_switch_hyp
+>>> cpsr =600001da
+>>> REGS 0
+>>>
+>>> Here is the diff of our modifications. (just added prints)
+>>> diff --git a/arch/arm/cpu/armv7/virt-v7.c b/arch/arm/cpu/armv7/virt-v7.c
+>>> index 2cd604f..f38f125 100644
+>>> --- a/arch/arm/cpu/armv7/virt-v7.c
+>>> +++ b/arch/arm/cpu/armv7/virt-v7.c
+>>> @@ -107,6 +107,10 @@ int armv7_switch_hyp(void)
+>>>             printf("HYP mode: switch not successful.\n");
+>>>             return -1;
+>>>     }
+>>> +   printf("HYP mode: successful.\n");
+>>> +   printf("%s \r\n",__FUNCTION__);
+>>> +   printf("cpsr =%x\n", read_cpsr());
+>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>
+>>>     return 0;
+>>> }
+>>> @@ -116,6 +120,10 @@ int armv7_switch_nonsec(void)
+>>>     unsigned int reg;
+>>>     unsigned itlinesnr, i;
+>>>
+>>> +   printf("%s \r\n",__FUNCTION__);
+>>> +   printf("cpsr =%x\n", read_cpsr());
+>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>> +
+>>>     /* check whether the CPU supports the security extensions */
+>>>     reg = read_id_pfr1();
+>>>     if ((reg & 0xF0) == 0) {
+>>> @@ -140,6 +148,9 @@ int armv7_switch_nonsec(void)
+>>>     /* TYPER[4:0] contains an encoded number of available interrupts */
+>>>     itlinesnr = readl(gic_dist_addr + GICD_TYPER) & 0x1f;
+>>>
+>>> +   printf("Before write to group regs \r\n");
+>>> +   printf("cpsr =%x\n", read_cpsr());
+>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>     /* set all bits in the GIC group registers to one to allow access
+>>>      * from non-secure state. The first 32 interrupts are private per
+>>>      * CPU and will be set later when enabling the GIC for each core
+>>> @@ -147,11 +158,19 @@ int armv7_switch_nonsec(void)
+>>>     for (i = 1; i <= itlinesnr; i++)
+>>>             writel((unsigned)-1, gic_dist_addr + GICD_IGROUPRn + 4 * i);
+>>>
+>>> -   smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
+>>> -   smp_kick_all_cpus();
+>>> +   //smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
+>>> +   //smp_kick_all_cpus();
+>>>
+>>> +   printf("Before _nonsec_init() \r\n");
+>>> +   printf("cpsr =%x\n", read_cpsr());
+>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>     /* call the non-sec switching code on this CPU also */
+>>>     _nonsec_init();
+>>>
+>>> +   printf("After _nonsec_init() \r\n");
+>>> +   printf("cpsr =%x\n", read_cpsr());
+>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>> +
+>>> +
+>>>     return 0;
+>>> }
+>>> diff --git a/include/configs/arndale.h b/include/configs/arndale.h
+>>> index 515facf..53a1212 100644
+>>> --- a/include/configs/arndale.h
+>>> +++ b/include/configs/arndale.h
+>>> @@ -62,7 +62,6 @@
+>>> /* select serial console configuration */
+>>> #define CONFIG_BAUDRATE                     115200
+>>> #define EXYNOS5_DEFAULT_UART_OFFSET 0x010000
+>>> -#define CONFIG_SILENT_CONSOLE
+>>>
+>>> /* Console configuration */
+>>> #define CONFIG_CONSOLE_MUX
+>>> @@ -249,4 +248,7 @@
+>>> /* Enable Time Command */
+>>> #define CONFIG_CMD_TIME
+>>>
+>>> +/* Enable jump to hypervisor */
+>>> +#define CONFIG_ARMV7_VIRT
+>>> +#define CONFIG_SMP_PEN_ADDR 0x0
+>>> #endif      /* __CONFIG_H */
+>>>
+>>
+>
+> _______________________________________________
+> U-Boot mailing list
+> U-Boot@lists.denx.de
+> http://lists.denx.de/mailman/listinfo/u-boot
+>
+
+-- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
+
+ARM Limited, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, Registered in England & Wales, Company No:  2557590
+ARM Holdings plc, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, Registered in England & Wales, Company No:  2548782
