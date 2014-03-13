@@ -1,75 +1,156 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v5 2/3] ARM: dts: add dts files for exynos5260 SoC
-Date: Thu, 13 Mar 2014 19:32:09 +0100
-Message-ID: <5321F9A9.9030904@samsung.com>
+Subject: Re: [PATCH v5 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Thu, 13 Mar 2014 19:38:58 +0100
+Message-ID: <5321FB42.5090907@samsung.com>
 References: <1394637394-3960-1-git-send-email-rahul.sharma@samsung.com>
- <1394637394-3960-3-git-send-email-rahul.sharma@samsung.com>
- <532102CE.708@samsung.com>
- <CAPdUM4McDh5gqk2Z=-n5XTZqsLLVe18rO4s810Zrk0vHQu-M2A@mail.gmail.com>
+ <1394637394-3960-4-git-send-email-rahul.sharma@samsung.com>
+ <5321008C.3090203@samsung.com>
+ <CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:62167 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754468AbaCMScO (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:13492 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754637AbaCMSjD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 14:32:14 -0400
-In-reply-to: <CAPdUM4McDh5gqk2Z=-n5XTZqsLLVe18rO4s810Zrk0vHQu-M2A@mail.gmail.com>
+	Thu, 13 Mar 2014 14:39:03 -0400
+In-reply-to: <CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <r.sh.open@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-On 13.03.2014 06:06, Rahul Sharma wrote:
-> On 13 March 2014 06:28, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+On 13.03.2014 06:01, Rahul Sharma wrote:
+> Thanks Pankaj,
+>
+> On 13 March 2014 06:19, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+>> Hi Rahul,
+>>
+>>
 >> On 03/13/2014 12:16 AM, Rahul Sharma wrote:
-
-[snip]
-
->>> +               clocks {
->>> +                       compatible = "simple-bus";
->>> +                       #address-cells = <1>;
->>> +                       #size-cells = <0>;
->>
->>
->> Even though you added  #address-cells property I can not see "reg" property
->> in any of "fixed-clock".
->> Isn't it better either we can remove this or add "reg" property?
->> Also all these fixed-clock are missing #clock-cells property.
->>
->
-> Since it is a soc level addition, I enabled provision for adding reg
-> property for
-> fixed clocks in boards files (or in SoC file).
->
-
-All sub-nodes should follow the same pattern.
-
-After recent discussion with DT people, the conclusion is that 
-simple-bus should be used only for MMIO platform devices with "reg" 
-values mapped directly into address space in which the simple-bus node 
-resides.
-
-So for now I'd remove the grouping and keep the clocks in "soc" node 
-directly.
-
-[snip]
-
+>>>
+>>> The patch adds the dts files for xyref5260 board which
+>>> is based on Exynos5260 Evt0 sample.
+>>>
+>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>> ---
+>>>    arch/arm/boot/dts/Makefile                      |    1 +
+>>>    arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  110
+>>> +++++++++++++++++++++++
+>>>    2 files changed, 111 insertions(+)
+>>>    create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>>
+>>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>>> index b9d6a8b..5a391bf 100644
+>>> --- a/arch/arm/boot/dts/Makefile
+>>> +++ b/arch/arm/boot/dts/Makefile
+>>> @@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>>>          exynos5250-arndale.dtb \
+>>>          exynos5250-smdk5250.dtb \
+>>>          exynos5250-snow.dtb \
+>>> +       exynos5260-xyref5260-evt0.dtb \
+>>>          exynos5420-arndale-octa.dtb \
+>>>          exynos5420-smdk5420.dtb \
+>>>          exynos5440-sd5v1.dtb \
+>>> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>> b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>> new file mode 100644
+>>> index 0000000..d7d0aeb
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>> @@ -0,0 +1,110 @@
+>>> +/*
+>>> + * SAMSUNG XYREF5260 EVT0 board device tree source
+>>> + *
+>>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>>> + *             http://www.samsung.com
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License version 2 as
+>>> + * published by the Free Software Foundation.
+>>> +*/
 >>> +
->>> +                       dptx_phy_ch0: phyclk_dptx_phy_ch0_txd {
->>> +                               compatible = "fixed-clock";
->>> +                               clock-frequency = <270000000>;
->>> +                               clock-output-names =
->>> "phyclk_dptx_phy_ch0_txd_clk";
->>> +                       };
+>>> +/dts-v1/;
+>>> +#include "exynos5260.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
+>>> +       compatible = "samsung,xyref5260", "samsung,exynos5260";
+>>> +
+>>> +       memory {
+>>> +               reg = <0x20000000 0x80000000>;
+>>> +       };
+>>> +
+>>> +       chosen {
+>>> +               bootargs = "console=ttySAC2,115200";
+>>> +       };
+>>> +
+>>> +       clocks {
+>>> +               fin_pll: xxti {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <24000000>;
+>>> +                       clock-output-names = "fin_pll";
+>>> +                       #clock-cells = <0>;
+>>> +               };
+>>> +
+>>> +               xrtcxti: xrtcxti {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <32768>;
+>>> +                       clock-output-names = "xrtcxti";
+>>> +               };
+>>
+>>
+>> clock-cells property is missing here.
+>>
+>
+> I have added #clock-cells only for clocks which
+> are supposed to be referred. IMO we need it otherwise.
 
-I'm not sure whether these clocks are really fixed clocks. They are 
-output from certain PHY blocks which are not always-on, while using the 
-fixed clock binding would suggest otherwise. IMHO they should be hidden 
-inside the clock driver, without DT IDs assigned as a temporary hack, 
-until proper support gets added for them (e.g. proper clock provider 
-from appropriate PHY).
+The fixed-clock binding requires the #clock-cells property to be present 
+with value of <0>. It is not a valid fixed-clock otherwise.
+
+>>
+>>> +
+>>> +               spdif_extclk: ioclk_spdif_extclk {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <49152000>;
+>>> +                       clock-output-names = "ioclk_spdif_extclk";
+>>> +               };
+>>
+>>
+>> ditto.
+>>
+>>> +       };
+>>> +};
+>>
+>>
+>> May I know why other phyclocks and ioclks have not been added?
+>>
+>
+> Phyclocks should be added in SoC file. Please refer the other patch.
+>
+> Ioclocks have 2 dimensions. 1) A board may or may not have these.
+> But if board doesn't have them, we may end up with orphans in clock
+> tree. 2) Adding them in SoC is not meaningful because rate is board
+> dependent and cannot be mentioned in SoC file. Without rate, probe
+> will not be successful.
+>
+> What I followed here is adding IO clocks which are resulting into
+> orphan clocks.
+
+Only clocks with active parents set to missing ioclocks will be 
+orphaned. If a mux has an ioclock as its default parent, it can be still 
+reconfigured to another input normally.
+
+>
+> What we can do is to allow the registration of fixed-io-clocks in clock
+> driver which are provided without RATE? If this looks good, I can post
+> the respective patch for clock driver and dt correction.
+
+I believe ioclocks should be registered properly using DT, only if 
+present. It is important, because such ioclock might not be an always-on 
+fixed rate clock, but instead a configurable external clock generator.
 
 Best regards,
 Tomasz
