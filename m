@@ -1,38 +1,56 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 1/3] clk: s2mps11: Add support for S2MPS14 clocks
-Date: Thu, 13 Mar 2014 15:33:23 +0100
-Message-ID: <5321C1B3.2050806@samsung.com>
-References: <1394703425-6462-1-git-send-email-k.kozlowski@samsung.com>
- <1394703425-6462-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 1/5] clk/samsung: add support for multiple clock
+ providers
+Date: Thu, 13 Mar 2014 15:44:13 +0100
+Message-ID: <5321C43D.80100@samsung.com>
+References: <1394636208-3125-1-git-send-email-rahul.sharma@samsung.com>
+ <1394636208-3125-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55712 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753180AbaCMOd0 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:61968 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752191AbaCMOoS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 10:33:26 -0400
-In-reply-to: <1394703425-6462-2-git-send-email-k.kozlowski@samsung.com>
+	Thu, 13 Mar 2014 10:44:18 -0400
+In-reply-to: <1394636208-3125-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, pankaj.dubey@samsung.com
 
-Hi Krzysztof,
+Hi Rahul,
 
-On 13.03.2014 10:37, Krzysztof Kozlowski wrote:
-> This patch adds support for S2MPS14 PMIC clocks (BT and AP) to the
-> s2mps11 clock driver.
+On 12.03.2014 15:56, Rahul Sharma wrote:
+> Samsung CCF helper functions do not provide support to
+> register multiple Clock Providers for a given SoC. Due to
+> this limitation, SoC platforms are not able to use these
+> helpers for registering multiple clock providers and are
+> forced to bypass this layer.
 >
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> This layer is modified accordingly to enable the support
+> for multiple clock providers.
+>
+> Clock file for exynos4, exynos5250, exynos5420, exynos5440,
+> S3c64xx, S3c2412 and S3c2443 are also modified as per changed
+> helper functions.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > ---
->   drivers/clk/Kconfig       |    8 +++---
->   drivers/clk/clk-s2mps11.c |   61 ++++++++++++++++++++++++++++++++++-----------
->   2 files changed, 50 insertions(+), 19 deletions(-)
+>   drivers/clk/samsung/clk-exynos4.c    |   47 +++++++-------
+>   drivers/clk/samsung/clk-exynos5250.c |   25 +++++---
+>   drivers/clk/samsung/clk-exynos5420.c |   24 ++++---
+>   drivers/clk/samsung/clk-exynos5440.c |   18 +++---
+>   drivers/clk/samsung/clk-pll.c        |   14 +++--
+>   drivers/clk/samsung/clk-s3c2412.c    |   29 +++++----
+>   drivers/clk/samsung/clk-s3c2443.c    |   46 +++++++-------
+>   drivers/clk/samsung/clk-s3c64xx.c    |   44 +++++++------
+>   drivers/clk/samsung/clk.c            |  114 ++++++++++++++++++----------------
+>   drivers/clk/samsung/clk.h            |   72 ++++++++++++++-------
+>   10 files changed, 251 insertions(+), 182 deletions(-)
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Applied, thanks.
 
 Best regards,
 Tomasz
