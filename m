@@ -1,384 +1,218 @@
 From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v5 4/5] clk/exynos5260: add macros and documentation for exynos5260
-Date: Thu, 13 Mar 2014 10:44:47 +0530
-Message-ID: <CAPdUM4Nne8cu2NWKaRh8Eh22qhe2j7Q4TB2AUKDFW4cQCk3=cQ@mail.gmail.com>
-References: <1394636208-3125-1-git-send-email-rahul.sharma@samsung.com>
-	<1394636208-3125-5-git-send-email-rahul.sharma@samsung.com>
-	<53210882.3040505@samsung.com>
+Subject: Re: [PATCH v5 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Thu, 13 Mar 2014 11:42:49 +0530
+Message-ID: <CAPdUM4M4U5CH3_6hJJm5vQs40Ok=rHFokARJfWLo380-A7ryyA@mail.gmail.com>
+References: <1394637394-3960-1-git-send-email-rahul.sharma@samsung.com>
+	<1394637394-3960-4-git-send-email-rahul.sharma@samsung.com>
+	<5321008C.3090203@samsung.com>
+	<CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:60051 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750887AbaCMFOs (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:54085 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751182AbaCMGMv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 01:14:48 -0400
-In-Reply-To: <53210882.3040505@samsung.com>
+	Thu, 13 Mar 2014 02:12:51 -0400
+In-Reply-To: <CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-On 13 March 2014 06:53, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> Hi Rahul,
+On 13 March 2014 10:31, Rahul Sharma <r.sh.open@gmail.com> wrote:
+> Thanks Pankaj,
 >
->
-> On 03/12/2014 11:56 PM, Rahul Sharma wrote:
+> On 13 March 2014 06:19, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+>> Hi Rahul,
 >>
->> Add macros which are used as Clock IDs in DT and clock file.
->> It also adds the documentation for the exynos5260 clocks.
 >>
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> ---
->>   .../devicetree/bindings/clock/exynos5260-clock.txt |   55 +++++
->>   include/dt-bindings/clock/exynos5260-clk.h         |  233
->> ++++++++++++++++++++
->>   2 files changed, 288 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/clock/exynos5260-clock.txt
->>   create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
+>> On 03/13/2014 12:16 AM, Rahul Sharma wrote:
+>>>
+>>> The patch adds the dts files for xyref5260 board which
+>>> is based on Exynos5260 Evt0 sample.
+>>>
+>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>> ---
+>>>   arch/arm/boot/dts/Makefile                      |    1 +
+>>>   arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  110
+>>> +++++++++++++++++++++++
+>>>   2 files changed, 111 insertions(+)
+>>>   create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>>
+>>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>>> index b9d6a8b..5a391bf 100644
+>>> --- a/arch/arm/boot/dts/Makefile
+>>> +++ b/arch/arm/boot/dts/Makefile
+>>> @@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>>>         exynos5250-arndale.dtb \
+>>>         exynos5250-smdk5250.dtb \
+>>>         exynos5250-snow.dtb \
+>>> +       exynos5260-xyref5260-evt0.dtb \
+>>>         exynos5420-arndale-octa.dtb \
+>>>         exynos5420-smdk5420.dtb \
+>>>         exynos5440-sd5v1.dtb \
+>>> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>> b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>> new file mode 100644
+>>> index 0000000..d7d0aeb
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+>>> @@ -0,0 +1,110 @@
+>>> +/*
+>>> + * SAMSUNG XYREF5260 EVT0 board device tree source
+>>> + *
+>>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>>> + *             http://www.samsung.com
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License version 2 as
+>>> + * published by the Free Software Foundation.
+>>> +*/
+>>> +
+>>> +/dts-v1/;
+>>> +#include "exynos5260.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
+>>> +       compatible = "samsung,xyref5260", "samsung,exynos5260";
+>>> +
+>>> +       memory {
+>>> +               reg = <0x20000000 0x80000000>;
+>>> +       };
+>>> +
+>>> +       chosen {
+>>> +               bootargs = "console=ttySAC2,115200";
+>>> +       };
+>>> +
+>>> +       clocks {
+>>> +               fin_pll: xxti {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <24000000>;
+>>> +                       clock-output-names = "fin_pll";
+>>> +                       #clock-cells = <0>;
+>>> +               };
+>>> +
+>>> +               xrtcxti: xrtcxti {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <32768>;
+>>> +                       clock-output-names = "xrtcxti";
+>>> +               };
 >>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos5260-clock.txt
->> b/Documentation/devicetree/bindings/clock/exynos5260-clock.txt
->> new file mode 100644
->> index 0000000..4128892
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/exynos5260-clock.txt
->> @@ -0,0 +1,55 @@
->> +* Samsung Exynos5260 Clock Controller
->> +
->> +The Exynos5260 clock controller encapsulate all CMUs which are
->> +instantiaited independently from the device-tree. As a whole, these
->> +CMUs generates and supplies clocks to various controllers within
->> +the Exynos5260 SoC.
->> +
->> +Required Properties:
->> +
->> +- compatible: should be one of the following.
->> +       "exynos5260-clock-top"
->> +       "exynos5260-clock-peri"
->> +       "exynos5260-clock-egl"
->> +       "exynos5260-clock-kfc"
->> +       "exynos5260-clock-g2d"
->> +       "exynos5260-clock-mif"
->> +       "exynos5260-clock-mfc"
->> +       "exynos5260-clock-g3d"
->> +       "exynos5260-clock-fsys"
->> +       "exynos5260-clock-aud"
->> +       "exynos5260-clock-isp"
->> +       "exynos5260-clock-gscl"
->> +       "exynos5260-clock-disp"
->> +
->> +- reg: physical base address of the controller and length of memory
->> mapped
->> +  region.
->> +
->> +- #clock-cells: should be 1.
->> +
->> +The following is the list of clocks generated by each controller. Each
->> +clock is assigned with a MACRO constant. These constants are defined in
->> +"dt-bindings/clk/exynos5260-clk.h". DT client nodes use this MACRO to
+>>
+>> clock-cells property is missing here.
+>>
 >
+I have added #clock-cells only for clocks which
+are supposed to be referred. IMO we don't need it otherwise.
 >
-> nit: s/clk/clock
+>>
+>>> +
+>>> +               spdif_extclk: ioclk_spdif_extclk {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <49152000>;
+>>> +                       clock-output-names = "ioclk_spdif_extclk";
+>>> +               };
+>>
+>>
+>> ditto.
+>>
+>>> +       };
+>>> +};
+>>
+>>
+>> May I know why other phyclocks and ioclks have not been added?
+>>
 >
-
-Oops. I will change this.
-
+> Phyclocks should be added in SoC file. Please refer the other patch.
 >
->> +specify the clock, which they want to consume.
->> +
->> +Example 1: An example of a clock controller node is listed below.
->> +
->> +       cmu_disp: clock-controller@0x14550000 {
->> +               compatible = "exynos5260-clock-disp";
->> +               reg = <0x14550000 0x10000>;
->> +               #clock-cells = <1>;
->> +       };
->> +
->> +Example 2: UART controller node that consumes the clock generated by the
->> +               peri clock controller. Refer to the standard clock
->> bindings for
->> +               information about 'clocks' and 'clock-names' property.
->> +
->> +       serial@12C00000 {
->> +               compatible = "samsung,exynos4210-uart";
->> +               reg = <0x12C00000 0x100>;
->> +               interrupts = <0 146 0>;
->> +               clocks = <&clock_peri PERI_PCLK_UART0>, <&clock_peri
->> PERI_SCLK_UART0>;
->> +               clock-names = "uart", "clk_uart_baud0";
->> +               status = "disabled";
->> +       };
+> Ioclocks have 2 dimensions. 1) A board may or may not have these.
+> But if board doesn't have them, we may end up with orphans in clock
+> tree. 2) Adding them in SoC is not meaningful because rate is board
+> dependent and cannot be mentioned in SoC file. Without rate, probe
+> will not be successful.
 >
+> What I followed here is adding IO clocks which are resulting into
+> orphan clocks.
 >
-> Isn't it better that we should add binding information about fixed-clocks
-> (phyclocks and ioclks) here?
+> What we can do is to allow the registration of fixed-io-clocks in clock
+> driver which are provided without RATE? If this looks good, I can post
+> the respective patch for clock driver and dt correction.
 >
-
-Binding for "fixed-clocks" are applicable for the above clocks. We don't
-need to add them here. Did you mean something different ?
-
+> I want to request experts to comment on this.
 >
->> +
->> diff --git a/include/dt-bindings/clock/exynos5260-clk.h
->> b/include/dt-bindings/clock/exynos5260-clk.h
->> new file mode 100644
->> index 0000000..d6f4391
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/exynos5260-clk.h
->> @@ -0,0 +1,233 @@
->> +/*
->> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * Provides Constants for Exynos5260 clocks.
->> +*/
->> +
->> +#ifndef _DT_BINDINGS_CLK_EXYNOS5260_H
->> +#define _DT_BINDINGS_CLK_EXYNOS5260_H
->> +
->> +/*
->> + * Clock names:        XXXXX_YYYYYY_ZZZZ
->> + *             |---| |----| |--|
->> + *              cmu   type   IP
->> + */
->> +
->> +/* List Of Clocks For CMU_TOP */
->> +#define FIN_PLL                        1
+> Regards,
+> Rahul Sharma
 >
->
-> This should be removed now.
->
->
->> +#define TOP_FOUT_DISP_PLL      2
->> +#define TOP_FOUT_AUD_PLL       3
->> +#define TOP_SCLK_MMC0          4
->> +#define TOP_SCLK_MMC1          5
->> +#define TOP_SCLK_MMC2          6
->> +#define TOP_SCLK_HDMIPHY       7
->> +#define TOP_SCLK_FIMD1         8
->> +#define TOP_MOUT_FIMD1         9
->> +#define TOP_MOUT_DISP_PLL      10
->> +#define TOP_HDMI_PHY_PIXEL_CLKO        11
->
->
-yea, I will remove these 2.
->
->
->> +#define TOP_NR_CLK             12
->> +
->> +/* List Of Clocks For CMU_EGL */
->> +#define EGL_FOUT_EGL_PLL       1
->> +#define EGL_FOUT_EGL_DPLL      2
->> +#define EGL_NR_CLK             3
->> +
->> +/* List Of Clocks For CMU_KFC */
->> +#define KFC_FOUT_KFC_PLL       1
->> +#define KFC_NR_CLK             2
->> +
->> +/* List Of Clocks For CMU_MIF */
->> +#define MIF_FOUT_MEM_PLL       1
->> +#define MIF_FOUT_BUS_PLL       2
->> +#define MIF_FOUT_MEDIA_PLL     3
->> +#define MIF_NR_CLK             4
->> +
->> +/* List Of Clocks For CMU_G3D */
->> +#define G3D_FOUT_G3D_PLL       1
->> +#define G3D_CLK_G3D_HPM                2
->> +#define G3D_CLK_G3D            3
->> +#define G3D_NR_CLK             4
->> +
->> +/* List Of Clocks For CMU_AUD */
->> +#define AUD_CLK_AUD_UART       1
->> +#define AUD_CLK_PCM            2
->> +#define AUD_CLK_I2S            3
->> +#define AUD_CLK_DMAC           4
->> +#define AUD_SCLK_AUD_UART      5
->> +#define AUD_SCLK_PCM           6
->> +#define AUD_SCLK_I2S           7
->> +#define AUD_NR_CLK             8
->> +
->> +/* List Of Clocks For CMU_MFC */
->> +#define MFC_CLK_MFC            1
->> +#define MFC_CLK_SMMU2_MFCM1    2
->> +#define MFC_CLK_SMMU2_MFCM0    3
->> +#define MFC_NR_CLK             4
->> +
->> +/* List Of Clocks For CMU_GSCL */
->> +#define GSCL_CLK_PIXEL_GSCL1   1
->> +#define GSCL_CLK_PIXEL_GSCL0   2
->> +#define GSCL_CLK_MSCL1         3
->> +#define GSCL_CLK_MSCL0         4
->> +#define GSCL_CLK_GSCL1         5
->> +#define GSCL_CLK_GSCL0         6
->> +#define GSCL_CLK_FIMC_LITE_D   7
->> +#define GSCL_CLK_FIMC_LITE_B   8
->> +#define GSCL_CLK_FIMC_LITE_A   9
->> +#define GSCL_CLK_CSIS1         10
->> +#define GSCL_CLK_CSIS0         11
->> +#define GSCL_CLK_SMMU3_LITE_D  12
->> +#define GSCL_CLK_SMMU3_LITE_B  13
->> +#define GSCL_CLK_SMMU3_LITE_A  14
->> +#define GSCL_CLK_SMMU3_GSCL0   15
->> +#define GSCL_CLK_SMMU3_GSCL1   16
->> +#define GSCL_CLK_SMMU3_MSCL0   17
->> +#define GSCL_CLK_SMMU3_MSCL1   18
->> +#define GSCL_SCLK_CSIS1_WRAP   19
->> +#define GSCL_SCLK_CSIS0_WRAP   20
->> +#define GSCL_NR_CLK            21
->> +
->> +/* List Of Clocks For CMU_FSYS */
->> +#define FSYS_CLK_TSI           1
->> +#define FSYS_CLK_USBLINK       2
->> +#define FSYS_CLK_USBHOST20     3
->> +#define FSYS_CLK_USBDRD30      4
->> +#define FSYS_CLK_SROMC         5
->> +#define FSYS_CLK_PDMA          6
->> +#define FSYS_CLK_MMC2          7
->> +#define FSYS_CLK_MMC1          8
->> +#define FSYS_CLK_MMC0          9
->> +#define FSYS_CLK_RTIC          10
->> +#define FSYS_CLK_SMMU_RTIC     11
->> +#define FSYS_PHYCLK_USBDRD30   12
->> +#define FSYS_PHYCLK_USBHOST20  13
->> +#define FSYS_NR_CLK            14
->> +
->> +/* List Of Clocks For CMU_PERI */
->> +#define PERI_CLK_WDT_KFC       1
->> +#define PERI_CLK_WDT_EGL       2
->> +#define PERI_CLK_HSIC3         3
->> +#define PERI_CLK_HSIC2         4
->> +#define PERI_CLK_HSIC1         5
->> +#define PERI_CLK_HSIC0         6
->> +#define PERI_CLK_PCM           7
->> +#define PERI_CLK_MCT           8
->> +#define PERI_CLK_I2S           9
->> +#define PERI_CLK_I2CHDMI       10
->> +#define PERI_CLK_I2C7          11
->> +#define PERI_CLK_I2C6          12
->> +#define PERI_CLK_I2C5          13
->> +#define PERI_CLK_I2C4          14
->> +#define PERI_CLK_I2C9          15
->> +#define PERI_CLK_I2C8          16
->> +#define PERI_CLK_I2C11         17
->> +#define PERI_CLK_I2C10         18
->> +#define PERI_CLK_HDMICEC       19
->> +#define PERI_CLK_EFUSE_WRITER  20
->> +#define PERI_CLK_ABB           21
->> +#define PERI_CLK_UART2         22
->> +#define PERI_CLK_UART1         23
->> +#define PERI_CLK_UART0         24
->> +#define PERI_CLK_ADC           25
->> +#define PERI_CLK_TMU4          26
->> +#define PERI_CLK_TMU3          27
->> +#define PERI_CLK_TMU2          28
->> +#define PERI_CLK_TMU1          29
->> +#define PERI_CLK_TMU0          30
->> +#define PERI_CLK_SPI2          31
->> +#define PERI_CLK_SPI1          32
->> +#define PERI_CLK_SPI0          33
->> +#define PERI_CLK_SPDIF         34
->> +#define PERI_CLK_PWM           35
->> +#define PERI_CLK_UART4         36
->> +#define PERI_CLK_CHIPID                37
->> +#define PERI_CLK_PROVKEY0      38
->> +#define PERI_CLK_PROVKEY1      39
->> +#define PERI_CLK_SECKEY                40
->> +#define PERI_CLK_TOP_RTC       41
->> +#define PERI_CLK_TZPC10                42
->> +#define PERI_CLK_TZPC9         43
->> +#define PERI_CLK_TZPC8         44
->> +#define PERI_CLK_TZPC7         45
->> +#define PERI_CLK_TZPC6         46
->> +#define PERI_CLK_TZPC5         47
->> +#define PERI_CLK_TZPC4         48
->> +#define PERI_CLK_TZPC3         49
->> +#define PERI_CLK_TZPC2         50
->> +#define PERI_CLK_TZPC1         51
->> +#define PERI_CLK_TZPC0         52
->> +#define PERI_SCLK_SPI2         53
->> +#define PERI_SCLK_SPI1         54
->> +#define PERI_SCLK_SPI0         55
->> +#define PERI_SCLK_SPDIF                56
->> +#define PERI_SCLK_I2S          57
->> +#define PERI_SCLK_PCM1         58
->> +#define PERI_SCLK_UART2                59
->> +#define PERI_SCLK_UART1                60
->> +#define PERI_SCLK_UART0                61
->> +#define PERI_NR_CLK            62
->> +
->> +/* List Of Clocks For CMU_DISP */
->> +#define DISP_CLK_SMMU_TV       1
->> +#define DISP_CLK_SMMU_FIMD1M1  2
->> +#define DISP_CLK_SMMU_FIMD1M0  3
->> +#define DISP_CLK_MIXER         4
->> +#define DISP_CLK_MIPIPHY       5
->> +#define DISP_CLK_HDMIPHY       6
->> +#define DISP_CLK_HDMI          7
->> +#define DISP_CLK_FIMD1         8
->> +#define DISP_CLK_DSIM1         9
->> +#define DISP_CLK_DPPHY         10
->> +#define DISP_CLK_DP            11
->> +#define DISP_SCLK_PIXEL                12
->> +#define DISP_MOUT_HDMI_PHY_PIXEL_USER          13
->> +#define DISP_MOUT_HDMI_PHY_PIXEL       14
->> +#define DISP_NR_CLK            15
->> +
->> +/* List Of Clocks For CMU_G2D */
->> +#define G2D_CLK_SMMU3_JPEG     1
->> +#define G2D_CLK_MDMA           2
->> +#define G2D_CLK_JPEG           3
->> +#define G2D_CLK_G2D            4
->> +#define G2D_CLK_SSS            5
->> +#define G2D_CLK_SLIM_SSS       6
->> +#define G2D_CLK_SMMU_SLIM_SSS  7
->> +#define G2D_CLK_SMMU_SSS       8
->> +#define G2D_CLK_SMMU_MDMA      9
->> +#define G2D_CLK_SMMU3_G2D      10
->> +#define G2D_NR_CLK             11
->> +
->> +/* List Of Clocks For CMU_ISP */
->> +#define ISP_CLK_GIC            1
->> +#define ISP_CLK_WDT            2
->> +#define ISP_CLK_UART           3
->> +#define ISP_CLK_SPI1           4
->> +#define ISP_CLK_SPI0           5
->> +#define ISP_CLK_SMMU_SCALERP   6
->> +#define ISP_CLK_SMMU_SCALERC   7
->> +#define ISP_CLK_SMMU_ISPCX     8
->> +#define ISP_CLK_SMMU_ISP       9
->> +#define ISP_CLK_SMMU_FD                10
->> +#define ISP_CLK_SMMU_DRC       11
->> +#define ISP_CLK_PWM            12
->> +#define ISP_CLK_MTCADC         13
->> +#define ISP_CLK_MPWM           14
->> +#define ISP_CLK_MCUCTL         15
->> +#define ISP_CLK_I2C1           16
->> +#define ISP_CLK_I2C0           17
->> +#define ISP_CLK_FIMC_SCALERP   18
->> +#define ISP_CLK_FIMC_SCALERC   19
->> +#define ISP_CLK_FIMC           20
->> +#define ISP_CLK_FIMC_FD                21
->> +#define ISP_CLK_FIMC_DRC       22
->> +#define ISP_CLK_CA5            23
->> +#define ISP_SCLK_SPI0_EXT      24
->> +#define ISP_SCLK_SPI1_EXT      25
->> +#define ISP_SCLK_UART_EXT      26
->> +#define ISP_NR_CLK             27
->> +
->> +#endif
->
->
-
-Regards,
-Rahul Sharma.
-
->
-> --
-> Best Regards,
-> Pankaj Dubey
->
+>>
+>>> +
+>>> +&pinctrl_0 {
+>>> +       hdmi_hpd_irq: hdmi-hpd-irq {
+>>> +               samsung,pins = "gpx3-7";
+>>> +               samsung,pin-function = <0>;
+>>> +               samsung,pin-pud = <1>;
+>>> +               samsung,pin-drv = <0>;
+>>> +       };
+>>> +};
+>>> +
+>>> +&uart0 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&uart1 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&uart2 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&uart3 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&mmc_0 {
+>>> +       status = "okay";
+>>> +       num-slots = <1>;
+>>> +       broken-cd;
+>>> +       bypass-smu;
+>>> +       supports-highspeed;
+>>> +       supports-hs200-mode; /* 200 Mhz */
+>>> +       card-detect-delay = <200>;
+>>> +       samsung,dw-mshc-ciu-div = <3>;
+>>> +       samsung,dw-mshc-sdr-timing = <0 4>;
+>>> +       samsung,dw-mshc-ddr-timing = <0 2>;
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4
+>>> &sd0_bus8>;
+>>> +
+>>> +       slot@0 {
+>>> +               reg = <0>;
+>>> +               bus-width = <8>;
+>>> +       };
+>>> +};
+>>> +
+>>> +&mmc_2 {
+>>> +       status = "okay";
+>>> +       num-slots = <1>;
+>>> +       supports-highspeed;
+>>> +       card-detect-delay = <200>;
+>>> +       samsung,dw-mshc-ciu-div = <3>;
+>>> +       samsung,dw-mshc-sdr-timing = <2 3>;
+>>> +       samsung,dw-mshc-ddr-timing = <1 2>;
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+>>> +
+>>> +       slot@0 {
+>>> +               reg = <0>;
+>>> +               bus-width = <4>;
+>>> +               disable-wp;
+>>> +       };
+>>> +};
+>>
+>>
+>>
+>> --
+>> Best Regards,
+>> Pankaj Dubey
+>>
