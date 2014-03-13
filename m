@@ -1,42 +1,81 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] Documentation: mfd: s2mps11: Describe S5M8767 and
- S2MPS14 clocks
-Date: Thu, 13 Mar 2014 13:51:41 +0100
-Message-ID: <5321A9DD.2060901@samsung.com>
-References: <1394703425-6462-1-git-send-email-k.kozlowski@samsung.com>
- <1394703425-6462-4-git-send-email-k.kozlowski@samsung.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH V2 RE-SEND 1/7] net: sxgbe: add basic framework for
+ Samsung 10Gb ethernet driver
+Date: Thu, 13 Mar 2014 05:53:09 -0700
+Message-ID: <1394715189.3915.76.camel@joe-AO722>
+References: <007a01cf3e89$3bbdf460$b339dd20$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1394703425-6462-4-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Yadwinder Singh Brar <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtprelay0176.hostedemail.com ([216.40.44.176]:56660 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751032AbaCMMxN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Mar 2014 08:53:13 -0400
+In-Reply-To: <007a01cf3e89$3bbdf460$b339dd20$%an@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com
 
-Hi Krzysztof,
+On Thu, 2014-03-13 at 15:55 +0900, Byungho An wrote:
+> This patch adds support for Samsung 10Gb ethernet driver(sxgbe).
+> - sxgbe core initialization
+> - Tx and Rx support
+> - MDIO support
+> - ISRs for Tx and Rx
+> - ifconfig support to driver
+[]
+> diff --git a/drivers/net/ethernet/samsung/sxgbe_desc.c b/drivers/net/ethernet/samsung/sxgbe_desc.c
+[]
+> +/* Set Time stamp */
+> +static void sxgbe_tx_ctxt_desc_set_tstamp(struct sxgbe_tx_ctxt_desc *p,
+> +					  u8 ostc_enable, u64 tstamp)
+> +{
+> +	if (ostc_enable) {
+> +		p->ostc = ostc_enable;
+> +		p->tstamp_lo = (u32) tstamp;
+> +		p->tstamp_hi = (u32) (tstamp>>32);
+> +	}
+> +}
 
-On 13.03.2014 10:37, Krzysztof Kozlowski wrote:
-> Add bindings documentation for clocks on S5M8767 and S2MPS14 devices.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> ---
->   Documentation/devicetree/bindings/mfd/s2mps11.txt |   24 +++++++++++++--------
->   1 file changed, 15 insertions(+), 9 deletions(-)
+[]
 
-Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> +static u64 sxgbe_get_rx_timestamp(struct sxgbe_rx_ctxt_desc *p)
+> +{
+> +	u64 ns;
+> +	ns = p->tstamp_lo;
+> +	ns += p->tstamp_hi * 1000000000ULL;
+> +
+> +	return ns;
+> +}
 
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This looks odd.
+
+rx and tx timestamps are different clocks?
+
+rx tstamp_lo resets every second but tx_stamp
+is free-running?
+
+Maybe this was supposed to be something like
+
+	ns = p->tstamp_lo
+	ns |= ((u64)tstamp_hi) << 32;
+
+If not, maybe it warrants a comment around
+here or on the descriptor definition
+
+> diff --git a/drivers/net/ethernet/samsung/sxgbe_desc.h b/drivers/net/ethernet/samsung/sxgbe_desc.h
+[]
+> +/* Context descriptor structure */
+> +struct sxgbe_tx_ctxt_desc {
+> +	u32 tstamp_lo:32;
+> +	u32 tstamp_hi:32;
+
+[]
+
+> +struct sxgbe_rx_ctxt_desc {
+> +	u32 tstamp_lo:32;
+> +	u32 tstamp_hi:32;
+ 
