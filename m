@@ -1,218 +1,70 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v5 3/3] ARM: dts: add dts files for xyref5260 board
-Date: Thu, 13 Mar 2014 11:42:49 +0530
-Message-ID: <CAPdUM4M4U5CH3_6hJJm5vQs40Ok=rHFokARJfWLo380-A7ryyA@mail.gmail.com>
-References: <1394637394-3960-1-git-send-email-rahul.sharma@samsung.com>
-	<1394637394-3960-4-git-send-email-rahul.sharma@samsung.com>
-	<5321008C.3090203@samsung.com>
-	<CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: [PATCH V2 RE-SEND 0/7] add new Samsung SXGbE driver
+Date: Thu, 13 Mar 2014 15:55:28 +0900
+Message-ID: <007901cf3e89$37d632e0$a78298a0$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:54085 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751182AbaCMGMv (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:44048 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751158AbaCMGzb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 02:12:51 -0400
-In-Reply-To: <CAPdUM4PaXGceKyeO=kXaGy=VqapETg9m4RAMci_BD6=jsW-gNA@mail.gmail.com>
+	Thu, 13 Mar 2014 02:55:31 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davem@davemloft.net, ilho215.lee@samsung.com
 
-On 13 March 2014 10:31, Rahul Sharma <r.sh.open@gmail.com> wrote:
-> Thanks Pankaj,
->
-> On 13 March 2014 06:19, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> Hi Rahul,
->>
->>
->> On 03/13/2014 12:16 AM, Rahul Sharma wrote:
->>>
->>> The patch adds the dts files for xyref5260 board which
->>> is based on Exynos5260 Evt0 sample.
->>>
->>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>> ---
->>>   arch/arm/boot/dts/Makefile                      |    1 +
->>>   arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  110
->>> +++++++++++++++++++++++
->>>   2 files changed, 111 insertions(+)
->>>   create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->>>
->>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->>> index b9d6a8b..5a391bf 100644
->>> --- a/arch/arm/boot/dts/Makefile
->>> +++ b/arch/arm/boot/dts/Makefile
->>> @@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->>>         exynos5250-arndale.dtb \
->>>         exynos5250-smdk5250.dtb \
->>>         exynos5250-snow.dtb \
->>> +       exynos5260-xyref5260-evt0.dtb \
->>>         exynos5420-arndale-octa.dtb \
->>>         exynos5420-smdk5420.dtb \
->>>         exynos5440-sd5v1.dtb \
->>> diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->>> b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->>> new file mode 100644
->>> index 0000000..d7d0aeb
->>> --- /dev/null
->>> +++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
->>> @@ -0,0 +1,110 @@
->>> +/*
->>> + * SAMSUNG XYREF5260 EVT0 board device tree source
->>> + *
->>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->>> + *             http://www.samsung.com
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> +*/
->>> +
->>> +/dts-v1/;
->>> +#include "exynos5260.dtsi"
->>> +
->>> +/ {
->>> +       model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
->>> +       compatible = "samsung,xyref5260", "samsung,exynos5260";
->>> +
->>> +       memory {
->>> +               reg = <0x20000000 0x80000000>;
->>> +       };
->>> +
->>> +       chosen {
->>> +               bootargs = "console=ttySAC2,115200";
->>> +       };
->>> +
->>> +       clocks {
->>> +               fin_pll: xxti {
->>> +                       compatible = "fixed-clock";
->>> +                       clock-frequency = <24000000>;
->>> +                       clock-output-names = "fin_pll";
->>> +                       #clock-cells = <0>;
->>> +               };
->>> +
->>> +               xrtcxti: xrtcxti {
->>> +                       compatible = "fixed-clock";
->>> +                       clock-frequency = <32768>;
->>> +                       clock-output-names = "xrtcxti";
->>> +               };
->>
->>
->> clock-cells property is missing here.
->>
->
-I have added #clock-cells only for clocks which
-are supposed to be referred. IMO we don't need it otherwise.
->
->>
->>> +
->>> +               spdif_extclk: ioclk_spdif_extclk {
->>> +                       compatible = "fixed-clock";
->>> +                       clock-frequency = <49152000>;
->>> +                       clock-output-names = "ioclk_spdif_extclk";
->>> +               };
->>
->>
->> ditto.
->>
->>> +       };
->>> +};
->>
->>
->> May I know why other phyclocks and ioclks have not been added?
->>
->
-> Phyclocks should be added in SoC file. Please refer the other patch.
->
-> Ioclocks have 2 dimensions. 1) A board may or may not have these.
-> But if board doesn't have them, we may end up with orphans in clock
-> tree. 2) Adding them in SoC is not meaningful because rate is board
-> dependent and cannot be mentioned in SoC file. Without rate, probe
-> will not be successful.
->
-> What I followed here is adding IO clocks which are resulting into
-> orphan clocks.
->
-> What we can do is to allow the registration of fixed-io-clocks in clock
-> driver which are provided without RATE? If this looks good, I can post
-> the respective patch for clock driver and dt correction.
->
-> I want to request experts to comment on this.
->
-> Regards,
-> Rahul Sharma
->
->>
->>> +
->>> +&pinctrl_0 {
->>> +       hdmi_hpd_irq: hdmi-hpd-irq {
->>> +               samsung,pins = "gpx3-7";
->>> +               samsung,pin-function = <0>;
->>> +               samsung,pin-pud = <1>;
->>> +               samsung,pin-drv = <0>;
->>> +       };
->>> +};
->>> +
->>> +&uart0 {
->>> +       status = "okay";
->>> +};
->>> +
->>> +&uart1 {
->>> +       status = "okay";
->>> +};
->>> +
->>> +&uart2 {
->>> +       status = "okay";
->>> +};
->>> +
->>> +&uart3 {
->>> +       status = "okay";
->>> +};
->>> +
->>> +&mmc_0 {
->>> +       status = "okay";
->>> +       num-slots = <1>;
->>> +       broken-cd;
->>> +       bypass-smu;
->>> +       supports-highspeed;
->>> +       supports-hs200-mode; /* 200 Mhz */
->>> +       card-detect-delay = <200>;
->>> +       samsung,dw-mshc-ciu-div = <3>;
->>> +       samsung,dw-mshc-sdr-timing = <0 4>;
->>> +       samsung,dw-mshc-ddr-timing = <0 2>;
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4
->>> &sd0_bus8>;
->>> +
->>> +       slot@0 {
->>> +               reg = <0>;
->>> +               bus-width = <8>;
->>> +       };
->>> +};
->>> +
->>> +&mmc_2 {
->>> +       status = "okay";
->>> +       num-slots = <1>;
->>> +       supports-highspeed;
->>> +       card-detect-delay = <200>;
->>> +       samsung,dw-mshc-ciu-div = <3>;
->>> +       samsung,dw-mshc-sdr-timing = <2 3>;
->>> +       samsung,dw-mshc-ddr-timing = <1 2>;
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
->>> +
->>> +       slot@0 {
->>> +               reg = <0>;
->>> +               bus-width = <4>;
->>> +               disable-wp;
->>> +       };
->>> +};
->>
->>
->>
->> --
->> Best Regards,
->> Pankaj Dubey
->>
+Hi all,
+
+This is 2nd posting for Samsung SXGbE driver and just re-sending because of
+line wrapping in previous posting.
+
+Changes since v1:
+- changed name of driver to SXGbE as per Ben's comment
+- squashed Joe's neatening for many stuff in original patches
+
+Byungho An (1):
+      MAINTAINERS: add maintainer for Samsung sxgbe driver
+
+Girish K S (2):
+      net: sxgbe: add EEE(Energy Efficient Ethernet) for Samsung sxgbe
+      net: sxgbe: add WOL(Wakeup-On-Lan)support for Samsung sxgbe
+
+Siva Reddy (1):
+      net: sxgbe: add basic framework for Samsung 10Gb ethernet driver
+
+Vipul Pandya (3):
+      net: sxgbe: add TSO support for Samsung sxgbe
+      net: sxgbe: add Checksum offload support for Samsung sxgbe
+      net: sxgbe: add ethtool related functions support Samsung sxgbe
+
+ .../devicetree/bindings/net/samsung-sxgbe.txt      |   39 +
+ MAINTAINERS                                        |    9 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/samsung/Kconfig               |    7 +
+ drivers/net/ethernet/samsung/Makefile              |    4 +
+ drivers/net/ethernet/samsung/sxgbe_common.h        |  571 +++++
+ drivers/net/ethernet/samsung/sxgbe_core.c          |  290 +++
+ drivers/net/ethernet/samsung/sxgbe_desc.c          |  515 ++++
+ drivers/net/ethernet/samsung/sxgbe_desc.h          |  298 +++
+ drivers/net/ethernet/samsung/sxgbe_dma.c           |  381 +++
+ drivers/net/ethernet/samsung/sxgbe_dma.h           |   51 +
+ drivers/net/ethernet/samsung/sxgbe_ethtool.c       |  628 +++++
+ drivers/net/ethernet/samsung/sxgbe_main.c          | 2447
+++++++++++++++++++++
+ drivers/net/ethernet/samsung/sxgbe_mdio.c          |  274 +++
+ drivers/net/ethernet/samsung/sxgbe_mtl.c           |  279 +++
+ drivers/net/ethernet/samsung/sxgbe_mtl.h           |  108 +
+ drivers/net/ethernet/samsung/sxgbe_platform.c      |  272 +++
+ drivers/net/ethernet/samsung/sxgbe_reg.h           |  491 ++++
+ drivers/net/ethernet/samsung/sxgbe_xpcs.c          |   92 +
+ drivers/net/ethernet/samsung/sxgbe_xpcs.h          |   38 +
+ include/linux/sxgbe_platform.h                     |   54 +
+ 22 files changed, 6850 insertions(+)
+
+Thanks,
+Byungho An
