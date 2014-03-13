@@ -1,233 +1,84 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RFC PATCH v2 00/21] Add DSI display support for Exynos based boards
-Date: Fri, 14 Mar 2014 00:35:24 +0900
-Message-ID: <CAAQKjZNxdfs1aF8_gjj_+HnnkQDvUy-G8fTUP=+sp-SsSCH-iw@mail.gmail.com>
-References: <1392204688-4591-1-git-send-email-a.hajda@samsung.com>
-	<CAAQKjZOEAWG3jwTPOP7aBnpjyg8qLfq-Fcv_Mec2+fgmOULqEg@mail.gmail.com>
-	<531998B5.7040002@samsung.com>
-	<CAAQKjZN3PoXoEFRXzHA+vrMCLfTRYJ9g3rFjzodNRNh62hPuDw@mail.gmail.com>
-	<532041FA.7070300@samsung.com>
-	<CAAQKjZP5we8vdpNaDE87fVQjqxcxT5RF3My-2fJ5wtobC4uvgA@mail.gmail.com>
-	<5321B576.5070409@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCHv2 0/8] devfreq: exynos4: Support dt and use common ppmu
+ driver
+Date: Thu, 13 Mar 2014 17:43:21 +0100
+Message-ID: <2117336.08cyWySR1X@amdc1032>
+References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:46333 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753781AbaCMPf0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 11:35:26 -0400
-In-Reply-To: <5321B576.5070409@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-2014-03-13 22:41 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
-> On 03/13/2014 08:08 AM, Inki Dae wrote:
->> 2014-03-12 20:16 GMT+09:00 Tomasz Figa <t.figa@samsung.com>:
->>> On 12.03.2014 11:08, Inki Dae wrote:
->>>> 2014-03-07 19:00 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->>>>> On 03/05/2014 03:56 AM, Inki Dae wrote:
->>>>>> Hi Andrzej,
->>>>>>
->>>>>> Thanks for your contributions.
->>>>>>
->>>>>> 2014-02-12 20:31 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->>>>>>> Hi,
->>>>>>>
->>>>>>> This patchset adds drivers and bindings to the following devices:
->>>>>>> - Exynos DSI master,
->>>>>>> - S6E8AA0 DSI panel,
->>>>>>> - TC358764 DSI/LVDS bridge,
->>>>>>> - HV070WSA-100 LVDS panel.
->>>>>>>
->>>>>>> It adds also display support in DTS files for the following boards:
->>>>>>> - Exynos4210/Trats,
->>>>>>> - Exynos4412/Trats2,
->>>>>>> - Exynos5250/Arndale.
->>>>>>>
->>>>>>> Things worth mentioning:
->>>>>>>
->>>>>>> 1. I have implemented DSI/LVDS bridge using drm_panel framework, ie.
->>>>>>> the driver exposes drm_panel interface on DSI side, and interact with
->>>>>>> panels on LVDS side using drm_panel framework. This approach seems to
->>>>>>> me simpler and more natural than using drm_bridge.
->>>>>> Can you give me more details about why you think better to use panel
->>>>>> framework than using drm_bridge?  "Simpler" and "more natural" are
->>>>>> ambiguous to me.
->>>>> In this particular case DSI master expects on the other end
->>>>> any device having DSI slave interface, it could be panel or bridge.
->>>>> So it seems natural that both types of slave devices should expose
->>>>> the same interface also  on programming level.
->>>>> Another problem with drm_bridge is that it is not scalable -
->>>>> if some manufacturer will decide to add another block between the bridge
->>>>> and the panel there is no drm component which can be used for it.
->>>>> Using drm_panel the way I have used in toshiba bridge makes scalability
->>>>> possible,
->>>>> it will be only a matter of adding a driver for new block and making
->>>>> proper links in device tree, I see no easy way of doing it with
->>>>> drm_bridge approach.
->>>>
->>>> Now drm_bridge may not cover all hardware. However drm_bridge has
->>>> already been merged to mainline so I think we need to use drm_bridge
->>>> somehow instead of using other one, and also we could extend
->>>> drm_bridge if needed. It would be definitely impossible for a new
->>>> framework to cover all hardware because there may be other hardware
->>>> not appeared yet. That is what we are doing for mainline until now.
->>>>
->>> Well, maybe drm_bridge has been merged, but so has been drm_panel. Moreover,
->>> merged code is not carved in stone, if there is a better option that could
->>> replace it, users of it can be converted to the new approach and the old one
->>> can be removed.
->>>
->>> As I believe Andrzej has demonstrated, drm_panel framework is clearly
->>> superior over drm_bridge and I can't think of any good reason why it
->>> couldn't become more generic and replace drm_bridge. Of course it can be
->>> renamed then to something more generic appropriately.
->>>
->>>
->>>>>
->>>>>> Using same drm_panel framework for LDVS bridge and real panel drivers
->>>>>> isn't reasonable to me as now because drm_panel framework would be for
->>>>>> real panel device even if the use of drm_panel framework looks like
->>>>>> suitable to LVDS bridge driver. I thought Sean's way, ptn3460 driver
->>>>>> using drm_bride stuff, is good enough, and that would be why
->>>>>> drm_bridge exists and why drm_encoder has drm_bridge.
->>>>>>
->>>>>> And I'm finding more generic way, how to handle LVDS bridge using
->>>>>> super node so that  LVDS bridge driver isn't embedded to connector
->>>>>> drivers such as eDP and MIPI-DSI, and dt binding of LVDS bridge can be
->>>>>> done at top level of Exynos drm. Once the binding is done, encoder of
->>>>>> display bus driver will have drm_bridge object of LVDS bridge driver
->>>>>> so that display bus driver can handle LVDS bridge driver.
->>>>> Could you explain what you mean by "dt binding of LVDS bridge can be
->>>>> done at top level of Exynos drm" ? How it will look like if there
->>>>> will be more bridges, one for DSI, one for HDMI, etc... What if there
->>>>> will be two
->>>>> bridges in one chain. How it will cope with video pipeline bindings?
->>>>
->>>> it was just my idea so I have no implementation about it yet.
->>>>
->>>> My idea is that crtc and encoder are binded at top level of Exynos drm
->>>> as is. And for bridge support, the only difference is, in case that
->>>> encoder driver has bridge, the dt binding of the encoder driver is
->>>> done once last one between encoder and bridge driver is binded. It
->>>> would mean that bridge driver can use driver model and it doesn't need
->>>> to concern about probe order issue.
->>>>
->>>> For this, encoder driver with bridge, MIPI-DSI or eDP, would need to
->>>> use component interfaces specific to Exynos drm. As a result, once the
->>>> dt bindings of crtc and encoder are completed at top level, encoder
->>>> driver has its own drm_bridge for bridge, and dt binding you proposed
->>>> could be used without any change, and drm_panel could also be used
->>>> only for real lcd panel driver.
->>>>
->>>> And below is a block diagram I think,
->>>>
->>>>                                    DRM KMS
->>>>                     /                      |                 \
->>>>                /                           |                      \
->>>>           crtc                      encoder              connector
->>>>             |                           /     \                          |
->>>>             |                       /             \                      |
->>>>             |                      |           drm_bridge   drm_panel
->>>>             |                      |                   |                 |
->>>>             |                      |                   |                 |
->>>>          FIMD         MIPI-DSI    LVDS bridge    Panel
->>>>
->>> Hmm, this doesn't seem to be complete. Several bridges can be chained
->>> together. Also I believe "Panel" and "drm_panel" on your diagram should be
->>> basically the same. This leads to obvious conclusion that drm_bridge and
->>> drm_panel should be merged and Andrzej has shown an example (and IMHO good)
->>> way to do it, as drm_panel already provides a significant amount of existing
->>> infrastructure.
->>>
->> Not opposite to using drm_panel framework. What I disagree is to
->> implement encoder/connector to crtc driver, and to use drm_panel
->> framework for bridge device.
->> I tend to believe that obvious fact is that crtc driver, fimd, is not
->> proper place that encoder and connector should be implemented. Is
->> there other SoC using such way? I think other SoC guys had ever
->> agonized about same issue.
-> Quick look at some mobile drm drivers:
-> 1. tegra - in rgb pseudo-driver encoder/connector is bound to crtc device,
->     it is separate file but the same device driver.
-> 2. imx - crtc and encoder are separated, but parallel driver is a pure
->     virtual device driver, no hw associated with it.
-> 3. shmob - crtc, encoder and connector are in the same device.
-> 4. omap - all drm components are created in omap_drv, physical devices
->     are bound to them using internal framework.
->
-> I prefer to avoid creating virtual devices, I think the simpler solution
-> for parallel output for now could be something like in tegra.
->
-> Generally I tend to omap solution but instead of creating internal
-> framework use what we have already, ie drm_panel.
 
-Doesn't it better to use internal framework like omap did ? Or, I
-think it's better to change drm_panel to more generic name if you want
-to use drm_panel so that drm_panel can be used commonly for other
-hardware block devices. It's curious to control all hardware blocks
-and real panel device using drm_panel.
+Hi,
 
->
-> Btw I do not see drm_panel as sth strange in this context,
-> for example in the chain:
-> FIMD --> DSIM --> DSI/LVDS --> Panel
-> any device in the chain sees device on the right side of the link as a
-> panel. Ie.
-> FIMD sees RGB panel,
-> DSIM sees DSI panel,
-> bridge sees LVDS panel.
->
->>
->> And I'm not sure that how several bridges can be chained together so
->> can you show me the real case, real hardware? If there is my missing
->> something and we cannot really cover such hardware support with
->> drm_bridge framework, I think we could consider to use drm_panel
->> framework instead of drm_bridge. And maybe, we may need opinions from
->> other maintainers.
->
-> Real cases I have showed in another thread:
-> FIMD --> MIE --> DSI --> DSI/LVDS --> Panel
+On Thursday, March 13, 2014 05:17:21 PM Chanwoo Choi wrote:
+> This patchset support devicetree and use common ppmu driver instead of
+> individual code of exynos4_bus.c to remove duplicate code. Also this patchset
+> get the resources for busfreq from dt data by using DT helper function.
+> - PPMU register address
+> - PPMU clock
+> - Regulator for INT/MIF block
+> 
+> This patchset use SET_SYSTEM_SLEEP_PM_OPS macro intead of legacy method.
+> To remove power-leakage in suspend state, before entering suspend state,
+> disable ppmu clocks.
+> 
+> Changes from v1:
+> - Add exynos4_bus.txt documentation for devicetree guide
+> - Fix probe failure if CONFIG_PM_OPP is disabled
+> - Fix typo and resource leak(regulator/clock/memory) when happening probe failure
+> - Add additionally comment for PPMU usage instead of previous PPC
+> - Split separate patch to remove ambiguous of patch
+> 
+> Chanwoo Choi (8):
+>   devfreq: exynos4: Support devicetree to get device id of Exynos4 SoC
+>   devfreq: exynos4: Use common ppmu driver and get ppmu address from dt data
+>   devfreq: exynos4: Add ppmu's clock control and code clean about regulator control
+>   devfreq: exynos4: Fix bug of resource leak and code clean on probe()
+>   devfreq: exynos4: Use SET_SYSTEM_SLEEP_PM_OPS macro
+>   devfreq: exynos4: Fix power-leakage of clock on suspend state
+>   devfreq: exynos4: Add CONFIG_PM_OPP dependency to fix probe fail
+>   devfreq: exynos4: Add busfreq driver for exynos4210/exynos4x12
+> 
+>  .../devicetree/bindings/devfreq/exynos4_bus.txt    |  49 +++
+>  drivers/devfreq/Kconfig                            |   1 +
+>  drivers/devfreq/exynos/Makefile                    |   2 +-
+>  drivers/devfreq/exynos/exynos4_bus.c               | 415 ++++++++++++++-------
+>  4 files changed, 341 insertions(+), 126 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/exynos4_bus.txt
 
-I didn't see these hardware blocks are called bridge. :) Yes, right,
-and also these can be chained together in more various ways.
+Thanks for updating this patchset.  There are still some minor issues
+left though:
 
->
-> Five hw devices in the chain, we are not able to map them
-> to 3+1 drm components 1:1, something should be squashed.
-> Probably squashing MIE with FIMD would be a some solution.
-> But in place of MIE there can be also mDNIe --> FIMDlite.
-> So we need another sub-framework or bunch of conditionals
-> to handle it.
-> On the other side drm_panel would solve these problems
-> in generic way.
->
+- patch #4 should be at beginning of the patch series
 
-Ok, but for more clear I think we would need to look into how other
-SoC guys are handling similar hardware blocks in drm world.
+- moving of devfreq_unregister_opp_notifier(dev, data->devfreq) from
+  exynos4_bus_exit() to exynos4_busfreq_remove() should be in patch #4
+  (which should really be at the beggining of patch series) not #3
 
-Thanks,
-Inki Dae
+- handling of iounmap(data->ppmu[i].hw_base) should be added to
+  exynos4_bus_exit() in patch #2 not #3
 
-> Regards
-> Andrzej
->
->>
->> Thanks,
->> Inki Dae
->>
->>> Best regards,
->>> Tomasz
->>>
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+- patch #8 summary and description should mention fact that it adds DT
+  binding documentation (not the driver itself) and the patch itself
+  can be slighlty polished
+
+One important note about this patchset not mentioned in the cover
+letter is that it is improving currently unused driver (because of
+DT-only mach-exynos conversion the only user was removed in June 2013
+and from the reading the code I suspect that even that user hadn't
+worked previously).  As such this patch series should not cause any
+regressions.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
