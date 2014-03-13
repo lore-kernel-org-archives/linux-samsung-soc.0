@@ -1,82 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 3/3] Documentation: mfd: s2mps11: Describe S5M8767 and
- S2MPS14 clocks
-Date: Thu, 13 Mar 2014 10:37:04 +0100
-Message-ID: <1394703425-6462-4-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 2/3] mfd: sec-core: Add of_compatible strings for MFD cells
+Date: Thu, 13 Mar 2014 10:37:03 +0100
+Message-ID: <1394703425-6462-3-git-send-email-k.kozlowski@samsung.com>
 References: <1394703425-6462-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1394703425-6462-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Yadwinder Singh Brar <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1394703425-6462-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add bindings documentation for clocks on S5M8767 and S2MPS14 devices.
+Add of_compatible strings for MFD cells for regulator, clock and RTC
+drivers in S5M8767, S2MPS11 and S2MPS14 PMIC-s.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- Documentation/devicetree/bindings/mfd/s2mps11.txt |   24 +++++++++++++--------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/mfd/sec-core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-index 15ee89c3cc7b..67ea05ca8050 100644
---- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-+++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-@@ -16,20 +16,25 @@ Optional properties:
- - interrupts: Interrupt specifiers for interrupt sources.
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index d163c66edebb..c5b9b95b2099 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -55,28 +55,36 @@ static const struct mfd_cell s5m8763_devs[] = {
+ static const struct mfd_cell s5m8767_devs[] = {
+ 	{
+ 		.name = "s5m8767-pmic",
++		.of_compatible = "samsung,s5m8767-regulators",
+ 	}, {
+ 		.name = "s5m-rtc",
++		.of_compatible = "samsung,s5m8767-rtc",
+ 	}, {
+ 		.name = "s5m8767-clk",
++		.of_compatible = "samsung,s5m8767-clk",
+ 	}
+ };
  
- Optional nodes:
--- clocks: s2mps11 provides three(AP/CP/BT) buffered 32.768 KHz outputs, so to
--  register these as clocks with common clock framework instantiate a sub-node
--  named "clocks". It uses the common clock binding documented in :
-+- clocks: s2mps11 and s5m8767 provide three(AP/CP/BT) buffered 32.768 KHz
-+  outputs, so to register these as clocks with common clock framework
-+  instantiate a sub-node named "clocks". It uses the common clock binding
-+  documented in :
-   [Documentation/devicetree/bindings/clock/clock-bindings.txt]
-+  The s2mps14 provides two (AP/BT) buffered 32.768 KHz outputs.
-   - #clock-cells: should be 1.
+ static const struct mfd_cell s2mps11_devs[] = {
+ 	{
+ 		.name = "s2mps11-pmic",
++		.of_compatible = "samsung,s2mps11-regulators",
+ 	}, {
+ 		.name = "s2mps11-clk",
++		.of_compatible = "samsung,s2mps11-clk",
+ 	}
+ };
  
-   - The following is the list of clocks generated by the controller. Each clock
-     is assigned an identifier and client nodes use this identifier to specify
-     the clock which they consume.
--    Clock               ID
--    ----------------------
--    32KhzAP		0
--    32KhzCP		1
--    32KhzBT		2
-+    Clock               ID           Devices
-+    ----------------------------------------------------------
-+    32KhzAP		0            S2MPS11, S2MPS14, S5M8767
-+    32KhzCP		1            S2MPS11, S5M8767
-+    32KhzBT		2            S2MPS11, S2MPS14, S5M8767
-+
-+  - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps14-clk",
-+		"samsung,s5m8767-clk"
+ static const struct mfd_cell s2mps14_devs[] = {
+ 	{
+ 		.name = "s2mps14-pmic",
++		.of_compatible = "samsung,s2mps14-regulators",
+ 	}, {
+ 		.name = "s2mps14-rtc",
++		.of_compatible = "samsung,s2mps14-rtc",
+ 	}, {
+ 		.name = "s2mps14-clk",
++		.of_compatible = "samsung,s2mps14-clk",
+ 	}
+ };
  
- - regulators: The regulators of s2mps11 that have to be instantiated should be
- included in a sub-node named 'regulators'. Regulator nodes included in this
-@@ -71,7 +76,8 @@ Example:
- 		compatible = "samsung,s2mps11-pmic";
- 		reg = <0x66>;
- 
--		s2m_osc: clocks{
-+		s2m_osc: clocks {
-+			compatible = "samsung,s2mps11-clk";
- 			#clock-cells = 1;
- 			clock-output-names = "xx", "yy", "zz";
- 		};
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
