@@ -1,298 +1,252 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
- and SSDK-GH7 board
-Date: Thu, 13 Mar 2014 10:33:29 +0000
-Message-ID: <20140313103329.GD5035@e106331-lin.cambridge.arm.com>
-References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
- <1394491879-5320-2-git-send-email-kgene.kim@samsung.com>
- <20140311182922.GD3263@e106331-lin.cambridge.arm.com>
- <01c501cf3dac$022879b0$06796d10$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <01c501cf3dac$022879b0$06796d10$@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Catalin Marinas <Catalin.Marinas@arm.com>, 'Ilho Lee' <ilho215.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: armdev <armdev.ftm@gmail.com>
+Subject: Re: ref: virt-v7.c switching to non_secure mode
+Date: Thu, 13 Mar 2014 16:29:19 +0530
+Message-ID: <457DF3EC-7DAE-4AC1-94A1-3EDD8BD9A2AD@gmail.com>
+References: <99DDD4A2-0B44-4C6D-A0B5-4A18CC9EF21F@gmail.com>	<1A481609-5D5F-4E89-92D1-2C698128FA84@gmail.com>
+	<42C5F6B1-3090-422D-A494-9B6F3769DE0A@gmail.com>
+	<53217D66.6020901@arm.com>
+Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
+Content-Type: multipart/mixed; boundary="===============1189457821=="
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <53217D66.6020901@arm.com>
+List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Sender: u-boot-bounces@lists.denx.de
+Errors-To: u-boot-bounces@lists.denx.de
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: u-boot@lists.denx.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 12, 2014 at 04:31:56AM +0000, Kukjin Kim wrote:
-> Mark Rutland wrote:
-> > 
-> Hi Mark,
-> 
-> > On Mon, Mar 10, 2014 at 10:51:17PM +0000, Kukjin Kim wrote:
-> > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > > Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
-> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > > ---
-> > >  arch/arm64/boot/dts/samsung-gh7.dtsi     | 106
-> > +++++++++++++++++++++++++++++++
-> > >  arch/arm64/boot/dts/samsung-ssdk-gh7.dts |  26 ++++++++
-> > >  2 files changed, 132 insertions(+)
-> > >  create mode 100644 arch/arm64/boot/dts/samsung-gh7.dtsi
-> > >  create mode 100644 arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> > >
-> > > diff --git a/arch/arm64/boot/dts/samsung-gh7.dtsi
-> > b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> > > new file mode 100644
-> > > index 0000000..b5e8488
-> > > --- /dev/null
-> > > +++ b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> > > @@ -0,0 +1,106 @@
-> > > +/*
-> > > + * SAMSUNG GH7 SoC device tree source
-> > > + *
-> > > + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> > > + *		http://www.samsung.com
-> > > + *
-> > > + * This program is free software; you can redistribute it and/or modify
-> > > + * it under the terms of the GNU General Public License version 2 as
-> > > + * published by the Free Software Foundation.
-> > > +*/
-> > > +
-> > > +/memreserve/ 0x80000000 0x0C400000;
-> > 
-> > Please have a comment as to what this memreserve is intended to protect.
-> > This is very large, and we don't want pointless memreserves.
-> > 
-> Well, you mean I need to comment about each reserved memory area?
 
-Please have a comment about what each /memreserve/ is intended to
-protect.
+--===============1189457821==
+Content-Type: multipart/alternative; boundary="Apple-Mail=_A668A1B1-AE38-4BB9-95F1-B483AE4DC791"
 
-> We need the reserved memory for EL3 monitor, UEFI services, secure
-> interpreter, hypervisor and Scan-chain for debug...BTW isn't it depending on
-> each hardware platform and usage model?
 
-If it depends on each particular model then it doesn't belong in the
-shared dtsi, and each dts should have the /memreserve/ for that
-platform.
+--Apple-Mail=_A668A1B1-AE38-4BB9-95F1-B483AE4DC791
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=windows-1252
 
-Why would the hypervisor or secure OS memory ever be accessible to the
-kernel such that it would require a memreserve? That sounds
-fundamentally broken.
+Dear Andre,
 
-I was under the impression that if using UEFI we can identify and
-reserve the UEFI services by walking to UEFI memory map. If we don't use
-them, they don't need to be protected. As such, I don't see why they
-need a memreserve for them.
+Thanks for replying.=20
 
-> Just note, I will change the reserve memory area and size. From at
-> 0xf8000000 and size is 128MB(0x8000000).
 
-Ok.
+On 13-Mar-2014, at 3:11 pm, Andre Przywara <andre.przywara@arm.com> =
+wrote:
 
-> > What address does the kernel end up getting loaded at on this board?
-> > 
-> We load the kernel image from at 0x80080000 after changing the reserve
-> memory area.
+> Hi,
+>=20
+>> We are able to figure out the issue. PERIPHBASE returned on ARNDALE
+>> board was 0x10500000 and adding GIC offset was creating an incorrect
+>> address.
+>=20
+> please see:
+> =
+https://github.com/apritzel/u-boot-hypmode/commit/5d9c4209907c6d67dadd0338=
+87a30c2f10efeb4c
+>=20
+>>=20
+>> Setting CONFIG_ARM_GIC_BASE_ADDRESS as 0x10480000 in arndale.h solves =
+the issue.
+>=20
+> Yes, I spotted that before and deliberately introduced that variable =
+for
+> the Exynos SoCs.
 
-Ok.
+So it turns out that this is the only way.
 
-> > > +/ {
-> > > +	interrupt-parent = <&gic>;
-> > > +	#address-cells = <2>;
-> > > +	#size-cells = <2>;
-> > > +
-> > > +	aliases {
-> > > +		serial0 = "/amba/uart@12c00000";
-> > > +	};
-> > > +
-> > > +	cpus {
-> > > +		#address-cells = <2>;
-> > > +		#size-cells = <0>;
-> > > +
-> > > +		cpu@000 {
-> > > +			device_type = "cpu";
-> > > +			compatible = "arm,armv8";
-> > 
-> > The "arm,armv8" should be a fallback rather than the only entry. The
-> > precise core should be first (see arch/arm64/boot/dts/apm-storm.dtsi for
-> > an example).
-> > 
-> Well, do I really need another name if GH7 has just 'ARMv8 core' exactly?
+>=20
+>> The u-boot code needs to be fixed for arndale right ? Please confirm
+>=20
+> I could get the Arndale to boot with this above patch. But only after =
+a
+> warm reboot:
+Can you please describe more on the warm reboot problem. I am not facing =
+anything like it.
 
-Yes please. You presumably don't have "just 'ARMv8 core'", but rather a
-specific ARMv8 implementation.
+> 1) boot the board up, load the kernel and launch it: Linux will reboot
+> very early (before any useful output via earlyprintk)
+> 2) (back in u-boot:) load the kernel again and launch it: works
+>=20
+> I got both cores in HYP mode and KVM initialized fine.
+>=20
+> I lost access to my board, so if you could debug this I would be =
+grateful.
+I have 3 boards of exynos family 5250 /5410 /5420. I will try on each =
+and let you know. If you have anything specific do let me know=20
 
-> > > +			reg = <0x0 0x000>;
-> > 
-> > Any reason for padding these to three hexadecimal digits (in both the
-> > reg and unit-address)?
-> > 
-> Yes, I already commented on Olof's question before, other cores will be
-> added and it should be separated from this.
+> Thanks,
+> Andre.
+>=20
+>>=20
+>> Regards
+>> Manish
+>> armdev Team @FTM
+>>=20
+>> On 13-Mar-2014, at 11:20 am, armdev <armdev.ftm@gmail.com> wrote:
+>>=20
+>>> Got a mail that Andre is not with linaro, Adding Christoffer Dall
+>>>=20
+>>> On 13-Mar-2014, at 11:17 am, armdev <armdev.ftm@gmail.com> wrote:
+>>>=20
+>>>> Hi Andrey ,
+>>>>=20
+>>>> This is wrt your patch set which enabled the switch to non-sec and =
+hip mode in armv7.
+>>>> We have a small piece of code which we run in hypmode using the =
+bootm command on arndale board
+>>>>=20
+>>>> While this code was trying to access the GICD_ISENABLR0 =
+(0x10481100), read was always returning 0, while as per the reset value =
+it should be 0x0000ffff. Debugged more in u-boot and added prints.
+>>>>=20
+>>>> This is the log, our observation is that in _nonsec_init() there is =
+something that is causing the issue. Now It can be an issue or a gap in =
+our understanding. Ideally we should be able to read the GICD_ISENABLR =
+value as 0xffff.
+>>>> Can you please help us in find out how to read GIC values properly =
+in hyp mode.
+>>>>=20
+>>>> armv7_switch_nonsec
+>>>> cpsr =3D600001d3
+>>>> REGS ffff
+>>>> Before write to group regs
+>>>> cpsr =3D600001d3
+>>>> REGS ffff
+>>>> Before _nonsec_init()
+>>>> cpsr =3D600001d3
+>>>> REGS ffff
+>>>> After _nonsec_init()
+>>>> cpsr =3D600001d3
+>>>> REGS 0
+>>>>=20
+>>>> HYP mode: successful.
+>>>> armv7_switch_hyp
+>>>> cpsr =3D600001da
+>>>> REGS 0
+>>>>=20
+>>>> Here is the diff of our modifications. (just added prints)
+>>>> diff --git a/arch/arm/cpu/armv7/virt-v7.c =
+b/arch/arm/cpu/armv7/virt-v7.c
+>>>> index 2cd604f..f38f125 100644
+>>>> --- a/arch/arm/cpu/armv7/virt-v7.c
+>>>> +++ b/arch/arm/cpu/armv7/virt-v7.c
+>>>> @@ -107,6 +107,10 @@ int armv7_switch_hyp(void)
+>>>>            printf("HYP mode: switch not successful.\n");
+>>>>            return -1;
+>>>>    }
+>>>> +   printf("HYP mode: successful.\n");
+>>>> +   printf("%s \r\n",__FUNCTION__);
+>>>> +   printf("cpsr =3D%x\n", read_cpsr());
+>>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>>=20
+>>>>    return 0;
+>>>> }
+>>>> @@ -116,6 +120,10 @@ int armv7_switch_nonsec(void)
+>>>>    unsigned int reg;
+>>>>    unsigned itlinesnr, i;
+>>>>=20
+>>>> +   printf("%s \r\n",__FUNCTION__);
+>>>> +   printf("cpsr =3D%x\n", read_cpsr());
+>>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>> +
+>>>>    /* check whether the CPU supports the security extensions */
+>>>>    reg =3D read_id_pfr1();
+>>>>    if ((reg & 0xF0) =3D=3D 0) {
+>>>> @@ -140,6 +148,9 @@ int armv7_switch_nonsec(void)
+>>>>    /* TYPER[4:0] contains an encoded number of available interrupts =
+*/
+>>>>    itlinesnr =3D readl(gic_dist_addr + GICD_TYPER) & 0x1f;
+>>>>=20
+>>>> +   printf("Before write to group regs \r\n");
+>>>> +   printf("cpsr =3D%x\n", read_cpsr());
+>>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>>    /* set all bits in the GIC group registers to one to allow =
+access
+>>>>     * from non-secure state. The first 32 interrupts are private =
+per
+>>>>     * CPU and will be set later when enabling the GIC for each core
+>>>> @@ -147,11 +158,19 @@ int armv7_switch_nonsec(void)
+>>>>    for (i =3D 1; i <=3D itlinesnr; i++)
+>>>>            writel((unsigned)-1, gic_dist_addr + GICD_IGROUPRn + 4 * =
+i);
+>>>>=20
+>>>> -   smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
+>>>> -   smp_kick_all_cpus();
+>>>> +   //smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
+>>>> +   //smp_kick_all_cpus();
+>>>>=20
+>>>> +   printf("Before _nonsec_init() \r\n");
+>>>> +   printf("cpsr =3D%x\n", read_cpsr());
+>>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>>    /* call the non-sec switching code on this CPU also */
+>>>>    _nonsec_init();
+>>>>=20
+>>>> +   printf("After _nonsec_init() \r\n");
+>>>> +   printf("cpsr =3D%x\n", read_cpsr());
+>>>> +   printf("REGS %x \n", *(uint32_t*)0x10481100);
+>>>> +
+>>>> +
+>>>>    return 0;
+>>>> }
+>>>> diff --git a/include/configs/arndale.h b/include/configs/arndale.h
+>>>> index 515facf..53a1212 100644
+>>>> --- a/include/configs/arndale.h
+>>>> +++ b/include/configs/arndale.h
+>>>> @@ -62,7 +62,6 @@
+>>>> /* select serial console configuration */
+>>>> #define CONFIG_BAUDRATE                     115200
+>>>> #define EXYNOS5_DEFAULT_UART_OFFSET 0x010000
+>>>> -#define CONFIG_SILENT_CONSOLE
+>>>>=20
+>>>> /* Console configuration */
+>>>> #define CONFIG_CONSOLE_MUX
+>>>> @@ -249,4 +248,7 @@
+>>>> /* Enable Time Command */
+>>>> #define CONFIG_CMD_TIME
+>>>>=20
+>>>> +/* Enable jump to hypervisor */
+>>>> +#define CONFIG_ARMV7_VIRT
+>>>> +#define CONFIG_SMP_PEN_ADDR 0x0
+>>>> #endif      /* __CONFIG_H */
+>>>>=20
+>>>=20
+>>=20
+>> _______________________________________________
+>> U-Boot mailing list
+>> U-Boot@lists.denx.de
+>> http://lists.denx.de/mailman/listinfo/u-boot
+>>=20
+>=20
+> -- IMPORTANT NOTICE: The contents of this email and any attachments =
+are confidential and may also be privileged. If you are not the intended =
+recipient, please notify the sender immediately and do not disclose the =
+contents to any other person, use it for any purpose, or store or copy =
+the information in any medium.  Thank you.
+>=20
+> ARM Limited, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, =
+Registered in England & Wales, Company No:  2557590
+> ARM Holdings plc, Registered office 110 Fulbourn Road, Cambridge CB1 =
+9NJ, Registered in England & Wales, Company No:  2548782
 
-Ok.
 
-> > > +			enable-method = "spin-table";
-> > > +			cpu-release-addr = <0x0 0x8000fff8>;
-> > > +		};
-> > > +		cpu@001 {
-> > > +			device_type = "cpu";
-> > > +			compatible = "arm,armv8";
-> > > +			reg = <0x0 0x001>;
-> > > +			enable-method = "spin-table";
-> > > +			cpu-release-addr = <0x0 0x8000fff8>;
-> > > +		};
-> > > +		cpu@002 {
-> > > +			device_type = "cpu";
-> > > +			compatible = "arm,armv8";
-> > > +			reg = <0x0 0x002>;
-> > > +			enable-method = "spin-table";
-> > > +			cpu-release-addr = <0x0 0x8000fff8>;
-> > > +		};
-> > > +		cpu@003 {
-> > > +			device_type = "cpu";
-> > > +			compatible = "arm,armv8";
-> > > +			reg = <0x0 0x003>;
-> > > +			enable-method = "spin-table";
-> > > +			cpu-release-addr = <0x0 0x8000fff8>;
-> > > +		};
-> > > +	};
-> > > +
-> > > +	gic: interrupt-controller@1C000000 {
-> > > +		compatible = "arm,cortex-a15-gic";
-> > 
-> > We should have a more specific compatible string early in the list here
-> > too.
-> > 
-> Well, I think more specific compatible string is not required for gic, there
-> were discussion about using another compatible string for gic-v2. And
-> cortex-a15-gic should be fine at this moment and if another name is required
-> as per previous discussion, we will then.
+--Apple-Mail=_A668A1B1-AE38-4BB9-95F1-B483AE4DC791--
 
-While it's probably ok to have "arm,cortex-a15-gic" in the compatible
-list, it would be good to also have a more specific string, so we can
-identify the GIC implementation precisely in future (in case we need to
-perform any workarounds, or there's some kind of optimisation we could
-perform for some implementations).
+--===============1189457821==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-> > > +		#interrupt-cells = <3>;
-> > > +		interrupt-controller;
-> > > +		reg = <0x0 0x1C001000 0 0x1000>,	/* GIC Dist */
-> > > +		      <0x0 0x1C002000 0 0x1000>,	/* GIC CPU */
-> > > +		      <0x0 0x1C004000 0 0x2000>,	/* GIC VCPU Control
-> */
-> > > +		      <0x0 0x1C006000 0 0x2000>;	/* GIC VCPU */
-> > > +		interrupts = <1 9 0xf04>;	/* GIC Maintenence IRQ */
-> > > +	};
-> > > +
-> > > +	timer {
-> > > +		compatible = "arm,armv8-timer";
-> > > +		interrupts = <1 13 0xff01>,	/* Secure Phys IRQ */
-> > > +			     <1 14 0xff01>,	/* Non-secure Phys IRQ */
-> > > +			     <1 11 0xff01>,	/* Virt IRQ */
-> > > +			     <1 10 0xff01>;	/* Hyp IRQ */
-> > > +	};
-> > > +
-> > > +	pmu {
-> > > +		compatible = "arm,armv8-pmuv3";
-> > 
-> > This is missing a specific compatible string.
-> > 
-> I don't know why I need another specific compatible string here because I
-> thought the 'armv8-pmuv3' is enough.
+_______________________________________________
+U-Boot mailing list
+U-Boot@lists.denx.de
+http://lists.denx.de/mailman/listinfo/u-boot
 
-Each CPU microarchitecture has different PMU events and quirks. While
-the CPU PMU might be compatible with ARMv8's PMUv3, it will also have
-implementation-specific events, and may have quirks we need to work
-around in future.
-
-As with 32-bit, we'd expect these to be of the form
-"${implementor},${cpu}-pmu".
-
-> > > +		interrupts = <0 294 0>,
-> > > +			     <0 295 0>,
-> > > +			     <0 296 0>,
-> > > +			     <0 297 0>,
-> > > +			     <0 298 0>,
-> > > +			     <0 299 0>,
-> > > +			     <0 300 0>,
-> > > +			     <0 301 0>;
-> > > +	};
-> > 
-> > There are four CPUs described, yet eight interrupts here. There should
-> > be one per CPU.
-> > 
-> Yes right. I added them here by mistake, the other four interrupts will be
-> used for other 4 cores will be added later though.
-
-Ok.
-
-> > > +	amba {
-> > > +		compatible = "arm,amba-bus";
-> > > +		#address-cells = <2>;
-> > > +		#size-cells = <2>;
-> > > +		ranges;
-> > > +
-> > > +		serial@12c00000 {
-> > > +			compatible = "arm,pl011", "arm,primecell";
-> > > +			reg = <0 0x12c00000 0 0x10000>;
-> > > +			interrupts = <0 418 0>;
-> > > +		};
-> > > +
-> > > +		serial@12c20000 {
-> > > +			compatible = "arm,pl011", "arm,primecell";
-> > > +			reg = <0 0x12c20000 0 0x10000>;
-> > > +			interrupts = <0 420 0>;
-> > > +		};
-> > 
-> > These are both missing required clocks.
-> > 
-> Yes right.
-
-So you'll add these?
-
-> > > diff --git a/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> > b/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> > > new file mode 100644
-> > > index 0000000..47afbc4
-> > > --- /dev/null
-> > > +++ b/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> > > @@ -0,0 +1,26 @@
-> > > +/*
-> > > + * SAMSUNG SSDK-GH7 board device tree source
-> > > + *
-> > > + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> > > + *		http://www.samsung.com
-> > > + *
-> > > + * This program is free software; you can redistribute it and/or modify
-> > > + * it under the terms of the GNU General Public License version 2 as
-> > > + * published by the Free Software Foundation.
-> > > +*/
-> > > +
-> > > +/dts-v1/;
-> > > +#include "samsung-gh7.dtsi"
-> > > +
-> > > +/ {
-> > > +	model = "SAMSUNG SSDK-GH7 board based on GH7 SoC";
-> > 
-> > Is the "based on GH7 SoC" part necessary? Does the "SSDK-GH7" not give
-> > that away?
-> > 
-> In this case, yes, SSDK-GH7 is enough but I though, in case of different
-> board adding what SoC is used on the board in that is useful. Anyway, OK.
-
-Looking at ePAPR, the recommended format is "manufacturer,model", and
-the string is intended to identify a particular implementation. It is
-not intended to give details about the implementation that can be
-derived from the name.
-
-We seem to have ignored the format (and to some degree purpose) of the
-model property so far, but I don't see any reason to fill it with
-unnecessary information.
-
-Thanks,
-Mark.
+--===============1189457821==--
