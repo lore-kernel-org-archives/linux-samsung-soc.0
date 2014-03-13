@@ -1,202 +1,186 @@
-From: Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [U-Boot] ref: virt-v7.c switching to non_secure mode
-Date: Thu, 13 Mar 2014 10:27:00 +0000
-Message-ID: <532187F4.9040300@arm.com>
-References: <99DDD4A2-0B44-4C6D-A0B5-4A18CC9EF21F@gmail.com>	<1A481609-5D5F-4E89-92D1-2C698128FA84@gmail.com> <42C5F6B1-3090-422D-A494-9B6F3769DE0A@gmail.com> <53217A6B.9090709@gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v5 3/5] clk/samsung: add support for pll2650xx
+Date: Thu, 13 Mar 2014 19:29:03 +0900
+Message-ID: <CAGcde9FiFkbtuCrG1TWAmbcM-LLMu8fAMKS-L4keZ2ehuEDn=g@mail.gmail.com>
+References: <1394636208-3125-1-git-send-email-rahul.sharma@samsung.com>
+ <1394636208-3125-4-git-send-email-rahul.sharma@samsung.com> <532109C6.2060100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service88.mimecast.com ([195.130.217.12]:55433 "EHLO
-	service88.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753651AbaCMK1E convert rfc822-to-8bit (ORCPT
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:64684 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753540AbaCMK3c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Mar 2014 06:27:04 -0400
-In-Reply-To: <53217A6B.9090709@gmail.com>
+	Thu, 13 Mar 2014 06:29:32 -0400
+In-Reply-To: <532109C6.2060100@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: armdev <armdev.ftm@gmail.com>, christoffer.dall@linaro.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, kgene.kim@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-Hi,
-
-sorry for the double post. Please don't use the Gmail address, this is
-just my ML catching account. I got a denial from our SMTP server
-regarding the u-boot ML recipient, so I had to send it again.
-
-Thanks,
-Andre.
-
-On 13/03/14 09:29, Reinhard Moselbach wrote:
-> Hi,
->
->  > We are able to figure out the issue. PERIPHBASE returned on ARNDALE
->  > board was 0x10500000 and adding GIC offset was creating an incorrect
->  > address.
->
-> please see:
-> https://github.com/apritzel/u-boot-hypmode/commit/5d9c4209907c6d67dadd033887a30c2f10efeb4c
+On Thu, Mar 13, 2014 at 10:28 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Hi Rahul,
 >
 >
+> On 03/12/2014 11:56 PM, Rahul Sharma wrote:
 >>
->> Setting CONFIG_ARM_GIC_BASE_ADDRESS as 0x10480000 in arndale.h solves
->> the issue.
->
-> Yes, I spotted that before and deliberately introduced that variable for
-> the Exynos SoCs.
->
->> The u-boot code needs to be fixed for arndale right ? Please confirm
->
-> I could get the Arndale to boot with this above patch. But only after a
-> warm reboot:
-> 1) boot the board up, load the kernel and launch it: Linux will reboot
-> very early (before any useful output via earlyprintk)
-> 2) (back in u-boot:) load the kernel again and launch it: works
->
-> I got both cores in HYP mode and KVM initialized fine.
->
-> I lost access to my board, so if you could debug this I would be grateful.
->
-> Thanks,
-> Andre.
->
+>> Add support for pll2650xx in samsung pll file. This PLL variant
+>> is close to pll36xx but uses CON2 registers instead of CON1.
 >>
->> Regards
->> Manish
->> armdev Team @FTM
+>> Aud_pll in Exynos5260 is pll2650xx and uses this code.
 >>
->> On 13-Mar-2014, at 11:20 am, armdev <armdev.ftm@gmail.com> wrote:
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-pll.c |  101
+>> +++++++++++++++++++++++++++++++++++++++++
+>>   drivers/clk/samsung/clk-pll.h |    1 +
+>>   2 files changed, 102 insertions(+)
 >>
->>> Got a mail that Andre is not with linaro, Adding Christoffer Dall
->>>
->>> On 13-Mar-2014, at 11:17 am, armdev <armdev.ftm@gmail.com> wrote:
->>>
->>>> Hi Andrey ,
->>>>
->>>> This is wrt your patch set which enabled the switch to non-sec and
->>>> hip mode in armv7.
->>>> We have a small piece of code which we run in hypmode using the
->>>> bootm command on arndale board
->>>>
->>>> While this code was trying to access the GICD_ISENABLR0
->>>> (0x10481100), read was always returning 0, while as per the reset
->>>> value it should be 0x0000ffff. Debugged more in u-boot and added
->>>> prints.
->>>>
->>>> This is the log, our observation is that in _nonsec_init() there is
->>>> something that is causing the issue. Now It can be an issue or a gap
->>>> in our understanding. Ideally we should be able to read the
->>>> GICD_ISENABLR value as 0xffff.
->>>> Can you please help us in find out how to read GIC values properly
->>>> in hyp mode.
->>>>
->>>> armv7_switch_nonsec
->>>> cpsr =600001d3
->>>> REGS ffff
->>>> Before write to group regs
->>>> cpsr =600001d3
->>>> REGS ffff
->>>> Before _nonsec_init()
->>>> cpsr =600001d3
->>>> REGS ffff
->>>> After _nonsec_init()
->>>> cpsr =600001d3
->>>> REGS 0
->>>>
->>>> HYP mode: successful.
->>>> armv7_switch_hyp
->>>> cpsr =600001da
->>>> REGS 0
->>>>
->>>> Here is the diff of our modifications. (just added prints)
->>>> diff --git a/arch/arm/cpu/armv7/virt-v7.c
->>>> b/arch/arm/cpu/armv7/virt-v7.c
->>>> index 2cd604f..f38f125 100644
->>>> --- a/arch/arm/cpu/armv7/virt-v7.c
->>>> +++ b/arch/arm/cpu/armv7/virt-v7.c
->>>> @@ -107,6 +107,10 @@ int armv7_switch_hyp(void)
->>>>         printf("HYP mode: switch not successful.\n");
->>>>         return -1;
->>>>     }
->>>> +    printf("HYP mode: successful.\n");
->>>> +    printf("%s \r\n",__FUNCTION__);
->>>> +    printf("cpsr =%x\n", read_cpsr());
->>>> +    printf("REGS %x \n", *(uint32_t*)0x10481100);
->>>>
->>>>     return 0;
->>>> }
->>>> @@ -116,6 +120,10 @@ int armv7_switch_nonsec(void)
->>>>     unsigned int reg;
->>>>     unsigned itlinesnr, i;
->>>>
->>>> +    printf("%s \r\n",__FUNCTION__);
->>>> +    printf("cpsr =%x\n", read_cpsr());
->>>> +    printf("REGS %x \n", *(uint32_t*)0x10481100);
->>>> +
->>>>     /* check whether the CPU supports the security extensions */
->>>>     reg = read_id_pfr1();
->>>>     if ((reg & 0xF0) == 0) {
->>>> @@ -140,6 +148,9 @@ int armv7_switch_nonsec(void)
->>>>     /* TYPER[4:0] contains an encoded number of available interrupts */
->>>>     itlinesnr = readl(gic_dist_addr + GICD_TYPER) & 0x1f;
->>>>
->>>> +    printf("Before write to group regs \r\n");
->>>> +    printf("cpsr =%x\n", read_cpsr());
->>>> +    printf("REGS %x \n", *(uint32_t*)0x10481100);
->>>>     /* set all bits in the GIC group registers to one to allow access
->>>>      * from non-secure state. The first 32 interrupts are private per
->>>>      * CPU and will be set later when enabling the GIC for each core
->>>> @@ -147,11 +158,19 @@ int armv7_switch_nonsec(void)
->>>>     for (i = 1; i <= itlinesnr; i++)
->>>>         writel((unsigned)-1, gic_dist_addr + GICD_IGROUPRn + 4 * i);
->>>>
->>>> -    smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
->>>> -    smp_kick_all_cpus();
->>>> +    //smp_set_core_boot_addr((unsigned long)_smp_pen, -1);
->>>> +    //smp_kick_all_cpus();
->>>>
->>>> +    printf("Before _nonsec_init() \r\n");
->>>> +    printf("cpsr =%x\n", read_cpsr());
->>>> +    printf("REGS %x \n", *(uint32_t*)0x10481100);
->>>>     /* call the non-sec switching code on this CPU also */
->>>>     _nonsec_init();
->>>>
->>>> +    printf("After _nonsec_init() \r\n");
->>>> +    printf("cpsr =%x\n", read_cpsr());
->>>> +    printf("REGS %x \n", *(uint32_t*)0x10481100);
->>>> +
->>>> +
->>>>     return 0;
->>>> }
->>>> diff --git a/include/configs/arndale.h b/include/configs/arndale.h
->>>> index 515facf..53a1212 100644
->>>> --- a/include/configs/arndale.h
->>>> +++ b/include/configs/arndale.h
->>>> @@ -62,7 +62,6 @@
->>>> /* select serial console configuration */
->>>> #define CONFIG_BAUDRATE            115200
->>>> #define EXYNOS5_DEFAULT_UART_OFFSET    0x010000
->>>> -#define CONFIG_SILENT_CONSOLE
->>>>
->>>> /* Console configuration */
->>>> #define CONFIG_CONSOLE_MUX
->>>> @@ -249,4 +248,7 @@
->>>> /* Enable Time Command */
->>>> #define CONFIG_CMD_TIME
->>>>
->>>> +/* Enable jump to hypervisor */
->>>> +#define CONFIG_ARMV7_VIRT
->>>> +#define CONFIG_SMP_PEN_ADDR 0x0
->>>> #endif    /* __CONFIG_H */
->>>>
->>>
->>
->> _______________________________________________
->> U-Boot mailing list
->> U-Boot@lists.denx.de
->> http://lists.denx.de/mailman/listinfo/u-boot
->>
-
--- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
-
-ARM Limited, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, Registered in England & Wales, Company No:  2557590
-ARM Holdings plc, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, Registered in England & Wales, Company No:  2548782
+>> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+>> index 18e42ef..b07fad2 100644
+>> --- a/drivers/clk/samsung/clk-pll.c
+>> +++ b/drivers/clk/samsung/clk-pll.c
+>> @@ -1049,6 +1049,101 @@ static const struct clk_ops
+>> samsung_pll2550xx_clk_min_ops = {
+>>         .recalc_rate = samsung_pll2550xx_recalc_rate,
+>>   };
+>>   +/*
+>> + * PLL2650XX Clock Type
+>> + */
+>> +
+>> +/* Maximum lock time can be 3000 * PDIV cycles */
+>> +#define PLL2650XX_LOCK_FACTOR 3000
+>> +
+>> +#define PLL2650XX_MDIV_SHIFT           9
+>> +#define PLL2650XX_PDIV_SHIFT           3
+>> +#define PLL2650XX_SDIV_SHIFT           0
+>> +#define PLL2650XX_KDIV_SHIFT           0
+>> +#define PLL2650XX_MDIV_MASK            0x1ff
+>> +#define PLL2650XX_PDIV_MASK            0x3f
+>> +#define PLL2650XX_SDIV_MASK            0x7
+>> +#define PLL2650XX_KDIV_MASK            0xffff
+>> +#define PLL2650XX_PLL_ENABLE_SHIFT     23
+>> +#define PLL2650XX_PLL_LOCKTIME_SHIFT   21
+>> +#define PLL2650XX_PLL_FOUTMASK_SHIFT   31
+>> +
+>> +static unsigned long samsung_pll2650xx_recalc_rate(struct clk_hw *hw,
+>> +                               unsigned long parent_rate)
+>> +{
+>> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
+>> +       u32 mdiv, pdiv, sdiv, pll_con0, pll_con2;
+>> +       s16 kdiv;
+>> +       u64 fvco = parent_rate;
+>> +
+>> +       pll_con0 = __raw_readl(pll->con_reg);
+>> +       pll_con2 = __raw_readl(pll->con_reg + 8);
+>> +       mdiv = (pll_con0 >> PLL2650XX_MDIV_SHIFT) & PLL2650XX_MDIV_MASK;
+>> +       pdiv = (pll_con0 >> PLL2650XX_PDIV_SHIFT) & PLL2650XX_PDIV_MASK;
+>> +       sdiv = (pll_con0 >> PLL2650XX_SDIV_SHIFT) & PLL2650XX_SDIV_MASK;
+>> +       kdiv = (s16)(pll_con2 & PLL2650XX_KDIV_MASK);
+>> +
+>> +       fvco *= (mdiv << 16) + kdiv;
+>> +       do_div(fvco, (pdiv << sdiv));
+>> +       fvco >>= 16;
+>> +
+>> +       return (unsigned long)fvco;
+>> +}
+>> +
+>> +static int samsung_pll2650xx_set_rate(struct clk_hw *hw, unsigned long
+>> drate,
+>> +                                       unsigned long parent_rate)
+>> +{
+>> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
+>> +       u32 tmp, pll_con0, pll_con2;
+>> +       const struct samsung_pll_rate_table *rate;
+>> +
+>> +       rate = samsung_get_pll_settings(pll, drate);
+>> +       if (!rate) {
+>> +               pr_err("%s: Invalid rate : %lu for pll clk %s\n",
+>> __func__,
+>> +                       drate, __clk_get_name(hw->clk));
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       pll_con0 = __raw_readl(pll->con_reg);
+>> +       pll_con2 = __raw_readl(pll->con_reg + 8);
+>> +
+>> +        /* Change PLL PMS values */
+>> +       pll_con0 &= ~(PLL2650XX_MDIV_MASK << PLL2650XX_MDIV_SHIFT |
+>> +                       PLL2650XX_PDIV_MASK << PLL2650XX_PDIV_SHIFT |
+>> +                       PLL2650XX_SDIV_MASK << PLL2650XX_SDIV_SHIFT);
+>> +       pll_con0 |= rate->mdiv << PLL2650XX_MDIV_SHIFT;
+>> +       pll_con0 |= rate->pdiv << PLL2650XX_PDIV_SHIFT;
+>> +       pll_con0 |= rate->sdiv << PLL2650XX_SDIV_SHIFT;
+>> +       pll_con0 |= 1 << PLL2650XX_PLL_ENABLE_SHIFT;
+>> +       pll_con0 |= 1 << PLL2650XX_PLL_FOUTMASK_SHIFT;
+>> +
+>> +       pll_con2 &= ~(PLL2650XX_KDIV_MASK << PLL2650XX_KDIV_SHIFT);
+>> +       pll_con2 |= ((~(rate->kdiv) + 1) & PLL2650XX_KDIV_MASK)
+>> +                       << PLL2650XX_KDIV_SHIFT;
+>> +
+>> +       /* Set PLL lock time. */
+>> +       __raw_writel(PLL2650XX_LOCK_FACTOR * rate->pdiv, pll->lock_reg);
+>> +
+>> +       __raw_writel(pll_con0, pll->con_reg);
+>> +       __raw_writel(pll_con2, pll->con_reg + 8);
+>> +
+>> +       do {
+>> +               tmp = __raw_readl(pll->con_reg);
+>> +       } while (!(tmp & (0x1 << PLL2650XX_PLL_LOCKTIME_SHIFT)));
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct clk_ops samsung_pll2650xx_clk_ops = {
+>> +       .recalc_rate = samsung_pll2650xx_recalc_rate,
+>> +       .set_rate = samsung_pll2650xx_set_rate,
+>> +       .round_rate = samsung_pll_round_rate,
+>> +};
+>> +
+>> +static const struct clk_ops samsung_pll2650xx_clk_min_ops = {
+>> +       .recalc_rate = samsung_pll2650xx_recalc_rate,
+>> +};
+>> +
+>>   static void __init _samsung_clk_register_pll(struct samsung_clk_provider
+>> *ctx,
+>>                                 struct samsung_pll_clock *pll_clk,
+>>                                 void __iomem *base)
+>> @@ -1157,6 +1252,12 @@ static void __init _samsung_clk_register_pll(struct
+>> samsung_clk_provider *ctx,
+>>                 else
+>>                         init.ops = &samsung_pll2550xx_clk_ops;
+>>                 break;
+>> +       case pll_2650xx:
+>> +               if (!pll->rate_table)
+>> +                       init.ops = &samsung_pll2650xx_clk_min_ops;
+>> +               else
+>> +                       init.ops = &samsung_pll2650xx_clk_ops;
+>> +               break;
+>>         default:
+>>                 pr_warn("%s: Unknown pll type for pll clk %s\n",
+>>                         __func__, pll_clk->name);
+>> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+>> index ec4bc1d..c0ed4d4 100644
+>> --- a/drivers/clk/samsung/clk-pll.h
+>> +++ b/drivers/clk/samsung/clk-pll.h
+>> @@ -32,6 +32,7 @@ enum samsung_pll_type {
+>>         pll_s3c2410_upll,
+>>         pll_s3c2440_mpll,
+>>         pll_2550xx,
+>> +       pll_2650xx,
+>>   };
+>>     #define PLL_35XX_RATE(_rate, _m, _p, _s)                    \
+>
+>
+> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>
+> --
+> Best Regards,
+> Pankaj Dubey
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
