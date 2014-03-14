@@ -1,81 +1,82 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCHv2 0/8] devfreq: exynos4: Support dt and use common ppmu
- driver
-Date: Fri, 14 Mar 2014 18:58:06 +0100
-Message-ID: <5323432E.5060005@samsung.com>
-References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v2 01/11] base: power: Add generic OF-based power domain look-up
+Date: Fri, 14 Mar 2014 16:07:05 -0700
+Message-ID: <7h38ikgz1i.fsf@paris.lan>
+References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
+	<1393862536-9842-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45266 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751946AbaCNR6K (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Mar 2014 13:58:10 -0400
-In-reply-to: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com> (Tomasz
+	Figa's message of "Mon, 3 Mar 2014 17:02:06 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kumar Gala <gal>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Cc: rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 
-Hi Chanwoo,
+Tomasz Figa <tomasz.figa@gmail.com> writes:
 
-On 13.03.2014 09:17, Chanwoo Choi wrote:
-> This patchset support devicetree and use common ppmu driver instead of
-> individual code of exynos4_bus.c to remove duplicate code. Also this patchset
-> get the resources for busfreq from dt data by using DT helper function.
-> - PPMU register address
-> - PPMU clock
-> - Regulator for INT/MIF block
+> This patch introduces generic code to perform power domain look-up using
+> device tree and automatically bind devices to their power domains.
+> Generic device tree binding is introduced to specify power domains of
+> devices in their device tree nodes.
 >
-> This patchset use SET_SYSTEM_SLEEP_PM_OPS macro intead of legacy method.
-> To remove power-leakage in suspend state, before entering suspend state,
-> disable ppmu clocks.
+> Backwards compatibility with legacy Samsung-specific power domain
+> bindings is provided, but for now the new code is not compiled when
+> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
+> will change as soon as Exynos power domain code gets converted to use
+> the generic framework in further patch.
 >
-> Changes from v1:
-> - Add exynos4_bus.txt documentation for devicetree guide
-> - Fix probe failure if CONFIG_PM_OPP is disabled
-> - Fix typo and resource leak(regulator/clock/memory) when happening probe failure
-> - Add additionally comment for PPMU usage instead of previous PPC
-> - Split separate patch to remove ambiguous of patch
->
-> Chanwoo Choi (8):
->    devfreq: exynos4: Support devicetree to get device id of Exynos4 SoC
->    devfreq: exynos4: Use common ppmu driver and get ppmu address from dt data
->    devfreq: exynos4: Add ppmu's clock control and code clean about regulator control
->    devfreq: exynos4: Fix bug of resource leak and code clean on probe()
->    devfreq: exynos4: Use SET_SYSTEM_SLEEP_PM_OPS macro
->    devfreq: exynos4: Fix power-leakage of clock on suspend state
->    devfreq: exynos4: Add CONFIG_PM_OPP dependency to fix probe fail
->    devfreq: exynos4: Add busfreq driver for exynos4210/exynos4x12
->
->   .../devicetree/bindings/devfreq/exynos4_bus.txt    |  49 +++
->   drivers/devfreq/Kconfig                            |   1 +
->   drivers/devfreq/exynos/Makefile                    |   2 +-
->   drivers/devfreq/exynos/exynos4_bus.c               | 415 ++++++++++++++-------
->   4 files changed, 341 insertions(+), 126 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/devfreq/exynos4_bus.txt
->
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-I have reviewed this series and there are several comments that I'd like 
-to ask you to address. Please see my replies to particular patches.
+Reviewed-by: Kevin Hilman <khilman@linaro.org>
 
-However, this driver, even after applying your series, is still far from 
-a state that would allow it to be enabled. The most important issue is 
-direct access to CMU registers, based on static mapping, which is not 
-allowed on multiplatform kernels and multiplatform-awareness for drivers 
-is currently a must.
+The approach and binding both look good to me, other than a few minor
+nits on comments and question on the locking below...
 
-To allow this driver to be enabled, it needs to be converted to use 
-common clock framework functions to configure all clocks, e.g. 
-clk_set_rate(), clk_set_parent(), etc., without accessing CMU registers 
-directly.
+[...]
 
-Of course as long as the driver is effectively unusable, to keep 
-development, we can proceed with refactoring it step-by-step and your 
-series would be basically the first step, after addressing the review 
-comments.
+> @@ -2177,3 +2181,297 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
+>  	list_add(&genpd->gpd_list_node, &gpd_list);
+>  	mutex_unlock(&gpd_list_lock);
+>  }
+> +
+> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+> +/*
+> + * DEVICE TREE BASED POWER DOMAIN PROVIDERS
 
-Best regards,
-Tomasz
+why all caps?
+
+[...]
+
+> +/* See of_genpd_get_from_provider(). */
+> +static struct generic_pm_domain *__of_genpd_get_from_provider(
+> +					struct of_phandle_args *genpdspec)
+> +{
+> +	struct of_genpd_provider *provider;
+> +	struct generic_pm_domain *genpd = ERR_PTR(-EPROBE_DEFER);
+> +
+> +	/* Check if we have such a provider in our array */
+
+I think you want to take the mutex here...
+
+> +	list_for_each_entry(provider, &of_genpd_providers, link) {
+> +		if (provider->node == genpdspec->np)
+> +			genpd = provider->xlate(genpdspec, provider->data);
+> +		if (!IS_ERR(genpd))
+> +			break;
+> +	}
+
+...and release it here, right?
+
+[...]
+
+> +/*
+> + * DEVICE<->DOMAIN BINDING USING DEVICE TREE LOOK-UP
+
+hmm, more yelling?
+
+
+Otherwise, looks good to me.
+
+Kevin
