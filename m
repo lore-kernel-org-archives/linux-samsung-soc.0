@@ -1,67 +1,82 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v11 01/27] iommu/exynos: do not include removed header
-Date: Fri, 14 Mar 2014 17:29:36 +0530
-Message-ID: <CAK9yfHyGfdP+0RKtdSCdU4tO=PX8GbQRQ7ar=ST5B2RenZMMsg@mail.gmail.com>
-References: <20140314140129.68a41cc1bd9e0a48a198ca13@samsung.com>
-	<CAK9yfHzRasE3jroDUZgAa=DN5N=2ZDAxgNiHDCip+f2868BAVQ@mail.gmail.com>
-	<000e01cf3f7b$6edcdfd0$4c969f70$@samsung.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH 1/2] ARM: DT: fix gic interrupt controller documentation
+Date: Fri, 14 Mar 2014 20:14:49 +0800
+Message-ID: <20140314121448.GB813@S2101-09.ap.freescale.net>
+References: <1394732405-2260-1-git-send-email-tharvey@gateworks.com>
+ <1394732405-2260-2-git-send-email-tharvey@gateworks.com>
+ <5321EE81.1030207@wwwdotorg.org>
+ <20140313182554.GA15990@obsidianresearch.com>
+ <CAJ+vNU2YYbsH8iOWJ_B-vcHdfWYW1oFsWY_=YEd-ojJASOZgtQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <000e01cf3f7b$6edcdfd0$4c969f70$@samsung.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAJ+vNU2YYbsH8iOWJ_B-vcHdfWYW1oFsWY_=YEd-ojJASOZgtQ@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Mark Rutland <mark.rutland@arm.com>, Richard Zhu <r65037@freescale.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Sascha Hauer <kernel@pengutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lucas Stach <l.stach@pengutronix.de>, Rob Herring <robh@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 14 March 2014 17:19, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> From: Sachin Kamat [mailto:sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org]
->> Sent: Friday, March 14, 2014 7:00 PM
->>
->> On 14 March 2014 10:31, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> > Commit 25e9d28d92 (ARM: EXYNOS: remove system mmu initialization from
->> > exynos tree) removed arch/arm/mach-exynos/mach/sysmmu.h header without
->> > removing remaining use of it from exynos-iommu driver, thus causing a
->> > compilation error.
->> >
->> > This patch fixes the error by removing respective include line
->> > from exynos-iommu.c.
->> >
->> > CC: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> > ---
->> >  drivers/iommu/exynos-iommu.c |    3 +--
->> >  1 file changed, 1 insertion(+), 2 deletions(-)
->> >
->> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
->> > index 0740189..4876d35 100644
->> > --- a/drivers/iommu/exynos-iommu.c
->> > +++ b/drivers/iommu/exynos-iommu.c
->> > @@ -12,6 +12,7 @@
->> >  #define DEBUG
->> >  #endif
->> >
->> > +#include <linux/kernel.h>
->>
->> This change doesn't look related to the patch subject/description.
->>
-> Yes. But it is simply added without any side-effect.
-> Do you think it should be in a separate patch?.
-> Actually, the added line is a redundant.
+On Thu, Mar 13, 2014 at 03:25:50PM -0700, Tim Harvey wrote:
+> On Thu, Mar 13, 2014 at 11:25 AM, Jason Gunthorpe
+> <jgunthorpe@obsidianresearch.com> wrote:
+> > On Thu, Mar 13, 2014 at 11:44:33AM -0600, Stephen Warren wrote:
+> >> On 03/13/2014 11:40 AM, Tim Harvey wrote:
+> >> > When using interrupt-maps, the size of a map entry is #address-cells +
+> >> >  #interrupt-cells for the parent interrupt controller.  For the ARM GIC
+> >> > address-cells should be 0 as this is not used.
+> >> >
+> >> > This patch fixes the example by correctly specifying #address-cells = 0.
+> >>
+> >> If the #address-cells property is required (well, or even optional...)
+> >> in the node, shouldn't it be included in the list of required/optional
+> >> properties above, and not solely included in the example?
+> >
+> > AFAIK, #address-cells = 0 is the same as not including a
+> > #address-cells at all.
+> >
+> > Omitting entirely is what other interrupt-controller bindings are
+> > doing, so I'd just drop mention of #address-cells completely.
+> >
+> > Jason
+> 
+> Jason / Stephen,
+> 
+> Yes, it does indeed default to 0 if not specified.  For arm-gic it
+> would appear #address-cells must be 0, so should we remove all places
+> its set explicitly to 0 in dts as wel as the example in
+> Documentation/devicetree/bindings?
+> 
+> Looking through arch/arm/boot/dts I'm seeing other dts configs using
+> 'arm,cortex-a9-gic' which I'm guessing are equally as wrong as the
+> imx6 situation:
+>  - arch/arm/boot/dts/highbank.dts
+>  - arch/arm/boot/dts/sh73a0.dtsi
+> 
+> I'm also seeing a number of places where its set explicitly to 0:
+>  - Documentation/devicetree/bindings/arm/gic.txt
+>  - Documentation/devicetree/bindings/arm/vexpress.txt
+>  - arch/arm/boot/dts/bcm11351.dtsi
+>  - arch/arm/boot/dts/hi3620.dtsi
+>  - arch/arm/boot/dts/imx6qdl.dtsi
+>  - arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts
+> 
+> If I extend this search to the other compatible gic interrupt
+> controllers implemented in drivers/irqchip/irq-gic.c
+> (arm,cortex-a15-gic, qcom,msm-8660-qgic, qcom,msm-qgic2) I find even
+> more examples where #address-cells is set explicitly to 0 or to 1 (and
+> I would believe a value of 1 is invalid, just as it is in my case).
+> 
+> I'm happy to broaden my patch, but I certainly want to make sure I'm
+> doing the right thing with it, as I don't have the ability to test all
+> the other devicetree configs and am by no means a devicetree expert.
+> 
+> Recommendations?
 
-If it is redundant, then you shouldn't be adding it. If it is
-required, then please
-mention about the need in the commit description if not a separate patch.
+Copy Rob, who might want to comment a bit.
 
--- 
-With warm regards,
-Sachin
+My understanding is that #address-cells and #size-cells are only valid
+for a node that may have child nodes.  Will gic node possibly get any
+child node?
+
+Shawn
