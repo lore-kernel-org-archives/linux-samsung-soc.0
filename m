@@ -1,108 +1,126 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v11 27/27] iommu/exynos: enhanced error messages
-Date: Fri, 14 Mar 2014 14:14:31 +0900
-Message-ID: <20140314141431.320b055a618203746b1e3075@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv2 8/8] devfreq: exynos4: Add busfreq driver for
+ exynos4210/exynos4x12
+Date: Fri, 14 Mar 2014 16:14:37 +0900
+Message-ID: <5322AC5D.9070200@samsung.com>
+References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
+ <1394698649-20996-9-git-send-email-cw00.choi@samsung.com>
+ <20140313175308.GE25870@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:29490 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755302AbaCNHOk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Mar 2014 03:14:40 -0400
+In-reply-to: <20140313175308.GE25870@e106331-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "nm@ti.com" <nm@ti.com>, "b.zolnierkie@samsaung.com" <b.zolnierkie@samsaung.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-Some redundant error message is removed and some error messages
-are changed to error level from debug level.
+Hi Mark,
 
-Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c |   23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+On 03/14/2014 02:53 AM, Mark Rutland wrote:
+> On Thu, Mar 13, 2014 at 08:17:29AM +0000, Chanwoo Choi wrote:
+>> This patch add busfreq driver for Exynos4210/Exynos4x12 memory interface
+>> and bus to support DVFS(Dynamic Voltage Frequency Scaling) according to PPMU
+>> counters. PPMU (Performance Profiling Monitorings Units) of Exynos4 SoC provides
+>> PPMU counters for DMC(Dynamic Memory Controller) to check memory bus utilization
+>> and then busfreq driver adjusts dynamically the operating frequency/voltage
+>> by using DEVFREQ Subsystem.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  .../devicetree/bindings/devfreq/exynos4_bus.txt    | 49 ++++++++++++++++++++++
+>>  1 file changed, 49 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/devfreq/exynos4_bus.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/devfreq/exynos4_bus.txt b/Documentation/devicetree/bindings/devfreq/exynos4_bus.txt
+>> new file mode 100644
+>> index 0000000..2a83fcc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/devfreq/exynos4_bus.txt
+>> @@ -0,0 +1,49 @@
+>> +
+>> +Exynos4210/4x12 busfreq driver
+>> +-----------------------------
+>> +
+>> +Exynos4210/4x12 Soc busfreq driver with devfreq for Memory bus frequency/voltage
+>> +scaling according to PPMU counters of memory controllers
+>> +
+>> +Required properties:
+>> +- compatible	: should contain Exynos4 SoC type as follwoing:
+>> +		  - "samsung,exynos4x12-busfreq" for Exynos4x12
+>> +		  - "samsung,exynos4210-busfreq" for Exynos4210
+> 
+> Is there a device called "busfreq"? What device does this binding
+> describe?
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 4888383..b7f7731 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1012,7 +1012,7 @@ static void exynos_iommu_detach_device(struct iommu_domain *domain,
- 		dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n",
- 					__func__, &pgtable);
- 	} else {
--		dev_dbg(dev, "%s: No IOMMU is attached\n", __func__);
-+		dev_err(dev, "%s: No IOMMU is attached\n", __func__);
- 	}
- }
- 
-@@ -1112,10 +1112,8 @@ static int lv2set_page(sysmmu_pte_t *pent, phys_addr_t paddr, size_t size,
- 								short *pgcnt)
- {
- 	if (size == SPAGE_SIZE) {
--		if (!lv2ent_fault(pent)) {
--			WARN(1, "Trying mapping on 4KiB where mapping exists");
-+		if (WARN_ON(!lv2ent_fault(pent)))
- 			return -EADDRINUSE;
--		}
- 
- 		*pent = mk_lv2ent_spage(paddr);
- 		pgtable_flush(pent, pent + 1);
-@@ -1123,9 +1121,7 @@ static int lv2set_page(sysmmu_pte_t *pent, phys_addr_t paddr, size_t size,
- 	} else { /* size == LPAGE_SIZE */
- 		int i;
- 		for (i = 0; i < SPAGES_PER_LPAGE; i++, pent++) {
--			if (!lv2ent_fault(pent)) {
--				WARN(1,
--				"Trying mapping on 64KiB where mapping exists");
-+			if (WARN_ON(!lv2ent_fault(pent))) {
- 				if (i > 0)
- 					memset(pent - i, 0, sizeof(*pent) * i);
- 				return -EADDRINUSE;
-@@ -1198,8 +1194,8 @@ static int exynos_iommu_map(struct iommu_domain *domain, unsigned long l_iova,
- 	}
- 
- 	if (ret)
--		pr_debug("%s: Failed to map iova %#x/%#zx bytes\n",
--							__func__, iova, size);
-+		pr_err("%s: Failed(%d) to map %#zx bytes @ %#x\n",
-+			__func__, ret, size, iova);
- 
- 	spin_unlock_irqrestore(&priv->pgtablelock, flags);
- 
-@@ -1236,7 +1232,7 @@ static size_t exynos_iommu_unmap(struct iommu_domain *domain,
- 	ent = section_entry(priv->pgtable, iova);
- 
- 	if (lv1ent_section(ent)) {
--		if (size < SECT_SIZE) {
-+		if (WARN_ON(size < SECT_SIZE)) {
- 			err_pgsize = SECT_SIZE;
- 			goto err;
- 		}
-@@ -1271,7 +1267,7 @@ static size_t exynos_iommu_unmap(struct iommu_domain *domain,
- 	}
- 
- 	/* lv1ent_large(ent) == true here */
--	if (size < LPAGE_SIZE) {
-+	if (WARN_ON(size < LPAGE_SIZE)) {
- 		err_pgsize = LPAGE_SIZE;
- 		goto err;
- 	}
-@@ -1290,9 +1286,8 @@ done:
- err:
- 	spin_unlock_irqrestore(&priv->pgtablelock, flags);
- 
--	WARN(1,
--	"%s: Failed due to size(%#zx) @ %#x is smaller than page size %#zx\n",
--	__func__, size, iova, err_pgsize);
-+	pr_err("%s: Failed: size(%#zx) @ %#x is smaller than page size %#zx\n",
-+		__func__, size, iova, err_pgsize);
- 
- 	return 0;
- }
--- 
-1.7.9.5
+I'll add detailed description of busfreq as following:
+
+"busfreq(bus frequendcy)" driver means that busfreq driver control dynamically
+memory bus frequency/voltage by checking memory bus utilization to optimize
+power-consumption. When checking memeory bus utilization, exynos4_busfreq driver
+would use PPMU(Performance Profiling Monitoring Units).
+
+
+> 
+>> +- reg		: offset and length of the ppmudmc0/1
+>> +		  - PPMU (Performance Profiling Monitoring Units)
+> 
+> You seem to require a particular order here. It would be good to be
+> explicit about it.
+
+OK, I'll modify it as following:
+the offset and length of the PPMU_DMC0 / PPMU_DMC1
+PPMU_DMC0/PPMU_DMC1 show memory buy utilization to exynos4_bus driver.
+
+> 
+>> +		  : It is to profile performance event of DMC(Dynamic Memory
+>> +		  Controller) So, exynos4_bus.c can check memory bus utilization
+>> +		  by using PPMU of Exynos4 SoC.
+> 
+> This is superfluous, and Linux-specific. The binding document shouldn't
+> need to refer to drivers.
+
+I'll remove this description.
+
+> 
+>> +- clocks	: clock number of ppmudmc0/1
+>> +- clock-names	: clock name of ppmudmc0/1
+> 
+> Are these two clocks, or one clock with a slash in the name?
+> 
+> Please list each name separately.
+
+I'll expalin clocks as following:
+	"ppmudmc0", "ppmudmc1"
+
+> 
+>> +- vdd_int-supply: regulator for interface block of Exynos4
+>> +
+>> +Optional properties:
+>> +- vdd_mif-supply: regulator for DMC block of Exynos4x12 if Exynos4x12 Soc
+>> +- regs-name	: register name of ppmudmc0/1
+> 
+> This is completely nonstandard. Did you mean reg-names?
+
+I'll remove it about 'regs-name'.
+
+> 
+> Please be explicit about the names you expect. Write them in full,
+> quoted, and describe the relationship to the reg property.
+> 
+>> +
+>> +All the required listed above must be defined under code busfreq with devfreq
+> 
+> I'm having some difficulty figuring out what exactly this is intended to
+> mean.
+
+I'll add detailed opeation method and role of exynos4_busfreq driver.
+
+Thanks,
+Chanwoo Choi
