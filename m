@@ -1,75 +1,78 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v11 15/27] iommu/exynos: use convenient macro to handle
-	gate clocks
-Date: Fri, 14 Mar 2014 22:27:59 +0530
-Message-ID: <CAK9yfHx_=Os1G46nNO1HDA3tigkRNeHKN1KGCvuN=w7dRTkfjg@mail.gmail.com>
-References: <20140314140951.3d443a3096e80297c9fecef0@samsung.com>
-	<5323078E.4060903@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos4210-trats: add max8997 IRQ
+Date: Fri, 14 Mar 2014 18:23:04 +0100
+Message-ID: <53233AF8.9020501@samsung.com>
+References: <1394792001-7837-1-git-send-email-r.baldyga@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <5323078E.4060903-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:46942 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755341AbaCNRXI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Mar 2014 13:23:08 -0400
+In-reply-to: <1394792001-7837-1-git-send-email-r.baldyga@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Robert Baldyga <r.baldyga@samsung.com>, ben-linux@fluff.org, kgene.kim@samsung.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
 
- Hi KyongHo,
+Hi Robert,
 
-On 14 March 2014 19:13, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi KyongHo,
+On 14.03.2014 11:13, Robert Baldyga wrote:
+> This patch adds device tree node for IRQ used by max8997.
 >
->
-> On 14.03.2014 06:09, Cho KyongHo wrote:
->>
->> exynos-iommu driver must care about master H/W's gate clock as well as
->> System MMU's gate clock. To enhance readability of the source code,
->> macros to gate/ungate those clocks are defined.
->>
->> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>   drivers/iommu/exynos-iommu.c |   34 ++++++++++++++++++++++------------
->>   1 file changed, 22 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
->> index 71e77f1..cef62d0 100644
->> --- a/drivers/iommu/exynos-iommu.c
->> +++ b/drivers/iommu/exynos-iommu.c
->> @@ -101,6 +101,16 @@
->>   #define REG_PB1_SADDR         0x054
->>   #define REG_PB1_EADDR         0x058
->>
->> +#define __clk_gate_ctrl(data, clk, en) do {            \
->> +               if (data->clk)                          \
->> +                       clk_##en##able(data->clk);      \
->> +       } while (0)
->> +
->> +#define __sysmmu_clk_enable(data)      __clk_gate_ctrl(data, clk, en)
->> +#define __sysmmu_clk_disable(data)     __clk_gate_ctrl(data, clk, dis)
->> +#define __master_clk_enable(data)      __clk_gate_ctrl(data, clk_master,
->> en)
->> +#define __master_clk_disable(data)     __clk_gate_ctrl(data, clk_master,
->> dis)
->> +
->
->
-> I'd say that such macros only obfuscate code, without any gains, as you can
-> see in diffstat - this patch adds more lines than it removes.
->
-> Please drop this change.
 
- I agree with Tomasz here.
+Generally, this patch does not add just a node, but rather "IRQ line 
+specification for the MAX8997 PMIC chip and necessary pinctrl group to 
+configure pull-up and driver strength of the pin".
 
+Also it would be nice to mention a reason for this change, e.g. what can 
+be achieved after applying this patch.
 
--- 
-With warm regards,
-Sachin
+Otherwise looks good.
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+--
+Best regards,
+Tomasz
+
+> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos4210-trats.dts |   13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+> index 1d18428..0e1fc19 100644
+> --- a/arch/arm/boot/dts/exynos4210-trats.dts
+> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
+> @@ -148,6 +148,14 @@
+>   		};
+>   	};
+>
+> +	pinctrl@11000000 {
+> +		max8997_irq: max8997-irq {
+> +			samsung,pins = "gpx0-7";
+> +			samsung,pin-pud = <3>;
+> +			samsung,pin-drv = <0>;
+> +		};
+> +	};
+> +
+>   	i2c@13890000 {
+>   		samsung,i2c-sda-delay = <100>;
+>   		samsung,i2c-slave-addr = <0x10>;
+> @@ -179,6 +187,11 @@
+>   		max8997_pmic@66 {
+>   			compatible = "maxim,max8997-pmic";
+>
+> +			pinctrl-0 = <&max8997_irq>;
+> +			pinctrl-names = "default";
+> +
+> +			interrupt-parent = <&gpx0>;
+> +			interrupts = <7 0>;
+>   			reg = <0x66>;
+>
+>   			max8997,pmic-buck1-uses-gpio-dvs;
+>
