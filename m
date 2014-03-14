@@ -1,34 +1,86 @@
-From: armdev <armdev.ftm@gmail.com>
-Subject: Enabling uart 3 in arndale
-Date: Fri, 14 Mar 2014 13:34:10 +0530
-Message-ID: <0259D8EA-B62C-4D07-8661-ED2CF6E53779@gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv3 2/8] devfreq: exynos4: Support devicetree to get device id of
+ Exynos4 SoC
+Date: Fri, 14 Mar 2014 18:30:02 +0900
+Message-ID: <1394789408-14648-3-git-send-email-cw00.choi@samsung.com>
+References: <1394789408-14648-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:40692 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755516AbaCNIES convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:64220 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755543AbaCNJaP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Mar 2014 04:04:18 -0400
-Received: by mail-pd0-f180.google.com with SMTP id v10so2232308pde.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Mar 2014 01:04:17 -0700 (PDT)
+	Fri, 14 Mar 2014 05:30:15 -0400
+In-reply-to: <1394789408-14648-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, u-boot@lists.denx.de
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Cc: rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi,
+This patch support DT(DeviceTree) method to probe exynos4_bus and get device
+id of each Exynos4 SoC by using dt helper function.
 
-We are trying to enable the UART3 on COM18 pins of arndale board. The UART3 RXD and TXD are on pins 2 and 4 which as per the base board specification is connected as 
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/devfreq/exynos/exynos4_bus.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-XuRXD3 : UART_3_RXD/GPA1[4] : 2
-XuTXD3 : UART_3_TXD/GPA1[5] : 4
-
-As per the public reference manual of exynos 5250, there is a register GPACON (0x1140_0000) 
-Setting GPACON |= 0x0010_0000 should enable the pins, but I am not able to see any output on UART3.
-
-Can you please suggest what is the right procedure
-
--Regards
-armdev team @FTM
+diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+index 378e4bd..2d2b44b 100644
+--- a/drivers/devfreq/exynos/exynos4_bus.c
++++ b/drivers/devfreq/exynos/exynos4_bus.c
+@@ -23,6 +23,7 @@
+ #include <linux/devfreq.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/of.h>
+ #include <linux/module.h>
+ 
+ /* Exynos4 ASV has been in the mailing list, but not upstreamed, yet. */
+@@ -1014,6 +1015,28 @@ unlock:
+ 	return NOTIFY_DONE;
+ }
+ 
++static struct of_device_id exynos4_busfreq_id_match[] = {
++	{
++		.compatible = "samsung,exynos4210-busfreq",
++		.data = (void *)TYPE_BUSF_EXYNOS4210,
++	}, {
++		.compatible = "samsung,exynos4x12-busfreq",
++		.data = (void *)TYPE_BUSF_EXYNOS4x12,
++	},
++};
++
++static int exynos4_busfreq_get_driver_data(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct of_device_id *match;
++
++	match = of_match_node(exynos4_busfreq_id_match, dev->of_node);
++	if (!match)
++		return -ENODEV;
++
++	return (int) match->data;
++}
++
+ static int exynos4_busfreq_probe(struct platform_device *pdev)
+ {
+ 	struct busfreq_data *data;
+@@ -1027,7 +1050,7 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	data->type = pdev->id_entry->driver_data;
++	data->type = exynos4_busfreq_get_driver_data(pdev);
+ 	data->dmc[0].hw_base = S5P_VA_DMC0;
+ 	data->dmc[1].hw_base = S5P_VA_DMC1;
+ 	data->pm_notifier.notifier_call = exynos4_busfreq_pm_notifier_event;
+@@ -1151,6 +1174,7 @@ static struct platform_driver exynos4_busfreq_driver = {
+ 		.name	= "exynos4-busfreq",
+ 		.owner	= THIS_MODULE,
+ 		.pm	= &exynos4_busfreq_pm,
++		.of_match_table = exynos4_busfreq_id_match,
+ 	},
+ };
+ 
+-- 
+1.8.0
