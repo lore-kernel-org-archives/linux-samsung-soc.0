@@ -1,82 +1,68 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH v2 01/11] base: power: Add generic OF-based power domain look-up
-Date: Fri, 14 Mar 2014 16:07:05 -0700
-Message-ID: <7h38ikgz1i.fsf@paris.lan>
-References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
-	<1393862536-9842-2-git-send-email-tomasz.figa@gmail.com>
+From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v11 02/27] iommu/exynos: add missing cache flush for
+	removed page table entries
+Date: Fri, 14 Mar 2014 23:35:59 -0700
+Message-ID: <CANEJEGvkoUEWoJ4Y5sXwAr2KHW0MESj-1cHQ31AVRasG0P8pzg@mail.gmail.com>
+References: <20140314140234.c972b52a96a4fe39acd09fe0@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com> (Tomasz
-	Figa's message of "Mon, 3 Mar 2014 17:02:06 +0100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kumar Gala <gal>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140314140234.c972b52a96a4fe39acd09fe0-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tomasz Figa <tomasz.figa@gmail.com> writes:
+Please apply this. It's way overdue.  It fixes customer kernel crashes
+we've seen in the field.
 
-> This patch introduces generic code to perform power domain look-up using
-> device tree and automatically bind devices to their power domains.
-> Generic device tree binding is introduced to specify power domains of
-> devices in their device tree nodes.
+I'd also advocate for seeing this be applied to stable kernels.
+
+thanks,
+grant
+
+On Thu, Mar 13, 2014 at 10:02 PM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This commit adds cache flush for removed small and large page entries
+> in exynos_iommu_unmap(). Missing cache flush of removed page table
+> entries can cause missing page fault interrupt when a master IP
+> accesses an unmapped area.
 >
-> Backwards compatibility with legacy Samsung-specific power domain
-> bindings is provided, but for now the new code is not compiled when
-> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
-> will change as soon as Exynos power domain code gets converted to use
-> the generic framework in further patch.
+> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c |    2 ++
+>  1 file changed, 2 insertions(+)
 >
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Reviewed-by: Kevin Hilman <khilman@linaro.org>
-
-The approach and binding both look good to me, other than a few minor
-nits on comments and question on the locking below...
-
-[...]
-
-> @@ -2177,3 +2181,297 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
->  	list_add(&genpd->gpd_list_node, &gpd_list);
->  	mutex_unlock(&gpd_list_lock);
->  }
-> +
-> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
-> +/*
-> + * DEVICE TREE BASED POWER DOMAIN PROVIDERS
-
-why all caps?
-
-[...]
-
-> +/* See of_genpd_get_from_provider(). */
-> +static struct generic_pm_domain *__of_genpd_get_from_provider(
-> +					struct of_phandle_args *genpdspec)
-> +{
-> +	struct of_genpd_provider *provider;
-> +	struct generic_pm_domain *genpd = ERR_PTR(-EPROBE_DEFER);
-> +
-> +	/* Check if we have such a provider in our array */
-
-I think you want to take the mutex here...
-
-> +	list_for_each_entry(provider, &of_genpd_providers, link) {
-> +		if (provider->node == genpdspec->np)
-> +			genpd = provider->xlate(genpdspec, provider->data);
-> +		if (!IS_ERR(genpd))
-> +			break;
-> +	}
-
-...and release it here, right?
-
-[...]
-
-> +/*
-> + * DEVICE<->DOMAIN BINDING USING DEVICE TREE LOOK-UP
-
-hmm, more yelling?
-
-
-Otherwise, looks good to me.
-
-Kevin
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 4876d35..1c3a397 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -958,6 +958,7 @@ static size_t exynos_iommu_unmap(struct iommu_domain *domain,
+>         if (lv2ent_small(ent)) {
+>                 *ent = 0;
+>                 size = SPAGE_SIZE;
+> +               pgtable_flush(ent, ent + 1);
+>                 priv->lv2entcnt[lv1ent_offset(iova)] += 1;
+>                 goto done;
+>         }
+> @@ -966,6 +967,7 @@ static size_t exynos_iommu_unmap(struct iommu_domain *domain,
+>         BUG_ON(size < LPAGE_SIZE);
+>
+>         memset(ent, 0, sizeof(*ent) * SPAGES_PER_LPAGE);
+> +       pgtable_flush(ent, ent + SPAGES_PER_LPAGE);
+>
+>         size = LPAGE_SIZE;
+>         priv->lv2entcnt[lv1ent_offset(iova)] += SPAGES_PER_LPAGE;
+> --
+> 1.7.9.5
+>
