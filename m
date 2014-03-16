@@ -1,53 +1,38 @@
-From: "Andrew.an" <bh74.an@samsung.com>
-Subject: RE: [PATCH V2 RE-SEND 0/7] add new Samsung SXGbE driver
-Date: Sat, 15 Mar 2014 17:23:17 -0700
-Message-ID: <000f01cf40ad$eecf0be0$cc6d23a0$@samsung.com>
-References: <007901cf3e89$37d632e0$a78298a0$%an@samsung.com>
- <20140313.160947.1309757358549172711.davem@davemloft.net>
-Mime-Version: 1.0
+From: armdev <armdev.ftm@gmail.com>
+Subject: Re: Enabling uart 3 in arndale
+Date: Sun, 16 Mar 2014 14:52:32 +0530
+Message-ID: <3F6EEB85-AEDB-4924-8324-E5FBAF525FA5@gmail.com>
+References: <0259D8EA-B62C-4D07-8661-ED2CF6E53779@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35147 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756590AbaCPAXZ (ORCPT
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:50728 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751080AbaCPJWh convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Mar 2014 20:23:25 -0400
-In-reply-to: <20140313.160947.1309757358549172711.davem@davemloft.net>
-Content-language: en-us
+	Sun, 16 Mar 2014 05:22:37 -0400
+Received: by mail-pb0-f54.google.com with SMTP id ma3so4427323pbc.41
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Mar 2014 02:22:37 -0700 (PDT)
+In-Reply-To: <0259D8EA-B62C-4D07-8661-ED2CF6E53779@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'David Miller' <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ilho215.lee@samsung.com
+To: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, u-boot@lists.denx.de
 
-David Miller <davem@davemloft.net> wrote:
-> From: Byungho An <bh74.an@samsung.com>
-> Date: Thu, 13 Mar 2014 15:55:28 +0900
-> 
-> > This is 2nd posting for Samsung SXGbE driver and just re-sending because
-> of
-> > line wrapping in previous posting.
-> >
-> > Changes since v1:
-> > - changed name of driver to SXGbE as per Ben's comment
-> > - squashed Joe's neatening for many stuff in original patches
-> 
-> I'm mostly happy with this driver, but all of those module parameters
-> have to be removed except for 'debug'.
-OK, I'll remove them.
+Please can someone help
+On 14-Mar-2014, at 1:34 pm, armdev <armdev.ftm@gmail.com> wrote:
 
+> Hi,
 > 
-> They duplicate functionality provided by ethtool.
-OK.
-
+> We are trying to enable the UART3 on COM18 pins of arndale board. The UART3 RXD and TXD are on pins 2 and 4 which as per the base board specification is connected as 
 > 
-> Module parameters are strongly, if not completely, discouraged.  A
-> suitable generic configuration mechanism, such as ethtool, should
-> always be used instead.
-OK. I'll repost soon. 
-
-Thanks
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> XuRXD3 : UART_3_RXD/GPA1[4] : 2
+> XuTXD3 : UART_3_TXD/GPA1[5] : 4
+> 
+> As per the public reference manual of exynos 5250, there is a register GPACON (0x1140_0000) 
+> Setting GPACON |= 0x0010_0000 should enable the pins, but I am not able to see any output on UART3.
+> 
+> Can you please suggest what is the right procedure
+> 
+> -Regards
+> armdev team @FTM
