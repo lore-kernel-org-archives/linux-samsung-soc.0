@@ -1,57 +1,65 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] clk: samsung: fixed compiler warning
- [-Wpointer-to-int-cast]
-Date: Mon, 17 Mar 2014 14:17:49 +0100
-Message-ID: <5326F5FD.5060302@samsung.com>
-References: <1393382561-5388-1-git-send-email-pankaj.dubey@samsung.com>
- <53264E61.2010502@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 1/3] ARM: EXYNOS: Map PMU address through DT
+Date: Mon, 17 Mar 2014 19:53:10 +0530
+Message-ID: <CAK9yfHyF9t0fsO86cqHvAzaWKa17=2MkFq6mhoL0-mwjw6OXQQ@mail.gmail.com>
+References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com>
+	<1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:44773 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932639AbaCQNR4 (ORCPT
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:38493 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932692AbaCQOXL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 09:17:56 -0400
-In-reply-to: <53264E61.2010502@samsung.com>
+	Mon, 17 Mar 2014 10:23:11 -0400
+Received: by mail-oa0-f49.google.com with SMTP id h16so339599oag.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Mar 2014 07:23:11 -0700 (PDT)
+In-Reply-To: <1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-Hi Pankaj,
+Hi Vikas,
 
-On 17.03.2014 02:22, Pankaj Dubey wrote:
-> On 02/26/2014 11:42 AM, Pankaj Dubey wrote:
->> When compiled using ARM64 cross compiler, gcc complains as
->>
->> drivers/clk/samsung/clk.c:293:18:
->> warning: cast from pointer to integer of different size
->> [-Wpointer-to-int-cast]
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>   drivers/clk/samsung/clk.c |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
->> index 91bec3e..59142ba 100644
->> --- a/drivers/clk/samsung/clk.c
->> +++ b/drivers/clk/samsung/clk.c
->> @@ -278,7 +278,7 @@ void __init samsung_clk_of_register_fixed_ext(
->>       for_each_matching_node_and_match(np, clk_matches, &match) {
->>           if (of_property_read_u32(np, "clock-frequency", &freq))
->>               continue;
->> -        fixed_rate_clk[(u32)match->data].fixed_rate = freq;
->> +        fixed_rate_clk[(unsigned long)match->data].fixed_rate = freq;
->>       }
->>       samsung_clk_register_fixed_rate(fixed_rate_clk, nr_fixed_rate_clk);
->>   }
+On 17 March 2014 18:39, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Instead of hardcoding the PMU details for each SoC, pass this information
+> through device tree (DT).
 >
-> Gentle Ping.
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |    5 +-
+>  arch/arm/boot/dts/exynos4.dtsi                     |    5 ++
+>  arch/arm/boot/dts/exynos5260.dtsi                  |    5 ++
+>  arch/arm/mach-exynos/common.c                      |   51 +++++++++++++-------
+>  arch/arm/mach-exynos/include/mach/map.h            |    3 --
+>  5 files changed, 47 insertions(+), 22 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> index f1f1552..667a7f0 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -2,14 +2,15 @@ SAMSUNG Exynos SoC series PMU Registers
+>
+>  Properties:
+>   - compatible : should contain two values. First value must be one from following list:
+> +                  - "samsung,exynos4210-pmu" - for Exynos4210 and Exynos4x12 SoC,
+>                    - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+> -                  - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+> +                  - "samsung,exynos5420-pmu" - for Exynos5420 and Exynos5260 SoC.
+>                 second value must be always "syscon".
+>
+>   - reg : offset and length of the register set.
+>
+>  Example :
+>  pmu_system_controller: system-controller@10040000 {
+> -       compatible = "samsung,exynos5250-pmu", "syscon";
+> +       compatible = "samsung,exynos5250-pmu";
 
-Missed this patch, thanks. Applied for v3.15.
+If you have removed "syscon" deliberately above, then you should also
+remove the same in the
+binding description which says "second value must be always "syscon".".
 
-Best regards,
-Tomasz
+-- 
+With warm regards,
+Sachin
