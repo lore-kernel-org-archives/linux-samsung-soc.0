@@ -1,101 +1,45 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [RFC v3 0/5] cpufreq:LAB: Support for LAB governor.
-Date: Mon, 17 Mar 2014 16:38:24 +0100
-Message-ID: <20140317163824.3c5480b3@amdc2363>
-References: <1367590072-10496-1-git-send-email-jonghwa3.lee@samsung.com>
- <1393928852-22725-1-git-send-email-l.majewski@samsung.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH V2 RE-SEND 1/7] net: sxgbe: add basic framework for
+ Samsung 10Gb ethernet driver
+Date: Mon, 17 Mar 2014 09:58:53 -0700
+Message-ID: <20140317095853.27c27f6c@nehalam.linuxnetplumber.net>
+References: <007a01cf3e89$3bbdf460$b339dd20$%an@samsung.com>
+	<20140314004454.GA10982@electric-eye.fr.zoreil.com>
+	<000e01cf40ac$08c19290$1a44b7b0$@samsung.com>
+	<20140316231101.GA23765@electric-eye.fr.zoreil.com>
+	<005601cf4194$752c0c60$5f842520$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18445 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756604AbaCQPie (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:33038 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756315AbaCQQ65 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 11:38:34 -0400
-In-reply-to: <1393928852-22725-1-git-send-email-l.majewski@samsung.com>
+	Mon, 17 Mar 2014 12:58:57 -0400
+Received: by mail-pa0-f41.google.com with SMTP id fa1so6004845pad.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Mar 2014 09:58:57 -0700 (PDT)
+In-Reply-To: <005601cf4194$752c0c60$5f842520$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, thomas.ab@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: 'Francois Romieu' <romieu@fr.zoreil.com>, netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, 'Joe Perches' <joe@perches.com>
 
-Dear all,
+On Sun, 16 Mar 2014 20:53:25 -0700
+Byungho An <bh74.an@samsung.com> wrote:
 
-> Despite this patch set is working and applicable on top of 3.14-rc5, 
-> please regard it solely as a pure RFC.
-> 
-> This patch provides support for LAB governor build on top of ondemand.
-> Previous version of LAB can be found here:
-> http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
-> 
-> LAB short reminder:
-> 
-> LAB uses information about how many cores are in "idle" state (the
-> core idleness is represented as the value between 0 and 100) and the
-> overall load of the system (from 0 to 100) to decide about frequency
-> to be set. It is extremely useful with SoCs like Exynos4412, which
-> can set only one frequency for all cores.
-> 
-> Important design decisions:
-> 
-> - Reuse well established ondemand governor's internal code. To do this
->   I had to expose some previously static internal ondemand code. 
->   This allowed smaller LAB code when compared to previous version.
-> 	
-> - LAB works on top of ondemand, which means that one via device tree
->   attributes can specify if and when e.g. BOOST shall be enabled or
-> if any particular frequency shall be imposed. For situation NOT
-> important from the power consumption reduction viewpoint the ondemand
-> is used to set proper frequency.
-> 
-> - It is only possible to either compile in or not the LAB into the
-> kernel. There is no "M" option for Kconfig. It is done on purpose,
-> since ondemand itself can be also compiled as a module and then it
-> would be possible to remove ondemand when LAB is working on top of it.
-> 
-> - The LAB operation is specified (and thereof extendable) via device
-> tree lab-ctrl-freq attribute defined at /cpus/cpu0.
-> 
-> 
-> Problems:
-> - How the governor will work for big.LITTLE systems (especially
-> Global Task Scheduling).
-> - Will there be agreement to expose internal ondemand code to be
-> reused for more specialized governors.
-> 
-> Test HW:
-> 	Exynos4412 - Trats2 board.
-> Above patches were posted on top of Linux 3.14-rc5
-> (SHA1: 3f9590c281c66162bf8ae9b7b2d987f0a89043c6)
-> 
+> > 
+> > They are used but they always point to the same set of methods.
+> > Those methods could thus be directly called.  
+> Yes, those methods can be called directly.
+> But I think it is acceptable for manageability and extension for future.
 
-Any comments about those patches?
+That argument is only valid if:
+ 1. you have hardware that will use it but it is not ready.
+ 2. they will get used in next release (in < 6 mo)
 
-> Lukasz Majewski (5):
->   cpufreq:LAB:ondemand Adjust ondemand to be able to reuse its methods
->   cpufreq:LAB:cpufreq_governor Adjust cpufreq_governor.[h|c] to
-> support LAB
->   cpufreq:LAB:lab Add LAB governor code
->   cpufreq:LAB:Kconfig Add LAB definitions to Kconfig
->   cpufreq:LAB:dts:trats2: Add DTS nodes for LAB governor
-> 
->  arch/arm/boot/dts/exynos4412-trats2.dts |   29 ++
->  drivers/cpufreq/Kconfig                 |   28 ++
->  drivers/cpufreq/Makefile                |    1 +
->  drivers/cpufreq/cpufreq_governor.c      |    7 +
->  drivers/cpufreq/cpufreq_governor.h      |   12 +
->  drivers/cpufreq/cpufreq_lab.c           |  457
-> +++++++++++++++++++++++++++++++
-> drivers/cpufreq/cpufreq_ondemand.c      |   24 +- 7 files changed,
-> 550 insertions(+), 8 deletions(-) create mode 100644
-> drivers/cpufreq/cpufreq_lab.c
-> 
+Ths set of indirection has negative cost: it impedes readability, 
+has to be maintained, and hurts performance.
 
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+One of the principles of agile programming is NOT to build infrastructure
+until it is needed. Otherwise you are likely to build it wrong.
