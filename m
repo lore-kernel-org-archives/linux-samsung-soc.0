@@ -1,49 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
-Date: Tue, 18 Mar 2014 07:20:56 +0900
-Message-ID: <53277548.60300@samsung.com>
-References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org> <1394085884-13081-3-git-send-email-tushar.behera@linaro.org> <531D054E.70008@gmail.com>
+Subject: Re: [PATCH 6/9 v7] ARM: dts: exynos5250/5420: add dt node for sss
+ module
+Date: Tue, 18 Mar 2014 07:36:45 +0900
+Message-ID: <532778FD.5080509@samsung.com>
+References: <1392630275-8667-1-git-send-email-ch.naveen@samsung.com> <1392630275-8667-7-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:62714 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752386AbaCQWVE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 18:21:04 -0400
-In-Reply-To: <531D054E.70008@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1392630275-8667-7-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, davem@davemloft.net, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, mark.rutland@arm.com, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, t.figa@samsung.com, robh+dt@kernel.org, rob@landley.net, galak@codeaurora.org, plagnioj@jcrosoft.com, linux@maxim.org.za
 
-On 03/10/14 09:20, Tomasz Figa wrote:
-> On 06.03.2014 07:04, Tushar Behera wrote:
->> Most of the clock related dt-binding header files are located in
->> dt-bindings/clock folder. It would be good to keep all the similar
->> header files at a single location.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> CC: Kukjin Kim <kgene.kim@samsung.com>
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Or shall I take this into samsung tree?
-
-Thanks,
-Kukjin
-
->> CC: Tomasz Figa <t.figa@samsung.com>
->> ---
->> arch/arm/boot/dts/exynos5250.dtsi | 2 +-
->> arch/arm/boot/dts/exynos5420.dtsi | 2 +-
->> drivers/clk/samsung/clk-exynos-audss.c | 2 +-
->> .../dt-bindings/{clk => clock}/exynos-audss-clk.h | 0
->> 4 files changed, 3 insertions(+), 3 deletions(-)
->> rename include/dt-bindings/{clk => clock}/exynos-audss-clk.h (100%)
+On 02/17/14 18:44, Naveen Krishna Chatradhi wrote:
+> This patch adds the device tree node for SSS module
+> found on Exynos5420 and Exynos5250
 >
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
+> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> TO:<linux-samsung-soc@vger.kernel.org>
+> CC: David S. Miller<davem@davemloft.net>
+> CC: Kukjin Kim<kgene.kim@samsung.com>
+> CC:<linux-crypto@vger.kernel.org>
+> ---
+> Changes since v6:
+> None
 >
-> Best regards,
-> Tomasz
+>   arch/arm/boot/dts/exynos5250.dtsi |    8 ++++++++
+>   arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
+>   2 files changed, 17 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index a76a189..13b748f 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -715,4 +715,12 @@
+>   		io-channel-ranges;
+>   		status = "disabled";
+>   	};
+> +
+> +	sss@10830000 {
+> +		compatible = "samsung,exynos4210-secss";
+> +		reg =<0x10830000 0x10000>;
+> +		interrupts =<0 112 0>;
+> +		clocks =<&clock 348>;
+> +		clock-names = "secss";
+> +	};
+>   };
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 9c834cc..b4ce625 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -666,4 +666,13 @@
+>   		clock-names = "watchdog";
+>   		samsung,syscon-phandle =<&pmu_system_controller>;
+>           };
+> +
+> +	sss@10830000 {
+> +		compatible = "samsung,exynos4210-secss";
+> +		reg =<0x10830000 0x10000>;
+> +		interrupts =<0 112 0>;
+> +		clocks =<&clock 471>;
+> +		clock-names = "secss";
+> +		samsung,power-domain =<&g2d_pd>;
+> +	};
+>   };
+
+Applied, thanks.
+
+- Kukjin
