@@ -1,11 +1,13 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/9] Restore parallel display support for Exynos based boards
-Date: Mon, 17 Mar 2014 11:27:16 +0100
-Message-ID: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 2/9] drm/exynos: init kms poll after creation of connectors
+Date: Mon, 17 Mar 2014 11:27:18 +0100
+Message-ID: <1395052045-23848-3-git-send-email-a.hajda@samsung.com>
+References: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -19,41 +21,37 @@ To: dri-devel@lists.freedesktop.org
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Denis Carikli <denis@eukrea.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+KMS poll init helper should be run when connectors are created,
+otherwise it will not schedule connection detector.
 
-This patch set restores parallel display support removed during exynos
-refactorization. It is rebased on the latest exynos-drm-next branch plus patch
-adding polarization flags to drm_display_mode [1].
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-[1]: http://permalink.gmane.org/gmane.linux.drivers.driver-project.devel/47216
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (9):
-  drm/exynos: delay fbdev initialization until an output is connected
-  drm/exynos: init kms poll after creation of connectors
-  drm/exynos: correct timing porch conversion
-  exynos/fimd: add parallel output related bindings
-  drm/exynos: restore parallel output interface support
-  ARM: dts: exynos4210-universal: add exynos/fimd node
-  drm/modes: add polarization handling to mode conversion
-  drm/exynos/fimd: use polarization flags provided by drm_display_mode
-  drm/exynos/fimd: remove unused variable
-
- .../devicetree/bindings/video/samsung-fimd.txt     |  15 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts    |  25 ++
- drivers/gpu/drm/drm_modes.c                        |  11 +
- drivers/gpu/drm/exynos/Kconfig                     |   8 +
- drivers/gpu/drm/exynos/Makefile                    |   1 +
- drivers/gpu/drm/exynos/exynos_drm_dpi.c            | 339 +++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_drv.c            |  22 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.h            |   8 +
- drivers/gpu/drm/exynos/exynos_drm_fb.c             |   3 +
- drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  32 +-
- 10 files changed, 432 insertions(+), 32 deletions(-)
- create mode 100644 drivers/gpu/drm/exynos/exynos_drm_dpi.c
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 25f45b8..dfee083 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -71,9 +71,6 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 
+ 	drm_mode_config_init(dev);
+ 
+-	/* init kms poll for handling hpd */
+-	drm_kms_helper_poll_init(dev);
+-
+ 	exynos_drm_mode_config_init(dev);
+ 
+ 	ret = exynos_drm_initialize_managers(dev);
+@@ -93,6 +90,9 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	if (ret)
+ 		goto err_manager_cleanup;
+ 
++	/* init kms poll for handling hpd */
++	drm_kms_helper_poll_init(dev);
++
+ 	ret = drm_vblank_init(dev, MAX_CRTC);
+ 	if (ret)
+ 		goto err_display_cleanup;
 -- 
 1.8.3.2
