@@ -1,247 +1,277 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 3/8] devfreq: exynos4: Add ppmu's clock control and code
- clean about regulator control
-Date: Mon, 17 Mar 2014 14:35:42 +0900
-Message-ID: <532689AE.5080201@samsung.com>
-References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
- <1394698649-20996-4-git-send-email-cw00.choi@samsung.com>
- <53233F78.8020500@samsung.com> <5326632A.8030801@samsung.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: RE: [PATCH V2 1/7] net: sxgbe: add basic framework for Samsung 10Gb
+ ethernet driver
+Date: Sun, 16 Mar 2014 22:51:21 -0700
+Message-ID: <005701cf41a4$eee0ddf0$cca299d0$@samsung.com>
+References: <005101cf3df6$e37664f0$aa632ed0$%an@samsung.com>
+ <20140312151008.GA5035@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48801 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751009AbaCQFfn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 01:35:43 -0400
-In-reply-to: <5326632A.8030801@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-reply-to: <20140312151008.GA5035@e106331-lin.cambridge.arm.com>
+Content-language: en-us
+Sender: netdev-owner@vger.kernel.org
+To: 'Mark Rutland' <mark.rutland@arm.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 
-Hi Tomasz,
+Mark Rutland <mark.rutland@arm.com> :
+> On Wed, Mar 12, 2014 at 01:28:00PM +0000, Byungho An wrote:
+> > From: Siva Reddy <siva.kallam@samsung.com>
+> >
+> > This patch adds support for Samsung 10Gb ethernet driver(sxgbe).
+> >
+> > - sxgbe core initialization
+> > - Tx and Rx support
+> > - MDIO support
+> > - ISRs for Tx and Rx
+> > - ifconfig support to driver
+> >
+> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> > Signed-off-by: Vipul Pandya <vipul.pandya@samsung.com>
+> > Signed-off-by: Girish K S <ks.giri@samsung.com>
+> > Neatening-by: Joe Perches <joe@perches.com>
+> > Signed-off-by: Byungho An <bh74.an@samsung.com>
+> > ---
+> 
+> [...]
+> 
+> > diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > new file mode 100644
+> > index 0000000..f2abf65
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> 
+> Please split the binding into a separate patch from the code (it makes it
+far
+> easier for us DT guys to find that portions relevant to use).
+> 
+> Is there any public documentation?
+No.
 
-On 03/17/2014 11:51 AM, Chanwoo Choi wrote:
-> Hi Tomasz,
 > 
-> On 03/15/2014 02:42 AM, Tomasz Figa wrote:
->> Hi Chanwoo,
->>
->> On 13.03.2014 09:17, Chanwoo Choi wrote:
->>> There are not the clock controller of ppmudmc0/1. This patch control the clock
->>> of ppmudmc0/1 which is used for monitoring memory bus utilization.
->>>
->>> Also, this patch code clean about regulator control and free resource
->>> when calling exit/remove function.
->>>
->>> For example,
->>> busfreq@106A0000 {
->>>     compatible = "samsung,exynos4x12-busfreq";
->>>
->>>     /* Clock for PPMUDMC0/1 */
->>>     clocks = <&clock CLK_PPMUDMC0>, <&clock CLK_PPMUDMC1>;
->>>     clock-names = "ppmudmc0", "ppmudmc1";
->>>
->>>     /* Regulator for MIF/INT block */
->>>     vdd_mif-supply = <&buck1_reg>;
->>>     vdd_int-supply = <&buck3_reg>;
->>> };
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>>   drivers/devfreq/exynos/exynos4_bus.c | 114 ++++++++++++++++++++++++++++++-----
->>>   1 file changed, 100 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
->>> index 1a0effa..a2a3a47 100644
->>> --- a/drivers/devfreq/exynos/exynos4_bus.c
->>> +++ b/drivers/devfreq/exynos/exynos4_bus.c
->>> @@ -62,6 +62,11 @@ enum exynos_ppmu_idx {
->>>       PPMU_END,
->>>   };
->>>
->>> +static const char *exynos_ppmu_clk_name[] = {
->>> +    [PPMU_DMC0]    = "ppmudmc0",
->>> +    [PPMU_DMC1]    = "ppmudmc1",
->>> +};
->>> +
->>>   #define EX4210_LV_MAX    LV_2
->>>   #define EX4x12_LV_MAX    LV_4
->>>   #define EX4210_LV_NUM    (LV_2 + 1)
->>> @@ -86,6 +91,7 @@ struct busfreq_data {
->>>       struct regulator *vdd_mif; /* Exynos4412/4212 only */
->>>       struct busfreq_opp_info curr_oppinfo;
->>>       struct exynos_ppmu ppmu[PPMU_END];
->>> +    struct clk *clk_ppmu[PPMU_END];
->>>
->>>       struct notifier_block pm_notifier;
->>>       struct mutex lock;
->>> @@ -722,8 +728,26 @@ static int exynos4_bus_get_dev_status(struct device *dev,
->>>   static void exynos4_bus_exit(struct device *dev)
->>>   {
->>>       struct busfreq_data *data = dev_get_drvdata(dev);
->>> +    int i;
->>> +
->>> +    /*
->>> +     * Un-map memory map and disable regulator/clocks
->>> +     * to prevent power leakage.
->>> +     */
->>> +    regulator_disable(data->vdd_int);
->>> +    if (data->type == TYPE_BUSF_EXYNOS4x12)
->>> +        regulator_disable(data->vdd_mif);
->>> +
->>> +    for (i = 0; i < PPMU_END; i++) {
->>> +        if (data->clk_ppmu[i])
->>
->> This check is invalid. Clock pointers must be checked for validity using the IS_ERR() macro, because NULL is a valid clock pointer value indicating a dummy clock.
+> > @@ -0,0 +1,39 @@
+> > +* Samsung 10G Ethernet driver (SXGBE)
+> > +
+> > +Required properties:
+> > +- compatible: Should be "samsung,sxgbe-v2.0a"
+> > +- reg: Address and length of the register set for the device
+> > +- interrupt-parent: Should be the phandle for the interrupt
+> > +controller
+> > +  that services interrupts for this device
+> > +- interrupts: Should contain the SXGBE interrupts
 > 
-> OK, I'll check it by using the IS_ERR() macro as following:
+> How many, in which order, what are each of them for?
+total = 26, first mandatory interrupt common to all, followed by 8 tx
+interrupt (which can vary based on platform), 16 rx interrupts  (which can
+vary based on platform) and a optional lpi interrupt
 > 
+> > +- samsung,burst-map        Program the possible bursts supported by
+sxgbe
+> > +- samsung,fixed-burst  Program the DMA to use the fixed burst mode
+> > +- samsung,adv-addr-mode        program the DMA to use Enhanced address
+> mode
+> 
+> What are valid values?
+> 
+> Units/types?
+> 
+> Please describe what these actually do.
+These will be updated in the binding document as per your review.
 
-I'll modify it as following:
+> 
+> > +- samsung,force_thresh_dma_mode        Force DMA to use the threshold
+> mode
+> > for
+> > +                               both tx and rx
+> 
+> Odd formatting here.
+> 
+> s/_/-/ in property names please.
+> 
+> When and why should this property be set in a dt?
+Addressed in the new document
 
-	for (i = 0; i < PPMU_END; i++) {
-		if (IS_ERR(data->clk_ppmu[i])
-			continue;
-		else
-			clk_unprepare_disable(data->clk_ppmu[i]);
-	}
+> 
+> > +- samsung,force_sf_dma_mode    Force DMA to use the Store and
+> Forward
+> > +                               mode for both tx and rx. This flag is
+> > +                               ignored if force_thresh_dma_mode is set.
+> 
+> Likewise, for all points.
+OK.
 
+> 
+> [...]
+> 
+> > +/* Clean the tx descriptor as soon as the tx irq is received */
+> > +static void sxgbe_release_tx_desc(struct sxgbe_tx_norm_desc *p) {
+> > +       memset(p, 0, sizeof(struct sxgbe_tx_norm_desc));
+> 
+> You can use sizeof(*p) here.
+OK.
 
-> 	if (IS_ERR(data->clk_ppmu[i]) {
 > 
+> [...]
 > 
->>
->>> +            clk_disable_unprepare(data->clk_ppmu[i]);
->>> +    }
->>>
->>> -    devfreq_unregister_opp_notifier(dev, data->devfreq);
->>> +    for (i = 0; i < PPMU_END; i++) {
->>> +        if (data->ppmu[i].hw_base)
->>
->> Can this even happen? Is there a PPMU without registers?
+> > +static int sxgbe_probe_config_dt(struct platform_device *pdev,
+> > +                                struct sxgbe_plat_data *plat,
+> > +                                const char **mac) {
+> > +       struct device_node *np = pdev->dev.of_node;
+> > +       struct sxgbe_dma_cfg *dma_cfg;
+> > +       u32 phy_addr;
+> > +
+> > +       if (!np)
+> > +               return -ENODEV;
+> > +
+> > +       *mac = of_get_mac_address(np);
+> 
+> I see that of_get_mac_address returns a *void rather than *char, but it's
+> always a string of hex digits. Would it make sense to change the
+> of_get_mac_address prototype to return a char* ?
+This implementation is of_ specific, our driver only uses it.
 
-OK, I'll always unmap the ppmu address.
+> 
+> > +       plat->interface = of_get_phy_mode(np);
+> > +
+> > +       plat->bus_id = of_alias_get_id(np, "ethernet");
+> > +       if (plat->bus_id < 0)
+> > +               plat->bus_id = 0;
+> 
+> This wasn't mentioned in the binding.
+It doesn't need to  be in the binding document, because we get the alias id
+by passing the node name. Here ethernet is not a property it is the dt node
+name
+e.g.
+ ethernet@xxxxx {
 
->>
->>> +            iounmap(data->ppmu[i].hw_base);
->>> +
->>> +    }
->>>   }
->>>
->>>   static struct devfreq_dev_profile exynos4_devfreq_profile = {
->>> @@ -987,6 +1011,7 @@ static int exynos4_busfreq_parse_dt(struct busfreq_data *data)
->>>   {
->>>       struct device *dev = data->dev;
->>>       struct device_node *np = dev->of_node;
->>> +    const char **clk_name = exynos_ppmu_clk_name;
->>>       int i, ret;
->>>
->>>       if (!np) {
->>> @@ -1005,8 +1030,70 @@ static int exynos4_busfreq_parse_dt(struct busfreq_data *data)
->>>           }
->>>       }
->>>
->>> +    /*
->>> +     * Get PPMU's clocks to control them. But, if PPMU's clocks
->>> +     * is default 'pass' state, this driver don't need control
->>> +     * PPMU's clock.
->>> +     */
->>> +    for (i = 0; i < PPMU_END; i++) {
->>> +        data->clk_ppmu[i] = devm_clk_get(dev, clk_name[i]);
->>> +        if (IS_ERR_OR_NULL(data->clk_ppmu[i])) {
->>
->> Again, this check is invalid. Only IS_ERR() is the correct way to check whether returned clock pointer is valid.
-> 
-> ditto.
-> 	if (IS_ERR(data->clk_ppmu[i]) {
-> 
->>
->>> +            dev_warn(dev, "Cannot get %s clock\n", clk_name[i]);
->>> +            data->clk_ppmu[i] = NULL;
->>
->> This assignment is wrong. To allow further checking whether the clock was found the value returned from devm_clk_get() must be retained and then IS_ERR() used in further code.
->>
->> However, I believe it should be an error if a clock is not provided. The driver must make sure that PPMU clocks are ungated before trying to access them, otherwise the system might hang.
-> 
-> OK, I'll use IS_ERR() macro when checking / handling clock instance of 'data->clk_ppmu[i]'.
-> And If this driver can't get the clock of ppmu, handel error exception.
-> 
->>
->>> +        }
->>> +
->>> +        ret = clk_prepare_enable(data->clk_ppmu[i]);
->>
->> The code above allows the clock to be skipped, but this line doesn't check whether it is valid. Still, I think the clock should be always required.
-> 
-> OK, I'll require clock of ppmu without exception.
-> 
->>
->>> +        if (ret < 0) {
->>> +            dev_warn(dev, "Cannot enable %s clock\n", clk_name[i]);
->>> +            data->clk_ppmu[i] = NULL;
->>> +            goto err_clocks;
->>> +        }
->>> +    }
->>> +
->>> +    /* Get regulator to control voltage of int block */
->>> +    data->vdd_int = devm_regulator_get(dev, "vdd_int");
->>> +    if (IS_ERR(data->vdd_int)) {
->>> +        dev_err(dev, "Failed to get the regulator of vdd_int\n");
->>> +        ret = PTR_ERR(data->vdd_int);
->>> +        goto err_clocks;
->>> +    }
->>> +    ret = regulator_enable(data->vdd_int);
->>> +    if (ret < 0) {
->>> +        dev_err(dev, "Failed to enable regulator of vdd_int\n");
->>> +        goto err_clocks;
->>> +    }
->>> +
->>> +    switch (data->type) {
->>> +    case TYPE_BUSF_EXYNOS4210:
->>> +        break;
->>> +    case TYPE_BUSF_EXYNOS4x12:
->>> +        /* Get regulator to control voltage of mif blk if Exynos4x12 */
->>> +        data->vdd_mif = devm_regulator_get(dev, "vdd_mif");
->>> +        if (IS_ERR(data->vdd_mif)) {
->>> +            dev_err(dev, "Failed to get the regulator vdd_mif\n");
->>> +            ret = PTR_ERR(data->vdd_mif);
->>> +            goto err_regulator;
->>> +        }
->>> +        ret = regulator_enable(data->vdd_mif);
->>> +        if (ret < 0) {
->>> +            dev_err(dev, "Failed to enable regulator of vdd_mif\n");
->>> +            goto err_regulator;
->>> +        }
->>> +        break;
->>> +    default:
->>> +        dev_err(dev, "Unknown device type : %d\n", data->type);
->>> +        return -EINVAL;
->>> +    };
->>> +
->>>       return 0;
->>>
->>> +err_regulator:
->>> +    regulator_disable(data->vdd_int);
->>> +err_clocks:
->>> +    for (i = 0; i < PPMU_END; i++) {
->>> +        if (data->clk_ppmu[i])
->>
->> Invalid check.
-> 
-> Modify it as following:
-> 
-> 	if (!IS_ERR(data->clk_ppmu[i]) {
+};
 
+> 
+> > +
+> > +       of_property_read_u32(np, "samsung,phy-addr", &plat->phy_addr);
+> 
+> Neither was this.
+OK.
 
-	for (i = 0; i < PPMU_END; i++) {
-		if (IS_ERR(data->clk_ppmu[i])
-			continue;
-		else
-			clk_unprepare_disable(data->clk_ppmu[i]);
-	}
+> 
+> > +
+> > +       plat->mdio_bus_data = devm_kzalloc(&pdev->dev,
+> > +                                          sizeof(struct
+> > sxgbe_mdio_bus_data),
+> > +                                          GFP_KERNEL);
+> > +
+> > +       if (of_device_is_compatible(np, "samsung,sxgbe-v2.0a"))
+> > +               plat->pmt = 1;
+> 
+> Only one compatible string is documented. When would this _not_ be the
+> case?
+Removed as it is unused
 
-Best Regards,
-Chanwoo Choi
+> 
+> [...]
+> 
+> > +static int sxgbe_platform_probe(struct platform_device *pdev) {
+> > +       int ret = 0;
+> > +       int loop = 0;
+> > +       int index1, index2;
+> > +       struct resource *res;
+> > +       struct device *dev = &pdev->dev;
+> > +       void __iomem *addr = NULL;
+> > +       struct sxgbe_priv_data *priv = NULL;
+> > +       struct sxgbe_plat_data *plat_dat = NULL;
+> > +       const char *mac = NULL;
+> > +       int total_dma_channels = SXGBE_TX_QUEUES + SXGBE_RX_QUEUES;
+> > +
+> > +       /* Get memory resource */
+> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       if (!res)
+> > +               return -ENODEV;
+> > +
+> > +       addr = devm_ioremap_resource(dev, res);
+> > +       if (IS_ERR(addr))
+> > +               return PTR_ERR(addr);
+> > +
+> > +       plat_dat = pdev->dev.platform_data;
+> 
+> This is a new dt-driven driver. Why would you need additional platform
+data?
+> Why can this information not come from dt?
+Same above.
+
+> 
+> > +       if (pdev->dev.of_node) {
+> > +               if (!plat_dat)
+> > +                       plat_dat = devm_kzalloc(&pdev->dev,
+> > +                                               sizeof(struct
+> > sxgbe_plat_data),
+> > +                                               GFP_KERNEL);
+> > +               if (!plat_dat)
+> > +                       return  -ENOMEM;
+> > +
+> > +               ret = sxgbe_probe_config_dt(pdev, plat_dat, &mac);
+> > +               if (ret) {
+> > +                       pr_err("%s: main dt probe failed\n", __func__);
+> > +                       return ret;
+> > +               }
+> > +       }
+> > +
+> > +       priv = sxgbe_dvr_probe(&(pdev->dev), plat_dat, addr);
+> > +       if (!priv) {
+> > +               pr_err("%s: main driver probe failed\n", __func__);
+> > +               return -ENODEV;
+> > +       }
+> > +
+> > +       /* Get MAC address if available (DT) */
+> > +       if (mac)
+> > +               ether_addr_copy(priv->dev->dev_addr, mac);
+> > +
+> > +       /* Get the SXGBE common INT information */
+> > +       priv->dev->irq  = irq_of_parse_and_map(dev->of_node, loop++);
+> > +       if (priv->dev->irq <= 0) {
+> > +               dev_err(dev, "sxgbe common irq parsing failed\n");
+> > +               return -EINVAL;
+> > +       }
+> 
+> So the first IRQ is assumed to be a common interrupt...
+Right.
+
+> 
+> > +
+> > +       /* Get the TX/RX IRQ numbers */
+> > +       for (index1 = 0, index2 = 0 ; loop < total_dma_channels; loop++)
+{
+> > +               if (loop < SXGBE_TX_QUEUES) {
+> > +                       (priv->txq[index1])->irq_no  =
+> > +                               irq_of_parse_and_map(dev->of_node,
+> > + loop);
+> 
+> then there's a TX IRQ for each queue, in order...
+> 
+> > +                       if ((priv->txq[index1++])->irq_no <= 0) {
+> > +                               dev_err(dev, "sxgbe tx irq parsing
+> > failed\n");
+> > +                               return -EINVAL;
+> > +                       }
+> > +               } else {
+> > +                       (priv->rxq[index2])->irq_no  =
+> > +                               irq_of_parse_and_map(dev->of_node,
+> > + loop);
+> 
+> then an RX IRQ for each queue, in order.
+> 
+> That should be in the binding document.
+taken care in the binding document.
+
+Thanks Mark for your comments
+
+> 
+> Cheers,
+> Mark.
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in the
+body
+> of a message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
