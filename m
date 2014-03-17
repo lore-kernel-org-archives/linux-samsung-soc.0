@@ -1,78 +1,78 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [GIT PULL 5/6] Samsung PM updates for v3.15
-Date: Mon, 17 Mar 2014 19:09:54 +0100
-Message-ID: <53273A72.2080402@samsung.com>
-References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
- <20140309183523.GD22881@quad.lixom.net> <531CFA28.9020600@gmail.com>
- <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: [PATCH V3 0/8] add new Samsung SXGBE driver
+Date: Mon, 17 Mar 2014 13:43:34 -0700
+Message-ID: <00bc01cf4221$9239f6e0$b6ade4a0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:62755 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755535AbaCQSKA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:31440 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbaCQUnn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 14:10:00 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N2L00GY1EGL6500@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Mar 2014 18:09:57 +0000 (GMT)
-In-reply-to: <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
+	Mon, 17 Mar 2014 16:43:43 -0400
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "khilman@linaro.org" <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davem@davemloft.net, ilho215.lee@samsung.com
 
-Hi Mike,
+Hi all,
 
-On 10.03.2014 01:08, Olof Johansson wrote:
-> On Sun, Mar 9, 2014 at 4:32 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 09.03.2014 19:35, Olof Johansson wrote:
->>>
->>> On Mon, Mar 03, 2014 at 09:56:11AM +0000, Kukjin Kim wrote:
->>>>
->>>> The following changes since commit
->>>> 38dbfb59d1175ef458d006556061adeaa8751b72:
->>>>
->>>>     Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
->>>>
->>>> are available in the git repository at:
->>>>
->>>>     http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>>> tags/samsung-pm-1
->>>>
->>>> for you to fetch changes up to e11d919e4aa2009077e3e4f829ff991d37adca61:
->>>>
->>>>     ARM: EXYNOS: Drop legacy Exynos4 clock suspend/resume code (2014-02-14
->>>> 08:16:01 +0900)
->>>
->>>
->>> Hi,
->>>
->>> I don't see a single cc or acked-by line from Mike Turquette here. I'll
->>> hold
->>> off until he's had a chance to take a look at these ones; I suspect
->>> they'll be
->>> fine since it's mostly code refactoring though.
->>
->>
->> I guess I should have ACKed them too, but it felt kind of strange to ACK my
->> own patches. ;)
->>
->> Anyway, for all samsung-clk patches:
->>
->> Acked-by: Tomasz Figa <t.figa@samsung.com>
->
-> Yeah, self-acking doesn't make much sense. :)
->
-> I'm mostly worried about patches touching other subsystems without the
-> other maintainer being aware of it or having reviewed them. As I said,
-> these mostly look like refactorings but it's still good habit.
+This is 3rd posting for SAMSUNG SXGBE driver.
 
-May we get your ACK for this? I hope it's not too late already to have 
-them merged for 3.15.
+Changes since v1:
+- changed name of driver to SXGbE as per Ben's comment
+- squashed Joe's neatening for many stuff in original patches
 
-Best regards,
-Tomasz
+Changes since v2:
+- updated and split binding document as per Mark's comment
+- clean up codes as per Joe's comment
+- removed unused fields and clean up codes as per Francois's comment
+- removed module parameters as per Dave's comment
+- moved driver directory to samsung/sxgbe/
+
+Byungho An (1):
+      MAINTAINERS: add maintainer for Samsung sxgbe driver
+
+Girish K S (2):
+      net: sxgbe: add EEE(Energy Efficient Ethernet) for Samsung sxgbe
+      net: sxgbe: add WOL(Wakeup-On-Lan)support for Samsung sxgbe
+
+Siva Reddy (2):
+      sxgbe: Add device-tree binding support document
+      net: sxgbe: add basic framework for Samsung 10Gb ethernet driver
+
+Vipul Pandya (3):
+      net: sxgbe: add TSO support for Samsung sxgbe
+      net: sxgbe: add Checksum offload support for Samsung sxgbe
+      net: sxgbe: add ethtool related functions support Samsung sxgbe
+
+ .../devicetree/bindings/net/samsung-sxgbe.txt      |   53 +
+ MAINTAINERS                                        |    9 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/samsung/Kconfig               |   20 +
+ drivers/net/ethernet/samsung/Makefile              |    5 +
+ drivers/net/ethernet/samsung/sxgbe/Kconfig         |    9 +
+ drivers/net/ethernet/samsung/sxgbe/Makefile        |    4 +
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h  |  552 +++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c    |  290 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c    |  515 +++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h    |  298 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c     |  387 ++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h     |   51 +
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c |  633 ++++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c    | 2392 ++++++++++++++++++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c    |  274 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.c     |  282 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.h     |  108 +
+ .../net/ethernet/samsung/sxgbe/sxgbe_platform.c    |  267 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h     |  491 ++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_xpcs.c    |   92 +
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_xpcs.h    |   38 +
+ include/linux/sxgbe_platform.h                     |   54 +
+ 24 files changed, 6826 insertions(+)
+
+Thanks,
+Byungho An
