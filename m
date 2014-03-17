@@ -1,67 +1,72 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCHv3 5/8] devfreq: exynos4: Use SET_SYSTEM_SLEEP_PM_OPS macro
-Date: Mon, 17 Mar 2014 09:17:10 +0900
-Message-ID: <001501cf4176$3d23daa0$b76b8fe0$%han@samsung.com>
-References: <1394789408-14648-1-git-send-email-cw00.choi@samsung.com>
- <1394789408-14648-6-git-send-email-cw00.choi@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v11 01/27] iommu/exynos: do not include removed header
+Date: Mon, 17 Mar 2014 09:26:46 +0900
+Message-ID: <20140317092646.b696d2245fb95ea8835cbd2e@samsung.com>
+References: <20140314140129.68a41cc1bd9e0a48a198ca13@samsung.com>
+	<CAK9yfHzRasE3jroDUZgAa=DN5N=2ZDAxgNiHDCip+f2868BAVQ@mail.gmail.com>
+	<000e01cf3f7b$6edcdfd0$4c969f70$@samsung.com>
+	<CAK9yfHyGfdP+0RKtdSCdU4tO=PX8GbQRQ7ar=ST5B2RenZMMsg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1394789408-14648-6-git-send-email-cw00.choi@samsung.com>
-Content-language: ko
-Sender: linux-doc-owner@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CAK9yfHyGfdP+0RKtdSCdU4tO=PX8GbQRQ7ar=ST5B2RenZMMsg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, March 14, 2014 6:30 PM, Chanwoo Choi wrote:
+On Fri, 14 Mar 2014 17:29:36 +0530, Sachin Kamat wrote:
+> On 14 March 2014 17:19, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >> From: Sachin Kamat [mailto:sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org]
+> >> Sent: Friday, March 14, 2014 7:00 PM
+> >>
+> >> On 14 March 2014 10:31, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >> > Commit 25e9d28d92 (ARM: EXYNOS: remove system mmu initialization from
+> >> > exynos tree) removed arch/arm/mach-exynos/mach/sysmmu.h header without
+> >> > removing remaining use of it from exynos-iommu driver, thus causing a
+> >> > compilation error.
+> >> >
+> >> > This patch fixes the error by removing respective include line
+> >> > from exynos-iommu.c.
+> >> >
+> >> > CC: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >> > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >> > ---
+> >> >  drivers/iommu/exynos-iommu.c |    3 +--
+> >> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >> >
+> >> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> >> > index 0740189..4876d35 100644
+> >> > --- a/drivers/iommu/exynos-iommu.c
+> >> > +++ b/drivers/iommu/exynos-iommu.c
+> >> > @@ -12,6 +12,7 @@
+> >> >  #define DEBUG
+> >> >  #endif
+> >> >
+> >> > +#include <linux/kernel.h>
+> >>
+> >> This change doesn't look related to the patch subject/description.
+> >>
+> > Yes. But it is simply added without any side-effect.
+> > Do you think it should be in a separate patch?.
+> > Actually, the added line is a redundant.
 > 
-> This patch use SET_SYSTEM_SLEEP_PM_OPS macro instead of legacy method.
+> If it is redundant, then you shouldn't be adding it. If it is
+> required, then please
+> mention about the need in the commit description if not a separate patch.
 > 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/devfreq/exynos/exynos4_bus.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
-> index 60539e8..e5d2c5a 100644
-> --- a/drivers/devfreq/exynos/exynos4_bus.c
-> +++ b/drivers/devfreq/exynos/exynos4_bus.c
-> @@ -1247,6 +1247,7 @@ static int exynos4_busfreq_remove(struct platform_device *pdev)
->  	return 0;
->  }
-> 
-> +#ifdef CONFIG_PM_SLEEP
->  static int exynos4_busfreq_resume(struct device *dev)
->  {
->  	struct busfreq_data *data = dev_get_drvdata(dev);
-> @@ -1254,9 +1255,10 @@ static int exynos4_busfreq_resume(struct device *dev)
->  	busfreq_mon_reset(data);
->  	return 0;
->  }
-> +#endif
-> 
->  static const struct dev_pm_ops exynos4_busfreq_pm = {
-> -	.resume	= exynos4_busfreq_resume,
-> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, exynos4_busfreq_resume)
 
-Hi Chanwoo Choi,
+Ok.
 
-How about using SIMPLE_DEV_PM_OPS instead of SET_SYSTEM_SLEEP_PM_OPS?
-SIMPLE_DEV_PM_OPS is simpler as below.
+Thanks for the advice.
 
-static SIMPLE_DEV_PM_OPS(exynos4_busfreq_pm, NULL, exynos4_busfreq_resume);
-
-However, if runtime pm functions will be added later,
-SIMPLE_DEV_PM_OPS is not necessary.
-
-Best regards,
-Jingoo Han
-
->  };
-> 
->  static const struct platform_device_id exynos4_busfreq_id[] = {
-> --
-> 1.8.0
-
+KyongHo
