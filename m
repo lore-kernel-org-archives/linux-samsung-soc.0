@@ -1,54 +1,67 @@
-From: Francois Romieu <romieu@fr.zoreil.com>
-Subject: Re: [PATCH V2 RE-SEND 1/7] net: sxgbe: add basic framework for
- Samsung 10Gb ethernet driver
-Date: Mon, 17 Mar 2014 00:11:01 +0100
-Message-ID: <20140316231101.GA23765@electric-eye.fr.zoreil.com>
-References: <007a01cf3e89$3bbdf460$b339dd20$%an@samsung.com>
- <20140314004454.GA10982@electric-eye.fr.zoreil.com>
- <000e01cf40ac$08c19290$1a44b7b0$@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCHv3 5/8] devfreq: exynos4: Use SET_SYSTEM_SLEEP_PM_OPS macro
+Date: Mon, 17 Mar 2014 09:17:10 +0900
+Message-ID: <001501cf4176$3d23daa0$b76b8fe0$%han@samsung.com>
+References: <1394789408-14648-1-git-send-email-cw00.choi@samsung.com>
+ <1394789408-14648-6-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from violet.fr.zoreil.com ([92.243.8.30]:53099 "EHLO
-	violet.fr.zoreil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755790AbaCPXLS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Mar 2014 19:11:18 -0400
-Content-Disposition: inline
-In-Reply-To: <000e01cf40ac$08c19290$1a44b7b0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1394789408-14648-6-git-send-email-cw00.choi@samsung.com>
+Content-language: ko
+Sender: linux-doc-owner@vger.kernel.org
+To: 'Chanwoo Choi' <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Andrew.an" <bh74.an@samsung.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, 'Joe Perches' <joe@perches.com>
 
-Andrew.an <bh74.an@samsung.com> :
-[...]
-> > > +struct sxgbe_core_ops {
-> > > +	/* MAC core initialization */
-> > > +	void (*core_init)(void __iomem *ioaddr);
-[...]
-> > > +	/* adjust SXGBE speed */
-> > > +	void (*set_speed)(void __iomem *ioaddr, unsigned char speed);
-> > > +};
-> > 
-> > This indirection level is never used.
-> Those are used, can you give more detail?
+On Friday, March 14, 2014 6:30 PM, Chanwoo Choi wrote:
+> 
+> This patch use SET_SYSTEM_SLEEP_PM_OPS macro instead of legacy method.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/devfreq/exynos/exynos4_bus.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+> index 60539e8..e5d2c5a 100644
+> --- a/drivers/devfreq/exynos/exynos4_bus.c
+> +++ b/drivers/devfreq/exynos/exynos4_bus.c
+> @@ -1247,6 +1247,7 @@ static int exynos4_busfreq_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+> 
+> +#ifdef CONFIG_PM_SLEEP
+>  static int exynos4_busfreq_resume(struct device *dev)
+>  {
+>  	struct busfreq_data *data = dev_get_drvdata(dev);
+> @@ -1254,9 +1255,10 @@ static int exynos4_busfreq_resume(struct device *dev)
+>  	busfreq_mon_reset(data);
+>  	return 0;
+>  }
+> +#endif
+> 
+>  static const struct dev_pm_ops exynos4_busfreq_pm = {
+> -	.resume	= exynos4_busfreq_resume,
+> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, exynos4_busfreq_resume)
 
-They are used but they always point to the same set of methods.
-Those methods could thus be directly called.
+Hi Chanwoo Choi,
 
-[...]
-> > > +/* SXGBE private data structures */
-> > > +struct sxgbe_tx_queue {
-> > > +	u8 queue_no;
-> > > +	unsigned int irq_no;
-> > > +	struct sxgbe_priv_data *priv_ptr;
-> > > +	struct sxgbe_tx_norm_desc *dma_tx;
-> > 
-> > You may lay things a bit differently.
-> can you give more detail?
+How about using SIMPLE_DEV_PM_OPS instead of SET_SYSTEM_SLEEP_PM_OPS?
+SIMPLE_DEV_PM_OPS is simpler as below.
 
-Bigger fields first, u8 at the end. It will save padding in the struct.
+static SIMPLE_DEV_PM_OPS(exynos4_busfreq_pm, NULL, exynos4_busfreq_resume);
 
--- 
-Ueimor
+However, if runtime pm functions will be added later,
+SIMPLE_DEV_PM_OPS is not necessary.
+
+Best regards,
+Jingoo Han
+
+>  };
+> 
+>  static const struct platform_device_id exynos4_busfreq_id[] = {
+> --
+> 1.8.0
+
