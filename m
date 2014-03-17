@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/9] ARM: dts: exynos4210-universal: add exynos/fimd node
-Date: Mon, 17 Mar 2014 11:27:22 +0100
-Message-ID: <1395052045-23848-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/9] drm/exynos: correct timing porch conversion
+Date: Mon, 17 Mar 2014 11:27:19 +0100
+Message-ID: <1395052045-23848-4-git-send-email-a.hajda@samsung.com>
 References: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,64 +21,54 @@ To: dri-devel@lists.freedesktop.org
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Denis Carikli <denis@eukrea.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds fimd node with display timings for exynos4210-universal device.
-It also makes LCD regulators always on. This allow to re-use panel initialized
-by boot loader.
+The patch corrects porch calculation. It should
+be calculated as a difference between adjacent
+respective fields of drm_display_mode.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d2e3f5f..21ca0b978 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -225,6 +225,7 @@
- 					regulator-name = "VLCD+VMIPI_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
- 				};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index f78fbf4..10431b0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -221,7 +221,7 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	struct drm_display_mode *mode = &ctx->mode;
+ 	struct fimd_driver_data *driver_data;
+ 	u32 val, clkdiv, vidcon1;
+-	int hblank, vblank, vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
++	int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
  
- 				ldo8_reg: LDO8 {
-@@ -288,6 +289,7 @@
- 					regulator-name = "VCC_3.0V_LCD";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
- 				};
+ 	driver_data = ctx->driver_data;
+ 	if (ctx->suspended)
+@@ -240,10 +240,9 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
  
- 				buck1_reg: BUCK1 {
-@@ -345,6 +347,29 @@
- 		};
- 	};
+ 	/* setup vertical timing values. */
+-	vblank = mode->crtc_vblank_end - mode->crtc_vblank_start;
+ 	vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+-	vbpd = (vblank - vsync_len) / 2;
+-	vfpd = vblank - vsync_len - vbpd;
++	vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
++	vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
  
-+	fimd: fimd@11c00000 {
-+		pinctrl-0 = <&lcd_clk>, <&lcd_data24>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+		display-timings {
-+			timing {
-+				clock-frequency = <23492370>;
-+				hactive = <480>;
-+				vactive = <800>;
-+				hback-porch = <16>;
-+				hfront-porch = <16>;
-+				vback-porch = <2>;
-+				vfront-porch = <28>;
-+				hsync-len = <2>;
-+				vsync-len = <1>;
-+				hsync-active = <0>;
-+				vsync-active = <0>;
-+				de-active = <0>;
-+				pixelclk-active = <0>;
-+			};
-+		};
-+	};
-+
- 	pwm@139D0000 {
- 		compatible = "samsung,s5p6440-pwm";
- 		status = "okay";
+ 	val = VIDTCON0_VBPD(vbpd - 1) |
+ 		VIDTCON0_VFPD(vfpd - 1) |
+@@ -251,10 +250,9 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
+ 
+ 	/* setup horizontal timing values.  */
+-	hblank = mode->crtc_hblank_end - mode->crtc_hblank_start;
+ 	hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+-	hbpd = (hblank - hsync_len) / 2;
+-	hfpd = hblank - hsync_len - hbpd;
++	hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
++	hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+ 
+ 	val = VIDTCON1_HBPD(hbpd - 1) |
+ 		VIDTCON1_HFPD(hfpd - 1) |
 -- 
 1.8.3.2
