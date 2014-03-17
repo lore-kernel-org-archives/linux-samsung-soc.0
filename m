@@ -1,150 +1,80 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v2 3/3] arm: exynos5260: add support for S2R
-Date: Mon, 17 Mar 2014 18:39:55 +0530
-Message-ID: <1395061795-17777-4-git-send-email-vikas.sajjan@samsung.com>
-References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8637 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932702AbaCQNJq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 09:09:46 -0400
-In-reply-to: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 9/9] drm/exynos/fimd: remove unused variable
+Date: Mon, 17 Mar 2014 14:16:12 +0100
+Message-ID: <1395062172-19756-1-git-send-email-a.hajda@samsung.com>
+References: <1395052045-23848-10-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1395052045-23848-10-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Denis Carikli <denis@eukrea.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: vikas.sajjan@samsung.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Adds Suspend to RAM (S2R) support to exynos5260.
+The patch removes unused vidcon0 field from fimd_context structure.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm/mach-exynos/pm.c       |   62 +++++++++++++++++++++++++++++++--------
- arch/arm/mach-exynos/regs-pmu.h |   12 ++++++++
- 2 files changed, 61 insertions(+), 13 deletions(-)
+v2:
+- corrected vidcon0 calculation
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index dbe9670..12cc241 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -77,12 +77,20 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
- 	{ /* sentinel */ },
- };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index dbfad4e..158d53a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -114,7 +114,6 @@ struct fimd_context {
+ 	struct fimd_win_data		win_data[WINDOWS_NR];
+ 	unsigned int			default_win;
+ 	unsigned long			irq_flags;
+-	u32				vidcon0;
+ 	bool				suspended;
+ 	int				pipe;
+ 	wait_queue_head_t		wait_vsync_queue;
+@@ -269,26 +268,19 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	       VIDTCON2_HOZVAL_E(mode->hdisplay - 1);
+ 	writel(val, ctx->regs + driver_data->timing_base + VIDTCON2);
  
-+static const struct exynos_wkup_irq exynos5260_wkup_irq[] = {
-+	{ 105, BIT(1) }, /* RTC alarm */
-+	{ 106, BIT(2) }, /* RTC tick */
-+	{ /* sentinel */ },
-+};
-+
- static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- {
- 	const struct exynos_wkup_irq *wkup_irq;
+-	/* setup clock source, clock divider, enable dma. */
+-	val = ctx->vidcon0;
+-	val &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
++	/*
++	 * fields of register with prefix '_F' would be updated
++	 * at vsync(same as dma start)
++	 */
++	val = VIDCON0_ENVID | VIDCON0_ENVID_F;
  
- 	if (soc_is_exynos5250())
- 		wkup_irq = exynos5250_wkup_irq;
-+	else if (soc_is_exynos5260())
-+		wkup_irq = exynos5260_wkup_irq;
- 	else
- 		wkup_irq = exynos4_wkup_irq;
+-	if (ctx->driver_data->has_clksel) {
+-		val &= ~VIDCON0_CLKSEL_MASK;
++	if (ctx->driver_data->has_clksel)
+ 		val |= VIDCON0_CLKSEL_LCD;
+-	}
  
-@@ -124,10 +132,20 @@ static void exynos_pm_prepare(void)
- 	unsigned int tmp;
+ 	clkdiv = fimd_calc_clkdiv(ctx, mode);
+ 	if (clkdiv > 1)
+ 		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
+-	else
+-		val &= ~VIDCON0_CLKDIR;	/* 1:1 clock */
  
- 	/* Set wake-up mask registers */
--	__raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
--	__raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
-+	if (soc_is_exynos5260()) {
-+		__raw_writel(exynos_get_eint_wake_mask(),
-+					EXYNOS5260_EINT_WAKEUP_MASK);
-+		__raw_writel(exynos_irqwake_intmask & ~(1 << 31),
-+					EXYNOS5260_WAKEUP_MASK);
-+	} else {
-+		__raw_writel(exynos_get_eint_wake_mask(),
-+					S5P_EINT_WAKEUP_MASK);
-+		__raw_writel(exynos_irqwake_intmask & ~(1 << 31),
-+					S5P_WAKEUP_MASK);
-+	}
+-	/*
+-	 * fields of register with prefix '_F' would be updated
+-	 * at vsync(same as dma start)
+-	 */
+-	val |= VIDCON0_ENVID | VIDCON0_ENVID_F;
+ 	writel(val, ctx->regs + VIDCON0);
+ }
  
--	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-+	if (!soc_is_exynos5260())
-+		s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
- 	if (soc_is_exynos5250()) {
- 		s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-@@ -221,21 +239,39 @@ static void exynos_pm_resume(void)
- 			      : "cc");
- 	}
- 
--	/* For release retention */
--
--	__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
--	__raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
--	__raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
--	__raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
--	__raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
--	__raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
--	__raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
-+	if (soc_is_exynos5250()) {
-+		/* For release retention */
-+
-+		__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
-+		__raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
-+		__raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
-+		__raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
-+		__raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
-+		__raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
-+		__raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
-+	} else if (soc_is_exynos5260()) {
-+		/* For release retention */
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_LPDDR3_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RET_MAUDIO_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RET_JTAG_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MMC2_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_TOP_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_UART_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MMC0_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MMC1_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_SPI_OPTION);
-+		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MIF_OPTION);
-+		__raw_writel((1 << 28),
-+				EXYNOS5260_PAD_RETENTION_BOOTLDO_OPTION);
-+	}
- 
- 	if (soc_is_exynos5250())
- 		s3c_pm_do_restore(exynos5_sys_save,
- 			ARRAY_SIZE(exynos5_sys_save));
- 
--	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-+	if (!soc_is_exynos5260())
-+		s3c_pm_do_restore_core(exynos_core_save,
-+				ARRAY_SIZE(exynos_core_save));
- 
- 	if (IS_ENABLED(CONFIG_SMP) && !soc_is_exynos5250())
- 		scu_enable(S5P_VA_SCU);
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index a81926b..906dc1e 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -532,6 +532,18 @@
- #define EXYNOS5260_EAGLE_L2_STATUS			S5P_PMUREG(0x2604)
- #define EXYNOS5260_KFC_L2_STATUS			S5P_PMUREG(0x2624)
- 
-+#define EXYNOS5260_PAD_RETENTION_LPDDR3_OPTION	S5P_PMUREG(0x3008)
-+#define EXYNOS5260_PAD_RET_MAUDIO_OPTION	S5P_PMUREG(0x3028)
-+#define EXYNOS5260_PAD_RET_JTAG_OPTION		S5P_PMUREG(0x3048)
-+#define EXYNOS5260_PAD_RETENTION_MMC2_OPTION	S5P_PMUREG(0x30C8)
-+#define EXYNOS5260_PAD_RETENTION_TOP_OPTION	S5P_PMUREG(0x3108)
-+#define EXYNOS5260_PAD_RETENTION_UART_OPTION	S5P_PMUREG(0x3128)
-+#define EXYNOS5260_PAD_RETENTION_MMC0_OPTION	S5P_PMUREG(0x3148)
-+#define EXYNOS5260_PAD_RETENTION_MMC1_OPTION	S5P_PMUREG(0x3168)
-+#define EXYNOS5260_PAD_RETENTION_SPI_OPTION	S5P_PMUREG(0x31C8)
-+#define EXYNOS5260_PAD_RETENTION_MIF_OPTION	S5P_PMUREG(0x31E8)
-+#define EXYNOS5260_PAD_RETENTION_BOOTLDO_OPTION	S5P_PMUREG(0x3248)
-+
- /* CENTRAL_SEQ_OPTION */
- #define EXYNOS5260_ARM_USE_STANDBY_WFI0			(1 << 16)
- #define EXYNOS5260_ARM_USE_STANDBY_WFI1			(1 << 17)
 -- 
-1.7.9.5
+1.8.3.2
