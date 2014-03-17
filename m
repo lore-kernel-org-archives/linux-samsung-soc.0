@@ -1,80 +1,57 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 9/9] drm/exynos/fimd: remove unused variable
-Date: Mon, 17 Mar 2014 14:16:12 +0100
-Message-ID: <1395062172-19756-1-git-send-email-a.hajda@samsung.com>
-References: <1395052045-23848-10-git-send-email-a.hajda@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] clk: samsung: fixed compiler warning
+ [-Wpointer-to-int-cast]
+Date: Mon, 17 Mar 2014 14:17:49 +0100
+Message-ID: <5326F5FD.5060302@samsung.com>
+References: <1393382561-5388-1-git-send-email-pankaj.dubey@samsung.com>
+ <53264E61.2010502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1395052045-23848-10-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Denis Carikli <denis@eukrea.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:44773 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932639AbaCQNR4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Mar 2014 09:17:56 -0400
+In-reply-to: <53264E61.2010502@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-The patch removes unused vidcon0 field from fimd_context structure.
+Hi Pankaj,
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-v2:
-- corrected vidcon0 calculation
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+On 17.03.2014 02:22, Pankaj Dubey wrote:
+> On 02/26/2014 11:42 AM, Pankaj Dubey wrote:
+>> When compiled using ARM64 cross compiler, gcc complains as
+>>
+>> drivers/clk/samsung/clk.c:293:18:
+>> warning: cast from pointer to integer of different size
+>> [-Wpointer-to-int-cast]
+>>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk.c |    2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+>> index 91bec3e..59142ba 100644
+>> --- a/drivers/clk/samsung/clk.c
+>> +++ b/drivers/clk/samsung/clk.c
+>> @@ -278,7 +278,7 @@ void __init samsung_clk_of_register_fixed_ext(
+>>       for_each_matching_node_and_match(np, clk_matches, &match) {
+>>           if (of_property_read_u32(np, "clock-frequency", &freq))
+>>               continue;
+>> -        fixed_rate_clk[(u32)match->data].fixed_rate = freq;
+>> +        fixed_rate_clk[(unsigned long)match->data].fixed_rate = freq;
+>>       }
+>>       samsung_clk_register_fixed_rate(fixed_rate_clk, nr_fixed_rate_clk);
+>>   }
+>
+> Gentle Ping.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index dbfad4e..158d53a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -114,7 +114,6 @@ struct fimd_context {
- 	struct fimd_win_data		win_data[WINDOWS_NR];
- 	unsigned int			default_win;
- 	unsigned long			irq_flags;
--	u32				vidcon0;
- 	bool				suspended;
- 	int				pipe;
- 	wait_queue_head_t		wait_vsync_queue;
-@@ -269,26 +268,19 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
- 	       VIDTCON2_HOZVAL_E(mode->hdisplay - 1);
- 	writel(val, ctx->regs + driver_data->timing_base + VIDTCON2);
- 
--	/* setup clock source, clock divider, enable dma. */
--	val = ctx->vidcon0;
--	val &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
-+	/*
-+	 * fields of register with prefix '_F' would be updated
-+	 * at vsync(same as dma start)
-+	 */
-+	val = VIDCON0_ENVID | VIDCON0_ENVID_F;
- 
--	if (ctx->driver_data->has_clksel) {
--		val &= ~VIDCON0_CLKSEL_MASK;
-+	if (ctx->driver_data->has_clksel)
- 		val |= VIDCON0_CLKSEL_LCD;
--	}
- 
- 	clkdiv = fimd_calc_clkdiv(ctx, mode);
- 	if (clkdiv > 1)
- 		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
--	else
--		val &= ~VIDCON0_CLKDIR;	/* 1:1 clock */
- 
--	/*
--	 * fields of register with prefix '_F' would be updated
--	 * at vsync(same as dma start)
--	 */
--	val |= VIDCON0_ENVID | VIDCON0_ENVID_F;
- 	writel(val, ctx->regs + VIDCON0);
- }
- 
--- 
-1.8.3.2
+Missed this patch, thanks. Applied for v3.15.
+
+Best regards,
+Tomasz
