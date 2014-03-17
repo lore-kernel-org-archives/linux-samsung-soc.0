@@ -1,43 +1,46 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH V3 8/8] MAINTAINERS: add maintainer for Samsung sxgbe driver
-Date: Mon, 17 Mar 2014 13:43:45 -0700
-Message-ID: <00c101cf4221$97f4f1c0$c7ded540$@samsung.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH V3 2/8] net: sxgbe: add basic framework for Samsung
+ 10Gb ethernet driver
+Date: Mon, 17 Mar 2014 17:18:25 -0400 (EDT)
+Message-ID: <20140317.171825.1118518563919818497.davem@davemloft.net>
+References: <00bf01cf4221$95373150$bfa593f0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Content-language: en-us
-Sender: netdev-owner@vger.kernel.org
-To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davem@davemloft.net, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:43278 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751022AbaCQVS1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Mar 2014 17:18:27 -0400
+In-Reply-To: <00bf01cf4221$95373150$bfa593f0$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: bh74.an@samsung.com
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com
 
 From: Byungho An <bh74.an@samsung.com>
+Date: Mon, 17 Mar 2014 13:43:37 -0700
 
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- MAINTAINERS |    9 +++++++++
- 1 file changed, 9 insertions(+)
+> +static void sxgbe_tx_timer(unsigned long data)
+> +{
+> +	struct sxgbe_tx_queue *p = (struct sxgbe_tx_queue *)data;
+> +	sxgbe_tx_queue_clean(p);
+> +}
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b7befe7..aeb81f2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7536,6 +7536,15 @@ S:	Supported
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- F:	drivers/clk/samsung/
- 
-+SAMSUNG SXGBE DRIVERS
-+M:	Byungho An <bh74.an@samsung.com>
-+M:	Girish K S <ks.giri@samsung.com>
-+M:	Siva Reddy Kallam <siva.kallam@samsung.com>
-+M:	Vipul Pandya <vipul.pandya@samsung.com>
-+S:	Supported
-+L:	netdev@vger.kernel.org
-+F:	drivers/net/ethernet/samsung/sxgbe/
-+
- SERIAL DRIVERS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- L:	linux-serial@vger.kernel.org
--- 
-1.7.10.4
+A empty line after local variable declarations please.
+
+> +	SXGBE_FOR_EACH_QUEUE(SXGBE_TX_QUEUES, queue_num) {
+> +		struct sxgbe_tx_queue *p = priv->txq[queue_num];
+> +		p->tx_coal_frames =  SXGBE_TX_FRAMES;
+
+Likewise.
+
+> +	SXGBE_FOR_EACH_QUEUE(SXGBE_TX_QUEUES, queue_num) {
+> +		struct sxgbe_tx_queue *p = priv->txq[queue_num];
+> +		del_timer_sync(&p->txtimer);
+> +	}
+
+Likewise.
+
+Please audit your entire submission for this problem.
