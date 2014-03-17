@@ -1,65 +1,101 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 1/3] ARM: EXYNOS: Map PMU address through DT
-Date: Mon, 17 Mar 2014 19:53:10 +0530
-Message-ID: <CAK9yfHyF9t0fsO86cqHvAzaWKa17=2MkFq6mhoL0-mwjw6OXQQ@mail.gmail.com>
-References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com>
-	<1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [RFC v3 0/5] cpufreq:LAB: Support for LAB governor.
+Date: Mon, 17 Mar 2014 16:38:24 +0100
+Message-ID: <20140317163824.3c5480b3@amdc2363>
+References: <1367590072-10496-1-git-send-email-jonghwa3.lee@samsung.com>
+ <1393928852-22725-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:38493 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932692AbaCQOXL (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:18445 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756604AbaCQPie (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Mar 2014 10:23:11 -0400
-Received: by mail-oa0-f49.google.com with SMTP id h16so339599oag.22
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Mar 2014 07:23:11 -0700 (PDT)
-In-Reply-To: <1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
+	Mon, 17 Mar 2014 11:38:34 -0400
+In-reply-to: <1393928852-22725-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, thomas.ab@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
 
-Hi Vikas,
+Dear all,
 
-On 17 March 2014 18:39, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Instead of hardcoding the PMU details for each SoC, pass this information
-> through device tree (DT).
->
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-> ---
->  .../devicetree/bindings/arm/samsung/pmu.txt        |    5 +-
->  arch/arm/boot/dts/exynos4.dtsi                     |    5 ++
->  arch/arm/boot/dts/exynos5260.dtsi                  |    5 ++
->  arch/arm/mach-exynos/common.c                      |   51 +++++++++++++-------
->  arch/arm/mach-exynos/include/mach/map.h            |    3 --
->  5 files changed, 47 insertions(+), 22 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> index f1f1552..667a7f0 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> @@ -2,14 +2,15 @@ SAMSUNG Exynos SoC series PMU Registers
->
->  Properties:
->   - compatible : should contain two values. First value must be one from following list:
-> +                  - "samsung,exynos4210-pmu" - for Exynos4210 and Exynos4x12 SoC,
->                    - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
-> -                  - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-> +                  - "samsung,exynos5420-pmu" - for Exynos5420 and Exynos5260 SoC.
->                 second value must be always "syscon".
->
->   - reg : offset and length of the register set.
->
->  Example :
->  pmu_system_controller: system-controller@10040000 {
-> -       compatible = "samsung,exynos5250-pmu", "syscon";
-> +       compatible = "samsung,exynos5250-pmu";
+> Despite this patch set is working and applicable on top of 3.14-rc5, 
+> please regard it solely as a pure RFC.
+> 
+> This patch provides support for LAB governor build on top of ondemand.
+> Previous version of LAB can be found here:
+> http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
+> 
+> LAB short reminder:
+> 
+> LAB uses information about how many cores are in "idle" state (the
+> core idleness is represented as the value between 0 and 100) and the
+> overall load of the system (from 0 to 100) to decide about frequency
+> to be set. It is extremely useful with SoCs like Exynos4412, which
+> can set only one frequency for all cores.
+> 
+> Important design decisions:
+> 
+> - Reuse well established ondemand governor's internal code. To do this
+>   I had to expose some previously static internal ondemand code. 
+>   This allowed smaller LAB code when compared to previous version.
+> 	
+> - LAB works on top of ondemand, which means that one via device tree
+>   attributes can specify if and when e.g. BOOST shall be enabled or
+> if any particular frequency shall be imposed. For situation NOT
+> important from the power consumption reduction viewpoint the ondemand
+> is used to set proper frequency.
+> 
+> - It is only possible to either compile in or not the LAB into the
+> kernel. There is no "M" option for Kconfig. It is done on purpose,
+> since ondemand itself can be also compiled as a module and then it
+> would be possible to remove ondemand when LAB is working on top of it.
+> 
+> - The LAB operation is specified (and thereof extendable) via device
+> tree lab-ctrl-freq attribute defined at /cpus/cpu0.
+> 
+> 
+> Problems:
+> - How the governor will work for big.LITTLE systems (especially
+> Global Task Scheduling).
+> - Will there be agreement to expose internal ondemand code to be
+> reused for more specialized governors.
+> 
+> Test HW:
+> 	Exynos4412 - Trats2 board.
+> Above patches were posted on top of Linux 3.14-rc5
+> (SHA1: 3f9590c281c66162bf8ae9b7b2d987f0a89043c6)
+> 
 
-If you have removed "syscon" deliberately above, then you should also
-remove the same in the
-binding description which says "second value must be always "syscon".".
+Any comments about those patches?
+
+> Lukasz Majewski (5):
+>   cpufreq:LAB:ondemand Adjust ondemand to be able to reuse its methods
+>   cpufreq:LAB:cpufreq_governor Adjust cpufreq_governor.[h|c] to
+> support LAB
+>   cpufreq:LAB:lab Add LAB governor code
+>   cpufreq:LAB:Kconfig Add LAB definitions to Kconfig
+>   cpufreq:LAB:dts:trats2: Add DTS nodes for LAB governor
+> 
+>  arch/arm/boot/dts/exynos4412-trats2.dts |   29 ++
+>  drivers/cpufreq/Kconfig                 |   28 ++
+>  drivers/cpufreq/Makefile                |    1 +
+>  drivers/cpufreq/cpufreq_governor.c      |    7 +
+>  drivers/cpufreq/cpufreq_governor.h      |   12 +
+>  drivers/cpufreq/cpufreq_lab.c           |  457
+> +++++++++++++++++++++++++++++++
+> drivers/cpufreq/cpufreq_ondemand.c      |   24 +- 7 files changed,
+> 550 insertions(+), 8 deletions(-) create mode 100644
+> drivers/cpufreq/cpufreq_lab.c
+> 
+
+
 
 -- 
-With warm regards,
-Sachin
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
