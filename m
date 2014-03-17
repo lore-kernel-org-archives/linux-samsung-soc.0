@@ -1,59 +1,48 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/9] exynos/fimd: add parallel output related bindings
-Date: Mon, 17 Mar 2014 11:27:20 +0100
-Message-ID: <1395052045-23848-5-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 9/9] drm/exynos/fimd: remove unused variable
+Date: Mon, 17 Mar 2014 11:27:25 +0100
+Message-ID: <1395052045-23848-10-git-send-email-a.hajda@samsung.com>
 References: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Denis Carikli <denis@eukrea.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1395052045-23848-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Denis Carikli <denis-fO0SIAKYzcbQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds bindings required to add support
-for parallel output.
+The patch removes unused vidcon0 field from fimd_context structure.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- Documentation/devicetree/bindings/video/samsung-fimd.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-index 36b7895..2dad41b 100644
---- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-+++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-@@ -41,6 +41,21 @@ Optional Properties:
- - samsung,power-domain: a phandle to FIMD power domain node.
- - samsung,invert-vden: video enable signal is inverted
- - samsung,invert-vclk: video clock signal is inverted
-+- display-timings: timing settings for FIMD, as described in document [1].
-+		Can be used in case timings cannot be provided otherwise
-+		or to override timings provided by the panel.
-+
-+The device node can contain 'port' child nodes according to the bindings defined
-+in [2]. The following are properties specific to those nodes:
-+- reg: (required) port index, can be:
-+		0 - for CAMIF0 input,
-+		1 - for CAMIF1 input,
-+		2 - for CAMIF2 input,
-+		3 - for parallel output,
-+		4 - for write-back interface
-+
-+[1]: Documentation/devicetree/bindings/video/display-timing.txt
-+[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index dbfad4e..375ec66 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -114,7 +114,6 @@ struct fimd_context {
+ 	struct fimd_win_data		win_data[WINDOWS_NR];
+ 	unsigned int			default_win;
+ 	unsigned long			irq_flags;
+-	u32				vidcon0;
+ 	bool				suspended;
+ 	int				pipe;
+ 	wait_queue_head_t		wait_vsync_queue;
+@@ -270,8 +269,7 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	writel(val, ctx->regs + driver_data->timing_base + VIDTCON2);
  
- Example:
+ 	/* setup clock source, clock divider, enable dma. */
+-	val = ctx->vidcon0;
+-	val &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
++	val = ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
  
+ 	if (ctx->driver_data->has_clksel) {
+ 		val &= ~VIDCON0_CLKSEL_MASK;
 -- 
 1.8.3.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
