@@ -1,69 +1,65 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH] drm/exynos: Fix (more) freeing issues in exynos_drm_drv.c
-Date: Mon, 17 Mar 2014 11:28:39 +0800
-Message-ID: <1395026919-14467-1-git-send-email-djkurtz@chromium.org>
+From: Byungho An <bh74.an@samsung.com>
+Subject: RE: [PATCH V2 RE-SEND 1/7] net: sxgbe: add basic framework for Samsung
+ 10Gb ethernet driver
+Date: Sun, 16 Mar 2014 20:53:25 -0700
+Message-ID: <005601cf4194$752c0c60$5f842520$@samsung.com>
+References: <007a01cf3e89$3bbdf460$b339dd20$%an@samsung.com>
+ <20140314004454.GA10982@electric-eye.fr.zoreil.com>
+ <000e01cf40ac$08c19290$1a44b7b0$@samsung.com>
+ <20140316231101.GA23765@electric-eye.fr.zoreil.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:18856 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932317AbaCQDxi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Mar 2014 23:53:38 -0400
+In-reply-to: <20140316231101.GA23765@electric-eye.fr.zoreil.com>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Francois Romieu' <romieu@fr.zoreil.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com, 'Joe Perches' <joe@perches.com>
 
-The following commit [0] fixed a use-after-free, but left the subdrv open
-in the error path.
+Francois Romieu <romieu@fr.zoreil.com> :
+> [...]
+> > > > +struct sxgbe_core_ops {
+> > > > +	/* MAC core initialization */
+> > > > +	void (*core_init)(void __iomem *ioaddr);
+> [...]
+> > > > +	/* adjust SXGBE speed */
+> > > > +	void (*set_speed)(void __iomem *ioaddr, unsigned char
+speed); };
+> > >
+> > > This indirection level is never used.
+> > Those are used, can you give more detail?
+> 
+> They are used but they always point to the same set of methods.
+> Those methods could thus be directly called.
+Yes, those methods can be called directly.
+But I think it is acceptable for manageability and extension for future.
 
-[0] commit 6ca605f7c70895a35737435f17ae9cc5e36f1466
-drm/exynos: Fix freeing issues in exynos_drm_drv.c
+> 
+> [...]
+> > > > +/* SXGBE private data structures */ struct sxgbe_tx_queue {
+> > > > +	u8 queue_no;
+> > > > +	unsigned int irq_no;
+> > > > +	struct sxgbe_priv_data *priv_ptr;
+> > > > +	struct sxgbe_tx_norm_desc *dma_tx;
+> > >
+> > > You may lay things a bit differently.
+> > can you give more detail?
+> 
+> Bigger fields first, u8 at the end. It will save padding in the struct.
+OK.
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
----
-Hi, I noticed this when reviewing some recent patches.
-I am only able to compile test this patch.
-
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 215131a..c204b4e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -172,20 +172,24 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
- 
- 	ret = exynos_drm_subdrv_open(dev, file);
- 	if (ret)
--		goto out;
-+		goto err_file_priv_free;
- 
- 	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
- 					NULL, 0);
- 	if (IS_ERR(anon_filp)) {
- 		ret = PTR_ERR(anon_filp);
--		goto out;
-+		goto err_subdrv_close;
- 	}
- 
- 	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
- 	file_priv->anon_filp = anon_filp;
- 
- 	return ret;
--out:
-+
-+err_subdrv_close:
-+	exynos_drm_subdrv_close(dev, file);
-+
-+err_file_priv_free:
- 	kfree(file_priv);
- 	file->driver_priv = NULL;
- 	return ret;
--- 
-1.9.0.279.gdc9e3eb
+> 
+> --
+> Ueimor
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in the
+body
+> of a message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
