@@ -1,129 +1,171 @@
 From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH V5 1/8] sxgbe: Add device-tree binding support document
-Date: Tue, 18 Mar 2014 11:46:56 -0700
-Message-ID: <CAGVrzcbY61dtBLzYRY4xYg9CrTuMHBWCcJ+-hNLH_EvQ80xGCw@mail.gmail.com>
-References: <002d01cf42d6$a3fd3a30$ebf7ae90$@samsung.com>
+Subject: Re: [PATCH V5 2/8] net: sxgbe: add basic framework for Samsung 10Gb
+ ethernet driver
+Date: Tue, 18 Mar 2014 11:59:15 -0700
+Message-ID: <CAGVrzcYgONroZULGKhiigPT8yqLDufbzgR4+q7_tdNEqgWDKkA@mail.gmail.com>
+References: <002801cf42d6$a27317c0$e7594740$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:61646 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757735AbaCRSrg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 14:47:36 -0400
-In-Reply-To: <002d01cf42d6$a3fd3a30$ebf7ae90$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <002801cf42d6$a27317c0$e7594740$@samsung.com>
+Sender: netdev-owner@vger.kernel.org
 To: Byungho An <bh74.an@samsung.com>
-Cc: netdev <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, David Miller <davem@davemloft.net>, siva.kallam@samsung.com, ilho215.lee@samsung.com, ks.giri@samsung.com, vipul.pandya@samsung.com
+Cc: netdev <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, David Miller <davem@davemloft.net>, "siva.kallam" <siva.kallam@samsung.com>, "ks.giri" <ks.giri@samsung.com>, "ilho215.lee" <ilho215.lee@samsung.com>, "vipul.pandya" <vipul.pandya@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 2014-03-18 11:19 GMT-07:00 Byungho An <bh74.an@samsung.com>:
 > From: Siva Reddy <siva.kallam@samsung.com>
 >
-> This patch adds binding document for SXGBE ethernet driver via device-tree.
+> This patch adds support for Samsung 10Gb ethernet driver(sxgbe).
 >
-> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> Signed-off-by: Byungho An <bh74.an@samsung.com>
-> ---
->  .../devicetree/bindings/net/samsung-sxgbe.txt      |   52 ++++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/samsung-sxgbe.txt
->
-> diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> new file mode 100644
-> index 0000000..340eff6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> @@ -0,0 +1,52 @@
-> +* Samsung 10G Ethernet driver (SXGBE)
+> - sxgbe core initialization
+> - Tx and Rx support
+> - MDIO support
+> - ISRs for Tx and Rx
+> - ifconfig support to driver
+
+Too many files to review at once, the diffstat was around 5000+ lines!
+You should split this into logical parts, or just submit the basic
+bits for now and add the features later.
+
+[snip]
+
+> +       ret = register_netdev(ndev);
+> +       if (ret) {
+> +               pr_err("%s: ERROR %i registering the device\n", __func__, ret);
+> +               goto error_netdev_register;
+> +       }
 > +
-> +Required properties:
-> +- compatible: Should be "samsung,sxgbe-v2.0a"
-> +- reg: Address and length of the register set for the device
-> +- interrupt-parent: Should be the phandle for the interrupt controller
-> +  that services interrupts for this device
-> +- interrupts: Should contain the SXGBE interrupts
-> +  These interrupts are ordered by fixed and follows variable
-> +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
-> +  index 0 - this is fixed common interrupt of SXGBE and it is always
-> +  available.
-> +  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive interrupts
-> +  and 1 optional lpi interrupt.
-> +- phy-mode: String, operation mode of the PHY interface.
+> +       priv->sxgbe_clk = clk_get(priv->device, SXGBE_RESOURCE_NAME);
+> +       if (IS_ERR(priv->sxgbe_clk)) {
+> +               netdev_warn(ndev, "%s: warning: cannot get CSR clock\n",
+> +                           __func__);
+> +               goto error_clk_get;
+> +       }
 
-You should reference
-Documentation/devicetree/bindings/net/ethernet.txt which is more
-thorough about what this is about.
-
-> +  Supported values are: "xaui", "gmii".
-
-xaui is not documented in
-Documentation/devicetree/bindings/net/ethernet.txt, nor is it
-supported in include/linux/phy.h and drivers/of/of_net.c, that should
-be part of the patchset.
-
-> +- samsung,pbl: Integer, Programmable Burst Length.
-> +  Supported values are 1, 2, 4, 8, 16, or 32.
-> +- samsung,burst-map: Integer, Program the possible bursts supported by sxgbe
-> +  This is an interger and represents allowable DMA bursts when fixed burst.
-> +  Allowable range is 0x00-0x3F. This field is valid only when fixed burst is
-> +  enabled, otherwise ignored.
-> +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced address mode.
-> +- samsung,force-thresh-dma-mode: Boolean, Force DMA to use the threshold mode
-> +  for both tx and rx
-> +- samsung,force-sf-dma-mode: Boolean, Force DMA to use the Store and Forward
-> +  mode for both tx and rx. This flag is ignored if force-thresh-dma-mode is set.
-> +- samsung,phy-addr: Integer, Address of the PHY attached with SXGBE.
-
-Please don't use a custom property for that, use a phy-handle which
-points to an ePAPR compliant Ethernet PHY device tree node as
-described in Documentation/devicetree/bindings/net/phy.txt.
+This is racy, after register_netdev() is called, the network stack is
+free to use the interface, which means that as much as possible needs
+to be initialized before you call it, including clocks, and MDIO.
 
 > +
-> +Optional properties:
-> +- mac-address: 6 bytes, mac address
+> +       /* If a specific clk_csr value is passed from the platform
+> +        * this means that the CSR Clock Range selection cannot be
+> +        * changed at run-time and it is fixed. Viceversa the driver'll try to
+> +        * set the MDC clock dynamically according to the csr actual
+> +        * clock input.
+> +        */
+> +       if (!priv->plat->clk_csr)
+> +               sxgbe_clk_csr_set(priv);
+> +       else
+> +               priv->clk_csr = priv->plat->clk_csr;
+> +
+> +       /* MDIO bus Registration */
+> +       ret = sxgbe_mdio_register(ndev);
+> +       if (ret < 0) {
+> +               netdev_dbg(ndev, "%s: MDIO bus (id: %d) registration failed\n",
+> +                          __func__, priv->plat->bus_id);
+> +               goto error_mdio_register;
+> +       }
 
-Did you intend to use 'local-mac-address'. 'mac-address' is described
-by ePAPR as:
-
-"Specifies the MAC address that was last used by the boot program.
-This property should be
-used in cases where the MAC address assigned to the device by the boot
-program is different
-from the local-mac-address property. This property shall be used only
-if the value differs
-from local-mac-address property value."
-
-Does your bootloader really do something which falls into that
-description? If not, use 'local-mac-address'.
+Don't do this, register your MDIO bus before calling register_netdev().
 
 > +
-> +Example:
+> +       sxgbe_check_ether_addr(priv);
 > +
-> +       aliases {
-> +               ethernet0 = <&sxgbe0>;
-> +       };
+> +       return priv;
 > +
-> +       sxgbe0: ethernet@1a040000 {
-> +               compatible = "samsung,sxgbe-v2.0a";
-> +               reg = <0 0x1a040000 0 0x10000>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <0 209 4>, <0 185 4>, <0 186 4>, <0 187 4>,
-> +                            <0 188 4>, <0 189 4>, <0 190 4>, <0 191 4>,
-> +                            <0 192 4>, <0 193 4>, <0 194 4>, <0 195 4>,
-> +                            <0 196 4>, <0 197 4>, <0 198 4>, <0 199 4>,
-> +                            <0 200 4>, <0 201 4>, <0 202 4>, <0 203 4>,
-> +                            <0 204 4>, <0 205 4>, <0 206 4>, <0 207 4>,
-> +                            <0 208 4>, <0 210 4>;
-> +               mac-address = [000000000000]; /* Filled in by U-Boot */
+> +error_mdio_register:
+> +       clk_put(priv->sxgbe_clk);
+> +error_clk_get:
+> +       unregister_netdev(ndev);
+> +error_netdev_register:
+> +       netif_napi_del(&priv->napi);
+> +error_free_netdev:
+> +       free_netdev(ndev);
+> +
+> +       return NULL;
+> +}
+> +
+> +/**
+> + * sxgbe_dvr_remove
+> + * @ndev: net device pointer
+> + * Description: this function resets the TX/RX processes, disables the MAC RX/TX
+> + * changes the link status, releases the DMA descriptor rings.
+> + */
+> +int sxgbe_dvr_remove(struct net_device *ndev)
+> +{
+> +       struct sxgbe_priv_data *priv = netdev_priv(ndev);
+> +
+> +       netdev_info(ndev, "%s: removing driver\n", __func__);
+> +
+> +       priv->hw->dma->stop_rx(priv->ioaddr, SXGBE_RX_QUEUES);
+> +       priv->hw->dma->stop_tx(priv->ioaddr, SXGBE_TX_QUEUES);
+> +
+> +       priv->hw->mac->enable_tx(priv->ioaddr, false);
+> +       priv->hw->mac->enable_rx(priv->ioaddr, false);
+> +
+> +       netif_napi_del(&priv->napi);
+> +
+> +       sxgbe_mdio_unregister(ndev);
+> +
+> +       netif_carrier_off(ndev);
 
-The preferred way to format this is:
-                    mac-address = [ 00 00 00 00 00 00 ];
-even better is something directly usable in case people copy/paste
-this example such as 00 11 22 33 44 55.
+This is not required, both the PHY library and the network stack will
+do that for you.
 
-> +               phy-mode = "xaui";
+[snip]
 
-Your example is lacking a corresponding Ethernet PHY address/node.
---
+> +       /* register with kernel subsystem */
+> +       err = mdiobus_register(mdio_bus);
+> +       if (err != 0) {
+> +               netdev_err(ndev, "mdiobus register failed\n");
+> +               goto mdiobus_err;
+> +       }
+> +
+> +       for (phy_addr = 0; phy_addr < PHY_MAX_ADDR; phy_addr++) {
+> +               struct phy_device *phy = mdio_bus->phy_map[phy_addr];
+> +               if (phy) {
+> +                       char irq_num[4];
+> +                       char *irq_str;
+> +                       /* If an IRQ was provided to be assigned after
+> +                        * the bus probe, do it here.
+> +                        */
+> +                       if ((mdio_data->irqs == NULL) &&
+> +                           (mdio_data->probed_phy_irq > 0)) {
+> +                               irqlist[phy_addr] = mdio_data->probed_phy_irq;
+> +                               phy->irq = mdio_data->probed_phy_irq;
+> +                       }
+> +
+> +                       /* If we're  going to bind the MAC to this PHY bus,
+> +                        * and no PHY number was provided to the MAC,
+> +                        * use the one probed here.
+> +                        */
+> +                       if (priv->plat->phy_addr == -1)
+> +                               priv->plat->phy_addr = phy_addr;
+> +
+> +                       act = (priv->plat->phy_addr == phy_addr);
+> +                       switch (phy->irq) {
+> +                       case PHY_POLL:
+> +                               irq_str = "POLL";
+> +                               break;
+> +                       case PHY_IGNORE_INTERRUPT:
+> +                               irq_str = "IGNORE";
+> +                               break;
+> +                       default:
+> +                               sprintf(irq_num, "%d", phy->irq);
+> +                               irq_str = irq_num;
+> +                               break;
+> +                       }
+> +                       netdev_info(ndev, "PHY ID %08x at %d IRQ %s (%s)%s\n",
+> +                                   phy->phy_id, phy_addr, irq_str,
+> +                                   dev_name(&phy->dev), act ? " active" : "");
+> +                       phy_found = 1;
+> +               }
+
+This is clunky, and you are duplicating what of_mdiobus_register()
+will do for you, but since you are not using the standard Ethernet PHY
+device tree node, you could not use that code. So please use the
+standard Ethernet PHY device tree node such that you can remove that
+code and leverage it instead.
+-- 
 Florian
