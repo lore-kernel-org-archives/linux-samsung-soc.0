@@ -1,85 +1,51 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v11 15/27] iommu/exynos: use convenient macro to handle
-	gate clocks
-Date: Tue, 18 Mar 2014 20:03:29 +0900
-Message-ID: <20140318200329.cc1dca7541b4b1916e5d9d48@samsung.com>
-References: <20140314140951.3d443a3096e80297c9fecef0@samsung.com>
-	<5323078E.4060903@samsung.com>
-	<CAK9yfHx_=Os1G46nNO1HDA3tigkRNeHKN1KGCvuN=w7dRTkfjg@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v6 05/10] V4L: s5c73m3: Add device tree support
+Date: Tue, 18 Mar 2014 12:07:48 +0100
+Message-ID: <53282904.6080004@samsung.com>
+References: <1394122819-9582-1-git-send-email-s.nawrocki@samsung.com>
+ <1394122819-9582-6-git-send-email-s.nawrocki@samsung.com>
+ <201403181105.47922.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <CAK9yfHx_=Os1G46nNO1HDA3tigkRNeHKN1KGCvuN=w7dRTkfjg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <201403181105.47922.arnd@arndb.de>
+Sender: linux-media-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 14 Mar 2014 22:27:59 +0530, Sachin Kamat wrote:
->  Hi KyongHo,
+On 18/03/14 11:05, Arnd Bergmann wrote:
+> On Thursday 06 March 2014, Sylwester Nawrocki wrote:
+>> This patch adds the V4L2 asynchronous subdev registration and
+>> device tree support. Common clock API is used to control the
+>> sensor master clock from within the subdev.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > 
-> On 14 March 2014 19:13, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> > Hi KyongHo,
-> >
-> >
-> > On 14.03.2014 06:09, Cho KyongHo wrote:
-> >>
-> >> exynos-iommu driver must care about master H/W's gate clock as well as
-> >> System MMU's gate clock. To enhance readability of the source code,
-> >> macros to gate/ungate those clocks are defined.
-> >>
-> >> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >>   drivers/iommu/exynos-iommu.c |   34 ++++++++++++++++++++++------------
-> >>   1 file changed, 22 insertions(+), 12 deletions(-)
-> >>
-> >> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> >> index 71e77f1..cef62d0 100644
-> >> --- a/drivers/iommu/exynos-iommu.c
-> >> +++ b/drivers/iommu/exynos-iommu.c
-> >> @@ -101,6 +101,16 @@
-> >>   #define REG_PB1_SADDR         0x054
-> >>   #define REG_PB1_EADDR         0x058
-> >>
-> >> +#define __clk_gate_ctrl(data, clk, en) do {            \
-> >> +               if (data->clk)                          \
-> >> +                       clk_##en##able(data->clk);      \
-> >> +       } while (0)
-> >> +
-> >> +#define __sysmmu_clk_enable(data)      __clk_gate_ctrl(data, clk, en)
-> >> +#define __sysmmu_clk_disable(data)     __clk_gate_ctrl(data, clk, dis)
-> >> +#define __master_clk_enable(data)      __clk_gate_ctrl(data, clk_master,
-> >> en)
-> >> +#define __master_clk_disable(data)     __clk_gate_ctrl(data, clk_master,
-> >> dis)
-> >> +
-> >
-> >
-> > I'd say that such macros only obfuscate code, without any gains, as you can
-> > see in diffstat - this patch adds more lines than it removes.
-> >
-> > Please drop this change.
+> This driver is in linux-next now, but
 > 
->  I agree with Tomasz here.
+>> +	node_ep = v4l2_of_get_next_endpoint(node, NULL);
+>> +	if (!node_ep) {
+>> +		dev_warn(dev, "no endpoint defined for node: %s\n",
+>> +						node->full_name);
+>> +		return 0;
+>>  	}
 > 
+> This function is not defined here, leading to build errors.
 
-Are you concerning about using macros or more insertions than deletions?
+*sigh* it seems this [1] patch series ended up somehow in -next,
+but it shouldn't. Mauro, could you please remove the 'exynos'
+branch from media-next tree ? This should fix the problem.
+Even though I have been trying to merge this patch to mainline
+for ages, I'm ready to resign from it for now, not to add to
+the mess we are already seeing [2].
 
-The deletions in this patch are only clk_enable() and clk_disable()
-but they must be
-"if (!IS_ERR(clk)) clk_enable(clk)" and "if (!IS_ERR(clk)) clk_disable(clk)".
 
-I think use of macro is fancier in that case.
+[1] https://lkml.org/lkml/2014/3/6/352
+[2] https://lkml.org/lkml/2014/3/17/547
 
-Thank you.
-
-KyongHo.
+Thanks,
+Sylwester
