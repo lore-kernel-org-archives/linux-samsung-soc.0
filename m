@@ -1,82 +1,88 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/2] Samsung 2nd DT updates for v3.15
-Date: Tue, 18 Mar 2014 23:13:49 +0900
-Message-ID: <5328549D.1090008@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v11 20/27] iommu/exynos: allow having multiple System MMUs
+	for a master H/W
+Date: Tue, 18 Mar 2014 15:26:48 +0100
+Message-ID: <532857A8.5060000@samsung.com>
+References: <20140314141050.c8bedcb66532d277c496796d@samsung.com>
+	<53232A53.4040708@samsung.com>
+	<20140318220128.564740c88d06b86c9c5c10e3@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:36870 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755730AbaCRONy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 10:13:54 -0400
-Received: by mail-pb0-f50.google.com with SMTP id md12so7314443pbc.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 07:13:54 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <20140318220128.564740c88d06b86c9c5c10e3-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The following changes since commit 86feafebbec2b510daf36ffbdbe10228ed890b00:
 
-   ARM: dts: use macros in clock bindings for exynos5440 (2014-02-26 
-09:53:31 +0900)
 
-are available in the git repository at:
+On 18.03.2014 14:01, Cho KyongHo wrote:
+> On Fri, 14 Mar 2014 17:12:03 +0100, Tomasz Figa wrote:
+>> Hi KyongHo,
+>>
+>> On 14.03.2014 06:10, Cho KyongHo wrote:
+>>> Some master device descriptor like fimc-is which is an abstraction
+>>> of very complex H/W may have multiple System MMUs. For those devices,
+>>> the design of the link between System MMU and its master H/W is needed
+>>> to be reconsidered.
+>>>
+>>> A link structure, sysmmu_list_data is introduced that provides a link
+>>> to master H/W and that has a pointer to the device descriptor of a
+>>> System MMU. Given a device descriptor of a master H/W, it is possible
+>>> to traverse all System MMUs that must be controlled along with the
+>>> master H/W.
+>>
+>> NAK.
+>>
+>> A device driver should handle particular hardware instances separately,
+>> without abstracting a virtual hardware instance consisting of multiple
+>> physical ones.
+>>
+>> If such abstraction is needed, it should be done above the exynos-iommu
+>> driver, e.g. by something like iommu-composite driver that would
+>> aggregate several IOMMUs. Keep in mind that such IOMMUs in a group could
+>> be different, e.g. different Exynos SysMMU versions or even completely
+>> different IPs handled by different drivers.
+>>
+>> Still, I don't think there is a real need for such abstraction. Instead,
+>> related drivers shall be fixed to properly handle multiple memory
+>> masters and their IOMMUs.
+>>
+>
+> G2D, Scalers and FIMD of Exynos5420 has 2 System MMUs while aother SoC like
+> Exynos5250 does not.
+>
+> I don't understand why you are negative to this approach.
+> This is the simplest than the others.
+>
+> Let me show you an example.
+> FIMC-IS driver just controls MCU in FIMC-IS subsystem and the firmware of
+> the MCU controls all other peripherals in the subsystem. Each peripherals
+> have their own System MMU. Moreover, the configuration of the peripherals
+> varies according to the SoCs.
+>
+> If System MMU driver accepts multiple masters, everything is done in DT.
+> But I worry that it is not easy if System MMU driver does not support
+> multiple masters.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-dt-2
+I believe I have stated enough reasons why this kind of implementation 
+is bad. I'm not going to waste time repeating myself.
 
-for you to fetch changes up to ba0d7ed391b7b3fb5ca98d9cf4d067b7f5ed956b:
+Your concerns presented above are valid, however they are not related to 
+what is wrong with this patch. I have given you two proper ways to 
+handle this, none should be forced upon particular IOMMU master drivers 
+- their authors should have the chance to select the method that works 
+best for them.
 
-   ARM: dts: enable ahci sata and sata phy for exynos5250 (2014-03-18 
-07:49:14 +0900)
-
-----------------------------------------------------------------
-Samsung 2nd DT updates for v3.15
-- add DT entry for AHCI SATA and SATA PHY with using generic
-   PHY framework for exynos5250 and arndale, smdk5250 boards.
-- add SSS DT node for exynos5420 and exynos5250
-- remove leftover spi0 node for smdk5250 board
-- add ADC and thermistor nodes for exynos4412-trats2 board
-- move common irq-combiner node for exynos4x12 from exynos4212
-   and exynos4412
-- add ADC, PMU and GPS_ALIVE power domain nodes for exynos4x12
-
-Note that based on previous tags/samsung-dt and tags/exynos-clk
-
-----------------------------------------------------------------
-Chanwoo Choi (5):
-       ARM: dts: Add ADC's dt data to read raw data for exynos4x12
-       ARM: dts: Add PMU dt data to support PMU for exynos4x12
-       ARM: dts: Add GPS_ALIVE power domain for exynos4x12
-       ARM: dts: Move common dt data for interrupt combiner controller 
-for exynos4x12
-       ARM: dts: Add ADC and themistor nodes for exynos4412-trats2
-
-Mark Brown (1):
-       ARM: dts: Remove leftover spi0 node for smdk5250
-
-Naveen Krishna Chatradhi (1):
-       ARM: dts: add dt node for sss module for exynos5250/5420
-
-Yuvaraj Kumar C D (1):
-       ARM: dts: enable ahci sata and sata phy for exynos5250
-
-  .../devicetree/bindings/ata/exynos-sata-phy.txt    | 14 ---------
-  .../devicetree/bindings/ata/exynos-sata.txt        | 25 +++++++++------
-  .../devicetree/bindings/phy/samsung-phy.txt        | 36 
-++++++++++++++++++++++
-  arch/arm/boot/dts/exynos4.dtsi                     |  5 +++
-  arch/arm/boot/dts/exynos4212.dtsi                  | 13 +++-----
-  arch/arm/boot/dts/exynos4412-trats2.dts            | 21 +++++++++++++
-  arch/arm/boot/dts/exynos4412.dtsi                  | 14 +++------
-  arch/arm/boot/dts/exynos4x12.dtsi                  | 26 ++++++++++++++++
-  arch/arm/boot/dts/exynos5250-arndale.dts           | 21 +++++++++++++
-  arch/arm/boot/dts/exynos5250-smdk5250.dts          | 21 +++++++------
-  arch/arm/boot/dts/exynos5250.dtsi                  | 26 +++++++++++++---
-  arch/arm/boot/dts/exynos5420.dtsi                  |  9 ++++++
-  12 files changed, 175 insertions(+), 56 deletions(-)
-  delete mode 100644 
-Documentation/devicetree/bindings/ata/exynos-sata-phy.txt
+Best regards,
+Tomasz
