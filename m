@@ -1,189 +1,124 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 00/12] Samsung PM consolidation part 2 (multiplatform)
-Date: Tue, 18 Mar 2014 18:40:59 +0100
-Message-ID: <5328852B.9090403@samsung.com>
-References: <1391713977-22300-1-git-send-email-t.figa@samsung.com>
- <53075164.8080800@samsung.com> <531D07FC.2050805@gmail.com>
- <014f01cf4245$3833cfd0$a89b6f70$@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
+ and SSDK-GH7 board
+Date: Tue, 18 Mar 2014 18:10:54 +0000
+Message-ID: <20140318181054.GF2941@e106331-lin.cambridge.arm.com>
+References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
+ <1394491879-5320-2-git-send-email-kgene.kim@samsung.com>
+ <20140311182922.GD3263@e106331-lin.cambridge.arm.com>
+ <01c501cf3dac$022879b0$06796d10$@samsung.com>
+ <20140313103329.GD5035@e106331-lin.cambridge.arm.com>
+ <010f01cf3f24$7002adb0$50080910$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:45628 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751377AbaCRRlF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 13:41:05 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N2N00FUJ7SFQS90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Mar 2014 17:41:04 +0000 (GMT)
-In-reply-to: <014f01cf4245$3833cfd0$a89b6f70$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <010f01cf3f24$7002adb0$50080910$@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Catalin Marinas <Catalin.Marinas@arm.com>, 'Ilho Lee' <ilho215.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Doug Anderson' <dianders@chromium.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-Hi Kukjin,
+On Fri, Mar 14, 2014 at 01:26:31AM +0000, Kukjin Kim wrote:
+> > > > > +		cpu@000 {
+> > > > > +			device_type = "cpu";
+> > > > > +			compatible = "arm,armv8";
+> > > >
+> > > > The "arm,armv8" should be a fallback rather than the only entry. The
+> > > > precise core should be first (see arch/arm64/boot/dts/apm-storm.dtsi for
+> > > > an example).
+> > > >
+> > > Well, do I really need another name if GH7 has just 'ARMv8 core' exactly?
+> > 
+> > Yes please. You presumably don't have "just 'ARMv8 core'", but rather a
+> > specific ARMv8 implementation.
+> > 
+> OK, so in my understanding if it is really _just_ 'ARMv8 core' from S/W point
+> of view, "arm,armv8" should be fine. I will make sure.
 
-On 18.03.2014 01:58, Kukjin Kim wrote:
-> Tomasz Figa wrote:
->>
->> On 21.02.2014 14:15, Tomasz Figa wrote:
->>> Hi Kukjin,
->>>
->>> On 06.02.2014 20:12, Tomasz Figa wrote:
->>>> Current Samsung PM code is heavily unprepared for multiplatform
-> systems.
->>>> The design implies accessing functions and global variables defined in
->>>> particular mach- subdirectory from common code in plat-, which is not
->>>> allowed when building ARCH_MULTIPLATFORM. In addition there is a lot of
->>>> forced code unification, which makes common function handle any
->> possible
->>>> quirks of all supported SoCs. In the end this design turned out to not
->>>> work too well, ending with a lot of empty functions exported from
-> mach-,
->>>> just because code in common pm.c calls them. Moreover, recent trend of
->>>> moving lower level suspend/resume code to proper drivers, like pinctrl
->>>> or clk, made a lot of code there redundant, especially on DT-only
->>>> platforms
->>>> like Exynos.
->>>>
->>>> This patch series attempts to untie Exynos PM support from the legacy
->>>> Samsung PM core and make it multiplatform-aware, by isolating truly
->>>> generic parts of the latter, making them multiplatform-friendly and
->> then
->>>> reimplementing Exynos PM support in a multiplatform-capable way by
->> using
->>>> those generic parts. The result is that now PM initialization is
->> started
->>>> from mach-exynos*-dt, which calls Exynos-specific initialization code
->>>> that
->>>> registers platform_suspend_ops, so control flow is basically reversed
->>>> ending with mach- code calling more generic plat- code if needed.
->>>>
->>>> This is limited to Exynos right now, but remaining SoCs could follow
->>>> in further series.
->>>>
->>>> Depends on Samsung PM consolidation part 1 (clocks) series:
->>>>    - http://thread.gmane.org/gmane.linux.kernel.samsung-soc/26816
->>>>
->>>> On Exynos4210-based Trats, Exynos4412-based Trats2 and Exynos5250-based
->>>> Arndale boards (except suspend/resume, which is broken because of
->>>> unrelated reasons):
->>>>
->>>> Tested-by: Tomasz Figa <t.figa@samsung.com>
->>>>
->>>> Changes since v1 (RFC):
->>>>    - fixed l2x0 resume,
->>>>    - fixed checkpatch complaints (about issues in existing code being
->>>> moved),
->>>>    - rebased on top of current linux-next,
->>>>    - slightly reordered patches to make the order more logical.
->>>>
->>>> Tomasz Figa (12):
->>>>     ARM: EXYNOS: Do not resume l2x0 if not enabled before suspend
->>>>     ARM: SAMSUNG: Add soc_is_s3c2410() helper
->>>>     ARM: SAMSUNG: pm: Save UART DIVSLOT register based on SoC type
->>>>     ARM: SAMSUNG: pm: Use debug_ll_addr() to get UART base address
->>>>     ARM: SAMSUNG: pm: Consolidate PM debug functions
->>>>     ARM: SAMSUNG: pm: Move Samsung PM debug code into separate file
->>>>     ARM: SAMSUNG: Move common save/restore helpers to separate file
->>>>     ARM: SAMSUNG: pm: Move s3c_pm_check_* prototypes to plat/pm-common.h
->>>>     ARM: EXYNOS: Kconfig: Fix abuse of CONFIG_PM
->>>>     ARM: EXYNOS: Remove PM initcalls and useless indirection
->>>>     ARM: EXYNOS: Stop using legacy Samsung PM code
->>>>     ARM: exynos: Allow wake-up using GIC interrupts
->>>>
->>>>    arch/arm/mach-exynos/Kconfig                   |  16 +--
->>>>    arch/arm/mach-exynos/Makefile                  |   2 +-
->>>>    arch/arm/mach-exynos/common.c                  |   1 +
->>>>    arch/arm/mach-exynos/common.h                  |  14 ++
->>>>    arch/arm/mach-exynos/include/mach/pm-core.h    |  75 -----------
->>>>    arch/arm/mach-exynos/pm.c                      | 172
->>>> +++++++++++++++++++------
->>>>    arch/arm/mach-exynos/regs-pmu.h                |   2 +
->>>>    arch/arm/mach-exynos/sleep.S                   |  85 ++++++++++++
->>>>    arch/arm/mach-s3c64xx/pm.c                     |   1 -
->>>>    arch/arm/mach-s5p64x0/pm.c                     |   1 -
->>>>    arch/arm/plat-samsung/Makefile                 |   2 +
->>>>    arch/arm/plat-samsung/include/plat/cpu.h       |   6 +
->>>>    arch/arm/plat-samsung/include/plat/pm-common.h | 110 ++++++++++++++++
->>>>    arch/arm/plat-samsung/include/plat/pm.h        |  80 +-----------
->>>>    arch/arm/plat-samsung/pm-check.c               |   2 +-
->>>>    arch/arm/plat-samsung/pm-common.c              |  75 +++++++++++
->>>>    arch/arm/plat-samsung/pm-debug.c               |  98 ++++++++++++++
->>>>    arch/arm/plat-samsung/pm.c                     | 146
->>>> ---------------------
->>>>    arch/arm/plat-samsung/s5p-sleep.S              |  43 -------
->>>>    19 files changed, 531 insertions(+), 400 deletions(-)
->>>>    delete mode 100644 arch/arm/mach-exynos/include/mach/pm-core.h
->>>>    create mode 100644 arch/arm/mach-exynos/sleep.S
->>>>    create mode 100644 arch/arm/plat-samsung/include/plat/pm-common.h
->>>>    create mode 100644 arch/arm/plat-samsung/pm-common.c
->>>>    create mode 100644 arch/arm/plat-samsung/pm-debug.c
->>>>
->
-> Hi Tomasz,
->
-> Build error happens with s3c6400_defconfig:
->
-> In file included from arch/arm/plat-samsung/pm.c:38:0:
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h: In function
-> 's3c_pm_arch_update_uart':
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:64:32: error: 'S3C2410_UCON'
-> undeclared (first use in this function)
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:64:32: note: each undeclared
-> identifier is reported only once for each function it appears in
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:65:24: error:
-> 'S3C6400_UCON_CLKMASK' undeclared (first use in this function)
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:73:16: error:
-> 'S3C2410_UCON_TXILEVEL' undeclared (first use in this function)
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:73:40: error:
-> 'S3C2410_UCON_RXILEVEL' undeclared (first use in this function)
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:87:18: error:
-> 'S3C6400_UCON_UCLK0' undeclared (first use in this function)
-> arch/arm/mach-s3c64xx/include/mach/pm-core.h:89:15: error:
-> 'S3C6400_UCON_PCLK2' undeclared (first use in this function)
-> make[2]: *** [arch/arm/plat-samsung/pm.o] Error 1
-> make[1]: *** [arch/arm/plat-samsung] Error 2
-> make[1]: *** Waiting for unfinished jobs....
->
-> And with s5p64x0_defconfig:
->
-> In file included from arch/arm/plat-samsung/pm.c:38:0:
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h: In function
-> 's3c_pm_arch_update_uart':
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:57:32: error: 'S3C2410_UCON'
-> undeclared (first use in this function)
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:57:32: note: each undeclared
-> identifier is reported only once for each function it appears in
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:58:24: error:
-> 'S3C6400_UCON_CLKMASK' undeclared (first use in this function)
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:68:16: error:
-> 'S3C2410_UCON_TXILEVEL' undeclared (first use in this function)
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:68:40: error:
-> 'S3C2410_UCON_RXILEVEL' undeclared (first use in this function)
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:85:18: error:
-> 'S3C6400_UCON_UCLK0' undeclared (first use in this function)
-> arch/arm/mach-s5p64x0/include/mach/pm-core.h:87:11: error:
-> 'S3C6400_UCON_PCLK2' undeclared (first use in this function)
-> make[2]: *** [arch/arm/plat-samsung/pm.o] Error 1
-> make[2]: *** Waiting for unfinished jobs....
->    CC      arch/arm/mach-s5p64x0/setup-sdhci-gpio.o
->    CC      fs/char_dev.o
-> make[1]: *** [arch/arm/plat-samsung] Error 2
-> make[1]: *** Waiting for unfinished jobs....
->
-> Please see the 'v3.15-next/s2r-pm-samsung-2' branch.
+It will work, sure. But the compatible list should also list the
+specific CPU. From the S/W point of view there are likely
+implementation-defined registers which mean that no real CPU will be
+"just" an ARMv8 core.
 
-I've sent a series of fixup patches:
+We have enough trouble with DTBs for 32-bit SoCs not listing things they
+should. I see no reason to be lax here.
 
-http://www.spinics.net/lists/arm-kernel/msg316390.html
+> > > > > +	gic: interrupt-controller@1C000000 {
+> > > > > +		compatible = "arm,cortex-a15-gic";
+> > > >
+> > > > We should have a more specific compatible string early in the list here
+> > > > too.
+> > > >
+> > > Well, I think more specific compatible string is not required for gic, there
+> > > were discussion about using another compatible string for gic-v2. And
+> > > cortex-a15-gic should be fine at this moment and if another name is required
+> > > as per previous discussion, we will then.
+> > 
+> > While it's probably ok to have "arm,cortex-a15-gic" in the compatible
+> > list, it would be good to also have a more specific string, so we can
+> > identify the GIC implementation precisely in future (in case we need to
+> > perform any workarounds, or there's some kind of optimisation we could
+> > perform for some implementations).
+> > 
+> Hmm... let's use just it for now then add another specific string later ;-)
 
-Compile tested on s3c24xx, s3c64xx, s5p64x0, s5pv210 and exynos with and 
-without CONFIG_PM_SLEEP.
+Why not do this from the start? Then we can actually rely on the DTB
+rather than it being useless.
 
-Best regards,
-Tomasz
+> > > > > +	pmu {
+> > > > > +		compatible = "arm,armv8-pmuv3";
+> > > >
+> > > > This is missing a specific compatible string.
+> > > >
+> > > I don't know why I need another specific compatible string here because I
+> > > thought the 'armv8-pmuv3' is enough.
+> > 
+> > Each CPU microarchitecture has different PMU events and quirks. While
+> > the CPU PMU might be compatible with ARMv8's PMUv3, it will also have
+> > implementation-specific events, and may have quirks we need to work
+> > around in future.
+> > 
+> > As with 32-bit, we'd expect these to be of the form
+> > "${implementor},${cpu}-pmu".
+> > 
+> OK.
+> 
+> +	compatible = "samsung,gh7-pmu", "armv8-pmuv3";
+
+Is GH7 an SoC or a CPU?
+
+> > > > > +		serial@12c20000 {
+> > > > > +			compatible = "arm,pl011", "arm,primecell";
+> > > > > +			reg = <0 0x12c20000 0 0x10000>;
+> > > > > +			interrupts = <0 420 0>;
+> > > > > +		};
+> > > >
+> > > > These are both missing required clocks.
+> > > >
+> > > Yes right.
+> > 
+> > So you'll add these?
+> > 
+> To be honest, still I'm not sure how it should be handled because regarding
+> clocks do not need to handle in the kernel for GH7. And for it, I needed to
+> use some HACKs to change clock handling in the kernel. I will provide proper
+> solution soon.
+
+Are the clocks always-on, fixed-rate clocks, or does some firmware
+manage them dynamically? We have bindings for the former.
+
+There's not much point having a DTS upstream that relies on hacks which
+are not.
+
+Cheers,
+Mark.
