@@ -1,60 +1,76 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung non-critical fixes for v3.15
-Date: Tue, 18 Mar 2014 13:27:56 +0900
-Message-ID: <5327CB4C.9070905@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: Fix (more) freeing issues in exynos_drm_drv.c
+Date: Tue, 18 Mar 2014 14:03:01 +0900
+Message-ID: <CAAQKjZMeeyD+6fhCaGk9qzX0oLTS=vHU86Y7gF9ZnbwcpTT7Kg@mail.gmail.com>
+References: <1395026886-14325-1-git-send-email-djkurtz@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:39245 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835AbaCRE2H (ORCPT
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:62693 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751193AbaCRFDD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 00:28:07 -0400
-Received: by mail-pa0-f50.google.com with SMTP id kq14so6688987pab.23
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Mar 2014 21:28:07 -0700 (PDT)
+	Tue, 18 Mar 2014 01:03:03 -0400
+In-Reply-To: <1395026886-14325-1-git-send-email-djkurtz@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
+Applied.
 
-   Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
+Thanks,
+Inki Dae
 
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-fixes
-
-for you to fetch changes up to baf64abc468c7583592f67197ae23fa31414b4db:
-
-   ARM: S3C64XX: mach-crag6410-module.c is not modular (2014-02-16 
-02:05:44 +0900)
-
-----------------------------------------------------------------
-Samsung non-critical fixes for v3.15
-- fix typo CONFIG_CPU_S3C2443 in Kconfig
-- fix G3D regulator on because of entering low power mode
-   for exynos5250-arndale
-- fix CONFIG_USB_EHCI_EXYNOS for exynos_defconfig
-- fix initcall of mach-crag6410-module.c
-
-----------------------------------------------------------------
-Paul Bolle (1):
-       ARM: S3C24XX: Fix typo CONFIG_CPUS_3C2443
-
-Paul Gortmaker (1):
-       ARM: S3C64XX: mach-crag6410-module.c is not modular
-
-Tomasz Figa (1):
-       ARM: dts: Keep G3D regulator always on for exynos5250-arndale
-
-Tushar Behera (1):
-       ARM: exynos_defconfig: Update EHCI config entry
-
-  arch/arm/boot/dts/exynos5250-arndale.dts     | 1 +
-  arch/arm/configs/exynos_defconfig            | 2 +-
-  arch/arm/mach-s3c24xx/common.c               | 2 +-
-  arch/arm/mach-s3c64xx/mach-crag6410-module.c | 2 +-
-  4 files changed, 4 insertions(+), 3 deletions(-)
+2014-03-17 12:28 GMT+09:00 Daniel Kurtz <djkurtz@chromium.org>:
+> The following commit [0] fixed a use-after-free, but left the subdrv open
+> in the error path.
+>
+> [0] commit 6ca605f7c70895a35737435f17ae9cc5e36f1466
+> drm/exynos: Fix freeing issues in exynos_drm_drv.c
+>
+> Change-Id: I452e944bf090fb11434d9e34213c890c41c15d73
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 215131a..c204b4e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -172,20 +172,24 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+>
+>         ret = exynos_drm_subdrv_open(dev, file);
+>         if (ret)
+> -               goto out;
+> +               goto err_file_priv_free;
+>
+>         anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
+>                                         NULL, 0);
+>         if (IS_ERR(anon_filp)) {
+>                 ret = PTR_ERR(anon_filp);
+> -               goto out;
+> +               goto err_subdrv_close;
+>         }
+>
+>         anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
+>         file_priv->anon_filp = anon_filp;
+>
+>         return ret;
+> -out:
+> +
+> +err_subdrv_close:
+> +       exynos_drm_subdrv_close(dev, file);
+> +
+> +err_file_priv_free:
+>         kfree(file_priv);
+>         file->driver_priv = NULL;
+>         return ret;
+> --
+> 1.9.0.279.gdc9e3eb
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
