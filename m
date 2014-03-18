@@ -1,87 +1,61 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v11 15/27] iommu/exynos: use convenient macro to handle
-	gate clocks
-Date: Tue, 18 Mar 2014 14:07:51 +0100
-Message-ID: <53284527.8010903@samsung.com>
-References: <20140314140951.3d443a3096e80297c9fecef0@samsung.com>
-	<5323078E.4060903@samsung.com>
-	<CAK9yfHx_=Os1G46nNO1HDA3tigkRNeHKN1KGCvuN=w7dRTkfjg@mail.gmail.com>
-	<20140318200329.cc1dca7541b4b1916e5d9d48@samsung.com>
-	<CAK9yfHxcArgmxm4wSipY1afjmG00zugyycdU+BQbuexvL2bmBw@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 1/2] Samsung 2nd cleanup for v3.15
+Date: Tue, 18 Mar 2014 23:12:39 +0900
+Message-ID: <53285457.80900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <CAK9yfHxcArgmxm4wSipY1afjmG00zugyycdU+BQbuexvL2bmBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:49004 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755242AbaCROMo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Mar 2014 10:12:44 -0400
+Received: by mail-pb0-f47.google.com with SMTP id up15so7290452pbc.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 07:12:44 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 18.03.2014 12:18, Sachin Kamat wrote:
-> On 18 March 2014 16:33, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> On Fri, 14 Mar 2014 22:27:59 +0530, Sachin Kamat wrote:
->>>   Hi KyongHo,
->>>
->>> On 14 March 2014 19:13, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>> Hi KyongHo,
->>>>
->>>>
->>>> On 14.03.2014 06:09, Cho KyongHo wrote:
->>>>>
->>>>> exynos-iommu driver must care about master H/W's gate clock as well as
->>>>> System MMU's gate clock. To enhance readability of the source code,
->>>>> macros to gate/ungate those clocks are defined.
->>>>>
->>>>> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>> ---
->>>>>    drivers/iommu/exynos-iommu.c |   34 ++++++++++++++++++++++------------
->>>>>    1 file changed, 22 insertions(+), 12 deletions(-)
->>>>>
->>>>> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
->>>>> index 71e77f1..cef62d0 100644
->>>>> --- a/drivers/iommu/exynos-iommu.c
->>>>> +++ b/drivers/iommu/exynos-iommu.c
->>>>> @@ -101,6 +101,16 @@
->>>>>    #define REG_PB1_SADDR         0x054
->>>>>    #define REG_PB1_EADDR         0x058
->>>>>
->>>>> +#define __clk_gate_ctrl(data, clk, en) do {            \
->>>>> +               if (data->clk)                          \
->>>>> +                       clk_##en##able(data->clk);      \
->>>>> +       } while (0)
->>>>> +
->>>>> +#define __sysmmu_clk_enable(data)      __clk_gate_ctrl(data, clk, en)
->>>>> +#define __sysmmu_clk_disable(data)     __clk_gate_ctrl(data, clk, dis)
->>>>> +#define __master_clk_enable(data)      __clk_gate_ctrl(data, clk_master,
->>>>> en)
->>>>> +#define __master_clk_disable(data)     __clk_gate_ctrl(data, clk_master,
->>>>> dis)
->>>>> +
->>>>
->>>>
->>>> I'd say that such macros only obfuscate code, without any gains, as you can
->>>> see in diffstat - this patch adds more lines than it removes.
->>>>
->>>> Please drop this change.
->>>
->>>   I agree with Tomasz here.
->>>
->>
->> Are you concerning about using macros or more insertions than deletions?
->
-> It is just making the code more difficult to read and understand.
+The following changes since commit d9671ca923445aa870ecc34df3db01dd602d87fc:
 
-Especially when hiding accesses to struct fields inside and doing fancy 
-stuff like concatenations.
+   ARM: EXYNOS: Remove uncompress.h (2014-02-24 09:39:18 +0900)
 
-Best regards,
-Tomasz
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-cleanup-2
+
+for you to fetch changes up to 19a964644f1e655c3f67d539c1e99a9fbcc4588c:
+
+   ARM: SAMSUNG: remove all custom uncompress.h (2014-03-11 22:05:18 +0900)
+
+----------------------------------------------------------------
+Samsung cleanup-2 for v3.15
+- use generic uncompress.h and remove all custom
+   uncompress.h in mach-s3c24xx, s3c64xx, s5p64x0,
+   s5pc100, s5pv210 and plat-samsung directories.
+
+Note that based on previous tags/samsung-cleanup
+
+----------------------------------------------------------------
+Heiko Stuebner (2):
+       ARM: SAMSUNG: use generic uncompress.h
+       ARM: SAMSUNG: remove all custom uncompress.h
+
+  arch/arm/Kconfig.debug                          |   4 +-
+  arch/arm/mach-s3c24xx/include/mach/uncompress.h |  57 --------
+  arch/arm/mach-s3c64xx/include/mach/uncompress.h |  31 -----
+  arch/arm/mach-s5p64x0/include/mach/uncompress.h |  34 -----
+  arch/arm/mach-s5pc100/include/mach/uncompress.h |  30 ----
+  arch/arm/mach-s5pv210/include/mach/uncompress.h |  28 ----
+  arch/arm/plat-samsung/include/plat/uncompress.h | 175 
+------------------------
+  7 files changed, 2 insertions(+), 357 deletions(-)
+  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/uncompress.h
+  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/uncompress.h
+  delete mode 100644 arch/arm/mach-s5p64x0/include/mach/uncompress.h
+  delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
+  delete mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
+  delete mode 100644 arch/arm/plat-samsung/include/plat/uncompress.h
