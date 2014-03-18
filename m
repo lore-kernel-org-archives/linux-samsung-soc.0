@@ -1,85 +1,175 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCHv2 0/8] devfreq: exynos4: Support dt and use common ppmu
- driver
-Date: Tue, 18 Mar 2014 16:47:38 +0100
-Message-ID: <53286A9A.1040207@samsung.com>
-References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
- <5323432E.5060005@samsung.com> <532656B1.2010907@samsung.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: RE: [PATCH V4 1/8] sxgbe: Add device-tree binding support document
+Date: Tue, 18 Mar 2014 09:27:46 -0700
+Message-ID: <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
+References: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
+ <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <532656B1.2010907@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-reply-to: <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
+Content-language: en-us
+Sender: netdev-owner@vger.kernel.org
+To: 'Mark Rutland' <mark.rutland@arm.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Mark Rutland <mark.rutland@arm.com> :
+> Hi,
+> 
+> As a general note it's helpful for devicetree to be Cc'd on the entire
+series
+> (though the binding document should be a separate patch) as it provides
+useful
+> context for reviewing the binding.
+OK.
 
+> 
+> On Tue, Mar 18, 2014 at 06:47:13AM +0000, Byungho An wrote:
+> > From: Siva Reddy <siva.kallam@samsung.com>
+> >
+> > This patch adds binding document for SXGBE ethernet driver via
+device-tree.
+> >
+> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> > Signed-off-by: Byungho An <bh74.an@samsung.com>
+> > ---
+> >  .../devicetree/bindings/net/samsung-sxgbe.txt      |   53
+> > ++++++++++++++++++++
+> >  1 file changed, 53 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > new file mode 100644
+> > index 0000000..ca27947
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > @@ -0,0 +1,53 @@
+> > +* Samsung 10G Ethernet driver (SXGBE)
+> > +
+> > +Required properties:
+> > +- compatible: Should be "samsung,sxgbe-v2.0a"
+> > +- reg: Address and length of the register set for the device
+> > +- interrupt-parent: Should be the phandle for the interrupt
+> > +controller
+> > +  that services interrupts for this device
+> > +- interrupts: Should contain the SXGBE interrupts
+> > +  These interrupts are ordered by fixed and follows variable
+> > +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
+> > +  index 0 - this is fixed common interrupt of SXGBE and it is always
+> > +  available.
+> > +  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive
+> > interrupts
+> > +  and 1 optional lpi interrupt.
+> > +- phy-mode: String, operation mode of the PHY interface.
+> > +  Supported values are: "xaui", "gmii".
+> > +- samsung,pbl: Integer, Programmable Burst Length.
+> > +  Supported values are 1, 2, 4, 8, 16, or 32.
+> 
+> There's no need to abbreviate to "pbl".
+> 
+> Is this a property of the hardware, or configuration that the kernel will
+program
+> in? If the latter, why can the kernel not choose?
+Yes, this is hardware property
 
-On 17.03.2014 02:58, Chanwoo Choi wrote:
-> Hi Tomasz,
->
-> On 03/15/2014 02:58 AM, Tomasz Figa wrote:
->> Hi Chanwoo,
->>
->> On 13.03.2014 09:17, Chanwoo Choi wrote:
->>> This patchset support devicetree and use common ppmu driver instead of
->>> individual code of exynos4_bus.c to remove duplicate code. Also this patchset
->>> get the resources for busfreq from dt data by using DT helper function.
->>> - PPMU register address
->>> - PPMU clock
->>> - Regulator for INT/MIF block
->>>
->>> This patchset use SET_SYSTEM_SLEEP_PM_OPS macro intead of legacy method.
->>> To remove power-leakage in suspend state, before entering suspend state,
->>> disable ppmu clocks.
->>>
->>> Changes from v1:
->>> - Add exynos4_bus.txt documentation for devicetree guide
->>> - Fix probe failure if CONFIG_PM_OPP is disabled
->>> - Fix typo and resource leak(regulator/clock/memory) when happening probe failure
->>> - Add additionally comment for PPMU usage instead of previous PPC
->>> - Split separate patch to remove ambiguous of patch
->>>
->>> Chanwoo Choi (8):
->>>     devfreq: exynos4: Support devicetree to get device id of Exynos4 SoC
->>>     devfreq: exynos4: Use common ppmu driver and get ppmu address from dt data
->>>     devfreq: exynos4: Add ppmu's clock control and code clean about regulator control
->>>     devfreq: exynos4: Fix bug of resource leak and code clean on probe()
->>>     devfreq: exynos4: Use SET_SYSTEM_SLEEP_PM_OPS macro
->>>     devfreq: exynos4: Fix power-leakage of clock on suspend state
->>>     devfreq: exynos4: Add CONFIG_PM_OPP dependency to fix probe fail
->>>     devfreq: exynos4: Add busfreq driver for exynos4210/exynos4x12
->>>
->>>    .../devicetree/bindings/devfreq/exynos4_bus.txt    |  49 +++
->>>    drivers/devfreq/Kconfig                            |   1 +
->>>    drivers/devfreq/exynos/Makefile                    |   2 +-
->>>    drivers/devfreq/exynos/exynos4_bus.c               | 415 ++++++++++++++-------
->>>    4 files changed, 341 insertions(+), 126 deletions(-)
->>>    create mode 100644 Documentation/devicetree/bindings/devfreq/exynos4_bus.txt
->>>
->>
->> I have reviewed this series and there are several comments that I'd like to ask you to address. Please see my replies to particular patches.
->
-> OK, I'll fix it about your comment.
->
->>
->> However, this driver, even after applying your series, is still far from a state that would allow it to be enabled. The most important issue is direct access to CMU registers, based on static mapping, which is not allowed on multiplatform kernels and multiplatform-awareness for drivers is currently a must.
->>
->> To allow this driver to be enabled, it needs to be converted to use common clock framework functions to configure all clocks, e.g. clk_set_rate(), clk_set_parent(), etc., without accessing CMU registers directly.
->>
->> Of course as long as the driver is effectively unusable, to keep development, we can proceed with refactoring it step-by-step and your series would be basically the first step, after addressing the review comments.
->>
->
-> I agree your opinion. When setting frequency of memory bus, this driver access
-> directly to CMU registers. I know it should be modified by using common clk
-> framework as your comment.
->
-> I'll send patch set about using common clk framework instead of CMU register
-> based on static mapping after finished the review and apply of this patch set as next step.
+> 
+> > +- samsung,fixed-burst: Boolean, Program the DMA to use the fixed
+> > +burst mode
+> > +- samsung,burst-map: Integer, Program the possible bursts supported
+> > +by sxgbe
+> > +  This is an interger and represents allowable DMA bursts when fixed
+burst.
+> > +  Allowable range is 0x00-0x3F. This field is valid only when fixed
+> > +burst is
+> > +  enabled, otherwise ignored.
+> 
+> If that's the case, why not have just this property and have it imply the
+use of
+> fixed burst mode?
+OK. It will be implemented in next patch set.
 
-OK. I'm looking forward for patches sorting this out.
+> 
+> When is it necessary to use fixed burst mode?
+This is the configurable mode of DMA an used internally by hardware to fetch
+data from platform bus
 
-Best regards,
-Tomasz
+> 
+> > +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced
+> > +address
+> > mode.
+> 
+> When would this be selected, and why can the kernel not choose?
+Kernel doesn't have the provision to find out a way to select this. So, need
+to pass from DT
+
+> 
+> > +- samsung,force_thresh_dma_mode: Boolean, Force DMA to use the
+> > +threshold mode
+> > +  for both tx and rx
+> 
+> s/_/-/ in property names.
+OK.
+
+> 
+> Likewise, why can the kernel not choose.
+SXGBE h/w registers can't provide information to select this. So, need to pass
+from DT depend on Platform
+
+> 
+> > +- samsung,force_sf_dma_mode: Boolean, Force DMA to use the Store and
+> > +Forward
+> > +  mode for both tx and rx. This flag is ignored if
+> > +force_thresh_dma_mode is
+> > set.
+> 
+> Likewise for both points.
+Same above.
+
+> 
+> > +- samsung,phy-addr: Integer, Address of the PHY attached with SXGBE.
+> 
+> Some of these properties appear to be missing from the example. Are they
+> required or optional?
+Those are optional depend on platform configuration.
+
+> 
+> Thanks,
+> Mark.
+> 
+> > +
+> > +Optional properties:
+> > +- mac-address: 6 bytes, mac address
+> > +
+> > +Example:
+> > +
+> > +	aliases {
+> > +		ethernet0 = <&sxgbe0>;
+> > +	};
+> > +
+> > +	sxgbe0: ethernet@1a040000 {
+> > +		compatible = "samsung,sxgbe-v2.0a";
+> > +		reg = <0 0x1a040000 0 0x10000>;
+> > +		interrupt-parent = <&gic>;
+> > +		interrupts = <0 209 4>, <0 185 4>, <0 186 4>, <0 187 4>,
+> > +			     <0 188 4>, <0 189 4>, <0 190 4>, <0 191 4>,
+> > +			     <0 192 4>, <0 193 4>, <0 194 4>, <0 195 4>,
+> > +			     <0 196 4>, <0 197 4>, <0 198 4>, <0 199 4>,
+> > +			     <0 200 4>, <0 201 4>, <0 202 4>, <0 203 4>,
+> > +			     <0 204 4>, <0 205 4>, <0 206 4>, <0 207 4>,
+> > +			     <0 208 4>, <0 210 4>;
+> > +		mac-address = [000000000000]; /* Filled in by U-Boot */
+> > +		phy-mode = "xaui";
+> > +	};
+> > --
+> > 1.7.10.4
+> >
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe devicetree"
+> > in the body of a message to majordomo@vger.kernel.org More majordomo
+> > info at  http://vger.kernel.org/majordomo-info.html
+> >
