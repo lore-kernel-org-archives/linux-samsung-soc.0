@@ -1,72 +1,87 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/9] Restore parallel display support for Exynos based
- boards
-Date: Tue, 18 Mar 2014 14:05:40 +0100
-Message-ID: <532844A4.300@samsung.com>
-References: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v11 15/27] iommu/exynos: use convenient macro to handle
+	gate clocks
+Date: Tue, 18 Mar 2014 14:07:51 +0100
+Message-ID: <53284527.8010903@samsung.com>
+References: <20140314140951.3d443a3096e80297c9fecef0@samsung.com>
+	<5323078E.4060903@samsung.com>
+	<CAK9yfHx_=Os1G46nNO1HDA3tigkRNeHKN1KGCvuN=w7dRTkfjg@mail.gmail.com>
+	<20140318200329.cc1dca7541b4b1916e5d9d48@samsung.com>
+	<CAK9yfHxcArgmxm4wSipY1afjmG00zugyycdU+BQbuexvL2bmBw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Denis Carikli <denis@eukrea.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CAK9yfHxcArgmxm4wSipY1afjmG00zugyycdU+BQbuexvL2bmBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
+On 18.03.2014 12:18, Sachin Kamat wrote:
+> On 18 March 2014 16:33, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> On Fri, 14 Mar 2014 22:27:59 +0530, Sachin Kamat wrote:
+>>>   Hi KyongHo,
+>>>
+>>> On 14 March 2014 19:13, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>> Hi KyongHo,
+>>>>
+>>>>
+>>>> On 14.03.2014 06:09, Cho KyongHo wrote:
+>>>>>
+>>>>> exynos-iommu driver must care about master H/W's gate clock as well as
+>>>>> System MMU's gate clock. To enhance readability of the source code,
+>>>>> macros to gate/ungate those clocks are defined.
+>>>>>
+>>>>> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>> ---
+>>>>>    drivers/iommu/exynos-iommu.c |   34 ++++++++++++++++++++++------------
+>>>>>    1 file changed, 22 insertions(+), 12 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+>>>>> index 71e77f1..cef62d0 100644
+>>>>> --- a/drivers/iommu/exynos-iommu.c
+>>>>> +++ b/drivers/iommu/exynos-iommu.c
+>>>>> @@ -101,6 +101,16 @@
+>>>>>    #define REG_PB1_SADDR         0x054
+>>>>>    #define REG_PB1_EADDR         0x058
+>>>>>
+>>>>> +#define __clk_gate_ctrl(data, clk, en) do {            \
+>>>>> +               if (data->clk)                          \
+>>>>> +                       clk_##en##able(data->clk);      \
+>>>>> +       } while (0)
+>>>>> +
+>>>>> +#define __sysmmu_clk_enable(data)      __clk_gate_ctrl(data, clk, en)
+>>>>> +#define __sysmmu_clk_disable(data)     __clk_gate_ctrl(data, clk, dis)
+>>>>> +#define __master_clk_enable(data)      __clk_gate_ctrl(data, clk_master,
+>>>>> en)
+>>>>> +#define __master_clk_disable(data)     __clk_gate_ctrl(data, clk_master,
+>>>>> dis)
+>>>>> +
+>>>>
+>>>>
+>>>> I'd say that such macros only obfuscate code, without any gains, as you can
+>>>> see in diffstat - this patch adds more lines than it removes.
+>>>>
+>>>> Please drop this change.
+>>>
+>>>   I agree with Tomasz here.
+>>>
+>>
+>> Are you concerning about using macros or more insertions than deletions?
+>
+> It is just making the code more difficult to read and understand.
 
-On 17.03.2014 11:27, Andrzej Hajda wrote:
-> Hi,
->
-> This patch set restores parallel display support removed during exynos
-> refactorization. It is rebased on the latest exynos-drm-next branch plus patch
-> adding polarization flags to drm_display_mode [1].
->
-> [1]: http://permalink.gmane.org/gmane.linux.drivers.driver-project.devel/47216
->
-> Regards
-> Andrzej
->
->
-> Andrzej Hajda (9):
->    drm/exynos: delay fbdev initialization until an output is connected
->    drm/exynos: init kms poll after creation of connectors
->    drm/exynos: correct timing porch conversion
->    exynos/fimd: add parallel output related bindings
->    drm/exynos: restore parallel output interface support
->    ARM: dts: exynos4210-universal: add exynos/fimd node
->    drm/modes: add polarization handling to mode conversion
->    drm/exynos/fimd: use polarization flags provided by drm_display_mode
->    drm/exynos/fimd: remove unused variable
->
->   .../devicetree/bindings/video/samsung-fimd.txt     |  15 +
->   arch/arm/boot/dts/exynos4210-universal_c210.dts    |  25 ++
->   drivers/gpu/drm/drm_modes.c                        |  11 +
->   drivers/gpu/drm/exynos/Kconfig                     |   8 +
->   drivers/gpu/drm/exynos/Makefile                    |   1 +
->   drivers/gpu/drm/exynos/exynos_drm_dpi.c            | 339 +++++++++++++++++++++
->   drivers/gpu/drm/exynos/exynos_drm_drv.c            |  22 +-
->   drivers/gpu/drm/exynos/exynos_drm_drv.h            |   8 +
->   drivers/gpu/drm/exynos/exynos_drm_fb.c             |   3 +
->   drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  32 +-
->   10 files changed, 432 insertions(+), 32 deletions(-)
->   create mode 100644 drivers/gpu/drm/exynos/exynos_drm_dpi.c
->
-
-Including the V2 fixups sent for particular patches:
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-Will try to test on one of my boards with parallel displays soon.
+Especially when hiding accesses to struct fields inside and doing fancy 
+stuff like concatenations.
 
 Best regards,
 Tomasz
