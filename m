@@ -1,50 +1,64 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 2/6] ARM: s3c64xx: Fix build for implicit serial_s3c.h
- inclusion
-Date: Tue, 18 Mar 2014 18:16:00 +0100
-Message-ID: <1395162964-5916-2-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 5/6] ARM: s3c64xx: Fix incorrect selection of PM-related
+ symbols
+Date: Tue, 18 Mar 2014 18:16:03 +0100
+Message-ID: <1395162964-5916-5-git-send-email-t.figa@samsung.com>
 References: <1395162964-5916-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40553 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754722AbaCRRQY (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49312 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753950AbaCRRQZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 13:16:24 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
+	Tue, 18 Mar 2014 13:16:25 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N2N00JH06N3GM90@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Mar 2014 17:16:15 +0000 (GMT)
+ 17 2011)) with ESMTP id <0N2N00ND36NB4B90@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Mar 2014 17:16:23 +0000 (GMT)
 In-reply-to: <1395162964-5916-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Tomasz Figa <t.figa@samsung.com>
 
-From: Mark Brown <broonie@linaro.org>
+This patch modifies ARCH_S3C64XX Kconfig entry to select
+SAMSUNG_WAKEMASK and PM_GENERIC_DOMAINS conditionally if PM_SLEEP and
+PM_RUNTIME are enabled respectively to avoid introducing unmet
+dependenies such as
 
-Some very recent change appears to have removed an implicit inclusion of
-serial_s3c.h causing build failures due to references to UART registers
-in the serial port restore code in next-20140318.  Include it explicitly
-to fix the build.
+warning: (ARCH_S3C64XX && S3C2412_PM && CPU_S5P6440 && CPU_S5P6450)
+selects SAMSUNG_WAKEMASK which has unmet direct dependencies
+(PLAT_SAMSUNG && PM)
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
+warning: (ARCH_S3C64XX && ARCH_EXYNOS4 && SOC_EXYNOS5250 &&
+SOC_EXYNOS5420) selects PM_GENERIC_DOMAINS which has unmet direct
+dependencies (PM)
+
+and related compilation errors, when PM_SLEEP or PM_RUNTIME is not
+enabled.
+
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-s3c64xx/include/mach/pm-core.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-index c0537f4..a30a1e3 100644
---- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-@@ -15,6 +15,8 @@
- #ifndef __MACH_S3C64XX_PM_CORE_H
- #define __MACH_S3C64XX_PM_CORE_H __FILE__
- 
-+#include <linux/serial_s3c.h>
-+
- #include <mach/regs-gpio.h>
- 
- static inline void s3c_pm_debug_init_uart(void)
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index afc751f..0608177 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -757,11 +757,11 @@ config ARCH_S3C64XX
+ 	select HAVE_TCM
+ 	select NO_IOPORT_MAP
+ 	select PLAT_SAMSUNG
+-	select PM_GENERIC_DOMAINS
++	select PM_GENERIC_DOMAINS if PM_RUNTIME
+ 	select S3C_DEV_NAND
+ 	select S3C_GPIO_TRACK
+ 	select SAMSUNG_ATAGS
+-	select SAMSUNG_WAKEMASK
++	select SAMSUNG_WAKEMASK if PM_SLEEP
+ 	select SAMSUNG_WDT_RESET
+ 	help
+ 	  Samsung S3C64XX series based systems
 -- 
 1.9.0
