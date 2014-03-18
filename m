@@ -1,62 +1,32 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH V5 2/8] net: sxgbe: add basic framework for Samsung 10Gb
- ethernet driver
-Date: Tue, 18 Mar 2014 12:35:14 -0700
-Message-ID: <1395171314.2812.80.camel@joe-AO722>
-References: <002801cf42d6$a27317c0$e7594740$@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 2/3] mfd: sec-core: Add of_compatible strings for
+ clock MFD cells
+Date: Tue, 18 Mar 2014 20:31:59 +0000
+Message-ID: <20140318203159.GW25478@lee--X1>
+References: <1395047958-17953-1-git-send-email-k.kozlowski@samsung.com>
+ <1395047958-17953-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay0092.hostedemail.com ([216.40.44.92]:50290 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756715AbaCRTfS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 15:35:18 -0400
-In-Reply-To: <002801cf42d6$a27317c0$e7594740$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1395047958-17953-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Byungho An <bh74.an@samsung.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, davem@davemloft.net, siva.kallam@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com, vipul.pandya@samsung.com
 
-On Tue, 2014-03-18 at 11:19 -0700, Byungho An wrote:
-> From: Siva Reddy <siva.kallam@samsung.com>
-> 
-> This patch adds support for Samsung 10Gb ethernet driver(sxgbe).
+> Add of_compatible strings for S5M8767 and S2MPS14 clock MFD cells.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/mfd/sec-core.c |    3 +++
+>  1 file changed, 3 insertions(+)
 
-More trivia, nothing that should stop this from
-being applied and updated later...
+Applied with Tomasz' Reviewed-by.
 
-> diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
-[]
-> +static int sxgbe_mdio_busy_wait(void __iomem *ioaddr, unsigned int mii_data)
-> +{
-> +	unsigned long cur_time;
-> +	unsigned long fin_time = jiffies + 3 * HZ; /* 30 ms */
-
-This is actually 3 seconds.
-If this should be 30ms, then use msecs_to_jiffies(30)
-
-> +
-> +	do {
-> +		cur_time = jiffies;
-> +		if (readl(ioaddr + mii_data) & SXGBE_MII_BUSY)
-> +			cpu_relax();
-> +		else
-> +			return 0;
-> +	} while (!time_after_eq(cur_time, fin_time));
-> +
-> +	return -EBUSY;
-> +}
-
-This may be clearer as
-
-	unsigned long fin_time = jiffies + msecs_to_jiffies(30);
- 
-	while (!time_after(jiffies, fin_time))
-		if (!(readl(ioaddr + mii_data) & SXGBE_MII_BUSY))
-			return 0;
-		cpu_relax();
-	}
-
-	return -EBUSY;
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
