@@ -1,46 +1,70 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 3/3] Documentation: mfd: s2mps11: Describe S5M8767 and
- S2MPS14 clocks
-Date: Tue, 18 Mar 2014 20:33:56 +0000
-Message-ID: <20140318203356.GX25478@lee--X1>
-References: <1395047958-17953-1-git-send-email-k.kozlowski@samsung.com>
- <1395047958-17953-4-git-send-email-k.kozlowski@samsung.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: RE: [PATCH V5 2/8] net: sxgbe: add basic framework for Samsung 10Gb
+ ethernet driver
+Date: Tue, 18 Mar 2014 13:56:12 -0700
+Message-ID: <003601cf42ec$80bd2bf0$823783d0$@samsung.com>
+References: <002801cf42d6$a27317c0$e7594740$@samsung.com>
+ <1395171314.2812.80.camel@joe-AO722>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1395047958-17953-4-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Yadwinder Singh Brar <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:35926 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932649AbaCRU4U (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Mar 2014 16:56:20 -0400
+In-reply-to: <1395171314.2812.80.camel@joe-AO722>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Joe Perches' <joe@perches.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, davem@davemloft.net, siva.kallam@samsung.com, ks.giri@samsung.com, ilho215.lee@samsung.com, vipul.pandya@samsung.com
 
-> Add bindings documentation for clocks on S5M8767 and S2MPS14 devices.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt |   24 +++++++++++=
-++--------
->  1 file changed, 15 insertions(+), 9 deletions(-)
 
-Applied, thanks.
+Joe Perches <joe@perches.com> wrote : 
+> On Tue, 2014-03-18 at 11:19 -0700, Byungho An wrote:
+> > From: Siva Reddy <siva.kallam@samsung.com>
+> >
+> > This patch adds support for Samsung 10Gb ethernet driver(sxgbe).
+> 
+> More trivia, nothing that should stop this from being applied and updated
+> later...
+> 
+> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
+> > b/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
+> []
+> > +static int sxgbe_mdio_busy_wait(void __iomem *ioaddr, unsigned int
+> > +mii_data) {
+> > +	unsigned long cur_time;
+> > +	unsigned long fin_time = jiffies + 3 * HZ; /* 30 ms */
+> 
+> This is actually 3 seconds.
+> If this should be 30ms, then use msecs_to_jiffies(30)
+This is a typo, comment will be changed to "3 sec".
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> > +
+> > +	do {
+> > +		cur_time = jiffies;
+> > +		if (readl(ioaddr + mii_data) & SXGBE_MII_BUSY)
+> > +			cpu_relax();
+> > +		else
+> > +			return 0;
+> > +	} while (!time_after_eq(cur_time, fin_time));
+> > +
+> > +	return -EBUSY;
+> > +}
+> 
+> This may be clearer as
+> 
+> 	unsigned long fin_time = jiffies + msecs_to_jiffies(30);
+> 
+> 	while (!time_after(jiffies, fin_time))
+> 		if (!(readl(ioaddr + mii_data) & SXGBE_MII_BUSY))
+> 			return 0;
+> 		cpu_relax();
+> 	}
+> 
+> 	return -EBUSY;
+OK.
