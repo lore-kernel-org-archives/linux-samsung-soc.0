@@ -1,136 +1,141 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [RFC v3 0/5] cpufreq:LAB: Support for LAB governor.
-Date: Tue, 18 Mar 2014 10:17:36 +0100
-Message-ID: <20140318101736.501844d1@amdc2363>
-References: <1367590072-10496-1-git-send-email-jonghwa3.lee@samsung.com>
- <1393928852-22725-1-git-send-email-l.majewski@samsung.com>
- <20140317163824.3c5480b3@amdc2363>
- <CAKohpokz9SknhPH_sgGE6Q8DB+QtaJKSwMG4WgfmWet9skMKUA@mail.gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V4 1/8] sxgbe: Add device-tree binding support document
+Date: Tue, 18 Mar 2014 09:18:53 +0000
+Message-ID: <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
+References: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAKohpokz9SknhPH_sgGE6Q8DB+QtaJKSwMG4WgfmWet9skMKUA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:36374 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752948AbaCRJS7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Mar 2014 05:18:59 -0400
+Content-Disposition: inline
+In-Reply-To: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "vipul.pandya@samsung.com" <vipul.pandya@samsung.com>, "ks.giri@samsung.com" <ks.giri@samsung.com>
 
-Hi Viresh,
+Hi,
 
-> On 17 March 2014 21:08, Lukasz Majewski <l.majewski@samsung.com>
-> wrote:
-> >> Despite this patch set is working and applicable on top of
-> >> 3.14-rc5, please regard it solely as a pure RFC.
-> >>
-> >> This patch provides support for LAB governor build on top of
-> >> ondemand. Previous version of LAB can be found here:
-> >> http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
-> >>
-> >> LAB short reminder:
-> >>
-> >> LAB uses information about how many cores are in "idle" state (the
-> >> core idleness is represented as the value between 0 and 100) and
-> >> the overall load of the system (from 0 to 100) to decide about
-> >> frequency to be set. It is extremely useful with SoCs like
-> >> Exynos4412, which can set only one frequency for all cores.
-> >>
-> >> Important design decisions:
-> >>
-> >> - Reuse well established ondemand governor's internal code. To do
-> >> this I had to expose some previously static internal ondemand code.
-> >>   This allowed smaller LAB code when compared to previous version.
-> >>
-> >> - LAB works on top of ondemand, which means that one via device
-> >> tree attributes can specify if and when e.g. BOOST shall be
-> >> enabled or if any particular frequency shall be imposed. For
-> >> situation NOT important from the power consumption reduction
-> >> viewpoint the ondemand is used to set proper frequency.
-> >>
-> >> - It is only possible to either compile in or not the LAB into the
-> >> kernel. There is no "M" option for Kconfig. It is done on purpose,
-> >> since ondemand itself can be also compiled as a module and then it
-> >> would be possible to remove ondemand when LAB is working on top of
-> >> it.
-> >>
-> >> - The LAB operation is specified (and thereof extendable) via
-> >> device tree lab-ctrl-freq attribute defined at /cpus/cpu0.
-> >>
-> >>
-> >> Problems:
-> >> - How the governor will work for big.LITTLE systems (especially
-> >> Global Task Scheduling).
-> >> - Will there be agreement to expose internal ondemand code to be
-> >> reused for more specialized governors.
-> >>
-> >> Test HW:
-> >>       Exynos4412 - Trats2 board.
-> >> Above patches were posted on top of Linux 3.14-rc5
-> >> (SHA1: 3f9590c281c66162bf8ae9b7b2d987f0a89043c6)
-> >>
-> >
-> > Any comments about those patches?
+As a general note it's helpful for devicetree to be Cc'd on the entire
+series (though the binding document should be a separate patch) as it
+provides useful context for reviewing the binding.
+
+On Tue, Mar 18, 2014 at 06:47:13AM +0000, Byungho An wrote:
+> From: Siva Reddy <siva.kallam@samsung.com>
 > 
-> Sorry for being late on reviewing these..
+> This patch adds binding document for SXGBE ethernet driver via device-tree.
 > 
-> I tried to go through the patches but didn't looked at the minutest
-> of the details. Its been a long time when you first sent this
-> patchset. And the memories have corrupted by now :) ..
-
-Unfortunately memory is volatile ... since LAB governor is a follow up
-of BOOST, which review and inclusion took considerable time, some
-details could be forgotten. 
-
+> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> Signed-off-by: Byungho An <bh74.an@samsung.com>
+> ---
+>  .../devicetree/bindings/net/samsung-sxgbe.txt      |   53
+> ++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/samsung-sxgbe.txt
 > 
-> To get context back, can we discuss again the fundamentals behind
-> this new governor you are proposing. And then we can discuss about
-> it again, its pros/cons, etc..
+> diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> new file mode 100644
+> index 0000000..ca27947
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> @@ -0,0 +1,53 @@
+> +* Samsung 10G Ethernet driver (SXGBE)
+> +
+> +Required properties:
+> +- compatible: Should be "samsung,sxgbe-v2.0a"
+> +- reg: Address and length of the register set for the device
+> +- interrupt-parent: Should be the phandle for the interrupt controller
+> +  that services interrupts for this device
+> +- interrupts: Should contain the SXGBE interrupts
+> +  These interrupts are ordered by fixed and follows variable
+> +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
+> +  index 0 - this is fixed common interrupt of SXGBE and it is always
+> +  available.
+> +  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive
+> interrupts
+> +  and 1 optional lpi interrupt.
+> +- phy-mode: String, operation mode of the PHY interface.
+> +  Supported values are: "xaui", "gmii".
+> +- samsung,pbl: Integer, Programmable Burst Length.
+> +  Supported values are 1, 2, 4, 8, 16, or 32.
 
-Please consider following links:
+There's no need to abbreviate to "pbl".
 
-The original implementation - threads:
-http://thread.gmane.org/gmane.linux.power-management.general/32523/match=lab
-http://thread.gmane.org/gmane.linux.kernel/1484746/match=lab
+Is this a property of the hardware, or configuration that the kernel
+will program in? If the latter, why can the kernel not choose?
 
+> +- samsung,fixed-burst: Boolean, Program the DMA to use the fixed burst mode
+> +- samsung,burst-map: Integer, Program the possible bursts supported by sxgbe
+> +  This is an interger and represents allowable DMA bursts when fixed burst.
+> +  Allowable range is 0x00-0x3F. This field is valid only when fixed burst is
+> +  enabled, otherwise ignored.
 
-LAB justification data:
-http://article.gmane.org/gmane.linux.kernel/1472381
+If that's the case, why not have just this property and have it imply
+the use of fixed burst mode?
 
+When is it necessary to use fixed burst mode?
 
-> People are reluctant in getting another governor in and want to give
-> existing governors a try if possible.
+> +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced address
+> mode.
 
-As I've stated in the covering letter, this code is an extension of
-Ondemand.
+When would this be selected, and why can the kernel not choose?
 
-This is totally different from what have been posted previously (v1,
-v2).
-The first LAB proposal was written with some parts copied from Ondemand.
-It was a separate, standalone governor.
+> +- samsung,force_thresh_dma_mode: Boolean, Force DMA to use the threshold mode
+> +  for both tx and rx
 
+s/_/-/ in property names.
 
-The approach proposed in those patches is very different. It simply
-reuses Ondemand code as much as possible (timers, default attributes
-exported to sysfs, etc.).
+Likewise, why can the kernel not choose.
 
-On top of the Ondemand we have the LAB, which thereof is its optional
-extension. The existing code is reused and can be easily extracted as a
-common code.
+> +- samsung,force_sf_dma_mode: Boolean, Force DMA to use the Store and Forward
+> +  mode for both tx and rx. This flag is ignored if force_thresh_dma_mode is
+> set.
 
+Likewise for both points.
+
+> +- samsung,phy-addr: Integer, Address of the PHY attached with SXGBE.
+
+Some of these properties appear to be missing from the example. Are they
+required or optional?
+
+Thanks,
+Mark.
+
+> +
+> +Optional properties:
+> +- mac-address: 6 bytes, mac address
+> +
+> +Example:
+> +
+> +	aliases {
+> +		ethernet0 = <&sxgbe0>;
+> +	};
+> +
+> +	sxgbe0: ethernet@1a040000 {
+> +		compatible = "samsung,sxgbe-v2.0a";
+> +		reg = <0 0x1a040000 0 0x10000>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 209 4>, <0 185 4>, <0 186 4>, <0 187 4>,
+> +			     <0 188 4>, <0 189 4>, <0 190 4>, <0 191 4>,
+> +			     <0 192 4>, <0 193 4>, <0 194 4>, <0 195 4>,
+> +			     <0 196 4>, <0 197 4>, <0 198 4>, <0 199 4>,
+> +			     <0 200 4>, <0 201 4>, <0 202 4>, <0 203 4>,
+> +			     <0 204 4>, <0 205 4>, <0 206 4>, <0 207 4>,
+> +			     <0 208 4>, <0 210 4>;
+> +		mac-address = [000000000000]; /* Filled in by U-Boot */
+> +		phy-mode = "xaui";
+> +	};
+> -- 
+> 1.7.10.4
 > 
-> So, please explain the basics behind your governor again and then
-> we can put our arguments again..
 > 
-
-I hope that provided overview is sufficient. More in depth
-information can be found in posted patches or provided LKML archives.
-
 > --
-> viresh
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
