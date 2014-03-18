@@ -1,61 +1,82 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 1/2] Samsung 2nd cleanup for v3.15
-Date: Tue, 18 Mar 2014 23:12:39 +0900
-Message-ID: <53285457.80900@samsung.com>
+Subject: [GIT PULL 2/2] Samsung 2nd DT updates for v3.15
+Date: Tue, 18 Mar 2014 23:13:49 +0900
+Message-ID: <5328549D.1090008@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:49004 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755242AbaCROMo (ORCPT
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:36870 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755730AbaCRONy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 10:12:44 -0400
-Received: by mail-pb0-f47.google.com with SMTP id up15so7290452pbc.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 07:12:44 -0700 (PDT)
+	Tue, 18 Mar 2014 10:13:54 -0400
+Received: by mail-pb0-f50.google.com with SMTP id md12so7314443pbc.23
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 07:13:54 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The following changes since commit d9671ca923445aa870ecc34df3db01dd602d87fc:
+The following changes since commit 86feafebbec2b510daf36ffbdbe10228ed890b00:
 
-   ARM: EXYNOS: Remove uncompress.h (2014-02-24 09:39:18 +0900)
+   ARM: dts: use macros in clock bindings for exynos5440 (2014-02-26 
+09:53:31 +0900)
 
 are available in the git repository at:
 
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-cleanup-2
+tags/samsung-dt-2
 
-for you to fetch changes up to 19a964644f1e655c3f67d539c1e99a9fbcc4588c:
+for you to fetch changes up to ba0d7ed391b7b3fb5ca98d9cf4d067b7f5ed956b:
 
-   ARM: SAMSUNG: remove all custom uncompress.h (2014-03-11 22:05:18 +0900)
-
-----------------------------------------------------------------
-Samsung cleanup-2 for v3.15
-- use generic uncompress.h and remove all custom
-   uncompress.h in mach-s3c24xx, s3c64xx, s5p64x0,
-   s5pc100, s5pv210 and plat-samsung directories.
-
-Note that based on previous tags/samsung-cleanup
+   ARM: dts: enable ahci sata and sata phy for exynos5250 (2014-03-18 
+07:49:14 +0900)
 
 ----------------------------------------------------------------
-Heiko Stuebner (2):
-       ARM: SAMSUNG: use generic uncompress.h
-       ARM: SAMSUNG: remove all custom uncompress.h
+Samsung 2nd DT updates for v3.15
+- add DT entry for AHCI SATA and SATA PHY with using generic
+   PHY framework for exynos5250 and arndale, smdk5250 boards.
+- add SSS DT node for exynos5420 and exynos5250
+- remove leftover spi0 node for smdk5250 board
+- add ADC and thermistor nodes for exynos4412-trats2 board
+- move common irq-combiner node for exynos4x12 from exynos4212
+   and exynos4412
+- add ADC, PMU and GPS_ALIVE power domain nodes for exynos4x12
 
-  arch/arm/Kconfig.debug                          |   4 +-
-  arch/arm/mach-s3c24xx/include/mach/uncompress.h |  57 --------
-  arch/arm/mach-s3c64xx/include/mach/uncompress.h |  31 -----
-  arch/arm/mach-s5p64x0/include/mach/uncompress.h |  34 -----
-  arch/arm/mach-s5pc100/include/mach/uncompress.h |  30 ----
-  arch/arm/mach-s5pv210/include/mach/uncompress.h |  28 ----
-  arch/arm/plat-samsung/include/plat/uncompress.h | 175 
-------------------------
-  7 files changed, 2 insertions(+), 357 deletions(-)
-  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/uncompress.h
-  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/uncompress.h
-  delete mode 100644 arch/arm/mach-s5p64x0/include/mach/uncompress.h
-  delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
-  delete mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
-  delete mode 100644 arch/arm/plat-samsung/include/plat/uncompress.h
+Note that based on previous tags/samsung-dt and tags/exynos-clk
+
+----------------------------------------------------------------
+Chanwoo Choi (5):
+       ARM: dts: Add ADC's dt data to read raw data for exynos4x12
+       ARM: dts: Add PMU dt data to support PMU for exynos4x12
+       ARM: dts: Add GPS_ALIVE power domain for exynos4x12
+       ARM: dts: Move common dt data for interrupt combiner controller 
+for exynos4x12
+       ARM: dts: Add ADC and themistor nodes for exynos4412-trats2
+
+Mark Brown (1):
+       ARM: dts: Remove leftover spi0 node for smdk5250
+
+Naveen Krishna Chatradhi (1):
+       ARM: dts: add dt node for sss module for exynos5250/5420
+
+Yuvaraj Kumar C D (1):
+       ARM: dts: enable ahci sata and sata phy for exynos5250
+
+  .../devicetree/bindings/ata/exynos-sata-phy.txt    | 14 ---------
+  .../devicetree/bindings/ata/exynos-sata.txt        | 25 +++++++++------
+  .../devicetree/bindings/phy/samsung-phy.txt        | 36 
+++++++++++++++++++++++
+  arch/arm/boot/dts/exynos4.dtsi                     |  5 +++
+  arch/arm/boot/dts/exynos4212.dtsi                  | 13 +++-----
+  arch/arm/boot/dts/exynos4412-trats2.dts            | 21 +++++++++++++
+  arch/arm/boot/dts/exynos4412.dtsi                  | 14 +++------
+  arch/arm/boot/dts/exynos4x12.dtsi                  | 26 ++++++++++++++++
+  arch/arm/boot/dts/exynos5250-arndale.dts           | 21 +++++++++++++
+  arch/arm/boot/dts/exynos5250-smdk5250.dts          | 21 +++++++------
+  arch/arm/boot/dts/exynos5250.dtsi                  | 26 +++++++++++++---
+  arch/arm/boot/dts/exynos5420.dtsi                  |  9 ++++++
+  12 files changed, 175 insertions(+), 56 deletions(-)
+  delete mode 100644 
+Documentation/devicetree/bindings/ata/exynos-sata-phy.txt
