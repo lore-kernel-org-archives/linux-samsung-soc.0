@@ -1,124 +1,86 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 1/3] arm64: dts: add initial dts for Samsung GH7 SoC
- and SSDK-GH7 board
-Date: Tue, 18 Mar 2014 18:10:54 +0000
-Message-ID: <20140318181054.GF2941@e106331-lin.cambridge.arm.com>
-References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
- <1394491879-5320-2-git-send-email-kgene.kim@samsung.com>
- <20140311182922.GD3263@e106331-lin.cambridge.arm.com>
- <01c501cf3dac$022879b0$06796d10$@samsung.com>
- <20140313103329.GD5035@e106331-lin.cambridge.arm.com>
- <010f01cf3f24$7002adb0$50080910$@samsung.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: [PATCH V5 0/8] add new Samsung SXGBE driver
+Date: Tue, 18 Mar 2014 11:19:18 -0700
+Message-ID: <002101cf42d6$97677c90$c63675b0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <010f01cf3f24$7002adb0$50080910$@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Catalin Marinas <Catalin.Marinas@arm.com>, 'Ilho Lee' <ilho215.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:63651 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757402AbaCRSTa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Mar 2014 14:19:30 -0400
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: davem@davemloft.net, ks.giri@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ilho215.lee@samsung.com
 
-On Fri, Mar 14, 2014 at 01:26:31AM +0000, Kukjin Kim wrote:
-> > > > > +		cpu@000 {
-> > > > > +			device_type = "cpu";
-> > > > > +			compatible = "arm,armv8";
-> > > >
-> > > > The "arm,armv8" should be a fallback rather than the only entry. The
-> > > > precise core should be first (see arch/arm64/boot/dts/apm-storm.dtsi for
-> > > > an example).
-> > > >
-> > > Well, do I really need another name if GH7 has just 'ARMv8 core' exactly?
-> > 
-> > Yes please. You presumably don't have "just 'ARMv8 core'", but rather a
-> > specific ARMv8 implementation.
-> > 
-> OK, so in my understanding if it is really _just_ 'ARMv8 core' from S/W point
-> of view, "arm,armv8" should be fine. I will make sure.
+Hi all,
 
-It will work, sure. But the compatible list should also list the
-specific CPU. From the S/W point of view there are likely
-implementation-defined registers which mean that no real CPU will be
-"just" an ARMv8 core.
+This is 5th posting for SAMSUNG SXGBE driver.
 
-We have enough trouble with DTBs for 32-bit SoCs not listing things they
-should. I see no reason to be lax here.
+Changes since v1:
+- changed name of driver to SXGbE as per Ben's comment
+- squashed Joe's neatening for many stuff in original patches
 
-> > > > > +	gic: interrupt-controller@1C000000 {
-> > > > > +		compatible = "arm,cortex-a15-gic";
-> > > >
-> > > > We should have a more specific compatible string early in the list here
-> > > > too.
-> > > >
-> > > Well, I think more specific compatible string is not required for gic, there
-> > > were discussion about using another compatible string for gic-v2. And
-> > > cortex-a15-gic should be fine at this moment and if another name is required
-> > > as per previous discussion, we will then.
-> > 
-> > While it's probably ok to have "arm,cortex-a15-gic" in the compatible
-> > list, it would be good to also have a more specific string, so we can
-> > identify the GIC implementation precisely in future (in case we need to
-> > perform any workarounds, or there's some kind of optimisation we could
-> > perform for some implementations).
-> > 
-> Hmm... let's use just it for now then add another specific string later ;-)
+Changes since v2:
+- updated and splited binding document as per Mark's comment
+- clean up codes as per Joe's comment
+- removed unused fields and clean up codes as per Froancois's comment
+- removed module parameters as per Dave's comment
+- moved driver directory to samsung/sxgbe/
 
-Why not do this from the start? Then we can actually rely on the DTB
-rather than it being useless.
+Changes since v3:
+- fixed Missing a blank line after declarations as per Dave's comment
+- clean up codes as per Joe's comment
+- removed reference of net_device.{irq, base_addr}
 
-> > > > > +	pmu {
-> > > > > +		compatible = "arm,armv8-pmuv3";
-> > > >
-> > > > This is missing a specific compatible string.
-> > > >
-> > > I don't know why I need another specific compatible string here because I
-> > > thought the 'armv8-pmuv3' is enough.
-> > 
-> > Each CPU microarchitecture has different PMU events and quirks. While
-> > the CPU PMU might be compatible with ARMv8's PMUv3, it will also have
-> > implementation-specific events, and may have quirks we need to work
-> > around in future.
-> > 
-> > As with 32-bit, we'd expect these to be of the form
-> > "${implementor},${cpu}-pmu".
-> > 
-> OK.
-> 
-> +	compatible = "samsung,gh7-pmu", "armv8-pmuv3";
+Changes since v4:
+- updated binding document and DT related function per Mark's comment
 
-Is GH7 an SoC or a CPU?
+Byungho An (1):
+      MAINTAINERS: add maintainer for Samsung sxgbe driver
 
-> > > > > +		serial@12c20000 {
-> > > > > +			compatible = "arm,pl011", "arm,primecell";
-> > > > > +			reg = <0 0x12c20000 0 0x10000>;
-> > > > > +			interrupts = <0 420 0>;
-> > > > > +		};
-> > > >
-> > > > These are both missing required clocks.
-> > > >
-> > > Yes right.
-> > 
-> > So you'll add these?
-> > 
-> To be honest, still I'm not sure how it should be handled because regarding
-> clocks do not need to handle in the kernel for GH7. And for it, I needed to
-> use some HACKs to change clock handling in the kernel. I will provide proper
-> solution soon.
+Girish K S (2):
+      net: sxgbe: add EEE(Energy Efficient Ethernet) for Samsung sxgbe
+      net: sxgbe: add WOL(Wakeup-On-Lan)support for Samsung sxgbe
 
-Are the clocks always-on, fixed-rate clocks, or does some firmware
-manage them dynamically? We have bindings for the former.
+Siva Reddy (2):
+      sxgbe: Add device-tree binding support document
+      net: sxgbe: add basic framework for Samsung 10Gb ethernet driver
 
-There's not much point having a DTS upstream that relies on hacks which
-are not.
+Vipul Pandya (3):
+      net: sxgbe: add TSO support for Samsung sxgbe
+      net: sxgbe: add Checksum offload support for Samsung sxgbe
+      net: sxgbe: add ethtool related functions support Samsung sxgbe
 
-Cheers,
-Mark.
+ .../devicetree/bindings/net/samsung-sxgbe.txt      |   52 +
+ MAINTAINERS                                        |    9 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/samsung/Kconfig               |   20 +
+ drivers/net/ethernet/samsung/Makefile              |    5 +
+ drivers/net/ethernet/samsung/sxgbe/Kconfig         |    9 +
+ drivers/net/ethernet/samsung/sxgbe/Makefile        |    4 +
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h  |  553 +++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c    |  290 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c    |  515 +++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h    |  298 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c     |  387 ++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h     |   51 +
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c |  634 ++++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c    | 2382 ++++++++++++++++++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c    |  274 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.c     |  293 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.h     |  108 +
+ .../net/ethernet/samsung/sxgbe/sxgbe_platform.c    |  268 +++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h     |  491 ++++
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_xpcs.c    |   92 +
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_xpcs.h    |   38 +
+ include/linux/sxgbe_platform.h                     |   54 +
+ 24 files changed, 6829 insertions(+)
+
+Thanks,
+Byungho An
