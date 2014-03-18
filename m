@@ -1,137 +1,76 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCHv2 4/8] devfreq: exynos4: Fix bug of resource leak and code
- clean on probe()
-Date: Tue, 18 Mar 2014 13:18:45 +0100
-Message-ID: <532839A5.8020505@samsung.com>
-References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
- <1394698649-20996-5-git-send-email-cw00.choi@samsung.com>
- <53234132.8080202@samsung.com> <532682A8.2030300@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v11 20/27] iommu/exynos: allow having multiple System MMUs
+	for a master H/W
+Date: Tue, 18 Mar 2014 22:01:28 +0900
+Message-ID: <20140318220128.564740c88d06b86c9c5c10e3@samsung.com>
+References: <20140314141050.c8bedcb66532d277c496796d@samsung.com>
+	<53232A53.4040708@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <532682A8.2030300@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <53232A53.4040708-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17.03.2014 06:05, Chanwoo Choi wrote:
-> Hi Tomasz,
->
-> On 03/15/2014 02:49 AM, Tomasz Figa wrote:
->> Hi Chanwoo,
->>
->> On 13.03.2014 09:17, Chanwoo Choi wrote:
->>> This patch fix bug about resource leak when happening probe fail and code clean
->>> to add debug message.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>>    drivers/devfreq/exynos/exynos4_bus.c | 32 ++++++++++++++++++++++++++------
->>>    1 file changed, 26 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
->>> index a2a3a47..152a3e9 100644
->>> --- a/drivers/devfreq/exynos/exynos4_bus.c
->>> +++ b/drivers/devfreq/exynos/exynos4_bus.c
->>> @@ -1152,8 +1152,11 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
->>>            dev_err(dev, "Cannot determine the device id %d\n", data->type);
->>>            err = -EINVAL;
->>>        }
->>> -    if (err)
->>> +    if (err) {
->>> +        dev_err(dev, "Cannot initialize busfreq table %d\n",
->>> +                 data->type);
->>>            return err;
->>> +    }
->>>
->>>        rcu_read_lock();
->>>        opp = dev_pm_opp_find_freq_floor(dev,
->>> @@ -1176,7 +1179,7 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
->>>        if (IS_ERR(data->devfreq)) {
->>>            dev_err(dev, "Failed to add devfreq device\n");
->>>            err = PTR_ERR(data->devfreq);
->>> -        goto err_opp;
->>> +        goto err_devfreq;
->>>        }
->>>
->>>        /*
->>> @@ -1185,18 +1188,35 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
->>>         */
->>>        busfreq_mon_reset(data);
->>>
->>> -    devfreq_register_opp_notifier(dev, data->devfreq);
->>> +    /* Register opp_notifier for Exynos4 busfreq */
->>> +    err = devfreq_register_opp_notifier(dev, data->devfreq);
->>> +    if (err < 0) {
->>> +        dev_err(dev, "Failed to register opp notifier\n");
->>> +        goto err_notifier_opp;
->>> +    }
->>>
->>> +    /* Register pm_notifier for Exynos4 busfreq */
->>>        err = register_pm_notifier(&data->pm_notifier);
->>>        if (err) {
->>>            dev_err(dev, "Failed to setup pm notifier\n");
->>> -        devfreq_remove_device(data->devfreq);
->>> -        return err;
->>> +        goto err_notifier_pm;
->>>        }
->>>
->>>        return 0;
->>>
->>> -err_opp:
->>> +err_notifier_pm:
->>> +    devfreq_unregister_opp_notifier(dev, data->devfreq);
->>> +err_notifier_opp:
->>> +    /*
->>> +     * The devfreq_remove_device() would execute finally devfreq->profile
->>> +     * ->exit(). To avoid duplicate resource free operation, return directly
->>> +     * before executing resource free below 'err_devfreq' goto statement.
->>> +     */
->>
->> I'm not quite sure about this. I believe that in this case devfreq->profile->exit() would be exynos4_bus_exit() and all it does is devfreq_unregister_opp_notifier(dev, data->devfreq), so all remaining resources (regulators, clocks, etc.) would get leaked.
->
-> This patch execute following sequence to probe exynos4_busfreq.c:
->
-> 1. Parse dt node to get resource(regulator/clock/memory address).
-> 2. Enable regulator/clock and map memory.
-> 3. Add devfreq device using devfreq_add_device().
->     The devfreq_add_device() return devfreq instance(data->devfreq).
-> 4. Register opp_notifier using devfreq instance(data->devfreq) which is created in sequence #3.
->
-> Case 1,
-> If an error happens in sequence #3 for registering devfreq_add_device(),
->
-> this case can't execute devfreq->profile->exit() to free resource
-> because this case has failed to register devfreq->profile to devfreq_list.
->
-> So, must goto 'err_devfreq' statement to free resource(regulator/clock/memory).
->
->
-> Case 2,
-> If an error happens in sequence #4 for registering opp_notifier,
->
-> In contrast
-> this case can execute devfreq->profile->exit() to free resource.
-> But, After executed devfreq->profile->exit(),
-> should not execute 'err_devfreq' statement to free resource.
-> In case, will operate twice of resource.
->
-> If my explanation is wrong, please reply your comment.
->
+On Fri, 14 Mar 2014 17:12:03 +0100, Tomasz Figa wrote:
+> Hi KyongHo,
+> 
+> On 14.03.2014 06:10, Cho KyongHo wrote:
+> > Some master device descriptor like fimc-is which is an abstraction
+> > of very complex H/W may have multiple System MMUs. For those devices,
+> > the design of the link between System MMU and its master H/W is needed
+> > to be reconsidered.
+> >
+> > A link structure, sysmmu_list_data is introduced that provides a link
+> > to master H/W and that has a pointer to the device descriptor of a
+> > System MMU. Given a device descriptor of a master H/W, it is possible
+> > to traverse all System MMUs that must be controlled along with the
+> > master H/W.
+> 
+> NAK.
+> 
+> A device driver should handle particular hardware instances separately, 
+> without abstracting a virtual hardware instance consisting of multiple 
+> physical ones.
+> 
+> If such abstraction is needed, it should be done above the exynos-iommu 
+> driver, e.g. by something like iommu-composite driver that would 
+> aggregate several IOMMUs. Keep in mind that such IOMMUs in a group could 
+> be different, e.g. different Exynos SysMMU versions or even completely 
+> different IPs handled by different drivers.
+> 
+> Still, I don't think there is a real need for such abstraction. Instead, 
+> related drivers shall be fixed to properly handle multiple memory 
+> masters and their IOMMUs.
+> 
 
-OK, it will work indeed, however the code is barely readable with this.
+G2D, Scalers and FIMD of Exynos5420 has 2 System MMUs while aother SoC like
+Exynos5250 does not.
 
-For consistency (and readability), resources acquired in platform 
-driver's .probe() should be freed in .remove() and error path of 
-.probe() should not rely on external code to do the clean-up.
+I don't understand why you are negative to this approach.
+This is the simplest than the others.
 
-So, as I proposed in my previous reply:
+Let me show you an example.
+FIMC-IS driver just controls MCU in FIMC-IS subsystem and the firmware of
+the MCU controls all other peripherals in the subsystem. Each peripherals
+have their own System MMU. Moreover, the configuration of the peripherals
+varies according to the SoCs.
 
->>
->> I believe the correct thing to do would be to remove the .exit() callback from exynos4_devfreq_profile struct and handle all the clean-up here in error path.
->>
+If System MMU driver accepts multiple masters, everything is done in DT.
+But I worry that it is not easy if System MMU driver does not support
+multiple masters. 
 
-Best regards,
-Tomasz
+Thank you.
+
+KyongHo
