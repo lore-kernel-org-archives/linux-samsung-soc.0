@@ -1,43 +1,47 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to
- dt-bindings/clock
-Date: Tue, 18 Mar 2014 15:32:07 +0100
-Message-ID: <532858E7.3040802@samsung.com>
-References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
- <1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
- <531D054E.70008@gmail.com> <53277548.60300@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung non-critical fixes for v3.15
+Date: Tue, 18 Mar 2014 16:07:42 +0100
+Message-ID: <201403181607.42503.arnd@arndb.de>
+References: <5327CB4C.9070905@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:36685 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755613AbaCROcN (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.131]:51155 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755298AbaCRPHy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 10:32:13 -0400
-In-reply-to: <53277548.60300@samsung.com>
+	Tue, 18 Mar 2014 11:07:54 -0400
+In-Reply-To: <5327CB4C.9070905@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, rob@landley.net, galak@codeaurora.org, plagnioj@jcrosoft.com, linux@maxim.org.za, Grant Likely <grant.likely@secretlab.ca>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 17.03.2014 23:20, Kukjin Kim wrote:
-> On 03/10/14 09:20, Tomasz Figa wrote:
->> On 06.03.2014 07:04, Tushar Behera wrote:
->>> Most of the clock related dt-binding header files are located in
->>> dt-bindings/clock folder. It would be good to keep all the similar
->>> header files at a single location.
->>>
->>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>> CC: Kukjin Kim <kgene.kim@samsung.com>
->
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->
-> Or shall I take this into samsung tree?
+On Tuesday 18 March 2014, Kukjin Kim wrote:
+> The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
+> 
+>    Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
+> 
+> are available in the git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+> tags/samsung-fixes
+> 
+> for you to fetch changes up to baf64abc468c7583592f67197ae23fa31414b4db:
+> 
+>    ARM: S3C64XX: mach-crag6410-module.c is not modular (2014-02-16 
+> 02:05:44 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung non-critical fixes for v3.15
+> - fix typo CONFIG_CPU_S3C2443 in Kconfig
+> - fix G3D regulator on because of entering low power mode
+>    for exynos5250-arndale
+> - fix CONFIG_USB_EHCI_EXYNOS for exynos_defconfig
+> - fix initcall of mach-crag6410-module.c
 
-I guess so.
+Pulled into next/fixes-non-critical, thanks!
 
-Or should this whole series go through DT tree?
-
-Best regards,
-Tomasz
+	Arnd
