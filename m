@@ -1,230 +1,44 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCHv2 3/8] devfreq: exynos4: Add ppmu's clock control and code
- clean about regulator control
-Date: Tue, 18 Mar 2014 12:13:36 +0100
-Message-ID: <53282A60.2010301@samsung.com>
-References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
- <1394698649-20996-4-git-send-email-cw00.choi@samsung.com>
- <53233F78.8020500@samsung.com> <5326632A.8030801@samsung.com>
- <53268F48.8060704@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v11 13/27] iommu/exynos: support for device tree
+Date: Tue, 18 Mar 2014 16:46:24 +0530
+Message-ID: <CAK9yfHy+uiRPZjEDzZRpNKVY1CnWehVGdJmu3ztOTXAuHBx_Yg@mail.gmail.com>
+References: <20140314140935.e0652b58ce16591b54d0e10b@samsung.com>
+	<CAK9yfHx_FUaUcA_tpsJ73i0iJmczOp7K8gC6sMGHQ6c50i46=A@mail.gmail.com>
+	<20140318201424.e8bde8514726c3639243e9ad@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:25998 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755174AbaCRLOf (ORCPT
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:53131 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755195AbaCRLQY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 07:14:35 -0400
-In-reply-to: <53268F48.8060704@samsung.com>
+	Tue, 18 Mar 2014 07:16:24 -0400
+Received: by mail-ob0-f169.google.com with SMTP id va2so6887705obc.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 04:16:24 -0700 (PDT)
+In-Reply-To: <20140318201424.e8bde8514726c3639243e9ad@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>
 
-Hi Chanwoo,
-
-On 17.03.2014 06:59, Chanwoo Choi wrote:
-> Hi Tomasz,
->
-> On 03/17/2014 11:51 AM, Chanwoo Choi wrote:
->> Hi Tomasz,
+On 18 March 2014 16:44, Cho KyongHo <pullip.cho@samsung.com> wrote:
+> On Fri, 14 Mar 2014 20:57:42 +0530, Sachin Kamat wrote:
+>> Hi KyongHo,
 >>
->> On 03/15/2014 02:42 AM, Tomasz Figa wrote:
->>> Hi Chanwoo,
->>>
->>> On 13.03.2014 09:17, Chanwoo Choi wrote:
->>>> There are not the clock controller of ppmudmc0/1. This patch control the clock
->>>> of ppmudmc0/1 which is used for monitoring memory bus utilization.
->>>>
->>>> Also, this patch code clean about regulator control and free resource
->>>> when calling exit/remove function.
->>>>
->>>> For example,
->>>> busfreq@106A0000 {
->>>>      compatible = "samsung,exynos4x12-busfreq";
->>>>
->>>>      /* Clock for PPMUDMC0/1 */
->>>>      clocks = <&clock CLK_PPMUDMC0>, <&clock CLK_PPMUDMC1>;
->>>>      clock-names = "ppmudmc0", "ppmudmc1";
->>>>
->>>>      /* Regulator for MIF/INT block */
->>>>      vdd_mif-supply = <&buck1_reg>;
->>>>      vdd_int-supply = <&buck3_reg>;
->>>> };
->>>>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-> I modify this patch according your comment as following:
->
-> Best Regards,
-> Chanwoo Choi
->
->>From c8f2fbc4c1166ec02fb2ad46164bc7ed9118721b Mon Sep 17 00:00:00 2001
-> From: Chanwoo Choi <cw00.choi@samsung.com>
-> Date: Fri, 14 Mar 2014 12:05:54 +0900
-> Subject: [PATCH] devfreq: exynos4: Add ppmu's clock control and code clean
->   about regulator control
->
-> There are not the clock controller of ppmudmc0/1. This patch control the clock
-> of ppmudmc0/1 which is used for monitoring memory bus utilization.
->
-> Also, this patch code clean about regulator control and free resource
-> when calling exit/remove function.
->
-> For example,
-> busfreq@106A0000 {
-> 	compatible = "samsung,exynos4x12-busfreq";
->
-> 	/* Clock for PPMUDMC0/1 */
-> 	clocks = <&clock CLK_PPMUDMC0>, <&clock CLK_PPMUDMC1>;
-> 	clock-names = "ppmudmc0", "ppmudmc1";
->
-> 	/* Regulator for MIF/INT block */
-> 	vdd_mif-supply = <&buck1_reg>;
-> 	vdd_int-supply = <&buck3_reg>;
-> };
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->   drivers/devfreq/exynos/exynos4_bus.c | 97 +++++++++++++++++++++++++++++++-----
->   1 file changed, 84 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
-> index 4c630fb..3956bcc 100644
-> --- a/drivers/devfreq/exynos/exynos4_bus.c
-> +++ b/drivers/devfreq/exynos/exynos4_bus.c
-> @@ -62,6 +62,11 @@ enum exynos_ppmu_idx {
->   	PPMU_END,
->   };
->
-> +static const char *exynos_ppmu_clk_name[] = {
-> +	[PPMU_DMC0]	= "ppmudmc0",
-> +	[PPMU_DMC1]	= "ppmudmc1",
-> +};
-> +
->   #define EX4210_LV_MAX	LV_2
->   #define EX4x12_LV_MAX	LV_4
->   #define EX4210_LV_NUM	(LV_2 + 1)
-> @@ -86,6 +91,7 @@ struct busfreq_data {
->   	struct regulator *vdd_mif; /* Exynos4412/4212 only */
->   	struct busfreq_opp_info curr_oppinfo;
->   	struct exynos_ppmu ppmu[PPMU_END];
-> +	struct clk *clk_ppmu[PPMU_END];
->
->   	struct notifier_block pm_notifier;
->   	struct mutex lock;
-> @@ -724,6 +730,17 @@ static void exynos4_bus_exit(struct device *dev)
->   	struct busfreq_data *data = dev_get_drvdata(dev);
->   	int i;
->
-> +	/*
-> +	 * Un-map memory map and disable regulator/clocks
-> +	 * to prevent power leakage.
-> +	 */
-> +	regulator_disable(data->vdd_int);
-> +	if (data->type == TYPE_BUSF_EXYNOS4x12)
-> +		regulator_disable(data->vdd_mif);
-> +
-> +	for (i = 0; i < PPMU_END; i++)
-> +		clk_disable_unprepare(data->clk_ppmu[i]);
-> +
->   	for (i = 0; i < PPMU_END; i++)
->   		iounmap(data->ppmu[i].hw_base);
->   }
-> @@ -989,6 +1006,7 @@ static int exynos4_busfreq_parse_dt(struct busfreq_data *data)
->   {
->   	struct device *dev = data->dev;
->   	struct device_node *np = dev->of_node;
-> +	const char **clk_name = exynos_ppmu_clk_name;
->   	int i, ret = 0;
->
->   	if (!np) {
-> @@ -1006,8 +1024,67 @@ static int exynos4_busfreq_parse_dt(struct busfreq_data *data)
->   		}
->   	}
->
-> +	for (i = 0; i < PPMU_END; i++) {
-> +		data->clk_ppmu[i] = devm_clk_get(dev, clk_name[i]);
-> +		if (IS_ERR(data->clk_ppmu[i])) {
-> +			dev_warn(dev, "Failed to get %s clock\n", clk_name[i]);
+>> On 14 March 2014 10:39, Cho KyongHo <pullip.cho@samsung.com> wrote:
+>> >
+>> > -static struct platform_driver exynos_sysmmu_driver = {
+>> > -       .probe          = exynos_sysmmu_probe,
+>> > -       .driver         = {
+>> > +#ifdef CONFIG_OF
+>>
+>> This is not needed as Exynos is DT only platform.
+>>
+> Yes, but I hesitate to remove that.
 
-dev_err() since this is an error.
+What is the reason for your hesitation? :)
 
-> +			goto err_clocks;
-> +		}
-> +
-> +		ret = clk_prepare_enable(data->clk_ppmu[i]);
-> +		if (ret < 0) {
-> +			dev_warn(dev, "Failed to enable %s clock\n", clk_name[i]);
 
-Ditto.
-
-> +			data->clk_ppmu[i] = NULL;
-> +			goto err_clocks;
-> +		}
-> +	}
-> +
-> +	/* Get regulator to control voltage of int block */
-> +	data->vdd_int = devm_regulator_get(dev, "vdd_int");
-> +	if (IS_ERR(data->vdd_int)) {
-> +		dev_err(dev, "Failed to get the regulator of vdd_int\n");
-> +		ret = PTR_ERR(data->vdd_int);
-> +		goto err_clocks;
-> +	}
-> +	ret = regulator_enable(data->vdd_int);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to enable regulator of vdd_int\n");
-> +		goto err_clocks;
-> +	}
-> +
-> +	switch (data->type) {
-> +	case TYPE_BUSF_EXYNOS4210:
-> +		break;
-
-Do you need to use switch here? Wouldn't a simple if (data->type == 
-TYPE_BUSF_EXYNOS4x12) work as well, resulting with simpler code?
-
-However I would expect this code to be completely removed, after 
-defining DT bindings in a way allowing you to completely drop such SoC 
-type enums. Please see my other reply for explanation of Exynos power 
-plane DT bindings concept.
-
-> +	case TYPE_BUSF_EXYNOS4x12:
-> +		/* Get regulator to control voltage of mif blk if Exynos4x12 */
-> +		data->vdd_mif = devm_regulator_get(dev, "vdd_mif");
-> +		if (IS_ERR(data->vdd_mif)) {
-> +			dev_err(dev, "Failed to get the regulator vdd_mif\n");
-> +			ret = PTR_ERR(data->vdd_mif);
-> +			goto err_regulator;
-> +		}
-> +		ret = regulator_enable(data->vdd_mif);
-> +		if (ret < 0) {
-> +			dev_err(dev, "Failed to enable regulator of vdd_mif\n");
-> +			goto err_regulator;
-> +		}
-> +		break;
-> +	default:
-> +		dev_err(dev, "Unknown device type : %d\n", data->type);
-> +		return -EINVAL;
-> +	};
-> +
->   	return 0;
->
-> +err_regulator:
-> +	regulator_disable(data->vdd_int);
-> +err_clocks:
-> +	for (i = 0; i < PPMU_END; i++) {
-> +		if (IS_ERR(data->clk_ppmu[i]))
-> +			continue;
-> +		else
-
-if (!IS_ERR(...))
-
-> +			clk_disable_unprepare(data->clk_ppmu[i]);
-> +	}
-
-Otherwise looks good.
-
-Best regards,
-Tomasz
+-- 
+With warm regards,
+Sachin
