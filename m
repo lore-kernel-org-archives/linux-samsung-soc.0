@@ -1,45 +1,137 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/2] serial: s3c: Fix build of header without serial_core.h preinclusion
-Date: Tue, 18 Mar 2014 11:56:42 +0000
-Message-ID: <1395143803-2032-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53914 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753281AbaCRL47 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 07:56:59 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCHv2 4/8] devfreq: exynos4: Fix bug of resource leak and code
+ clean on probe()
+Date: Tue, 18 Mar 2014 13:18:45 +0100
+Message-ID: <532839A5.8020505@samsung.com>
+References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
+ <1394698649-20996-5-git-send-email-cw00.choi@samsung.com>
+ <53234132.8080202@samsung.com> <532682A8.2030300@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <532682A8.2030300@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+On 17.03.2014 06:05, Chanwoo Choi wrote:
+> Hi Tomasz,
+>
+> On 03/15/2014 02:49 AM, Tomasz Figa wrote:
+>> Hi Chanwoo,
+>>
+>> On 13.03.2014 09:17, Chanwoo Choi wrote:
+>>> This patch fix bug about resource leak when happening probe fail and code clean
+>>> to add debug message.
+>>>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> ---
+>>>    drivers/devfreq/exynos/exynos4_bus.c | 32 ++++++++++++++++++++++++++------
+>>>    1 file changed, 26 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+>>> index a2a3a47..152a3e9 100644
+>>> --- a/drivers/devfreq/exynos/exynos4_bus.c
+>>> +++ b/drivers/devfreq/exynos/exynos4_bus.c
+>>> @@ -1152,8 +1152,11 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
+>>>            dev_err(dev, "Cannot determine the device id %d\n", data->type);
+>>>            err = -EINVAL;
+>>>        }
+>>> -    if (err)
+>>> +    if (err) {
+>>> +        dev_err(dev, "Cannot initialize busfreq table %d\n",
+>>> +                 data->type);
+>>>            return err;
+>>> +    }
+>>>
+>>>        rcu_read_lock();
+>>>        opp = dev_pm_opp_find_freq_floor(dev,
+>>> @@ -1176,7 +1179,7 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
+>>>        if (IS_ERR(data->devfreq)) {
+>>>            dev_err(dev, "Failed to add devfreq device\n");
+>>>            err = PTR_ERR(data->devfreq);
+>>> -        goto err_opp;
+>>> +        goto err_devfreq;
+>>>        }
+>>>
+>>>        /*
+>>> @@ -1185,18 +1188,35 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
+>>>         */
+>>>        busfreq_mon_reset(data);
+>>>
+>>> -    devfreq_register_opp_notifier(dev, data->devfreq);
+>>> +    /* Register opp_notifier for Exynos4 busfreq */
+>>> +    err = devfreq_register_opp_notifier(dev, data->devfreq);
+>>> +    if (err < 0) {
+>>> +        dev_err(dev, "Failed to register opp notifier\n");
+>>> +        goto err_notifier_opp;
+>>> +    }
+>>>
+>>> +    /* Register pm_notifier for Exynos4 busfreq */
+>>>        err = register_pm_notifier(&data->pm_notifier);
+>>>        if (err) {
+>>>            dev_err(dev, "Failed to setup pm notifier\n");
+>>> -        devfreq_remove_device(data->devfreq);
+>>> -        return err;
+>>> +        goto err_notifier_pm;
+>>>        }
+>>>
+>>>        return 0;
+>>>
+>>> -err_opp:
+>>> +err_notifier_pm:
+>>> +    devfreq_unregister_opp_notifier(dev, data->devfreq);
+>>> +err_notifier_opp:
+>>> +    /*
+>>> +     * The devfreq_remove_device() would execute finally devfreq->profile
+>>> +     * ->exit(). To avoid duplicate resource free operation, return directly
+>>> +     * before executing resource free below 'err_devfreq' goto statement.
+>>> +     */
+>>
+>> I'm not quite sure about this. I believe that in this case devfreq->profile->exit() would be exynos4_bus_exit() and all it does is devfreq_unregister_opp_notifier(dev, data->devfreq), so all remaining resources (regulators, clocks, etc.) would get leaked.
+>
+> This patch execute following sequence to probe exynos4_busfreq.c:
+>
+> 1. Parse dt node to get resource(regulator/clock/memory address).
+> 2. Enable regulator/clock and map memory.
+> 3. Add devfreq device using devfreq_add_device().
+>     The devfreq_add_device() return devfreq instance(data->devfreq).
+> 4. Register opp_notifier using devfreq instance(data->devfreq) which is created in sequence #3.
+>
+> Case 1,
+> If an error happens in sequence #3 for registering devfreq_add_device(),
+>
+> this case can't execute devfreq->profile->exit() to free resource
+> because this case has failed to register devfreq->profile to devfreq_list.
+>
+> So, must goto 'err_devfreq' statement to free resource(regulator/clock/memory).
+>
+>
+> Case 2,
+> If an error happens in sequence #4 for registering opp_notifier,
+>
+> In contrast
+> this case can execute devfreq->profile->exit() to free resource.
+> But, After executed devfreq->profile->exit(),
+> should not execute 'err_devfreq' statement to free resource.
+> In case, will operate twice of resource.
+>
+> If my explanation is wrong, please reply your comment.
+>
 
-serial_s3c.h uses upf_t which is defined in serial_core.h but does not
-include that itself meaning that users which include serial_s3c.h by
-itself don't build.
+OK, it will work indeed, however the code is barely readable with this.
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
+For consistency (and readability), resources acquired in platform 
+driver's .probe() should be freed in .remove() and error path of 
+.probe() should not rely on external code to do the clean-up.
 
-This is needed together with patch 2 to fix build failures in -next, I
-didn't have the time/enthusiasm to isolate the issue.
+So, as I proposed in my previous reply:
 
- include/linux/serial_s3c.h | 2 ++
- 1 file changed, 2 insertions(+)
+>>
+>> I believe the correct thing to do would be to remove the .exit() callback from exynos4_devfreq_profile struct and handle all the clean-up here in error path.
+>>
 
-diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-index 907d9d1d56cf..44e4a6b92ddb 100644
---- a/include/linux/serial_s3c.h
-+++ b/include/linux/serial_s3c.h
-@@ -29,6 +29,8 @@
- #ifndef __ASM_ARM_REGS_SERIAL_H
- #define __ASM_ARM_REGS_SERIAL_H
- 
-+#include <linux/serial_core.h>
-+
- #define S3C2410_URXH	  (0x24)
- #define S3C2410_UTXH	  (0x20)
- #define S3C2410_ULCON	  (0x00)
--- 
-1.9.0
+Best regards,
+Tomasz
