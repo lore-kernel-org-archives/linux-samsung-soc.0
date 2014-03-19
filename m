@@ -1,94 +1,63 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: RE: [PATCH V6 3/8] net: sxgbe: add TSO support for Samsung sxgbe
-Date: Wed, 19 Mar 2014 11:29:40 -0700
-Message-ID: <00aa01cf43a1$32ec0d00$98c42700$@samsung.com>
-References: <006701cf4334$af6d9af0$0e48d0d0$@samsung.com>
- <CAJ3bTp6BSD5qCJEVJX36Xd=-oX6oDkmTXA2NK42g7zUj6dJgjA@mail.gmail.com>
+From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v11 17/27] iommu/exynos: remove calls to Runtime PM API
+	functions
+Date: Wed, 19 Mar 2014 11:37:57 -0700
+Message-ID: <CANEJEGtCdMmWXwpoky8USLOBw7jAt1bRw8or-mDK7twxAzhWpA@mail.gmail.com>
+References: <20140314140843.ba055f28dd7ed59c46088029@samsung.com>
+	<5322FD14.5090602@samsung.com>
+	<20140318185605.0380c8dfe6559c06183092e5@samsung.com>
+	<532861BE.7020601@samsung.com>
+	<20140319100304.5e26fa43ccdfc29178b058e1@samsung.com>
+	<532997D7.6090608@samsung.com>
+	<CANEJEGuYz28dGT+264CYtG+Tk6htOq=u-t4PWMtsij32X0vJFA@mail.gmail.com>
+	<5329D426.9020706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-reply-to: <CAJ3bTp6BSD5qCJEVJX36Xd=-oX6oDkmTXA2NK42g7zUj6dJgjA@mail.gmail.com>
-Content-language: en-us
-Sender: netdev-owner@vger.kernel.org
-To: 'Rayagond Kokatanur' <rayagond@vayavyalabs.com>
-Cc: 'netdev' <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'David Miller' <davem@davemloft.net>, "'ks.giri'" <ks.giri@samsung.com>, "'siva.kallam'" <siva.kallam@samsung.com>, "'vipul.pandya'" <vipul.pandya@samsung.com>, "'ilho215.lee'" <ilho215.lee@samsung.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <5329D426.9020706-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rayagond Kokatanur <rayagond@vayavyalabs.com> wrote:
-> On Wed, Mar 19, 2014 at 11:02 AM, Byungho An <bh74.an@samsung.com> wrote:
-[snip]
-> >
-> >         /* save the skb address */
-> >         tqueue->tx_skbuff[entry] = skb;
-> >
-> >         if (!is_jumbo) {
-> > -               tx_desc->tdes01 = dma_map_single(priv->device, skb->data,
-> > -                                                  no_pagedlen,
-DMA_TO_DEVICE);
-> > -               if (dma_mapping_error(priv->device, tx_desc->tdes01))
-> > -                       pr_err("%s: TX dma mapping failed!!\n", __func__);
-> > -
-> > -               priv->hw->desc->prepare_tx_desc(tx_desc, 1, no_pagedlen,
-> > -                                               no_pagedlen);
-> > +               if (likely(skb_is_gso(skb))) {
-> > +                       /* TSO support */
-> > +                       mss = skb_shinfo(skb)->gso_size;
-> > +
-> > + priv->hw->desc->tx_ctxt_desc_set_mss(ctxt_desc, mss);
-> 
-> No need to issue context descriptor for every TSO packets. Program context
-descriptor only if MSS value is value is changed compared
-> to previous TSO packet MSS value. By this way we can reduce the one extra
-descriptor fetch by device and improve the performance.
-OK. This will be applied in the  next post.
+On Wed, Mar 19, 2014 at 10:30 AM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+...
+> As I said, AFAIK the trend is to get rid of ordering by initcalls and make
+> sure that drivers can handle missing dependencies properly, even for
+> "services" such as DMA, GPIO, clocks and so on, which after all are provided
+> by normal drivers like other.
 
-[snip]
-> > @@ -1893,7 +1943,9 @@ struct sxgbe_priv_data *sxgbe_dvr_probe(struct
-> > device *device,
-> >
-> >         ndev->netdev_ops = &sxgbe_netdev_ops;
-> >
-> > -       ndev->hw_features = NETIF_F_SG | NETIF_F_RXCSUM;
-> > +       ndev->hw_features = NETIF_F_SG | NETIF_F_IP_CSUM |
-NETIF_F_IPV6_CSUM |
-> > +               NETIF_F_RXCSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-> > +               NETIF_F_GRO;
-> 
-> Enable TSO only if HW supports, hence we have to check for HW
-feature/capability registers here also.
-OK. Thanks
+Ok - I'm not following the general kernel dev trends. initcall()
+levels are easy to understand and implement. So I would not be in a
+hurry to replace them.
 
-> 
-> >         ndev->features |= ndev->hw_features | NETIF_F_HIGHDMA;
-> >         ndev->watchdog_timeo = msecs_to_jiffies(TX_TIMEO);
-> >
-> > @@ -1905,6 +1957,13 @@ struct sxgbe_priv_data *sxgbe_dvr_probe(struct
-device *device,
-> >         if (flow_ctrl)
-> >                 priv->flow_ctrl = SXGBE_FLOW_AUTO;      /* RX/TX pause on
-*/
-> >
-> > +       /* Enable TCP segmentation offload for all DMA channels */
-> > +       if (priv->hw_cap.tcpseg_offload) {
-> > +               SXGBE_FOR_EACH_QUEUE(SXGBE_TX_QUEUES, queue_num) {
-> > +                       priv->hw->dma->enable_tso(priv->ioaddr,
-queue_num);
-> > +               }
-> > +       }
-> > +
-> >         /* Rx Watchdog is available, enable depend on platform data */
-> >         if (!priv->plat->riwt_off) {
-> >                 priv->use_riwt = 1;
-> > --
-> > 1.7.10.4
-> >
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe netdev" in
-> > the body of a message to majordomo@vger.kernel.org More majordomo info
-> > at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in the
-body of a message to majordomo@vger.kernel.org More
-> majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> ps. I've written IOMMU support for four different IOMMUs on three
+>> operating systems (See drivers/parisc for two linux examples). But I
+>> still feel like I at best have 80% understanding of how this one is
+>> organized/works. Abstract descriptions and convoluted code have been
+>> handicapping me (and lack of time to dig further).
+>
+>
+> Well, this is one of my concerns with this driver. It isn't easy to read
+> (and so review, maintain, extend and debug found issues).
+
+My postscript comment was more to explain why I'm not confident in my
+opinion - not a reason to reject the patch series.  I still consider
+the whole series as a step forward. But I'm not the expert here.
+
+Right now, with ~30 patches posted by the exynos iommu (official?)
+maintainer, no one else who has a clue will attempt to fix or clean up
+those kinds of problems.  i.e. it's useful to enable others to fix
+what are essentially unspecified "design pattern" issues.
+
+cheers,
+grant
