@@ -1,59 +1,75 @@
-From: Leela Krishna Amudala <leelakrishna.a@gmail.com>
-Subject: Re: [PATCH v11 0/4] thermal: samsung: Clean up and add support for Exynos5420
-Date: Wed, 19 Mar 2014 16:49:36 +0530
-Message-ID: <CAL1wa8fj+pYN7EOkh0nggkwss2U9pJhGEoaA7TG+7oy0LK3zFQ@mail.gmail.com>
-References: <1384238132-24515-1-git-send-email-ch.naveen@samsung.com> <1386657640-21481-1-git-send-email-ch.naveen@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v6 1/4] [media] exynos-scaler: Add DT bindings for SCALER driver
+Date: Wed, 19 Mar 2014 12:31:01 +0100
+Message-ID: <4637278.9G3gGkQ5GA@avalon>
+References: <1395213196-25972-1-git-send-email-shaik.ameer@samsung.com> <1395213196-25972-2-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1386657640-21481-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-pm@vger.kernel.org, Naveen Krishna <naveenkrishna.ch@gmail.com>, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "cpgs ." <cpgs@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:53816 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757582AbaCSL3P (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Mar 2014 07:29:15 -0400
+In-Reply-To: <1395213196-25972-2-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, m.chehab@samsung.com, b.zolnierkie@samsung.com, t.figa@samsung.com, k.debski@samsung.com, arun.kk@samsung.com
 
-Hi All,
+Hi Shaik,
 
-I didn't see this series in mainline, Any comments for this ?
+Thank you for the patch.
 
-Thanks,
-Leela Krishna Amudala.
+On Wednesday 19 March 2014 12:43:13 Shaik Ameer Basha wrote:
+> This patch adds the DT binding documentation for the Exynos5420/5410
+> based SCALER device driver.
+> 
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/media/exynos5-scaler.txt   |   24 +++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/media/exynos5-scaler.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt
+> b/Documentation/devicetree/bindings/media/exynos5-scaler.txt new file mode
+> 100644
+> index 0000000..e1dd465
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
+> @@ -0,0 +1,24 @@
+> +* Samsung Exynos5 SCALER device
+> +
+> +SCALER is used for scaling, blending, color fill and color space
+> +conversion on EXYNOS[5420/5410] SoCs.
+> +
+> +Required properties:
+> +- compatible: should be "samsung,exynos5420-scaler" or
+> +			"samsung,exynos5410-scaler"
+> +- reg: should contain SCALER physical address location and length
+> +- interrupts: should contain SCALER interrupt specifier
+> +- clocks: should contain the SCALER clock phandle and specifier pair for
+> +		each clock listed in clock-names property, according to
+> +		the common clock bindings
+> +- clock-names: should contain exactly one entry
+> +		- "scaler" - IP bus clock
 
+I'm not too familiar with the Exynos platform, but wouldn't it make sense to 
+use a common name across IP cores for interface and function clocks ?
 
-On Tue, Dec 10, 2013 at 12:10 PM, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> This patchset does a little clean up of the existing code (linux-soc-thermal)
-> 1.  [v11] thermal: samsung: replace inten_ bit fields with intclr_
-> 2.  [v11] thermal: samsung: change base_common to more meaningful base_second
->
-> adds support for Exynos5420 in the driver and (linux-soc-thermal)
-> 3.  [v11] thermal: samsung: Add TMU support for Exynos5420 SoCs
-> also adds the device tree nodes for the same to exynos5420.dtsi (linux-samsung.git)
-> 4.  [v11] ARM: dts: Exynos5420: Add device nodes for TMU blocks
->
-> (linux-soc-thermal)
-> Naveen Krishna Chatradhi (3):
->   thermal: samsung: replace inten_ bit fields with intclr_
->   thermal: samsung: change base_common to more meaningful base_second
->   thermal: samsung: Add TMU support for Exynos5420 SoCs
->
->  .../devicetree/bindings/thermal/exynos-thermal.txt |   42 ++++++-
->  drivers/thermal/samsung/exynos_tmu.c               |   72 +++++++++---
->  drivers/thermal/samsung/exynos_tmu.h               |   21 ++--
->  drivers/thermal/samsung/exynos_tmu_data.c          |  119 ++++++++++++++++++--
->  drivers/thermal/samsung/exynos_tmu_data.h          |   12 +-
->  5 files changed, 228 insertions(+), 38 deletions(-)
->
-> (linux-samsung.git)
-> Naveen Krishna Chatradhi (1):
->   ARM: dts: Exynos5420: Add device nodes for TMU blocks
->
->  arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +Example:
+> +	scaler_0: scaler@12800000 {
+> +		compatible = "samsung,exynos5420-scaler";
+> +		reg = <0x12800000 0x1000>;
+> +		interrupts = <0 220 0>;
+> +		clocks = <&clock 381>;
+> +		clock-names = "scaler";
+> +	};
+
+-- 
+Regards,
+
+Laurent Pinchart
