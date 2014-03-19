@@ -1,62 +1,62 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [RFC 3/4] drm: exynos: add IELCD post processor
-Date: Wed, 19 Mar 2014 19:52:54 +0530
-Message-ID: <1395238975-24600-4-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [RFC 2/4] drm: exynos: add MDNIE post processor
+Date: Wed, 19 Mar 2014 19:52:53 +0530
+Message-ID: <1395238975-24600-3-git-send-email-ajaykumar.rs@samsung.com>
 References: <1395238975-24600-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58341 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965308AbaCSOWo (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:31903 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965309AbaCSOXP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 10:22:44 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 19 Mar 2014 10:23:15 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N2O00AGLT9ULF70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Mar 2014 23:22:43 +0900 (KST)
+ with ESMTP id <0N2O005W6T9S4S10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Mar 2014 23:22:41 +0900 (KST)
 In-reply-to: <1395238975-24600-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, sw0312.kim@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, marcheu@chromium.org, Ajay Kumar <ajaykumar.rs@samsung.com>, Shirish S <s.shirish@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Add post processor ops for IELCD and their support functions.
-Expose an interface for the FIMD to register IELCD PP.
+Add post processor ops for MDNIE and their support functions.
+Expose an interface for the FIMD to register MDNIE PP.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 Signed-off-by: Shirish S <s.shirish@samsung.com>
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- drivers/gpu/drm/exynos/Makefile       |   3 +-
- drivers/gpu/drm/exynos/exynos_ielcd.c | 295 ++++++++++++++++++++++++++++++++++
- include/video/samsung_fimd.h          |  43 +++++
- 3 files changed, 340 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/exynos/exynos_ielcd.c
+ drivers/gpu/drm/exynos/Makefile            |   2 +-
+ drivers/gpu/drm/exynos/exynos_mdnie.c      | 707 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_mdnie_regs.h | 154 +++++++
+ 3 files changed, 862 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie.c
+ create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie_regs.h
 
 diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-index 653eab5..f3d7314 100644
+index 02dde22..653eab5 100644
 --- a/drivers/gpu/drm/exynos/Makefile
 +++ b/drivers/gpu/drm/exynos/Makefile
-@@ -10,7 +10,8 @@ exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
+@@ -10,7 +10,7 @@ exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
  
  exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
  exynosdrm-$(CONFIG_DRM_EXYNOS_DMABUF) += exynos_drm_dmabuf.o
--exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o exynos_mdnie.o
-+exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o exynos_mdnie.o \
-+						exynos_ielcd.o
+-exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
++exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o exynos_mdnie.o
  exynosdrm-$(CONFIG_DRM_EXYNOS_DSI)	+= exynos_drm_dsi.o
  exynosdrm-$(CONFIG_DRM_EXYNOS_DP)	+= exynos_dp_core.o exynos_dp_reg.o
  exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o exynos_mixer.o
-diff --git a/drivers/gpu/drm/exynos/exynos_ielcd.c b/drivers/gpu/drm/exynos/exynos_ielcd.c
+diff --git a/drivers/gpu/drm/exynos/exynos_mdnie.c b/drivers/gpu/drm/exynos/exynos_mdnie.c
 new file mode 100644
-index 0000000..33d0d34
+index 0000000..a043853
 --- /dev/null
-+++ b/drivers/gpu/drm/exynos/exynos_ielcd.c
-@@ -0,0 +1,295 @@
-+/* drivers/gpu/drm/exynos/exynos_ielcd.c
++++ b/drivers/gpu/drm/exynos/exynos_mdnie.c
+@@ -0,0 +1,707 @@
++/* drivers/gpu/drm/exynos/exynos_mdnie.c
 + *
-+ * Samsung IELCD driver
++ * Samsung mDNIe driver
 + *
 + * Copyright (C) 2014 Samsung Electronics Co., Ltd.
 + *
@@ -66,9 +66,9 @@ index 0000000..33d0d34
 + * option) any later version.
 +*/
 +
++#include <linux/clk.h>
 +#include <linux/errno.h>
 +#include <linux/of_device.h>
-+#include <linux/delay.h>
 +
 +#include <video/samsung_fimd.h>
 +
@@ -76,337 +76,850 @@ index 0000000..33d0d34
 +
 +#include "exynos_drm_drv.h"
 +#include "exynos_fimd_pp.h"
++#include "exynos_mdnie_regs.h"
 +
-+#define exynos_ielcd_readl(addr)	readl(ielcd->exynos_ielcd_base + addr)
-+#define exynos_ielcd_writel(addr, val) \
-+				writel(val, ielcd->exynos_ielcd_base + addr)
-+#define IELCD_TIMEOUT_CNT	1000
++#define GAMMA_RAMP_LENGTH	17
++#define COLOR_COMPONENTS	3
 +
-+struct ielcd_context {
-+	void __iomem			*exynos_ielcd_base;
-+	unsigned		vdisplay;
-+	unsigned		vsync_len;
-+	unsigned		vbpd;
-+	unsigned		vfpd;
-+	unsigned		hdisplay;
-+	unsigned		hsync_len;
-+	unsigned		hbpd;
-+	unsigned		hfpd;
-+	unsigned		vidcon0;
-+	unsigned		vidcon1;
++#define MDNIE_ON	1
++#define MDNIE_OFF	0
++
++#define PARAM_IN_RANGE(r, p, l, u)					\
++	do {							\
++		r = ((p >= l) && (p <= u)) ? 0 : 1;		\
++		if (r) \
++			DRM_ERROR("Wrong param: %s:%llu\n", #p, (u64)p); \
++	} while (0)
++
++struct exynos_mdnie_drm_gamma {
++	u8 gamma_r[GAMMA_RAMP_LENGTH];
++	u8 gamma_g[GAMMA_RAMP_LENGTH];
++	u8 gamma_b[GAMMA_RAMP_LENGTH];
 +};
 +
-+static int ielcd_logic_start(struct ielcd_context *ielcd)
++struct mdnie_conf_params {
++	u32					modules_enabled;
++	struct exynos_mdnie_drm_gamma		gamma_params;
++	struct drm_exynos_mdnie_window		win;
++	struct drm_mode_color_reproduction	cr_params;
++	struct drm_mode_color_saturation	cs_params;
++	struct drm_mode_edge_enhancement	de_params;
++};
++
++struct mdnie_context {
++	struct mdnie_conf_params		params;
++	struct clk				*mdnie_mux_clk;
++	struct clk				*mdnie_bus_clk;
++	struct clk				*mdnie_src_clk;
++	struct clk				*sclk_mout_fimd;
++	void __iomem				*exynos_mdnie_base;
++	void __iomem				*sysreg_disp1blk;
++	struct drm_display_mode			mode;
++};
++
++static void exynos_mdnie_unmask(struct mdnie_context *mdnie)
 +{
-+	exynos_ielcd_writel(IELCD_AUXCON, IELCD_MAGIC_KEY);
++	writel(!MDNIE_RELEASE_RFF_MASK_REGISTERS,
++			mdnie->exynos_mdnie_base +
++			MDNIE_RELEASE_RFF * sizeof(u32));
++}
++
++static u32 mdnie_read(struct mdnie_context *mdnie, u32 reg)
++{
++	return readl(mdnie->exynos_mdnie_base + reg * sizeof(u32)) &
++			MDNIE_REG_WIDTH;
++}
++
++static void mdnie_write(struct mdnie_context *mdnie, u32 reg, u32 val)
++{
++	writel(val & MDNIE_REG_WIDTH, mdnie->exynos_mdnie_base +
++			(reg & MDNIE_REG_OFFSET_LIMIT) * sizeof(u32));
++
++	exynos_mdnie_unmask(mdnie);
++}
++
++static void exynos_mdnie_bank_sel(struct mdnie_context *mdnie, int bank)
++{
++	if (bank)
++		writel(MDNIE_TOP_R0_BANK1_SEL |
++			MDNIE_TOP_R0_SHADOW_SEL ,
++			mdnie->exynos_mdnie_base);
++	else
++		writel(MDNIE_TOP_R0_BANK0_SEL |
++			MDNIE_TOP_R0_SHADOW_SEL ,
++			mdnie->exynos_mdnie_base);
++
++	exynos_mdnie_unmask(mdnie);
++}
++
++static int exynos_mdnie_set_size(struct mdnie_context *mdnie)
++{
++	unsigned int cfg;
++
++	if ((mdnie->mode.crtc_hdisplay > MDNIE_TOP_RSIZE_MAX) ||
++			(mdnie->mode.crtc_vdisplay > MDNIE_TOP_RSIZE_MAX))
++		return -EINVAL;
++
++	exynos_mdnie_bank_sel(mdnie, 0);
++
++	/* Input Data Unmask */
++	cfg = mdnie_read(mdnie, MDNIE_TOP_R1);
++	cfg &= ~(MDNIE_TOP_R1_MASK_INPUT_DATA_ENABLE);
++	cfg &= ~(MDNIE_TOP_R1_MASK_INPUT_HSYNC);
++	mdnie_write(mdnie, MDNIE_TOP_R1, cfg);
++
++	/* LCD width */
++	mdnie_write(mdnie, MDNIE_TOP_RIHSIZE,
++			mdnie->mode.crtc_hdisplay);
++
++	/* LCD height */
++	mdnie_write(mdnie, MDNIE_TOP_RIVSIZE,
++			mdnie->mode.crtc_vdisplay);
++	return 0;
++}
++
++static void mdnie_set_all_modules_off(struct mdnie_context *mdnie)
++{
++	u32 val;
++
++	val = mdnie_read(mdnie, MDNIE_TOP_R8);
++	val &= ~(MDNIE_TOP_R8_DITH_MODULE_ON |
++		MDNIE_TOP_R8_ABC_MODULE_ON |
++		MDNIE_TOP_R8_SCR_MODULE_ON |
++		MDNIE_TOP_R8_CC_MODULE_ON |
++		MDNIE_TOP_R8_CS_MODULE_ON |
++		MDNIE_TOP_R8_DE_MODULE_ON);
++	mdnie_write(mdnie, MDNIE_TOP_R8, val);
++
++	val = mdnie_read(mdnie, MDNIE_TOP_R9);
++	val &= ~(MDNIE_TOP_R9_MCM_MODULE_ON);
++	mdnie_write(mdnie, MDNIE_TOP_R9, val);
++
++	val = mdnie_read(mdnie, MDNIE_TOP_RA);
++	val &= ~(MDNIE_TOP_RA_UC_MODULE_ON);
++	mdnie_write(mdnie, MDNIE_TOP_RA, val);
++}
++
++static void mdnie_set_req_modules_on(struct mdnie_context *mdnie)
++{
++	u32 val;
++
++	val = mdnie_read(mdnie, MDNIE_TOP_R8);
++	if (mdnie->params.modules_enabled & BIT(MDNIE_COLOR_REPRODUCTION))
++		val |= MDNIE_TOP_R8_SCR_MODULE_ON;
++	if (mdnie->params.modules_enabled & BIT(MDNIE_CURVE_CONTROL))
++		val |= MDNIE_TOP_R8_CC_MODULE_ON;
++	if (mdnie->params.modules_enabled & BIT(MDNIE_COLOR_SATURATION))
++		val |= MDNIE_TOP_R8_CS_MODULE_ON;
++	if (mdnie->params.modules_enabled & BIT(MDNIE_DETAIL_ENHANCEMENT))
++		val |= MDNIE_TOP_R8_DE_MODULE_ON;
++
++	mdnie_write(mdnie, MDNIE_TOP_R8, val);
++}
++
++static int mdnie_set_color_saturation_params(
++		struct mdnie_context *mdnie,
++		const struct drm_mode_color_saturation *params)
++{
++	int ret;
++
++	PARAM_IN_RANGE(ret, params->hue_gain_red, HG_MIN, HG_MAX);
++	PARAM_IN_RANGE(ret, params->hue_gain_green, HG_MIN, HG_MAX);
++	PARAM_IN_RANGE(ret, params->hue_gain_blue, HG_MIN, HG_MAX);
++	PARAM_IN_RANGE(ret, params->hue_gain_cyan, HG_MIN, HG_MAX);
++	PARAM_IN_RANGE(ret, params->hue_gain_magenta, HG_MIN, HG_MAX);
++	PARAM_IN_RANGE(ret, params->hue_gain_yellow, HG_MIN, HG_MAX);
++	PARAM_IN_RANGE(ret, params->hue_gain_overall, HG_MIN, HG_MAX);
++
++	if (ret)
++		return -EINVAL;
++
++	memcpy(&mdnie->params.cs_params, params, sizeof(*params));
 +
 +	return 0;
 +}
 +
-+static void ielcd_set_polarity(struct ielcd_context *ielcd)
++static int mdnie_set_color_reproduction_params(
++		struct mdnie_context *mdnie,
++		const struct drm_mode_color_reproduction *params)
 +{
-+	unsigned int cfg;
++	int ret;
 +
-+	cfg = exynos_ielcd_readl(IELCD_VIDCON1);
++	PARAM_IN_RANGE(ret, params->red_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->red_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->red_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->green_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->green_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->green_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->blue_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->blue_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->blue_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->cyan_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->cyan_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->cyan_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->magenta_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->magenta_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->magenta_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->yellow_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->yellow_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->yellow_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->white_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->white_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->white_rgb[2], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->black_rgb[0], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->black_rgb[1], CC_MIN, CC_MAX);
++	PARAM_IN_RANGE(ret, params->black_rgb[2], CC_MIN, CC_MAX);
 +
-+	cfg &= ~(VIDCON1_INV_VCLK | VIDCON1_INV_HSYNC
-+				| VIDCON1_INV_VSYNC | VIDCON1_INV_VDEN);
-+	cfg |= ielcd->vidcon1;
-+	exynos_ielcd_writel(IELCD_VIDCON1, cfg);
++	if (ret)
++		return -EINVAL;
++
++	memcpy(&mdnie->params.cr_params, params, sizeof(*params));
++	return 0;
 +}
 +
-+static void ielcd_set_timing(struct ielcd_context *ielcd)
++static int mdnie_set_edge_enhancement_params(
++		struct mdnie_context *mdnie,
++		const struct drm_mode_edge_enhancement *params)
 +{
-+	unsigned int cfg;
++	int ret;
 +
-+	/*LCD verical porch setting*/
-+	cfg = VIDTCON0_VBPD(ielcd->vbpd - 1) |
-+		VIDTCON0_VFPD(ielcd->vfpd - 1) |
-+		VIDTCON0_VSPW(ielcd->vsync_len - 1);
++	PARAM_IN_RANGE(ret, params->edge_th, TH_MIN, TH_MAX);
++	PARAM_IN_RANGE(ret, params->background_th, TH_MIN, TH_MAX);
++	PARAM_IN_RANGE(ret, params->pg_edge, GAIN_MIN, GAIN_MAX);
++	PARAM_IN_RANGE(ret, params->pg_flat, GAIN_MIN, GAIN_MAX);
++	PARAM_IN_RANGE(ret, params->pg_background, GAIN_MIN, GAIN_MAX);
++	PARAM_IN_RANGE(ret, params->ng_edge, GAIN_MIN, GAIN_MAX);
++	PARAM_IN_RANGE(ret, params->ng_flat, GAIN_MIN, GAIN_MAX);
++	PARAM_IN_RANGE(ret, params->ng_background, GAIN_MIN, GAIN_MAX);
 +
-+	exynos_ielcd_writel(IELCD_VIDTCON0, cfg);
-+	/*LCD horizontal porch setting*/
-+	cfg = VIDTCON1_HBPD(ielcd->hbpd - 1) |
-+		VIDTCON1_HFPD(ielcd->hfpd - 1) |
-+		VIDTCON1_HSPW(ielcd->hsync_len - 1);
++	if (ret)
++		return -EINVAL;
 +
-+	exynos_ielcd_writel(IELCD_VIDTCON1, cfg);
++	memcpy(&mdnie->params.de_params, params, sizeof(*params));
++	return 0;
 +}
 +
-+static void ielcd_set_lcd_size(struct ielcd_context *ielcd)
++static int mdnie_set_window_params(
++		struct mdnie_context *mdnie,
++		const struct drm_exynos_mdnie_window *params)
 +{
-+	unsigned int cfg;
++	int ret;
 +
-+	cfg = (IELCD_VIDTCON2_LINEVAL(ielcd->vdisplay - 1) |
-+				IELCD_VIDTCON2_HOZVAL(ielcd->hdisplay - 1));
-+	exynos_ielcd_writel(IELCD_VIDTCON2, cfg);
++	PARAM_IN_RANGE(ret, params->win_x, X_MIN, X_MAX);
++	PARAM_IN_RANGE(ret, params->win_y, Y_MIN, Y_MAX);
++	PARAM_IN_RANGE(ret, params->win_w, params->win_x, X_MAX);
++	PARAM_IN_RANGE(ret, params->win_h, params->win_y, Y_MAX);
 +
-+	/* window0 position setting */
-+	exynos_ielcd_writel(IELCD_VIDOSD0A, 0);
-+	cfg = (IELCD_VIDOSDB_XPOS_END(ielcd->hdisplay - 1)) |
-+			(IELCD_VIDOSDB_YPOS_END(ielcd->vdisplay - 1));
-+	exynos_ielcd_writel(IELCD_VIDOSD0B, cfg);
++	if (ret)
++		return -EINVAL;
 +
-+	/* window0 osd size setting */
-+	exynos_ielcd_writel(IELCD_VIDOSD0C, ielcd->hdisplay *
-+							ielcd->vdisplay);
-+
-+	/* window0 page size(bytes) */
-+	exynos_ielcd_writel(IELCD_VIDW00ADD2, ielcd->hdisplay * 4);
++	memcpy(&mdnie->params.win, params, sizeof(*params));
++	return 0;
 +}
 +
-+static int exynos_ielcd_hw_trigger_check(struct ielcd_context *ielcd)
++static int mdnie_enable_sub_modules(struct mdnie_context *mdnie,
++		uint64_t module_en)
 +{
-+	unsigned int cfg;
-+	unsigned int count = 0;
++	uint64_t mask;
++	int ret;
 +
-+	cfg = exynos_ielcd_readl(IELCD_TRIGCON);
-+	cfg &= ~(SWTRGCMD_W0BUF | TRGMODE_W0BUF);
-+	cfg |= (SWTRGCMD_W0BUF | TRGMODE_W0BUF);
-+	exynos_ielcd_writel(IELCD_TRIGCON, cfg);
++	mask = BIT(MDNIE_COLOR_REPRODUCTION) |
++		BIT(MDNIE_CURVE_CONTROL) |
++		BIT(MDNIE_COLOR_SATURATION) |
++		BIT(MDNIE_DETAIL_ENHANCEMENT);
 +
-+	do {
-+		cfg = exynos_ielcd_readl(IELCD_SHADOWCON);
-+		cfg |= IELCD_W0_SW_SHADOW_UPTRIG;
-+		exynos_ielcd_writel(IELCD_SHADOWCON, cfg);
++	ret = module_en & ~mask;
 +
-+		cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-+		cfg |= IELCD_SW_SHADOW_UPTRIG;
-+		exynos_ielcd_writel(IELCD_VIDCON0, cfg);
++	if (ret)
++		return -EINVAL;
 +
-+		count++;
-+		if (count > IELCD_TIMEOUT_CNT) {
-+			DRM_ERROR("ielcd start fail\n");
-+			return -EBUSY;
-+		}
-+		udelay(10);
-+	} while (exynos_ielcd_readl(IELCD_WINCON0) & IELCD_TRGSTATUS);
++	mdnie->params.modules_enabled = (uint32_t)module_en;
++	return 0;
++}
++
++static void mdnie_apply_de_params(struct mdnie_context *mdnie)
++{
++	struct drm_mode_edge_enhancement de = mdnie->params.de_params;
++
++	/* remains contant for all mdnie modes */
++	u32 max_out_ratio = 0x1000;
++	u32 min_out_ratio = 0x0100;
++
++	mdnie_write(mdnie, MDNIE_DE_TH_EDGE, de.edge_th);
++	mdnie_write(mdnie, MDNIE_DE_TH_BKG, de.background_th);
++	mdnie_write(mdnie, MDNIE_DE_GAINPOS_EDGE, de.pg_edge);
++	mdnie_write(mdnie, MDNIE_DE_GAINPOS_FLAT, de.pg_flat);
++	mdnie_write(mdnie, MDNIE_DE_GAINPOS_BKG, de.pg_background);
++	mdnie_write(mdnie, MDNIE_DE_GAINNEG_EDGE, de.ng_edge);
++	mdnie_write(mdnie, MDNIE_DE_GAINNEG_FLAT, de.ng_flat);
++	mdnie_write(mdnie, MDNIE_DE_GAINNEG_BKG, de.ng_background);
++	mdnie_write(mdnie, MDNIE_DE_MAX_RATIO, max_out_ratio);
++	mdnie_write(mdnie, MDNIE_DE_MIN_RATIO, min_out_ratio);
++}
++
++static void mdnie_apply_cs_params(struct mdnie_context *mdnie)
++{
++	struct drm_mode_color_saturation cs = mdnie->params.cs_params;
++
++	mdnie_write(mdnie, MDNIE_CS_RED_YELLOW_HUE_GAIN,
++		MDNIE_CS_RED_HUE_GAIN(cs.hue_gain_red) |
++		MDNIE_CS_YELLOW_HUE_GAIN(cs.hue_gain_yellow));
++
++	mdnie_write(mdnie, MDNIE_CS_GREEN_CYAN_HUE_GAIN,
++		MDNIE_CS_GREEN_HUE_GAIN(cs.hue_gain_green) |
++		MDNIE_CS_CYAN_HUE_GAIN(cs.hue_gain_cyan));
++
++	mdnie_write(mdnie, MDNIE_CS_BLUE_MAG_HUE_GAIN,
++		MDNIE_CS_BLUE_HUE_GAIN(cs.hue_gain_blue) |
++		MDNIE_CS_MAGENTA_HUE_GAIN(cs.hue_gain_magenta));
++
++	mdnie_write(mdnie, MDNIE_CS_OVERALL_HUE_GAIN_REG,
++		mdnie_read(mdnie, MDNIE_CS_OVERALL_HUE_GAIN_REG) |
++		MDNIE_CS_OVERALL_HUE_GAIN(cs.hue_gain_overall));
++}
++
++static void mdnie_apply_cc_gamma_params(struct mdnie_context *mdnie)
++{
++	struct exynos_mdnie_drm_gamma *cc = &mdnie->params.gamma_params;
++	u32 i, val;
++	u8 strength = MDNIE_DEFAULT_CC_STRENGTH;
++	u8 gamma_channel = RGB_GAMMA_R;
++
++	val = mdnie_read(mdnie, MDNIE_CC_CHSEL_STRENGTH);
++	val &= ~(MDNIE_CC_CHSEL_MASK);
++	val |= MDNIE_CC_CHSEL(gamma_channel);
++	val &= ~(MDNIE_CC_STRENGTH_MASK);
++	val |= MDNIE_CC_STRENGTH(strength);
++	mdnie_write(mdnie, MDNIE_CC_CHSEL_STRENGTH, val);
++
++	mdnie_write(mdnie, MDNIE_CC_GAMMA_RED_0_REG, cc->gamma_r[0]);
++	for (i = 1; i <= 8; i++)
++		mdnie_write(mdnie,
++			MDNIE_CC_GAMMA_RED_0_REG + i,
++			MDNIE_CC_GAMMA_MSB(cc->gamma_r[i]) |
++			MDNIE_CC_GAMMA_LSB(cc->gamma_r[i + 8]));
++
++	mdnie_write(mdnie, MDNIE_CC_GAMMA_GREEN_0_REG, cc->gamma_g[0]);
++	for (i = 1; i <= 8; i++)
++		mdnie_write(mdnie,
++			MDNIE_CC_GAMMA_GREEN_0_REG + i,
++			MDNIE_CC_GAMMA_MSB(cc->gamma_g[i]) |
++			MDNIE_CC_GAMMA_LSB(cc->gamma_g[i + 8]));
++
++	mdnie_write(mdnie, MDNIE_CC_GAMMA_BLUE_0_REG, cc->gamma_b[0]);
++	for (i = 1; i <= 8; i++)
++		mdnie_write(mdnie,
++			MDNIE_CC_GAMMA_BLUE_0_REG + i,
++			MDNIE_CC_GAMMA_MSB(cc->gamma_b[i]) |
++			MDNIE_CC_GAMMA_LSB(cc->gamma_b[i + 8]));
++}
++
++static void mdnie_apply_cr_params(struct mdnie_context *mdnie)
++{
++	struct drm_mode_color_reproduction cr = mdnie->params.cr_params;
++
++	mdnie_write(mdnie, MDNIE_SCR_R_R,
++			MDNIE_SCR_MSB(cr.red_rgb[0]) |
++			MDNIE_SCR_LSB(cr.cyan_rgb[0]));
++
++	mdnie_write(mdnie, MDNIE_SCR_R_G,
++			MDNIE_SCR_MSB(cr.red_rgb[1]) |
++			MDNIE_SCR_LSB(cr.cyan_rgb[1]));
++
++	mdnie_write(mdnie, MDNIE_SCR_R_B,
++			MDNIE_SCR_MSB(cr.red_rgb[2]) |
++			MDNIE_SCR_LSB(cr.cyan_rgb[2]));
++
++	mdnie_write(mdnie, MDNIE_SCR_G_R,
++			MDNIE_SCR_MSB(cr.green_rgb[0]) |
++			MDNIE_SCR_LSB(cr.magenta_rgb[0]));
++
++	mdnie_write(mdnie, MDNIE_SCR_G_G,
++			MDNIE_SCR_MSB(cr.green_rgb[1]) |
++			MDNIE_SCR_LSB(cr.magenta_rgb[1]));
++
++	mdnie_write(mdnie, MDNIE_SCR_G_B,
++			MDNIE_SCR_MSB(cr.green_rgb[2]) |
++			MDNIE_SCR_LSB(cr.magenta_rgb[2]));
++
++	mdnie_write(mdnie, MDNIE_SCR_B_R,
++			MDNIE_SCR_MSB(cr.blue_rgb[0]) |
++			MDNIE_SCR_LSB(cr.yellow_rgb[0]));
++
++	mdnie_write(mdnie, MDNIE_SCR_B_G,
++			MDNIE_SCR_MSB(cr.blue_rgb[1]) |
++			MDNIE_SCR_LSB(cr.yellow_rgb[1]));
++
++	mdnie_write(mdnie, MDNIE_SCR_B_B,
++			MDNIE_SCR_MSB(cr.blue_rgb[2]) |
++			MDNIE_SCR_LSB(cr.yellow_rgb[2]));
++
++	mdnie_write(mdnie, MDNIE_SCR_K_R,
++			MDNIE_SCR_MSB(cr.black_rgb[0]) |
++			MDNIE_SCR_LSB(cr.white_rgb[0]));
++
++	mdnie_write(mdnie, MDNIE_SCR_K_G,
++			MDNIE_SCR_MSB(cr.black_rgb[1]) |
++			MDNIE_SCR_LSB(cr.white_rgb[1]));
++
++	mdnie_write(mdnie, MDNIE_SCR_K_B,
++			MDNIE_SCR_MSB(cr.black_rgb[2]) |
++			MDNIE_SCR_LSB(cr.white_rgb[2]));
++}
++
++static int exynos_mdnie_update(struct mdnie_context *mdnie)
++{
++	/* Bank 0 controls */
++	exynos_mdnie_bank_sel(mdnie, 0);
++
++	mdnie_set_all_modules_off(mdnie);
++	mdnie_set_req_modules_on(mdnie);
++
++	if (mdnie->params.modules_enabled & BIT(MDNIE_DETAIL_ENHANCEMENT))
++		mdnie_apply_de_params(mdnie);
++	if (mdnie->params.modules_enabled & BIT(MDNIE_COLOR_SATURATION))
++		mdnie_apply_cs_params(mdnie);
++
++	/* Bank 1 controls */
++	exynos_mdnie_bank_sel(mdnie, 1);
++
++	if (mdnie->params.modules_enabled & BIT(MDNIE_CURVE_CONTROL))
++		mdnie_apply_cc_gamma_params(mdnie);
++	if (mdnie->params.modules_enabled & BIT(MDNIE_COLOR_REPRODUCTION))
++		mdnie_apply_cr_params(mdnie);
 +
 +	return 0;
 +}
 +
-+static int exynos_ielcd_display_on(struct ielcd_context *ielcd)
++static void exynos_fimd_mdnie_cfg(struct mdnie_context *mdnie, int mdnie_on)
 +{
-+	unsigned int cfg;
++	u32 val = readl(mdnie->sysreg_disp1blk);
 +
-+	cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-+	cfg |= (VIDCON0_ENVID | VIDCON0_ENVID_F);
-+	exynos_ielcd_writel(IELCD_VIDCON0, cfg);
++	val &= ~EXYNOS_FIFORST_DISP1;		/* DISP1_BLK FIFO reset */
++	val &= ~EXYNOS_CLEAR_DISP0;		/* Clear DISP0 */
++	val &= ~EXYNOS_VT_DISP1_MASK;
++	val |= EXYNOS_VT_DISP1_RGB;		/* Set RGB interface */
 +
-+	return exynos_ielcd_hw_trigger_check(ielcd);
++	val |= EXYNOS_FIFORST_DISP1;
++
++	if (mdnie_on) {
++		val &= ~EXYNOS_FIMDBYPASS_DISP1;	/* MIE, MDNIE path */
++		val |= EXYNOS_MDNIE_SEL;		/* MDNIE */
++		val |= EXYNOS_MDNIE_ENABLE;		/* ENABLE */
++	} else {
++		val |= EXYNOS_FIMDBYPASS_DISP1;		/* FIMD path */
++		val &= ~EXYNOS_MDNIE_SEL;		/* Clear MDNIE */
++		val &= ~EXYNOS_MDNIE_ENABLE;		/* Clear MDNIE ENABLE */
++	}
++	writel(val, mdnie->sysreg_disp1blk);
 +}
 +
-+int exynos_ielcd_display_off(void *pp_ctx)
++static int exynos_mdnie_power_on(void *pp_ctx)
 +{
-+	struct ielcd_context *ielcd = pp_ctx;
-+	unsigned int cfg, ielcd_count = 0;
++	struct mdnie_context *mdnie = pp_ctx;
 +	int ret = 0;
 +
-+	cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-+	cfg &= ~(VIDCON0_ENVID | VIDCON0_ENVID_F);
++	exynos_fimd_mdnie_cfg(mdnie, MDNIE_ON);
 +
-+	exynos_ielcd_writel(IELCD_VIDCON0, cfg);
-+
-+	do {
-+		if (++ielcd_count > IELCD_TIMEOUT_CNT) {
-+			DRM_ERROR("ielcd off TIMEDOUT\n");
-+			ret = -ETIMEDOUT;
-+			break;
-+		}
-+
-+		if (!(exynos_ielcd_readl(IELCD_VIDCON1) &
-+						VIDCON1_LINECNT_MASK)) {
-+			ret = 0;
-+			break;
-+		}
-+		udelay(200);
-+	} while (1);
-+
-+	return ret;
-+}
-+
-+static void exynos_ielcd_config_rgb(struct ielcd_context *ielcd)
-+{
-+	unsigned int cfg;
-+
-+	cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-+	cfg &= ~(VIDCON0_VIDOUT_MASK | VIDCON0_VCLK_MASK);
-+	cfg |= VIDCON0_VIDOUT_RGB;
-+	cfg |= VIDCON0_VCLK_NORMAL;
-+
-+	exynos_ielcd_writel(IELCD_VIDCON0, cfg);
-+}
-+
-+int exynos_ielcd_power_on(void *pp_ctx)
-+{
-+	struct ielcd_context *ielcd = pp_ctx;
-+	unsigned int cfg;
-+	int ret = 0;
-+
-+	ielcd_logic_start(ielcd);
-+	ielcd_set_polarity(ielcd);
-+
-+	ielcd_set_lcd_size(ielcd);
-+	ielcd_set_timing(ielcd);
-+
-+	/* window0 setting , fixed */
-+	cfg = WINCONx_ENLOCAL | WINCON0_BPPMODE_24BPP_888 | WINCONx_ENWIN;
-+	exynos_ielcd_writel(IELCD_WINCON0, cfg);
-+
-+	exynos_ielcd_config_rgb(ielcd);
-+
-+	ret = exynos_ielcd_display_on(ielcd);
-+	if (ret) {
-+		DRM_ERROR("IELCD failed to start\n");
++	ret = clk_prepare_enable(mdnie->mdnie_bus_clk);
++	if (ret < 0) {
++		DRM_ERROR("failed to enable mdnie bus clk [%d]\n", ret);
 +		return ret;
 +	}
 +
-+	return 0;
-+}
-+
-+static void exynos_ielcd_mode_set(void *pp_ctx,
-+				const struct drm_display_mode *in_mode)
-+{
-+	struct ielcd_context *ielcd = pp_ctx;
-+
-+	ielcd->vdisplay = in_mode->crtc_vdisplay;
-+	ielcd->vsync_len = in_mode->crtc_vsync_end - in_mode->crtc_vsync_start;
-+	ielcd->vbpd = in_mode->crtc_vtotal - in_mode->crtc_vsync_end;
-+	ielcd->vfpd = in_mode->crtc_vsync_start - in_mode->crtc_vdisplay;
-+
-+	ielcd->hdisplay = in_mode->crtc_hdisplay;
-+	ielcd->hsync_len = in_mode->crtc_hsync_end - in_mode->crtc_hsync_start;
-+	ielcd->hbpd = in_mode->crtc_htotal - in_mode->crtc_hsync_end;
-+	ielcd->hfpd = in_mode->crtc_hsync_start - in_mode->crtc_hdisplay;
-+}
-+
-+static struct exynos_fimd_pp_ops ielcd_ops = {
-+	.power_on =	exynos_ielcd_power_on,
-+	.power_off =	exynos_ielcd_display_off,
-+	.mode_set =	exynos_ielcd_mode_set,
-+};
-+
-+static struct exynos_fimd_pp ielcd_pp = {
-+	.ops =		&ielcd_ops,
-+};
-+
-+int exynos_ielcd_init(struct device *dev, struct exynos_fimd_pp **pp)
-+{
-+	struct device_node *ielcd_np;
-+	struct ielcd_context *ielcd;
-+	u32 addr[2];
-+	int ret = 0;
-+
-+	ielcd = kzalloc(sizeof(struct ielcd_context), GFP_KERNEL);
-+	if (!ielcd) {
-+		DRM_ERROR("failed to allocate ielcd\n");
-+		ret = -ENOMEM;
-+		goto error0;
++	ret = clk_prepare_enable(mdnie->mdnie_src_clk);
++	if (ret < 0) {
++		DRM_ERROR("failed to enable mdnie src clk [%d]\n", ret);
++		clk_disable_unprepare(mdnie->mdnie_bus_clk);
++		return ret;
 +	}
 +
-+	ielcd_np = of_parse_phandle(dev->of_node, "samsung,ielcd", 0);
-+	if (!ielcd_np) {
-+		DRM_ERROR("No ielcd node present, "
-+					"MDNIE feature will be disabled\n");
-+		ret = -ENODEV;
-+		goto error1;
-+	}
++	ret = exynos_mdnie_set_size(mdnie);
++	exynos_mdnie_update(mdnie);
 +
-+	if (of_property_read_u32_array(ielcd_np, "reg", addr, 2)) {
-+		DRM_ERROR("failed to get base address for IELCD\n");
-+		ret = -ENOMEM;
-+		goto error1;
-+	}
-+
-+	ielcd->exynos_ielcd_base = ioremap(addr[0], addr[1]);
-+	if (!ielcd->exynos_ielcd_base) {
-+		DRM_ERROR("failed to ioremap ielcd device\n");
-+		ret = -ENOMEM;
-+		goto error1;
-+	}
-+
-+	if (of_get_property(dev->of_node, "samsung,fimd-vidout-rgb", NULL))
-+		ielcd->vidcon0 |= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB;
-+	if (of_get_property(dev->of_node, "samsung,fimd-inv-hsync", NULL))
-+		ielcd->vidcon1 |= VIDCON1_INV_HSYNC;
-+	if (of_get_property(dev->of_node, "samsung,fimd-inv-vsync", NULL))
-+		ielcd->vidcon1 |= VIDCON1_INV_VSYNC;
-+	if (of_get_property(dev->of_node, "samsung,fimd-inv-vclk", NULL))
-+		ielcd->vidcon1 |= VIDCON1_INV_VCLK;
-+	if (of_get_property(dev->of_node, "samsung,fimd-inv-vden", NULL))
-+		ielcd->vidcon1 |= VIDCON1_INV_VDEN;
-+
-+	ielcd_pp.ctx = ielcd;
-+
-+	*pp = &ielcd_pp;
-+
-+	DRM_INFO("IELCD initialzation done\n");
-+
-+	return 0;
-+error1:
-+	kfree(ielcd);
-+error0:
 +	return ret;
 +}
-+EXPORT_SYMBOL(exynos_ielcd_init);
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index 3ff7cad..cc64757 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -60,7 +60,9 @@
- #define VIDCON0_CLKVAL_F_SHIFT			6
- #define VIDCON0_CLKVAL_F_LIMIT			0xff
- #define VIDCON0_CLKVAL_F(_x)			((_x) << 6)
-+#define VIDCON0_VCLK_MASK			(1 << 5)
- #define VIDCON0_VCLKFREE			(1 << 5)
-+#define VIDCON0_VCLK_NORMAL			(0 << 5)
- #define VIDCON0_CLKDIR				(1 << 4)
- 
- #define VIDCON0_CLKSEL_MASK			(0x3 << 2)
-@@ -466,3 +468,44 @@
- #define FIMD_V8_VIDTCON2	0x20018
- #define FIMD_V8_VIDTCON3	0x2001C
- #define FIMD_V8_VIDCON1		0x20004
 +
-+/* IELCD Register Offsets */
-+#define IELCD_VIDCON0			(0x0000)
-+#define IELCD_VIDCON1			(0x0004)
++static int exynos_mdnie_power_off(void *pp_ctx)
++{
++	struct mdnie_context *mdnie = pp_ctx;
 +
-+#define IELCD_VIDTCON0			(0x0010)
-+#define IELCD_VIDTCON1			(0x0014)
-+#define IELCD_VIDTCON2			(0x0018)
++	clk_disable_unprepare(mdnie->mdnie_src_clk);
++	clk_disable_unprepare(mdnie->mdnie_bus_clk);
 +
-+#define IELCD_WINCON0			(0x0020)
-+#define IELCD_TRGSTATUS			(1 << 25)
++	exynos_fimd_mdnie_cfg(mdnie, MDNIE_OFF);
 +
-+#define IELCD_SHADOWCON			(0x0034)
++	return 0;
++}
 +
-+#define IELCD_VIDOSD0A			(0x0040)
-+#define IELCD_VIDOSD0B			(0x0044)
-+#define IELCD_VIDOSD0C			(0x0048)
-+#define IELCD_VIDW00ADD2		(0x0100)
++static int exynos_mdnie_set_property(struct drm_device *drm_dev,
++		void *pp_ctx, struct drm_property *property, uint64_t val)
++{
++	struct mdnie_context *mdnie = pp_ctx;
++	struct drm_property_blob *blob;
++	struct drm_mode_object *blob_obj;
++	int ret = 0;
 +
-+#define IELCD_TRIGCON			(0x01A4)
-+#define IELCD_AUXCON			(0x0278)
++	DRM_DEBUG("[PROP:%s, VALUE:%llu]\n", property->name, val);
 +
-+/* Value */
-+#define IELCD_MAGIC_KEY			(0x2ff47)
++	if (drm_dev->mode_config.color_saturation_property == property) {
++		blob = drm_dev->mode_config.color_saturation_blob_ptr;
++		ret = mdnie_set_color_saturation_params(mdnie,
++			(struct drm_mode_color_saturation *)blob->data);
++		if (ret)
++			return ret;
++	}
 +
-+/* Register bit */
-+#define IELCD_VIDTCON2_LINEVAL(_x)	((_x) << 12)
-+#define IELCD_VIDTCON2_HOZVAL(_x)	((_x) << 0)
++	if (drm_dev->mode_config.color_reproduction_property == property) {
++		blob = drm_dev->mode_config.color_reproduction_blob_ptr;
++		mdnie_set_color_reproduction_params(mdnie,
++			(struct drm_mode_color_reproduction *)blob->data);
++		if (ret)
++			return ret;
++	}
 +
-+/* IELCD_VIDCON0 */
-+#define IELCD_SW_SHADOW_UPTRIG		(1 << 14)
++	if (drm_dev->mode_config.edge_enhancement_property == property) {
++		blob = drm_dev->mode_config.edge_enhancement_blob_ptr;
++		mdnie_set_edge_enhancement_params(mdnie,
++			(struct drm_mode_edge_enhancement *)blob->data);
++		if (ret)
++			return ret;
++	}
 +
-+/* IELCD_SHADOWCON */
-+#define IELCD_W0_SW_SHADOW_UPTRIG	(1 << 16)
++	if (!strcmp("mdnie_window", property->name)) {
++		blob_obj = drm_mode_object_find(drm_dev, val,
++				DRM_MODE_OBJECT_BLOB);
++		blob = obj_to_blob(blob_obj);
 +
-+/* IELCD_IELCD_VIDOSD */
-+#define IELCD_VIDOSDB_XPOS_END(_x)	((_x) << 11)
-+#define IELCD_VIDOSDB_YPOS_END(_x)	((_x) << 0)
++		mdnie_set_window_params(mdnie,
++			(struct drm_exynos_mdnie_window *)blob->data);
++		if (ret)
++			return ret;
++	}
 +
-+#define SWTRGCMD_W0BUF		(1 << 6)
-+#define TRGMODE_W0BUF		(1 << 5)
++	if (!strcmp("mdnie_modules_enable", property->name)) {
++		mdnie_enable_sub_modules(mdnie, val);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static int exynos_mdnie_set_gamma(void *pp_ctx, u16 *r, u16 *g,
++		u16 *b, uint32_t start, uint32_t size)
++{
++	struct mdnie_context *mdnie = pp_ctx;
++	struct exynos_mdnie_drm_gamma *gamma = &mdnie->params.gamma_params;
++	int i, ret;
++
++	DRM_DEBUG("[LENGTH :%u]\n", size);
++
++	if (size > GAMMA_RAMP_LENGTH)
++		return -EINVAL;
++
++	for (i = 0; i < size; i++) {
++		PARAM_IN_RANGE(ret, r[i], CC_MIN, CC_MAX);
++		PARAM_IN_RANGE(ret, g[i], CC_MIN, CC_MAX);
++		PARAM_IN_RANGE(ret, b[i], CC_MIN, CC_MAX);
++	}
++
++	if (ret)
++		return -EINVAL;
++
++	for (i = 0; i < size; i++) {
++		gamma->gamma_r[i] = r[i];
++		gamma->gamma_g[i] = g[i];
++		gamma->gamma_b[i] = b[i];
++	}
++
++	return 0;
++}
++
++void exynos_mdnie_mode_set(void *pp_ctx,
++			const struct drm_display_mode *in_mode)
++{
++	struct mdnie_context *mdnie = pp_ctx;
++
++	DRM_DEBUG("[MODE :%s]\n", in_mode->name);
++
++	/* preserve mode everytime for later use */
++	drm_mode_copy(&mdnie->mode, in_mode);
++}
++
++static struct exynos_fimd_pp_ops mdnie_ops = {
++	.power_on = exynos_mdnie_power_on,
++	.power_off = exynos_mdnie_power_off,
++	.set_property = exynos_mdnie_set_property,
++	.set_gamma = exynos_mdnie_set_gamma,
++	.mode_set = exynos_mdnie_mode_set,
++};
++
++static struct exynos_fimd_pp mdnie_pp = {
++	.ops = &mdnie_ops,
++};
++
++static int dt_parse_disp1blk_cfg(struct device *dev, u32 *disp1blk_addr)
++{
++	struct device_node *np = dev->of_node;
++
++	if (of_property_read_u32(np, "samsung,disp1blk-cfg", disp1blk_addr)) {
++		DRM_INFO("No DISP1BLK_CFG property present, "
++			"MDNIE feature will be disabled\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int exynos_iomap_disp1blk(struct mdnie_context *mdnie,
++			u32 disp1blk_addr)
++{
++	mdnie->sysreg_disp1blk = ioremap(disp1blk_addr, 4);
++	if (!mdnie->sysreg_disp1blk) {
++		DRM_ERROR("failed to ioremap DISP1BLK_CFG\n");
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++int exynos_mdnie_init(struct device *dev, struct exynos_fimd_pp **pp)
++{
++	struct device_node *np = dev->of_node;
++	struct device_node *mdnie_np;
++	struct mdnie_context *mdnie = NULL;
++	u32 disp1blk_phyaddr;
++	int ret = 0;
++	u32 buf[2];
++
++	mdnie_np = of_parse_phandle(np, "samsung,mdnie", 0);
++	if (!mdnie_np) {
++		DRM_INFO("No mdnie node present, "
++				"MDNIE feature will be disabled\n");
++		ret = -EINVAL;
++		goto err0;
++	}
++
++	if (of_property_read_u32_array(mdnie_np, "reg", buf, 2)) {
++		DRM_ERROR("failed to get base address for MDNIE\n");
++		ret = -ENOMEM;
++		goto err0;
++	}
++
++	mdnie = kzalloc(sizeof(struct mdnie_context), GFP_KERNEL);
++	if (!mdnie) {
++		DRM_ERROR("failed to allocate mdnie\n");
++		ret = -ENOMEM;
++		goto err0;
++	}
++
++	mdnie->exynos_mdnie_base = ioremap(buf[0], buf[1]);
++	if (!mdnie->exynos_mdnie_base) {
++		DRM_ERROR("failed to ioremap mdnie device\n");
++		ret = -ENOMEM;
++		goto err1;
++	}
++
++	if (dt_parse_disp1blk_cfg(dev, &disp1blk_phyaddr)) {
++		DRM_ERROR("failed to get disp1blk property.\n");
++		ret = -ENODEV;
++		goto err1;
++	}
++
++	if (exynos_iomap_disp1blk(mdnie, disp1blk_phyaddr)) {
++		DRM_ERROR("failed to iopmap disp1blk sysreg.\n");
++		ret = -ENODEV;
++		goto err1;
++	}
++
++	/* Setup MDNIE clocks */
++	mdnie->mdnie_bus_clk = devm_clk_get(dev, "mdnie");
++	if (IS_ERR(mdnie->mdnie_bus_clk)) {
++		DRM_ERROR("failed to get mdnie bus clock\n");
++		ret = PTR_ERR(mdnie->mdnie_bus_clk);
++		goto err1;
++	}
++
++	mdnie->mdnie_src_clk = devm_clk_get(dev, "sclk_mdnie");
++	if (IS_ERR(mdnie->mdnie_src_clk)) {
++		DRM_ERROR("failed to get mdnie_src_clk\n");
++		ret = PTR_ERR(mdnie->mdnie_src_clk);
++		goto err1;
++	}
++
++	mdnie_pp.ctx = mdnie;
++	*pp = &mdnie_pp;
++
++	DRM_INFO("MDNIE initialzation done\n");
++
++	return 0;
++
++err1:
++	kfree(mdnie);
++err0:
++	return ret;
++}
++EXPORT_SYMBOL(exynos_mdnie_init);
+diff --git a/drivers/gpu/drm/exynos/exynos_mdnie_regs.h b/drivers/gpu/drm/exynos/exynos_mdnie_regs.h
+new file mode 100644
+index 0000000..66a8edc
+--- /dev/null
++++ b/drivers/gpu/drm/exynos/exynos_mdnie_regs.h
+@@ -0,0 +1,154 @@
++/* drivers/gpu/drm/exynos/exynos_mdnie_regs.h
++ *
++ * Header file for Samsung (MDNIE) driver
++ *
++ * Copyright (c) 2014 Samsung Electronics
++ *	http://www.samsungsemi.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __REGS_MDNIE_H__
++#define __REGS_MDNIE_H__
++
++/* Exynos DISP1BLK_CFG register */
++#define EXYNOS_MDNIE_ENABLE			(1 << 0)
++#define EXYNOS_MDNIE_SEL			(1 << 14)
++#define EXYNOS_FIMDBYPASS_DISP1			(1 << 15)
++#define EXYNOS_FIFORST_DISP1			(1 << 23)
++#define EXYNOS_CLEAR_DISP0			(1 << 27)
++#define EXYNOS_VT_DISP1_MASK			(3 << 24)
++#define EXYNOS_VT_DISP1_RGB			(0 << 24)
++#define EXYNOS_VT_DISP1_I80			(1 << 24)
++
++#define MDNIE_REG_WIDTH				0xFFFF
++#define MDNIE_REG_OFFSET_LIMIT			0xFF
++
++/* BANK 0: MODULE_TOP */
++#define MDNIE_TOP_R0				0x0000
++#define MDNIE_TOP_R0_BANK0_SEL			(0 << 0)
++#define MDNIE_TOP_R0_BANK1_SEL			(1 << 0)
++#define MDNIE_TOP_R0_SHADOW_SEL			(1 << 3)
++#define MDNIE_TOP_R1				0x0001
++#define MDNIE_TOP_R1_MASK_INPUT_DATA_ENABLE	(1 << 10)
++#define MDNIE_TOP_R1_MASK_INPUT_HSYNC		(1 << 9)
++#define MDNIE_TOP_RIHSIZE			0x0003
++#define MDNIE_TOP_RSIZE_MAX			2560
++#define MDNIE_TOP_RIVSIZE			0x0004
++#define MDNIE_TOP_R8				0x0008
++#define MDNIE_TOP_R8_DITH_MODULE_ON		(1 << 13)
++#define MDNIE_TOP_R8_ABC_MODULE_ON		(1 << 11)
++#define MDNIE_TOP_R8_SCR_MODULE_ON		(1 << 9)
++#define MDNIE_TOP_R8_CC_MODULE_ON		(1 << 8)
++#define MDNIE_TOP_R8_CS_MODULE_ON		(1 << 5)
++#define MDNIE_TOP_R8_DE_MODULE_ON		(1 << 4)
++#define MDNIE_TOP_R9				0x0009
++#define MDNIE_TOP_R9_MCM_MODULE_ON		(1 << 0)
++#define MDNIE_TOP_RA				0x000A
++#define MDNIE_TOP_RA_UC_MODULE_ON		(1 << 0)
++#define MDNIE_TOP_RB				0x000B
++
++/* BANK 0: MODULE_DE */
++#define MDNIE_DE_TH_EDGE				0xB0
++#define MDNIE_DE_TH_BKG				0xB1
++#define MDNIE_DE_TH_MAX				2047
++
++#define MDNIE_DE_GAINPOS_EDGE			0xB2
++#define MDNIE_DE_GAINPOS_FLAT			0xB3
++#define MDNIE_DE_GAINPOS_BKG			0xB4
++#define MDNIE_DE_GAINNEG_EDGE			0xB5
++#define MDNIE_DE_GAINNEG_FLAT			0xB6
++#define MDNIE_DE_GAINNEG_BKG			0xB7
++#define MDNIE_DE_GAIN_MAX			8191
++
++#define MDNIE_DE_MAX_RATIO			0xB8
++#define MDNIE_DE_MAX_RATIO_MIN			1024
++#define MDNIE_DE_MAX_RATIO_MAX			65535
++#define MDNIE_DE_MIN_RATIO			0xB9
++#define MDNIE_DE_MIN_RATIO_MIN			0
++#define MDNIE_DE_MIN_RATIO_MAX			1024
++#define MDNIE_DE_RBA				0xBA
++#define MDNIE_DE_RBA_MAXPLUS(x)			((x & 0xFF) << 8)
++#define MDNIE_DE_RBA_MAXMINUS(x)			((x & 0xFF) << 0)
++
++/* BANK 0: MODULE_CS */
++#define MDNIE_CS_RED_YELLOW_HUE_GAIN		0xC0
++#define MDNIE_CS_RED_HUE_GAIN(x)			((x & 0x3F) << 8)
++#define MDNIE_CS_YELLOW_HUE_GAIN(x)		((x & 0x3F) << 0)
++#define MDNIE_CS_GREEN_CYAN_HUE_GAIN		0xC1
++#define MDNIE_CS_GREEN_HUE_GAIN(x)		((x & 0x3F) << 8)
++#define MDNIE_CS_CYAN_HUE_GAIN(x)		((x & 0x3F) << 0)
++#define MDNIE_CS_BLUE_MAG_HUE_GAIN		0xC2
++#define MDNIE_CS_BLUE_HUE_GAIN(x)		((x & 0x3F) << 8)
++#define MDNIE_CS_MAGENTA_HUE_GAIN(x)		((x & 0x3F) << 0)
++#define MDNIE_CS_OVERALL_HUE_GAIN_REG		0xC3
++#define MDNIE_CS_OVERALL_HUE_GAIN(x)		((x & 0x3F) << 8)
++#define MDNIE_CS_HUE_GAIN_MAX			0x3F
++
++/* BANK 0: RELEASE0 */
++#define MDNIE_RELEASE_RFF			0x00FF
++#define MDNIE_RELEASE_RFF_MASK_REGISTERS		(1 << 0)
++
++/* BANK 1: MODULE_CC */
++#define MDNIE_CC_CHSEL_STRENGTH			0x13F
++#define MDNIE_CC_CHSEL_MASK			((0x3 << 0x8))
++#define MDNIE_CC_CHSEL(x)			((x) << 0x8)
++#define MDNIE_CC_STRENGTH_MASK			0xFF
++#define MDNIE_CC_STRENGTH(x)			(x << 0)
++#define MDNIE_DEFAULT_CC_STRENGTH		0x80
++
++/* Gamma Ramp */
++#define MDNIE_CC_GAMMA_RED_0_REG			0x140
++#define MDNIE_CC_GAMMA_GREEN_0_REG		0x150
++#define MDNIE_CC_GAMMA_BLUE_0_REG		0x160
++#define MDNIE_CC_GAMMA_MSB(x)			((x & 0xFF) << 8)
++#define MDNIE_CC_GAMMA_LSB(x)			((x & 0xFF) << 0)
++
++/* MODULE SCRPLUS */
++#define MDNIE_SCR_GCC_ONOFF			0x170
++#define MDNIE_SCR_GCC_ON				(1 << 0)
++#define MDNIE_SCR_R_R				0x171
++#define MDNIE_SCR_R_G				0x172
++#define MDNIE_SCR_R_B				0x173
++#define MDNIE_SCR_G_R				0x174
++#define MDNIE_SCR_G_G				0x175
++#define MDNIE_SCR_G_B				0x176
++#define MDNIE_SCR_B_R				0x177
++#define MDNIE_SCR_B_G				0x178
++#define MDNIE_SCR_B_B				0x179
++#define MDNIE_SCR_K_R				0x17A
++#define MDNIE_SCR_K_G				0x17B
++#define MDNIE_SCR_K_B				0x17C
++#define MDNIE_SCR_MSB(x)				((x & 0xFF) << 8)
++#define MDNIE_SCR_LSB(x)				((x & 0xFF) << 0)
++
++/*  Hue gain ranges */
++#define HG_MIN			0
++#define HG_MAX			63
++
++/*  Color Component ranges */
++#define CC_MIN			0
++#define CC_MAX			255
++
++/*  threshold ranges */
++#define TH_MIN			0
++#define TH_MAX			2047
++
++/*  pos/neg gain ranges */
++#define GAIN_MIN		0
++#define GAIN_MAX		8191
++
++/*  window ranges */
++#define X_MIN			0
++#define X_MAX			1920
++#define Y_MIN			0
++#define Y_MAX			1080
++
++/*  gamma modes */
++#define RGB_GAMMA_R		0
++#define R_GAMMA_R		1
++#define Y_GAMMA_R		2
++
++#endif
 -- 
 1.8.1.2
