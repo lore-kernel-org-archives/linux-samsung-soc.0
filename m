@@ -1,63 +1,246 @@
-From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v11 24/27] iommu/exynos: use exynos-iommu specific typedef
-Date: Tue, 18 Mar 2014 18:33:20 -0700
-Message-ID: <CANEJEGu=yDfYi-gH7W7h7up2gd7MxBOg9bz4konLoe-UGf4RYA@mail.gmail.com>
-References: <20140314141302.393cfdf96dd7b82eee3f700e@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv2 3/8] devfreq: exynos4: Add ppmu's clock control and code
+ clean about regulator control
+Date: Wed, 19 Mar 2014 11:44:01 +0900
+Message-ID: <53290471.105@samsung.com>
+References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
+ <1394698649-20996-4-git-send-email-cw00.choi@samsung.com>
+ <53233F78.8020500@samsung.com> <5326632A.8030801@samsung.com>
+ <53268F48.8060704@samsung.com> <53282A60.2010301@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140314141302.393cfdf96dd7b82eee3f700e-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <53282A60.2010301@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 13, 2014 at 10:13 PM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This commit introduces sysmmu_pte_t for page table entries and
-> sysmmu_iova_t vor I/O virtual address that is manipulated by
-> exynos-iommu driver. The purpose of the typedef is to remove
-> dependencies to the driver code from the change of CPU architecture
-> from 32 bit to 64 bit.
+Hi Tomasz,
 
-hi Cho,
-I noticed this before but understood this code was only compiled for
-ILP-32 programming model. I'm assuming that is going to change in the
-not-to-distant future. Good. :)
+On 03/18/2014 08:13 PM, Tomasz Figa wrote:
+> Hi Chanwoo,
+> 
+> On 17.03.2014 06:59, Chanwoo Choi wrote:
+>> Hi Tomasz,
+>>
+>> On 03/17/2014 11:51 AM, Chanwoo Choi wrote:
+>>> Hi Tomasz,
+>>>
+>>> On 03/15/2014 02:42 AM, Tomasz Figa wrote:
+>>>> Hi Chanwoo,
+>>>>
+>>>> On 13.03.2014 09:17, Chanwoo Choi wrote:
+>>>>> There are not the clock controller of ppmudmc0/1. This patch control the clock
+>>>>> of ppmudmc0/1 which is used for monitoring memory bus utilization.
+>>>>>
+>>>>> Also, this patch code clean about regulator control and free resource
+>>>>> when calling exit/remove function.
+>>>>>
+>>>>> For example,
+>>>>> busfreq@106A0000 {
+>>>>>      compatible = "samsung,exynos4x12-busfreq";
+>>>>>
+>>>>>      /* Clock for PPMUDMC0/1 */
+>>>>>      clocks = <&clock CLK_PPMUDMC0>, <&clock CLK_PPMUDMC1>;
+>>>>>      clock-names = "ppmudmc0", "ppmudmc1";
+>>>>>
+>>>>>      /* Regulator for MIF/INT block */
+>>>>>      vdd_mif-supply = <&buck1_reg>;
+>>>>>      vdd_int-supply = <&buck3_reg>;
+>>>>> };
+>>>>>
+>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>
+>> I modify this patch according your comment as following:
+>>
+>> Best Regards,
+>> Chanwoo Choi
+>>
+>>> From c8f2fbc4c1166ec02fb2ad46164bc7ed9118721b Mon Sep 17 00:00:00 2001
+>> From: Chanwoo Choi <cw00.choi@samsung.com>
+>> Date: Fri, 14 Mar 2014 12:05:54 +0900
+>> Subject: [PATCH] devfreq: exynos4: Add ppmu's clock control and code clean
+>>   about regulator control
+>>
+>> There are not the clock controller of ppmudmc0/1. This patch control the clock
+>> of ppmudmc0/1 which is used for monitoring memory bus utilization.
+>>
+>> Also, this patch code clean about regulator control and free resource
+>> when calling exit/remove function.
+>>
+>> For example,
+>> busfreq@106A0000 {
+>>     compatible = "samsung,exynos4x12-busfreq";
+>>
+>>     /* Clock for PPMUDMC0/1 */
+>>     clocks = <&clock CLK_PPMUDMC0>, <&clock CLK_PPMUDMC1>;
+>>     clock-names = "ppmudmc0", "ppmudmc1";
+>>
+>>     /* Regulator for MIF/INT block */
+>>     vdd_mif-supply = <&buck1_reg>;
+>>     vdd_int-supply = <&buck3_reg>;
+>> };
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>   drivers/devfreq/exynos/exynos4_bus.c | 97 +++++++++++++++++++++++++++++++-----
+>>   1 file changed, 84 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+>> index 4c630fb..3956bcc 100644
+>> --- a/drivers/devfreq/exynos/exynos4_bus.c
+>> +++ b/drivers/devfreq/exynos/exynos4_bus.c
+>> @@ -62,6 +62,11 @@ enum exynos_ppmu_idx {
+>>       PPMU_END,
+>>   };
+>>
+>> +static const char *exynos_ppmu_clk_name[] = {
+>> +    [PPMU_DMC0]    = "ppmudmc0",
+>> +    [PPMU_DMC1]    = "ppmudmc1",
+>> +};
+>> +
+>>   #define EX4210_LV_MAX    LV_2
+>>   #define EX4x12_LV_MAX    LV_4
+>>   #define EX4210_LV_NUM    (LV_2 + 1)
+>> @@ -86,6 +91,7 @@ struct busfreq_data {
+>>       struct regulator *vdd_mif; /* Exynos4412/4212 only */
+>>       struct busfreq_opp_info curr_oppinfo;
+>>       struct exynos_ppmu ppmu[PPMU_END];
+>> +    struct clk *clk_ppmu[PPMU_END];
+>>
+>>       struct notifier_block pm_notifier;
+>>       struct mutex lock;
+>> @@ -724,6 +730,17 @@ static void exynos4_bus_exit(struct device *dev)
+>>       struct busfreq_data *data = dev_get_drvdata(dev);
+>>       int i;
+>>
+>> +    /*
+>> +     * Un-map memory map and disable regulator/clocks
+>> +     * to prevent power leakage.
+>> +     */
+>> +    regulator_disable(data->vdd_int);
+>> +    if (data->type == TYPE_BUSF_EXYNOS4x12)
+>> +        regulator_disable(data->vdd_mif);
+>> +
+>> +    for (i = 0; i < PPMU_END; i++)
+>> +        clk_disable_unprepare(data->clk_ppmu[i]);
+>> +
+>>       for (i = 0; i < PPMU_END; i++)
+>>           iounmap(data->ppmu[i].hw_base);
+>>   }
+>> @@ -989,6 +1006,7 @@ static int exynos4_busfreq_parse_dt(struct busfreq_data *data)
+>>   {
+>>       struct device *dev = data->dev;
+>>       struct device_node *np = dev->of_node;
+>> +    const char **clk_name = exynos_ppmu_clk_name;
+>>       int i, ret = 0;
+>>
+>>       if (!np) {
+>> @@ -1006,8 +1024,67 @@ static int exynos4_busfreq_parse_dt(struct busfreq_data *data)
+>>           }
+>>       }
+>>
+>> +    for (i = 0; i < PPMU_END; i++) {
+>> +        data->clk_ppmu[i] = devm_clk_get(dev, clk_name[i]);
+>> +        if (IS_ERR(data->clk_ppmu[i])) {
+>> +            dev_warn(dev, "Failed to get %s clock\n", clk_name[i]);
+> 
+> dev_err() since this is an error.
 
->
-> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/iommu/exynos-iommu.c |  103 ++++++++++++++++++++++--------------------
->  1 file changed, 54 insertions(+), 49 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index e375501..6e716cc 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -56,19 +56,19 @@
->  #define lv2ent_large(pent) ((*(pent) & 3) == 1)
->
->  #define section_phys(sent) (*(sent) & SECT_MASK)
-> -#define section_offs(iova) ((iova) & 0xFFFFF)
-> +#define section_offs(iova) ((sysmmu_iova_t)(iova) & 0xFFFFF)
+OK, I'll fix it.
 
-The cast will mask abuses of iova. Define section_offs as a static
-function and GCC can type check iova parameter to make sure it's a
-sysmmu_iova_t.
-Thoughts?
+> 
+>> +            goto err_clocks;
+>> +        }
+>> +
+>> +        ret = clk_prepare_enable(data->clk_ppmu[i]);
+>> +        if (ret < 0) {
+>> +            dev_warn(dev, "Failed to enable %s clock\n", clk_name[i]);
+> 
+> Ditto.
 
-I was thinking "((iova) & (sysmmu_iova_t) 0XFFFFF)" might do what you
-want but it doesn't warn on abuse that I tried. I believe GCC knows
-the upper bits are being ignored.
+OK, I'll fix it.
 
-cheers,
-grant
+> 
+>> +            data->clk_ppmu[i] = NULL;
+>> +            goto err_clocks;
+>> +        }
+>> +    }
+>> +
+>> +    /* Get regulator to control voltage of int block */
+>> +    data->vdd_int = devm_regulator_get(dev, "vdd_int");
+>> +    if (IS_ERR(data->vdd_int)) {
+>> +        dev_err(dev, "Failed to get the regulator of vdd_int\n");
+>> +        ret = PTR_ERR(data->vdd_int);
+>> +        goto err_clocks;
+>> +    }
+>> +    ret = regulator_enable(data->vdd_int);
+>> +    if (ret < 0) {
+>> +        dev_err(dev, "Failed to enable regulator of vdd_int\n");
+>> +        goto err_clocks;
+>> +    }
+>> +
+>> +    switch (data->type) {
+>> +    case TYPE_BUSF_EXYNOS4210:
+>> +        break;
+> 
+> Do you need to use switch here? Wouldn't a simple if (data->type == TYPE_BUSF_EXYNOS4x12) work as well, resulting with simpler code?
+
+OK, I'll fix it.
+
+> 
+> However I would expect this code to be completely removed, after defining DT bindings in a way allowing you to completely drop such SoC type enums. Please see my other reply for explanation of Exynos power plane DT bindings concept.
+
+OK, I agree your suggestion about Exynos power plane DT bindings concept.
+
+I'll apply "Exynos power plane" to exynos4 busfreq driver on next step
+after defining Exynos power plane DT bindings.
+
+> 
+>> +    case TYPE_BUSF_EXYNOS4x12:
+>> +        /* Get regulator to control voltage of mif blk if Exynos4x12 */
+>> +        data->vdd_mif = devm_regulator_get(dev, "vdd_mif");
+>> +        if (IS_ERR(data->vdd_mif)) {
+>> +            dev_err(dev, "Failed to get the regulator vdd_mif\n");
+>> +            ret = PTR_ERR(data->vdd_mif);
+>> +            goto err_regulator;
+>> +        }
+>> +        ret = regulator_enable(data->vdd_mif);
+>> +        if (ret < 0) {
+>> +            dev_err(dev, "Failed to enable regulator of vdd_mif\n");
+>> +            goto err_regulator;
+>> +        }
+>> +        break;
+>> +    default:
+>> +        dev_err(dev, "Unknown device type : %d\n", data->type);
+>> +        return -EINVAL;
+>> +    };
+>> +
+>>       return 0;
+>>
+>> +err_regulator:
+>> +    regulator_disable(data->vdd_int);
+>> +err_clocks:
+>> +    for (i = 0; i < PPMU_END; i++) {
+>> +        if (IS_ERR(data->clk_ppmu[i]))
+>> +            continue;
+>> +        else
+> 
+> if (!IS_ERR(...))
+> 
+>> +            clk_disable_unprepare(data->clk_ppmu[i]);
+>> +    }
+> 
+> Otherwise looks good.
+
+Thanks for your review.
+
+Best Regards,
+Chanwoo Choi
+
+
+
+
+
