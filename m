@@ -1,235 +1,165 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v11 17/27] iommu/exynos: remove calls to Runtime PM API
-	functions
-Date: Wed, 19 Mar 2014 10:03:04 +0900
-Message-ID: <20140319100304.5e26fa43ccdfc29178b058e1@samsung.com>
-References: <20140314140843.ba055f28dd7ed59c46088029@samsung.com>
-	<5322FD14.5090602@samsung.com>
-	<20140318185605.0380c8dfe6559c06183092e5@samsung.com>
-	<532861BE.7020601@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [GIT PULL] Samsung clock changes for v3.15
+Date: Tue, 18 Mar 2014 18:06:34 -0700
+Message-ID: <20140319010634.30995.4609@quantum>
+References: <1395079197-13598-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <532861BE.7020601-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1395079197-13598-1-git-send-email-t.figa@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 18 Mar 2014 16:09:50 +0100, Tomasz Figa wrote:
-> On 18.03.2014 10:56, Cho KyongHo wrote:
-> > On Fri, 14 Mar 2014 13:59:00 +0100, Tomasz Figa wrote:
-> >> Hi KyongHo,
-> >>
-> >> On 14.03.2014 06:08, Cho KyongHo wrote:
+Quoting Tomasz Figa (2014-03-17 10:59:57)
+> The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
 > 
-> [snip]
+>   Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
 > 
-> >>> -static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
-> >>> +static void __sysmmu_disable_nocount(struct sysmmu_drvdata *data)
-> >>
-> >> If you are changing the names anyway, it would be probably a good idea
-> >> to reduce code obfuscation a bit and drop the underscores from
-> >> beginnings of function names. Also I'd suggest keeping the "exynos_" prefix.
-> >
-> > Thanks for the suggestion.
-> > __exynos_sysmmu_disable is splitted into 2 functions: __sysmmu_disable
-> > and __sysmmu_disable_nocount.
-> > I agree with you that it is good idea to reduce code obfuscation but
-> > I don't think dropping beginning underscores of function names reduces
-> > obfuscation.
-> >
+> are available in the git repository at:
 > 
-> Well, if you are ending up with a function like 
-> __sysmmu_enable_nocount() below with every line starting with two 
-> underscores, do you think this improves code readability?
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.15/samsung-clk
 > 
-> Of course this is a minor issue, but let's keep some code quality level 
-> in Linux kernel.
+> for you to fetch changes up to 70d1cf1c85486753fec0c60a9a093bdfe42b89b4:
 > 
+>   Merge branch 'for_3.15/misc' into samsung-next (2014-03-17 13:00:01 +0100)
+> 
+> ----------------------------------------------------------------
+> 
+> Samsung clock patches for v3.15.
+> 
+> Due to dependencies, most of the patches already went through linux-samsung
+> tree, so this pull request is rather small.
 
-Ok. understood what your are concerning about.
+I'm a bit confused. This PR is not really small (32 patches) and it
+covers more stuff from arch/arm that I usually take.
 
-> >>
-> >>>    {
-> >>> -	unsigned long flags;
-> >>> -	bool disabled = false;
-> >>> -
-> >>> -	write_lock_irqsave(&data->lock, flags);
+> It contains various patches
+> collected since the last merge window:
 > 
-> [snip]
+> 1) non-critical fixes (without need to push to stable):
 > 
-> Here's the function mentioned above:
+> 220b0cc clk: samsung: Initialize clock table with error pointers
+> 58d83cb clk: exynos-5420: Fix VPLL lock offset
+> 3299bc3 clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
 > 
-> >>> +
-> >>> +static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
-> >>> +{
-> >>> +	__master_clk_enable(data);
-> >>> +	__sysmmu_clk_enable(data);
-> >>> +
-> >>> +	__raw_writel(CTRL_BLOCK, data->sfrbase + REG_MMU_CTRL);
-> >>> +
-> >>> +	__sysmmu_init_config(data);
-> >>> +
-> >>> +	__sysmmu_set_ptbase(data->sfrbase, data->pgtable);
-> >>> +
-> >>> +	__raw_writel(CTRL_ENABLE, data->sfrbase + REG_MMU_CTRL);
-> >>> +
-> >>> +	__master_clk_disable(data);
-> >>> +}
-> >>> +
+> 2) clock driver extensions:
 > 
-> [snip]
-> 
-> >>>
-> >>> @@ -629,7 +700,7 @@ err_pgtable:
-> >>>    static void exynos_iommu_domain_destroy(struct iommu_domain *domain)
-> >>>    {
-> >>>    	struct exynos_iommu_domain *priv = domain->priv;
-> >>> -	struct sysmmu_drvdata *data;
-> >>> +	struct exynos_iommu_owner *owner;
-> >>>    	unsigned long flags;
-> >>>    	int i;
-> >>>
-> >>> @@ -637,11 +708,14 @@ static void exynos_iommu_domain_destroy(struct iommu_domain *domain)
-> >>>
-> >>>    	spin_lock_irqsave(&priv->lock, flags);
-> >>>
-> >>> -	list_for_each_entry(data, &priv->clients, node) {
-> >>> -		while (!exynos_sysmmu_disable(data->dev))
-> >>> +	list_for_each_entry(owner, &priv->clients, client) {
-> >>> +		while (!exynos_sysmmu_disable(owner->dev))
-> >>>    			; /* until System MMU is actually disabled */
-> >>
-> >> What about using list_for_each_entry_safe() and calling list_del_init()
-> >> here directly?
-> >>
-> >
-> > That require another variable to be defined.
-> 
-> Is it a problem?
-> 
-That is not a problem.
-But I think using list_for_each_entry() is not a problem likewise.
+> db40d0c clk: samsung exynos5250/5420: Add gate clock for SSS module
+> d8b9731 clk/samsung: add support for multiple clock providers
+> 45af130 clk/samsung: add support for pll2550xx
+> adec437 clk/samsung: add support for pll2650xx
 
-> > I just wanted to avoid that because I think it is prettier.
-> > Moreover, list_del_init() below the empty while() clause may make
-> > the source code readers misunderstood..
+Right, these 7 patches would constitute a small PR. Was there a mistake
+when generating this pull request?
+
+Thanks,
+Mike
+
 > 
-> This raises another question, why the loop above is even needed. 
-> exynos_sysmmu_disable() should make sure that SYSMMU is actually 
-> disabled, without any need for looping like this.
-
-Some driver needs enabling sysmmu to be counted due to its complex structure.
-It can be also removed by the driver with an extra effort
-but the reality is important.
-Device driver is not only for the scholarship but also for the real use.
-
-> >>>    	}
-> >>>
-> >>> +	while (!list_empty(&priv->clients))
-> >>> +		list_del_init(priv->clients.next);
-> >>> +
-> >>>    	spin_unlock_irqrestore(&priv->lock, flags);
-> >>>
-> >>>    	for (i = 0; i < NUM_LV1ENTRIES; i++)
+> The patches are based on clk-s3c24xx branch of linux-samsung tree, due to
+> dependencies of further patches on S3C24xx clock driver and clock PM
+> refactor.
 > 
-> [snip]
+> ----------------------------------------------------------------
+> Heiko Stuebner (12):
+>       clk: samsung: add pll_6552 variant for s3c2416
+>       clk: samsung: add plls used by the s3c2443
+>       dt-bindings: add binding for clock-controller of s3c2443 and following
+>       clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
+>       ARM: S3C24XX: prevent conflicts between ccf and non-ccf s3c24xx-socs
+>       ARM: dts: add clock data for s3c2416
+>       ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+>       ARM: S3C24XX: only store clock registers when old clock code is active
+>       clk: samsung: add plls used by the early s3c24xx cpus
+>       dt-bindings: add documentation for s3c2412 clock controller
+>       clk: samsung: add clock controller driver for s3c2412
+>       ARM: S3C24XX: convert s3c2412 to common clock framework
 > 
-> >>> +static int sysmmu_hook_driver_register(struct notifier_block *nb,
-> >>> +					unsigned long val,
-> >>> +					void *p)
-> >>> +{
-> >>> +	struct device *dev = p;
-> >>> +
-> >>> +	switch (val) {
-> >>> +	case BUS_NOTIFY_BIND_DRIVER:
-> >>> +	{
-> >>> +		struct exynos_iommu_owner *owner;
-> >>
-> >> Please move this variable to the top of the function and drop the braces
-> >> around case blocks.
-> >
-> > I don't think it is required because this function is modified
-> > by the following patches.
+> Naveen Krishna Chatradhi (1):
+>       clk: samsung exynos5250/5420: Add gate clock for SSS module
 > 
-> OK, if so, and similar issue is not present after further patches.
+> Pankaj Dubey (2):
+>       clk/samsung: add support for pll2550xx
+>       clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
 > 
-> >
-> >>
-> >>> +
-> >>> +		/* No System MMU assigned. See exynos_sysmmu_probe(). */
-> >>> +		if (dev->archdata.iommu == NULL)
-> >>> +			break;
-> >>
-> >> This looks strange... (see below)
-> >>
-> >> Also this looks racy. There are no guarantees about device probing
-> >> order, so you may end up with master devices being probed before the
-> >> IOMMUs. Deferred probing should be used to handle this correctly.
-> >
-> > System MMU driver must be probed earlier than the drivers of master devices
-> > because the drivers may want to use System MMU for their initial task.
+> Rahul Sharma (2):
+>       clk/samsung: add support for multiple clock providers
+>       clk/samsung: add support for pll2650xx
 > 
-> As I said, there are no guarantees about platform device probe order in 
-> Linux kernel. Code must be designed to check whether required 
-> dependencies are met and if not, deferred probing must be used.
+> Sachin Kamat (1):
+>       clk: exynos-5420: Fix VPLL lock offset
 > 
-
-I told that System MMU driver must be probed earlier.
-That's why exynos_iommu_init() is called by subsys_initcall level.
-I also noticed that it must be promoted to arch_initcall for some driver.
-
-> >>
-> >>> +
-> >>> +		owner = devm_kzalloc(dev, sizeof(*owner), GFP_KERNEL);
-> >>> +		if (!owner) {
-> >>> +			dev_err(dev, "No Memory for exynos_iommu_owner\n");
-> >>> +			return -ENOMEM;
-> >>> +		}
-> >>> +
-> >>> +		owner->dev = dev;
-> >>> +		INIT_LIST_HEAD(&owner->client);
-> >>> +		owner->sysmmu = dev->archdata.iommu;
-> >>> +
-> >>> +		dev->archdata.iommu = owner;
-> >>
-> >> I don't understand what is happening here in this case statement. There
-> >> is already something assigned to dev->archdata.iommu, but this code
-> >> reassigns something else to this field. This means that you attempt to
-> >> use the same field to store pointers to objects of different types,
-> >> which I believe is broken, because you have no way to check what kind of
-> >> object is currently pointed by such (void *) pointer.
-> >>
-> >
-> > exynos_sysmmu_probe() assigns the device descriptor of the probing System MMU
-> > to archdata.iommu of its master device. The assignment is just a marker that
-> > the device is a master device of a System MMU.
-> > If dev->archdata.iommu has a value in the case of BUS_NOTIFY_BIND_DRIVER,
-> > the 'dev' is a master devices of a System MMU. Then sysmmu_hook_driver_register()
-> > assigns the data structure to handle System MMU to dev->archdata.iommu.
+> Tomasz Figa (14):
+>       clk: exynos4: Remove remnants of non-DT support
+>       clk: samsung: Provide common helpers for register save/restore
+>       clk: samsung: exynos4: Move suspend/resume handling to SoC driver
+>       clk: samsung: exynos5250: Move suspend/resume handling to SoC driver
+>       clk: samsung: exynos5420: Move suspend/resume handling to SoC driver
+>       clk: samsung: s3c64xx: Move suspend/resume handling to SoC driver
+>       clk: samsung: Drop old suspend/resume code
+>       clk: samsung: exynos4: Add remaining suspend/resume handling
+>       ARM: EXYNOS: Drop legacy Exynos4 clock suspend/resume code
+>       clk: samsung: Initialize clock table with error pointers
+>       Merge branch 'for_3.15/misc' into samsung-clk-next
+>       Merge branch 'for_3.15/misc' into samsung-next
+>       Merge branch 'for_3.15/exynos5260' into samsung-next
+>       Merge branch 'for_3.15/misc' into samsung-next
 > 
-> Which is wrong (or even if you don't consider it wrong, it is ugly), 
-> because one (void *) pointer in the same object is used to store 
-> pointers to two completely different types.
-
-archdata.iommu has a pointer to sysmmu descriptor for a very short time
-during booting time to build complete data structure to handle System MMU.
-It is it also a matter?
-
-Anyway, this style of initialization just maintained to make the driver work
-with the old design. It is changed with the following patches.
-
-
-Regards,
-
-KyongHo
+>  .../devicetree/bindings/clock/exynos5250-clock.txt |   1 +
+>  .../bindings/clock/samsung,s3c2412-clock.txt       |  50 ++
+>  .../bindings/clock/samsung,s3c2443-clock.txt       |  56 ++
+>  arch/arm/boot/dts/s3c2416-smdk2416.dts             |  13 +
+>  arch/arm/boot/dts/s3c2416.dtsi                     |  42 ++
+>  arch/arm/mach-exynos/pm.c                          | 148 +---
+>  arch/arm/mach-s3c24xx/Kconfig                      |  24 +-
+>  arch/arm/mach-s3c24xx/Makefile                     |   7 +-
+>  arch/arm/mach-s3c24xx/clock-s3c2412.c              | 761 ---------------------
+>  arch/arm/mach-s3c24xx/clock-s3c2416.c              | 171 -----
+>  arch/arm/mach-s3c24xx/clock-s3c2443.c              | 212 ------
+>  arch/arm/mach-s3c24xx/common-s3c2443.c             | 675 ------------------
+>  arch/arm/mach-s3c24xx/common.c                     |  27 +-
+>  arch/arm/mach-s3c24xx/common.h                     |  10 +
+>  arch/arm/mach-s3c24xx/mach-jive.c                  |   9 +-
+>  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |  39 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2413.c              |   9 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |   9 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2443.c              |   9 +-
+>  arch/arm/mach-s3c24xx/mach-vstms.c                 |   9 +-
+>  arch/arm/mach-s3c24xx/pm.c                         |  13 +-
+>  arch/arm/mach-s3c24xx/s3c2412.c                    |  43 --
+>  drivers/clk/samsung/Makefile                       |   2 +
+>  drivers/clk/samsung/clk-exynos4.c                  | 213 ++++--
+>  drivers/clk/samsung/clk-exynos5250.c               |  71 +-
+>  drivers/clk/samsung/clk-exynos5420.c               |  75 +-
+>  drivers/clk/samsung/clk-exynos5440.c               |  18 +-
+>  drivers/clk/samsung/clk-pll.c                      | 489 ++++++++++++-
+>  drivers/clk/samsung/clk-pll.h                      |   8 +
+>  drivers/clk/samsung/clk-s3c2412.c                  | 274 ++++++++
+>  drivers/clk/samsung/clk-s3c2443.c                  | 466 +++++++++++++
+>  drivers/clk/samsung/clk-s3c64xx.c                  | 121 +++-
+>  drivers/clk/samsung/clk.c                          | 190 +++--
+>  drivers/clk/samsung/clk.h                          |  72 +-
+>  include/dt-bindings/clock/exynos5250.h             |   1 +
+>  include/dt-bindings/clock/s3c2412.h                |  73 ++
+>  include/dt-bindings/clock/s3c2443.h                |  92 +++
+>  37 files changed, 2202 insertions(+), 2300 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2412-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt
+>  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2412.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
+>  create mode 100644 drivers/clk/samsung/clk-s3c2412.c
+>  create mode 100644 drivers/clk/samsung/clk-s3c2443.c
+>  create mode 100644 include/dt-bindings/clock/s3c2412.h
+>  create mode 100644 include/dt-bindings/clock/s3c2443.h
