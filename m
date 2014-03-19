@@ -1,205 +1,124 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: RE: [PATCH V4 1/8] sxgbe: Add device-tree binding support document
-Date: Wed, 19 Mar 2014 15:32:48 -0700
-Message-ID: <00cd01cf43c3$2b086d50$811947f0$@samsung.com>
-References: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
- <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
- <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
- <20140319150402.GC9188@e106331-lin.cambridge.arm.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v2 01/11] base: power: Add generic OF-based power domain
+ look-up
+Date: Wed, 19 Mar 2014 16:13:41 -0700
+Message-ID: <7e54f23f-1e11-4e17-ad29-13b497d7055a@TX2EHSMHS041.ehs.local>
+References: <1393862536-9842-1-git-send-email-tomasz.figa@gmail.com>
+ <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:26893 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964832AbaCSWc7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 18:32:59 -0400
-In-reply-to: <20140319150402.GC9188@e106331-lin.cambridge.arm.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1393862536-9842-2-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kumar
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Rutland' <mark.rutland@arm.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, davem@davemloft.net, ilho215.lee@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ks.giri@samsung.com
 
-Mark Rutland <mark.rutland@arm.com> :
-> On Tue, Mar 18, 2014 at 04:27:46PM +0000, Byungho An wrote:
-> > Mark Rutland <mark.rutland@arm.com> :
-> > > Hi,
-> > >
-> > > As a general note it's helpful for devicetree to be Cc'd on the
-> > > entire
-> > series
-> > > (though the binding document should be a separate patch) as it
-> > > provides
-> > useful
-> > > context for reviewing the binding.
-> > OK.
-> >
-> > >
-> > > On Tue, Mar 18, 2014 at 06:47:13AM +0000, Byungho An wrote:
-> > > > From: Siva Reddy <siva.kallam@samsung.com>
-> > > >
-> > > > This patch adds binding document for SXGBE ethernet driver via
-> > device-tree.
-> > > >
-> > > > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > > > Signed-off-by: Byungho An <bh74.an@samsung.com>
-> > > > ---
-> > > >  .../devicetree/bindings/net/samsung-sxgbe.txt      |   53
-> > > > ++++++++++++++++++++
-> > > >  1 file changed, 53 insertions(+)
-> > > >  create mode 100644
-> > > > Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > >
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > > b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > > new file mode 100644
-> > > > index 0000000..ca27947
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > > @@ -0,0 +1,53 @@
-> > > > +* Samsung 10G Ethernet driver (SXGBE)
-> > > > +
-> > > > +Required properties:
-> > > > +- compatible: Should be "samsung,sxgbe-v2.0a"
-> > > > +- reg: Address and length of the register set for the device
-> > > > +- interrupt-parent: Should be the phandle for the interrupt
-> > > > +controller
-> > > > +  that services interrupts for this device
-> > > > +- interrupts: Should contain the SXGBE interrupts
-> > > > +  These interrupts are ordered by fixed and follows variable
-> > > > +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
-> > > > +  index 0 - this is fixed common interrupt of SXGBE and it is
-> > > > +always
-> > > > +  available.
-> > > > +  index 1 to 25 - 8 variable trasmit interrupts, variable 16
-> > > > +receive
-> > > > interrupts
-> > > > +  and 1 optional lpi interrupt.
-> > > > +- phy-mode: String, operation mode of the PHY interface.
-> > > > +  Supported values are: "xaui", "gmii".
-> > > > +- samsung,pbl: Integer, Programmable Burst Length.
-> > > > +  Supported values are 1, 2, 4, 8, 16, or 32.
-> > >
-> > > There's no need to abbreviate to "pbl".
-> > >
-> > > Is this a property of the hardware, or configuration that the kernel
-> > > will
-> > program
-> > > in? If the latter, why can the kernel not choose?
-> > Yes, this is hardware property
-> 
-> Ok.
-> 
-> >
-> > >
-> > > > +- samsung,fixed-burst: Boolean, Program the DMA to use the fixed
-> > > > +burst mode
-> > > > +- samsung,burst-map: Integer, Program the possible bursts
-> > > > +supported by sxgbe
-> > > > +  This is an interger and represents allowable DMA bursts when
-> > > > +fixed
-> > burst.
-> > > > +  Allowable range is 0x00-0x3F. This field is valid only when
-> > > > +fixed burst is
-> > > > +  enabled, otherwise ignored.
-> > >
-> > > If that's the case, why not have just this property and have it
-> > > imply the
-> > use of
-> > > fixed burst mode?
-> > OK. It will be implemented in next patch set.
-> >
-> > >
-> > > When is it necessary to use fixed burst mode?
-> > This is the configurable mode of DMA an used internally by hardware to
-> > fetch data from platform bus
-> 
-> Sure, but that doesn't describe when it is necessary. Is this the way the
-DMA
-> was configured at integration time, or the way the kernel should configure
-it?
-It is needed when fixed length of burst is needed. 
-if it is not configured, the length of burst will be variable(not fixed).
-Anyway, I'll add description more for it.
+On Mon, 2014-03-03 at 05:02PM +0100, Tomasz Figa wrote:
+> This patch introduces generic code to perform power domain look-up us=
+ing
+> device tree and automatically bind devices to their power domains.
+> Generic device tree binding is introduced to specify power domains of
+> devices in their device tree nodes.
+>=20
+> Backwards compatibility with legacy Samsung-specific power domain
+> bindings is provided, but for now the new code is not compiled when
+> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. T=
+his
+> will change as soon as Exynos power domain code gets converted to use
+> the generic framework in further patch.
+>=20
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  .../devicetree/bindings/power/power_domain.txt     |  51 ++++
+>  drivers/base/power/domain.c                        | 298 +++++++++++=
+++++++++++
+>  include/linux/pm_domain.h                          |  46 ++++
+>  kernel/power/Kconfig                               |   4 +
+>  4 files changed, 399 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/power_dom=
+ain.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt=
+ b/Documentation/devicetree/bindings/power/power_domain.txt
+> new file mode 100644
+> index 0000000..93be5d9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
+> @@ -0,0 +1,51 @@
+> +* Generic power domains
+> +
+> +System on chip designs are often divided into multiple power domains=
+ that
+> +can be used for power gating of selected IP blocks for power saving =
+by
+> +reduced leakage current.
+> +
+> +This device tree binding can be used to bind power domain consumer d=
+evices
+> +with their power domains provided by power domain providers. A power=
+ domain
+> +provider can be represented by any node in the device tree and can p=
+rovide
+> +one or more power domains. A consumer node can refer to the provider=
+ by
+> +a phandle and a set of phandle arguments (so called power domain spe=
+cifier)
+> +of length specified by #power-domain-cells property in the power dom=
+ain
+> +provider node.
+> +
+> +=3D=3DPower domain providers=3D=3D
+> +
+> +Required properties:
+> + - #power-domain-cells : Number of cells in a power domain specifier=
+;
+> +   Typically 0 for nodes representing a single power domain and 1 fo=
+r nodes
+> +   providing multiple power domains (e.g. power controllers), but ca=
+n be
+> +   any value as specified by device tree binding documentation of pa=
+rticular
+> +   provider.
+> +
+> +Example:
+> +
+> +	power: power-controller@12340000 {
+> +		compatible =3D "foo,power-controller";
+> +		reg =3D <0x12340000 0x1000>;
+> +		#power-domain-cells =3D <1>;
+> +	};
+> +
+> +The node above defines a power controller that is a power domain pro=
+vider
+> +and expects one cell as its phandle argument.
+> +
+> +=3D=3DPower domain consumers=3D=3D
+> +
+> +Required properties:
+> + - power-domain : A phandle and power domain specifier as defined by=
+ bindings
+> +                  of power controller specified by phandle.
+> +
+> +Example:
+> +
+> +	leaky-device@12350000 {
+> +		compatible =3D "foo,i-leak-current";
+> +		reg =3D <0x12350000 0x1000>;
+> +		power-domain =3D <&power 0>;
+> +	};
+> +
+> +The node above defines a typical power domain consumer device, which=
+ is located
+> +inside power domain with index 0 of power controller represented by =
+node with
+> +label "power".
 
-> 
-> If the latter, is it absolutely necessary for correctness to use fixed-burst
-mode?
-> Or is it just always sensible to use it if available? 
-It is not absolutely necessary, as I mentioned above.
+Does this allow nesting of power domains? E.g. you have a PD which is
+represented by some programmable power supply, and within this domain
+smaller islands/domains that can be gated independently.
 
-> 
-> What does the driver do if fixed burst mode is not available? Would this
-work in
-> the presence of fixed-burt mode?
-Fixed burst mode is always available so driver doesn't need to care about it.
-
-> 
-> I'm not arguing to remove these properties. I'd just like to understand if
-all
-> you're describing is the presence of a feature or that the use of the
-feature is
-> absolutely necessary for correctness.
-OK
-
-> 
-> I'm perfectly happy for Linux to always decide to use these features if
-available.
-> 
-> >
-> > >
-> > > > +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced
-> > > > +address
-> > > > mode.
-> > >
-> > > When would this be selected, and why can the kernel not choose?
-> > Kernel doesn't have the provision to find out a way to select this.
-> > So, need to pass from DT
-> 
-> Likewise, it is always absolutely necessary, or just always sensible to use
-> enhanced address mode if present?
-Not always necessary. When extended address mode is needed, it can be set in
-the DT.
-
-> 
-> >
-> > >
-> > > > +- samsung,force_thresh_dma_mode: Boolean, Force DMA to use the
-> > > > +threshold mode
-> > > > +  for both tx and rx
-> > >
-> > > s/_/-/ in property names.
-> > OK.
-> >
-> > >
-> > > Likewise, why can the kernel not choose.
-> > SXGBE h/w registers can't provide information to select this. So, need
-> > to pass from DT depend on Platform
-> 
-> Similarly.
-Not always necessary. When threshold base DMA mode is needed it can be set.
-
-> 
-> >
-> > >
-> > > > +- samsung,force_sf_dma_mode: Boolean, Force DMA to use the Store
-> > > > +and Forward
-> > > > +  mode for both tx and rx. This flag is ignored if
-> > > > +force_thresh_dma_mode is
-> > > > set.
-> > >
-> > > Likewise for both points.
-> > Same above.
-> 
-> And again.
-Not always necessary. When threshold base DMA mode is not needed it can be
-set.
-On the other hand, store and forward is needed for DMA, it can be set.
-
-Thanks,
-> 
-> Cheers,
-> Mark.
+	Thanks,
+	S=C3=B6ren
