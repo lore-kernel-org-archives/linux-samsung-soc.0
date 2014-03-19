@@ -1,169 +1,181 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V4 1/8] sxgbe: Add device-tree binding support document
-Date: Wed, 19 Mar 2014 15:04:02 +0000
-Message-ID: <20140319150402.GC9188@e106331-lin.cambridge.arm.com>
-References: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
- <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
- <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v11 20/27] iommu/exynos: allow having multiple System MMUs
+	for a master H/W
+Date: Wed, 19 Mar 2014 16:14:57 +0100
+Message-ID: <5329B471.7030703@samsung.com>
+References: <20140314141050.c8bedcb66532d277c496796d@samsung.com>
+	<53232A53.4040708@samsung.com>
+	<20140318220128.564740c88d06b86c9c5c10e3@samsung.com>
+	<532857A8.5060000@samsung.com>
+	<20140319093929.d3a7cea131c626cf978e0ff1@samsung.com>
+	<532999A2.6030107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:50067 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S964911AbaCSPEM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 11:04:12 -0400
-Content-Disposition: inline
-In-Reply-To: <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <532999A2.6030107-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Byungho An <bh74.an@samsung.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "vipul.pandya@samsung.com" <vipul.pandya@samsung.com>, "ks.giri@samsung.com" <ks.giri@samsung.com>
 
-On Tue, Mar 18, 2014 at 04:27:46PM +0000, Byungho An wrote:
-> Mark Rutland <mark.rutland@arm.com> :
-> > Hi,
-> > 
-> > As a general note it's helpful for devicetree to be Cc'd on the entire
-> series
-> > (though the binding document should be a separate patch) as it provides
-> useful
-> > context for reviewing the binding.
-> OK.
-> 
-> > 
-> > On Tue, Mar 18, 2014 at 06:47:13AM +0000, Byungho An wrote:
-> > > From: Siva Reddy <siva.kallam@samsung.com>
-> > >
-> > > This patch adds binding document for SXGBE ethernet driver via
-> device-tree.
-> > >
-> > > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > > Signed-off-by: Byungho An <bh74.an@samsung.com>
-> > > ---
-> > >  .../devicetree/bindings/net/samsung-sxgbe.txt      |   53
-> > > ++++++++++++++++++++
-> > >  1 file changed, 53 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > new file mode 100644
-> > > index 0000000..ca27947
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-> > > @@ -0,0 +1,53 @@
-> > > +* Samsung 10G Ethernet driver (SXGBE)
-> > > +
-> > > +Required properties:
-> > > +- compatible: Should be "samsung,sxgbe-v2.0a"
-> > > +- reg: Address and length of the register set for the device
-> > > +- interrupt-parent: Should be the phandle for the interrupt
-> > > +controller
-> > > +  that services interrupts for this device
-> > > +- interrupts: Should contain the SXGBE interrupts
-> > > +  These interrupts are ordered by fixed and follows variable
-> > > +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
-> > > +  index 0 - this is fixed common interrupt of SXGBE and it is always
-> > > +  available.
-> > > +  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive
-> > > interrupts
-> > > +  and 1 optional lpi interrupt.
-> > > +- phy-mode: String, operation mode of the PHY interface.
-> > > +  Supported values are: "xaui", "gmii".
-> > > +- samsung,pbl: Integer, Programmable Burst Length.
-> > > +  Supported values are 1, 2, 4, 8, 16, or 32.
-> > 
-> > There's no need to abbreviate to "pbl".
-> > 
-> > Is this a property of the hardware, or configuration that the kernel will
-> program
-> > in? If the latter, why can the kernel not choose?
-> Yes, this is hardware property
+On 19.03.2014 14:20, Tomasz Figa wrote:
+> On 19.03.2014 01:39, Cho KyongHo wrote:
+>> On Tue, 18 Mar 2014 15:26:48 +0100, Tomasz Figa wrote:
+>>>
+>>>
+>>> On 18.03.2014 14:01, Cho KyongHo wrote:
+>>>> On Fri, 14 Mar 2014 17:12:03 +0100, Tomasz Figa wrote:
+>>>>> Hi KyongHo,
+>>>>>
+>>>>> On 14.03.2014 06:10, Cho KyongHo wrote:
+>>>>>> Some master device descriptor like fimc-is which is an abstraction
+>>>>>> of very complex H/W may have multiple System MMUs. For those devices,
+>>>>>> the design of the link between System MMU and its master H/W is
+>>>>>> needed
+>>>>>> to be reconsidered.
+>>>>>>
+>>>>>> A link structure, sysmmu_list_data is introduced that provides a link
+>>>>>> to master H/W and that has a pointer to the device descriptor of a
+>>>>>> System MMU. Given a device descriptor of a master H/W, it is possible
+>>>>>> to traverse all System MMUs that must be controlled along with the
+>>>>>> master H/W.
+>>>>>
+>>>>> NAK.
+>>>>>
+>>>>> A device driver should handle particular hardware instances
+>>>>> separately,
+>>>>> without abstracting a virtual hardware instance consisting of multiple
+>>>>> physical ones.
+>>>>>
+>>>>> If such abstraction is needed, it should be done above the
+>>>>> exynos-iommu
+>>>>> driver, e.g. by something like iommu-composite driver that would
+>>>>> aggregate several IOMMUs. Keep in mind that such IOMMUs in a group
+>>>>> could
+>>>>> be different, e.g. different Exynos SysMMU versions or even completely
+>>>>> different IPs handled by different drivers.
+>>>>>
+>>>>> Still, I don't think there is a real need for such abstraction.
+>>>>> Instead,
+>>>>> related drivers shall be fixed to properly handle multiple memory
+>>>>> masters and their IOMMUs.
+>>>>>
+>>>>
+>>>> G2D, Scalers and FIMD of Exynos5420 has 2 System MMUs while aother
+>>>> SoC like
+>>>> Exynos5250 does not.
+>>>>
+>>>> I don't understand why you are negative to this approach.
+>>>> This is the simplest than the others.
+>>>>
+>>>> Let me show you an example.
+>>>> FIMC-IS driver just controls MCU in FIMC-IS subsystem and the
+>>>> firmware of
+>>>> the MCU controls all other peripherals in the subsystem. Each
+>>>> peripherals
+>>>> have their own System MMU. Moreover, the configuration of the
+>>>> peripherals
+>>>> varies according to the SoCs.
+>>>>
+>>>> If System MMU driver accepts multiple masters, everything is done in
+>>>> DT.
+>>>> But I worry that it is not easy if System MMU driver does not support
+>>>> multiple masters.
+>>>
+>>> I believe I have stated enough reasons why this kind of implementation
+>>> is bad. I'm not going to waste time repeating myself.
+>>>
+>>> Your concerns presented above are valid, however they are not related to
+>>> what is wrong with this patch. I have given you two proper ways to
+>>> handle this, none should be forced upon particular IOMMU master drivers
+>>> - their authors should have the chance to select the method that works
+>>> best for them.
+>>>
+>>
+>> I don't still understand why you think this patch is wrong.
+>> I think this is the best way not to think for all the driver developers
+>> about other things than their business logic.
+>
+> I agree, but one of the ways I proposed (an iommu-composite layer above
+> the IOMMU low level drivers) doesn't add any extra responsibility of
+> driver developers.
+>
+> Moreover, it's this kind of business logic in low level drivers that is
+> adding more responsibility, because it introduces additional complexity
+> and makes the driver harder to read, maintain and extend in future.
+>
+>>
+>> This does not hurt anyone and I think this is good enough.
+>>
+>
+> Well, it is barely good enough. It is a good practice to make a low
+> level driver handle a single device instance and this is how Linux
+> driver model is designed.
+>
+> Moreover, a single device tree node _must_ represent a single hardware
+> block, so you can't group multiple SysMMUs into a single device tree node.
+>
 
-Ok.
+OK, you add nodes for single SysMMUs devices which is fine, sorry. I was 
+under impression that one kernel device (struct device) corresponds to 
+multiple SysMMUs, but this was before your patches, sorry. So one issue 
+less, but it's still not good.
 
-> 
-> > 
-> > > +- samsung,fixed-burst: Boolean, Program the DMA to use the fixed
-> > > +burst mode
-> > > +- samsung,burst-map: Integer, Program the possible bursts supported
-> > > +by sxgbe
-> > > +  This is an interger and represents allowable DMA bursts when fixed
-> burst.
-> > > +  Allowable range is 0x00-0x3F. This field is valid only when fixed
-> > > +burst is
-> > > +  enabled, otherwise ignored.
-> > 
-> > If that's the case, why not have just this property and have it imply the
-> use of
-> > fixed burst mode?
-> OK. It will be implemented in next patch set.
-> 
-> > 
-> > When is it necessary to use fixed burst mode?
-> This is the configurable mode of DMA an used internally by hardware to fetch
-> data from platform bus
+> Furthermore, if you force grouping of SysMMUs into a single virtual one,
+> you enforce using the same address space for all masters of some
+> particular hardware blocks, while potentially driver developers would
+> like to separate them.
 
-Sure, but that doesn't describe when it is necessary. Is this the way
-the DMA was configured at integration time, or the way the kernel should
-configure it?
+Probably some clarification is needed. Your other patch adds:
 
-If the latter, is it absolutely necessary for correctness to use
-fixed-burst mode? Or is it just always sensible to use it if available?
+	sysmmu_fimd0w04: sysmmu@14640000 {
+		compatible = "samsung,sysmmu-v3.3";
+		reg = <0x14640000 0x1000>;
+		interrupt-parent = <&combiner>;
+		interrupts = <3 2>;
+		clock-names = "sysmmu", "master";
+		clocks = <&clock 422>, <&clock 421>;
+		samsung,power-domain = <&disp_pd>;
+		mmu-masters = <&fimd>;
+	};
 
-What does the driver do if fixed burst mode is not available? Would this
-work in the presence of fixed-burt mode?
+	sysmmu_fimd0w123: sysmmu@14680000 {
+		compatible = "samsung,sysmmu-v3.3";
+		reg = <0x14680000 0x1000>;
+		interrupt-parent = <&combiner>;
+		interrupts = <3 0>;
+		clock-names = "sysmmu", "master";
+		clocks = <&clock 423>, <&clock 421>;
+		samsung,power-domain = <&disp_pd>;
+		mmu-masters = <&fimd>;
+	};
 
-I'm not arguing to remove these properties. I'd just like to understand
-if all you're describing is the presence of a feature or that the use of
-the feature is absolutely necessary for correctness.
+ From such description, in future FIMD driver won't be able to determine 
+which SysMMU is used for windows 0 and 4 and which for windows 1, 2 and 
+3. However it would be desirable to handle both SysMMUs separately, 
+allowing each SysMMU to have only mappings for frame buffers needed by 
+respective FIMD windows.
 
-I'm perfectly happy for Linux to always decide to use these features if
-available.
+> A good interface design should not enforce any particular implementation
+> and this is what we should stick to in this case as well.
+>
+>> If you want to provide another layer between master device and system mmu
+>> as you mentioned, you do that. This patch does not restrict it.
+>
+> It does, as mentioned above. With a device tree listing multiple SysMMUs
+> as one, you can't separate them.
 
-> 
-> > 
-> > > +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced
-> > > +address
-> > > mode.
-> > 
-> > When would this be selected, and why can the kernel not choose?
-> Kernel doesn't have the provision to find out a way to select this. So, need
-> to pass from DT
+What I mean is that based on DT description, drivers should be able to 
+control SysMMUs separately if they want to.
 
-Likewise, it is always absolutely necessary, or just always sensible to
-use enhanced address mode if present?
-
-> 
-> > 
-> > > +- samsung,force_thresh_dma_mode: Boolean, Force DMA to use the
-> > > +threshold mode
-> > > +  for both tx and rx
-> > 
-> > s/_/-/ in property names.
-> OK.
-> 
-> > 
-> > Likewise, why can the kernel not choose.
-> SXGBE h/w registers can't provide information to select this. So, need to pass
-> from DT depend on Platform
-
-Similarly.
-
-> 
-> > 
-> > > +- samsung,force_sf_dma_mode: Boolean, Force DMA to use the Store and
-> > > +Forward
-> > > +  mode for both tx and rx. This flag is ignored if
-> > > +force_thresh_dma_mode is
-> > > set.
-> > 
-> > Likewise for both points.
-> Same above.
-
-And again.
-
-Cheers,
-Mark.
+Best regards,
+Tomasz
