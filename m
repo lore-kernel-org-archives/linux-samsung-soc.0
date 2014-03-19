@@ -1,92 +1,34 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] Samsung clock changes for v3.15
-Date: Tue, 18 Mar 2014 21:07:15 -0700
-Message-ID: <20140319040715.30995.6371@quantum>
-References: <1395079197-13598-1-git-send-email-t.figa@samsung.com>
- <20140319010634.30995.4609@quantum> <5328F09D.9090103@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/3] ARM: S3C24XX: Remove invalid code from hardware.h
+Date: Wed, 19 Mar 2014 10:37:26 +0530
+Message-ID: <CAK9yfHxbgNwR4Zx9q9V5oO=NkjQKj9Oio6pOZwgT24u6WWUhRQ@mail.gmail.com>
+References: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:59799 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751835AbaCSEHV convert rfc822-to-8bit (ORCPT
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:63639 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750776AbaCSFH1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 00:07:21 -0400
-Received: by mail-pa0-f42.google.com with SMTP id fb1so8341858pad.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 21:07:21 -0700 (PDT)
-In-Reply-To: <5328F09D.9090103@gmail.com>
+	Wed, 19 Mar 2014 01:07:27 -0400
+Received: by mail-ob0-f169.google.com with SMTP id va2so7821763obc.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 22:07:27 -0700 (PDT)
+In-Reply-To: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Quoting Tomasz Figa (2014-03-18 18:19:25)
-> Hi Mike,
-> 
-> On 19.03.2014 02:06, Mike Turquette wrote:
-> > Quoting Tomasz Figa (2014-03-17 10:59:57)
-> >> The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
-> >>
-> >>    Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>    git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.15/samsung-clk
-> >>
-> >> for you to fetch changes up to 70d1cf1c85486753fec0c60a9a093bdfe42b89b4:
-> >>
-> >>    Merge branch 'for_3.15/misc' into samsung-next (2014-03-17 13:00:01 +0100)
-> >>
-> >> ----------------------------------------------------------------
-> >>
-> >> Samsung clock patches for v3.15.
-> >>
-> >> Due to dependencies, most of the patches already went through linux-samsung
-> >> tree, so this pull request is rather small.
-> >
-> > I'm a bit confused. This PR is not really small (32 patches) and it
-> > covers more stuff from arch/arm that I usually take.
-> >
-> >> It contains various patches
-> >> collected since the last merge window:
-> >>
-> >> 1) non-critical fixes (without need to push to stable):
-> >>
-> >> 220b0cc clk: samsung: Initialize clock table with error pointers
-> >> 58d83cb clk: exynos-5420: Fix VPLL lock offset
-> >> 3299bc3 clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
-> >>
-> >> 2) clock driver extensions:
-> >>
-> >> db40d0c clk: samsung exynos5250/5420: Add gate clock for SSS module
-> >> d8b9731 clk/samsung: add support for multiple clock providers
-> >> 45af130 clk/samsung: add support for pll2550xx
-> >> adec437 clk/samsung: add support for pll2650xx
-> >
-> > Right, these 7 patches would constitute a small PR. Was there a mistake
-> > when generating this pull request?
-> 
-> The problem with this pull request is that it contains patches that 
-> require quite a lot of dependencies that have been already applied into 
-> Samsung SoC tree. I'm not sure how else such situation could be handled, 
-> other than pulling respective commits into my tree as well.
+On 3 January 2014 14:54, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Remove the code that is not referenced anywhere. While at it also
+> remove incorrect file path.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
 
-There are already a fair number of clk patches going through the samsung
-tree. So in the name of consistency for this upcoming merge window it
-might be best to take these patches through there as well. Let me know
-if that creates any undo burden on you. Otherwise please add:
+Gentle ping on this series, Kukjin.
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
 
-Regards,
-Mike
-
-> 
-> I don't think this would make any problem when merging into Linus' tree, 
-> as these are exactly the same commits that will go through ARM SoC, so 
-> git should merge them just fine. Still, if you have a better idea what 
-> to do now, I will do so.
-> 
-> Best regards,
-> Tomasz
+-- 
+With warm regards,
+Sachin
