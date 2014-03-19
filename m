@@ -1,45 +1,152 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 1/3] clk: s2mps11: Add support for S2MPS14 clocks
-Date: Wed, 19 Mar 2014 08:50:08 +0100
-Message-ID: <1395215408.18730.2.camel@AMDC1943>
-References: <1395047958-17953-1-git-send-email-k.kozlowski@samsung.com>
- <1395047958-17953-2-git-send-email-k.kozlowski@samsung.com>
- <20140319001643.30995.46947@quantum>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 1/3] arm64: dts: add initial dts for Samsung GH7 SoC and
+ SSDK-GH7 board
+Date: Wed, 19 Mar 2014 17:33:32 +0900
+Message-ID: <019601cf434d$eb5c47f0$c214d7d0$@samsung.com>
+References: <1394491879-5320-1-git-send-email-kgene.kim@samsung.com>
+ <1394491879-5320-2-git-send-email-kgene.kim@samsung.com>
+ <20140311182922.GD3263@e106331-lin.cambridge.arm.com>
+ <01c501cf3dac$022879b0$06796d10$@samsung.com>
+ <20140313103329.GD5035@e106331-lin.cambridge.arm.com>
+ <010f01cf3f24$7002adb0$50080910$@samsung.com>
+ <20140318181054.GF2941@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140319001643.30995.46947@quantum>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:65351 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757067AbaCSIdi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Mar 2014 04:33:38 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N2O00ILXD40ZG10@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Mar 2014 17:33:36 +0900 (KST)
+In-reply-to: <20140318181054.GF2941@e106331-lin.cambridge.arm.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mark Rutland' <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Catalin Marinas' <Catalin.Marinas@arm.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
 
-On Tue, 2014-03-18 at 17:16 -0700, Mike Turquette wrote:
-> Quoting Krzysztof Kozlowski (2014-03-17 02:19:16)
-> > This patch adds support for S2MPS14 PMIC clocks (BT and AP) to the
-> > s2mps11 clock driver.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Mark Rutland wrote:
 > 
-> This does not apply cleanly to to clk tree trip, nor does it compile
-> after manually merging due to changes introducing
-> linux/mfd/samsung/s2mps14.h.
+> On Fri, Mar 14, 2014 at 01:26:31AM +0000, Kukjin Kim wrote:
+> > > > > > +		cpu@000 {
+> > > > > > +			device_type = "cpu";
+> > > > > > +			compatible = "arm,armv8";
+> > > > >
+> > > > > The "arm,armv8" should be a fallback rather than the only entry. The
+> > > > > precise core should be first (see arch/arm64/boot/dts/apm-storm.dtsi for
+> > > > > an example).
+> > > > >
+> > > > Well, do I really need another name if GH7 has just 'ARMv8 core' exactly?
+> > >
+> > > Yes please. You presumably don't have "just 'ARMv8 core'", but rather a
+> > > specific ARMv8 implementation.
+> > >
+> > OK, so in my understanding if it is really _just_ 'ARMv8 core' from S/W point
+> > of view, "arm,armv8" should be fine. I will make sure.
 > 
-> The changes look OK to me so maybe Lee can take it with my Ack?
+> It will work, sure. But the compatible list should also list the
+> specific CPU. From the S/W point of view there are likely
+> implementation-defined registers which mean that no real CPU will be
+> "just" an ARMv8 core.
 > 
-> Acked-by: Mike Turquette <mturquette@linaro.org>
-> 
+Well, IMHO, SoC is just SoC and we don't think each CPU(core) from SoC and I'm
+still wondering why the specific compatible string for CPU is needed in kernel.
+And I don't see any custom handling for GH7 SoC. Note sorry, I don't get about
+implementation-defined registers.
 
-Hi,
+> We have enough trouble with DTBs for 32-bit SoCs not listing things they
+> should. I see no reason to be lax here.
+> 
+Could you please let me know what was the problem?
+If it could be on exynos, would be helpful to me.
 
-Thanks for the Ack. The patch depends on Tushar Behera's patches:
- - [PATCH V2 0/2] Add support for clocks in S5M8767
-   http://thread.gmane.org/gmane.linux.kernel.samsung-soc/27264
-which are waiting for some time. Both patchsets should be pulled
-together.
+> > > > > > +	gic: interrupt-controller@1C000000 {
+> > > > > > +		compatible = "arm,cortex-a15-gic";
+> > > > >
+> > > > > We should have a more specific compatible string early in the list here
+> > > > > too.
+> > > > >
+> > > > Well, I think more specific compatible string is not required for gic, there
+> > > > were discussion about using another compatible string for gic-v2. And
+> > > > cortex-a15-gic should be fine at this moment and if another name is required
+> > > > as per previous discussion, we will then.
+> > >
+> > > While it's probably ok to have "arm,cortex-a15-gic" in the compatible
+> > > list, it would be good to also have a more specific string, so we can
+> > > identify the GIC implementation precisely in future (in case we need to
+> > > perform any workarounds, or there's some kind of optimisation we could
+> > > perform for some implementations).
+> > >
+> > Hmm... let's use just it for now then add another specific string later ;-)
+> 
+> Why not do this from the start? Then we can actually rely on the DTB
+> rather than it being useless.
+> 
+I mean, we need to use current GIC implementation for GH7 SoC at this moment.
 
-Best regards,
-Krzysztof
+> > > > > > +	pmu {
+> > > > > > +		compatible = "arm,armv8-pmuv3";
+> > > > >
+> > > > > This is missing a specific compatible string.
+> > > > >
+> > > > I don't know why I need another specific compatible string here because I
+> > > > thought the 'armv8-pmuv3' is enough.
+> > >
+> > > Each CPU microarchitecture has different PMU events and quirks. While
+> > > the CPU PMU might be compatible with ARMv8's PMUv3, it will also have
+> > > implementation-specific events, and may have quirks we need to work
+> > > around in future.
+> > >
+> > > As with 32-bit, we'd expect these to be of the form
+> > > "${implementor},${cpu}-pmu".
+> > >
+> > OK.
+> >
+> > +	compatible = "samsung,gh7-pmu", "armv8-pmuv3";
+> 
+> Is GH7 an SoC or a CPU?
+> 
+SoC. Similar as above. AFAIK, ARM SoC vendors usually didn't name for each CPU
+not SoC if there is no change in core hardware implementation, at least Samsung
+didn't name.
+
+OK, if you still have strong objection on this, I will remove PMU support here
+until agreement about that.
+
+> > > > > > +		serial@12c20000 {
+> > > > > > +			compatible = "arm,pl011", "arm,primecell";
+> > > > > > +			reg = <0 0x12c20000 0 0x10000>;
+> > > > > > +			interrupts = <0 420 0>;
+> > > > > > +		};
+> > > > >
+> > > > > These are both missing required clocks.
+> > > > >
+> > > > Yes right.
+> > >
+> > > So you'll add these?
+> > >
+> > To be honest, still I'm not sure how it should be handled because regarding
+> > clocks do not need to handle in the kernel for GH7. And for it, I needed to
+> > use some HACKs to change clock handling in the kernel. I will provide proper
+> > solution soon.
+> 
+> Are the clocks always-on, fixed-rate clocks, or does some firmware
+> manage them dynamically? We have bindings for the former.
+> 
+Actually, some firmware handles them and basically and kernel doesn't need.
+
+> There's not much point having a DTS upstream that relies on hacks which
+> are not.
+> 
+At the end, we are going to use just upstream kernel for GH7 without any HACKs
+but as a preliminary, this is a good start point even there is HACK for a while.
+
+Thanks,
+Kukjin
