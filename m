@@ -1,193 +1,59 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH Resend 1/3] ARM: EXYNOS: Consolidate Kconfig entries
-Date: Wed, 19 Mar 2014 15:55:03 +0530
-Message-ID: <1395224705-2935-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:48256 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758259AbaCSKba (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 06:31:30 -0400
-Received: by mail-pa0-f43.google.com with SMTP id bj1so8760235pad.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Mar 2014 03:31:30 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Leela Krishna Amudala <leelakrishna.a@gmail.com>
+Subject: Re: [PATCH v11 0/4] thermal: samsung: Clean up and add support for Exynos5420
+Date: Wed, 19 Mar 2014 16:49:36 +0530
+Message-ID: <CAL1wa8fj+pYN7EOkh0nggkwss2U9pJhGEoaA7TG+7oy0LK3zFQ@mail.gmail.com>
+References: <1384238132-24515-1-git-send-email-ch.naveen@samsung.com> <1386657640-21481-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1386657640-21481-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, Naveen Krishna <naveenkrishna.ch@gmail.com>, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "cpgs ." <cpgs@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mark.rutland@arm.com, sachin.kamat@linaro.org
 
-Instead of repeating the Kconfig entries for every SoC, move them under
-ARCH_EXYNOS4 and 5 and move the entries common to both 4 and 5 under
-ARCH_EXYNOS. Also, since the individual SoCs do not have any specific
-machine/platform code, keep them as boolean symbols instead of user
-selectable and select them from Exynos4 and 5 config symbols. Individual
-SoC symbols can be removed eventually once the driver Kconfig dependencies
-on these symbols are removed.
+Hi All,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Acked-by: Tomasz Figa <t.figa@samsung.com>
----
-This is a resend of the series rebased on top of latest linux-next and
-Tomasz Figa's PM consolidation series 1 and 2.
----
- arch/arm/Kconfig             |   10 +++++
- arch/arm/mach-exynos/Kconfig |   89 +++++++++++-------------------------------
- 2 files changed, 33 insertions(+), 66 deletions(-)
+I didn't see this series in mainline, Any comments for this ?
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index afc751f750b9..e2428a18f2a6 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -821,18 +821,28 @@ config ARCH_S5PV210
- 
- config ARCH_EXYNOS
- 	bool "Samsung EXYNOS"
-+	select ARCH_HAS_BANDGAP
- 	select ARCH_HAS_CPUFREQ
- 	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARCH_SPARSEMEM_ENABLE
-+	select ARM_AMBA
- 	select ARM_GIC
-+	select CLKSRC_OF
- 	select COMMON_CLK
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
-+	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
-+	select HAVE_SMP
- 	select NEED_MACH_MEMORY_H
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
-+	select PM_GENERIC_DOMAINS if PM_RUNTIME
-+	select S5P_DEV_MFC
-+	select SAMSUNG_DMADEV
- 	select SPARSE_IRQ
- 	select USE_OF
- 	help
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index fc8bf18e222d..9398bab87a76 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -14,90 +14,32 @@ menu "SAMSUNG EXYNOS SoCs Support"
- config ARCH_EXYNOS4
- 	bool "SAMSUNG EXYNOS4"
- 	default y
--	select ARM_AMBA
--	select CLKSRC_OF
-+	select ARM_CPU_SUSPEND if PM_SLEEP
- 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
- 	select CPU_EXYNOS4210
- 	select GIC_NON_BANKED
- 	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
--	select HAVE_ARM_SCU if SMP
--	select HAVE_SMP
- 	select MIGHT_HAVE_CACHE_L2X0
--	select PINCTRL
--	select PM_GENERIC_DOMAINS if PM_RUNTIME
--	select S5P_DEV_MFC
-+	select SOC_EXYNOS4212
-+	select SOC_EXYNOS4412
- 	help
--	  Samsung EXYNOS4 SoCs based systems
-+	  Samsung EXYNOS4 (Cortex-A9) SoC based systems
- 
- config ARCH_EXYNOS5
- 	bool "SAMSUNG EXYNOS5"
--	select ARM_AMBA
--	select CLKSRC_OF
--	select HAVE_ARM_SCU if SMP
--	select HAVE_SMP
--	select PINCTRL
--	help
--	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
--
--comment "EXYNOS SoCs"
--
--config CPU_EXYNOS4210
--	bool "SAMSUNG EXYNOS4210"
--	default y
--	depends on ARCH_EXYNOS4
--	select ARCH_HAS_BANDGAP
--	select ARM_CPU_SUSPEND if PM_SLEEP
--	select PINCTRL_EXYNOS
--	select SAMSUNG_DMADEV
--	help
--	  Enable EXYNOS4210 CPU support
--
--config SOC_EXYNOS4212
--	bool "SAMSUNG EXYNOS4212"
- 	default y
--	depends on ARCH_EXYNOS4
--	select ARCH_HAS_BANDGAP
--	select PINCTRL_EXYNOS
--	select SAMSUNG_DMADEV
-+	select SOC_EXYNOS5250
-+	select SOC_EXYNOS5420
- 	help
--	  Enable EXYNOS4212 SoC support
-+	  Samsung EXYNOS5 (Cortex-A15/A7) SoC based systems
- 
--config SOC_EXYNOS4412
--	bool "SAMSUNG EXYNOS4412"
--	default y
--	depends on ARCH_EXYNOS4
--	select ARCH_HAS_BANDGAP
--	select PINCTRL_EXYNOS
--	select SAMSUNG_DMADEV
--	help
--	  Enable EXYNOS4412 SoC support
--
--config SOC_EXYNOS5250
--	bool "SAMSUNG EXYNOS5250"
--	default y
--	depends on ARCH_EXYNOS5
--	select ARCH_HAS_BANDGAP
--	select PINCTRL_EXYNOS
--	select PM_GENERIC_DOMAINS if PM_RUNTIME
--	select S5P_DEV_MFC
--	select SAMSUNG_DMADEV
--	help
--	  Enable EXYNOS5250 SoC support
--
--config SOC_EXYNOS5420
--	bool "SAMSUNG EXYNOS5420"
--	default y
--	depends on ARCH_EXYNOS5
--	select PM_GENERIC_DOMAINS if PM_RUNTIME
--	help
--	  Enable EXYNOS5420 SoC support
-+comment "EXYNOS SoCs"
- 
- config SOC_EXYNOS5440
- 	bool "SAMSUNG EXYNOS5440"
- 	default y
- 	depends on ARCH_EXYNOS5
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
--	select ARCH_HAS_BANDGAP
- 	select ARCH_HAS_OPP
- 	select HAVE_ARM_ARCH_TIMER
- 	select AUTO_ZRELADDR
-@@ -110,4 +52,19 @@ config SOC_EXYNOS5440
- 
- endmenu
- 
-+config CPU_EXYNOS4210
-+	bool
-+
-+config SOC_EXYNOS4212
-+	bool
-+
-+config SOC_EXYNOS4412
-+	bool
-+
-+config SOC_EXYNOS5250
-+	bool
-+
-+config SOC_EXYNOS5420
-+	bool
-+
- endif
--- 
-1.7.9.5
+Thanks,
+Leela Krishna Amudala.
+
+
+On Tue, Dec 10, 2013 at 12:10 PM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> This patchset does a little clean up of the existing code (linux-soc-thermal)
+> 1.  [v11] thermal: samsung: replace inten_ bit fields with intclr_
+> 2.  [v11] thermal: samsung: change base_common to more meaningful base_second
+>
+> adds support for Exynos5420 in the driver and (linux-soc-thermal)
+> 3.  [v11] thermal: samsung: Add TMU support for Exynos5420 SoCs
+> also adds the device tree nodes for the same to exynos5420.dtsi (linux-samsung.git)
+> 4.  [v11] ARM: dts: Exynos5420: Add device nodes for TMU blocks
+>
+> (linux-soc-thermal)
+> Naveen Krishna Chatradhi (3):
+>   thermal: samsung: replace inten_ bit fields with intclr_
+>   thermal: samsung: change base_common to more meaningful base_second
+>   thermal: samsung: Add TMU support for Exynos5420 SoCs
+>
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |   42 ++++++-
+>  drivers/thermal/samsung/exynos_tmu.c               |   72 +++++++++---
+>  drivers/thermal/samsung/exynos_tmu.h               |   21 ++--
+>  drivers/thermal/samsung/exynos_tmu_data.c          |  119 ++++++++++++++++++--
+>  drivers/thermal/samsung/exynos_tmu_data.h          |   12 +-
+>  5 files changed, 228 insertions(+), 38 deletions(-)
+>
+> (linux-samsung.git)
+> Naveen Krishna Chatradhi (1):
+>   ARM: dts: Exynos5420: Add device nodes for TMU blocks
+>
+>  arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
