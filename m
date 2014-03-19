@@ -1,41 +1,67 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 0/4] Consolidate Exynos machine code
-Date: Wed, 19 Mar 2014 14:29:11 +0100
-Message-ID: <201403191429.11721.arnd@arndb.de>
-References: <1395231957-22032-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1395231957-22032-1-git-send-email-sachin.kamat@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [RFC 0/4] drm: exynos: Add drivers for MDNIE and IELCD
+Date: Wed, 19 Mar 2014 19:52:51 +0530
+Message-ID: <1395238975-24600-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:64744 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965253AbaCSOWi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Mar 2014 10:22:38 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N2O005U3T9OY070@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Mar 2014 23:22:36 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, sw0312.kim@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, marcheu@chromium.org, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On Wednesday 19 March 2014, Sachin Kamat wrote:
-> This patch series consolidates the Exynos machine code and common
-> code into a single file to avoid code duplication and introduces
-> generic compatible strings for Exynos4 and 5 SoC series.
-> 
-> Complete discussion and motivation for this series is found here:
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/27268
-> 
-> This series is based on the latest linux-next and depends on
-> 1. Tomasz Figa's PM consolidation series 1 and 2
-> 2. Patch: ARM: SAMSUNG: Reorganize calls to reserve memory for MFC
-> http://www.spinics.net/lists/linux-samsung-soc/msg25501.html
-> 3. Patch: ARM: EXYNOS: Add support to reserve memory for MFC-v7
-> http://www.spinics.net/lists/arm-kernel/msg315940.html
-> 4. Kconfig and CPU init Consolidation series
-> http://article.gmane.org/gmane.linux.kernel.samsung-soc/28216
+This series is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+On Exynos SOC, FIMD supports various post processors
+like MIE, MDNIE and IELCD for image enhancement purposes.
+This patchset adds an infrastructure in exynos FIMD to support such
+post procerssors and also adds support routines for MDNIE, and IELCD.
+
+(1) For basic display output,
+	-- MDNIE and IELCD should have same video timings as FIMD (mode_set)
+	-- strict power_up/down sequence need to be followed between FIMD,
+	   MDNIE, and IELCD (power_on, power_off)
+
+(2) For enhanced display output,
+	-- MDNIE needs image enhancement data from userspace
+	   (set_property and set_gamma)
+
+Rahul Sharma's patchset at:
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/27642
+The above patchset is needed to support the enhanced display output.
+
+MDNIE and IELCD DT nodes are given as phandles to FIMD DT node.
+SOC specific information like base address, clocks and other
+configuration information are extracted via FIMD DT node.
+
+Ajay Kumar, Shirish, Rahul Sharma (4):
+  drm: exynos: Add infrastructure to support FIMD post processors
+  drm: exynos: add MDNIE post processor
+  drm: exynos: add IELCD post processor
+  drm: exynos: add MDNIE and IELCD to FIMD pp list
+
+ drivers/gpu/drm/exynos/Makefile            |   3 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 179 ++++++++
+ drivers/gpu/drm/exynos/exynos_fimd_pp.h    |  54 +++
+ drivers/gpu/drm/exynos/exynos_ielcd.c      | 295 ++++++++++++
+ drivers/gpu/drm/exynos/exynos_mdnie.c      | 707 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_mdnie_regs.h | 154 +++++++
+ include/video/samsung_fimd.h               |  49 +-
+ 7 files changed, 1439 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/drm/exynos/exynos_fimd_pp.h
+ create mode 100644 drivers/gpu/drm/exynos/exynos_ielcd.c
+ create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie.c
+ create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie_regs.h
+
+-- 
+1.8.1.2
