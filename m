@@ -1,73 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v6 1/4] [media] exynos-scaler: Add DT bindings for SCALER
- driver
-Date: Wed, 19 Mar 2014 13:33:03 +0100
-Message-ID: <53298E7F.30603@samsung.com>
-References: <1395213196-25972-1-git-send-email-shaik.ameer@samsung.com>
- <4637278.9G3gGkQ5GA@avalon> <532985A9.8050101@samsung.com>
- <1929080.dnr9A8PU43@avalon>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung clock changes for v3.15
+Date: Wed, 19 Mar 2014 13:41:57 +0100
+Message-ID: <10961055.sol9h1mMBA@wuerfel>
+References: <1395079197-13598-1-git-send-email-t.figa@samsung.com> <20140319040715.30995.6371@quantum> <532989BB.9010700@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17084 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964883AbaCSMdL (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.13]:58416 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964866AbaCSMmj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 08:33:11 -0400
-In-reply-to: <1929080.dnr9A8PU43@avalon>
+	Wed, 19 Mar 2014 08:42:39 -0400
+In-Reply-To: <532989BB.9010700@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.chehab@samsung.com, b.zolnierkie@samsung.com, t.figa@samsung.com, k.debski@samsung.com, arun.kk@samsung.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, "arm@kernel.org" <arm@kernel.org>
 
-Hi Laurent,
+On Wednesday 19 March 2014 13:12:43 Tomasz Figa wrote:
+> On 19.03.2014 05:07, Mike Turquette wrote:
+> > Quoting Tomasz Figa (2014-03-18 18:19:25)
+> >> Hi Mike,
+> >>
+> >> On 19.03.2014 02:06, Mike Turquette wrote:
+> >>> Quoting Tomasz Figa (2014-03-17 10:59:57)
+> >>>> The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
+> >>>>
+> >>>>     Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
+> >>>>
+> >>>> are available in the git repository at:
+> >>>>
+> >>>>     git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.15/samsung-clk
+> >>>>
+> >>>> for you to fetch changes up to 70d1cf1c85486753fec0c60a9a093bdfe42b89b4:
+> >>>>
+> >>>>     Merge branch 'for_3.15/misc' into samsung-next (2014-03-17 13:00:01 +0100)
+> >>>>
+> >>>> ----------------------------------------------------------------
+> >>>>
+> >>>> Samsung clock patches for v3.15.
+> >>>>
+> >>>> Due to dependencies, most of the patches already went through linux-samsung
+> >>>> tree, so this pull request is rather small.
+> >>>
+> >>> I'm a bit confused. This PR is not really small (32 patches) and it
+> >>> covers more stuff from arch/arm that I usually take.
+> >>>
+> >>>> It contains various patches
+> >>>> collected since the last merge window:
+> >>>>
+> >>>> 1) non-critical fixes (without need to push to stable):
+> >>>>
+> >>>> 220b0cc clk: samsung: Initialize clock table with error pointers
+> >>>> 58d83cb clk: exynos-5420: Fix VPLL lock offset
+> >>>> 3299bc3 clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
+> >>>>
+> >>>> 2) clock driver extensions:
+> >>>>
+> >>>> db40d0c clk: samsung exynos5250/5420: Add gate clock for SSS module
+> >>>> d8b9731 clk/samsung: add support for multiple clock providers
+> >>>> 45af130 clk/samsung: add support for pll2550xx
+> >>>> adec437 clk/samsung: add support for pll2650xx
+> >>>
+> >>> Right, these 7 patches would constitute a small PR. Was there a mistake
+> >>> when generating this pull request?
+> >>
+> >> The problem with this pull request is that it contains patches that
+> >> require quite a lot of dependencies that have been already applied into
+> >> Samsung SoC tree. I'm not sure how else such situation could be handled,
+> >> other than pulling respective commits into my tree as well.
+> >
+> > There are already a fair number of clk patches going through the samsung
+> > tree. So in the name of consistency for this upcoming merge window it
+> > might be best to take these patches through there as well. Let me know
+> > if that creates any undo burden on you. Otherwise please add:
+> >
+> > Acked-by: Mike Turquette <mturquette@linaro.org>
+> 
+>  From my perspective, as long as the patches flow upstream, it's one and 
+> the same. I wonder whether ARM SoC tree is still open for merges, 
+> though. Arnd, Olof?
+> 
 
-On 19/03/14 12:59, Laurent Pinchart wrote:
-> On Wednesday 19 March 2014 12:55:21 Sylwester Nawrocki wrote:
->> > On 19/03/14 12:31, Laurent Pinchart wrote:
->>>> > >> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->>>> > >> 
->>>>> > >> > @@ -0,0 +1,24 @@
->>>>> > >> > +* Samsung Exynos5 SCALER device
->>>>> > >> > +
->>>>> > >> > +SCALER is used for scaling, blending, color fill and color space
->>>>> > >> > +conversion on EXYNOS[5420/5410] SoCs.
->>>>> > >> > +
->>>>> > >> > +Required properties:
->>>>> > >> > +- compatible: should be "samsung,exynos5420-scaler" or
->>>>> > >> > +			"samsung,exynos5410-scaler"
->>>>> > >> > +- reg: should contain SCALER physical address location and length
->>>>> > >> > +- interrupts: should contain SCALER interrupt specifier
->>>>> > >> > +- clocks: should contain the SCALER clock phandle and specifier pair
->>>>> > >> > for
->>>>> > >> > +		each clock listed in clock-names property, according to
->>>>> > >> > +		the common clock bindings
->>>>> > >> > +- clock-names: should contain exactly one entry
->>>>> > >> > +		- "scaler" - IP bus clock
->>> > > 
->>> > > I'm not too familiar with the Exynos platform, but wouldn't it make sense
->>> > > to use a common name across IP cores for interface and function clocks ?
->> > Certainly it would, I proposed that when the exynos clock controller
->> > driver was posted, quite long time ago. Unfortunately it wasn't followed
->> > up. One of serious reasons was that there are common drivers for
->> > multiple Samsung platforms (also the ones not reworked to support dt) and
->> > thus changing the clock names would be problematic - driver would still
->> > need to handle multiple clock names.
->> > But for this driver a common name like "gate" could be better IMHO.
->
-> OMAP uses "ick" for the interface clock and "fck" for the function clock. Do 
-> you think it would make sense to standardize on "fck" across SoC families ?
+We can probably still take the bug fixes, but I'd have to take a closer
+look at other ones. Probably one of us would say no to those.
 
-Not sure if it could be future proof, I guess where it isn't bound to other
-issues and the names could be chosen freely - we could try to use standard
-names. OTOH it could obfuscate things a bit. As far as Samsung platforms 
-are concerned, the function clock names are usually in form of SCLK_[IP_NAME],
-"sclk" seems to be an abbreviation of "special clock".
-It is also not always clear which clock is the interface clock and which is
-the function clock. The "special clocks" are generally referred to as the IP 
-block clocks.
-
---
-Regards,
-Sylwester
+	Arnd
