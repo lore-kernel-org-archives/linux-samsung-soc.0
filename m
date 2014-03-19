@@ -1,223 +1,98 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3 1/3] clk: s2mps11: Add support for S2MPS14 clocks
-Date: Tue, 18 Mar 2014 17:16:43 -0700
-Message-ID: <20140319001643.30995.46947@quantum>
-References: <1395047958-17953-1-git-send-email-k.kozlowski@samsung.com>
- <1395047958-17953-2-git-send-email-k.kozlowski@samsung.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: Re: [PATCH v11 20/27] iommu/exynos: allow having multiple System MMUs
+ for a master H/W
+Date: Wed, 19 Mar 2014 09:39:29 +0900
+Message-ID: <20140319093929.d3a7cea131c626cf978e0ff1@samsung.com>
+References: <20140314141050.c8bedcb66532d277c496796d@samsung.com>
+ <53232A53.4040708@samsung.com>
+ <20140318220128.564740c88d06b86c9c5c10e3@samsung.com>
+ <532857A8.5060000@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1395047958-17953-2-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44982 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756792AbaCSAjb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Mar 2014 20:39:31 -0400
+In-reply-to: <532857A8.5060000@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>
 
-Quoting Krzysztof Kozlowski (2014-03-17 02:19:16)
-> This patch adds support for S2MPS14 PMIC clocks (BT and AP) to the
-> s2mps11 clock driver.
+On Tue, 18 Mar 2014 15:26:48 +0100, Tomasz Figa wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> On 18.03.2014 14:01, Cho KyongHo wrote:
+> > On Fri, 14 Mar 2014 17:12:03 +0100, Tomasz Figa wrote:
+> >> Hi KyongHo,
+> >>
+> >> On 14.03.2014 06:10, Cho KyongHo wrote:
+> >>> Some master device descriptor like fimc-is which is an abstraction
+> >>> of very complex H/W may have multiple System MMUs. For those devices,
+> >>> the design of the link between System MMU and its master H/W is needed
+> >>> to be reconsidered.
+> >>>
+> >>> A link structure, sysmmu_list_data is introduced that provides a link
+> >>> to master H/W and that has a pointer to the device descriptor of a
+> >>> System MMU. Given a device descriptor of a master H/W, it is possible
+> >>> to traverse all System MMUs that must be controlled along with the
+> >>> master H/W.
+> >>
+> >> NAK.
+> >>
+> >> A device driver should handle particular hardware instances separately,
+> >> without abstracting a virtual hardware instance consisting of multiple
+> >> physical ones.
+> >>
+> >> If such abstraction is needed, it should be done above the exynos-iommu
+> >> driver, e.g. by something like iommu-composite driver that would
+> >> aggregate several IOMMUs. Keep in mind that such IOMMUs in a group could
+> >> be different, e.g. different Exynos SysMMU versions or even completely
+> >> different IPs handled by different drivers.
+> >>
+> >> Still, I don't think there is a real need for such abstraction. Instead,
+> >> related drivers shall be fixed to properly handle multiple memory
+> >> masters and their IOMMUs.
+> >>
+> >
+> > G2D, Scalers and FIMD of Exynos5420 has 2 System MMUs while aother SoC like
+> > Exynos5250 does not.
+> >
+> > I don't understand why you are negative to this approach.
+> > This is the simplest than the others.
+> >
+> > Let me show you an example.
+> > FIMC-IS driver just controls MCU in FIMC-IS subsystem and the firmware of
+> > the MCU controls all other peripherals in the subsystem. Each peripherals
+> > have their own System MMU. Moreover, the configuration of the peripherals
+> > varies according to the SoCs.
+> >
+> > If System MMU driver accepts multiple masters, everything is done in DT.
+> > But I worry that it is not easy if System MMU driver does not support
+> > multiple masters.
+> 
+> I believe I have stated enough reasons why this kind of implementation 
+> is bad. I'm not going to waste time repeating myself.
+> 
+> Your concerns presented above are valid, however they are not related to 
+> what is wrong with this patch. I have given you two proper ways to 
+> handle this, none should be forced upon particular IOMMU master drivers 
+> - their authors should have the chance to select the method that works 
+> best for them.
+> 
 
-This does not apply cleanly to to clk tree trip, nor does it compile
-after manually merging due to changes introducing
-linux/mfd/samsung/s2mps14.h.
+I don't still understand why you think this patch is wrong.
+I think this is the best way not to think for all the driver developers
+about other things than their business logic.
 
-The changes look OK to me so maybe Lee can take it with my Ack?
+This does not hurt anyone and I think this is good enough.
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
+If you want to provide another layer between master device and system mmu
+as you mentioned, you do that. This patch does not restrict it.
 
 Regards,
-Mike
 
-> ---
->  drivers/clk/Kconfig       |    8 +++---
->  drivers/clk/clk-s2mps11.c |   61 ++++++++++++++++++++++++++++++++++-----------
->  2 files changed, 50 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6f56d3a4f010..8f9ce8ba036d 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -65,12 +65,12 @@ config COMMON_CLK_SI570
->           clock generators.
->  
->  config COMMON_CLK_S2MPS11
-> -       tristate "Clock driver for S2MPS11/S5M8767 MFD"
-> +       tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->         depends on MFD_SEC_CORE
->         ---help---
-> -         This driver supports S2MPS11/S5M8767 crystal oscillator clock. These
-> -         multi-function devices have 3 fixed-rate oscillators, clocked at
-> -         32KHz each.
-> +         This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
-> +         clock. These multi-function devices have two (S2MPS14) or three
-> +         (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
->  
->  config CLK_TWL6040
->         tristate "External McPDM functional clock from twl6040"
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 508875535e1e..8dafb552274f 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -1,7 +1,7 @@
->  /*
->   * clk-s2mps11.c - Clock driver for S2MPS11.
->   *
-> - * Copyright (C) 2013 Samsung Electornics
-> + * Copyright (C) 2013,2014 Samsung Electornics
->   *
->   * This program is free software; you can redistribute  it and/or modify it
->   * under  the terms of  the GNU General  Public License as published by the
-> @@ -13,10 +13,6 @@
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
->   *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-> - *
->   */
->  
->  #include <linux/module.h>
-> @@ -27,6 +23,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/platform_device.h>
->  #include <linux/mfd/samsung/s2mps11.h>
-> +#include <linux/mfd/samsung/s2mps14.h>
->  #include <linux/mfd/samsung/s5m8767.h>
->  #include <linux/mfd/samsung/core.h>
->  
-> @@ -125,7 +122,21 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
->         },
->  };
->  
-> -static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
-> +static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
-> +       [S2MPS11_CLK_AP] = {
-> +               .name = "s2mps14_ap",
-> +               .ops = &s2mps11_clk_ops,
-> +               .flags = CLK_IS_ROOT,
-> +       },
-> +       [S2MPS11_CLK_BT] = {
-> +               .name = "s2mps14_bt",
-> +               .ops = &s2mps11_clk_ops,
-> +               .flags = CLK_IS_ROOT,
-> +       },
-> +};
-> +
-> +static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
-> +               struct clk_init_data *clks_init)
->  {
->         struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
->         struct device_node *clk_np;
-> @@ -145,9 +156,12 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
->         if (!clk_table)
->                 return ERR_PTR(-ENOMEM);
->  
-> -       for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-> +       for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-> +               if (!clks_init[i].name)
-> +                       continue; /* Skip clocks not present in some devices */
->                 of_property_read_string_index(clk_np, "clock-output-names", i,
-> -                               &s2mps11_clks_init[i].name);
-> +                               &clks_init[i].name);
-> +       }
->  
->         return clk_np;
->  }
-> @@ -158,6 +172,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->         struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
->         struct device_node *clk_np = NULL;
->         unsigned int s2mps11_reg;
-> +       struct clk_init_data *clks_init;
->         int i, ret = 0;
->         u32 val;
->  
-> @@ -168,25 +183,33 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  
->         s2mps11_clk = s2mps11_clks;
->  
-> -       clk_np = s2mps11_clk_parse_dt(pdev);
-> -       if (IS_ERR(clk_np))
-> -               return PTR_ERR(clk_np);
-> -
->         switch (platform_get_device_id(pdev)->driver_data) {
->         case S2MPS11X:
->                 s2mps11_reg = S2MPS11_REG_RTC_CTRL;
-> +               clks_init = s2mps11_clks_init;
-> +               break;
-> +       case S2MPS14X:
-> +               s2mps11_reg = S2MPS14_REG_RTCCTRL;
-> +               clks_init = s2mps14_clks_init;
->                 break;
->         case S5M8767X:
->                 s2mps11_reg = S5M8767_REG_CTRL1;
-> +               clks_init = s2mps11_clks_init;
->                 break;
->         default:
->                 dev_err(&pdev->dev, "Invalid device type\n");
->                 return -EINVAL;
->         };
->  
-> +       clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
-> +       if (IS_ERR(clk_np))
-> +               return PTR_ERR(clk_np);
-> +
->         for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
-> +               if (!clks_init[i].name)
-> +                       continue; /* Skip clocks not present in some devices */
->                 s2mps11_clk->iodev = iodev;
-> -               s2mps11_clk->hw.init = &s2mps11_clks_init[i];
-> +               s2mps11_clk->hw.init = &clks_init[i];
->                 s2mps11_clk->mask = 1 << i;
->                 s2mps11_clk->reg = s2mps11_reg;
->  
-> @@ -220,8 +243,12 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->         }
->  
->         if (clk_table) {
-> -               for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-> +               for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-> +                       /* Skip clocks not present on S2MPS14 */
-> +                       if (!clks_init[i].name)
-> +                               continue;
->                         clk_table[i] = s2mps11_clks[i].clk;
-> +               }
->  
->                 clk_data.clks = clk_table;
->                 clk_data.clk_num = S2MPS11_CLKS_NUM;
-> @@ -250,14 +277,18 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
->         struct s2mps11_clk *s2mps11_clks = platform_get_drvdata(pdev);
->         int i;
->  
-> -       for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-> +       for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-> +               if (!s2mps11_clks[i].lookup)
-> +                       continue; /* Skip clocks not present in some devices */
->                 clkdev_drop(s2mps11_clks[i].lookup);
-> +       }
->  
->         return 0;
->  }
->  
->  static const struct platform_device_id s2mps11_clk_id[] = {
->         { "s2mps11-clk", S2MPS11X},
-> +       { "s2mps14-clk", S2MPS14X},
->         { "s5m8767-clk", S5M8767X},
->         { },
->  };
-> -- 
-> 1.7.9.5
-> 
+KyongHo
