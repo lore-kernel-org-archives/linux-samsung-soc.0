@@ -1,60 +1,75 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 1/4] clk: samsung: add new Kconfig for Samsung common
- clock options
-Date: Wed, 19 Mar 2014 13:19:47 +0100
-Message-ID: <53298B63.40005@samsung.com>
-References: <1394598781-3848-1-git-send-email-pankaj.dubey@samsung.com>
- <1394598781-3848-2-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 0/4] Consolidate Exynos machine code
+Date: Wed, 19 Mar 2014 17:55:53 +0530
+Message-ID: <1395231957-22032-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:16380 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932721AbaCSMTz (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:59104 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964791AbaCSMcW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 08:19:55 -0400
-In-reply-to: <1394598781-3848-2-git-send-email-pankaj.dubey@samsung.com>
+	Wed, 19 Mar 2014 08:32:22 -0400
+Received: by mail-pa0-f49.google.com with SMTP id lj1so8826725pab.22
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Mar 2014 05:32:22 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, arnd@arndb.de, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Hi Pankaj,
+This patch series consolidates the Exynos machine code and common
+code into a single file to avoid code duplication and introduces
+generic compatible strings for Exynos4 and 5 SoC series.
 
-On 12.03.2014 05:32, Pankaj Dubey wrote:
-> This patch adds new Kconfig file for adding new config option
-> as COMMON_CLK_SAMSUNG for Samsung common clock. This patch also
-> moves S3C24XX specific clock options here in this file.
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->   drivers/clk/samsung/Kconfig |   11 +++++++++++
->   1 file changed, 11 insertions(+)
->   create mode 100644 drivers/clk/samsung/Kconfig
->
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> new file mode 100644
-> index 0000000..26eb446
-> --- /dev/null
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -0,0 +1,11 @@
-> +config COMMON_CLK_SAMSUNG
-> +	bool
-> +	select COMMON_CLK
-> +
-> +config S3C2412_COMMON_CLK
-> +	bool
-> +	select COMMON_CLK_SAMSUNG
-> +
-> +config S3C2443_COMMON_CLK
-> +	bool
-> +	select COMMON_CLK_SAMSUNG
->
+Complete discussion and motivation for this series is found here:
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/27268
 
-This patch adds S3C2412_COMMON_CLK and S3C2443_COMMON_CLK to 
-drivers/clk/samsung/Kconfig, but they are still present in 
-arch/arm/mach-s3c24xx/Kconfig, so after this patch there are duplicate 
-definitions.
+This series is based on the latest linux-next and depends on
+1. Tomasz Figa's PM consolidation series 1 and 2
+2. Patch: ARM: SAMSUNG: Reorganize calls to reserve memory for MFC
+http://www.spinics.net/lists/linux-samsung-soc/msg25501.html
+3. Patch: ARM: EXYNOS: Add support to reserve memory for MFC-v7
+http://www.spinics.net/lists/arm-kernel/msg315940.html
+4. Kconfig and CPU init Consolidation series
+http://article.gmane.org/gmane.linux.kernel.samsung-soc/28216
 
-Best regards,
-Tomasz
+Sachin Kamat (4):
+  ARM: SAMSUNG: Introduce generic Exynos4 and 5 helpers
+  ARM: EXYNOS: Consolidate Exynos4 and 5 machine files
+  ARM: EXYNOS: Add generic compatible strings
+  ARM: dts: Update Exynos DT files with generic compatible strings
+
+ arch/arm/boot/dts/exynos4210-origen.dts         |    2 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |    2 +-
+ arch/arm/boot/dts/exynos4210-trats.dts          |    2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |    2 +-
+ arch/arm/boot/dts/exynos4210.dtsi               |    2 +-
+ arch/arm/boot/dts/exynos4212.dtsi               |    2 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts        |    2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts         |    2 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |    2 +-
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |    2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts         |    2 +-
+ arch/arm/boot/dts/exynos4412.dtsi               |    2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts        |    2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts       |    2 +-
+ arch/arm/boot/dts/exynos5250-snow.dts           |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi               |    2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts   |    2 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts       |    2 +-
+ arch/arm/boot/dts/exynos5420.dtsi               |    2 +-
+ arch/arm/boot/dts/exynos5440-sd5v1.dts          |    2 +-
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts       |    2 +-
+ arch/arm/boot/dts/exynos5440.dtsi               |    2 +-
+ arch/arm/mach-exynos/Makefile                   |    7 +-
+ arch/arm/mach-exynos/common.h                   |    3 +-
+ arch/arm/mach-exynos/{common.c => exynos.c}     |  135 ++++++++++++++++-------
+ arch/arm/mach-exynos/mach-exynos4-dt.c          |   53 ---------
+ arch/arm/mach-exynos/mach-exynos5-dt.c          |   83 --------------
+ arch/arm/mach-exynos/regs-pmu.h                 |    1 -
+ arch/arm/plat-samsung/include/plat/cpu.h        |    4 +
+ 29 files changed, 121 insertions(+), 209 deletions(-)
+ rename arch/arm/mach-exynos/{common.c => exynos.c} (75%)
+ delete mode 100644 arch/arm/mach-exynos/mach-exynos4-dt.c
+ delete mode 100644 arch/arm/mach-exynos/mach-exynos5-dt.c
+
+-- 
+1.7.9.5
