@@ -1,143 +1,65 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 4/8] devfreq: exynos4: Fix bug of resource leak and code
- clean on probe()
-Date: Wed, 19 Mar 2014 11:46:04 +0900
-Message-ID: <532904EC.3090101@samsung.com>
-References: <1394698649-20996-1-git-send-email-cw00.choi@samsung.com>
- <1394698649-20996-5-git-send-email-cw00.choi@samsung.com>
- <53234132.8080202@samsung.com> <532682A8.2030300@samsung.com>
- <532839A5.8020505@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [GIT PULL 5/6] Samsung PM updates for v3.15
+Date: Tue, 18 Mar 2014 21:01:49 -0700
+Message-ID: <20140319040149.30995.80279@quantum>
+References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
+ <20140309183523.GD22881@quad.lixom.net> <531CFA28.9020600@gmail.com>
+ <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com>
+ <01d001cf3ccc$39f339b0$add9ad10$@samsung.com>
+ <CAOesGMiYJa7uM21ot_h6mGRTQX+HLcOsmTjk78WS0KZD6=piyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <532839A5.8020505@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, nm@ti.com, b.zolnierkie@samsaung.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:50383 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750978AbaCSEBz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Mar 2014 00:01:55 -0400
+Received: by mail-pb0-f54.google.com with SMTP id ma3so8315682pbc.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 21:01:55 -0700 (PDT)
+In-Reply-To: <CAOesGMiYJa7uM21ot_h6mGRTQX+HLcOsmTjk78WS0KZD6=piyw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Tomasz,
+Quoting Olof Johansson (2014-03-10 19:52:01)
+> On Mon, Mar 10, 2014 at 6:50 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Olof Johansson wrote:
+> >>
+> >> >> Hi,
+> >> >>
+> >> >> I don't see a single cc or acked-by line from Mike Turquette here. I'll
+> >> >> hold
+> >> >> off until he's had a chance to take a look at these ones; I suspect
+> >> >> they'll be
+> >> >> fine since it's mostly code refactoring though.
+> >> >
+> >> >
+> >> > I guess I should have ACKed them too, but it felt kind of strange to ACK
+> >> my
+> >> > own patches. ;)
+> >> >
+> >> > Anyway, for all samsung-clk patches:
+> >> >
+> >> > Acked-by: Tomasz Figa <t.figa@samsung.com>
+> >>
+> >> Yeah, self-acking doesn't make much sense. :)
+> >>
+> >> I'm mostly worried about patches touching other subsystems without the
+> >> other maintainer being aware of it or having reviewed them. As I said,
+> >> these mostly look like refactorings but it's still good habit.
+> >>
+> > OK, agreed, I think Mike knew about that though. Let's wait for Mike's
+> > response.
+> >
+> > BTW, should I sort out the branch again if Mike gives ack on that?
+> 
+> If I hear from Mike that he's OK with it then I can merge it, no need to rebase.
 
-On 03/18/2014 09:18 PM, Tomasz Figa wrote:
-> On 17.03.2014 06:05, Chanwoo Choi wrote:
->> Hi Tomasz,
->>
->> On 03/15/2014 02:49 AM, Tomasz Figa wrote:
->>> Hi Chanwoo,
->>>
->>> On 13.03.2014 09:17, Chanwoo Choi wrote:
->>>> This patch fix bug about resource leak when happening probe fail and code clean
->>>> to add debug message.
->>>>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> ---
->>>>    drivers/devfreq/exynos/exynos4_bus.c | 32 ++++++++++++++++++++++++++------
->>>>    1 file changed, 26 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
->>>> index a2a3a47..152a3e9 100644
->>>> --- a/drivers/devfreq/exynos/exynos4_bus.c
->>>> +++ b/drivers/devfreq/exynos/exynos4_bus.c
->>>> @@ -1152,8 +1152,11 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
->>>>            dev_err(dev, "Cannot determine the device id %d\n", data->type);
->>>>            err = -EINVAL;
->>>>        }
->>>> -    if (err)
->>>> +    if (err) {
->>>> +        dev_err(dev, "Cannot initialize busfreq table %d\n",
->>>> +                 data->type);
->>>>            return err;
->>>> +    }
->>>>
->>>>        rcu_read_lock();
->>>>        opp = dev_pm_opp_find_freq_floor(dev,
->>>> @@ -1176,7 +1179,7 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
->>>>        if (IS_ERR(data->devfreq)) {
->>>>            dev_err(dev, "Failed to add devfreq device\n");
->>>>            err = PTR_ERR(data->devfreq);
->>>> -        goto err_opp;
->>>> +        goto err_devfreq;
->>>>        }
->>>>
->>>>        /*
->>>> @@ -1185,18 +1188,35 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
->>>>         */
->>>>        busfreq_mon_reset(data);
->>>>
->>>> -    devfreq_register_opp_notifier(dev, data->devfreq);
->>>> +    /* Register opp_notifier for Exynos4 busfreq */
->>>> +    err = devfreq_register_opp_notifier(dev, data->devfreq);
->>>> +    if (err < 0) {
->>>> +        dev_err(dev, "Failed to register opp notifier\n");
->>>> +        goto err_notifier_opp;
->>>> +    }
->>>>
->>>> +    /* Register pm_notifier for Exynos4 busfreq */
->>>>        err = register_pm_notifier(&data->pm_notifier);
->>>>        if (err) {
->>>>            dev_err(dev, "Failed to setup pm notifier\n");
->>>> -        devfreq_remove_device(data->devfreq);
->>>> -        return err;
->>>> +        goto err_notifier_pm;
->>>>        }
->>>>
->>>>        return 0;
->>>>
->>>> -err_opp:
->>>> +err_notifier_pm:
->>>> +    devfreq_unregister_opp_notifier(dev, data->devfreq);
->>>> +err_notifier_opp:
->>>> +    /*
->>>> +     * The devfreq_remove_device() would execute finally devfreq->profile
->>>> +     * ->exit(). To avoid duplicate resource free operation, return directly
->>>> +     * before executing resource free below 'err_devfreq' goto statement.
->>>> +     */
->>>
->>> I'm not quite sure about this. I believe that in this case devfreq->profile->exit() would be exynos4_bus_exit() and all it does is devfreq_unregister_opp_notifier(dev, data->devfreq), so all remaining resources (regulators, clocks, etc.) would get leaked.
->>
->> This patch execute following sequence to probe exynos4_busfreq.c:
->>
->> 1. Parse dt node to get resource(regulator/clock/memory address).
->> 2. Enable regulator/clock and map memory.
->> 3. Add devfreq device using devfreq_add_device().
->>     The devfreq_add_device() return devfreq instance(data->devfreq).
->> 4. Register opp_notifier using devfreq instance(data->devfreq) which is created in sequence #3.
->>
->> Case 1,
->> If an error happens in sequence #3 for registering devfreq_add_device(),
->>
->> this case can't execute devfreq->profile->exit() to free resource
->> because this case has failed to register devfreq->profile to devfreq_list.
->>
->> So, must goto 'err_devfreq' statement to free resource(regulator/clock/memory).
->>
->>
->> Case 2,
->> If an error happens in sequence #4 for registering opp_notifier,
->>
->> In contrast
->> this case can execute devfreq->profile->exit() to free resource.
->> But, After executed devfreq->profile->exit(),
->> should not execute 'err_devfreq' statement to free resource.
->> In case, will operate twice of resource.
->>
->> If my explanation is wrong, please reply your comment.
->>
-> 
-> OK, it will work indeed, however the code is barely readable with this.
-> 
-> For consistency (and readability), resources acquired in platform driver's .probe() should be freed in .remove() and error path of .probe() should not rely on external code to do the clean-up.
-> 
-> So, as I proposed in my previous reply:
-
-OK, I'll modify it according to your previous comment.
+Acked-by: Mike Turquette <mturquette@linaro.org>
 
 > 
->>>
->>> I believe the correct thing to do would be to remove the .exit() callback from exynos4_devfreq_profile struct and handle all the clean-up here in error path.
->>>
-
-Best Regards,
-Chanwoo Choi
- 
+> 
+> -Olof
