@@ -1,44 +1,169 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 2/3] mfd: sec-core: Add of_compatible strings for
- clock MFD cells
-Date: Wed, 19 Mar 2014 14:36:58 +0000
-Message-ID: <20140319143658.GJ31687@lee--X1>
-References: <1395047958-17953-1-git-send-email-k.kozlowski@samsung.com>
- <1395047958-17953-3-git-send-email-k.kozlowski@samsung.com>
- <20140318203159.GW25478@lee--X1>
- <1395234951.7642.1.camel@AMDC1943>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V4 1/8] sxgbe: Add device-tree binding support document
+Date: Wed, 19 Mar 2014 15:04:02 +0000
+Message-ID: <20140319150402.GC9188@e106331-lin.cambridge.arm.com>
+References: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
+ <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
+ <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:50067 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S964911AbaCSPEM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Mar 2014 11:04:12 -0400
 Content-Disposition: inline
-In-Reply-To: <1395234951.7642.1.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+In-Reply-To: <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "vipul.pandya@samsung.com" <vipul.pandya@samsung.com>, "ks.giri@samsung.com" <ks.giri@samsung.com>
 
-> > > Add of_compatible strings for S5M8767 and S2MPS14 clock MFD cells=
-=2E
-> > >=20
-> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Tue, Mar 18, 2014 at 04:27:46PM +0000, Byungho An wrote:
+> Mark Rutland <mark.rutland@arm.com> :
+> > Hi,
+> > 
+> > As a general note it's helpful for devicetree to be Cc'd on the entire
+> series
+> > (though the binding document should be a separate patch) as it provides
+> useful
+> > context for reviewing the binding.
+> OK.
+> 
+> > 
+> > On Tue, Mar 18, 2014 at 06:47:13AM +0000, Byungho An wrote:
+> > > From: Siva Reddy <siva.kallam@samsung.com>
+> > >
+> > > This patch adds binding document for SXGBE ethernet driver via
+> device-tree.
+> > >
+> > > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> > > Signed-off-by: Byungho An <bh74.an@samsung.com>
 > > > ---
-> > >  drivers/mfd/sec-core.c |    3 +++
-> > >  1 file changed, 3 insertions(+)
-> >=20
-> > Applied with Tomasz' Reviewed-by.
->=20
-> Thanks! One minor thing - I see that Tomasz' Review-by got lost when =
-the
-> patch was applied to your tree:
-> https://git.kernel.org/cgit/linux/kernel/git/lee/mfd.git/commit/?h=3D=
-for-mfd-next&id=3D09f8c0a07044bb8ac5085fcbcf82468173a1666d.
+> > >  .../devicetree/bindings/net/samsung-sxgbe.txt      |   53
+> > > ++++++++++++++++++++
+> > >  1 file changed, 53 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > new file mode 100644
+> > > index 0000000..ca27947
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > @@ -0,0 +1,53 @@
+> > > +* Samsung 10G Ethernet driver (SXGBE)
+> > > +
+> > > +Required properties:
+> > > +- compatible: Should be "samsung,sxgbe-v2.0a"
+> > > +- reg: Address and length of the register set for the device
+> > > +- interrupt-parent: Should be the phandle for the interrupt
+> > > +controller
+> > > +  that services interrupts for this device
+> > > +- interrupts: Should contain the SXGBE interrupts
+> > > +  These interrupts are ordered by fixed and follows variable
+> > > +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
+> > > +  index 0 - this is fixed common interrupt of SXGBE and it is always
+> > > +  available.
+> > > +  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive
+> > > interrupts
+> > > +  and 1 optional lpi interrupt.
+> > > +- phy-mode: String, operation mode of the PHY interface.
+> > > +  Supported values are: "xaui", "gmii".
+> > > +- samsung,pbl: Integer, Programmable Burst Length.
+> > > +  Supported values are 1, 2, 4, 8, 16, or 32.
+> > 
+> > There's no need to abbreviate to "pbl".
+> > 
+> > Is this a property of the hardware, or configuration that the kernel will
+> program
+> > in? If the latter, why can the kernel not choose?
+> Yes, this is hardware property
 
-Thanks for the prod, but I do have it applied locally. I'll push the
-branch later today.
+Ok.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> 
+> > 
+> > > +- samsung,fixed-burst: Boolean, Program the DMA to use the fixed
+> > > +burst mode
+> > > +- samsung,burst-map: Integer, Program the possible bursts supported
+> > > +by sxgbe
+> > > +  This is an interger and represents allowable DMA bursts when fixed
+> burst.
+> > > +  Allowable range is 0x00-0x3F. This field is valid only when fixed
+> > > +burst is
+> > > +  enabled, otherwise ignored.
+> > 
+> > If that's the case, why not have just this property and have it imply the
+> use of
+> > fixed burst mode?
+> OK. It will be implemented in next patch set.
+> 
+> > 
+> > When is it necessary to use fixed burst mode?
+> This is the configurable mode of DMA an used internally by hardware to fetch
+> data from platform bus
+
+Sure, but that doesn't describe when it is necessary. Is this the way
+the DMA was configured at integration time, or the way the kernel should
+configure it?
+
+If the latter, is it absolutely necessary for correctness to use
+fixed-burst mode? Or is it just always sensible to use it if available?
+
+What does the driver do if fixed burst mode is not available? Would this
+work in the presence of fixed-burt mode?
+
+I'm not arguing to remove these properties. I'd just like to understand
+if all you're describing is the presence of a feature or that the use of
+the feature is absolutely necessary for correctness.
+
+I'm perfectly happy for Linux to always decide to use these features if
+available.
+
+> 
+> > 
+> > > +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced
+> > > +address
+> > > mode.
+> > 
+> > When would this be selected, and why can the kernel not choose?
+> Kernel doesn't have the provision to find out a way to select this. So, need
+> to pass from DT
+
+Likewise, it is always absolutely necessary, or just always sensible to
+use enhanced address mode if present?
+
+> 
+> > 
+> > > +- samsung,force_thresh_dma_mode: Boolean, Force DMA to use the
+> > > +threshold mode
+> > > +  for both tx and rx
+> > 
+> > s/_/-/ in property names.
+> OK.
+> 
+> > 
+> > Likewise, why can the kernel not choose.
+> SXGBE h/w registers can't provide information to select this. So, need to pass
+> from DT depend on Platform
+
+Similarly.
+
+> 
+> > 
+> > > +- samsung,force_sf_dma_mode: Boolean, Force DMA to use the Store and
+> > > +Forward
+> > > +  mode for both tx and rx. This flag is ignored if
+> > > +force_thresh_dma_mode is
+> > > set.
+> > 
+> > Likewise for both points.
+> Same above.
+
+And again.
+
+Cheers,
+Mark.
