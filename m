@@ -1,79 +1,63 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [GIT PULL] Samsung clock changes for v3.15
-Date: Wed, 19 Mar 2014 02:19:25 +0100
-Message-ID: <5328F09D.9090103@gmail.com>
-References: <1395079197-13598-1-git-send-email-t.figa@samsung.com> <20140319010634.30995.4609@quantum>
+From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v11 24/27] iommu/exynos: use exynos-iommu specific typedef
+Date: Tue, 18 Mar 2014 18:33:20 -0700
+Message-ID: <CANEJEGu=yDfYi-gH7W7h7up2gd7MxBOg9bz4konLoe-UGf4RYA@mail.gmail.com>
+References: <20140314141302.393cfdf96dd7b82eee3f700e@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:47914 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758754AbaCSBTX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Mar 2014 21:19:23 -0400
-Received: by mail-ee0-f47.google.com with SMTP id b15so5967187eek.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Mar 2014 18:19:22 -0700 (PDT)
-In-Reply-To: <20140319010634.30995.4609@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140314141302.393cfdf96dd7b82eee3f700e-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Mike,
+On Thu, Mar 13, 2014 at 10:13 PM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This commit introduces sysmmu_pte_t for page table entries and
+> sysmmu_iova_t vor I/O virtual address that is manipulated by
+> exynos-iommu driver. The purpose of the typedef is to remove
+> dependencies to the driver code from the change of CPU architecture
+> from 32 bit to 64 bit.
 
-On 19.03.2014 02:06, Mike Turquette wrote:
-> Quoting Tomasz Figa (2014-03-17 10:59:57)
->> The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
->>
->>    Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
->>
->> are available in the git repository at:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.15/samsung-clk
->>
->> for you to fetch changes up to 70d1cf1c85486753fec0c60a9a093bdfe42b89b4:
->>
->>    Merge branch 'for_3.15/misc' into samsung-next (2014-03-17 13:00:01 +0100)
->>
->> ----------------------------------------------------------------
->>
->> Samsung clock patches for v3.15.
->>
->> Due to dependencies, most of the patches already went through linux-samsung
->> tree, so this pull request is rather small.
+hi Cho,
+I noticed this before but understood this code was only compiled for
+ILP-32 programming model. I'm assuming that is going to change in the
+not-to-distant future. Good. :)
+
 >
-> I'm a bit confused. This PR is not really small (32 patches) and it
-> covers more stuff from arch/arm that I usually take.
+> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c |  103 ++++++++++++++++++++++--------------------
+>  1 file changed, 54 insertions(+), 49 deletions(-)
 >
->> It contains various patches
->> collected since the last merge window:
->>
->> 1) non-critical fixes (without need to push to stable):
->>
->> 220b0cc clk: samsung: Initialize clock table with error pointers
->> 58d83cb clk: exynos-5420: Fix VPLL lock offset
->> 3299bc3 clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
->>
->> 2) clock driver extensions:
->>
->> db40d0c clk: samsung exynos5250/5420: Add gate clock for SSS module
->> d8b9731 clk/samsung: add support for multiple clock providers
->> 45af130 clk/samsung: add support for pll2550xx
->> adec437 clk/samsung: add support for pll2650xx
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index e375501..6e716cc 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -56,19 +56,19 @@
+>  #define lv2ent_large(pent) ((*(pent) & 3) == 1)
 >
-> Right, these 7 patches would constitute a small PR. Was there a mistake
-> when generating this pull request?
+>  #define section_phys(sent) (*(sent) & SECT_MASK)
+> -#define section_offs(iova) ((iova) & 0xFFFFF)
+> +#define section_offs(iova) ((sysmmu_iova_t)(iova) & 0xFFFFF)
 
-The problem with this pull request is that it contains patches that 
-require quite a lot of dependencies that have been already applied into 
-Samsung SoC tree. I'm not sure how else such situation could be handled, 
-other than pulling respective commits into my tree as well.
+The cast will mask abuses of iova. Define section_offs as a static
+function and GCC can type check iova parameter to make sure it's a
+sysmmu_iova_t.
+Thoughts?
 
-I don't think this would make any problem when merging into Linus' tree, 
-as these are exactly the same commits that will go through ARM SoC, so 
-git should merge them just fine. Still, if you have a better idea what 
-to do now, I will do so.
+I was thinking "((iova) & (sysmmu_iova_t) 0XFFFFF)" might do what you
+want but it doesn't warn on abuse that I tried. I believe GCC knows
+the upper bits are being ignored.
 
-Best regards,
-Tomasz
+cheers,
+grant
