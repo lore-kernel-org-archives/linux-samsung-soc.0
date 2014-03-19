@@ -1,82 +1,72 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v6 1/4] [media] exynos-scaler: Add DT bindings for SCALER
- driver
-Date: Wed, 19 Mar 2014 13:02:42 +0100
-Message-ID: <53298762.9090604@samsung.com>
-References: <1395213196-25972-1-git-send-email-shaik.ameer@samsung.com>
- <1395213196-25972-2-git-send-email-shaik.ameer@samsung.com>
- <4637278.9G3gGkQ5GA@avalon>
+Subject: Re: [PATCH v11 10/27] iommu/exynos: use managed device helper functions
+Date: Wed, 19 Mar 2014 13:08:42 +0100
+Message-ID: <532988CA.4000008@samsung.com>
+References: <20140314140542.f4ded6c50dbd8a1d937bf354@samsung.com>
+ <CAK9yfHw7zYaX9EYFE+m3Mh-u8Uiyubx-cS0EwPmfW+0weLiBKw@mail.gmail.com>
+ <20140318200915.7dd833ce0fddbbd6ecd8dac9@samsung.com>
+ <532862ED.8040809@samsung.com>
+ <20140319175927.a3feadcacbffe80eca1d3421@samsung.com>
+ <CAK9yfHxxo2eFh38gPZkpYf1ueBWySWqPzgLV_tSSykzHhNzN8g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19820 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20160 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933817AbaCSMCt (ORCPT
+	with ESMTP id S1758953AbaCSMIu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 08:02:49 -0400
-In-reply-to: <4637278.9G3gGkQ5GA@avalon>
+	Wed, 19 Mar 2014 08:08:50 -0400
+In-reply-to: <CAK9yfHxxo2eFh38gPZkpYf1ueBWySWqPzgLV_tSSykzHhNzN8g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, m.chehab@samsung.com, b.zolnierkie@samsung.com, k.debski@samsung.com, arun.kk@samsung.com
+To: Sachin Kamat <sachin.kamat@linaro.org>, Cho KyongHo <pullip.cho@samsung.com>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>
 
-Hi Laurent,
-
-On 19.03.2014 12:31, Laurent Pinchart wrote:
-> Hi Shaik,
->
-> Thank you for the patch.
->
-> On Wednesday 19 March 2014 12:43:13 Shaik Ameer Basha wrote:
->> This patch adds the DT binding documentation for the Exynos5420/5410
->> based SCALER device driver.
+On 19.03.2014 10:01, Sachin Kamat wrote:
+> On 19 March 2014 14:29, Cho KyongHo <pullip.cho@samsung.com> wrote:
+>> On Tue, 18 Mar 2014 16:14:53 +0100, Tomasz Figa wrote:
+>>> On 18.03.2014 12:09, Cho KyongHo wrote:
+>>>> On Fri, 14 Mar 2014 20:52:43 +0530, Sachin Kamat wrote:
+>>>>> Hi KyongHo,
+>>>>>
+>>>>> On 14 March 2014 10:35, Cho KyongHo <pullip.cho@samsung.com> wrote:
+>>>>>> This patch uses managed device helper functions in the probe().
+>>>>>>
+>>>>>> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+>>>>>> ---
+>>>>> [snip]
+>>>>>
+>>>>>> +       data->clk = devm_clk_get(dev, "sysmmu");
+>>>>>> +       if (IS_ERR(data->clk)) {
+>>>>>> +               dev_info(dev, "No gate clock found!\n");
+>>>>>> +               data->clk = NULL;
+>>>>>> +       }
+>>>>>
+>>>>> Why aren't you returning from here upon error?
+>>>>
+>>>> It is for the case of a System MMU which does not need clock gating.
+>>>>
+>>>
+>>> Are there really such cases?
+>>>
 >>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>   .../devicetree/bindings/media/exynos5-scaler.txt   |   24 +++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/media/exynos5-scaler.txt
+>> Yes.
+>> Especially in the case of initial stage of new SoC development.
 >>
->> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> b/Documentation/devicetree/bindings/media/exynos5-scaler.txt new file mode
->> 100644
->> index 0000000..e1dd465
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
->> @@ -0,0 +1,24 @@
->> +* Samsung Exynos5 SCALER device
->> +
->> +SCALER is used for scaling, blending, color fill and color space
->> +conversion on EXYNOS[5420/5410] SoCs.
->> +
->> +Required properties:
->> +- compatible: should be "samsung,exynos5420-scaler" or
->> +			"samsung,exynos5410-scaler"
->> +- reg: should contain SCALER physical address location and length
->> +- interrupts: should contain SCALER interrupt specifier
->> +- clocks: should contain the SCALER clock phandle and specifier pair for
->> +		each clock listed in clock-names property, according to
->> +		the common clock bindings
->> +- clock-names: should contain exactly one entry
->> +		- "scaler" - IP bus clock
+>> I have experianced some software workaround for H/W restriction
+>> needs prevention of clock gating for some devices.
 >
-> I'm not too familiar with the Exynos platform, but wouldn't it make sense to
-> use a common name across IP cores for interface and function clocks ?
+> So aren't these basically some exceptions/hacks rather than the usual way
+> of functioning of the device?
+>
 
-Yes, it would definitely make sense, provided we are starting from 
-scratch, but due to the lack of listed IP clock inputs in documentation, 
-we ended with a custom of naming the inputs after SoC clocks of first 
-SoC used with such driver. This showed up long before adoption of DT and 
-common clocks on Samsung platform and I'd say it would be hard to get 
-rid of it now.
+This actually raises a good question, whether we really need to support 
+such early development SoC versions in mainline.
 
-Anyway, as long as clock names are well specified in binding 
-documentation, it should be fine. So, from me it's a
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Another thing is that if you need to assure that a clock is ungated, you 
+must acquire it and prepare_enable explicitly, so I don't think this 
+kind of handling is correct.
 
 Best regards,
 Tomasz
