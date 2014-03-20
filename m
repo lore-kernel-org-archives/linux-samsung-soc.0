@@ -1,93 +1,61 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 8/9] drm/exynos/fimd: use polarization flags provided by
- drm_display_mode
-Date: Thu, 20 Mar 2014 15:03:59 +0900
-Message-ID: <CAAQKjZOh-qFEn3ex7YwCRDwOjpV=s-8JGj68Yx7qOpS+oy2-ww@mail.gmail.com>
-References: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
- <1395052045-23848-9-git-send-email-a.hajda@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH Resend 1/3] ARM: EXYNOS: Consolidate Kconfig entries
+Date: Thu, 20 Mar 2014 15:05:10 +0900
+Message-ID: <031401cf4402$59cdda00$0d698e00$@samsung.com>
+References: <1395224705-2935-1-git-send-email-sachin.kamat@linaro.org>
+ <02f701cf4400$e561e2c0$b025a840$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1395052045-23848-9-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Denis Carikli <denis@eukrea.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:41854 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751093AbaCTGFN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Mar 2014 02:05:13 -0400
+In-reply-to: <02f701cf4400$e561e2c0$b025a840$@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com
 
-Thanks for your contributions,
+Kukjin Kim wrote:
+> 
+> Sachin Kamat wrote:
+> >
+> > Instead of repeating the Kconfig entries for every SoC, move them under
+> > ARCH_EXYNOS4 and 5 and move the entries common to both 4 and 5 under
+> > ARCH_EXYNOS. Also, since the individual SoCs do not have any specific
+> > machine/platform code, keep them as boolean symbols instead of user
+> > selectable and select them from Exynos4 and 5 config symbols. Individual
+> > SoC symbols can be removed eventually once the driver Kconfig dependencies
+> > on these symbols are removed.
+> >
+> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> > Acked-by: Tomasz Figa <t.figa@samsung.com>
+> > ---
+> > This is a resend of the series rebased on top of latest linux-next and
+> > Tomasz Figa's PM consolidation series 1 and 2.
+> > ---
+> >  arch/arm/Kconfig             |   10 +++++
+> >  arch/arm/mach-exynos/Kconfig |   89
+> +++++++++++---------------------------
+> > ----
+> >  2 files changed, 33 insertions(+), 66 deletions(-)
+> >
+> Hmm...I'm still thinking whether we don't need to select some specific
+> Exynos SoCs. Because actually we're implement/develop some features based on
+> mainline kernel and sometimes the features are not valid on all of Exynos4
+> or Exynos5. Even though they are not in mainline, for mass product it's true
+> that Samsung needs to do it. It's another thing we have a plan for them or
+> not.
 
+Mainline upstreaming plan.
 
-2014-03-17 19:27 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
-> The patch replaces fimd private bindings for signal polarization by
-> polarization flags provided by drm_display_mode.
->
+> 
+> So in my opinion, basically consolidation something is usually good but it's
+> not always good so we need to provide a way to use one of both.
+> 
 
-This patch needs below patch not merged yet,
-     drm: drm_display_mode: add signal polarity flags
-
-So let me pick up all of your path series except for patch 7 and 8.
-And for these two patches, later.
-
-Your opinion?
-
-Thanks,
-Inki Dae
-
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 15d6b37..dbfad4e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -115,7 +115,6 @@ struct fimd_context {
->         unsigned int                    default_win;
->         unsigned long                   irq_flags;
->         u32                             vidcon0;
-> -       u32                             vidcon1;
->         bool                            suspended;
->         int                             pipe;
->         wait_queue_head_t               wait_vsync_queue;
-> @@ -232,7 +231,11 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
->                 return;
->
->         /* setup polarity values */
-> -       vidcon1 = ctx->vidcon1;
-> +       vidcon1 = 0;
-> +       if (mode->pol_flags & DRM_MODE_FLAG_POL_DE_NEGEDGE)
-> +               vidcon1 |= VIDCON1_INV_VDEN;
-> +       if (mode->pol_flags & DRM_MODE_FLAG_POL_PIXDATA_NEGEDGE)
-> +               vidcon1 |= VIDCON1_INV_VCLK;
->         if (mode->flags & DRM_MODE_FLAG_NVSYNC)
->                 vidcon1 |= VIDCON1_INV_VSYNC;
->         if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-> @@ -875,11 +878,6 @@ static int fimd_probe(struct platform_device *pdev)
->         ctx->dev = dev;
->         ctx->suspended = true;
->
-> -       if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
-> -               ctx->vidcon1 |= VIDCON1_INV_VDEN;
-> -       if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
-> -               ctx->vidcon1 |= VIDCON1_INV_VCLK;
-> -
->         ctx->bus_clk = devm_clk_get(dev, "fimd");
->         if (IS_ERR(ctx->bus_clk)) {
->                 dev_err(dev, "failed to get bus clock\n");
-> --
-> 1.8.3.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+- Kukjin
