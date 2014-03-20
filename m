@@ -1,93 +1,71 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH V8 1/7] sxgbe: Add device-tree binding support document
-Date: Thu, 20 Mar 2014 10:25:59 -0700
-Message-ID: <012e01cf4461$79852880$6c8f7980$@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 1/6] serial: s3c: Fix build of header without serial_core.h
+ preinclusion
+Date: Fri, 21 Mar 2014 02:52:31 +0900
+Message-ID: <532B2ADF.1000207@samsung.com>
+References: <1395162964-5916-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Content-language: en-us
-Sender: netdev-owner@vger.kernel.org
-To: 'netdev' <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:40104 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757878AbaCTRwh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Mar 2014 13:52:37 -0400
+Received: by mail-pb0-f50.google.com with SMTP id md12so1273422pbc.23
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 10:52:36 -0700 (PDT)
+In-Reply-To: <1395162964-5916-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@linaro.org>, linaro-kernel@lists.linaro.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-From: Siva Reddy <siva.kallam@samsung.com>
+On 03/19/14 02:15, Tomasz Figa wrote:
+> From: Mark Brown<broonie@linaro.org>
+>
+> serial_s3c.h uses upf_t which is defined in serial_core.h but does not
+> include that itself meaning that users which include serial_s3c.h by
+> itself don't build.
+>
+Oops yeah, When we replace inclusion of <plat/regs-serial.h> with 
+serial_s3c.h, maybe we missed inclusion of serial_core.h in the 
+following files:
 
-This patch adds binding document for SXGBE ethernet driver via device-tree.
+arch/arm/include/debug/samsung.S
+arch/arm/mach-s3c24xx/include/mach/debug-macro.S
+arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+arch/arm/mach-s3c24xx/mach-vr1000.c
+arch/arm/mach-s3c24xx/sleep-s3c2410.S
+arch/arm/mach-s3c24xx/sleep.S
+arch/arm/mach-s3c64xx/include/mach/debug-macro.S
+arch/arm/mach-s5p64x0/include/mach/debug-macro.S
+arch/arm/mach-s5pc100/include/mach/debug-macro.S
+arch/arm/mach-s5pv210/include/mach/debug-macro.S
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- .../devicetree/bindings/net/samsung-sxgbe.txt      |   60 ++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+So, this fix looks good to me. BTW, we need to cleanup inclusion of 
+serial_core.h later because it is useless with this.
 
-diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-new file mode 100644
-index 0000000..231acf8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-@@ -0,0 +1,60 @@
-+* Samsung 10G Ethernet driver (SXGBE)
-+
-+Required properties:
-+- compatible: Should be "samsung,sxgbe-v2.0a"
-+- reg: Address and length of the register set for the device
-+- interrupt-parent: Should be the phandle for the interrupt controller
-+  that services interrupts for this device
-+- interrupts: Should contain the SXGBE interrupts
-+  These interrupts are ordered by fixed and follows variable
-+  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
-+  index 0 - this is fixed common interrupt of SXGBE and it is always
-+  available.
-+  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive interrupts
-+  and 1 optional lpi interrupt.
-+- phy-mode: String, operation mode of the PHY interface.
-+  Supported values are: "sgmii", "xgmii".
-+- samsung,pbl: Integer, Programmable Burst Length.
-+  Supported values are 1, 2, 4, 8, 16, or 32.
-+- samsung,burst-map: Integer, Program the possible bursts supported by sxgbe
-+  This is an interger and represents allowable DMA bursts when fixed burst.
-+  Allowable range is 0x01-0x3F. When this field is set fixed burst is enabled.
-+  When fixed length is needed for burst mode, it can be set within allowable
-+  range.
-+- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced address mode.
-+  When enhanced address mode is needed, it can be set.
-+- samsung,force-thresh-dma-mode: Boolean, Force DMA to use the threshold mode
-+  for both tx and rx.
-+- samsung,force-sf-dma-mode: Boolean, Force DMA to use the Store and Forward
-+  mode for both tx and rx. This flag is ignored if force-thresh-dma-mode is set.
-+
-+Optional properties:
-+- mac-address: 6 bytes, mac address
-+- max-frame-size: Maximum Transfer Unit (IEEE defined MTU), rather
-+		  than the maximum frame size.
-+
-+Example:
-+
-+	aliases {
-+		ethernet0 = <&sxgbe0>;
-+	};
-+
-+	sxgbe0: ethernet@1a040000 {
-+		compatible = "samsung,sxgbe-v2.0a";
-+		reg = <0 0x1a040000 0 0x10000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 209 4>, <0 185 4>, <0 186 4>, <0 187 4>,
-+			     <0 188 4>, <0 189 4>, <0 190 4>, <0 191 4>,
-+			     <0 192 4>, <0 193 4>, <0 194 4>, <0 195 4>,
-+			     <0 196 4>, <0 197 4>, <0 198 4>, <0 199 4>,
-+			     <0 200 4>, <0 201 4>, <0 202 4>, <0 203 4>,
-+			     <0 204 4>, <0 205 4>, <0 206 4>, <0 207 4>,
-+			     <0 208 4>, <0 210 4>;
-+		samsung,pbl = <0x08>
-+		samsung,burst-map = <0x20>
-+		samsung,adv-addr-mode = "true"
-+		samsung,force-sf-dma-mode = "true"
-+		mac-address = [ 00 11 22 33 44 55 ]; /* Filled in by U-Boot */
-+		max-frame-size = <9000>;
-+		phy-mode = "xgmii";
-+	};
--- 
-1.7.10.4
+Applied, thanks.
+- Kukjin
+
+> Signed-off-by: Mark Brown<broonie@linaro.org>
+> [t.figa: Moved inclusion under #ifndef __ASSEMBLY__ to fix mach-exynos.]
+> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
+> ---
+>   include/linux/serial_s3c.h | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
+> index 907d9d1..e6fc956 100644
+> --- a/include/linux/serial_s3c.h
+> +++ b/include/linux/serial_s3c.h
+> @@ -233,6 +233,8 @@
+>
+>   #ifndef __ASSEMBLY__
+>
+> +#include<linux/serial_core.h>
+> +
+>   /* configuration structure for per-machine configurations for the
+>    * serial port
+>    *
