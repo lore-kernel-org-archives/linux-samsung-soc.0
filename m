@@ -1,204 +1,70 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2] ARM: SAMSUNG: Reorganize calls to reserve memory for MFC
-Date: Thu, 20 Mar 2014 11:07:30 +0900
-Message-ID: <018b01cf43e1$264c2220$72e46660$@samsung.com>
-References: <1388399205-3111-1-git-send-email-tushar.behera@linaro.org>
- <1388470980-1321-1-git-send-email-tushar.behera@linaro.org>
- <CAHbNUh0HsOk5naYZNgKhpmroCJqehGOGr=CeK_9Y-4q4RMT55g@mail.gmail.com>
+Subject: RE: [PATCH 1/1] ARM: EXYNOS: Add support to reserve memory for MFC-v7
+Date: Thu, 20 Mar 2014 11:10:12 +0900
+Message-ID: <019e01cf43e1$86e3c390$94ab4ab0$@samsung.com>
+References: <1395046487-21249-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53803 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751445AbaCTCHc (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:15331 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbaCTCKO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 22:07:32 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 19 Mar 2014 22:10:14 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N2P00FROPWJ4360@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Mar 2014 11:07:31 +0900 (KST)
-In-reply-to: <CAHbNUh0HsOk5naYZNgKhpmroCJqehGOGr=CeK_9Y-4q4RMT55g@mail.gmail.com>
+ with ESMTP id <0N2P00KH1Q100N80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Mar 2014 11:10:12 +0900 (KST)
+In-reply-to: <1395046487-21249-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
-Cc: jtp.park@samsung.com, k.debski@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-Tushar Behera wrote:
+Sachin Kamat wrote:
 > 
-> On 31 December 2013 11:53, Tushar Behera <tushar.behera@linaro.org> wrote:
-> > Reorganize code so that "plat/mfc.h" is no more referred from
-> > mach-exynos folder.
-> >
-> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> > ---
-> >
-> > Changelog for V2:
-> > * Added missing arch/arm/mach-exynos/mfc.h file
-> >
-> >  arch/arm/mach-exynos/mach-exynos4-dt.c   |   10 ++--------
-> >  arch/arm/mach-exynos/mach-exynos5-dt.c   |   10 ++--------
-> >  arch/arm/mach-exynos/mfc.h               |   16 ++++++++++++++++
-> >  arch/arm/plat-samsung/include/plat/mfc.h |    3 ---
-> >  arch/arm/plat-samsung/s5p-dev-mfc.c      |   17 ++++++++++-------
-> >  5 files changed, 30 insertions(+), 26 deletions(-)
-> >  create mode 100644 arch/arm/mach-exynos/mfc.h
-> >
-> > diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-
-> exynos4-dt.c
-> > index 4603e6b..66b4a6e 100644
-> > --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> > +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> > @@ -15,9 +15,9 @@
-> >  #include <linux/of_fdt.h>
-> >
-> >  #include <asm/mach/arch.h>
-> > -#include <plat/mfc.h>
-> >
-> >  #include "common.h"
-> > +#include "mfc.h"
-> >
-> >  static void __init exynos4_dt_machine_init(void)
-> >  {
-> > @@ -36,13 +36,7 @@ static char const *exynos4_dt_compat[] __initdata = {
-> >  static void __init exynos4_reserve(void)
-> >  {
-> >  #ifdef CONFIG_S5P_DEV_MFC
-> > -       struct s5p_mfc_dt_meminfo mfc_mem;
-> > -
-> > -       /* Reserve memory for MFC only if it's available */
-> > -       mfc_mem.compatible = "samsung,mfc-v5";
-> > -       if (of_scan_flat_dt(s5p_fdt_find_mfc_mem, &mfc_mem))
-> > -               s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
-> > -                               mfc_mem.lsize);
-> > +       of_scan_flat_dt(s5p_fdt_alloc_mfc_mem, "samsung,mfc-v5");
-> >  #endif
-> >  }
-> >  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
-> > diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-
+> Reserve memory for MFC-v7 IP.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+> Based on top of Tushar's patch:
+> [PATCH V2] ARM: SAMSUNG: Reorganize calls to reserve memory for MFC
+> http://www.spinics.net/lists/linux-samsung-soc/msg25501.html
+> ---
+>  arch/arm/mach-exynos/mach-exynos5-dt.c |   10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c
+b/arch/arm/mach-exynos/mach-
 > exynos5-dt.c
-> > index 9bb6eac..36b36f4 100644
-> > --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> > +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> > @@ -14,9 +14,9 @@
-> >  #include <linux/io.h>
-> >
-> >  #include <asm/mach/arch.h>
-> > -#include <plat/mfc.h>
-> >
-> >  #include "common.h"
-> > +#include "mfc.h"
-> >  #include "regs-pmu.h"
-> >
-> >  static void __init exynos5_dt_machine_init(void)
-> > @@ -59,13 +59,7 @@ static char const *exynos5_dt_compat[] __initdata = {
-> >  static void __init exynos5_reserve(void)
-> >  {
-> >  #ifdef CONFIG_S5P_DEV_MFC
-> > -       struct s5p_mfc_dt_meminfo mfc_mem;
-> > -
-> > -       /* Reserve memory for MFC only if it's available */
-> > -       mfc_mem.compatible = "samsung,mfc-v6";
-> > -       if (of_scan_flat_dt(s5p_fdt_find_mfc_mem, &mfc_mem))
-> > -               s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
-> > -                               mfc_mem.lsize);
-> > +       of_scan_flat_dt(s5p_fdt_alloc_mfc_mem, "samsung,mfc-v6");
-> >  #endif
-> >  }
-> >
-> > diff --git a/arch/arm/mach-exynos/mfc.h b/arch/arm/mach-exynos/mfc.h
-> > new file mode 100644
-> > index 0000000..dec93cd
-> > --- /dev/null
-> > +++ b/arch/arm/mach-exynos/mfc.h
-> > @@ -0,0 +1,16 @@
-> > +/*
-> > + * Copyright (C) 2013 Samsung Electronics Co.Ltd
-> > + *
-> > + * This program is free software; you can redistribute  it and/or modify it
-> > + * under  the terms of  the GNU General  Public License as published by the
-> > + * Free Software Foundation;  either version 2 of the  License, or (at your
-> > + * option) any later version.
-> > + */
-> > +
-> > +#ifndef __MACH_EXYNOS_MFC_H
-> > +#define __MACH_EXYNOS_MFC_H __FILE__
-> > +
-> > +int __init s5p_fdt_alloc_mfc_mem(unsigned long node, const char *uname,
-> > +                               int depth, void *data);
-> > +
-> > +#endif /* __MACH_EXYNOS_MFC_H */
-> > diff --git a/arch/arm/plat-samsung/include/plat/mfc.h b/arch/arm/plat-
-> samsung/include/plat/mfc.h
-> > index e6d7c42..033654e 100644
-> > --- a/arch/arm/plat-samsung/include/plat/mfc.h
-> > +++ b/arch/arm/plat-samsung/include/plat/mfc.h
-> > @@ -32,7 +32,4 @@ struct s5p_mfc_dt_meminfo {
-> >  void __init s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
-> >                                 phys_addr_t lbase, unsigned int lsize);
-> >
-> > -int __init s5p_fdt_find_mfc_mem(unsigned long node, const char *uname,
-> > -                               int depth, void *data);
-> > -
-> >  #endif /* __PLAT_SAMSUNG_MFC_H */
-> > diff --git a/arch/arm/plat-samsung/s5p-dev-mfc.c b/arch/arm/plat-samsung/s5p-dev-
-> mfc.c
-> > index ad51f85..98087b6 100644
-> > --- a/arch/arm/plat-samsung/s5p-dev-mfc.c
-> > +++ b/arch/arm/plat-samsung/s5p-dev-mfc.c
-> > @@ -122,32 +122,35 @@ device_initcall(s5p_mfc_memory_init);
-> >  #endif
-> >
-> >  #ifdef CONFIG_OF
-> > -int __init s5p_fdt_find_mfc_mem(unsigned long node, const char *uname,
-> > +int __init s5p_fdt_alloc_mfc_mem(unsigned long node, const char *uname,
-> >                                 int depth, void *data)
-> >  {
-> >         __be32 *prop;
-> >         unsigned long len;
-> > -       struct s5p_mfc_dt_meminfo *mfc_mem = data;
-> > +       struct s5p_mfc_dt_meminfo mfc_mem;
-> >
-> >         if (!data)
-> >                 return 0;
-> >
-> > -       if (!of_flat_dt_is_compatible(node, mfc_mem->compatible))
-> > +       if (!of_flat_dt_is_compatible(node, data))
-> >                 return 0;
-> >
-> >         prop = of_get_flat_dt_prop(node, "samsung,mfc-l", &len);
-> >         if (!prop || (len != 2 * sizeof(unsigned long)))
-> >                 return 0;
-> >
-> > -       mfc_mem->loff = be32_to_cpu(prop[0]);
-> > -       mfc_mem->lsize = be32_to_cpu(prop[1]);
-> > +       mfc_mem.loff = be32_to_cpu(prop[0]);
-> > +       mfc_mem.lsize = be32_to_cpu(prop[1]);
-> >
-> >         prop = of_get_flat_dt_prop(node, "samsung,mfc-r", &len);
-> >         if (!prop || (len != 2 * sizeof(unsigned long)))
-> >                 return 0;
-> >
-> > -       mfc_mem->roff = be32_to_cpu(prop[0]);
-> > -       mfc_mem->rsize = be32_to_cpu(prop[1]);
-> > +       mfc_mem.roff = be32_to_cpu(prop[0]);
-> > +       mfc_mem.rsize = be32_to_cpu(prop[1]);
-> > +
-> > +       s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize,
-> > +                       mfc_mem.loff, mfc_mem.lsize);
-> >
-> >         return 1;
-> >  }
-> > --
-> > 1.7.9.5
-> >
+> index 9586439b2d0e..9a8a798d2ad0 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -59,7 +59,15 @@ static char const *exynos5_dt_compat[] __initdata = {
+>  static void __init exynos5_reserve(void)
+>  {
+>  #ifdef CONFIG_S5P_DEV_MFC
+> -	of_scan_flat_dt(s5p_fdt_alloc_mfc_mem, "samsung,mfc-v6");
+> +	int i;
+> +	char *mfc_mem[] = {
+> +		"samsung,mfc-v6",
+> +		"samsung,mfc-v7",
+> +	};
+> +
+> +	for (i = 0; i < ARRAY_SIZE(mfc_mem); i++)
+> +		if (of_scan_flat_dt(s5p_fdt_alloc_mfc_mem, mfc_mem[i]))
+> +			break;
+>  #endif
+>  }
 > 
-> Any comments on this patch?
-> 
-Looks OK to me, will apply.
+> --
+> 1.7.9.5
+
+Looks OK, will apply.
 
 Thanks,
 Kukjin
