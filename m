@@ -1,53 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: s3c64xx: Fix build for implicit serial_s3c.h
- inclusion
-Date: Fri, 21 Mar 2014 02:56:36 +0900
-Message-ID: <532B2BD4.7060809@samsung.com>
-References: <1395143803-2032-1-git-send-email-broonie@kernel.org> <1395143803-2032-2-git-send-email-broonie@kernel.org>
+Subject: Re: [PATCH v2 3/6] ARM: EXYNOS: Fix compilation error in cpuidle.c
+Date: Fri, 21 Mar 2014 03:01:12 +0900
+Message-ID: <532B2CE8.9090206@samsung.com>
+References: <1395162964-5916-1-git-send-email-t.figa@samsung.com> <1395162964-5916-3-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:49614 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932885AbaCTR4s (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:63686 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755533AbaCTSBQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Mar 2014 13:56:48 -0400
-Received: by mail-pb0-f44.google.com with SMTP id rp16so1277673pbb.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 10:56:48 -0700 (PDT)
-In-Reply-To: <1395143803-2032-2-git-send-email-broonie@kernel.org>
+	Thu, 20 Mar 2014 14:01:16 -0400
+Received: by mail-pa0-f41.google.com with SMTP id fa1so1283995pad.14
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 11:01:16 -0700 (PDT)
+In-Reply-To: <1395162964-5916-3-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-On 03/18/14 20:56, Mark Brown wrote:
-> From: Mark Brown<broonie@linaro.org>
+On 03/19/14 02:16, Tomasz Figa wrote:
+> The big series refactoring Exynos suspend to RAM handling missed the
+> cpuidle driver that is disabled in exynos_defconfig, leaving it
+> including old mach/pm_core.h header and using old s3c_cpu_resume symbol
+> instead of new exynos_cpu_resume, resulting in compilation failures with
+> CONFIG_ARCH_EXYNOS and CONFIG_CPU_IDLE enabled.
 >
-> Some very recent change appears to have removed an implicit inclusion of
-> serial_s3c.h causing build failures due to references to UART registers
-> in the serial port restore code in next-20140318.  Include it explicitly
-> to fix the build.
+> This patch fixes that silly mistake and performs necessary modification
+> to arhc/arm/exynos/cpuidle.c to make it compile again.
 >
-> Signed-off-by: Mark Brown<broonie@linaro.org>
+> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
 > ---
->   arch/arm/mach-s3c64xx/include/mach/pm-core.h | 2 ++
->   1 file changed, 2 insertions(+)
+>   arch/arm/mach-exynos/cpuidle.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-> index c0537f40a3d8..a30a1e3ffc6a 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-> @@ -15,6 +15,8 @@
->   #ifndef __MACH_S3C64XX_PM_CORE_H
->   #define __MACH_S3C64XX_PM_CORE_H __FILE__
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index f57cb91..b530231 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -26,7 +26,6 @@
+>   #include<plat/cpu.h>
+>   #include<plat/pm.h>
 >
-> +#include<linux/serial_s3c.h>
-> +
->   #include<mach/regs-gpio.h>
+> -#include<mach/pm-core.h>
+>   #include<mach/map.h>
 >
->   static inline void s3c_pm_debug_init_uart(void)
+>   #include "common.h"
+> @@ -127,7 +126,7 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+>   	/* Set value of power down register for aftr mode */
+>   	exynos_sys_powerdown_conf(SYS_AFTR);
+>
+> -	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
+> +	__raw_writel(virt_to_phys(exynos_cpu_resume), REG_DIRECTGO_ADDR);
+>   	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
+>
+>   	save_cpu_arch_register();
 
-Applied, thanks.
+OK, applied into s2r-pm-samsung-2 branch, thanks.
 
 - Kukjin
