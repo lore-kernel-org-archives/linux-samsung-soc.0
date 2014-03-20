@@ -1,7 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv4 4/5] devfreq: exynos5: Use SIMPLE_DEV_PM_OPS macro
-Date: Thu, 20 Mar 2014 11:59:12 +0900
-Message-ID: <1395284353-22458-5-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCHv4 2/5] devfreq: exynos4: Use SIMPLE_DEV_PM_OPS macro
+Date: Thu, 20 Mar 2014 11:59:10 +0900
+Message-ID: <1395284353-22458-3-git-send-email-cw00.choi@samsung.com>
 References: <1395284353-22458-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1395284353-22458-1-git-send-email-cw00.choi@samsung.com>
@@ -14,41 +14,40 @@ This patch use SIMPLE_DEV_PM_OPS macro instead of legacy method.
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/devfreq/exynos/exynos5_bus.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/devfreq/exynos/exynos4_bus.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
-index 6eef1f7..af6213f 100644
---- a/drivers/devfreq/exynos/exynos5_bus.c
-+++ b/drivers/devfreq/exynos/exynos5_bus.c
-@@ -429,6 +429,7 @@ static int exynos5_busfreq_int_remove(struct platform_device *pdev)
+diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+index 4c1bbd9..5a48d16 100644
+--- a/drivers/devfreq/exynos/exynos4_bus.c
++++ b/drivers/devfreq/exynos/exynos4_bus.c
+@@ -1119,6 +1119,7 @@ static int exynos4_busfreq_remove(struct platform_device *pdev)
  	return 0;
  }
  
 +#ifdef CONFIG_PM_SLEEP
- static int exynos5_busfreq_int_resume(struct device *dev)
+ static int exynos4_busfreq_resume(struct device *dev)
  {
- 	struct platform_device *pdev = container_of(dev, struct platform_device,
-@@ -438,10 +439,12 @@ static int exynos5_busfreq_int_resume(struct device *dev)
+ 	struct busfreq_data *data = dev_get_drvdata(dev);
+@@ -1126,10 +1127,9 @@ static int exynos4_busfreq_resume(struct device *dev)
  	busfreq_mon_reset(data);
  	return 0;
  }
--
- static const struct dev_pm_ops exynos5_busfreq_int_pm = {
- 	.resume	= exynos5_busfreq_int_resume,
- };
 +#endif
-+static SIMPLE_DEV_PM_OPS(exynos5_busfreq_int_pm_ops, NULL,
-+			 exynos5_busfreq_int_resume);
  
- /* platform device pointer for exynos5 devfreq device. */
- static struct platform_device *exynos5_devfreq_pdev;
-@@ -452,7 +455,7 @@ static struct platform_driver exynos5_busfreq_int_driver = {
- 	.driver		= {
- 		.name		= "exynos5-bus-int",
- 		.owner		= THIS_MODULE,
--		.pm		= &exynos5_busfreq_int_pm,
-+		.pm		= &exynos5_busfreq_int_pm_ops,
+-static const struct dev_pm_ops exynos4_busfreq_pm = {
+-	.resume	= exynos4_busfreq_resume,
+-};
++static SIMPLE_DEV_PM_OPS(exynos4_busfreq_pm_ops, NULL, exynos4_busfreq_resume);
+ 
+ static const struct platform_device_id exynos4_busfreq_id[] = {
+ 	{ "exynos4210-busfreq", TYPE_BUSF_EXYNOS4210 },
+@@ -1145,7 +1145,7 @@ static struct platform_driver exynos4_busfreq_driver = {
+ 	.driver = {
+ 		.name	= "exynos4-busfreq",
+ 		.owner	= THIS_MODULE,
+-		.pm	= &exynos4_busfreq_pm,
++		.pm	= &exynos4_busfreq_pm_ops,
  	},
  };
  
