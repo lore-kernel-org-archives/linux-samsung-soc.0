@@ -1,64 +1,41 @@
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 0/9 v7] crypto:s5p-sss: Add DT and Exynos support
-Date: Thu, 20 Mar 2014 11:43:46 +0900
-Message-ID: <CAHfPSqBeO1zoVd6H-r+ZBrKmQR-t6HgcbL4rmshuX_qhjR7JQw@mail.gmail.com>
-References: <1392630275-8667-1-git-send-email-ch.naveen@samsung.com> <20140225061630.GA9934@gondor.apana.org.au>
+Subject: Re: [PATCH v11 0/4] thermal: samsung: Clean up and add support for Exynos5420
+Date: Thu, 20 Mar 2014 11:45:54 +0900
+Message-ID: <CAHfPSqA6gW+-yTj0vp0b3xbWRVFczkx03nO=GCe9ccgXsRtOag@mail.gmail.com>
+References: <1384238132-24515-1-git-send-email-ch.naveen@samsung.com>
+ <1386657640-21481-1-git-send-email-ch.naveen@samsung.com> <CAL1wa8fj+pYN7EOkh0nggkwss2U9pJhGEoaA7TG+7oy0LK3zFQ@mail.gmail.com>
+ <5329BE8C.8000508@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:60020 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750742AbaCTCoI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Mar 2014 22:44:08 -0400
-In-Reply-To: <20140225061630.GA9934@gondor.apana.org.au>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <5329BE8C.8000508@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Leela Krishna Amudala <leelakrishna.a@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "cpgs ." <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vzapolskiy@gmail.com>, cpgs@samsung.com, davem@davemloft.net
 
-Hello Everyone,
+Hello Tomasz,
 
-On 25 February 2014 15:16, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Mon, Feb 17, 2014 at 03:14:26PM +0530, Naveen Krishna Chatradhi wrote:
->> SSS module on Exynos4210, Exynos5250 and Exynos5420 SoCs has added
->> features to the one on S5PV210. However with minor changes the s5p-sss.c
->> driver can be reused to support SSS modules on Exynos4 and 5 SoCs.
->>
->> This patch set
->> 1. Adds device tree support to the s5p-sss.c driver and Documentation
->> 2. Adds code to support SSS module on Exynos4 and 5 SoCs
->> 3. Adds device tree node to Exynos5250 and Exynos5420
->> 4. Adds variant struct to handle the differences in SSS modules
->> 5. Adds clk_prepare/clk_unprepare clocks to the s5p-sss.c driver
->>
->> Note: Compatible "exynos4210-secss" should work for Exynos4412 and
->>       Exynos5260 (Exynos5260, for which ARCH code is under review)
->> I couldn't test on Exynos4412 and Exynos4210 boards, Should be able to
->> test with addition of DT node and clocks support.
->>
->> Naveen Krishna Ch (7): [crypto-2.6.git]
->>   crypto:s5p-sss: Use platform_get_irq() instead of _byname()
->>   crypto:s5p-sss: Kconfig: Let Exynos SoCs select SSS driver
->>   crypto:s5p-sss: Look for the next request in the queue
->>   crypto:s5p-sss: Add device tree support
->>   crypto:s5p-sss: Add support for SSS module on Exynos
->>   crypto:s5p-sss: validate iv before memcpy
->>   crypto:s5p-sss: Use clk_prepare/clk_unprepare
+On 20 March 2014 00:58, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Leela,
 >
-> FWIW these patches are fine by me.
 >
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+> On 19.03.2014 12:19, Leela Krishna Amudala wrote:
+>>
+>> Hi All,
+>>
+>> I didn't see this series in mainline, Any comments for this ?
 >
-> Thanks,
-Any update on this patchset. They are already reviewed by Tomasz
-and Acked by Herbert.
-Anything else to be done from my side.
+>
+> Naveen had posted v12 of this series and I believe all the patches got my
+> Reviewed-by.
+>
+> Best regards,
+> Tomasz
+Thanks for your reply.
+These patches are posted to the mailing list quite some time now.
+Anything i can do to speed up the process.
 
-> --
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
 
 
