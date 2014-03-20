@@ -1,101 +1,71 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 8/9] drm/exynos/fimd: use polarization flags provided by
- drm_display_mode
-Date: Thu, 20 Mar 2014 08:01:41 +0100
-Message-ID: <532A9255.2030403@samsung.com>
-References: <1395052045-23848-1-git-send-email-a.hajda@samsung.com>
- <1395052045-23848-9-git-send-email-a.hajda@samsung.com>
- <CAAQKjZOh-qFEn3ex7YwCRDwOjpV=s-8JGj68Yx7qOpS+oy2-ww@mail.gmail.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: Re: [PATCH v11 24/27] iommu/exynos: use exynos-iommu specific typedef
+Date: Thu, 20 Mar 2014 18:55:19 +0900
+Message-ID: <20140320185519.0035bf69004da6c570133414@samsung.com>
+References: <20140314141302.393cfdf96dd7b82eee3f700e@samsung.com>
+ <CANEJEGu=yDfYi-gH7W7h7up2gd7MxBOg9bz4konLoe-UGf4RYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAAQKjZOh-qFEn3ex7YwCRDwOjpV=s-8JGj68Yx7qOpS+oy2-ww@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>, Denis Carikli <denis@eukrea.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:19881 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750740AbaCTJzY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Mar 2014 05:55:24 -0400
+In-reply-to: <CANEJEGu=yDfYi-gH7W7h7up2gd7MxBOg9bz4konLoe-UGf4RYA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Grant Grundler <grundler@chromium.org>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>
 
-On 03/20/2014 07:03 AM, Inki Dae wrote:
-> Thanks for your contributions,
+On Tue, 18 Mar 2014 18:33:20 -0700, Grant Grundler wrote:
+> On Thu, Mar 13, 2014 at 10:13 PM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+> > This commit introduces sysmmu_pte_t for page table entries and
+> > sysmmu_iova_t vor I/O virtual address that is manipulated by
+> > exynos-iommu driver. The purpose of the typedef is to remove
+> > dependencies to the driver code from the change of CPU architecture
+> > from 32 bit to 64 bit.
 > 
+> hi Cho,
+> I noticed this before but understood this code was only compiled for
+> ILP-32 programming model. I'm assuming that is going to change in the
+> not-to-distant future. Good. :)
 > 
-> 2014-03-17 19:27 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->> The patch replaces fimd private bindings for signal polarization by
->> polarization flags provided by drm_display_mode.
->>
-> 
-> This patch needs below patch not merged yet,
->      drm: drm_display_mode: add signal polarity flags
-> 
-> So let me pick up all of your path series except for patch 7 and 8.
-> And for these two patches, later.
-> 
-> Your opinion?
 
-Yes, please do it.
+Thanks.
 
-Regards
-Andrzej
+> >
+> > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> > ---
+> >  drivers/iommu/exynos-iommu.c |  103 ++++++++++++++++++++++--------------------
+> >  1 file changed, 54 insertions(+), 49 deletions(-)
+> >
+> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> > index e375501..6e716cc 100644
+> > --- a/drivers/iommu/exynos-iommu.c
+> > +++ b/drivers/iommu/exynos-iommu.c
+> > @@ -56,19 +56,19 @@
+> >  #define lv2ent_large(pent) ((*(pent) & 3) == 1)
+> >
+> >  #define section_phys(sent) (*(sent) & SECT_MASK)
+> > -#define section_offs(iova) ((iova) & 0xFFFFF)
+> > +#define section_offs(iova) ((sysmmu_iova_t)(iova) & 0xFFFFF)
+> 
+> The cast will mask abuses of iova. Define section_offs as a static
+> function and GCC can type check iova parameter to make sure it's a
+> sysmmu_iova_t.
+> Thoughts?
+> 
+> I was thinking "((iova) & (sysmmu_iova_t) 0XFFFFF)" might do what you
+> want but it doesn't warn on abuse that I tried. I believe GCC knows
+> the upper bits are being ignored.
 
-> 
-> Thanks,
-> Inki Dae
-> 
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 +++++-------
->>  1 file changed, 5 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> index 15d6b37..dbfad4e 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -115,7 +115,6 @@ struct fimd_context {
->>         unsigned int                    default_win;
->>         unsigned long                   irq_flags;
->>         u32                             vidcon0;
->> -       u32                             vidcon1;
->>         bool                            suspended;
->>         int                             pipe;
->>         wait_queue_head_t               wait_vsync_queue;
->> @@ -232,7 +231,11 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
->>                 return;
->>
->>         /* setup polarity values */
->> -       vidcon1 = ctx->vidcon1;
->> +       vidcon1 = 0;
->> +       if (mode->pol_flags & DRM_MODE_FLAG_POL_DE_NEGEDGE)
->> +               vidcon1 |= VIDCON1_INV_VDEN;
->> +       if (mode->pol_flags & DRM_MODE_FLAG_POL_PIXDATA_NEGEDGE)
->> +               vidcon1 |= VIDCON1_INV_VCLK;
->>         if (mode->flags & DRM_MODE_FLAG_NVSYNC)
->>                 vidcon1 |= VIDCON1_INV_VSYNC;
->>         if (mode->flags & DRM_MODE_FLAG_NHSYNC)
->> @@ -875,11 +878,6 @@ static int fimd_probe(struct platform_device *pdev)
->>         ctx->dev = dev;
->>         ctx->suspended = true;
->>
->> -       if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
->> -               ctx->vidcon1 |= VIDCON1_INV_VDEN;
->> -       if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
->> -               ctx->vidcon1 |= VIDCON1_INV_VCLK;
->> -
->>         ctx->bus_clk = devm_clk_get(dev, "fimd");
->>         if (IS_ERR(ctx->bus_clk)) {
->>                 dev_err(dev, "failed to get bus clock\n");
->> --
->> 1.8.3.2
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thank you for advice.
+
+I agree that type checking by compiler will be more helpful
+as you mentioned.
+
+Regards,
+
+KyongHo
