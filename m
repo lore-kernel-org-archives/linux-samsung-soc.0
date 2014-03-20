@@ -1,36 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: S3C24XX: Remove invalid code from hardware.h
-Date: Fri, 21 Mar 2014 04:51:00 +0900
-Message-ID: <532B46A4.8050405@samsung.com>
-References: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHxbgNwR4Zx9q9V5oO=NkjQKj9Oio6pOZwgT24u6WWUhRQ@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH V8 2/7] net: sxgbe: add basic framework for Samsung
+ 10Gb ethernet driver
+Date: Thu, 20 Mar 2014 17:33:38 -0400 (EDT)
+Message-ID: <20140320.173338.1960242211982744557.davem@davemloft.net>
+References: <012d01cf4461$77a062f0$66e128d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:48077 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755653AbaCTTvE (ORCPT
+Received: from shards.monkeyblade.net ([149.20.54.216]:52233 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932328AbaCTVdl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Mar 2014 15:51:04 -0400
-Received: by mail-pd0-f175.google.com with SMTP id x10so1361035pdj.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 12:51:03 -0700 (PDT)
-In-Reply-To: <CAK9yfHxbgNwR4Zx9q9V5oO=NkjQKj9Oio6pOZwgT24u6WWUhRQ@mail.gmail.com>
+	Thu, 20 Mar 2014 17:33:41 -0400
+In-Reply-To: <012d01cf4461$77a062f0$66e128d0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: bh74.an@samsung.com
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, ks.giri@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, ilho215.lee@samsung.com
 
-On 03/19/14 14:07, Sachin Kamat wrote:
-> On 3 January 2014 14:54, Sachin Kamat<sachin.kamat@linaro.org>  wrote:
->> Remove the code that is not referenced anywhere. While at it also
->> remove incorrect file path.
->>
->> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
->> ---
->
-> Gentle ping on this series, Kukjin.
->
-OK, applied this whole series.
+From: Byungho An <bh74.an@samsung.com>
+Date: Thu, 20 Mar 2014 10:25:59 -0700
 
-Thanks,
-Kukjin
+> +config NET_VENDOR_SAMSUNG
+> +	bool "Samsung Ethernet device"
+> +	default y
+> +	depends on HAS_IOMEM && HAS_DMA
+> +	select PHYLIB
+> +	select CRC32
+> +	select PTP_1588_CLOCK
+> +	---help---
+> +	  This is the driver for the SXGBE 10G Ethernet IP block found on Samsung
+> +	  platforms.
+
+The vendor sub-section does not necessarily need these select and
+depends statements.
+
+These should be put only in the individual driver entries.
