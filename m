@@ -1,66 +1,36 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL 5/6] Samsung PM updates for v3.15
-Date: Fri, 21 Mar 2014 04:39:37 +0900
-Message-ID: <532B43F9.9060001@samsung.com>
-References: <8259832.260591393840570438.JavaMail.weblogic@epml16> <20140309183523.GD22881@quad.lixom.net> <531CFA28.9020600@gmail.com> <CAOesGMiqhVk6JYhx=4446E1ZFWy7CrQNsjp8U6jf_De8FzidFw@mail.gmail.com> <01d001cf3ccc$39f339b0$add9ad10$@samsung.com> <CAOesGMiYJa7uM21ot_h6mGRTQX+HLcOsmTjk78WS0KZD6=piyw@mail.gmail.com> <20140319040149.30995.80279@quantum>
+Subject: Re: [PATCH 1/3] ARM: S3C24XX: Remove invalid code from hardware.h
+Date: Fri, 21 Mar 2014 04:51:00 +0900
+Message-ID: <532B46A4.8050405@samsung.com>
+References: <1388741079-16202-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHxbgNwR4Zx9q9V5oO=NkjQKj9Oio6pOZwgT24u6WWUhRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:64978 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965232AbaCTTjm (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:48077 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755653AbaCTTvE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Mar 2014 15:39:42 -0400
-Received: by mail-pd0-f170.google.com with SMTP id v10so1373405pde.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 12:39:42 -0700 (PDT)
-In-Reply-To: <20140319040149.30995.80279@quantum>
+	Thu, 20 Mar 2014 15:51:04 -0400
+Received: by mail-pd0-f175.google.com with SMTP id x10so1361035pdj.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 12:51:03 -0700 (PDT)
+In-Reply-To: <CAK9yfHxbgNwR4Zx9q9V5oO=NkjQKj9Oio6pOZwgT24u6WWUhRQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 03/19/14 13:01, Mike Turquette wrote:
-> Quoting Olof Johansson (2014-03-10 19:52:01)
->> On Mon, Mar 10, 2014 at 6:50 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->>> Olof Johansson wrote:
->>>>
->>>>>> Hi,
->>>>>>
->>>>>> I don't see a single cc or acked-by line from Mike Turquette here. I'll
->>>>>> hold
->>>>>> off until he's had a chance to take a look at these ones; I suspect
->>>>>> they'll be
->>>>>> fine since it's mostly code refactoring though.
->>>>>
->>>>>
->>>>> I guess I should have ACKed them too, but it felt kind of strange to ACK
->>>> my
->>>>> own patches. ;)
->>>>>
->>>>> Anyway, for all samsung-clk patches:
->>>>>
->>>>> Acked-by: Tomasz Figa<t.figa@samsung.com>
->>>>
->>>> Yeah, self-acking doesn't make much sense. :)
->>>>
->>>> I'm mostly worried about patches touching other subsystems without the
->>>> other maintainer being aware of it or having reviewed them. As I said,
->>>> these mostly look like refactorings but it's still good habit.
->>>>
->>> OK, agreed, I think Mike knew about that though. Let's wait for Mike's
->>> response.
->>>
->>> BTW, should I sort out the branch again if Mike gives ack on that?
+On 03/19/14 14:07, Sachin Kamat wrote:
+> On 3 January 2014 14:54, Sachin Kamat<sachin.kamat@linaro.org>  wrote:
+>> Remove the code that is not referenced anywhere. While at it also
+>> remove incorrect file path.
 >>
->> If I hear from Mike that he's OK with it then I can merge it, no need to rebase.
+>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>> ---
 >
-Thanks :-)
-
-> Acked-by: Mike Turquette<mturquette@linaro.org>
+> Gentle ping on this series, Kukjin.
 >
-It's time. Please pull this [5/6] and "[GIT PULL 6/6] Samsung 
-clk-s3c24xx updates for v3.15".
+OK, applied this whole series.
 
 Thanks,
 Kukjin
