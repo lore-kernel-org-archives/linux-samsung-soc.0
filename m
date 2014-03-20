@@ -1,97 +1,73 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v11 17/27] iommu/exynos: remove calls to Runtime PM API
-	functions
-Date: Thu, 20 Mar 2014 21:07:05 +0900
-Message-ID: <20140320210705.19aa5192f55f263ccf271b32@samsung.com>
-References: <20140314140843.ba055f28dd7ed59c46088029@samsung.com>
-	<5322FD14.5090602@samsung.com>
-	<20140318185605.0380c8dfe6559c06183092e5@samsung.com>
-	<532861BE.7020601@samsung.com>
-	<20140319100304.5e26fa43ccdfc29178b058e1@samsung.com>
-	<532997D7.6090608@samsung.com>
-	<CANEJEGuYz28dGT+264CYtG+Tk6htOq=u-t4PWMtsij32X0vJFA@mail.gmail.com>
-	<5329D426.9020706@samsung.com>
-	<CANEJEGtCdMmWXwpoky8USLOBw7jAt1bRw8or-mDK7twxAzhWpA@mail.gmail.com>
-	<5329E729.4020201@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 1/3] clk: s2mps11: Add support for S2MPS14 clocks
+Date: Thu, 20 Mar 2014 13:45:57 +0100
+Message-ID: <1395319557.22979.1.camel@AMDC1943>
+References: <1395047958-17953-1-git-send-email-k.kozlowski@samsung.com>
+ <1395047958-17953-2-git-send-email-k.kozlowski@samsung.com>
+ <20140319001643.30995.46947@quantum> <1395215408.18730.2.camel@AMDC1943>
+ <20140319191117.30995.13715@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <5329E729.4020201-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:63224 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756925AbaCTMqA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Mar 2014 08:46:00 -0400
+In-reply-to: <20140319191117.30995.13715@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-On Wed, 19 Mar 2014 19:51:21 +0100, Tomasz Figa wrote:
-> On 19.03.2014 19:37, Grant Grundler wrote:
-> > On Wed, Mar 19, 2014 at 10:30 AM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> > ...
-> >> As I said, AFAIK the trend is to get rid of ordering by initcalls and make
-> >> sure that drivers can handle missing dependencies properly, even for
-> >> "services" such as DMA, GPIO, clocks and so on, which after all are provided
-> >> by normal drivers like other.
-> >
-> > Ok - I'm not following the general kernel dev trends. initcall()
-> > levels are easy to understand and implement. So I would not be in a
-> > hurry to replace them.
-> >
+On Wed, 2014-03-19 at 12:11 -0700, Mike Turquette wrote:
+> Quoting Krzysztof Kozlowski (2014-03-19 00:50:08)
+> > On Tue, 2014-03-18 at 17:16 -0700, Mike Turquette wrote:
+> > > Quoting Krzysztof Kozlowski (2014-03-17 02:19:16)
+> > > > This patch adds support for S2MPS14 PMIC clocks (BT and AP) to the
+> > > > s2mps11 clock driver.
+> > > > 
+> > > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > > Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> > > > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> > > 
+> > > This does not apply cleanly to to clk tree trip, nor does it compile
+> > > after manually merging due to changes introducing
+> > > linux/mfd/samsung/s2mps14.h.
+> > > 
+> > > The changes look OK to me so maybe Lee can take it with my Ack?
+> > > 
+> > > Acked-by: Mike Turquette <mturquette@linaro.org>
+> > > 
+> > 
+> > Hi,
+> > 
+> > Thanks for the Ack. The patch depends on Tushar Behera's patches:
+> >  - [PATCH V2 0/2] Add support for clocks in S5M8767
+> >    http://thread.gmane.org/gmane.linux.kernel.samsung-soc/27264
+> > which are waiting for some time. Both patchsets should be pulled
+> > together.
 > 
-> Well, initcall level is still a way to satisfy most of dependencies, 
-> i.e. all client devices with higher initcall levels will probe 
-> successfully. However the other case needs to be handled as well - in 
-> this case the IOMMU binding code needs to defer probe of client driver 
-> if respective IOMMU is not yet available.
+> I took those patches in yesterday. So we have three options:
 
-I now understand what is deferred probing you mentioned.
-However, I worry that many existing drivers are not ready
-for deferred probing.
+Great! Thanks.
 
-But still I wonder if System MMU driver need to be probed in the same
-initcall level.
-
-> >>> ps. I've written IOMMU support for four different IOMMUs on three
-> >>> operating systems (See drivers/parisc for two linux examples). But I
-> >>> still feel like I at best have 80% understanding of how this one is
-> >>> organized/works. Abstract descriptions and convoluted code have been
-> >>> handicapping me (and lack of time to dig further).
-> >>
-> >>
-> >> Well, this is one of my concerns with this driver. It isn't easy to read
-> >> (and so review, maintain, extend and debug found issues).
-> >
-> > My postscript comment was more to explain why I'm not confident in my
-> > opinion - not a reason to reject the patch series.  I still consider
-> > the whole series as a step forward. But I'm not the expert here.
 > 
-> I fully agree with you. Other than the issues mentioned in review, the 
-> patches are definitely a step forward. I'd even say that all the patches 
-> that have nothing to do with device tree could be merged in their 
-> current form and the code refined later. It doesn't mean that patches 
-> shouldn't be reviewed now and issues spotted reported, even if they 
-> could be fixed later - this is for the IOMMU subsystem maintainer to decide.
+> 1) MFD tree can pull a stable commit from the clk tree. I'm happy to
+> make a topic branch for this. Then these patches can be applied.
 > 
-> As for patches related to DT support, more care needs to be taken, as 
-> bindings should be designed with stability in mind, so the refining 
-> process should happen at review stage.
+> 2) clk tree can pull a stable commit from the mfd tree if the mfd folks
+> can provide one.
 > 
-> > Right now, with ~30 patches posted by the exynos iommu (official?)
-> > maintainer, no one else who has a clue will attempt to fix or clean up
-> > those kinds of problems.  i.e. it's useful to enable others to fix
-> > what are essentially unspecified "design pattern" issues.
-> 
-> Agreed.
+> 3) Wait until after the merge window to apply this one to the clk tree.
+> I don't currently plan to send 2 PRs during the merge window, so this
+> could either go in 3.16 or maybe into 3.15 if a split PR is sent.
 
-Let me wait for the way of binding System MMU and its master developed by Marek.
+Dear Lee,
 
-Regards,
+How do you wish to proceed? The patchset depends on changes in sec-core
+MFD driver.
 
-KyongHo
+Best regards,
+Krzysztof
