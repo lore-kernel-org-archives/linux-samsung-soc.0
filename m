@@ -1,70 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Disable MDMA1 node for Arndale-octa board
-Date: Fri, 21 Mar 2014 04:29:13 +0900
-Message-ID: <532B4189.4090204@samsung.com>
-References: <1394006947-26126-1-git-send-email-tushar.behera@linaro.org> <CAHbNUh0sWquBXk9bXAr6LKqYz_1JHDXwzoRy4==R0ze2FNoaQw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Move exynos-audss-clk.h to
+ dt-bindings/clock
+Date: Fri, 21 Mar 2014 04:32:21 +0900
+Message-ID: <532B4245.90705@samsung.com>
+References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org>
+ <1394085884-13081-3-git-send-email-tushar.behera@linaro.org>
+ <531D054E.70008@gmail.com> <53277548.60300@samsung.com>
+ <532858E7.3040802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:55219 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964875AbaCTT3R (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Mar 2014 15:29:17 -0400
-Received: by mail-pd0-f180.google.com with SMTP id v10so1358432pde.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 12:29:16 -0700 (PDT)
-In-Reply-To: <CAHbNUh0sWquBXk9bXAr6LKqYz_1JHDXwzoRy4==R0ze2FNoaQw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <532858E7.3040802@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, pawel.moll@arm.com, linux-doc@vger.kernel.org, ijc+devicetree@hellion.org.uk, Tomasz Figa <tomasz.figa@gmail.com>, robh+dt@kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, rob@landley.net, galak@codeaurora.org, plagnioj@jcrosoft.com, linux@maxim.org.za, linux-arm-kernel@lists.infradead.org, Tushar Behera <tushar.behera@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kgene Kim <kgene.kim@samsung.com>
 
-On 03/19/14 17:38, Tushar Behera wrote:
-> On 5 March 2014 13:39, Tushar Behera<tushar.behera@linaro.org>  wrote:
->> MDMA1 can support both secure and non-secure AXI transactions. When this
->> is enabled in the kernel for boards that run in secure mode, we get
->> imprecise external aborts causing the kernel to oops.
+On 03/18/14 23:32, Tomasz Figa wrote:
+> On 17.03.2014 23:20, Kukjin Kim wrote:
+>> On 03/10/14 09:20, Tomasz Figa wrote:
+>>> On 06.03.2014 07:04, Tushar Behera wrote:
+>>>> Most of the clock related dt-binding header files are located in
+>>>> dt-bindings/clock folder. It would be good to keep all the similar
+>>>> header files at a single location.
+>>>>
+>>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>>> CC: Kukjin Kim <kgene.kim@samsung.com>
 >>
->> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 >>
->> Suggested-by: Javi Merino<javi.merino@arm.com>
->> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
->> ---
->>   arch/arm/boot/dts/exynos5420-arndale-octa.dts |   12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
->> index f509e8f..810ec73 100644
->> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
->> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
->> @@ -361,4 +361,16 @@
->>                          gpio-key,wakeup;
->>                  };
->>          };
->> +
->> +       amba {
->> +               mdma1: mdma@11C10000 {
->> +                       /*
->> +                        * MDMA1 can support both secure and non-secure
->> +                        * AXI transactions. When this is enabled in the kernel
->> +                        * for boards that run in secure mode, we are getting
->> +                        * imprecise external aborts causing the kernel to oops.
->> +                        */
->> +                       status = "disabled";
->> +               };
->> +       };
->>   };
->> --
->> 1.7.9.5
->>
-> Kukjin,
+>> Or shall I take this into samsung tree?
 >
-> Can you please apply this with Javi's "Tested-by"?
+> I guess so.
 >
+> Or should this whole series go through DT tree?
 >
-Looks OK, applied this and second one.
+OK, I've applied into samsung tree.
 
 Thanks,
 Kukjin
