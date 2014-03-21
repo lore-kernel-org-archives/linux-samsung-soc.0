@@ -1,90 +1,65 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH 7/7] ARM: dts: add HS400 support for Exynos5420
-Date: Fri, 21 Mar 2014 23:04:49 +0900
-Message-ID: <002101cf450e$861697c0$9243c740$%jun@samsung.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: RE: [PATCH V8 4/7] net: sxgbe: add EEE(Energy Efficient Ethernet) for
+ Samsung sxgbe
+Date: Fri, 21 Mar 2014 07:24:28 -0700
+Message-ID: <004601cf4511$46c8a970$d459fc50$@samsung.com>
+References: <012f01cf4461$7ac68220$70538660$@samsung.com>
+ <20140321110423.GN23372@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45522 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965542AbaCUOEu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Mar 2014 10:04:50 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-reply-to: <20140321110423.GN23372@e106331-lin.cambridge.arm.com>
+Content-language: en-us
+Sender: netdev-owner@vger.kernel.org
+To: 'Mark Rutland' <mark.rutland@arm.com>
+Cc: 'netdev' <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: 'Chris Ball' <chris@printf.net>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>
 
-HS400 timing value set is added for SMDK5420.
-And GPIO line for RCLK should be pull-down state.
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    6 ++++++
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 +++++++
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |    5 ++++-
- 3 files changed, 17 insertions(+), 1 deletions(-)
+Mark Rutland <mark.rutland@arm.com> wrote:
+> On Thu, Mar 20, 2014 at 05:26:06PM +0000, Byungho An wrote:
+> > From: Girish K S <ks.giri@samsung.com>
+> >
+> > Added support for the EEE(Energy Efficient Ethernet) in 10G ethernet
+driver.
+> >
+> > Signed-off-by: Girish K S <ks.giri@samsung.com>
+> > Neatening-by: Joe Perches <joe@perches.com>
+> > Signed-off-by: Byungho An <bh74.an@samsung.com>
+> > ---
+> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h  |   53 +++++++
+> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c    |   86 +++++++++-
+> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c |   47 ++++++
+> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c    |  165
+> +++++++++++++++++++-
+> >  .../net/ethernet/samsung/sxgbe/sxgbe_platform.c    |    4 +
+> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h     |    5 +
+> >  6 files changed, 358 insertions(+), 2 deletions(-)
+> 
+> [...]
+> 
+> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> > b/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> > index e410d84..b23ec57 100644
+> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> > @@ -160,6 +160,10 @@ static int sxgbe_platform_probe(struct
+> platform_device *pdev)
+> >                 }
+> >         }
+> >
+> > +       priv->lpi_irq = irq_of_parse_and_map(dev->of_node, loop++);
+> 
+> You can use platform_get_irq(pdev, loop++) here. The interrupts have already
+> been parsed elsewhere.
+OK.
 
-diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-index ca1914f..39c3014 100644
---- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-@@ -29,6 +29,9 @@ Required Properties:
-   data rate mode operation. Refer notes below for the order of the cells and the
-   valid values.
- 
-+* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
-+* samsung,dw-mshc-hs400-timing: Similar with dw-mshc-ddr-timing.
-+
-   Notes for the sdr-timing and ddr-timing values:
- 
-     The order of the cells should be
-@@ -45,6 +48,9 @@ Required Properties:
-       - if CIU clock divider value is 0 (that is divide by 1), both tx and rx
-         phase shift clocks should be 0.
- 
-+* read-strobe-delay: RCLK (Data strobe) delay to control HS400 mode
-+  (Latency value for delay line in Read path)
-+
- Required properties for a slot:
- 
- * gpios: specifies a list of gpios used for command, clock and data bus. The
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index e62c8eb..51233ee 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -194,6 +194,13 @@
- 			samsung,pin-drv = <3>;
- 		};
- 
-+		sd0_rclk: sd0-rclk {
-+			samsung,pins = "gpc0-7";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <1>;
-+			samsung,pin-drv = <3>;
-+		};
-+
- 		sd1_clk: sd1-clk {
- 			samsung,pins = "gpc1-0";
- 			samsung,pin-function = <2>;
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 3ad4ef3..4796d44 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -38,8 +38,11 @@
- 		card-detect-delay = <200>;
- 		samsung,dw-mshc-sdr-timing = <0 4 3>;
- 		samsung,dw-mshc-ddr-timing = <0 2 3>;
-+		samsung,dw-mshc-hs200-timing = <0 2 3>;
-+		samsung,dw-mshc-hs400-timing = <0 2 1>;
-+		read-strobe-delay = <90>;
- 		pinctrl-names = "default";
--		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
- 
- 		slot@0 {
- 			reg = <0>;
--- 
-1.7.4.1
+> 
+> Cheers,
+> Mark.
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in the
+body of
+> a message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
