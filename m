@@ -1,709 +1,717 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: RE: [PATCH V7 6/7] net: sxgbe: add ethtool related functions support
- Samsung sxgbe
-Date: Fri, 21 Mar 2014 08:20:41 -0700
-Message-ID: <004e01cf4519$23dd0520$6b970f60$@samsung.com>
-References: <00f001cf43e3$caf62580$60e27080$@samsung.com>
- <CAOwfj2MEtb8_ia+Zu429HSq4FMzwmS8VN02V7yLz4LHdHzPyrQ@mail.gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [RFC 2/4] drm: exynos: add MDNIE post processor
+Date: Fri, 21 Mar 2014 20:00:45 +0530
+Message-ID: <CAEC9eQMHAqEG33=L9Cyey0KZTXAs0OX2LuDdgdXkmutZDUQ46A@mail.gmail.com>
+References: <1395238975-24600-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1395238975-24600-3-git-send-email-ajaykumar.rs@samsung.com>
+ <CAK9yfHzD50i1pVjbxFa2Ya1t_fkGKhq6dm8G9At79xOX2P695A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11317 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753694AbaCUPUx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Mar 2014 11:20:53 -0400
-In-reply-to: <CAOwfj2MEtb8_ia+Zu429HSq4FMzwmS8VN02V7yLz4LHdHzPyrQ@mail.gmail.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0168419773=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAK9yfHzD50i1pVjbxFa2Ya1t_fkGKhq6dm8G9At79xOX2P695A@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Shirish S <s.shirish@samsung.com>, seanpaul@google.com, Seung-Woo Kim <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, marcheu@chromium.org, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vince Bridgers' <vbridgers2013@gmail.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>
+
+--===============0168419773==
+Content-Type: multipart/alternative; boundary=bcaec543079a39db1604f51ebb09
+
+--bcaec543079a39db1604f51ebb09
+Content-Type: text/plain; charset=ISO-8859-1
+
+Hi Sachin,
 
 
-Vince Bridgers <vbridgers2013@gmail.com> wrote :
-> On Wed, Mar 19, 2014 at 9:26 PM, Byungho An <bh74.an@samsung.com>
-> wrote:
-> > From: Vipul Pandya <vipul.pandya@samsung.com>
+On Wed, Mar 19, 2014 at 10:51 PM, Sachin Kamat <sachin.kamat@linaro.org>wrote:
+
+> Hi Ajay,
+>
+> On 19 March 2014 19:52, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> > Add post processor ops for MDNIE and their support functions.
+> > Expose an interface for the FIMD to register MDNIE PP.
 > >
-> > This patch adds ethtool related functions.
-> >
-> > Signed-off-by: Vipul Pandya <vipul.pandya@samsung.com>
-> > Neatening-by: Joe Perches <joe@perches.com>
-> > Signed-off-by: Byungho An <bh74.an@samsung.com>
+> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> > Signed-off-by: Shirish S <s.shirish@samsung.com>
+> > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > > ---
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h  |   25 +-
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c |  509
-> +++++++++++++++++++-
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c    |    8 +-
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h     |    6 +
-> >  4 files changed, 537 insertions(+), 11 deletions(-)
+> >  drivers/gpu/drm/exynos/Makefile            |   2 +-
+> >  drivers/gpu/drm/exynos/exynos_mdnie.c      | 707
+> +++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/exynos/exynos_mdnie_regs.h | 154 +++++++
+> >  3 files changed, 862 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie.c
+> >  create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie_regs.h
 > >
-> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h
-> > b/drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h
-> > index f06d439..ef7dc80 100644
-> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h
-> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h
-> > @@ -42,8 +42,12 @@ struct sxgbe_mtl_ops;
-> >  #define SXGBE_RX_QUEUES   16
+> > diff --git a/drivers/gpu/drm/exynos/Makefile
+> b/drivers/gpu/drm/exynos/Makefile
+> > index 02dde22..653eab5 100644
+> > --- a/drivers/gpu/drm/exynos/Makefile
+> > +++ b/drivers/gpu/drm/exynos/Makefile
+> > @@ -10,7 +10,7 @@ exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
 > >
-> >  /* Max/Min RI Watchdog Timer count value */
-> > -#define SXGBE_MAX_DMA_RIWT     0xff
-> > -#define SXGBE_MIN_DMA_RIWT     0x20
-> > +/* Calculated based how much time does it take to fill 256KB Rx
-> > +memory
-> > + * at 10Gb speed at 156MHz clock rate and considered little less then
-> > + * the actual value.
-> > + */
-> > +#define SXGBE_MAX_DMA_RIWT     0x70
-> > +#define SXGBE_MIN_DMA_RIWT     0x01
-> >
-> >  /* Tx coalesce parameters */
-> >  #define SXGBE_COAL_TX_TIMER    40000
-> > @@ -194,6 +198,20 @@ enum dma_irq_status {
-> >  #define SXGBE_FOR_EACH_QUEUE(max_queues, queue_num)                    \
-> >         for (queue_num = 0; queue_num < max_queues; queue_num++)
-> >
-> > +#define DRV_VERSION "1.0.0"
+> >  exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
+> >  exynosdrm-$(CONFIG_DRM_EXYNOS_DMABUF) += exynos_drm_dmabuf.o
+> > -exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)    += exynos_drm_fimd.o
+> > +exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)    += exynos_drm_fimd.o
+> exynos_mdnie.o
+> >  exynosdrm-$(CONFIG_DRM_EXYNOS_DSI)     += exynos_drm_dsi.o
+> >  exynosdrm-$(CONFIG_DRM_EXYNOS_DP)      += exynos_dp_core.o
+> exynos_dp_reg.o
+> >  exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)    += exynos_hdmi.o exynos_mixer.o
+> > diff --git a/drivers/gpu/drm/exynos/exynos_mdnie.c
+> b/drivers/gpu/drm/exynos/exynos_mdnie.c
+> > new file mode 100644
+> > index 0000000..a043853
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/exynos/exynos_mdnie.c
+> > @@ -0,0 +1,707 @@
+> > +/* drivers/gpu/drm/exynos/exynos_mdnie.c
+> > + *
+> > + * Samsung mDNIe driver
+> > + *
+> > + * Copyright (C) 2014 Samsung Electronics Co., Ltd.
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> it
+> > + * under the terms of the GNU General Public License as published by the
+> > + * Free Software Foundation; either version 2 of the License, or (at
+> your
+> > + * option) any later version.
+> > +*/
 > > +
-> > +#define SXGBE_MAX_RX_CHANNELS  16
-> > +#define SXGBE_MAX_TX_CHANNELS  16
-> > +
-> > +#define START_MAC_REG_OFFSET   0x0000
-> > +#define MAX_MAC_REG_OFFSET     0x0DFC
-> > +#define START_MTL_REG_OFFSET   0x1000
-> > +#define MAX_MTL_REG_OFFSET     0x18FC
-> > +#define START_DMA_REG_OFFSET   0x3000
-> > +#define MAX_DMA_REG_OFFSET     0x38FC
-> > +
-> > +#define REG_SPACE_SIZE         0x2000
-> > +
-> >  /* sxgbe statistics counters */
-> >  struct sxgbe_extra_stats {
-> >         /* TX/RX IRQ events */
-> > @@ -479,6 +497,7 @@ struct sxgbe_priv_data {
-> >         /* advanced time stamp support */
-> >         u32 adv_ts;
-> >         int use_riwt;
-> > +       struct ptp_clock *ptp_clock;
-> >
-> >         /* tc control */
-> >         int tx_tc;
-> > @@ -515,4 +534,6 @@ const struct sxgbe_mtl_ops
-> > *sxgbe_get_mtl_ops(void);  void sxgbe_disable_eee_mode(struct
-> > sxgbe_priv_data * const priv);  bool sxgbe_eee_init(struct
-> > sxgbe_priv_data * const priv);
-> >
-> > +int sxgbe_set_flow_ctrl(struct sxgbe_priv_data *priv, int rx, int
-> > +tx);
-> > +
-> >  #endif /* __SXGBE_COMMON_H__ */
-> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c
-> > b/drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c
-> > index 9083300..471bc89 100644
-> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c
-> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c
-> > @@ -12,11 +12,17 @@
-> >
-> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >
 > > +#include <linux/clk.h>
-> > +#include <linux/interrupt.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/netdevice.h>
-> > +#include <linux/net_tstamp.h>
-> >  #include <linux/phy.h>
-> > +#include <linux/ptp_clock_kernel.h>
-> >
-> >  #include "sxgbe_common.h"
-> > +#include "sxgbe_reg.h"
-> > +#include "sxgbe_dma.h"
-> >
-> >  struct sxgbe_stats {
-> >         char stat_string[ETH_GSTRING_LEN]; @@ -32,16 +38,105 @@ struct
-> > sxgbe_stats {  }
-> >
-> >  static const struct sxgbe_stats sxgbe_gstrings_stats[] = {
-> > +       /* TX/RX IRQ events */
-> > +       SXGBE_STAT(tx_process_stopped_irq),
-> > +       SXGBE_STAT(tx_ctxt_desc_err),
-> > +       SXGBE_STAT(tx_threshold),
-> > +       SXGBE_STAT(rx_threshold),
-> > +       SXGBE_STAT(tx_pkt_n),
-> > +       SXGBE_STAT(rx_pkt_n),
-> > +       SXGBE_STAT(normal_irq_n),
-> > +       SXGBE_STAT(tx_normal_irq_n),
-> > +       SXGBE_STAT(rx_normal_irq_n),
-> > +       SXGBE_STAT(napi_poll),
-> > +       SXGBE_STAT(tx_clean),
-> > +       SXGBE_STAT(tx_reset_ic_bit),
-> > +       SXGBE_STAT(rx_process_stopped_irq),
-> > +       SXGBE_STAT(rx_underflow_irq),
+> > +#include <linux/errno.h>
+> > +#include <linux/of_device.h>
 > > +
-> > +       /* Bus access errors */
-> > +       SXGBE_STAT(fatal_bus_error_irq),
-> > +       SXGBE_STAT(tx_read_transfer_err),
-> > +       SXGBE_STAT(tx_write_transfer_err),
-> > +       SXGBE_STAT(tx_desc_access_err),
-> > +       SXGBE_STAT(tx_buffer_access_err),
-> > +       SXGBE_STAT(tx_data_transfer_err),
-> > +       SXGBE_STAT(rx_read_transfer_err),
-> > +       SXGBE_STAT(rx_write_transfer_err),
-> > +       SXGBE_STAT(rx_desc_access_err),
-> > +       SXGBE_STAT(rx_buffer_access_err),
-> > +       SXGBE_STAT(rx_data_transfer_err),
+> > +#include <video/samsung_fimd.h>
 > > +
-> > +       /* EEE-LPI stats */
-> >         SXGBE_STAT(tx_lpi_entry_n),
-> >         SXGBE_STAT(tx_lpi_exit_n),
-> >         SXGBE_STAT(rx_lpi_entry_n),
-> >         SXGBE_STAT(rx_lpi_exit_n),
-> >         SXGBE_STAT(eee_wakeup_error_n),
+> > +#include <drm/drmP.h>
 > > +
-> > +       /* RX specific */
-> > +       /* L2 error */
-> > +       SXGBE_STAT(rx_code_gmii_err),
-> > +       SXGBE_STAT(rx_watchdog_err),
-> > +       SXGBE_STAT(rx_crc_err),
-> > +       SXGBE_STAT(rx_gaint_pkt_err),
-> > +       SXGBE_STAT(ip_hdr_err),
-> > +       SXGBE_STAT(ip_payload_err),
-> > +       SXGBE_STAT(overflow_error),
+> > +#include "exynos_drm_drv.h"
+> > +#include "exynos_fimd_pp.h"
+> > +#include "exynos_mdnie_regs.h"
 > > +
-> > +       /* L2 Pkt type */
-> > +       SXGBE_STAT(len_pkt),
-> > +       SXGBE_STAT(mac_ctl_pkt),
-> > +       SXGBE_STAT(dcb_ctl_pkt),
-> > +       SXGBE_STAT(arp_pkt),
-> > +       SXGBE_STAT(oam_pkt),
-> > +       SXGBE_STAT(untag_okt),
-> > +       SXGBE_STAT(other_pkt),
-> > +       SXGBE_STAT(svlan_tag_pkt),
-> > +       SXGBE_STAT(cvlan_tag_pkt),
-> > +       SXGBE_STAT(dvlan_ocvlan_icvlan_pkt),
-> > +       SXGBE_STAT(dvlan_osvlan_isvlan_pkt),
-> > +       SXGBE_STAT(dvlan_osvlan_icvlan_pkt),
-> > +       SXGBE_STAT(dvan_ocvlan_icvlan_pkt),
+> > +#define GAMMA_RAMP_LENGTH      17
+> > +#define COLOR_COMPONENTS       3
 > > +
-> > +       /* L3/L4 Pkt type */
-> > +       SXGBE_STAT(not_ip_pkt),
-> > +       SXGBE_STAT(ip4_tcp_pkt),
-> > +       SXGBE_STAT(ip4_udp_pkt),
-> > +       SXGBE_STAT(ip4_icmp_pkt),
-> > +       SXGBE_STAT(ip4_unknown_pkt),
-> > +       SXGBE_STAT(ip6_tcp_pkt),
-> > +       SXGBE_STAT(ip6_udp_pkt),
-> > +       SXGBE_STAT(ip6_icmp_pkt),
-> > +       SXGBE_STAT(ip6_unknown_pkt),
+> > +#define MDNIE_ON       1
+> > +#define MDNIE_OFF      0
 > > +
-> > +       /* Filter specific */
-> > +       SXGBE_STAT(vlan_filter_match),
-> > +       SXGBE_STAT(sa_filter_fail),
-> > +       SXGBE_STAT(da_filter_fail),
-> > +       SXGBE_STAT(hash_filter_pass),
-> > +       SXGBE_STAT(l3_filter_match),
-> > +       SXGBE_STAT(l4_filter_match),
+> > +#define PARAM_IN_RANGE(r, p, l, u)                                     \
+> > +       do {                                                    \
+> > +               r = ((p >= l) && (p <= u)) ? 0 : 1;             \
+> > +               if (r) \
+> > +                       DRM_ERROR("Wrong param: %s:%llu\n", #p, (u64)p);
+> \
+> > +       } while (0)
 > > +
-> > +       /* RX context specific */
-> > +       SXGBE_STAT(timestamp_dropped),
-> > +       SXGBE_STAT(rx_msg_type_no_ptp),
-> > +       SXGBE_STAT(rx_ptp_type_sync),
-> > +       SXGBE_STAT(rx_ptp_type_follow_up),
-> > +       SXGBE_STAT(rx_ptp_type_delay_req),
-> > +       SXGBE_STAT(rx_ptp_type_delay_resp),
-> > +       SXGBE_STAT(rx_ptp_type_pdelay_req),
-> > +       SXGBE_STAT(rx_ptp_type_pdelay_resp),
-> > +       SXGBE_STAT(rx_ptp_type_pdelay_follow_up),
-> > +       SXGBE_STAT(rx_ptp_announce),
-> > +       SXGBE_STAT(rx_ptp_mgmt),
-> > +       SXGBE_STAT(rx_ptp_signal),
-> > +       SXGBE_STAT(rx_ptp_resv_msg_type),
-> >  };
-> >  #define SXGBE_STATS_LEN ARRAY_SIZE(sxgbe_gstrings_stats)
-> >
-> > -static int sxgbe_ethtool_get_eee(struct net_device *dev,
-> > -                                struct ethtool_eee *edata)
-> > +static int sxgbe_get_eee(struct net_device *dev,
-> > +                        struct ethtool_eee *edata)
-> >  {
-> >         struct sxgbe_priv_data *priv = netdev_priv(dev);
-> >
-> > @@ -55,8 +150,8 @@ static int sxgbe_ethtool_get_eee(struct net_device
-> *dev,
-> >         return phy_ethtool_get_eee(priv->phydev, edata);  }
-> >
-> > -static int sxgbe_ethtool_set_eee(struct net_device *dev,
-> > -                                struct ethtool_eee *edata)
-> > +static int sxgbe_set_eee(struct net_device *dev,
-> > +                        struct ethtool_eee *edata)
-> >  {
-> >         struct sxgbe_priv_data *priv = netdev_priv(dev);
-> >
-> > @@ -80,9 +175,411 @@ static int sxgbe_ethtool_set_eee(struct net_device
-> *dev,
-> >         return phy_ethtool_set_eee(priv->phydev, edata);  }
-> >
-> > +static void sxgbe_getdrvinfo(struct net_device *dev,
-> > +                            struct ethtool_drvinfo *info) {
-> > +       strlcpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
-> > +       strlcpy(info->version, DRV_VERSION, sizeof(info->version)); }
-> > +
-> > +static int sxgbe_getsettings(struct net_device *dev,
-> > +                            struct ethtool_cmd *cmd) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +
-> > +       if (priv->phydev)
-> > +               return phy_ethtool_gset(priv->phydev, cmd);
-> > +
-> > +       return -ENODEV;
-> > +}
-> > +
-> > +static int sxgbe_setsettings(struct net_device *dev, struct
-> > +ethtool_cmd *cmd) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +
-> > +       if (priv->phydev)
-> > +               return phy_ethtool_sset(priv->phydev, cmd);
-> > +
-> > +       return -ENODEV;
-> > +}
-> > +
-> > +static u32 sxgbe_getmsglevel(struct net_device *dev) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       return priv->msg_enable;
-> > +}
-> > +
-> > +static void sxgbe_setmsglevel(struct net_device *dev, u32 level) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       priv->msg_enable = level;
-> > +}
-> > +
-> > +static int sxgbe_get_ts_info(struct net_device *dev,
-> > +                            struct ethtool_ts_info *info) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +
-> > +       if (!priv->hw_cap.atime_stamp)
-> > +               return ethtool_op_get_ts_info(dev, info);
-> > +
-> > +       info->so_timestamping = (SOF_TIMESTAMPING_TX_SOFTWARE |
-> > +                                SOF_TIMESTAMPING_RX_SOFTWARE |
-> > +                                SOF_TIMESTAMPING_SOFTWARE |
-> > +                                SOF_TIMESTAMPING_TX_HARDWARE |
-> > +                                SOF_TIMESTAMPING_RX_HARDWARE |
-> > +                                SOF_TIMESTAMPING_RAW_HARDWARE);
-> > +
-> > +       if (priv->ptp_clock)
-> > +               info->phc_index = ptp_clock_index(priv->ptp_clock);
-> > +
-> > +       info->tx_types = ((1 << HWTSTAMP_TX_OFF) |
-> > +                         (1 << HWTSTAMP_TX_ON) |
-> > +                         (1 << HWTSTAMP_TX_ONESTEP_SYNC));
-> > +
-> > +       info->rx_filters = ((1 << HWTSTAMP_FILTER_NONE) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V1_L4_EVENT) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V1_L4_SYNC) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_L4_EVENT) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_L4_SYNC) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_L2_EVENT) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_L2_SYNC) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_L2_DELAY_REQ) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_EVENT) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_SYNC) |
-> > +                           (1 << HWTSTAMP_FILTER_PTP_V2_DELAY_REQ) |
-> > +                           (1 << HWTSTAMP_FILTER_ALL));
-> > +       return 0;
-> > +}
-> > +
-> > +int sxgbe_set_flow_ctrl(struct sxgbe_priv_data *priv, int rx, int tx)
+>
+> [snip]
+>
+> > +static int mdnie_set_color_saturation_params(
+> > +               struct mdnie_context *mdnie,
+> > +               const struct drm_mode_color_saturation *params)
 > > +{
-> > +       return 0;
-> > +}
+> > +       int ret;
 > > +
-> > +static void sxgbe_get_pauseparam(struct net_device *netdev,
-> > +                                struct ethtool_pauseparam *pause) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(netdev);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_red, HG_MIN, HG_MAX);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_green, HG_MIN, HG_MAX);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_blue, HG_MIN, HG_MAX);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_cyan, HG_MIN, HG_MAX);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_magenta, HG_MIN, HG_MAX);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_yellow, HG_MIN, HG_MAX);
+> > +       PARAM_IN_RANGE(ret, params->hue_gain_overall, HG_MIN, HG_MAX);
 > > +
-> > +       pause->rx_pause = priv->rx_pause;
-> > +       pause->tx_pause = priv->tx_pause; }
-> > +
-> > +static int sxgbe_set_pauseparam(struct net_device *netdev,
-> > +                               struct ethtool_pauseparam *pause) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(netdev);
-> > +
-> > +       if (pause->autoneg)
+> > +       if (ret)
 > > +               return -EINVAL;
-> > +
-> > +       return sxgbe_set_flow_ctrl(priv, pause->rx_pause,
-> > +pause->tx_pause); }
-> > +
-> > +
-> > +
-> > +static void sxgbe_get_strings(struct net_device *dev, u32 stringset,
-> > +u8 *data) {
-> > +       int i;
-> > +       u8 *p = data;
-> > +
-> > +       switch (stringset) {
-> > +       case ETH_SS_STATS:
-> > +               for (i = 0; i < SXGBE_STATS_LEN; i++) {
-> > +                       memcpy(p, sxgbe_gstrings_stats[i].stat_string,
-> > +                              ETH_GSTRING_LEN);
-> > +                       p += ETH_GSTRING_LEN;
-> > +               }
-> > +               break;
-> > +       default:
-> > +               WARN_ON(1);
-> > +               break;
-> > +       }
-> > +}
-> > +
-> > +static int sxgbe_get_sset_count(struct net_device *netdev, int sset)
-> > +{
-> > +       int len;
-> > +
-> > +       switch (sset) {
-> > +       case ETH_SS_STATS:
-> > +               len = SXGBE_STATS_LEN;
-> > +               return len;
-> > +       default:
-> > +               return -EOPNOTSUPP;
-> > +       }
-> > +}
-> > +
-> > +static void sxgbe_get_ethtool_stats(struct net_device *dev,
-> > +                                   struct ethtool_stats *dummy, u64
-> > +*data) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       int i, j = 0;
-> > +       char *p;
-> > +
-> > +       if (priv->eee_enabled) {
-> > +               int val = phy_get_eee_err(priv->phydev);
-> > +
-> > +               if (val)
-> > +                       priv->xstats.eee_wakeup_error_n = val;
-> > +       }
-> > +
-> > +       for (i = 0; i < SXGBE_STATS_LEN; i++) {
-> > +               p = (char *)priv + sxgbe_gstrings_stats[i].stat_offset;
-> > +               data[j++] = (sxgbe_gstrings_stats[i].sizeof_stat ==
-sizeof(u64))
-> > +                       ? (*(u64 *)p) : (*(u32 *)p);
-> > +       }
-> > +}
-> > +
-> > +static void sxgbe_get_channels(struct net_device *dev,
-> > +                              struct ethtool_channels *channel) {
-> > +       channel->max_rx = SXGBE_MAX_RX_CHANNELS;
-> > +       channel->max_tx = SXGBE_MAX_TX_CHANNELS;
-> > +       channel->rx_count = SXGBE_RX_QUEUES;
-> > +       channel->tx_count = SXGBE_TX_QUEUES; }
-> > +
-> > +static u32 sxgbe_riwt2usec(u32 riwt, struct sxgbe_priv_data *priv) {
-> > +       unsigned long clk = clk_get_rate(priv->sxgbe_clk);
-> > +
-> > +       if (!clk)
-> > +               return 0;
-> > +
-> > +       return (riwt * 256) / (clk / 1000000); }
-> > +
-> > +static u32 sxgbe_usec2riwt(u32 usec, struct sxgbe_priv_data *priv) {
-> > +       unsigned long clk = clk_get_rate(priv->sxgbe_clk);
-> > +
-> > +       if (!clk)
-> > +               return 0;
-> > +
-> > +       return (usec * (clk / 1000000)) / 256; }
-> > +
-> > +static int sxgbe_get_coalesce(struct net_device *dev,
-> > +                             struct ethtool_coalesce *ec) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +
-> > +       if (priv->use_riwt)
-> > +               ec->rx_coalesce_usecs = sxgbe_riwt2usec(priv->rx_riwt,
-> > + priv);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sxgbe_set_coalesce(struct net_device *dev,
-> > +                             struct ethtool_coalesce *ec) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       unsigned int rx_riwt;
-> > +
-> > +       rx_riwt = sxgbe_usec2riwt(ec->rx_coalesce_usecs, priv);
-> > +
-> > +       if ((rx_riwt > SXGBE_MAX_DMA_RIWT) || (rx_riwt <
-> SXGBE_MIN_DMA_RIWT))
-> > +               return -EINVAL;
-> > +       else if (!priv->use_riwt)
-> > +               return -EOPNOTSUPP;
-> > +
-> > +       priv->rx_riwt = rx_riwt;
-> > +       priv->hw->dma->rx_watchdog(priv->ioaddr, priv->rx_riwt);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sxgbe_get_rss_hash_opts(struct sxgbe_priv_data *priv,
-> > +                                  struct ethtool_rxnfc *cmd) {
-> > +       cmd->data = 0;
-> > +
-> > +       /* Report default options for RSS on sxgbe */
-> > +       switch (cmd->flow_type) {
-> > +       case TCP_V4_FLOW:
-> > +       case UDP_V4_FLOW:
-> > +               cmd->data |= RXH_L4_B_0_1 | RXH_L4_B_2_3;
-> > +       case SCTP_V4_FLOW:
-> > +       case AH_ESP_V4_FLOW:
-> > +       case AH_V4_FLOW:
-> > +       case ESP_V4_FLOW:
-> > +       case IPV4_FLOW:
-> > +               cmd->data |= RXH_IP_SRC | RXH_IP_DST;
-> > +               break;
-> > +       case TCP_V6_FLOW:
-> > +       case UDP_V6_FLOW:
-> > +               cmd->data |= RXH_L4_B_0_1 | RXH_L4_B_2_3;
-> > +       case SCTP_V6_FLOW:
-> > +       case AH_ESP_V6_FLOW:
-> > +       case AH_V6_FLOW:
-> > +       case ESP_V6_FLOW:
-> > +       case IPV6_FLOW:
-> > +               cmd->data |= RXH_IP_SRC | RXH_IP_DST;
-> > +               break;
-> > +       default:
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sxgbe_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc
-> *cmd,
-> > +                          u32 *rule_locs) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       int ret = -EOPNOTSUPP;
-> > +
-> > +       switch (cmd->cmd) {
-> > +       case ETHTOOL_GRXFH:
-> > +               ret = sxgbe_get_rss_hash_opts(priv, cmd);
-> > +               break;
-> > +       default:
-> > +               break;
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int sxgbe_set_rss_hash_opt(struct sxgbe_priv_data *priv,
-> > +                                 struct ethtool_rxnfc *cmd) {
-> > +       u32 reg_val = 0;
-> > +
-> > +       /* RSS does not support anything other than hashing
-> > +        * to queues on src and dst IPs and ports
-> > +        */
-> > +       if (cmd->data & ~(RXH_IP_SRC | RXH_IP_DST |
-> > +                         RXH_L4_B_0_1 | RXH_L4_B_2_3))
-> > +               return -EINVAL;
-> > +
-> > +       switch (cmd->flow_type) {
-> > +       case TCP_V4_FLOW:
-> > +       case TCP_V6_FLOW:
-> > +               if (!(cmd->data & RXH_IP_SRC) ||
-> > +                   !(cmd->data & RXH_IP_DST) ||
-> > +                   !(cmd->data & RXH_L4_B_0_1) ||
-> > +                   !(cmd->data & RXH_L4_B_2_3))
-> > +                       return -EINVAL;
-> > +               reg_val = SXGBE_CORE_RSS_CTL_TCP4TE;
-> > +               break;
-> > +       case UDP_V4_FLOW:
-> > +       case UDP_V6_FLOW:
-> > +               if (!(cmd->data & RXH_IP_SRC) ||
-> > +                   !(cmd->data & RXH_IP_DST) ||
-> > +                   !(cmd->data & RXH_L4_B_0_1) ||
-> > +                   !(cmd->data & RXH_L4_B_2_3))
-> > +                       return -EINVAL;
-> > +               reg_val = SXGBE_CORE_RSS_CTL_UDP4TE;
-> > +               break;
-> > +       case SCTP_V4_FLOW:
-> > +       case AH_ESP_V4_FLOW:
-> > +       case AH_V4_FLOW:
-> > +       case ESP_V4_FLOW:
-> > +       case AH_ESP_V6_FLOW:
-> > +       case AH_V6_FLOW:
-> > +       case ESP_V6_FLOW:
-> > +       case SCTP_V6_FLOW:
-> > +       case IPV4_FLOW:
-> > +       case IPV6_FLOW:
-> > +               if (!(cmd->data & RXH_IP_SRC) ||
-> > +                   !(cmd->data & RXH_IP_DST) ||
-> > +                   (cmd->data & RXH_L4_B_0_1) ||
-> > +                   (cmd->data & RXH_L4_B_2_3))
-> > +                       return -EINVAL;
-> > +               reg_val = SXGBE_CORE_RSS_CTL_IP2TE;
-> > +               break;
-> > +       default:
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       /* Read SXGBE RSS control register and update */
-> > +       reg_val |= readl(priv->ioaddr + SXGBE_CORE_RSS_CTL_REG);
-> > +       writel(reg_val, priv->ioaddr + SXGBE_CORE_RSS_CTL_REG);
-> > +       readl(priv->ioaddr + SXGBE_CORE_RSS_CTL_REG);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sxgbe_set_rxnfc(struct net_device *dev, struct
-> > +ethtool_rxnfc *cmd) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       int ret = -EOPNOTSUPP;
-> > +
-> > +       switch (cmd->cmd) {
-> > +       case ETHTOOL_SRXFH:
-> > +               ret = sxgbe_set_rss_hash_opt(priv, cmd);
-> > +               break;
-> > +       default:
-> > +               break;
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static void sxgbe_get_regs(struct net_device *dev,
-> > +                          struct ethtool_regs *regs, void *space) {
-> > +       struct sxgbe_priv_data *priv = netdev_priv(dev);
-> > +       u32 *reg_space = (u32 *)space;
-> > +       int reg_offset;
-> > +       int reg_ix = 0;
-> > +       void __iomem *ioaddr = priv->ioaddr;
-> > +
-> 
-> nit: you might want to set regs->version so you can differentiate how to
-format
-> the registers from ethtool if the register structure ever changes, or you
-decide
-> to add more useful information here.
-Ok, it will be updated after this seriese.
-Thanks.
+>
+> This would be applicable only for the last macro call as ret would get
+> overwritten after
+> each call.
+>
+> Nice catch. I will fix it.
 
-> 
-> > +       memset(reg_space, 0x0, REG_SPACE_SIZE);
+>
+> > +       memcpy(&mdnie->params.cs_params, params, sizeof(*params));
 > > +
-> > +       /* MAC registers */
-> > +       for (reg_offset = START_MAC_REG_OFFSET;
-> > +            reg_offset <= MAX_MAC_REG_OFFSET; reg_offset += 4) {
-> > +               reg_space[reg_ix] = readl(ioaddr + reg_offset);
-> > +               reg_ix++;
-> > +       }
-> > +
-> > +       /* MTL registers */
-> > +       for (reg_offset = START_MTL_REG_OFFSET;
-> > +            reg_offset <= MAX_MTL_REG_OFFSET; reg_offset += 4) {
-> > +               reg_space[reg_ix] = readl(ioaddr + reg_offset);
-> > +               reg_ix++;
-> > +       }
-> > +
-> > +       /* DMA registers */
-> > +       for (reg_offset = START_DMA_REG_OFFSET;
-> > +            reg_offset <= MAX_DMA_REG_OFFSET; reg_offset += 4) {
-> > +               reg_space[reg_ix] = readl(ioaddr + reg_offset);
-> > +               reg_ix++;
-> > +       }
+> > +       return 0;
 > > +}
 > > +
-> > +static int sxgbe_get_regs_len(struct net_device *dev) {
-> > +       return REG_SPACE_SIZE;
+> > +static int mdnie_set_color_reproduction_params(
+> > +               struct mdnie_context *mdnie,
+> > +               const struct drm_mode_color_reproduction *params)
+> > +{
+> > +       int ret;
+> > +
+> > +       PARAM_IN_RANGE(ret, params->red_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->red_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->red_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->green_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->green_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->green_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->blue_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->blue_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->blue_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->cyan_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->cyan_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->cyan_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->magenta_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->magenta_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->magenta_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->yellow_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->yellow_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->yellow_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->white_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->white_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->white_rgb[2], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->black_rgb[0], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->black_rgb[1], CC_MIN, CC_MAX);
+> > +       PARAM_IN_RANGE(ret, params->black_rgb[2], CC_MIN, CC_MAX);
+> > +
+> > +       if (ret)
+> > +               return -EINVAL;
+> >
+> ditto
+>
+> Ok.
+
+> > +       memcpy(&mdnie->params.cr_params, params, sizeof(*params));
+> > +       return 0;
 > > +}
 > > +
-> >  static const struct ethtool_ops sxgbe_ethtool_ops = {
-> > -       .get_eee = sxgbe_ethtool_get_eee,
-> > -       .set_eee = sxgbe_ethtool_set_eee,
-> > +       .get_drvinfo = sxgbe_getdrvinfo,
-> > +       .get_settings = sxgbe_getsettings,
-> > +       .set_settings = sxgbe_setsettings,
-> > +       .get_msglevel = sxgbe_getmsglevel,
-> > +       .set_msglevel = sxgbe_setmsglevel,
-> > +       .get_link = ethtool_op_get_link,
-> > +       .get_ts_info = sxgbe_get_ts_info,
-> > +       .get_pauseparam = sxgbe_get_pauseparam,
-> > +       .set_pauseparam = sxgbe_set_pauseparam,
-> > +       .get_strings = sxgbe_get_strings,
-> > +       .get_ethtool_stats = sxgbe_get_ethtool_stats,
-> > +       .get_sset_count = sxgbe_get_sset_count,
-> > +       .get_channels = sxgbe_get_channels,
-> > +       .get_coalesce = sxgbe_get_coalesce,
-> > +       .set_coalesce = sxgbe_set_coalesce,
-> > +       .get_rxnfc = sxgbe_get_rxnfc,
-> > +       .set_rxnfc = sxgbe_set_rxnfc,
-> > +       .get_regs = sxgbe_get_regs,
-> > +       .get_regs_len = sxgbe_get_regs_len,
-> > +       .get_eee = sxgbe_get_eee,
-> > +       .set_eee = sxgbe_set_eee,
-> >  };
-> >
-> >  void sxgbe_set_ethtool_ops(struct net_device *netdev) diff --git
-> > a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-> > b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-> > index dbbb7ab..8c478c9 100644
-> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-> > @@ -2126,9 +2126,6 @@ struct sxgbe_priv_data *sxgbe_dvr_probe(struct
-> > device *device,
-> >
-> >         priv->msg_enable = netif_msg_init(debug, default_msg_level);
-> >
-> > -       if (flow_ctrl)
-> > -               priv->flow_ctrl = SXGBE_FLOW_AUTO;      /* RX/TX pause on
-*/
-> > -
-> >         /* Enable TCP segmentation offload for all DMA channels */
-> >         if (priv->hw_cap.tcpseg_offload) {
-> >                 SXGBE_FOR_EACH_QUEUE(SXGBE_TX_QUEUES, queue_num) { @@
-> > -2142,6 +2139,11 @@ struct sxgbe_priv_data *sxgbe_dvr_probe(struct
-> device *device,
-> >                 priv->rxcsum_insertion = true;
-> >         }
-> >
-> > +       /* Initialise pause frame settings */
-> > +       priv->rx_pause = 1;
-> > +       priv->tx_pause = 1;
-> > +       sxgbe_set_flow_ctrl(priv, priv->rx_pause, priv->tx_pause);
+> > +static int mdnie_set_edge_enhancement_params(
+> > +               struct mdnie_context *mdnie,
+> > +               const struct drm_mode_edge_enhancement *params)
+> > +{
+> > +       int ret;
 > > +
-> >         /* Rx Watchdog is available, enable depend on platform data */
-> >         if (!priv->plat->riwt_off) {
-> >                 priv->use_riwt = 1;
-> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-> > b/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-> > index 85a7b31..5a89acb 100644
-> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-> > @@ -195,6 +195,12 @@
-> >  #define SXGBE_CORE_RSS_ADD_REG         0x0C88
-> >  #define SXGBE_CORE_RSS_DATA_REG                0x0C8C
-> >
-> > +/* RSS control register bits */
-> > +#define SXGBE_CORE_RSS_CTL_UDP4TE      BIT(3)
-> > +#define SXGBE_CORE_RSS_CTL_TCP4TE      BIT(2)
-> > +#define SXGBE_CORE_RSS_CTL_IP2TE       BIT(1)
-> > +#define SXGBE_CORE_RSS_CTL_RSSE                BIT(0)
+> > +       PARAM_IN_RANGE(ret, params->edge_th, TH_MIN, TH_MAX);
+> > +       PARAM_IN_RANGE(ret, params->background_th, TH_MIN, TH_MAX);
+> > +       PARAM_IN_RANGE(ret, params->pg_edge, GAIN_MIN, GAIN_MAX);
+> > +       PARAM_IN_RANGE(ret, params->pg_flat, GAIN_MIN, GAIN_MAX);
+> > +       PARAM_IN_RANGE(ret, params->pg_background, GAIN_MIN, GAIN_MAX);
+> > +       PARAM_IN_RANGE(ret, params->ng_edge, GAIN_MIN, GAIN_MAX);
+> > +       PARAM_IN_RANGE(ret, params->ng_flat, GAIN_MIN, GAIN_MAX);
+> > +       PARAM_IN_RANGE(ret, params->ng_background, GAIN_MIN, GAIN_MAX);
+>
+> ditto
+>
+Ok.
+
+>
+> > +       if (ret)
+> > +               return -EINVAL;
 > > +
-> >  /* IEEE 1588 registers */
-> >  #define SXGBE_CORE_TSTAMP_CTL_REG      0x0D00
-> >  #define SXGBE_CORE_SUBSEC_INC_REG      0x0D04
-> > --
-> > 1.7.10.4
-> >
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe devicetree"
-> > in the body of a message to majordomo@vger.kernel.org More majordomo
-> > info at  http://vger.kernel.org/majordomo-info.html
+> > +       memcpy(&mdnie->params.de_params, params, sizeof(*params));
+> > +       return 0;
+> > +}
+> > +
+> > +static int mdnie_set_window_params(
+> > +               struct mdnie_context *mdnie,
+> > +               const struct drm_exynos_mdnie_window *params)
+> > +{
+> > +       int ret;
+> > +
+> > +       PARAM_IN_RANGE(ret, params->win_x, X_MIN, X_MAX);
+> > +       PARAM_IN_RANGE(ret, params->win_y, Y_MIN, Y_MAX);
+> > +       PARAM_IN_RANGE(ret, params->win_w, params->win_x, X_MAX);
+> > +       PARAM_IN_RANGE(ret, params->win_h, params->win_y, Y_MAX);
+>
+> ditto and all other places of similar usage.
+>
+> Ok.
+
+>
+>
+>
+>
+>
+>
+> [snip]
+>
+> > +int exynos_mdnie_init(struct device *dev, struct exynos_fimd_pp **pp)
+> > +{
+> > +       struct device_node *np = dev->of_node;
+> > +       struct device_node *mdnie_np;
+> > +       struct mdnie_context *mdnie = NULL;
+> > +       u32 disp1blk_phyaddr;
+> > +       int ret = 0;
+> > +       u32 buf[2];
+> > +
+> > +       mdnie_np = of_parse_phandle(np, "samsung,mdnie", 0);
+> > +       if (!mdnie_np) {
+> > +               DRM_INFO("No mdnie node present, "
+> > +                               "MDNIE feature will be disabled\n");
+> > +               ret = -EINVAL;
+> > +               goto err0;
+>
+> return directly from here.
+>
+> Ok.
+
+> > +       }
+> > +
+> > +       if (of_property_read_u32_array(mdnie_np, "reg", buf, 2)) {
+> > +               DRM_ERROR("failed to get base address for MDNIE\n");
+> > +               ret = -ENOMEM;
+> > +               goto err0;
+>
+> ditto
+>
+Ok.
+
+>
+>
+> +       }
+> > +
+> > +       mdnie = kzalloc(sizeof(struct mdnie_context), GFP_KERNEL);
+>
+> nit: use sizeof(*mdnie)
+>
+> Ok.
+
+> > +       if (!mdnie) {
+> > +               DRM_ERROR("failed to allocate mdnie\n");
+>
+> This message is not needed as kzalloc prints OOM message upon failure.
+>
+Ok.
+
+>
+> > +               ret = -ENOMEM;
+> > +               goto err0;
+> > +       }
+>
+> return directly.
+
+Ok.
+
+>
+> > +
+> > +       mdnie->exynos_mdnie_base = ioremap(buf[0], buf[1]);
+> > +       if (!mdnie->exynos_mdnie_base) {
+> > +               DRM_ERROR("failed to ioremap mdnie device\n");
+> > +               ret = -ENOMEM;
+> > +               goto err1;
+> > +       }
+> > +
+> > +       if (dt_parse_disp1blk_cfg(dev, &disp1blk_phyaddr)) {
+> > +               DRM_ERROR("failed to get disp1blk property.\n");
+> > +               ret = -ENODEV;
+> > +               goto err1;
+> > +       }
+> > +
+> > +       if (exynos_iomap_disp1blk(mdnie, disp1blk_phyaddr)) {
+> > +               DRM_ERROR("failed to iopmap disp1blk sysreg.\n");
+>
+> s/iopmap/iomap
+>
+> Ok.
+
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in the
-body of
-> a message to majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
+> With warm regards,
+> Sachin
+>
+
+I will address your comments in next patchset.
+
+Thanks,
+Ajay
+
+--bcaec543079a39db1604f51ebb09
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Sachin,<br><div class=3D"gmail_extra"><br><br><div clas=
+s=3D"gmail_quote">On Wed, Mar 19, 2014 at 10:51 PM, Sachin Kamat <span dir=
+=3D"ltr">&lt;<a href=3D"mailto:sachin.kamat@linaro.org" target=3D"_blank">s=
+achin.kamat@linaro.org</a>&gt;</span> wrote:<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">Hi Ajay,<br>
+<div><div class=3D"h5"><br>
+On 19 March 2014 19:52, Ajay Kumar &lt;<a href=3D"mailto:ajaykumar.rs@samsu=
+ng.com">ajaykumar.rs@samsung.com</a>&gt; wrote:<br>
+&gt; Add post processor ops for MDNIE and their support functions.<br>
+&gt; Expose an interface for the FIMD to register MDNIE PP.<br>
+&gt;<br>
+&gt; Signed-off-by: Ajay Kumar &lt;<a href=3D"mailto:ajaykumar.rs@samsung.c=
+om">ajaykumar.rs@samsung.com</a>&gt;<br>
+&gt; Signed-off-by: Shirish S &lt;<a href=3D"mailto:s.shirish@samsung.com">=
+s.shirish@samsung.com</a>&gt;<br>
+&gt; Signed-off-by: Rahul Sharma &lt;<a href=3D"mailto:rahul.sharma@samsung=
+.com">rahul.sharma@samsung.com</a>&gt;<br>
+&gt; ---<br>
+&gt; =A0drivers/gpu/drm/exynos/Makefile =A0 =A0 =A0 =A0 =A0 =A0| =A0 2 +-<b=
+r>
+&gt; =A0drivers/gpu/drm/exynos/exynos_mdnie.c =A0 =A0 =A0| 707 ++++++++++++=
++++++++++++++++++<br>
+&gt; =A0drivers/gpu/drm/exynos/exynos_mdnie_regs.h | 154 +++++++<br>
+&gt; =A03 files changed, 862 insertions(+), 1 deletion(-)<br>
+&gt; =A0create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie.c<br>
+&gt; =A0create mode 100644 drivers/gpu/drm/exynos/exynos_mdnie_regs.h<br>
+&gt;<br>
+&gt; diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/=
+Makefile<br>
+&gt; index 02dde22..653eab5 100644<br>
+&gt; --- a/drivers/gpu/drm/exynos/Makefile<br>
+&gt; +++ b/drivers/gpu/drm/exynos/Makefile<br>
+&gt; @@ -10,7 +10,7 @@ exynosdrm-y :=3D exynos_drm_drv.o exynos_drm_encoder=
+.o \<br>
+&gt;<br>
+&gt; =A0exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) +=3D exynos_drm_iommu.o<br>
+&gt; =A0exynosdrm-$(CONFIG_DRM_EXYNOS_DMABUF) +=3D exynos_drm_dmabuf.o<br>
+&gt; -exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD) =A0 =A0+=3D exynos_drm_fimd.o<br>
+&gt; +exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD) =A0 =A0+=3D exynos_drm_fimd.o exy=
+nos_mdnie.o<br>
+&gt; =A0exynosdrm-$(CONFIG_DRM_EXYNOS_DSI) =A0 =A0 +=3D exynos_drm_dsi.o<br=
+>
+&gt; =A0exynosdrm-$(CONFIG_DRM_EXYNOS_DP) =A0 =A0 =A0+=3D exynos_dp_core.o =
+exynos_dp_reg.o<br>
+&gt; =A0exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI) =A0 =A0+=3D exynos_hdmi.o exyno=
+s_mixer.o<br>
+&gt; diff --git a/drivers/gpu/drm/exynos/exynos_mdnie.c b/drivers/gpu/drm/e=
+xynos/exynos_mdnie.c<br>
+&gt; new file mode 100644<br>
+&gt; index 0000000..a043853<br>
+&gt; --- /dev/null<br>
+&gt; +++ b/drivers/gpu/drm/exynos/exynos_mdnie.c<br>
+&gt; @@ -0,0 +1,707 @@<br>
+&gt; +/* drivers/gpu/drm/exynos/exynos_mdnie.c<br>
+&gt; + *<br>
+&gt; + * Samsung mDNIe driver<br>
+&gt; + *<br>
+&gt; + * Copyright (C) 2014 Samsung Electronics Co., Ltd.<br>
+&gt; + *<br>
+&gt; + * This program is free software; you can redistribute it and/or modi=
+fy it<br>
+&gt; + * under the terms of the GNU General Public License as published by =
+the<br>
+&gt; + * Free Software Foundation; either version 2 of the License, or (at =
+your<br>
+&gt; + * option) any later version.<br>
+&gt; +*/<br>
+&gt; +<br>
+&gt; +#include &lt;linux/clk.h&gt;<br>
+&gt; +#include &lt;linux/errno.h&gt;<br>
+&gt; +#include &lt;linux/of_device.h&gt;<br>
+&gt; +<br>
+&gt; +#include &lt;video/samsung_fimd.h&gt;<br>
+&gt; +<br>
+&gt; +#include &lt;drm/drmP.h&gt;<br>
+&gt; +<br>
+&gt; +#include &quot;exynos_drm_drv.h&quot;<br>
+&gt; +#include &quot;exynos_fimd_pp.h&quot;<br>
+&gt; +#include &quot;exynos_mdnie_regs.h&quot;<br>
+&gt; +<br>
+&gt; +#define GAMMA_RAMP_LENGTH =A0 =A0 =A017<br>
+&gt; +#define COLOR_COMPONENTS =A0 =A0 =A0 3<br>
+&gt; +<br>
+&gt; +#define MDNIE_ON =A0 =A0 =A0 1<br>
+&gt; +#define MDNIE_OFF =A0 =A0 =A00<br>
+&gt; +<br>
+&gt; +#define PARAM_IN_RANGE(r, p, l, u) =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \<br>
+&gt; + =A0 =A0 =A0 do { =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 r =3D ((p &gt;=3D l) &amp;&amp; (p &lt;=
+=3D u)) ? 0 : 1; =A0 =A0 =A0 =A0 =A0 =A0 \<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (r) \<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_ERROR(&quot;Wrong pa=
+ram: %s:%llu\n&quot;, #p, (u64)p); \<br>
+&gt; + =A0 =A0 =A0 } while (0)<br>
+&gt; +<br>
+<br>
+</div></div>[snip]<br>
+<div class=3D""><br>
+&gt; +static int mdnie_set_color_saturation_params(<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct mdnie_context *mdnie,<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct drm_mode_color_saturation *=
+params)<br>
+&gt; +{<br>
+&gt; + =A0 =A0 =A0 int ret;<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_red, HG_MIN, HG_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_green, HG_MIN, H=
+G_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_blue, HG_MIN, HG=
+_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_cyan, HG_MIN, HG=
+_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_magenta, HG_MIN,=
+ HG_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_yellow, HG_MIN, =
+HG_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;hue_gain_overall, HG_MIN,=
+ HG_MAX);<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 if (ret)<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;<br>
+<br>
+</div>This would be applicable only for the last macro call as ret would ge=
+t<br>
+overwritten after<br>
+each call.<br>
+<div><div class=3D"h5"><br></div></div></blockquote><div>Nice catch. I will=
+ fix it.=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8=
+ex;border-left:1px #ccc solid;padding-left:1ex"><div><div class=3D"h5">
+<br>
+&gt; + =A0 =A0 =A0 memcpy(&amp;mdnie-&gt;params.cs_params, params, sizeof(*=
+params));<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 return 0;<br>
+&gt; +}<br>
+&gt; +<br>
+&gt; +static int mdnie_set_color_reproduction_params(<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct mdnie_context *mdnie,<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct drm_mode_color_reproduction=
+ *params)<br>
+&gt; +{<br>
+&gt; + =A0 =A0 =A0 int ret;<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;red_rgb[0], CC_MIN, CC_MA=
+X);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;red_rgb[1], CC_MIN, CC_MA=
+X);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;red_rgb[2], CC_MIN, CC_MA=
+X);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;green_rgb[0], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;green_rgb[1], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;green_rgb[2], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;blue_rgb[0], CC_MIN, CC_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;blue_rgb[1], CC_MIN, CC_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;blue_rgb[2], CC_MIN, CC_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;cyan_rgb[0], CC_MIN, CC_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;cyan_rgb[1], CC_MIN, CC_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;cyan_rgb[2], CC_MIN, CC_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;magenta_rgb[0], CC_MIN, C=
+C_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;magenta_rgb[1], CC_MIN, C=
+C_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;magenta_rgb[2], CC_MIN, C=
+C_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;yellow_rgb[0], CC_MIN, CC=
+_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;yellow_rgb[1], CC_MIN, CC=
+_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;yellow_rgb[2], CC_MIN, CC=
+_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;white_rgb[0], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;white_rgb[1], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;white_rgb[2], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;black_rgb[0], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;black_rgb[1], CC_MIN, CC_=
+MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;black_rgb[2], CC_MIN, CC_=
+MAX);<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 if (ret)<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;<br>
+&gt;<br>
+</div></div>ditto<br>
+<div class=3D""><br></div></blockquote><div>Ok.=A0</div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex"><div class=3D"">
+&gt; + =A0 =A0 =A0 memcpy(&amp;mdnie-&gt;params.cr_params, params, sizeof(*=
+params));<br>
+&gt; + =A0 =A0 =A0 return 0;<br>
+&gt; +}<br>
+&gt; +<br>
+&gt; +static int mdnie_set_edge_enhancement_params(<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct mdnie_context *mdnie,<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct drm_mode_edge_enhancement *=
+params)<br>
+&gt; +{<br>
+&gt; + =A0 =A0 =A0 int ret;<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;edge_th, TH_MIN, TH_MAX);=
+<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;background_th, TH_MIN, TH=
+_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;pg_edge, GAIN_MIN, GAIN_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;pg_flat, GAIN_MIN, GAIN_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;pg_background, GAIN_MIN, =
+GAIN_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;ng_edge, GAIN_MIN, GAIN_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;ng_flat, GAIN_MIN, GAIN_M=
+AX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;ng_background, GAIN_MIN, =
+GAIN_MAX);<br>
+<br>
+</div>ditto<br></blockquote><div>Ok.=A0</div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"=
+>
+<div class=3D""><br>
+&gt; + =A0 =A0 =A0 if (ret)<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 memcpy(&amp;mdnie-&gt;params.de_params, params, sizeof(*=
+params));<br>
+&gt; + =A0 =A0 =A0 return 0;<br>
+&gt; +}<br>
+&gt; +<br>
+&gt; +static int mdnie_set_window_params(<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct mdnie_context *mdnie,<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct drm_exynos_mdnie_window *pa=
+rams)<br>
+&gt; +{<br>
+&gt; + =A0 =A0 =A0 int ret;<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;win_x, X_MIN, X_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;win_y, Y_MIN, Y_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;win_w, params-&gt;win_x, =
+X_MAX);<br>
+&gt; + =A0 =A0 =A0 PARAM_IN_RANGE(ret, params-&gt;win_h, params-&gt;win_y, =
+Y_MAX);<br>
+<br>
+</div>ditto and all other places of similar usage.<br>
+<br></blockquote><div>Ok.=A0</div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+[snip]<br>
+<div class=3D""><br>
+&gt; +int exynos_mdnie_init(struct device *dev, struct exynos_fimd_pp **pp)=
+<br>
+&gt; +{<br>
+&gt; + =A0 =A0 =A0 struct device_node *np =3D dev-&gt;of_node;<br>
+&gt; + =A0 =A0 =A0 struct device_node *mdnie_np;<br>
+&gt; + =A0 =A0 =A0 struct mdnie_context *mdnie =3D NULL;<br>
+&gt; + =A0 =A0 =A0 u32 disp1blk_phyaddr;<br>
+&gt; + =A0 =A0 =A0 int ret =3D 0;<br>
+&gt; + =A0 =A0 =A0 u32 buf[2];<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 mdnie_np =3D of_parse_phandle(np, &quot;samsung,mdnie&qu=
+ot;, 0);<br>
+&gt; + =A0 =A0 =A0 if (!mdnie_np) {<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_INFO(&quot;No mdnie node present, &q=
+uot;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &quot;MD=
+NIE feature will be disabled\n&quot;);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -EINVAL;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err0;<br>
+<br>
+</div>return directly from here.<br>
+<div class=3D""><br></div></blockquote><div>Ok.=A0</div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex"><div class=3D"">
+&gt; + =A0 =A0 =A0 }<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 if (of_property_read_u32_array(mdnie_np, &quot;reg&quot;=
+, buf, 2)) {<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_ERROR(&quot;failed to get base addre=
+ss for MDNIE\n&quot;);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOMEM;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err0;<br>
+<br>
+</div>ditto<br></blockquote><div>Ok.=A0</div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"=
+>
+<div class=3D"">=A0<br></div></blockquote><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><d=
+iv class=3D"">
+&gt; + =A0 =A0 =A0 }<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 mdnie =3D kzalloc(sizeof(struct mdnie_context), GFP_KERN=
+EL);<br>
+<br>
+</div>nit: use sizeof(*mdnie)<br>
+<div class=3D""><br></div></blockquote><div>Ok.=A0</div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex"><div class=3D"">
+&gt; + =A0 =A0 =A0 if (!mdnie) {<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_ERROR(&quot;failed to allocate mdnie=
+\n&quot;);<br>
+<br>
+</div>This message is not needed as kzalloc prints OOM message upon failure=
+.<br></blockquote><div>Ok.=A0</div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+<div class=3D""><br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOMEM;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err0;<br>
+&gt; + =A0 =A0 =A0 }<br>
+<br>
+</div>return directly.=A0</blockquote><div>Ok.=A0</div><blockquote class=3D=
+"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding=
+-left:1ex">
+<div class=3D""><br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 mdnie-&gt;exynos_mdnie_base =3D ioremap(buf[0], buf[1]);=
+<br>
+&gt; + =A0 =A0 =A0 if (!mdnie-&gt;exynos_mdnie_base) {<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_ERROR(&quot;failed to ioremap mdnie =
+device\n&quot;);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOMEM;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err1;<br>
+&gt; + =A0 =A0 =A0 }<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 if (dt_parse_disp1blk_cfg(dev, &amp;disp1blk_phyaddr)) {=
+<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_ERROR(&quot;failed to get disp1blk p=
+roperty.\n&quot;);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENODEV;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err1;<br>
+&gt; + =A0 =A0 =A0 }<br>
+&gt; +<br>
+&gt; + =A0 =A0 =A0 if (exynos_iomap_disp1blk(mdnie, disp1blk_phyaddr)) {<br=
+>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 DRM_ERROR(&quot;failed to iopmap disp1bl=
+k sysreg.\n&quot;);<br>
+<br>
+</div>s/iopmap/iomap<br>
+<span class=3D"HOEnZb"><font color=3D"#888888"><br></font></span></blockquo=
+te><div>Ok.=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0=
+ .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"HOEnZb"><=
+font color=3D"#888888">
+<br>
+--<br>
+With warm regards,<br>
+Sachin<br></font></span></blockquote><div>=A0</div></div>I will address you=
+r comments in next patchset.</div><div class=3D"gmail_extra"><br></div><div=
+ class=3D"gmail_extra">Thanks,</div><div class=3D"gmail_extra">Ajay</div></=
+div>
+
+--bcaec543079a39db1604f51ebb09--
+
+--===============0168419773==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0168419773==--
