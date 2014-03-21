@@ -1,233 +1,180 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [RFC 3/4] drm: exynos: add IELCD post processor
-Date: Fri, 21 Mar 2014 14:12:54 +0530
-Message-ID: <CAK9yfHxQR_O2MdvHuKHHRsEg0k7CxVKD1wmLDRq0S3BrdAOMbw@mail.gmail.com>
-References: <1395238975-24600-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1395238975-24600-4-git-send-email-ajaykumar.rs@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V4 1/8] sxgbe: Add device-tree binding support document
+Date: Fri, 21 Mar 2014 09:44:32 +0000
+Message-ID: <20140321094432.GI23372@e106331-lin.cambridge.arm.com>
+References: <00f801cf4275$e7e2a1b0$b7a7e510$@samsung.com>
+ <20140318091852.GA8043@e106331-lin.cambridge.arm.com>
+ <001101cf42c7$00d99ba0$028cd2e0$@samsung.com>
+ <20140319150402.GC9188@e106331-lin.cambridge.arm.com>
+ <00cd01cf43c3$2b086d50$811947f0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:57392 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760255AbaCUImz (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:49715 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1760727AbaCUJom (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Mar 2014 04:42:55 -0400
-Received: by mail-oa0-f43.google.com with SMTP id eb12so2199871oac.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Mar 2014 01:42:54 -0700 (PDT)
-In-Reply-To: <1395238975-24600-4-git-send-email-ajaykumar.rs@samsung.com>
+	Fri, 21 Mar 2014 05:44:42 -0400
+Content-Disposition: inline
+In-Reply-To: <00cd01cf43c3$2b086d50$811947f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, Ajay kumar <ajaynumb@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, marcheu@chromium.org, Shirish S <s.shirish@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Byungho An <bh74.an@samsung.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "vipul.pandya@samsung.com" <vipul.pandya@samsung.com>, "ks.giri@samsung.com" <ks.giri@samsung.com>
 
-On 19 March 2014 19:52, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> Add post processor ops for IELCD and their support functions.
-> Expose an interface for the FIMD to register IELCD PP.
-[snip]
-> +
-> +#define exynos_ielcd_readl(addr)       readl(ielcd->exynos_ielcd_base + addr)
-> +#define exynos_ielcd_writel(addr, val) \
+On Wed, Mar 19, 2014 at 10:32:48PM +0000, Byungho An wrote:
+> Mark Rutland <mark.rutland@arm.com> :
+> > On Tue, Mar 18, 2014 at 04:27:46PM +0000, Byungho An wrote:
+> > > Mark Rutland <mark.rutland@arm.com> :
+> > > > Hi,
+> > > >
+> > > > As a general note it's helpful for devicetree to be Cc'd on the
+> > > > entire
+> > > series
+> > > > (though the binding document should be a separate patch) as it
+> > > > provides
+> > > useful
+> > > > context for reviewing the binding.
+> > > OK.
+> > >
+> > > >
+> > > > On Tue, Mar 18, 2014 at 06:47:13AM +0000, Byungho An wrote:
+> > > > > From: Siva Reddy <siva.kallam@samsung.com>
+> > > > >
+> > > > > This patch adds binding document for SXGBE ethernet driver via
+> > > device-tree.
+> > > > >
+> > > > > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> > > > > Signed-off-by: Byungho An <bh74.an@samsung.com>
+> > > > > ---
+> > > > >  .../devicetree/bindings/net/samsung-sxgbe.txt      |   53
+> > > > > ++++++++++++++++++++
+> > > > >  1 file changed, 53 insertions(+)
+> > > > >  create mode 100644
+> > > > > Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > > >
+> > > > > diff --git
+> > > > > a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > > > b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > > > new file mode 100644
+> > > > > index 0000000..ca27947
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+> > > > > @@ -0,0 +1,53 @@
+> > > > > +* Samsung 10G Ethernet driver (SXGBE)
+> > > > > +
+> > > > > +Required properties:
+> > > > > +- compatible: Should be "samsung,sxgbe-v2.0a"
+> > > > > +- reg: Address and length of the register set for the device
+> > > > > +- interrupt-parent: Should be the phandle for the interrupt
+> > > > > +controller
+> > > > > +  that services interrupts for this device
+> > > > > +- interrupts: Should contain the SXGBE interrupts
+> > > > > +  These interrupts are ordered by fixed and follows variable
+> > > > > +  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
+> > > > > +  index 0 - this is fixed common interrupt of SXGBE and it is
+> > > > > +always
+> > > > > +  available.
+> > > > > +  index 1 to 25 - 8 variable trasmit interrupts, variable 16
+> > > > > +receive
+> > > > > interrupts
+> > > > > +  and 1 optional lpi interrupt.
+> > > > > +- phy-mode: String, operation mode of the PHY interface.
+> > > > > +  Supported values are: "xaui", "gmii".
+> > > > > +- samsung,pbl: Integer, Programmable Burst Length.
+> > > > > +  Supported values are 1, 2, 4, 8, 16, or 32.
+> > > >
+> > > > There's no need to abbreviate to "pbl".
+> > > >
+> > > > Is this a property of the hardware, or configuration that the kernel
+> > > > will
+> > > program
+> > > > in? If the latter, why can the kernel not choose?
+> > > Yes, this is hardware property
+> > 
+> > Ok.
+> > 
+> > >
+> > > >
+> > > > > +- samsung,fixed-burst: Boolean, Program the DMA to use the fixed
+> > > > > +burst mode
+> > > > > +- samsung,burst-map: Integer, Program the possible bursts
+> > > > > +supported by sxgbe
+> > > > > +  This is an interger and represents allowable DMA bursts when
+> > > > > +fixed
+> > > burst.
+> > > > > +  Allowable range is 0x00-0x3F. This field is valid only when
+> > > > > +fixed burst is
+> > > > > +  enabled, otherwise ignored.
+> > > >
+> > > > If that's the case, why not have just this property and have it
+> > > > imply the
+> > > use of
+> > > > fixed burst mode?
+> > > OK. It will be implemented in next patch set.
+> > >
+> > > >
+> > > > When is it necessary to use fixed burst mode?
+> > > This is the configurable mode of DMA an used internally by hardware to
+> > > fetch data from platform bus
+> > 
+> > Sure, but that doesn't describe when it is necessary. Is this the way the
+> DMA
+> > was configured at integration time, or the way the kernel should configure
+> it?
+> It is needed when fixed length of burst is needed. 
+> if it is not configured, the length of burst will be variable(not fixed).
+> Anyway, I'll add description more for it.
 
-nit: The order of arguments could be retained same as writel (i.e.,
-val, addr) for ease of
-reading.
+And when is it necessary to have a fixed length of burst?
 
-> +                               writel(val, ielcd->exynos_ielcd_base + addr)
+Is this a property of the system, or the conenction of the system to
+another?
 
-> +#define IELCD_TIMEOUT_CNT      1000
-> +
-> +struct ielcd_context {
-> +       void __iomem                    *exynos_ielcd_base;
-> +       unsigned                vdisplay;
-> +       unsigned                vsync_len;
-> +       unsigned                vbpd;
-> +       unsigned                vfpd;
-> +       unsigned                hdisplay;
-> +       unsigned                hsync_len;
-> +       unsigned                hbpd;
-> +       unsigned                hfpd;
-> +       unsigned                vidcon0;
-> +       unsigned                vidcon1;
-> +};
-> +
-> +static int ielcd_logic_start(struct ielcd_context *ielcd)
-> +{
-> +       exynos_ielcd_writel(IELCD_AUXCON, IELCD_MAGIC_KEY);
-> +
-> +       return 0;
-> +}
+> 
+> > 
+> > If the latter, is it absolutely necessary for correctness to use fixed-burst
+> mode?
+> > Or is it just always sensible to use it if available? 
+> It is not absolutely necessary, as I mentioned above.
 
-The return type could be made void.
+The description above does not make this clear.
 
-> +
-> +static int exynos_ielcd_hw_trigger_check(struct ielcd_context *ielcd)
-> +{
-> +       unsigned int cfg;
-> +       unsigned int count = 0;
-> +
-> +       cfg = exynos_ielcd_readl(IELCD_TRIGCON);
-> +       cfg &= ~(SWTRGCMD_W0BUF | TRGMODE_W0BUF);
-> +       cfg |= (SWTRGCMD_W0BUF | TRGMODE_W0BUF);
-> +       exynos_ielcd_writel(IELCD_TRIGCON, cfg);
-> +
-> +       do {
-> +               cfg = exynos_ielcd_readl(IELCD_SHADOWCON);
-> +               cfg |= IELCD_W0_SW_SHADOW_UPTRIG;
-> +               exynos_ielcd_writel(IELCD_SHADOWCON, cfg);
-> +
-> +               cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-> +               cfg |= IELCD_SW_SHADOW_UPTRIG;
-> +               exynos_ielcd_writel(IELCD_VIDCON0, cfg);
-> +
-> +               count++;
-> +               if (count > IELCD_TIMEOUT_CNT) {
+> 
+> > 
+> > What does the driver do if fixed burst mode is not available? Would this
+> work in
+> > the presence of fixed-burt mode?
+> Fixed burst mode is always available so driver doesn't need to care about it.
+> 
+> > 
+> > I'm not arguing to remove these properties. I'd just like to understand if
+> all
+> > you're describing is the presence of a feature or that the use of the
+> feature is
+> > absolutely necessary for correctness.
+> OK
+> 
+> > 
+> > I'm perfectly happy for Linux to always decide to use these features if
+> available.
+> > 
+> > >
+> > > >
+> > > > > +- samsung,adv-addr-mode: Boolean, Program the DMA to use Enhanced
+> > > > > +address
+> > > > > mode.
+> > > >
+> > > > When would this be selected, and why can the kernel not choose?
+> > > Kernel doesn't have the provision to find out a way to select this.
+> > > So, need to pass from DT
+> > 
+> > Likewise, it is always absolutely necessary, or just always sensible to use
+> > enhanced address mode if present?
+> Not always necessary. When extended address mode is needed, it can be set in
+> the DT.
 
-The 2 lines could be combined as:
-                    if (++count > IELCD_TIMEOUT_CNT) {
+When is this needed?
 
-> +                       DRM_ERROR("ielcd start fail\n");
-> +                       return -EBUSY;
-> +               }
-> +               udelay(10);
-> +       } while (exynos_ielcd_readl(IELCD_WINCON0) & IELCD_TRGSTATUS);
-
-Also this check could be moved inside the loop and break if 0 whereas this could
-while (1) here.
-
-> +
-> +       return 0;
-> +}
-> +
-> +static int exynos_ielcd_display_on(struct ielcd_context *ielcd)
-> +{
-> +       unsigned int cfg;
-> +
-> +       cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-> +       cfg |= (VIDCON0_ENVID | VIDCON0_ENVID_F);
-> +       exynos_ielcd_writel(IELCD_VIDCON0, cfg);
-> +
-> +       return exynos_ielcd_hw_trigger_check(ielcd);
-> +}
-> +
-> +int exynos_ielcd_display_off(void *pp_ctx)
-> +{
-> +       struct ielcd_context *ielcd = pp_ctx;
-> +       unsigned int cfg, ielcd_count = 0;
-> +       int ret = 0;
-
-initialization not needed.
-
-> +
-> +       cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-> +       cfg &= ~(VIDCON0_ENVID | VIDCON0_ENVID_F);
-> +
-> +       exynos_ielcd_writel(IELCD_VIDCON0, cfg);
-> +
-> +       do {
-> +               if (++ielcd_count > IELCD_TIMEOUT_CNT) {
-> +                       DRM_ERROR("ielcd off TIMEDOUT\n");
-> +                       ret = -ETIMEDOUT;
-> +                       break;
-> +               }
-> +
-> +               if (!(exynos_ielcd_readl(IELCD_VIDCON1) &
-> +                                               VIDCON1_LINECNT_MASK)) {
-> +                       ret = 0;
-> +                       break;
-> +               }
-> +               udelay(200);
-> +       } while (1);
-> +
-> +       return ret;
-> +}
-> +
-> +static void exynos_ielcd_config_rgb(struct ielcd_context *ielcd)
-> +{
-> +       unsigned int cfg;
-> +
-> +       cfg = exynos_ielcd_readl(IELCD_VIDCON0);
-> +       cfg &= ~(VIDCON0_VIDOUT_MASK | VIDCON0_VCLK_MASK);
-> +       cfg |= VIDCON0_VIDOUT_RGB;
-> +       cfg |= VIDCON0_VCLK_NORMAL;
-> +
-> +       exynos_ielcd_writel(IELCD_VIDCON0, cfg);
-> +}
-> +
-> +int exynos_ielcd_power_on(void *pp_ctx)
-> +{
-> +       struct ielcd_context *ielcd = pp_ctx;
-> +       unsigned int cfg;
-> +       int ret = 0;
-> +
-> +       ielcd_logic_start(ielcd);
-> +       ielcd_set_polarity(ielcd);
-> +
-> +       ielcd_set_lcd_size(ielcd);
-> +       ielcd_set_timing(ielcd);
-> +
-> +       /* window0 setting , fixed */
-> +       cfg = WINCONx_ENLOCAL | WINCON0_BPPMODE_24BPP_888 | WINCONx_ENWIN;
-> +       exynos_ielcd_writel(IELCD_WINCON0, cfg);
-> +
-> +       exynos_ielcd_config_rgb(ielcd);
-> +
-> +       ret = exynos_ielcd_display_on(ielcd);
-> +       if (ret) {
-> +               DRM_ERROR("IELCD failed to start\n");
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-
-The above block could be simplified as:
-               ret = exynos_ielcd_display_on(ielcd);
-               if (ret)
-                      DRM_ERROR(...);
-
-               return ret;
-> +}
-> +
-> +static void exynos_ielcd_mode_set(void *pp_ctx,
-> +                               const struct drm_display_mode *in_mode)
-> +{
-> +       struct ielcd_context *ielcd = pp_ctx;
-> +
-> +       ielcd->vdisplay = in_mode->crtc_vdisplay;
-> +       ielcd->vsync_len = in_mode->crtc_vsync_end - in_mode->crtc_vsync_start;
-> +       ielcd->vbpd = in_mode->crtc_vtotal - in_mode->crtc_vsync_end;
-> +       ielcd->vfpd = in_mode->crtc_vsync_start - in_mode->crtc_vdisplay;
-> +
-> +       ielcd->hdisplay = in_mode->crtc_hdisplay;
-> +       ielcd->hsync_len = in_mode->crtc_hsync_end - in_mode->crtc_hsync_start;
-> +       ielcd->hbpd = in_mode->crtc_htotal - in_mode->crtc_hsync_end;
-> +       ielcd->hfpd = in_mode->crtc_hsync_start - in_mode->crtc_hdisplay;
-> +}
-> +
-> +static struct exynos_fimd_pp_ops ielcd_ops = {
-> +       .power_on =     exynos_ielcd_power_on,
-> +       .power_off =    exynos_ielcd_display_off,
-> +       .mode_set =     exynos_ielcd_mode_set,
-> +};
-> +
-> +static struct exynos_fimd_pp ielcd_pp = {
-> +       .ops =          &ielcd_ops,
-> +};
-> +
-> +int exynos_ielcd_init(struct device *dev, struct exynos_fimd_pp **pp)
-> +{
-> +       struct device_node *ielcd_np;
-> +       struct ielcd_context *ielcd;
-> +       u32 addr[2];
-> +       int ret = 0;
-> +
-> +       ielcd = kzalloc(sizeof(struct ielcd_context), GFP_KERNEL);
-> +       if (!ielcd) {
-> +               DRM_ERROR("failed to allocate ielcd\n");
-> +               ret = -ENOMEM;
-> +               goto error0;
-
-return directly from here and delete the label.
-
--- 
-With warm regards,
-Sachin
+Cheers,
+Mark.
