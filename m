@@ -1,156 +1,105 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 4/4] Samsung Exynos cleanup/consolidate for v3.15
-Date: Fri, 21 Mar 2014 07:36:48 +0900
-Message-ID: <532B6D80.9070302@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v11 10/27] iommu/exynos: use managed device helper
+	functions
+Date: Fri, 21 Mar 2014 13:49:00 +0900
+Message-ID: <20140321134900.ef9b7ac83443ae2e0bc5565b@samsung.com>
+References: <20140314140542.f4ded6c50dbd8a1d937bf354@samsung.com>
+	<CAK9yfHw7zYaX9EYFE+m3Mh-u8Uiyubx-cS0EwPmfW+0weLiBKw@mail.gmail.com>
+	<20140318200915.7dd833ce0fddbbd6ecd8dac9@samsung.com>
+	<532862ED.8040809@samsung.com>
+	<20140319175927.a3feadcacbffe80eca1d3421@samsung.com>
+	<CAK9yfHxxo2eFh38gPZkpYf1ueBWySWqPzgLV_tSSykzHhNzN8g@mail.gmail.com>
+	<532988CA.4000008@samsung.com>
+	<20140320190333.9c3555b097e97d593faddbdd@samsung.com>
+	<532AC6A2.9070307@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:54616 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758342AbaCTWgx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Mar 2014 18:36:53 -0400
-Received: by mail-pd0-f182.google.com with SMTP id y10so1543509pdj.27
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Mar 2014 15:36:52 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <532AC6A2.9070307-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
+On Thu, 20 Mar 2014 11:44:50 +0100, Tomasz Figa wrote:
+> On 20.03.2014 11:03, Cho KyongHo wrote:
+> > On Wed, 19 Mar 2014 13:08:42 +0100, Tomasz Figa wrote:
+> >> On 19.03.2014 10:01, Sachin Kamat wrote:
+> >>> On 19 March 2014 14:29, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >>>> On Tue, 18 Mar 2014 16:14:53 +0100, Tomasz Figa wrote:
+> >>>>> On 18.03.2014 12:09, Cho KyongHo wrote:
+> >>>>>> On Fri, 14 Mar 2014 20:52:43 +0530, Sachin Kamat wrote:
+> >>>>>>> Hi KyongHo,
+> >>>>>>>
+> >>>>>>> On 14 March 2014 10:35, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >>>>>>>> This patch uses managed device helper functions in the probe().
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>>>>>> ---
+> >>>>>>> [snip]
+> >>>>>>>
+> >>>>>>>> +       data->clk = devm_clk_get(dev, "sysmmu");
+> >>>>>>>> +       if (IS_ERR(data->clk)) {
+> >>>>>>>> +               dev_info(dev, "No gate clock found!\n");
+> >>>>>>>> +               data->clk = NULL;
+> >>>>>>>> +       }
+> >>>>>>>
+> >>>>>>> Why aren't you returning from here upon error?
+> >>>>>>
+> >>>>>> It is for the case of a System MMU which does not need clock gating.
+> >>>>>>
+> >>>>>
+> >>>>> Are there really such cases?
+> >>>>>
+> >>>>
+> >>>> Yes.
+> >>>> Especially in the case of initial stage of new SoC development.
+> >>>>
+> >>>> I have experianced some software workaround for H/W restriction
+> >>>> needs prevention of clock gating for some devices.
+> >>>
+> >>> So aren't these basically some exceptions/hacks rather than the usual way
+> >>> of functioning of the device?
+> >>>
+> >>
+> >> This actually raises a good question, whether we really need to support
+> >> such early development SoC versions in mainline.
+> >>
+> >> Another thing is that if you need to assure that a clock is ungated, you
+> >> must acquire it and prepare_enable explicitly, so I don't think this
+> >> kind of handling is correct.
+> >>
+> > On early development step of a new SoC, clock related stuffs and
+> > some device drivers like display controller are usually developed in parallel.
+> >
+> > In that case, -ENOENT from clk_get() must not treated as an error.
+> > "[PATCH v11 20/17] iommu/exynos: allow having multiple System MMUs for a master H/W"
+> > patch distinguishes -ENOENT from other error values returned by devm_clk_get().
+> 
+> I still don't think upstream is right place for such development hacks 
+> and such assumption will mask potential errors caused by clocks 
+> unspecified in DT.
+> 
+> If such thing is needed for development, an extra patch might be kept in 
+> development tree, until clock driver is implemented or a dummy 
+> fixed-rate clock might be specified in DT.
+> 
 
-   Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
+Ok.
 
-are available in the git repository at:
+Now I understand.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/exynos-cleanup
+Error from clk_get() will be failure of probe in the next patch series.
 
-for you to fetch changes up to 602408e3de70d132c115670a366f4c5ae657080c:
+Thanks.
 
-   dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock 
-(2014-03-21 04:31:30 +0900)
-
-----------------------------------------------------------------
-Exynos cleanup for v3.15
-
-- reorganize code for
-- add support reserve memory for mfc-v7
-- consolidate exynos4 and exynos5 machine codes
-- add generic compatible strings for exynos4 and exynos5
-- update DT with generic compatible strings
-- move clk related dt-binding header file in dt-bindings/clock
-
-----------------------------------------------------------------
-Sachin Kamat (6):
-       ARM: EXYNOS: Add support to reserve memory for MFC-v7
-       ARM: SAMSUNG: Introduce generic Exynos4 and 5 helpers
-       ARM: EXYNOS: Consolidate CPU init code
-       ARM: EXYNOS: Consolidate exynos4 and exynos5 machine files
-       ARM: EXYNOS: Add generic compatible strings
-       ARM: dts: Update Exynos DT files with generic compatible strings
-
-Tushar Behera (2):
-       ARM: SAMSUNG: Reorganize calls to reserve memory for MFC
-       dt-bindings: clock: Move exynos-audss-clk.h to dt-bindings/clock
-
-  arch/arm/boot/dts/exynos4210-origen.dts            |   2 +-
-  arch/arm/boot/dts/exynos4210-smdkv310.dts          |   2 +-
-  arch/arm/boot/dts/exynos4210-trats.dts             |   2 +-
-  arch/arm/boot/dts/exynos4210-universal_c210.dts    |   2 +-
-  arch/arm/boot/dts/exynos4210.dtsi                  |   2 +-
-  arch/arm/boot/dts/exynos4212.dtsi                  |   2 +-
-  arch/arm/boot/dts/exynos4412-odroidx.dts           |   2 +-
-  arch/arm/boot/dts/exynos4412-origen.dts            |   2 +-
-  arch/arm/boot/dts/exynos4412-smdk4412.dts          |   2 +-
-  arch/arm/boot/dts/exynos4412-tiny4412.dts          |   2 +-
-  arch/arm/boot/dts/exynos4412-trats2.dts            |   2 +-
-  arch/arm/boot/dts/exynos4412.dtsi                  |   2 +-
-  arch/arm/boot/dts/exynos5250-arndale.dts           |   2 +-
-  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   2 +-
-  arch/arm/boot/dts/exynos5250-snow.dts              |   2 +-
-  arch/arm/boot/dts/exynos5250.dtsi                  |   4 +-
-  arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   2 +-
-  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   2 +-
-  arch/arm/boot/dts/exynos5420.dtsi                  |   4 +-
-  arch/arm/boot/dts/exynos5440-sd5v1.dts             |   2 +-
-  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |   2 +-
-  arch/arm/boot/dts/exynos5440.dtsi                  |   2 +-
-  arch/arm/mach-exynos/Makefile                      |   7 +-
-  arch/arm/mach-exynos/common.h                      |   3 +-
-  arch/arm/mach-exynos/{common.c => exynos.c}        | 228 
-++++++++++-----------
-  arch/arm/mach-exynos/mach-exynos4-dt.c             |  59 ------
-  arch/arm/mach-exynos/mach-exynos5-dt.c             |  81 --------
-  arch/arm/mach-exynos/mfc.h                         |  16 ++
-  arch/arm/mach-exynos/regs-pmu.h                    |   1 -
-  arch/arm/plat-samsung/include/plat/cpu.h           |   4 +
-  arch/arm/plat-samsung/include/plat/mfc.h           |   3 -
-  arch/arm/plat-samsung/s5p-dev-mfc.c                |  17 +-
-  drivers/clk/samsung/clk-exynos-audss.c             |   2 +-
-  .../dt-bindings/{clk => clock}/exynos-audss-clk.h  |   0
-  34 files changed, 166 insertions(+), 303 deletions(-)
-  rename arch/arm/mach-exynos/{common.c => exynos.c} (71%)
-  delete mode 100644 arch/arm/mach-exynos/mach-exynos4-dt.c
-  delete mode 100644 arch/arm/mach-exynos/mach-exynos5-dt.c
-  create mode 100644 arch/arm/mach-exynos/mfc.h
-  rename include/dt-bindings/{clk => clock}/exynos-audss-clk.h (100%)
-
-One more note, following is resolution for merge conflict. Sorry.
-
-diff --cc arch/arm/mach-exynos/exynos.c
-index e98ddad,fd3664f..b567361
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@@ -9,40 -9,27 +9,27 @@@
-    * published by the Free Software Foundation.
-    */
-
-- #include <linux/kernel.h>
-- #include <linux/bitops.h>
-- #include <linux/interrupt.h>
-- #include <linux/irq.h>
-- #include <linux/irqchip.h>
-+ #include <linux/init.h>
-   #include <linux/io.h>
-- #include <linux/device.h>
-- #include <linux/gpio.h>
-- #include <clocksource/samsung_pwm.h>
-- #include <linux/sched.h>
-- #include <linux/serial_core.h>
-  +#include <linux/serial_s3c.h>
-+ #include <linux/kernel.h>
-   #include <linux/of.h>
-- #include <linux/of_fdt.h>
-- #include <linux/of_irq.h>
-- #include <linux/pm_domain.h>
-- #include <linux/export.h>
-- #include <linux/irqdomain.h>
-   #include <linux/of_address.h>
-- #include <linux/irqchip/arm-gic.h>
-- #include <linux/irqchip/chained_irq.h>
-+ #include <linux/of_fdt.h>
-+ #include <linux/of_platform.h>
-   #include <linux/platform_device.h>
-+ #include <linux/pm_domain.h>
-
-- #include <asm/proc-fns.h>
-- #include <asm/exception.h>
-+ #include <asm/cacheflush.h>
-   #include <asm/hardware/cache-l2x0.h>
-+ #include <asm/mach/arch.h>
-   #include <asm/mach/map.h>
-- #include <asm/mach/irq.h>
-- #include <asm/cacheflush.h>
-+ #include <asm/memory.h>
-
-   #include <plat/cpu.h>
-- #include <plat/pm.h>
-  -#include <plat/regs-serial.h>
-
-   #include "common.h"
-+ #include "mfc.h"
-   #include "regs-pmu.h"
-
-   #define L2_AUX_VAL 0x7C470001
+KyongHo
