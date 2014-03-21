@@ -1,52 +1,40 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH] mmc: dw_mmc: Support setting the ciu-div on exynos
-Date: Fri, 21 Mar 2014 17:32:07 +0530
-Message-ID: <1395403327-19713-1-git-send-email-yuvaraj.cd@samsung.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, tgih.jun@samsung.com, linux-mmc@vger.kernel.org, sonnyrao@chromium.org, kgene.kim@samsung.com, joshi@samsung.com
-Cc: t.figa@samsung.com, Doug Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] clk: s2mps11: Fix possible NULL pointer dereference
+Date: Fri, 21 Mar 2014 13:18:17 +0100
+Message-ID: <1395404297-12133-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:52546 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755604AbaCUMSa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Mar 2014 08:18:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Tushar Behera <tushar.behera@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 
-From: Doug Anderson <dianders@chromium.org>
+If parent device does not have of_node set the s2mps11_clk_parse_dt()
+returned NULL. This NULL was later passed to of_clk_add_provider() which
+dereferenced it in pr_debug() call.
 
-The existing dw_mmc code for exynos5250/exynos5420 read the ciu-div
-property from the device tree and used it in calculations, but didn't
-actually ever set it in hardware.  That means that if the hardware
-value set by the firmware didn't match what was in the device tree
-that we'd be clocking things incorrectly.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
 ---
- drivers/mmc/host/dw_mmc-exynos.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk-s2mps11.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 3423c5e..07392ac 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -28,6 +28,7 @@
- #define SDMMC_CLKSEL_CCLK_SAMPLE(x)	(((x) & 7) << 0)
- #define SDMMC_CLKSEL_CCLK_DRIVE(x)	(((x) & 7) << 16)
- #define SDMMC_CLKSEL_CCLK_DIVIDER(x)	(((x) & 7) << 24)
-+#define SDMMC_CLKSEL_GET_SAMPLE(x)      (((x) >> 0) & 0x7)
- #define SDMMC_CLKSEL_GET_DRV_WD3(x)	(((x) >> 16) & 0x7)
- #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
- 					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
-@@ -118,6 +119,12 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
- {
- 	struct dw_mci_exynos_priv_data *priv = host->priv;
- 	unsigned long rate = clk_get_rate(host->ciu_clk);
-+	u32 clksel = mci_readl(host, CLKSEL);
-+
-+	clksel = SDMMC_CLKSEL_TIMING(SDMMC_CLKSEL_GET_SAMPLE(clksel),
-+				     SDMMC_CLKSEL_GET_DRV_WD3(clksel),
-+				     priv->ciu_div);
-+	mci_writel(host, CLKSEL, clksel);
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 00a3abe103a5..27c83e45eaed 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -130,7 +130,7 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
+ 	int i;
  
- 	host->bus_hz = rate / (priv->ciu_div + 1);
- 	return 0;
+ 	if (!iodev->dev->of_node)
+-		return NULL;
++		return ERR_PTR(-EINVAL);
+ 
+ 	clk_np = of_find_node_by_name(iodev->dev->of_node, "clocks");
+ 	if (!clk_np) {
 -- 
-1.7.10.4
-
+1.7.9.5
