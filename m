@@ -1,85 +1,146 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH V11 1/7] sxgbe: Add device-tree binding support document
-Date: Fri, 21 Mar 2014 23:23:48 -0700
-Message-ID: <008001cf4597$531fe090$f95fa1b0$@samsung.com>
+From: Francois Romieu <romieu-W8zweXLXuWQS+FvcfC7Uqw@public.gmane.org>
+Subject: Re: [PATCH V10 2/7] net: sxgbe: add basic framework for Samsung 10Gb
+ ethernet driver
+Date: Sat, 22 Mar 2014 11:29:07 +0100
+Message-ID: <20140322102907.GA12121@electric-eye.fr.zoreil.com>
+References: <005b01cf4530$56a1ba20$03e52e60$@samsung.com>
+ <20140321235526.GA7727@electric-eye.fr.zoreil.com>
+ <007a01cf4586$58a02c20$09e08460$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Content-language: en-us
-Sender: netdev-owner@vger.kernel.org
-To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <007a01cf4586$58a02c20$09e08460$@samsung.com>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Byungho An <bh74.an-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'David Miller' <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, 'GIRISH K S' <ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'SIVAREDDY KALLAM' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Vipul Chandrakant' <vipul.pandya-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ilho Lee' <ilho215.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Siva Reddy <siva.kallam@samsung.com>
+Byungho An <bh74.an-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> :
+[...]
+> > Nit: you may consider reorganizing the variables in an inverted xmas tree
+> > fashion at some point.
+> Does it look better? No problem.
 
-This patch adds binding document for SXGBE ethernet driver via device-tree.
+Marginally if not more. Consider it a guideline to avoid unusual or ugly
+layout.
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- .../devicetree/bindings/net/samsung-sxgbe.txt      |   52 ++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+[...]
+> > > +		       priv->ioaddr + SXGBE_MDIO_CLAUSE22_PORT_REG);
+> > > +		/* set mdio address register */
+> > > +		reg_val = (phyaddr << 16) | (phyreg & 0x1F);
+> > > +		writel(reg_val, priv->ioaddr + mii_addr);
+> > > +
+> > > +		/* set mdio control/data register */
+> > > +		reg_val = ((SXGBE_SMA_READ_CMD << 16) |
+> > SXGBE_SMA_SKIP_ADDRFRM |
+> > > +			   ((priv->clk_csr & 0x7) << 19) | SXGBE_MII_BUSY);
+> > > +		writel(reg_val, priv->ioaddr + mii_data);
+> > > +	}
+> > 
+> > The whole 'if (phyreg & MII_ADDR_C45) { ... } else { ... }' chunk is shared
+> with
+> > sxgbe_mdio_write(..., phydata = 0). Factor out ?
+> Not exactly same.
 
-diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-new file mode 100644
-index 0000000..989f6c9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-@@ -0,0 +1,52 @@
-+* Samsung 10G Ethernet driver (SXGBE)
-+
-+Required properties:
-+- compatible: Should be "samsung,sxgbe-v2.0a"
-+- reg: Address and length of the register set for the device
-+- interrupt-parent: Should be the phandle for the interrupt controller
-+  that services interrupts for this device
-+- interrupts: Should contain the SXGBE interrupts
-+  These interrupts are ordered by fixed and follows variable
-+  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
-+  index 0 - this is fixed common interrupt of SXGBE and it is always
-+  available.
-+  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive interrupts
-+  and 1 optional lpi interrupt.
-+- phy-mode: String, operation mode of the PHY interface.
-+  Supported values are: "sgmii", "xgmii".
-+- samsung,pbl: Integer, Programmable Burst Length.
-+  Supported values are 1, 2, 4, 8, 16, or 32.
-+- samsung,burst-map: Integer, Program the possible bursts supported by sxgbe
-+  This is an interger and represents allowable DMA bursts when fixed burst.
-+  Allowable range is 0x01-0x3F. When this field is set fixed burst is enabled.
-+  When fixed length is needed for burst mode, it can be set within allowable
-+  range.
-+
-+Optional properties:
-+- mac-address: 6 bytes, mac address
-+- max-frame-size: Maximum Transfer Unit (IEEE defined MTU), rather
-+		  than the maximum frame size.
-+
-+Example:
-+
-+	aliases {
-+		ethernet0 = <&sxgbe0>;
-+	};
-+
-+	sxgbe0: ethernet@1a040000 {
-+		compatible = "samsung,sxgbe-v2.0a";
-+		reg = <0 0x1a040000 0 0x10000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 209 4>, <0 185 4>, <0 186 4>, <0 187 4>,
-+			     <0 188 4>, <0 189 4>, <0 190 4>, <0 191 4>,
-+			     <0 192 4>, <0 193 4>, <0 194 4>, <0 195 4>,
-+			     <0 196 4>, <0 197 4>, <0 198 4>, <0 199 4>,
-+			     <0 200 4>, <0 201 4>, <0 202 4>, <0 203 4>,
-+			     <0 204 4>, <0 205 4>, <0 206 4>, <0 207 4>,
-+			     <0 208 4>, <0 210 4>;
-+		samsung,pbl = <0x08>
-+		samsung,burst-map = <0x20>
-+		mac-address = [ 00 11 22 33 44 55 ]; /* Filled in by U-Boot */
-+		max-frame-size = <9000>;
-+		phy-mode = "xgmii";
-+	};
+Almost :o)
+
+static void sxgbe_mdio_ctrl_data(struct spgbe_priv_data *sp, u32 cmd,
+				 u16 phydata)
+{
+	u32 reg = phydata;
+
+	reg |= (cmd << 16) | SXGBE_SMA_SKIP_ADDRFRM |
+	       ((sp->clk_csr & 0x7) << 19) | SXGBE_MII_BUSY;
+	writel(reg, sp->ioaddr + sp->hw->mii.data);
+}
+
+static void sxgbe_mdio_c45(struct spgbe_priv_data *sp, u32 cmd, int phyaddr,
+			   int phyreg, u16 phydata)
+{
+	u32 reg;
+
+	/* set mdio address register */
+	reg = ((phyreg >> 16) & 0x1f) << 21;
+	reg |= (phyaddr << 16) | (phyreg & 0xffff);
+	writel(reg, sp->ioaddr + sp->hw->mii.addr);
+
+	sxgbe_mdio_ctrl_data(sp, cmd, phydata);
+}
+
+static int sxgbe_mdio_c22(struct spgbe_priv_data *sp, u32 cmd, int phyaddr,
+			  int phyreg, u16 phydata)
+{
+	u32 reg
+
+	writel(1 << phyaddr, ioaddr + SXGBE_MDIO_CLAUSE22_PORT_REG);
+
+	/* set mdio address register */
+	reg = (phyaddr << 16) | (phyreg & 0x1f);
+	writel(reg, sp->ioaddr + sp->hw->mii.addr);
+
+	sxgbe_mdio_ctrl_data(sp, cmd, phydata);
+}
+
+static int spgbe_mdio_access(struct spgbe_priv_data *sp, u32 cmd, int phyaddr,
+			     int phyreg, u16 phydata)
+{
+	const struct mii_regs *mii = &sp->hw->mii;
+	int rc;
+
+	rc = spgbe_mdio_busy_wait(sp->ioaddr, mii->data);
+	if (rc < 0)
+		return rc;
+
+	if (phyreg & MII_ADDR_C45) {
+		spgbe_mdio_c45(sp, cmd, phyaddr, phyreg, phydata);
+	} else {
+		 /* Ports 0-3 only support C22. */
+		if (phyaddr >= 4)
+			return -ENODEV;
+
+		spgbe_mdio_c22(sp, cmd, phyaddr, phyreg, phydata);
+	}
+
+	return spgbe_mdio_busy_wait(sp->ioaddr, mii->data);
+}
+
+static int sxgbe_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
+{
+	struct net_device *ndev = bus->priv;
+	struct sxgbe_priv_data *priv = netdev_priv(ndev);
+	int rc;
+
+	rc = sxgbe_mdio_access(priv, SXGBE_SMA_READ_CMD, phyaddr, phyreg, 0);
+	if (rc < 0)
+		return rc;
+
+	return readl(priv->ioaddr + priv->hw->mii.data) & 0xffff;
+}
+
+static int sxgbe_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
+			    u16 phydata)
+{
+	struct net_device *ndev = bus->priv;
+	struct sxgbe_priv_data *priv = netdev_priv(ndev);
+
+	return sxgbe_mdio_access(priv, SXGBE_SMA_WRITE_CMD, phyaddr, phyreg,
+				 phydata);
+}
+
+It fixes an unchecked sxgbe_mdio_busy_wait in sxgbe_mdio_write btw.
+
+sxgbe_mdio_read and sxgbe_mdio_write are mostly the same. Their core is
+imho worth sharing. You're of course free to rewrite or used the code above
+as fits your needs.
+
+sxgbe_priv_data should probably be sxgbe_priv, sxgbe or sx. It's everywhere
+and it's a first class type in the code. It's exceedingly litterate whereas
+common drivers choose to be more lean.
+
 -- 
-1.7.10.4
+Ueimor
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
