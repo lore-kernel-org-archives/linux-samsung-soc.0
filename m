@@ -1,90 +1,76 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH V13 1/7] sxgbe: Add device-tree binding support document
-Date: Sun, 23 Mar 2014 13:46:16 -0700
-Message-ID: <00a101cf46d8$fc7aa4d0$f56fee70$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v6 0/2] clk: exynos: add support for exynos5260 SoC
+Date: Mon, 24 Mar 2014 02:15:52 +0530
+Message-ID: <1395607554-21373-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:19317 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751414AbaCWUql (ORCPT
+	with ESMTP id S1751232AbaCWUqk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Mar 2014 16:46:41 -0400
-Content-language: en-us
+	Sun, 23 Mar 2014 16:46:40 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Siva Reddy <siva.kallam@samsung.com>
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-This patch adds binding document for SXGBE ethernet driver via device-tree.
+Add clock support for exynos5260 SoC.
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- .../devicetree/bindings/net/samsung-sxgbe.txt      |   52 ++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/samsung-sxgbe.txt
+This series is based on Tomasz Figa's samsung-next branch.
 
-diff --git a/Documentation/devicetree/bindings/net/samsung-sxgbe.txt b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-new file mode 100644
-index 0000000..989f6c9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/samsung-sxgbe.txt
-@@ -0,0 +1,52 @@
-+* Samsung 10G Ethernet driver (SXGBE)
-+
-+Required properties:
-+- compatible: Should be "samsung,sxgbe-v2.0a"
-+- reg: Address and length of the register set for the device
-+- interrupt-parent: Should be the phandle for the interrupt controller
-+  that services interrupts for this device
-+- interrupts: Should contain the SXGBE interrupts
-+  These interrupts are ordered by fixed and follows variable
-+  trasmit DMA interrupts, receive DMA interrupts and lpi interrupt.
-+  index 0 - this is fixed common interrupt of SXGBE and it is always
-+  available.
-+  index 1 to 25 - 8 variable trasmit interrupts, variable 16 receive interrupts
-+  and 1 optional lpi interrupt.
-+- phy-mode: String, operation mode of the PHY interface.
-+  Supported values are: "sgmii", "xgmii".
-+- samsung,pbl: Integer, Programmable Burst Length.
-+  Supported values are 1, 2, 4, 8, 16, or 32.
-+- samsung,burst-map: Integer, Program the possible bursts supported by sxgbe
-+  This is an interger and represents allowable DMA bursts when fixed burst.
-+  Allowable range is 0x01-0x3F. When this field is set fixed burst is enabled.
-+  When fixed length is needed for burst mode, it can be set within allowable
-+  range.
-+
-+Optional properties:
-+- mac-address: 6 bytes, mac address
-+- max-frame-size: Maximum Transfer Unit (IEEE defined MTU), rather
-+		  than the maximum frame size.
-+
-+Example:
-+
-+	aliases {
-+		ethernet0 = <&sxgbe0>;
-+	};
-+
-+	sxgbe0: ethernet@1a040000 {
-+		compatible = "samsung,sxgbe-v2.0a";
-+		reg = <0 0x1a040000 0 0x10000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 209 4>, <0 185 4>, <0 186 4>, <0 187 4>,
-+			     <0 188 4>, <0 189 4>, <0 190 4>, <0 191 4>,
-+			     <0 192 4>, <0 193 4>, <0 194 4>, <0 195 4>,
-+			     <0 196 4>, <0 197 4>, <0 198 4>, <0 199 4>,
-+			     <0 200 4>, <0 201 4>, <0 202 4>, <0 203 4>,
-+			     <0 204 4>, <0 205 4>, <0 206 4>, <0 207 4>,
-+			     <0 208 4>, <0 210 4>;
-+		samsung,pbl = <0x08>
-+		samsung,burst-map = <0x20>
-+		mac-address = [ 00 11 22 33 44 55 ]; /* Filled in by U-Boot */
-+		max-frame-size = <9000>;
-+		phy-mode = "xgmii";
-+	};
+V6:
+  1) Listed external Clocks in documentation file.
+  2) Listed Input Clocks for each clock controller in exynos5260-clock.txt.
+  3) Added Clock and Clock-names properties.
+  4) Assigned IDs to all clocks in the clock file.
+  5) Moved all PHY clocks as fixed rate to the driver file.
+  6) Reorder clocks to maintain acscending order on the basis of clock
+  register offset and bit numer.
+
+V5:
+  1) Include S3c2412 and S3c2443 in clock provider patch.
+  2) Added SCLK_TOP_FIMD with CLK_IGNORE_UNUSED due to Suspend
+  failure.
+  3) Moved exynos5260-clk.h to include/dt-bindings/clock.
+  4) Fix exynos5260_clk_sleep_init protoype for PM disabled.W
+  5) Moved fixed clock registeration to DT.
+  6) Removed CLK_IGNORE_UNUSED flags from UART clocks. Earlier
+  facing issues because of RFS probing all TTYs.
+
+V4:
+  1) Rework clock file as per Tomasz review comments at
+        http://www.spinics.net/lists/arm-kernel/msg310116.html.
+
+V3:
+  1) Removed "samsung,exynos5260-clock" property from clock files.
+  2) Replaced "__SPIN_LOCK_UNLOCKED(lock)" with spin_lock_init.
+  3) Removed '(' and ')' around numeric constants in macros.
+
+V2:
+  1) Move suspend resume handling to Exynos5410 Clock file.
+  2) Removed Unused Macros and Condition checks for Exynos5260.
+  3) Add spin lock to clock provider context.
+  4) Add clock provider context for Exynos5410.
+  5) Uniform implementation for callbacks for PLL2550xx.
+  6) Split Exynos5260 clock file patch to bring it under 100 Kb limit.
+  7) Replace aclk/pclk/hclk gates with combined gates.
+  8) Remove CLK_IGNORE_UNUSED flag for gate clocks.
+
+Rahul Sharma (2):
+  clk/exynos5260: add macros and documentation for exynos5260
+  clk/exynos5260: add clock file for exynos5260
+
+ .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5260.c               | 1980 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
+ include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
+ 5 files changed, 3099 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+ create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
+
 -- 
-1.7.10.4
+1.7.9.5
