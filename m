@@ -1,103 +1,84 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v6 0/2] clk: exynos: add support for exynos5260 SoC
-Date: Mon, 24 Mar 2014 08:58:27 +0530
-Message-ID: <CAPdUM4NC+8Sw-gC2anb56oemOtqu9-Dy3PopGHY7oqcwmp-Jig@mail.gmail.com>
-References: <1395607554-21373-1-git-send-email-rahul.sharma@samsung.com>
-	<532F5E29.3040507@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f175.google.com ([209.85.220.175]:59001 "EHLO
-	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751725AbaCXD22 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Mar 2014 23:28:28 -0400
-In-Reply-To: <532F5E29.3040507@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH] mmc: dw_mmc: Fix the max_blk_count in IDMAC
+Date: Mon, 24 Mar 2014 09:23:38 +0530
+Message-ID: <1395633218-23766-1-git-send-email-yuvaraj.cd@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, tgih.jun@samsung.com, linux-mmc@vger.kernel.org, sonnyrao@chromium.org, kgene.kim@samsung.com, joshi@samsung.com
+Cc: t.figa@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Thanks Tomasz,
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
-Please let me know if any concern.
-Meanwhile I will post dt patches with "clock" and "clock-names" properties
-added for each controller node.
+max_blk_count is currently set incorrectly, and the correct value can
+be determined by looking at the maximum number of bytes which can be
+transferred and the block size.  We use the maximum block size to
+determine the minimum number of blocks that the controller should
+support.  It could probably do more with a smaller block size but this
+value should be sufficient for good performance.
 
-Regards,
-Rahul Sharma.
+This improves sequential performance by 82% on write and 6% read on
+one particular device.
 
+TEST= with this patch
+	time dd if=/dev/zero of=/usr/local/100 bs=1M count=100 conv=fdatasync
+	100+0 records in
+	100+0 records out
+	104857600 bytes (105 MB) copied, 2.62541 s, 39.9 MB/s
 
-On 24 March 2014 03:50, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Rahul,
->
->
-> On 23.03.2014 21:45, Rahul Sharma wrote:
->>
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> Add clock support for exynos5260 SoC.
->>
->> This series is based on Tomasz Figa's samsung-next branch.
->>
->> V6:
->>    1) Listed external Clocks in documentation file.
->>    2) Listed Input Clocks for each clock controller in
->> exynos5260-clock.txt.
->>    3) Added Clock and Clock-names properties.
->>    4) Assigned IDs to all clocks in the clock file.
->>    5) Moved all PHY clocks as fixed rate to the driver file.
->>    6) Reorder clocks to maintain acscending order on the basis of clock
->>    register offset and bit numer.
->>
->> V5:
->>    1) Include S3c2412 and S3c2443 in clock provider patch.
->>    2) Added SCLK_TOP_FIMD with CLK_IGNORE_UNUSED due to Suspend
->>    failure.
->>    3) Moved exynos5260-clk.h to include/dt-bindings/clock.
->>    4) Fix exynos5260_clk_sleep_init protoype for PM disabled.W
->>    5) Moved fixed clock registeration to DT.
->>    6) Removed CLK_IGNORE_UNUSED flags from UART clocks. Earlier
->>    facing issues because of RFS probing all TTYs.
->>
->> V4:
->>    1) Rework clock file as per Tomasz review comments at
->>          http://www.spinics.net/lists/arm-kernel/msg310116.html.
->>
->> V3:
->>    1) Removed "samsung,exynos5260-clock" property from clock files.
->>    2) Replaced "__SPIN_LOCK_UNLOCKED(lock)" with spin_lock_init.
->>    3) Removed '(' and ')' around numeric constants in macros.
->>
->> V2:
->>    1) Move suspend resume handling to Exynos5410 Clock file.
->>    2) Removed Unused Macros and Condition checks for Exynos5260.
->>    3) Add spin lock to clock provider context.
->>    4) Add clock provider context for Exynos5410.
->>    5) Uniform implementation for callbacks for PLL2550xx.
->>    6) Split Exynos5260 clock file patch to bring it under 100 Kb limit.
->>    7) Replace aclk/pclk/hclk gates with combined gates.
->>    8) Remove CLK_IGNORE_UNUSED flag for gate clocks.
->>
->> Rahul Sharma (2):
->>    clk/exynos5260: add macros and documentation for exynos5260
->>    clk/exynos5260: add clock file for exynos5260
->>
->>   .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
->>   drivers/clk/samsung/Makefile                       |    1 +
->>   drivers/clk/samsung/clk-exynos5260.c               | 1980
->> ++++++++++++++++++++
->>   drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
->>   include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
->>   5 files changed, 3099 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/clock/exynos5260-clock.txt
->>   create mode 100644 drivers/clk/samsung/clk-exynos5260.c
->>   create mode 100644 drivers/clk/samsung/clk-exynos5260.h
->>   create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
->>
->
-> Looks good to me, will apply if no comments show up for few more days.
->
-> Best regards,
-> Tomasz
+	real    0m2.638s
+	user    0m0.000s
+	sys     0m0.645s
+
+	without this patch:
+	time dd if=/dev/zero of=/usr/local/100 bs=1M count=100 conv=fdatasync
+	100+0 records in
+	100+0 records out
+	104857600 bytes (105 MB) copied, 3.25873 s, 32.2 MB/s
+
+	real    0m3.265s
+	user    0m0.005s
+	sys     0m0.690s
+
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 0c56faa..2fc4030 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2213,10 +2213,24 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 		/* Useful defaults if platform data is unset. */
+ #ifdef CONFIG_MMC_DW_IDMAC
+ 		mmc->max_segs = host->ring_size;
++
++		/* the BLKSIZ register is 16-bits wide */
+ 		mmc->max_blk_size = 65536;
+-		mmc->max_blk_count = host->ring_size;
++
++		/*
++		 * This value is calculated by taking the size of the
++		 * 32-bit BYTCNT (byte count) register and dividing by the
++		 * BLKSIZ (block size) register.  This is the minimum number
++		 * of blocks which could be handled.
++		 */
++		mmc->max_blk_count = 0xFFFF;
+ 		mmc->max_seg_size = 0x1000;
+-		mmc->max_req_size = mmc->max_seg_size * mmc->max_blk_count;
++		/*
++		 * Maximum request size should be total number of descriptors
++		 * times the maximum amount of data each can reference
++		 */
++
++		mmc->max_req_size = mmc->max_seg_size * mmc->max_segs;
+ #else
+ 		mmc->max_segs = 64;
+ 		mmc->max_blk_size = 65536; /* BLKSIZ is 16 bits */
+-- 
+1.7.10.4
+
