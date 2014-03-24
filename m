@@ -1,174 +1,147 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH 3/7] mmc: dw_mmc: exynos: move definitions to header file
-Date: Mon, 24 Mar 2014 15:43:30 +0900
-Message-ID: <000b01cf472c$5ecadd00$1c609700$%jun@samsung.com>
-References: <001d01cf450e$5c8ae960$15a0bc20$%jun@samsung.com>
- <532FB2B6.3060102@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [RFC v3 0/5] cpufreq:LAB: Support for LAB governor.
+Date: Mon, 24 Mar 2014 07:47:42 +0100
+Message-ID: <20140324074742.00181c21@amdc2363>
+References: <1367590072-10496-1-git-send-email-jonghwa3.lee@samsung.com>
+ <1393928852-22725-1-git-send-email-l.majewski@samsung.com>
+ <20140317163824.3c5480b3@amdc2363>
+ <CAKohpokz9SknhPH_sgGE6Q8DB+QtaJKSwMG4WgfmWet9skMKUA@mail.gmail.com>
+ <20140318101736.501844d1@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65030 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750816AbaCXGne (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Mar 2014 02:43:34 -0400
-In-reply-to: <532FB2B6.3060102@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <20140318101736.501844d1@amdc2363>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: 'Chris Ball' <chris@printf.net>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>
 
-On Mon, March 24, 2014, Jaehoon Chung wrote:
-> Hi, Seungwon.
-> 
-> On 03/21/2014 11:03 PM, Seungwon Jeon wrote:
-> > Moves some parts related to definition to header file
-> >
-> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> > ---
-> >  drivers/mmc/host/dw_mmc-exynos.c |   46 ++++---------------------------
-> >  drivers/mmc/host/dw_mmc-exynos.h |   55 ++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 61 insertions(+), 40 deletions(-)
-> >  create mode 100644 drivers/mmc/host/dw_mmc-exynos.h
-> >
-> > diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> > index 89aa019..801861b 100644
-> > --- a/drivers/mmc/host/dw_mmc-exynos.c
-> > +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> > @@ -21,42 +21,8 @@
-> >
-> >  #include "dw_mmc.h"
-> >  #include "dw_mmc-pltfm.h"
-> > +#include "dw_mmc-exynos.h"
-> >
-> > -#define NUM_PINS(x)			(x + 2)
-> > -
-> > -#define SDMMC_CLKSEL			0x09C
-> > -#define SDMMC_CLKSEL_CCLK_SAMPLE(x)	(((x) & 7) << 0)
-> > -#define SDMMC_CLKSEL_CCLK_DRIVE(x)	(((x) & 7) << 16)
-> > -#define SDMMC_CLKSEL_CCLK_DIVIDER(x)	(((x) & 7) << 24)
-> > -#define SDMMC_CLKSEL_GET_DRV_WD3(x)	(((x) >> 16) & 0x7)
-> > -#define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
-> > -					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
-> > -					SDMMC_CLKSEL_CCLK_DIVIDER(z))
-> > -#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
-> > -
-> > -#define EXYNOS4210_FIXED_CIU_CLK_DIV	2
-> > -#define EXYNOS4412_FIXED_CIU_CLK_DIV	4
-> > -
-> > -/* Block number in eMMC */
-> > -#define DWMCI_BLOCK_NUM		0xFFFFFFFF
-> > -
-> > -#define SDMMC_EMMCP_BASE	0x1000
-> > -#define SDMMC_MPSECURITY	(SDMMC_EMMCP_BASE + 0x0010)
-> > -#define SDMMC_MPSBEGIN0		(SDMMC_EMMCP_BASE + 0x0200)
-> > -#define SDMMC_MPSEND0		(SDMMC_EMMCP_BASE + 0x0204)
-> > -#define SDMMC_MPSCTRL0		(SDMMC_EMMCP_BASE + 0x020C)
-> > -
-> > -/* SMU control bits */
-> > -#define DWMCI_MPSCTRL_SECURE_READ_BIT		BIT(7)
-> > -#define DWMCI_MPSCTRL_SECURE_WRITE_BIT		BIT(6)
-> > -#define DWMCI_MPSCTRL_NON_SECURE_READ_BIT	BIT(5)
-> > -#define DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT	BIT(4)
-> > -#define DWMCI_MPSCTRL_USE_FUSE_KEY		BIT(3)
-> > -#define DWMCI_MPSCTRL_ECB_MODE			BIT(2)
-> > -#define DWMCI_MPSCTRL_ENCRYPTION		BIT(1)
-> > -#define DWMCI_MPSCTRL_VALID			BIT(0)
-> > -
-> > -#define EXYNOS_CCLKIN_MIN	50000000	/* unit: HZ */
-> >
-> >  /* Variations in Exynos specific dw-mshc controller */
-> >  enum dw_mci_exynos_type {
-> > @@ -104,11 +70,11 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
-> >
-> >  	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU) {
-> >  		mci_writel(host, MPSBEGIN0, 0);
-> > -		mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
-> > -		mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
-> > -			   DWMCI_MPSCTRL_NON_SECURE_READ_BIT |
-> > -			   DWMCI_MPSCTRL_VALID |
-> > -			   DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT);
-> > +		mci_writel(host, MPSEND0, SDMMC_ENDING_SEC_NR_MAX);
-> > +		mci_writel(host, MPSCTRL0, SDMMC_MPSCTRL_SECURE_WRITE_BIT |
-> > +			   SDMMC_MPSCTRL_NON_SECURE_READ_BIT |
-> > +			   SDMMC_MPSCTRL_VALID |
-> > +			   SDMMC_MPSCTRL_NON_SECURE_WRITE_BIT);
-> >  	}
-> >
-> >  	return 0;
-> > diff --git a/drivers/mmc/host/dw_mmc-exynos.h b/drivers/mmc/host/dw_mmc-exynos.h
-> > new file mode 100644
-> > index 0000000..a4c6e10
-> > --- /dev/null
-> > +++ b/drivers/mmc/host/dw_mmc-exynos.h
-> > @@ -0,0 +1,55 @@
-> > +/*
-> > + * Exynos Specific Extensions for Synopsys DW Multimedia Card Interface driver
-> > + *
-> > + * Copyright (C) 201333Samsung Electronics Co., Ltd.
-> 2013333 Typo? :)
-Oh, thank you for detect.
+Hi Viresh,
 
-Thanks,
-Seungwon Jeon
+> Hi Viresh,
+> 
+> > On 17 March 2014 21:08, Lukasz Majewski <l.majewski@samsung.com>
+> > wrote:
+> > >> Despite this patch set is working and applicable on top of
+> > >> 3.14-rc5, please regard it solely as a pure RFC.
+> > >>
+> > >> This patch provides support for LAB governor build on top of
+> > >> ondemand. Previous version of LAB can be found here:
+> > >> http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
+> > >>
+> > >> LAB short reminder:
+> > >>
+> > >> LAB uses information about how many cores are in "idle" state
+> > >> (the core idleness is represented as the value between 0 and
+> > >> 100) and the overall load of the system (from 0 to 100) to
+> > >> decide about frequency to be set. It is extremely useful with
+> > >> SoCs like Exynos4412, which can set only one frequency for all
+> > >> cores.
+> > >>
+> > >> Important design decisions:
+> > >>
+> > >> - Reuse well established ondemand governor's internal code. To do
+> > >> this I had to expose some previously static internal ondemand
+> > >> code. This allowed smaller LAB code when compared to previous
+> > >> version.
+> > >>
+> > >> - LAB works on top of ondemand, which means that one via device
+> > >> tree attributes can specify if and when e.g. BOOST shall be
+> > >> enabled or if any particular frequency shall be imposed. For
+> > >> situation NOT important from the power consumption reduction
+> > >> viewpoint the ondemand is used to set proper frequency.
+> > >>
+> > >> - It is only possible to either compile in or not the LAB into
+> > >> the kernel. There is no "M" option for Kconfig. It is done on
+> > >> purpose, since ondemand itself can be also compiled as a module
+> > >> and then it would be possible to remove ondemand when LAB is
+> > >> working on top of it.
+> > >>
+> > >> - The LAB operation is specified (and thereof extendable) via
+> > >> device tree lab-ctrl-freq attribute defined at /cpus/cpu0.
+> > >>
+> > >>
+> > >> Problems:
+> > >> - How the governor will work for big.LITTLE systems (especially
+> > >> Global Task Scheduling).
+> > >> - Will there be agreement to expose internal ondemand code to be
+> > >> reused for more specialized governors.
+> > >>
+> > >> Test HW:
+> > >>       Exynos4412 - Trats2 board.
+> > >> Above patches were posted on top of Linux 3.14-rc5
+> > >> (SHA1: 3f9590c281c66162bf8ae9b7b2d987f0a89043c6)
+> > >>
+> > >
+> > > Any comments about those patches?
+> > 
+> > Sorry for being late on reviewing these..
+> > 
+> > I tried to go through the patches but didn't looked at the minutest
+> > of the details. Its been a long time when you first sent this
+> > patchset. And the memories have corrupted by now :) ..
+> 
+> Unfortunately memory is volatile ... since LAB governor is a follow up
+> of BOOST, which review and inclusion took considerable time, some
+> details could be forgotten. 
+> 
+> > 
+> > To get context back, can we discuss again the fundamentals behind
+> > this new governor you are proposing. And then we can discuss about
+> > it again, its pros/cons, etc..
+> 
+> Please consider following links:
+> 
+> The original implementation - threads:
+> http://thread.gmane.org/gmane.linux.power-management.general/32523/match=lab
+> http://thread.gmane.org/gmane.linux.kernel/1484746/match=lab
+> 
+> 
+> LAB justification data:
+> http://article.gmane.org/gmane.linux.kernel/1472381
+> 
+> 
+> > People are reluctant in getting another governor in and want to give
+> > existing governors a try if possible.
+> 
+> As I've stated in the covering letter, this code is an extension of
+> Ondemand.
+> 
+> This is totally different from what have been posted previously (v1,
+> v2).
+> The first LAB proposal was written with some parts copied from
+> Ondemand. It was a separate, standalone governor.
+> 
+> 
+> The approach proposed in those patches is very different. It simply
+> reuses Ondemand code as much as possible (timers, default attributes
+> exported to sysfs, etc.).
+> 
+> On top of the Ondemand we have the LAB, which thereof is its optional
+> extension. The existing code is reused and can be easily extracted as
+> a common code.
+> 
+> > 
+> > So, please explain the basics behind your governor again and then
+> > we can put our arguments again..
+> > 
+> 
+> I hope that provided overview is sufficient. More in depth
+> information can be found in posted patches or provided LKML archives.
+> 
 
+Viresh, will you find time for reviewing this RFC in a near future?
+
+> > --
+> > viresh
 > 
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published by
-> > + * the Free Software Foundation; either version 2 of the License, or
-> > + * (at your option) any later version.
-> > + */
-> > +
-> > +#ifndef _DW_MMC_EXYNOS_H_
-> > +#define _DW_MMC_EXYNOS_H_
-> > +
-> > +/* Extended Register's Offset */
-> > +#define SDMMC_CLKSEL			0x09C
-> > +
-> > +/* CLKSEL register defines */
-> > +#define SDMMC_CLKSEL_CCLK_SAMPLE(x)	(((x) & 7) << 0)
-> > +#define SDMMC_CLKSEL_CCLK_DRIVE(x)	(((x) & 7) << 16)
-> > +#define SDMMC_CLKSEL_CCLK_DIVIDER(x)	(((x) & 7) << 24)
-> > +#define SDMMC_CLKSEL_GET_DRV_WD3(x)	(((x) >> 16) & 0x7)
-> > +#define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
-> > +					 SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
-> > +					 SDMMC_CLKSEL_CCLK_DIVIDER(z))
-> > +#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
-> > +
-> > +/* Protector Register */
-> > +#define SDMMC_EMMCP_BASE	0x1000
-> > +#define SDMMC_MPSECURITY	(SDMMC_EMMCP_BASE + 0x0010)
-> > +#define SDMMC_MPSBEGIN0		(SDMMC_EMMCP_BASE + 0x0200)
-> > +#define SDMMC_MPSEND0		(SDMMC_EMMCP_BASE + 0x0204)
-> > +#define SDMMC_MPSCTRL0		(SDMMC_EMMCP_BASE + 0x020C)
-> > +
-> > +/* SMU control defines */
-> > +#define SDMMC_MPSCTRL_SECURE_READ_BIT		BIT(7)
-> > +#define SDMMC_MPSCTRL_SECURE_WRITE_BIT		BIT(6)
-> > +#define SDMMC_MPSCTRL_NON_SECURE_READ_BIT	BIT(5)
-> > +#define SDMMC_MPSCTRL_NON_SECURE_WRITE_BIT	BIT(4)
-> > +#define SDMMC_MPSCTRL_USE_FUSE_KEY		BIT(3)
-> > +#define SDMMC_MPSCTRL_ECB_MODE			BIT(2)
-> > +#define SDMMC_MPSCTRL_ENCRYPTION		BIT(1)
-> > +#define SDMMC_MPSCTRL_VALID			BIT(0)
-> > +
-> > +/* Maximum number of Ending sector */
-> > +#define SDMMC_ENDING_SEC_NR_MAX	0xFFFFFFFF
-> > +
-> > +/* Fixed clock divider */
-> > +#define EXYNOS4210_FIXED_CIU_CLK_DIV	2
-> > +#define EXYNOS4412_FIXED_CIU_CLK_DIV	4
-> > +
-> > +/* Minimal required clock frequency for cclkin, unit: HZ */
-> > +#define EXYNOS_CCLKIN_MIN	50000000
-> > +
-> > +#endif /* _DW_MMC_EXYNOS_H_ */
-> >
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
