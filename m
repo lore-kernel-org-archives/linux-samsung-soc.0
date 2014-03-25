@@ -1,51 +1,101 @@
-From: Andrew Murray <amurray@embedded-bits.co.uk>
-Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based on
- designware core driver
-Date: Tue, 25 Mar 2014 11:46:41 +0000
-Message-ID: <CAPcvp5Gy8uNW3UULi8jYk7GNbmgTd2B_qOEAXnP4H4Wq3v9BCw@mail.gmail.com>
-References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
-	<1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
-	<235376049.yyfljDtinu@wuerfel>
-	<20140325103525.GA14789@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140325103525.GA14789@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <r65037@freescale.com>, linux-samsung-soc@vger.kernel.org, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Murali Karicheri <m-karicheri2@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 1/3] panel/ld9040: add DT bindings
+Date: Tue, 25 Mar 2014 13:10:34 +0100
+Message-ID: <1395749436-24697-2-git-send-email-a.hajda@samsung.com>
+References: <1395749436-24697-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53172 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753495AbaCYMLg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Mar 2014 08:11:36 -0400
+In-reply-to: <1395749436-24697-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <treding@nvidia.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/SAMSUNG ARM A..." <linux-samsung-soc@vger.kernel.org>
 
-On 25 March 2014 10:35, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Tue, Mar 25, 2014 at 08:44:36AM +0100, Arnd Bergmann wrote:
->> On Monday 24 March 2014 20:35:26 Murali Karicheri wrote:
-> [...]
->> > +/* Keystone PCIe driver does not allow module unload */
->> > +static int __init ks_pcie_init(void)
->> > +{
->> > +   return platform_driver_probe(&ks_pcie_driver, ks_pcie_probe);
->> > +}
->> > +subsys_initcall(ks_pcie_init);
->>
->> Why subsys_initcall?
->>
->> We should probably try to fix unloading soon.
->
-> I did some work on this a few months ago but never got around to
-> cleaning up the patches. Let me see if I can resurrect that work.
+The patch adds bindings for ld9040 panel.
+Bindings describe panel resources, boot delays,
+display timings and physical size.
 
-I think there may be merit in these drivers using subsys_init. I've
-not had time to investigate, but as far as I can remember this causes
-issues with piceport.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ .../devicetree/bindings/panel/samsung,ld9040.txt   | 66 ++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,ld9040.txt
 
-For ARM32 host drivers, pci_fixup_irqs (arch/arm/kernel/bios32.c) must
-be called before init_service_irqs (portdrv_core.c) otherwise pcieport
-acts on invalid information in dev->irq and breaks. It seems that its
-possible for the portbus driver to pick up new devices before bios32
-has been able to fixup the irqs. Making the host bridge drivers subsys
-will overcome this. I guess this hasn't been an issue in the past as
-host bridge drivers were always in the arch/ directories.
-
-In any case it may be worth testing this driver with PCIEPORTBUS enabled.
-
-Andrew Murray
+diff --git a/Documentation/devicetree/bindings/panel/samsung,ld9040.txt b/Documentation/devicetree/bindings/panel/samsung,ld9040.txt
+new file mode 100644
+index 0000000..07c36c3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/samsung,ld9040.txt
+@@ -0,0 +1,66 @@
++Samsung LD9040 AMOLED LCD parallel RGB panel with SPI control bus
++
++Required properties:
++  - compatible: "samsung,ld9040"
++  - reg: address of the panel on SPI bus
++  - vdd3-supply: core voltage supply
++  - vci-supply: voltage supply for analog circuits
++  - reset-gpios: a GPIO spec for the reset pin
++  - display-timings: timings for the connected panel according to [1]
++
++The panel must obey rules for SPI slave device specified in document [2].
++
++Optional properties:
++  - power-on-delay: delay after turning regulators on [ms]
++  - reset-delay: delay after reset sequence [ms]
++  - panel-width-mm: physical panel width [mm]
++  - panel-height-mm: physical panel height [mm]
++
++The device node can contain one 'port' child node with one child
++'endpoint' node, according to the bindings defined in [3]. This
++node should describe panel's video bus.
++
++[1]: Documentation/devicetree/bindings/video/display-timing.txt
++[2]: Documentation/devicetree/bindings/spi/spi-bus.txt
++[3]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++
++	lcd@0 {
++		compatible = "samsung,ld9040";
++		reg = <0>;
++		vdd3-supply = <&ldo7_reg>;
++		vci-supply = <&ldo17_reg>;
++		reset-gpios = <&gpy4 5 0>;
++		spi-max-frequency = <1200000>;
++		spi-cpol;
++		spi-cpha;
++		power-on-delay = <10>;
++		reset-delay = <10>;
++		panel-width-mm = <90>;
++		panel-height-mm = <154>;
++
++		display-timings {
++			timing {
++				clock-frequency = <23492370>;
++				hactive = <480>;
++				vactive = <800>;
++				hback-porch = <16>;
++				hfront-porch = <16>;
++				vback-porch = <2>;
++				vfront-porch = <28>;
++				hsync-len = <2>;
++				vsync-len = <1>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <0>;
++				pixelclk-active = <0>;
++			};
++		};
++
++		port {
++			lcd_ep: endpoint {
++				remote-endpoint = <&fimd_dpi_ep>;
++			};
++		};
++	};
+-- 
+1.8.3.2
