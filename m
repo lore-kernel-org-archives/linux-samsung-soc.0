@@ -1,84 +1,90 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: RE: [PATCH V13 2/7] net: sxgbe: add basic framework for Samsung 10Gb
- ethernet driver
-Date: Tue, 25 Mar 2014 09:09:18 -0700
-Message-ID: <019901cf4844$956a9580$c03fc080$@samsung.com>
-References: <00a001cf46d8$f4c38bd0$de4aa370$@samsung.com>
- <20140324234505.GA22059@electric-eye.fr.zoreil.com>
- <015b01cf47d7$8a8e5c40$9fab14c0$@samsung.com>
- <20140325070543.GA26998@electric-eye.fr.zoreil.com>
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based on
+ designware core driver
+Date: Tue, 25 Mar 2014 10:54:21 -0600
+Message-ID: <20140325165421.GB30641@obsidianresearch.com>
+References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
+ <1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
+ <235376049.yyfljDtinu@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-reply-to: <20140325070543.GA26998@electric-eye.fr.zoreil.com>
-Content-language: en-us
-Sender: netdev-owner@vger.kernel.org
-To: 'Francois Romieu' <romieu@fr.zoreil.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <235376049.yyfljDtinu@wuerfel>
+Sender: linux-pci-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Richard Zhu <r65037@freescale.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Francois Romieu <romieu@fr.zoreil.com>:
-> Byungho An <bh74.an@samsung.com> :
-> [...]
-> > How about below ?
+On Tue, Mar 25, 2014 at 08:44:36AM +0100, Arnd Bergmann wrote:
+
+> I have no idea how this would work with the standard interrupt-map property,
+> since the legacy interrupt host is now the same device as the pci host.
 > 
-> The for loops should be unrolled.
+> Maybe it's better to move the legacy irqchip handling entirely out of
+> the driver and use a separate device node for the registers so it can
+> come with its own #interrupt-cells, and then refer to this irqchip from
+> the interrupt-map.
+
+The other DW PCI-E drivers are being fixed to use interrupt-map, so I
+think this driver should be fixed before it goes in as well.
+
+Other PCI-E hosts have handled this particular problem with a
+construction like this:
+
+       pcie@21800000 {
+               compatible = "ti,keystone2-pcie";
+               device_type = "pci";
+               #address-cells = <3>;
+               #size-cells = <2>;
+               #interrupt-cells = <1>;
+	       reg = ..
+
+               pcie_intc: interrupt-controller {
+                  interrupt-controller;
+		  #address-cells = <0>;
+                  #interrupt-cells = <1>;
+               }
+
+               interrupts =  ... enough to decode INTx;
+
+	       interrtup-map = <0 0 0 1 &pcie_intc 1>, // INT A
+	                       <0 0 0 2 &pcie_intc 2>, // INT B
+                               <0 0 0 3 &pcie_intc 3>, // INT C
+                               <0 0 0 4 &pcie_intc 4>; // INT D
+       }
+
+When the legacy irq domain is created it should be bound to the
+pcie_intc node, not to pcie node.
+
+ks_pcie_map_irq should be removed.
+
+> > +#ifdef CONFIG_PCIE_KEYSTONE
+> > +/*
+> > + * The KeyStone PCIe controller has maximum read request size of 256 bytes.
+> > + * Force this configuration for all EP including bridges.
+> > + */
+> > +static void quirk_limit_readrequest(struct pci_dev *dev)
+> > +{
+> > +	pcie_set_readrq(dev, 256);
+> > +}
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, quirk_limit_readrequest);
+> > +#endif /* CONFIG_TI_KEYSTONE_PCIE */
 > 
-> (style: no need to join before branching)
+> You can't do this:
 > 
-> I must go to work, so you'll have to fill the dots in the code below:
-> 
->         priv = sxgbe_drv_probe(&(pdev->dev), plat_dat, addr);
->         if (!priv) {
->                 pr_err("%s: main driver probe failed\n", __func__);
->                 goto err_something;
->         }
-> 
->         /* Get the SXGBE common INT information */
->         priv->irq  = irq_of_parse_and_map(node, 0);
->         if (priv->irq <= 0) {
->                 dev_err(dev, "sxgbe common irq parsing failed\n");
->                 goto err_drv_remove;
->         }
-> 
->         /* Get the TX/RX IRQ numbers */
->         for (i = 0, chan = 1; i < SXGBE_TX_QUEUES; i++) {
->                 priv->txq[i]->irq_no = irq_of_parse_and_map(node, chan++);
->                 if (priv->txq[i]->irq_no <= 0) {
->                         dev_err(dev, "sxgbe tx irq parsing failed\n");
->                         goto err_tx_irq_unmap;
->                 }
->         }
-> 
->         for (i = 0; i < SXGBE_RX_QUEUES; i++) {
->                 priv->rxq[i]->irq_no = irq_of_parse_and_map(node, chan++);
->                 if (priv->rxq[i]->irq_no <= 0) {
->                         dev_err(dev, "sxgbe rx irq parsing failed\n");
->                         goto err_rx_irq_unmap;
->                 }
->         }
-> 
->         platform_set_drvdata(pdev, priv->dev);
-> 
->         pr_debug("platform driver registration completed\n");
-> 
->         return 0;
-> 
-> err_rx_irq_unmap:
-> 	/* TODO: check that 'i' isn't unsigned. */
-> 	while (i--)
-> 		irq_dispose_mapping(priv->rx[i]->irq_no);
-> 	i = SXGBE_TX_QUEUES;
-> err_tx_irq_unmap:
-> 	while (i--)
-> 		irq_dispose_mapping(priv->tx[i]->irq_no);
-> 	irq_dispose_mapping(priv->irq);
-> err_drv_remove:
->         sxgbe_drv_remove(ndev);
-> err_something:
-> 	...
-> 
-OK, thanks
-> --
-> Ueimor
+> A quirk for a specific hardware must not be enabled by compile-time options.
+> You have to find a different way to do this.
+
+This configuration should happen automatically by the PCI core if the
+config spaces are correct. See pcie_write_mrrs, pcie_write_mps,
+pcie_bus_configure_settings, etc.
+
+Your host will need to conform to the PCI spec and provide a root
+port bridge header for this to work.
+
+Also, even in the keystone case the MRRS should not be globally forced
+like this, there may be other bridges in the system with a 128 byte
+MPS.
+
+Jason
