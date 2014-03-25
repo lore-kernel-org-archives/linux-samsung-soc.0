@@ -1,55 +1,49 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 1/2] clk: s2mps11: Fix possible NULL pointer dereference
-Date: Mon, 24 Mar 2014 17:07:05 -0700
-Message-ID: <20140325000705.32624.49820@quantum>
-References: <1395404297-12133-1-git-send-email-k.kozlowski@samsung.com>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Subject: [PATCH 1/3] ARM: keystone: add pcie related options
+Date: Mon, 24 Mar 2014 20:33:22 -0400
+Message-ID: <1395707604-20377-3-git-send-email-m-karicheri2@ti.com>
+References: <1395707604-20377-1-git-send-email-m-karicheri2@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:55367 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750875AbaCYAHO convert rfc822-to-8bit (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:59375 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750875AbaCYAeF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Mar 2014 20:07:14 -0400
-Received: by mail-pd0-f175.google.com with SMTP id x10so6004781pdj.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Mar 2014 17:07:13 -0700 (PDT)
-In-Reply-To: <1395404297-12133-1-git-send-email-k.kozlowski@samsung.com>
+	Mon, 24 Mar 2014 20:34:05 -0400
+In-Reply-To: <1395707604-20377-1-git-send-email-m-karicheri2@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Tushar Behera <tushar.behera@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
+To: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Murali Karicheri <m-karicheri2@ti.com>, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Richard Zhu <r65037@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, Mohit Kumar <mohit.kumar@st.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-Quoting Krzysztof Kozlowski (2014-03-21 05:18:17)
-> If parent device does not have of_node set the s2mps11_clk_parse_dt()
-> returned NULL. This NULL was later passed to of_clk_add_provider() which
-> dereferenced it in pr_debug() call.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Add pcie related options by default for keystone architecture
 
-I've taken both of these patches into clk-next.
+CC: Jingoo Han <jg1.han@samsung.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Kukjin Kim <kgene.kim@samsung.com>
+CC: Richard Zhu <r65037@freescale.com>
+CC: Shawn Guo <shawn.guo@linaro.org>
+CC: Mohit Kumar <mohit.kumar@st.com>
+CC: Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-Thanks!
-Mike
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ arch/arm/mach-keystone/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
-> Cc: <stable@vger.kernel.org>
-> ---
->  drivers/clk/clk-s2mps11.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 00a3abe103a5..27c83e45eaed 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -130,7 +130,7 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
->         int i;
->  
->         if (!iodev->dev->of_node)
-> -               return NULL;
-> +               return ERR_PTR(-EINVAL);
->  
->         clk_np = of_find_node_by_name(iodev->dev->of_node, "clocks");
->         if (!clk_np) {
-> -- 
-> 1.7.9.5
-> 
+diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
+index 7e16d07..22c2174 100644
+--- a/arch/arm/mach-keystone/Kconfig
++++ b/arch/arm/mach-keystone/Kconfig
+@@ -17,6 +17,8 @@ config ARCH_KEYSTONE
+ 	select TI_KEYSTONE
+ 	select ARCH_SUPPORTS_BIG_ENDIAN
+ 	select ZONE_DMA if ARM_LPAE
++	select MIGHT_HAVE_PCI
++	select ARCH_SUPPORTS_MSI
+ 	help
+ 	  Support for boards based on the Texas Instruments Keystone family of
+ 	  SoCs.
+-- 
+1.7.9.5
