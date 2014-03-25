@@ -1,442 +1,84 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 2/3] drm/panel: add ld9040 driver
-Date: Tue, 25 Mar 2014 15:09:33 +0100
-Message-ID: <1395756573-956-1-git-send-email-a.hajda@samsung.com>
-References: <1395749436-24697-3-git-send-email-a.hajda@samsung.com>
+From: Byungho An <bh74.an@samsung.com>
+Subject: RE: [PATCH V13 2/7] net: sxgbe: add basic framework for Samsung 10Gb
+ ethernet driver
+Date: Tue, 25 Mar 2014 09:09:18 -0700
+Message-ID: <019901cf4844$956a9580$c03fc080$@samsung.com>
+References: <00a001cf46d8$f4c38bd0$de4aa370$@samsung.com>
+ <20140324234505.GA22059@electric-eye.fr.zoreil.com>
+ <015b01cf47d7$8a8e5c40$9fab14c0$@samsung.com>
+ <20140325070543.GA26998@electric-eye.fr.zoreil.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1395749436-24697-3-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/SAMSUNG ARM A..." <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <treding@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-reply-to: <20140325070543.GA26998@electric-eye.fr.zoreil.com>
+Content-language: en-us
+Sender: netdev-owner@vger.kernel.org
+To: 'Francois Romieu' <romieu@fr.zoreil.com>
+Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds LD9040 parallel RGB panel driver with SPI control interface.
-The driver uses drm_panel framework.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-v2: removed useless include
----
- drivers/gpu/drm/panel/Kconfig        |   6 +
- drivers/gpu/drm/panel/Makefile       |   1 +
- drivers/gpu/drm/panel/panel-ld9040.c | 376 +++++++++++++++++++++++++++++++++++
- 3 files changed, 383 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-ld9040.c
-
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 3e0f13d..94cc0c7 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -16,4 +16,10 @@ config DRM_PANEL_SIMPLE
- 	  that it can be automatically turned off when the panel goes into a
- 	  low power state.
- 
-+config DRM_PANEL_LD9040
-+	tristate "LD9040 RGB/SPI panel"
-+	depends on DRM && DRM_PANEL
-+	depends on OF
-+	select VIDEOMODE_HELPERS
-+
- endmenu
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index af9dfa2..4f7dfce 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
-+obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
-diff --git a/drivers/gpu/drm/panel/panel-ld9040.c b/drivers/gpu/drm/panel/panel-ld9040.c
-new file mode 100644
-index 0000000..1f1f837
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-ld9040.c
-@@ -0,0 +1,376 @@
-+/*
-+ * ld9040 AMOLED LCD drm_panel driver.
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd
-+ * Derived from drivers/video/backlight/ld9040.c
-+ *
-+ * Andrzej Hajda <a.hajda@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_panel.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+
-+#include <video/mipi_display.h>
-+#include <video/of_videomode.h>
-+#include <video/videomode.h>
-+
-+/* Manufacturer Command Set */
-+#define MCS_MANPWR		0xb0
-+#define MCS_ELVSS_ON		0xb1
-+#define MCS_USER_SETTING	0xf0
-+#define MCS_DISPCTL		0xf2
-+#define MCS_GTCON		0xf7
-+#define MCS_PANEL_CONDITION	0xf8
-+#define MCS_GAMMA_SET1		0xf9
-+#define MCS_GAMMA_CTRL		0xfb
-+
-+/* array of gamma tables for gamma value 2.2 */
-+static u8 const ld9040_gammas[25][22] = {
-+	{ 0xf9, 0x00, 0x13, 0xb2, 0xba, 0xd2, 0x00, 0x30, 0x00, 0xaf, 0xc0,
-+	  0xb8, 0xcd, 0x00, 0x3d, 0x00, 0xa8, 0xb8, 0xb7, 0xcd, 0x00, 0x44 },
-+	{ 0xf9, 0x00, 0x13, 0xb9, 0xb9, 0xd0, 0x00, 0x3c, 0x00, 0xaf, 0xbf,
-+	  0xb6, 0xcb, 0x00, 0x4b, 0x00, 0xa8, 0xb9, 0xb5, 0xcc, 0x00, 0x52 },
-+	{ 0xf9, 0x00, 0x13, 0xba, 0xb9, 0xcd, 0x00, 0x41, 0x00, 0xb0, 0xbe,
-+	  0xb5, 0xc9, 0x00, 0x51, 0x00, 0xa9, 0xb9, 0xb5, 0xca, 0x00, 0x57 },
-+	{ 0xf9, 0x00, 0x13, 0xb9, 0xb8, 0xcd, 0x00, 0x46, 0x00, 0xb1, 0xbc,
-+	  0xb5, 0xc8, 0x00, 0x56, 0x00, 0xaa, 0xb8, 0xb4, 0xc9, 0x00, 0x5d },
-+	{ 0xf9, 0x00, 0x13, 0xba, 0xb8, 0xcb, 0x00, 0x4b, 0x00, 0xb3, 0xbc,
-+	  0xb4, 0xc7, 0x00, 0x5c, 0x00, 0xac, 0xb8, 0xb4, 0xc8, 0x00, 0x62 },
-+	{ 0xf9, 0x00, 0x13, 0xbb, 0xb7, 0xca, 0x00, 0x4f, 0x00, 0xb4, 0xbb,
-+	  0xb3, 0xc7, 0x00, 0x60, 0x00, 0xad, 0xb8, 0xb4, 0xc7, 0x00, 0x67 },
-+	{ 0xf9, 0x00, 0x47, 0xba, 0xb6, 0xca, 0x00, 0x53, 0x00, 0xb5, 0xbb,
-+	  0xb3, 0xc6, 0x00, 0x65, 0x00, 0xae, 0xb8, 0xb3, 0xc7, 0x00, 0x6c },
-+	{ 0xf9, 0x00, 0x71, 0xbb, 0xb5, 0xc8, 0x00, 0x57, 0x00, 0xb5, 0xbb,
-+	  0xb0, 0xc5, 0x00, 0x6a, 0x00, 0xae, 0xb9, 0xb1, 0xc6, 0x00, 0x70 },
-+	{ 0xf9, 0x00, 0x7b, 0xbb, 0xb4, 0xc8, 0x00, 0x5b, 0x00, 0xb5, 0xba,
-+	  0xb1, 0xc4, 0x00, 0x6e, 0x00, 0xae, 0xb9, 0xb0, 0xc5, 0x00, 0x75 },
-+	{ 0xf9, 0x00, 0x82, 0xba, 0xb4, 0xc7, 0x00, 0x5f, 0x00, 0xb5, 0xba,
-+	  0xb0, 0xc3, 0x00, 0x72, 0x00, 0xae, 0xb8, 0xb0, 0xc3, 0x00, 0x7a },
-+	{ 0xf9, 0x00, 0x89, 0xba, 0xb3, 0xc8, 0x00, 0x62, 0x00, 0xb6, 0xba,
-+	  0xaf, 0xc3, 0x00, 0x76, 0x00, 0xaf, 0xb7, 0xae, 0xc4, 0x00, 0x7e },
-+	{ 0xf9, 0x00, 0x8b, 0xb9, 0xb3, 0xc7, 0x00, 0x65, 0x00, 0xb7, 0xb8,
-+	  0xaf, 0xc3, 0x00, 0x7a, 0x00, 0x80, 0xb6, 0xae, 0xc4, 0x00, 0x81 },
-+	{ 0xf9, 0x00, 0x93, 0xba, 0xb3, 0xc5, 0x00, 0x69, 0x00, 0xb8, 0xb9,
-+	  0xae, 0xc1, 0x00, 0x7f, 0x00, 0xb0, 0xb6, 0xae, 0xc3, 0x00, 0x85 },
-+	{ 0xf9, 0x00, 0x97, 0xba, 0xb2, 0xc5, 0x00, 0x6c, 0x00, 0xb8, 0xb8,
-+	  0xae, 0xc1, 0x00, 0x82, 0x00, 0xb0, 0xb6, 0xae, 0xc2, 0x00, 0x89 },
-+	{ 0xf9, 0x00, 0x9a, 0xba, 0xb1, 0xc4, 0x00, 0x6f, 0x00, 0xb8, 0xb8,
-+	  0xad, 0xc0, 0x00, 0x86, 0x00, 0xb0, 0xb7, 0xad, 0xc0, 0x00, 0x8d },
-+	{ 0xf9, 0x00, 0x9c, 0xb9, 0xb0, 0xc4, 0x00, 0x72, 0x00, 0xb8, 0xb8,
-+	  0xac, 0xbf, 0x00, 0x8a, 0x00, 0xb0, 0xb6, 0xac, 0xc0, 0x00, 0x91 },
-+	{ 0xf9, 0x00, 0x9e, 0xba, 0xb0, 0xc2, 0x00, 0x75, 0x00, 0xb9, 0xb8,
-+	  0xab, 0xbe, 0x00, 0x8e, 0x00, 0xb0, 0xb6, 0xac, 0xbf, 0x00, 0x94 },
-+	{ 0xf9, 0x00, 0xa0, 0xb9, 0xaf, 0xc3, 0x00, 0x77, 0x00, 0xb9, 0xb7,
-+	  0xab, 0xbe, 0x00, 0x90, 0x00, 0xb0, 0xb6, 0xab, 0xbf, 0x00, 0x97 },
-+	{ 0xf9, 0x00, 0xa2, 0xb9, 0xaf, 0xc2, 0x00, 0x7a, 0x00, 0xb9, 0xb7,
-+	  0xaa, 0xbd, 0x00, 0x94, 0x00, 0xb0, 0xb5, 0xab, 0xbf, 0x00, 0x9a },
-+	{ 0xf9, 0x00, 0xa4, 0xb9, 0xaf, 0xc1, 0x00, 0x7d, 0x00, 0xb9, 0xb6,
-+	  0xaa, 0xbb, 0x00, 0x97, 0x00, 0xb1, 0xb5, 0xaa, 0xbf, 0x00, 0x9d },
-+	{ 0xf9, 0x00, 0xa4, 0xb8, 0xb0, 0xbf, 0x00, 0x80, 0x00, 0xb8, 0xb6,
-+	  0xaa, 0xbc, 0x00, 0x9a, 0x00, 0xb0, 0xb5, 0xab, 0xbd, 0x00, 0xa0 },
-+	{ 0xf9, 0x00, 0xa8, 0xb8, 0xae, 0xbe, 0x00, 0x84, 0x00, 0xb9, 0xb7,
-+	  0xa8, 0xbc, 0x00, 0x9d, 0x00, 0xb2, 0xb5, 0xaa, 0xbc, 0x00, 0xa4 },
-+	{ 0xf9, 0x00, 0xa9, 0xb6, 0xad, 0xbf, 0x00, 0x86, 0x00, 0xb8, 0xb5,
-+	  0xa8, 0xbc, 0x00, 0xa0, 0x00, 0xb3, 0xb3, 0xa9, 0xbc, 0x00, 0xa7 },
-+	{ 0xf9, 0x00, 0xa9, 0xb7, 0xae, 0xbd, 0x00, 0x89, 0x00, 0xb7, 0xb6,
-+	  0xa8, 0xba, 0x00, 0xa4, 0x00, 0xb1, 0xb4, 0xaa, 0xbb, 0x00, 0xaa },
-+	{ 0xf9, 0x00, 0xa7, 0xb4, 0xae, 0xbf, 0x00, 0x91, 0x00, 0xb2, 0xb4,
-+	  0xaa, 0xbb, 0x00, 0xac, 0x00, 0xb3, 0xb1, 0xaa, 0xbc, 0x00, 0xb3 },
-+};
-+
-+struct ld9040 {
-+	struct device *dev;
-+	struct drm_panel panel;
-+
-+	struct regulator_bulk_data supplies[2];
-+	struct gpio_desc *reset_gpio;
-+	u32 power_on_delay;
-+	u32 reset_delay;
-+	struct videomode vm;
-+	u32 width_mm;
-+	u32 height_mm;
-+
-+	int brightness;
-+
-+	/* This field is tested by functions directly accessing bus before
-+	 * transfer, transfer is skipped if it is set. In case of transfer
-+	 * failure or unexpected response the field is set to error value.
-+	 * Such construct allows to eliminate many checks in higher level
-+	 * functions.
-+	 */
-+	int error;
-+};
-+
-+#define panel_to_ld9040(p) container_of(p, struct ld9040, panel)
-+
-+static int ld9040_clear_error(struct ld9040 *ctx)
-+{
-+	int ret = ctx->error;
-+
-+	ctx->error = 0;
-+	return ret;
-+}
-+
-+static int ld9040_spi_write_word(struct ld9040 *ctx, u16 data)
-+{
-+	struct spi_device *spi = to_spi_device(ctx->dev);
-+	struct spi_transfer xfer = {
-+		.len		= 2,
-+		.tx_buf		= &data,
-+	};
-+	struct spi_message msg;
-+
-+	spi_message_init(&msg);
-+	spi_message_add_tail(&xfer, &msg);
-+
-+	return spi_sync(spi, &msg);
-+}
-+
-+static void ld9040_dcs_write(struct ld9040 *ctx, const u8 *data, size_t len)
-+{
-+	int ret = 0;
-+
-+	if (ctx->error < 0 || len == 0)
-+		return;
-+
-+	dev_dbg(ctx->dev, "writing dcs seq: %*ph\n", len, data);
-+	ret = ld9040_spi_write_word(ctx, *data);
-+
-+	while (!ret && --len) {
-+		++data;
-+		ret = ld9040_spi_write_word(ctx, *data | 0x100);
-+	}
-+
-+	if (ret) {
-+		dev_err(ctx->dev, "error %d writing dcs seq: %*ph\n", ret, len,
-+			data);
-+		ctx->error = ret;
-+	}
-+
-+	usleep_range(300, 310);
-+}
-+
-+#define ld9040_dcs_write_seq_static(ctx, seq...) \
-+({\
-+	static const u8 d[] = { seq };\
-+	ld9040_dcs_write(ctx, d, ARRAY_SIZE(d));\
-+})
-+
-+static void ld9040_brightness_set(struct ld9040 *ctx)
-+{
-+	ld9040_dcs_write(ctx, ld9040_gammas[ctx->brightness],
-+			 ARRAY_SIZE(ld9040_gammas[ctx->brightness]));
-+
-+	ld9040_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL, 0x02, 0x5a);
-+}
-+
-+static void ld9040_init(struct ld9040 *ctx)
-+{
-+	ld9040_dcs_write_seq_static(ctx, MCS_USER_SETTING, 0x5a, 0x5a);
-+	ld9040_dcs_write_seq_static(ctx, MCS_PANEL_CONDITION,
-+		0x05, 0x65, 0x96, 0x71, 0x7d, 0x19, 0x3b, 0x0d,
-+		0x19, 0x7e, 0x0d, 0xe2, 0x00, 0x00, 0x7e, 0x7d,
-+		0x07, 0x07, 0x20, 0x20, 0x20, 0x02, 0x02);
-+	ld9040_dcs_write_seq_static(ctx, MCS_DISPCTL,
-+		0x02, 0x08, 0x08, 0x10, 0x10);
-+	ld9040_dcs_write_seq_static(ctx, MCS_MANPWR, 0x04);
-+	ld9040_dcs_write_seq_static(ctx, MCS_ELVSS_ON, 0x0d, 0x00, 0x16);
-+	ld9040_dcs_write_seq_static(ctx, MCS_GTCON, 0x09, 0x00, 0x00);
-+	ld9040_brightness_set(ctx);
-+	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
-+	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
-+}
-+
-+static int ld9040_power_on(struct ld9040 *ctx)
-+{
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	msleep(ctx->power_on_delay);
-+	gpiod_set_value(ctx->reset_gpio, 0);
-+	msleep(ctx->reset_delay);
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+	msleep(ctx->reset_delay);
-+
-+	return 0;
-+}
-+
-+static int ld9040_power_off(struct ld9040 *ctx)
-+{
-+	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+}
-+
-+static int ld9040_disable(struct drm_panel *panel)
-+{
-+	struct ld9040 *ctx = panel_to_ld9040(panel);
-+
-+	msleep(120);
-+	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_OFF);
-+	ld9040_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
-+	msleep(40);
-+
-+	ld9040_clear_error(ctx);
-+
-+	return ld9040_power_off(ctx);
-+}
-+
-+static int ld9040_enable(struct drm_panel *panel)
-+{
-+	struct ld9040 *ctx = panel_to_ld9040(panel);
-+	int ret;
-+
-+	ret = ld9040_power_on(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	ld9040_init(ctx);
-+
-+	ret = ld9040_clear_error(ctx);
-+
-+	if (ret < 0)
-+		ld9040_disable(panel);
-+
-+	return ret;
-+}
-+
-+static int ld9040_get_modes(struct drm_panel *panel)
-+{
-+	struct drm_connector *connector = panel->connector;
-+	struct ld9040 *ctx = panel_to_ld9040(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_create(connector->dev);
-+	if (!mode) {
-+		DRM_ERROR("failed to create a new display mode\n");
-+		return 0;
-+	}
-+
-+	drm_display_mode_from_videomode(&ctx->vm, mode);
-+	mode->width_mm = ctx->width_mm;
-+	mode->height_mm = ctx->height_mm;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs ld9040_drm_funcs = {
-+	.disable = ld9040_disable,
-+	.enable = ld9040_enable,
-+	.get_modes = ld9040_get_modes,
-+};
-+
-+static int ld9040_parse_dt(struct ld9040 *ctx)
-+{
-+	struct device *dev = ctx->dev;
-+	struct device_node *np = dev->of_node;
-+	int ret;
-+
-+	ret = of_get_videomode(np, &ctx->vm, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	of_property_read_u32(np, "power-on-delay", &ctx->power_on_delay);
-+	of_property_read_u32(np, "reset-delay", &ctx->reset_delay);
-+	of_property_read_u32(np, "panel-width-mm", &ctx->width_mm);
-+	of_property_read_u32(np, "panel-height-mm", &ctx->height_mm);
-+
-+	return 0;
-+}
-+
-+static int ld9040_probe(struct spi_device *spi)
-+{
-+	struct device *dev = &spi->dev;
-+	struct ld9040 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(struct ld9040), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	spi_set_drvdata(spi, ctx);
-+
-+	ctx->dev = dev;
-+	ctx->brightness = ARRAY_SIZE(ld9040_gammas) - 1;
-+
-+	ret = ld9040_parse_dt(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->supplies[0].supply = "vdd3";
-+	ctx->supplies[1].supply = "vci";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
-+				      ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset");
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		dev_err(dev, "cannot get reset-gpios %ld\n",
-+			PTR_ERR(ctx->reset_gpio));
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+	ret = gpiod_direction_output(ctx->reset_gpio, 1);
-+	if (ret < 0) {
-+		dev_err(dev, "cannot configure reset-gpios %d\n", ret);
-+		return ret;
-+	}
-+
-+	spi->bits_per_word = 9;
-+	ret = spi_setup(spi);
-+	if (ret < 0) {
-+		dev_err(dev, "spi setup failed.\n");
-+		return ret;
-+	}
-+
-+	drm_panel_init(&ctx->panel);
-+	ctx->panel.dev = dev;
-+	ctx->panel.funcs = &ld9040_drm_funcs;
-+
-+	return drm_panel_add(&ctx->panel);
-+}
-+
-+static int ld9040_remove(struct spi_device *spi)
-+{
-+	struct ld9040 *ctx = spi_get_drvdata(spi);
-+
-+	ld9040_power_off(ctx);
-+	drm_panel_remove(&ctx->panel);
-+
-+	return 0;
-+}
-+
-+static struct of_device_id ld9040_of_match[] = {
-+	{ .compatible = "samsung,ld9040" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ld9040_of_match);
-+
-+static struct spi_driver ld9040_driver = {
-+	.probe		= ld9040_probe,
-+	.remove		= ld9040_remove,
-+	.driver = {
-+		.name	= "ld9040",
-+		.owner	= THIS_MODULE,
-+		.of_match_table = ld9040_of_match,
-+	},
-+};
-+module_spi_driver(ld9040_driver);
-+
-+MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
-+MODULE_DESCRIPTION("ld9040 LCD Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.8.3.2
+Francois Romieu <romieu@fr.zoreil.com>:
+> Byungho An <bh74.an@samsung.com> :
+> [...]
+> > How about below ?
+> 
+> The for loops should be unrolled.
+> 
+> (style: no need to join before branching)
+> 
+> I must go to work, so you'll have to fill the dots in the code below:
+> 
+>         priv = sxgbe_drv_probe(&(pdev->dev), plat_dat, addr);
+>         if (!priv) {
+>                 pr_err("%s: main driver probe failed\n", __func__);
+>                 goto err_something;
+>         }
+> 
+>         /* Get the SXGBE common INT information */
+>         priv->irq  = irq_of_parse_and_map(node, 0);
+>         if (priv->irq <= 0) {
+>                 dev_err(dev, "sxgbe common irq parsing failed\n");
+>                 goto err_drv_remove;
+>         }
+> 
+>         /* Get the TX/RX IRQ numbers */
+>         for (i = 0, chan = 1; i < SXGBE_TX_QUEUES; i++) {
+>                 priv->txq[i]->irq_no = irq_of_parse_and_map(node, chan++);
+>                 if (priv->txq[i]->irq_no <= 0) {
+>                         dev_err(dev, "sxgbe tx irq parsing failed\n");
+>                         goto err_tx_irq_unmap;
+>                 }
+>         }
+> 
+>         for (i = 0; i < SXGBE_RX_QUEUES; i++) {
+>                 priv->rxq[i]->irq_no = irq_of_parse_and_map(node, chan++);
+>                 if (priv->rxq[i]->irq_no <= 0) {
+>                         dev_err(dev, "sxgbe rx irq parsing failed\n");
+>                         goto err_rx_irq_unmap;
+>                 }
+>         }
+> 
+>         platform_set_drvdata(pdev, priv->dev);
+> 
+>         pr_debug("platform driver registration completed\n");
+> 
+>         return 0;
+> 
+> err_rx_irq_unmap:
+> 	/* TODO: check that 'i' isn't unsigned. */
+> 	while (i--)
+> 		irq_dispose_mapping(priv->rx[i]->irq_no);
+> 	i = SXGBE_TX_QUEUES;
+> err_tx_irq_unmap:
+> 	while (i--)
+> 		irq_dispose_mapping(priv->tx[i]->irq_no);
+> 	irq_dispose_mapping(priv->irq);
+> err_drv_remove:
+>         sxgbe_drv_remove(ndev);
+> err_something:
+> 	...
+> 
+OK, thanks
+> --
+> Ueimor
