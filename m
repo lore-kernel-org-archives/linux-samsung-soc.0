@@ -1,77 +1,55 @@
-From: Francois Romieu <romieu@fr.zoreil.com>
-Subject: Re: [PATCH V13 2/7] net: sxgbe: add basic framework for Samsung 10Gb
- ethernet driver
-Date: Tue, 25 Mar 2014 00:45:05 +0100
-Message-ID: <20140324234505.GA22059@electric-eye.fr.zoreil.com>
-References: <00a001cf46d8$f4c38bd0$de4aa370$@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH 1/2] clk: s2mps11: Fix possible NULL pointer dereference
+Date: Mon, 24 Mar 2014 17:07:05 -0700
+Message-ID: <20140325000705.32624.49820@quantum>
+References: <1395404297-12133-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from violet.fr.zoreil.com ([92.243.8.30]:48327 "EHLO
-	violet.fr.zoreil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbaCXXpU (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:55367 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750875AbaCYAHO convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Mar 2014 19:45:20 -0400
-Content-Disposition: inline
-In-Reply-To: <00a001cf46d8$f4c38bd0$de4aa370$@samsung.com>
+	Mon, 24 Mar 2014 20:07:14 -0400
+Received: by mail-pd0-f175.google.com with SMTP id x10so6004781pdj.34
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Mar 2014 17:07:13 -0700 (PDT)
+In-Reply-To: <1395404297-12133-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Byungho An <bh74.an@samsung.com>
-Cc: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'David Miller' <davem@davemloft.net>, 'GIRISH K S' <ks.giri@samsung.com>, 'SIVAREDDY KALLAM' <siva.kallam@samsung.com>, 'Vipul Chandrakant' <vipul.pandya@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Tushar Behera <tushar.behera@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 
-> +static int sxgbe_platform_probe(struct platform_device *pdev)
-[...]
-> +	/* Get the SXGBE common INT information */
-> +	priv->irq  = irq_of_parse_and_map(node, 0);
-> +	if (priv->irq <= 0) {
-> +		dev_err(dev, "sxgbe common irq parsing failed\n");
-> +		irq_dispose_mapping(priv->irq);
-> +		sxgbe_drv_remove(ndev);
+Quoting Krzysztof Kozlowski (2014-03-21 05:18:17)
+> If parent device does not have of_node set the s2mps11_clk_parse_dt()
+> returned NULL. This NULL was later passed to of_clk_add_provider() which
+> dereferenced it in pr_debug() call.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-sxgbe_drv_probe has not been issued at this point.
+I've taken both of these patches into clk-next.
 
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Get the TX/RX IRQ numbers */
-> +	for (i = 0, chan = 1; i < SXGBE_TX_QUEUES; i++) {
-> +		priv->txq[i]->irq_no = irq_of_parse_and_map(node, chan++);
-> +		if (priv->txq[i]->irq_no <= 0) {
-> +			dev_err(dev, "sxgbe tx irq parsing failed\n");
-> +			irq_dispose_mapping(priv->txq[i]->irq_no);
+Thanks!
+Mike
 
-Releasing the failed irq_no and leaking the i - 1  succeeded ones can't
-be right.
-
-> +			sxgbe_drv_remove(ndev);
-
-Sic.
-
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < SXGBE_RX_QUEUES; i++) {
-> +		priv->rxq[i]->irq_no = irq_of_parse_and_map(node, chan++);
-> +		if (priv->rxq[i]->irq_no <= 0) {
-> +			dev_err(dev, "sxgbe rx irq parsing failed\n");
-> +			irq_dispose_mapping(priv->rxq[i]->irq_no);
-> +			sxgbe_drv_remove(ndev);
-
-Same problem(s) as above + priv->txq[.]->irq_no leak.
-
-Please use goto for the unwind path.
-
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	priv = sxgbe_drv_probe(&(pdev->dev), plat_dat, addr);
-> +	if (!priv) {
-> +		pr_err("%s: main driver probe failed\n", __func__);
-> +		return -ENODEV;
-
-The error path is wrong.
-
--- 
-Ueimor
+> Cc: <stable@vger.kernel.org>
+> ---
+>  drivers/clk/clk-s2mps11.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index 00a3abe103a5..27c83e45eaed 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -130,7 +130,7 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
+>         int i;
+>  
+>         if (!iodev->dev->of_node)
+> -               return NULL;
+> +               return ERR_PTR(-EINVAL);
+>  
+>         clk_np = of_find_node_by_name(iodev->dev->of_node, "clocks");
+>         if (!clk_np) {
+> -- 
+> 1.7.9.5
+> 
