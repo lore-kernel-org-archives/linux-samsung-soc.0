@@ -1,42 +1,36 @@
 From: Beomho Seo <beomho.seo@samsung.com>
-Subject: [PATCH 1/3] ARM: dts: fix incorrect compatible for exynos4412
-Date: Wed, 26 Mar 2014 16:08:24 +0900
-Message-ID: <53327CE8.4090309@samsung.com>
+Subject: [PATCH 0/3] ARM: dts: add device data for exynos4412-trats2
+Date: Wed, 26 Mar 2014 16:08:19 +0900
+Message-ID: <53327CE3.8030800@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53403 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751147AbaCZHIZ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:17197 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991AbaCZHIY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Mar 2014 03:08:25 -0400
+	Wed, 26 Mar 2014 03:08:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-This patch fixed incorrect compatible for ak8975 magnetic sensor.
-ak8975 magnetic sensor use compatible "ak8975" or "asahi-kasei,ak8975".
+This patchset add some device node for exynos4412-trats2.
+It is based on v3.15-next/dt-samsung-2 branch.
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+exynos4412-trats2.dts
+- Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-kasei,ak8975".
+- Add cm36651 light/proximity sensor device node.
+- Change gpio-key device node. fix incorrect gpio property, and then add "ok-key" node.
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 3228506..42418e2 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -494,7 +494,7 @@
- 		status = "okay";
+Beomho Seo (3):
+  ARM: dts: fix incorrect compatible for exynos4412
+  ARM: dts: add cm36651 light/proximity sensor node
+  ARM: dts: fixed gpio key node for exynos4412
 
- 		ak8975@0c {
--			compatible = "ak,ak8975";
-+			compatible = "ak8975";
- 			reg = <0x0c>;
- 			gpios = <&gpj0 7 0>;
- 		};
+ arch/arm/boot/dts/exynos4412-trats2.dts |   50 ++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 7 deletions(-)
+
 -- 
 1.7.9.5
