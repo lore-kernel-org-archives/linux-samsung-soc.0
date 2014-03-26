@@ -1,67 +1,52 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos4210-trats: add max8997 IRQ
-Date: Wed, 26 Mar 2014 11:07:09 +0100
-Message-ID: <1395828429-11023-1-git-send-email-r.baldyga@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40677 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750911AbaCZKHj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Mar 2014 06:07:39 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH v2 0/7] mmc: dw_mmc: update host driver including HS400 support
+Date: Wed, 26 Mar 2014 20:30:49 +0900
+Message-ID: <000001cf48e6$d662a260$8327e720$%jun@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+References: 
+In-reply-to: 
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Chris Ball' <chris@printf.net>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, t.figa@samsung.com, Robert Baldyga <r.baldyga@samsung.com>
 
-This patch adds IRQ line specification for the MAX8997 chip and necessary
-pinctrl group to configure pull-up and driver strength of the pin.
-It's needed for proper handling of IRQs coming from MAX8997 multifunction
-device (IRQs are used by PMIC, MUIC and RTC).
+This patch-set includes several driver's updates.
+Specially, HS400 mode is enabled for eMMC5.0 spec.
+And it goes with "[PATCH v4 5/5] mmc: add support for HS400 mode of eMMC5.0"
 
-Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
+Changes in v2:
+	(2/7) Reuse bus_hz for clock rate.
+	(3/7) Fix typo.
 
-Changelog:
+Seungwon Jeon (7):
+  mmc: dw_mmc: fix the max_blk_count in IDMAC
+  mmc: dw_mmc: exynos: don't use if clock isn't available
+  mmc: dw_mmc: exynos: move definitions to header file
+  mmc: dw_mmc: exynos: incorporate ciu_div into timing property
+  mmc: dw_mmc: exynos: support eMMC's HS400 mode
+  ARM: dts: drop dw-mshc-ciu-div property from Exynos
+  ARM: dts: add HS400 support for Exynos5420
 
-v2:
-- Corrected commit message.
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   18 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    5 +-
+ arch/arm/boot/dts/exynos4412-origen.dts            |    5 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    5 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   10 +-
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   15 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   10 +-
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   15 +-
+ drivers/mmc/host/dw_mmc-exynos.c                   |  262 +++++++++++++-------
+ drivers/mmc/host/dw_mmc-exynos.h                   |   70 ++++++
+ drivers/mmc/host/dw_mmc.c                          |    7 +-
+ 13 files changed, 298 insertions(+), 141 deletions(-)
+ create mode 100644 drivers/mmc/host/dw_mmc-exynos.h
 
-v1: https://lkml.org/lkml/2014/3/14/124
+Thanks,
+sw-j
 
- arch/arm/boot/dts/exynos4210-trats.dts |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 662b482..5629eef 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -156,6 +156,14 @@
- 		};
- 	};
- 
-+	pinctrl@11000000 {
-+		max8997_irq: max8997-irq {
-+			samsung,pins = "gpx0-7";
-+			samsung,pin-pud = <3>;
-+			samsung,pin-drv = <0>;
-+		};
-+	};
-+
- 	i2c@13890000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-slave-addr = <0x10>;
-@@ -187,6 +195,11 @@
- 		max8997_pmic@66 {
- 			compatible = "maxim,max8997-pmic";
- 
-+			pinctrl-0 = <&max8997_irq>;
-+			pinctrl-names = "default";
-+
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <7 0>;
- 			reg = <0x66>;
- 
- 			max8997,pmic-buck1-uses-gpio-dvs;
--- 
-1.7.9.5
