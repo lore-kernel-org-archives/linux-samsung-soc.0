@@ -1,429 +1,271 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v2 7/7] ARM: dts: update macros in clock bindings for exynos5420
-Date: Thu, 27 Mar 2014 16:37:50 +0530
-Message-ID: <1395918470-16374-8-git-send-email-shaik.ameer@samsung.com>
-References: <1395918470-16374-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46746 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756240AbaC0LIT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Mar 2014 07:08:19 -0400
-In-reply-to: <1395918470-16374-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: "Karicheri, Muralidharan" <m-karicheri2@ti.com>
+Subject: RE: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based
+ on designware core driver
+Date: Thu, 27 Mar 2014 14:01:11 +0000
+Message-ID: <3E54258959B69E4282D79E01AB1F32B7046EF3C5@DFLE11.ent.ti.com>
+References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
+ <1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
+ <235376049.yyfljDtinu@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <235376049.yyfljDtinu@wuerfel>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Richard Zhu <r65037@freescale.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "Shilimkar,
+ Santosh" <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Shawn Guo <shawn.guo@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-From: Rahul Sharma <rahul.sharma@samsung.com>
+>-----Original Message-----
+>From: Arnd Bergmann [mailto:arnd@arndb.de]
+>Sent: Tuesday, March 25, 2014 3:45 AM
+>To: linux-arm-kernel@lists.infradead.org
+>Cc: Karicheri, Muralidharan; linux-pci@vger.kernel.org; linux-samsung-
+>soc@vger.kernel.org; linux-kernel@vger.kernel.org; Richard Zhu; Kukjin Kim; Mohit
+>Kumar; Jingoo Han; Shilimkar, Santosh; Bjorn Helgaas; Shawn Guo
+>Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based on
+>designware core driver
+>
+>On Monday 24 March 2014 20:35:26 Murali Karicheri wrote:
+>> +
+>> +int k2_pcie_platform_setup(struct platform_device *pdev) {
+>> +	struct resource *phy_base_r, *devstat_r;
+>> +	void __iomem *phy_base, *devstat;
+>> +	u32 val;
+>> +	int i;
+>> +
+>> +	devstat_r = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>> +						 "reg_devcfg");
+>> +	if (!devstat_r)
+>> +		return -ENODEV;
+>
+>It seems you have a distinct register set for the PHY that you are driving here. Why not
+>make this part generic PHY API driver?
+>
+>> +static int ks_pcie_establish_link(struct keystone_pcie *ks_pcie) {
+>> +	struct pcie_port *pp = &ks_pcie->pp;
+>> +	int count = 0;
+>> +
+>> +	dw_pcie_setup_rc(pp);
+>> +
+>> +	/* check if the link is up or not */
+>> +	while (!dw_pcie_link_up(pp)) {
+>> +		mdelay(100);
+>> +		count++;
+>> +		if (count == 10)
+>> +			return -EINVAL;
+>> +	}
+>> +	return 0;
+>> +}
+>
+>You are blocking the CPU for up to one second here, which is really nasty. Please find a way
+>to move the code into a context where you can sleep and use msleep() instead, or better
+>use an interrupt if the hardware supports that and use wait_for_completion().
+>
+>> +
+>> +static void ks_pcie_msi_irq_handler(unsigned int irq, struct irq_desc
+>> +*desc) {
+>> +	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+>> +	u32 offset = irq - ks_pcie->msi_host_irqs[0], pending, vector;
+>> +	struct pcie_port *pp = &ks_pcie->pp;
+>> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>> +	int src, virq;
+>
+>Did I understand this right that the MSI implementation can be used by any dw-pcie
+>hardware of the same version? If so, it would be good to move it into an extra file so it can
+>be shared with the next host driver that uses this version.
+>
+>> +/**
+>> + * ks_pcie_set_outbound_trans() - Set PHYADDR <-> BUSADDR
+>> + * mapping for outbound
+>> + */
+>> +static void ks_pcie_set_outbound_trans(struct keystone_pcie *ks_pcie)
+>
+>> +static void ks_pcie_set_inbound_trans(struct pcie_port *pp)
+>
+>Why do you need to set this up from the kernel? Please move the translation window setup
+>into the boot loader if you can.
+>
+>> +static struct hw_pci keystone_pcie_hw = {
+>> +	.nr_controllers	= 1,
+>> +	.setup		= dw_pcie_setup,
+>> +	.scan		= ks_pcie_scan_bus,
+>> +	.swizzle        = pci_common_swizzle,
+>> +	.add_bus	= dw_pcie_add_bus,
+>> +	.map_irq	= ks_pcie_map_irq,
+>> +};
+>
+>This can just be a local variable in the probe function.
+>
+>> +
+>> +static int ks_pcie_map_irq(const struct pci_dev *dev, u8 slot, u8
+>> +pin) {
+>> +	struct pcie_port *pp = sys_to_pcie(dev->bus->sysdata);
+>> +	struct keystone_pcie *ks_pcie = to_keystone_pcie(pp);
+>> +
+>> +	dev_info(pp->dev, "ks_pcie_map_irq: pin %d\n", pin);
+>> +
+>> +	if (!pin || pin > ks_pcie->num_legacy_host_irqs) {
+>> +		dev_err(pp->dev, "pci irq pin out of range\n");
+>> +		return -1;
+>> +	}
+>> +
+>> +	/* pin has values from 1-4 */
+>> +	return (ks_pcie->virqs[pin - 1] >= 0) ?
+>> +		ks_pcie->virqs[pin - 1] : -1;
+>> +}
+>> +
+>> +
+>> +static void ack_irq(struct irq_data *d) { }
+>> +
+>> +static void mask_irq(struct irq_data *d) { }
+>> +
+>> +static void unmask_irq(struct irq_data *d) { }
+>> +
+>> +static struct irq_chip ks_pcie_legacy_irq_chip = {
+>> +	.name = "PCIe-LEGACY-IRQ",
+>> +	.irq_ack = ack_irq,
+>> +	.irq_mask = mask_irq,
+>> +	.irq_unmask = unmask_irq,
+>> +};
+>
+>Can you use the generic irqchip code here?
+>
+>> +	/*
+>> +	 * support upto MAX_LEGACY_HOST_IRQS host and legacy IRQs.
+>> +	 * In dt from index 0 to 3
+>> +	 */
+>> +	for (i = 0; i < MAX_LEGACY_HOST_IRQS; i++) {
+>> +		ks_pcie->legacy_host_irqs[i] = irq_of_parse_and_map(np, i);
+>> +		if (ks_pcie->legacy_host_irqs[i] < 0)
+>> +			break;
+>> +		ks_pcie->num_legacy_host_irqs++;
+>> +	}
+>> +
+>> +	if (ks_pcie->num_legacy_host_irqs) {
+>> +		ks_pcie->legacy_irqd = irq_domain_add_linear(np,
+>> +					ks_pcie->num_legacy_host_irqs,
+>> +					&irq_domain_simple_ops, NULL);
+>> +
+>> +		if (!ks_pcie->legacy_irqd) {
+>> +			dev_err(dev,
+>> +				"Failed to add irq domain for legacy irqs\n");
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+>> +
+>> +	for (i = 0; i < ks_pcie->num_legacy_host_irqs; i++) {
+>> +		ks_pcie->virqs[i] =
+>> +			irq_create_mapping(ks_pcie->legacy_irqd, i);
+>> +		irq_set_chip_and_handler(ks_pcie->virqs[i],
+>> +			&ks_pcie_legacy_irq_chip, handle_level_irq);
+>> +		irq_set_chip_data(ks_pcie->virqs[i], ks_pcie);
+>> +		set_irq_flags(ks_pcie->virqs[i], IRQF_VALID);
+>> +
+>> +		if (ks_pcie->legacy_host_irqs[i] >= 0) {
+>> +			irq_set_handler_data(ks_pcie->legacy_host_irqs[i],
+>> +				ks_pcie);
+>> +			irq_set_chained_handler(ks_pcie->legacy_host_irqs[i],
+>> +				ks_pcie_legacy_irq_handler);
+>> +		}
+>> +		set_irq_flags(ks_pcie->legacy_host_irqs[i], IRQF_VALID);
+>> +	}
+>
+>I have no idea how this would work with the standard interrupt-map property, since the
+>legacy interrupt host is now the same device as the pci host.
+>
+>Maybe it's better to move the legacy irqchip handling entirely out of the driver and use a
+>separate device node for the registers so it can come with its own #interrupt-cells, and then
+>refer to this irqchip from the interrupt-map.
+>
+>> +	ks_pcie->clk = devm_clk_get(&pdev->dev, "pcie");
+>> +	if (IS_ERR(ks_pcie->clk)) {
+>> +		dev_err(&pdev->dev, "Failed to get pcie rc clock\n");
+>> +		return PTR_ERR(ks_pcie->clk);
+>> +	}
+>> +	ret = clk_prepare_enable(ks_pcie->clk);
+>> +	if (ret)
+>> +		return ret;
+>
+>Could you move the clock handling into the generic dw-pcie code?
+>
+>> +
+>> +/* Keystone PCIe driver does not allow module unload */ static int
+>> +__init ks_pcie_init(void) {
+>> +	return platform_driver_probe(&ks_pcie_driver, ks_pcie_probe); }
+>> +subsys_initcall(ks_pcie_init);
+>
+>Why subsys_initcall?
+>
+>We should probably try to fix unloading soon.
+>
+>> diff --git a/drivers/pci/host/pcie-ks-pdata.h
+>> b/drivers/pci/host/pcie-ks-pdata.h
+>> new file mode 100644
+>> index 0000000..a7626de
+>> --- /dev/null
+>> +++ b/drivers/pci/host/pcie-ks-pdata.h
+>> @@ -0,0 +1,19 @@
+>> +/*
+>> + * Copyright (C) 2013-2014 Texas Instruments., Ltd.
+>> + *		http://www.ti.com
+>> + *
+>> + * Author: Murali Karicheri <m-karicheri2@ti.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> +modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +/* platform specific setup for k2 pcie */ int
+>> +k2_pcie_platform_setup(struct platform_device *pdev);
+>> +
+>> +/* keystone pcie pdata configurations */ struct keystone_pcie_pdata {
+>> +	int (*setup)(struct platform_device *pdev); };
+>
+>This should all go away once you have a proper PHY driver.
+>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c index
+>> 3a02717..7c3f777 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -3461,3 +3461,15 @@ int pci_dev_specific_acs_enabled(struct pci_dev
+>> *dev, u16 acs_flags)
+>>
+>>  	return -ENOTTY;
+>>  }
+>> +
+>> +#ifdef CONFIG_PCIE_KEYSTONE
+>> +/*
+>> + * The KeyStone PCIe controller has maximum read request size of 256 bytes.
+>> + * Force this configuration for all EP including bridges.
+>> + */
+>> +static void quirk_limit_readrequest(struct pci_dev *dev) {
+>> +	pcie_set_readrq(dev, 256);
+>> +}
+>> +DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID,
+>> +quirk_limit_readrequest); #endif /* CONFIG_TI_KEYSTONE_PCIE */
+>
+>You can't do this:
+>
+>A quirk for a specific hardware must not be enabled by compile-time options.
+>You have to find a different way to do this.
+>
+>	Arnd
+All,
 
-This patch updates the macros as per the latest changes and
-replaces magic numbers with macros defined in DT header for
-exynos5420.
+Thanks for the comments. I will review them when I get a chance and respond.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi |   90 ++++++++++++++++++-------------------
- 1 file changed, 45 insertions(+), 45 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 7c53ae9..2e60c80 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -129,7 +129,7 @@
- 		compatible = "samsung,mfc-v7";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
--		clocks = <&clock CLK_MFC>;
-+		clocks = <&clock CLK_ACLK_MFC>;
- 		clock-names = "mfc";
- 	};
- 
-@@ -139,7 +139,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		reg = <0x12200000 0x2000>;
--		clocks = <&clock CLK_MMC0>, <&clock CLK_SCLK_MMC0>;
-+		clocks = <&clock CLK_ACLK_MMC0>, <&clock CLK_SCLK_MMC0>;
- 		clock-names = "biu", "ciu";
- 		fifo-depth = <0x40>;
- 		status = "disabled";
-@@ -151,7 +151,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		reg = <0x12210000 0x2000>;
--		clocks = <&clock CLK_MMC1>, <&clock CLK_SCLK_MMC1>;
-+		clocks = <&clock CLK_ACLK_MMC1>, <&clock CLK_SCLK_MMC1>;
- 		clock-names = "biu", "ciu";
- 		fifo-depth = <0x40>;
- 		status = "disabled";
-@@ -163,7 +163,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		reg = <0x12220000 0x1000>;
--		clocks = <&clock CLK_MMC2>, <&clock CLK_SCLK_MMC2>;
-+		clocks = <&clock CLK_ACLK_MMC2>, <&clock CLK_SCLK_MMC2>;
- 		clock-names = "biu", "ciu";
- 		fifo-depth = <0x40>;
- 		status = "disabled";
-@@ -177,7 +177,7 @@
- 		interrupt-parent = <&mct_map>;
- 		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
- 				<8>, <9>, <10>, <11>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_PCLK_MCT>;
- 		clock-names = "fin_pll", "mct";
- 
- 		mct_map: mct-map {
-@@ -271,7 +271,7 @@
- 	};
- 
- 	rtc@101E0000 {
--		clocks = <&clock CLK_RTC>;
-+		clocks = <&clock CLK_PCLK_RTC>;
- 		clock-names = "rtc";
- 		status = "okay";
- 	};
-@@ -287,7 +287,7 @@
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x121A0000 0x1000>;
- 			interrupts = <0 34 0>;
--			clocks = <&clock CLK_PDMA0>;
-+			clocks = <&clock CLK_ACLK_PDMA0>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
- 			#dma-channels = <8>;
-@@ -298,7 +298,7 @@
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x121B0000 0x1000>;
- 			interrupts = <0 35 0>;
--			clocks = <&clock CLK_PDMA1>;
-+			clocks = <&clock CLK_ACLK_PDMA1>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
- 			#dma-channels = <8>;
-@@ -309,7 +309,7 @@
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x10800000 0x1000>;
- 			interrupts = <0 33 0>;
--			clocks = <&clock CLK_MDMA0>;
-+			clocks = <&clock CLK_ACLK_MDMA0>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
- 			#dma-channels = <8>;
-@@ -320,7 +320,7 @@
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x11C10000 0x1000>;
- 			interrupts = <0 124 0>;
--			clocks = <&clock CLK_MDMA1>;
-+			clocks = <&clock CLK_ACLK_MDMA1>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
- 			#dma-channels = <8>;
-@@ -351,7 +351,7 @@
- 		dmas = <&pdma1 12
- 			&pdma1 11>;
- 		dma-names = "tx", "rx";
--		clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
-+		clocks = <&clock CLK_PCLK_I2S1>, <&clock CLK_SCLK_I2S1>;
- 		clock-names = "iis", "i2s_opclk0";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s1_bus>;
-@@ -364,7 +364,7 @@
- 		dmas = <&pdma0 12
- 			&pdma0 11>;
- 		dma-names = "tx", "rx";
--		clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
-+		clocks = <&clock CLK_PCLK_I2S2>, <&clock CLK_SCLK_I2S2>;
- 		clock-names = "iis", "i2s_opclk0";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s2_bus>;
-@@ -382,7 +382,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi0_bus>;
--		clocks = <&clock CLK_SPI0>, <&clock CLK_SCLK_SPI0>;
-+		clocks = <&clock CLK_PCLK_SPI0>, <&clock CLK_SCLK_SPI0>;
- 		clock-names = "spi", "spi_busclk0";
- 		status = "disabled";
- 	};
-@@ -398,7 +398,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi1_bus>;
--		clocks = <&clock CLK_SPI1>, <&clock CLK_SCLK_SPI1>;
-+		clocks = <&clock CLK_PCLK_SPI1>, <&clock CLK_SCLK_SPI1>;
- 		clock-names = "spi", "spi_busclk0";
- 		status = "disabled";
- 	};
-@@ -414,28 +414,28 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi2_bus>;
--		clocks = <&clock CLK_SPI2>, <&clock CLK_SCLK_SPI2>;
-+		clocks = <&clock CLK_PCLK_SPI2>, <&clock CLK_SCLK_SPI2>;
- 		clock-names = "spi", "spi_busclk0";
- 		status = "disabled";
- 	};
- 
- 	serial@12C00000 {
--		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+		clocks = <&clock CLK_PCLK_UART0>, <&clock CLK_SCLK_UART0>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
- 	serial@12C10000 {
--		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+		clocks = <&clock CLK_PCLK_UART1>, <&clock CLK_SCLK_UART1>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
- 	serial@12C20000 {
--		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+		clocks = <&clock CLK_PCLK_UART2>, <&clock CLK_SCLK_UART2>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
- 	serial@12C30000 {
--		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-+		clocks = <&clock CLK_PCLK_UART3>, <&clock CLK_SCLK_UART3>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
-@@ -444,7 +444,7 @@
- 		reg = <0x12dd0000 0x100>;
- 		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
- 		#pwm-cells = <3>;
--		clocks = <&clock CLK_PWM>;
-+		clocks = <&clock CLK_PCLK_PWM>;
- 		clock-names = "timers";
- 	};
- 
-@@ -455,7 +455,7 @@
- 	};
- 
- 	dp-controller@145B0000 {
--		clocks = <&clock CLK_DP1>;
-+		clocks = <&clock CLK_PCLK_DP1>;
- 		clock-names = "dp";
- 		phys = <&dp_phy>;
- 		phy-names = "dp";
-@@ -463,7 +463,7 @@
- 
- 	fimd@14400000 {
- 		samsung,power-domain = <&disp_pd>;
--		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
-+		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_ACLK_FIMD1>;
- 		clock-names = "sclk_fimd", "fimd";
- 	};
- 
-@@ -471,7 +471,7 @@
- 		compatible = "samsung,exynos-adc-v2";
- 		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
- 		interrupts = <0 106 0>;
--		clocks = <&clock CLK_TSADC>;
-+		clocks = <&clock CLK_PCLK_TSADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-@@ -484,7 +484,7 @@
- 		interrupts = <0 56 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&clock CLK_I2C0>;
-+		clocks = <&clock CLK_PCLK_I2C0>;
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c0_bus>;
-@@ -497,7 +497,7 @@
- 		interrupts = <0 57 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&clock CLK_I2C1>;
-+		clocks = <&clock CLK_PCLK_I2C1>;
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c1_bus>;
-@@ -510,7 +510,7 @@
- 		interrupts = <0 58 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&clock CLK_I2C2>;
-+		clocks = <&clock CLK_PCLK_I2C2>;
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c2_bus>;
-@@ -523,7 +523,7 @@
- 		interrupts = <0 59 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&clock CLK_I2C3>;
-+		clocks = <&clock CLK_PCLK_I2C3>;
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c3_bus>;
-@@ -538,7 +538,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c4_hs_bus>;
--		clocks = <&clock CLK_I2C4>;
-+		clocks = <&clock CLK_PCLK_USI0>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -551,7 +551,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c5_hs_bus>;
--		clocks = <&clock CLK_I2C5>;
-+		clocks = <&clock CLK_PCLK_USI1>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -564,7 +564,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c6_hs_bus>;
--		clocks = <&clock CLK_I2C6>;
-+		clocks = <&clock CLK_PCLK_USI2>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -577,7 +577,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c7_hs_bus>;
--		clocks = <&clock CLK_I2C7>;
-+		clocks = <&clock CLK_PCLK_USI3>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -590,7 +590,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c8_hs_bus>;
--		clocks = <&clock CLK_I2C8>;
-+		clocks = <&clock CLK_PCLK_USI4>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -603,7 +603,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c9_hs_bus>;
--		clocks = <&clock CLK_I2C9>;
-+		clocks = <&clock CLK_PCLK_USI5>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -616,7 +616,7 @@
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c10_hs_bus>;
--		clocks = <&clock CLK_I2C10>;
-+		clocks = <&clock CLK_PCLK_USI6>;
- 		clock-names = "hsi2c";
- 		status = "disabled";
- 	};
-@@ -625,7 +625,7 @@
- 		compatible = "samsung,exynos4212-hdmi";
- 		reg = <0x14530000 0x70000>;
- 		interrupts = <0 95 0>;
--		clocks = <&clock CLK_HDMI>, <&clock CLK_SCLK_HDMI>,
-+		clocks = <&clock CLK_PCLK_HDMI>, <&clock CLK_SCLK_HDMI>,
- 			 <&clock CLK_DOUT_PIXEL>, <&clock CLK_SCLK_HDMIPHY>,
- 			 <&clock CLK_MOUT_HDMI>;
- 		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
-@@ -637,7 +637,7 @@
- 		compatible = "samsung,exynos5420-mixer";
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
--		clocks = <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>;
-+		clocks = <&clock CLK_ACLK_MIXER>, <&clock CLK_SCLK_HDMI>;
- 		clock-names = "mixer", "sclk_hdmi";
- 	};
- 
-@@ -645,7 +645,7 @@
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e00000 0x1000>;
- 		interrupts = <0 85 0>;
--		clocks = <&clock CLK_GSCL0>;
-+		clocks = <&clock CLK_ACLK_GSCL0>;
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
- 	};
-@@ -654,7 +654,7 @@
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e10000 0x1000>;
- 		interrupts = <0 86 0>;
--		clocks = <&clock CLK_GSCL1>;
-+		clocks = <&clock CLK_ACLK_GSCL1>;
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
- 	};
-@@ -668,7 +668,7 @@
- 		compatible = "samsung,exynos5420-tmu";
- 		reg = <0x10060000 0x100>;
- 		interrupts = <0 65 0>;
--		clocks = <&clock CLK_TMU>;
-+		clocks = <&clock CLK_PCLK_TMU>;
- 		clock-names = "tmu_apbif";
- 	};
- 
-@@ -676,7 +676,7 @@
- 		compatible = "samsung,exynos5420-tmu";
- 		reg = <0x10064000 0x100>;
- 		interrupts = <0 183 0>;
--		clocks = <&clock CLK_TMU>;
-+		clocks = <&clock CLK_PCLK_TMU>;
- 		clock-names = "tmu_apbif";
- 	};
- 
-@@ -684,7 +684,7 @@
- 		compatible = "samsung,exynos5420-tmu-ext-triminfo";
- 		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
- 		interrupts = <0 184 0>;
--		clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
-+		clocks = <&clock CLK_PCLK_TMU>, <&clock CLK_PCLK_TMU>;
- 		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
- 	};
- 
-@@ -692,7 +692,7 @@
- 		compatible = "samsung,exynos5420-tmu-ext-triminfo";
- 		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
- 		interrupts = <0 185 0>;
--		clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
-+		clocks = <&clock CLK_PCLK_TMU>, <&clock CLK_PCLK_TMU_GPU>;
- 		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
- 	};
- 
-@@ -700,7 +700,7 @@
- 		compatible = "samsung,exynos5420-tmu-ext-triminfo";
- 		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
- 		interrupts = <0 215 0>;
--		clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
-+		clocks = <&clock CLK_PCLK_TMU_GPU>, <&clock CLK_PCLK_TMU>;
- 		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
- 	};
- 
-@@ -708,7 +708,7 @@
- 		compatible = "samsung,exynos5420-wdt";
- 		reg = <0x101D0000 0x100>;
- 		interrupts = <0 42 0>;
--		clocks = <&clock CLK_WDT>;
-+		clocks = <&clock CLK_PCLK_WDT>;
- 		clock-names = "watchdog";
- 		samsung,syscon-phandle = <&pmu_system_controller>;
-         };
-@@ -717,7 +717,7 @@
- 		compatible = "samsung,exynos4210-secss";
- 		reg = <0x10830000 0x10000>;
- 		interrupts = <0 112 0>;
--		clocks = <&clock 471>;
-+		clocks = <&clock CLK_ACLK_SSS>;
- 		clock-names = "secss";
- 		samsung,power-domain = <&g2d_pd>;
- 	};
--- 
-1.7.9.5
+Murali Karicheri
+Linux Kernel, Software Development
