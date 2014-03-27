@@ -1,108 +1,57 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH] mmc: dw_mmc: Make sure we don't get stuck when we get an error
-Date: Thu, 27 Mar 2014 11:48:46 +0530
-Message-ID: <1395901126-6141-1-git-send-email-yuvaraj.cd@samsung.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, tgih.jun@samsung.com, linux-mmc@vger.kernel.org, sonnyrao@chromium.org, kgene.kim@samsung.com, joshi@samsung.com
-Cc: t.figa@samsung.com, Doug Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH 0/4] devfreq: exynos: generalize PPMU code
+Date: Thu, 27 Mar 2014 10:08:09 +0000 (GMT)
+Message-ID: <14716616.146541395914888684.JavaMail.weblogic@epml10>
+Reply-To: myungjoo.ham@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?euc-kr?Q?=C3=D6=C2=F9=BF=EC?= <cw00.choi@samsung.com>
+Cc: =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Doug Anderson <dianders@chromium.org>
+DQoNCk9uIFNhdCwgTWFyIDIyLCAyMDE0IGF0IDI6MzEgQU0sIEJhcnRsb21pZWogWm9sbmllcmtp
+ZXdpY3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4gd3JvdGU6DQo+IEhpLA0KPg0KPiBUaGlz
+IHBhdGNoIHNlcmllcyBnZW5lcmFsaXplcyBQUE1VIHN1cHBvcnQgZm9yIEV4eW5vcyBkZXZmcmVx
+DQo+IGRyaXZlcnMuDQo+DQo+IEl0IGlzIGJhc2VkIG9uIHRvcCBvZiAiZGV2ZnJlcTogZXh5bm9z
+OiBGaXggbWlub3IgaXNzdWUgYW5kIGNvZGUNCj4gY2xlYW4gdG8gcmVtb3ZlIGxlZ2FjeSBtZXRo
+b2QiIHBhdGNoIHNlcmllcyBmcm9tIENoYW53b28gQ2hvaQ0KPiAoaHR0cHM6Ly9sa21sLm9yZy9s
+a21sLzIwMTQvMy8xOS83MTMpLg0KPg0KPiBQbGVhc2Ugbm90ZSB0aGF0IHRoZSBwYXRjaGVzIHdl
+cmUgb25seSBjb21waWxlIHRlc3RlZCBiZWNhdXNlDQo+IEV4eW5vcyBkZXZmcmVxIGRyaXZlcnMg
+ZG9uJ3Qgd29yayB5ZXQgaW4gdGhlIHVwc3RyZWFtIGtlcm5lbHMNCj4gKEZXSVcgdGhlc2UgY2hh
+bmdlcyB3ZXJlIGJyaWVmbHkgdGVzdGVkIHdpdGggdGhlIGludGVybmFsIHRyZWUNCj4gd2hpY2gg
+aGFzIHdvcmtpbmcgZGV2ZnJlcSBkcml2ZXJzKS4NCg0KSGkgQmxhcnRsb21pZWosDQoNCg0KVGhh
+bmsgeW91Lg0KDQpJJ2xsIG1lcmdlIHRoaXMgaW50byBkZXZmcmVxJ3MgZm9yLW5leHQuDQoNCg0K
+QW55d2F5LCBkYXlzIGFnbywgSSBoYWQgYSBzaG9ydCBkaXNjdXNzaW9uIHdpdGggQ2hhbndvbyBh
+Ym91dA0KcHJvdmlkaW5nIHNvbWUgY29tbW9uIGludGVyZmFjZSBmb3IgUFBNVS1saWtlIGRldmlj
+ZXMNCihzb3J0IG9mIHN1YiBkZXZpY2Ugb2YgZGV2ZnJlcSBkZXZpY2UpIHRoYXQgcHJvdmlkZSB1
+c2FnZSBzdGF0aXN0aWNzLiANCg0KQXQgdGhpcyBzdGFnZSwgSSByb3VnaGx5IGd1ZXNzIHRoYXQg
+c3VjaCBhIGRldmljZSBkcml2ZXIgKG9yIHdoYXRldmVyDQplbnRpdHkgaXQgaXMpIG1heSBiZSBz
+aW1wbHkgYSBoZWxwZXIgZm9yIGZpbGxpbmcgb3V0IHRoZSAiZ2V0X2Rldl9zdGF0dXMiIGNhbGxi
+YWNrLg0KSXQgaXMgYmVjYXVzZSBkZXZmcmVxJ3MgUFBNVSB1c2FnZSBpcyBsaW1pdGVkIHRvIGdl
+dHRpbmcgZ2V0X2Rldl9zdGF0dXMoKS4NCkFzIHlvdSBoYWQgZG9uZSBzb21ldGhpbmcgb24gUFBN
+VSwgSSBndWVzcyB5b3UgbWF5IGhhdmUgc29tZQ0KaWRlYSBvbiB0aGlzLg0KDQpDaGVlcnMsDQpN
+eXVuZ0pvby4NCj4NCj4gQmVzdCByZWdhcmRzLA0KPiAtLQ0KPiBCYXJ0bG9taWVqIFpvbG5pZXJr
+aWV3aWN6DQo+IFNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQNCj4gU2Ftc3VuZyBFbGVjdHJv
+bmljcw0KPg0KPg0KPiBCYXJ0bG9taWVqIFpvbG5pZXJraWV3aWN6ICgzKToNCj4gICBkZXZmcmVx
+OiBleHlub3M0OiBpbnRyb2R1Y2Ugc3RydWN0IGJ1c2ZyZXFfcHBtdV9kYXRhDQo+ICAgZGV2ZnJl
+cTogZXh5bm9zNTogaW50cm9kdWNlIHN0cnVjdCBidXNmcmVxX3BwbXVfZGF0YQ0KPiAgIGRldmZy
+ZXE6IGV4eW5vczogbWFrZSBtb3JlIFBQTVUgY29kZSBjb21tb24NCj4NCj4gQ2hhbndvbyBDaG9p
+ICgxKToNCj4gICBkZXZmcmVxOiBleHlub3M0OiB1c2UgY29tbW9uIFBQTVUgY29kZQ0KPg0KPiAg
+ZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9NYWtlZmlsZSAgICAgIHwgICAyICstDQo+ICBkcml2ZXJz
+L2RldmZyZXEvZXh5bm9zL2V4eW5vczRfYnVzLmMgfCAxNzYgKysrKysrKysrLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0NCj4gIGRyaXZlcnMvZGV2ZnJlcS9leHlub3MvZXh5bm9zNV9idXMuYyB8
+ICA5NCArKysrKy0tLS0tLS0tLS0tLS0tDQo+ICBkcml2ZXJzL2RldmZyZXEvZXh5bm9zL2V4eW5v
+c19wcG11LmMgfCAgNjAgKysrKysrKysrKysrDQo+ICBkcml2ZXJzL2RldmZyZXEvZXh5bm9zL2V4
+eW5vc19wcG11LmggfCAgIDggKysNCj4gIDUgZmlsZXMgY2hhbmdlZCwgMTM1IGluc2VydGlvbnMo
+KyksIDIwNSBkZWxldGlvbnMoLSkNCj4NCj4gLS0NCj4gMS44LjIuMw0KPg0KPiAtLQ0KPiBUbyB1
+bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGlu
+dXgtcG0iIGluDQo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
+ZWwub3JnDQo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcv
+bWFqb3Jkb21vLWluZm8uaHRtbA0KDQoNCg0KLS0gDQpNeXVuZ0pvbyBIYW0sIFBoLkQuDQpTeXN0
+ZW0gUy9XIExhYiwgUy9XIENlbnRlciwgU2Ftc3VuZyBFbGVjdHJvbmljcw0KIA==
 
-If we happened to get a data error at just the wrong time the dw_mmc
-driver could get into a state where it would never complete its
-request.  That would leave the caller just hanging there.
-
-We fix this two ways and both of the two fixes on their own appear to
-fix the problems we've seen:
-
-1. Fix a race in the tasklet where the interrupt setting the data
-   error happens _just after_ we check for it, then we get a
-   EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
-2. Fix it so that if we detect that we've got an error in the "data
-   busy" state and we're not going to do anything else we end the
-   request and unblock anyone waiting.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
----
- drivers/mmc/host/dw_mmc.c |   47 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
-
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 1d77431..4c589f1 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1300,6 +1300,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
- 			/* fall through */
- 
- 		case STATE_SENDING_DATA:
-+			/*
-+			 * We could get a data error and never a transfer
-+			 * complete so we'd better check for it here.
-+			 *
-+			 * Note that we don't really care if we also got a
-+			 * transfer complete; stopping the DMA and sending an
-+			 * abort won't hurt.
-+			 */
- 			if (test_and_clear_bit(EVENT_DATA_ERROR,
- 					       &host->pending_events)) {
- 				dw_mci_stop_dma(host);
-@@ -1313,7 +1321,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
- 				break;
- 
- 			set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
-+
-+			/*
-+			 * Handle an EVENT_DATA_ERROR that might have shown up
-+			 * before the transfer completed.  This might not have
-+			 * been caught by the check above because the interrupt
-+			 * could have gone off between the previous check and
-+			 * the check for transfer complete.
-+			 *
-+			 * Technically this ought not be needed assuming we
-+			 * get a DATA_COMPLETE eventually (we'll notice the
-+			 * error and end the request), but it shouldn't hurt.
-+			 *
-+			 * This has the advantage of sending the stop command.
-+			 */
-+			if (test_and_clear_bit(EVENT_DATA_ERROR,
-+					       &host->pending_events)) {
-+				dw_mci_stop_dma(host);
-+				send_stop_abort(host, data);
-+				state = STATE_DATA_ERROR;
-+				break;
-+			}
- 			prev_state = state = STATE_DATA_BUSY;
-+
- 			/* fall through */
- 
- 		case STATE_DATA_BUSY:
-@@ -1336,6 +1366,23 @@ static void dw_mci_tasklet_func(unsigned long priv)
- 				/* stop command for open-ended transfer*/
- 				if (data->stop)
- 					send_stop_abort(host, data);
-+			} else {
-+				/*
-+				 * If we don't have a command complete now we'll
-+				 * never get one since we just reset everything;
-+				 * better end the request.
-+				 *
-+				 * If we do have a command complete we'll fall
-+				 * through to the SENDING_STOP command and
-+				 * everything will be peachy keen.
-+				 *
-+				 * TODO: I guess we shouldn't send a stop?
-+				 */
-+				if (!test_bit(EVENT_CMD_COMPLETE,
-+					      &host->pending_events)) {
-+					dw_mci_request_end(host, mrq);
-+					goto unlock;
-+				}
- 			}
- 
- 			/*
--- 
-1.7.10.4
 
