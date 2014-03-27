@@ -1,32 +1,52 @@
-From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
-Subject: Re: Re: [PATCHv4 0/5] devfreq: exynos: Fix minor issue and code clean
- to remove legacy method
-Date: Thu, 27 Mar 2014 10:52:19 +0000 (GMT)
-Message-ID: <2623633.147631395917538263.JavaMail.weblogic@epml10>
-Reply-To: myungjoo.ham@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?euc-kr?Q?=C3=D6=C2=F9=BF=EC?= <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, Tomasz Figa <t.figa@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v2 0/7] exynos5420: clock file cleanup
+Date: Thu, 27 Mar 2014 16:37:43 +0530
+Message-ID: <1395918470-16374-1-git-send-email-shaik.ameer@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:40894 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755221AbaC0LH4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Mar 2014 07:07:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-DQpPbiBNb24sIE1hciAyNCwgMjAxNCBhdCAxMDozNiBBTSwgQ2hhbndvbyBDaG9pIDxjdzAwLmNo
-b2lAc2Ftc3VuZy5jb20+IHdyb3RlOg0KPiBIaSBUb21hc3osDQo+DQo+IE9uIDAzLzIyLzIwMTQg
-MTE6NTIgUE0sIFRvbWFzeiBGaWdhIHdyb3RlOg0KPj4gSGksDQo+Pg0KPj4gW2ZpeGluZyBtaXN0
-eXBlZCBhZGRyZXNzZXMgb2YgbWUgYW5kIEJhcnRsb21pZWpdDQo+Pg0KPj4gT24gMjAuMDMuMjAx
-NCAwMzo1OSwgQ2hhbndvbyBDaG9pIHdyb3RlOg0KPj4+IFRoaXMgcGF0Y2hzZXQgdXNlIFNJTVBM
-RV9ERVZfUE1fT1BTIG1hY3JvIGludGVhZCBvZiBsZWdhY3kgbWV0aG9kIGFuZCBmaXgNCj4+PiBw
-cm9iZSBmYWlsIGlmIENPTkZJR19QTV9PUFAgaXMgZGlzYWJsZWQuIEFsc28sIHRoaXMgcGF0Y2hz
-ZXQgZml4IG1pbm9yIGlzc3VlLg0KPj4+DQo+Pg0KPj4gUmV2aWV3ZWQtYnk6IFRvbWFzeiBGaWdh
-IDx0LmZpZ2FAc2Ftc3VuZy5jb20+DQo+Pg0KPg0KPiBUaGFua3MgZm9yIHlvdXIgcmV2aWV3IGFs
-d2F5cy4NCj4NCj4gQmVzdCBSZWdhcmRzLA0KPiBDaGFud29vIENob2kNCj4NCg0KQXBwbGllZC9N
-ZXJnZWQuDQoNCg0KPiAtLQ0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0
-aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluDQo+IHRoZSBib2R5IG9m
-IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0KDQoN
-Cg0KLS0gDQpNeXVuZ0pvbyBIYW0sIFBoLkQuDQpTeXN0ZW0gUy9XIExhYiwgUy9XIENlbnRlciwg
-U2Ftc3VuZyBFbGVjdHJvbmljcw0KIA==
+Many changes/fixes have been identified for clock file for exynos5420.
+These include correct parents, bit fields, new clocks etc. Existing
+files needs some correction in terms of names of the clock and
+indentation. These issues are addressed in this patch series. It also
+replaces the usage of enums with macro as clock ids.
+
+This patch series is rebased on,
+git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git:samsung-next
+
+This patch is also dependent on the following patches.
+ARM: dts: Add I2S nodes to exynos5420
+ARM: dts: add dt node for sss module for exynos5250/5420
+ARM: dts: update watchdog device nodes for exynos5250 and exynos5420
+ARM: dts: use macros in clock bindings for exynos5420
+
+Changes since v1:
+-----------------
+1] Addressed review comments from Tomasz Figa.
+    http://www.spinics.net/lists/devicetree/msg16759.html
+    http://www.spinics.net/lists/devicetree/msg16760.html
+
+Rahul Sharma (7):
+  clk: exynos5420: Add more clock register offsets
+  clk: exynos5420: Add more clock IDs
+  clk: exynos5420: Rename clock IDs
+  clk: exynos5420: Rename clock names
+  clk: exynos5420: Add missing clocks
+  clk: exynos5420: Add more registers to restore list
+  ARM: dts: update macros in clock bindings for exynos5420
+
+ arch/arm/boot/dts/exynos5420.dtsi      |   90 +--
+ drivers/clk/samsung/clk-exynos5420.c   | 1029 +++++++++++++++++++++-----------
+ include/dt-bindings/clock/exynos5420.h |  214 ++++---
+ 3 files changed, 871 insertions(+), 462 deletions(-)
+
+-- 
+1.7.9.5
