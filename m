@@ -1,89 +1,141 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v3 07/12] drm/panel: add S6E8AA0 driver
-Date: Fri, 28 Mar 2014 12:52:42 +0100
-Message-ID: <1396007567-4015-8-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 05/12] drm/exynos: add DSIM driver
+Date: Fri, 28 Mar 2014 12:52:40 +0100
+Message-ID: <1396007567-4015-6-git-send-email-a.hajda@samsung.com>
 References: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1396007567-4015-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds MIPI-DSI based S6E8AA0 AMOLED LCD panel driver.
-Driver uses mipi_dsi bus to communicate with panel and exposes drm_panel
-interface.
+The patch adds driver for Exynos DSI master (DSIM). It is a platform driver
+which is registered as exynos_drm_display sub-driver of exynos_drm framework
+and implements DRM encoder/connector pair.
+It is also MIPI-DSI host driver and provides DSI bus for panels.
+It interacts with its panel(s) using drm_panel framework.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
-v2
-- added bus error handling,
-- set maxmimum DSI packet size on init,
-- removed unsupported brightness drm_panel callbacks,
-- minor improvements
+v2:
+- add support for DSI message flags,
+- add support for new DT properties,
+- remove brightness DRM property,
+- corrected PM handlers,
+- minor fixes/improvements
 
-v3
-- switched to gpiod framework,
-- minor fixes in error handling
+v3:
+- panel attach/detach moved to connector detect callback,
+- improved error handling,
+- removed exynos_drm_initialize callback,
+- added video interface handling,
+- moved dsi clock properties to dsi endpoint
 ---
- drivers/gpu/drm/panel/Kconfig         |    7 +
- drivers/gpu/drm/panel/Makefile        |    1 +
- drivers/gpu/drm/panel/panel-s6e8aa0.c | 1069 +++++++++++++++++++++++++++++++++
- 3 files changed, 1077 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-s6e8aa0.c
+ drivers/gpu/drm/exynos/Kconfig          |    9 +
+ drivers/gpu/drm/exynos/Makefile         |    1 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |   15 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1525 +++++++++++++++++++++++++++++++
+ 5 files changed, 1551 insertions(+)
+ create mode 100644 drivers/gpu/drm/exynos/exynos_drm_dsi.c
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index f0fcb62..4ec874d 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -23,4 +23,11 @@ config DRM_PANEL_LD9040
- 	select SPI
- 	select VIDEOMODE_HELPERS
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 56f9581..5bf5bca 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -39,6 +39,15 @@ config DRM_EXYNOS_DPI
+ 	help
+ 	  This enables support for Exynos parallel output.
  
-+config DRM_PANEL_S6E8AA0
-+	tristate "S6E8AA0 DSI video mode panel"
-+	depends on DRM && DRM_PANEL
-+	depends on OF
++config DRM_EXYNOS_DSI
++	bool "EXYNOS DRM MIPI-DSI driver support"
++	depends on DRM_EXYNOS
 +	select DRM_MIPI_DSI
-+	select VIDEOMODE_HELPERS
++	select DRM_PANEL
++	default n
++	help
++	  This enables support for Exynos MIPI-DSI device.
 +
- endmenu
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 4f7dfce..8b92921 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
- obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
-+obj-$(CONFIG_DRM_PANEL_S6E8AA0) += panel-s6e8aa0.o
-diff --git a/drivers/gpu/drm/panel/panel-s6e8aa0.c b/drivers/gpu/drm/panel/panel-s6e8aa0.c
+ config DRM_EXYNOS_DP
+ 	bool "EXYNOS DRM DP driver support"
+ 	depends on DRM_EXYNOS && ARCH_EXYNOS
+diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+index babcd52..33ae365 100644
+--- a/drivers/gpu/drm/exynos/Makefile
++++ b/drivers/gpu/drm/exynos/Makefile
+@@ -12,6 +12,7 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_DMABUF) += exynos_drm_dmabuf.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_DPI)	+= exynos_drm_dpi.o
++exynosdrm-$(CONFIG_DRM_EXYNOS_DSI)	+= exynos_drm_dsi.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_DP)	+= exynos_dp_core.o exynos_dp_reg.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_HDMI)	+= exynos_hdmi.o exynos_mixer.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_VIDI)	+= exynos_drm_vidi.o
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 771c87e..2d27ba2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -450,6 +450,12 @@ static int __init exynos_drm_init(void)
+ 		goto out_dp;
+ #endif
+ 
++#ifdef CONFIG_DRM_EXYNOS_DSI
++	ret = platform_driver_register(&dsi_driver);
++	if (ret < 0)
++		goto out_dsi;
++#endif
++
+ #ifdef CONFIG_DRM_EXYNOS_FIMD
+ 	ret = platform_driver_register(&fimd_driver);
+ 	if (ret < 0)
+@@ -566,6 +572,11 @@ out_hdmi:
+ out_fimd:
+ #endif
+ 
++#ifdef CONFIG_DRM_EXYNOS_DSI
++	platform_driver_unregister(&dsi_driver);
++out_dsi:
++#endif
++
+ #ifdef CONFIG_DRM_EXYNOS_DP
+ 	platform_driver_unregister(&dp_driver);
+ out_dp:
+@@ -613,6 +624,10 @@ static void __exit exynos_drm_exit(void)
+ 	platform_driver_unregister(&fimd_driver);
+ #endif
+ 
++#ifdef CONFIG_DRM_EXYNOS_DSI
++	platform_driver_unregister(&dsi_driver);
++#endif
++
+ #ifdef CONFIG_DRM_EXYNOS_DP
+ 	platform_driver_unregister(&dp_driver);
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 2d892f3..4c5cf68 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -370,6 +370,7 @@ static inline int exynos_dpi_remove(struct device *dev) { return 0; }
+ #endif
+ 
+ extern struct platform_driver dp_driver;
++extern struct platform_driver dsi_driver;
+ extern struct platform_driver fimd_driver;
+ extern struct platform_driver hdmi_driver;
+ extern struct platform_driver mixer_driver;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 new file mode 100644
-index 0000000..35941d2
+index 0000000..697228e
 --- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-@@ -0,0 +1,1069 @@
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -0,0 +1,1525 @@
 +/*
-+ * MIPI-DSI based s6e8aa0 AMOLED LCD 5.3 inch panel driver.
++ * Samsung SoC MIPI DSI Master driver.
 + *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd
 + *
-+ * Inki Dae, <inki.dae@samsung.com>
-+ * Donghwa Lee, <dh09.lee@samsung.com>
-+ * Joongmock Shin <jmock.shin@samsung.com>
-+ * Eunchul Kim <chulspro.kim@samsung.com>
-+ * Tomasz Figa <t.figa@samsung.com>
-+ * Andrzej Hajda <a.hajda@samsung.com>
++ * Contacts: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
@@ -91,1056 +143,1522 @@ index 0000000..35941d2
 +*/
 +
 +#include <drm/drmP.h>
++#include <drm/drm_crtc_helper.h>
 +#include <drm/drm_mipi_dsi.h>
 +#include <drm/drm_panel.h>
 +
-+#include <linux/gpio/consumer.h>
++#include <linux/clk.h>
++#include <linux/irq.h>
++#include <linux/phy/phy.h>
 +#include <linux/regulator/consumer.h>
 +
 +#include <video/mipi_display.h>
-+#include <video/of_videomode.h>
 +#include <video/videomode.h>
 +
-+#define LDI_MTP_LENGTH			24
-+#define GAMMA_LEVEL_NUM			25
-+#define GAMMA_TABLE_LEN			26
++#include "exynos_drm_drv.h"
 +
-+#define PANELCTL_SS_MASK		(1 << 5)
-+#define PANELCTL_SS_1_800		(0 << 5)
-+#define PANELCTL_SS_800_1		(1 << 5)
-+#define PANELCTL_GTCON_MASK		(7 << 2)
-+#define PANELCTL_GTCON_110		(6 << 2)
-+#define PANELCTL_GTCON_111		(7 << 2)
++/* returns true iff both arguments logically differs */
++#define NEQV(a, b) (!(a) ^ !(b))
 +
-+#define PANELCTL_CLK1_CON_MASK		(7 << 3)
-+#define PANELCTL_CLK1_000		(0 << 3)
-+#define PANELCTL_CLK1_001		(1 << 3)
-+#define PANELCTL_CLK2_CON_MASK		(7 << 0)
-+#define PANELCTL_CLK2_000		(0 << 0)
-+#define PANELCTL_CLK2_001		(1 << 0)
++#define DSIM_STATUS_REG		0x0	/* Status register */
++#define DSIM_SWRST_REG		0x4	/* Software reset register */
++#define DSIM_CLKCTRL_REG	0x8	/* Clock control register */
++#define DSIM_TIMEOUT_REG	0xc	/* Time out register */
++#define DSIM_CONFIG_REG		0x10	/* Configuration register */
++#define DSIM_ESCMODE_REG	0x14	/* Escape mode register */
 +
-+#define PANELCTL_INT1_CON_MASK		(7 << 3)
-+#define PANELCTL_INT1_000		(0 << 3)
-+#define PANELCTL_INT1_001		(1 << 3)
-+#define PANELCTL_INT2_CON_MASK		(7 << 0)
-+#define PANELCTL_INT2_000		(0 << 0)
-+#define PANELCTL_INT2_001		(1 << 0)
++/* Main display image resolution register */
++#define DSIM_MDRESOL_REG	0x18
++#define DSIM_MVPORCH_REG	0x1c	/* Main display Vporch register */
++#define DSIM_MHPORCH_REG	0x20	/* Main display Hporch register */
++#define DSIM_MSYNC_REG		0x24	/* Main display sync area register */
 +
-+#define PANELCTL_BICTL_CON_MASK		(7 << 3)
-+#define PANELCTL_BICTL_000		(0 << 3)
-+#define PANELCTL_BICTL_001		(1 << 3)
-+#define PANELCTL_BICTLB_CON_MASK	(7 << 0)
-+#define PANELCTL_BICTLB_000		(0 << 0)
-+#define PANELCTL_BICTLB_001		(1 << 0)
++/* Sub display image resolution register */
++#define DSIM_SDRESOL_REG	0x28
++#define DSIM_INTSRC_REG		0x2c	/* Interrupt source register */
++#define DSIM_INTMSK_REG		0x30	/* Interrupt mask register */
++#define DSIM_PKTHDR_REG		0x34	/* Packet Header FIFO register */
++#define DSIM_PAYLOAD_REG	0x38	/* Payload FIFO register */
++#define DSIM_RXFIFO_REG		0x3c	/* Read FIFO register */
++#define DSIM_FIFOTHLD_REG	0x40	/* FIFO threshold level register */
++#define DSIM_FIFOCTRL_REG	0x44	/* FIFO status and control register */
 +
-+#define PANELCTL_EM_CLK1_CON_MASK	(7 << 3)
-+#define PANELCTL_EM_CLK1_110		(6 << 3)
-+#define PANELCTL_EM_CLK1_111		(7 << 3)
-+#define PANELCTL_EM_CLK1B_CON_MASK	(7 << 0)
-+#define PANELCTL_EM_CLK1B_110		(6 << 0)
-+#define PANELCTL_EM_CLK1B_111		(7 << 0)
++/* FIFO memory AC characteristic register */
++#define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
++#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
++#define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
++#define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
 +
-+#define PANELCTL_EM_CLK2_CON_MASK	(7 << 3)
-+#define PANELCTL_EM_CLK2_110		(6 << 3)
-+#define PANELCTL_EM_CLK2_111		(7 << 3)
-+#define PANELCTL_EM_CLK2B_CON_MASK	(7 << 0)
-+#define PANELCTL_EM_CLK2B_110		(6 << 0)
-+#define PANELCTL_EM_CLK2B_111		(7 << 0)
++/* DSIM_STATUS */
++#define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
++#define DSIM_STOP_STATE_CLK		(1 << 8)
++#define DSIM_TX_READY_HS_CLK		(1 << 10)
++#define DSIM_PLL_STABLE			(1 << 31)
 +
-+#define PANELCTL_EM_INT1_CON_MASK	(7 << 3)
-+#define PANELCTL_EM_INT1_000		(0 << 3)
-+#define PANELCTL_EM_INT1_001		(1 << 3)
-+#define PANELCTL_EM_INT2_CON_MASK	(7 << 0)
-+#define PANELCTL_EM_INT2_000		(0 << 0)
-+#define PANELCTL_EM_INT2_001		(1 << 0)
++/* DSIM_SWRST */
++#define DSIM_FUNCRST			(1 << 16)
++#define DSIM_SWRST			(1 << 0)
 +
-+#define AID_DISABLE			(0x4)
-+#define AID_1				(0x5)
-+#define AID_2				(0x6)
-+#define AID_3				(0x7)
++/* DSIM_TIMEOUT */
++#define DSIM_LPDR_TIMEOUT(x)		((x) << 0)
++#define DSIM_BTA_TIMEOUT(x)		((x) << 16)
 +
-+typedef u8 s6e8aa0_gamma_table[GAMMA_TABLE_LEN];
++/* DSIM_CLKCTRL */
++#define DSIM_ESC_PRESCALER(x)		(((x) & 0xffff) << 0)
++#define DSIM_ESC_PRESCALER_MASK		(0xffff << 0)
++#define DSIM_LANE_ESC_CLK_EN_CLK	(1 << 19)
++#define DSIM_LANE_ESC_CLK_EN_DATA(x)	(((x) & 0xf) << 20)
++#define DSIM_LANE_ESC_CLK_EN_DATA_MASK	(0xf << 20)
++#define DSIM_BYTE_CLKEN			(1 << 24)
++#define DSIM_BYTE_CLK_SRC(x)		(((x) & 0x3) << 25)
++#define DSIM_BYTE_CLK_SRC_MASK		(0x3 << 25)
++#define DSIM_PLL_BYPASS			(1 << 27)
++#define DSIM_ESC_CLKEN			(1 << 28)
++#define DSIM_TX_REQUEST_HSCLK		(1 << 31)
 +
-+struct s6e8aa0_variant {
-+	u8 version;
-+	const s6e8aa0_gamma_table *gamma_tables;
++/* DSIM_CONFIG */
++#define DSIM_LANE_EN_CLK		(1 << 0)
++#define DSIM_LANE_EN(x)			(((x) & 0xf) << 1)
++#define DSIM_NUM_OF_DATA_LANE(x)	(((x) & 0x3) << 5)
++#define DSIM_SUB_PIX_FORMAT(x)		(((x) & 0x7) << 8)
++#define DSIM_MAIN_PIX_FORMAT_MASK	(0x7 << 12)
++#define DSIM_MAIN_PIX_FORMAT_RGB888	(0x7 << 12)
++#define DSIM_MAIN_PIX_FORMAT_RGB666	(0x6 << 12)
++#define DSIM_MAIN_PIX_FORMAT_RGB666_P	(0x5 << 12)
++#define DSIM_MAIN_PIX_FORMAT_RGB565	(0x4 << 12)
++#define DSIM_SUB_VC			(((x) & 0x3) << 16)
++#define DSIM_MAIN_VC			(((x) & 0x3) << 18)
++#define DSIM_HSA_MODE			(1 << 20)
++#define DSIM_HBP_MODE			(1 << 21)
++#define DSIM_HFP_MODE			(1 << 22)
++#define DSIM_HSE_MODE			(1 << 23)
++#define DSIM_AUTO_MODE			(1 << 24)
++#define DSIM_VIDEO_MODE			(1 << 25)
++#define DSIM_BURST_MODE			(1 << 26)
++#define DSIM_SYNC_INFORM		(1 << 27)
++#define DSIM_EOT_DISABLE		(1 << 28)
++#define DSIM_MFLUSH_VS			(1 << 29)
++
++/* DSIM_ESCMODE */
++#define DSIM_TX_TRIGGER_RST		(1 << 4)
++#define DSIM_TX_LPDT_LP			(1 << 6)
++#define DSIM_CMD_LPDT_LP		(1 << 7)
++#define DSIM_FORCE_BTA			(1 << 16)
++#define DSIM_FORCE_STOP_STATE		(1 << 20)
++#define DSIM_STOP_STATE_CNT(x)		(((x) & 0x7ff) << 21)
++#define DSIM_STOP_STATE_CNT_MASK	(0x7ff << 21)
++
++/* DSIM_MDRESOL */
++#define DSIM_MAIN_STAND_BY		(1 << 31)
++#define DSIM_MAIN_VRESOL(x)		(((x) & 0x7ff) << 16)
++#define DSIM_MAIN_HRESOL(x)		(((x) & 0X7ff) << 0)
++
++/* DSIM_MVPORCH */
++#define DSIM_CMD_ALLOW(x)		((x) << 28)
++#define DSIM_STABLE_VFP(x)		((x) << 16)
++#define DSIM_MAIN_VBP(x)		((x) << 0)
++#define DSIM_CMD_ALLOW_MASK		(0xf << 28)
++#define DSIM_STABLE_VFP_MASK		(0x7ff << 16)
++#define DSIM_MAIN_VBP_MASK		(0x7ff << 0)
++
++/* DSIM_MHPORCH */
++#define DSIM_MAIN_HFP(x)		((x) << 16)
++#define DSIM_MAIN_HBP(x)		((x) << 0)
++#define DSIM_MAIN_HFP_MASK		((0xffff) << 16)
++#define DSIM_MAIN_HBP_MASK		((0xffff) << 0)
++
++/* DSIM_MSYNC */
++#define DSIM_MAIN_VSA(x)		((x) << 22)
++#define DSIM_MAIN_HSA(x)		((x) << 0)
++#define DSIM_MAIN_VSA_MASK		((0x3ff) << 22)
++#define DSIM_MAIN_HSA_MASK		((0xffff) << 0)
++
++/* DSIM_SDRESOL */
++#define DSIM_SUB_STANDY(x)		((x) << 31)
++#define DSIM_SUB_VRESOL(x)		((x) << 16)
++#define DSIM_SUB_HRESOL(x)		((x) << 0)
++#define DSIM_SUB_STANDY_MASK		((0x1) << 31)
++#define DSIM_SUB_VRESOL_MASK		((0x7ff) << 16)
++#define DSIM_SUB_HRESOL_MASK		((0x7ff) << 0)
++
++/* DSIM_INTSRC */
++#define DSIM_INT_PLL_STABLE		(1 << 31)
++#define DSIM_INT_SW_RST_RELEASE		(1 << 30)
++#define DSIM_INT_SFR_FIFO_EMPTY		(1 << 29)
++#define DSIM_INT_BTA			(1 << 25)
++#define DSIM_INT_FRAME_DONE		(1 << 24)
++#define DSIM_INT_RX_TIMEOUT		(1 << 21)
++#define DSIM_INT_BTA_TIMEOUT		(1 << 20)
++#define DSIM_INT_RX_DONE		(1 << 18)
++#define DSIM_INT_RX_TE			(1 << 17)
++#define DSIM_INT_RX_ACK			(1 << 16)
++#define DSIM_INT_RX_ECC_ERR		(1 << 15)
++#define DSIM_INT_RX_CRC_ERR		(1 << 14)
++
++/* DSIM_FIFOCTRL */
++#define DSIM_RX_DATA_FULL		(1 << 25)
++#define DSIM_RX_DATA_EMPTY		(1 << 24)
++#define DSIM_SFR_HEADER_FULL		(1 << 23)
++#define DSIM_SFR_HEADER_EMPTY		(1 << 22)
++#define DSIM_SFR_PAYLOAD_FULL		(1 << 21)
++#define DSIM_SFR_PAYLOAD_EMPTY		(1 << 20)
++#define DSIM_I80_HEADER_FULL		(1 << 19)
++#define DSIM_I80_HEADER_EMPTY		(1 << 18)
++#define DSIM_I80_PAYLOAD_FULL		(1 << 17)
++#define DSIM_I80_PAYLOAD_EMPTY		(1 << 16)
++#define DSIM_SD_HEADER_FULL		(1 << 15)
++#define DSIM_SD_HEADER_EMPTY		(1 << 14)
++#define DSIM_SD_PAYLOAD_FULL		(1 << 13)
++#define DSIM_SD_PAYLOAD_EMPTY		(1 << 12)
++#define DSIM_MD_HEADER_FULL		(1 << 11)
++#define DSIM_MD_HEADER_EMPTY		(1 << 10)
++#define DSIM_MD_PAYLOAD_FULL		(1 << 9)
++#define DSIM_MD_PAYLOAD_EMPTY		(1 << 8)
++#define DSIM_RX_FIFO			(1 << 4)
++#define DSIM_SFR_FIFO			(1 << 3)
++#define DSIM_I80_FIFO			(1 << 2)
++#define DSIM_SD_FIFO			(1 << 1)
++#define DSIM_MD_FIFO			(1 << 0)
++
++/* DSIM_PHYACCHR */
++#define DSIM_AFC_EN			(1 << 14)
++#define DSIM_AFC_CTL(x)			(((x) & 0x7) << 5)
++
++/* DSIM_PLLCTRL */
++#define DSIM_FREQ_BAND(x)		((x) << 24)
++#define DSIM_PLL_EN			(1 << 23)
++#define DSIM_PLL_P(x)			((x) << 13)
++#define DSIM_PLL_M(x)			((x) << 4)
++#define DSIM_PLL_S(x)			((x) << 1)
++
++#define DSI_MAX_BUS_WIDTH		4
++#define DSI_NUM_VIRTUAL_CHANNELS	4
++#define DSI_TX_FIFO_SIZE		2048
++#define DSI_RX_FIFO_SIZE		256
++#define DSI_XFER_TIMEOUT_MS		100
++#define DSI_RX_FIFO_EMPTY		0x30800002
++
++enum exynos_dsi_transfer_type {
++	EXYNOS_DSI_TX,
++	EXYNOS_DSI_RX,
 +};
 +
-+struct s6e8aa0 {
++struct exynos_dsi_transfer {
++	struct list_head list;
++	struct completion completed;
++	int result;
++	u8 data_id;
++	u8 data[2];
++	u16 flags;
++
++	const u8 *tx_payload;
++	u16 tx_len;
++	u16 tx_done;
++
++	u8 *rx_payload;
++	u16 rx_len;
++	u16 rx_done;
++};
++
++#define DSIM_STATE_ENABLED		BIT(0)
++#define DSIM_STATE_INITIALIZED		BIT(1)
++#define DSIM_STATE_CMD_LPM		BIT(2)
++
++struct exynos_dsi {
++	struct mipi_dsi_host dsi_host;
++	struct drm_connector connector;
++	struct drm_encoder *encoder;
++	struct device_node *panel_node;
++	struct drm_panel *panel;
 +	struct device *dev;
-+	struct drm_panel panel;
 +
++	void __iomem *reg_base;
++	struct phy *phy;
++	struct clk *pll_clk;
++	struct clk *bus_clk;
 +	struct regulator_bulk_data supplies[2];
-+	struct gpio_desc *reset_gpio;
-+	u32 power_on_delay;
-+	u32 reset_delay;
-+	u32 init_delay;
-+	bool flip_horizontal;
-+	bool flip_vertical;
++	int irq;
++
++	u32 pll_clk_rate;
++	u32 burst_clk_rate;
++	u32 esc_clk_rate;
++	u32 lanes;
++	u32 mode_flags;
++	u32 format;
 +	struct videomode vm;
-+	u32 width_mm;
-+	u32 height_mm;
 +
-+	u8 version;
-+	u8 id;
-+	const struct s6e8aa0_variant *variant;
-+	int brightness;
++	int state;
++	struct drm_property *brightness;
++	struct completion completed;
 +
-+	/* This field is tested by functions directly accessing DSI bus before
-+	 * transfer, transfer is skipped if it is set. In case of transfer
-+	 * failure or unexpected response the field is set to error value.
-+	 * Such construct allows to eliminate many checks in higher level
-+	 * functions.
-+	 */
-+	int error;
++	spinlock_t transfer_lock; /* protects transfer_list */
++	struct list_head transfer_list;
 +};
 +
-+#define panel_to_s6e8aa0(p) container_of(p, struct s6e8aa0, panel)
++#define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
++#define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
 +
-+static int s6e8aa0_clear_error(struct s6e8aa0 *ctx)
++static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
 +{
-+	int ret = ctx->error;
-+
-+	ctx->error = 0;
-+	return ret;
-+}
-+
-+static void s6e8aa0_dcs_write(struct s6e8aa0 *ctx, const void *data, size_t len)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (ctx->error < 0)
++	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
 +		return;
 +
-+	ret = mipi_dsi_dcs_write(dsi, dsi->channel, data, len);
-+	if (ret < 0) {
-+		dev_err(ctx->dev, "error %d writing dcs seq: %*ph\n", ret, len,
-+			data);
-+		ctx->error = ret;
++	dev_err(dsi->dev, "timeout waiting for reset\n");
++}
++
++static void exynos_dsi_reset(struct exynos_dsi *dsi)
++{
++	reinit_completion(&dsi->completed);
++	writel(DSIM_SWRST, dsi->reg_base + DSIM_SWRST_REG);
++}
++
++#ifndef MHZ
++#define MHZ	(1000*1000)
++#endif
++
++static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
++		unsigned long fin, unsigned long fout, u8 *p, u16 *m, u8 *s)
++{
++	unsigned long best_freq = 0;
++	u32 min_delta = 0xffffffff;
++	u8 p_min, p_max;
++	u8 _p, uninitialized_var(best_p);
++	u16 _m, uninitialized_var(best_m);
++	u8 _s, uninitialized_var(best_s);
++
++	p_min = DIV_ROUND_UP(fin, (12 * MHZ));
++	p_max = fin / (6 * MHZ);
++
++	for (_p = p_min; _p <= p_max; ++_p) {
++		for (_s = 0; _s <= 5; ++_s) {
++			u64 tmp;
++			u32 delta;
++
++			tmp = (u64)fout * (_p << _s);
++			do_div(tmp, fin);
++			_m = tmp;
++			if (_m < 41 || _m > 125)
++				continue;
++
++			tmp = (u64)_m * fin;
++			do_div(tmp, _p);
++			if (tmp < 500 * MHZ || tmp > 1000 * MHZ)
++				continue;
++
++			tmp = (u64)_m * fin;
++			do_div(tmp, _p << _s);
++
++			delta = abs(fout - tmp);
++			if (delta < min_delta) {
++				best_p = _p;
++				best_m = _m;
++				best_s = _s;
++				min_delta = delta;
++				best_freq = tmp;
++			}
++		}
 +	}
-+}
 +
-+static int s6e8aa0_dcs_read(struct s6e8aa0 *ctx, u8 cmd, void *data, size_t len)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (ctx->error < 0)
-+		return ctx->error;
-+
-+	ret = mipi_dsi_dcs_read(dsi, dsi->channel, cmd, data, len);
-+	if (ret < 0) {
-+		dev_err(ctx->dev, "error %d reading dcs seq(%#x)\n", ret, cmd);
-+		ctx->error = ret;
++	if (best_freq) {
++		*p = best_p;
++		*m = best_m;
++		*s = best_s;
 +	}
 +
-+	return ret;
++	return best_freq;
 +}
 +
-+#define s6e8aa0_dcs_write_seq(ctx, seq...) \
-+({\
-+	const u8 d[] = { seq };\
-+	BUILD_BUG_ON_MSG(ARRAY_SIZE(d) > 64, "DCS sequence too big for stack");\
-+	s6e8aa0_dcs_write(ctx, d, ARRAY_SIZE(d));\
-+})
-+
-+#define s6e8aa0_dcs_write_seq_static(ctx, seq...) \
-+({\
-+	static const u8 d[] = { seq };\
-+	s6e8aa0_dcs_write(ctx, d, ARRAY_SIZE(d));\
-+})
-+
-+static void s6e8aa0_apply_level_1_key(struct s6e8aa0 *ctx)
++static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
++					unsigned long freq)
 +{
-+	s6e8aa0_dcs_write_seq_static(ctx, 0xf0, 0x5a, 0x5a);
-+}
-+
-+static void s6e8aa0_panel_cond_set_v142(struct s6e8aa0 *ctx)
-+{
-+	static const u8 aids[] = {
-+		0x04, 0x04, 0x04, 0x04, 0x04, 0x60, 0x80, 0xA0
++	static const unsigned long freq_bands[] = {
++		100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
++		270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
++		510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
++		770 * MHZ, 870 * MHZ, 950 * MHZ,
 +	};
-+	u8 aid = aids[ctx->id >> 5];
-+	u8 cfg = 0x3d;
-+	u8 clk_con = 0xc8;
-+	u8 int_con = 0x08;
-+	u8 bictl_con = 0x48;
-+	u8 em_clk1_con = 0xff;
-+	u8 em_clk2_con = 0xff;
-+	u8 em_int_con = 0xc8;
-+
-+	if (ctx->flip_vertical) {
-+		/* GTCON */
-+		cfg &= ~(PANELCTL_GTCON_MASK);
-+		cfg |= (PANELCTL_GTCON_110);
-+	}
-+
-+	if (ctx->flip_horizontal) {
-+		/* SS */
-+		cfg &= ~(PANELCTL_SS_MASK);
-+		cfg |= (PANELCTL_SS_1_800);
-+	}
-+
-+	if (ctx->flip_horizontal || ctx->flip_vertical) {
-+		/* CLK1,2_CON */
-+		clk_con &= ~(PANELCTL_CLK1_CON_MASK |
-+			PANELCTL_CLK2_CON_MASK);
-+		clk_con |= (PANELCTL_CLK1_000 | PANELCTL_CLK2_001);
-+
-+		/* INT1,2_CON */
-+		int_con &= ~(PANELCTL_INT1_CON_MASK |
-+			PANELCTL_INT2_CON_MASK);
-+		int_con |= (PANELCTL_INT1_000 | PANELCTL_INT2_001);
-+
-+		/* BICTL,B_CON */
-+		bictl_con &= ~(PANELCTL_BICTL_CON_MASK |
-+			PANELCTL_BICTLB_CON_MASK);
-+		bictl_con |= (PANELCTL_BICTL_000 |
-+			PANELCTL_BICTLB_001);
-+
-+		/* EM_CLK1,1B_CON */
-+		em_clk1_con &= ~(PANELCTL_EM_CLK1_CON_MASK |
-+			PANELCTL_EM_CLK1B_CON_MASK);
-+		em_clk1_con |= (PANELCTL_EM_CLK1_110 |
-+			PANELCTL_EM_CLK1B_110);
-+
-+		/* EM_CLK2,2B_CON */
-+		em_clk2_con &= ~(PANELCTL_EM_CLK2_CON_MASK |
-+			PANELCTL_EM_CLK2B_CON_MASK);
-+		em_clk2_con |= (PANELCTL_EM_CLK2_110 |
-+			PANELCTL_EM_CLK2B_110);
-+
-+		/* EM_INT1,2_CON */
-+		em_int_con &= ~(PANELCTL_EM_INT1_CON_MASK |
-+			PANELCTL_EM_INT2_CON_MASK);
-+		em_int_con |= (PANELCTL_EM_INT1_000 |
-+			PANELCTL_EM_INT2_001);
-+	}
-+
-+	s6e8aa0_dcs_write_seq(ctx,
-+		0xf8, cfg, 0x35, 0x00, 0x00, 0x00, 0x93, 0x00,
-+		0x3c, 0x78, 0x08, 0x27, 0x7d, 0x3f, 0x00, 0x00,
-+		0x00, 0x20, aid, 0x08, 0x6e, 0x00, 0x00, 0x00,
-+		0x02, 0x07, 0x07, 0x23, 0x23, 0xc0, clk_con, int_con,
-+		bictl_con, 0xc1, 0x00, 0xc1, em_clk1_con, em_clk2_con,
-+		em_int_con);
-+}
-+
-+static void s6e8aa0_panel_cond_set(struct s6e8aa0 *ctx)
-+{
-+	if (ctx->version < 142)
-+		s6e8aa0_dcs_write_seq_static(ctx,
-+			0xf8, 0x19, 0x35, 0x00, 0x00, 0x00, 0x94, 0x00,
-+			0x3c, 0x78, 0x10, 0x27, 0x08, 0x6e, 0x00, 0x00,
-+			0x00, 0x00, 0x04, 0x08, 0x6e, 0x00, 0x00, 0x00,
-+			0x00, 0x07, 0x07, 0x23, 0x6e, 0xc0, 0xc1, 0x01,
-+			0x81, 0xc1, 0x00, 0xc3, 0xf6, 0xf6, 0xc1
-+		);
-+	else
-+		s6e8aa0_panel_cond_set_v142(ctx);
-+}
-+
-+static void s6e8aa0_display_condition_set(struct s6e8aa0 *ctx)
-+{
-+	s6e8aa0_dcs_write_seq_static(ctx, 0xf2, 0x80, 0x03, 0x0d);
-+}
-+
-+static void s6e8aa0_etc_source_control(struct s6e8aa0 *ctx)
-+{
-+	s6e8aa0_dcs_write_seq_static(ctx, 0xf6, 0x00, 0x02, 0x00);
-+}
-+
-+static void s6e8aa0_etc_pentile_control(struct s6e8aa0 *ctx)
-+{
-+	static const u8 pent32[] = {
-+		0xb6, 0x0c, 0x02, 0x03, 0x32, 0xc0, 0x44, 0x44, 0xc0, 0x00
-+	};
-+
-+	static const u8 pent142[] = {
-+		0xb6, 0x0c, 0x02, 0x03, 0x32, 0xff, 0x44, 0x44, 0xc0, 0x00
-+	};
-+
-+	if (ctx->version < 142)
-+		s6e8aa0_dcs_write(ctx, pent32, ARRAY_SIZE(pent32));
-+	else
-+		s6e8aa0_dcs_write(ctx, pent142, ARRAY_SIZE(pent142));
-+}
-+
-+static void s6e8aa0_etc_power_control(struct s6e8aa0 *ctx)
-+{
-+	static const u8 pwr142[] = {
-+		0xf4, 0xcf, 0x0a, 0x12, 0x10, 0x1e, 0x33, 0x02
-+	};
-+
-+	static const u8 pwr32[] = {
-+		0xf4, 0xcf, 0x0a, 0x15, 0x10, 0x19, 0x33, 0x02
-+	};
-+
-+	if (ctx->version < 142)
-+		s6e8aa0_dcs_write(ctx, pwr32, ARRAY_SIZE(pwr32));
-+	else
-+		s6e8aa0_dcs_write(ctx, pwr142, ARRAY_SIZE(pwr142));
-+}
-+
-+static void s6e8aa0_etc_elvss_control(struct s6e8aa0 *ctx)
-+{
-+	u8 id = ctx->id ? 0 : 0x95;
-+
-+	s6e8aa0_dcs_write_seq(ctx, 0xb1, 0x04, id);
-+}
-+
-+static void s6e8aa0_elvss_nvm_set_v142(struct s6e8aa0 *ctx)
-+{
-+	u8 br;
-+
-+	switch (ctx->brightness) {
-+	case 0 ... 6: /* 30cd ~ 100cd */
-+		br = 0xdf;
-+		break;
-+	case 7 ... 11: /* 120cd ~ 150cd */
-+		br = 0xdd;
-+		break;
-+	case 12 ... 15: /* 180cd ~ 210cd */
-+	default:
-+		br = 0xd9;
-+		break;
-+	case 16 ... 24: /* 240cd ~ 300cd */
-+		br = 0xd0;
-+		break;
-+	}
-+
-+	s6e8aa0_dcs_write_seq(ctx, 0xd9, 0x14, 0x40, 0x0c, 0xcb, 0xce, 0x6e,
-+		0xc4, 0x0f, 0x40, 0x41, br, 0x00, 0x60, 0x19);
-+}
-+
-+static void s6e8aa0_elvss_nvm_set(struct s6e8aa0 *ctx)
-+{
-+	if (ctx->version < 142)
-+		s6e8aa0_dcs_write_seq_static(ctx,
-+			0xd9, 0x14, 0x40, 0x0c, 0xcb, 0xce, 0x6e, 0xc4, 0x07,
-+			0x40, 0x41, 0xc1, 0x00, 0x60, 0x19);
-+	else
-+		s6e8aa0_elvss_nvm_set_v142(ctx);
-+};
-+
-+static void s6e8aa0_apply_level_2_key(struct s6e8aa0 *ctx)
-+{
-+	s6e8aa0_dcs_write_seq_static(ctx, 0xfc, 0x5a, 0x5a);
-+}
-+
-+static const s6e8aa0_gamma_table s6e8aa0_gamma_tables_v142[GAMMA_LEVEL_NUM] = {
-+	{
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x62, 0x55, 0x55,
-+		0xaf, 0xb1, 0xb1, 0xbd, 0xce, 0xb7, 0x9a, 0xb1,
-+		0x90, 0xb2, 0xc4, 0xae, 0x00, 0x60, 0x00, 0x40,
-+		0x00, 0x70,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x74, 0x68, 0x69,
-+		0xb8, 0xc1, 0xb7, 0xbd, 0xcd, 0xb8, 0x93, 0xab,
-+		0x88, 0xb4, 0xc4, 0xb1, 0x00, 0x6b, 0x00, 0x4d,
-+		0x00, 0x7d,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x95, 0x8a, 0x89,
-+		0xb4, 0xc6, 0xb2, 0xc5, 0xd2, 0xbf, 0x90, 0xa8,
-+		0x85, 0xb5, 0xc4, 0xb3, 0x00, 0x7b, 0x00, 0x5d,
-+		0x00, 0x8f,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x9f, 0x98, 0x92,
-+		0xb3, 0xc4, 0xb0, 0xbc, 0xcc, 0xb4, 0x91, 0xa6,
-+		0x87, 0xb5, 0xc5, 0xb4, 0x00, 0x87, 0x00, 0x6a,
-+		0x00, 0x9e,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x99, 0x93, 0x8b,
-+		0xb2, 0xc2, 0xb0, 0xbd, 0xce, 0xb4, 0x90, 0xa6,
-+		0x87, 0xb3, 0xc3, 0xb2, 0x00, 0x8d, 0x00, 0x70,
-+		0x00, 0xa4,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa7, 0xa5, 0x99,
-+		0xb2, 0xc2, 0xb0, 0xbb, 0xcd, 0xb1, 0x93, 0xa7,
-+		0x8a, 0xb2, 0xc1, 0xb0, 0x00, 0x92, 0x00, 0x75,
-+		0x00, 0xaa,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa0, 0xa0, 0x93,
-+		0xb6, 0xc4, 0xb4, 0xb5, 0xc8, 0xaa, 0x94, 0xa9,
-+		0x8c, 0xb2, 0xc0, 0xb0, 0x00, 0x97, 0x00, 0x7a,
-+		0x00, 0xaf,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa3, 0xa7, 0x96,
-+		0xb3, 0xc2, 0xb0, 0xba, 0xcb, 0xb0, 0x94, 0xa8,
-+		0x8c, 0xb0, 0xbf, 0xaf, 0x00, 0x9f, 0x00, 0x83,
-+		0x00, 0xb9,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x9d, 0xa2, 0x90,
-+		0xb6, 0xc5, 0xb3, 0xb8, 0xc9, 0xae, 0x94, 0xa8,
-+		0x8d, 0xaf, 0xbd, 0xad, 0x00, 0xa4, 0x00, 0x88,
-+		0x00, 0xbf,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa6, 0xac, 0x97,
-+		0xb4, 0xc4, 0xb1, 0xbb, 0xcb, 0xb2, 0x93, 0xa7,
-+		0x8d, 0xae, 0xbc, 0xad, 0x00, 0xa7, 0x00, 0x8c,
-+		0x00, 0xc3,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa2, 0xa9, 0x93,
-+		0xb6, 0xc5, 0xb2, 0xba, 0xc9, 0xb0, 0x93, 0xa7,
-+		0x8d, 0xae, 0xbb, 0xac, 0x00, 0xab, 0x00, 0x90,
-+		0x00, 0xc8,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0x9e, 0xa6, 0x8f,
-+		0xb7, 0xc6, 0xb3, 0xb8, 0xc8, 0xb0, 0x93, 0xa6,
-+		0x8c, 0xae, 0xbb, 0xad, 0x00, 0xae, 0x00, 0x93,
-+		0x00, 0xcc,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xab, 0xb4, 0x9c,
-+		0xb3, 0xc3, 0xaf, 0xb7, 0xc7, 0xaf, 0x93, 0xa6,
-+		0x8c, 0xaf, 0xbc, 0xad, 0x00, 0xb1, 0x00, 0x97,
-+		0x00, 0xcf,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa6, 0xb1, 0x98,
-+		0xb1, 0xc2, 0xab, 0xba, 0xc9, 0xb2, 0x93, 0xa6,
-+		0x8d, 0xae, 0xba, 0xab, 0x00, 0xb5, 0x00, 0x9b,
-+		0x00, 0xd4,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa3, 0xae, 0x94,
-+		0xb2, 0xc3, 0xac, 0xbb, 0xca, 0xb4, 0x91, 0xa4,
-+		0x8a, 0xae, 0xba, 0xac, 0x00, 0xb8, 0x00, 0x9e,
-+		0x00, 0xd8,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xab, 0xb7, 0x9c,
-+		0xae, 0xc0, 0xa9, 0xba, 0xc9, 0xb3, 0x92, 0xa5,
-+		0x8b, 0xad, 0xb9, 0xab, 0x00, 0xbb, 0x00, 0xa1,
-+		0x00, 0xdc,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa7, 0xb4, 0x97,
-+		0xb0, 0xc1, 0xaa, 0xb9, 0xc8, 0xb2, 0x92, 0xa5,
-+		0x8c, 0xae, 0xb9, 0xab, 0x00, 0xbe, 0x00, 0xa4,
-+		0x00, 0xdf,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa3, 0xb0, 0x94,
-+		0xb0, 0xc2, 0xab, 0xbb, 0xc9, 0xb3, 0x91, 0xa4,
-+		0x8b, 0xad, 0xb8, 0xaa, 0x00, 0xc1, 0x00, 0xa8,
-+		0x00, 0xe2,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa3, 0xb0, 0x94,
-+		0xae, 0xbf, 0xa8, 0xb9, 0xc8, 0xb3, 0x92, 0xa4,
-+		0x8b, 0xad, 0xb7, 0xa9, 0x00, 0xc4, 0x00, 0xab,
-+		0x00, 0xe6,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa7, 0xb6, 0x98,
-+		0xaf, 0xc0, 0xa8, 0xb8, 0xc7, 0xb2, 0x93, 0xa5,
-+		0x8d, 0xad, 0xb7, 0xa9, 0x00, 0xc7, 0x00, 0xae,
-+		0x00, 0xe9,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa4, 0xb3, 0x95,
-+		0xaf, 0xc1, 0xa9, 0xb9, 0xc8, 0xb3, 0x92, 0xa4,
-+		0x8b, 0xad, 0xb7, 0xaa, 0x00, 0xc9, 0x00, 0xb0,
-+		0x00, 0xec,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa4, 0xb3, 0x95,
-+		0xac, 0xbe, 0xa6, 0xbb, 0xc9, 0xb4, 0x90, 0xa3,
-+		0x8a, 0xad, 0xb7, 0xa9, 0x00, 0xcc, 0x00, 0xb4,
-+		0x00, 0xf0,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa0, 0xb0, 0x91,
-+		0xae, 0xc0, 0xa6, 0xba, 0xc8, 0xb4, 0x91, 0xa4,
-+		0x8b, 0xad, 0xb7, 0xa9, 0x00, 0xcf, 0x00, 0xb7,
-+		0x00, 0xf3,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa7, 0xb8, 0x98,
-+		0xab, 0xbd, 0xa4, 0xbb, 0xc9, 0xb5, 0x91, 0xa3,
-+		0x8b, 0xac, 0xb6, 0xa8, 0x00, 0xd1, 0x00, 0xb9,
-+		0x00, 0xf6,
-+	}, {
-+		0xfa, 0x01, 0x71, 0x31, 0x7b, 0xa4, 0xb5, 0x95,
-+		0xa9, 0xbc, 0xa1, 0xbb, 0xc9, 0xb5, 0x91, 0xa3,
-+		0x8a, 0xad, 0xb6, 0xa8, 0x00, 0xd6, 0x00, 0xbf,
-+		0x00, 0xfc,
-+	},
-+};
-+
-+static const s6e8aa0_gamma_table s6e8aa0_gamma_tables_v96[GAMMA_LEVEL_NUM] = {
-+	{
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xdf, 0x1f, 0xd7, 0xdc, 0xb7, 0xe1, 0xc0, 0xaf,
-+		0xc4, 0xd2, 0xd0, 0xcf, 0x00, 0x4d, 0x00, 0x40,
-+		0x00, 0x5f,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xd5, 0x35, 0xcf, 0xdc, 0xc1, 0xe1, 0xbf, 0xb3,
-+		0xc1, 0xd2, 0xd1, 0xce,	0x00, 0x53, 0x00, 0x46,
-+		0x00, 0x67,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xd2, 0x64, 0xcf, 0xdb, 0xc6, 0xe1, 0xbd, 0xb3,
-+		0xbd, 0xd2, 0xd2, 0xce,	0x00, 0x59, 0x00, 0x4b,
-+		0x00, 0x6e,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xd0, 0x7c, 0xcf, 0xdb, 0xc9, 0xe0, 0xbc, 0xb4,
-+		0xbb, 0xcf, 0xd1, 0xcc, 0x00, 0x5f, 0x00, 0x50,
-+		0x00, 0x75,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xd0, 0x8e, 0xd1, 0xdb, 0xcc, 0xdf, 0xbb, 0xb6,
-+		0xb9, 0xd0, 0xd1, 0xcd,	0x00, 0x63, 0x00, 0x54,
-+		0x00, 0x7a,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xd1, 0x9e, 0xd5, 0xda, 0xcd, 0xdd, 0xbb, 0xb7,
-+		0xb9, 0xce, 0xce, 0xc9,	0x00, 0x68, 0x00, 0x59,
-+		0x00, 0x81,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x00, 0xff,
-+		0xd0, 0xa5, 0xd6, 0xda, 0xcf, 0xdd, 0xbb, 0xb7,
-+		0xb8, 0xcc, 0xcd, 0xc7,	0x00, 0x6c, 0x00, 0x5c,
-+		0x00, 0x86,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x1f, 0xfe,
-+		0xd0, 0xae, 0xd7, 0xd9, 0xd0, 0xdb, 0xb9, 0xb6,
-+		0xb5, 0xca, 0xcc, 0xc5,	0x00, 0x74, 0x00, 0x63,
-+		0x00, 0x90,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x1f, 0xf9,
-+		0xcf, 0xb0, 0xd6, 0xd9, 0xd1, 0xdb, 0xb9, 0xb6,
-+		0xb4, 0xca, 0xcb, 0xc5,	0x00, 0x77, 0x00, 0x66,
-+		0x00, 0x94,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xff, 0x1f, 0xf7,
-+		0xcf, 0xb3, 0xd7, 0xd8, 0xd1, 0xd9, 0xb7, 0xb6,
-+		0xb3, 0xc9, 0xca, 0xc3,	0x00, 0x7b, 0x00, 0x69,
-+		0x00, 0x99,
-+
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xfd, 0x2f, 0xf7,
-+		0xdf, 0xb5, 0xd6, 0xd8, 0xd1, 0xd8, 0xb6, 0xb5,
-+		0xb2, 0xca, 0xcb, 0xc4,	0x00, 0x7e, 0x00, 0x6c,
-+		0x00, 0x9d,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xfa, 0x2f, 0xf5,
-+		0xce, 0xb6, 0xd5, 0xd7, 0xd2, 0xd8, 0xb6, 0xb4,
-+		0xb0, 0xc7, 0xc9, 0xc1,	0x00, 0x84, 0x00, 0x71,
-+		0x00, 0xa5,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xf7, 0x2f, 0xf2,
-+		0xce, 0xb9, 0xd5, 0xd8, 0xd2, 0xd8, 0xb4, 0xb4,
-+		0xaf, 0xc7, 0xc9, 0xc1,	0x00, 0x87, 0x00, 0x73,
-+		0x00, 0xa8,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xf5, 0x2f, 0xf0,
-+		0xdf, 0xba, 0xd5, 0xd7, 0xd2, 0xd7, 0xb4, 0xb4,
-+		0xaf, 0xc5, 0xc7, 0xbf,	0x00, 0x8a, 0x00, 0x76,
-+		0x00, 0xac,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xf2, 0x2f, 0xed,
-+		0xcE, 0xbb, 0xd4, 0xd6, 0xd2, 0xd6, 0xb5, 0xb4,
-+		0xaF, 0xc5, 0xc7, 0xbf,	0x00, 0x8c, 0x00, 0x78,
-+		0x00, 0xaf,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xef, 0x2f, 0xeb,
-+		0xcd, 0xbb, 0xd2, 0xd7, 0xd3, 0xd6, 0xb3, 0xb4,
-+		0xae, 0xc5, 0xc6, 0xbe,	0x00, 0x91, 0x00, 0x7d,
-+		0x00, 0xb6,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xee, 0x2f, 0xea,
-+		0xce, 0xbd, 0xd4, 0xd6, 0xd2, 0xd5, 0xb2, 0xb3,
-+		0xad, 0xc3, 0xc4, 0xbb,	0x00, 0x94, 0x00, 0x7f,
-+		0x00, 0xba,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xec, 0x2f, 0xe8,
-+		0xce, 0xbe, 0xd3, 0xd6, 0xd3, 0xd5, 0xb2, 0xb2,
-+		0xac, 0xc3, 0xc5, 0xbc,	0x00, 0x96, 0x00, 0x81,
-+		0x00, 0xbd,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xeb, 0x2f, 0xe7,
-+		0xce, 0xbf, 0xd3, 0xd6, 0xd2, 0xd5, 0xb1, 0xb2,
-+		0xab, 0xc2, 0xc4, 0xbb,	0x00, 0x99, 0x00, 0x83,
-+		0x00, 0xc0,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xef, 0x5f, 0xe9,
-+		0xca, 0xbf, 0xd3, 0xd5, 0xd2, 0xd4, 0xb2, 0xb2,
-+		0xab, 0xc1, 0xc4, 0xba,	0x00, 0x9b, 0x00, 0x85,
-+		0x00, 0xc3,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xea, 0x5f, 0xe8,
-+		0xee, 0xbf, 0xd2, 0xd5, 0xd2, 0xd4, 0xb1, 0xb2,
-+		0xab, 0xc1, 0xc2, 0xb9,	0x00, 0x9D, 0x00, 0x87,
-+		0x00, 0xc6,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xe9, 0x5f, 0xe7,
-+		0xcd, 0xbf, 0xd2, 0xd6, 0xd2, 0xd4, 0xb1, 0xb2,
-+		0xab, 0xbe, 0xc0, 0xb7,	0x00, 0xa1, 0x00, 0x8a,
-+		0x00, 0xca,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xe8, 0x61, 0xe6,
-+		0xcd, 0xbf, 0xd1, 0xd6, 0xd3, 0xd4, 0xaf, 0xb0,
-+		0xa9, 0xbe, 0xc1, 0xb7,	0x00, 0xa3, 0x00, 0x8b,
-+		0x00, 0xce,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xe8, 0x62, 0xe5,
-+		0xcc, 0xc0, 0xd0, 0xd6, 0xd2, 0xd4, 0xaf, 0xb1,
-+		0xa9, 0xbd, 0xc0, 0xb6,	0x00, 0xa5, 0x00, 0x8d,
-+		0x00, 0xd0,
-+	}, {
-+		0xfa, 0x01, 0x1f, 0x1f, 0x1f, 0xe7, 0x7f, 0xe3,
-+		0xcc, 0xc1, 0xd0, 0xd5, 0xd3, 0xd3, 0xae, 0xaf,
-+		0xa8, 0xbe, 0xc0, 0xb7,	0x00, 0xa8, 0x00, 0x90,
-+		0x00, 0xd3,
-+	}
-+};
-+
-+static const s6e8aa0_gamma_table s6e8aa0_gamma_tables_v32[GAMMA_LEVEL_NUM] = {
-+	{
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0x72, 0x5e, 0x6b,
-+		0xa1, 0xa7, 0x9a, 0xb4, 0xcb, 0xb8, 0x92, 0xac,
-+		0x97, 0xb4, 0xc3, 0xb5, 0x00, 0x4e, 0x00, 0x37,
-+		0x00, 0x58,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0x85, 0x71, 0x7d,
-+		0xa6, 0xb6, 0xa1, 0xb5, 0xca, 0xba, 0x93, 0xac,
-+		0x98, 0xb2, 0xc0, 0xaf, 0x00, 0x59, 0x00, 0x43,
-+		0x00, 0x64,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xa4, 0x94, 0x9e,
-+		0xa0, 0xbb, 0x9c, 0xc3, 0xd2, 0xc6, 0x93, 0xaa,
-+		0x95, 0xb7, 0xc2, 0xb4, 0x00, 0x65, 0x00, 0x50,
-+		0x00, 0x74,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xa1, 0xa6,
-+		0xa0, 0xb9, 0x9b, 0xc3, 0xd1, 0xc8, 0x90, 0xa6,
-+		0x90, 0xbb, 0xc3, 0xb7, 0x00, 0x6f, 0x00, 0x5b,
-+		0x00, 0x80,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xa6, 0x9d, 0x9f,
-+		0x9f, 0xb8, 0x9a, 0xc7, 0xd5, 0xcc, 0x90, 0xa5,
-+		0x8f, 0xb8, 0xc1, 0xb6, 0x00, 0x74, 0x00, 0x60,
-+		0x00, 0x85,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb3, 0xae, 0xae,
-+		0x9e, 0xb7, 0x9a, 0xc8, 0xd6, 0xce, 0x91, 0xa6,
-+		0x90, 0xb6, 0xc0, 0xb3, 0x00, 0x78, 0x00, 0x65,
-+		0x00, 0x8a,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xa9, 0xa8,
-+		0xa3, 0xb9, 0x9e, 0xc4, 0xd3, 0xcb, 0x94, 0xa6,
-+		0x90, 0xb6, 0xbf, 0xb3, 0x00, 0x7c, 0x00, 0x69,
-+		0x00, 0x8e,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xaf, 0xaf, 0xa9,
-+		0xa5, 0xbc, 0xa2, 0xc7, 0xd5, 0xcd, 0x93, 0xa5,
-+		0x8f, 0xb4, 0xbd, 0xb1, 0x00, 0x83, 0x00, 0x70,
-+		0x00, 0x96,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xa9, 0xab, 0xa3,
-+		0xaa, 0xbf, 0xa7, 0xc5, 0xd3, 0xcb, 0x93, 0xa5,
-+		0x8f, 0xb2, 0xbb, 0xb0, 0x00, 0x86, 0x00, 0x74,
-+		0x00, 0x9b,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb1, 0xb5, 0xab,
-+		0xab, 0xc0, 0xa9, 0xc7, 0xd4, 0xcc, 0x94, 0xa4,
-+		0x8f, 0xb1, 0xbb, 0xaf, 0x00, 0x8a, 0x00, 0x77,
-+		0x00, 0x9e,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xb2, 0xa7,
-+		0xae, 0xc2, 0xab, 0xc5, 0xd3, 0xca, 0x93, 0xa4,
-+		0x8f, 0xb1, 0xba, 0xae, 0x00, 0x8d, 0x00, 0x7b,
-+		0x00, 0xa2,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xa9, 0xaf, 0xa3,
-+		0xb0, 0xc3, 0xae, 0xc4, 0xd1, 0xc8, 0x93, 0xa4,
-+		0x8f, 0xb1, 0xba, 0xaf, 0x00, 0x8f, 0x00, 0x7d,
-+		0x00, 0xa5,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb4, 0xbd, 0xaf,
-+		0xae, 0xc1, 0xab, 0xc2, 0xd0, 0xc6, 0x94, 0xa4,
-+		0x8f, 0xb1, 0xba, 0xaf, 0x00, 0x92, 0x00, 0x80,
-+		0x00, 0xa8,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb0, 0xb9, 0xac,
-+		0xad, 0xc1, 0xab, 0xc4, 0xd1, 0xc7, 0x95, 0xa4,
-+		0x90, 0xb0, 0xb9, 0xad, 0x00, 0x95, 0x00, 0x84,
-+		0x00, 0xac,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xb6, 0xa7,
-+		0xaf, 0xc2, 0xae, 0xc5, 0xd1, 0xc7, 0x93, 0xa3,
-+		0x8e, 0xb0, 0xb9, 0xad, 0x00, 0x98, 0x00, 0x86,
-+		0x00, 0xaf,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb4, 0xbf, 0xaf,
-+		0xad, 0xc1, 0xab, 0xc3, 0xd0, 0xc6, 0x94, 0xa3,
-+		0x8f, 0xaf, 0xb8, 0xac, 0x00, 0x9a, 0x00, 0x89,
-+		0x00, 0xb2,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb0, 0xbc, 0xac,
-+		0xaf, 0xc2, 0xad, 0xc2, 0xcf, 0xc4, 0x94, 0xa3,
-+		0x90, 0xaf, 0xb8, 0xad, 0x00, 0x9c, 0x00, 0x8b,
-+		0x00, 0xb5,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xb9, 0xa7,
-+		0xb1, 0xc4, 0xaf, 0xc3, 0xcf, 0xc5, 0x94, 0xa3,
-+		0x8f, 0xae, 0xb7, 0xac, 0x00, 0x9f, 0x00, 0x8e,
-+		0x00, 0xb8,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xb9, 0xa7,
-+		0xaf, 0xc2, 0xad, 0xc1, 0xce, 0xc3, 0x95, 0xa3,
-+		0x90, 0xad, 0xb6, 0xab, 0x00, 0xa2, 0x00, 0x91,
-+		0x00, 0xbb,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb1, 0xbe, 0xac,
-+		0xb1, 0xc4, 0xaf, 0xc1, 0xcd, 0xc1, 0x95, 0xa4,
-+		0x91, 0xad, 0xb6, 0xab, 0x00, 0xa4, 0x00, 0x93,
-+		0x00, 0xbd,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xbb, 0xa8,
-+		0xb3, 0xc5, 0xb2, 0xc1, 0xcd, 0xc2, 0x95, 0xa3,
-+		0x90, 0xad, 0xb6, 0xab, 0x00, 0xa6, 0x00, 0x95,
-+		0x00, 0xc0,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xbb, 0xa8,
-+		0xb0, 0xc3, 0xaf, 0xc2, 0xce, 0xc2, 0x94, 0xa2,
-+		0x90, 0xac, 0xb6, 0xab, 0x00, 0xa8, 0x00, 0x98,
-+		0x00, 0xc3,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xa9, 0xb8, 0xa5,
-+		0xb3, 0xc5, 0xb2, 0xc1, 0xcc, 0xc0, 0x95, 0xa2,
-+		0x90, 0xad, 0xb6, 0xab, 0x00, 0xaa, 0x00, 0x9a,
-+		0x00, 0xc5,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xb0, 0xc0, 0xac,
-+		0xb0, 0xc3, 0xaf, 0xc1, 0xcd, 0xc1, 0x95, 0xa2,
-+		0x90, 0xac, 0xb5, 0xa9, 0x00, 0xac, 0x00, 0x9c,
-+		0x00, 0xc8,
-+	}, {
-+		0xfa, 0x01, 0x43, 0x14, 0x45, 0xad, 0xbd, 0xa8,
-+		0xaf, 0xc2, 0xaf, 0xc1, 0xcc, 0xc0, 0x95, 0xa2,
-+		0x90, 0xac, 0xb5, 0xaa, 0x00, 0xb1, 0x00, 0xa1,
-+		0x00, 0xcc,
-+	},
-+};
-+
-+static const struct s6e8aa0_variant s6e8aa0_variants[] = {
-+	{
-+		.version = 32,
-+		.gamma_tables = s6e8aa0_gamma_tables_v32,
-+	}, {
-+		.version = 96,
-+		.gamma_tables = s6e8aa0_gamma_tables_v96,
-+	}, {
-+		.version = 142,
-+		.gamma_tables = s6e8aa0_gamma_tables_v142,
-+	}, {
-+		.version = 210,
-+		.gamma_tables = s6e8aa0_gamma_tables_v142,
-+	}
-+};
-+
-+static void s6e8aa0_brightness_set(struct s6e8aa0 *ctx)
-+{
-+	const u8 *gamma;
-+
-+	if (ctx->error)
-+		return;
-+
-+	gamma = ctx->variant->gamma_tables[ctx->brightness];
-+
-+	if (ctx->version >= 142)
-+		s6e8aa0_elvss_nvm_set(ctx);
-+
-+	s6e8aa0_dcs_write(ctx, gamma, GAMMA_TABLE_LEN);
-+
-+	/* update gamma table. */
-+	s6e8aa0_dcs_write_seq_static(ctx, 0xf7, 0x03);
-+}
-+
-+static void s6e8aa0_panel_init(struct s6e8aa0 *ctx)
-+{
-+	s6e8aa0_apply_level_1_key(ctx);
-+	s6e8aa0_apply_level_2_key(ctx);
-+	msleep(20);
-+
-+	s6e8aa0_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
-+	msleep(40);
-+
-+	s6e8aa0_panel_cond_set(ctx);
-+	s6e8aa0_display_condition_set(ctx);
-+	s6e8aa0_brightness_set(ctx);
-+	s6e8aa0_etc_source_control(ctx);
-+	s6e8aa0_etc_pentile_control(ctx);
-+	s6e8aa0_elvss_nvm_set(ctx);
-+	s6e8aa0_etc_power_control(ctx);
-+	s6e8aa0_etc_elvss_control(ctx);
-+	msleep(ctx->init_delay);
-+}
-+
-+static void s6e8aa0_set_maximum_return_packet_size(struct s6e8aa0 *ctx,
-+						   int size)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
-+	u8 buf[] = {size, 0};
-+	struct mipi_dsi_msg msg = {
-+		.channel = dsi->channel,
-+		.type = MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE,
-+		.tx_len = sizeof(buf),
-+		.tx_buf = buf
-+	};
-+	int ret;
-+
-+	if (ctx->error < 0)
-+		return;
-+
-+	if (!ops || !ops->transfer)
-+		ret = -EIO;
-+	else
-+		ret = ops->transfer(dsi->host, &msg);
-+
-+	if (ret < 0) {
-+		dev_err(ctx->dev,
-+			"error %d setting maximum return packet size to %d\n",
-+			ret, size);
-+		ctx->error = ret;
-+	}
-+}
-+
-+static void s6e8aa0_read_mtp_id(struct s6e8aa0 *ctx)
-+{
-+	u8 id[3];
-+	int ret, i;
-+
-+	ret = s6e8aa0_dcs_read(ctx, 0xd1, id, ARRAY_SIZE(id));
-+	if (ret < ARRAY_SIZE(id) || id[0] == 0x00) {
-+		dev_err(ctx->dev, "read id failed\n");
-+		ctx->error = -EIO;
-+		return;
-+	}
-+
-+	dev_info(ctx->dev, "ID: 0x%2x, 0x%2x, 0x%2x\n", id[0], id[1], id[2]);
-+
-+	for (i = 0; i < ARRAY_SIZE(s6e8aa0_variants); ++i) {
-+		if (id[1] == s6e8aa0_variants[i].version)
-+			break;
-+	}
-+	if (i >= ARRAY_SIZE(s6e8aa0_variants)) {
-+		dev_err(ctx->dev, "unsupported display version %d\n", id[1]);
-+		ctx->error = -EINVAL;
-+	}
-+
-+	ctx->variant = &s6e8aa0_variants[i];
-+	ctx->version = id[1];
-+	ctx->id = id[2];
-+}
-+
-+static void s6e8aa0_set_sequence(struct s6e8aa0 *ctx)
-+{
-+	s6e8aa0_set_maximum_return_packet_size(ctx, 3);
-+	s6e8aa0_read_mtp_id(ctx);
-+	s6e8aa0_panel_init(ctx);
-+	s6e8aa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
-+}
-+
-+static int s6e8aa0_power_on(struct s6e8aa0 *ctx)
-+{
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	msleep(ctx->power_on_delay);
-+
-+	gpiod_set_value(ctx->reset_gpio, 0);
-+	usleep_range(10000, 11000);
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+
-+	msleep(ctx->reset_delay);
-+
-+	return 0;
-+}
-+
-+static int s6e8aa0_power_off(struct s6e8aa0 *ctx)
-+{
-+	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+}
-+
-+static int s6e8aa0_disable(struct drm_panel *panel)
-+{
-+	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
-+
-+	s6e8aa0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
-+	s6e8aa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_OFF);
-+	msleep(40);
-+
-+	s6e8aa0_clear_error(ctx);
-+
-+	return s6e8aa0_power_off(ctx);
-+}
-+
-+static int s6e8aa0_enable(struct drm_panel *panel)
-+{
-+	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
-+	int ret;
-+
-+	ret = s6e8aa0_power_on(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	s6e8aa0_set_sequence(ctx);
-+	ret = ctx->error;
-+
-+	if (ret < 0)
-+		s6e8aa0_disable(panel);
-+
-+	return ret;
-+}
-+
-+static int s6e8aa0_get_modes(struct drm_panel *panel)
-+{
-+	struct drm_connector *connector = panel->connector;
-+	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_create(connector->dev);
-+	if (!mode) {
-+		DRM_ERROR("failed to create a new display mode\n");
++	unsigned long fin, fout;
++	int timeout, band;
++	u8 p, s;
++	u16 m;
++	u32 reg;
++
++	clk_set_rate(dsi->pll_clk, dsi->pll_clk_rate);
++
++	fin = clk_get_rate(dsi->pll_clk);
++	if (!fin) {
++		dev_err(dsi->dev, "failed to get PLL clock frequency\n");
 +		return 0;
 +	}
 +
-+	drm_display_mode_from_videomode(&ctx->vm, mode);
-+	mode->width_mm = ctx->width_mm;
-+	mode->height_mm = ctx->height_mm;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
++	dev_dbg(dsi->dev, "PLL input frequency: %lu\n", fin);
 +
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	drm_mode_probed_add(connector, mode);
++	fout = exynos_dsi_pll_find_pms(dsi, fin, freq, &p, &m, &s);
++	if (!fout) {
++		dev_err(dsi->dev,
++			"failed to find PLL PMS for requested frequency\n");
++		return -EFAULT;
++	}
 +
-+	return 1;
++	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
++		if (fout < freq_bands[band])
++			break;
++
++	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d), band %d\n", fout,
++		p, m, s, band);
++
++	writel(500, dsi->reg_base + DSIM_PLLTMR_REG);
++
++	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
++			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
++	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
++
++	timeout = 1000;
++	do {
++		if (timeout-- == 0) {
++			dev_err(dsi->dev, "PLL failed to stabilize\n");
++			return -EFAULT;
++		}
++		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
++	} while ((reg & DSIM_PLL_STABLE) == 0);
++
++	return fout;
 +}
 +
-+static const struct drm_panel_funcs s6e8aa0_drm_funcs = {
-+	.disable = s6e8aa0_disable,
-+	.enable = s6e8aa0_enable,
-+	.get_modes = s6e8aa0_get_modes,
-+};
-+
-+static int s6e8aa0_parse_dt(struct s6e8aa0 *ctx)
++static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
 +{
-+	struct device *dev = ctx->dev;
-+	struct device_node *np = dev->of_node;
-+	int ret;
++	unsigned long hs_clk, byte_clk, esc_clk;
++	unsigned long esc_div;
++	u32 reg;
 +
-+	ret = of_get_videomode(np, &ctx->vm, 0);
-+	if (ret < 0)
-+		return ret;
++	hs_clk = exynos_dsi_set_pll(dsi, dsi->burst_clk_rate);
++	if (!hs_clk) {
++		dev_err(dsi->dev, "failed to configure DSI PLL\n");
++		return -EFAULT;
++	}
 +
-+	of_property_read_u32(np, "power-on-delay", &ctx->power_on_delay);
-+	of_property_read_u32(np, "reset-delay", &ctx->reset_delay);
-+	of_property_read_u32(np, "init-delay", &ctx->init_delay);
-+	of_property_read_u32(np, "panel-width-mm", &ctx->width_mm);
-+	of_property_read_u32(np, "panel-height-mm", &ctx->height_mm);
++	byte_clk = hs_clk / 8;
++	esc_div = DIV_ROUND_UP(byte_clk, dsi->esc_clk_rate);
++	esc_clk = byte_clk / esc_div;
 +
-+	ctx->flip_horizontal = of_property_read_bool(np, "flip-horizontal");
-+	ctx->flip_vertical = of_property_read_bool(np, "flip-vertical");
++	if (esc_clk > 20 * MHZ) {
++		++esc_div;
++		esc_clk = byte_clk / esc_div;
++	}
++
++	dev_dbg(dsi->dev, "hs_clk = %lu, byte_clk = %lu, esc_clk = %lu\n",
++		hs_clk, byte_clk, esc_clk);
++
++	reg = readl(dsi->reg_base + DSIM_CLKCTRL_REG);
++	reg &= ~(DSIM_ESC_PRESCALER_MASK | DSIM_LANE_ESC_CLK_EN_CLK
++			| DSIM_LANE_ESC_CLK_EN_DATA_MASK | DSIM_PLL_BYPASS
++			| DSIM_BYTE_CLK_SRC_MASK);
++	reg |= DSIM_ESC_CLKEN | DSIM_BYTE_CLKEN
++			| DSIM_ESC_PRESCALER(esc_div)
++			| DSIM_LANE_ESC_CLK_EN_CLK
++			| DSIM_LANE_ESC_CLK_EN_DATA(BIT(dsi->lanes) - 1)
++			| DSIM_BYTE_CLK_SRC(0)
++			| DSIM_TX_REQUEST_HSCLK;
++	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
 +
 +	return 0;
 +}
 +
-+static int s6e8aa0_probe(struct mipi_dsi_device *dsi)
++static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
 +{
-+	struct device *dev = &dsi->dev;
-+	struct s6e8aa0 *ctx;
++	u32 reg;
++
++	reg = readl(dsi->reg_base + DSIM_CLKCTRL_REG);
++	reg &= ~(DSIM_LANE_ESC_CLK_EN_CLK | DSIM_LANE_ESC_CLK_EN_DATA_MASK
++			| DSIM_ESC_CLKEN | DSIM_BYTE_CLKEN);
++	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
++
++	reg = readl(dsi->reg_base + DSIM_PLLCTRL_REG);
++	reg &= ~DSIM_PLL_EN;
++	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
++}
++
++static int exynos_dsi_init_link(struct exynos_dsi *dsi)
++{
++	int timeout;
++	u32 reg;
++	u32 lanes_mask;
++
++	/* Initialize FIFO pointers */
++	reg = readl(dsi->reg_base + DSIM_FIFOCTRL_REG);
++	reg &= ~0x1f;
++	writel(reg, dsi->reg_base + DSIM_FIFOCTRL_REG);
++
++	usleep_range(9000, 11000);
++
++	reg |= 0x1f;
++	writel(reg, dsi->reg_base + DSIM_FIFOCTRL_REG);
++
++	usleep_range(9000, 11000);
++
++	/* DSI configuration */
++	reg = 0;
++
++	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
++		reg |= DSIM_VIDEO_MODE;
++
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
++			reg |= DSIM_MFLUSH_VS;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
++			reg |= DSIM_EOT_DISABLE;
++		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
++			reg |= DSIM_SYNC_INFORM;
++		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++			reg |= DSIM_BURST_MODE;
++		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_AUTO_VERT)
++			reg |= DSIM_AUTO_MODE;
++		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HSE)
++			reg |= DSIM_HSE_MODE;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HFP))
++			reg |= DSIM_HFP_MODE;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HBP))
++			reg |= DSIM_HBP_MODE;
++		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HSA))
++			reg |= DSIM_HSA_MODE;
++	}
++
++	switch (dsi->format) {
++	case MIPI_DSI_FMT_RGB888:
++		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
++		break;
++	case MIPI_DSI_FMT_RGB666:
++		reg |= DSIM_MAIN_PIX_FORMAT_RGB666;
++		break;
++	case MIPI_DSI_FMT_RGB666_PACKED:
++		reg |= DSIM_MAIN_PIX_FORMAT_RGB666_P;
++		break;
++	case MIPI_DSI_FMT_RGB565:
++		reg |= DSIM_MAIN_PIX_FORMAT_RGB565;
++		break;
++	default:
++		dev_err(dsi->dev, "invalid pixel format\n");
++		return -EINVAL;
++	}
++
++	reg |= DSIM_NUM_OF_DATA_LANE(dsi->lanes - 1);
++
++	writel(reg, dsi->reg_base + DSIM_CONFIG_REG);
++
++	reg |= DSIM_LANE_EN_CLK;
++	writel(reg, dsi->reg_base + DSIM_CONFIG_REG);
++
++	lanes_mask = BIT(dsi->lanes) - 1;
++	reg |= DSIM_LANE_EN(lanes_mask);
++	writel(reg, dsi->reg_base + DSIM_CONFIG_REG);
++
++	/* Check clock and data lane state are stop state */
++	timeout = 100;
++	do {
++		if (timeout-- == 0) {
++			dev_err(dsi->dev, "waiting for bus lanes timed out\n");
++			return -EFAULT;
++		}
++
++		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
++		if ((reg & DSIM_STOP_STATE_DAT(lanes_mask))
++		    != DSIM_STOP_STATE_DAT(lanes_mask))
++			continue;
++	} while (!(reg & (DSIM_STOP_STATE_CLK | DSIM_TX_READY_HS_CLK)));
++
++	reg = readl(dsi->reg_base + DSIM_ESCMODE_REG);
++	reg &= ~DSIM_STOP_STATE_CNT_MASK;
++	reg |= DSIM_STOP_STATE_CNT(0xf);
++	writel(reg, dsi->reg_base + DSIM_ESCMODE_REG);
++
++	reg = DSIM_BTA_TIMEOUT(0xff) | DSIM_LPDR_TIMEOUT(0xffff);
++	writel(reg, dsi->reg_base + DSIM_TIMEOUT_REG);
++
++	return 0;
++}
++
++static void exynos_dsi_set_display_mode(struct exynos_dsi *dsi)
++{
++	struct videomode *vm = &dsi->vm;
++	u32 reg;
++
++	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
++		reg = DSIM_CMD_ALLOW(0xf)
++			| DSIM_STABLE_VFP(vm->vfront_porch)
++			| DSIM_MAIN_VBP(vm->vback_porch);
++		writel(reg, dsi->reg_base + DSIM_MVPORCH_REG);
++
++		reg = DSIM_MAIN_HFP(vm->hfront_porch)
++			| DSIM_MAIN_HBP(vm->hback_porch);
++		writel(reg, dsi->reg_base + DSIM_MHPORCH_REG);
++
++		reg = DSIM_MAIN_VSA(vm->vsync_len)
++			| DSIM_MAIN_HSA(vm->hsync_len);
++		writel(reg, dsi->reg_base + DSIM_MSYNC_REG);
++	}
++
++	reg = DSIM_MAIN_HRESOL(vm->hactive) | DSIM_MAIN_VRESOL(vm->vactive);
++	writel(reg, dsi->reg_base + DSIM_MDRESOL_REG);
++
++	dev_dbg(dsi->dev, "LCD size = %dx%d\n", vm->hactive, vm->vactive);
++}
++
++static void exynos_dsi_set_display_enable(struct exynos_dsi *dsi, bool enable)
++{
++	u32 reg;
++
++	reg = readl(dsi->reg_base + DSIM_MDRESOL_REG);
++	if (enable)
++		reg |= DSIM_MAIN_STAND_BY;
++	else
++		reg &= ~DSIM_MAIN_STAND_BY;
++	writel(reg, dsi->reg_base + DSIM_MDRESOL_REG);
++}
++
++static int exynos_dsi_wait_for_hdr_fifo(struct exynos_dsi *dsi)
++{
++	int timeout = 2000;
++
++	do {
++		u32 reg = readl(dsi->reg_base + DSIM_FIFOCTRL_REG);
++
++		if (!(reg & DSIM_SFR_HEADER_FULL))
++			return 0;
++
++		if (!cond_resched())
++			usleep_range(950, 1050);
++	} while (--timeout);
++
++	return -ETIMEDOUT;
++}
++
++static void exynos_dsi_set_cmd_lpm(struct exynos_dsi *dsi, bool lpm)
++{
++	u32 v = readl(dsi->reg_base + DSIM_ESCMODE_REG);
++
++	if (lpm)
++		v |= DSIM_CMD_LPDT_LP;
++	else
++		v &= ~DSIM_CMD_LPDT_LP;
++
++	writel(v, dsi->reg_base + DSIM_ESCMODE_REG);
++}
++
++static void exynos_dsi_force_bta(struct exynos_dsi *dsi)
++{
++	u32 v = readl(dsi->reg_base + DSIM_ESCMODE_REG);
++
++	v |= DSIM_FORCE_BTA;
++	writel(v, dsi->reg_base + DSIM_ESCMODE_REG);
++}
++
++static void exynos_dsi_send_to_fifo(struct exynos_dsi *dsi,
++					struct exynos_dsi_transfer *xfer)
++{
++	struct device *dev = dsi->dev;
++	const u8 *payload = xfer->tx_payload + xfer->tx_done;
++	u16 length = xfer->tx_len - xfer->tx_done;
++	bool first = !xfer->tx_done;
++	u32 reg;
++
++	dev_dbg(dev, "< xfer %p: tx len %u, done %u, rx len %u, done %u\n",
++		xfer, xfer->tx_len, xfer->tx_done, xfer->rx_len, xfer->rx_done);
++
++	if (length > DSI_TX_FIFO_SIZE)
++		length = DSI_TX_FIFO_SIZE;
++
++	xfer->tx_done += length;
++
++	/* Send payload */
++	while (length >= 4) {
++		reg = (payload[3] << 24) | (payload[2] << 16)
++					| (payload[1] << 8) | payload[0];
++		writel(reg, dsi->reg_base + DSIM_PAYLOAD_REG);
++		payload += 4;
++		length -= 4;
++	}
++
++	reg = 0;
++	switch (length) {
++	case 3:
++		reg |= payload[2] << 16;
++		/* Fall through */
++	case 2:
++		reg |= payload[1] << 8;
++		/* Fall through */
++	case 1:
++		reg |= payload[0];
++		writel(reg, dsi->reg_base + DSIM_PAYLOAD_REG);
++		break;
++	case 0:
++		/* Do nothing */
++		break;
++	}
++
++	/* Send packet header */
++	if (!first)
++		return;
++
++	reg = (xfer->data[1] << 16) | (xfer->data[0] << 8) | xfer->data_id;
++	if (exynos_dsi_wait_for_hdr_fifo(dsi)) {
++		dev_err(dev, "waiting for header FIFO timed out\n");
++		return;
++	}
++
++	if (NEQV(xfer->flags & MIPI_DSI_MSG_USE_LPM,
++		 dsi->state & DSIM_STATE_CMD_LPM)) {
++		exynos_dsi_set_cmd_lpm(dsi, xfer->flags & MIPI_DSI_MSG_USE_LPM);
++		dsi->state ^= DSIM_STATE_CMD_LPM;
++	}
++
++	writel(reg, dsi->reg_base + DSIM_PKTHDR_REG);
++
++	if (xfer->flags & MIPI_DSI_MSG_REQ_ACK)
++		exynos_dsi_force_bta(dsi);
++}
++
++static void exynos_dsi_read_from_fifo(struct exynos_dsi *dsi,
++					struct exynos_dsi_transfer *xfer)
++{
++	u8 *payload = xfer->rx_payload + xfer->rx_done;
++	bool first = !xfer->rx_done;
++	struct device *dev = dsi->dev;
++	u16 length;
++	u32 reg;
++
++	if (first) {
++		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
++
++		switch (reg & 0x3f) {
++		case MIPI_DSI_RX_GENERIC_SHORT_READ_RESPONSE_2BYTE:
++		case MIPI_DSI_RX_DCS_SHORT_READ_RESPONSE_2BYTE:
++			if (xfer->rx_len >= 2) {
++				payload[1] = reg >> 16;
++				++xfer->rx_done;
++			}
++			/* Fall through */
++		case MIPI_DSI_RX_GENERIC_SHORT_READ_RESPONSE_1BYTE:
++		case MIPI_DSI_RX_DCS_SHORT_READ_RESPONSE_1BYTE:
++			payload[0] = reg >> 8;
++			++xfer->rx_done;
++			xfer->rx_len = xfer->rx_done;
++			xfer->result = 0;
++			goto clear_fifo;
++		case MIPI_DSI_RX_ACKNOWLEDGE_AND_ERROR_REPORT:
++			dev_err(dev, "DSI Error Report: 0x%04x\n",
++				(reg >> 8) & 0xffff);
++			xfer->result = 0;
++			goto clear_fifo;
++		}
++
++		length = (reg >> 8) & 0xffff;
++		if (length > xfer->rx_len) {
++			dev_err(dev,
++				"response too long (%u > %u bytes), stripping\n",
++				xfer->rx_len, length);
++			length = xfer->rx_len;
++		} else if (length < xfer->rx_len)
++			xfer->rx_len = length;
++	}
++
++	length = xfer->rx_len - xfer->rx_done;
++	xfer->rx_done += length;
++
++	/* Receive payload */
++	while (length >= 4) {
++		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
++		payload[0] = (reg >>  0) & 0xff;
++		payload[1] = (reg >>  8) & 0xff;
++		payload[2] = (reg >> 16) & 0xff;
++		payload[3] = (reg >> 24) & 0xff;
++		payload += 4;
++		length -= 4;
++	}
++
++	if (length) {
++		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
++		switch (length) {
++		case 3:
++			payload[2] = (reg >> 16) & 0xff;
++			/* Fall through */
++		case 2:
++			payload[1] = (reg >> 8) & 0xff;
++			/* Fall through */
++		case 1:
++			payload[0] = reg & 0xff;
++		}
++	}
++
++	if (xfer->rx_done == xfer->rx_len)
++		xfer->result = 0;
++
++clear_fifo:
++	length = DSI_RX_FIFO_SIZE / 4;
++	do {
++		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
++		if (reg == DSI_RX_FIFO_EMPTY)
++			break;
++	} while (--length);
++}
++
++static void exynos_dsi_transfer_start(struct exynos_dsi *dsi)
++{
++	unsigned long flags;
++	struct exynos_dsi_transfer *xfer;
++	bool start = false;
++
++again:
++	spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++	if (list_empty(&dsi->transfer_list)) {
++		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++		return;
++	}
++
++	xfer = list_first_entry(&dsi->transfer_list,
++					struct exynos_dsi_transfer, list);
++
++	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++
++	if (xfer->tx_len && xfer->tx_done == xfer->tx_len)
++		/* waiting for RX */
++		return;
++
++	exynos_dsi_send_to_fifo(dsi, xfer);
++
++	if (xfer->tx_len || xfer->rx_len)
++		return;
++
++	xfer->result = 0;
++	complete(&xfer->completed);
++
++	spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++	list_del_init(&xfer->list);
++	start = !list_empty(&dsi->transfer_list);
++
++	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++
++	if (start)
++		goto again;
++}
++
++static bool exynos_dsi_transfer_finish(struct exynos_dsi *dsi)
++{
++	struct exynos_dsi_transfer *xfer;
++	unsigned long flags;
++	bool start = true;
++
++	spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++	if (list_empty(&dsi->transfer_list)) {
++		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++		return false;
++	}
++
++	xfer = list_first_entry(&dsi->transfer_list,
++					struct exynos_dsi_transfer, list);
++
++	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++
++	dev_dbg(dsi->dev,
++		"> xfer %p, tx_len %u, tx_done %u, rx_len %u, rx_done %u\n",
++		xfer, xfer->tx_len, xfer->tx_done, xfer->rx_len, xfer->rx_done);
++
++	if (xfer->tx_done != xfer->tx_len)
++		return true;
++
++	if (xfer->rx_done != xfer->rx_len)
++		exynos_dsi_read_from_fifo(dsi, xfer);
++
++	if (xfer->rx_done != xfer->rx_len)
++		return true;
++
++	spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++	list_del_init(&xfer->list);
++	start = !list_empty(&dsi->transfer_list);
++
++	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++
++	if (!xfer->rx_len)
++		xfer->result = 0;
++	complete(&xfer->completed);
++
++	return start;
++}
++
++static void exynos_dsi_remove_transfer(struct exynos_dsi *dsi,
++					struct exynos_dsi_transfer *xfer)
++{
++	unsigned long flags;
++	bool start;
++
++	spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++	if (!list_empty(&dsi->transfer_list) &&
++	    xfer == list_first_entry(&dsi->transfer_list,
++				     struct exynos_dsi_transfer, list)) {
++		list_del_init(&xfer->list);
++		start = !list_empty(&dsi->transfer_list);
++		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++		if (start)
++			exynos_dsi_transfer_start(dsi);
++		return;
++	}
++
++	list_del_init(&xfer->list);
++
++	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++}
++
++static int exynos_dsi_transfer(struct exynos_dsi *dsi,
++					struct exynos_dsi_transfer *xfer)
++{
++	unsigned long flags;
++	bool stopped;
++
++	xfer->tx_done = 0;
++	xfer->rx_done = 0;
++	xfer->result = -ETIMEDOUT;
++	init_completion(&xfer->completed);
++
++	spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++	stopped = list_empty(&dsi->transfer_list);
++	list_add_tail(&xfer->list, &dsi->transfer_list);
++
++	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
++
++	if (stopped)
++		exynos_dsi_transfer_start(dsi);
++
++	wait_for_completion_timeout(&xfer->completed,
++				    msecs_to_jiffies(DSI_XFER_TIMEOUT_MS));
++	if (xfer->result == -ETIMEDOUT) {
++		exynos_dsi_remove_transfer(dsi, xfer);
++		dev_err(dsi->dev, "xfer timed out: %*ph %*ph\n", 2, xfer->data,
++			xfer->tx_len, xfer->tx_payload);
++		return -ETIMEDOUT;
++	}
++
++	/* Also covers hardware timeout condition */
++	return xfer->result;
++}
++
++static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
++{
++	struct exynos_dsi *dsi = dev_id;
++	u32 status;
++
++	status = readl(dsi->reg_base + DSIM_INTSRC_REG);
++	if (!status) {
++		static unsigned long int j;
++		if (printk_timed_ratelimit(&j, 500))
++			dev_warn(dsi->dev, "spurious interrupt\n");
++		return IRQ_HANDLED;
++	}
++	writel(status, dsi->reg_base + DSIM_INTSRC_REG);
++
++	if (status & DSIM_INT_SW_RST_RELEASE) {
++		u32 mask = ~(DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY);
++		writel(mask, dsi->reg_base + DSIM_INTMSK_REG);
++		complete(&dsi->completed);
++		return IRQ_HANDLED;
++	}
++
++	if (!(status & (DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY)))
++		return IRQ_HANDLED;
++
++	if (exynos_dsi_transfer_finish(dsi))
++		exynos_dsi_transfer_start(dsi);
++
++	return IRQ_HANDLED;
++}
++
++static int exynos_dsi_init(struct exynos_dsi *dsi)
++{
++	exynos_dsi_enable_clock(dsi);
++	exynos_dsi_reset(dsi);
++	enable_irq(dsi->irq);
++	exynos_dsi_wait_for_reset(dsi);
++	exynos_dsi_init_link(dsi);
++
++	return 0;
++}
++
++static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
++				  struct mipi_dsi_device *device)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++
++	dsi->lanes = device->lanes;
++	dsi->format = device->format;
++	dsi->mode_flags = device->mode_flags;
++	dsi->panel_node = device->dev.of_node;
++
++	if (dsi->connector.dev)
++		drm_helper_hpd_irq_event(dsi->connector.dev);
++
++	return 0;
++}
++
++static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
++				  struct mipi_dsi_device *device)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++
++	dsi->panel_node = NULL;
++
++	if (dsi->connector.dev)
++		drm_helper_hpd_irq_event(dsi->connector.dev);
++
++	return 0;
++}
++
++/* distinguish between short and long DSI packet types */
++static bool exynos_dsi_is_short_dsi_type(u8 type)
++{
++	return (type & 0x0f) <= 8;
++}
++
++static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
++				       struct mipi_dsi_msg *msg)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++	struct exynos_dsi_transfer xfer;
 +	int ret;
 +
-+	ctx = devm_kzalloc(dev, sizeof(struct s6e8aa0), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
++	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
++		ret = exynos_dsi_init(dsi);
++		if (ret)
++			return ret;
++		dsi->state |= DSIM_STATE_INITIALIZED;
++	}
 +
-+	mipi_dsi_set_drvdata(dsi, ctx);
++	if (msg->tx_len == 0)
++		return -EINVAL;
 +
-+	ctx->dev = dev;
++	xfer.data_id = msg->type | (msg->channel << 6);
 +
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST
-+		| MIPI_DSI_MODE_VIDEO_HFP | MIPI_DSI_MODE_VIDEO_HBP
-+		| MIPI_DSI_MODE_VIDEO_HSA | MIPI_DSI_MODE_EOT_PACKET
-+		| MIPI_DSI_MODE_VSYNC_FLUSH | MIPI_DSI_MODE_VIDEO_AUTO_VERT;
++	if (exynos_dsi_is_short_dsi_type(msg->type)) {
++		const char *tx_buf = msg->tx_buf;
 +
-+	ret = s6e8aa0_parse_dt(ctx);
-+	if (ret < 0)
-+		return ret;
++		if (msg->tx_len > 2)
++			return -EINVAL;
++		xfer.tx_len = 0;
++		xfer.data[0] = tx_buf[0];
++		xfer.data[1] = (msg->tx_len == 2) ? tx_buf[1] : 0;
++	} else {
++		xfer.tx_len = msg->tx_len;
++		xfer.data[0] = msg->tx_len & 0xff;
++		xfer.data[1] = msg->tx_len >> 8;
++		xfer.tx_payload = msg->tx_buf;
++	}
 +
-+	ctx->supplies[0].supply = "vdd3";
-+	ctx->supplies[1].supply = "vci";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
-+				      ctx->supplies);
++	xfer.rx_len = msg->rx_len;
++	xfer.rx_payload = msg->rx_buf;
++	xfer.flags = msg->flags;
++
++	ret = exynos_dsi_transfer(dsi, &xfer);
++	return (ret < 0) ? ret : xfer.rx_done;
++}
++
++static const struct mipi_dsi_host_ops exynos_dsi_ops = {
++	.attach = exynos_dsi_host_attach,
++	.detach = exynos_dsi_host_detach,
++	.transfer = exynos_dsi_host_transfer,
++};
++
++static int exynos_dsi_poweron(struct exynos_dsi *dsi)
++{
++	int ret;
++
++	ret = regulator_bulk_enable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
 +	if (ret < 0) {
-+		dev_err(dev, "failed to get regulators: %d\n", ret);
++		dev_err(dsi->dev, "cannot enable regulators %d\n", ret);
 +		return ret;
 +	}
 +
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset");
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		dev_err(dev, "cannot get reset-gpios %ld\n",
-+			PTR_ERR(ctx->reset_gpio));
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+	ret = gpiod_direction_output(ctx->reset_gpio, 1);
++	ret = clk_prepare_enable(dsi->bus_clk);
 +	if (ret < 0) {
-+		dev_err(dev, "cannot configure reset-gpios %d\n", ret);
-+		return ret;
++		dev_err(dsi->dev, "cannot enable bus clock %d\n", ret);
++		goto err_bus_clk;
 +	}
 +
-+	ctx->brightness = GAMMA_LEVEL_NUM - 1;
++	ret = clk_prepare_enable(dsi->pll_clk);
++	if (ret < 0) {
++		dev_err(dsi->dev, "cannot enable pll clock %d\n", ret);
++		goto err_pll_clk;
++	}
 +
-+	drm_panel_init(&ctx->panel);
-+	ctx->panel.dev = dev;
-+	ctx->panel.funcs = &s6e8aa0_drm_funcs;
++	ret = phy_power_on(dsi->phy);
++	if (ret < 0) {
++		dev_err(dsi->dev, "cannot enable phy %d\n", ret);
++		goto err_phy;
++	}
 +
-+	ret = drm_panel_add(&ctx->panel);
-+	if (ret < 0)
-+		return ret;
++	return 0;
 +
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0)
-+		drm_panel_remove(&ctx->panel);
++err_phy:
++	clk_disable_unprepare(dsi->pll_clk);
++err_pll_clk:
++	clk_disable_unprepare(dsi->bus_clk);
++err_bus_clk:
++	regulator_bulk_disable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
 +
 +	return ret;
 +}
 +
-+static int s6e8aa0_remove(struct mipi_dsi_device *dsi)
++static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
 +{
-+	struct s6e8aa0 *ctx = mipi_dsi_get_drvdata(dsi);
++	int ret;
 +
-+	mipi_dsi_detach(dsi);
-+	drm_panel_remove(&ctx->panel);
++	usleep_range(10000, 20000);
++
++	if (dsi->state & DSIM_STATE_INITIALIZED) {
++		dsi->state &= ~DSIM_STATE_INITIALIZED;
++
++		exynos_dsi_disable_clock(dsi);
++
++		disable_irq(dsi->irq);
++	}
++
++	dsi->state &= ~DSIM_STATE_CMD_LPM;
++
++	phy_power_off(dsi->phy);
++
++	clk_disable_unprepare(dsi->pll_clk);
++	clk_disable_unprepare(dsi->bus_clk);
++
++	ret = regulator_bulk_disable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
++	if (ret < 0)
++		dev_err(dsi->dev, "cannot disable regulators %d\n", ret);
++}
++
++static int exynos_dsi_enable(struct exynos_dsi *dsi)
++{
++	int ret;
++
++	if (dsi->state & DSIM_STATE_ENABLED)
++		return 0;
++
++	ret = exynos_dsi_poweron(dsi);
++	if (ret < 0)
++		return ret;
++
++	ret = drm_panel_enable(dsi->panel);
++	if (ret < 0) {
++		exynos_dsi_poweroff(dsi);
++		return ret;
++	}
++
++	exynos_dsi_set_display_mode(dsi);
++	exynos_dsi_set_display_enable(dsi, true);
++
++	dsi->state |= DSIM_STATE_ENABLED;
 +
 +	return 0;
 +}
 +
-+static struct of_device_id s6e8aa0_of_match[] = {
-+	{ .compatible = "samsung,s6e8aa0" },
++static void exynos_dsi_disable(struct exynos_dsi *dsi)
++{
++	if (!(dsi->state & DSIM_STATE_ENABLED))
++		return;
++
++	exynos_dsi_set_display_enable(dsi, false);
++	drm_panel_disable(dsi->panel);
++	exynos_dsi_poweroff(dsi);
++
++	dsi->state &= ~DSIM_STATE_ENABLED;
++}
++
++static void exynos_dsi_dpms(struct exynos_drm_display *display, int mode)
++{
++	struct exynos_dsi *dsi = display->ctx;
++
++	if (dsi->panel) {
++		switch (mode) {
++		case DRM_MODE_DPMS_ON:
++			exynos_dsi_enable(dsi);
++			break;
++		case DRM_MODE_DPMS_STANDBY:
++		case DRM_MODE_DPMS_SUSPEND:
++		case DRM_MODE_DPMS_OFF:
++			exynos_dsi_disable(dsi);
++			break;
++		default:
++			break;
++		}
++	}
++}
++
++static enum drm_connector_status
++exynos_dsi_detect(struct drm_connector *connector, bool force)
++{
++	struct exynos_dsi *dsi = connector_to_dsi(connector);
++
++	if (!dsi->panel) {
++		dsi->panel = of_drm_find_panel(dsi->panel_node);
++		if (dsi->panel)
++			drm_panel_attach(dsi->panel, &dsi->connector);
++	} else if (!dsi->panel_node) {
++		struct exynos_drm_display *display;
++
++		display = platform_get_drvdata(to_platform_device(dsi->dev));
++		exynos_dsi_dpms(display, DRM_MODE_DPMS_OFF);
++		drm_panel_detach(dsi->panel);
++		dsi->panel = NULL;
++	}
++
++	if (dsi->panel)
++		return connector_status_connected;
++
++	return connector_status_disconnected;
++}
++
++static void exynos_dsi_connector_destroy(struct drm_connector *connector)
++{
++}
++
++static struct drm_connector_funcs exynos_dsi_connector_funcs = {
++	.dpms = drm_helper_connector_dpms,
++	.detect = exynos_dsi_detect,
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.destroy = exynos_dsi_connector_destroy,
++};
++
++static int exynos_dsi_get_modes(struct drm_connector *connector)
++{
++	struct exynos_dsi *dsi = connector_to_dsi(connector);
++
++	if (dsi->panel)
++		return dsi->panel->funcs->get_modes(dsi->panel);
++
++	return 0;
++}
++
++static int exynos_dsi_mode_valid(struct drm_connector *connector,
++				 struct drm_display_mode *mode)
++{
++	return MODE_OK;
++}
++
++static struct drm_encoder *
++exynos_dsi_best_encoder(struct drm_connector *connector)
++{
++	struct exynos_dsi *dsi = connector_to_dsi(connector);
++
++	return dsi->encoder;
++}
++
++static struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
++	.get_modes = exynos_dsi_get_modes,
++	.mode_valid = exynos_dsi_mode_valid,
++	.best_encoder = exynos_dsi_best_encoder,
++};
++
++static int exynos_dsi_create_connector(struct exynos_drm_display *display,
++				       struct drm_encoder *encoder)
++{
++	struct exynos_dsi *dsi = display->ctx;
++	struct drm_connector *connector = &dsi->connector;
++	int ret;
++
++	dsi->encoder = encoder;
++
++	connector->polled = DRM_CONNECTOR_POLL_HPD;
++
++	ret = drm_connector_init(encoder->dev, connector,
++				 &exynos_dsi_connector_funcs,
++				 DRM_MODE_CONNECTOR_DSI);
++	if (ret) {
++		DRM_ERROR("Failed to initialize connector with drm\n");
++		return ret;
++	}
++
++	drm_connector_helper_add(connector, &exynos_dsi_connector_helper_funcs);
++	drm_sysfs_connector_add(connector);
++	drm_mode_connector_attach_encoder(connector, encoder);
++
++	return 0;
++}
++
++static void exynos_dsi_mode_set(struct exynos_drm_display *display,
++			 struct drm_display_mode *mode)
++{
++	struct exynos_dsi *dsi = display->ctx;
++	struct videomode *vm = &dsi->vm;
++
++	vm->hactive = mode->hdisplay;
++	vm->vactive = mode->vdisplay;
++	vm->vfront_porch = mode->vsync_start - mode->vdisplay;
++	vm->vback_porch = mode->vtotal - mode->vsync_end;
++	vm->vsync_len = mode->vsync_end - mode->vsync_start;
++	vm->hfront_porch = mode->hsync_start - mode->hdisplay;
++	vm->hback_porch = mode->htotal - mode->hsync_end;
++	vm->hsync_len = mode->hsync_end - mode->hsync_start;
++}
++
++static struct exynos_drm_display_ops exynos_dsi_display_ops = {
++	.create_connector = exynos_dsi_create_connector,
++	.mode_set = exynos_dsi_mode_set,
++	.dpms = exynos_dsi_dpms
++};
++
++static struct exynos_drm_display exynos_dsi_display = {
++	.type = EXYNOS_DISPLAY_TYPE_LCD,
++	.ops = &exynos_dsi_display_ops,
++};
++
++/* of_* functions will be removed after merge of of_graph patches */
++static struct device_node *
++of_get_child_by_name_reg(struct device_node *parent, const char *name, u32 reg)
++{
++	struct device_node *np;
++
++	for_each_child_of_node(parent, np) {
++		u32 r;
++
++		if (!np->name || of_node_cmp(np->name, name))
++			continue;
++
++		if (of_property_read_u32(np, "reg", &r) < 0)
++			r = 0;
++
++		if (reg == r)
++			break;
++	}
++
++	return np;
++}
++
++static struct device_node *of_graph_get_port_by_reg(struct device_node *parent,
++						    u32 reg)
++{
++	struct device_node *ports, *port;
++
++	ports = of_get_child_by_name(parent, "ports");
++	if (ports)
++		parent = ports;
++
++	port = of_get_child_by_name_reg(parent, "port", reg);
++
++	of_node_put(ports);
++
++	return port;
++}
++
++static struct device_node *
++of_graph_get_endpoint_by_reg(struct device_node *port, u32 reg)
++{
++	return of_get_child_by_name_reg(port, "endpoint", reg);
++}
++
++static int exynos_dsi_of_read_u32(const struct device_node *np,
++				  const char *propname, u32 *out_value)
++{
++	int ret = of_property_read_u32(np, propname, out_value);
++
++	if (ret < 0)
++		pr_err("%s: failed to get '%s' property\n", np->full_name,
++		       propname);
++
++	return ret;
++}
++
++enum {
++	DSI_PORT_IN,
++	DSI_PORT_OUT
++};
++
++static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
++{
++	struct device *dev = dsi->dev;
++	struct device_node *node = dev->of_node;
++	struct device_node *port, *ep;
++	int ret;
++
++	ret = exynos_dsi_of_read_u32(node, "samsung,pll-clock-frequency",
++				     &dsi->pll_clk_rate);
++	if (ret < 0)
++		return ret;
++
++	port = of_graph_get_port_by_reg(node, DSI_PORT_OUT);
++	if (!port) {
++		dev_err(dev, "no output port specified\n");
++		return -EINVAL;
++	}
++
++	ep = of_graph_get_endpoint_by_reg(port, 0);
++	of_node_put(port);
++	if (!ep) {
++		dev_err(dev, "no endpoint specified in output port\n");
++		return -EINVAL;
++	}
++
++	ret = exynos_dsi_of_read_u32(ep, "samsung,burst-clock-frequency",
++				     &dsi->burst_clk_rate);
++	if (ret < 0)
++		goto end;
++
++	ret = exynos_dsi_of_read_u32(ep, "samsung,esc-clock-frequency",
++				     &dsi->esc_clk_rate);
++
++end:
++	of_node_put(ep);
++
++	return ret;
++}
++
++static int exynos_dsi_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct exynos_dsi *dsi;
++	int ret;
++
++	dsi = devm_kzalloc(&pdev->dev, sizeof(*dsi), GFP_KERNEL);
++	if (!dsi) {
++		dev_err(&pdev->dev, "failed to allocate dsi object.\n");
++		return -ENOMEM;
++	}
++
++	init_completion(&dsi->completed);
++	spin_lock_init(&dsi->transfer_lock);
++	INIT_LIST_HEAD(&dsi->transfer_list);
++
++	dsi->dsi_host.ops = &exynos_dsi_ops;
++	dsi->dsi_host.dev = &pdev->dev;
++
++	dsi->dev = &pdev->dev;
++
++	ret = exynos_dsi_parse_dt(dsi);
++	if (ret)
++		return ret;
++
++	dsi->supplies[0].supply = "vddcore";
++	dsi->supplies[1].supply = "vddio";
++	ret = devm_regulator_bulk_get(&pdev->dev, ARRAY_SIZE(dsi->supplies),
++				      dsi->supplies);
++	if (ret) {
++		dev_info(&pdev->dev, "failed to get regulators: %d\n", ret);
++		return -EPROBE_DEFER;
++	}
++
++	dsi->pll_clk = devm_clk_get(&pdev->dev, "pll_clk");
++	if (IS_ERR(dsi->pll_clk)) {
++		dev_info(&pdev->dev, "failed to get dsi pll input clock\n");
++		return -EPROBE_DEFER;
++	}
++
++	dsi->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
++	if (IS_ERR(dsi->bus_clk)) {
++		dev_info(&pdev->dev, "failed to get dsi bus clock\n");
++		return -EPROBE_DEFER;
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	dsi->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	if (!dsi->reg_base) {
++		dev_err(&pdev->dev, "failed to remap io region\n");
++		return -EADDRNOTAVAIL;
++	}
++
++	dsi->phy = devm_phy_get(&pdev->dev, "dsim");
++	if (IS_ERR(dsi->phy)) {
++		dev_info(&pdev->dev, "failed to get dsim phy\n");
++		return -EPROBE_DEFER;
++	}
++
++	dsi->irq = platform_get_irq(pdev, 0);
++	if (dsi->irq < 0) {
++		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
++		return dsi->irq;
++	}
++
++	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
++	ret = devm_request_threaded_irq(&pdev->dev, dsi->irq, NULL,
++					exynos_dsi_irq, IRQF_ONESHOT,
++					dev_name(&pdev->dev), dsi);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to request dsi irq\n");
++		return ret;
++	}
++
++	exynos_dsi_display.ctx = dsi;
++
++	platform_set_drvdata(pdev, &exynos_dsi_display);
++	exynos_drm_display_register(&exynos_dsi_display);
++
++	return mipi_dsi_host_register(&dsi->dsi_host);
++}
++
++static int exynos_dsi_remove(struct platform_device *pdev)
++{
++	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
++
++	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
++
++	exynos_drm_display_unregister(&exynos_dsi_display);
++	mipi_dsi_host_unregister(&dsi->dsi_host);
++
++	return 0;
++}
++
++#if CONFIG_PM_SLEEP
++static int exynos_dsi_resume(struct device *dev)
++{
++	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
++
++	if (dsi->state & DSIM_STATE_ENABLED) {
++		dsi->state &= ~DSIM_STATE_ENABLED;
++		exynos_dsi_enable(dsi);
++	}
++
++	return 0;
++}
++
++static int exynos_dsi_suspend(struct device *dev)
++{
++	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
++
++	if (dsi->state & DSIM_STATE_ENABLED) {
++		exynos_dsi_disable(dsi);
++		dsi->state |= DSIM_STATE_ENABLED;
++	}
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops exynos_dsi_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
++};
++
++static struct of_device_id exynos_dsi_of_match[] = {
++	{ .compatible = "samsung,exynos4210-mipi-dsi" },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, s6e8aa0_of_match);
 +
-+static struct mipi_dsi_driver s6e8aa0_driver = {
-+	.probe = s6e8aa0_probe,
-+	.remove = s6e8aa0_remove,
++MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
++struct platform_driver dsi_driver = {
++	.probe = exynos_dsi_probe,
++	.remove = exynos_dsi_remove,
 +	.driver = {
-+		.name = "panel_s6e8aa0",
-+		.owner = THIS_MODULE,
-+		.of_match_table = s6e8aa0_of_match,
++		   .name = "exynos-dsi",
++		   .owner = THIS_MODULE,
++		   .pm = &exynos_dsi_pm_ops,
++		   .of_match_table = exynos_dsi_of_match,
 +	},
 +};
-+module_mipi_dsi_driver(s6e8aa0_driver);
 +
-+MODULE_AUTHOR("Donghwa Lee <dh09.lee@samsung.com>");
-+MODULE_AUTHOR("Inki Dae <inki.dae@samsung.com>");
-+MODULE_AUTHOR("Joongmock Shin <jmock.shin@samsung.com>");
-+MODULE_AUTHOR("Eunchul Kim <chulspro.kim@samsung.com>");
-+MODULE_AUTHOR("Tomasz Figa <t.figa@samsung.com>");
-+MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
-+MODULE_DESCRIPTION("MIPI-DSI based s6e8aa0 AMOLED LCD Panel Driver");
++MODULE_AUTHOR("Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
++MODULE_AUTHOR("Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
++MODULE_DESCRIPTION("Samsung SoC MIPI DSI Master");
 +MODULE_LICENSE("GPL v2");
 -- 
 1.8.3.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
