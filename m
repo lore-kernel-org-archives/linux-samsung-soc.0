@@ -1,25 +1,46 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 51/75] ARM: l2c: remove platforms/SoCs setting early BRESP
-Date: Fri, 28 Mar 2014 09:02:30 -0700
-Message-ID: <20140328160229.GF24308@atomide.com>
-References: <20140328151249.GJ7528@n2100.arm.linux.org.uk>
- <E1WTYYR-0007GJ-Ai@rmk-PC.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1WTYYR-0007GJ-Ai@rmk-PC.arm.linux.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH 3/8] ARM: dts: imx6: update pcie to bring in line with new binding
+Date: Fri, 28 Mar 2014 17:52:54 +0100
+Message-ID: <1396025579-14344-4-git-send-email-l.stach@pengutronix.de>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Russell King <rmk+kernel@arm.linux.org.uk> [140328 08:22]:
-> Since we now automatically enable early BRESP in core L2C-310 code when
-> we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
-> explicitly.  Instead, they should seek to preserve the value of bit 30
-> in the auxiliary control register.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+The new bindings drops one clock, renames the others and
+drops the old interrupt mapping.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ arch/arm/boot/dts/imx6qdl.dtsi | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index c1c06d25decc..1ea1adb6d8c6 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -128,15 +128,16 @@
+ 				  0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
+ 				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
+ 			num-lanes = <1>;
+-			interrupts = <0 123 0x04>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
+ 			#interrupt-cells = <1>;
+ 			interrupt-map-mask = <0 0 0 0x7>;
+ 			interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+ 			                <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+ 			                <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+ 			                <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
+-			clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
++			clocks = <&clks 144>, <&clks 206>, <&clks 189>;
++			clock-names = "pcie", "pcie_bus", "pcie_phy";
+ 			status = "disabled";
+ 		};
+ 
+-- 
+1.9.0
