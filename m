@@ -1,88 +1,146 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH 8/8] PCI: imx6: add support for MSI
-Date: Fri, 28 Mar 2014 17:52:59 +0100
-Message-ID: <1396025579-14344-9-git-send-email-l.stach@pengutronix.de>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: [PATCH 4/8] PCI: imx6: use new clock names
+Date: Fri, 28 Mar 2014 17:52:55 +0100
+Message-ID: <1396025579-14344-5-git-send-email-l.stach@pengutronix.de>
 References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:59028 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752513AbaC1QxK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Mar 2014 12:53:10 -0400
-In-Reply-To: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1396025579-14344-1-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Cross <xobs-nXMMniAx+RbQT0dZR+AlfA@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 
-This patch adds support for Message Signaled Interrupts in the
-imx6-pcie driver.
+As defined in the new binding.
 
-Signed-off-by: Harro Haan <hrhaan@gmail.com>
-Signed-off-by: Juergen Beisert <jbe@pengutronix.de>
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 ---
- drivers/pci/host/pci-imx6.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/pci/host/pci-imx6.c | 74 ++++++++++++++++++---------------------------
+ 1 file changed, 29 insertions(+), 45 deletions(-)
 
 diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
-index 4c20fc4795e5..41008b7804f9 100644
+index ee082509b0ba..71730bbcd9a2 100644
 --- a/drivers/pci/host/pci-imx6.c
 +++ b/drivers/pci/host/pci-imx6.c
-@@ -25,6 +25,7 @@
- #include <linux/resource.h>
- #include <linux/signal.h>
- #include <linux/types.h>
-+#include <linux/interrupt.h>
+@@ -35,10 +35,9 @@ struct imx6_pcie {
+ 	int			power_on_gpio;
+ 	int			wake_up_gpio;
+ 	int			disable_gpio;
+-	struct clk		*lvds_gate;
+-	struct clk		*sata_ref_100m;
+-	struct clk		*pcie_ref_125m;
+-	struct clk		*pcie_axi;
++	struct clk		*pcie_bus;
++	struct clk		*pcie_phy;
++	struct clk		*pcie;
+ 	struct pcie_port	pp;
+ 	struct regmap		*iomuxc_gpr;
+ 	void __iomem		*mem_base;
+@@ -239,28 +238,22 @@ static int imx6_pcie_deassert_core_reset(struct pcie_port *pp)
+ 	regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR1,
+ 			IMX6Q_GPR1_PCIE_REF_CLK_EN, 1 << 16);
  
- #include "pcie-designware.h"
+-	ret = clk_prepare_enable(imx6_pcie->sata_ref_100m);
++	ret = clk_prepare_enable(imx6_pcie->pcie_phy);
+ 	if (ret) {
+-		dev_err(pp->dev, "unable to enable sata_ref_100m\n");
+-		goto err_sata_ref;
++		dev_err(pp->dev, "unable to enable pcie_phy clock\n");
++		goto err_pcie_phy;
+ 	}
  
-@@ -314,6 +315,13 @@ static int imx6_pcie_wait_for_link(struct pcie_port *pp)
+-	ret = clk_prepare_enable(imx6_pcie->pcie_ref_125m);
++	ret = clk_prepare_enable(imx6_pcie->pcie_bus);
+ 	if (ret) {
+-		dev_err(pp->dev, "unable to enable pcie_ref_125m\n");
+-		goto err_pcie_ref;
++		dev_err(pp->dev, "unable to enable pcie_bus clock\n");
++		goto err_pcie_bus;
+ 	}
+ 
+-	ret = clk_prepare_enable(imx6_pcie->lvds_gate);
++	ret = clk_prepare_enable(imx6_pcie->pcie);
+ 	if (ret) {
+-		dev_err(pp->dev, "unable to enable lvds_gate\n");
+-		goto err_lvds_gate;
+-	}
+-
+-	ret = clk_prepare_enable(imx6_pcie->pcie_axi);
+-	if (ret) {
+-		dev_err(pp->dev, "unable to enable pcie_axi\n");
+-		goto err_pcie_axi;
++		dev_err(pp->dev, "unable to enable pcie clock\n");
++		goto err_pcie;
+ 	}
+ 
+ 	/* allow the clocks to stabilize */
+@@ -274,13 +267,11 @@ static int imx6_pcie_deassert_core_reset(struct pcie_port *pp)
+ 	}
  	return 0;
+ 
+-err_pcie_axi:
+-	clk_disable_unprepare(imx6_pcie->lvds_gate);
+-err_lvds_gate:
+-	clk_disable_unprepare(imx6_pcie->pcie_ref_125m);
+-err_pcie_ref:
+-	clk_disable_unprepare(imx6_pcie->sata_ref_100m);
+-err_sata_ref:
++err_pcie:
++	clk_disable_unprepare(imx6_pcie->pcie_bus);
++err_pcie_bus:
++	clk_disable_unprepare(imx6_pcie->pcie_phy);
++err_pcie_phy:
+ 	return ret;
+ 
  }
+@@ -583,32 +574,25 @@ static int __init imx6_pcie_probe(struct platform_device *pdev)
+ 	}
  
-+static irqreturn_t imx6_pcie_msi_handler(int irq, void *arg)
-+{
-+	struct pcie_port *pp = arg;
-+
-+	return dw_handle_msi_irq(pp);
-+}
-+
- static int imx6_pcie_start_link(struct pcie_port *pp)
- {
- 	struct imx6_pcie *imx6_pcie = to_imx6_pcie(pp);
-@@ -388,6 +396,9 @@ static void imx6_pcie_host_init(struct pcie_port *pp)
- 	dw_pcie_setup_rc(pp);
+ 	/* Fetch clocks */
+-	imx6_pcie->lvds_gate = devm_clk_get(&pdev->dev, "lvds_gate");
+-	if (IS_ERR(imx6_pcie->lvds_gate)) {
+-		dev_err(&pdev->dev,
+-			"lvds_gate clock select missing or invalid\n");
+-		return PTR_ERR(imx6_pcie->lvds_gate);
+-	}
+-
+-	imx6_pcie->sata_ref_100m = devm_clk_get(&pdev->dev, "sata_ref_100m");
+-	if (IS_ERR(imx6_pcie->sata_ref_100m)) {
++	imx6_pcie->pcie_phy = devm_clk_get(&pdev->dev, "pcie_phy");
++	if (IS_ERR(imx6_pcie->pcie_phy)) {
+ 		dev_err(&pdev->dev,
+-			"sata_ref_100m clock source missing or invalid\n");
+-		return PTR_ERR(imx6_pcie->sata_ref_100m);
++			"pcie_phy clock source missing or invalid\n");
++		return PTR_ERR(imx6_pcie->pcie_phy);
+ 	}
  
- 	imx6_pcie_start_link(pp);
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		dw_pcie_msi_init(pp);
- }
+-	imx6_pcie->pcie_ref_125m = devm_clk_get(&pdev->dev, "pcie_ref_125m");
+-	if (IS_ERR(imx6_pcie->pcie_ref_125m)) {
++	imx6_pcie->pcie_bus = devm_clk_get(&pdev->dev, "pcie_bus");
++	if (IS_ERR(imx6_pcie->pcie_bus)) {
+ 		dev_err(&pdev->dev,
+-			"pcie_ref_125m clock source missing or invalid\n");
+-		return PTR_ERR(imx6_pcie->pcie_ref_125m);
++			"pcie_bus clock source missing or invalid\n");
++		return PTR_ERR(imx6_pcie->pcie_bus);
+ 	}
  
- static void imx6_pcie_reset_phy(struct pcie_port *pp)
-@@ -477,6 +488,22 @@ static int imx6_add_pcie_port(struct pcie_port *pp,
- {
- 	int ret;
+-	imx6_pcie->pcie_axi = devm_clk_get(&pdev->dev, "pcie_axi");
+-	if (IS_ERR(imx6_pcie->pcie_axi)) {
++	imx6_pcie->pcie = devm_clk_get(&pdev->dev, "pcie");
++	if (IS_ERR(imx6_pcie->pcie)) {
+ 		dev_err(&pdev->dev,
+-			"pcie_axi clock source missing or invalid\n");
+-		return PTR_ERR(imx6_pcie->pcie_axi);
++			"pcie clock source missing or invalid\n");
++		return PTR_ERR(imx6_pcie->pcie);
+ 	}
  
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-+		if (pp->msi_irq <= 0) {
-+			dev_err(&pdev->dev, "failed to get MSI irq\n");
-+			return -ENODEV;
-+		}
-+
-+		ret = devm_request_irq(&pdev->dev, pp->msi_irq,
-+		                       imx6_pcie_msi_handler,
-+		                       IRQF_SHARED, "mx6-pcie-msi", pp);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to request MSI irq\n");
-+			return -ENODEV;
-+		}
-+	}
-+
- 	pp->root_bus_nr = -1;
- 	pp->ops = &imx6_pcie_host_ops;
- 
+ 	/* Grab GPR config register range */
 -- 
 1.9.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
