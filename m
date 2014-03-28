@@ -1,228 +1,104 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 1/3] arm64: dts: add initial dts for Samsung GH7 SoC and
- SSDK-GH7 board
-Date: Fri, 28 Mar 2014 17:57:48 +0900
-Message-ID: <023601cf4a63$cb1bfae0$6153f0a0$@samsung.com>
-References: <000301cf4509$2b6400b0$822c0210$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: armdev <armdev.ftm@gmail.com>
+Subject: Re: Enabling uart 3 in arndale
+Date: Fri, 28 Mar 2014 15:12:09 +0530
+Message-ID: <1F300D52-7D5A-47FA-B3B4-7254C5A409E8@gmail.com>
+References: <0259D8EA-B62C-4D07-8661-ED2CF6E53779@gmail.com> <53259EB5.8090202@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52224 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750793AbaC1I5u (ORCPT
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:48855 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750951AbaC1JmT convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Mar 2014 04:57:50 -0400
-In-reply-to: <000301cf4509$2b6400b0$822c0210$@samsung.com>
-Content-language: ko
+	Fri, 28 Mar 2014 05:42:19 -0400
+Received: by mail-pb0-f47.google.com with SMTP id up15so4771060pbc.34
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Mar 2014 02:42:18 -0700 (PDT)
+In-Reply-To: <53259EB5.8090202@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: 'Thomas Abraham' <thomas.ab@samsung.com>, mark.rutland@arm.com, 'Catalin Marinas' <Catalin.Marinas@arm.com>, ilho215.lee@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, u-boot@lists.denx.de
 
-Kukjin Kim wrote:
-> 
-> 
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> ---
-> 
-> Changes since v3:
-> - addressed comments from Mark
->   : updated reserved memory
->   : fixed interrupt trigger for pmu and serial
-> - removing 'gh7-pmu' from PMU compatible string
-> 
-> Since the patch 2nd and 3rd are same with previous version I'm not re-
-> posting.
-> 
->  arch/arm64/boot/dts/samsung-gh7.dtsi     |  134
-> ++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/samsung-ssdk-gh7.dts |   26 ++++++
->  2 files changed, 160 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/samsung-gh7.dtsi
->  create mode 100644 arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> 
-> diff --git a/arch/arm64/boot/dts/samsung-gh7.dtsi
-> b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> new file mode 100644
-> index 0000000..d3ab914
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/samsung-gh7.dtsi
-> @@ -0,0 +1,134 @@
-> +/*
-> + * SAMSUNG GH7 SoC device tree source
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/memreserve/ 0x80000000 0x00010000;
-> +
-> +/ {
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	aliases {
-> +		serial0 = "/amba/uart@12c00000";
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +
-> +		cpu@000 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x000>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@001 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x001>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@002 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x002>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@003 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x003>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x100>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@101 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x101>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@102 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x102>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +		cpu@103 {
-> +			device_type = "cpu";
-> +			compatible = "arm,armv8";
-> +			reg = <0x0 0x103>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x8000fff8>;
-> +		};
-> +	};
-> +
-> +	gic: interrupt-controller@1C000000 {
-> +		compatible = "arm,cortex-a15-gic";
-> +		#interrupt-cells = <3>;
-> +		interrupt-controller;
-> +		reg = <0x0 0x1C001000 0 0x1000>,	/* GIC Dist */
-> +		      <0x0 0x1C002000 0 0x1000>,	/* GIC CPU */
-> +		      <0x0 0x1C004000 0 0x2000>,	/* GIC VCPU Control
-*/
-> +		      <0x0 0x1C006000 0 0x2000>;	/* GIC VCPU */
-> +		interrupts = <1 9 0xf04>;	/* GIC Maintenence IRQ */
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <1 13 0xff01>,	/* Secure Phys IRQ */
-> +			     <1 14 0xff01>,	/* Non-secure Phys IRQ */
-> +			     <1 11 0xff01>,	/* Virt IRQ */
-> +			     <1 10 0xff01>;	/* Hyp IRQ */
-> +	};
-> +
-> +	pmu {
-> +		compatible = "armv8-pmuv3";
-> +		interrupts = <0 294 8>,
-> +			     <0 295 8>,
-> +			     <0 296 8>,
-> +			     <0 297 8>,
-> +			     <0 298 8>,
-> +			     <0 299 8>,
-> +			     <0 300 8>,
-> +			     <0 301 8>;
-> +	};
-> +
-> +	amba {
-> +		compatible = "arm,amba-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		serial@12c00000 {
-> +			compatible = "arm,pl011", "arm,primecell";
-> +			reg = <0 0x12c00000 0 0x10000>;
-> +			interrupts = <0 418 4>;
-> +		};
-> +
-> +		serial@12c20000 {
-> +			compatible = "arm,pl011", "arm,primecell";
-> +			reg = <0 0x12c20000 0 0x10000>;
-> +			interrupts = <0 420 4>;
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> b/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> new file mode 100644
-> index 0000000..80bd93c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/samsung-ssdk-gh7.dts
-> @@ -0,0 +1,26 @@
-> +/*
-> + * SAMSUNG SSDK-GH7 board device tree source
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +#include "samsung-gh7.dtsi"
-> +
-> +/ {
-> +	model = "samsung,SSDK-GH7";
-> +	compatible = "samsung,ssdk-gh7", "samsung,gh7";
-> +
-> +	chosen {
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x00000000 0x80000000 0 0x80000000>;
-> +	};
-> +};
-> --
-> 1.7.10.4
+Dear Tomasz,
 
-Ping
+On 16-Mar-2014, at 6:23 pm, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-- Kukjin
+> Hi,
+>=20
+> On 14.03.2014 09:04, armdev wrote:
+>> Hi,
+>>=20
+>> We are trying to enable the UART3 on COM18 pins of arndale board. Th=
+e UART3 RXD and TXD are on pins 2 and 4 which as per the base board spe=
+cification is connected as
+>>=20
+>> XuRXD3 : UART_3_RXD/GPA1[4] : 2
+>> XuTXD3 : UART_3_TXD/GPA1[5] : 4
+>>=20
+>> As per the public reference manual of exynos 5250, there is a regist=
+er GPACON (0x1140_0000)
+>> Setting GPACON |=3D 0x0010_0000 should enable the pins, but I am not=
+ able to see any output on UART3.
+>>=20
+>> Can you please suggest what is the right procedure
+>=20
+> The register is GPA1CON and its GPA1CON[4] and [5] bit fields need bo=
+th to be set to 0x2 - see Pad Control chapter of Exynos5250 public data=
+sheet. Also GPA1PUD should be reconfigured to disable default pull-down=
+ on both pins, again you can find details of the register in the datash=
+eet.
+>=20
+> Best regards,
+> Tomasz
+
+Based on the steps provided, we are still not able to get some output o=
+n UART3 simultaneously with UART2.
+Can you please help us find out what we are missing.
+
+On the current u-boot, Following was the observation and steps to enabl=
+e UART3 on arndale
+
+Observations / Questions
+=97=97=97=97=97=97=97=97=97=97=97=97=97=97
+a) The board has the default UART set to UART2 which is at 0x12c20000, =
+while the include/configs/arndale.h has the UART_OFFSET set to 0x010000=
+=2E
+Shouldn=92t it be set to 0x20000 ?
+
+b) board_uart_init in board/samsung/arndale/arndale.c is configuring al=
+l the uarts,=20
+Clocks would be set properly for all 4 uarts ?
+
+Steps / Code Modified
+=97=97=97=97=97=97=97=97=97=97=97=97=97=97
+a) GPAICON[4] and [5] set to 0x2 in board/samsung/arndale/arndale.c
+b) GPA1PUD [4] and [5] set to 0.
+
+diff --git a/board/samsung/arndale/arndale.c b/board/samsung/arndale/ar=
+ndale.c
+index 9efc355..4fb291e 100644
+--- a/board/samsung/arndale/arndale.c
++++ b/board/samsung/arndale/arndale.c
+@@ -102,12 +102,18 @@ static int board_uart_init(void)
+ int board_early_init_f(void)
+ {
+ 	int err;
+-
++	volatile unsigned int *gpa1con =3D (volatile unsigned int *)0x1140002=
+0;
++	volatile unsigned int *gpa1pud =3D (volatile unsigned int *)0x1140002=
+8;
+ 	err =3D board_uart_init();
+ 	if (err) {
+ 		debug("UART init failed\n");
+ 		return err;
+ 	}
++	serial_init_dev(2);
++	serial_setbrg_dev(2);
++	*gpa1con |=3D 0x00220000;=09
++	*gpa1pud &=3D 0xfffff0ff;=09
++
+ 	return err;
+ }
+ #endif
