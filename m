@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v3 12/12] ARM: dts: exynos4412-trats2: enable exynos/fimd node
-Date: Fri, 28 Mar 2014 12:52:47 +0100
-Message-ID: <1396007567-4015-13-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v3 11/12] ARM: dts: exynos4210-trats: enable exynos/fimd node
+Date: Fri, 28 Mar 2014 12:52:46 +0100
+Message-ID: <1396007567-4015-12-git-send-email-a.hajda@samsung.com>
 References: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -25,14 +25,14 @@ The patch changes fimd node status to OK.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
+ arch/arm/boot/dts/exynos4210-trats.dts | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index f7070e9..53c717b 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -577,6 +577,10 @@
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 996c7e3..02c6768 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -410,6 +410,10 @@
  		};
  	};
  
@@ -41,7 +41,7 @@ index f7070e9..53c717b 100644
 +	};
 +
  	camera {
- 		pinctrl-0 = <&cam_port_b_clk_active>;
  		pinctrl-names = "default";
+ 		pinctrl-0 = <>;
 -- 
 1.8.3.2
