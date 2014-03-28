@@ -1,51 +1,47 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v3 08/12] ARM: dts: exynos4: add MIPI DSI Master node
-Date: Fri, 28 Mar 2014 12:52:43 +0100
-Message-ID: <1396007567-4015-9-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v3 12/12] ARM: dts: exynos4412-trats2: enable exynos/fimd node
+Date: Fri, 28 Mar 2014 12:52:47 +0100
+Message-ID: <1396007567-4015-13-git-send-email-a.hajda@samsung.com>
 References: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:62417 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752103AbaC1Lxh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Mar 2014 07:53:37 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This is a common part of DSI node for all Exynos4 boards.
+The patch changes fimd node status to OK.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 08452e1..3d14cdb 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -104,6 +104,20 @@
- 		reg = <0x10010000 0x400>;
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index f7070e9..53c717b 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -577,6 +577,10 @@
+ 		};
  	};
  
-+	dsi_0: dsi@11C80000 {
-+		compatible = "samsung,exynos4210-mipi-dsi";
-+		reg = <0x11C80000 0x10000>;
-+		interrupts = <0 79 0>;
-+		samsung,power-domain = <&pd_lcd0>;
-+		phys = <&mipi_phy 1>;
-+		phy-names = "dsim";
-+		clocks = <&clock 286>, <&clock 143>;
-+		clock-names = "bus_clk", "pll_clk";
-+		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	fimd@11c00000 {
++		status = "okay";
 +	};
 +
  	camera {
- 		compatible = "samsung,fimc", "simple-bus";
- 		status = "disabled";
+ 		pinctrl-0 = <&cam_port_b_clk_active>;
+ 		pinctrl-names = "default";
 -- 
 1.8.3.2
