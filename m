@@ -1,138 +1,75 @@
-From: armdev <armdev.ftm@gmail.com>
-Subject: Re: Enabling uart 3 in arndale
-Date: Mon, 31 Mar 2014 09:17:01 +0530
-Message-ID: <F1F1B5E6-A1BC-497B-AB6C-5349FC57F02E@gmail.com>
-References: <0259D8EA-B62C-4D07-8661-ED2CF6E53779@gmail.com>
-	<53259EB5.8090202@gmail.com>
-	<1F300D52-7D5A-47FA-B3B4-7254C5A409E8@gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
-Content-Type: multipart/mixed; boundary="===============1150823079=="
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <1F300D52-7D5A-47FA-B3B4-7254C5A409E8@gmail.com>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: u-boot@lists.denx.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 2/8] PCI: designware: split Exynos and i.MX bindings
+Date: Mon, 31 Mar 2014 11:28:29 +0200
+Message-ID: <1396258109.5533.11.camel@weser.hi.pengutronix.de>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+	 <1396025579-14344-3-git-send-email-l.stach@pengutronix.de>
+	 <201403301936.49692.marex@denx.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <201403301936.49692.marex@denx.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Marek Vasut <marex@denx.de>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Am Sonntag, den 30.03.2014, 19:36 +0200 schrieb Marek Vasut:
+> On Friday, March 28, 2014 at 05:52:53 PM, Lucas Stach wrote:
+> > The glue around the core designware IP is significantly
+> > different between the Exynos and i.MX implementation,
+> > which is reflected in the DT bindings.
+> > 
+> > This changes the i.MX6 binding to reuse as much as
+> > possible from the common designware binding and
+> > removes old cruft.
+> > 
+> > I removed the optional GPIOs with the following reasoning:
+> > - disable-gpio: endpoint specific GPIO, not currently
+> >   wired up in any code. Should be handled by the PCI device
+> >   driver, not the host controller driver.
+> > - wake-up-gpio: same as above.
+> > - power-on-gpio: No user in any upstream DT. This should
+> >   be handled by a regulator which shouldn't be controlled
+> >   by the host driver, but rather by the PCI device driver.
+> 
+> This power-on-gpio should indeed be handled by the regulator, but the regulator 
+> cannot be handled by the PCIe device driver. This power-on-gpio must be operated 
+> on per-slot basis if I understand it correctly, so it cannot be controlled by 
+> the host controller driver either.
+> 
+> The reason why this cannot be controlled by the device driver is that if the 
+> device is powered down, it won't be detected on the PCIe bus, thus it cannot 
+> enable the regulator which will power up the slot the device is sitting in.
+> 
+So we are on the same page with regard to a GPIO being the wrong
+abstraction for this, I think.
 
---===============1150823079==
-Content-Type: multipart/alternative; boundary="Apple-Mail=_02F4E6FC-7F48-4735-8657-E239D5FBB464"
+For the regulator part I would argue that PCI is a bus that is built
+around the ability to inspect the bus and detect devices on the bus at
+probe time, so any regulator that's powering a PCI device should be
+boot-on.
 
+Only after the device driver is loaded it should be able to fetch the
+regulator to power down/up the device as it wishes. In the x86 world
+this is AFAIK done using ACPI methods.
 
---Apple-Mail=_02F4E6FC-7F48-4735-8657-E239D5FBB464
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=windows-1252
+I think the host controller driver has no business in controlling the
+device power, more so as there possibly could be a lot of devices on the
+bus even with a single host lane.
 
-Dear tomaz
+> 
+> btw. am I blind or do I just not see devicetree-discuss on CC ?
+> 
+Hm, there is devicetree@vger.kernel.org on CC, which MAINTAINER says is
+the right list for this stuff.
 
-Waiting for your reply...=20
+Regards,
+Lucas
 
-On 28-Mar-2014, at 3:12 pm, armdev <armdev.ftm@gmail.com> wrote:
-
-> Dear Tomasz,
->=20
-> On 16-Mar-2014, at 6:23 pm, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->=20
->> Hi,
->>=20
->> On 14.03.2014 09:04, armdev wrote:
->>> Hi,
->>>=20
->>> We are trying to enable the UART3 on COM18 pins of arndale board. =
-The UART3 RXD and TXD are on pins 2 and 4 which as per the base board =
-specification is connected as
->>>=20
->>> XuRXD3 : UART_3_RXD/GPA1[4] : 2
->>> XuTXD3 : UART_3_TXD/GPA1[5] : 4
->>>=20
->>> As per the public reference manual of exynos 5250, there is a =
-register GPACON (0x1140_0000)
->>> Setting GPACON |=3D 0x0010_0000 should enable the pins, but I am not =
-able to see any output on UART3.
->>>=20
->>> Can you please suggest what is the right procedure
->>=20
->> The register is GPA1CON and its GPA1CON[4] and [5] bit fields need =
-both to be set to 0x2 - see Pad Control chapter of Exynos5250 public =
-datasheet. Also GPA1PUD should be reconfigured to disable default =
-pull-down on both pins, again you can find details of the register in =
-the datasheet.
->>=20
->> Best regards,
->> Tomasz
->=20
-> Based on the steps provided, we are still not able to get some output =
-on UART3 simultaneously with UART2.
-> Can you please help us find out what we are missing.
->=20
-> On the current u-boot, Following was the observation and steps to =
-enable UART3 on arndale
->=20
-> Observations / Questions
-> =97=97=97=97=97=97=97=97=97=97=97=97=97=97
-> a) The board has the default UART set to UART2 which is at 0x12c20000, =
-while the include/configs/arndale.h has the UART_OFFSET set to 0x010000.
-> Shouldn=92t it be set to 0x20000 ?
->=20
-> b) board_uart_init in board/samsung/arndale/arndale.c is configuring =
-all the uarts,=20
-> Clocks would be set properly for all 4 uarts ?
->=20
-> Steps / Code Modified
-> =97=97=97=97=97=97=97=97=97=97=97=97=97=97
-> a) GPAICON[4] and [5] set to 0x2 in board/samsung/arndale/arndale.c
-> b) GPA1PUD [4] and [5] set to 0.
->=20
-> diff --git a/board/samsung/arndale/arndale.c =
-b/board/samsung/arndale/arndale.c
-> index 9efc355..4fb291e 100644
-> --- a/board/samsung/arndale/arndale.c
-> +++ b/board/samsung/arndale/arndale.c
-> @@ -102,12 +102,18 @@ static int board_uart_init(void)
-> int board_early_init_f(void)
-> {
->  	int err;
-> -
-> +	volatile unsigned int *gpa1con =3D (volatile unsigned int =
-*)0x11400020;
-> +	volatile unsigned int *gpa1pud =3D (volatile unsigned int =
-*)0x11400028;
->  	err =3D board_uart_init();
->  	if (err) {
->  		debug("UART init failed\n");
->  		return err;
->  	}
-> +	serial_init_dev(2);
-> +	serial_setbrg_dev(2);
-> +	*gpa1con |=3D 0x00220000;=09
-> +	*gpa1pud &=3D 0xfffff0ff;=09
-> +
->  	return err;
-> }
-> #endif
->=20
-
-
---Apple-Mail=_02F4E6FC-7F48-4735-8657-E239D5FBB464--
-
---===============1150823079==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-U-Boot mailing list
-U-Boot@lists.denx.de
-http://lists.denx.de/mailman/listinfo/u-boot
-
---===============1150823079==--
+-- 
+Pengutronix e.K.                           | Lucas Stach                 |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
