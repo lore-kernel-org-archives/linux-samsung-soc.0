@@ -1,49 +1,64 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 2/8] PCI: designware: split Exynos and i.MX bindings
-Date: Sun, 30 Mar 2014 19:36:49 +0200
-Message-ID: <201403301936.49692.marex@denx.de>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de> <1396025579-14344-3-git-send-email-l.stach@pengutronix.de>
+From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] spi: s3c24xx: Convert to use devm_kzalloc
+Date: Mon, 31 Mar 2014 11:37:29 +0800
+Message-ID: <1396237049.12196.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1396025579-14344-3-git-send-email-l.stach@pengutronix.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, March 28, 2014 at 05:52:53 PM, Lucas Stach wrote:
-> The glue around the core designware IP is significantly
-> different between the Exynos and i.MX implementation,
-> which is reflected in the DT bindings.
-> 
-> This changes the i.MX6 binding to reuse as much as
-> possible from the common designware binding and
-> removes old cruft.
-> 
-> I removed the optional GPIOs with the following reasoning:
-> - disable-gpio: endpoint specific GPIO, not currently
->   wired up in any code. Should be handled by the PCI device
->   driver, not the host controller driver.
-> - wake-up-gpio: same as above.
-> - power-on-gpio: No user in any upstream DT. This should
->   be handled by a regulator which shouldn't be controlled
->   by the host driver, but rather by the PCI device driver.
+Simplify the cleanup code.
 
-This power-on-gpio should indeed be handled by the regulator, but the regulator 
-cannot be handled by the PCIe device driver. This power-on-gpio must be operated 
-on per-slot basis if I understand it correctly, so it cannot be controlled by 
-the host controller driver either.
+Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/spi/spi-s3c24xx.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-The reason why this cannot be controlled by the device driver is that if the 
-device is powered down, it won't be detected on the PCIe bus, thus it cannot 
-enable the regulator which will power up the slot the device is sitting in.
+diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+index bed2338..6db14e5 100644
+--- a/drivers/spi/spi-s3c24xx.c
++++ b/drivers/spi/spi-s3c24xx.c
+@@ -183,7 +183,9 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
+ 
+ 	/* allocate settings on the first call */
+ 	if (!cs) {
+-		cs = kzalloc(sizeof(struct s3c24xx_spi_devstate), GFP_KERNEL);
++		cs = devm_kzalloc(&spi->dev,
++				  sizeof(struct s3c24xx_spi_devstate),
++				  GFP_KERNEL);
+ 		if (!cs) {
+ 			dev_err(&spi->dev, "no memory for controller state\n");
+ 			return -ENOMEM;
+@@ -209,11 +211,6 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
+ 	return 0;
+ }
+ 
+-static void s3c24xx_spi_cleanup(struct spi_device *spi)
+-{
+-	kfree(spi->controller_state);
+-}
+-
+ static inline unsigned int hw_txbyte(struct s3c24xx_spi *hw, int count)
+ {
+ 	return hw->tx ? hw->tx[count] : 0;
+@@ -543,7 +540,6 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
+ 	hw->bitbang.txrx_bufs      = s3c24xx_spi_txrx;
+ 
+ 	hw->master->setup  = s3c24xx_spi_setup;
+-	hw->master->cleanup = s3c24xx_spi_cleanup;
+ 
+ 	dev_dbg(hw->dev, "bitbang at %p\n", &hw->bitbang);
+ 
+-- 
+1.8.3.2
 
-[...]
 
-btw. am I blind or do I just not see devicetree-discuss on CC ?
 
-Best regards,
-Marek Vasut
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
