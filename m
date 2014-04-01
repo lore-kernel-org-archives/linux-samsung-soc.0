@@ -1,77 +1,79 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH] swiotlb: Correct kernel command line handler
-Date: Tue, 1 Apr 2014 08:46:06 -0400
-Message-ID: <20140401124606.GA7135@phenom.dumpdata.com>
-References: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: exynos4: cpu hotplug + cpuidle/AFTR broken
+Date: Tue, 01 Apr 2014 14:49:17 +0200
+Message-ID: <533AB5CD.7080209@linaro.org>
+References: <533A9849.1080402@linaro.org> <533AA17A.1090405@samsung.com> <533AAE34.20601@linaro.org> <533AB128.7050208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, sungjinn.chung@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f173.google.com ([74.125.82.173]:38679 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751162AbaDAMtG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Apr 2014 08:49:06 -0400
+Received: by mail-we0-f173.google.com with SMTP id w61so6135129wes.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Apr 2014 05:49:04 -0700 (PDT)
+In-Reply-To: <533AB128.7050208@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Tue, Apr 01, 2014 at 10:51:58AM +0900, Jungseok Lee wrote:
-> This patch corrects kernel command line handler when io_tlb_nslabs
-> is set to 0.
-> 
-> A current implementation allocates default size memory (64MB) when
-> 0 is given to io_tlb_nslabs ("swiotlb=0") by kernel command line.
-> In other words, memory is allocated unintentionally.
+On 04/01/2014 02:29 PM, Tomasz Figa wrote:
+>
+>
+> On 01.04.2014 14:16, Daniel Lezcano wrote:
+>> On 04/01/2014 01:22 PM, Tomasz Figa wrote:
+>>> Hi Daniel,
+>>>
+>>> On 01.04.2014 12:43, Daniel Lezcano wrote:
+>>>>
+>>>> Hi all,
+>>>>
+>>>> I tried the v3.14 kernel and unplugged the cpu1. That leads to a k=
+ernel
+>>>> hang without any trace.
+>>>>
+>>>> If I disable the cpuidle AFTR state through sysfs before unpluggin=
+g
+>>>> cpu1, it works well.
+>>>>
+>>>> I reproduced the issue on v3.14, v3.13, v3.12, v3.11
+>>>>
+>>>> v3.10 works fine.
+>>>
+>>> Could you try to reproduce the same issue on linux-next? Some of PM
+>>> issues on Exynos should be patches there.
+>>
+>> Tested on linux-next. Works fine.
+>
+> Great, thanks.
+>
+>>
+>> Do you have an idea of the patch which have fixed the issue ? In ord=
+er
+>> to backport it the kernels mentioned above.
+>
+> Most likely it's this one:
+>
+> 61557b8bac ARM: EXYNOS: Do not resume l2x0 if not enabled before susp=
+end
 
-What are the other IOMMUs that end up taking over the DMA ops?
-Or do you end up with no DMA ops?
+Confirmed.
 
-> 
-> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> Signed-off-by: Sungjinn Chung <sungjinn.chung@samsung.com>
-> ---
->  lib/swiotlb.c |    8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-> index b604b83..9fe9f71 100644
-> --- a/lib/swiotlb.c
-> +++ b/lib/swiotlb.c
-> @@ -55,6 +55,8 @@
->  
->  int swiotlb_force;
->  
-> +static int swiotlb_no_use;
-> +
->  /*
->   * Used to do a quick range check in swiotlb_tbl_unmap_single and
->   * swiotlb_tbl_sync_single_*, to see if the memory was in fact allocated by this
-> @@ -102,6 +104,8 @@ setup_io_tlb_npages(char *str)
->  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
->  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
->  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> +		if (!io_tlb_nslabs)
-> +			swiotlb_no_use = 1;
->  	}
->  	if (*str == ',')
->  		++str;
-> @@ -212,7 +216,7 @@ swiotlb_init(int verbose)
->  	unsigned char *vstart;
->  	unsigned long bytes;
->  
-> -	if (!io_tlb_nslabs) {
-> +	if (!swiotlb_no_use && !io_tlb_nslabs) {
->  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
->  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
->  	}
-> @@ -244,7 +248,7 @@ swiotlb_late_init_with_default_size(size_t default_size)
->  	unsigned int order;
->  	int rc = 0;
->  
-> -	if (!io_tlb_nslabs) {
-> +	if (!swiotlb_no_use && !io_tlb_nslabs) {
->  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
->  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
->  	}
-> -- 
-> 1.7.10.4
-> 
-> 
+This patch fixes the issue.
+
+Will you send the fix for the different kernel v3.14, v3.13, v3.12 ?=20
+(v3.11 is EOL).
+
+Thanks !
+
+   -- Daniel
+
+<http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for =
+ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
