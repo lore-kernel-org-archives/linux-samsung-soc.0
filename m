@@ -1,100 +1,77 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 00/12] Add DSI display support for Exynos based boards
-Date: Tue, 1 Apr 2014 21:29:39 +0900
-Message-ID: <CAAQKjZN7u1q6jeLCyQ0qe7VDRY3wUv1PjUeZZ6uoWYjo7vdtZQ@mail.gmail.com>
-References: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH] swiotlb: Correct kernel command line handler
+Date: Tue, 1 Apr 2014 08:46:06 -0400
+Message-ID: <20140401124606.GA7135@phenom.dumpdata.com>
+References: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:54480 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751096AbaDAM3l (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Apr 2014 08:29:41 -0400
-In-Reply-To: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: linux-kernel@vger.kernel.org, sungjinn.chung@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Andrzej,
+On Tue, Apr 01, 2014 at 10:51:58AM +0900, Jungseok Lee wrote:
+> This patch corrects kernel command line handler when io_tlb_nslabs
+> is set to 0.
+> 
+> A current implementation allocates default size memory (64MB) when
+> 0 is given to io_tlb_nslabs ("swiotlb=0") by kernel command line.
+> In other words, memory is allocated unintentionally.
 
+What are the other IOMMUs that end up taking over the DMA ops?
+Or do you end up with no DMA ops?
 
-
-2014-03-28 20:52 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
-> Hi,
->
-> This patchset adds drivers and bindings to the following devices:
-> - Exynos DSI master,
-> - S6E8AA0 DSI panel,
->
-> It adds also display support in DTS files for the following boards:
-> - Exynos4210/Trats,
-> - Exynos4412/Trats2.
->
-> The patchset is based on exynos_drm_next branch.
->
-> It is the 3rd iteration of the patches, main changes:
-> - based on exynos_drm_next branch,
-> - added video interface bindings between DSI host and slave,
->   it seems to me to be redundand, and I hope when video interface bindings
->   will be stabilized it can become optional,
-> - GPIOs implemented using gpiod framework,
-> - removed controversial stuff (toshiba bridge implementation and arndale support),
->   it will be send in another set of patches
->
-> Other changes are described in individual patches.
->
-> Regards
-> Andrzej
->
->
-> Andrzej Hajda (12):
->   drm/mipi_dsi: add flags to DSI messages
->   drm/mipi_dsi: create dsi devices only for nodes with reg property
->   drm/exynos: disallow fbdev initialization if no device is connected
->   exynos/dsim: add DT bindings
->   drm/exynos: add DSIM driver
->   panel/s6e8aa0: add DT bindings
->   drm/panel: add S6E8AA0 driver
->   ARM: dts: exynos4: add MIPI DSI Master node
->   ARM: dts: exynos4210-trats: add panel node
->   ARM: dts: exynos4412-trats2: add panel node
->   ARM: dts: exynos4210-trats: enable exynos/fimd node
->   ARM: dts: exynos4412-trats2: enable exynos/fimd node
-
-Picked up this patch series.
-
-Thanks for your contribution,
-Inki Dae
-
->
->  .../devicetree/bindings/panel/samsung,s6e8aa0.txt  |   56 +
->  .../devicetree/bindings/video/exynos_dsim.txt      |   80 +
->  arch/arm/boot/dts/exynos4.dtsi                     |   14 +
->  arch/arm/boot/dts/exynos4210-trats.dts             |   61 +
->  arch/arm/boot/dts/exynos4412-trats2.dts            |   70 +
->  drivers/gpu/drm/drm_mipi_dsi.c                     |    6 +-
->  drivers/gpu/drm/exynos/Kconfig                     |    9 +
->  drivers/gpu/drm/exynos/Makefile                    |    1 +
->  drivers/gpu/drm/exynos/exynos_drm_drv.c            |   15 +
->  drivers/gpu/drm/exynos/exynos_drm_drv.h            |    1 +
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 1525 ++++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c          |   21 +
->  drivers/gpu/drm/panel/Kconfig                      |    7 +
->  drivers/gpu/drm/panel/Makefile                     |    1 +
->  drivers/gpu/drm/panel/panel-s6e8aa0.c              | 1069 ++++++++++++++
->  include/drm/drm_mipi_dsi.h                         |    6 +
->  16 files changed, 2941 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt
->  create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
->  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_dsi.c
->  create mode 100644 drivers/gpu/drm/panel/panel-s6e8aa0.c
->
-> --
-> 1.8.3.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> Signed-off-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> ---
+>  lib/swiotlb.c |    8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+> index b604b83..9fe9f71 100644
+> --- a/lib/swiotlb.c
+> +++ b/lib/swiotlb.c
+> @@ -55,6 +55,8 @@
+>  
+>  int swiotlb_force;
+>  
+> +static int swiotlb_no_use;
+> +
+>  /*
+>   * Used to do a quick range check in swiotlb_tbl_unmap_single and
+>   * swiotlb_tbl_sync_single_*, to see if the memory was in fact allocated by this
+> @@ -102,6 +104,8 @@ setup_io_tlb_npages(char *str)
+>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+>  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> +		if (!io_tlb_nslabs)
+> +			swiotlb_no_use = 1;
+>  	}
+>  	if (*str == ',')
+>  		++str;
+> @@ -212,7 +216,7 @@ swiotlb_init(int verbose)
+>  	unsigned char *vstart;
+>  	unsigned long bytes;
+>  
+> -	if (!io_tlb_nslabs) {
+> +	if (!swiotlb_no_use && !io_tlb_nslabs) {
+>  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
+>  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+>  	}
+> @@ -244,7 +248,7 @@ swiotlb_late_init_with_default_size(size_t default_size)
+>  	unsigned int order;
+>  	int rc = 0;
+>  
+> -	if (!io_tlb_nslabs) {
+> +	if (!swiotlb_no_use && !io_tlb_nslabs) {
+>  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
+>  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+>  	}
+> -- 
+> 1.7.10.4
+> 
+> 
