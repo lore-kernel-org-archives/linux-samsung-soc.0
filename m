@@ -1,73 +1,63 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c24xx: Convert to use devm_kzalloc
-Date: Tue, 01 Apr 2014 11:02:14 +0900
-Message-ID: <000a01cf4d4e$67074030$3515c090$%han@samsung.com>
-References: <1396237049.12196.1.camel@phoenix>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] ARM: dts: Increase the size of PCIe configuration space for
+ EXYNOS5440
+Date: Tue, 01 Apr 2014 11:54:57 +0900
+Message-ID: <000001cf4d55$c4455230$4ccff690$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1396237049.12196.1.camel@phoenix>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:37850 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750996AbaDACzA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 31 Mar 2014 22:55:00 -0400
 Content-language: ko
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Axel Lin' <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, 'Mark Brown' <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, 'Pratyush Anand' <pratyush.anand@st.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Monday, March 31, 2014 12:37 PM, Axel Lin wrote:
-> 
-> Simplify the cleanup code.
-> 
-> Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Increase the size of PCIe configuration space to 8kB from 4kB,
+because 4kB for cfg0 and 4kB for cfg1 are required respectively.
+If 2kB for cfg0 and 2kB for cfg1 are set, it will make problems
+when a PCIe card having multiple EPs below a bridge is used.
 
-Reviewed-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Suggested-by: Pratyush Anand <pratyush.anand@st.com>
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/boot/dts/exynos5440.dtsi |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
-Jingoo Han
-
-> ---
->  drivers/spi/spi-s3c24xx.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-> index bed2338..6db14e5 100644
-> --- a/drivers/spi/spi-s3c24xx.c
-> +++ b/drivers/spi/spi-s3c24xx.c
-> @@ -183,7 +183,9 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
-> 
->  	/* allocate settings on the first call */
->  	if (!cs) {
-> -		cs = kzalloc(sizeof(struct s3c24xx_spi_devstate), GFP_KERNEL);
-> +		cs = devm_kzalloc(&spi->dev,
-> +				  sizeof(struct s3c24xx_spi_devstate),
-> +				  GFP_KERNEL);
->  		if (!cs) {
->  			dev_err(&spi->dev, "no memory for controller state\n");
->  			return -ENOMEM;
-> @@ -209,11 +211,6 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
->  	return 0;
->  }
-> 
-> -static void s3c24xx_spi_cleanup(struct spi_device *spi)
-> -{
-> -	kfree(spi->controller_state);
-> -}
-> -
->  static inline unsigned int hw_txbyte(struct s3c24xx_spi *hw, int count)
->  {
->  	return hw->tx ? hw->tx[count] : 0;
-> @@ -543,7 +540,6 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
->  	hw->bitbang.txrx_bufs      = s3c24xx_spi_txrx;
-> 
->  	hw->master->setup  = s3c24xx_spi_setup;
-> -	hw->master->cleanup = s3c24xx_spi_cleanup;
-> 
->  	dev_dbg(hw->dev, "bitbang at %p\n", &hw->bitbang);
-> 
-> --
-> 1.8.3.2
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index d600733..5d08be8 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -281,9 +281,9 @@
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		device_type = "pci";
+-		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
+-			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
+-			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
++		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00002000   /* configuration space */
++			  0x81000000 0 0	  0x40002000 0 0x00010000   /* downstream I/O */
++			  0x82000000 0 0x40012000 0x40012000 0 0x1ffee000>; /* non-prefetchable memory */
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+ 		interrupt-map = <0x0 0 &gic 53>;
+@@ -302,9 +302,9 @@
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		device_type = "pci";
+-		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
+-			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
+-			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
++		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00002000   /* configuration space */
++			  0x81000000 0 0	  0x60002000 0 0x00020000   /* downstream I/O */
++			  0x82000000 0 0x60012000 0x60012000 0 0x1ffee000>; /* non-prefetchable memory */
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+ 		interrupt-map = <0x0 0 &gic 56>;
+-- 
+1.7.10.4
