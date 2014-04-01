@@ -1,177 +1,54 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: exynos4: cpu hotplug + cpuidle/AFTR broken
-Date: Tue, 01 Apr 2014 13:04:18 +0200
-Message-ID: <1396350258.4250.7.camel@AMDC1943>
-References: <533A9849.1080402@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] spi: s3c24xx: Convert to use devm_kzalloc
+Date: Tue, 1 Apr 2014 12:10:33 +0100
+Message-ID: <20140401111033.GL2269@sirena.org.uk>
+References: <1396237049.12196.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k1icXJ1HDib4AVtD"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51813 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751095AbaDALEW (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49838 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751095AbaDALKv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Apr 2014 07:04:22 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3C008M5MR0ZS40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Apr 2014 12:04:12 +0100 (BST)
-In-reply-to: <533A9849.1080402@linaro.org>
+	Tue, 1 Apr 2014 07:10:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1396237049.12196.1.camel@phoenix>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
 
-On Tue, 2014-04-01 at 12:43 +0200, Daniel Lezcano wrote:
-> Hi all,
-> 
-> I tried the v3.14 kernel and unplugged the cpu1. That leads to a kernel 
-> hang without any trace.
-> 
-> If I disable the cpuidle AFTR state through sysfs before unplugging 
-> cpu1, it works well.
+--k1icXJ1HDib4AVtD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+On Mon, Mar 31, 2014 at 11:37:29AM +0800, Axel Lin wrote:
+> Simplify the cleanup code.
 
-Can you describe the hardware (at least SoC)?
+Applied, thanks.
 
-I encountered stalls after CPU hotplugging. In my case affected were
-SOC-s s where MCT local timer interrupt is shared (SPI). It could be
-reproduced easily by continuous hotplugging CPU1.
+--k1icXJ1HDib4AVtD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Fix for one issue (CPU1 stall) in my case:
-http://thread.gmane.org/gmane.linux.kernel.stable/85047
-However I still encounter CPU0 stall in the same test case (hotplug
-CPU1).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Maybe these issues are similar?
+iQIcBAEBAgAGBQJTOp6lAAoJELSic+t+oim9tccP/0/6HxJI3rrodswH/LFNoB/s
+TFJqfbGll84rCeAaicRAsJpkRL/OXvQQkzn+B2FYDYrzpuaT9+Kvxl/jpA6rN69D
+7vMlUDJyJgwfxyhP+L77YbPAE6t2h3/FqDm5GNnXaWRA7DfvS8fdDgMCZhgEZdl8
+LeXDcc0EA8JYnjZHPB5dWaeH5GCQNjlRfrlDxsV4yo2CRw/MxNxgD6sp3fgm5+TU
+7VLbkniKMo7AQaSwoKGdHG8gkFvAT0KaWnM1N1S5oPcNPbpWPBeCxw0KpOjLsYVf
+cfRSSHrXQFFqZw1YvpYO3Bo+kA1JWt5gvbmpTPK1IkuY3TOmgDrb+GL6pWATE5aB
+8hUoLr0yjPpqxCnJTdG0li/6bylTvZercrXAgA9eMqqXyvTnO68GmptFHWGgEj1M
++sCkY6M2YUuhWenlrItwEQ3ZKldei9QPLw8w6OVXVFaHUXBPfbhka1oOqto7WE8N
+z9mNpEKb/Zj8wgPOPX6jpLj/30ZNx2Jp/Ig5ASkEkF7cIYgJVeGPLnPHBetOoIga
+nk1/BFBNb/2bEn8ILIw/E6dOfS/y8Ref1UWe/TnplXHd6zH+hQ3Fey4sbjKAudd1
+SAmeZWGQd7gZtO8dy/f476WAiA1kLMpn+h5KRiNQBKpFk9KFA72TdqQejqQomHdK
+eICauXFOR8QdTuXaZAKK
+=cQPt
+-----END PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
-
-
-> 
-> I reproduced the issue on v3.14, v3.13, v3.12, v3.11
-> 
-> v3.10 works fine.
-> 
-> I tried to git bisect but I finally gave up due to too much kernel 
-> hanging at boot.
-> 
-> The git bisect log below.
-> 
-> Thanks
->    -- Daniel
-> 
-> 
-> git bisect start
-> # bad: [6e4664525b1db28f8c4e1130957f70a94c19213e] Linux 3.11
-> git bisect bad 6e4664525b1db28f8c4e1130957f70a94c19213e
-> # good: [8bb495e3f02401ee6f76d1b1d77f3ac9f079e376] Linux 3.10
-> git bisect good 8bb495e3f02401ee6f76d1b1d77f3ac9f079e376
-> # good: [8b70a90cabafb6a6e1a0d3f838b38355fe48337e] Merge branch 
-> 'for-v3.11' of git://git.linaro.org/people/mszyprowski/linux-dma-mapping
-> git bisect good 8b70a90cabafb6a6e1a0d3f838b38355fe48337e
-> # bad: [b41e6a51d57e231d2ed237f17f002cc536c0987c] sh_eth: SH_ETH should 
-> depend on HAS_DMA
-> git bisect bad b41e6a51d57e231d2ed237f17f002cc536c0987c
-> # bad: [2e17c5a97e231f3cb426f4b7895eab5be5c5442e] Merge branch 
-> 'drm-next' of git://people.freedesktop.org/~airlied/linux
-> git bisect bad 2e17c5a97e231f3cb426f4b7895eab5be5c5442e
-> # good: [e631227f698f39969eb476d297f3ac65b43b51a5] drm/radeon: fix 
-> endian bug in radeon_atom_get_mclk_range_table()
-> git bisect good e631227f698f39969eb476d297f3ac65b43b51a5
-> # bad: [9a5889ae1ce41f376e6a5b56e17e0c5a755fda80] Merge branch 
-> 'for-linus' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client
-> git bisect bad 9a5889ae1ce41f376e6a5b56e17e0c5a755fda80
-> # bad: [be0c5d8c0bb0023e11f5c6d38e90f7b0f24edb64] Merge tag 
-> 'nfs-for-3.11-1' of git://git.linux-nfs.org/projects/trondmy/linux-nfs
-> git bisect bad be0c5d8c0bb0023e11f5c6d38e90f7b0f24edb64
-> # bad: [d2b4a646717153a1a180b64d4a8464054dbd700e] Merge branch 
-> 'for-linus' of git://git.infradead.org/users/vkoul/slave-dma
-> git bisect bad d2b4a646717153a1a180b64d4a8464054dbd700e
-> # skip: [07bd1172902e782f288e4d44b1fde7dec0f08b6f] tick: Sanitize 
-> broadcast control logic
-> git bisect skip 07bd1172902e782f288e4d44b1fde7dec0f08b6f
-> # good: [757f4e51b74f7fb19251020e742a78111fdea194] MIPS: jz4740: Correct 
-> clock gate bit for DMA controller
-> git bisect good 757f4e51b74f7fb19251020e742a78111fdea194
-> # skip: [064706514ec3fea740c2656e03c4f01f6a551ac4] clocksource: Add 
-> generic dummy timer driver
-> git bisect skip 064706514ec3fea740c2656e03c4f01f6a551ac4
-> # skip: [55a68c23e0a675b2b8ac2656fd6edbf98b78e4c6] dw_apb_timer_of.c: 
-> Remove parts that were picoxcell-specific
-> git bisect skip 55a68c23e0a675b2b8ac2656fd6edbf98b78e4c6
-> # skip: [fc1f7d5606487ae28d6c84e95401952927d7379e] clocksource: 
-> apb_timer: Remove unsused function
-> git bisect skip fc1f7d5606487ae28d6c84e95401952927d7379e
-> # skip: [6cffe00f7d4e24679eae6b7aae4caaf915288256] alarmtimer: Add 
-> functions for timerfd support
-> git bisect skip 6cffe00f7d4e24679eae6b7aae4caaf915288256
-> # good: [e24f6628811e2d4531b443684b598f7050932012] modpost: remove all 
-> traces of cpuinit/cpuexit sections
-> git bisect good e24f6628811e2d4531b443684b598f7050932012
-> # skip: [629a6a2b7762a474177d08043bea094dd27e0a54] sched_clock: Add 
-> temporary asm/sched_clock.h
-> git bisect skip 629a6a2b7762a474177d08043bea094dd27e0a54
-> # skip: [5c83545f24ab3dd67e0ae0e2b795fea750f08c34] power: Add option to 
-> log time spent in suspend
-> git bisect skip 5c83545f24ab3dd67e0ae0e2b795fea750f08c34
-> # good: [2473f3e7a97ce8bc0fe7596cdb361b21221418eb] posix_cpu_timers: 
-> consolidate expired timers check
-> git bisect good 2473f3e7a97ce8bc0fe7596cdb361b21221418eb
-> # skip: [336ae1180df5f69b9e0fb6561bec01c5f64361cf] ARM: sched_clock: 
-> Load cycle count after epoch stabilizes
-> git bisect skip 336ae1180df5f69b9e0fb6561bec01c5f64361cf
-> # skip: [f5a2e34375a5e2b711aea488ac3ae50eeba6d57c] clocksource: Allow 
-> clocksource select to skip current clocksource
-> git bisect skip f5a2e34375a5e2b711aea488ac3ae50eeba6d57c
-> # skip: [ce0b098981544d9f4e910ea48f3af3e726ca6d6b] x86: Fix 
-> vrtc_get_time/set_mmss to use new timespec interface
-> git bisect skip ce0b098981544d9f4e910ea48f3af3e726ca6d6b
-> # skip: [d0951a23383d09276f7976ed34d8f1cede629b48] DMA: shdma: 
-> shdma_chan_filter() has to be in shdma-base.h
-> git bisect skip d0951a23383d09276f7976ed34d8f1cede629b48
-> # skip: [7c4c3a0f18ba57ea2a2985034532303d2929902a] hrtimers: Support 
-> resuming with two or more CPUs online (but stopped)
-> git bisect skip 7c4c3a0f18ba57ea2a2985034532303d2929902a
-> # skip: [a89c7edbe7d7aa80f507915f3dd801211b116b79] clocksource: Let 
-> clocksource_unregister() return success/error
-> git bisect skip a89c7edbe7d7aa80f507915f3dd801211b116b79
-> # skip: [2699339361a9bacb3fa663e6b8981a040cfca4ee] clocksource: 
-> vf_pit_timer: Use linux/sched_clock.h
-> git bisect skip 2699339361a9bacb3fa663e6b8981a040cfca4ee
-> # skip: [7172a286ced0c1f4f239a0fa09db54ed37d3ead2] clockevents: Get rid 
-> of the notifier chain
-> git bisect skip 7172a286ced0c1f4f239a0fa09db54ed37d3ead2
-> # skip: [762cf9695d714d312ef7369bed1b9f9467c9e64e] Merge branch 
-> 'timers/clockevents' of git://git.linaro.org/people/dlezcano/clockevents 
-> into timers/core
-> git bisect skip 762cf9695d714d312ef7369bed1b9f9467c9e64e
-> # bad: [21884a83b2192a00885d7244a1dda32debd2fbc7] Merge branch 
-> 'timers-core-for-linus' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> git bisect bad 21884a83b2192a00885d7244a1dda32debd2fbc7
-> # skip: [5a9b5855c248d0298eac4d5490c7bc11c2f1983b] ARM: sched_clock: 
-> Remove unused needs_suspend member
-> git bisect skip 5a9b5855c248d0298eac4d5490c7bc11c2f1983b
-> # skip: [45cb8e01b2ecef1c2afb18333e95793fa1a90281] clockevents: Split 
-> out selection logic
-> git bisect skip 45cb8e01b2ecef1c2afb18333e95793fa1a90281
-> # skip: [ffbfb5e316f0db486798ccf1db36a577ffe79637] ARM: sched_clock: 
-> Return suspended count earlier
-> git bisect skip ffbfb5e316f0db486798ccf1db36a577ffe79637
-> # skip: [04397fe94ad65289884b9862b6a0c722ececaadf] timekeeping: Pass 
-> flags instead of multiple bools to timekeeping_update()
-> git bisect skip 04397fe94ad65289884b9862b6a0c722ececaadf
-> # skip: [11682a41618f8094cb7a9330b4b6a12ffaef5774] alarmtimer: Export 
-> symbols of functions declared in linux/alarmtimer.h
-> git bisect skip 11682a41618f8094cb7a9330b4b6a12ffaef5774
-> # skip: [fc1f7d5606487ae28d6c84e95401952927d7379e] clocksource: 
-> apb_timer: Remove unsused function
-> git bisect skip fc1f7d5606487ae28d6c84e95401952927d7379e
-> 
-> 
+--k1icXJ1HDib4AVtD--
