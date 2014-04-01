@@ -1,66 +1,56 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V2] ARM: dts: Increase the size of PCIe configuration space for
- EXYNOS5440
-Date: Tue, 01 Apr 2014 13:03:35 +0900
-Message-ID: <000301cf4d5f$5b14b7b0$113e2710$%han@samsung.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v2 3/7] clk: exynos5420: Rename clock IDs
+Date: Tue, 1 Apr 2014 10:12:03 +0530
+Message-ID: <CAOD6ATqRGgz9MxWYBs6Bo_xh2+N6trVByywXE_dxv9N=tpkTDg@mail.gmail.com>
+References: <1395918470-16374-1-git-send-email-shaik.ameer@samsung.com>
+	<1395918470-16374-4-git-send-email-shaik.ameer@samsung.com>
+	<20140327194959.GY3998@book.gsilab.sittig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:49342 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750709AbaDAEDj (ORCPT
+Received: from mail-yk0-f176.google.com ([209.85.160.176]:40612 "EHLO
+	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751081AbaDAEmF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Apr 2014 00:03:39 -0400
-Content-language: ko
+	Tue, 1 Apr 2014 00:42:05 -0400
+In-Reply-To: <20140327194959.GY3998@book.gsilab.sittig.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, 'Pratyush Anand' <pratyush.anand@st.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Gerhard Sittig <gsi@denx.de>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, tomasz.figa@gmail.com, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Increase the size of PCIe configuration space to 8kB from 4kB,
-because 4kB for cfg0 and 4kB for cfg1 are required respectively.
-If 2kB for cfg0 and 2kB for cfg1 are set, it will make problems
-when a PCIe card having multiple EPs below a bridge is used.
+On Fri, Mar 28, 2014 at 1:19 AM, Gerhard Sittig <gsi@denx.de> wrote:
+> On Thu, 2014-03-27 at 16:37 +0530, Shaik Ameer Basha wrote:
+>>
+>> From: Rahul Sharma <rahul.sharma@samsung.com>
+>>
+>> This patch renames the clock IDs used for the DT bindings as
+>> per Exynos5420 datasheet.
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5420.c   |  162 +++++++++++++++++---------------
+>>  include/dt-bindings/clock/exynos5420.h |  138 +++++++++++++--------------
+>>  2 files changed, 154 insertions(+), 146 deletions(-)
+>
+> does this break bisection when you rename symbolic identifiers in
+> their declaration yet don't update references at the users?
 
-Suggested-by: Pratyush Anand <pratyush.anand@st.com>
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Changes since v1:
-- Fix unintentional modification of I/O size, per Pratyush Anand.
+Hi Gerhard,
 
- arch/arm/boot/dts/exynos5440.dtsi |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks for the review.
+You are right. Actually I check for bisect build when I rebased to
+linux-next and samsung-clk (of tomasz figa) branches.
 
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index d600733..94b2cea 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -281,9 +281,9 @@
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
--		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
--			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
--			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00002000   /* configuration space */
-+			  0x81000000 0 0	  0x40002000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x40012000 0x40012000 0 0x1ffee000>; /* non-prefetchable memory */
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
- 		interrupt-map = <0x0 0 &gic 53>;
-@@ -302,9 +302,9 @@
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
--		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
--			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
--			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00002000   /* configuration space */
-+			  0x81000000 0 0	  0x60002000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x60012000 0x60012000 0 0x1ffee000>; /* non-prefetchable memory */
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
- 		interrupt-map = <0x0 0 &gic 56>;
--- 
-1.7.10.4
+I didn't check for bisect build after rebased to following patch.
+ARM: dts: use macros in clock bindings for exynos5420
+
+>
+>
+> virtually yours
+> Gerhard Sittig
+> --
+> DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+> HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+> Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
