@@ -1,233 +1,109 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 5/5] drm/exynos: enable support for exynos5420 hdmi device
-Date: Wed, 02 Apr 2014 22:43:46 +0530
-Message-ID: <1396458826-3051-6-git-send-email-rahul.sharma@samsung.com>
-References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34105 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932383AbaDBROb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Apr 2014 13:14:31 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N3E002N9YK6KWB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Apr 2014 02:14:30 +0900 (KST)
-In-reply-to: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base address
+ via DT
+Date: Wed, 02 Apr 2014 16:50:57 +0900
+Message-ID: <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
+References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, r.sh.open@gmail.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+From: Young-Gun Jang <yg1004.jang@samsung.com>
 
-Enable support for hdmi for exynos5420 hdmiphy. Add
-compatible string in the of_match table. Also added
-hdmiphy configuration values for exynos5420.
+Add support for mapping Exynos Power Management Unit (PMU) base address
+from device tree. Code will use existing samsung pmu binding information.
+This patch also adds "get_exynos_pmubase" a helper function to return mapped base
+address to various other files under "mach-exynos".
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-Signed-off-by: Shirish S <s.shirish@samsung.com>
+Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- .../devicetree/bindings/video/exynos_hdmi.txt      |    1 +
- drivers/gpu/drm/exynos/exynos_hdmi.c               |  165 ++++++++++++++++++++
- 2 files changed, 166 insertions(+)
+ arch/arm/mach-exynos/common.h |    2 ++
+ arch/arm/mach-exynos/exynos.c |   44 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index 243a499..1fd8cf9 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -5,6 +5,7 @@ Required properties:
- 	1) "samsung,exynos5-hdmi" <DEPRECATED>
- 	2) "samsung,exynos4210-hdmi"
- 	3) "samsung,exynos4212-hdmi"
-+	4) "samsung,exynos5420-hdmi"
- - reg: physical base address of the hdmi and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 5989770..f3189af 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -426,6 +426,168 @@ static const struct hdmiphy_config hdmiphy_v14_configs[] = {
- 	},
- };
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index ff28334..9a55cf6 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -61,4 +61,6 @@ struct exynos_pmu_conf {
  
-+static const struct hdmiphy_config hdmiphy_5420_configs[] = {
-+	{
-+		.pixel_clock = 25200000,
-+		.conf = {
-+			0x01, 0x52, 0x3F, 0x55, 0x40, 0x01, 0x00, 0xC8,
-+			0x82, 0xC8, 0xBD, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x06, 0x80, 0x01, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xF4, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 27000000,
-+		.conf = {
-+			0x01, 0xD1, 0x22, 0x51, 0x40, 0x08, 0xFC, 0xE0,
-+			0x98, 0xE8, 0xCB, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x06, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xE4, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 27027000,
-+		.conf = {
-+			0x01, 0xD1, 0x2D, 0x72, 0x40, 0x64, 0x12, 0xC8,
-+			0x43, 0xE8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x26, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xE3, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 36000000,
-+		.conf = {
-+			0x01, 0x51, 0x2D, 0x55, 0x40, 0x40, 0x00, 0xC8,
-+			0x02, 0xC8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xAB, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 40000000,
-+		.conf = {
-+			0x01, 0xD1, 0x21, 0x31, 0x40, 0x3C, 0x28, 0xC8,
-+			0x87, 0xE8, 0xC8, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x9A, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 65000000,
-+		.conf = {
-+			0x01, 0xD1, 0x36, 0x34, 0x40, 0x0C, 0x04, 0xC8,
-+			0x82, 0xE8, 0x45, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xBD, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 71000000,
-+		.conf = {
-+			0x01, 0xD1, 0x3B, 0x35, 0x40, 0x0C, 0x04, 0xC8,
-+			0x85, 0xE8, 0x63, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x57, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 73250000,
-+		.conf = {
-+			0x01, 0xD1, 0x1F, 0x10, 0x40, 0x78, 0x8D, 0xC8,
-+			0x81, 0xE8, 0xB7, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x56, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xA8, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 74176000,
-+		.conf = {
-+			0x01, 0xD1, 0x1F, 0x10, 0x40, 0x5B, 0xEF, 0xC8,
-+			0x81, 0xE8, 0xB9, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x56, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xA6, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 74250000,
-+		.conf = {
-+			0x01, 0xD1, 0x1F, 0x10, 0x40, 0x40, 0xF8, 0x08,
-+			0x81, 0xE8, 0xBA, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x26, 0x80, 0x09, 0x84, 0x05, 0x22, 0x24, 0x66,
-+			0x54, 0xA5, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 83500000,
-+		.conf = {
-+			0x01, 0xD1, 0x23, 0x11, 0x40, 0x0C, 0xFB, 0xC8,
-+			0x85, 0xE8, 0xD1, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x4A, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 88750000,
-+		.conf = {
-+			0x01, 0xD1, 0x25, 0x11, 0x40, 0x18, 0xFF, 0xC8,
-+			0x83, 0xE8, 0xDE, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x45, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 106500000,
-+		.conf = {
-+			0x01, 0xD1, 0x2C, 0x12, 0x40, 0x0C, 0x09, 0xC8,
-+			0x84, 0xE8, 0x0A, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x73, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 108000000,
-+		.conf = {
-+			0x01, 0x51, 0x2D, 0x15, 0x40, 0x01, 0x00, 0xC8,
-+			0x82, 0xC8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0xC7, 0x25, 0x03, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 115500000,
-+		.conf = {
-+			0x01, 0xD1, 0x30, 0x14, 0x40, 0x0C, 0x03, 0xC8,
-+			0x88, 0xE8, 0x21, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x6A, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 146250000,
-+		.conf = {
-+			0x01, 0xD1, 0x3D, 0x15, 0x40, 0x18, 0xFD, 0xC8,
-+			0x83, 0xE8, 0x6E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-+			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-+			0x54, 0x54, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-+		},
-+	},
-+	{
-+		.pixel_clock = 148500000,
-+		.conf = {
-+			0x01, 0xD1, 0x1F, 0x00, 0x40, 0x40, 0xF8, 0x08,
-+			0x81, 0xE8, 0xBA, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-+			0x26, 0x80, 0x09, 0x84, 0x05, 0x22, 0x24, 0x66,
-+			0x54, 0x4B, 0x25, 0x03, 0x00, 0x80, 0x01, 0x80,
-+		},
-+	},
+ extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+ 
++extern void __iomem *get_exynos_pmubase(void);
++
+ #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index a5e1349..a5127fb 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -35,6 +35,8 @@
+ #define L2_AUX_VAL 0x7C470001
+ #define L2_AUX_MASK 0xC200ffff
+ 
++static void __iomem *exynos_pmu_base __initdata;
++
+ static struct map_desc exynos4_iodesc[] __initdata = {
+ 	{
+ 		.virtual	= (unsigned long)S3C_VA_SYS,
+@@ -245,6 +247,47 @@ void __init exynos_init_late(void)
+ 	exynos_pm_init();
+ }
+ 
++static char const *exynos_dt_pmu_match[] __initconst = {
++	"samsung,exynos4210-pmu",
++	"samsung,exynos4212-pmu",
++	"samsung,exynos4412-pmu",
++	"samsung,exynos5250-pmu",
++	NULL
 +};
 +
-+struct hdmi_driver_data exynos5420_hdmi_driver_data = {
-+	.type		= HDMI_TYPE14,
-+	.phy_confs	= hdmiphy_5420_configs,
-+	.phy_conf_count	= ARRAY_SIZE(hdmiphy_5420_configs),
-+	.is_apb_phy	= 1,
-+};
++static int __init exynos_fdt_map_pmu(unsigned long node,
++		const char *uname, int depth, void *data)
++{
++	struct map_desc iodesc;
++	__be32 *reg;
++	unsigned long len;
++
++	if (of_flat_dt_match(node, exynos_dt_pmu_match)) {
++		phys_addr_t phys_addr;
++		reg = of_get_flat_dt_prop(node, "reg", &len);
++		if (reg == NULL || len != (sizeof(unsigned long) * 2))
++			return 0;
++
++		phys_addr = be32_to_cpu(reg[0]);
++		iodesc.pfn = __phys_to_pfn(phys_addr);
++		iodesc.length = be32_to_cpu(reg[1]) - 1;
++		iodesc.virtual = (unsigned long)S5P_VA_PMU;
++		iodesc.type = MT_DEVICE;
++		iotable_init(&iodesc, 1);
++
++		exynos_pmu_base = ioremap(phys_addr, be32_to_cpu(reg[1]));
++		if (WARN_ON(!exynos_pmu_base))
++			return -EFAULT;
++	}
++
++	return 0;
++}
++
++inline void __iomem *get_exynos_pmubase()
++{
++	return exynos_pmu_base;
++}
++
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 					int depth, void *data)
+ {
+@@ -301,6 +344,7 @@ void __init exynos_init_io(void)
+ 	debug_ll_io_init();
  
- struct hdmi_driver_data exynos4212_hdmi_driver_data = {
- 	.type		= HDMI_TYPE14,
-@@ -2051,6 +2213,9 @@ static struct of_device_id hdmi_match_types[] = {
- 		.compatible = "samsung,exynos4212-hdmi",
- 		.data = &exynos4212_hdmi_driver_data,
- 	}, {
-+		.compatible = "samsung,exynos5420-hdmi",
-+		.data = &exynos5420_hdmi_driver_data,
-+	}, {
- 		/* end node */
- 	}
- };
+ 	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
++	of_scan_flat_dt(exynos_fdt_map_pmu, NULL);
+ 
+ 	/* detect cpu id and rev. */
+ 	s5p_init_cpu(S5P_VA_CHIPID);
 -- 
-1.7.9.5
+1.7.10.4
