@@ -1,95 +1,113 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base
- address via DT
-Date: Wed, 02 Apr 2014 13:48:21 +0200
-Message-ID: <533BF905.6070701@samsung.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
- <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 00/12] Add DSI display support for Exynos based boards
+Date: Wed, 02 Apr 2014 09:24:47 +0200
+Message-ID: <533BBB3F.9060709@samsung.com>
+References: <1396007567-4015-1-git-send-email-a.hajda@samsung.com>
+ <CAAQKjZN7u1q6jeLCyQ0qe7VDRY3wUv1PjUeZZ6uoWYjo7vdtZQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAAQKjZN7u1q6jeLCyQ0qe7VDRY3wUv1PjUeZZ6uoWYjo7vdtZQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: DRI mailing list <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/04/14 09:50, Pankaj Dubey wrote:
-> From: Young-Gun Jang <yg1004.jang@samsung.com>
-> 
-> Add support for mapping Exynos Power Management Unit (PMU) base address
-> from device tree. Code will use existing samsung pmu binding information.
-> This patch also adds "get_exynos_pmubase" a helper function to return mapped base
-> address to various other files under "mach-exynos".
-> 
-> Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h |    2 ++
->  arch/arm/mach-exynos/exynos.c |   44 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 46 insertions(+)
-> 
-[...]
->  #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index a5e1349..a5127fb 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -35,6 +35,8 @@
->  #define L2_AUX_VAL 0x7C470001
->  #define L2_AUX_MASK 0xC200ffff
->  
-> +static void __iomem *exynos_pmu_base __initdata;
-> +
->  static struct map_desc exynos4_iodesc[] __initdata = {
->  	{
->  		.virtual	= (unsigned long)S3C_VA_SYS,
-> @@ -245,6 +247,47 @@ void __init exynos_init_late(void)
->  	exynos_pm_init();
->  }
->  
-> +static char const *exynos_dt_pmu_match[] __initconst = {
-> +	"samsung,exynos4210-pmu",
-> +	"samsung,exynos4212-pmu",
-> +	"samsung,exynos4412-pmu",
-> +	"samsung,exynos5250-pmu",
-> +	NULL
-> +};
-> +
-> +static int __init exynos_fdt_map_pmu(unsigned long node,
-> +		const char *uname, int depth, void *data)
-> +{
-> +	struct map_desc iodesc;
-> +	__be32 *reg;
-> +	unsigned long len;
-> +
-> +	if (of_flat_dt_match(node, exynos_dt_pmu_match)) {
-> +		phys_addr_t phys_addr;
-> +		reg = of_get_flat_dt_prop(node, "reg", &len);
-> +		if (reg == NULL || len != (sizeof(unsigned long) * 2))
-> +			return 0;
-> +
-> +		phys_addr = be32_to_cpu(reg[0]);
-> +		iodesc.pfn = __phys_to_pfn(phys_addr);
-> +		iodesc.length = be32_to_cpu(reg[1]) - 1;
-> +		iodesc.virtual = (unsigned long)S5P_VA_PMU;
-> +		iodesc.type = MT_DEVICE;
-> +		iotable_init(&iodesc, 1);
+Hi Inki,
 
-Are you sure...you need this in addition to ioremap() below ?
-Can't you just use the Linux syscon API ?
-There were some patches posted for syscon to make it available in earlier
-system initialization stage: https://lkml.org/lkml/2014/2/19/218
+I see you have took also ld9040 driver patch [1].
+Could you take the 3rd version of this patch [2].
+It fixes build dependencies.
 
-> +		exynos_pmu_base = ioremap(phys_addr, be32_to_cpu(reg[1]));
-> +		if (WARN_ON(!exynos_pmu_base))
-> +			return -EFAULT;
-> +	}
-> +
-> +	return 0;
-> +}
+[1]: http://permalink.gmane.org/gmane.comp.video.dri.devel/102592
+[2]: http://permalink.gmane.org/gmane.comp.video.dri.devel/102659
+
+Thanks and Regards
+Andrzej
+
+On 04/01/2014 02:29 PM, Inki Dae wrote:
+> Hi Andrzej,
+>
+>
+>
+> 2014-03-28 20:52 GMT+09:00 Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+>> Hi,
+>>
+>> This patchset adds drivers and bindings to the following devices:
+>> - Exynos DSI master,
+>> - S6E8AA0 DSI panel,
+>>
+>> It adds also display support in DTS files for the following boards:
+>> - Exynos4210/Trats,
+>> - Exynos4412/Trats2.
+>>
+>> The patchset is based on exynos_drm_next branch.
+>>
+>> It is the 3rd iteration of the patches, main changes:
+>> - based on exynos_drm_next branch,
+>> - added video interface bindings between DSI host and slave,
+>>   it seems to me to be redundand, and I hope when video interface bindings
+>>   will be stabilized it can become optional,
+>> - GPIOs implemented using gpiod framework,
+>> - removed controversial stuff (toshiba bridge implementation and arndale support),
+>>   it will be send in another set of patches
+>>
+>> Other changes are described in individual patches.
+>>
+>> Regards
+>> Andrzej
+>>
+>>
+>> Andrzej Hajda (12):
+>>   drm/mipi_dsi: add flags to DSI messages
+>>   drm/mipi_dsi: create dsi devices only for nodes with reg property
+>>   drm/exynos: disallow fbdev initialization if no device is connected
+>>   exynos/dsim: add DT bindings
+>>   drm/exynos: add DSIM driver
+>>   panel/s6e8aa0: add DT bindings
+>>   drm/panel: add S6E8AA0 driver
+>>   ARM: dts: exynos4: add MIPI DSI Master node
+>>   ARM: dts: exynos4210-trats: add panel node
+>>   ARM: dts: exynos4412-trats2: add panel node
+>>   ARM: dts: exynos4210-trats: enable exynos/fimd node
+>>   ARM: dts: exynos4412-trats2: enable exynos/fimd node
+> Picked up this patch series.
+>
+> Thanks for your contribution,
+> Inki Dae
+>
+>>  .../devicetree/bindings/panel/samsung,s6e8aa0.txt  |   56 +
+>>  .../devicetree/bindings/video/exynos_dsim.txt      |   80 +
+>>  arch/arm/boot/dts/exynos4.dtsi                     |   14 +
+>>  arch/arm/boot/dts/exynos4210-trats.dts             |   61 +
+>>  arch/arm/boot/dts/exynos4412-trats2.dts            |   70 +
+>>  drivers/gpu/drm/drm_mipi_dsi.c                     |    6 +-
+>>  drivers/gpu/drm/exynos/Kconfig                     |    9 +
+>>  drivers/gpu/drm/exynos/Makefile                    |    1 +
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.c            |   15 +
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.h            |    1 +
+>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 1525 ++++++++++++++++++++
+>>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c          |   21 +
+>>  drivers/gpu/drm/panel/Kconfig                      |    7 +
+>>  drivers/gpu/drm/panel/Makefile                     |    1 +
+>>  drivers/gpu/drm/panel/panel-s6e8aa0.c              | 1069 ++++++++++++++
+>>  include/drm/drm_mipi_dsi.h                         |    6 +
+>>  16 files changed, 2941 insertions(+), 1 deletion(-)
+>>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e8aa0.txt
+>>  create mode 100644 Documentation/devicetree/bindings/video/exynos_dsim.txt
+>>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>  create mode 100644 drivers/gpu/drm/panel/panel-s6e8aa0.c
+>>
+>> --
+>> 1.8.3.2
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 --
-Thanks,
-Sylwester
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
