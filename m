@@ -1,112 +1,97 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 05/10] ARM: EXYNOS: Move "regs-pmu" header inclusion in common.h
-Date: Wed, 02 Apr 2014 16:50:56 +0900
-Message-ID: <1396425058-4012-6-git-send-email-pankaj.dubey@samsung.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: Re: [PATCH] swiotlb: Correct kernel command line handler
+Date: Wed, 02 Apr 2014 13:36:29 +0900
+Message-ID: <004c01cf4e2d$1d84a1c0$588de540$@samsung.com>
+References: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
+ <20140401124606.GA7135@phenom.dumpdata.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+In-reply-to: <20140401124606.GA7135@phenom.dumpdata.com>
+Content-language: ko
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: 'Konrad Rzeszutek Wilk' <konrad.wilk@oracle.com>
+Cc: linux-kernel@vger.kernel.org, sungjinn.chung@samsung.com, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There are many machine files under "mach-exynos" including "regs-pmu.h"
-as well as "common.h", so better we move this header inclusion in common.h.
+On Tuesday, April 01, 2014 9:46 PM, Konrad Rzeszutek Wilk wrote:
+> On Tue, Apr 01, 2014 at 10:51:58AM +0900, Jungseok Lee wrote:
+> > This patch corrects kernel command line handler when io_tlb_nslabs is
+> > set to 0.
+> >
+> > A current implementation allocates default size memory (64MB) when
+> > 0 is given to io_tlb_nslabs ("swiotlb=0") by kernel command line.
+> > In other words, memory is allocated unintentionally.
+> 
+> What are the other IOMMUs that end up taking over the DMA ops?
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h  |    1 +
- arch/arm/mach-exynos/cpuidle.c |    1 -
- arch/arm/mach-exynos/exynos.c  |    1 -
- arch/arm/mach-exynos/hotplug.c |    1 -
- arch/arm/mach-exynos/platsmp.c |    1 -
- arch/arm/mach-exynos/pm.c      |    1 -
- arch/arm/mach-exynos/pmu.c     |    1 -
- 7 files changed, 1 insertion(+), 6 deletions(-)
+I think that no other IOMMUs take over it on ARM64 system, except Xen.
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 277a83e..ff28334 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -14,6 +14,7 @@
- 
- #include <linux/reboot.h>
- #include <linux/of.h>
-+#include "regs-pmu.h"
- 
- void exynos_init_io(void);
- void exynos_restart(enum reboot_mode mode, const char *cmd);
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index b530231..b9dd8c3 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -29,7 +29,6 @@
- #include <mach/map.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- 
- #define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
- 			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 57bd1cd..a5e1349 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -30,7 +30,6 @@
- 
- #include "common.h"
- #include "mfc.h"
--#include "regs-pmu.h"
- #include "regs-sys.h"
- 
- #define L2_AUX_VAL 0x7C470001
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index 5eead53..33db6ee 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -22,7 +22,6 @@
- #include <plat/cpu.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- 
- static inline void cpu_enter_lowpower_a9(void)
- {
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index d8d1555..3ebb03f 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -29,7 +29,6 @@
- #include <plat/cpu.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- 
- extern void exynos4_secondary_startup(void);
- 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 723c988..875151f 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -34,7 +34,6 @@
- #include <mach/map.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- #include "regs-sys.h"
- 
- /**
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 05c7ce1..fb44352 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -16,7 +16,6 @@
- #include <plat/cpu.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- 
- static const struct exynos_pmu_conf *exynos_pmu_config;
- 
--- 
-1.7.10.4
+> Or do you end up with no DMA ops?
+
+I focus on ARM64 system which uses swiotlb as default DMA ops.
+
+If some ARM64 platforms would like to use memory only from
+__get_free_pages in swiotlb_alloc_coherent function, an
+interface would be needed to configure reserved memory size.
+
+Thus, I add it to kernel command line handler.
+
+Best Regards
+Jungseok Lee
+
+> >
+> > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> > Signed-off-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> > ---
+> >  lib/swiotlb.c |    8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/lib/swiotlb.c b/lib/swiotlb.c index b604b83..9fe9f71
+> > 100644
+> > --- a/lib/swiotlb.c
+> > +++ b/lib/swiotlb.c
+> > @@ -55,6 +55,8 @@
+> >
+> >  int swiotlb_force;
+> >
+> > +static int swiotlb_no_use;
+> > +
+> >  /*
+> >   * Used to do a quick range check in swiotlb_tbl_unmap_single and
+> >   * swiotlb_tbl_sync_single_*, to see if the memory was in fact
+> > allocated by this @@ -102,6 +104,8 @@ setup_io_tlb_npages(char *str)
+> >  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+> >  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+> >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> > +		if (!io_tlb_nslabs)
+> > +			swiotlb_no_use = 1;
+> >  	}
+> >  	if (*str == ',')
+> >  		++str;
+> > @@ -212,7 +216,7 @@ swiotlb_init(int verbose)
+> >  	unsigned char *vstart;
+> >  	unsigned long bytes;
+> >
+> > -	if (!io_tlb_nslabs) {
+> > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
+> >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
+> >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> >  	}
+> > @@ -244,7 +248,7 @@ swiotlb_late_init_with_default_size(size_t default_size)
+> >  	unsigned int order;
+> >  	int rc = 0;
+> >
+> > -	if (!io_tlb_nslabs) {
+> > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
+> >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
+> >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> >  	}
+> > --
+> > 1.7.10.4
+> >
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in the body of a message
+> to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
