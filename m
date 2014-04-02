@@ -1,58 +1,71 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 0/7] ARM: Exynos: PMU cleanup and refactoring for using DT
-Date: Wed, 02 Apr 2014 16:50:51 +0900
-Message-ID: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63643 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757956AbaDBHeO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Apr 2014 03:34:14 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 03/10] ARM: EXYNOS: Move SYSREG definition into sys-reg
+ specific file
+Date: Wed, 02 Apr 2014 13:27:47 +0200
+Message-ID: <533BF433.6000209@samsung.com>
+References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+ <1396425058-4012-4-git-send-email-pankaj.dubey@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1396425058-4012-4-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-This patch series, does some minor cleanup and modifies Exynos PMU related
-code for mapping Exynos Power Management Unit (PMU) base address from device
-tree. Since PMU offsets are used across many files under mach-exynos, it
-introduces one helper function to get PMU base address in exynos.c.
+Hi,
 
-This patch series is preparation for moving PMU related code out of machine
-folder and converting into a driver.
+On 02/04/14 09:50, Pankaj Dubey wrote:
+> From: Young-Gun Jang <yg1004.jang@samsung.com>
+> 
+> While making PMU (Power Mengement Unit) implementation device tree based,
+> there are few offsets related with SYSREG present in regs-pmu.h, so let's
+> make a new header file "regs-sys.h" to keep all such SYSREG related
+> register definition and remove them from "regs-pmu.h"
+> 
+> Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c   |    1 +
+>  arch/arm/mach-exynos/pm.c       |    1 +
+>  arch/arm/mach-exynos/regs-pmu.h |    3 ---
+>  arch/arm/mach-exynos/regs-sys.h |   22 ++++++++++++++++++++++
+>  4 files changed, 24 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/arm/mach-exynos/regs-sys.h
+[...]
+> diff --git a/arch/arm/mach-exynos/regs-sys.h b/arch/arm/mach-exynos/regs-sys.h
+> new file mode 100644
+> index 0000000..84332b0
+> --- /dev/null
+> +++ b/arch/arm/mach-exynos/regs-sys.h
+> @@ -0,0 +1,22 @@
+> +/*
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * EXYNOS - system register definition
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_REGS_SYS_H
+> +#define __ASM_ARCH_REGS_SYS_H __FILE__
+> +
+> +#include <mach/map.h>
+> +
+> +#define S5P_SYSREG(x)                          (S3C_VA_SYS + (x))
+> +
+> +/* For EXYNOS5 */
+> +#define EXYNOS5_SYS_I2C_CFG                    S5P_SYSREG(0x0234)
 
-This patch requires change in Exynos4210, Exynos4212 and Exynos4412 dtsi files,
-which I will post shortly as separate patch series.
-
-These patches are created on top of kgene for-next branch.
-We have tested these patches for System boot and PMU initialization of
-Exynos5250 and Exynos5260 (with some internal patches).
-For rest Exynos SoC it has been only compile tested.
-
-Pankaj Dubey (4):
-  ARM: EXYNOS: Cleanup  "mach-exynos/common.h" file
-  ARM: EXYNOS: Correct file path in comment message
-  ARM: EXYNOS: Move "regs-pmu" header inclusion in common.h
-  ARM: EXYNOS: Refactored code for PMU register mapping via DT
-
-Young-Gun Jang (3):
-  ARM: EXYNOS: Move SYSREG definition into sys-reg specific file
-  ARM: EXYNOS: Remove regs-pmu.h file dependency from pm_domain
-  ARM: EXYNOS: Add support for mapping PMU base address via DT
-
- arch/arm/mach-exynos/common.h           |   10 +-
- arch/arm/mach-exynos/cpuidle.c          |   29 +-
- arch/arm/mach-exynos/exynos.c           |   58 +++-
- arch/arm/mach-exynos/hotplug.c          |    5 +-
- arch/arm/mach-exynos/include/mach/map.h |    3 -
- arch/arm/mach-exynos/platsmp.c          |   15 +-
- arch/arm/mach-exynos/pm.c               |   55 ++--
- arch/arm/mach-exynos/pm_domains.c       |    2 +-
- arch/arm/mach-exynos/pmu.c              |   35 +--
- arch/arm/mach-exynos/regs-pmu.h         |  510 +++++++++++++++----------------
- arch/arm/mach-exynos/regs-sys.h         |   22 ++
- 11 files changed, 405 insertions(+), 339 deletions(-)
- create mode 100644 arch/arm/mach-exynos/regs-sys.h
+Can this be defined as a regular register offset in a header file
+placed at include/linux/mfd/syscon/ ? I.e. can the mfd syscon driver be
+used instead of these hacks ?
 
 -- 
-1.7.10.4
+Thanks,
+Sylwester
