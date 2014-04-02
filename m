@@ -1,109 +1,165 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base address
- via DT
-Date: Wed, 02 Apr 2014 16:50:57 +0900
-Message-ID: <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: EXYNOS: Consolidate Kconfig entries
+Date: Wed,  2 Apr 2014 14:25:38 +0530
+Message-ID: <1396428938-28064-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:57956 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758105AbaDBI4T (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Apr 2014 04:56:19 -0400
+Received: by mail-pd0-f181.google.com with SMTP id p10so10721431pdj.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Apr 2014 01:56:18 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-From: Young-Gun Jang <yg1004.jang@samsung.com>
+Instead of repeating the Kconfig entries for every SoC, move them under
+ARCH_EXYNOS4 and 5 and move the entries common to both 4 and 5 under
+ARCH_EXYNOS.
 
-Add support for mapping Exynos Power Management Unit (PMU) base address
-from device tree. Code will use existing samsung pmu binding information.
-This patch also adds "get_exynos_pmubase" a helper function to return mapped base
-address to various other files under "mach-exynos".
-
-Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/mach-exynos/common.h |    2 ++
- arch/arm/mach-exynos/exynos.c |   44 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+Changes since previous version:
+Kept the individual machines selectable as suggested by
+Kukjin Kim.
+---
+ arch/arm/Kconfig             |   10 ++++++++++
+ arch/arm/mach-exynos/Kconfig |   45 ++++--------------------------------------
+ 2 files changed, 14 insertions(+), 41 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index ff28334..9a55cf6 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -61,4 +61,6 @@ struct exynos_pmu_conf {
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a48712ed0444..73c2f2641375 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -831,18 +831,28 @@ config ARCH_S5PV210
  
- extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+ config ARCH_EXYNOS
+ 	bool "Samsung EXYNOS"
++	select ARCH_HAS_BANDGAP
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARCH_SPARSEMEM_ENABLE
++	select ARM_AMBA
+ 	select ARM_GIC
++	select CLKSRC_OF
+ 	select COMMON_CLK
+ 	select CPU_V7
+ 	select GENERIC_CLOCKEVENTS
++	select HAVE_ARM_SCU if SMP
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
++	select HAVE_SMP
+ 	select NEED_MACH_MEMORY_H
++	select PINCTRL
++	select PINCTRL_EXYNOS
++	select PM_GENERIC_DOMAINS if PM_RUNTIME
++	select S5P_DEV_MFC
++	select SAMSUNG_DMADEV
+ 	select SPARSE_IRQ
+ 	select USE_OF
+ 	help
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index fc8bf18e222d..5c34dc26cec6 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -14,30 +14,20 @@ menu "SAMSUNG EXYNOS SoCs Support"
+ config ARCH_EXYNOS4
+ 	bool "SAMSUNG EXYNOS4"
+ 	default y
+-	select ARM_AMBA
+-	select CLKSRC_OF
++	select ARM_CPU_SUSPEND if PM_SLEEP
+ 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
+ 	select CPU_EXYNOS4210
+ 	select GIC_NON_BANKED
+ 	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
+-	select HAVE_ARM_SCU if SMP
+-	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
+-	select PINCTRL
+-	select PM_GENERIC_DOMAINS if PM_RUNTIME
+-	select S5P_DEV_MFC
+ 	help
+-	  Samsung EXYNOS4 SoCs based systems
++	  Samsung EXYNOS4 (Cortex-A9) SoC based systems
  
-+extern void __iomem *get_exynos_pmubase(void);
-+
- #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index a5e1349..a5127fb 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -35,6 +35,8 @@
- #define L2_AUX_VAL 0x7C470001
- #define L2_AUX_MASK 0xC200ffff
+ config ARCH_EXYNOS5
+ 	bool "SAMSUNG EXYNOS5"
+-	select ARM_AMBA
+-	select CLKSRC_OF
+-	select HAVE_ARM_SCU if SMP
+-	select HAVE_SMP
+-	select PINCTRL
++	default y
+ 	help
+-	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
++	  Samsung EXYNOS5 (Cortex-A15/A7) SoC based systems
  
-+static void __iomem *exynos_pmu_base __initdata;
-+
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S3C_VA_SYS,
-@@ -245,6 +247,47 @@ void __init exynos_init_late(void)
- 	exynos_pm_init();
- }
+ comment "EXYNOS SoCs"
  
-+static char const *exynos_dt_pmu_match[] __initconst = {
-+	"samsung,exynos4210-pmu",
-+	"samsung,exynos4212-pmu",
-+	"samsung,exynos4412-pmu",
-+	"samsung,exynos5250-pmu",
-+	NULL
-+};
-+
-+static int __init exynos_fdt_map_pmu(unsigned long node,
-+		const char *uname, int depth, void *data)
-+{
-+	struct map_desc iodesc;
-+	__be32 *reg;
-+	unsigned long len;
-+
-+	if (of_flat_dt_match(node, exynos_dt_pmu_match)) {
-+		phys_addr_t phys_addr;
-+		reg = of_get_flat_dt_prop(node, "reg", &len);
-+		if (reg == NULL || len != (sizeof(unsigned long) * 2))
-+			return 0;
-+
-+		phys_addr = be32_to_cpu(reg[0]);
-+		iodesc.pfn = __phys_to_pfn(phys_addr);
-+		iodesc.length = be32_to_cpu(reg[1]) - 1;
-+		iodesc.virtual = (unsigned long)S5P_VA_PMU;
-+		iodesc.type = MT_DEVICE;
-+		iotable_init(&iodesc, 1);
-+
-+		exynos_pmu_base = ioremap(phys_addr, be32_to_cpu(reg[1]));
-+		if (WARN_ON(!exynos_pmu_base))
-+			return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+inline void __iomem *get_exynos_pmubase()
-+{
-+	return exynos_pmu_base;
-+}
-+
- static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
- 					int depth, void *data)
- {
-@@ -301,6 +344,7 @@ void __init exynos_init_io(void)
- 	debug_ll_io_init();
+@@ -45,59 +35,32 @@ config CPU_EXYNOS4210
+ 	bool "SAMSUNG EXYNOS4210"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARCH_HAS_BANDGAP
+-	select ARM_CPU_SUSPEND if PM_SLEEP
+-	select PINCTRL_EXYNOS
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS4210 CPU support
  
- 	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
-+	of_scan_flat_dt(exynos_fdt_map_pmu, NULL);
+ config SOC_EXYNOS4212
+ 	bool "SAMSUNG EXYNOS4212"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARCH_HAS_BANDGAP
+-	select PINCTRL_EXYNOS
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS4212 SoC support
  
- 	/* detect cpu id and rev. */
- 	s5p_init_cpu(S5P_VA_CHIPID);
+ config SOC_EXYNOS4412
+ 	bool "SAMSUNG EXYNOS4412"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARCH_HAS_BANDGAP
+-	select PINCTRL_EXYNOS
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS4412 SoC support
+ 
+ config SOC_EXYNOS5250
+ 	bool "SAMSUNG EXYNOS5250"
+ 	default y
+ 	depends on ARCH_EXYNOS5
+-	select ARCH_HAS_BANDGAP
+-	select PINCTRL_EXYNOS
+-	select PM_GENERIC_DOMAINS if PM_RUNTIME
+-	select S5P_DEV_MFC
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS5250 SoC support
+ 
+ config SOC_EXYNOS5420
+ 	bool "SAMSUNG EXYNOS5420"
+ 	default y
+ 	depends on ARCH_EXYNOS5
+-	select PM_GENERIC_DOMAINS if PM_RUNTIME
+-	help
+-	  Enable EXYNOS5420 SoC support
+ 
+ config SOC_EXYNOS5440
+ 	bool "SAMSUNG EXYNOS5440"
+ 	default y
+ 	depends on ARCH_EXYNOS5
+ 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+-	select ARCH_HAS_BANDGAP
+ 	select ARCH_HAS_OPP
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select AUTO_ZRELADDR
 -- 
-1.7.10.4
+1.7.9.5
