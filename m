@@ -1,79 +1,51 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: exynos4: cpu hotplug + cpuidle/AFTR broken
-Date: Tue, 01 Apr 2014 14:49:17 +0200
-Message-ID: <533AB5CD.7080209@linaro.org>
-References: <533A9849.1080402@linaro.org> <533AA17A.1090405@samsung.com> <533AAE34.20601@linaro.org> <533AB128.7050208@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:38679 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751162AbaDAMtG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Apr 2014 08:49:06 -0400
-Received: by mail-we0-f173.google.com with SMTP id w61so6135129wes.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Apr 2014 05:49:04 -0700 (PDT)
-In-Reply-To: <533AB128.7050208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 2/3] ARM: dts: Add PMU reg node to exynos4212 and exynos4412
+Date: Wed, 02 Apr 2014 17:02:57 +0900
+Message-ID: <1396425778-4379-3-git-send-email-pankaj.dubey@samsung.com>
+References: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 04/01/2014 02:29 PM, Tomasz Figa wrote:
->
->
-> On 01.04.2014 14:16, Daniel Lezcano wrote:
->> On 04/01/2014 01:22 PM, Tomasz Figa wrote:
->>> Hi Daniel,
->>>
->>> On 01.04.2014 12:43, Daniel Lezcano wrote:
->>>>
->>>> Hi all,
->>>>
->>>> I tried the v3.14 kernel and unplugged the cpu1. That leads to a k=
-ernel
->>>> hang without any trace.
->>>>
->>>> If I disable the cpuidle AFTR state through sysfs before unpluggin=
-g
->>>> cpu1, it works well.
->>>>
->>>> I reproduced the issue on v3.14, v3.13, v3.12, v3.11
->>>>
->>>> v3.10 works fine.
->>>
->>> Could you try to reproduce the same issue on linux-next? Some of PM
->>> issues on Exynos should be patches there.
->>
->> Tested on linux-next. Works fine.
->
-> Great, thanks.
->
->>
->> Do you have an idea of the patch which have fixed the issue ? In ord=
-er
->> to backport it the kernels mentioned above.
->
-> Most likely it's this one:
->
-> 61557b8bac ARM: EXYNOS: Do not resume l2x0 if not enabled before susp=
-end
+This patch adds pmu regnode to exynos4212 and exynos4412 dtsi to
+handle PMU register access via DT.
 
-Confirmed.
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/boot/dts/exynos4212.dtsi |    5 +++++
+ arch/arm/boot/dts/exynos4412.dtsi |    5 +++++
+ 2 files changed, 10 insertions(+)
 
-This patch fixes the issue.
-
-Will you send the fix for the different kernel v3.14, v3.13, v3.12 ?=20
-(v3.11 is EOL).
-
-Thanks !
-
-   -- Daniel
-
-<http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for =
-ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index 3c00e6e..4661ffa 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -29,4 +29,9 @@
+ 	gic: interrupt-controller@10490000 {
+ 		cpu-offset = <0x8000>;
+ 	};
++
++	pmu_system_controller: system-controller@10020000 {
++		compatible = "samsung,exynos4212-pmu", "syscon";
++		reg = <0x10020000 0x5000>;
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 15d3c0a..6f4cb22 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -29,4 +29,9 @@
+ 	gic: interrupt-controller@10490000 {
+ 		cpu-offset = <0x4000>;
+ 	};
++
++	pmu_system_controller: system-controller@10020000 {
++		compatible = "samsung,exynos4412-pmu", "syscon";
++		reg = <0x10020000 0x5000>;
++	};
+ };
+-- 
+1.7.10.4
