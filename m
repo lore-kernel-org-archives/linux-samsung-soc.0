@@ -1,57 +1,35 @@
-From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v7 1/3] ARM: EXYNOS: initial board support for exynos5260 SoC
-Date: Thu, 03 Apr 2014 15:30:22 +0530
-Message-ID: <1396519224-18712-2-git-send-email-rahul.sharma@samsung.com>
-References: <1396519224-18712-1-git-send-email-rahul.sharma@samsung.com>
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/3] Add PMU node for Exynos4210, Exynos4412, Exynos4212
+Date: Wed, 02 Apr 2014 17:02:55 +0900
+Message-ID: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1396519224-18712-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, chow.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+This patch updates Exynos4210, Exynos4412 and Exynos4212 dtsi files
+for adding PMU (Power Management Unit) reg node. Also updated binding
+document for the same. 
+These patches required for using PMU base address via DT for these SoC.
+Patches for using PMU base address via DT are posted here-
 
-This patch add basic arch side support for exynos5260 SoC.
+http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg27875.html
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-exynos/Kconfig  |    5 +++++
- arch/arm/mach-exynos/exynos.c |    1 +
- 2 files changed, 6 insertions(+)
+Pankaj Dubey (3):
+  ARM: dts: Add PMU reg node to exynos4210
+  ARM: dts: Add PMU reg node to exynos4212 and exynos4412
+  Documentation: update samsung pmu binding information for
+    Exynos4210/4212/4412
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 5c34dc2..6c48844 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -51,6 +51,11 @@ config SOC_EXYNOS5250
- 	default y
- 	depends on ARCH_EXYNOS5
- 
-+config SOC_EXYNOS5260
-+	bool "SAMSUNG EXYNOS5260"
-+	default y
-+	depends on ARCH_EXYNOS5
-+
- config SOC_EXYNOS5420
- 	bool "SAMSUNG EXYNOS5420"
- 	default y
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index b567361..5324051 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -374,6 +374,7 @@ static char const *exynos_dt_compat[] __initconst = {
- 	"samsung,exynos4412",
- 	"samsung,exynos5",
- 	"samsung,exynos5250",
-+	"samsung,exynos5260",
- 	"samsung,exynos5420",
- 	"samsung,exynos5440",
- 	NULL
+ Documentation/devicetree/bindings/arm/samsung/pmu.txt |    3 +++
+ arch/arm/boot/dts/exynos4210.dtsi                     |    5 +++++
+ arch/arm/boot/dts/exynos4212.dtsi                     |    5 +++++
+ arch/arm/boot/dts/exynos4412.dtsi                     |    5 +++++
+ 4 files changed, 18 insertions(+)
+
 -- 
-1.7.9.5
+1.7.10.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
