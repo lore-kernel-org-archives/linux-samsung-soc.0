@@ -1,97 +1,62 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH] swiotlb: Correct kernel command line handler
-Date: Wed, 02 Apr 2014 13:36:29 +0900
-Message-ID: <004c01cf4e2d$1d84a1c0$588de540$@samsung.com>
-References: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
- <20140401124606.GA7135@phenom.dumpdata.com>
+From: Andrew Murray <amurray@embedded-bits.co.uk>
+Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based on
+ designware core driver
+Date: Wed, 2 Apr 2014 17:47:04 +0100
+Message-ID: <CAPcvp5FEFbP_Fwc47V=LppiZnfbTgPqaAAm-A9K17dVEZWwHQQ@mail.gmail.com>
+References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
+	<1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
+	<235376049.yyfljDtinu@wuerfel>
+	<20140325103525.GA14789@ulmo>
+	<CAPcvp5Gy8uNW3UULi8jYk7GNbmgTd2B_qOEAXnP4H4Wq3v9BCw@mail.gmail.com>
+	<533C300E.7070109@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140401124606.GA7135@phenom.dumpdata.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Konrad Rzeszutek Wilk' <konrad.wilk@oracle.com>
-Cc: linux-kernel@vger.kernel.org, sungjinn.chung@samsung.com, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f54.google.com ([209.85.213.54]:55795 "EHLO
+	mail-yh0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932414AbaDBQrG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Apr 2014 12:47:06 -0400
+Received: by mail-yh0-f54.google.com with SMTP id f73so475583yha.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Apr 2014 09:47:04 -0700 (PDT)
+In-Reply-To: <533C300E.7070109@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Murali Karicheri <m-karicheri2@ti.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <r65037@freescale.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
 
-On Tuesday, April 01, 2014 9:46 PM, Konrad Rzeszutek Wilk wrote:
-> On Tue, Apr 01, 2014 at 10:51:58AM +0900, Jungseok Lee wrote:
-> > This patch corrects kernel command line handler when io_tlb_nslabs is
-> > set to 0.
-> >
-> > A current implementation allocates default size memory (64MB) when
-> > 0 is given to io_tlb_nslabs ("swiotlb=0") by kernel command line.
-> > In other words, memory is allocated unintentionally.
-> 
-> What are the other IOMMUs that end up taking over the DMA ops?
+On 2 April 2014 16:43, Murali Karicheri <m-karicheri2@ti.com> wrote:
 
-I think that no other IOMMUs take over it on ARM64 system, except Xen.
+> Keystone pcie driver is developed based on other dw based pcie drivers
+>
+> such as pci-exynos that uses subsys_initcall(). I am new to this list,
+>
+> probably Jingoo (copied) has some history on why we can't use module.
+> For now I will keep it as is and can be re-visited in the next revisions.
+> Also I will experiment with PCIE port driver as well.
+>
+>
+> BTW, PCIE driver currently uses Legacy or MSI IRQ. Keystone PCI has
+> a platform IRQ. Is DT based irq configuration is the appropriate way
+> to add this capability?
 
-> Or do you end up with no DMA ops?
+As far as I am aware - the PCI standards define a particular way for
+devices to describe which interrupt will be used for things like
+hotplug, AER and PME. These interrupts are always PCI interrupts (i.e.
+MSI/MSI-X/legacy). Thus the port services code in the kernel uses
+standard configuration space accesses to determine the interrupt to
+use. Also note that it's not just the host bridge that can provide
+these services but any PCIE device, I guess in this sense a host
+bridge is treated like any other device.
 
-I focus on ARM64 system which uses swiotlb as default DMA ops.
+If my understanding is correct I don't believe the current port
+services code allows exceptions to this, i.e. to say this host bridge
+actually uses a platform IRQ for AER rather than an MSI. Though this
+may be quite useful as I suspect many host bridges provide interrupts
+for things like PME through platform IRQs rather that PCI interrupts.
 
-If some ARM64 platforms would like to use memory only from
-__get_free_pages in swiotlb_alloc_coherent function, an
-interface would be needed to configure reserved memory size.
+Does the Keystone have platform IRQs for things like AER? Is that
+because the IP makes these events available through platform IRQs in
+addition to the standard PCI means?
 
-Thus, I add it to kernel command line handler.
-
-Best Regards
-Jungseok Lee
-
-> >
-> > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> > Signed-off-by: Sungjinn Chung <sungjinn.chung@samsung.com>
-> > ---
-> >  lib/swiotlb.c |    8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/lib/swiotlb.c b/lib/swiotlb.c index b604b83..9fe9f71
-> > 100644
-> > --- a/lib/swiotlb.c
-> > +++ b/lib/swiotlb.c
-> > @@ -55,6 +55,8 @@
-> >
-> >  int swiotlb_force;
-> >
-> > +static int swiotlb_no_use;
-> > +
-> >  /*
-> >   * Used to do a quick range check in swiotlb_tbl_unmap_single and
-> >   * swiotlb_tbl_sync_single_*, to see if the memory was in fact
-> > allocated by this @@ -102,6 +104,8 @@ setup_io_tlb_npages(char *str)
-> >  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
-> >  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
-> >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> > +		if (!io_tlb_nslabs)
-> > +			swiotlb_no_use = 1;
-> >  	}
-> >  	if (*str == ',')
-> >  		++str;
-> > @@ -212,7 +216,7 @@ swiotlb_init(int verbose)
-> >  	unsigned char *vstart;
-> >  	unsigned long bytes;
-> >
-> > -	if (!io_tlb_nslabs) {
-> > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
-> >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
-> >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> >  	}
-> > @@ -244,7 +248,7 @@ swiotlb_late_init_with_default_size(size_t default_size)
-> >  	unsigned int order;
-> >  	int rc = 0;
-> >
-> > -	if (!io_tlb_nslabs) {
-> > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
-> >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
-> >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> >  	}
-> > --
-> > 1.7.10.4
-> >
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in the body of a message
-> to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Andrew Murray
