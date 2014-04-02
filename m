@@ -1,131 +1,66 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 2/5] drm/exynos: use regmap interface to set hdmiphy control
- bit in pmu
-Date: Wed, 02 Apr 2014 22:43:43 +0530
-Message-ID: <1396458826-3051-3-git-send-email-rahul.sharma@samsung.com>
-References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based
+ on designware core driver
+Date: Wed, 2 Apr 2014 13:23:33 -0400
+Message-ID: <533C4795.9080209@ti.com>
+References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com> <1395707726-20437-4-git-send-email-m-karicheri2@ti.com> <235376049.yyfljDtinu@wuerfel>	<20140325103525.GA14789@ulmo> <CAPcvp5Gy8uNW3UULi8jYk7GNbmgTd2B_qOEAXnP4H4Wq3v9BCw@mail.gmail.com> <533C300E.7070109@ti.com> <CAPcvp5FEFbP_Fwc47V=LppiZnfbTgPqaAAm-A9K17dVEZWwHQQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34097 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932263AbaDBRO2 (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:53336 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758761AbaDBRYL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Apr 2014 13:14:28 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N3E000L5YK3QPC0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Apr 2014 02:14:27 +0900 (KST)
-In-reply-to: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
+	Wed, 2 Apr 2014 13:24:11 -0400
+In-Reply-To: <CAPcvp5FEFbP_Fwc47V=LppiZnfbTgPqaAAm-A9K17dVEZWwHQQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, r.sh.open@gmail.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Andrew Murray <amurray@embedded-bits.co.uk>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <r65037@freescale.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+On 4/2/2014 12:47 PM, Andrew Murray wrote:
+> On 2 April 2014 16:43, Murali Karicheri <m-karicheri2@ti.com> wrote:
+>
+>> Keystone pcie driver is developed based on other dw based pcie drivers
+>>
+>> such as pci-exynos that uses subsys_initcall(). I am new to this list,
+>>
+>> probably Jingoo (copied) has some history on why we can't use module.
+>> For now I will keep it as is and can be re-visited in the next revisions.
+>> Also I will experiment with PCIE port driver as well.
+>>
+>>
+>> BTW, PCIE driver currently uses Legacy or MSI IRQ. Keystone PCI has
+>> a platform IRQ. Is DT based irq configuration is the appropriate way
+>> to add this capability?
+> As far as I am aware - the PCI standards define a particular way for
+> devices to describe which interrupt will be used for things like
+> hotplug, AER and PME. These interrupts are always PCI interrupts (i.e.
+> MSI/MSI-X/legacy). Thus the port services code in the kernel uses
+> standard configuration space accesses to determine the interrupt to
+> use. Also note that it's not just the host bridge that can provide
+> these services but any PCIE device, I guess in this sense a host
+> bridge is treated like any other device.
+>
+> If my understanding is correct I don't believe the current port
+> services code allows exceptions to this, i.e. to say this host bridge
+> actually uses a platform IRQ for AER rather than an MSI. Though this
+> may be quite useful as I suspect many host bridges provide interrupts
+> for things like PME through platform IRQs rather that PCI interrupts.
+>
+> Does the Keystone have platform IRQs for things like AER? Is that
+> because the IP makes these events available through platform IRQs in
+> addition to the standard PCI means?
+>
+> Andrew Murray
+Andrew,
 
-Hdmiphy control bit needs to be set before setting the resolution
-to hdmi hardware. This was handled using dummy hdmiphy clock which
-is removed now.
+Yes. Keystone PCIe hw is based on designware hw version v3.65 that 
+implements
+Error interrupt as a platform IRQ only (not in addition) and 
+unfortunately standard
+PCI means are not supported. The latter versions do support standard PCI 
+means.
 
-PMU is already defined as system controller for exynos SoC. Registers
-of PMU are accessed using regmap interfaces.
-
-Devicetree binding document for hdmi is also updated.
-
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
----
- .../devicetree/bindings/video/exynos_hdmi.txt      |    2 ++
- drivers/gpu/drm/exynos/exynos_hdmi.c               |   17 +++++++++++++++++
- drivers/gpu/drm/exynos/regs-hdmi.h                 |    4 ++++
- 3 files changed, 23 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index f9187a2..243a499 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -27,6 +27,7 @@ Required properties:
- 	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
- - ddc: phandle to the hdmi ddc node
- - phy: phandle to the hdmi phy node
-+- samsung,syscon-phandle: phandle for system controller node for PMU.
- 
- Example:
- 
-@@ -37,4 +38,5 @@ Example:
- 		hpd-gpio = <&gpx3 7 1>;
- 		ddc = <&hdmi_ddc_node>;
- 		phy = <&hdmi_phy_node>;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 	};
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 23abfa0..47b8c06 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -36,6 +36,8 @@
- #include <linux/i2c.h>
- #include <linux/of_gpio.h>
- #include <linux/hdmi.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- #include <drm/exynos_drm.h>
- 
-@@ -194,6 +196,7 @@ struct hdmi_context {
- 	struct hdmi_resources		res;
- 
- 	int				hpd_gpio;
-+	struct regmap			*pmureg;
- 
- 	enum hdmi_type			type;
- };
-@@ -1853,6 +1856,9 @@ static void hdmi_poweron(struct exynos_drm_display *display)
- 	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
- 		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
- 
-+	/* set pmu hdmiphy control bit to enable hdmiphy */
-+	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
-+			PMU_HDMI_PHY_ENABLE_BIT, 1);
- 	clk_prepare_enable(res->hdmi);
- 	clk_prepare_enable(res->sclk_hdmi);
- 
-@@ -1879,6 +1885,10 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
- 
- 	clk_disable_unprepare(res->sclk_hdmi);
- 	clk_disable_unprepare(res->hdmi);
-+	/* reset pmu hdmiphy control bit to disable hdmiphy */
-+	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
-+			PMU_HDMI_PHY_ENABLE_BIT, 0);
-+
- 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
- 
- 	pm_runtime_put_sync(hdata->dev);
-@@ -2128,6 +2138,13 @@ static int hdmi_probe(struct platform_device *pdev)
- 		goto err_hdmiphy;
- 	}
- 
-+	hdata->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-+			"samsung,syscon-phandle");
-+	if (IS_ERR_OR_NULL(hdata->pmureg)) {
-+		DRM_ERROR("syscon regmap lookup failed.\n");
-+		goto err_hdmiphy;
-+	}
-+
- 	pm_runtime_enable(dev);
- 
- 	hdmi_display.ctx = hdata;
-diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
-index ef1b3eb..9811d6f 100644
---- a/drivers/gpu/drm/exynos/regs-hdmi.h
-+++ b/drivers/gpu/drm/exynos/regs-hdmi.h
-@@ -578,4 +578,8 @@
- #define HDMI_TG_VACT_ST4_H		HDMI_TG_BASE(0x0074)
- #define HDMI_TG_3D			HDMI_TG_BASE(0x00F0)
- 
-+/* PMU Registers for PHY */
-+#define PMU_HDMI_PHY_CONTROL		0x700
-+#define PMU_HDMI_PHY_ENABLE_BIT	(1<<0)
-+
- #endif /* SAMSUNG_REGS_HDMI_H */
--- 
-1.7.9.5
+Murali
