@@ -1,69 +1,77 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 5/6] Samsung PM updates for v3.15
-Date: Wed, 02 Apr 2014 13:25:45 +0900
-Message-ID: <012401cf4e2b$9f9d9a60$ded8cf20$@samsung.com>
-References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
- <021e01cf4a63$0cdb7380$26925a80$@samsung.com>
- <201403290247.33924.arnd@arndb.de> <2561102.8vIJ8rzIic@diego>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 1/5] drm/exynos: remove dummy hdmiphy clock from hdmi driver
+Date: Wed, 02 Apr 2014 22:43:42 +0530
+Message-ID: <1396458826-3051-2-git-send-email-rahul.sharma@samsung.com>
+References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:30187 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750707AbaDBEZu convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:52939 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932341AbaDBRO1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Apr 2014 00:25:50 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 2 Apr 2014 13:14:27 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N3D005NTYZ0FI40@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 02 Apr 2014 13:25:48 +0900 (KST)
-In-reply-to: <2561102.8vIJ8rzIic@diego>
-Content-language: ko
+ with ESMTP id <0N3E003RZYK2V710@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Apr 2014 02:14:26 +0900 (KST)
+In-reply-to: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Mike Turquette' <mturquette@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, r.sh.open@gmail.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Heiko St=FCbner wrote:
->=20
-> Hi Arnd,
->=20
-> Am Samstag, 29. M=E4rz 2014, 02:47:33 schrieb Arnd Bergmann:
-> > On Friday 28 March 2014, Kukjin Kim wrote:
-> > > Kukjin Kim wrote:
-> > > > On 03/19/14 13:01, Mike Turquette wrote:
-> > > >
-> > > > Thanks :-)
-> > > >
-> > > > > Acked-by: Mike Turquette<mturquette@linaro.org>
-> > > >
-> > > > It's time. Please pull this [5/6] and "[GIT PULL 6/6] Samsung
-> > > > clk-s3c24xx updates for v3.15".
-> > >
-> > > Hi Arnd, Olof and Mike,
-> > >
-> > > Still I cannot see this in arm-soc. Any problems?
-> >
-> > Sorry, I didn't have this one on my radar any more, merged into
-> > next/drivers now.
->=20
-> maybe you could also take a look at the depending "[GIT PULL 6/6] Sam=
-sung
-> clk-
-> s3c24xx updates for v3.15" we walked about at the beginning of the
-> week? :-)
->=20
-Yeah, so I've informed that [5/6] and [6/6] is needed...
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Arnd, Olof and Mike,
+Exynos drm hdmi driver used to get dummy hdmiphy clock to
+control the PMU bit for hdmiphy. This clock is removed
+during CCF migration. This should also be cleaned from
+hdmi driver.
 
-Probably you guys missed "[6/6] Samsung clk-s3c24xx updates" when depen=
-dency
-with [5/6] has been cleared but since it's already 3.15 merge window, I=
-'m
-not sure it can be sent to Linus in this time...
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
-- Kukjin
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 25bf65a..23abfa0 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -74,7 +74,6 @@ struct hdmi_resources {
+ 	struct clk			*sclk_hdmi;
+ 	struct clk			*sclk_pixel;
+ 	struct clk			*sclk_hdmiphy;
+-	struct clk			*hdmiphy;
+ 	struct clk			*mout_hdmi;
+ 	struct regulator_bulk_data	*regul_bulk;
+ 	int				regul_count;
+@@ -1854,7 +1853,6 @@ static void hdmi_poweron(struct exynos_drm_display *display)
+ 	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
+ 		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+ 
+-	clk_prepare_enable(res->hdmiphy);
+ 	clk_prepare_enable(res->hdmi);
+ 	clk_prepare_enable(res->sclk_hdmi);
+ 
+@@ -1881,7 +1879,6 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+ 
+ 	clk_disable_unprepare(res->sclk_hdmi);
+ 	clk_disable_unprepare(res->hdmi);
+-	clk_disable_unprepare(res->hdmiphy);
+ 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
+ 
+ 	pm_runtime_put_sync(hdata->dev);
+@@ -1977,11 +1974,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
+ 		goto fail;
+ 	}
+-	res->hdmiphy = devm_clk_get(dev, "hdmiphy");
+-	if (IS_ERR(res->hdmiphy)) {
+-		DRM_ERROR("failed to get clock 'hdmiphy'\n");
+-		goto fail;
+-	}
+ 	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
+ 	if (IS_ERR(res->mout_hdmi)) {
+ 		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
+-- 
+1.7.9.5
