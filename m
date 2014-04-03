@@ -1,60 +1,66 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 04/10] ARM: EXYNOS: Remove regs-pmu.h file dependency from
- pm_domain
-Date: Wed, 02 Apr 2014 16:50:55 +0900
-Message-ID: <1396425058-4012-5-git-send-email-pankaj.dubey@samsung.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v7 0/3] exynos: arch: add support for exynos5260 SoC
+Date: Thu, 03 Apr 2014 15:30:21 +0530
+Message-ID: <1396519224-18712-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14709 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:28149 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758000AbaDBHeC (ORCPT
+	with ESMTP id S1751573AbaDCKBE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Apr 2014 03:34:02 -0400
-In-reply-to: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+	Thu, 3 Apr 2014 06:01:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Young-Gun Jang <yg1004.jang@samsung.com>
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Current "pm_domain.c" file uses "S5P_INT_LOCAL_PWR_EN" definition from
-"regs-pmu.h" and hence needs to include this header file. As there is
-no other user of "S5P_INT_LOCAL_PWR_EN" definition other than pm_domain,
-to remove "regs-pmu.h" header file dependency from "pm_domain.c"  it's
-better we define this definition in "pm_domain.c" file itself and thus it
-will help in removing header file inclusion from "pm_domain.c".
+v7:
+  1) Renamed board file
 
-Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
----
- arch/arm/mach-exynos/pm_domains.c |    2 +-
- arch/arm/mach-exynos/regs-pmu.h   |    1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+V6:
+  1) Renamed mmc nodes.
+  2) Removed PHY clocks from DT and put them inside clock driver.
+  3) Added clock-cells property for all fixed clocks.
+  4) Removed spdif_ext_clk fixed rate clock.
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index fe6570e..f676b0a 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -22,7 +22,7 @@
- #include <linux/of_platform.h>
- #include <linux/sched.h>
- 
--#include "regs-pmu.h"
-+#define S5P_INT_LOCAL_PWR_EN 0x7
- 
- /*
-  * Exynos specific wrapper around the generic power domain
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 4ee706d..bfebe84 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -116,7 +116,6 @@
- #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
- 
- #define S5P_CORE_LOCAL_PWR_EN			0x3
--#define S5P_INT_LOCAL_PWR_EN			0x7
- 
- #define S5P_CHECK_SLEEP				0x00000BAD
- 
+V5:
+  1) Removed SYSRAM related code.
+  2) Fixed mct clocks.
+  3) Add SoC and Board specifc fixed-rate clocks in respective files.
+
+V4:
+  1) Removed duplicate MMC Soc property from Board file.
+
+V3:
+  1) Addressed review comments from Tomasz figa.
+
+V2:
+  1) Split up DT patch into SoC and Board patch.
+
+This series is dependent on Sachin's patch
+"ARM: EXYNOS: Consolidate Kconfig entries"
+
+This series is based on Kukjin's for-next branch at
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
+
+Pankaj Dubey (1):
+  ARM: EXYNOS: initial board support for exynos5260 SoC
+
+Rahul Sharma (2):
+  ARM: dts: add dts files for exynos5260 SoC
+  ARM: dts: add dts files for xyref5260 board
+
+ arch/arm/boot/dts/Makefile                 |    1 +
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi  |  574 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5260-xyref5260.dts |  103 +++++
+ arch/arm/boot/dts/exynos5260.dtsi          |  304 +++++++++++++++
+ arch/arm/mach-exynos/Kconfig               |    5 +
+ arch/arm/mach-exynos/exynos.c              |    1 +
+ 6 files changed, 988 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260.dts
+ create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+
 -- 
-1.7.10.4
+1.7.9.5
