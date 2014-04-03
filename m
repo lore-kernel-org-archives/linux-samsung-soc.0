@@ -1,65 +1,23 @@
-From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 1/3] ARM: EXYNOS: initial board support for exynos5260 SoC
-Date: Thu, 03 Apr 2014 10:47:55 +0530
-Message-ID: <1396502277-19588-2-git-send-email-rahul.sharma@samsung.com>
-References: <1396502277-19588-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1396502277-19588-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 1/8] ARM: imx6q-clk: parent lvds_gate from lvds_sel
+Date: Thu, 3 Apr 2014 14:49:08 +0800
+Message-ID: <20140403064906.GI2801@dragon>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+ <1396025579-14344-2-git-send-email-l.stach@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1396025579-14344-2-git-send-email-l.stach@pengutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Fri, Mar 28, 2014 at 05:52:52PM +0100, Lucas Stach wrote:
+> Allows fror proper refcounting of the parent clocks
+> when enabling the clock output on CLK1/2 pads.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 
-This patch add basic arch side support for exynos5260 SoC.
-
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-exynos/Kconfig           |    4 ++++
- arch/arm/mach-exynos/mach-exynos5-dt.c |    1 +
- 2 files changed, 5 insertions(+)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 54162ef..69c00ca 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -29,6 +29,7 @@ config ARCH_EXYNOS5
- 	bool "SAMSUNG EXYNOS5"
- 	default y
- 	select SOC_EXYNOS5250
-+	select SOC_EXYNOS5260
- 	select SOC_EXYNOS5420
- 	select USB_ARCH_HAS_XHCI
- 	help
-@@ -65,6 +66,9 @@ config SOC_EXYNOS4412
- config SOC_EXYNOS5250
- 	bool
- 
-+config SOC_EXYNOS5260
-+	bool
-+
- config SOC_EXYNOS5420
- 	bool
- 
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 37ea261..790009e 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -51,6 +51,7 @@ static void __init exynos5_dt_machine_init(void)
- 
- static char const *exynos5_dt_compat[] __initdata = {
- 	"samsung,exynos5250",
-+	"samsung,exynos5260",
- 	"samsung,exynos5420",
- 	"samsung,exynos5440",
- 	NULL
--- 
-1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied, thanks.
