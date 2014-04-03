@@ -1,135 +1,114 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 7/7] drm/exynos: replace hdmi reset with hdmi disable
-Date: Thu, 03 Apr 2014 20:41:04 +0530
-Message-ID: <1396537864-29291-8-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH 5/7] drm/exynos: add hdmiphy power on/off sequence
+Date: Thu, 03 Apr 2014 20:41:02 +0530
+Message-ID: <1396537864-29291-6-git-send-email-rahul.sharma@samsung.com>
 References: <1396537864-29291-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56598 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752283AbaDCPMT (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:35635 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752536AbaDCPMR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Apr 2014 11:12:19 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 3 Apr 2014 11:12:17 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N3G00B1LNKINV30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Apr 2014 00:12:18 +0900 (KST)
+ with ESMTP id <0N3G00BTWNKFZW10@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Apr 2014 00:12:15 +0900 (KST)
 In-reply-to: <1396537864-29291-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, r.sh.open@gmail.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>, Shirish S <s.shirish@samsung.com>
+Cc: inki.dae@samsung.com, r.sh.open@gmail.com, joshi@samsung.com, Shirish S <s.shirish@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Before setting the core and timing generation registers,
-hdmi driver resets the whole hdmi hardware, which also
-resets the audio related registers.
+From: Shirish S <s.shirish@samsung.com>
 
-Hdmi reset is replaced by hdmi disable which is called
-just before setting the core and timing registers. It
-also ensure that audio settings are not changed.
+This patch implements the power on/off sequence
+of HDMI PHY in exynos5420 and exynos5250 as provided
+by the hardware team.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+This has been verified for mulitple iterations of
+S2R.
+
 Signed-off-by: Shirish S <s.shirish@samsung.com>
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c |   40 ++++++++++++++--------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   40 +++++++++++++++++++++++++++++-----
+ drivers/gpu/drm/exynos/regs-hdmi.h   |    7 +++++-
+ 2 files changed, 40 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index fce2f7b..4c69139 100644
+index 539e603..b2cbf43 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -197,6 +197,7 @@ struct hdmi_context {
- 	struct i2c_client		*hdmiphy_port;
+@@ -1711,16 +1711,44 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
  
- 	/* current hdmiphy conf regs */
-+	struct drm_display_mode		current_mode;
- 	struct hdmi_conf_regs		mode_conf;
- 
- 	struct hdmi_resources		res;
-@@ -1350,20 +1351,15 @@ static void hdmi_audio_control(struct hdmi_context *hdata, bool onoff)
- 			HDMI_ASP_EN : HDMI_ASP_DIS, HDMI_ASP_MASK);
- }
- 
--static void hdmi_conf_reset(struct hdmi_context *hdata)
-+static void hdmi_start(struct hdmi_context *hdata, bool start)
+ static void hdmiphy_poweron(struct hdmi_context *hdata)
  {
--	u32 reg;
-+	u32 val = start ? HDMI_TG_EN : 0;
- 
--	if (hdata->type == HDMI_TYPE13)
--		reg = HDMI_V13_CORE_RSTOUT;
--	else
--		reg = HDMI_CORE_RSTOUT;
-+	if (hdata->current_mode.flags & DRM_MODE_FLAG_INTERLACE)
-+		val |= HDMI_FIELD_EN;
- 
--	/* resetting HDMI core */
--	hdmi_reg_writemask(hdata, reg,  0, HDMI_CORE_SW_RSTOUT);
--	usleep_range(10000, 12000);
--	hdmi_reg_writemask(hdata, reg, ~0, HDMI_CORE_SW_RSTOUT);
--	usleep_range(10000, 12000);
-+	hdmi_reg_writemask(hdata, HDMI_CON_0, val, HDMI_EN);
-+	hdmi_reg_writemask(hdata, HDMI_TG_CMD, val, HDMI_TG_EN | HDMI_FIELD_EN);
- }
- 
- static void hdmi_conf_init(struct hdmi_context *hdata)
-@@ -1500,12 +1496,7 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 	clk_prepare_enable(hdata->res.sclk_hdmi);
- 
- 	/* enable HDMI and timing generator */
--	hdmi_reg_writemask(hdata, HDMI_CON_0, ~0, HDMI_EN);
--	if (core->int_pro_mode[0])
--		hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN |
--				HDMI_FIELD_EN);
--	else
--		hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN);
-+	hdmi_start(hdata, true);
- }
- 
- static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
-@@ -1667,12 +1658,7 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 	clk_prepare_enable(hdata->res.sclk_hdmi);
- 
- 	/* enable HDMI and timing generator */
--	hdmi_reg_writemask(hdata, HDMI_CON_0, ~0, HDMI_EN);
--	if (core->int_pro_mode[0])
--		hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN |
--				HDMI_FIELD_EN);
--	else
--		hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN);
-+	hdmi_start(hdata, true);
- }
- 
- static void hdmi_mode_apply(struct hdmi_context *hdata)
-@@ -1788,7 +1774,7 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
- 	hdmiphy_conf_apply(hdata);
- 
- 	mutex_lock(&hdata->hdmi_mutex);
--	hdmi_conf_reset(hdata);
-+	hdmi_start(hdata, false);
- 	hdmi_conf_init(hdata);
- 	mutex_unlock(&hdata->hdmi_mutex);
- 
-@@ -2029,6 +2015,9 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
- 		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
- 		"INTERLACED" : "PROGERESSIVE");
- 
-+	/* preserve mode information for later use. */
-+	drm_mode_copy(&hdata->current_mode, mode);
+-	if (hdata->type == HDMI_TYPE14)
+-		hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0,
+-			HDMI_PHY_POWER_OFF_EN);
++	if (hdata->type != HDMI_TYPE14)
++		return;
 +
- 	if (hdata->type == HDMI_TYPE13)
- 		hdmi_v13_mode_set(hdata, mode);
- 	else
-@@ -2089,6 +2078,9 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
- 		goto out;
- 	mutex_unlock(&hdata->hdmi_mutex);
- 
-+	/* HDMI System Disable */
-+	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
++	DRM_DEBUG_KMS("\n");
 +
- 	hdmiphy_poweroff(hdata);
++	/* For PHY Mode Setting */
++	hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
++				HDMI_PHY_ENABLE_MODE_SET);
++	/* Phy Power On */
++	hdmiphy_reg_writeb(hdata, HDMIPHY_POWER,
++				HDMI_PHY_POWER_ON);
++	/* For PHY Mode Setting */
++	hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
++				HDMI_PHY_DISABLE_MODE_SET);
++	/* PHY SW Reset */
++	hdmiphy_conf_reset(hdata);
+ }
  
- 	cancel_delayed_work(&hdata->hotplug_work);
+ static void hdmiphy_poweroff(struct hdmi_context *hdata)
+ {
+-	if (hdata->type == HDMI_TYPE14)
+-		hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0,
+-			HDMI_PHY_POWER_OFF_EN);
++	if (hdata->type != HDMI_TYPE14)
++		return;
++
++	DRM_DEBUG_KMS("\n");
++
++	/* PHY SW Reset */
++	hdmiphy_conf_reset(hdata);
++	/* For PHY Mode Setting */
++	hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
++				HDMI_PHY_ENABLE_MODE_SET);
++
++	/* PHY Power Off */
++	hdmiphy_reg_writeb(hdata, HDMIPHY_POWER,
++				HDMI_PHY_POWER_OFF);
++
++	/* For PHY Mode Setting */
++	hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
++				HDMI_PHY_DISABLE_MODE_SET);
+ }
+ 
+ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
+index 344a5db..fd4c590 100644
+--- a/drivers/gpu/drm/exynos/regs-hdmi.h
++++ b/drivers/gpu/drm/exynos/regs-hdmi.h
+@@ -579,7 +579,12 @@
+ #define HDMI_TG_3D			HDMI_TG_BASE(0x00F0)
+ 
+ /* HDMI PHY Registers Offsets*/
+-#define HDMIPHY_MODE_SET_DONE		(0x7C >> 2)
++#define HDMIPHY_POWER		(0x74 >> 2)
++#define HDMIPHY_MODE_SET_DONE		(0x7c >> 2)
++
++/* HDMI PHY Values */
++#define HDMI_PHY_POWER_ON              0x80
++#define HDMI_PHY_POWER_OFF             0xff
+ 
+ /* HDMI PHY Values */
+ #define HDMI_PHY_DISABLE_MODE_SET	0x80
 -- 
 1.7.9.5
