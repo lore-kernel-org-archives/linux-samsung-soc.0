@@ -1,60 +1,36 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based
- on designware core driver
-Date: Thu, 03 Apr 2014 10:32:06 +0200
-Message-ID: <1396513926.5057.12.camel@weser.hi.pengutronix.de>
-References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
-	 <1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
-	 <235376049.yyfljDtinu@wuerfel> <533C460D.1030608@ti.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base
+ address via DT
+Date: Thu, 03 Apr 2014 11:07:34 +0200
+Message-ID: <533D24D6.2030103@samsung.com>
+References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+ <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
+ <533BF905.6070701@samsung.com> <533BFF69.1060701@monstr.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <533C460D.1030608@ti.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Murali Karicheri <m-karicheri2@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, xobs@kosagi.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Kukjin Kim <kgene.kim@samsung.com>, Mohit Kumar <mohit.kumar@st.com>, Jingoo Han <jg1.han@samsung.com>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Shawn Guo <shawn.guo@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:24431 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1162296AbaDCJHo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Apr 2014 05:07:44 -0400
+In-reply-to: <533BFF69.1060701@monstr.eu>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: monstr@monstr.eu
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>
 
-Am Mittwoch, den 02.04.2014, 13:17 -0400 schrieb Murali Karicheri:
-> Arnd,
-> 
-> Thanks for reviewing the RFC patch. Please see below my response.
-> 
-> On 3/25/2014 3:44 AM, Arnd Bergmann wrote:
-> > On Monday 24 March 2014 20:35:26 Murali Karicheri wrote:
-[...]
-> 
-> >> +	ks_pcie->clk = devm_clk_get(&pdev->dev, "pcie");
-> >> +	if (IS_ERR(ks_pcie->clk)) {
-> >> +		dev_err(&pdev->dev, "Failed to get pcie rc clock\n");
-> >> +		return PTR_ERR(ks_pcie->clk);
-> >> +	}
-> >> +	ret = clk_prepare_enable(ks_pcie->clk);
-> >> +	if (ret)
-> >> +		return ret;
-> > Could you move the clock handling into the generic dw-pcie code?
-> 
-> Could be. But currently only pci-exynos.c is using a clock name 
-> "pcie".pci-imx6.c uses pcie_axi" and
-> will have to be fixed so that we can move this code to the generic 
-> dw-pcie code.  Sean Cross is the
-> author for pci-imx6.c.
-> 
-> Sean,
-> 
-> Is "pcie_axi" is the pcie hw clock? If so, can you rename this to "pcie" 
-> so that  my patch can move the
-> clock handling code to pcie designware code?
-> 
-My series "i.MX6 PCIe binding change and MSI support" already changes
-the clock name. So we could consolidate the clock handling once this is
-in. Only difference is that the i.MX6 needs an additional PHY clock.
+On 02/04/14 14:15, Michal Simek wrote:
+>> There were some patches posted for syscon to make it available in earlier
+>> system initialization stage: https://lkml.org/lkml/2014/2/19/218
+>
+> I haven't finished this yet. I have to look at it again.
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks for the information, I assume this would be also useful
+on the Exynos SoC series, so I'd be happy to see continuation
+of those works.
+
+--
+Thanks,
+Sylwester
