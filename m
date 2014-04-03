@@ -1,66 +1,86 @@
-From: Murali Karicheri <m-karicheri2@ti.com>
-Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based
- on designware core driver
-Date: Wed, 2 Apr 2014 13:23:33 -0400
-Message-ID: <533C4795.9080209@ti.com>
-References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com> <1395707726-20437-4-git-send-email-m-karicheri2@ti.com> <235376049.yyfljDtinu@wuerfel>	<20140325103525.GA14789@ulmo> <CAPcvp5Gy8uNW3UULi8jYk7GNbmgTd2B_qOEAXnP4H4Wq3v9BCw@mail.gmail.com> <533C300E.7070109@ti.com> <CAPcvp5FEFbP_Fwc47V=LppiZnfbTgPqaAAm-A9K17dVEZWwHQQ@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 5/6] Samsung PM updates for v3.15
+Date: Thu, 03 Apr 2014 18:24:25 +0900
+Message-ID: <015d01cf4f1e$8153a6f0$83faf4d0$@samsung.com>
+References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
+ <021e01cf4a63$0cdb7380$26925a80$@samsung.com>
+ <201403290247.33924.arnd@arndb.de> <2561102.8vIJ8rzIic@diego>
+ <012401cf4e2b$9f9d9a60$ded8cf20$@samsung.com>
+ <20140403071912.8250.98981@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:53336 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758761AbaDBRYL (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:45420 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751397AbaDCJY2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Apr 2014 13:24:11 -0400
-In-Reply-To: <CAPcvp5FEFbP_Fwc47V=LppiZnfbTgPqaAAm-A9K17dVEZWwHQQ@mail.gmail.com>
+	Thu, 3 Apr 2014 05:24:28 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N3G000GC7GQY2C0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Apr 2014 18:24:26 +0900 (KST)
+In-reply-to: <20140403071912.8250.98981@quantum>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Murray <amurray@embedded-bits.co.uk>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <r65037@freescale.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
+To: 'Mike Turquette' <mturquette@linaro.org>, =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 4/2/2014 12:47 PM, Andrew Murray wrote:
-> On 2 April 2014 16:43, Murali Karicheri <m-karicheri2@ti.com> wrote:
->
->> Keystone pcie driver is developed based on other dw based pcie drivers
->>
->> such as pci-exynos that uses subsys_initcall(). I am new to this list,
->>
->> probably Jingoo (copied) has some history on why we can't use module.
->> For now I will keep it as is and can be re-visited in the next revisions.
->> Also I will experiment with PCIE port driver as well.
->>
->>
->> BTW, PCIE driver currently uses Legacy or MSI IRQ. Keystone PCI has
->> a platform IRQ. Is DT based irq configuration is the appropriate way
->> to add this capability?
-> As far as I am aware - the PCI standards define a particular way for
-> devices to describe which interrupt will be used for things like
-> hotplug, AER and PME. These interrupts are always PCI interrupts (i.e.
-> MSI/MSI-X/legacy). Thus the port services code in the kernel uses
-> standard configuration space accesses to determine the interrupt to
-> use. Also note that it's not just the host bridge that can provide
-> these services but any PCIE device, I guess in this sense a host
-> bridge is treated like any other device.
->
-> If my understanding is correct I don't believe the current port
-> services code allows exceptions to this, i.e. to say this host bridge
-> actually uses a platform IRQ for AER rather than an MSI. Though this
-> may be quite useful as I suspect many host bridges provide interrupts
-> for things like PME through platform IRQs rather that PCI interrupts.
->
-> Does the Keystone have platform IRQs for things like AER? Is that
-> because the IP makes these events available through platform IRQs in
-> addition to the standard PCI means?
->
-> Andrew Murray
-Andrew,
+Mike Turquette wrote:
+>=20
+> Quoting Kukjin Kim (2014-04-01 21:25:45)
+> > Heiko St=C3=BCbner wrote:
+> > >
+> > > Hi Arnd,
+> > >
+> > > Am Samstag, 29. M=C3=A4rz 2014, 02:47:33 schrieb Arnd Bergmann:
+> > > > On Friday 28 March 2014, Kukjin Kim wrote:
+> > > > > Kukjin Kim wrote:
+> > > > > > On 03/19/14 13:01, Mike Turquette wrote:
+> > > > > >
+> > > > > > Thanks :-)
+> > > > > >
+> > > > > > > Acked-by: Mike Turquette<mturquette@linaro.org>
+> > > > > >
+> > > > > > It's time. Please pull this [5/6] and "[GIT PULL 6/6] Samsu=
+ng
+> > > > > > clk-s3c24xx updates for v3.15".
+> > > > >
+> > > > > Hi Arnd, Olof and Mike,
+> > > > >
+> > > > > Still I cannot see this in arm-soc. Any problems?
+> > > >
+> > > > Sorry, I didn't have this one on my radar any more, merged into
+> > > > next/drivers now.
+> > >
+> > > maybe you could also take a look at the depending "[GIT PULL 6/6]
+> Samsung
+> > > clk-
+> > > s3c24xx updates for v3.15" we walked about at the beginning of th=
+e
+> > > week? :-)
+> > >
+> > Yeah, so I've informed that [5/6] and [6/6] is needed...
+> >
+> > Arnd, Olof and Mike,
+> >
+> > Probably you guys missed "[6/6] Samsung clk-s3c24xx updates" when
+> dependency
+> > with [5/6] has been cleared but since it's already 3.15 merge windo=
+w,
+> I'm
+> > not sure it can be sent to Linus in this time...
+>=20
+> Both PRs were Acked by me, so no problems from my end. Pretty late fo=
+r
+> 3.15 though.
+>=20
+Yeah, I know. I mean 'Arnd, Olof and Kevin' ;-)
 
-Yes. Keystone PCIe hw is based on designware hw version v3.65 that 
-implements
-Error interrupt as a platform IRQ only (not in addition) and 
-unfortunately standard
-PCI means are not supported. The latter versions do support standard PCI 
-means.
+BTW, hmm...I know, it's too late for v3.15...so...unfortunately maybe I=
+ should queue it for v3.16?...
 
-Murali
+- Kukjin
