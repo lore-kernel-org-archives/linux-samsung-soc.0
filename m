@@ -1,46 +1,60 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/3] Documentation: update samsung pmu binding information for
- Exynos4210/4212/4412
-Date: Wed, 02 Apr 2014 17:02:58 +0900
-Message-ID: <1396425778-4379-4-git-send-email-pankaj.dubey@samsung.com>
-References: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1396425778-4379-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, chow.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based
+ on designware core driver
+Date: Thu, 03 Apr 2014 10:32:06 +0200
+Message-ID: <1396513926.5057.12.camel@weser.hi.pengutronix.de>
+References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
+	 <1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
+	 <235376049.yyfljDtinu@wuerfel> <533C460D.1030608@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <533C460D.1030608@ti.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Murali Karicheri <m-karicheri2@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, xobs@kosagi.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Kukjin Kim <kgene.kim@samsung.com>, Mohit Kumar <mohit.kumar@st.com>, Jingoo Han <jg1.han@samsung.com>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Shawn Guo <shawn.guo@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch updates samsung pmu (power management unit) binding information
-for Exynos4210, Exynos4212 and Exynos4412.
+Am Mittwoch, den 02.04.2014, 13:17 -0400 schrieb Murali Karicheri:
+> Arnd,
+> 
+> Thanks for reviewing the RFC patch. Please see below my response.
+> 
+> On 3/25/2014 3:44 AM, Arnd Bergmann wrote:
+> > On Monday 24 March 2014 20:35:26 Murali Karicheri wrote:
+[...]
+> 
+> >> +	ks_pcie->clk = devm_clk_get(&pdev->dev, "pcie");
+> >> +	if (IS_ERR(ks_pcie->clk)) {
+> >> +		dev_err(&pdev->dev, "Failed to get pcie rc clock\n");
+> >> +		return PTR_ERR(ks_pcie->clk);
+> >> +	}
+> >> +	ret = clk_prepare_enable(ks_pcie->clk);
+> >> +	if (ret)
+> >> +		return ret;
+> > Could you move the clock handling into the generic dw-pcie code?
+> 
+> Could be. But currently only pci-exynos.c is using a clock name 
+> "pcie".pci-imx6.c uses pcie_axi" and
+> will have to be fixed so that we can move this code to the generic 
+> dw-pcie code.  Sean Cross is the
+> author for pci-imx6.c.
+> 
+> Sean,
+> 
+> Is "pcie_axi" is the pcie hw clock? If so, can you rename this to "pcie" 
+> so that  my patch can move the
+> clock handling code to pcie designware code?
+> 
+My series "i.MX6 PCIe binding change and MSI support" already changes
+the clock name. So we could consolidate the clock handling once this is
+in. Only difference is that the i.MX6 needs an additional PHY clock.
 
-CC: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-CC: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-CC: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-CC: Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- Documentation/devicetree/bindings/arm/samsung/pmu.txt |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index f1f1552..b562634 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -2,6 +2,9 @@ SAMSUNG Exynos SoC series PMU Registers
- 
- Properties:
-  - compatible : should contain two values. First value must be one from following list:
-+		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
-+		   - "samsung,exynos4212-pmu" - for Exynos4212 SoC,
-+		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
- 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
- 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
- 		second value must be always "syscon".
+Regards,
+Lucas
 -- 
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Pengutronix e.K.                           | Lucas Stach                 |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
