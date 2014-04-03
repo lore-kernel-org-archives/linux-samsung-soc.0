@@ -1,91 +1,150 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH 4/8] PCI: imx6: use new clock names
-Date: Thu, 3 Apr 2014 14:50:39 +0800
-Message-ID: <20140403065037.GJ2801@dragon>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
- <1396025579-14344-5-git-send-email-l.stach@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:57315 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1162420AbaDCHGH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Apr 2014 03:06:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1396025579-14344-5-git-send-email-l.stach@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Thu, 03 Apr 2014 10:47:57 +0530
+Message-ID: <1396502277-19588-4-git-send-email-rahul.sharma@samsung.com>
+References: <1396502277-19588-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1396502277-19588-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 
-On Fri, Mar 28, 2014 at 05:52:55PM +0100, Lucas Stach wrote:
-> As defined in the new binding.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/pci/host/pci-imx6.c | 74 ++++++++++++++++++---------------------------
->  1 file changed, 29 insertions(+), 45 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
-> index ee082509b0ba..71730bbcd9a2 100644
-> --- a/drivers/pci/host/pci-imx6.c
-> +++ b/drivers/pci/host/pci-imx6.c
-...
-> @@ -583,32 +574,25 @@ static int __init imx6_pcie_probe(struct platform_device *pdev)
->  	}
->  
->  	/* Fetch clocks */
-> -	imx6_pcie->lvds_gate = devm_clk_get(&pdev->dev, "lvds_gate");
-> -	if (IS_ERR(imx6_pcie->lvds_gate)) {
-> -		dev_err(&pdev->dev,
-> -			"lvds_gate clock select missing or invalid\n");
-> -		return PTR_ERR(imx6_pcie->lvds_gate);
-> -	}
-> -
-> -	imx6_pcie->sata_ref_100m = devm_clk_get(&pdev->dev, "sata_ref_100m");
-> -	if (IS_ERR(imx6_pcie->sata_ref_100m)) {
-> +	imx6_pcie->pcie_phy = devm_clk_get(&pdev->dev, "pcie_phy");
-> +	if (IS_ERR(imx6_pcie->pcie_phy)) {
+The patch adds the dts files for xyref5260 board which
+is based on Exynos5260 Evt0 sample.
 
-Won't this break the existing DTBs?
+Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/Makefile                      |    1 +
+ arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts |  103 +++++++++++++++++++++++
+ 2 files changed, 104 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
 
-Shawn
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b9d6a8b..5a391bf 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+ 	exynos5250-snow.dtb \
++	exynos5260-xyref5260-evt0.dtb \
+ 	exynos5420-arndale-octa.dtb \
+ 	exynos5420-smdk5420.dtb \
+ 	exynos5440-sd5v1.dtb \
+diff --git a/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+new file mode 100644
+index 0000000..fb1b0ee
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+@@ -0,0 +1,103 @@
++/*
++ * SAMSUNG XYREF5260 EVT0 board device tree source
++ *
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include "exynos5260.dtsi"
++
++/ {
++	model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
++	compatible = "samsung,xyref5260", "samsung,exynos5260";
++
++	memory {
++		reg = <0x20000000 0x80000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC2,115200";
++	};
++
++	fin_pll: xxti {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "fin_pll";
++		#clock-cells = <0>;
++	};
++
++	xrtcxti: xrtcxti {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		clock-output-names = "xrtcxti";
++		#clock-cells = <0>;
++	};
++};
++
++&pinctrl_0 {
++	hdmi_hpd_irq: hdmi-hpd-irq {
++		samsung,pins = "gpx3-7";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart1 {
++	status = "okay";
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&uart3 {
++	status = "okay";
++};
++
++&mmc_0 {
++	status = "okay";
++	num-slots = <1>;
++	broken-cd;
++	bypass-smu;
++	supports-highspeed;
++	supports-hs200-mode; /* 200 Mhz */
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++
++	slot@0 {
++		reg = <0>;
++		bus-width = <8>;
++	};
++};
++
++&mmc_2 {
++	status = "okay";
++	num-slots = <1>;
++	supports-highspeed;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <2 3>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
++
++	slot@0 {
++		reg = <0>;
++		bus-width = <4>;
++		disable-wp;
++	};
++};
+-- 
+1.7.9.5
 
->  		dev_err(&pdev->dev,
-> -			"sata_ref_100m clock source missing or invalid\n");
-> -		return PTR_ERR(imx6_pcie->sata_ref_100m);
-> +			"pcie_phy clock source missing or invalid\n");
-> +		return PTR_ERR(imx6_pcie->pcie_phy);
->  	}
->  
-> -	imx6_pcie->pcie_ref_125m = devm_clk_get(&pdev->dev, "pcie_ref_125m");
-> -	if (IS_ERR(imx6_pcie->pcie_ref_125m)) {
-> +	imx6_pcie->pcie_bus = devm_clk_get(&pdev->dev, "pcie_bus");
-> +	if (IS_ERR(imx6_pcie->pcie_bus)) {
->  		dev_err(&pdev->dev,
-> -			"pcie_ref_125m clock source missing or invalid\n");
-> -		return PTR_ERR(imx6_pcie->pcie_ref_125m);
-> +			"pcie_bus clock source missing or invalid\n");
-> +		return PTR_ERR(imx6_pcie->pcie_bus);
->  	}
->  
-> -	imx6_pcie->pcie_axi = devm_clk_get(&pdev->dev, "pcie_axi");
-> -	if (IS_ERR(imx6_pcie->pcie_axi)) {
-> +	imx6_pcie->pcie = devm_clk_get(&pdev->dev, "pcie");
-> +	if (IS_ERR(imx6_pcie->pcie)) {
->  		dev_err(&pdev->dev,
-> -			"pcie_axi clock source missing or invalid\n");
-> -		return PTR_ERR(imx6_pcie->pcie_axi);
-> +			"pcie clock source missing or invalid\n");
-> +		return PTR_ERR(imx6_pcie->pcie);
->  	}
->  
->  	/* Grab GPR config register range */
-> -- 
-> 1.9.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
