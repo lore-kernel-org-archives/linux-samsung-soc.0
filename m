@@ -1,106 +1,71 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 5/6] Samsung PM updates for v3.15
-Date: Thu, 03 Apr 2014 19:03:52 +0900
-Message-ID: <017201cf4f24$048a8e80$0d9fab80$@samsung.com>
-References: <8259832.260591393840570438.JavaMail.weblogic@epml16>
- <20140403071912.8250.98981@quantum>
- <015d01cf4f1e$8153a6f0$83faf4d0$@samsung.com> <2387249.KfAueze2Lh@diego>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 4/8] PCI: imx6: use new clock names
+Date: Thu, 03 Apr 2014 10:21:05 +0200
+Message-ID: <1396513265.5057.7.camel@weser.hi.pengutronix.de>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+	 <1396025579-14344-5-git-send-email-l.stach@pengutronix.de>
+	 <20140403065037.GJ2801@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55616 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751220AbaDCKDz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Apr 2014 06:03:55 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N3G00B3P9AHO530@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Apr 2014 19:03:53 +0900 (KST)
-In-reply-to: <2387249.KfAueze2Lh@diego>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140403065037.GJ2801@dragon>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Cross <xobs-nXMMniAx+RbQT0dZR+AlfA@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: 'Mike Turquette' <mturquette@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Heiko St=FCbner wrote:
->=20
-> Am Donnerstag, 3. April 2014, 18:24:25 schrieb Kukjin Kim:
-> > Mike Turquette wrote:
-> > > Quoting Kukjin Kim (2014-04-01 21:25:45)
-> > >
-> > > > Heiko St=FCbner wrote:
-> > > > > Hi Arnd,
-> > > > >
-> > > > > Am Samstag, 29. M=E4rz 2014, 02:47:33 schrieb Arnd Bergmann:
-> > > > > > On Friday 28 March 2014, Kukjin Kim wrote:
-> > > > > > > Kukjin Kim wrote:
-> > > > > > > > On 03/19/14 13:01, Mike Turquette wrote:
-> > > > > > > >
-> > > > > > > > Thanks :-)
-> > > > > > > >
-> > > > > > > > > Acked-by: Mike Turquette<mturquette@linaro.org>
-> > > > > > > >
-> > > > > > > > It's time. Please pull this [5/6] and "[GIT PULL 6/6]
-> Samsung
-> > > > > > > > clk-s3c24xx updates for v3.15".
-> > > > > > >
-> > > > > > > Hi Arnd, Olof and Mike,
-> > > > > > >
-> > > > > > > Still I cannot see this in arm-soc. Any problems?
-> > > > > >
-> > > > > > Sorry, I didn't have this one on my radar any more, merged =
-into
-> > > > > > next/drivers now.
-> > > > >
-> > > > > maybe you could also take a look at the depending "[GIT PULL =
-6/6]
-> > >
-> > > Samsung
-> > >
-> > > > > clk-
-> > > > > s3c24xx updates for v3.15" we walked about at the beginning o=
-f the
-> > > > > week? :-)
-> > > >
-> > > > Yeah, so I've informed that [5/6] and [6/6] is needed...
-> > > >
-> > > > Arnd, Olof and Mike,
-> > > >
-> > > > Probably you guys missed "[6/6] Samsung clk-s3c24xx updates" wh=
-en
-> > >
-> > > dependency
-> > >
-> > > > with [5/6] has been cleared but since it's already 3.15 merge
-window,
-> > >
-> > > I'm
-> > >
-> > > > not sure it can be sent to Linus in this time...
-> > >
-> > > Both PRs were Acked by me, so no problems from my end. Pretty lat=
-e for
-> > > 3.15 though.
-> >
-> > Yeah, I know. I mean 'Arnd, Olof and Kevin' ;-)
-> >
-> > BTW, hmm...I know, it's too late for v3.15...so...unfortunately may=
-be I
-> > should queue it for v3.16?...
->=20
-> I guess this would be the best option. I should also be able to finis=
-h the
-> s3c2410/2440/2442 conversion until then, which needs a bit more work.
->=20
-Hi Heiko,
+Hi Shawn,
 
-OK, I will rebase the branch once 3.15-rc1 is ready for 3.16. Thanks an=
-d
-Sorry ;-)
+Am Donnerstag, den 03.04.2014, 14:50 +0800 schrieb Shawn Guo:
+> On Fri, Mar 28, 2014 at 05:52:55PM +0100, Lucas Stach wrote:
+> > As defined in the new binding.
+> > 
+> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> > ---
+> >  drivers/pci/host/pci-imx6.c | 74 ++++++++++++++++++---------------------------
+> >  1 file changed, 29 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
+> > index ee082509b0ba..71730bbcd9a2 100644
+> > --- a/drivers/pci/host/pci-imx6.c
+> > +++ b/drivers/pci/host/pci-imx6.c
+> ...
+> > @@ -583,32 +574,25 @@ static int __init imx6_pcie_probe(struct platform_device *pdev)
+> >  	}
+> >  
+> >  	/* Fetch clocks */
+> > -	imx6_pcie->lvds_gate = devm_clk_get(&pdev->dev, "lvds_gate");
+> > -	if (IS_ERR(imx6_pcie->lvds_gate)) {
+> > -		dev_err(&pdev->dev,
+> > -			"lvds_gate clock select missing or invalid\n");
+> > -		return PTR_ERR(imx6_pcie->lvds_gate);
+> > -	}
+> > -
+> > -	imx6_pcie->sata_ref_100m = devm_clk_get(&pdev->dev, "sata_ref_100m");
+> > -	if (IS_ERR(imx6_pcie->sata_ref_100m)) {
+> > +	imx6_pcie->pcie_phy = devm_clk_get(&pdev->dev, "pcie_phy");
+> > +	if (IS_ERR(imx6_pcie->pcie_phy)) {
+> 
+> Won't this break the existing DTBs?
+> 
+Yes, it will. But I think it's justified to break the binding,
+considering how much brokenness was in there and the relatively few
+number of users right now.
 
-- Kukjin
+All these patches depend on agreement of the new binding, as laid out in
+patch 2/8. I don't think it makes much sense in keeping the old cruft
+around given that the old binding was properly reviewed by PCI experts.
+
+Regards,
+Lucas
+-- 
+Pengutronix e.K.                           | Lucas Stach                 |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
