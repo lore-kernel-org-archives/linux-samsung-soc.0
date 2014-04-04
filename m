@@ -1,69 +1,77 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V2 08/17] ARM: exynos: cpuidle: Move scu_enable in the cpu_pm notifier
-Date: Fri,  4 Apr 2014 15:43:00 +0200
-Message-ID: <1396618989-2897-9-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V2 10/17] ARM: exynos: cpuidle: Move exynos_set_wakeupmask in the cpu_pm notifier
+Date: Fri,  4 Apr 2014 15:43:02 +0200
+Message-ID: <1396618989-2897-11-git-send-email-daniel.lezcano@linaro.org>
 References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:42942 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752774AbaDDNnH (ORCPT
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:58712 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752774AbaDDNnL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 09:43:07 -0400
-Received: by mail-we0-f174.google.com with SMTP id t60so3507158wes.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:06 -0700 (PDT)
+	Fri, 4 Apr 2014 09:43:11 -0400
+Received: by mail-wi0-f173.google.com with SMTP id z2so1299010wiv.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:10 -0700 (PDT)
 In-Reply-To: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-We make the cpuidle code less arch dependent.
+Let's encapsulate more the PM code inside the PM file by moving the
+'exynos_set_wakeupmask' function inside the pm.c and the call in the cpu_pm
+notifier.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/mach-exynos/cpuidle.c |    6 ------
- arch/arm/mach-exynos/pm.c      |    4 ++++
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    7 -------
+ arch/arm/mach-exynos/pm.c      |    7 +++++++
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 7f1f4ef..ce31004 100644
+index ce31004..01444ed 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -18,7 +18,6 @@
- #include <linux/platform_device.h>
+@@ -58,15 +58,8 @@
+ #define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
+ #define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
  
- #include <asm/proc-fns.h>
--#include <asm/smp_scu.h>
- #include <asm/suspend.h>
- #include <asm/unified.h>
- #include <asm/cpuidle.h>
-@@ -93,11 +92,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- 
- 	cpu_pm_enter();
- 	cpu_suspend(0, idle_finisher);
+-/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+-static void exynos_set_wakeupmask(void)
+-{
+-	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
+-}
 -
--#ifdef CONFIG_SMP
--	if (!soc_is_exynos5250())
--		scu_enable(S5P_VA_SCU);
--#endif
- 	cpu_pm_exit();
+ static int idle_finisher(unsigned long flags)
+ {
+-	exynos_set_wakeupmask();
  
- 	/*
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
+ 	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
 diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 67d75fe..aba577f 100644
+index 9773a00..c8b3dc4 100644
 --- a/arch/arm/mach-exynos/pm.c
 +++ b/arch/arm/mach-exynos/pm.c
-@@ -336,6 +336,10 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+@@ -322,6 +322,12 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
+ 	.valid		= suspend_valid_only_mem,
+ };
  
- 	case CPU_PM_EXIT:
++/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
++static void exynos_set_wakeupmask(void)
++{
++	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
++}
++
+ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 				  unsigned long cmd, void *v)
+ {
+@@ -331,6 +337,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 	case CPU_PM_ENTER:
  		if (cpu == 0) {
-+#ifdef CONFIG_SMP
-+			if (!soc_is_exynos5250())
-+				scu_enable(S5P_VA_SCU);
-+#endif
- 			exynos_cpu_restore_register();
+ 			exynos_cpu_save_register();
++			exynos_set_wakeupmask();
  		}
  		break;
+ 
 -- 
 1.7.9.5
