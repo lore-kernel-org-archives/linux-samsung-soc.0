@@ -1,51 +1,73 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: [PATCH] usb: ohci-exynos: Remove locks for 'ohci' in suspend callback
-Date: Fri,  4 Apr 2014 19:03:37 +0530
-Message-ID: <1396618417-9560-1-git-send-email-gautam.vivek@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH V2 00/17] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle
+Date: Fri,  4 Apr 2014 15:42:52 +0200
+Message-ID: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:65252 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752822AbaDDNdp (ORCPT
+Received: from mail-we0-f173.google.com ([74.125.82.173]:36861 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752444AbaDDNmz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 09:33:45 -0400
+	Fri, 4 Apr 2014 09:42:55 -0400
+Received: by mail-we0-f173.google.com with SMTP id w61so3409745wes.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:42:54 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, kgene.kim@samsung.com, Manjunath Goudar <csmanjuvijay@gmail.com>, Alan Stern <stern@rowland.harvard.edu>
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-Patch : 14982e3 USB: OHCI: Properly handle ohci-exynos suspend
-has already removed 'ohci_hcd' settings from exynos glue layer
-as a part of streamlining the ohci controller's suspend.
-So we don't need the locks for 'ohci_hcd' anymore.
+Changelog:
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Manjunath Goudar <csmanjuvijay@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
----
- drivers/usb/host/ohci-exynos.c |    4 ----
- 1 file changed, 4 deletions(-)
+V2: 
+	* Added comment in changelog for calls order (5/17)
+	* Call the powerdown only for cpu0 in the pm notifier
+	* Set the pm notifier for all boards
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 68588d8..7f5e779 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -199,8 +199,6 @@ static int exynos_ohci_suspend(struct device *dev)
- 	if (rc)
- 		return rc;
- 
--	spin_lock_irqsave(&ohci->lock, flags);
--
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
-@@ -208,8 +206,6 @@ static int exynos_ohci_suspend(struct device *dev)
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
--	spin_unlock_irqrestore(&ohci->lock, flags);
--
- 	return 0;
- }
- 
+V1: initial post
+
+This patchset relies on the cpm_pm notifier to initiate the powerdown sequence
+operations from pm.c instead cpuidle.c. Thus the cpuidle driver is no longer
+dependent from arch specific code as everything is called from the pm.c file.
+
+The patchset applies on top of linux-samsung/for-next.
+
+Tested on exynos4: 4210
+Tested on exynos5: 5250 (without AFTR)
+
+Daniel Lezcano (17):
+  ARM: exynos: cpuidle: Prevent forward declaration
+  ARM: exynos: cpuidle: use cpuidle_register
+  ARM: exynos: cpuidle: change function name prefix
+  ARM: exynos: cpuidle: encapsulate register access inside a function
+  ARM: exynos: cpuidle: Move some code inside the idle_finisher
+  ARM: exynos: cpuidle: Fix S5P_WAKEUP_STAT call
+  ARM: exynos: cpuidle: Use the cpu_pm notifier
+  ARM: exynos: cpuidle: Move scu_enable in the cpu_pm notifier
+  ARM: exynos: cpuidle: Remove ifdef for scu_enable
+  ARM: exynos: cpuidle: Move exynos_set_wakeupmask in the cpu_pm
+    notifier
+  ARM: exynos: cpuidle: Move the power sequence call in the cpu_pm
+    notifier
+  ARM: exynos: cpuidle: Move S5P_CHECK_AFTR in a header
+  ARM: exynos: cpuidle: Move clock setup to pm.c
+  ARM: exynos: cpuidle: Move the boot vector in pm.c
+  ARM: exynos: cpuidle: Pass the AFTR callback to the platform_data
+  ARM: exynos: cpuidle: Move the driver to drivers/cpuidle directory
+  ARM: exynos: config: Enable cpuidle
+
+ arch/arm/configs/exynos_defconfig |    1 +
+ arch/arm/mach-exynos/Makefile     |    1 -
+ arch/arm/mach-exynos/common.c     |    5 +-
+ arch/arm/mach-exynos/common.h     |    1 +
+ arch/arm/mach-exynos/cpuidle.c    |  256 -------------------------------------
+ arch/arm/mach-exynos/pm.c         |  191 ++++++++++++++++++++++-----
+ arch/arm/mach-exynos/pmu.c        |    6 +
+ arch/arm/mach-exynos/regs-pmu.h   |    1 +
+ drivers/cpuidle/Kconfig.arm       |    7 +
+ drivers/cpuidle/Makefile          |    1 +
+ drivers/cpuidle/cpuidle-exynos.c  |  102 +++++++++++++++
+ 11 files changed, 281 insertions(+), 291 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/cpuidle.c
+ create mode 100644 drivers/cpuidle/cpuidle-exynos.c
+
 -- 
-1.7.10.4
+1.7.9.5
