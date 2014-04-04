@@ -1,85 +1,69 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
-Date: Fri, 04 Apr 2014 18:09:53 +0200
-Message-ID: <5825506.2ErDt1UQ5r@amdc1032>
-References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
- <1396618989-2897-18-git-send-email-daniel.lezcano@linaro.org>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based
+ on designware core driver
+Date: Fri, 4 Apr 2014 12:15:27 -0400
+Message-ID: <533EDA9F.5090801@ti.com>
+References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
+ <1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
+ <235376049.yyfljDtinu@wuerfel> <533C460D.1030608@ti.com>
+ <1396513926.5057.12.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34194 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753799AbaDDQKS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 12:10:18 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3I000V3KX4T150@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 05 Apr 2014 01:10:16 +0900 (KST)
-In-reply-to: <1396618989-2897-18-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1396513926.5057.12.camel@weser.hi.pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Richard Zhu <r65037@freescale.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "Shilimkar,
+ Santosh" <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, "xobs@kosagi.com" <xobs@kosagi.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
+On 4/3/2014 4:32 AM, Lucas Stach wrote:
+> Am Mittwoch, den 02.04.2014, 13:17 -0400 schrieb Murali Karicheri:
+>> Arnd,
+>>
+>> Thanks for reviewing the RFC patch. Please see below my response.
+>>
+>> On 3/25/2014 3:44 AM, Arnd Bergmann wrote:
+>>> On Monday 24 March 2014 20:35:26 Murali Karicheri wrote:
+> [...]
+>>>> +	ks_pcie->clk = devm_clk_get(&pdev->dev, "pcie");
+>>>> +	if (IS_ERR(ks_pcie->clk)) {
+>>>> +		dev_err(&pdev->dev, "Failed to get pcie rc clock\n");
+>>>> +		return PTR_ERR(ks_pcie->clk);
+>>>> +	}
+>>>> +	ret = clk_prepare_enable(ks_pcie->clk);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>> Could you move the clock handling into the generic dw-pcie code?
+>> Could be. But currently only pci-exynos.c is using a clock name
+>> "pcie".pci-imx6.c uses pcie_axi" and
+>> will have to be fixed so that we can move this code to the generic
+>> dw-pcie code.  Sean Cross is the
+>> author for pci-imx6.c.
+>>
+>> Sean,
+>>
+>> Is "pcie_axi" is the pcie hw clock? If so, can you rename this to "pcie"
+>> so that  my patch can move the
+>> clock handling code to pcie designware code?
+>>
+> My series "i.MX6 PCIe binding change and MSI support" already changes
+> the clock name. So we could consolidate the clock handling once this is
+> in. Only difference is that the i.MX6 needs an additional PHY clock.
+>
+> Regards,
+> Lucas
+Lucas,
 
-On Friday, April 04, 2014 03:43:09 PM Daniel Lezcano wrote:
-> The cpuidle driver is broken since v3.11 and now we are at v3.14.
-> 
-> Default the cpuidle driver to favorize a better detection next time.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  arch/arm/configs/exynos_defconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 4ce7b70..6ed4b34 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -132,3 +132,4 @@ CONFIG_DEBUG_INFO=y
->  CONFIG_DEBUG_USER=y
->  CONFIG_CRYPTO_SHA256=y
->  CONFIG_CRC_CCITT=y
-> +CONFIG_CPU_IDLE=y
+Thanks. I will send a patch for this.
 
-Sorry but I have to NAK this change.  There are three issues with AFTR
-mode that should be resolved first before this patch can be merged:
-
-* The upstream Exynos cpuidle code lacks support for secure firmware and
-  it is used on i.e. Trats2 boards (Exynos4412).  Attempts to use AFTR on
-  such hardware results in oops + lockup.
-
-  I have patches adding secure firmware support to Exynos cpuidle driver
-  but they depend on Tomasz Figa's PM changes which are not yet upstream.
-
-* Somebody needs to verify that the current Exynos cpuidle driver works
-  in the AFTR mode on Exynos5420 for which support has been added recently
-  (I really doubt it looking at some internal trees).
-
-* Some of our u-boot bootloader versions are incompatible with AFTR.  We
-  have observed the problem happening on Trats board (Exynos4210) on which
-  it can be fixed by using the upstream u-boot version and Universal C210
-  board (Exynos4210 with broken SMP support) on which there is no upstream
-  u-boot available (IIRC) and because of the broken SMP support enabling
-  cpuidle results in attempt to enter AFTR during boot + immediate lockup.
-
-  I know that this is mainly our problem but the issue is widespread on
-  our targets and I believe that adding some workaround for it in cpuidle
-  core would be beneficial for the whole cpuidle subsystem.  Namely there
-  should be some way of telling cpuidle subsystem to either disable
-  particular state(s) or limit the max available state.  I think that this
-  can be also useful for testing and development of other cpuidle drivers.
-
-For now please change this patch to add CONFIG_CPU_IDLE=n instead (since
-the config option is "default y" it will be auto-enabled if there is no
-entry in the defconfig)..
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Murali
