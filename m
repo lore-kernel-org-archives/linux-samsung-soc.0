@@ -1,65 +1,67 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 05/17] ARM: exynos: cpuidle: Move some code inside the idle_finisher
-Date: Fri,  4 Apr 2014 09:47:51 +0200
-Message-ID: <1396597683-6969-6-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 08/17] ARM: exynos: cpuidle: Move scu_enable in the cpu_pm notifier
+Date: Fri,  4 Apr 2014 09:47:54 +0200
+Message-ID: <1396597683-6969-9-git-send-email-daniel.lezcano@linaro.org>
 References: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:53480 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750755AbaDDHrz (ORCPT
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:51957 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750755AbaDDHr7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 03:47:55 -0400
-Received: by mail-wg0-f42.google.com with SMTP id y10so2990953wgg.25
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 00:47:54 -0700 (PDT)
+	Fri, 4 Apr 2014 03:47:59 -0400
+Received: by mail-wi0-f175.google.com with SMTP id cc10so686291wib.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 00:47:58 -0700 (PDT)
 In-Reply-To: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-Move the code around to differentiate different section of code and prepare it
-to be factored out in the next patches.
+We make the cpuidle code less arch dependent.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- arch/arm/mach-exynos/cpuidle.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    6 ------
+ arch/arm/mach-exynos/pm.c      |    3 +++
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 18f6aba..9cd1ed9 100644
+index 4b090cf..c63ad05 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -88,7 +88,16 @@ static void restore_cpu_arch_register(void)
+@@ -18,7 +18,6 @@
+ #include <linux/platform_device.h>
  
- static int idle_finisher(unsigned long flags)
- {
-+	exynos_set_wakeupmask();
-+
-+	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
-+	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
-+
-+	/* Set value of power down register for aftr mode */
-+	exynos_sys_powerdown_conf(SYS_AFTR);
-+
- 	cpu_do_idle();
-+
- 	return 1;
- }
+ #include <asm/proc-fns.h>
+-#include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ #include <asm/unified.h>
+ #include <asm/cpuidle.h>
+@@ -94,11 +93,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
  
-@@ -98,14 +107,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- {
- 	unsigned long tmp;
- 
--	exynos_set_wakeupmask();
+ 	cpu_pm_enter();
+ 	cpu_suspend(0, idle_finisher);
 -
--	/* Set value of power down register for aftr mode */
--	exynos_sys_powerdown_conf(SYS_AFTR);
--
--	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
--	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
--
- 	save_cpu_arch_register();
+-#ifdef CONFIG_SMP
+-	if (!soc_is_exynos5250())
+-		scu_enable(S5P_VA_SCU);
+-#endif
+ 	cpu_pm_exit();
  
- 	/* Setting Central Sequence Register for power down mode */
+ 	/*
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index b2a075e..f43a004 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -386,6 +386,9 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 		break;
+ 
+ 	case CPU_PM_EXIT:
++#ifdef CONFIG_SMP
++		scu_enable(S5P_VA_SCU);
++#endif
+ 		exynos_cpu_restore_register();
+ 		break;
+ 	}
 -- 
 1.7.9.5
