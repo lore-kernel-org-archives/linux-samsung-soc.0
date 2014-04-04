@@ -1,47 +1,59 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 17/17] ARM: exynos: config: Enable cpuidle
-Date: Fri, 04 Apr 2014 11:16:08 +0200
-Message-ID: <533E7858.2030403@linaro.org>
-References: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>	<1396597683-6969-18-git-send-email-daniel.lezcano@linaro.org> <CAKohpo=Dbp1uSCpOMhAx5vk9ddYP=DK14Od6_aoAuyX3mrwzew@mail.gmail.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH 1/2] drm/exynos/fbdev: don't set fix.smem/mmio_{start,len}
+Date: Fri,  4 Apr 2014 17:22:01 +0800
+Message-ID: <1396603322-13585-1-git-send-email-djkurtz@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:57289 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751799AbaDDJPy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 05:15:54 -0400
-Received: by mail-wg0-f48.google.com with SMTP id l18so3151568wgh.7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 02:15:53 -0700 (PDT)
-In-Reply-To: <CAKohpo=Dbp1uSCpOMhAx5vk9ddYP=DK14Od6_aoAuyX3mrwzew@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 04/04/2014 11:10 AM, Viresh Kumar wrote:
-> On 4 April 2014 13:18, Daniel Lezcano <daniel.lezcano@linaro.org> wro=
-te:
->> The cpuidle driver is broken since v3.11 and now we are at v3.14.
->>
->> Default the cpuidle driver to favorize a better detection next time.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>   arch/arm/configs/exynos_defconfig |    1 +
->>   1 file changed, 1 insertion(+)
->
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Kernel access to the eyxnos fbdev framebuffer is via its gem object's
+kernel mapping (kvaddr, stored in info->screen_base).
 
-Thanks Viresh for the review !
+User space access is provided by mmap(), read() and write() of /dev/fb/fb0.
+These functions also only use screen_base/screen_size().
 
+Therefore, it is not necessary to set fix->smem_{start,len} or
+fix->mmio_{start,len} fields.
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+This avoids leaking kernel, physical and dma mapped addresses to user
+space via the ioctls FBIOGET_VSCREENINFO and FBIOGET_FSCREENINFO.
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 5fa342e..2dcc589 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -123,14 +123,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
+ 
+ 	dev->mode_config.fb_base = (resource_size_t)buffer->dma_addr;
+ 	fbi->screen_base = buffer->kvaddr + offset;
+-	if (is_drm_iommu_supported(dev))
+-		fbi->fix.smem_start = (unsigned long)
+-			(page_to_phys(sg_page(buffer->sgt->sgl)) + offset);
+-	else
+-		fbi->fix.smem_start = (unsigned long)buffer->dma_addr;
+-
+ 	fbi->screen_size = size;
+-	fbi->fix.smem_len = size;
+ 
+ 	return 0;
+ }
+-- 
+1.9.1.423.g4596e3a
