@@ -1,87 +1,40 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH 4/4] Revert
- "drm/exynos: add mout_hdmi clock in hdmi driver to change parent"
-Date: Fri, 04 Apr 2014 16:53:21 +0200
-Message-ID: <1396623201-26000-5-git-send-email-t.stanislaws@samsung.com>
-References: <1396623201-26000-1-git-send-email-t.stanislaws@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V2 01/17] ARM: exynos: cpuidle: Prevent forward declaration
+Date: Fri, 04 Apr 2014 17:24:35 +0200
+Message-ID: <3652764.DHfZbIadZt@amdc1032>
+References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
+ <1396618989-2897-2-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1396623201-26000-1-git-send-email-t.stanislaws@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, kgene.kim@samsung.com, mturquette@linaro.org, sw0312.kim@samsung.com, rob.herring@calxeda.com, kishon@ti.com, a.hajda@samsung.com, kyungmin.park@samsung.com, sylvester.nawrocki@gmail.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47303 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753475AbaDDPY6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Apr 2014 11:24:58 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3I00DE1ITLI810@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 05 Apr 2014 00:24:57 +0900 (KST)
+In-reply-to: <1396618989-2897-2-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-This reverts commit 59956d35a8618235ea715280b49447bb36f2c975.
+On Friday, April 04, 2014 03:42:53 PM Daniel Lezcano wrote:
+> Move the structure below the 'exynos4_enter_lowpower' function so no more
+> need of forward declaration.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 9a6d652..8ebb4bf 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -75,7 +75,6 @@ struct hdmi_resources {
- 	struct clk			*sclk_pixel;
- 	struct clk			*sclk_hdmiphy;
- 	struct clk			*hdmiphy;
--	struct clk			*mout_hdmi;
- 	struct regulator_bulk_data	*regul_bulk;
- 	int				regul_count;
- };
-@@ -1282,7 +1281,7 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 	}
- 
- 	clk_disable_unprepare(hdata->res.sclk_hdmi);
--	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
-+	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_hdmiphy);
- 	clk_prepare_enable(hdata->res.sclk_hdmi);
- 
- 	/* enable HDMI and timing generator */
-@@ -1449,7 +1448,7 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 	}
- 
- 	clk_disable_unprepare(hdata->res.sclk_hdmi);
--	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
-+	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_hdmiphy);
- 	clk_prepare_enable(hdata->res.sclk_hdmi);
- 
- 	/* enable HDMI and timing generator */
-@@ -1475,7 +1474,7 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
- 	u32 reg;
- 
- 	clk_disable_unprepare(hdata->res.sclk_hdmi);
--	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_pixel);
-+	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_pixel);
- 	clk_prepare_enable(hdata->res.sclk_hdmi);
- 
- 	/* operation mode */
-@@ -1982,13 +1981,8 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
- 		DRM_ERROR("failed to get clock 'hdmiphy'\n");
- 		goto fail;
- 	}
--	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
--	if (IS_ERR(res->mout_hdmi)) {
--		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
--		goto fail;
--	}
- 
--	clk_set_parent(res->mout_hdmi, res->sclk_pixel);
-+	clk_set_parent(res->sclk_hdmi, res->sclk_pixel);
- 
- 	res->regul_bulk = devm_kzalloc(dev, ARRAY_SIZE(supply) *
- 		sizeof(res->regul_bulk[0]), GFP_KERNEL);
--- 
-1.7.9.5
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
