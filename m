@@ -1,141 +1,199 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V2 11/17] ARM: exynos: cpuidle: Move the power sequence call in the cpu_pm notifier
-Date: Fri,  4 Apr 2014 15:43:03 +0200
-Message-ID: <1396618989-2897-12-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V2 13/17] ARM: exynos: cpuidle: Move clock setup to pm.c
+Date: Fri,  4 Apr 2014 15:43:05 +0200
+Message-ID: <1396618989-2897-14-git-send-email-daniel.lezcano@linaro.org>
 References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:54859 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752841AbaDDNnM (ORCPT
+Received: from mail-we0-f170.google.com ([74.125.82.170]:42195 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752318AbaDDNnP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 09:43:12 -0400
-Received: by mail-wi0-f181.google.com with SMTP id hm4so1274460wib.14
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:11 -0700 (PDT)
+	Fri, 4 Apr 2014 09:43:15 -0400
+Received: by mail-we0-f170.google.com with SMTP id w61so3483418wes.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:14 -0700 (PDT)
 In-Reply-To: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-The code to initiate and exit the powerdown sequence is the same in pm.c and
-cpuidle.c.
+One more step is moving the clock ratio setting at idle time in pm.c
 
-Let's split the common part in the pm.c and reuse it from the cpu_pm notifier.
+The macro names have been changed to be consistent with the other macros
+name in the file.
 
-That is one more step forward to make the cpuidle driver arch indenpendant.
+Note, the clock divider was working only when cpuidle was enabled because it
+was in its init routine. With this change, the clock divider is set in the pm's
+init routine, so it will also operate when the cpuidle driver is not set, which
+is good.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/mach-exynos/cpuidle.c |   21 ---------------------
- arch/arm/mach-exynos/pm.c      |   22 ++++++++++++++++++----
- 2 files changed, 18 insertions(+), 25 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c  |   54 ---------------------------------------
+ arch/arm/mach-exynos/pm.c       |   35 +++++++++++++++++++++++++
+ arch/arm/mach-exynos/regs-pmu.h |   19 ++++++++++++++
+ 3 files changed, 54 insertions(+), 54 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 01444ed..81d7197 100644
+index cd27dbf..44d169b 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -76,31 +76,10 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- 				struct cpuidle_driver *drv,
- 				int index)
- {
--	unsigned long tmp;
--
--	/* Setting Central Sequence Register for power down mode */
--	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
--	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
--	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
--
- 	cpu_pm_enter();
- 	cpu_suspend(0, idle_finisher);
- 	cpu_pm_exit();
+@@ -37,25 +37,6 @@
+ 			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+ 			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
  
--	/*
--	 * If PMU failed while entering sleep mode, WFI will be
--	 * ignored by PMU and then exiting cpu_do_idle().
--	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
--	 * in this situation.
--	 */
--	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
--	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
--		tmp |= S5P_CENTRAL_LOWPWR_CFG;
--		__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
--		/* Clear wakeup state register */
--		__raw_writel(0x0, S5P_WAKEUP_STAT);
--	}
+-#define EXYNOS5_PWR_CTRL1			(S5P_VA_CMU + 0x01020)
+-#define EXYNOS5_PWR_CTRL2			(S5P_VA_CMU + 0x01024)
 -
- 	return index;
+-#define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
+-#define PWR_CTRL1_CORE1_DOWN_RATIO		(7 << 16)
+-#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
+-#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
+-#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
+-#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
+-#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
+-#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
+-
+-#define PWR_CTRL2_DIV2_UP_EN			(1 << 25)
+-#define PWR_CTRL2_DIV1_UP_EN			(1 << 24)
+-#define PWR_CTRL2_DUR_STANDBY2_VAL		(1 << 16)
+-#define PWR_CTRL2_DUR_STANDBY1_VAL		(1 << 8)
+-#define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
+-#define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
+-
+ static int idle_finisher(unsigned long flags)
+ {
+ 
+@@ -97,38 +78,6 @@ static int exynos_enter_lowpower(struct cpuidle_device *dev,
+ 		return exynos_enter_core0_aftr(dev, drv, new_index);
  }
+ 
+-static void __init exynos5_core_down_clk(void)
+-{
+-	unsigned int tmp;
+-
+-	/*
+-	 * Enable arm clock down (in idle) and set arm divider
+-	 * ratios in WFI/WFE state.
+-	 */
+-	tmp = PWR_CTRL1_CORE2_DOWN_RATIO | \
+-	      PWR_CTRL1_CORE1_DOWN_RATIO | \
+-	      PWR_CTRL1_DIV2_DOWN_EN	 | \
+-	      PWR_CTRL1_DIV1_DOWN_EN	 | \
+-	      PWR_CTRL1_USE_CORE1_WFE	 | \
+-	      PWR_CTRL1_USE_CORE0_WFE	 | \
+-	      PWR_CTRL1_USE_CORE1_WFI	 | \
+-	      PWR_CTRL1_USE_CORE0_WFI;
+-	__raw_writel(tmp, EXYNOS5_PWR_CTRL1);
+-
+-	/*
+-	 * Enable arm clock up (on exiting idle). Set arm divider
+-	 * ratios when not in idle along with the standby duration
+-	 * ratios.
+-	 */
+-	tmp = PWR_CTRL2_DIV2_UP_EN	 | \
+-	      PWR_CTRL2_DIV1_UP_EN	 | \
+-	      PWR_CTRL2_DUR_STANDBY2_VAL | \
+-	      PWR_CTRL2_DUR_STANDBY1_VAL | \
+-	      PWR_CTRL2_CORE2_UP_RATIO	 | \
+-	      PWR_CTRL2_CORE1_UP_RATIO;
+-	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+-}
+-
+ static struct cpuidle_driver exynos_idle_driver = {
+ 	.name			= "exynos_idle",
+ 	.owner			= THIS_MODULE,
+@@ -151,9 +100,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 
+-	if (soc_is_exynos5250())
+-		exynos5_core_down_clk();
+-
+ 	if (soc_is_exynos5440())
+ 		exynos_idle_driver.state_count = 1;
  
 diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index c8b3dc4..0e73591 100644
+index 0e73591..90fb692 100644
 --- a/arch/arm/mach-exynos/pm.c
 +++ b/arch/arm/mach-exynos/pm.c
-@@ -184,15 +184,19 @@ static void exynos_pm_prepare(void)
- 	__raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+@@ -140,6 +140,38 @@ static void exynos_cpu_restore_register(void)
+ 		      : "cc");
  }
  
--static int exynos_pm_suspend(void)
-+static void exynos_pm_central_suspend(void)
- {
- 	unsigned long tmp;
- 
- 	/* Setting Central Sequence Register for power down mode */
--
- 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
++static void __init exynos5_core_down_clk(void)
++{
++	unsigned int tmp;
++
++	/*
++	 * Enable arm clock down (in idle) and set arm divider
++	 * ratios in WFI/WFE state.
++	 */
++	tmp = EXYNOS5_PWR_CTRL1_CORE2_DOWN_RATIO | \
++	      EXYNOS5_PWR_CTRL1_CORE1_DOWN_RATIO | \
++	      EXYNOS5_PWR_CTRL1_DIV2_DOWN_EN	 | \
++	      EXYNOS5_PWR_CTRL1_DIV1_DOWN_EN	 | \
++	      EXYNOS5_PWR_CTRL1_USE_CORE1_WFE	 | \
++	      EXYNOS5_PWR_CTRL1_USE_CORE0_WFE	 | \
++	      EXYNOS5_PWR_CTRL1_USE_CORE1_WFI	 | \
++	      EXYNOS5_PWR_CTRL1_USE_CORE0_WFI;
++	__raw_writel(tmp, EXYNOS5_PWR_CTRL1);
++
++	/*
++	 * Enable arm clock up (on exiting idle). Set arm divider
++	 * ratios when not in idle along with the standby duration
++	 * ratios.
++	 */
++	tmp = EXYNOS5_PWR_CTRL2_DIV2_UP_EN	 | \
++	      EXYNOS5_PWR_CTRL2_DIV1_UP_EN	 | \
++	      EXYNOS5_PWR_CTRL2_DUR_STANDBY2_VAL | \
++	      EXYNOS5_PWR_CTRL2_DUR_STANDBY1_VAL | \
++	      EXYNOS5_PWR_CTRL2_CORE2_UP_RATIO	 | \
++	      EXYNOS5_PWR_CTRL2_CORE1_UP_RATIO;
++	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
 +}
 +
-+static int exynos_pm_suspend(void)
-+{
-+	unsigned long tmp;
- 
- 	/* Setting SEQ_OPTION register */
- 
-@@ -205,7 +209,7 @@ static int exynos_pm_suspend(void)
- 	return 0;
- }
- 
--static void exynos_pm_resume(void)
-+static int exynos_pm_central_resume(void)
+ static int exynos_cpu_suspend(unsigned long arg)
  {
- 	unsigned long tmp;
+ #ifdef CONFIG_CACHE_L2X0
+@@ -256,6 +288,9 @@ static void exynos_pm_resume(void)
  
-@@ -222,9 +226,17 @@ static void exynos_pm_resume(void)
- 		/* clear the wakeup state register */
- 		__raw_writel(0x0, S5P_WAKEUP_STAT);
- 		/* No need to perform below restore code */
--		goto early_wakeup;
-+		return -1;
- 	}
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
  
-+	return 0;
-+}
-+
-+static void exynos_pm_resume(void)
-+{
-+	if (exynos_pm_central_resume())
-+		goto early_wakeup;
++	if (soc_is_exynos5250())
++		exynos5_core_down_clk();
 +
  	if (!soc_is_exynos5250())
- 		exynos_cpu_restore_register();
+ 		scu_enable(S5P_VA_SCU);
  
-@@ -336,6 +348,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 	switch (cmd) {
- 	case CPU_PM_ENTER:
- 		if (cpu == 0) {
-+			exynos_pm_central_suspend();
- 			exynos_cpu_save_register();
- 			exynos_set_wakeupmask();
- 		}
-@@ -346,6 +359,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 			if (!soc_is_exynos5250())
- 				scu_enable(S5P_VA_SCU);
- 			exynos_cpu_restore_register();
-+			exynos_pm_central_resume();
- 		}
- 		break;
- 	}
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 09c43c3..ba5f038 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -314,4 +314,23 @@
+ 
+ #define EXYNOS5_OPTION_USE_RETENTION				(1 << 4)
+ 
++#define EXYNOS5_PWR_CTRL1			(S5P_VA_CMU + 0x01020)
++#define EXYNOS5_PWR_CTRL2			(S5P_VA_CMU + 0x01024)
++
++#define EXYNOS5_PWR_CTRL1_CORE2_DOWN_RATIO	(7 << 28)
++#define EXYNOS5_PWR_CTRL1_CORE1_DOWN_RATIO	(7 << 16)
++#define EXYNOS5_PWR_CTRL1_DIV2_DOWN_EN		(1 << 9)
++#define EXYNOS5_PWR_CTRL1_DIV1_DOWN_EN		(1 << 8)
++#define EXYNOS5_PWR_CTRL1_USE_CORE1_WFE		(1 << 5)
++#define EXYNOS5_PWR_CTRL1_USE_CORE0_WFE		(1 << 4)
++#define EXYNOS5_PWR_CTRL1_USE_CORE1_WFI		(1 << 1)
++#define EXYNOS5_PWR_CTRL1_USE_CORE0_WFI		(1 << 0)
++
++#define EXYNOS5_PWR_CTRL2_DIV2_UP_EN		(1 << 25)
++#define EXYNOS5_PWR_CTRL2_DIV1_UP_EN		(1 << 24)
++#define EXYNOS5_PWR_CTRL2_DUR_STANDBY2_VAL	(1 << 16)
++#define EXYNOS5_PWR_CTRL2_DUR_STANDBY1_VAL	(1 << 8)
++#define EXYNOS5_PWR_CTRL2_CORE2_UP_RATIO	(1 << 4)
++#define EXYNOS5_PWR_CTRL2_CORE1_UP_RATIO	(1 << 0)
++
+ #endif /* __ASM_ARCH_REGS_PMU_H */
 -- 
 1.7.9.5
