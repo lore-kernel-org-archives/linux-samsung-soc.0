@@ -1,117 +1,54 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V2 14/17] ARM: exynos: cpuidle: Move the boot vector in pm.c
-Date: Fri,  4 Apr 2014 15:43:06 +0200
-Message-ID: <1396618989-2897-15-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V2 09/17] ARM: exynos: cpuidle: Remove ifdef for scu_enable
+Date: Fri,  4 Apr 2014 15:43:01 +0200
+Message-ID: <1396618989-2897-10-git-send-email-daniel.lezcano@linaro.org>
 References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:62064 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752841AbaDDNnQ (ORCPT
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:36902 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752774AbaDDNnJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 09:43:16 -0400
-Received: by mail-wg0-f48.google.com with SMTP id l18so3510770wgh.7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:15 -0700 (PDT)
+	Fri, 4 Apr 2014 09:43:09 -0400
+Received: by mail-wg0-f43.google.com with SMTP id x13so3448286wgg.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:08 -0700 (PDT)
 In-Reply-To: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-As usual, move the boot vector setting in the pm.c file and use the cpu_pm
-notifier to set it up.
-
-Remove the unused headers.
+The scu_enable function is already a noop in the scu's header file is
+CONFIG_SMP=n, so no need to use these macros in the code.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/mach-exynos/cpuidle.c |   23 -----------------------
- arch/arm/mach-exynos/pm.c      |   15 +++++++++++++++
- 2 files changed, 15 insertions(+), 23 deletions(-)
+ arch/arm/mach-exynos/pm.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 44d169b..4b94181 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -8,46 +8,23 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <linux/kernel.h>
--#include <linux/init.h>
- #include <linux/cpuidle.h>
- #include <linux/cpu_pm.h>
--#include <linux/io.h>
--#include <linux/export.h>
--#include <linux/time.h>
- #include <linux/platform_device.h>
- 
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
--#include <asm/unified.h>
- #include <asm/cpuidle.h>
- 
- #include <plat/cpu.h>
--#include <plat/pm.h>
--
--#include <mach/map.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
--
--#define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
--#define REG_DIRECTGO_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
- 
- static int idle_finisher(unsigned long flags)
- {
--
--	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
--	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
--
- 	/* Set value of power down register for aftr mode */
- 	exynos_sys_powerdown_conf(SYS_AFTR);
--
- 	cpu_do_idle();
--
- 	return 1;
- }
- 
 diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 90fb692..e4ecd8c 100644
+index aba577f..9773a00 100644
 --- a/arch/arm/mach-exynos/pm.c
 +++ b/arch/arm/mach-exynos/pm.c
-@@ -172,6 +172,20 @@ static void __init exynos5_core_down_clk(void)
- 	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
- }
+@@ -244,7 +244,7 @@ static void exynos_pm_resume(void)
  
-+#define EXYNOS_BOOT_VECTOR_ADDR (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-+			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-+			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
-+
-+#define EXYNOS_BOOT_VECTOR_FLAG (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-+			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-+			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
-+
-+static void exynos_cpu_set_boot_vector(void)
-+{
-+	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
-+	__raw_writel(S5P_CHECK_AFTR, EXYNOS_BOOT_VECTOR_FLAG);
-+}
-+
- static int exynos_cpu_suspend(unsigned long arg)
- {
- #ifdef CONFIG_CACHE_L2X0
-@@ -387,6 +401,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 			exynos_cpu_save_register();
- 			exynos_set_wakeupmask();
- 		}
-+		exynos_cpu_set_boot_vector();
- 		break;
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+-	if (IS_ENABLED(CONFIG_SMP) && !soc_is_exynos5250())
++	if (!soc_is_exynos5250())
+ 		scu_enable(S5P_VA_SCU);
+ 
+ early_wakeup:
+@@ -336,10 +336,8 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
  
  	case CPU_PM_EXIT:
+ 		if (cpu == 0) {
+-#ifdef CONFIG_SMP
+ 			if (!soc_is_exynos5250())
+ 				scu_enable(S5P_VA_SCU);
+-#endif
+ 			exynos_cpu_restore_register();
+ 		}
+ 		break;
 -- 
 1.7.9.5
