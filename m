@@ -1,83 +1,39 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 10/17] ARM: exynos: cpuidle: Move exynos_set_wakeupmask in
- the cpu_pm notifier
-Date: Fri, 4 Apr 2014 14:29:03 +0530
-Message-ID: <CAKohpon6EZXpefHfFOFN=jutBrVqS0fgQ35+gpb6y8Ad3Au-2w@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 00/17] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle
+Date: Fri, 4 Apr 2014 14:30:49 +0530
+Message-ID: <CAK9yfHyqysyXMWURUAScXWgVoXUYJqtYH2Z7_jkqYO4W0z+siw@mail.gmail.com>
 References: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>
-	<1396597683-6969-11-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:44610 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066AbaDDI7E (ORCPT
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:56818 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752193AbaDDJAu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 04:59:04 -0400
-Received: by mail-oa0-f43.google.com with SMTP id eb12so3252140oac.30
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 01:59:03 -0700 (PDT)
-In-Reply-To: <1396597683-6969-11-git-send-email-daniel.lezcano@linaro.org>
+	Fri, 4 Apr 2014 05:00:50 -0400
+Received: by mail-oa0-f46.google.com with SMTP id i7so3274225oag.33
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 02:00:49 -0700 (PDT)
+In-Reply-To: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+
+Hi Daniel,
 
 On 4 April 2014 13:17, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> Let's encapsulate more the PM code inside the PM file by moving the
-> 'exynos_set_wakeupmask' function inside the pm.c and the call in the cpu_pm
-> notifier.
+> This patchset relies on the cpm_pm notifier to initiate the powerdown sequence
+> operations from pm.c instead cpuidle.c. Thus the cpuidle driver is no longer
+> dependent from arch specific code as everything is called from the pm.c file.
 >
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  arch/arm/mach-exynos/cpuidle.c |    7 -------
->  arch/arm/mach-exynos/pm.c      |    7 +++++++
->  2 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index c63ad05..7014654 100644
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -59,15 +59,8 @@
->  #define PWR_CTRL2_CORE2_UP_RATIO               (1 << 4)
->  #define PWR_CTRL2_CORE1_UP_RATIO               (1 << 0)
->
-> -/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
-> -static void exynos_set_wakeupmask(void)
-> -{
-> -       __raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
-> -}
-> -
->  static int idle_finisher(unsigned long flags)
->  {
-> -       exynos_set_wakeupmask();
->
+> The patchset applies on top of v3.14.
 
-Remove this blank line as well..
+It would be good to have this patch series based on Kukjin's for-next
+which has several
+changes like code refactoring and consolidation including Tomasz
+Figa's PM consolidation
+patches applied and would be merged in 3.15-rc1 release.
 
->         __raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
->         __raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index c0d8640..3f2ddef 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -374,12 +374,19 @@ early_wakeup:
->         return;
->  }
->
-> +/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
-> +static void exynos_set_wakeupmask(void)
-> +{
-> +       __raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
-> +}
-> +
->  static int exynos_cpu_pm_notifier(struct notifier_block *self,
->                                   unsigned long cmd, void *v)
->  {
->         switch (cmd) {
->         case CPU_PM_ENTER:
->                 exynos_cpu_save_register();
-> +               exynos_set_wakeupmask();
->                 break;
->
->         case CPU_PM_EXIT:
-
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+-- 
+With warm regards,
+Sachin
