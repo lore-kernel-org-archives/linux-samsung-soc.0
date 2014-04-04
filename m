@@ -1,54 +1,133 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V2 09/17] ARM: exynos: cpuidle: Remove ifdef for scu_enable
-Date: Fri,  4 Apr 2014 15:43:01 +0200
-Message-ID: <1396618989-2897-10-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V2 07/17] ARM: exynos: cpuidle: Use the cpu_pm notifier
+Date: Fri,  4 Apr 2014 15:42:59 +0200
+Message-ID: <1396618989-2897-8-git-send-email-daniel.lezcano@linaro.org>
 References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:36902 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752774AbaDDNnJ (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:55441 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752774AbaDDNnF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 09:43:09 -0400
-Received: by mail-wg0-f43.google.com with SMTP id x13so3448286wgg.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:08 -0700 (PDT)
+	Fri, 4 Apr 2014 09:43:05 -0400
+Received: by mail-wg0-f52.google.com with SMTP id k14so3436613wgh.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:04 -0700 (PDT)
 In-Reply-To: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-The scu_enable function is already a noop in the scu's header file is
-CONFIG_SMP=n, so no need to use these macros in the code.
+Use the cpu_pm_enter/exit notifier to group some pm code inside the pm file.
+
+The save and restore code is duplicated across pm.c and cpuidle.c. By using
+the cpu_pm notifier, we can factor out the routine.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/mach-exynos/pm.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |   24 ------------------------
+ arch/arm/mach-exynos/pm.c      |   29 +++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 24 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index 6663349..7f1f4ef 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -65,26 +65,6 @@ static void exynos_set_wakeupmask(void)
+ 	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
+ }
+ 
+-static unsigned int g_pwr_ctrl, g_diag_reg;
+-
+-static void save_cpu_arch_register(void)
+-{
+-	/*read power control register*/
+-	asm("mrc p15, 0, %0, c15, c0, 0" : "=r"(g_pwr_ctrl) : : "cc");
+-	/*read diagnostic register*/
+-	asm("mrc p15, 0, %0, c15, c0, 1" : "=r"(g_diag_reg) : : "cc");
+-	return;
+-}
+-
+-static void restore_cpu_arch_register(void)
+-{
+-	/*write power control register*/
+-	asm("mcr p15, 0, %0, c15, c0, 0" : : "r"(g_pwr_ctrl) : "cc");
+-	/*write diagnostic register*/
+-	asm("mcr p15, 0, %0, c15, c0, 1" : : "r"(g_diag_reg) : "cc");
+-	return;
+-}
+-
+ static int idle_finisher(unsigned long flags)
+ {
+ 	exynos_set_wakeupmask();
+@@ -106,8 +86,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
+ {
+ 	unsigned long tmp;
+ 
+-	save_cpu_arch_register();
+-
+ 	/* Setting Central Sequence Register for power down mode */
+ 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+ 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
+@@ -122,8 +100,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
+ #endif
+ 	cpu_pm_exit();
+ 
+-	restore_cpu_arch_register();
+-
+ 	/*
+ 	 * If PMU failed while entering sleep mode, WFI will be
+ 	 * ignored by PMU and then exiting cpu_do_idle().
 diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index aba577f..9773a00 100644
+index adfdf4b..67d75fe 100644
 --- a/arch/arm/mach-exynos/pm.c
 +++ b/arch/arm/mach-exynos/pm.c
-@@ -244,7 +244,7 @@ static void exynos_pm_resume(void)
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/suspend.h>
+ #include <linux/syscore_ops.h>
++#include <linux/cpu_pm.h>
+ #include <linux/io.h>
+ #include <linux/irqchip/arm-gic.h>
+ #include <linux/err.h>
+@@ -321,10 +322,38 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
+ 	.valid		= suspend_valid_only_mem,
+ };
  
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
++static int exynos_cpu_pm_notifier(struct notifier_block *self,
++				  unsigned long cmd, void *v)
++{
++	int cpu = smp_processor_id();
++
++	switch (cmd) {
++	case CPU_PM_ENTER:
++		if (cpu == 0) {
++			exynos_cpu_save_register();
++		}
++		break;
++
++	case CPU_PM_EXIT:
++		if (cpu == 0) {
++			exynos_cpu_restore_register();
++		}
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block exynos_cpu_pm_notifier_block = {
++	.notifier_call = exynos_cpu_pm_notifier,
++};
++
+ void __init exynos_pm_init(void)
+ {
+ 	u32 tmp;
  
--	if (IS_ENABLED(CONFIG_SMP) && !soc_is_exynos5250())
-+	if (!soc_is_exynos5250())
- 		scu_enable(S5P_VA_SCU);
++	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
++
+ 	/* Platform-specific GIC callback */
+ 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
  
- early_wakeup:
-@@ -336,10 +336,8 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 
- 	case CPU_PM_EXIT:
- 		if (cpu == 0) {
--#ifdef CONFIG_SMP
- 			if (!soc_is_exynos5250())
- 				scu_enable(S5P_VA_SCU);
--#endif
- 			exynos_cpu_restore_register();
- 		}
- 		break;
 -- 
 1.7.9.5
