@@ -1,71 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera
- interface
-Date: Fri, 4 Apr 2014 14:27:17 +0300
-Message-ID: <20140404112717.GR18506@mwanda>
-References: <20130823094647.GO31293@elgon.mountain>
- <5219F736.2010706@gmail.com>
- <20130827141914.GD19256@mwanda>
- <521CB6FF.70401@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: AFTR does not work on arndale 5250
+Date: Fri, 04 Apr 2014 15:06:31 +0200
+Message-ID: <533EAE57.1080202@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <521CB6FF.70401@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f172.google.com ([74.125.82.172]:63436 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752388AbaDDNGQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Apr 2014 09:06:16 -0400
+Received: by mail-we0-f172.google.com with SMTP id t61so3431252wes.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:06:14 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Whatever happened with this btw?  Also are you sure we don't need a
-second check after line 457?
 
-regards,
-dan carpenter
+Hi,
 
-On Tue, Aug 27, 2013 at 04:26:07PM +0200, Sylwester Nawrocki wrote:
-> On 08/27/2013 04:19 PM, Dan Carpenter wrote:
-> > On Sun, Aug 25, 2013 at 02:23:18PM +0200, Sylwester Nawrocki wrote:
-> >> On 08/23/2013 11:46 AM, Dan Carpenter wrote:
-> >>> [ Going through some old warnings... ]
-> >>>
-> >>> Hello Sylwester Nawrocki,
-> >>>
-> >>> This is a semi-automatic email about new static checker warnings.
-> >>>
-> >>> The patch babde1c243b2: "[media] V4L: Add driver for S3C24XX/S3C64XX
-> >>> SoC series camera interface" from Aug 22, 2012, leads to the
-> >>> following Smatch complaint:
-> >>>
-> >>> drivers/media/platform/s3c-camif/camif-capture.c:463 queue_setup()
-> >>> 	 warn: variable dereferenced before check 'fmt' (see line 460)
-> >>>
-> >>> drivers/media/platform/s3c-camif/camif-capture.c
-> >>>    455          if (pfmt) {
-> >>>    456                  pix =&pfmt->fmt.pix;
-> >>>    457                  fmt = s3c_camif_find_format(vp,&pix->pixelformat, -1);
-> >>>    458                  size = (pix->width * pix->height * fmt->depth) / 8;
-> >>>                                                            ^^^^^^^^^^
-> >>> Dereference.
-> >>>
-> >>>    459		} else {
-> >>>    460			size = (frame->f_width * frame->f_height * fmt->depth) / 8;
-> >>>                                                                    ^^^^^^^^^^
-> >>> Dereference.
-> >>>
-> >>>    461		}
-> >>>    462	
-> >>>    463		if (fmt == NULL)
-> >>>                     ^^^^^^^^^^^
-> >>> Check.
-> >>
-> >> Thanks for the bug report. This check of course should be before line 455.
-> >> Would you like to sent a patch for this or should I handle that ?
-> > 
-> > Could you handle it and give me the Reported-by tag?
-> 
-> Sure, will do.
-> 
-> --
-> Regards,
-> Sylwester
+I tried to make the idle AFTR state working on arndale 5250 but that=20
+leads to a kernel reboot and crash.
+
+How to reproduce ?
+
+echo 0 > /sys/devices/system/cpu/cpu1/online
+
+Reproductible on v3.14 and samsung/for-next
+
+Any ideas ?
+
+Thanks
+
+   -- Daniel
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
