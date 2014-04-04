@@ -1,119 +1,93 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 14/17] ARM: exynos: cpuidle: Move the boot vector in pm.c
-Date: Fri,  4 Apr 2014 09:48:00 +0200
-Message-ID: <1396597683-6969-15-git-send-email-daniel.lezcano@linaro.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 01/17] ARM: exynos: cpuidle: Prevent forward declaration
+Date: Fri, 4 Apr 2014 14:12:09 +0530
+Message-ID: <CAKohpomrQK=6pjuVNnZempTeNep859LPzRRbc2OPrJ-Ctx7V4g@mail.gmail.com>
 References: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>
+	<1396597683-6969-2-git-send-email-daniel.lezcano@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:56730 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752170AbaDDHsH (ORCPT
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:63226 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750888AbaDDImK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 03:48:07 -0400
-Received: by mail-wi0-f178.google.com with SMTP id bs8so684033wib.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 00:48:06 -0700 (PDT)
-In-Reply-To: <1396597683-6969-1-git-send-email-daniel.lezcano@linaro.org>
+	Fri, 4 Apr 2014 04:42:10 -0400
+Received: by mail-oa0-f48.google.com with SMTP id m1so3187562oag.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 01:42:09 -0700 (PDT)
+In-Reply-To: <1396597683-6969-2-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-As usual, move the boot vector setting in the pm.c file and use the cpu_pm
-notifier to set it up.
+On 4 April 2014 13:17, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+> Move the structure below the 'exynos4_enter_lowpower' function so no more
+> need of forward declaration.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  arch/arm/mach-exynos/cpuidle.c |   40 ++++++++++++++++++----------------------
+>  1 file changed, 18 insertions(+), 22 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index f57cb91..bd2142a 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -60,30 +60,8 @@
+>  #define PWR_CTRL2_CORE2_UP_RATIO               (1 << 4)
+>  #define PWR_CTRL2_CORE1_UP_RATIO               (1 << 0)
+>
+> -static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+> -                               struct cpuidle_driver *drv,
+> -                               int index);
+> -
+>  static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_device);
+>
+> -static struct cpuidle_driver exynos4_idle_driver = {
+> -       .name                   = "exynos4_idle",
+> -       .owner                  = THIS_MODULE,
+> -       .states = {
+> -               [0] = ARM_CPUIDLE_WFI_STATE,
+> -               [1] = {
+> -                       .enter                  = exynos4_enter_lowpower,
+> -                       .exit_latency           = 300,
+> -                       .target_residency       = 100000,
+> -                       .flags                  = CPUIDLE_FLAG_TIME_VALID,
+> -                       .name                   = "C1",
+> -                       .desc                   = "ARM power down",
+> -               },
+> -       },
+> -       .state_count = 2,
+> -       .safe_state_index = 0,
+> -};
+> -
+>  /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+>  static void exynos4_set_wakeupmask(void)
+>  {
+> @@ -214,6 +192,24 @@ static void __init exynos5_core_down_clk(void)
+>         __raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+>  }
+>
+> +static struct cpuidle_driver exynos4_idle_driver = {
+> +       .name                   = "exynos4_idle",
+> +       .owner                  = THIS_MODULE,
+> +       .states = {
+> +               [0] = ARM_CPUIDLE_WFI_STATE,
+> +               [1] = {
+> +                       .enter                  = exynos4_enter_lowpower,
+> +                       .exit_latency           = 300,
+> +                       .target_residency       = 100000,
+> +                       .flags                  = CPUIDLE_FLAG_TIME_VALID,
+> +                       .name                   = "C1",
+> +                       .desc                   = "ARM power down",
+> +               },
+> +       },
+> +       .state_count = 2,
+> +       .safe_state_index = 0,
+> +};
+> +
+>  static int exynos_cpuidle_probe(struct platform_device *pdev)
+>  {
+>         int cpu_id, ret;
 
-Remove the unused headers.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- arch/arm/mach-exynos/cpuidle.c |   22 ----------------------
- arch/arm/mach-exynos/pm.c      |   15 +++++++++++++++
- 2 files changed, 15 insertions(+), 22 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 3872c1e..1916dc6 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -8,42 +8,20 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <linux/kernel.h>
--#include <linux/init.h>
- #include <linux/cpuidle.h>
- #include <linux/cpu_pm.h>
--#include <linux/io.h>
--#include <linux/export.h>
--#include <linux/time.h>
- #include <linux/platform_device.h>
- 
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
--#include <asm/unified.h>
- #include <asm/cpuidle.h>
- 
- #include <plat/cpu.h>
--#include <plat/pm.h>
--
--#include <mach/pm-core.h>
--#include <mach/map.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
--
--#define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
--#define REG_DIRECTGO_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
- 
- static int idle_finisher(unsigned long flags)
- {
--
--	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
--	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
--
- 	/* Set value of power down register for aftr mode */
- 	exynos_sys_powerdown_conf(SYS_AFTR);
- 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 1c9d253..47fa9bd 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -79,6 +79,14 @@
- #define EXYNOS5_PWR_CTRL2_CORE2_UP_RATIO	(1 << 4)
- #define EXYNOS5_PWR_CTRL2_CORE1_UP_RATIO	(1 << 0)
- 
-+#define EXYNOS_BOOT_VECTOR_ADDR (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-+			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-+			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
-+
-+#define EXYNOS_BOOT_VECTOR_FLAG (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-+			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-+			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
-+
- static const struct sleep_save exynos4_set_clksrc[] = {
- 	{ .reg = EXYNOS4_CLKSRC_MASK_TOP		, .val = 0x00000001, },
- 	{ .reg = EXYNOS4_CLKSRC_MASK_CAM		, .val = 0x11111111, },
-@@ -189,6 +197,12 @@ static void __init exynos5_core_down_clk(void)
- 	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
- }
- 
-+static void exynos_cpu_set_boot_vector(void)
-+{
-+	__raw_writel(virt_to_phys(s3c_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
-+	__raw_writel(S5P_CHECK_AFTR, EXYNOS_BOOT_VECTOR_FLAG);
-+}
-+
- static int exynos_cpu_suspend(unsigned long arg)
- {
- #ifdef CONFIG_CACHE_L2X0
-@@ -450,6 +464,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 		exynos_pm_central_suspend();
- 		exynos_cpu_save_register();
- 		exynos_set_wakeupmask();
-+		exynos_cpu_set_boot_vector();
- 		break;
- 
- 	case CPU_PM_EXIT:
--- 
-1.7.9.5
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
