@@ -1,40 +1,57 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
-Date: Fri,  4 Apr 2014 15:43:09 +0200
-Message-ID: <1396618989-2897-18-git-send-email-daniel.lezcano@linaro.org>
-References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:62385 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752318AbaDDNnV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 09:43:21 -0400
-Received: by mail-wg0-f43.google.com with SMTP id x13so3423418wgg.26
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Apr 2014 06:43:20 -0700 (PDT)
-In-Reply-To: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH] usb: ohci-exynos: Remove locks for 'ohci' in suspend callback
+Date: Fri,  4 Apr 2014 19:24:48 +0530
+Message-ID: <1396619688-26857-1-git-send-email-gautam.vivek@samsung.com>
+References: <1396618417-9560-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1396618417-9560-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, kgene.kim@samsung.com, Manjunath Goudar <csmanjuvijay@gmail.com>, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-The cpuidle driver is broken since v3.11 and now we are at v3.14.
+Patch : 14982e3 USB: OHCI: Properly handle ohci-exynos suspend
+has already removed 'ohci_hcd' settings from exynos glue layer
+as a part of streamlining the ohci controller's suspend.
+So we don't need the locks for 'ohci_hcd' anymore.
 
-Default the cpuidle driver to favorize a better detection next time.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Manjunath Goudar <csmanjuvijay@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
 ---
- arch/arm/configs/exynos_defconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/ohci-exynos.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 4ce7b70..6ed4b34 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -132,3 +132,4 @@ CONFIG_DEBUG_INFO=y
- CONFIG_DEBUG_USER=y
- CONFIG_CRYPTO_SHA256=y
- CONFIG_CRC_CCITT=y
-+CONFIG_CPU_IDLE=y
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 68588d8..9cf80cb 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -190,17 +190,13 @@ static int exynos_ohci_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+-	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	bool do_wakeup = device_may_wakeup(dev);
+-	unsigned long flags;
+ 	int rc = ohci_suspend(hcd, do_wakeup);
+ 
+ 	if (rc)
+ 		return rc;
+ 
+-	spin_lock_irqsave(&ohci->lock, flags);
+-
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+ 
+@@ -208,8 +204,6 @@ static int exynos_ohci_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(exynos_ohci->clk);
+ 
+-	spin_unlock_irqrestore(&ohci->lock, flags);
+-
+ 	return 0;
+ }
+ 
 -- 
-1.7.9.5
+1.7.10.4
