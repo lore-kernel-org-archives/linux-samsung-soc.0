@@ -1,311 +1,79 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
-Date: Fri, 4 Apr 2014 15:25:56 +0100
-Message-ID: <20140404142556.GA17431@red-moon>
-References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: [PATCH 0/4] Update to Exynos clocks
+Date: Fri, 04 Apr 2014 16:53:17 +0200
+Message-ID: <1396623201-26000-1-git-send-email-t.stanislaws@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:33459 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753365AbaDDOYX convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17648 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753212AbaDDOxo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Apr 2014 10:24:23 -0400
-In-Reply-To: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
-Content-Disposition: inline
+	Fri, 4 Apr 2014 10:53:44 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "ccross@google.com" <ccross@google.com>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: t.figa@samsung.com, mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, rob.herring@calxeda.com, sylvester.nawrocki@gmail.com, a.hajda@samsung.com, kishon@ti.com, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-Hi Daniel,
+This patchset adds some updates to clocks for Exynos4 platform and to the clock
+core.  The patches are rebased on linux/next.
 
-On Fri, Apr 04, 2014 at 10:48:45AM +0100, Daniel Lezcano wrote:
-> The following driver is for exynos4210. I did not yet finished the other boards, so
-> I created a specific driver for 4210 which could be merged later.
-> 
-> The driver is based on Colin Cross's driver found at:
-> 
-> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4fdf811f9a4dfa3b393a010%5E%5E!/
-> 
-> This one was based on a 3.4 kernel and an old API.
-> 
-> It has been refreshed, simplified and based on the recent code cleanup I sent
-> today.
-> 
-> The AFTR could be entered when all the cpus (except cpu0) are down. In order to
-> reach this situation, the couple idle states are used.
-> 
-> There is a sync barrier at the entry and the exit of the low power function. So
-> all cpus will enter and exit the function at the same time.
-> 
-> At this point, CPU0 knows the other cpu will power down itself. CPU0 waits for
-> the CPU1 to be powered down and then initiate the AFTR power down sequence.
-> 
-> No interrupts are handled by CPU1, this is why we switch to the timer broadcast
-> even if the local timer is not impacted by the idle state.
+An interesting part might be 'propagation of clk_set_parent()'.  This feature
+simplifies configuration of complex topologyof clocks by drivers.  Such a
+situation happens for Exynos HDMI driver.
 
-Can you elaborate on this please ? Is that because the local timers are
-not wake-up capable (shutdown) ? Or because only the IRQs targeted at CPU with
-MPIDR[7:0] == 0x0 are wake-up capable ?
+The HDMI device is clocked by sclk_hdmi clock. In older versions of SoC and its
+driver, the clock had two parent clocks: sclk_hdmiphy and sclk_pixel.
+The sclk_hdmi was a gated clock.
 
-> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. Then they both
-> exit the idle function.
+In the recent version of Exynos clock provider this topology was slightly
+changed. A new clock named mout_hdmi was introduced.  This new clock represents
+the output of multiplexer that selects between sclk_hdmiphy and sclk_pixel.
 
-Does this mean that once shutdown CPU1 is stuck solid till it is poked
-by CPU0, right ? Again I think this should be handled with MPIDRs, not
-with cpu logical indices.
+After the change the sclk_hdmi is still gated but has a single parent -
+mout_hdmi.
 
-> This driver allows the exynos4210 to have the same power consumption at idle
-> time than the one when we have to unplug CPU1 in order to let CPU0 to reach
-> the AFTR state.
+This change caused interesting situation in Exynos HDMI driver because this
+driver used only sclk_hdmi.  Now clk_set_parent(sclk_hdmi, ...) fails because
+sclk_hdmi has a single parent now.  Using mout_hdmi instead of sclk_hdmi will
+not work because clk_enable(mout_hdmi) is not propagated to sclk_hdmi.
 
-Which is a good thing and that's the way the driver should have been
-implemented in the first place, thanks for posting it.
+To solve this problem, the setup of mout_hdmi was added to Exynos HDMI in the
+patch: "drm/exynos: add mout_hdmi clock in hdmi driver to change parent"
 
-[...]
+IMO, this change breaks abstraction of clock API reveling too detailed
+information about clock topology to the driver.
 
-> +static void (*exynos_aftr)(void);
-> +
-> +static int cpu_suspend_finish(unsigned long flags)
-> +{
-> +	if (flags)
-> +		exynos_aftr();
+Moreover, the driver no longer works with old DT bindings because they provide
+no mout_hdmi clock.
 
-This function pointer obfuscates things, not very easy to follow.
-Is there a reason why you should pass flags and run that code in
-the finisher instead of running this code in the enter method for
-CPU0 ? Is that a timing issue ? I do not see why running those
-commands before saving the context in cpu_suspend() can make any
-difference (well, apart from timing as I said), the idle functions
-are already different for CPU0 and CPU1.
+The clock set_parent propagation can be used to fix this.  The clk_set_parent()
+is propagated to a parent as long as the current clock has a single parent and
+has the flag CLK_SET_PARENT_PARENT set.
 
-> +
-> +	cpu_do_idle();
-> +
-> +	return -1;
-> +}
-> +
-> +static int exynos_cpu0_enter_aftr(void)
-> +{
-> +	int ret = -1;
-> +
-> +	/*
-> +	 * If the other cpu is powered on, we have to power it off, because
-> +	 * the AFTR state won't work otherwise
-> +	 */
-> +	if (cpu_online(1)) {
+Now Exynos HDMI can use only sclk_hdmi clock. The clk_enable() gates this clock
+directly and clk_set_parent() is propagated to mout_hdmi.
 
-Again, this dependency on logical CPUs is not ideal, but I guess it is
-impossible on Exynos to swap the boot CPU (or put it differently boot
-on a different CPU), so we should live with that.
+This new behaviour does not break DT bindings because mout_hdmi would be simply
+ignored.
 
-I've got to say MCPM could help make this code a bit more generic (I
-know that already CPUs are coordinated through coupled C-states, but
-this primary-secondary shutdown coordination could reuse the MCPM state
-machine, I have to check).
+After this change the 'add mout_hdmi clock' is no longer needed.
 
-> +
-> +		/*
-> +		 * We reach a sync point with the coupled idle state, we know
-> +		 * the other cpu will power down itself or will abort the
-> +		 * sequence, let's wait for one of these to happen
-> +		 */
-> +		while (__raw_readl(S5P_ARM_CORE1_STATUS) & 3) {
-> +
-> +			/*
-> +			 * The other cpu may skip idle and boot back
-> +			 * up again
-> +			 */
-> +			if (atomic_read(&cpu1_wakeup))
-> +				goto abort;
-> +
-> +			/*
-> +			 * The other cpu may bounce through idle and
-> +			 * boot back up again, getting stuck in the
-> +			 * boot rom code
-> +			 */
-> +			if (__raw_readl(BOOT_VECTOR) == 0)
+Regards,
+Tomasz Stanislawski
 
-Who clears the boot vector value ? FW ? Does this mean that CPU1 can be
-reset if there is a pending IRQ for it ? That's "interesting". Since
-IRQs are always affine to CPU0 and the local timer entered broadcast I
-really would like to understand what IRQ can wake up CPU1 here (hardly
-an IPI, CPU0 has hit the coupled barried already).
+Tomasz Stanislawski (4):
+  clk: propagate parent change up one level
+  clk: exynos4: export sclk_hdmiphy clock
+  clk: exynos4: enable clk_set_parent() propagation for sclk_hdmi and
+    sclk_mixer clocks
+  Revert "drm/exynos: add mout_hdmi clock in hdmi driver to change
+    parent"
 
-CPU1 is still in SMP mode though when it hits wfi (and it should not),
-I wonder whether this plays a role here.
+ drivers/clk/clk.c                    |    6 ++++++
+ drivers/clk/samsung/clk-exynos4.c    |    8 +++++---
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   14 ++++----------
+ include/dt-bindings/clock/exynos4.h  |    1 +
+ include/linux/clk-provider.h         |    1 +
+ 5 files changed, 17 insertions(+), 13 deletions(-)
 
-> +				goto abort;
-> +
-> +			cpu_relax();
-> +		}
-> +	}
-> +
-> +	cpu_pm_enter();
-> +
-> +	ret = cpu_suspend(1, cpu_suspend_finish);
-> +
-
-If we are executing here and the cluster has been shutdown, we must be sure
-that CPU1 is off and I guess that's the case. If both CPUs are released
-from reset and can run concurrently, there is a problem. It is related to
-the enabling of the SCU, which, given your last series is supposed to be
-executed in a CPU PM notifier. That code will work only if CPU1 is dead while
-CPU0 reboots and I still think that enabling scu so late is a recipe for mayhem
-and a bad example (not related to your clean-ups - this is true even in current
-code). On platforms where all CPUs are reset on wake-up this will never ever
-work, ie the SCU must be on by the time a CPU switches on its caches (because
-there might be other CPUs running concurrently and they _have_ to be coherent).
-
-> +	cpu_pm_exit();
-> +
-> +abort:
-> +	if (cpu_online(1)) {
-> +		/*
-> +		 * Set the boot vector to something non-zero
-> +		 */
-> +		__raw_writel(virt_to_phys(s3c_cpu_resume),
-> +			     BOOT_VECTOR);
-> +		dsb();
-> +
-> +		/*
-> +		 * Turn on cpu1 and wait for it to be on
-> +		 */
-> +		__raw_writel(0x3, S5P_ARM_CORE1_CONFIGURATION);
-> +		while ((__raw_readl(S5P_ARM_CORE1_STATUS) & 3) != 3)
-> +			cpu_relax();
-> +
-> +		/*
-> +		 * Wait for cpu1 to get stuck in the boot rom
-> +		 */
-> +		while ((__raw_readl(BOOT_VECTOR) != 0) &&
-> +		       !atomic_read(&cpu1_wakeup))
-> +			cpu_relax();
-> +
-> +		if (!atomic_read(&cpu1_wakeup)) {
-> +			/*
-> +			 * Poke cpu1 out of the boot rom
-> +			 */
-> +			__raw_writel(virt_to_phys(s3c_cpu_resume),
-> +				     BOOT_VECTOR);
-> +			dsb_sev();
-> +		}
-> +
-> +		/*
-> +		 * Wait for cpu1 to finish booting
-> +		 */
-> +		while (!atomic_read(&cpu1_wakeup))
-> +			cpu_relax();
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int exynos_powerdown_cpu1(void)
-> +{
-> +	int ret = -1;
-> +
-> +	/*
-> +	 * Idle sequence for cpu1
-> +	 */
-> +	if (cpu_pm_enter())
-> +		goto cpu1_aborted;
-> +
-> +	/*
-> +	 * Turn off cpu 1
-> +	 */
-> +	__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
-> +
-> +	ret = cpu_suspend(0, cpu_suspend_finish);
-
-To reiterate my point, CPU1 should execute this code if and only
-if CPU0 has rebooted it (or idling it failed so it jumps back from
-ROM code straight away and CPU0 bails out of idle too - scu is not
-reset in that case).
-
-This should be commented in detail.
-
-More importantly, I do not see anywhere code that allows CPU1 to
-clean its caches properly. While running cpu_suspend() the CPU cleans
-its data cache using the LoUIS API, but it does that with the C bit
-in SCTLR set, which means that it still allocates and could fetch
-dirty lines from other CPUs, that's not 100% safe. So, as it is done in
-arch/arm/mach-vexpress/tc2_pm.c - tc2_pm_down, core must clean its L1
-with C bit in SCTLR cleared to stop allocations so that by the time
-L1 cache clean is complete, the L1 data cache can't contain dirty lines.
-
-> +
-> +	cpu_pm_exit();
-> +
-> +cpu1_aborted:
-> +	dsb();
-> +	/*
-> +	 * Notify cpu 0 that cpu 1 is awake
-> +	 */
-> +	atomic_set(&cpu1_wakeup, 1);
-> +
-> +	return ret;
-> +}
-> +
-> +static int exynos_enter_aftr(struct cpuidle_device *dev,
-> +			     struct cpuidle_driver *drv, int index)
-> +{
-> +	int ret;
-> +
-> +	__raw_writel(virt_to_phys(s3c_cpu_resume), BOOT_VECTOR);
-> +
-> +	/*
-> +	 * Waiting all cpus to reach this point at the same moment
-> +	 */
-> +	cpuidle_coupled_parallel_barrier(dev, &exynos_idle_barrier);
-> +
-> +	/*
-> +	 * Both cpus will reach this point at the same time
-> +	 */
-> +	ret = dev->cpu ? exynos_powerdown_cpu1() : exynos_cpu0_enter_aftr();
-> +	if (ret)
-> +		index = ret;
-> +
-> +	/*
-> +	 * Waiting all cpus to finish the power sequence before going further
-> +	 */
-> +	cpuidle_coupled_parallel_barrier(dev, &exynos_idle_barrier);
-> +
-> +	atomic_set(&cpu1_wakeup, 0);
-> +
-> +	return index;
-> +}
-> +
-> +static struct cpuidle_driver exynos_idle_driver = {
-> +	.name		= "exynos4210_idle",
-> +	.owner		= THIS_MODULE,
-> +	.states = {
-> +		ARM_CPUIDLE_WFI_STATE,
-> +		[1] = {
-> +			.enter			= exynos_enter_aftr,
-> +			.exit_latency		= 5000,
-> +			.target_residency	= 10000,
-> +			.flags			= CPUIDLE_FLAG_TIME_VALID |
-> +			CPUIDLE_FLAG_COUPLED | CPUIDLE_FLAG_TIMER_STOP,
-> +			.name			= "C1",
-> +			.desc			= "ARM power down",
-> +		},
-> +	},
-> +	.state_count = 2,
-> +	.safe_state_index = 0,
-> +};
-> +
-> +static int exynos_cpuidle_probe(struct platform_device *pdev)
-> +{
-> +	exynos_aftr = (void *)(pdev->dev.platform_data);
-
-This function pointer passing serves what purpose ? Removing platform
-code dependency ? I do not see how you can avoid that given how tied
-this code is to a specific platform.
-
-BTW, you should check exynos_aftr != NULL, just in case.
-
-Thank you !!
-Lorenzo
+-- 
+1.7.9.5
