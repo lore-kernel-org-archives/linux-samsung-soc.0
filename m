@@ -1,7 +1,8 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH 2/4] clk: exynos4: export sclk_hdmiphy clock
-Date: Fri, 04 Apr 2014 16:53:19 +0200
-Message-ID: <1396623201-26000-3-git-send-email-t.stanislaws@samsung.com>
+Subject: [PATCH 3/4] clk: exynos4: enable clk_set_parent() propagation for
+ sclk_hdmi and sclk_mixer clocks
+Date: Fri, 04 Apr 2014 16:53:20 +0200
+Message-ID: <1396623201-26000-4-git-send-email-t.stanislaws@samsung.com>
 References: <1396623201-26000-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,38 +22,37 @@ To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-k
 Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, kgene.kim@samsung.com, mturquette@linaro.org, sw0312.kim@samsung.com, rob.herring@calxeda.com, kishon@ti.com, a.hajda@samsung.com, kyungmin.park@samsung.com, sylvester.nawrocki@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Export sclk_hdmiphy clock to be usable from DT.
+This patch enables clk_set_parent() propagation for clocks used
+by s5p-tv and exynos-drm drivers.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c   |    2 +-
- include/dt-bindings/clock/exynos4.h |    1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos4.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index b4f9672..528f8eb 100644
+index 528f8eb..87b8264 100644
 --- a/drivers/clk/samsung/clk-exynos4.c
 +++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -428,7 +428,7 @@ static struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
- /* fixed rate clocks generated inside the soc */
- static struct samsung_fixed_rate_clock exynos4_fixed_rate_clks[] __initdata = {
- 	FRATE(0, "sclk_hdmi24m", NULL, CLK_IS_ROOT, 24000000),
--	FRATE(0, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
-+	FRATE(CLK_SCLK_HDMIPHY, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
- 	FRATE(0, "sclk_usbphy0", NULL, CLK_IS_ROOT, 48000000),
- };
- 
-diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-index 75aff33..0e245eb 100644
---- a/include/dt-bindings/clock/exynos4.h
-+++ b/include/dt-bindings/clock/exynos4.h
-@@ -33,6 +33,7 @@
- #define CLK_MOUT_MPLL_USER_C	18 /* Exynos4x12 only */
- #define CLK_MOUT_CORE		19
- #define CLK_MOUT_APLL		20
-+#define CLK_SCLK_HDMIPHY	22
- 
- /* gate for special clocks (sclk) */
- #define CLK_SCLK_FIMC0		128
+@@ -680,7 +680,8 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
+ 	 * the device name and clock alias names specified below for some
+ 	 * of the clocks can be removed.
+ 	 */
+-	GATE(CLK_SCLK_HDMI, "sclk_hdmi", "mout_hdmi", SRC_MASK_TV, 0, 0, 0),
++	GATE(CLK_SCLK_HDMI, "sclk_hdmi", "mout_hdmi", SRC_MASK_TV, 0,
++		CLK_SET_PARENT_PARENT, 0),
+ 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "mout_spdif", SRC_MASK_PERIL1, 8, 0,
+ 		0),
+ 	GATE(CLK_JPEG, "jpeg", "aclk160", GATE_IP_CAM, 6, 0, 0),
+@@ -880,7 +881,8 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
+ 			E4210_SRC_MASK_LCD1, 12, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SATA, "sclk_sata", "div_sata",
+ 			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_MIXER, "sclk_mixer", "mout_mixer", SRC_MASK_TV, 4, 0, 0),
++	GATE(CLK_SCLK_MIXER, "sclk_mixer", "mout_mixer", SRC_MASK_TV, 4,
++			CLK_SET_PARENT_PARENT, 0),
+ 	GATE(CLK_SCLK_DAC, "sclk_dac", "mout_dac", SRC_MASK_TV, 8, 0, 0),
+ 	GATE(CLK_TSADC, "tsadc", "aclk100", GATE_IP_PERIL, 15,
+ 			0, 0),
 -- 
 1.7.9.5
