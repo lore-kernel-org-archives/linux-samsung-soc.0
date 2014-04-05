@@ -1,48 +1,203 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base
- address via DT
-Date: Sat, 05 Apr 2014 19:58:04 +0900
-Message-ID: <533FE1BC.7050300@samsung.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
- <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
- <533BF905.6070701@samsung.com> <533BFF69.1060701@monstr.eu>
- <533D24D6.2030103@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/7] drm/exynos: add super device support
+Date: Sat, 05 Apr 2014 19:32:50 +0200
+Message-ID: <53403E42.1010403@gmail.com>
+References: <1396355882-17010-1-git-send-email-inki.dae@samsung.com>
+ <1396355882-17010-2-git-send-email-inki.dae@samsung.com>
+ <533EB9C6.80302@samsung.com>
+ <CAAQKjZPbzb+qvJA5y+Kco9BRv4j3iVatM_0bd+ugyuVZUbfFFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:10553 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751896AbaDEKkk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Apr 2014 06:40:40 -0400
-In-reply-to: <533D24D6.2030103@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAQKjZPbzb+qvJA5y+Kco9BRv4j3iVatM_0bd+ugyuVZUbfFFg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: monstr@monstr.eu, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>
 
-On 04/03/2014 06:07 PM, Sylwester Nawrocki wrote:
-> On 02/04/14 14:15, Michal Simek wrote:
->>> There were some patches posted for syscon to make it available in earlier
->>> system initialization stage: https://lkml.org/lkml/2014/2/19/218
->> I haven't finished this yet. I have to look at it again.
-> Thanks for the information, I assume this would be also useful
-> on the Exynos SoC series, so I'd be happy to see continuation
-> of those works.
+[adding more people and MLs on Cc for further discussion]
 
-It is useful for Exynos SoC series and I have modified this patch series to use 
-early syscon
-initialization API and I can see it's working.
-I have some observation for early initialization of syscon API which I will
-update in corresponding message thread.
+On 04.04.2014 17:44, Inki Dae wrote:
+> 2014-04-04 22:55 GMT+09:00 Tomasz Figa <t.figa@samsung.com>:
+>> Hi Inki,
+>>
+>>
+>> On 01.04.2014 14:37, Inki Dae wrote:
+>>>
+>>> This patch adds super device support to bind sub drivers
+>>> using device tree.
+>>>
+>>> For this, you should add a super device node to each machine dt files
+>>> like belows,
+>>>
+>>> In case of using MIPI-DSI,
+>>>          display-subsystem {
+>>>                  compatible = "samsung,exynos-display-subsystem";
+>>>                  ports = <&fimd>, <&dsi>;
+>>>          };
+>>>
+>>> In case of using DisplayPort,
+>>>          display-subsystem {
+>>>                  compatible = "samsung,exynos-display-subsystem";
+>>>                  ports = <&fimd>, <&dp>;
+>>>          };
+>>>
+>>> In case of using Parallel panel,
+>>>          display-subsystem {
+>>>                  compatible = "samsung,exynos-display-subsystem";
+>>>                  ports = <&fimd>;
+>>>          };
+>>>
+>>> And if you don't add connector device node to ports property,
+>>> default parallel panel driver, exynos_drm_dpi module, will be used.
+>>>
+>>> ports property can have the following device nodes,
+>>>          fimd, mixer, Image Enhancer, MIPI-DSI, eDP, LVDS Bridge, or HDMI
+>>>
+>>> With this patch, we can resolve the probing order issue without
+>>> some global lists. So this patch also removes the unnecessary lists and
+>>> stuff related to these lists.
+>>
+>>
+>> I can see several problems with this approach:
+>>
+>> 1) It breaks compatibility with existing DT. After this patch it is no
+>> longer possible to use old device trees and get a working DRM. However, in
+>> my opinion, this requirement can be relaxed if we make sure that any users
+>> are properly converted.
+>>
+>> 2) What happens if in Kconfig you disable a driver for a component that is
+>
+> I'm not sure what you meant but there wouldn't be no way that users
+> *cannot disable* the driver for a component. The driver would be
+> exynos_drm_drv, not separated module, and would always be built as
+> long as users want to use *exynos drm driver*.
 
-> --
-> Thanks,
-> Sylwester
+I think you don't understand what I mean. Let me show you an example:
+
+You have a board with a DSI panel and also a HDMI output. So you have a 
+supernode pointing to FIMD, DSI and HDMI.
+
+Now, an user finds that he doesn't need HDMI in his system, so he turns 
+off CONFIG_DRM_EXYNOS_HDMI. The supernode still points at hdmi node and 
+Exynos DRM core will register it as a component, but HDMI driver is not 
+available and will never probe, leading the whole Exynos DRM to never 
+initialize. Is this a desired behavior?
+
+>
+>> listed in supernode? If I'm reading the code correctly, Exynos DRM will not
+>
+> And the only case a component isn't added to the list is when users
+> disabled sub driver.
+
+See above.
+
+The code creating the list of components to wait for 
+(exynos_drm_add_components()) doesn't seem to consider which sub-drivers 
+are actually enabled in kernel config.
+
+>> register, which is completely wrong. Users should be able to select which
+>> drivers should be compiled into their kernels.
+>
+> So users are be able to select drivers they want to use, and will be
+> compiled correctly. So no, the only thing users can disable is each
+> sub driver, not core module.
+>
+>>
+>> 3) Such approach leads to complete integration of all Exynos DRM drivers,
+>> without possibility of loading some sub-drivers as modules. I know that
+>> current driver design doesn't support it either, but if this series is
+>
+> No, current drm driver *must also be built* as one integrated single
+> drm driver without super device approach.
+
+As I wrote, I know that current design before this patch isn't modular 
+either, but this is not my concern here. See below.
+
+> So the super device approach
+> *has no any effect on existing design*,  and what the super device
+> approch tries to do is to resolve the probe order issue to sub drivers
+> *without some codes specific to Exynos drm*.
+
+My concern is that the supernode design is actually carving such broken 
+non-modular design in stone. Remember that we are currently heading 
+towards a fully multi-platform kernel where it is critical for such 
+subsystems to be modular, because the same zImage is going to be running 
+on completely different machines.
+
+>
+>> claimed to improve things, it should really do so.
+>>
+>> 4) Exactly the same can be achieved without changing the DT bindings at all.
+>> In fact even without adding any new single property or node to DT. We
+>> discussed this with Andrzej and Marek today and came to a solution in which
+>> just by adding a little bit of code to Exynos DRM subdrivers, you could
+>> guarantee correct registration of Exynos DRM platform and also get rid of
+>> #ifdeffery in exynos_drm_drv.c. Andrzej will send an RFC after the weekend.
+>
+> I'm not sure but I had implemented below prototype codes for that, see
+> the below link,
+> https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/commit/?h=exynos-bridge-test&id=2860ad02d736e300034ddeabce3da92614922b4e
+>
+> I guess what you said would be similler approach.
+
+Not exactly. The approach we found does mostly the same as componentized 
+subsystem framework but without _any_ extra data in Device Tree. Just 
+based on the list of subsystem sub-drivers that is already available to 
+the master driver.
+
+>
+> And I still think the use of the component framework would be the best
+> solution and *Linux generic way* for resolving the probe order issue
+> without any specific codes. So I'm not advocating the compoent
+> framework but I tend not to want to use specific codes.
 >
 
+I understand your concern. I also believe that generic frameworks should 
+be reused wherever possible. However the componentized subsystem 
+framework is a bit of overkill for this simple problem. Moreover, Device 
+Tree is not a trash can where any data that can be thought of can be 
+thrown as you go, but rather a hardware description that is supposed to 
+be a stable ABI and needs to be well-thought. So, if something can be 
+done in a way that doesn't require additional data, it's better to do it 
+that way.
 
--- 
-Best Regards,
-Pankaj Dubey
+>>
+>> 5) This series seems to break DPI display support with runtime PM enabled.
+>> Universal C210 just hangs on second FIMD probe, after first one fails with
+>> probe deferral. This needs more investigation, though.
+>
+> For -next, I never expect that pm operations would be operated
+> perfactly. They are really not for product. Just adding new feature
+> and drivers to -next, and then fixing them while in RC. And RC process
+> would also be for it. Actually, I see pm interfaces of exynos_drm_dsi
+> driver leads to break a single driver model because pm operations
+> should be done at top level of exynos drm, and some codes Sean didn't
+> fix. So such things are in my fix-todo-list. I tend to accept new
+> features and drivers for -next as long as they have no big problem,
+> And that is my style I maintain.
+
+Unless it breaks so much that the system is unable to boot at all, which 
+is the case. As I said, the system just hangs, like something would 
+access hardware that is not properly initialized, e.g. without power 
+domain or clocks enabled.
+
+Anyway, I don't agree that regressions are allowed in linux-next, 
+especially if found before applying a patch. Linux-next is a tree in 
+which patches that are supposed to be ready to be pulled by Linus should 
+be pushed. Of course nobody can spot all the regressions before the 
+patches hitting -next and that's fine, as -next is an integration 
+_testing_ tree. However even if already in -next, regressions should be 
+fixed ASAP to minimize the number of fix patches needed during -rc period.
+
+Best regards,
+Tomasz
