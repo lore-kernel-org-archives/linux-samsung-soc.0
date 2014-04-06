@@ -1,87 +1,59 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/7] drm/exynos: add super device support
-Date: Sun, 6 Apr 2014 18:38:03 +0900
-Message-ID: <CAAQKjZOAPx6oofJaeOWKzMFTzUZnHMwm1BnJ4jXqnBQ4NEpXmg@mail.gmail.com>
-References: <1396355882-17010-1-git-send-email-inki.dae@samsung.com>
-	<1396355882-17010-2-git-send-email-inki.dae@samsung.com>
-	<533EB9C6.80302@samsung.com>
-	<CAAQKjZPbzb+qvJA5y+Kco9BRv4j3iVatM_0bd+ugyuVZUbfFFg@mail.gmail.com>
-	<53403E42.1010403@gmail.com>
-	<20140405182423.GL7528@n2100.arm.linux.org.uk>
-	<53404BF3.2010409@gmail.com>
-	<CAAQKjZMSkN-ACOGKD2OecsZ6YQyafiR5F36_XnBwYC-wZj8NPA@mail.gmail.com>
-	<20140406084729.GO7528@n2100.arm.linux.org.uk>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: SAMSUNG: remove two unused S3C boot options
+Date: Sun, 06 Apr 2014 12:12:42 +0200
+Message-ID: <1396779162.30640.14.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:35491 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754211AbaDFJiF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Apr 2014 05:38:05 -0400
-Received: by mail-we0-f174.google.com with SMTP id t60so5362968wes.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Apr 2014 02:38:03 -0700 (PDT)
-In-Reply-To: <20140406084729.GO7528@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Russell,
+Commit 19a964644f1e ("ARM: SAMSUNG: remove all custom uncompress.h")
+removed the only users of S3C_BOOT_ERROR_RESET and
+S3C_BOOT_UART_FORCE_FIFO. Remove their Kconfig entries too.
 
-2014-04-06 17:47 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> On Sun, Apr 06, 2014 at 01:21:24PM +0900, Inki Dae wrote:
->> As you may know, there is exynos chip that has two display
->> controllers. So it is possible to compose display pipe lines at same
->> time like below,
->>
->> fimd0-----bridges..------Panel
->> fimd1-----maybe bridges..-----CPU Panel
->>
->> How we can care such pipelines without component? Of course, it would
->> be possible somehow but I'm not sure there could be better and more
->> generic way than super device.
->>
->> And super device will make existing dtb broken but this time it might
->> be good opportunity to more generic way before more users use existing
->> dt.
->
-> There has been a discussion ongoing about how to best represent display
-> (and capture) stuff in DT using graphs, which you may wish to consider
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+Untested.
 
-Right, there was my wrong comments. Actually, I had made a discussion
-about it. For this, you can refer to below link,
-http://www.spinics.net/lists/dri-devel/msg55555.html
+ arch/arm/plat-samsung/Kconfig | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-My intension there was that let's use super device approach to resolve
-the probe order issue of drm drivers for embedded system, and the
-graphs to compose their display pipelines. And for this, we need
-generic common structure to handle various bridge devices that could
-be controlled by crtc and encoder/connector drivers.
-
-I'd be happy to get your opinions about it.
-
-> looking at.  That discussion never reached any kind of conclusion before
-> the merge window, but it does need to reach a conclusion for the next
-> window.
-
-Yes. I still think the super device approach is a best solution, and I
-think the only problem here is backward compatibility.  I have a feel
-that we might resolve that issue easier then we think. I think all we
-have to do for it is to implement some codes for backward
-compatibility on top of super device approach.
-
-This way, we could have a better design for the future drm drivers
-without being tied to the backward compatibility.
-
-Thanks,
-Inki Dae
-
->
-> --
-> FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-> improving, and getting towards what was expected from it.
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index b57e922f1614..f615c0e7b226 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -40,20 +40,6 @@ if PLAT_SAMSUNG
+ 
+ comment "Boot options"
+ 
+-config S3C_BOOT_ERROR_RESET
+-	bool "S3C Reboot on decompression error"
+-	help
+-	  Say y here to use the watchdog to reset the system if the
+-	  kernel decompressor detects an error during decompression.
+-
+-config S3C_BOOT_UART_FORCE_FIFO
+-       bool "Force UART FIFO on during boot process"
+-       default y
+-       help
+-         Say Y here to force the UART FIFOs on during the kernel
+-	 uncompressor
+-
+-
+ config S3C_LOWLEVEL_UART_PORT
+ 	int "S3C UART to use for low-level messages"
+ 	default 0
+-- 
+1.9.0
