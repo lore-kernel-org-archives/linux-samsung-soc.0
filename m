@@ -1,41 +1,57 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 1/2] regulator: s5m8767: Fix carried over ena_gpio assignment
-Date: Mon, 07 Apr 2014 14:15:23 +0200
-Message-ID: <1396872924-14675-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] regulator: s5m8767: Fix carried over ena_gpio
+ assignment
+Date: Mon, 7 Apr 2014 13:41:07 +0100
+Message-ID: <20140407124107.GE14763@sirena.org.uk>
+References: <1396872924-14675-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1n5KrmHTzI9lYhsK"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44359 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753510AbaDGMlV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Apr 2014 08:41:21 -0400
+Content-Disposition: inline
+In-Reply-To: <1396872924-14675-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-During registration of regulators if external control for regulator was
-set in DTS the ena_gpio and ena_gpio_flags fields of regulator_config
-were set to proper values.
 
-However the same regulator_config was used in next iterations of loop so
-the ena_gpio fields carried over to next regulators.
+--1n5KrmHTzI9lYhsK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The issue was not observed as ena_gpio is supported only for Buck9
-regulator which is often the last regulator parsed from DTS.
-Be sure to clear ena_gpio config fields before registering the
-regulator.
+On Mon, Apr 07, 2014 at 02:15:23PM +0200, Krzysztof Kozlowski wrote:
+> During registration of regulators if external control for regulator was
+> set in DTS the ena_gpio and ena_gpio_flags fields of regulator_config
+> were set to proper values.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/regulator/s5m8767.c |    1 +
- 1 file changed, 1 insertion(+)
+Applied, thanks.
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index f05badabd69e..92f19a005dc3 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -964,6 +964,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
- 		config.driver_data = s5m8767;
- 		config.regmap = iodev->regmap_pmic;
- 		config.of_node = pdata->regulators[i].reg_node;
-+		config.ena_gpio = config.ena_gpio_flags = 0;
- 		if (pdata->regulators[i].ext_control_gpio)
- 			s5m8767_regulator_config_ext_control(s5m8767,
- 					&pdata->regulators[i], &config);
--- 
-1.7.9.5
+--1n5KrmHTzI9lYhsK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTQpzgAAoJELSic+t+oim9vzoQAIZLDNvJ216ZG6gtqA+UC9es
+YAD32N7Y0KRRci4DaJbcxDk2GtOXnJnzg+jEtFV4jnzwQfLjMMDx/AD7w/09aiTY
+KSJKqn1E146lW/3DZb7JoH5fgOsoG2jmImDCPg45Ml9Z4AHSj5USWxp3QRFRd0Xb
+UGC800GbhYCS8iBKXJFK5j+8WIV442lswg0zKQGvgTS3L0NJ4LyxGQsR73Y6Net2
+aF3/joN3qgBpPKPpMnanO7kkUSx/4NPk6GyJIVvsFJkxGFuD7lNi8BzBFJ6VDgjz
+PltHcMOx/Rqmh7QcsM75e8LSsC6xgCrGuiuWaPa4T5Rcgn9JZJpziPWKe/o6quCx
+x2weFGjM79nW/rNiyKVg108uy79gFkaHDR4GCQO0xgEfmMA9FsB7ZObZJG50i7R5
+Xu5ITFkQDmB/KyQPSk2OBu/lg/eoty5p28h2Y4Dh1z0o6toEkdKSiZZOTksryx/A
+fY914twyqO+IbdCMNkM9ONqGlW/TAe6GXwRuN0dtMfkN/qc5tWN13JinmnrFo/Zo
+o6RpRKwewJ336CvuwmTHGiw9b/vcinvRtcgDh0uBT5aP1LDdDZdqhuTrDE6GbK1g
+2Eb3DkIXXUUrm4AesaqFxiN7GmEA7TdVMZuMQVJT9YS3dHjFy6XIVSDLaOvy1FEx
+3LpObKy2BMgu6qzTnrtJ
+=de17
+-----END PGP SIGNATURE-----
+
+--1n5KrmHTzI9lYhsK--
