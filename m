@@ -1,61 +1,125 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when
- possible
-Date: Mon, 07 Apr 2014 18:13:20 +0900
-Message-ID: <002601cf5241$9e819cc0$db84d640$%han@samsung.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
- <20140305184219.GA29903@obsidianresearch.com>
- <20140404170341.GG9007@google.com> <20140404170517.GH9007@google.com>
- <1396859929.4553.2.camel@weser.hi.pengutronix.de>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
+Date: Mon, 07 Apr 2014 11:43:47 +0200
+Message-ID: <53427353.2020303@linaro.org>
+References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org> <1396618989-2897-18-git-send-email-daniel.lezcano@linaro.org> <5825506.2ErDt1UQ5r@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-reply-to: <1396859929.4553.2.camel@weser.hi.pengutronix.de>
-Content-language: ko
-Sender: linux-sh-owner@vger.kernel.org
-To: 'Lucas Stach' <l.stach@pengutronix.de>, 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, 'Arnd Bergmann' <arnd@arndb.de>, 'Stephen Warren' <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, 'Simon Horman' <horms@verge.net.au>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:41490 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754771AbaDGJnb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Apr 2014 05:43:31 -0400
+Received: by mail-wg0-f49.google.com with SMTP id a1so6645687wgh.32
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Apr 2014 02:43:30 -0700 (PDT)
+In-Reply-To: <5825506.2ErDt1UQ5r@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net, Rajeshwari Shinde <rajeshwari.shinde@linaro.org>
 
-On Monday, April 07, 2014 5:39 PM, Lucas Stach wrote:
-> Am Freitag, den 04.04.2014, 11:05 -0600 schrieb Bjorn Helgaas:
-> > On Fri, Apr 04, 2014 at 11:03:41AM -0600, Bjorn Helgaas wrote:
-> > > On Wed, Mar 05, 2014 at 11:42:19AM -0700, Jason Gunthorpe wrote:
-> > > > On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
-> > > > > -	return pp->irq;
-> > > > > +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
-> > > > > +	if (!irq)
-> > > > > +		irq = pp->irq;
-> > > >
-> > > > In light of the two bugs that Tim found, it might be wise to throw a
-> > > > 'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
-> > > > path, so it doesn't continue to silently cover up errors on the OF/DT
-> > > > side..
-> > >
-> > > This sounds like a reasonable thing to do, but I didn't see a response to
-> > > this comment.  Should I merge it as-is, or do you want to add the message?
-> >
-> > Oh, and I suppose the same question applies to the other host drivers in
-> > this series (tegra, rcar)?
-> 
-> Please apply as-is. of_irq_parse_and_map_pci() already prints an error
-> message if it isn't able to establish the mapping, thus right before we
-> fall into the fallback path. So any the warning would be redundant.
+On 04/04/2014 06:09 PM, Bartlomiej Zolnierkiewicz wrote:
+>
+> On Friday, April 04, 2014 03:43:09 PM Daniel Lezcano wrote:
+>> The cpuidle driver is broken since v3.11 and now we are at v3.14.
+>>
+>> Default the cpuidle driver to favorize a better detection next time.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> ---
+>>   arch/arm/configs/exynos_defconfig |    1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/ex=
+ynos_defconfig
+>> index 4ce7b70..6ed4b34 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -132,3 +132,4 @@ CONFIG_DEBUG_INFO=3Dy
+>>   CONFIG_DEBUG_USER=3Dy
+>>   CONFIG_CRYPTO_SHA256=3Dy
+>>   CONFIG_CRC_CCITT=3Dy
+>> +CONFIG_CPU_IDLE=3Dy
+>
+> Sorry but I have to NAK this change.  There are three issues with AFT=
+R
+> mode that should be resolved first before this patch can be merged:
+>
+> * The upstream Exynos cpuidle code lacks support for secure firmware =
+and
+>    it is used on i.e. Trats2 boards (Exynos4412).  Attempts to use AF=
+TR on
+>    such hardware results in oops + lockup.
+>    I have patches adding secure firmware support to Exynos cpuidle dr=
+iver
+>    but they depend on Tomasz Figa's PM changes which are not yet upst=
+ream.
 
-+1
+Ok.
 
-I agree with Lucas Stach's opinion. of_irq_parse_and_map_pci() already
-prints an error as below. So, additional warning message of host controller
-looks superfluous.
+> * Somebody needs to verify that the current Exynos cpuidle driver wor=
+ks
+>    in the AFTR mode on Exynos5420 for which support has been added re=
+cently
+>    (I really doubt it looking at some internal trees).
 
-	ret = of_irq_parse_pci(dev, &oirq);
-	if (ret) {
-		dev_err(&dev->dev, "of_irq_parse_pci() failed with rc=%d\n", ret);
-		return 0; /* Proper return code 0 == NO_IRQ */
+Rajeshwari (cc'ed) is working on creating a big.Little driver for this=20
+board, so it will be a separate cpuidle driver.
+
+> * Some of our u-boot bootloader versions are incompatible with AFTR. =
+ We
+>    have observed the problem happening on Trats board (Exynos4210) on=
+ which
+>    it can be fixed by using the upstream u-boot version and Universal=
+ C210
+>    board (Exynos4210 with broken SMP support) on which there is no up=
+stream
+>    u-boot available (IIRC) and because of the broken SMP support enab=
+ling
+>    cpuidle results in attempt to enter AFTR during boot + immediate l=
+ockup.
+>
+>    I know that this is mainly our problem but the issue is widespread=
+ on
+>    our targets and I believe that adding some workaround for it in cp=
+uidle
+>    core would be beneficial for the whole cpuidle subsystem.  Namely =
+there
+>    should be some way of telling cpuidle subsystem to either disable
+>    particular state(s) or limit the max available state.  I think tha=
+t this
+>    can be also useful for testing and development of other cpuidle dr=
+ivers.
+>
+> For now please change this patch to add CONFIG_CPU_IDLE=3Dn instead (=
+since
+> the config option is "default y" it will be auto-enabled if there is =
+no
+> entry in the defconfig)..
+
+Ok.
+
+Kukjin, is it possible you merge patches 1->16 ?
+
+Thanks
+
+   -- Daniel
+
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
 
 
-Best regards,
-Jingoo Han
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
