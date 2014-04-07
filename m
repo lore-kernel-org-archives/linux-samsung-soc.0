@@ -1,49 +1,79 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [RESEND: RFC PATCH 3/3] pcie: keystone: add pcie driver based on
- designware core driver
-Date: Mon, 7 Apr 2014 10:46:44 -0600
-Message-ID: <20140407164644.GB9952@obsidianresearch.com>
-References: <1395707726-20437-1-git-send-email-m-karicheri2@ti.com>
- <1395707726-20437-4-git-send-email-m-karicheri2@ti.com>
- <235376049.yyfljDtinu@wuerfel>
- <20140325165421.GB30641@obsidianresearch.com>
- <5342D47F.4010506@ti.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
+Date: Mon, 07 Apr 2014 19:44:45 +0200
+Message-ID: <3344539.A0GIVp3yPt@amdc1032>
+References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
+ <5825506.2ErDt1UQ5r@amdc1032>
+ <CAOesGMgkbfUX=cJ4rMf+-26Sq_fYUNW8m6unNiCXHKwj83dLbw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from quartz.orcorp.ca ([184.70.90.242]:56645 "EHLO quartz.orcorp.ca"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753197AbaDGQqz (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60690 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752718AbaDGRou (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Apr 2014 12:46:55 -0400
-Content-Disposition: inline
-In-Reply-To: <5342D47F.4010506@ti.com>
+	Mon, 7 Apr 2014 13:44:50 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3O004CH9AOHH50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Apr 2014 02:44:48 +0900 (KST)
+In-reply-to: <CAOesGMgkbfUX=cJ4rMf+-26Sq_fYUNW8m6unNiCXHKwj83dLbw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Murali Karicheri <m-karicheri2@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <r65037@freescale.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Mohit Kumar <mohit.kumar@st.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-On Mon, Apr 07, 2014 at 12:38:23PM -0400, Murali Karicheri wrote:
-> On 3/25/2014 12:54 PM, Jason Gunthorpe wrote:
-> >On Tue, Mar 25, 2014 at 08:44:36AM +0100, Arnd Bergmann wrote:
-> >
-> >>I have no idea how this would work with the standard interrupt-map property,
-> >>since the legacy interrupt host is now the same device as the pci host.
-> >>
-> >>Maybe it's better to move the legacy irqchip handling entirely out of
-> >>the driver and use a separate device node for the registers so it can
-> >>come with its own #interrupt-cells, and then refer to this irqchip from
-> >>the interrupt-map.
-> >The other DW PCI-E drivers are being fixed to use interrupt-map, so I
-> >think this driver should be fixed before it goes in as well.
+
+Hi,
+
+On Monday, April 07, 2014 09:28:39 AM Olof Johansson wrote:
+> On Fri, Apr 4, 2014 at 9:09 AM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
 > 
-> Could you send me a patch reference or branch that I can review to
-> better understand changes required in my driver to use the bindings
-> you have described below?
+> [...]
+> >   I know that this is mainly our problem but the issue is widespread on
+> >   our targets and I believe that adding some workaround for it in cpuidle
+> >   core would be beneficial for the whole cpuidle subsystem.
 
-Bjorn is now merging it:
+On the second look at the cpuidle code there is a "cpuidle.off" kernel
+parameter which should be sufficient to workaround this particular issue
+for now.
 
-[PATCH v2 0/6] PCI irq mapping fixes and cleanups
-http://www.spinics.net/lists/linux-pci/msg29589.html
+> Yes, we need to find a way forward without you guys holding the whole
+> platform hostage with out-of-tree code (here and in general, since I
+> think there are more areas in which this applies).
 
-Jason
+Please explain this more because I really don't know what you're meaning
+here (at least in case of SRPOL I feel that there are no such issues).
+
+In this particular case we have a problem with a modified uboot bootloader
+versions being broken and incompatible with the advanced AFTR cpuidle mode.
+This is not the only / main issue preventing AFTR mode and thus EXYNOS
+cpuidle driver from being used by default so I really think that the your
+comment was unfair.
+
+> >  Namely there
+> >   should be some way of telling cpuidle subsystem to either disable
+> >   particular state(s) or limit the max available state.  I think that this
+> >   can be also useful for testing and development of other cpuidle drivers.
+> >
+> > For now please change this patch to add CONFIG_CPU_IDLE=n instead (since
+> > the config option is "default y" it will be auto-enabled if there is no
+> > entry in the defconfig)..
+> 
+> Can the code be refactored such that even if CPU_IDLE is on, it won't
+> actually do anything useful on the platforms that have problems above?
+> I.e. determined at runtime, not build time?
+
+We can disable AFTR mode by default on EXYNOS4x12 SoCs with secure mode
+enabled and EXYNOS5420 SoCs (I would like somebody with the hardware to
+verify that AFTR mode is not working first so we have 100% certainty
+that we don't regress here).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
