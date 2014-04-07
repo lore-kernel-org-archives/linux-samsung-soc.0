@@ -1,7 +1,7 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v2 1/7] drm/exynos: add super device support
-Date: Mon, 07 Apr 2014 16:24:39 +0200
-Message-ID: <5342B527.8050102@gmail.com>
+Date: Tue, 8 Apr 2014 00:16:04 +0900
+Message-ID: <CAAQKjZNf=Lr=9DwFM4KCia8jeUpsVu-6h9RyfFpqK+8kkDsbgA@mail.gmail.com>
 References: <1396355882-17010-1-git-send-email-inki.dae@samsung.com>
  <1396355882-17010-2-git-send-email-inki.dae@samsung.com>
  <533EB9C6.80302@samsung.com>
@@ -10,7 +10,7 @@ References: <1396355882-17010-1-git-send-email-inki.dae@samsung.com>
  <CAAQKjZP+RbkO0yVNEKgWWAkogx+p36HKwVyJ+4EjPHrSOarBwQ@mail.gmail.com>
  <5342B3AD.1030502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <5342B3AD.1030502@samsung.com>
@@ -23,13 +23,13 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
 Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Andrzej,
 
-On 07.04.2014 16:18, Andrzej Hajda wrote:
+2014-04-07 23:18 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
 > Hi Inki and Tomasz,
 >
 > On 04/06/2014 05:15 AM, Inki Dae wrote:
@@ -59,14 +59,14 @@ On 07.04.2014 16:18, Andrzej Hajda wrote:
 >>
 >> static int exynos_drm_add_components(...)
 >> {
->>          ...
->>          for (i == 0;; i++) {
->>                  ...
->>                  node = of_parse_phandle(np, "ports", i);
->>                  ...
->>                  ret = component_master_add_child(m, compare_of, node);
->>                  ...
->>          }
+>>         ...
+>>         for (i == 0;; i++) {
+>>                 ...
+>>                 node = of_parse_phandle(np, "ports", i);
+>>                 ...
+>>                 ret = component_master_add_child(m, compare_of, node);
+>>                 ...
+>>         }
 >> }
 >
 > Hmm, In case HDMI driver is not present, HDMI device is not probed and
@@ -75,7 +75,25 @@ On 07.04.2014 16:18, Andrzej Hajda wrote:
 > up, am I correct?
 >
 
-This is my thought here as well.
+Ok, after that,
+
+ret = component_master_add(,..)
+if (ret < 0)
+         DRM_DEBUG_KMS("re-tried by last sub driver probed later.\n");
+
+As you can see above, if component_master_add() is failed, return 0,
+*not error*. And then component_add() called by other kms drivers,
+late probing of hdmi or fimd probing - if there is any kms driver
+enabled - will try to bring up master again by calling
+try_to_bring_up_master() from beginning.
+
+And if component_list is empty then it means that there is no any kms
+driver enabled.
+
+Do you still think in that case, exynos drm initialization will be failed?
+
+Thanks,
+Inki Dae
 
 >>
 >>
@@ -83,23 +101,23 @@ This is my thought here as well.
 >>
 >> int component_master_add_child(...)
 >> {
->>          list_for_each_entry(c, &component_list, node) {
->>                  if (c->master)
->>                          continue;
+>>         list_for_each_entry(c, &component_list, node) {
+>>                 if (c->master)
+>>                         continue;
 >>
->>                  if (compare(...)) {
->>                           component_attach_master(master, c);
->>                           ...
->>                  }
->>          }
+>>                 if (compare(...)) {
+>>                          component_attach_master(master, c);
+>>                          ...
+>>                 }
+>>         }
 >> }
 >>
 >> And below codes,
 >>
 >> static void component_attach_master(master, c)
 >> {
->>          c->master = master;
->>          list_add_tail(&c->master_node, &master->comonents);
+>>         c->master = master;
+>>         list_add_tail(&c->master_node, &master->comonents);
 >> }
 >>
 >>
@@ -111,12 +129,12 @@ This is my thought here as well.
 >>
 >> int component_bind_add(...)
 >> {
->>          ....
->>          list_for_each_entry(c, &master->components, master_node) {
->>                     ret = component_bind(c, master, data);
->>                     ...
->>          }
->>          ...
+>>         ....
+>>         list_for_each_entry(c, &master->components, master_node) {
+>>                    ret = component_bind(c, master, data);
+>>                    ...
+>>         }
+>>         ...
 >> }
 >>
 >> The hdmi driver users disabled doesn't exist to master->components list.
@@ -186,7 +204,11 @@ This is my thought here as well.
 > as some material for discussion.
 >
 
-Great. Looking forward for it.
+Feel free to post RFC but as I mentioned eailer, it'd be good way to
+use existing infrastructure, not specific one.
+
+Thanks,
+Inki Dae
 
 >>>
 >>>
@@ -213,12 +235,11 @@ Great. Looking forward for it.
 > If we are talking about the same issue, it is a problem of panel
 > initialization sequence on some
 > panels. I will post fix for it.
-
-That's possible.
-
-I'm not saying that it's a problem of this series itself, but it has 
-been introduced/triggered by this series. My intention was to point that 
-such issues need to be investigated before pushing the patches upstream.
-
-Best regards,
-Tomasz
+>
+>
+> Regards
+> Andrzej
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
