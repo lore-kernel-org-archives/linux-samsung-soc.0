@@ -1,78 +1,81 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base address
- via DT
-Date: Mon, 07 Apr 2014 08:02:23 +0200
-Message-ID: <53423F6F.5010504@monstr.eu>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com> <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com> <533BF905.6070701@samsung.com> <533BFF69.1060701@monstr.eu> <533D24D6.2030103@samsung.com> <533FE1BC.7050300@samsung.com>
-Reply-To: monstr@monstr.eu
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="gSAAimj8V1TXmNtGpKOHiBX1WX7LpFTmI"
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH RESEND 1/2] clk: s2mps11: Add missing of_node_put and
+ of_clk_del_provider
+Date: Mon, 07 Apr 2014 09:10:43 +0200
+Message-ID: <1396854644-7409-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:41352 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbaDGGC1 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:15637 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753408AbaDGHLJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Apr 2014 02:02:27 -0400
-Received: by mail-ee0-f52.google.com with SMTP id e49so197714eek.25
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Apr 2014 23:02:26 -0700 (PDT)
-In-Reply-To: <533FE1BC.7050300@samsung.com>
+	Mon, 7 Apr 2014 03:11:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org
+Cc: Tushar Behera <tushar.behera@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---gSAAimj8V1TXmNtGpKOHiBX1WX7LpFTmI
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Add of_clk_del_provider to remove previously registered clock provider.
+Add of_node_put to decrement the ref count of clock nodes.
 
-On 04/05/2014 12:58 PM, Pankaj Dubey wrote:
-> On 04/03/2014 06:07 PM, Sylwester Nawrocki wrote:
->> On 02/04/14 14:15, Michal Simek wrote:
->>>> There were some patches posted for syscon to make it available in ea=
-rlier
->>>> system initialization stage: https://lkml.org/lkml/2014/2/19/218
->>> I haven't finished this yet. I have to look at it again.
->> Thanks for the information, I assume this would be also useful
->> on the Exynos SoC series, so I'd be happy to see continuation
->> of those works.
->=20
-> It is useful for Exynos SoC series and I have modified this patch serie=
-s to use early syscon
-> initialization API and I can see it's working.
-> I have some observation for early initialization of syscon API which I =
-will
-> update in corresponding message thread.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/clk-s2mps11.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-Great. Please update that thread we should finish this implementation
-to be useful for everybody.
-
-Thanks,
-Michal
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---gSAAimj8V1TXmNtGpKOHiBX1WX7LpFTmI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlNCP28ACgkQykllyylKDCEAygCfQXdUMqZAYvviJyhWQsglE87a
-8xQAn0dkthqUz7uIx9Hm99SxWewBojNb
-=mtGD
------END PGP SIGNATURE-----
-
---gSAAimj8V1TXmNtGpKOHiBX1WX7LpFTmI--
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index f2f62a1bf61a..843ec3646501 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -44,6 +44,7 @@ enum {
+ 
+ struct s2mps11_clk {
+ 	struct sec_pmic_dev *iodev;
++	struct device_node *clk_np;
+ 	struct clk_hw hw;
+ 	struct clk *clk;
+ 	struct clk_lookup *lookup;
+@@ -156,7 +157,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+ 	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
+-	struct device_node *clk_np = NULL;
+ 	unsigned int s2mps11_reg;
+ 	int i, ret = 0;
+ 	u32 val;
+@@ -168,9 +168,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 
+ 	s2mps11_clk = s2mps11_clks;
+ 
+-	clk_np = s2mps11_clk_parse_dt(pdev);
+-	if (IS_ERR(clk_np))
+-		return PTR_ERR(clk_np);
++	/* Store clocks of_node in first element of s2mps11_clks array */
++	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev);
++	if (IS_ERR(s2mps11_clks->clk_np))
++		return PTR_ERR(s2mps11_clks->clk_np);
+ 
+ 	switch(platform_get_device_id(pdev)->driver_data) {
+ 	case S2MPS11X:
+@@ -225,7 +226,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 
+ 		clk_data.clks = clk_table;
+ 		clk_data.clk_num = S2MPS11_CLKS_NUM;
+-		of_clk_add_provider(clk_np, of_clk_src_onecell_get, &clk_data);
++		of_clk_add_provider(s2mps11_clks->clk_np,
++				of_clk_src_onecell_get, &clk_data);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, s2mps11_clks);
+@@ -250,6 +252,10 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
+ 	struct s2mps11_clk *s2mps11_clks = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	of_clk_del_provider(s2mps11_clks[0].clk_np);
++	/* Drop the reference obtained in s2mps11_clk_parse_dt */
++	of_node_put(s2mps11_clks[0].clk_np);
++
+ 	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
+ 		clkdev_drop(s2mps11_clks[i].lookup);
+ 
+-- 
+1.7.9.5
