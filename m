@@ -1,58 +1,115 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: AFTR does not work on arndale 5250
-Date: Tue, 08 Apr 2014 18:13:47 +0200
-Message-ID: <5344203B.6080702@samsung.com>
-References: <533EAE57.1080202@linaro.org> <5343D709.10708@samsung.com>
- <CAGm_ybjL-oA_C=VH4MMt_X45hrdKt8GMkwQtq5EJ94TvA4iqYw@mail.gmail.com>
- <5344075D.2030203@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [PATCH] arm: exynos: generalize power register address calculation
+Date: Tue,  8 Apr 2014 21:45:37 +0530
+Message-ID: <1396973737-18693-1-git-send-email-chander.kashyap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:38104 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932117AbaDHQNw (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:49342 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756329AbaDHQPv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 12:13:52 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3P00GP0ZR07370@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Apr 2014 17:13:48 +0100 (BST)
-In-reply-to: <5344075D.2030203@linaro.org>
+	Tue, 8 Apr 2014 12:15:51 -0400
+Received: by mail-pd0-f179.google.com with SMTP id w10so1206008pde.24
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 09:15:51 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Vikas Sajjan <sajjan.linux@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, sunil joshi <joshi@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-Hi Daniel, Vikas, Chander,
+Currently status/configuration power register values are hard-coded for cpu1.
 
-On 08.04.2014 16:27, Daniel Lezcano wrote:
-> On 04/08/2014 03:32 PM, Vikas Sajjan wrote:
->>   Hi Daniel,
->>
->>   I checked AFTR on v3.14 (
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/?id=refs/tags/v3.14)
->>
->>   on exynos5250 based chromebook (exynos5250-snow.dtb)
->>
->> I am able to hotplug CPU1  (echo 0 >
->> /sys/devices/system/cpu/cpu1/online).
->> I can see, it enters exynos4_enter_core0_aftr() when I hotplug CPU1.
->
-> Hi,
->
-> thanks a lot for your help.
->
-> I reproduced it on my arndale board with linux-samsung/for-next and on
-> v3.14.
->
-> Used the exynos_defconfig, enabled cpuidle and used exynos5250-arndale.dtb.
->
+Make it generic so that it is useful for SoC's with more than two cpus.
 
-You should compare your bootloader versions as this is one of the 
-aspects that can break AFTR support as it relies on kind of ABI between 
-bootloader and kernel.
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+---
+ arch/arm/mach-exynos/hotplug.c  |   10 +++++++---
+ arch/arm/mach-exynos/platsmp.c  |   13 ++++++++-----
+ arch/arm/mach-exynos/regs-pmu.h |    9 +++++++--
+ 3 files changed, 22 insertions(+), 10 deletions(-)
 
-Bets regards,
-Tomasz
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index 5eead53..460aec0 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -92,11 +92,15 @@ static inline void cpu_leave_lowpower(void)
+ 
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ {
++	unsigned long phys_cpu = cpu_logical_map(cpu);
++	unsigned int cpunr;
++
++	cpunr = phys_cpu & 0xF00 ? (4 + phys_cpu & 0xFF) : phys_cpu & 0xFF;
+ 	for (;;) {
+ 
+-		/* make cpu1 to be turned off at next WFI command */
+-		if (cpu == 1)
+-			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
++		/* make cpu to be turned off at next WFI command */
++		if (cpu)
++			__raw_writel(0, S5P_ARM_CORE_CONFIGURATION(cpunr));
+ 
+ 		/*
+ 		 * here's the WFI
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 8ea02f6..e694bdf 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -92,6 +92,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	unsigned long timeout;
+ 	unsigned long phys_cpu = cpu_logical_map(cpu);
++	unsigned int cpunr;
+ 
+ 	/*
+ 	 * Set synchronisation state between this boot processor
+@@ -109,14 +110,16 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 */
+ 	write_pen_release(phys_cpu);
+ 
+-	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
++	cpunr = phys_cpu & 0xF00 ? (4 + phys_cpu & 0xFF) : phys_cpu & 0xFF;
++	if (!(__raw_readl(S5P_ARM_CORE_STATUS(cpunr))
++		& S5P_CORE_LOCAL_PWR_EN)) {
+ 		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-			     S5P_ARM_CORE1_CONFIGURATION);
++			     S5P_ARM_CORE_CONFIGURATION(cpunr));
+ 
+ 		timeout = 10;
+ 
+-		/* wait max 10 ms until cpu1 is on */
+-		while ((__raw_readl(S5P_ARM_CORE1_STATUS)
++		/* wait max 10 ms until secondary cpu is on */
++		while ((__raw_readl(S5P_ARM_CORE_STATUS(cpunr))
+ 			& S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
+ 			if (timeout-- == 0)
+ 				break;
+@@ -125,7 +128,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 		}
+ 
+ 		if (timeout == 0) {
+-			printk(KERN_ERR "cpu1 power enable failed");
++			pr_err("cpu%x power enable failed", cpu);
+ 			spin_unlock(&boot_lock);
+ 			return -ETIMEDOUT;
+ 		}
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 7c029ce..16e17e4 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -104,8 +104,13 @@
+ #define S5P_GPS_LOWPWR				S5P_PMUREG(0x139C)
+ #define S5P_GPS_ALIVE_LOWPWR			S5P_PMUREG(0x13A0)
+ 
+-#define S5P_ARM_CORE1_CONFIGURATION		S5P_PMUREG(0x2080)
+-#define S5P_ARM_CORE1_STATUS			S5P_PMUREG(0x2084)
++#define S5P_ARM_CORE0_CONFIGURATION		S5P_PMUREG(0x2000)
++#define S5P_ARM_CORE0_STATUS			S5P_PMUREG(0x2004)
++
++#define S5P_ARM_CORE_CONFIGURATION(_cpunr)	\
++		(S5P_ARM_CORE0_CONFIGURATION + 0x80 * _cpunr)
++#define S5P_ARM_CORE_STATUS(_cpunr)		\
++		(S5P_ARM_CORE0_STATUS + 0x80 * _cpunr)
+ 
+ #define S5P_PAD_RET_MAUDIO_OPTION		S5P_PMUREG(0x3028)
+ #define S5P_PAD_RET_GPIO_OPTION			S5P_PMUREG(0x3108)
+-- 
+1.7.9.5
