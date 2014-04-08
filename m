@@ -1,62 +1,57 @@
-From: Javi Merino <javi.merino@arm.com>
-Subject: Re: [PATCH v11 0/4] thermal: samsung: Clean up and add support for
- Exynos5420
-Date: Tue, 8 Apr 2014 10:33:43 +0100
-Message-ID: <20140408093343.GA7947@e102654-lin.cambridge.arm.com>
-References: <1384238132-24515-1-git-send-email-ch.naveen@samsung.com>
- <1386657640-21481-1-git-send-email-ch.naveen@samsung.com>
- <CAL1wa8fj+pYN7EOkh0nggkwss2U9pJhGEoaA7TG+7oy0LK3zFQ@mail.gmail.com>
- <5329BE8C.8000508@samsung.com>
- <CAHfPSqA6gW+-yTj0vp0b3xbWRVFczkx03nO=GCe9ccgXsRtOag@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
+Date: Tue, 08 Apr 2014 11:40:04 +0200
+Message-ID: <1476266.LaBMgo4h3O@amdc1032>
+References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAOesGMgf4owZBCVz4RTgbFVsogws6WKARmA7COkgXVQaG5ky9A@mail.gmail.com>
+ <CAK9yfHz_J+NAtxk-Ec-cW6_u0ukssNGi24HZgGRRXb8Hzz2sig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:33753 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755454AbaDHJd5 convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:37135 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755384AbaDHJkM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 05:33:57 -0400
-In-Reply-To: <CAHfPSqA6gW+-yTj0vp0b3xbWRVFczkx03nO=GCe9ccgXsRtOag@mail.gmail.com>
-Content-Disposition: inline
+	Tue, 8 Apr 2014 05:40:12 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3P003H2HIYUM50@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Apr 2014 18:40:10 +0900 (KST)
+In-reply-to: <CAK9yfHz_J+NAtxk-Ec-cW6_u0ukssNGi24HZgGRRXb8Hzz2sig@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "eduardo.valentin@ti.com" <eduardo.valentin@ti.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amit.daniel@samsung.com" <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "cpgs ." <cpgs@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chander Kashyap <chander.kashyap@linaro.org>
 
-On Thu, Mar 20, 2014 at 02:45:54AM +0000, Naveen Krishna Ch wrote:
-> Hello Tomasz,
+On Tuesday, April 08, 2014 09:27:04 AM Sachin Kamat wrote:
+> On 8 April 2014 00:03, Olof Johansson <olof@lixom.net> wrote:
+> > On Mon, Apr 7, 2014 at 10:44 AM, Bartlomiej Zolnierkiewicz
+> > <b.zolnierkie@samsung.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On Monday, April 07, 2014 09:28:39 AM Olof Johansson wrote:
+> >>> On Fri, Apr 4, 2014 at 9:09 AM, Bartlomiej Zolnierkiewicz
+> >>> <b.zolnierkie@samsung.com> wrote:
+> >>>
+> >>> [...]
+> >
+> > Does 5420 even work upstream? I have hardware access but nothing that
+> > will run an upstream kernel as far as I know. Maybe SLSI has an SMDK
+> > they can help out with?
 > 
-> On 20 March 2014 00:58, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Leela,
-> >
-> >
-> > On 19.03.2014 12:19, Leela Krishna Amudala wrote:
-> >>
-> >> Hi All,
-> >>
-> >> I didn't see this series in mainline, Any comments for this ?
-> >
-> >
-> > Naveen had posted v12 of this series and I believe all the patches got my
-> > Reviewed-by.
-> >
-> > Best regards,
-> > Tomasz
-> Thanks for your reply.
-> These patches are posted to the mailing list quite some time now.
-> Anything i can do to speed up the process.
+> By working upstream if you mean being bootable, then yes I am able to boot both
+> SMDK and Arndale Octa boards based on 5420 with the current upstream kernel.
+> CPU idle however doesn't work though. I get a crash when I hot plug out all
+> secondary CPUs on SMDK.
 
-These patches create 5 thermal zones, one for each sensor.  Due to the
-way the exynos code in drivers/thermal/samsung/exynos_thermal_common.c
-registers thermal zones, each one gets a cpufreq_cooling_device.
-Therefore you end up with 5 thermal zone each of which is controlling
-the cpu frequency.
+Thanks for testing.  This behavior is an expected one given the current code
+(=> we need to disable AFTR on 5420 for now).
 
-Wouldn't it be better to collate these 5 sensors to create one thermal
-zone for the whole SoC?  Maybe a simplistic algorithm like reporting
-the maximum temperature of all the sensors as the thermal zone
-temperature is good enough.
-
-Cheers,
-Javi
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
