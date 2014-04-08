@@ -1,72 +1,54 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: AFTR does not work on arndale 5250
-Date: Tue, 08 Apr 2014 18:47:28 +0200
-Message-ID: <53442820.30501@linaro.org>
-References: <533EAE57.1080202@linaro.org> <5343D709.10708@samsung.com> <CAGm_ybjL-oA_C=VH4MMt_X45hrdKt8GMkwQtq5EJ94TvA4iqYw@mail.gmail.com> <5344075D.2030203@linaro.org> <5344203B.6080702@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH V3 15/17] ARM: exynos: cpuidle: Disable cpuidle for
+ 5440
+Date: Tue, 8 Apr 2014 15:30:08 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1404081527290.1571@knanqh.ubzr>
+References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org> <1396959579-18268-16-git-send-email-daniel.lezcano@linaro.org> <CAP245DUmBVeZqBYDc3mopvs_h5AkcTgjG2eO7z5VAQnUDJJogQ@mail.gmail.com> <5343F7E9.3010304@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:38956 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757249AbaDHQrM (ORCPT
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:40831 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756894AbaDHTaO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 12:47:12 -0400
-Received: by mail-wg0-f47.google.com with SMTP id x12so1246651wgg.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 09:47:11 -0700 (PDT)
-In-Reply-To: <5344203B.6080702@samsung.com>
+	Tue, 8 Apr 2014 15:30:14 -0400
+Received: by mail-qg0-f49.google.com with SMTP id e89so1253321qgf.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 12:30:13 -0700 (PDT)
+In-Reply-To: <5343F7E9.3010304@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, sunil joshi <joshi@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Lists LAKML <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
 
-On 04/08/2014 06:13 PM, Tomasz Figa wrote:
-> Hi Daniel, Vikas, Chander,
->
-> On 08.04.2014 16:27, Daniel Lezcano wrote:
->> On 04/08/2014 03:32 PM, Vikas Sajjan wrote:
->>>   Hi Daniel,
->>>
->>>   I checked AFTR on v3.14 (
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log=
-/?id=3Drefs/tags/v3.14)
->>>
->>>
->>>   on exynos5250 based chromebook (exynos5250-snow.dtb)
->>>
->>> I am able to hotplug CPU1  (echo 0 >
->>> /sys/devices/system/cpu/cpu1/online).
->>> I can see, it enters exynos4_enter_core0_aftr() when I hotplug CPU1=
-=2E
->>
->> Hi,
->>
->> thanks a lot for your help.
->>
->> I reproduced it on my arndale board with linux-samsung/for-next and =
-on
->> v3.14.
->>
->> Used the exynos_defconfig, enabled cpuidle and used
->> exynos5250-arndale.dtb.
->>
->
-> You should compare your bootloader versions as this is one of the
-> aspects that can break AFTR support as it relies on kind of ABI betwe=
-en
-> bootloader and kernel.
+On Tue, 8 Apr 2014, Daniel Lezcano wrote:
 
-U-Boot 2013.01.-rc1 (Jul 10 2013 - 15:16:09) for ARNDALE5250
-gcc-4.7 (Ubuntu/Linaro 4.7.3-1ubuntu1) 4.7.3
-GNU ld (GNU Binutils for Ubuntu) 2.23.2
+> On 04/08/2014 02:51 PM, Amit Kucheria wrote:
+> > On Tue, Apr 8, 2014 at 5:49 PM, Daniel Lezcano
+> > <daniel.lezcano@linaro.org <mailto:daniel.lezcano@linaro.org>> wrote:
+> >
+> >     There is no point to register the cpuidle driver for the 5440 as it
+> >     has only
+> >     one WFI state which is the default idle function when the cpuidle
+> >     driver is
+> >     disabled.
+> >
+> >     By disabling cpuidle we prevent to enter to the governor computation for
+> >     nothing, thus saving a lot of processing time.
+> >
+> >     The only drawback is the statistic via sysfs on this state which is
+> >     lost but
+> >     it is meaningless and it could be retrieved from the ftrace easily.
+> >
+> >
+> > So for the future, you'll only merge platform drivers that enable
+> > something more than WFI?
+> 
+> Well, I already picked up a driver with only WFI because I knew the next idle
+> states were in preparation. But adding a cpuidle driver just for WFI is no
+> sense and if, for a reason I missed, it is really needed, I guess a generic
+> WFI cpuidle driver for all platforms would be make much more sense.
+
+Better relegate WFI-only configurations to arch_cpu_idle().
 
 
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Nicolas
