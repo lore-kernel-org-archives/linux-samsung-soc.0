@@ -1,93 +1,85 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCHv2 3/3] s5p-tv: hdmi: use hdmiphy as PHY
-Date: Tue, 08 Apr 2014 16:37:36 +0200
-Message-ID: <1396967856-27470-4-git-send-email-t.stanislaws@samsung.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH V4 3/5] dt: exynos5420: Enable support for DWC3 controller
+Date: Tue,  8 Apr 2014 20:06:41 +0530
+Message-ID: <1396967803-28868-4-git-send-email-gautam.vivek@samsung.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, rahul.sharma@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, kishon@ti.com
+Cc: k.debski@samsung.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, balbi@ti.com, gautam.vivek@samsung.com, sylvester.nawrocki@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The HDMIPHY (physical interface) is controlled by a single
-bit in a power controller's regiter. It was implemented
-as clock. It was a simple but effective hack.
+Add device tree nodes for DWC3 controller present on
+Exynos 5420 SoC, to enable support for USB 3.0.
 
-This patch makes S5P-HDMI driver to control HDMIPHY via PHY interface.
-
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
- drivers/media/platform/s5p-tv/hdmi_drv.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/media/platform/s5p-tv/hdmi_drv.c b/drivers/media/platform/s5p-tv/hdmi_drv.c
-index 534722c..8013e52 100644
---- a/drivers/media/platform/s5p-tv/hdmi_drv.c
-+++ b/drivers/media/platform/s5p-tv/hdmi_drv.c
-@@ -32,6 +32,7 @@
- #include <linux/clk.h>
- #include <linux/regulator/consumer.h>
- #include <linux/v4l2-dv-timings.h>
-+#include <linux/phy/phy.h>
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index a6efb52..20c2d0b 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -653,6 +653,23 @@
+ 		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+ 	};
  
- #include <media/s5p_hdmi.h>
- #include <media/v4l2-common.h>
-@@ -66,7 +67,7 @@ struct hdmi_resources {
- 	struct clk *sclk_hdmi;
- 	struct clk *sclk_pixel;
- 	struct clk *sclk_hdmiphy;
--	struct clk *hdmiphy;
-+	struct phy *hdmiphy;
- 	struct regulator_bulk_data *regul_bulk;
- 	int regul_count;
- };
-@@ -586,7 +587,7 @@ static int hdmi_resource_poweron(struct hdmi_resources *res)
- 	if (ret < 0)
- 		return ret;
- 	/* power-on hdmi physical interface */
--	clk_enable(res->hdmiphy);
-+	phy_power_on(res->hdmiphy);
- 	/* use VPP as parent clock; HDMIPHY is not working yet */
- 	clk_set_parent(res->sclk_hdmi, res->sclk_pixel);
- 	/* turn clocks on */
-@@ -600,7 +601,7 @@ static void hdmi_resource_poweroff(struct hdmi_resources *res)
- 	/* turn clocks off */
- 	clk_disable(res->sclk_hdmi);
- 	/* power-off hdmiphy */
--	clk_disable(res->hdmiphy);
-+	phy_power_off(res->hdmiphy);
- 	/* turn HDMI power off */
- 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
- }
-@@ -784,7 +785,7 @@ static void hdmi_resources_cleanup(struct hdmi_device *hdev)
- 	/* kfree is NULL-safe */
- 	kfree(res->regul_bulk);
- 	if (!IS_ERR(res->hdmiphy))
--		clk_put(res->hdmiphy);
-+		phy_put(res->hdmiphy);
- 	if (!IS_ERR(res->sclk_hdmiphy))
- 		clk_put(res->sclk_hdmiphy);
- 	if (!IS_ERR(res->sclk_pixel))
-@@ -835,7 +836,7 @@ static int hdmi_resources_init(struct hdmi_device *hdev)
- 		dev_err(dev, "failed to get clock 'sclk_hdmiphy'\n");
- 		goto fail;
- 	}
--	res->hdmiphy = clk_get(dev, "hdmiphy");
-+	res->hdmiphy = phy_get(dev, "hdmiphy");
- 	if (IS_ERR(res->hdmiphy)) {
- 		dev_err(dev, "failed to get clock 'hdmiphy'\n");
- 		goto fail;
++	usb@12000000 {
++		compatible = "samsung,exynos5250-dwusb3";
++		clocks = <&clock 366>;
++		clock-names = "usbdrd30";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		dwc3 {
++			compatible = "synopsys,dwc3";
++			reg = <0x12000000 0x10000>;
++			interrupts = <0 72 0>;
++			phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
++			phy-names = "usb2-phy", "usb3-phy";
++		};
++	};
++
+ 	usbdrd_phy0: phy@12100000 {
+ 		compatible = "samsung,exynos5420-usbdrd-phy";
+ 		reg = <0x12100000 0x100>;
+@@ -663,6 +680,23 @@
+ 		#phy-cells = <1>;
+ 	};
+ 
++	usb@12400000 {
++		compatible = "samsung,exynos5250-dwusb3";
++		clocks = <&clock 367>;
++		clock-names = "usbdrd30";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		dwc3 {
++			compatible = "synopsys,dwc3";
++			reg = <0x12400000 0x10000>;
++			interrupts = <0 73 0>;
++			phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
++			phy-names = "usb2-phy", "usb3-phy";
++		};
++	};
++
+ 	usbdrd_phy1: phy@12500000 {
+ 		compatible = "samsung,exynos5420-usbdrd-phy";
+ 		reg = <0x12500000 0x100>;
 -- 
-1.7.9.5
+1.7.10.4
