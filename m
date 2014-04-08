@@ -1,57 +1,56 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
-Date: Tue, 08 Apr 2014 11:40:04 +0200
-Message-ID: <1476266.LaBMgo4h3O@amdc1032>
-References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
- <CAOesGMgf4owZBCVz4RTgbFVsogws6WKARmA7COkgXVQaG5ky9A@mail.gmail.com>
- <CAK9yfHz_J+NAtxk-Ec-cW6_u0ukssNGi24HZgGRRXb8Hzz2sig@mail.gmail.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] video: exynos: Add a dependency to the menu
+Date: Tue, 8 Apr 2014 12:00:56 +0200
+Message-ID: <20140408120056.57556a00@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37135 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755384AbaDHJkM (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:56387 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750800AbaDHKBD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 05:40:12 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3P003H2HIYUM50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Apr 2014 18:40:10 +0900 (KST)
-In-reply-to: <CAK9yfHz_J+NAtxk-Ec-cW6_u0ukssNGi24HZgGRRXb8Hzz2sig@mail.gmail.com>
+	Tue, 8 Apr 2014 06:01:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chander Kashyap <chander.kashyap@linaro.org>
+To: linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Tuesday, April 08, 2014 09:27:04 AM Sachin Kamat wrote:
-> On 8 April 2014 00:03, Olof Johansson <olof@lixom.net> wrote:
-> > On Mon, Apr 7, 2014 at 10:44 AM, Bartlomiej Zolnierkiewicz
-> > <b.zolnierkie@samsung.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On Monday, April 07, 2014 09:28:39 AM Olof Johansson wrote:
-> >>> On Fri, Apr 4, 2014 at 9:09 AM, Bartlomiej Zolnierkiewicz
-> >>> <b.zolnierkie@samsung.com> wrote:
-> >>>
-> >>> [...]
-> >
-> > Does 5420 even work upstream? I have hardware access but nothing that
-> > will run an upstream kernel as far as I know. Maybe SLSI has an SMDK
-> > they can help out with?
-> 
-> By working upstream if you mean being bootable, then yes I am able to boot both
-> SMDK and Arndale Octa boards based on 5420 with the current upstream kernel.
-> CPU idle however doesn't work though. I get a crash when I hot plug out all
-> secondary CPUs on SMDK.
+All drivers under menu EXYNOS_VIDEO depend on either ARCH_S5PV210 or
+ARCH_EXYNOS, so add these as dependencies to the menu itself. This
+avoids presenting an empty and useless menu on other architectures.
 
-Thanks for testing.  This behavior is an expected one given the current code
-(=> we need to disable AFTR on 5420 for now).
+Then drivers under the menu only need a dependency if they depend on
+one of the supported architectures specifically.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/video/exynos/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-3.15-rc0.orig/drivers/video/exynos/Kconfig	2014-04-07 10:23:07.316226676 +0200
++++ linux-3.15-rc0/drivers/video/exynos/Kconfig	2014-04-08 11:50:17.406723187 +0200
+@@ -4,6 +4,7 @@
+ 
+ menuconfig EXYNOS_VIDEO
+ 	bool "Exynos Video driver support"
++	depends on ARCH_S5PV210 || ARCH_EXYNOS
+ 	help
+ 	  This enables support for EXYNOS Video device.
+ 
+@@ -15,7 +16,6 @@ if EXYNOS_VIDEO
+ 
+ config EXYNOS_MIPI_DSI
+ 	bool "EXYNOS MIPI DSI driver support."
+-	depends on ARCH_S5PV210 || ARCH_EXYNOS
+ 	select GENERIC_PHY
+ 	help
+ 	  This enables support for MIPI-DSI device.
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
