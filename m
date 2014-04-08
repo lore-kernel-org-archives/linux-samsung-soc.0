@@ -1,132 +1,58 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 05/10] ARM: EXYNOS: Move "regs-pmu" header inclusion in
- common.h
-Date: Tue, 08 Apr 2014 18:09:09 +0200
-Message-ID: <53441F25.9080801@samsung.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
- <1396425058-4012-6-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: AFTR does not work on arndale 5250
+Date: Tue, 08 Apr 2014 18:13:47 +0200
+Message-ID: <5344203B.6080702@samsung.com>
+References: <533EAE57.1080202@linaro.org> <5343D709.10708@samsung.com>
+ <CAGm_ybjL-oA_C=VH4MMt_X45hrdKt8GMkwQtq5EJ94TvA4iqYw@mail.gmail.com>
+ <5344075D.2030203@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:37560 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756241AbaDHQJO (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:38104 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932117AbaDHQNw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 12:09:14 -0400
-In-reply-to: <1396425058-4012-6-git-send-email-pankaj.dubey@samsung.com>
+	Tue, 8 Apr 2014 12:13:52 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3P00GP0ZR07370@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Apr 2014 17:13:48 +0100 (BST)
+In-reply-to: <5344075D.2030203@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Vikas Sajjan <sajjan.linux@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, sunil joshi <joshi@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
 
-Hi Pankaj,
+Hi Daniel, Vikas, Chander,
 
-On 02.04.2014 09:50, Pankaj Dubey wrote:
-> There are many machine files under "mach-exynos" including "regs-pmu.h"
-> as well as "common.h", so better we move this header inclusion in common.h.
+On 08.04.2014 16:27, Daniel Lezcano wrote:
+> On 04/08/2014 03:32 PM, Vikas Sajjan wrote:
+>>   Hi Daniel,
+>>
+>>   I checked AFTR on v3.14 (
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/?id=refs/tags/v3.14)
+>>
+>>   on exynos5250 based chromebook (exynos5250-snow.dtb)
+>>
+>> I am able to hotplug CPU1  (echo 0 >
+>> /sys/devices/system/cpu/cpu1/online).
+>> I can see, it enters exynos4_enter_core0_aftr() when I hotplug CPU1.
 >
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->   arch/arm/mach-exynos/common.h  |    1 +
->   arch/arm/mach-exynos/cpuidle.c |    1 -
->   arch/arm/mach-exynos/exynos.c  |    1 -
->   arch/arm/mach-exynos/hotplug.c |    1 -
->   arch/arm/mach-exynos/platsmp.c |    1 -
->   arch/arm/mach-exynos/pm.c      |    1 -
->   arch/arm/mach-exynos/pmu.c     |    1 -
->   7 files changed, 1 insertion(+), 6 deletions(-)
+> Hi,
 >
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 277a83e..ff28334 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -14,6 +14,7 @@
+> thanks a lot for your help.
 >
->   #include <linux/reboot.h>
->   #include <linux/of.h>
-> +#include "regs-pmu.h"
+> I reproduced it on my arndale board with linux-samsung/for-next and on
+> v3.14.
 >
->   void exynos_init_io(void);
->   void exynos_restart(enum reboot_mode mode, const char *cmd);
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index b530231..b9dd8c3 100644
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -29,7 +29,6 @@
->   #include <mach/map.h>
->
->   #include "common.h"
-> -#include "regs-pmu.h"
->
->   #define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
->   			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 57bd1cd..a5e1349 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -30,7 +30,6 @@
->
->   #include "common.h"
->   #include "mfc.h"
-> -#include "regs-pmu.h"
->   #include "regs-sys.h"
->
->   #define L2_AUX_VAL 0x7C470001
-> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-> index 5eead53..33db6ee 100644
-> --- a/arch/arm/mach-exynos/hotplug.c
-> +++ b/arch/arm/mach-exynos/hotplug.c
-> @@ -22,7 +22,6 @@
->   #include <plat/cpu.h>
->
->   #include "common.h"
-> -#include "regs-pmu.h"
->
->   static inline void cpu_enter_lowpower_a9(void)
->   {
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index d8d1555..3ebb03f 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -29,7 +29,6 @@
->   #include <plat/cpu.h>
->
->   #include "common.h"
-> -#include "regs-pmu.h"
->
->   extern void exynos4_secondary_startup(void);
->
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 723c988..875151f 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -34,7 +34,6 @@
->   #include <mach/map.h>
->
->   #include "common.h"
-> -#include "regs-pmu.h"
->   #include "regs-sys.h"
->
->   /**
-> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-> index 05c7ce1..fb44352 100644
-> --- a/arch/arm/mach-exynos/pmu.c
-> +++ b/arch/arm/mach-exynos/pmu.c
-> @@ -16,7 +16,6 @@
->   #include <plat/cpu.h>
->
->   #include "common.h"
-> -#include "regs-pmu.h"
->
->   static const struct exynos_pmu_conf *exynos_pmu_config;
->
+> Used the exynos_defconfig, enabled cpuidle and used exynos5250-arndale.dtb.
 >
 
-I don't think this is a good idea. It adds hidden indirect dependencies 
-between source files and thus reduces maintainability and readability. 
-In addition it causes the file to be included even by files that don't 
-need it.
+You should compare your bootloader versions as this is one of the 
+aspects that can break AFTR support as it relies on kind of ABI between 
+bootloader and kernel.
 
-Best regards,
+Bets regards,
 Tomasz
