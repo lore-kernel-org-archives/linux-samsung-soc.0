@@ -1,43 +1,91 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH V4 4/5] dt: exynos5250: Enable support for generic USB DRD phy
-Date: Tue,  8 Apr 2014 20:06:42 +0530
-Message-ID: <1396967803-28868-5-git-send-email-gautam.vivek@samsung.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, kishon@ti.com
-Cc: gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, sylvester.nawrocki@gmail.com, gautam.vivek@samsung.com
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: [PATCHv2 0/3] phy: Add exynos-simple-phy driver
+Date: Tue, 08 Apr 2014 16:37:33 +0200
+Message-ID: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, rahul.sharma@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add device tree node for new usbdrd-phy driver, which
-is based on generic phy framework.
+Hello everyone,
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+The Samsung SoCs from Exynos family are enhanced with a bunch of devices that
+provide functionality of a physical layer for interfaces like USB, HDMI, SATA,
+etc. They are controlled by a simple interface, often a single bit that enables
+and/or resets the physical layer.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index b7dec41..92c6fcd 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -530,6 +530,16 @@
- 		};
- 	};
- 
-+	usbdrd_phy: phy@12100000 {
-+		compatible = "samsung,exynos5250-usbdrd-phy";
-+		reg = <0x12100000 0x100>;
-+		clocks = <&clock 286>, <&clock 1>;
-+		clock-names = "phy", "ref";
-+		samsung,syscon-phandle = <&pmu_system_controller>;
-+		samsung,pmu-offset = <0x704>;
-+		#phy-cells = <1>;
-+	};
-+
- 	usb@12110000 {
- 		compatible = "samsung,exynos4210-ehci";
- 		reg = <0x12110000 0x100>;
+An IP driver should to control such a controller in an abstract manner.
+Therefore, such 'enablers' were implemented as clocks in older versions of
+Linux kernel.  With the dawn of PHY subsystems, PHYs become a natural way of
+exporting the 'enabler' functionality to drivers.  However, there is an
+unexpected consequence. Some of those 1-bit PHYs were implemented as separate
+drivers.  This means that one has to create a struct device, struct phy, its
+phy provider and 100-150 lines of driver code to basically set one bit.
+
+The DP phy driver is a good example:
+https://lkml.org/lkml/2013/7/18/53
+
+And simple-phy RFC (shares only driver code but not other resources):
+https://lkml.org/lkml/2013/10/21/313
+
+To avoid waste of resources I propose to create all such 1-bit phys from Exynos
+SoC using a single device, driver and phy provider.
+
+This patchset contains a proposed solution.
+
+All comment are welcome.
+
+Hopefully in future the functionality introduced by this patch may be merged
+into a larger Power Management Unit (PMU) gluer driver.  On Samsusng SoC , the
+PMU part contains a number of register barely linked to power management (like
+clock gating, clock dividers, CPU resetting, etc.).  It may be tempting to
+create a hybrid driver that export clocks/phys/etc that are controlled by PMU
+unit.
+
+Alternative solutions might be:
+* exporting a regmap to the IP driver and allow the driver to control the PHY layer
+  like in the patch:
+  http://thread.gmane.org/gmane.linux.kernel.samsung-soc/28617/focus=28648
+
+* create a dedicated power domain for hdmiphy
+
+Regards,
+Tomasz Stanislawski
+
+Changelog:
+v2:
+	* rename to exynos-simple-phy
+	* fix usage of devm_ioremap()
+	* add documentation for DT bindings
+	* add patches to client drivers
+
+v1: initial version
+
+Tomasz Stanislawski (3):
+  phy: Add exynos-simple-phy driver
+  drm: exynos: hdmi: use hdmiphy as PHY
+  s5p-tv: hdmi: use hdmiphy as PHY
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |   24 +++
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   11 +-
+ drivers/media/platform/s5p-tv/hdmi_drv.c           |   11 +-
+ drivers/phy/Kconfig                                |    5 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/exynos-simple-phy.c                    |  154 ++++++++++++++++++++
+ 6 files changed, 196 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/phy/exynos-simple-phy.c
+
 -- 
-1.7.10.4
+1.7.9.5
