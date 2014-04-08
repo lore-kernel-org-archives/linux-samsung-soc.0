@@ -1,177 +1,112 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/7] drm/exynos: add super device support
-Date: Tue, 8 Apr 2014 17:37:52 +0900
-Message-ID: <CAAQKjZPpn2aYxYvisRMUmSManqat+e8EtmSDDXKp4kTSRAXxSQ@mail.gmail.com>
-References: <1396355882-17010-1-git-send-email-inki.dae@samsung.com>
-	<1396355882-17010-2-git-send-email-inki.dae@samsung.com>
-	<533EB9C6.80302@samsung.com>
-	<CAAQKjZPbzb+qvJA5y+Kco9BRv4j3iVatM_0bd+ugyuVZUbfFFg@mail.gmail.com>
-	<53403E42.1010403@gmail.com>
-	<CAAQKjZP+RbkO0yVNEKgWWAkogx+p36HKwVyJ+4EjPHrSOarBwQ@mail.gmail.com>
-	<5342B3AD.1030502@samsung.com>
-	<CAAQKjZNf=Lr=9DwFM4KCia8jeUpsVu-6h9RyfFpqK+8kkDsbgA@mail.gmail.com>
-	<5342C6FA.7060201@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V2 17/17] ARM: exynos: config: Enable cpuidle
+Date: Tue, 08 Apr 2014 11:26:27 +0200
+Message-ID: <4423416.M3qLAeXtKR@amdc1032>
+References: <1396618989-2897-1-git-send-email-daniel.lezcano@linaro.org>
+ <3344539.A0GIVp3yPt@amdc1032>
+ <CAOesGMgf4owZBCVz4RTgbFVsogws6WKARmA7COkgXVQaG5ky9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:54228 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756263AbaDHIhy (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49646 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756561AbaDHJ0d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 04:37:54 -0400
-Received: by mail-wi0-f171.google.com with SMTP id q5so6559670wiv.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 01:37:53 -0700 (PDT)
-In-Reply-To: <5342C6FA.7060201@gmail.com>
+	Tue, 8 Apr 2014 05:26:33 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3P00LYNGW84B60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Apr 2014 18:26:32 +0900 (KST)
+In-reply-to: <CAOesGMgf4owZBCVz4RTgbFVsogws6WKARmA7COkgXVQaG5ky9A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chander Kashyap <chander.kashyap@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>
 
-2014-04-08 0:40 GMT+09:00, Tomasz Figa <tomasz.figa@gmail.com>:
-> On 07.04.2014 17:16, Inki Dae wrote:
->> Hi Andrzej,
->>
->> 2014-04-07 23:18 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->>> Hi Inki and Tomasz,
->>>
->>> On 04/06/2014 05:15 AM, Inki Dae wrote:
->>>
->>> (...)
->>>> The code creating the list of components to wait for
->>>> (exynos_drm_add_components()) doesn't seem to consider which sub-drivers
->>>> are
->>>> actually enabled in kernel config.
->>>>
->>>> Are you sure?
->>>>
->>>> exynos_drm_add_components() will try to attach components *added to
->>>> component_lists. And these components will be added by only
->>>> corresponding sub drivers to the component_lists and
->>>> master->components.
->>>>
->>>> So in this case, if users disabled HDMI support then a commponent
->>>> object for HDMI sub driver doesn't exists in the component_lists and
->>>> master->components. This means that a component object for HDMI sub
->>>> driver *cannot be attached to master object*.
->>>>
->>>> As a result, component_bind_add() will ignor component_bind call for
->>>> HDMI sub driver so HDMI driver will not be bounded. The only
->>>> components added by sub drivers will be bound, component->ops->bind().
->>>>
->>>> For more understanding, it seems like you need to look into below
->>>> codes,
->>>>
->>>> static int exynos_drm_add_components(...)
->>>> {
->>>>          ...
->>>>          for (i == 0;; i++) {
->>>>                  ...
->>>>                  node = of_parse_phandle(np, "ports", i);
->>>>                  ...
->>>>                  ret = component_master_add_child(m, compare_of, node);
->>>>                  ...
->>>>          }
->>>> }
->>>
->>> Hmm, In case HDMI driver is not present, HDMI device is not probed and
->>> HDMI component is not added, so component_master_add_child returns
->>> an error when it tries to add hdmi component and master is never brought
->>> up, am I correct?
->>>
->>
->> Ok, after that,
->>
->> ret = component_master_add(,..)
->> if (ret < 0)
->>           DRM_DEBUG_KMS("re-tried by last sub driver probed later.\n");
->>
->> As you can see above, if component_master_add() is failed, return 0,
->> *not error*. And then component_add() called by other kms drivers,
->> late probing of hdmi or fimd probing - if there is any kms driver
->> enabled - will try to bring up master again by calling
->> try_to_bring_up_master() from beginning.
->>
->> And if component_list is empty then it means that there is no any kms
->> driver enabled.
->>
->> Do you still think in that case, exynos drm initialization will be
->> failed?
->
-> There will be no HDMI driver to call component_add(), because HDMI sub
-> driver will be disabled in kernel config and any previous
-> component_master_add_child() for the phandle pointing to HDMI node will
-> wail, because such component will never be registered.
->
-> The complete failure path is as follows:
->
-> exynos_drm_platform_probe()
-> 	component_master_add()
-> 		try_to_bring_up_master()
-> 			exynos_drm_add_components()
-> 				// phandle to HDMI node
-> 				component_master_add_child()
-> 				= -ENXIO
-> 			= -ENXIO
-> 		= 0 // but no call to master->ops->bind(master->dev);
-> 	= 0
-> = 0 // but Exynos DRM platform is not registered yet
->
-> Now if any other late-probed sub-driver comes, the sequence will be as
-> follows (let's take FIMD as an example):
->
-> fimd_probe()
-> 	component_add()
-> 		try_to_bring_up_masters()
-> 			try_to_bring_up_master()
-> 				exynos_drm_add_components()
-> 					// phandle to HDMI node
-> 					component_master_add_child()
-> 					= -ENXIO
-> 				= -ENXIO
-> 			= 0 // but no call to 	
-> 			    // master->ops->bind(master->dev);
-> 		= 0
-> 	= 0
-> = 0 // but Exynos DRM platform still not registered
->
-> And the same for any late-probed driver, unless HDMI drivers loads, but
-> there is no HDMI driver, because it is disabled in kernel config and not
-> compiled in.
->
+On Monday, April 07, 2014 11:33:57 AM Olof Johansson wrote:
+> On Mon, Apr 7, 2014 at 10:44 AM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi,
+> >
+> > On Monday, April 07, 2014 09:28:39 AM Olof Johansson wrote:
+> >> On Fri, Apr 4, 2014 at 9:09 AM, Bartlomiej Zolnierkiewicz
+> >> <b.zolnierkie@samsung.com> wrote:
+> >>
+> >> [...]
+> >> >   I know that this is mainly our problem but the issue is widespread on
+> >> >   our targets and I believe that adding some workaround for it in cpuidle
+> >> >   core would be beneficial for the whole cpuidle subsystem.
+> >
+> > On the second look at the cpuidle code there is a "cpuidle.off" kernel
+> > parameter which should be sufficient to workaround this particular issue
+> > for now.
+> >
+> >> Yes, we need to find a way forward without you guys holding the whole
+> >> platform hostage with out-of-tree code (here and in general, since I
+> >> think there are more areas in which this applies).
+> >
+> > Please explain this more because I really don't know what you're meaning
+> > here (at least in case of SRPOL I feel that there are no such issues).
+> >
+> > In this particular case we have a problem with a modified uboot bootloader
+> > versions being broken and incompatible with the advanced AFTR cpuidle mode.
+> > This is not the only / main issue preventing AFTR mode and thus EXYNOS
+> > cpuidle driver from being used by default so I really think that the your
+> > comment was unfair.
+> 
+> Holding off features for users of the platform because your firmware
+> is too old (and you can't control the feature per platform) is going
+> to get harder and harder, so being able to enable these kind of things
+> at runtime will be important. I.e. as features go in, it's something
+> that needs to be considered (runtime checking vs ifdef).
 
-Ah, right. I missed that it gets phandle to hdmi, and compares the
-phandle to one in component_list.
-Yes, in this case, exynos drm driver will be failed because
-component_list never has a component object for hdmi.
-So this shouldn't return as long as there is any component - in
-component_list - that can be attached to master.
+In this particular case runtime detection of broken uboot versions is not
+possible, otherwise the issue would have been addressed a long time ago.
 
-Hm.. the foot of the candle is dark.
+Anyway this is not the main problem here and we can deal with it on our
+side (we will just use "cpuidle.off" on our affected targets).
 
-For this, I fixed and tested it like below,
-for (i = 0;; i++) {
-        node = of_parse_phandle(np, "ports", i);
-        ...
-        ret = component_master_add_child(...);
-        ...
-        if (!ret)
-                attached_cnt++;
-}
+> Calling that hostage taking? Yeah, maybe a little on the harsh side.
+> But the problem definitely exists.
 
-if (!attached_cnt)
-        return -ENXIO;
-...
+I don't agree that there is some kind of general problem on our side
+and you've not provided any specific issues that would fall under this
+category.
 
-And one more thing, it seems that we could  resolve dt broken issue
-easily by getting phandle to existing device node directly.
+> >> >  Namely there
+> >> >   should be some way of telling cpuidle subsystem to either disable
+> >> >   particular state(s) or limit the max available state.  I think that this
+> >> >   can be also useful for testing and development of other cpuidle drivers.
+> >> >
+> >> > For now please change this patch to add CONFIG_CPU_IDLE=n instead (since
+> >> > the config option is "default y" it will be auto-enabled if there is no
+> >> > entry in the defconfig)..
+> >>
+> >> Can the code be refactored such that even if CPU_IDLE is on, it won't
+> >> actually do anything useful on the platforms that have problems above?
+> >> I.e. determined at runtime, not build time?
+> >
+> > We can disable AFTR mode by default on EXYNOS4x12 SoCs with secure mode
+> > enabled and EXYNOS5420 SoCs (I would like somebody with the hardware to
+> > verify that AFTR mode is not working first so we have 100% certainty
+> > that we don't regress here).
+> 
+> Does 5420 even work upstream? I have hardware access but nothing that
+> will run an upstream kernel as far as I know. Maybe SLSI has an SMDK
+> they can help out with?
 
-Thanks,
-Inki Dae
+I don't know the current status of 5420.  The initial support was added by
+Linaro (I added Chander and Sachin to cc:).
 
-> Best regards,
-> Tomasz
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+If the upstream support is working to check the AFTR mode one needs to
+enable cpuidle driver (CONFIG_CPU_IDLE=y) and offline all CPUs except CPU0
+(through sysfs using "echo 0 > /sys/devices/system/cpu/cpuX/online").
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
