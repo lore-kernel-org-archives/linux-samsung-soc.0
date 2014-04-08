@@ -1,134 +1,70 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V3 07/17] ARM: exynos: cpuidle: Use the cpu_pm notifier
-Date: Tue,  8 Apr 2014 14:19:29 +0200
-Message-ID: <1396959579-18268-8-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V3 08/17] ARM: exynos: cpuidle: Move scu_enable in the cpu_pm notifier
+Date: Tue,  8 Apr 2014 14:19:30 +0200
+Message-ID: <1396959579-18268-9-git-send-email-daniel.lezcano@linaro.org>
 References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:50196 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756636AbaDHMTh (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:55004 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756627AbaDHMTj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 08:19:37 -0400
-Received: by mail-wi0-f171.google.com with SMTP id q5so6889702wiv.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 05:19:36 -0700 (PDT)
+	Tue, 8 Apr 2014 08:19:39 -0400
+Received: by mail-wg0-f46.google.com with SMTP id b13so844210wgh.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 05:19:38 -0700 (PDT)
 In-Reply-To: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-Use the cpu_pm_enter/exit notifier to group some pm code inside the pm file.
-
-The save and restore code is duplicated across pm.c and cpuidle.c. By using
-the cpu_pm notifier, we can factor out the routine.
+We make the cpuidle code less arch dependent.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/mach-exynos/cpuidle.c |   24 ------------------------
- arch/arm/mach-exynos/pm.c      |   29 +++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 24 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    6 ------
+ arch/arm/mach-exynos/pm.c      |    4 ++++
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 6663349..7f1f4ef 100644
+index 7f1f4ef..ce31004 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -65,26 +65,6 @@ static void exynos_set_wakeupmask(void)
- 	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
- }
+@@ -18,7 +18,6 @@
+ #include <linux/platform_device.h>
  
--static unsigned int g_pwr_ctrl, g_diag_reg;
--
--static void save_cpu_arch_register(void)
--{
--	/*read power control register*/
--	asm("mrc p15, 0, %0, c15, c0, 0" : "=r"(g_pwr_ctrl) : : "cc");
--	/*read diagnostic register*/
--	asm("mrc p15, 0, %0, c15, c0, 1" : "=r"(g_diag_reg) : : "cc");
--	return;
--}
--
--static void restore_cpu_arch_register(void)
--{
--	/*write power control register*/
--	asm("mcr p15, 0, %0, c15, c0, 0" : : "r"(g_pwr_ctrl) : "cc");
--	/*write diagnostic register*/
--	asm("mcr p15, 0, %0, c15, c0, 1" : : "r"(g_diag_reg) : "cc");
--	return;
--}
--
- static int idle_finisher(unsigned long flags)
- {
- 	exynos_set_wakeupmask();
-@@ -106,8 +86,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- {
- 	unsigned long tmp;
+ #include <asm/proc-fns.h>
+-#include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ #include <asm/unified.h>
+ #include <asm/cpuidle.h>
+@@ -93,11 +92,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
  
--	save_cpu_arch_register();
+ 	cpu_pm_enter();
+ 	cpu_suspend(0, idle_finisher);
 -
- 	/* Setting Central Sequence Register for power down mode */
- 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
-@@ -122,8 +100,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- #endif
+-#ifdef CONFIG_SMP
+-	if (!soc_is_exynos5250())
+-		scu_enable(S5P_VA_SCU);
+-#endif
  	cpu_pm_exit();
  
--	restore_cpu_arch_register();
--
  	/*
- 	 * If PMU failed while entering sleep mode, WFI will be
- 	 * ignored by PMU and then exiting cpu_do_idle().
 diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index adfdf4b..67d75fe 100644
+index 67d75fe..aba577f 100644
 --- a/arch/arm/mach-exynos/pm.c
 +++ b/arch/arm/mach-exynos/pm.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/cpu_pm.h>
- #include <linux/io.h>
- #include <linux/irqchip/arm-gic.h>
- #include <linux/err.h>
-@@ -321,10 +322,38 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
- 	.valid		= suspend_valid_only_mem,
- };
+@@ -336,6 +336,10 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
  
-+static int exynos_cpu_pm_notifier(struct notifier_block *self,
-+				  unsigned long cmd, void *v)
-+{
-+	int cpu = smp_processor_id();
-+
-+	switch (cmd) {
-+	case CPU_PM_ENTER:
-+		if (cpu == 0) {
-+			exynos_cpu_save_register();
-+		}
-+		break;
-+
-+	case CPU_PM_EXIT:
-+		if (cpu == 0) {
-+			exynos_cpu_restore_register();
-+		}
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block exynos_cpu_pm_notifier_block = {
-+	.notifier_call = exynos_cpu_pm_notifier,
-+};
-+
- void __init exynos_pm_init(void)
- {
- 	u32 tmp;
- 
-+	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
-+
- 	/* Platform-specific GIC callback */
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
- 
+ 	case CPU_PM_EXIT:
+ 		if (cpu == 0) {
++#ifdef CONFIG_SMP
++			if (!soc_is_exynos5250())
++				scu_enable(S5P_VA_SCU);
++#endif
+ 			exynos_cpu_restore_register();
+ 		}
+ 		break;
 -- 
 1.7.9.5
