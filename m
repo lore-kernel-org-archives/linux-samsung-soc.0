@@ -1,118 +1,74 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V3 14/17] ARM: exynos: cpuidle: Move the boot vector in pm.c
-Date: Tue,  8 Apr 2014 14:19:36 +0200
-Message-ID: <1396959579-18268-15-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V3 15/17] ARM: exynos: cpuidle: Disable cpuidle for 5440
+Date: Tue,  8 Apr 2014 14:19:37 +0200
+Message-ID: <1396959579-18268-16-git-send-email-daniel.lezcano@linaro.org>
 References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:43602 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756227AbaDHMTt (ORCPT
+Received: from mail-we0-f172.google.com ([74.125.82.172]:51554 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756227AbaDHMTv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 08:19:49 -0400
-Received: by mail-wi0-f175.google.com with SMTP id cc10so6901168wib.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 05:19:48 -0700 (PDT)
+	Tue, 8 Apr 2014 08:19:51 -0400
+Received: by mail-we0-f172.google.com with SMTP id t61so860626wes.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 05:19:50 -0700 (PDT)
 In-Reply-To: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-As usual, move the boot vector setting in the pm.c file and use the cpu_pm
-notifier to set it up.
+There is no point to register the cpuidle driver for the 5440 as it has only
+one WFI state which is the default idle function when the cpuidle driver is
+disabled.
 
-Remove the unused headers.
+By disabling cpuidle we prevent to enter to the governor computation for
+nothing, thus saving a lot of processing time.
+
+The only drawback is the statistic via sysfs on this state which is lost but
+it is meaningless and it could be retrieved from the ftrace easily.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/mach-exynos/cpuidle.c |   23 -----------------------
- arch/arm/mach-exynos/pm.c      |   15 +++++++++++++++
- 2 files changed, 15 insertions(+), 23 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    5 -----
+ arch/arm/mach-exynos/exynos.c  |    3 +++
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 44d169b..4b94181 100644
+index 4b94181..a1f111e 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -8,46 +8,23 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <linux/kernel.h>
--#include <linux/init.h>
- #include <linux/cpuidle.h>
- #include <linux/cpu_pm.h>
--#include <linux/io.h>
--#include <linux/export.h>
--#include <linux/time.h>
- #include <linux/platform_device.h>
- 
- #include <asm/proc-fns.h>
+@@ -16,8 +16,6 @@
  #include <asm/suspend.h>
--#include <asm/unified.h>
  #include <asm/cpuidle.h>
  
- #include <plat/cpu.h>
--#include <plat/pm.h>
+-#include <plat/cpu.h>
 -
--#include <mach/map.h>
- 
  #include "common.h"
--#include "regs-pmu.h"
--
--#define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
--#define REG_DIRECTGO_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
  
  static int idle_finisher(unsigned long flags)
+@@ -77,9 +75,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
  {
+ 	int ret;
+ 
+-	if (soc_is_exynos5440())
+-		exynos_idle_driver.state_count = 1;
 -
--	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
--	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
--
- 	/* Set value of power down register for aftr mode */
- 	exynos_sys_powerdown_conf(SYS_AFTR);
--
- 	cpu_do_idle();
--
- 	return 1;
+ 	ret = cpuidle_register(&exynos_idle_driver, NULL);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index b567361..fe8dac8 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -227,6 +227,9 @@ static struct platform_device exynos_cpuidle = {
+ 
+ void __init exynos_cpuidle_init(void)
+ {
++	if (soc_is_exynos5440())
++		return;
++
+ 	platform_device_register(&exynos_cpuidle);
  }
  
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 90fb692..e4ecd8c 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -172,6 +172,20 @@ static void __init exynos5_core_down_clk(void)
- 	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
- }
- 
-+#define EXYNOS_BOOT_VECTOR_ADDR (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-+			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-+			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
-+
-+#define EXYNOS_BOOT_VECTOR_FLAG (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-+			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-+			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
-+
-+static void exynos_cpu_set_boot_vector(void)
-+{
-+	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
-+	__raw_writel(S5P_CHECK_AFTR, EXYNOS_BOOT_VECTOR_FLAG);
-+}
-+
- static int exynos_cpu_suspend(unsigned long arg)
- {
- #ifdef CONFIG_CACHE_L2X0
-@@ -387,6 +401,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 			exynos_cpu_save_register();
- 			exynos_set_wakeupmask();
- 		}
-+		exynos_cpu_set_boot_vector();
- 		break;
- 
- 	case CPU_PM_EXIT:
 -- 
 1.7.9.5
