@@ -1,74 +1,106 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V3 15/17] ARM: exynos: cpuidle: Disable cpuidle for 5440
-Date: Tue,  8 Apr 2014 14:19:37 +0200
-Message-ID: <1396959579-18268-16-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V3 16/17] ARM: exynos: cpuidle: Pass the AFTR callback to the platform_data
+Date: Tue,  8 Apr 2014 14:19:38 +0200
+Message-ID: <1396959579-18268-17-git-send-email-daniel.lezcano@linaro.org>
 References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:51554 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756227AbaDHMTv (ORCPT
+Received: from mail-we0-f179.google.com ([74.125.82.179]:58509 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756227AbaDHMTw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Apr 2014 08:19:51 -0400
-Received: by mail-we0-f172.google.com with SMTP id t61so860626wes.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 05:19:50 -0700 (PDT)
+	Tue, 8 Apr 2014 08:19:52 -0400
+Received: by mail-we0-f179.google.com with SMTP id x48so841585wes.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Apr 2014 05:19:51 -0700 (PDT)
 In-Reply-To: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-There is no point to register the cpuidle driver for the 5440 as it has only
-one WFI state which is the default idle function when the cpuidle driver is
-disabled.
-
-By disabling cpuidle we prevent to enter to the governor computation for
-nothing, thus saving a lot of processing time.
-
-The only drawback is the statistic via sysfs on this state which is lost but
-it is meaningless and it could be retrieved from the ftrace easily.
+No more dependency on the arch code. The platform_data field is used to set the
+PM callback as the other cpuidle drivers.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/mach-exynos/cpuidle.c |    5 -----
- arch/arm/mach-exynos/exynos.c  |    3 +++
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ arch/arm/mach-exynos/common.h  |    1 +
+ arch/arm/mach-exynos/cpuidle.c |    6 ++++--
+ arch/arm/mach-exynos/exynos.c  |    5 +++--
+ arch/arm/mach-exynos/pmu.c     |    6 ++++++
+ 4 files changed, 14 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 9ef3f83..7d9432e 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -62,5 +62,6 @@ struct exynos_pmu_conf {
+ };
+ 
+ extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
++extern void exynos_sys_powerdown_aftr(void);
+ 
+ #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 4b94181..a1f111e 100644
+index a1f111e..25d2fad 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -16,8 +16,6 @@
+@@ -16,12 +16,12 @@
  #include <asm/suspend.h>
  #include <asm/cpuidle.h>
  
--#include <plat/cpu.h>
--
- #include "common.h"
+-#include "common.h"
++static void (*exynos_aftr)(void);
  
  static int idle_finisher(unsigned long flags)
-@@ -77,9 +75,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
+ {
+ 	/* Set value of power down register for aftr mode */
+-	exynos_sys_powerdown_conf(SYS_AFTR);
++	exynos_aftr();
+ 	cpu_do_idle();
+ 	return 1;
+ }
+@@ -75,6 +75,8 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
  {
  	int ret;
  
--	if (soc_is_exynos5440())
--		exynos_idle_driver.state_count = 1;
--
++	exynos_aftr = (void *)(pdev->dev.platform_data);
++
  	ret = cpuidle_register(&exynos_idle_driver, NULL);
  	if (ret) {
  		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
 diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index b567361..fe8dac8 100644
+index fe8dac8..a7ab561 100644
 --- a/arch/arm/mach-exynos/exynos.c
 +++ b/arch/arm/mach-exynos/exynos.c
-@@ -227,6 +227,9 @@ static struct platform_device exynos_cpuidle = {
- 
- void __init exynos_cpuidle_init(void)
- {
-+	if (soc_is_exynos5440())
-+		return;
-+
- 	platform_device_register(&exynos_cpuidle);
+@@ -221,8 +221,9 @@ void exynos_restart(enum reboot_mode mode, const char *cmd)
  }
  
+ static struct platform_device exynos_cpuidle = {
+-	.name		= "exynos_cpuidle",
+-	.id		= -1,
++	.name              = "exynos_cpuidle",
++	.dev.platform_data = exynos_sys_powerdown_aftr,
++	.id                = -1,
+ };
+ 
+ void __init exynos_cpuidle_init(void)
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index 05c7ce1..fd1ae22 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -389,6 +389,12 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+ 	}
+ }
+ 
++/* Set value of power down register for aftr mode */
++void exynos_sys_powerdown_aftr(void)
++{
++	exynos_sys_powerdown_conf(SYS_AFTR);
++}
++
+ static int __init exynos_pmu_init(void)
+ {
+ 	unsigned int value;
 -- 
 1.7.9.5
