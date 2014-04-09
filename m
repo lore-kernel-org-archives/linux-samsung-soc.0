@@ -1,91 +1,83 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 09 Apr 2014 13:14:31 +0200
-Message-ID: <53452B97.8020700@samsung.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
- <534506B1.4040908@samsung.com>
- <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH V4 5/5] usb-phy: samsung-usb3: Remove older
+ phy-samsung-usb3 driver
+Date: Wed, 9 Apr 2014 17:04:46 +0530
+Message-ID: <CAFp+6iGQMS5_YAimBRdV-P2h3LczQEHMq_cXGrOtHJSZqM7UfQ@mail.gmail.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
+ <1396967803-28868-6-git-send-email-gautam.vivek@samsung.com>
+ <53452B59.8030901@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <r.sh.open@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <53452B59.8030901@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Rahul,
+Hi Tomasz,
+'
 
-On 04/09/2014 11:12 AM, Rahul Sharma wrote:
-> Hi Tomasz,
-> 
-> On 9 April 2014 14:07, Andrzej Hajda <a.hajda@samsung.com> wrote:
->> Hi Tomasz,
+On Wed, Apr 9, 2014 at 4:43 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Vivek,
+>
+Thanks for reviewing the patch series.
+
+>
+> On 08.04.2014 16:36, Vivek Gautam wrote:
 >>
->> On 04/08/2014 04:37 PM, Tomasz Stanislawski wrote:
->>> Add exynos-simple-phy driver to support a single register
->>> PHY interfaces present on Exynos4 SoC.
->>>
->>> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-
-[snip]
-
->>> +
->>> +     regs = devm_ioremap(dev, res->start, res->end - res->start);
->>> +     if (!regs) {
->>> +             dev_err(dev, "failed to ioremap registers\n");
->>> +             return -EFAULT;
->>> +     }
+>> Removing this older USB 3.0 DRD controller PHY driver, since
+>> a new driver based on generic phy framework is now available.
 >>
->> Why not devm_ioremap_resource? If not, resource_size function calculates
->> length of resource correctly.
+>> Also removing the dt node for older driver from Exynos5250
+>> device tree and updating the dt node for DWC3 controller.
 >>
->> Anyway I like the idea of implementing multiple phys in one driver.
->> The only drawback I see is that some phys will be created even there are
->> no consumers for them. To avoid such situation you can try to use
->> lazy approach - create phy only if there is request for it,
->> exynos_phy_xlate callback should allow this.
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> ---
 >>
->> Regards
->> Andrzej
+>> NOTE: This patch should be merged only when the new USB 3.0
+>> DRD phy controller driver is available in the tree from the
+>> patches:
+>>         phy: Add new Exynos5 USB 3.0 PHY driver; and
+>>         dt: exynos5250: Enable support for generic USB DRD phy
 >>
-> 
-> Idea looks good. How about keeping compatible which is independent
-> of SoC, something like "samsung,exynos-simple-phy" and provide Reg
-> and Bit through phy provider node. This way we can avoid SoC specific
-> hardcoding in phy driver and don't need to look into dt bindings for
-> each new SoC.
+>>   arch/arm/boot/dts/exynos5250.dtsi  |   17 +-
+>>   drivers/usb/phy/phy-samsung-usb.h  |   83 ---------
+>>   drivers/usb/phy/phy-samsung-usb3.c |  350
+>> ------------------------------------
+>>   3 files changed, 2 insertions(+), 448 deletions(-)
+>>   delete mode 100644 drivers/usb/phy/phy-samsung-usb3.c
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 92c6fcd..1cb1e91 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>
+>
+> IMHO driver and dts changes should be separated into two patches, first
+> updating device tree to use the new driver and second removing the driver.
 
-A very nice idea BUT there is a very strong pressure from DT guys
-to avoid adding any bit fields/offsets/masks in DT nodes.
+Sure will separate the patch into driver and dts change.
 
-Hopefully, as long as driver name starts with "exynos-" prefix
-one can hide SoCs specific tricks deep inside driver code.
-
-The idea behind this driver was not to create a generic phy for 1-bit
-devices but rather to hide SoC-specific issues from client drivers
-like DRM-HDMI.
-
-> 
-> We can use syscon interface to access PMU bits like USB phy.
-> PMU is already registered as system controller
-> 
-
-Ok. I will try to use it in PATCHv3.
-
-> Regards,
-> Rahul Sharma.
-> 
-
-Regards,
-Tomasz Stanislawski
+>
+> After fixing this issue,
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>
+> --
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
