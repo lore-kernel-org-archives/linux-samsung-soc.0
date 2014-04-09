@@ -1,51 +1,44 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCHv2 2/3] drm: exynos: hdmi: use hdmiphy as PHY
-Date: Wed, 9 Apr 2014 16:16:31 +0530
-Message-ID: <CAPdUM4NhP-gcA2CYVEYBzEPztSozmFKjB8X9ep-_MNE7q+ZhkQ@mail.gmail.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
-	<1396967856-27470-3-git-send-email-t.stanislaws@samsung.com>
-	<53452157.9030203@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v7 3/3] ARM: dts: add dts files for xyref5260 board
+Date: Wed, 09 Apr 2014 12:52:02 +0200
+Message-ID: <53452652.7040304@samsung.com>
+References: <1396519224-18712-1-git-send-email-rahul.sharma@samsung.com>
+ <1396519224-18712-4-git-send-email-rahul.sharma@samsung.com>
+ <CAK9yfHwWh9sFivsg-P9wT6DXM2J3nYuHqzgfwuo_Go7S-vriVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:63658 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750784AbaDIKqd (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17052 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932482AbaDIKwK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 06:46:33 -0400
-In-Reply-To: <53452157.9030203@samsung.com>
+	Wed, 9 Apr 2014 06:52:10 -0400
+In-reply-to: <CAK9yfHwWh9sFivsg-P9wT6DXM2J3nYuHqzgfwuo_Go7S-vriVA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-Hi Andrzej,
+On 07.04.2014 10:40, Sachin Kamat wrote:
+> On 3 April 2014 15:30, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> The patch adds the dts files for xyref5260 board which
+>> is based on Exynos5260 Evt0 sample.
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>
+>> +/ {
+>> +       model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
+>> +       compatible = "samsung,xyref5260", "samsung,exynos5260";
+>
+> "samsung,exynos5260" is OK here for future compatibility (if soc
+> specific quirk is required).
+> Please also add "samsung,exynos5" to compatible list.
+>
 
-On 9 April 2014 16:00, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Hi Tomasz,
->
-> On 04/08/2014 04:37 PM, Tomasz Stanislawski wrote:
->> The HDMIPHY (physical interface) is controlled by a single
->> bit in a power controller's regiter. It was implemented
->> as clock. It was a simple but effective hack.
->
-> This power controller register has also bits to control HDMI clock
-> divider ratio. I guess current drivers do not change it, but how do you
-> want to implement access to it if some HDMI driver in the future will
-> need to change ratio. I guess in case of clk it would be easier.
+Right. SoC family compatible string should be added between board and 
+SoC model strings.
 
-If it is really required to change this divider, it should be registered as
-a clock provider in clock driver exposing single divider clock.
-
-Regards,
-Rahul Sharma
-
->
-> Regards
-> Andrzej
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Best regards,
+Tomasz
