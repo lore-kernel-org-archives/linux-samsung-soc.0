@@ -1,44 +1,53 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v7 3/3] ARM: dts: add dts files for xyref5260 board
-Date: Wed, 09 Apr 2014 12:52:02 +0200
-Message-ID: <53452652.7040304@samsung.com>
-References: <1396519224-18712-1-git-send-email-rahul.sharma@samsung.com>
- <1396519224-18712-4-git-send-email-rahul.sharma@samsung.com>
- <CAK9yfHwWh9sFivsg-P9wT6DXM2J3nYuHqzgfwuo_Go7S-vriVA@mail.gmail.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCHv2 2/3] drm: exynos: hdmi: use hdmiphy as PHY
+Date: Wed, 09 Apr 2014 13:05:04 +0200
+Message-ID: <53452960.5070501@samsung.com>
+References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+ <1396967856-27470-3-git-send-email-t.stanislaws@samsung.com>
+ <53452157.9030203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17052 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932482AbaDIKwK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 06:52:10 -0400
-In-reply-to: <CAK9yfHwWh9sFivsg-P9wT6DXM2J3nYuHqzgfwuo_Go7S-vriVA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <53452157.9030203@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, rahul.sharma@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-On 07.04.2014 10:40, Sachin Kamat wrote:
-> On 3 April 2014 15:30, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> The patch adds the dts files for xyref5260 board which
->> is based on Exynos5260 Evt0 sample.
->>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> ---
->
->> +/ {
->> +       model = "SAMSUNG XYREF5260 EVT0 board based on EXYNOS5260";
->> +       compatible = "samsung,xyref5260", "samsung,exynos5260";
->
-> "samsung,exynos5260" is OK here for future compatibility (if soc
-> specific quirk is required).
-> Please also add "samsung,exynos5" to compatible list.
->
+Hi Andrzej,
+This issue could be solved by exporting a regmap from PMU driver
+or Exynos clock provider for the usage by exynos-simple-phy.
+The operations on PHYs from exynos-simple-phy provider would
+be chained to PMU driver and protected by a spinlock in the regmap.
 
-Right. SoC family compatible string should be added between board and 
-SoC model strings.
+Luckily, the divider is not used as far as I know.
 
-Best regards,
-Tomasz
+Regards,
+Tomasz Stanislawski
+
+On 04/09/2014 12:30 PM, Andrzej Hajda wrote:
+> Hi Tomasz,
+> 
+> On 04/08/2014 04:37 PM, Tomasz Stanislawski wrote:
+>> The HDMIPHY (physical interface) is controlled by a single
+>> bit in a power controller's regiter. It was implemented
+>> as clock. It was a simple but effective hack.
+> 
+> This power controller register has also bits to control HDMI clock
+> divider ratio. I guess current drivers do not change it, but how do you
+> want to implement access to it if some HDMI driver in the future will
+> need to change ratio. I guess in case of clk it would be easier.
+> 
+> Regards
+> Andrzej
+> 
+> 
