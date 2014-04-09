@@ -1,189 +1,91 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Wed, 9 Apr 2014 17:19:52 +0530
-Message-ID: <CAFp+6iEzaxCQNkGZWuBnAaAHk0uXrX4KhjVbaJfZFChB6uzk4A@mail.gmail.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
-	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
-	<534529B2.2020107@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] arm: exynos: generalize power register address calculation
+Date: Wed, 09 Apr 2014 13:49:58 +0200
+Message-ID: <534533E6.10901@samsung.com>
+References: <1396973737-18693-1-git-send-email-chander.kashyap@linaro.org>
+ <1397041783-18531-1-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f176.google.com ([209.85.216.176]:63665 "EHLO
-	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932482AbaDILtx (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:10135 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932482AbaDILuD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 07:49:53 -0400
-In-Reply-To: <534529B2.2020107@samsung.com>
+	Wed, 9 Apr 2014 07:50:03 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3R003VEI75WFA0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 Apr 2014 12:49:53 +0100 (BST)
+In-reply-to: <1397041783-18531-1-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, kishon <kishon@ti.com>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: Chander Kashyap <chander.kashyap@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com
 
-Hi,
+Hi Chander,
 
+On 09.04.2014 13:09, Chander Kashyap wrote:
+> Currently status/configuration power register values are hard-coded for cpu1.
+>
+> Make it generic so that it is useful for SoC's with more than two cpus.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> ---
+> changes in v2 : Used existing macros for clusterid and cpuid calculation
+>
+>   arch/arm/mach-exynos/hotplug.c  |   15 ++++++++++++---
+>   arch/arm/mach-exynos/platsmp.c  |   20 +++++++++++++++-----
+>   arch/arm/mach-exynos/regs-pmu.h |    9 +++++++--
+>   3 files changed, 34 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+> index 5eead53..eab6121 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -17,6 +17,7 @@
+>
+>   #include <asm/cacheflush.h>
+>   #include <asm/cp15.h>
+> +#include <asm/cputype.h>
+>   #include <asm/smp_plat.h>
+>
+>   #include <plat/cpu.h>
+> @@ -92,11 +93,19 @@ static inline void cpu_leave_lowpower(void)
+>
+>   static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>   {
+> +	unsigned int mpidr, cpunr, cluster;
+> +
+> +	mpidr = cpu_logical_map(cpu);
+> +	cpunr = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+> +
+> +	/* Maximum possible cpus in a cluster can be 4 */
+> +	cpunr += cluster * 4;
 
-On Wed, Apr 9, 2014 at 4:36 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Vivek,
->
-> Please see my comments inline.
->
->
-> On 08.04.2014 16:36, Vivek Gautam wrote:
->>
->> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->> The new driver uses the generic PHY framework and will interact
->> with DWC3 controller present on Exynos5 series of SoCs.
->> Thereby, removing old phy-samsung-usb3 driver and related code
->> used untill now which was based on usb/phy framework.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> ---
->>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
->>   drivers/phy/Kconfig                                |   11 +
->>   drivers/phy/Makefile                               |    1 +
->>   drivers/phy/phy-exynos5-usbdrd.c                   |  668
->> ++++++++++++++++++++
->>   4 files changed, 722 insertions(+)
->>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
->
->
-> [snip]
->
->
->> +       Additional clock required for Exynos5420:
->> +       - usb30_sclk_100m: Additional special clock used for PHY operation
->> +                          depicted as 'sclk_usbphy30' in CMU of
->> Exynos5420.
->
->
-> Are you sure this isn't simply a gate for the ref clock, as it can be found
-> on another SoC that is not upstream yet? I don't have documentation for
-> Exynos 5420 so I can't tell, but I'd like to ask you to recheck this.
+I believe this is rather a weak assumption. First of all, the limit 
+seems to be hardcoded only for the few existing SoCs. In addition, the 
+value is not used as a maximum, but rather it is assumed that each 
+cluster has always four cores.
 
->From what i can see in the manual :
-sclk_usbphy30 is derived from OSCCLK.
-It is coming from a MUX (default input line to this is OSCCLK)  and
-then through a DIV
-there's this gate.
+Moreover, it is assumed here that the mapping between core ID 
+(calculated by the equation below) and PMU core numbers is 1:1, which is 
+not true. On Exynos4210, the cluster ID is always 0x09 and on Exynos4x12 
+it is 0x0a, which will lead to completely wrong register offsets.
 
-      {OSCCLK  + other sources} --->[MUX] ---> [DIV] --> [GATE for
-sclk_usbphy30]
+I believe the proper way to deal with this is to provide per-CPU 
+property in DT called "samsung,pmu-offset" that could be used be code 
+like this to calculate register addresses properly.
 
-the {rate of sclk_usbphy30} == OSCCLK
+For now, I would recommend doing the above ignoring cluster ID 
+completely to not break (and actually fix) single cluster systems and 
+existing multi cluster ones on which only the first cluster is supported 
+now.
 
-However the 'ref' clock that we have been using is the actual oscillator clock.
-And on SoC Exynos5250, we don't have any such gate (sclk_usbphy30).
-So should this mean that ref clock and sclk_usbphy30 are still be controlled by
-two different gates ?
+After that, per-CPU PMU offset should be implemented to support 
+multi-cluster SoCs with proper support of multiple clusters.
 
->
->
->> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
->> +                         control pmu registers for power isolation.
->> +- samsung,pmu-offset: phy power control register offset to
->> pmu-system-controller
->> +                     base.
->> +- #phy-cells : from the generic PHY bindings, must be 1;
->> +
->> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
->> +compatible PHYs, the second cell in the PHY specifier identifies the
->> +PHY id, which is interpreted as follows:
->> +  0 - UTMI+ type phy,
->> +  1 - PIPE3 type phy,
->> +
->> +Example:
->> +       usb3_phy: usbphy@12100000 {
->> +               compatible = "samsung,exynos5250-usbdrd-phy";
->> +               reg = <0x12100000 0x100>;
->> +               clocks = <&clock 286>, <&clock 1>;
->> +               clock-names = "phy", "usb3phy_refclk";
->
->
-> Binding description above doesn't mention "usb3phy_refclk" entry.
-
-my bad !! will correct this.
-
->
->
->> +               samsung,syscon-phandle = <&pmu_syscon>;
->> +               samsung,pmu-offset = <0x704>;
->> +               #phy-cells = <1>;
->> +       };
->
->
-> [snip]
->
->
->> diff --git a/drivers/phy/phy-exynos5-usbdrd.c
->> b/drivers/phy/phy-exynos5-usbdrd.c
->> new file mode 100644
->> index 0000000..ff54a7c
->> --- /dev/null
->> +++ b/drivers/phy/phy-exynos5-usbdrd.c
->
->
-> [snip]
->
->
->> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct device_node *node = dev->of_node;
->> +       struct exynos5_usbdrd_phy *phy_drd;
->> +       struct phy_provider *phy_provider;
->> +       struct resource *res;
->> +       const struct of_device_id *match;
->> +       const struct exynos5_usbdrd_phy_drvdata *drv_data;
->> +       struct regmap *reg_pmu;
->> +       u32 pmu_offset;
->> +       int i;
->> +
->> +       /*
->> +        * Exynos systems are completely DT enabled,
->> +        * so lets not have any platform data support for this driver.
->> +        */
->> +       if (!node) {
->> +               dev_err(dev, "no device node found\n");
->
->
-> This error message is not very meaningful. I'd rather use something like
-> "This driver can be only instantiated using Device Tree".
-
-Sure, will amend this.
-
->
->
->> +               return -ENODEV;
->> +       }
->> +
->> +       match = of_match_node(exynos5_usbdrd_phy_of_match,
->> pdev->dev.of_node);
->> +       if (!match) {
->> +               dev_err(dev, "of_match_node() failed\n");
->> +               return -EINVAL;
->> +       }
->> +       drv_data = match->data;
->> +
->> +       phy_drd = devm_kzalloc(dev, sizeof(*phy_drd), GFP_KERNEL);
->> +       if (!phy_drd)
->> +               return -ENOMEM;
->> +
->> +       dev_set_drvdata(dev, phy_drd);
->> +       phy_drd->dev = dev;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       phy_drd->reg_phy = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(phy_drd->reg_phy)) {
->> +               dev_err(dev, "Failed to map register memory (phy)\n");
->
->
-> devm_ioremap_resource() already prints an error message.
-Ok, will remove this message.
-
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Tomasz
