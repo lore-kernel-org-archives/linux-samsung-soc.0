@@ -1,72 +1,281 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] usb: ehci-exynos: Return immediately from suspend if
- ehci_suspend fails
-Date: Wed, 09 Apr 2014 14:01:50 +0900
-Message-ID: <000601cf53b0$d17e2b50$747a81f0$%han@samsung.com>
-References: <1397016042-4451-1-git-send-email-gautam.vivek@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
+Date: Wed, 09 Apr 2014 10:37:05 +0200
+Message-ID: <534506B1.4040908@samsung.com>
+References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+ <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1397016042-4451-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: ko
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, rahul.sharma@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, April 09, 2014 1:01 PM, Vivek Gautam wrote:
+Hi Tomasz,
+
+On 04/08/2014 04:37 PM, Tomasz Stanislawski wrote:
+> Add exynos-simple-phy driver to support a single register
+> PHY interfaces present on Exynos4 SoC.
 > 
-> Patch 'b8efdaf USB: EHCI: add check for wakeup/suspend race'
-> adds a check for possible race between suspend and wakeup interrupt,
-> and thereby it returns -EBUSY as error code if there's a wakeup
-> interrupt.
-> So the platform host controller should not proceed further with
-> its suspend callback, rather should return immediately to avoid
-> powering down the essential things, like phy.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-Best regards,
-Jingoo Han
-
+> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 > ---
+>  .../devicetree/bindings/phy/samsung-phy.txt        |   24 +++
+>  drivers/phy/Kconfig                                |    5 +
+>  drivers/phy/Makefile                               |    1 +
+>  drivers/phy/exynos-simple-phy.c                    |  154 ++++++++++++++++++++
+>  4 files changed, 184 insertions(+)
+>  create mode 100644 drivers/phy/exynos-simple-phy.c
 > 
-> Based on 'usb-next' branch of Greg's usb tree.
-> 
->  drivers/usb/host/ehci-exynos.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index d1d8c47..a4550eb 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -212,6 +212,8 @@ static int exynos_ehci_suspend(struct device *dev)
->  	int rc;
-> 
->  	rc = ehci_suspend(hcd, do_wakeup);
-> +	if (rc)
-> +		return rc;
-> 
->  	if (exynos_ehci->otg)
->  		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
-> @@ -221,7 +223,7 @@ static int exynos_ehci_suspend(struct device *dev)
-> 
->  	clk_disable_unprepare(exynos_ehci->clk);
-> 
-> -	return rc;
-> +	return 0;
->  }
-> 
->  static int exynos_ehci_resume(struct device *dev)
-> --
-> 1.7.10.4
+> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> index b422e38..f97c4c3 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> @@ -114,3 +114,27 @@ Example:
+>  		compatible = "samsung,exynos-sataphy-i2c";
+>  		reg = <0x38>;
+>  	};
+> +
+> +Samsung S5P/EXYNOS SoC series SIMPLE PHY
+> +-------------------------------------------------
+> +
+> +Required properties:
+> +- compatible : should be one of the listed compatibles:
+> +	- "samsung,exynos4210-simple-phy"
+> +	- "samsung,exynos4412-simple-phy"
+> +- reg : offset and length of the register set;
+> +- #phy-cells : from the generic phy bindings, must be 1;
+> +
+> +For "samsung,exynos4210-simple-phy" compatible PHYs the second cell in
+> +the PHY specifier identifies the PHY and its meaning is as follows:
+> +  0 - HDMI PHY,
+> +  1 - DAC PHY,
+> +  2 - ADC PHY,
+> +  3 - PCIE PHY.
+> +  4 - SATA PHY.
+> +
+> +For "samsung,exynos4412-simple-phy" compatible PHYs the second cell in
+> +the PHY specifier identifies the PHY and its meaning is as follows:
+> +  0 - HDMI PHY,
+> +  1 - ADC PHY,
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+What about using preprocessor macros?
+
+> +
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 3bb05f1..65ab783 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -166,4 +166,9 @@ config PHY_XGENE
+>  	help
+>  	  This option enables support for APM X-Gene SoC multi-purpose PHY.
+>  
+> +config EXYNOS_SIMPLE_PHY
+> +	tristate "Exynos Simple PHY driver"
+> +	help
+> +	  Support for 1-bit PHY controllers on SoCs from Exynos family.
+> +
+>  endmenu
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index 2faf78e..88c5b60 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -18,3 +18,4 @@ obj-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+>  obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
+> +obj-$(CONFIG_EXYNOS_SIMPLE_PHY)		+= exynos-simple-phy.o
+> diff --git a/drivers/phy/exynos-simple-phy.c b/drivers/phy/exynos-simple-phy.c
+> new file mode 100644
+> index 0000000..57ad338
+> --- /dev/null
+> +++ b/drivers/phy/exynos-simple-phy.c
+> @@ -0,0 +1,154 @@
+> +/*
+> + * Exynos Simple PHY driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Author: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/phy/phy.h>
+> +
+> +#define EXYNOS_PHY_ENABLE	(1 << 0)
+> +
+> +static int exynos_phy_power_on(struct phy *phy)
+> +{
+> +	void __iomem *reg = phy_get_drvdata(phy);
+> +	u32 val;
+> +
+> +	val = readl(reg);
+> +	val |= EXYNOS_PHY_ENABLE;
+> +	writel(val, reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_phy_power_off(struct phy *phy)
+> +{
+> +	void __iomem *reg = phy_get_drvdata(phy);
+> +	u32 val;
+> +
+> +	val = readl(reg);
+> +	val &= ~EXYNOS_PHY_ENABLE;
+> +	writel(val, reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct phy_ops exynos_phy_ops = {
+> +	.power_on	= exynos_phy_power_on,
+> +	.power_off	= exynos_phy_power_off,
+> +	.owner		= THIS_MODULE,
+> +};
+> +
+> +static const u32 exynos4210_offsets[] = {
+> +	0x0700, /* HDMI_PHY */
+> +	0x070C, /* DAC_PHY */
+> +	0x0718, /* ADC_PHY */
+> +	0x071C, /* PCIE_PHY */
+> +	0x0720, /* SATA_PHY */
+> +	~0, /* end mark */
+> +};
+> +
+> +static const u32 exynos4412_offsets[] = {
+> +	0x0700, /* HDMI_PHY */
+> +	0x0718, /* ADC_PHY */
+> +	~0, /* end mark */
+> +};
+
+Why have you selected only these registers?
+According to specs Exynos 4210 has 9 and 4412 has 7 control registers
+with 'phy-enable' functionality.
+I guess MIPI would require little more work as it has also reset bits,
+but it will be still better than separate driver.
+
+> +
+> +static const struct of_device_id exynos_phy_of_match[] = {
+> +	{ .compatible = "samsung,exynos4210-simple-phy",
+> +	  .data = exynos4210_offsets},
+> +	{ .compatible = "samsung,exynos4412-simple-phy",
+> +	  .data = exynos4412_offsets},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_phy_of_match);
+> +
+> +static struct phy *exynos_phy_xlate(struct device *dev,
+> +					struct of_phandle_args *args)
+> +{
+> +	struct phy **phys = dev_get_drvdata(dev);
+> +	int index = args->args[0];
+> +	int i;
+> +
+> +	/* verify if index is valid */
+> +	for (i = 0; i <= index; ++i)
+> +		if (!phys[i])
+> +			return ERR_PTR(-ENODEV);
+> +
+> +	return phys[index];
+> +}
+> +
+> +static int exynos_phy_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *of_id = of_match_device(
+> +		of_match_ptr(exynos_phy_of_match), &pdev->dev);
+> +	const u32 *offsets = of_id->data;
+> +	int count;
+> +	struct device *dev = &pdev->dev;
+> +	struct phy **phys;
+> +	struct resource *res;
+> +	void __iomem *regs;
+> +	int i;
+> +	struct phy_provider *phy_provider;
+> +
+> +	/* count number of phys to create */
+> +	for (count = 0; offsets[count] != ~0; ++count)
+> +		;
+
+count = ARRAY_SIZE(offsets) - 1;
+
+> +
+> +	phys = devm_kzalloc(dev, (count + 1) * sizeof(phys[0]), GFP_KERNEL);
+> +	if (!phys)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, phys);
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +	regs = devm_ioremap(dev, res->start, res->end - res->start);
+> +	if (!regs) {
+> +		dev_err(dev, "failed to ioremap registers\n");
+> +		return -EFAULT;
+> +	}
+
+Why not devm_ioremap_resource? If not, resource_size function calculates
+length of resource correctly.
+
+Anyway I like the idea of implementing multiple phys in one driver.
+The only drawback I see is that some phys will be created even there are
+no consumers for them. To avoid such situation you can try to use
+lazy approach - create phy only if there is request for it,
+exynos_phy_xlate callback should allow this.
+
+Regards
+Andrzej
+
+> +
+> +	/* NOTE: last entry in phys[] is NULL */
+> +	for (i = 0; i < count; ++i) {
+> +		phys[i] = devm_phy_create(dev, &exynos_phy_ops, NULL);
+> +		if (IS_ERR(phys[i])) {
+> +			dev_err(dev, "failed to create PHY %d\n", i);
+> +			return PTR_ERR(phys[i]);
+> +		}
+> +		phy_set_drvdata(phys[i], regs + offsets[i]);
+> +	}
+> +
+> +	phy_provider = devm_of_phy_provider_register(dev, exynos_phy_xlate);
+> +	if (IS_ERR(phy_provider)) {
+> +		dev_err(dev, "failed to register PHY provider\n");
+> +		return PTR_ERR(phy_provider);
+> +	}
+> +
+> +	dev_info(dev, "added %d phys\n", count);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver exynos_phy_driver = {
+> +	.probe	= exynos_phy_probe,
+> +	.driver = {
+> +		.of_match_table	= exynos_phy_of_match,
+> +		.name  = "exynos-simple-phy",
+> +		.owner = THIS_MODULE,
+> +	}
+> +};
+> +module_platform_driver(exynos_phy_driver);
+> +
+> +MODULE_DESCRIPTION("Exynos Simple PHY driver");
+> +MODULE_AUTHOR("Tomasz Stanislawski <t.stanislaws@samsung.com>");
+> +MODULE_LICENSE("GPL v2");
+> 
