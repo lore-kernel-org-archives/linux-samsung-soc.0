@@ -1,73 +1,58 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V3 12/17] ARM: exynos: cpuidle: Move S5P_CHECK_AFTR in a
- header
-Date: Wed, 09 Apr 2014 14:21:34 +0200
-Message-ID: <53453B4E.8000203@samsung.com>
-References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
- <1396959579-18268-13-git-send-email-daniel.lezcano@linaro.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Add facility to toggle vbus gpio on/off
+Date: Wed, 9 Apr 2014 17:54:38 +0530
+Message-ID: <CAFp+6iHf5Ndt3yNbdAaayXi08-A54Sk8LDTiASm4RTw09GuWvg@mail.gmail.com>
+References: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
+	<534538F6.2010009@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22165 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932592AbaDIMVk (ORCPT
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:57496 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932932AbaDIMYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 08:21:40 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3R005KTJO1MCB0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Apr 2014 13:21:37 +0100 (BST)
-In-reply-to: <1396959579-18268-13-git-send-email-daniel.lezcano@linaro.org>
+	Wed, 9 Apr 2014 08:24:39 -0400
+In-Reply-To: <534538F6.2010009@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kishon <kishon@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-Hi Daniel,
+Hi Sylwester,
 
-On 08.04.2014 14:19, Daniel Lezcano wrote:
-> Move the S5P_CHECK_AFTR definition to the header it belongs to.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->   arch/arm/mach-exynos/cpuidle.c  |    2 --
->   arch/arm/mach-exynos/regs-pmu.h |    1 +
->   2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index 81d7197..cd27dbf 100644
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -37,8 +37,6 @@
->   			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
->   			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
->
-> -#define S5P_CHECK_AFTR		0xFCBA0D10
-> -
->   #define EXYNOS5_PWR_CTRL1			(S5P_VA_CMU + 0x01020)
->   #define EXYNOS5_PWR_CTRL2			(S5P_VA_CMU + 0x01024)
->
-> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-> index 4f6a256..09c43c3 100644
-> --- a/arch/arm/mach-exynos/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/regs-pmu.h
-> @@ -120,6 +120,7 @@
->   #define S5P_INT_LOCAL_PWR_EN			0x7
->
->   #define S5P_CHECK_SLEEP				0x00000BAD
-> +#define S5P_CHECK_AFTR				0xFCBA0D10
 
-This is not really a PMU-specific value. It is not a part of the 
-hardware programming interface, but rather a part of the 
-kernel-bootloader ABI used to handle wake-up from low power states. Same 
-applies to S5P_CHECK_SLEEP.
+On Wed, Apr 9, 2014 at 5:41 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Vivek,
+>
+> On 09/04/14 13:54, Vivek Gautam wrote:
+>> Adding support to enable/disable VBUS hooked to a gpio
+>> to enable vbus supply on the port.
+>
+> Does the GPIO control a fixed voltage regulator ? If so, shouldn't
+> it be modelled by the regulator API instead ?
 
-I believe the proper place for such definitions would be the source file 
-using it, which after patch 14/17 would be pm.c.
+No, this GPIO controls a 'current limiting power distribution switch',
+which gives the output vbus to usb controller.
+Should i model this as a fixed regulator ?
 
-Best regards,
-Tomasz
+>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> [...]
+>> +     /* Get required GPIO for vbus */
+>> +     phy_drd->gpio = of_get_named_gpio(dev->of_node,
+>> +                                       "samsung,vbus-gpio", 0);
+>> +     if (!gpio_is_valid(phy_drd->gpio))
+>> +             dev_dbg(dev, "no usbdrd-phy vbus gpio defined\n");
+>> +
+>> +     if (devm_gpio_request(dev, phy_drd->gpio, "phydrd_vbus_gpio"))
+>> +             dev_dbg(dev, "can't request usbdrd-phy vbus gpio %d\n",
+>> +                     phy_drd->gpio);
+>
+> --
+> Regards,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
