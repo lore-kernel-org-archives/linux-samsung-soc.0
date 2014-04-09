@@ -1,39 +1,68 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 09 Apr 2014 12:01:04 +0200
-Message-ID: <53451A60.4050803@samsung.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
- <534506B1.4040908@samsung.com>
- <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v7 2/3] ARM: dts: add dts files for exynos5260 SoC
+Date: Wed, 09 Apr 2014 12:29:31 +0200
+Message-ID: <5345210B.5070807@samsung.com>
+References: <1396519224-18712-1-git-send-email-rahul.sharma@samsung.com>
+ <1396519224-18712-3-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>, sunil joshi <joshi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:62716 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750784AbaDIK3h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Apr 2014 06:29:37 -0400
+In-reply-to: <1396519224-18712-3-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Arun Kumar K <arun.kk@samsung.com>
 
-Hi,
+Hi Rahul,
 
-On 09/04/14 11:12, Rahul Sharma wrote:
-> Idea looks good. How about keeping compatible which is independent
-> of SoC, something like "samsung,exynos-simple-phy" and provide Reg
-> and Bit through phy provider node. This way we can avoid SoC specific
-> hardcoding in phy driver and don't need to look into dt bindings for
-> each new SoC.
+On 03.04.2014 12:00, Rahul Sharma wrote:
+> The patch adds the dts files for exynos5260.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos5260-pinctrl.dtsi |  574 +++++++++++++++++++++++++++++
+>   arch/arm/boot/dts/exynos5260.dtsi         |  304 +++++++++++++++
+>   2 files changed, 878 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+>   create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
 
-I believe it is a not recommended approach.
+[snip]
 
-> We can use syscon interface to access PMU bits like USB phy.
-> PMU is already registered as system controller
+> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+> new file mode 100644
+> index 0000000..188a2ac
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5260.dtsi
+> @@ -0,0 +1,304 @@
+> +/*
+> + * SAMSUNG EXYNOS5260 SoC device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include "skeleton.dtsi"
+> +
+> +#include <dt-bindings/clock/exynos5260-clk.h>
+> +
+> +/ {
+> +	compatible = "samsung,exynos5260";
 
-Yes, that sounds good. This way we could avoid overlapping memory
-mapped register regions specified in 'reg' properties in the device
-tree.
+Since Sachin's patches, "samsung,exynos5" compatible should be also 
+added, before the more specific ones.
 
--- 
-Thanks,
-Sylwester
+Best regards,
+Tomasz
