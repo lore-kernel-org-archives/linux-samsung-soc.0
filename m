@@ -1,85 +1,58 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V4 3/5] dt: exynos5420: Enable support for DWC3 controller
-Date: Wed, 09 Apr 2014 13:11:06 +0200
-Message-ID: <53452ACA.1040008@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V4 4/5] dt: exynos5250: Enable support for generic USB DRD
+ phy
+Date: Wed, 09 Apr 2014 13:11:26 +0200
+Message-ID: <53452ADE.2000609@samsung.com>
 References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
- <1396967803-28868-4-git-send-email-gautam.vivek@samsung.com>
+ <1396967803-28868-5-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1396967803-28868-4-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, kishon@ti.com
-Cc: gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, sylvester.nawrocki@gmail.com
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1396967803-28868-5-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 08.04.2014 16:36, Vivek Gautam wrote:
-> Add device tree nodes for DWC3 controller present on
-> Exynos 5420 SoC, to enable support for USB 3.0.
+> Add device tree node for new usbdrd-phy driver, which
+> is based on generic phy framework.
 >
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->   arch/arm/boot/dts/exynos5420.dtsi |   34 ++++++++++++++++++++++++++++++++++
->   1 file changed, 34 insertions(+)
+>   arch/arm/boot/dts/exynos5250.dtsi |   10 ++++++++++
+>   1 file changed, 10 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index a6efb52..20c2d0b 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -653,6 +653,23 @@
->   		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index b7dec41..92c6fcd 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -530,6 +530,16 @@
+>   		};
 >   	};
 >
-> +	usb@12000000 {
-> +		compatible = "samsung,exynos5250-dwusb3";
-> +		clocks = <&clock 366>;
-> +		clock-names = "usbdrd30";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		dwc3 {
-> +			compatible = "synopsys,dwc3";
-> +			reg = <0x12000000 0x10000>;
-> +			interrupts = <0 72 0>;
-> +			phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
-> +			phy-names = "usb2-phy", "usb3-phy";
-> +		};
+> +	usbdrd_phy: phy@12100000 {
+> +		compatible = "samsung,exynos5250-usbdrd-phy";
+> +		reg = <0x12100000 0x100>;
+> +		clocks = <&clock 286>, <&clock 1>;
+> +		clock-names = "phy", "ref";
+> +		samsung,syscon-phandle = <&pmu_system_controller>;
+> +		samsung,pmu-offset = <0x704>;
+> +		#phy-cells = <1>;
 > +	};
 > +
->   	usbdrd_phy0: phy@12100000 {
->   		compatible = "samsung,exynos5420-usbdrd-phy";
->   		reg = <0x12100000 0x100>;
-> @@ -663,6 +680,23 @@
->   		#phy-cells = <1>;
->   	};
->
-> +	usb@12400000 {
-> +		compatible = "samsung,exynos5250-dwusb3";
-> +		clocks = <&clock 367>;
-> +		clock-names = "usbdrd30";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		dwc3 {
-> +			compatible = "synopsys,dwc3";
-> +			reg = <0x12400000 0x10000>;
-> +			interrupts = <0 73 0>;
-> +			phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
-> +			phy-names = "usb2-phy", "usb3-phy";
-> +		};
-> +	};
-> +
->   	usbdrd_phy1: phy@12500000 {
->   		compatible = "samsung,exynos5420-usbdrd-phy";
->   		reg = <0x12500000 0x100>;
+>   	usb@12110000 {
+>   		compatible = "samsung,exynos4210-ehci";
+>   		reg = <0x12110000 0x100>;
 >
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 --
 Best regards,
 Tomasz
-
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
