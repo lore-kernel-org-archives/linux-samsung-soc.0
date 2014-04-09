@@ -1,53 +1,136 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCHv2 2/3] drm: exynos: hdmi: use hdmiphy as PHY
-Date: Wed, 09 Apr 2014 13:05:04 +0200
-Message-ID: <53452960.5070501@samsung.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-3-git-send-email-t.stanislaws@samsung.com>
- <53452157.9030203@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Wed, 09 Apr 2014 13:06:26 +0200
+Message-ID: <534529B2.2020107@samsung.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
+ <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53452157.9030203@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, rahul.sharma@samsung.com
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1396967803-28868-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
-This issue could be solved by exporting a regmap from PMU driver
-or Exynos clock provider for the usage by exynos-simple-phy.
-The operations on PHYs from exynos-simple-phy provider would
-be chained to PMU driver and protected by a spinlock in the regmap.
+Hi Vivek,
 
-Luckily, the divider is not used as far as I know.
+Please see my comments inline.
 
-Regards,
-Tomasz Stanislawski
+On 08.04.2014 16:36, Vivek Gautam wrote:
+> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+> The new driver uses the generic PHY framework and will interact
+> with DWC3 controller present on Exynos5 series of SoCs.
+> Thereby, removing old phy-samsung-usb3 driver and related code
+> used untill now which was based on usb/phy framework.
+>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
+>   drivers/phy/Kconfig                                |   11 +
+>   drivers/phy/Makefile                               |    1 +
+>   drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
+>   4 files changed, 722 insertions(+)
+>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
 
-On 04/09/2014 12:30 PM, Andrzej Hajda wrote:
-> Hi Tomasz,
-> 
-> On 04/08/2014 04:37 PM, Tomasz Stanislawski wrote:
->> The HDMIPHY (physical interface) is controlled by a single
->> bit in a power controller's regiter. It was implemented
->> as clock. It was a simple but effective hack.
-> 
-> This power controller register has also bits to control HDMI clock
-> divider ratio. I guess current drivers do not change it, but how do you
-> want to implement access to it if some HDMI driver in the future will
-> need to change ratio. I guess in case of clk it would be easier.
-> 
-> Regards
-> Andrzej
-> 
-> 
+[snip]
+
+> +	Additional clock required for Exynos5420:
+> +	- usb30_sclk_100m: Additional special clock used for PHY operation
+> +			   depicted as 'sclk_usbphy30' in CMU of Exynos5420.
+
+Are you sure this isn't simply a gate for the ref clock, as it can be 
+found on another SoC that is not upstream yet? I don't have 
+documentation for Exynos 5420 so I can't tell, but I'd like to ask you 
+to recheck this.
+
+> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
+> +			  control pmu registers for power isolation.
+> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+> +		      base.
+> +- #phy-cells : from the generic PHY bindings, must be 1;
+> +
+> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
+> +compatible PHYs, the second cell in the PHY specifier identifies the
+> +PHY id, which is interpreted as follows:
+> +  0 - UTMI+ type phy,
+> +  1 - PIPE3 type phy,
+> +
+> +Example:
+> +	usb3_phy: usbphy@12100000 {
+> +		compatible = "samsung,exynos5250-usbdrd-phy";
+> +		reg = <0x12100000 0x100>;
+> +		clocks = <&clock 286>, <&clock 1>;
+> +		clock-names = "phy", "usb3phy_refclk";
+
+Binding description above doesn't mention "usb3phy_refclk" entry.
+
+> +		samsung,syscon-phandle = <&pmu_syscon>;
+> +		samsung,pmu-offset = <0x704>;
+> +		#phy-cells = <1>;
+> +	};
+
+[snip]
+
+> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+> new file mode 100644
+> index 0000000..ff54a7c
+> --- /dev/null
+> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+
+[snip]
+
+> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+> +	struct exynos5_usbdrd_phy *phy_drd;
+> +	struct phy_provider *phy_provider;
+> +	struct resource *res;
+> +	const struct of_device_id *match;
+> +	const struct exynos5_usbdrd_phy_drvdata *drv_data;
+> +	struct regmap *reg_pmu;
+> +	u32 pmu_offset;
+> +	int i;
+> +
+> +	/*
+> +	 * Exynos systems are completely DT enabled,
+> +	 * so lets not have any platform data support for this driver.
+> +	 */
+> +	if (!node) {
+> +		dev_err(dev, "no device node found\n");
+
+This error message is not very meaningful. I'd rather use something like 
+"This driver can be only instantiated using Device Tree".
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	match = of_match_node(exynos5_usbdrd_phy_of_match, pdev->dev.of_node);
+> +	if (!match) {
+> +		dev_err(dev, "of_match_node() failed\n");
+> +		return -EINVAL;
+> +	}
+> +	drv_data = match->data;
+> +
+> +	phy_drd = devm_kzalloc(dev, sizeof(*phy_drd), GFP_KERNEL);
+> +	if (!phy_drd)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, phy_drd);
+> +	phy_drd->dev = dev;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	phy_drd->reg_phy = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(phy_drd->reg_phy)) {
+> +		dev_err(dev, "Failed to map register memory (phy)\n");
+
+devm_ioremap_resource() already prints an error message.
+
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
