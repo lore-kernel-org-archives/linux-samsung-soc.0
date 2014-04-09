@@ -1,35 +1,44 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCHv2 2/3] drm: exynos: hdmi: use hdmiphy as PHY
-Date: Wed, 09 Apr 2014 12:30:47 +0200
-Message-ID: <53452157.9030203@samsung.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-3-git-send-email-t.stanislaws@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v6 2/3] ARM: dts: add dts files for exynos5260 SoC
+Date: Wed, 9 Apr 2014 16:10:45 +0530
+Message-ID: <CAK9yfHw+CncWpZ3NEtV7dGhx4LS7Wymw3TAweOXKCU9HShcXsg@mail.gmail.com>
+References: <1396502277-19588-1-git-send-email-rahul.sharma@samsung.com>
+	<1396502277-19588-3-git-send-email-rahul.sharma@samsung.com>
+	<CAK9yfHzBH9rTjJXPMM_OZhnVgpSY1Pj1Ne7Jy-v6zbp8g91zkA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:62808 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750784AbaDIKax (ORCPT
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:35146 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750784AbaDIKkp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 06:30:53 -0400
-In-reply-to: <1396967856-27470-3-git-send-email-t.stanislaws@samsung.com>
+	Wed, 9 Apr 2014 06:40:45 -0400
+Received: by mail-oa0-f52.google.com with SMTP id l6so2499326oag.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Apr 2014 03:40:45 -0700 (PDT)
+In-Reply-To: <CAK9yfHzBH9rTjJXPMM_OZhnVgpSY1Pj1Ne7Jy-v6zbp8g91zkA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, rahul.sharma@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Arun Kumar K <arun.kk@samsung.com>
 
-Hi Tomasz,
+On 7 April 2014 14:14, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 3 April 2014 10:47, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> The patch adds the dts files for exynos5260.
+>>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> ---
+> <snip>
+>
+>> +/ {
+>> +       compatible = "samsung,exynos5260";
+>
+> Add "samsung,exynos5260" to the above list.
 
-On 04/08/2014 04:37 PM, Tomasz Stanislawski wrote:
-> The HDMIPHY (physical interface) is controlled by a single
-> bit in a power controller's regiter. It was implemented
-> as clock. It was a simple but effective hack.
+Sorry for the typo. Should have been "samsung,exynos5" as mentioned by Tomasz.
 
-This power controller register has also bits to control HDMI clock
-divider ratio. I guess current drivers do not change it, but how do you
-want to implement access to it if some HDMI driver in the future will
-need to change ratio. I guess in case of clk it would be easier.
-
-Regards
-Andrzej
+-- 
+With warm regards,
+Sachin
