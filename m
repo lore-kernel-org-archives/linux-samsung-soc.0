@@ -1,83 +1,116 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V3 11/17] ARM: exynos: cpuidle: Move the power sequence
- call in the cpu_pm notifier
-Date: Wed, 09 Apr 2014 15:33:57 +0200
-Message-ID: <53454C45.8070004@linaro.org>
-References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org> <1396959579-18268-12-git-send-email-daniel.lezcano@linaro.org> <53453A4A.1000704@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] arm: exynos: generalize power register address calculation
+Date: Wed, 9 Apr 2014 19:19:35 +0530
+Message-ID: <CANuQgHEdks=OwF=N3LULmxujAeVVcLW3H++ixVZ3REfSrOieQA@mail.gmail.com>
+References: <1396973737-18693-1-git-send-email-chander.kashyap@linaro.org>
+	<1397041783-18531-1-git-send-email-chander.kashyap@linaro.org>
+	<534533E6.10901@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:55911 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933287AbaDINdm (ORCPT
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:64089 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932748AbaDINtg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 09:33:42 -0400
-Received: by mail-wi0-f181.google.com with SMTP id hm4so3203051wib.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Apr 2014 06:33:41 -0700 (PDT)
-In-Reply-To: <53453A4A.1000704@samsung.com>
+	Wed, 9 Apr 2014 09:49:36 -0400
+Received: by mail-oa0-f48.google.com with SMTP id m1so2709359oag.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Apr 2014 06:49:36 -0700 (PDT)
+In-Reply-To: <534533E6.10901@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 04/09/2014 02:17 PM, Tomasz Figa wrote:
-> Hi Daniel,
+Hi Tomasz,
+
+On 9 April 2014 17:19, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Chander,
 >
-> On 08.04.2014 14:19, Daniel Lezcano wrote:
->> The code to initiate and exit the powerdown sequence is the same in
->> pm.c and
->> cpuidle.c.
+>
+> On 09.04.2014 13:09, Chander Kashyap wrote:
 >>
->> Let's split the common part in the pm.c and reuse it from the cpu_pm
->> notifier.
+>> Currently status/configuration power register values are hard-coded for
+>> cpu1.
 >>
->> That is one more step forward to make the cpuidle driver arch
->> indenpendant.
+>> Make it generic so that it is useful for SoC's with more than two cpus.
 >>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
->> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
 >> ---
->>   arch/arm/mach-exynos/cpuidle.c |   21 ---------------------
->>   arch/arm/mach-exynos/pm.c      |   22 ++++++++++++++++++----
->>   2 files changed, 18 insertions(+), 25 deletions(-)
->
-> [snip]
->
->> -static int exynos_pm_suspend(void)
->> +static void exynos_pm_central_suspend(void)
+>> changes in v2 : Used existing macros for clusterid and cpuid calculation
+>>
+>>   arch/arm/mach-exynos/hotplug.c  |   15 ++++++++++++---
+>>   arch/arm/mach-exynos/platsmp.c  |   20 +++++++++++++++-----
+>>   arch/arm/mach-exynos/regs-pmu.h |    9 +++++++--
+>>   3 files changed, 34 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>> b/arch/arm/mach-exynos/hotplug.c
+>> index 5eead53..eab6121 100644
+>> --- a/arch/arm/mach-exynos/hotplug.c
+>> +++ b/arch/arm/mach-exynos/hotplug.c
+>> @@ -17,6 +17,7 @@
+>>
+>>   #include <asm/cacheflush.h>
+>>   #include <asm/cp15.h>
+>> +#include <asm/cputype.h>
+>>   #include <asm/smp_plat.h>
+>>
+>>   #include <plat/cpu.h>
+>> @@ -92,11 +93,19 @@ static inline void cpu_leave_lowpower(void)
+>>
+>>   static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
 >>   {
->>       unsigned long tmp;
->>
->>       /* Setting Central Sequence Register for power down mode */
->> -
->>       tmp =3D __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
->>       tmp &=3D ~S5P_CENTRAL_LOWPWR_CFG;
->>       __raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
->> +}
+>> +       unsigned int mpidr, cpunr, cluster;
 >> +
->> +static int exynos_pm_suspend(void)
->> +{
->> +    unsigned long tmp;
->>
+>> +       mpidr = cpu_logical_map(cpu);
+>> +       cpunr = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +       cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +       /* Maximum possible cpus in a cluster can be 4 */
+>> +       cpunr += cluster * 4;
 >
-> Shouldn't exynos_pm_central_suspend() be called here in place of the
-> code being moved to that function?
+>
+> I believe this is rather a weak assumption. First of all, the limit seems to
+> be hardcoded only for the few existing SoCs. In addition, the value is not
+> used as a maximum, but rather it is assumed that each cluster has always
+> four cores.
 
-Right. Good catch !
+The MPIDR register contains 2 bits for cpu id. Hence maximum number of
+cpus can be 4 only (A15/A9/A7).
 
-Thanks
+>
+> Moreover, it is assumed here that the mapping between core ID (calculated by
+> the equation below) and PMU core numbers is 1:1, which is not true. On
+> Exynos4210, the cluster ID is always 0x09 and on Exynos4x12 it is 0x0a,
+> which will lead to completely wrong register offsets.
 
-   -- Daniel
+Exynos4210 and Exynos4x12, cluster ids are not passed from DT as it
+breaks the gic_init_bases. Hence the Physical CpuID for Exynos4210
+will be 0,1 and Exynos4x12 will be 0,1,2,3.
+
+So it will not break.
+
+
+>
+> I believe the proper way to deal with this is to provide per-CPU property in
+> DT called "samsung,pmu-offset" that could be used be code like this to
+> calculate register addresses properly.
+>
+> For now, I would recommend doing the above ignoring cluster ID completely to
+> not break (and actually fix) single cluster systems and existing multi
+> cluster ones on which only the first cluster is supported now.
+>
+> After that, per-CPU PMU offset should be implemented to support
+> multi-cluster SoCs with proper support of multiple clusters.
+
+As of now the smp-boot (cores > 2) is broken. This is required to fix it.
+
+>
+> Best regards,
+> Tomasz
 
 
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+-- 
+with warm regards,
+Chander Kashyap
