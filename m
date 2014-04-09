@@ -1,24 +1,25 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V3 14/17] ARM: exynos: cpuidle: Move the boot vector in pm.c
-Date: Wed, 09 Apr 2014 14:27:25 +0200
-Message-ID: <53453CAD.9050000@samsung.com>
+Subject: Re: [PATCH V3 16/17] ARM: exynos: cpuidle: Pass the AFTR callback to
+ the platform_data
+Date: Wed, 09 Apr 2014 14:29:02 +0200
+Message-ID: <53453D0E.40904@samsung.com>
 References: <1396959579-18268-1-git-send-email-daniel.lezcano@linaro.org>
- <1396959579-18268-15-git-send-email-daniel.lezcano@linaro.org>
+ <1396959579-18268-17-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:15660 "EHLO
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:15723 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932932AbaDIM1c (ORCPT
+	with ESMTP id S932932AbaDIM3H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Apr 2014 08:27:32 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+	Wed, 9 Apr 2014 08:29:07 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
  by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3R006T3JXRDMB0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Apr 2014 13:27:27 +0100 (BST)
-In-reply-to: <1396959579-18268-15-git-send-email-daniel.lezcano@linaro.org>
+ 17 2011)) with ESMTP id <0N3R00G53K0GJH00@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 Apr 2014 13:29:04 +0100 (BST)
+In-reply-to: <1396959579-18268-17-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, kgene.kim@samsung.com
@@ -27,108 +28,89 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lin
 Hi Daniel,
 
 On 08.04.2014 14:19, Daniel Lezcano wrote:
-> As usual, move the boot vector setting in the pm.c file and use the cpu_pm
-> notifier to set it up.
->
-> Remove the unused headers.
+> No more dependency on the arch code. The platform_data field is used to set the
+> PM callback as the other cpuidle drivers.
 >
 > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->   arch/arm/mach-exynos/cpuidle.c |   23 -----------------------
->   arch/arm/mach-exynos/pm.c      |   15 +++++++++++++++
->   2 files changed, 15 insertions(+), 23 deletions(-)
+>   arch/arm/mach-exynos/common.h  |    1 +
+>   arch/arm/mach-exynos/cpuidle.c |    6 ++++--
+>   arch/arm/mach-exynos/exynos.c  |    5 +++--
+>   arch/arm/mach-exynos/pmu.c     |    6 ++++++
+>   4 files changed, 14 insertions(+), 4 deletions(-)
 >
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 9ef3f83..7d9432e 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -62,5 +62,6 @@ struct exynos_pmu_conf {
+>   };
+>
+>   extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+> +extern void exynos_sys_powerdown_aftr(void);
+>
+>   #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
 > diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index 44d169b..4b94181 100644
+> index a1f111e..25d2fad 100644
 > --- a/arch/arm/mach-exynos/cpuidle.c
 > +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -8,46 +8,23 @@
->    * published by the Free Software Foundation.
->   */
->
-> -#include <linux/kernel.h>
-> -#include <linux/init.h>
->   #include <linux/cpuidle.h>
->   #include <linux/cpu_pm.h>
-> -#include <linux/io.h>
-> -#include <linux/export.h>
-> -#include <linux/time.h>
->   #include <linux/platform_device.h>
->
->   #include <asm/proc-fns.h>
+> @@ -16,12 +16,12 @@
 >   #include <asm/suspend.h>
-> -#include <asm/unified.h>
 >   #include <asm/cpuidle.h>
 >
->   #include <plat/cpu.h>
-> -#include <plat/pm.h>
-> -
-> -#include <mach/map.h>
->
->   #include "common.h"
-> -#include "regs-pmu.h"
-> -
-> -#define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
-> -			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-> -			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
-> -#define REG_DIRECTGO_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
-> -			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-> -			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
+> -#include "common.h"
+> +static void (*exynos_aftr)(void);
 >
 >   static int idle_finisher(unsigned long flags)
 >   {
-> -
-> -	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
-> -	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
-> -
 >   	/* Set value of power down register for aftr mode */
->   	exynos_sys_powerdown_conf(SYS_AFTR);
-> -
+> -	exynos_sys_powerdown_conf(SYS_AFTR);
+> +	exynos_aftr();
 >   	cpu_do_idle();
-> -
 >   	return 1;
 >   }
+> @@ -75,6 +75,8 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
+>   {
+>   	int ret;
 >
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 90fb692..e4ecd8c 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -172,6 +172,20 @@ static void __init exynos5_core_down_clk(void)
->   	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+> +	exynos_aftr = (void *)(pdev->dev.platform_data);
+> +
+>   	ret = cpuidle_register(&exynos_idle_driver, NULL);
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index fe8dac8..a7ab561 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -221,8 +221,9 @@ void exynos_restart(enum reboot_mode mode, const char *cmd)
 >   }
 >
-> +#define EXYNOS_BOOT_VECTOR_ADDR (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-> +			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-> +			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
-> +
-> +#define EXYNOS_BOOT_VECTOR_FLAG (samsung_rev() == EXYNOS4210_REV_1_1 ? \
-> +			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
-> +			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
-> +
-> +static void exynos_cpu_set_boot_vector(void)
+>   static struct platform_device exynos_cpuidle = {
+> -	.name		= "exynos_cpuidle",
+> -	.id		= -1,
+> +	.name              = "exynos_cpuidle",
+> +	.dev.platform_data = exynos_sys_powerdown_aftr,
+> +	.id                = -1,
+>   };
+>
+>   void __init exynos_cpuidle_init(void)
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index 05c7ce1..fd1ae22 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -389,6 +389,12 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>   	}
+>   }
+>
+> +/* Set value of power down register for aftr mode */
+> +void exynos_sys_powerdown_aftr(void)
 > +{
-> +	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
-> +	__raw_writel(S5P_CHECK_AFTR, EXYNOS_BOOT_VECTOR_FLAG);
+> +	exynos_sys_powerdown_conf(SYS_AFTR);
 
-S5P_CHECK_AFTR is a value specific for AFTR state. I wonder if it 
-wouldn't be desired to let the cpuidle driver somehow affect the value 
-written here.
-
-> +}
-> +
->   static int exynos_cpu_suspend(unsigned long arg)
->   {
->   #ifdef CONFIG_CACHE_L2X0
-> @@ -387,6 +401,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
->   			exynos_cpu_save_register();
->   			exynos_set_wakeupmask();
->   		}
-> +		exynos_cpu_set_boot_vector();
-
-Why this is outside of the if above? Should this really be called for 
-all CPUs?
+I wonder if this callback wouldn't be more appropriate for setting idle 
+mode specific things like wake-up mask and boot flag.
 
 Best regards,
 Tomasz
