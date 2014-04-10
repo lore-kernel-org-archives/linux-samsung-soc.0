@@ -1,79 +1,174 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] usb: ehci-exynos: Return immediately from suspend if
- ehci_suspend fails
-Date: Thu, 10 Apr 2014 11:01:12 +0530
-Message-ID: <CAFp+6iGTbvK+7BTg6mDohiOqyaOHLuDzDTyXWeCkgS2YUApBJQ@mail.gmail.com>
-References: <001a01cf5453$243d9c70$6cb8d550$%han@samsung.com>
-	<Pine.LNX.4.44L0.1404092134420.7397-100000@netrider.rowland.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] arm: exynos: generalize power register address calculation
+Date: Thu, 10 Apr 2014 11:18:23 +0530
+Message-ID: <CANuQgHHjuWzmwKGH3YTznpTR5dRbmrW2fbGFoyroOg-P9rmybw@mail.gmail.com>
+References: <1396973737-18693-1-git-send-email-chander.kashyap@linaro.org>
+	<1397041783-18531-1-git-send-email-chander.kashyap@linaro.org>
+	<534533E6.10901@samsung.com>
+	<CANuQgHEdks=OwF=N3LULmxujAeVVcLW3H++ixVZ3REfSrOieQA@mail.gmail.com>
+	<53455CF2.9020704@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1404092134420.7397-100000-pYrvlCTfrz9XsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:47403 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750968AbaDJFsY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 01:48:24 -0400
+Received: by mail-ob0-f169.google.com with SMTP id va2so3920589obc.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Apr 2014 22:48:24 -0700 (PDT)
+In-Reply-To: <53455CF2.9020704@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Alan,
+Hi Tomasz,
 
-
-On Thu, Apr 10, 2014 at 7:06 AM, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org> wrote:
-> On Thu, 10 Apr 2014, Jingoo Han wrote:
->
->> > > --- a/drivers/usb/host/ehci-exynos.c
->> > > +++ b/drivers/usb/host/ehci-exynos.c
->> > > @@ -212,6 +212,8 @@ static int exynos_ehci_suspend(struct device *dev)
->> > >   int rc;
->> > >
->> > >   rc = ehci_suspend(hcd, do_wakeup);
->> > > + if (rc)
->> > > +         return rc;
->> > >
->> > >   if (exynos_ehci->otg)
->> > >           exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
->> > > @@ -221,7 +223,7 @@ static int exynos_ehci_suspend(struct device *dev)
->> > >
->> > >   clk_disable_unprepare(exynos_ehci->clk);
->> > >
->> > > - return rc;
->> > > + return 0;
->> > >  }
->> > >
->> > >  static int exynos_ehci_resume(struct device *dev)
->> >
->> > The first hunk of this patch is correct, but the second hunk isn't
->> > needed.  A similar remark is true for the ehci-platform patch.
+On 9 April 2014 20:15, Tomasz Figa <t.figa@samsung.com> wrote:
+> On 09.04.2014 15:49, Chander Kashyap wrote:
 >>
->> Hi Alan,
+>> Hi Tomasz,
 >>
->> Do you mean the following?
+>> On 9 April 2014 17:19, Tomasz Figa <t.figa@samsung.com> wrote:
+>>>
+>>> Hi Chander,
+>>>
+>>>
+>>> On 09.04.2014 13:09, Chander Kashyap wrote:
+>>>>
+>>>>
+>>>> Currently status/configuration power register values are hard-coded for
+>>>> cpu1.
+>>>>
+>>>> Make it generic so that it is useful for SoC's with more than two cpus.
+>>>>
+>>>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>>>> ---
+>>>> changes in v2 : Used existing macros for clusterid and cpuid calculation
+>>>>
+>>>>    arch/arm/mach-exynos/hotplug.c  |   15 ++++++++++++---
+>>>>    arch/arm/mach-exynos/platsmp.c  |   20 +++++++++++++++-----
+>>>>    arch/arm/mach-exynos/regs-pmu.h |    9 +++++++--
+>>>>    3 files changed, 34 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>>>> b/arch/arm/mach-exynos/hotplug.c
+>>>> index 5eead53..eab6121 100644
+>>>> --- a/arch/arm/mach-exynos/hotplug.c
+>>>> +++ b/arch/arm/mach-exynos/hotplug.c
+>>>> @@ -17,6 +17,7 @@
+>>>>
+>>>>    #include <asm/cacheflush.h>
+>>>>    #include <asm/cp15.h>
+>>>> +#include <asm/cputype.h>
+>>>>    #include <asm/smp_plat.h>
+>>>>
+>>>>    #include <plat/cpu.h>
+>>>> @@ -92,11 +93,19 @@ static inline void cpu_leave_lowpower(void)
+>>>>
+>>>>    static inline void platform_do_lowpower(unsigned int cpu, int
+>>>> *spurious)
+>>>>    {
+>>>> +       unsigned int mpidr, cpunr, cluster;
+>>>> +
+>>>> +       mpidr = cpu_logical_map(cpu);
+>>>> +       cpunr = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>>>> +       cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>>>> +
+>>>> +       /* Maximum possible cpus in a cluster can be 4 */
+>>>> +       cpunr += cluster * 4;
+>>>
+>>>
+>>>
+>>> I believe this is rather a weak assumption. First of all, the limit seems
+>>> to
+>>> be hardcoded only for the few existing SoCs. In addition, the value is
+>>> not
+>>> used as a maximum, but rather it is assumed that each cluster has always
+>>> four cores.
 >>
->> 1st hunk
->>  +    if (rc)
->>  +            return rc;
 >>
->> 2nd hunk
->>  -    return rc;
->>  +    return 0;
+>> The MPIDR register contains 2 bits for cpu id. Hence maximum number of
+>> cpus can be 4 only (A15/A9/A7).
+>>
 >
-> Yes, that's what I mean.
+> This is not what I meant. Exynos5260 contains 2 big cores (not 4) and 4
+> little cores. Are you sure that PMU register layout on Exynos5260 matches
+> your equation?
 >
->> Currently, the 'rc' will be always 'zero'; however, I don't
->> Have any objection, because the code might be  modified later.
->
-> Exactly.  We should add the new "if" statement but leave the "return
-> rc" the way it is.
 
-Sure, i will update both the patches.
+Yes the equation covers that as the PMU register layout takes care for that:
+Address offset are as follows:
+2 Big Cores:
+cpu0 : 2000
+cpu1: 2080
+
+4 Little cores:
+
+cpu0: 2200
+cpu1: 2280
+cpu2: 2300
+cpu3: 2380
 
 >
-> Alan Stern
+>>>
+>>> Moreover, it is assumed here that the mapping between core ID (calculated
+>>> by
+>>> the equation below) and PMU core numbers is 1:1, which is not true. On
+>>> Exynos4210, the cluster ID is always 0x09 and on Exynos4x12 it is 0x0a,
+>>> which will lead to completely wrong register offsets.
+>>
+>>
+>> Exynos4210 and Exynos4x12, cluster ids are not passed from DT as it
+>> breaks the gic_init_bases. Hence the Physical CpuID for Exynos4210
+>> will be 0,1 and Exynos4x12 will be 0,1,2,3.
+>>
+>> So it will not break.
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> I already have patches ready fixing GIC driver, just waiting for 3.15-rc1 to
+> be released. Anyway, CPU topology in DT is mandatory and Exynos4 device tree
+> files need to be fixed to contain them. This needs to be accounted for in
+> any changes touching CPU topology related code.
+>
+
+That's great.
+
+>
+>>
+>>
+>>>
+>>> I believe the proper way to deal with this is to provide per-CPU property
+>>> in
+>>> DT called "samsung,pmu-offset" that could be used be code like this to
+>>> calculate register addresses properly.
+>>>
+>>> For now, I would recommend doing the above ignoring cluster ID completely
+>>> to
+>>> not break (and actually fix) single cluster systems and existing multi
+>>> cluster ones on which only the first cluster is supported now.
+>>>
+>>> After that, per-CPU PMU offset should be implemented to support
+>>> multi-cluster SoCs with proper support of multiple clusters.
+>>
+>>
+>> As of now the smp-boot (cores > 2) is broken. This is required to fix it.
+>
+>
+> SMP boot works fine on all four cores of Exynos 4412. Obiously hot-(un)plug
+> doesn't, but this is another issue.
+>
+
+It works as of now as at power on all the cores powered on. Hence the
+powerOn in platsmp.c doent make any difference,  It breaks in hotplug
+as we always poweron cpu1, not the correct cpu.
+
+> Best regards,
+> Tomasz
+
+
+
+-- 
+with warm regards,
+Chander Kashyap
