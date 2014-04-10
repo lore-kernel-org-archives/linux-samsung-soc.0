@@ -1,50 +1,63 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 21/27] ARM: dts: exynos3250: Add PMU dt data
-Date: Thu, 10 Apr 2014 19:06:11 +0900
-Message-ID: <1397124377-16969-13-git-send-email-cw00.choi@samsung.com>
-References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+From: armdev <armdev.ftm@gmail.com>
+Subject: Re: [PATCH 07/27] irqchip: Declare cortex-a7's irqchip to initialize gic from dt
+Date: Thu, 10 Apr 2014 15:39:02 +0530
+Message-ID: <C136A675-6D64-42EE-918E-351A266946C5@gmail.com>
+References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com> <1397122124-15690-8-git-send-email-cw00.choi@samsung.com> <878urd33g4.fsf@approximate.cambridge.arm.com>
+Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <878urd33g4.fsf@approximate.cambridge.arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, mark.rutland@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Hyunhee Kim <hyunhee.kim@samsung.com>
 
-ARM CPU has its own PMU (Performance Monitoring Unit). This patch add PMU dt
-data to support PMU for CPU. Exynos3250 has four PMU interrupts.
+On 10-Apr-2014, at 3:34 pm, Marc Zyngier <marc.zyngier@arm.com> wrote:
 
-Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+> On Thu, Apr 10 2014 at 10:28:24 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patch declare coretex-a7's irqchip to initialze gic from dt
+>> with "arm,cortex-a7-gic" data.
+>> 
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>> drivers/irqchip/irq-gic.c | 1 +
+>> 1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+>> index 4300b66..8e906e4 100644
+>> --- a/drivers/irqchip/irq-gic.c
+>> +++ b/drivers/irqchip/irq-gic.c
+>> @@ -1069,6 +1069,7 @@ gic_of_init(struct device_node *node, struct device_node *parent)
+>> }
+>> IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
+>> IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
+>> +IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
+>> IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
+>> IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
+> 
+> Frankly, this patch adds no value. Are we going to add
+> "arm,cortex-a12-gic", "arm,cortex-a17-gic", "arm,cortex-a53-gic",
+> "arm,cortex-a57-gic"? And that's just to mention the ARM Ltd cores...
+> 
+> Instead, how about defining a generic "arm,gic" property, and mandate
+> that new DT files are using that? We can always use a more precise
+> compatible for quirks.
+> 
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index ceed761..2f0ca32 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -280,4 +280,9 @@
- 		pinctrl-0 = <&i2c7_bus>;
- 		status = "disabled";
- 	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a7-pmu";
-+		interrupts = <0 18 0>, <0 19 0>, <0 20 0>, <0 21 0>;
-+	};
- };
--- 
-1.8.0
+How about keeping it simple and tied to arm gic versions
+arm,gicv1, arm,gicv2, arm,gicv2ve
+
+> Mark, what do you think? I think this has been discussed in the past
+> already.
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
