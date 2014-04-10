@@ -1,65 +1,58 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: RE: [PATCH 02/27] ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of
- Exynos3250
-Date: Thu, 10 Apr 2014 18:57:02 +0900
-Message-ID: <002501cf54a3$38f50d60$aadf2820$@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 07/27] irqchip: Declare cortex-a7's irqchip to initialize gic from dt
+Date: Thu, 10 Apr 2014 11:04:59 +0100
+Message-ID: <878urd33g4.fsf@approximate.cambridge.arm.com>
 References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
- <1397122124-15690-3-git-send-email-cw00.choi@samsung.com>
- <4172202.teSeEmypAU@wuerfel>
+	<1397122124-15690-8-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:22629 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965804AbaDJJ5D (ORCPT
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:12106 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750763AbaDJKFI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 05:57:03 -0400
-In-reply-to: <4172202.teSeEmypAU@wuerfel>
-Content-language: ko
+	Thu, 10 Apr 2014 06:05:08 -0400
+In-Reply-To: <1397122124-15690-8-git-send-email-cw00.choi@samsung.com>
+	(Chanwoo Choi's message of "Thu, 10 Apr 2014 10:28:24 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, 'Chanwoo Choi' <cw00.choi@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, mark.rutland@arm.com
 
-Hi Arnd,
+On Thu, Apr 10 2014 at 10:28:24 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch declare coretex-a7's irqchip to initialze gic from dt
+> with "arm,cortex-a7-gic" data.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/irqchip/irq-gic.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index 4300b66..8e906e4 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -1069,6 +1069,7 @@ gic_of_init(struct device_node *node, struct device_node *parent)
+>  }
+>  IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
+>  IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
+> +IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
+>  IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
+>  IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
 
-> -----Original Message-----
-> From: linux-arm-kernel [mailto:linux-arm-kernel-
-> bounces@lists.infradead.org] On Behalf Of Arnd Bergmann
-> Sent: Thursday, April 10, 2014 6:45 PM
-> To: linux-arm-kernel@lists.infradead.org
-> Cc: kgene.kim@samsung.com; t.figa@samsung.com; hyunhee.kim@samsung.com;
-> sw0312.kim@samsung.com; linux-kernel@vger.kernel.org;
-> yj44.cho@samsung.com; inki.dae@samsung.com; Chanwoo Choi;
-> kyungmin.park@samsung.com; linux-samsung-soc@vger.kernel.org
-> Subject: Re: [PATCH 02/27] ARM: EXYNOS: Add IO mapping for non-secure
-> SYSRAM of Exynos3250
-> 
-> On Thursday 10 April 2014 18:28:19 Chanwoo Choi wrote:
-> >
-> > The non-secure SYSRAM is used for secondary CPU bring-up. This patch
-> add
-> > IO mapping for non-scure SYSRAM.
-> >
-> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> I really don't want to see any further static mappings here. We had the
-> same discussion for the previous Exynos chip that was submitted, so
-> please
-> describe the SYSRAM in DT, and start thinking about the other static
-> mappings
-> that can be removed.
+Frankly, this patch adds no value. Are we going to add
+"arm,cortex-a12-gic", "arm,cortex-a17-gic", "arm,cortex-a53-gic",
+"arm,cortex-a57-gic"? And that's just to mention the ARM Ltd cores...
 
-Sachin already submitted the DT support[1] for SYSRAM area.
+Instead, how about defining a generic "arm,gic" property, and mandate
+that new DT files are using that? We can always use a more precise
+compatible for quirks.
 
-[1] : http://www.spinics.net/lists/linux-samsung-soc/msg27647.html
+Mark, what do you think? I think this has been discussed in the past
+already.
 
-> 
-> 	Arnd
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+	M.
+-- 
+Jazz is not dead. It just smells funny.
