@@ -1,94 +1,56 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V4 10/20] ARM: exynos: cpuidle: Move clock setup to pm.c
-Date: Thu, 10 Apr 2014 16:23:20 +0200
-Message-ID: <5346A958.1030302@linaro.org>
-References: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org> <1397123751-1957-11-git-send-email-daniel.lezcano@linaro.org> <5346A367.2070107@samsung.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] usb: ehci-exynos: Return immediately from suspend
+ if ehci_suspend fails
+Date: Thu, 10 Apr 2014 11:27:38 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1404101127270.32351-100000@netrider.rowland.org>
+References: <1397125682-4955-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:50367 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934688AbaDJOXD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 10:23:03 -0400
-Received: by mail-wi0-f173.google.com with SMTP id z2so10779699wiv.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 07:23:01 -0700 (PDT)
-In-Reply-To: <5346A367.2070107@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1397125682-4955-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-On 04/10/2014 03:57 PM, Tomasz Figa wrote:
-> Hi Daniel,
->
-> On 10.04.2014 11:55, Daniel Lezcano wrote:
->> One more step is moving the clock ratio setting at idle time in pm.c
->>
->> The macro names have been changed to be consistent with the other ma=
-cros
->> name in the file.
->>
->> Note, the clock divider was working only when cpuidle was enabled
->> because it
->> was in its init routine. With this change, the clock divider is set =
-in
->> the pm's
->> init routine, so it will also operate when the cpuidle driver is not
->> set, which
->> is good.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
->> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->>   arch/arm/mach-exynos/cpuidle.c  |   54
->> ---------------------------------------
->>   arch/arm/mach-exynos/pm.c       |   35 +++++++++++++++++++++++++
->>   arch/arm/mach-exynos/regs-pmu.h |   19 ++++++++++++++
->>   3 files changed, 54 insertions(+), 54 deletions(-)
->
-> Sorry that I didn't mention that before, but now I recall that there =
-was
-> already a similar patch moving this code to Exynos5250 clock driver,
-> which is the best place for setup of any CMU registers and a step
-> towards removing one more static IO mapping.
+On Thu, 10 Apr 2014, Vivek Gautam wrote:
 
-Yes, Bartlomiej mentioned it.
+> Patch 'b8efdaf USB: EHCI: add check for wakeup/suspend race'
+> adds a check for possible race between suspend and wakeup interrupt,
+> and thereby it returns -EBUSY as error code if there's a wakeup
+> interrupt.
+> So the platform host controller should not proceed further with
+> its suspend callback, rather should return immediately to avoid
+> powering down the essential things, like phy.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+> ---
+> 
+> Changes from v1:
+> -- Removed unnecessary change 'return 0'
+> 
+>  drivers/usb/host/ehci-exynos.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index d1d8c47..7f425ac 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -212,6 +212,8 @@ static int exynos_ehci_suspend(struct device *dev)
+>  	int rc;
+>  
+>  	rc = ehci_suspend(hcd, do_wakeup);
+> +	if (rc)
+> +		return rc;
+>  
+>  	if (exynos_ehci->otg)
+>  		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
 
-Is it possible to merge this mentioned patch or to give a pointer to it=
-=20
-so I can integrate it into the patchset ?
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 
-> Also one more thing below.
->
-
-[ ... ]
-
->>   {
->>   #ifdef CONFIG_CACHE_L2X0
->> @@ -244,6 +276,9 @@ static void exynos_pm_resume(void)
->>
->>       s3c_pm_do_restore_core(exynos_core_save,
->> ARRAY_SIZE(exynos_core_save));
->>
->> +    if (soc_is_exynos5250())
->> +        exynos5_core_down_clk();
->> +
->
-> Originally this code was executed at system boot-up, but now it is
-> happening on resume from sleep. Is this change desired?
-
-Argh ! Sounds like I got a bad fuzz there.
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
