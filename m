@@ -1,52 +1,92 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v2 2/2] usb: ehci-platform: Return immediately from
- suspend if ehci_suspend fails
-Date: Thu, 10 Apr 2014 11:27:52 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1404101127420.32351-100000@netrider.rowland.org>
-References: <1397125682-4955-2-git-send-email-gautam.vivek@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/5] drm/exynos: remove dummy hdmiphy clock from hdmi driver
+Date: Thu, 10 Apr 2014 17:32:21 +0200
+Message-ID: <5346B985.3000801@samsung.com>
+References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
+ <1396458826-3051-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1397125682-4955-2-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, jg1.han@samsung.com, Hauke Mehrtens <hauke@hauke-m.de>, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:13561 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753036AbaDJPc2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 11:32:28 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3T0046WN5SS710@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Apr 2014 16:32:17 +0100 (BST)
+In-reply-to: <1396458826-3051-2-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: joshi@samsung.com
 
-On Thu, 10 Apr 2014, Vivek Gautam wrote:
+Hi Rahul,
 
-> Patch 'b8efdaf USB: EHCI: add check for wakeup/suspend race'
-> adds a check for possible race between suspend and wakeup interrupt,
-> and thereby it returns -EBUSY as error code if there's a wakeup
-> interrupt.
-> So the platform host controller should not proceed further with
-> its suspend callback, rather should return immediately to avoid
-> powering down the essential things, like phy.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Hauke Mehrtens <hauke@hauke-m.de>
-> Cc: Hans de Goede <hdegoede@redhat.com>
+On 02.04.2014 19:13, Rahul Sharma wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>
+> Exynos drm hdmi driver used to get dummy hdmiphy clock to
+> control the PMU bit for hdmiphy. This clock is removed
+> during CCF migration. This should also be cleaned from
+> hdmi driver.
+>
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
 > ---
-> 
-> Changes from v1:
-> -- Removed unnecessary change 'return 0'
-> 
->  drivers/usb/host/ehci-platform.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-> index b3a0e11..c7dd93a 100644
-> --- a/drivers/usb/host/ehci-platform.c
-> +++ b/drivers/usb/host/ehci-platform.c
-> @@ -303,6 +303,8 @@ static int ehci_platform_suspend(struct device *dev)
->  	int ret;
->  
->  	ret = ehci_suspend(hcd, do_wakeup);
-> +	if (ret)
-> +		return ret;
->  
->  	if (pdata->power_suspend)
->  		pdata->power_suspend(pdev);
+>   drivers/gpu/drm/exynos/exynos_hdmi.c |    8 --------
+>   1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 25bf65a..23abfa0 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -74,7 +74,6 @@ struct hdmi_resources {
+>   	struct clk			*sclk_hdmi;
+>   	struct clk			*sclk_pixel;
+>   	struct clk			*sclk_hdmiphy;
+> -	struct clk			*hdmiphy;
+>   	struct clk			*mout_hdmi;
+>   	struct regulator_bulk_data	*regul_bulk;
+>   	int				regul_count;
+> @@ -1854,7 +1853,6 @@ static void hdmi_poweron(struct exynos_drm_display *display)
+>   	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
+>   		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+>
+> -	clk_prepare_enable(res->hdmiphy);
+>   	clk_prepare_enable(res->hdmi);
+>   	clk_prepare_enable(res->sclk_hdmi);
+>
+> @@ -1881,7 +1879,6 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+>
+>   	clk_disable_unprepare(res->sclk_hdmi);
+>   	clk_disable_unprepare(res->hdmi);
+> -	clk_disable_unprepare(res->hdmiphy);
+>   	regulator_bulk_disable(res->regul_count, res->regul_bulk);
+>
+>   	pm_runtime_put_sync(hdata->dev);
+> @@ -1977,11 +1974,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+>   		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
+>   		goto fail;
+>   	}
+> -	res->hdmiphy = devm_clk_get(dev, "hdmiphy");
+> -	if (IS_ERR(res->hdmiphy)) {
+> -		DRM_ERROR("failed to get clock 'hdmiphy'\n");
+> -		goto fail;
+> -	}
+>   	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
+>   	if (IS_ERR(res->mout_hdmi)) {
+>   		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
+>
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+This patch makes the series non-bisectable. If you remove handling of 
+this dummy clock until you add proper support for PHY isolation setting, 
+then at this point you end up with non-working code.
+
+You should first provide new infrastructure in parallel to existing one, 
+then move all users to new one and only then drop the old one.
+
+Best regards,
+Tomasz
