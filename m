@@ -1,166 +1,93 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Thu, 10 Apr 2014 17:09:56 +0530
-Message-ID: <CAFp+6iHU0YXj18ajDwOqPh_SJWr6GkMPRr6qaGdmPoCc0+tz5g@mail.gmail.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
-	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
-	<534529B2.2020107@samsung.com>
-	<CAFp+6iEzaxCQNkGZWuBnAaAHk0uXrX4KhjVbaJfZFChB6uzk4A@mail.gmail.com>
-	<53454C11.7060607@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 06/27] ARM: EXYNOS:: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
+Date: Thu, 10 Apr 2014 13:07:32 +0100
+Message-ID: <87mwft1j7f.fsf@approximate.cambridge.arm.com>
+References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
+	<1397122124-15690-7-git-send-email-cw00.choi@samsung.com>
+	<87d2gp3430.fsf@approximate.cambridge.arm.com>
+	<534678E1.2000005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53454C11.7060607-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kishon <kishon-l0cyMroinI0@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:45828 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1030248AbaDJMHl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 08:07:41 -0400
+In-Reply-To: <534678E1.2000005@samsung.com> (Chanwoo Choi's message of "Thu,
+	10 Apr 2014 11:56:33 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Apr 9, 2014 at 7:03 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 09.04.2014 13:49, Vivek Gautam wrote:
->>
->> Hi,
->>
->>
->> On Wed, Apr 9, 2014 at 4:36 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+On Thu, Apr 10 2014 at 11:56:33 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> On 04/10/2014 06:51 PM, Marc Zyngier wrote:
+>> On Thu, Apr 10 2014 at 10:28:23 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>>> This patch decide proper lowpower mode of either a15 or a9 according to own ID
+>>> from Main ID register.
 >>>
->>> Hi Vivek,
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>  arch/arm/mach-exynos/hotplug.c | 13 ++++++++++---
+>>>  1 file changed, 10 insertions(+), 3 deletions(-)
 >>>
->>> Please see my comments inline.
->>>
->>>
->>> On 08.04.2014 16:36, Vivek Gautam wrote:
->>>>
->>>>
->>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->>>> The new driver uses the generic PHY framework and will interact
->>>> with DWC3 controller present on Exynos5 series of SoCs.
->>>> Thereby, removing old phy-samsung-usb3 driver and related code
->>>> used untill now which was based on usb/phy framework.
->>>>
->>>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> ---
->>>>    .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
->>>>    drivers/phy/Kconfig                                |   11 +
->>>>    drivers/phy/Makefile                               |    1 +
->>>>    drivers/phy/phy-exynos5-usbdrd.c                   |  668
->>>> ++++++++++++++++++++
->>>>    4 files changed, 722 insertions(+)
->>>>    create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
->>>
->>>
->>>
->>> [snip]
->>>
->>>
->>>> +       Additional clock required for Exynos5420:
->>>> +       - usb30_sclk_100m: Additional special clock used for PHY
->>>> operation
->>>> +                          depicted as 'sclk_usbphy30' in CMU of
->>>> Exynos5420.
->>>
->>>
->>>
->>> Are you sure this isn't simply a gate for the ref clock, as it can be
->>> found
->>> on another SoC that is not upstream yet? I don't have documentation for
->>> Exynos 5420 so I can't tell, but I'd like to ask you to recheck this.
->>
->>
->>> From what i can see in the manual :
->>
->> sclk_usbphy30 is derived from OSCCLK.
->> It is coming from a MUX (default input line to this is OSCCLK)  and
->> then through a DIV
->> there's this gate.
->>
->>        {OSCCLK  + other sources} --->[MUX] ---> [DIV] --> [GATE for
->> sclk_usbphy30]
->>
->> the {rate of sclk_usbphy30} == OSCCLK
->>
->> However the 'ref' clock that we have been using is the actual oscillator
->> clock.
->> And on SoC Exynos5250, we don't have any such gate (sclk_usbphy30).
->> So should this mean that ref clock and sclk_usbphy30 are still be
->> controlled by
->> two different gates ?
->>
+>>> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+>>> index 5eead53..36d3db6 100644
+>>> --- a/arch/arm/mach-exynos/hotplug.c
+>>> +++ b/arch/arm/mach-exynos/hotplug.c
+>>> @@ -135,13 +135,20 @@ void __ref exynos_cpu_die(unsigned int cpu)
+>>>  	int primary_part = 0;
+>>>  
+>>>  	/*
+>>> -	 * we're ready for shutdown now, so do it.
+>>> -	 * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
+>>> +	 * we're ready for shutdown now, so do it. Exynos4 is A9 based
+>>> +	 * while Exynos5 is A15/Exynos7 is A7; check the CPU part
+>>>  	 * number by reading the Main ID register and then perform the
+>>>  	 * appropriate sequence for entering low power.
+>>>  	 */
+>>>  	asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
+>> 
+>> While you're touching that code, how about using:
+>> 
+>>       primary_part = read_cpuid(CPUID_ID);
 >
-> Is there maybe a diagram of PHY input clocks in the datasheet, like for USB
-> 2.0 PHY in Exynos4210/4412/5250 datasheets in the chapter about USB2.0
-> Device? Something like:
+> Or, 
+> I suggest read_cpuid_part_number() instead of assembler directly.
 >
->                      ____________________________________
->                     |                                    |
->                     |                         ___________|
-> XusbXTI             |   Phy_fsel[2:0]        |  _______  |
->    _______[X]_______|    |         __________|_|___|\__|_|
->   |                 |   _v___     |  _____   ^ |   |/  | |
-> _____               |  |     |    | |     |  | |  ___  | |
->  ___                |  |     |    | |     |  | | |   |_|_|
-> |___|               |  | X 0 |____|_| PLL |__|_|_|CLK|_|_|
-> _____               |  |     |      |     |    | |DIV|_|_|
->   |_______[X]       |  |_____| 12   |_____|480 | |___| | |
->                     |          MHz         MHz |Digital| |
-> XusbXTO             |   USB PHY                |_______| |
->                     |____________________________________|
+> 	primary_part = read_cpuid_part_number();
+
+Yup, even better.
+
+>> 
+>>> -	if ((primary_part & 0xfff0) == 0xc0f0)
+>>> +
+>>> +	/*
+>>> +	 * Main ID register of Cortex series
+>>> +	 * - Cortex-a7  : 0x410F_C07x
+>>> +	 * - Cortex-a15 : 0x410F_C0Fx
+>>> +	 */
+>>> +	primary_part = primary_part & 0xfff0;
+>>> +	if (primary_part == 0xc0f0 || primary_part == 0xc070)
+>> 
+>> ARM_CPU_PART_CORTEX_A15, ARM_CPU_PART_CORTEX_A7
 >
+> OK I'll use this defined constant as following:
 >
+> 	switch (primary_part)
+> 	case ARM_CPU_PART_CORTEX_A7:
+> 	case ARM_CPU_PART_CORTEX_A15:
+> 		cpu_enter_lowpower_a15();
+> 		break;
+> 	default:
+> 		cpu_enter_lowpower_a9();
+> 		break;
+> 	}
 
-Below is the block diagram given for DRD controller.
+Looks good.
 
-___________________
-|                                |
-|      ____________     |
-|      | PHY           |      |
-|      | controller     |-----|-----------------------------------------------
-|      |__________  |     |                                               |
-|                                |
-          |
-|         USB 3.0           |                                              V
-|           DRD              |
------------------------
-|        Controller          |                                      |
-                     |
-|                                |    USB30_SCLK_100M    | USB 3.0 DRD  |
-|      ----------------          |           ----------------------->
-|       PHY         |
-|     | Link cont. |         |                                      |
-                     |
-|      -------------             |
- |                       |
-|___________________|                                     |_____________|
-
-Does this help ?
-
-So, USB30_SCLK_100M is the SCLK that we are talking in the driver. I
-don't see any reference to XXTI in the USB 3.0 DRD controller chapter
-(in both Exynos5250 and 5420)
-In addition to this there's one more point to be noticed here.
-On Exynos5420 system, the sclk_usbphy300 (which is the sclk_usbphy30
-for USB DRD channel 0), is also the PICO phy clock, i.e. USB 2.0 phy
-clock.
-So we should add a similar clk_get() for this clock in the
-phy-exynos5250-usb2 driver too, to support Exynos5420.
-
-
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+	M.
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jazz is not dead. It just smells funny.
