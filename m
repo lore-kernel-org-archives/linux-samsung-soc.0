@@ -1,64 +1,44 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: RE: [PATCH 21/27] ARM: dts: exynos3250: Add PMU dt data
-Date: Thu, 10 Apr 2014 19:23:48 +0900
-Message-ID: <002701cf54a6$f6593720$e30ba560$@samsung.com>
-References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
- <1397124377-16969-13-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v2 1/2] usb: ehci-exynos: Return immediately from suspend if ehci_suspend fails
+Date: Thu, 10 Apr 2014 15:58:01 +0530
+Message-ID: <1397125682-4955-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1397124377-16969-13-git-send-email-cw00.choi@samsung.com>
-Content-language: ko
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, kgene.kim@samsung.com, jg1.han@samsung.com, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Patch 'b8efdaf USB: EHCI: add check for wakeup/suspend race'
+adds a check for possible race between suspend and wakeup interrupt,
+and thereby it returns -EBUSY as error code if there's a wakeup
+interrupt.
+So the platform host controller should not proceed further with
+its suspend callback, rather should return immediately to avoid
+powering down the essential things, like phy.
 
-> -----Original Message-----
-> From: linux-arm-kernel [mailto:linux-arm-kernel-
-> bounces@lists.infradead.org] On Behalf Of Chanwoo Choi
-> Sent: Thursday, April 10, 2014 7:06 PM
-> To: kgene.kim@samsung.com; t.figa@samsung.com; linux-samsung-
-> soc@vger.kernel.org
-> Cc: hyunhee.kim@samsung.com; sw0312.kim@samsung.com; linux-
-> kernel@vger.kernel.org; yj44.cho@samsung.com; inki.dae@samsung.com;
-> cw00.choi@samsung.com; kyungmin.park@samsung.com; linux-arm-
-> kernel@lists.infradead.org
-> Subject: [PATCH 21/27] ARM: dts: exynos3250: Add PMU dt data
-> 
-> From: Hyunhee Kim <hyunhee.kim@samsung.com>
-> 
-> ARM CPU has its own PMU (Performance Monitoring Unit). This patch add
-> PMU dt
-> data to support PMU for CPU. Exynos3250 has four PMU interrupts.
-> 
-> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi
-> b/arch/arm/boot/dts/exynos3250.dtsi
-> index ceed761..2f0ca32 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -280,4 +280,9 @@
->  		pinctrl-0 = <&i2c7_bus>;
->  		status = "disabled";
->  	};
-> +
-> +	pmu {
-> +		compatible = "arm,cortex-a7-pmu";
-> +		interrupts = <0 18 0>, <0 19 0>, <0 20 0>, <0 21 0>;
-> +	};
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Acked-by: Jingoo Han <jg1.han@samsung.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+---
 
-As I know, the exynos3250 has two CPU cores. Why does it have four pmu
-interrupts?
-IMO it is sufficient it has only two interrupts.
+Changes from v1:
+-- Removed unnecessary change 'return 0'
 
-Best Regards,
-Chanho Park 
+ drivers/usb/host/ehci-exynos.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index d1d8c47..7f425ac 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -212,6 +212,8 @@ static int exynos_ehci_suspend(struct device *dev)
+ 	int rc;
+ 
+ 	rc = ehci_suspend(hcd, do_wakeup);
++	if (rc)
++		return rc;
+ 
+ 	if (exynos_ehci->otg)
+ 		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-- 
+1.7.10.4
