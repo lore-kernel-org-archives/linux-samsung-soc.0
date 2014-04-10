@@ -1,75 +1,74 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Add facility to toggle vbus gpio on/off
-Date: Thu, 10 Apr 2014 16:37:04 +0530
-Message-ID: <CAFp+6iEktKhksj8-SaDr3Ep7iFf+cyp4-xNmw9DrmmiV5J6wyA@mail.gmail.com>
-References: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
-	<534538F6.2010009@samsung.com>
-	<CAFp+6iHf5Ndt3yNbdAaayXi08-A54Sk8LDTiASm4RTw09GuWvg@mail.gmail.com>
-	<53453F2E.40606@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 21/27] ARM: dts: exynos3250: Add PMU dt data
+Date: Thu, 10 Apr 2014 20:20:10 +0900
+Message-ID: <53467E6A.6040105@samsung.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+ <1397124377-16969-13-git-send-email-cw00.choi@samsung.com>
+ <002701cf54a6$f6593720$e30ba560$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:61028 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030252AbaDJLHG (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25901 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935056AbaDJLUN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 07:07:06 -0400
-In-Reply-To: <53453F2E.40606@samsung.com>
+	Thu, 10 Apr 2014 07:20:13 -0400
+In-reply-to: <002701cf54a6$f6593720$e30ba560$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, kishon <kishon@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 
 Hi,
 
-
-On Wed, Apr 9, 2014 at 6:08 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+On 04/10/2014 07:23 PM, Chanho Park wrote:
 > Hi,
->
->
-> On 09.04.2014 14:24, Vivek Gautam wrote:
+> 
+>> -----Original Message-----
+>> From: linux-arm-kernel [mailto:linux-arm-kernel-
+>> bounces@lists.infradead.org] On Behalf Of Chanwoo Choi
+>> Sent: Thursday, April 10, 2014 7:06 PM
+>> To: kgene.kim@samsung.com; t.figa@samsung.com; linux-samsung-
+>> soc@vger.kernel.org
+>> Cc: hyunhee.kim@samsung.com; sw0312.kim@samsung.com; linux-
+>> kernel@vger.kernel.org; yj44.cho@samsung.com; inki.dae@samsung.com;
+>> cw00.choi@samsung.com; kyungmin.park@samsung.com; linux-arm-
+>> kernel@lists.infradead.org
+>> Subject: [PATCH 21/27] ARM: dts: exynos3250: Add PMU dt data
 >>
->> Hi Sylwester,
+>> From: Hyunhee Kim <hyunhee.kim@samsung.com>
 >>
+>> ARM CPU has its own PMU (Performance Monitoring Unit). This patch add
+>> PMU dt
+>> data to support PMU for CPU. Exynos3250 has four PMU interrupts.
 >>
->> On Wed, Apr 9, 2014 at 5:41 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>>
->>> Hi Vivek,
->>>
->>> On 09/04/14 13:54, Vivek Gautam wrote:
->>>>
->>>> Adding support to enable/disable VBUS hooked to a gpio
->>>> to enable vbus supply on the port.
->>>
->>>
->>> Does the GPIO control a fixed voltage regulator ? If so, shouldn't
->>> it be modelled by the regulator API instead ?
+>> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos3250.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
 >>
->>
->> No, this GPIO controls a 'current limiting power distribution switch',
->> which gives the output vbus to usb controller.
->> Should i model this as a fixed regulator ?
->
->
-> If I understand this correctly, this is just a switch that lets you control
-> whether vbus is provided to the USB connector or not. If so, this doesn't
-> look like an Exynos-specific thing at all and should rather be modeled on
-> higher level.
+>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi
+>> b/arch/arm/boot/dts/exynos3250.dtsi
+>> index ceed761..2f0ca32 100644
+>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>> @@ -280,4 +280,9 @@
+>>  		pinctrl-0 = <&i2c7_bus>;
+>>  		status = "disabled";
+>>  	};
+>> +
+>> +	pmu {
+>> +		compatible = "arm,cortex-a7-pmu";
+>> +		interrupts = <0 18 0>, <0 19 0>, <0 20 0>, <0 21 0>;
+>> +	};
+> 
+> As I know, the exynos3250 has two CPU cores. Why does it have four pmu
+> interrupts?
+> IMO it is sufficient it has only two interrupts.
 
-You are right. The Vbus to the USB connector is given through this a
-switch which current limiting capabilities.
-This switch just provides the 5V at its input to its output based on
-the state of Enable pin
-(which is the GPIO we are talking in this patch).
+OK, I'll fix it using only two interrupt for dual-core.
 
-So can you please suggest on how this should be handled ?
-
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
->
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards,
+Chanwoo Choi
