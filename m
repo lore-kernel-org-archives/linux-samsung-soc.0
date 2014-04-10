@@ -1,52 +1,62 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 06/27] ARM: EXYNOS:: Enter a15 lowpower mode for Exynos3250
- based on Cortex-a7
-Date: Thu, 10 Apr 2014 18:37:17 +0900
-Message-ID: <1397122658-16013-7-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 05/27] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+Date: Thu, 10 Apr 2014 18:37:16 +0900
+Message-ID: <1397122658-16013-6-git-send-email-cw00.choi@samsung.com>
 References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch decide proper lowpower mode of either a15 or a9 according to own ID
-from Main ID register.
+This patch fix the offset of CPU boot address and don't operate smc call
+of SMC_CMD_CPU1BOOT command for Exynos3250.
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/hotplug.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/arm/mach-exynos/firmware.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index 5eead53..36d3db6 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -135,13 +135,20 @@ void __ref exynos_cpu_die(unsigned int cpu)
- 	int primary_part = 0;
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 91a911d..8350007 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -30,10 +30,13 @@ static int exynos_do_idle(void)
  
- 	/*
--	 * we're ready for shutdown now, so do it.
--	 * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
-+	 * we're ready for shutdown now, so do it. Exynos4 is A9 based
-+	 * while Exynos5 is A15/Exynos7 is A7; check the CPU part
- 	 * number by reading the Main ID register and then perform the
- 	 * appropriate sequence for entering low power.
- 	 */
- 	asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
--	if ((primary_part & 0xfff0) == 0xc0f0)
-+
-+	/*
-+	 * Main ID register of Cortex series
-+	 * - Cortex-a7  : 0x410F_C07x
-+	 * - Cortex-a15 : 0x410F_C0Fx
-+	 */
-+	primary_part = primary_part & 0xfff0;
-+	if (primary_part == 0xc0f0 || primary_part == 0xc070)
- 		cpu_enter_lowpower_a15();
+ static int exynos_cpu_boot(int cpu)
+ {
+-	if (soc_is_exynos4212())
++	if (soc_is_exynos3250())
++		goto out;
++	else if (soc_is_exynos4212())
+ 		exynos_smc(SMC_CMD_CPU1BOOT, 0, 0, 0);
  	else
- 		cpu_enter_lowpower_a9();
+ 		exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
++out:
+ 	return 0;
+ }
+ 
+@@ -41,7 +44,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ {
+ 	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
+ 
+-	if (soc_is_exynos4212())
++	if (soc_is_exynos4212() || soc_is_exynos3250())
+ 		goto out;
+ 	else
+ 		boot_reg += 4*cpu;
 -- 
 1.8.0
