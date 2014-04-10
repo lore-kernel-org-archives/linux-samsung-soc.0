@@ -1,58 +1,67 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 07/27] irqchip: Declare cortex-a7's irqchip to initialize gic from dt
-Date: Thu, 10 Apr 2014 11:04:59 +0100
-Message-ID: <878urd33g4.fsf@approximate.cambridge.arm.com>
-References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
-	<1397122124-15690-8-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:12106 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750763AbaDJKFI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 06:05:08 -0400
-In-Reply-To: <1397122124-15690-8-git-send-email-cw00.choi@samsung.com>
-	(Chanwoo Choi's message of "Thu, 10 Apr 2014 10:28:24 +0100")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 10/27] ARM: dts: exynos3250: Add new exynos3250.dtsi file
+Date: Thu, 10 Apr 2014 19:06:00 +0900
+Message-ID: <1397124377-16969-2-git-send-email-cw00.choi@samsung.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, mark.rutland@arm.com
 
-On Thu, Apr 10 2014 at 10:28:24 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch declare coretex-a7's irqchip to initialze gic from dt
-> with "arm,cortex-a7-gic" data.
->
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/irqchip/irq-gic.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index 4300b66..8e906e4 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -1069,6 +1069,7 @@ gic_of_init(struct device_node *node, struct device_node *parent)
->  }
->  IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
->  IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
-> +IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
->  IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
->  IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
+From: Tomasz Figa <t.figa@samsung.com>
 
-Frankly, this patch adds no value. Are we going to add
-"arm,cortex-a12-gic", "arm,cortex-a17-gic", "arm,cortex-a53-gic",
-"arm,cortex-a57-gic"? And that's just to mention the ARM Ltd cores...
+This patch add new exynos3250.dtsi to support Exynos3250 SoC and includes
+chipid/sys_reg dt node.
 
-Instead, how about defining a generic "arm,gic" property, and mandate
-that new DT files are using that? We can always use a more precise
-compatible for quirks.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
 
-Mark, what do you think? I think this has been discussed in the past
-already.
-
-	M.
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+new file mode 100644
+index 0000000..3c8cee6
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -0,0 +1,34 @@
++/*
++ * Samsung's Exynos3250 SoC device tree source
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Samsung's Exynos3250 SoC device nodes are listed in this file. Exynos3250
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * Exynos3250 SoC. As device tree coverage for Exynos3250 increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "skeleton.dtsi"
++
++/ {
++	compatible = "samsung,exynos3250";
++
++	chipid@10000000 {
++		compatible = "samsung,exynos4210-chipid";
++		reg = <0x10000000 0x100>;
++	};
++
++	sys_reg: syscon@10010000 {
++		compatible = "samsung,exynos3-sysreg", "syscon";
++		reg = <0x10010000 0x400>;
++	};
++};
 -- 
-Jazz is not dead. It just smells funny.
+1.8.0
