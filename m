@@ -1,63 +1,53 @@
-From: armdev <armdev.ftm@gmail.com>
-Subject: Re: [PATCH 07/27] irqchip: Declare cortex-a7's irqchip to initialize gic from dt
-Date: Thu, 10 Apr 2014 15:39:02 +0530
-Message-ID: <C136A675-6D64-42EE-918E-351A266946C5@gmail.com>
-References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com> <1397122124-15690-8-git-send-email-cw00.choi@samsung.com> <878urd33g4.fsf@approximate.cambridge.arm.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.2 \(1874\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 15/27] ARM: dts: exynos3250: Add uart dt node to support seiral
+ ports
+Date: Thu, 10 Apr 2014 19:06:05 +0900
+Message-ID: <1397124377-16969-7-git-send-email-cw00.choi@samsung.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <878urd33g4.fsf@approximate.cambridge.arm.com>
+In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, mark.rutland@arm.com
+To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+This patch add UART dt node for Exynos3250. Exynos3250 uses same UART IP
+of Exynos4 SoC and has only two independent channels.
 
-On 10-Apr-2014, at 3:34 pm, Marc Zyngier <marc.zyngier@arm.com> wrote:
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+[Fix incorrect clock id by Tomasz Figa]
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-> On Thu, Apr 10 2014 at 10:28:24 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> This patch declare coretex-a7's irqchip to initialze gic from dt
->> with "arm,cortex-a7-gic" data.
->> 
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->> drivers/irqchip/irq-gic.c | 1 +
->> 1 file changed, 1 insertion(+)
->> 
->> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
->> index 4300b66..8e906e4 100644
->> --- a/drivers/irqchip/irq-gic.c
->> +++ b/drivers/irqchip/irq-gic.c
->> @@ -1069,6 +1069,7 @@ gic_of_init(struct device_node *node, struct device_node *parent)
->> }
->> IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
->> IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
->> +IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
->> IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
->> IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
-> 
-> Frankly, this patch adds no value. Are we going to add
-> "arm,cortex-a12-gic", "arm,cortex-a17-gic", "arm,cortex-a53-gic",
-> "arm,cortex-a57-gic"? And that's just to mention the ARM Ltd cores...
-> 
-> Instead, how about defining a generic "arm,gic" property, and mandate
-> that new DT files are using that? We can always use a more precise
-> compatible for quirks.
-> 
-
-How about keeping it simple and tied to arm gic versions
-arm,gicv1, arm,gicv2, arm,gicv2ve
-
-> Mark, what do you think? I think this has been discussed in the past
-> already.
-> 
-> 	M.
-> -- 
-> Jazz is not dead. It just smells funny.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 758913e..d17ed54 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -74,4 +74,22 @@
+ 		reg = <0x11400000 0x1000>;
+ 		interrupts = <0 240 0>;
+ 	};
++
++	serial@13800000 {
++		compatible = "samsung,exynos4210-uart";
++		reg = <0x13800000 0x100>;
++		interrupts = <0 109 0>;
++		clocks = <&cmu CLK_UART0>, <&cmu CLK_SCLK_UART0>;
++		clock-names = "uart", "clk_uart_baud0";
++		status = "disabled";
++	};
++
++	serial@13810000 {
++		compatible = "samsung,exynos4210-uart";
++		reg = <0x13810000 0x100>;
++		interrupts = <0 110 0>;
++		clocks = <&cmu CLK_UART1>, <&cmu CLK_SCLK_UART1>;
++		clock-names = "uart", "clk_uart_baud0";
++		status = "disabled";
++	};
+ };
+-- 
+1.8.0
