@@ -1,93 +1,74 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 06/27] ARM: EXYNOS:: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
-Date: Thu, 10 Apr 2014 13:07:32 +0100
-Message-ID: <87mwft1j7f.fsf@approximate.cambridge.arm.com>
-References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
-	<1397122124-15690-7-git-send-email-cw00.choi@samsung.com>
-	<87d2gp3430.fsf@approximate.cambridge.arm.com>
-	<534678E1.2000005@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] thermal: offer Samsung thermal support only when
+ ARCH_EXYNOS is defined
+Date: Thu, 10 Apr 2014 14:29:35 +0200
+Message-ID: <12703899.ZIfn6gkXfr@amdc1032>
+References: <2958660.aJeCDrTTOe@amdc1032>
+ <CADGdYn4YQL9-8WCDNWP8x9Gec9sMV09q3OsYPz3tTdMxDGnyvg@mail.gmail.com>
+ <5294A097.3070903@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:45828 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1030248AbaDJMHl (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:42776 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030452AbaDJM3o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 08:07:41 -0400
-In-Reply-To: <534678E1.2000005@samsung.com> (Chanwoo Choi's message of "Thu,
-	10 Apr 2014 11:56:33 +0100")
+	Thu, 10 Apr 2014 08:29:44 -0400
+In-reply-to: <5294A097.3070903@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Amit Kachhap <amit.kachhap@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Thu, Apr 10 2014 at 11:56:33 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> On 04/10/2014 06:51 PM, Marc Zyngier wrote:
->> On Thu, Apr 10 2014 at 10:28:23 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->>> This patch decide proper lowpower mode of either a15 or a9 according to own ID
->>> from Main ID register.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>  arch/arm/mach-exynos/hotplug.c | 13 ++++++++++---
->>>  1 file changed, 10 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
->>> index 5eead53..36d3db6 100644
->>> --- a/arch/arm/mach-exynos/hotplug.c
->>> +++ b/arch/arm/mach-exynos/hotplug.c
->>> @@ -135,13 +135,20 @@ void __ref exynos_cpu_die(unsigned int cpu)
->>>  	int primary_part = 0;
->>>  
->>>  	/*
->>> -	 * we're ready for shutdown now, so do it.
->>> -	 * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
->>> +	 * we're ready for shutdown now, so do it. Exynos4 is A9 based
->>> +	 * while Exynos5 is A15/Exynos7 is A7; check the CPU part
->>>  	 * number by reading the Main ID register and then perform the
->>>  	 * appropriate sequence for entering low power.
->>>  	 */
->>>  	asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
->> 
->> While you're touching that code, how about using:
->> 
->>       primary_part = read_cpuid(CPUID_ID);
->
-> Or, 
-> I suggest read_cpuid_part_number() instead of assembler directly.
->
-> 	primary_part = read_cpuid_part_number();
 
-Yup, even better.
+Hi,
 
->> 
->>> -	if ((primary_part & 0xfff0) == 0xc0f0)
->>> +
->>> +	/*
->>> +	 * Main ID register of Cortex series
->>> +	 * - Cortex-a7  : 0x410F_C07x
->>> +	 * - Cortex-a15 : 0x410F_C0Fx
->>> +	 */
->>> +	primary_part = primary_part & 0xfff0;
->>> +	if (primary_part == 0xc0f0 || primary_part == 0xc070)
->> 
->> ARM_CPU_PART_CORTEX_A15, ARM_CPU_PART_CORTEX_A7
->
-> OK I'll use this defined constant as following:
->
-> 	switch (primary_part)
-> 	case ARM_CPU_PART_CORTEX_A7:
-> 	case ARM_CPU_PART_CORTEX_A15:
-> 		cpu_enter_lowpower_a15();
-> 		break;
-> 	default:
-> 		cpu_enter_lowpower_a9();
-> 		break;
-> 	}
+Zhang, could you please pick this patch up to your tree?
 
-Looks good.
+[ Eduardos's tree hasn't been updated for over 4 months and
+  seems to be dead.. ]
 
-	M.
--- 
-Jazz is not dead. It just smells funny.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+On Tuesday, November 26, 2013 09:22:31 AM Eduardo Valentin wrote:
+> On 26-11-2013 02:07, Amit Kachhap wrote:
+> > On 10/4/13, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
+> >> Menu for Samsung thermal support is visible on all Samsung
+> >> platforms while thermal drivers are currently available only
+> >> for EXYNOS SoCs. Fix it by replacing PLAT_SAMSUNG dependency
+> >> with ARCH_EXYNOS one.
+> >>
+> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > Looks good, so
+> > Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> 
+> I will be queuing this one in my tree.
+> 
+> Thanks Bartlomiej.
+> 
+> > 
+> >> ---
+> >>  drivers/thermal/Kconfig | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> >> index a709c63..05cf95c 100644
+> >> --- a/drivers/thermal/Kconfig
+> >> +++ b/drivers/thermal/Kconfig
+> >> @@ -198,7 +198,7 @@ source "drivers/thermal/ti-soc-thermal/Kconfig"
+> >>  endmenu
+> >>
+> >>  menu "Samsung thermal drivers"
+> >> -depends on PLAT_SAMSUNG
+> >> +depends on ARCH_EXYNOS
+> >>  source "drivers/thermal/samsung/Kconfig"
+> >>  endmenu
+> >>
+> >> --
+> >> 1.8.2.3
