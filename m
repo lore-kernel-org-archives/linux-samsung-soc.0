@@ -1,67 +1,139 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 02/27] ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of
- Exynos3250
-Date: Thu, 10 Apr 2014 18:37:13 +0900
-Message-ID: <1397122658-16013-3-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 08/27] pinctrl: exynos: Add driver data for Exynos3250
+Date: Thu, 10 Apr 2014 18:37:19 +0900
+Message-ID: <1397122658-16013-9-git-send-email-cw00.choi@samsung.com>
 References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:9297 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965729AbaDJJh7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 05:37:59 -0400
 In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-The non-secure SYSRAM is used for secondary CPU bring-up. This patch add
-IO mapping for non-scure SYSRAM.
+From: Tomasz Figa <t.figa@samsung.com>
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+This patch adds driver data (bank list and EINT layout) for Exynos3250
+to pinctrl-exynos driver. Exynos3250 includes 158 multi-functional input/output
+ports. There are 23 general port groups.
+
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/exynos.c           | 12 ++++++++++++
- arch/arm/mach-exynos/include/mach/map.h |  1 +
- 2 files changed, 13 insertions(+)
+ drivers/pinctrl/pinctrl-exynos.c  | 67 +++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.c |  2 ++
+ drivers/pinctrl/pinctrl-samsung.h |  1 +
+ 3 files changed, 70 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index b134868..cad3bfd 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -35,6 +35,15 @@
- #define L2_AUX_VAL 0x7C470001
- #define L2_AUX_MASK 0xC200ffff
+diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
+index 07c8130..9609c23 100644
+--- a/drivers/pinctrl/pinctrl-exynos.c
++++ b/drivers/pinctrl/pinctrl-exynos.c
+@@ -718,6 +718,73 @@ struct samsung_pin_ctrl s5pv210_pin_ctrl[] = {
+ 	},
+ };
  
-+static struct map_desc exynos3250_iodesc[] __initdata = {
++/* pin banks of exynos3250 pin-controller 0 */
++static struct samsung_pin_bank exynos3250_pin_banks0[] = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb",  0x08),
++	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0a0, "gpd0", 0x14),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpd1", 0x18),
++};
++
++/* pin banks of exynos3250 pin-controller 1 */
++static struct samsung_pin_bank exynos3250_pin_banks1[] = {
++	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
++	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpl0", 0x18),
++	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
++	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
++	EXYNOS_PIN_BANK_EINTG(5, 0x2a0, "gpm2", 0x2c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2c0, "gpm3", 0x30),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2e0, "gpm4", 0x34),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc00, "gpx0", 0x00),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc20, "gpx1", 0x04),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc40, "gpx2", 0x08),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc60, "gpx3", 0x0c),
++};
++
++/*
++ * Samsung pinctrl driver data for Exynos3250 SoC. Exynos3250 SoC includes
++ * two gpio/pin-mux/pinconfig controllers.
++ */
++struct samsung_pin_ctrl exynos3250_pin_ctrl[] = {
 +	{
-+		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
-+		.pfn		= __phys_to_pfn(EXYNOS3_PA_SYSRAM_NS),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
++		/* pin-controller instance 0 data */
++		.pin_banks	= exynos3250_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks0),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos3250-gpio-ctrl0",
++	}, {
++		/* pin-controller instance 1 data */
++		.pin_banks	= exynos3250_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks1),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
++		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
++		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.eint_wkup_init = exynos_eint_wkup_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos3250-gpio-ctrl1",
 +	},
 +};
 +
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S3C_VA_SYS,
-@@ -275,6 +284,9 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
-  */
- static void __init exynos_map_io(void)
- {
-+	if (soc_is_exynos3250())
-+		iotable_init(exynos3250_iodesc, ARRAY_SIZE(exynos3250_iodesc));
-+
- 	if (soc_is_exynos4())
- 		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+ /* pin banks of exynos4210 pin-controller 0 */
+ static struct samsung_pin_bank exynos4210_pin_banks0[] = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index 0324d4c..3e61d0f 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -1114,6 +1114,8 @@ static struct syscore_ops samsung_pinctrl_syscore_ops = {
  
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 7b046b5..a53981b 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -26,6 +26,7 @@
- #define EXYNOS4_PA_SYSRAM0		0x02025000
- #define EXYNOS4_PA_SYSRAM1		0x02020000
- #define EXYNOS5_PA_SYSRAM		0x02020000
-+#define EXYNOS3_PA_SYSRAM_NS		0x0205F000
- #define EXYNOS4210_PA_SYSRAM_NS		0x0203F000
- #define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
- #define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
+ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ #ifdef CONFIG_PINCTRL_EXYNOS
++	{ .compatible = "samsung,exynos3250-pinctrl",
++		.data = (void *)exynos3250_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4210-pinctrl",
+ 		.data = (void *)exynos4210_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4x12-pinctrl",
+diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
+index bab9c21..b3e41fa 100644
+--- a/drivers/pinctrl/pinctrl-samsung.h
++++ b/drivers/pinctrl/pinctrl-samsung.h
+@@ -251,6 +251,7 @@ struct samsung_pmx_func {
+ };
+ 
+ /* list of all exported SoC specific data */
++extern struct samsung_pin_ctrl exynos3250_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
 -- 
 1.8.0
