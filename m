@@ -1,55 +1,110 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/6] ARM: EXYNOS: Staticize exynos_subsys
-Date: Thu, 10 Apr 2014 13:54:52 +0530
-Message-ID: <1397118296-6846-3-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 4/6] ARM: EXYNOS: Remove unnecessary inclusion of cpu.h
+Date: Thu, 10 Apr 2014 13:54:54 +0530
+Message-ID: <1397118296-6846-5-git-send-email-sachin.kamat@linaro.org>
 References: <1397118296-6846-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:48500 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965598AbaDJIZp (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:56173 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965407AbaDJIZv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 04:25:45 -0400
-Received: by mail-pb0-f47.google.com with SMTP id up15so3673698pbc.20
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 01:25:45 -0700 (PDT)
+	Thu, 10 Apr 2014 04:25:51 -0400
+Received: by mail-pd0-f174.google.com with SMTP id y13so3550804pdi.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 01:25:51 -0700 (PDT)
 In-Reply-To: <1397118296-6846-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-'exynos_subsys' is now local to this file. Make it static
-and remove the declaration from header file.
+Exynos specific macros and declarations have been moved to
+mach-exynos. Inclusion of plat/cpu.h is no more necessary.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/mach-exynos/exynos.c            |    2 +-
- arch/arm/plat-samsung/include/plat/cpu.h |    1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    1 -
+ arch/arm/mach-exynos/exynos.c  |    2 --
+ arch/arm/mach-exynos/hotplug.c |    2 --
+ arch/arm/mach-exynos/platsmp.c |    2 --
+ arch/arm/mach-exynos/pm.c      |    1 -
+ arch/arm/mach-exynos/pmu.c     |    2 --
+ 6 files changed, 10 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index c57cae0e8779..3dd385ebf195 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -24,7 +24,6 @@
+ #include <asm/unified.h>
+ #include <asm/cpuidle.h>
+ 
+-#include <plat/cpu.h>
+ #include <plat/pm.h>
+ 
+ #include <mach/map.h>
 diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 6a5fe18ec9b1..0ef42b9efd36 100644
+index 0ef42b9efd36..63a0ef714c70 100644
 --- a/arch/arm/mach-exynos/exynos.c
 +++ b/arch/arm/mach-exynos/exynos.c
-@@ -284,7 +284,7 @@ void __init exynos_init_io(void)
- 	of_scan_flat_dt(exynos_fdt_map_sysram, NULL);
- }
+@@ -26,8 +26,6 @@
+ #include <asm/mach/map.h>
+ #include <asm/memory.h>
  
--struct bus_type exynos_subsys = {
-+static struct bus_type exynos_subsys = {
- 	.name		= "exynos-core",
- 	.dev_name	= "exynos-core",
- };
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 5992b8dd9b89..930b4be832cd 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -239,7 +239,6 @@ extern struct bus_type s3c2443_subsys;
- extern struct bus_type s3c6410_subsys;
- extern struct bus_type s5p64x0_subsys;
- extern struct bus_type s5pv210_subsys;
--extern struct bus_type exynos_subsys;
+-#include <plat/cpu.h>
+-
+ #include "common.h"
+ #include "mfc.h"
+ #include "regs-pmu.h"
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index 5eead530c6f8..884e83cfbfbb 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -19,8 +19,6 @@
+ #include <asm/cp15.h>
+ #include <asm/smp_plat.h>
  
- extern void (*s5pc1xx_idle)(void);
+-#include <plat/cpu.h>
+-
+ #include "common.h"
+ #include "regs-pmu.h"
+ 
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 03e5e9f94705..c28cdb1c82cd 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -26,8 +26,6 @@
+ #include <asm/smp_scu.h>
+ #include <asm/firmware.h>
+ 
+-#include <plat/cpu.h>
+-
+ #include "common.h"
+ #include "regs-pmu.h"
+ 
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 15af0ceb0a66..ca672e24b5cd 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -26,7 +26,6 @@
+ #include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ 
+-#include <plat/cpu.h>
+ #include <plat/pm-common.h>
+ #include <plat/pll.h>
+ #include <plat/regs-srom.h>
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index 05c7ce15322a..fb0deda3b3a4 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -13,8 +13,6 @@
+ #include <linux/kernel.h>
+ #include <linux/bug.h>
+ 
+-#include <plat/cpu.h>
+-
+ #include "common.h"
+ #include "regs-pmu.h"
  
 -- 
 1.7.9.5
