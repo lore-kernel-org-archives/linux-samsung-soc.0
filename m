@@ -1,91 +1,96 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 6/6] ARM: multi_v7_defconfig: Enable Exynos platform
-Date: Thu, 10 Apr 2014 13:54:56 +0530
-Message-ID: <1397118296-6846-7-git-send-email-sachin.kamat@linaro.org>
-References: <1397118296-6846-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:43885 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965600AbaDJIZ5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 04:25:57 -0400
-Received: by mail-pa0-f42.google.com with SMTP id fb1so3701808pad.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 01:25:56 -0700 (PDT)
-In-Reply-To: <1397118296-6846-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Add facility to toggle vbus gpio
+ on/off
+Date: Thu, 10 Apr 2014 14:39:13 +0530
+Message-ID: <53465FB9.7070002@ti.com>
+References: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: k.debski@samsung.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, balbi@ti.com, sylvester.nawrocki@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Enable Exynos platform and its related IPs.
+Hi.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/configs/multi_v7_defconfig |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Wednesday 09 April 2014 05:24 PM, Vivek Gautam wrote:
+> Adding support to enable/disable VBUS hooked to a gpio
+> to enable vbus supply on the port.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+> 
+> Based on 'phy-exynos5-usbdrd' patches:
+> [PATCH V4 0/5] Add Exynos5 USB 3.0 phy driver based on generic PHY framework
+> http://www.spinics.net/lists/linux-usb/msg105507.html
+> 
+>  drivers/phy/phy-exynos5-usbdrd.c |   18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+> index ff54a7c..5ca7485 100644
+> --- a/drivers/phy/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_gpio.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mutex.h>
+> @@ -176,6 +177,7 @@ struct exynos5_usbdrd_phy {
+>  	struct clk *ref_clk;
+>  	unsigned long ref_rate;
+>  	unsigned int refclk_reg;
+> +	int gpio;
+>  };
+>  
+>  #define to_usbdrd_phy(inst) \
+> @@ -460,6 +462,9 @@ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
+>  	if (!IS_ERR(phy_drd->usb30_sclk))
+>  		clk_prepare_enable(phy_drd->usb30_sclk);
+>  
+> +	/* Toggle VBUS gpio - on */
+> +	gpio_set_value(phy_drd->gpio, 1);
+> +
+>  	/* Power-on PHY*/
+>  	inst->phy_cfg->phy_isol(inst, 0);
+>  
+> @@ -476,6 +481,9 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+>  	/* Power-off the PHY */
+>  	inst->phy_cfg->phy_isol(inst, 1);
+>  
+> +	/* Toggle VBUS gpio - off */
+> +	gpio_set_value(phy_drd->gpio, 0);
+> +
+>  	if (!IS_ERR(phy_drd->usb30_sclk))
+>  		clk_disable_unprepare(phy_drd->usb30_sclk);
+>  
+> @@ -585,6 +593,16 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+>  
+>  	phy_drd->drv_data = drv_data;
+>  
+> +	/* Get required GPIO for vbus */
+> +	phy_drd->gpio = of_get_named_gpio(dev->of_node,
+> +					  "samsung,vbus-gpio", 0);
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index d4e8a47a2f7c..298057a0324c 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -47,6 +47,7 @@ CONFIG_ARCH_SPEAR13XX=y
- CONFIG_MACH_SPEAR1310=y
- CONFIG_MACH_SPEAR1340=y
- CONFIG_ARCH_STI=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_SIRF=y
- CONFIG_ARCH_TEGRA=y
-@@ -71,6 +72,7 @@ CONFIG_PCI_MSI=y
- CONFIG_PCI_MVEBU=y
- CONFIG_PCI_TEGRA=y
- CONFIG_SMP=y
-+CONFIG_NR_CPUS=8
- CONFIG_HIGHPTE=y
- CONFIG_CMA=y
- CONFIG_ARM_APPENDED_DTB=y
-@@ -153,6 +155,8 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_AMBA_PL011=y
- CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
-+CONFIG_SERIAL_SAMSUNG=y
-+CONFIG_SERIAL_SAMSUNG_CONSOLE=y
- CONFIG_SERIAL_SIRFSOC=y
- CONFIG_SERIAL_SIRFSOC_CONSOLE=y
- CONFIG_SERIAL_TEGRA=y
-@@ -176,6 +180,7 @@ CONFIG_I2C_MUX=y
- CONFIG_I2C_MUX_PCA954x=y
- CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_DESIGNWARE_PLATFORM=y
-+CONFIG_I2C_EXYNOS5=y
- CONFIG_I2C_MV64XXX=y
- CONFIG_I2C_SIRF=y
- CONFIG_I2C_TEGRA=y
-@@ -210,6 +215,7 @@ CONFIG_MFD_AS3722=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX8907=y
-+CONFIG_MFD_SEC_CORE=y
- CONFIG_MFD_PALMAS=y
- CONFIG_MFD_TPS65090=y
- CONFIG_MFD_TPS6586X=y
-@@ -220,6 +226,8 @@ CONFIG_REGULATOR_AS3722=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8907=y
- CONFIG_REGULATOR_PALMAS=y
-+CONFIG_REGULATOR_S2MPS11=y
-+CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS51632=y
- CONFIG_REGULATOR_TPS62360=y
- CONFIG_REGULATOR_TPS65090=y
-@@ -280,6 +288,8 @@ CONFIG_MMC_SDHCI_BCM_KONA=y
- CONFIG_MMC_OMAP=y
- CONFIG_MMC_OMAP_HS=y
- CONFIG_MMC_MVSDIO=y
-+CONFIG_MMC_DW=y
-+CONFIG_MMC_DW_EXYNOS=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
--- 
-1.7.9.5
+Is this dt property documented somewhere?
+> +	if (!gpio_is_valid(phy_drd->gpio))
+> +		dev_dbg(dev, "no usbdrd-phy vbus gpio defined\n");
+
+No return here? Can the PHY be functional even without the VBUS?
+
+Thanks
+Kishon
