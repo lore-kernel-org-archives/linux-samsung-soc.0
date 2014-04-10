@@ -1,63 +1,131 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 06/27] ARM: EXYNOS:: Enter a15 lowpower mode for Exynos3250
- based on Cortex-a7
-Date: Thu, 10 Apr 2014 18:28:23 +0900
-Message-ID: <1397122124-15690-7-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 08/27] pinctrl: exynos: Add driver data for Exynos3250
+Date: Thu, 10 Apr 2014 18:28:25 +0900
+Message-ID: <1397122124-15690-9-git-send-email-cw00.choi@samsung.com>
 References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch decide proper lowpower mode of either a15 or a9 according to own ID
-from Main ID register.
+From: Tomasz Figa <t.figa@samsung.com>
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+This patch adds driver data (bank list and EINT layout) for Exynos3250
+to pinctrl-exynos driver. Exynos3250 includes 158 multi-functional input/output
+ports. There are 23 general port groups.
+
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/hotplug.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-exynos.c  | 67 +++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.c |  2 ++
+ drivers/pinctrl/pinctrl-samsung.h |  1 +
+ 3 files changed, 70 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index 5eead53..36d3db6 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -135,13 +135,20 @@ void __ref exynos_cpu_die(unsigned int cpu)
- 	int primary_part = 0;
+diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
+index 07c8130..9609c23 100644
+--- a/drivers/pinctrl/pinctrl-exynos.c
++++ b/drivers/pinctrl/pinctrl-exynos.c
+@@ -718,6 +718,73 @@ struct samsung_pin_ctrl s5pv210_pin_ctrl[] = {
+ 	},
+ };
  
- 	/*
--	 * we're ready for shutdown now, so do it.
--	 * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
-+	 * we're ready for shutdown now, so do it. Exynos4 is A9 based
-+	 * while Exynos5 is A15/Exynos7 is A7; check the CPU part
- 	 * number by reading the Main ID register and then perform the
- 	 * appropriate sequence for entering low power.
- 	 */
- 	asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
--	if ((primary_part & 0xfff0) == 0xc0f0)
++/* pin banks of exynos3250 pin-controller 0 */
++static struct samsung_pin_bank exynos3250_pin_banks0[] = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb",  0x08),
++	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0a0, "gpd0", 0x14),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpd1", 0x18),
++};
 +
-+	/*
-+	 * Main ID register of Cortex series
-+	 * - Cortex-a7  : 0x410F_C07x
-+	 * - Cortex-a15 : 0x410F_C0Fx
-+	 */
-+	primary_part = primary_part & 0xfff0;
-+	if (primary_part == 0xc0f0 || primary_part == 0xc070)
- 		cpu_enter_lowpower_a15();
- 	else
- 		cpu_enter_lowpower_a9();
++/* pin banks of exynos3250 pin-controller 1 */
++static struct samsung_pin_bank exynos3250_pin_banks1[] = {
++	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
++	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpl0", 0x18),
++	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
++	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
++	EXYNOS_PIN_BANK_EINTG(5, 0x2a0, "gpm2", 0x2c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2c0, "gpm3", 0x30),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2e0, "gpm4", 0x34),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc00, "gpx0", 0x00),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc20, "gpx1", 0x04),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc40, "gpx2", 0x08),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc60, "gpx3", 0x0c),
++};
++
++/*
++ * Samsung pinctrl driver data for Exynos3250 SoC. Exynos3250 SoC includes
++ * two gpio/pin-mux/pinconfig controllers.
++ */
++struct samsung_pin_ctrl exynos3250_pin_ctrl[] = {
++	{
++		/* pin-controller instance 0 data */
++		.pin_banks	= exynos3250_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks0),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos3250-gpio-ctrl0",
++	}, {
++		/* pin-controller instance 1 data */
++		.pin_banks	= exynos3250_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks1),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
++		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
++		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.eint_wkup_init = exynos_eint_wkup_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos3250-gpio-ctrl1",
++	},
++};
++
+ /* pin banks of exynos4210 pin-controller 0 */
+ static struct samsung_pin_bank exynos4210_pin_banks0[] = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index 0324d4c..3e61d0f 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -1114,6 +1114,8 @@ static struct syscore_ops samsung_pinctrl_syscore_ops = {
+ 
+ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ #ifdef CONFIG_PINCTRL_EXYNOS
++	{ .compatible = "samsung,exynos3250-pinctrl",
++		.data = (void *)exynos3250_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4210-pinctrl",
+ 		.data = (void *)exynos4210_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4x12-pinctrl",
+diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
+index bab9c21..b3e41fa 100644
+--- a/drivers/pinctrl/pinctrl-samsung.h
++++ b/drivers/pinctrl/pinctrl-samsung.h
+@@ -251,6 +251,7 @@ struct samsung_pmx_func {
+ };
+ 
+ /* list of all exported SoC specific data */
++extern struct samsung_pin_ctrl exynos3250_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
 -- 
 1.8.0
