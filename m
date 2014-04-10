@@ -1,92 +1,72 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/5] drm/exynos: remove dummy hdmiphy clock from hdmi driver
-Date: Thu, 10 Apr 2014 17:32:21 +0200
-Message-ID: <5346B985.3000801@samsung.com>
-References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
- <1396458826-3051-2-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH V4 10/20] ARM: exynos: cpuidle: Move clock setup to pm.c
+Date: Thu, 10 Apr 2014 17:34:33 +0200
+Message-ID: <5346BA09.9020708@samsung.com>
+References: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org>
+ <1397123751-1957-11-git-send-email-daniel.lezcano@linaro.org>
+ <5346A367.2070107@samsung.com> <5346A958.1030302@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:13561 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:13650 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753036AbaDJPc2 (ORCPT
+	with ESMTP id S1753049AbaDJPei (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 11:32:28 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+	Thu, 10 Apr 2014 11:34:38 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N3T0046WN5SS710@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Apr 2014 16:32:17 +0100 (BST)
-In-reply-to: <1396458826-3051-2-git-send-email-rahul.sharma@samsung.com>
+ 17 2011)) with ESMTP id <0N3T003CMN9HA810@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Apr 2014 16:34:29 +0100 (BST)
+In-reply-to: <5346A958.1030302@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: joshi@samsung.com
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-Hi Rahul,
+On 10.04.2014 16:23, Daniel Lezcano wrote:
+> On 04/10/2014 03:57 PM, Tomasz Figa wrote:
+>> Hi Daniel,
+>>
+>> On 10.04.2014 11:55, Daniel Lezcano wrote:
+>>> One more step is moving the clock ratio setting at idle time in pm.c
+>>>
+>>> The macro names have been changed to be consistent with the other macros
+>>> name in the file.
+>>>
+>>> Note, the clock divider was working only when cpuidle was enabled
+>>> because it
+>>> was in its init routine. With this change, the clock divider is set in
+>>> the pm's
+>>> init routine, so it will also operate when the cpuidle driver is not
+>>> set, which
+>>> is good.
+>>>
+>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>>> ---
+>>>   arch/arm/mach-exynos/cpuidle.c  |   54
+>>> ---------------------------------------
+>>>   arch/arm/mach-exynos/pm.c       |   35 +++++++++++++++++++++++++
+>>>   arch/arm/mach-exynos/regs-pmu.h |   19 ++++++++++++++
+>>>   3 files changed, 54 insertions(+), 54 deletions(-)
+>>
+>> Sorry that I didn't mention that before, but now I recall that there was
+>> already a similar patch moving this code to Exynos5250 clock driver,
+>> which is the best place for setup of any CMU registers and a step
+>> towards removing one more static IO mapping.
+>
+> Yes, Bartlomiej mentioned it.
+>
+> Is it possible to merge this mentioned patch or to give a pointer to it
+> so I can integrate it into the patchset ?
 
-On 02.04.2014 19:13, Rahul Sharma wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->
-> Exynos drm hdmi driver used to get dummy hdmiphy clock to
-> control the PMU bit for hdmiphy. This clock is removed
-> during CCF migration. This should also be cleaned from
-> hdmi driver.
->
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> ---
->   drivers/gpu/drm/exynos/exynos_hdmi.c |    8 --------
->   1 file changed, 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 25bf65a..23abfa0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -74,7 +74,6 @@ struct hdmi_resources {
->   	struct clk			*sclk_hdmi;
->   	struct clk			*sclk_pixel;
->   	struct clk			*sclk_hdmiphy;
-> -	struct clk			*hdmiphy;
->   	struct clk			*mout_hdmi;
->   	struct regulator_bulk_data	*regul_bulk;
->   	int				regul_count;
-> @@ -1854,7 +1853,6 @@ static void hdmi_poweron(struct exynos_drm_display *display)
->   	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
->   		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
->
-> -	clk_prepare_enable(res->hdmiphy);
->   	clk_prepare_enable(res->hdmi);
->   	clk_prepare_enable(res->sclk_hdmi);
->
-> @@ -1881,7 +1879,6 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
->
->   	clk_disable_unprepare(res->sclk_hdmi);
->   	clk_disable_unprepare(res->hdmi);
-> -	clk_disable_unprepare(res->hdmiphy);
->   	regulator_bulk_disable(res->regul_count, res->regul_bulk);
->
->   	pm_runtime_put_sync(hdata->dev);
-> @@ -1977,11 +1974,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
->   		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
->   		goto fail;
->   	}
-> -	res->hdmiphy = devm_clk_get(dev, "hdmiphy");
-> -	if (IS_ERR(res->hdmiphy)) {
-> -		DRM_ERROR("failed to get clock 'hdmiphy'\n");
-> -		goto fail;
-> -	}
->   	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
->   	if (IS_ERR(res->mout_hdmi)) {
->   		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
->
+http://marc.info/?l=linux-arm-kernel&m=138147021207626&w=2
 
-This patch makes the series non-bisectable. If you remove handling of 
-this dummy clock until you add proper support for PHY isolation setting, 
-then at this point you end up with non-working code.
-
-You should first provide new infrastructure in parallel to existing one, 
-then move all users to new one and only then drop the old one.
+I wonder if it still applies cleanly, though...
 
 Best regards,
 Tomasz
