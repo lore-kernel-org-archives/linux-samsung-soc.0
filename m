@@ -1,152 +1,65 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V4 16/20] ARM: exynos: cpuidle: Move the power sequence call in the cpu_pm notifier
-Date: Thu, 10 Apr 2014 11:55:47 +0200
-Message-ID: <1397123751-1957-17-git-send-email-daniel.lezcano@linaro.org>
-References: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: RE: [PATCH 02/27] ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of
+ Exynos3250
+Date: Thu, 10 Apr 2014 18:57:02 +0900
+Message-ID: <002501cf54a3$38f50d60$aadf2820$@samsung.com>
+References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
+ <1397122124-15690-3-git-send-email-cw00.choi@samsung.com>
+ <4172202.teSeEmypAU@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:37112 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965608AbaDJJz5 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:22629 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965804AbaDJJ5D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 05:55:57 -0400
-Received: by mail-wi0-f169.google.com with SMTP id hm4so709082wib.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 02:55:55 -0700 (PDT)
-In-Reply-To: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org>
+	Thu, 10 Apr 2014 05:57:03 -0400
+In-reply-to: <4172202.teSeEmypAU@wuerfel>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
+To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, 'Chanwoo Choi' <cw00.choi@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org
 
-The code to initiate and exit the powerdown sequence is the same in pm.c and
-cpuidle.c.
+Hi Arnd,
 
-Let's split the common part in the pm.c and reuse it from the cpu_pm notifier.
+> -----Original Message-----
+> From: linux-arm-kernel [mailto:linux-arm-kernel-
+> bounces@lists.infradead.org] On Behalf Of Arnd Bergmann
+> Sent: Thursday, April 10, 2014 6:45 PM
+> To: linux-arm-kernel@lists.infradead.org
+> Cc: kgene.kim@samsung.com; t.figa@samsung.com; hyunhee.kim@samsung.com;
+> sw0312.kim@samsung.com; linux-kernel@vger.kernel.org;
+> yj44.cho@samsung.com; inki.dae@samsung.com; Chanwoo Choi;
+> kyungmin.park@samsung.com; linux-samsung-soc@vger.kernel.org
+> Subject: Re: [PATCH 02/27] ARM: EXYNOS: Add IO mapping for non-secure
+> SYSRAM of Exynos3250
+> 
+> On Thursday 10 April 2014 18:28:19 Chanwoo Choi wrote:
+> >
+> > The non-secure SYSRAM is used for secondary CPU bring-up. This patch
+> add
+> > IO mapping for non-scure SYSRAM.
+> >
+> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> I really don't want to see any further static mappings here. We had the
+> same discussion for the previous Exynos chip that was submitted, so
+> please
+> describe the SYSRAM in DT, and start thinking about the other static
+> mappings
+> that can be removed.
 
-That is one more step forward to make the cpuidle driver arch indenpendant.
+Sachin already submitted the DT support[1] for SYSRAM area.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/mach-exynos/cpuidle.c |   22 ----------------------
- arch/arm/mach-exynos/pm.c      |   24 ++++++++++++++++++++----
- 2 files changed, 20 insertions(+), 26 deletions(-)
+[1] : http://www.spinics.net/lists/linux-samsung-soc/msg27647.html
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 5c5a4d1..0651293 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -28,7 +28,6 @@
- #include <mach/map.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- 
- static int idle_finisher(unsigned long flags)
- {
-@@ -42,31 +41,10 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- 				struct cpuidle_driver *drv,
- 				int index)
- {
--	unsigned long tmp;
--
--	/* Setting Central Sequence Register for power down mode */
--	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
--	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
--	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
--
- 	cpu_pm_enter();
- 	cpu_suspend(0, idle_finisher);
- 	cpu_pm_exit();
- 
--	/*
--	 * If PMU failed while entering sleep mode, WFI will be
--	 * ignored by PMU and then exiting cpu_do_idle().
--	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
--	 * in this situation.
--	 */
--	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
--	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
--		tmp |= S5P_CENTRAL_LOWPWR_CFG;
--		__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
--		/* Clear wakeup state register */
--		__raw_writel(0x0, S5P_WAKEUP_STAT);
--	}
--
- 	return index;
- }
- 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index f75d9b9..a943e97 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -245,15 +245,21 @@ static void exynos_pm_prepare(void)
- 	__raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
- }
- 
--static int exynos_pm_suspend(void)
-+static void exynos_pm_central_suspend(void)
- {
- 	unsigned long tmp;
- 
- 	/* Setting Central Sequence Register for power down mode */
--
- 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
-+}
-+
-+static int exynos_pm_suspend(void)
-+{
-+	unsigned long tmp;
-+
-+	exynos_pm_central_suspend();
- 
- 	/* Setting SEQ_OPTION register */
- 
-@@ -266,7 +272,7 @@ static int exynos_pm_suspend(void)
- 	return 0;
- }
- 
--static void exynos_pm_resume(void)
-+static int exynos_pm_central_resume(void)
- {
- 	unsigned long tmp;
- 
-@@ -283,9 +289,17 @@ static void exynos_pm_resume(void)
- 		/* clear the wakeup state register */
- 		__raw_writel(0x0, S5P_WAKEUP_STAT);
- 		/* No need to perform below restore code */
--		goto early_wakeup;
-+		return -1;
- 	}
- 
-+	return 0;
-+}
-+
-+static void exynos_pm_resume(void)
-+{
-+	if (exynos_pm_central_resume())
-+		goto early_wakeup;
-+
- 	if (!soc_is_exynos5250())
- 		exynos_cpu_restore_register();
- 
-@@ -394,6 +408,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 	switch (cmd) {
- 	case CPU_PM_ENTER:
- 		if (cpu == 0) {
-+			exynos_pm_central_suspend();
- 			exynos_cpu_save_register();
- 		}
- 		break;
-@@ -403,6 +418,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
- 			if (!soc_is_exynos5250())
- 				scu_enable(S5P_VA_SCU);
- 			exynos_cpu_restore_register();
-+			exynos_pm_central_resume();
- 		}
- 		break;
- 	}
--- 
-1.7.9.5
+> 
+> 	Arnd
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
