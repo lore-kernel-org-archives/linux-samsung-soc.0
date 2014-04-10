@@ -1,8 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 20/27] ARM: dts: exynos3250: Move definitions of external
- clocks to SoC dtsi
-Date: Thu, 10 Apr 2014 19:06:10 +0900
-Message-ID: <1397124377-16969-12-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 22/27] ARM: dts: exynos3250: Add amba and pdma dt node
+Date: Thu, 10 Apr 2014 19:06:12 +0900
+Message-ID: <1397124377-16969-14-git-send-email-cw00.choi@samsung.com>
 References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
@@ -13,57 +12,54 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Tomasz Figa <t.figa@samsung.com>
 
-This allows proper ordering of clock registration and is still correct,
-because list of external clocks is SoC-specific, just their frequencies
-and availability are board-specific.
+This patch add amba and pdma dt node to support bus on Exynos3250.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
  arch/arm/boot/dts/exynos3250.dtsi | 30 ++++++++++++++++++++++++++++++
  1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 587a124..ceed761 100644
+index 2f0ca32..b8e5ae13 100644
 --- a/arch/arm/boot/dts/exynos3250.dtsi
 +++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -40,6 +40,36 @@
- 		i2c7 = &i2c_7;
+@@ -148,6 +148,36 @@
+ 		status = "disabled";
  	};
  
-+	fixed-rate-clocks {
-+		compatible = "simple-bus";
++	amba {
 +		#address-cells = <1>;
-+		#size-cells = <0>;
++		#size-cells = <1>;
++		compatible = "arm,amba-bus";
++		interrupt-parent = <&gic>;
++		ranges;
 +
-+		xusbxti: clock@0 {
-+			compatible = "fixed-clock";
-+			reg = <0>;
-+			clock-frequency = <0>;
-+			#clock-cells = <0>;
-+			clock-output-names = "xusbxti";
++		pdma0: pdma@12680000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x12680000 0x1000>;
++			interrupts = <0 138 0>;
++			clocks = <&cmu CLK_PDMA0>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
 +		};
 +
-+		xxti: clock@1 {
-+			compatible = "fixed-clock";
-+			reg = <1>;
-+			clock-frequency = <0>;
-+			#clock-cells = <0>;
-+			clock-output-names = "xxti";
-+		};
-+
-+		xtcxo: clock@2 {
-+			compatible = "fixed-clock";
-+			reg = <2>;
-+			clock-frequency = <0>;
-+			#clock-cells = <0>;
-+			clock-output-names = "xtcxo";
++		pdma1: pdma@12690000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x12690000 0x1000>;
++			interrupts = <0 139 0>;
++			clocks = <&cmu CLK_PDMA1>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
 +		};
 +	};
 +
- 	chipid@10000000 {
- 		compatible = "samsung,exynos4210-chipid";
- 		reg = <0x10000000 0x100>;
+ 	adc: adc@126C0000 {
+ 		compatible = "samsung,exynos-adc-v2";
+ 		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
 -- 
 1.8.0
