@@ -1,15 +1,15 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/5] drm/exynos: use regmap interface to set hdmiphy
- control bit in pmu
-Date: Thu, 10 Apr 2014 19:00:42 +0200
-Message-ID: <5346CE3A.4060700@samsung.com>
+Subject: Re: [PATCH 3/5] drm/exynos: remove unnecessary read for phy
+ configuration values
+Date: Thu, 10 Apr 2014 19:02:29 +0200
+Message-ID: <5346CEA5.5010103@samsung.com>
 References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
- <1396458826-3051-3-git-send-email-rahul.sharma@samsung.com>
+ <1396458826-3051-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1396458826-3051-3-git-send-email-rahul.sharma@samsung.com>
+In-reply-to: <1396458826-3051-4-git-send-email-rahul.sharma@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -23,120 +23,51 @@ To: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org, li
 Cc: joshi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Rahul,
-
 On 02.04.2014 19:13, Rahul Sharma wrote:
 > From: Rahul Sharma <Rahul.Sharma@samsung.com>
 >
-> Hdmiphy control bit needs to be set before setting the resolution
-> to hdmi hardware. This was handled using dummy hdmiphy clock which
-> is removed now.
->
-> PMU is already defined as system controller for exynos SoC. Registers
-> of PMU are accessed using regmap interfaces.
->
-> Devicetree binding document for hdmi is also updated.
+> Cleaning up unnecessary i2c read call after hdmiphy configuration.
+> This check is redundant since check for hdmiphy pll lock status
+> confirms the correct settings for phy.
 >
 > Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 > ---
->   .../devicetree/bindings/video/exynos_hdmi.txt      |    2 ++
->   drivers/gpu/drm/exynos/exynos_hdmi.c               |   17 +++++++++++++++++
->   drivers/gpu/drm/exynos/regs-hdmi.h                 |    4 ++++
->   3 files changed, 23 insertions(+)
+>   drivers/gpu/drm/exynos/exynos_hdmi.c |   10 ----------
+>   1 file changed, 10 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-> index f9187a2..243a499 100644
-> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-> @@ -27,6 +27,7 @@ Required properties:
->   	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
->   - ddc: phandle to the hdmi ddc node
->   - phy: phandle to the hdmi phy node
-> +- samsung,syscon-phandle: phandle for system controller node for PMU.
->
->   Example:
->
-> @@ -37,4 +38,5 @@ Example:
->   		hpd-gpio = <&gpx3 7 1>;
->   		ddc = <&hdmi_ddc_node>;
->   		phy = <&hdmi_phy_node>;
-> +		samsung,syscon-phandle = <&pmu_system_controller>;
->   	};
 > diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 23abfa0..47b8c06 100644
+> index 47b8c06..5b2cfe7 100644
 > --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 > +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -36,6 +36,8 @@
->   #include <linux/i2c.h>
->   #include <linux/of_gpio.h>
->   #include <linux/hdmi.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
+> @@ -1518,7 +1518,6 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+>   	const u8 *hdmiphy_data;
+>   	u8 buffer[32];
+>   	u8 operation[2];
+> -	u8 read_buffer[32] = {0, };
+>   	int ret;
+>   	int i;
 >
->   #include <drm/exynos_drm.h>
->
-> @@ -194,6 +196,7 @@ struct hdmi_context {
->   	struct hdmi_resources		res;
->
->   	int				hpd_gpio;
-> +	struct regmap			*pmureg;
->
->   	enum hdmi_type			type;
->   };
-> @@ -1853,6 +1856,9 @@ static void hdmi_poweron(struct exynos_drm_display *display)
->   	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
->   		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
->
-> +	/* set pmu hdmiphy control bit to enable hdmiphy */
-> +	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
-> +			PMU_HDMI_PHY_ENABLE_BIT, 1);
->   	clk_prepare_enable(res->hdmi);
->   	clk_prepare_enable(res->sclk_hdmi);
->
-> @@ -1879,6 +1885,10 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
->
->   	clk_disable_unprepare(res->sclk_hdmi);
->   	clk_disable_unprepare(res->hdmi);
-
-nit: Blank line would beautify the code a bit.
-
-> +	/* reset pmu hdmiphy control bit to disable hdmiphy */
-> +	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
-> +			PMU_HDMI_PHY_ENABLE_BIT, 0);
-> +
->   	regulator_bulk_disable(res->regul_count, res->regul_bulk);
->
->   	pm_runtime_put_sync(hdata->dev);
-> @@ -2128,6 +2138,13 @@ static int hdmi_probe(struct platform_device *pdev)
->   		goto err_hdmiphy;
+> @@ -1558,15 +1557,6 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+>   		return;
 >   	}
 >
-> +	hdata->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +			"samsung,syscon-phandle");
-> +	if (IS_ERR_OR_NULL(hdata->pmureg)) {
-
-IS_ERR() is the correct macro to check return value of this function.
-
-> +		DRM_ERROR("syscon regmap lookup failed.\n");
-> +		goto err_hdmiphy;
-> +	}
-> +
->   	pm_runtime_enable(dev);
+> -	ret = i2c_master_recv(hdata->hdmiphy_port, read_buffer, 32);
+> -	if (ret < 0) {
+> -		DRM_ERROR("failed to read hdmiphy config\n");
+> -		return;
+> -	}
+> -
+> -	for (i = 0; i < ret; i++)
+> -		DRM_DEBUG_KMS("hdmiphy[0x%02x] write[0x%02x] - "
+> -			"recv [0x%02x]\n", i, buffer[i], read_buffer[i]);
+>   }
 >
->   	hdmi_display.ctx = hdata;
-> diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
-> index ef1b3eb..9811d6f 100644
-> --- a/drivers/gpu/drm/exynos/regs-hdmi.h
-> +++ b/drivers/gpu/drm/exynos/regs-hdmi.h
-> @@ -578,4 +578,8 @@
->   #define HDMI_TG_VACT_ST4_H		HDMI_TG_BASE(0x0074)
->   #define HDMI_TG_3D			HDMI_TG_BASE(0x00F0)
+>   static void hdmi_conf_apply(struct hdmi_context *hdata)
 >
-> +/* PMU Registers for PHY */
-> +#define PMU_HDMI_PHY_CONTROL		0x700
-> +#define PMU_HDMI_PHY_ENABLE_BIT	(1<<0)
 
-BIT() macro could be used instead of open coding the shift.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
+--
 Best regards,
 Tomasz
