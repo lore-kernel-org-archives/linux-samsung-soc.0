@@ -1,228 +1,191 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH] usb: ohci-exynos: Add facility to use phy provided by the generic phy framework
-Date: Thu, 10 Apr 2014 18:54:21 +0530
-Message-ID: <1397136261-16408-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, robh+dt@kernel.org, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH V4 10/20] ARM: exynos: cpuidle: Move clock setup to pm.c
+Date: Thu, 10 Apr 2014 15:57:59 +0200
+Message-ID: <5346A367.2070107@samsung.com>
+References: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org>
+ <1397123751-1957-11-git-send-email-daniel.lezcano@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17047 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934020AbaDJN6G (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 09:58:06 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3T006PTISR2CB0@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Apr 2014 14:58:03 +0100 (BST)
+In-reply-to: <1397123751-1957-11-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-Add support to consume phy provided by Generic phy framework.
-Keeping the support for older usb-phy intact right now, in order
-to prevent any functionality break in absence of relevant
-device tree side change for ohci-exynos.
-Once we move to new phy in the device nodes for ohci, we can
-remove the support for older phys.
+Hi Daniel,
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
----
+On 10.04.2014 11:55, Daniel Lezcano wrote:
+> One more step is moving the clock ratio setting at idle time in pm.c
+>
+> The macro names have been changed to be consistent with the other macros
+> name in the file.
+>
+> Note, the clock divider was working only when cpuidle was enabled because it
+> was in its init routine. With this change, the clock divider is set in the pm's
+> init routine, so it will also operate when the cpuidle driver is not set, which
+> is good.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>   arch/arm/mach-exynos/cpuidle.c  |   54 ---------------------------------------
+>   arch/arm/mach-exynos/pm.c       |   35 +++++++++++++++++++++++++
+>   arch/arm/mach-exynos/regs-pmu.h |   19 ++++++++++++++
+>   3 files changed, 54 insertions(+), 54 deletions(-)
 
-Based on 'usb-next' branch of Greg's usb tree.
-Tested with local dt patches, similar to ehci dt changes posted by Kamil[1].
-Tested on Exynos5250 smdk.
+Sorry that I didn't mention that before, but now I recall that there was 
+already a similar patch moving this code to Exynos5250 clock driver, 
+which is the best place for setup of any CMU registers and a step 
+towards removing one more static IO mapping.
 
-[1] [PATCH v6 4/8] dts: Add usb2phy to Exynos 5250
-    https://lkml.org/lkml/2014/1/29/302
+Also one more thing below.
 
- .../devicetree/bindings/usb/exynos-usb.txt         |   14 ++++
- drivers/usb/host/ohci-exynos.c                     |   79 ++++++++++++++++++--
- 2 files changed, 85 insertions(+), 8 deletions(-)
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index ce31004..97a441f 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -39,25 +39,6 @@
+>
+>   #define S5P_CHECK_AFTR		0xFCBA0D10
+>
+> -#define EXYNOS5_PWR_CTRL1			(S5P_VA_CMU + 0x01020)
+> -#define EXYNOS5_PWR_CTRL2			(S5P_VA_CMU + 0x01024)
+> -
+> -#define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
+> -#define PWR_CTRL1_CORE1_DOWN_RATIO		(7 << 16)
+> -#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
+> -#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
+> -#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
+> -#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
+> -#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
+> -#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
+> -
+> -#define PWR_CTRL2_DIV2_UP_EN			(1 << 25)
+> -#define PWR_CTRL2_DIV1_UP_EN			(1 << 24)
+> -#define PWR_CTRL2_DUR_STANDBY2_VAL		(1 << 16)
+> -#define PWR_CTRL2_DUR_STANDBY1_VAL		(1 << 8)
+> -#define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
+> -#define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
+> -
+>   /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+>   static void exynos_set_wakeupmask(void)
+>   {
+> @@ -127,38 +108,6 @@ static int exynos_enter_lowpower(struct cpuidle_device *dev,
+>   		return exynos_enter_core0_aftr(dev, drv, new_index);
+>   }
+>
+> -static void __init exynos5_core_down_clk(void)
+> -{
+> -	unsigned int tmp;
+> -
+> -	/*
+> -	 * Enable arm clock down (in idle) and set arm divider
+> -	 * ratios in WFI/WFE state.
+> -	 */
+> -	tmp = PWR_CTRL1_CORE2_DOWN_RATIO | \
+> -	      PWR_CTRL1_CORE1_DOWN_RATIO | \
+> -	      PWR_CTRL1_DIV2_DOWN_EN	 | \
+> -	      PWR_CTRL1_DIV1_DOWN_EN	 | \
+> -	      PWR_CTRL1_USE_CORE1_WFE	 | \
+> -	      PWR_CTRL1_USE_CORE0_WFE	 | \
+> -	      PWR_CTRL1_USE_CORE1_WFI	 | \
+> -	      PWR_CTRL1_USE_CORE0_WFI;
+> -	__raw_writel(tmp, EXYNOS5_PWR_CTRL1);
+> -
+> -	/*
+> -	 * Enable arm clock up (on exiting idle). Set arm divider
+> -	 * ratios when not in idle along with the standby duration
+> -	 * ratios.
+> -	 */
+> -	tmp = PWR_CTRL2_DIV2_UP_EN	 | \
+> -	      PWR_CTRL2_DIV1_UP_EN	 | \
+> -	      PWR_CTRL2_DUR_STANDBY2_VAL | \
+> -	      PWR_CTRL2_DUR_STANDBY1_VAL | \
+> -	      PWR_CTRL2_CORE2_UP_RATIO	 | \
+> -	      PWR_CTRL2_CORE1_UP_RATIO;
+> -	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+> -}
+> -
+>   static struct cpuidle_driver exynos_idle_driver = {
+>   	.name			= "exynos_idle",
+>   	.owner			= THIS_MODULE,
+> @@ -181,9 +130,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
+>   {
+>   	int ret;
+>
+> -	if (soc_is_exynos5250())
+> -		exynos5_core_down_clk();
+> -
+>   	if (soc_is_exynos5440())
+>   		exynos_idle_driver.state_count = 1;
+>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 9773a00..c4138bf 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -140,6 +140,38 @@ static void exynos_cpu_restore_register(void)
+>   		      : "cc");
+>   }
+>
+> +static void __init exynos5_core_down_clk(void)
+> +{
+> +	unsigned int tmp;
+> +
+> +	/*
+> +	 * Enable arm clock down (in idle) and set arm divider
+> +	 * ratios in WFI/WFE state.
+> +	 */
+> +	tmp = EXYNOS5_PWR_CTRL1_CORE2_DOWN_RATIO | \
+> +	      EXYNOS5_PWR_CTRL1_CORE1_DOWN_RATIO | \
+> +	      EXYNOS5_PWR_CTRL1_DIV2_DOWN_EN	 | \
+> +	      EXYNOS5_PWR_CTRL1_DIV1_DOWN_EN	 | \
+> +	      EXYNOS5_PWR_CTRL1_USE_CORE1_WFE	 | \
+> +	      EXYNOS5_PWR_CTRL1_USE_CORE0_WFE	 | \
+> +	      EXYNOS5_PWR_CTRL1_USE_CORE1_WFI	 | \
+> +	      EXYNOS5_PWR_CTRL1_USE_CORE0_WFI;
+> +	__raw_writel(tmp, EXYNOS5_PWR_CTRL1);
+> +
+> +	/*
+> +	 * Enable arm clock up (on exiting idle). Set arm divider
+> +	 * ratios when not in idle along with the standby duration
+> +	 * ratios.
+> +	 */
+> +	tmp = EXYNOS5_PWR_CTRL2_DIV2_UP_EN	 | \
+> +	      EXYNOS5_PWR_CTRL2_DIV1_UP_EN	 | \
+> +	      EXYNOS5_PWR_CTRL2_DUR_STANDBY2_VAL | \
+> +	      EXYNOS5_PWR_CTRL2_DUR_STANDBY1_VAL | \
+> +	      EXYNOS5_PWR_CTRL2_CORE2_UP_RATIO	 | \
+> +	      EXYNOS5_PWR_CTRL2_CORE1_UP_RATIO;
+> +	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+> +}
+> +
+>   static int exynos_cpu_suspend(unsigned long arg)
+>   {
+>   #ifdef CONFIG_CACHE_L2X0
+> @@ -244,6 +276,9 @@ static void exynos_pm_resume(void)
+>
+>   	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>
+> +	if (soc_is_exynos5250())
+> +		exynos5_core_down_clk();
+> +
 
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index d967ba1..ef0bc09 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -38,6 +38,10 @@ Required properties:
-  - interrupts: interrupt number to the cpu.
-  - clocks: from common clock binding: handle to usb clock.
-  - clock-names: from common clock binding: Shall be "usbhost".
-+ - port: if in the SoC there are OHCI phys, they should be listed here.
-+One phy per port. Each port should have its reg entry with a consecutive
-+number. Also it should contain phys and phy-names entries specifying the
-+phy used by the port.
- 
- Example:
- 	usb@12120000 {
-@@ -47,6 +51,16 @@ Example:
- 
- 		clocks = <&clock 285>;
- 		clock-names = "usbhost";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+		    reg = <0>;
-+		    phys = <&usb2phy 1>;
-+		    phy-names = "host";
-+		    status = "disabled";
-+		};
-+
- 	};
- 
- DWC3
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 68588d8..52eb821 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
-@@ -37,6 +38,7 @@ struct exynos_ohci_hcd {
- 	struct clk *clk;
- 	struct usb_phy *phy;
- 	struct usb_otg *otg;
-+	struct phy *phy_g;
- };
- 
- static void exynos_ohci_phy_enable(struct platform_device *pdev)
-@@ -57,12 +59,26 @@ static void exynos_ohci_phy_disable(struct platform_device *pdev)
- 		usb_phy_shutdown(exynos_ohci->phy);
- }
- 
-+static int exynos_ohci_phyg_on(struct phy *phy, bool on)
-+{
-+	int ret = 0;
-+
-+	if (phy) {
-+		if (on)
-+			ret = phy_power_on(phy);
-+		else
-+			ret = phy_power_off(phy);
-+	}
-+
-+	return ret;
-+}
-+
- static int exynos_ohci_probe(struct platform_device *pdev)
- {
- 	struct exynos_ohci_hcd *exynos_ohci;
- 	struct usb_hcd *hcd;
- 	struct resource *res;
--	struct usb_phy *phy;
-+	struct device_node *child;
- 	int irq;
- 	int err;
- 
-@@ -88,16 +104,49 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 					"samsung,exynos5440-ohci"))
- 		goto skip_phy;
- 
--	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(phy)) {
--		usb_put_hcd(hcd);
--		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
--		return -EPROBE_DEFER;
-+	exynos_ohci->phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR(exynos_ohci->phy)) {
-+		err = PTR_ERR(exynos_ohci->phy);
-+		if (err == -ENXIO || err == -ENODEV) {
-+			exynos_ohci->phy = NULL;
-+		} else if (err == -EPROBE_DEFER) {
-+			usb_put_hcd(hcd);
-+			return err;
-+		} else {
-+			dev_err(&pdev->dev, "no usb2 phy configured\n");
-+			usb_put_hcd(hcd);
-+			return err;
-+		}
- 	} else {
--		exynos_ohci->phy = phy;
--		exynos_ohci->otg = phy->otg;
-+		exynos_ohci->otg = exynos_ohci->phy->otg;
- 	}
- 
-+	/* Getting generic phy:
-+	 * We are keeping both types of phys as a part of transiting OHCI
-+	 * to generic phy framework, so that in absence of supporting dts
-+	 * changes the functionality doesn't break.
-+	 * Once we move the ohci dt nodes to use new generic phys,
-+	 * we can remove support for older PHY in this driver.
-+	 */
-+	child = of_get_next_child(pdev->dev.of_node, NULL);
-+	exynos_ohci->phy_g = devm_of_phy_get(&pdev->dev, child, 0);
-+	of_node_put(child);
-+	if (IS_ERR(exynos_ohci->phy_g)) {
-+		err = PTR_ERR(exynos_ohci->phy_g);
-+		if (err == -ENOSYS || err == -ENODEV) {
-+			exynos_ohci->phy_g = NULL;
-+		} else if (err == -EPROBE_DEFER) {
-+			usb_put_hcd(hcd);
-+			return err;
-+		} else {
-+			dev_err(&pdev->dev, "no usb2 phy configured\n");
-+			usb_put_hcd(hcd);
-+			return err;
-+		}
-+	}
-+
-+	if (!exynos_ohci->phy && !exynos_ohci->phy_g)
-+		dev_dbg(&pdev->dev, "Failed to get usb2 phy\n");
- skip_phy:
- 	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
- 
-@@ -140,6 +189,11 @@ skip_phy:
- 	platform_set_drvdata(pdev, hcd);
- 
- 	exynos_ohci_phy_enable(pdev);
-+	err = exynos_ohci_phyg_on(exynos_ohci->phy_g, true);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to enable phy\n");
-+		goto fail_io;
-+	}
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -151,6 +205,7 @@ skip_phy:
- 
- fail_add_hcd:
- 	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phyg_on(exynos_ohci->phy_g, false);
- fail_io:
- 	clk_disable_unprepare(exynos_ohci->clk);
- fail_clk:
-@@ -169,6 +224,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
- 	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phyg_on(exynos_ohci->phy_g, false);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -205,6 +261,7 @@ static int exynos_ohci_suspend(struct device *dev)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
- 	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phyg_on(exynos_ohci->phy_g, false);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -218,6 +275,7 @@ static int exynos_ohci_resume(struct device *dev)
- 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
- 	struct platform_device *pdev		= to_platform_device(dev);
-+	int ret;
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
-@@ -225,6 +283,11 @@ static int exynos_ohci_resume(struct device *dev)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
- 	exynos_ohci_phy_enable(pdev);
-+	ret = exynos_ohci_phyg_on(exynos_ohci->phy_g, true);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable phy\n");
-+		return ret;
-+	}
- 
- 	ohci_resume(hcd, false);
- 
--- 
-1.7.10.4
+Originally this code was executed at system boot-up, but now it is 
+happening on resume from sleep. Is this change desired?
+
+Best regards,
+Tomasz
