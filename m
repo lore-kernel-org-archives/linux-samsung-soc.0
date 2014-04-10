@@ -1,14 +1,14 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 23/27] ARM: dts: exynos3250: Add spi dt node to support spi bus
-Date: Thu, 10 Apr 2014 19:06:13 +0900
-Message-ID: <1397124377-16969-15-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 11/27] ARM: dts: exynos3250: Add GIC dt node for Exynos3250
+Date: Thu, 10 Apr 2014 19:06:01 +0900
+Message-ID: <1397124377-16969-3-git-send-email-cw00.choi@samsung.com>
 References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53305 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:53304 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965761AbaDJKGz (ORCPT
+	with ESMTP id S965676AbaDJKGv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 06:06:55 -0400
+	Thu, 10 Apr 2014 06:06:51 -0400
 In-reply-to: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,67 +17,34 @@ Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw03
 
 From: Tomasz Figa <t.figa@samsung.com>
 
-This patch add spi dt node to support SPI (Serial Peripheral Interface) bus.
-SPI in Exynos3250 transfers serial data by using various peripherals. Exynos3250
-has two independent interface (spi0/1).
+This patch adds device tree node for GIC interrupt controller
+on Exynos3250.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm/boot/dts/exynos3250.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index b8e5ae13..03e7931 100644
+index 3c8cee6..fe8960e 100644
 --- a/arch/arm/boot/dts/exynos3250.dtsi
 +++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -30,6 +30,8 @@
- 		pinctrl1 = &pinctrl_1;
- 		mshc0 = &mshc_0;
- 		mshc1 = &mshc_1;
-+		spi0 = &spi_0;
-+		spi1 = &spi_1;
- 		i2c0 = &i2c_0;
- 		i2c1 = &i2c_1;
- 		i2c2 = &i2c_2;
-@@ -311,6 +313,38 @@
- 		status = "disabled";
+@@ -31,4 +31,15 @@
+ 		compatible = "samsung,exynos3-sysreg", "syscon";
+ 		reg = <0x10010000 0x400>;
  	};
- 
-+	spi_0: spi@13920000 {
-+		compatible = "samsung,exynos4210-spi";
-+		reg = <0x13920000 0x100>;
-+		interrupts = <0 121 0>;
-+		dmas = <&pdma0 7>, <&pdma0 6>;
-+		dma-names = "tx", "rx";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&cmu CLK_SPI0>, <&cmu CLK_SCLK_SPI0>;
-+		clock-names = "spi", "spi_busclk0";
-+		samsung,spi-src-clk = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spi0_bus>;
-+		status = "disabled";
-+	};
 +
-+	spi_1: spi@13930000 {
-+		compatible = "samsung,exynos4210-spi";
-+		reg = <0x13930000 0x100>;
-+		interrupts = <0 122 0>;
-+		dmas = <&pdma1 7>, <&pdma1 6>;
-+		dma-names = "tx", "rx";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&cmu CLK_SPI1>, <&cmu CLK_SCLK_SPI1>;
-+		clock-names = "spi", "spi_busclk0";
-+		samsung,spi-src-clk = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spi1_bus>;
-+		status = "disabled";
++	gic: interrupt-controller@10481000 {
++		compatible = "arm,cortex-a7-gic";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10481000 0x1000>,
++		      <0x10482000 0x1000>,
++		      <0x10484000 0x2000>,
++		      <0x10486000 0x2000>;
++		      interrupts = <1 9 0xf04>;
 +	};
-+
- 	pmu {
- 		compatible = "arm,cortex-a7-pmu";
- 		interrupts = <0 18 0>, <0 19 0>, <0 20 0>, <0 21 0>;
+ };
 -- 
 1.8.0
