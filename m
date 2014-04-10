@@ -1,57 +1,70 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: dts: Fix SPI interrupt numbers for Exynos5420
-Date: Thu, 10 Apr 2014 18:28:12 +0530
-Message-ID: <1397134692-22149-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 07/27] irqchip: Declare cortex-a7's irqchip to
+ initialize gic from dt
+Date: Thu, 10 Apr 2014 14:02:59 +0100
+Message-ID: <20140410130259.GA4462@e106331-lin.cambridge.arm.com>
+References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
+ <1397122124-15690-8-git-send-email-cw00.choi@samsung.com>
+ <878urd33g4.fsf@approximate.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f45.google.com ([209.85.160.45]:37055 "EHLO
-	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030535AbaDJM6x (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:54494 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1030588AbaDJNDe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 08:58:53 -0400
-Received: by mail-pb0-f45.google.com with SMTP id uo5so3923028pbc.32
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 05:58:53 -0700 (PDT)
+	Thu, 10 Apr 2014 09:03:34 -0400
+Content-Disposition: inline
+In-Reply-To: <878urd33g4.fsf@approximate.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yj44.cho@samsung.com" <yj44.cho@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Updated as per the user manual.
+On Thu, Apr 10, 2014 at 11:04:59AM +0100, Marc Zyngier wrote:
+> On Thu, Apr 10 2014 at 10:28:24 am BST, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> > This patch declare coretex-a7's irqchip to initialze gic from dt
+> > with "arm,cortex-a7-gic" data.
+> >
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  drivers/irqchip/irq-gic.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> > index 4300b66..8e906e4 100644
+> > --- a/drivers/irqchip/irq-gic.c
+> > +++ b/drivers/irqchip/irq-gic.c
+> > @@ -1069,6 +1069,7 @@ gic_of_init(struct device_node *node, struct device_node *parent)
+> >  }
+> >  IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
+> >  IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
+> > +IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
+> >  IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
+> >  IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
+> 
+> Frankly, this patch adds no value. Are we going to add
+> "arm,cortex-a12-gic", "arm,cortex-a17-gic", "arm,cortex-a53-gic",
+> "arm,cortex-a57-gic"? And that's just to mention the ARM Ltd cores...
+> 
+> Instead, how about defining a generic "arm,gic" property, and mandate
+> that new DT files are using that? We can always use a more precise
+> compatible for quirks.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/boot/dts/exynos5420.dtsi |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Nit: s/property/compatible/
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c3a9a66c5767..6f662b5cc90d 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -385,7 +385,7 @@
- 	spi_0: spi@12d20000 {
- 		compatible = "samsung,exynos4210-spi";
- 		reg = <0x12d20000 0x100>;
--		interrupts = <0 66 0>;
-+		interrupts = <0 68 0>;
- 		dmas = <&pdma0 5
- 			&pdma0 4>;
- 		dma-names = "tx", "rx";
-@@ -401,7 +401,7 @@
- 	spi_1: spi@12d30000 {
- 		compatible = "samsung,exynos4210-spi";
- 		reg = <0x12d30000 0x100>;
--		interrupts = <0 67 0>;
-+		interrupts = <0 69 0>;
- 		dmas = <&pdma1 5
- 			&pdma1 4>;
- 		dma-names = "tx", "rx";
-@@ -417,7 +417,7 @@
- 	spi_2: spi@12d40000 {
- 		compatible = "samsung,exynos4210-spi";
- 		reg = <0x12d40000 0x100>;
--		interrupts = <0 68 0>;
-+		interrupts = <0 70 0>;
- 		dmas = <&pdma0 7
- 			&pdma0 6>;
- 		dma-names = "tx", "rx";
--- 
-1.7.9.5
+As mentioned elsewhere, "arm,gic-v2" would seem to fit the bill (and we
+can have "arm,gic" or "arm,gic-v1" for v1).
+
+> Mark, what do you think? I think this has been discussed in the past
+> already.
+
+It's been repeatedly brought up and agreed on, it's just that no-one's
+implemented it. I agree that having an "arm,gic-v2" binding that people
+can place in their compatible list is a sensible thing to do, and I'd be
+happy to Ack patches implementing it.
+
+Cheers,
+Mark.
