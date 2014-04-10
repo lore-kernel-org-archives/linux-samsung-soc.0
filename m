@@ -1,96 +1,70 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Add facility to toggle vbus gpio
- on/off
-Date: Thu, 10 Apr 2014 14:39:13 +0530
-Message-ID: <53465FB9.7070002@ti.com>
-References: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 2/6] ARM: EXYNOS: Staticize exynos_subsys
+Date: Thu, 10 Apr 2014 11:17:59 +0200
+Message-ID: <534661C7.9090304@samsung.com>
+References: <1397118296-6846-1-git-send-email-sachin.kamat@linaro.org>
+ <1397118296-6846-3-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: k.debski@samsung.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, balbi@ti.com, sylvester.nawrocki@gmail.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:50047 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933057AbaDJJSG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 05:18:06 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N3T00K655U4XJ50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Apr 2014 10:18:04 +0100 (BST)
+In-reply-to: <1397118296-6846-3-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de, kgene.kim@samsung.com
 
-Hi.
+Hi Sachin,
 
-On Wednesday 09 April 2014 05:24 PM, Vivek Gautam wrote:
-> Adding support to enable/disable VBUS hooked to a gpio
-> to enable vbus supply on the port.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+On 10.04.2014 10:24, Sachin Kamat wrote:
+> 'exynos_subsys' is now local to this file. Make it static
+> and remove the declaration from header file.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
-> 
-> Based on 'phy-exynos5-usbdrd' patches:
-> [PATCH V4 0/5] Add Exynos5 USB 3.0 phy driver based on generic PHY framework
-> http://www.spinics.net/lists/linux-usb/msg105507.html
-> 
->  drivers/phy/phy-exynos5-usbdrd.c |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-> index ff54a7c..5ca7485 100644
-> --- a/drivers/phy/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/phy-exynos5-usbdrd.c
-> @@ -18,6 +18,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_gpio.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/mutex.h>
-> @@ -176,6 +177,7 @@ struct exynos5_usbdrd_phy {
->  	struct clk *ref_clk;
->  	unsigned long ref_rate;
->  	unsigned int refclk_reg;
-> +	int gpio;
->  };
->  
->  #define to_usbdrd_phy(inst) \
-> @@ -460,6 +462,9 @@ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
->  	if (!IS_ERR(phy_drd->usb30_sclk))
->  		clk_prepare_enable(phy_drd->usb30_sclk);
->  
-> +	/* Toggle VBUS gpio - on */
-> +	gpio_set_value(phy_drd->gpio, 1);
-> +
->  	/* Power-on PHY*/
->  	inst->phy_cfg->phy_isol(inst, 0);
->  
-> @@ -476,6 +481,9 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
->  	/* Power-off the PHY */
->  	inst->phy_cfg->phy_isol(inst, 1);
->  
-> +	/* Toggle VBUS gpio - off */
-> +	gpio_set_value(phy_drd->gpio, 0);
-> +
->  	if (!IS_ERR(phy_drd->usb30_sclk))
->  		clk_disable_unprepare(phy_drd->usb30_sclk);
->  
-> @@ -585,6 +593,16 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->  
->  	phy_drd->drv_data = drv_data;
->  
-> +	/* Get required GPIO for vbus */
-> +	phy_drd->gpio = of_get_named_gpio(dev->of_node,
-> +					  "samsung,vbus-gpio", 0);
+>   arch/arm/mach-exynos/exynos.c            |    2 +-
+>   arch/arm/plat-samsung/include/plat/cpu.h |    1 -
+>   2 files changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 6a5fe18ec9b1..0ef42b9efd36 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -284,7 +284,7 @@ void __init exynos_init_io(void)
+>   	of_scan_flat_dt(exynos_fdt_map_sysram, NULL);
+>   }
+>
+> -struct bus_type exynos_subsys = {
+> +static struct bus_type exynos_subsys = {
+>   	.name		= "exynos-core",
+>   	.dev_name	= "exynos-core",
+>   };
+> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+> index 5992b8dd9b89..930b4be832cd 100644
+> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+> @@ -239,7 +239,6 @@ extern struct bus_type s3c2443_subsys;
+>   extern struct bus_type s3c6410_subsys;
+>   extern struct bus_type s5p64x0_subsys;
+>   extern struct bus_type s5pv210_subsys;
+> -extern struct bus_type exynos_subsys;
+>
+>   extern void (*s5pc1xx_idle)(void);
+>
+>
 
-Is this dt property documented somewhere?
-> +	if (!gpio_is_valid(phy_drd->gpio))
-> +		dev_dbg(dev, "no usbdrd-phy vbus gpio defined\n");
+This struct and registration of it do not seem to be needed for anything 
+anymore. Would you consider removing it instead?
 
-No return here? Can the PHY be functional even without the VBUS?
-
-Thanks
-Kishon
+Best regards,
+Tomasz
