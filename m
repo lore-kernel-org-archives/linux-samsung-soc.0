@@ -1,104 +1,151 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
-Date: Fri, 11 Apr 2014 15:07:26 +0900
-Message-ID: <5347869E.9070504@samsung.com>
+Date: Fri, 11 Apr 2014 15:32:21 +0900
+Message-ID: <53478C75.60302@samsung.com>
 References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
  <1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
- <CAK9yfHzZEh8m2y77DrqHtEFEMnwC_NBMUk=H+MP6oSV5PWArTQ@mail.gmail.com>
- <534783AB.2070601@samsung.com>
- <CAK9yfHyDLq6W_Vhuxg3zhvwBq6tHaN_BEG39WUcQMYxOBqnidg@mail.gmail.com>
+ <20140411014650.GB14934@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:26566 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754612AbaDKGH3 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:38414 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751076AbaDKGcV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 02:07:29 -0400
-In-reply-to: <CAK9yfHyDLq6W_Vhuxg3zhvwBq6tHaN_BEG39WUcQMYxOBqnidg@mail.gmail.com>
+	Fri, 11 Apr 2014 02:32:21 -0400
+In-reply-to: <20140411014650.GB14934@quad.lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, hyunhee.kim@samsung.com, yj44.cho@samsung.com, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Sachin,
+Hi,
 
-On 04/11/2014 02:56 PM, Sachin Kamat wrote:
-> Hi Chanwoo,
-> 
-> On 11 April 2014 11:24, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> Hi Sachin,
+On 04/11/2014 10:46 AM, Olof Johansson wrote:
+> On Thu, Apr 10, 2014 at 06:37:12PM +0900, Chanwoo Choi wrote:
+>> This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
+>> is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
+>> dual cores and has a target speed of 1.0GHz.
 >>
->> On 04/11/2014 12:56 PM, Sachin Kamat wrote:
->>> Hi Chanwoo,
->>>
->>> On 10 April 2014 15:07, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->>>> This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
->>>> is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
->>>> dual cores and has a target speed of 1.0GHz.
->>>>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>> ---
->>>>  arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
->>>>  arch/arm/mach-exynos/exynos.c            |  1 +
->>>>  arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
->>>>  3 files changed, 33 insertions(+)
->>>>
->>>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
->>>> index fc8bf18..6da8a68 100644
->>>> --- a/arch/arm/mach-exynos/Kconfig
->>>> +++ b/arch/arm/mach-exynos/Kconfig
->>>> @@ -11,6 +11,17 @@ if ARCH_EXYNOS
->>>>
->>>>  menu "SAMSUNG EXYNOS SoCs Support"
->>>>
->>>> +config ARCH_EXYNOS3
->>>> +       bool "SAMSUNG EXYNOS3"
->>>> +       select ARM_AMBA
->>>> +       select CLKSRC_OF
->>>> +       select HAVE_ARM_SCU if SMP
->>>> +       select HAVE_SMP
->>>> +       select PINCTRL
->>>> +       select PM_GENERIC_DOMAINS if PM_RUNTIME
->>>> +       help
->>>> +         Samsung EXYNOS3 SoCs based systems
->>>> +
->>>>  config ARCH_EXYNOS4
->>>>         bool "SAMSUNG EXYNOS4"
->>>>         default y
->>>> @@ -41,6 +52,17 @@ config ARCH_EXYNOS5
->>>>
->>>>  comment "EXYNOS SoCs"
->>>>
->>>> +config SOC_EXYNOS3250
->>>> +       bool "SAMSUNG EXYNOS3250"
->>>> +       default y
->>>> +       depends on ARCH_EXYNOS3
->>>> +       select ARCH_HAS_BANDGAP
->>>> +       select ARM_CPU_SUSPEND if PM
->>>> +       select PINCTRL_EXYNOS
->>>> +       select SAMSUNG_DMADEV
->>>> +       help
->>>> +         Enable EXYNOS3250 CPU support
->>>
->>> There is a Kconfig consolidation patch submitted by me [1]. Please base your
->>> code on that one to avoid merge conflicts.
->>>
->>> [1] http://article.gmane.org/gmane.linux.kernel.samsung-soc/28642
->>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
+>>  arch/arm/mach-exynos/exynos.c            |  1 +
+>>  arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
+>>  3 files changed, 33 insertions(+)
 >>
->> Your patch is applied? I can't find merged patch on linux-samsung.git and arm-soc.git.
->> If this patch is applied, I will rebase this patchset. Thanks.
+>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>> index fc8bf18..6da8a68 100644
+>> --- a/arch/arm/mach-exynos/Kconfig
+>> +++ b/arch/arm/mach-exynos/Kconfig
+>> @@ -11,6 +11,17 @@ if ARCH_EXYNOS
+>>  
+>>  menu "SAMSUNG EXYNOS SoCs Support"
+>>  
+>> +config ARCH_EXYNOS3
+>> +	bool "SAMSUNG EXYNOS3"
+>> +	select ARM_AMBA
+>> +	select CLKSRC_OF
+>> +	select HAVE_ARM_SCU if SMP
+>> +	select HAVE_SMP
+>> +	select PINCTRL
+>> +	select PM_GENERIC_DOMAINS if PM_RUNTIME
+>> +	help
+>> +	  Samsung EXYNOS3 SoCs based systems
+>> +
+>>  config ARCH_EXYNOS4
+>>  	bool "SAMSUNG EXYNOS4"
+>>  	default y
+>> @@ -41,6 +52,17 @@ config ARCH_EXYNOS5
+>>  
+>>  comment "EXYNOS SoCs"
+>>  
+>> +config SOC_EXYNOS3250
+>> +	bool "SAMSUNG EXYNOS3250"
+>> +	default y
+>> +	depends on ARCH_EXYNOS3
+>> +	select ARCH_HAS_BANDGAP
+>> +	select ARM_CPU_SUSPEND if PM
+>> +	select PINCTRL_EXYNOS
+>> +	select SAMSUNG_DMADEV
+>> +	help
+>> +	  Enable EXYNOS3250 CPU support
+>> +
+>>  config CPU_EXYNOS4210
+>>  	bool "SAMSUNG EXYNOS4210"
+>>  	default y
+>> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+>> index b32a907..b134868 100644
+>> --- a/arch/arm/mach-exynos/exynos.c
+>> +++ b/arch/arm/mach-exynos/exynos.c
+>> @@ -370,6 +370,7 @@ static void __init exynos_dt_machine_init(void)
+>>  }
+>>  
+>>  static char const *exynos_dt_compat[] __initconst = {
+>> +	"samsung,exynos3250",
 > 
-> This patch hasn't been merged yet but has been agreed upon by Kukjin,
-> Tomasz and others.
-> You may follow the mailing list for details.
+> Please consider samsung,exynos3 instead, so you don't have to update this table
+> for every SoC. We've talked about this before..
+
+This patchset included only exynos3250.dtsi without exynos3.dtsi.
+So, I added only "samsung,exynos3250" compatible name.
+
+Do you prefer to add SoC version as following?
++       "samsung,exynos3",
++       "samsung,exynos3250",
+
+or ?
++       "samsung,exynos3",
+
+> 
+>>  	"samsung,exynos4",
+>>  	"samsung,exynos4210",
+>>  	"samsung,exynos4212",
+>> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+>> index 5992b8d..3d808f6b 100644
+>> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+>> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+>> @@ -43,6 +43,9 @@ extern unsigned long samsung_cpu_id;
+>>  #define S5PV210_CPU_ID		0x43110000
+>>  #define S5PV210_CPU_MASK	0xFFFFF000
+>>  
+>> +#define EXYNOS3250_SOC_ID       0xE3472000
+>> +#define EXYNOS3_SOC_MASK        0xFFFFF000
+>> +
+>>  #define EXYNOS4210_CPU_ID	0x43210000
+>>  #define EXYNOS4212_CPU_ID	0x43220000
+>>  #define EXYNOS4412_CPU_ID	0xE4412200
+>> @@ -68,6 +71,7 @@ IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
+>>  IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
+>>  IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
+>>  IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
+>> +IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
+>>  IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+>>  IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+>>  IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+>> @@ -126,6 +130,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+>>  # define soc_is_s5pv210()	0
+>>  #endif
+>>  
+>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>> +# define soc_is_exynos3250()    is_samsung_exynos3250()
+>> +#else
+>> +# define soc_is_exynos3250()    0
+>> +#endif
+> 
+> In general, I think we have too much code littered with soc_is_<foo>() going
+> on, so please try to avoid adding more for this SoC. Especially in cases where
+> you just want to bail out of certain features where we might already have
+> function pointers to control if a function is called or not, such as the
+> firmware interfaces.
 > 
 
-OK, I checked mailied list for your patch.
-As my previous reply, if your patch is merged, I'll rebase it.
+Do you prefer dt helper function such as following function instead of new soc_is_xx() ?
+- of_machine_is_compatible("samsung,exynos3250")
 
-Thanks,
+If you are OK, I'll use of_machine_is_compatible() instead of soc_is_xx().
+
+Best Regards,
 Chanwoo Choi
