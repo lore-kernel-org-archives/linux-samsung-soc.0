@@ -1,67 +1,51 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V5 13/20] ARM: exynos: cpuidle: Disable cpuidle for 5440
-Date: Fri, 11 Apr 2014 12:40:08 +0200
-Message-ID: <1397212815-16068-14-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V5 12/20] ARM: exynos: cpuidle: Encapsulate boot vector code into a function
+Date: Fri, 11 Apr 2014 12:40:07 +0200
+Message-ID: <1397212815-16068-13-git-send-email-daniel.lezcano@linaro.org>
 References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:59022 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934717AbaDKKkP (ORCPT
+Received: from mail-we0-f169.google.com ([74.125.82.169]:51060 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756632AbaDKKkO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 06:40:15 -0400
-Received: by mail-wi0-f170.google.com with SMTP id bs8so2318357wib.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:14 -0700 (PDT)
+	Fri, 11 Apr 2014 06:40:14 -0400
+Received: by mail-we0-f169.google.com with SMTP id w62so5227694wes.14
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:13 -0700 (PDT)
 In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-There is no point to register the cpuidle driver for the 5440 as it has only
-one WFI state which is the default idle function when the cpuidle driver is
-disabled.
-
-By disabling cpuidle we prevent to enter to the governor computation for
-nothing, thus saving a lot of processing time.
-
-The only drawback is the statistic via sysfs on this state which is lost but
-it is meaningless and it could be retrieved from the ftrace easily.
-
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- arch/arm/mach-exynos/cpuidle.c |    3 ---
- arch/arm/mach-exynos/exynos.c  |    3 +++
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index f66ee4d..95313ea 100644
+index 169db74..f66ee4d 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -133,9 +133,6 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
- {
- 	int ret;
- 
--	if (soc_is_exynos5440())
--		exynos_idle_driver.state_count = 1;
--
- 	ret = cpuidle_register(&exynos_idle_driver, NULL);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index b567361..fe8dac8 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -227,6 +227,9 @@ static struct platform_device exynos_cpuidle = {
- 
- void __init exynos_cpuidle_init(void)
- {
-+	if (soc_is_exynos5440())
-+		return;
-+
- 	platform_device_register(&exynos_cpuidle);
+@@ -45,13 +45,16 @@ static void exynos_set_wakeupmask(long mask)
+ 	__raw_writel(mask, S5P_WAKEUP_MASK);
  }
+ 
++static void exynos_cpu_set_boot_vector(long flags)
++{
++	__raw_writel(virt_to_phys(exynos_cpu_resume), REG_DIRECTGO_ADDR);
++	__raw_writel(flags, REG_DIRECTGO_FLAG);
++}
++
+ static int idle_finisher(unsigned long flags)
+ {
+ 	exynos_set_wakeupmask(0x0000ff3e);
+-
+-	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
+-	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
+-
++	exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
+ 	/* Set value of power down register for aftr mode */
+ 	exynos_sys_powerdown_conf(SYS_AFTR);
  
 -- 
 1.7.9.5
