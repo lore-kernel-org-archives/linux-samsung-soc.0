@@ -1,192 +1,82 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 4/5] drm/exynos: add support for apb mapped phys in hdmi driver
-Date: Fri, 11 Apr 2014 08:06:57 +0530
-Message-ID: <CAPdUM4MV6Kk7GmQOCOdV9f6e8=fL0bp74WBBvZJJP3b7pCFaVQ@mail.gmail.com>
-References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
-	<1396458826-3051-5-git-send-email-rahul.sharma@samsung.com>
-	<5346D242.4090009@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
+Date: Fri, 11 Apr 2014 09:26:26 +0530
+Message-ID: <CAK9yfHzZEh8m2y77DrqHtEFEMnwC_NBMUk=H+MP6oSV5PWArTQ@mail.gmail.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+	<1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:43795 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754362AbaDKCg6 (ORCPT
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:40829 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754320AbaDKD40 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 22:36:58 -0400
-Received: by mail-we0-f182.google.com with SMTP id p61so4842645wes.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 19:36:57 -0700 (PDT)
-In-Reply-To: <5346D242.4090009@samsung.com>
+	Thu, 10 Apr 2014 23:56:26 -0400
+Received: by mail-ob0-f171.google.com with SMTP id wn1so5453088obc.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 20:56:26 -0700 (PDT)
+In-Reply-To: <1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, hyunhee.kim@samsung.com, yj44.cho@samsung.com, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Thanks Tomasz,
+Hi Chanwoo,
 
-On 10 April 2014 22:47, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Rahul,
+On 10 April 2014 15:07, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
+> is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
+> dual cores and has a target speed of 1.0GHz.
 >
-> On 02.04.2014 19:13, Rahul Sharma wrote:
->>
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> Previous SoCs have hdmi phys which are accessible through
->> dedicated i2c lines. Newer SoCs have Apb mapped hdmi phys.
->> Hdmi driver is modified to support apb mapped phys.
->>
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_hdmi.c |  142
->> +++++++++++++++++++++-------------
->>   drivers/gpu/drm/exynos/regs-hdmi.h   |    7 ++
->>   2 files changed, 96 insertions(+), 53 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c
->> b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> index 5b2cfe7..5989770 100644
->> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> @@ -33,6 +33,7 @@
->>   #include <linux/regulator/consumer.h>
->>   #include <linux/io.h>
->>   #include <linux/of.h>
->> +#include <linux/of_address.h>
->>   #include <linux/i2c.h>
->>   #include <linux/of_gpio.h>
->>   #include <linux/hdmi.h>
->> @@ -68,6 +69,8 @@ enum hdmi_type {
->>
->>   struct hdmi_driver_data {
->>         unsigned int type;
->> +       const struct hdmiphy_config *phy_confs;
->> +       unsigned int phy_conf_count;
->>         unsigned int is_apb_phy:1;
->>   };
->>
->> @@ -196,9 +199,12 @@ struct hdmi_context {
->>         struct hdmi_resources           res;
->>
->>         int                             hpd_gpio;
->> +       void __iomem                    *regs_hdmiphy;
->>         struct regmap                   *pmureg;
->>
->>         enum hdmi_type                  type;
->> +       const struct hdmiphy_config     *phy_confs;
->> +       unsigned int                    phy_conf_count;
->>   };
->>
->>   struct hdmiphy_config {
->> @@ -206,14 +212,6 @@ struct hdmiphy_config {
->>         u8 conf[32];
->>   };
->>
->> -struct hdmi_driver_data exynos4212_hdmi_driver_data = {
->> -       .type   = HDMI_TYPE14,
->> -};
->> -
->> -struct hdmi_driver_data exynos5_hdmi_driver_data = {
->> -       .type   = HDMI_TYPE14,
->> -};
->> -
->>   /* list of phy config settings */
->>   static const struct hdmiphy_config hdmiphy_v13_configs[] = {
->>         {
->> @@ -428,6 +426,21 @@ static const struct hdmiphy_config
->> hdmiphy_v14_configs[] = {
->>         },
->>   };
->>
->> +
->> +struct hdmi_driver_data exynos4212_hdmi_driver_data = {
->> +       .type           = HDMI_TYPE14,
->> +       .phy_confs      = hdmiphy_v14_configs,
->> +       .phy_conf_count = ARRAY_SIZE(hdmiphy_v14_configs),
->> +       .is_apb_phy     = 0,
->> +};
->> +
->> +struct hdmi_driver_data exynos5_hdmi_driver_data = {
->> +       .type           = HDMI_TYPE14,
->> +       .phy_confs      = hdmiphy_v13_configs,
->> +       .phy_conf_count = ARRAY_SIZE(hdmiphy_v13_configs),
->> +       .is_apb_phy     = 0,
->> +};
->> +
->>   static inline u32 hdmi_reg_read(struct hdmi_context *hdata, u32 reg_id)
->>   {
->>         return readl(hdata->regs + reg_id);
->> @@ -447,6 +460,48 @@ static inline void hdmi_reg_writemask(struct
->> hdmi_context *hdata,
->>         writel(value, hdata->regs + reg_id);
->>   }
->>
->> +static int hdmiphy_reg_writeb(struct hdmi_context *hdata,
->> +                       u32 reg_offset, u8 value)
->> +{
->> +       if (hdata->hdmiphy_port) {
->> +               u8 buffer[2];
->> +               int ret;
->> +
->> +               buffer[0] = reg_offset;
->> +               buffer[1] = value;
->> +
->> +               ret = i2c_master_send(hdata->hdmiphy_port, buffer, 2);
->> +               if (ret == 2)
->> +                       return 0;
->> +               return ret;
->> +       } else {
->> +               writeb(value, hdata->regs_hdmiphy + (reg_offset<<2));
->> +               return 0;
->> +       }
->> +}
->> +
->> +static int hdmiphy_reg_write_buf(struct hdmi_context *hdata,
->> +                       u32 reg_offset, const u8 *buf, u32 len)
->> +{
->> +       if ((reg_offset + len) > 32)
->> +               return -EINVAL;
->> +
->> +       if (hdata->hdmiphy_port) {
->> +               int ret;
->> +
->> +               ret = i2c_master_send(hdata->hdmiphy_port, buf, len);
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
+>  arch/arm/mach-exynos/exynos.c            |  1 +
+>  arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
+>  3 files changed, 33 insertions(+)
 >
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index fc8bf18..6da8a68 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -11,6 +11,17 @@ if ARCH_EXYNOS
 >
-> reg_offset doesn't seem to be used in I2C code path in any way. Are you sure
-> this is correct?
+>  menu "SAMSUNG EXYNOS SoCs Support"
 >
+> +config ARCH_EXYNOS3
+> +       bool "SAMSUNG EXYNOS3"
+> +       select ARM_AMBA
+> +       select CLKSRC_OF
+> +       select HAVE_ARM_SCU if SMP
+> +       select HAVE_SMP
+> +       select PINCTRL
+> +       select PM_GENERIC_DOMAINS if PM_RUNTIME
+> +       help
+> +         Samsung EXYNOS3 SoCs based systems
+> +
+>  config ARCH_EXYNOS4
+>         bool "SAMSUNG EXYNOS4"
+>         default y
+> @@ -41,6 +52,17 @@ config ARCH_EXYNOS5
+>
+>  comment "EXYNOS SoCs"
+>
+> +config SOC_EXYNOS3250
+> +       bool "SAMSUNG EXYNOS3250"
+> +       default y
+> +       depends on ARCH_EXYNOS3
+> +       select ARCH_HAS_BANDGAP
+> +       select ARM_CPU_SUSPEND if PM
+> +       select PINCTRL_EXYNOS
+> +       select SAMSUNG_DMADEV
+> +       help
+> +         Enable EXYNOS3250 CPU support
 
-yea ... reg_offset is not required for i2c write as first buffer in
-buffer is taken as offset.
+There is a Kconfig consolidation patch submitted by me [1]. Please base your
+code on that one to avoid merge conflicts.
 
->> +               if (ret == len)
->> +                       return 0;
->> +               return ret;
->> +       } else {
->> +               int i;
->> +               for (i = 0; i < len; i++)
->> +                       writeb(buf[i], hdata->regs_hdmiphy +
->> +                               ((reg_offset + i)<<2));
->> +               return 0;
->> +       }
->> +}
->
->
-> I wonder if those functions couldn't be abstracted as two callbacks in
-> hdmi_driver_data struct to eliminate such if clauses as above.
->
+[1] http://article.gmane.org/gmane.linux.kernel.samsung-soc/28642
 
-hmn...I can do that... but will it help in anyway. I will end up in changing
-more code in probe, adding 4 callbacks. let me know if you want me to do
-that.
-
-Regards,
-Rahul Sharma.
-
-> --
-> Best regards,
-> Tomasz
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+-- 
+With warm regards,
+Sachin
