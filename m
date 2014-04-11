@@ -1,7 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH RFC 1/2] drm/exynos: refactor drm drivers registration code
-Date: Fri, 11 Apr 2014 16:11:27 +0200
-Message-ID: <1397225488-6634-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH RFC 2/2] drm/exynos: initialize drm master only when all exynos
+ drm devices are ready
+Date: Fri, 11 Apr 2014 16:11:28 +0200
+Message-ID: <1397225488-6634-3-git-send-email-a.hajda@samsung.com>
 References: <1397225488-6634-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,480 +22,1056 @@ To: dri-devel@lists.freedesktop.org
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch removes driver registration code based on preprocessor conditionals.
-Instead it uses private linker section to create array of drm drivers.
+The patch adds function to block/unblock drm master device initialization.
+exynos_drm_dev_ready(pdev, bool) informs exynos_drm core if given device is
+ready. exynos_drm master is initialized only if all devices are ready,
+exynos_drm master is also removed if any device becomes not ready.
+During module initialization before driver registration module scans for
+devices matching given driver and marks them as not-ready. Driver during
+probe/remove can inform exynos_drm core about device readiness, triggering
+master drm init/remove.
+The core of the patch is in exynos_drm_drv.c.
+Drivers modifications is limited only to call exynos_drm_dev_ready on return
+from probe and in remove callback before manager/display/subdriver
+unregistration.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/Makefile             |   2 +
- drivers/gpu/drm/exynos/exynos_dp_core.c     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm.lds.S     |   9 ++
- drivers/gpu/drm/exynos/exynos_drm_drv.c     | 203 +++++-----------------------
- drivers/gpu/drm/exynos/exynos_drm_drv.h     |  18 ++-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimc.c    |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c    |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_g2d.c     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_gsc.c     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_rotator.c |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c    |   2 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c        |   2 +-
- drivers/gpu/drm/exynos/exynos_mixer.c       |   2 +-
- 15 files changed, 68 insertions(+), 186 deletions(-)
- create mode 100644 drivers/gpu/drm/exynos/exynos_drm.lds.S
+ drivers/gpu/drm/exynos/exynos_dp_core.c     |  35 +++++----
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     | 106 +++++++++++++++++++++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |   2 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  40 ++++++-----
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  33 +++++----
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  36 +++++++---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c     |  15 ++--
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  28 +++++---
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c     |  16 +++--
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c |  25 ++++---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  16 +++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c        |  51 ++++++++-----
+ drivers/gpu/drm/exynos/exynos_mixer.c       |  12 +++-
+ 13 files changed, 307 insertions(+), 108 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-index 33ae365..c8190c1 100644
---- a/drivers/gpu/drm/exynos/Makefile
-+++ b/drivers/gpu/drm/exynos/Makefile
-@@ -22,4 +22,6 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_FIMC)	+= exynos_drm_fimc.o
- exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
- exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
- 
-+exynosdrm-y				+= exynos_drm.lds
-+
- obj-$(CONFIG_DRM_EXYNOS)		+= exynosdrm.o
 diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index aed533b..9385e96 100644
+index 9385e96..b2955cc 100644
 --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
 +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -1340,7 +1340,7 @@ static const struct of_device_id exynos_dp_match[] = {
- 	{},
- };
- 
--struct platform_driver dp_driver = {
-+EXYNOS_DRM_DRV(dp_driver) = {
- 	.probe		= exynos_dp_probe,
- 	.remove		= exynos_dp_remove,
- 	.driver		= {
-diff --git a/drivers/gpu/drm/exynos/exynos_drm.lds.S b/drivers/gpu/drm/exynos/exynos_drm.lds.S
-new file mode 100644
-index 0000000..fd37dc1
---- /dev/null
-+++ b/drivers/gpu/drm/exynos/exynos_drm.lds.S
-@@ -0,0 +1,9 @@
-+SECTIONS
-+{
-+	.data : {
-+		. = ALIGN(8);
-+		exynos_drm_drivers = .;
-+		*(exynos_drm_drivers)
-+		*(exynos_drm_drivers_last)
-+	}
-+}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 2d27ba2..5067b32 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -430,7 +430,7 @@ static const struct dev_pm_ops exynos_drm_pm_ops = {
- 			exynos_drm_runtime_resume, NULL)
- };
- 
--static struct platform_driver exynos_drm_platform_driver = {
-+EXYNOS_DRM_DRV_LAST(exynos_drm_drv) = {
- 	.probe		= exynos_drm_platform_probe,
- 	.remove		= exynos_drm_platform_remove,
- 	.driver		= {
-@@ -440,197 +440,64 @@ static struct platform_driver exynos_drm_platform_driver = {
- 	},
- };
- 
--static int __init exynos_drm_init(void)
-+static int exynos_platform_device_drm_register(void)
- {
--	int ret;
--
--#ifdef CONFIG_DRM_EXYNOS_DP
--	ret = platform_driver_register(&dp_driver);
--	if (ret < 0)
--		goto out_dp;
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_DSI
--	ret = platform_driver_register(&dsi_driver);
--	if (ret < 0)
--		goto out_dsi;
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_FIMD
--	ret = platform_driver_register(&fimd_driver);
--	if (ret < 0)
--		goto out_fimd;
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_HDMI
--	ret = platform_driver_register(&hdmi_driver);
--	if (ret < 0)
--		goto out_hdmi;
--	ret = platform_driver_register(&mixer_driver);
--	if (ret < 0)
--		goto out_mixer;
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_VIDI
--	ret = platform_driver_register(&vidi_driver);
--	if (ret < 0)
--		goto out_vidi;
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_G2D
--	ret = platform_driver_register(&g2d_driver);
--	if (ret < 0)
--		goto out_g2d;
--#endif
-+	exynos_drm_pdev = platform_device_register_simple("exynos-drm", -1,
-+							  NULL, 0);
-+	if (IS_ERR(exynos_drm_pdev))
-+		return PTR_ERR(exynos_drm_pdev);
- 
--#ifdef CONFIG_DRM_EXYNOS_FIMC
--	ret = platform_driver_register(&fimc_driver);
--	if (ret < 0)
--		goto out_fimc;
--#endif
-+	return 0;
-+}
- 
--#ifdef CONFIG_DRM_EXYNOS_ROTATOR
--	ret = platform_driver_register(&rotator_driver);
--	if (ret < 0)
--		goto out_rotator;
--#endif
-+static void exynos_platform_device_drm_unregister(void)
-+{
-+	platform_device_unregister(exynos_drm_pdev);
-+}
- 
--#ifdef CONFIG_DRM_EXYNOS_GSC
--	ret = platform_driver_register(&gsc_driver);
--	if (ret < 0)
--		goto out_gsc;
--#endif
-+extern struct platform_driver exynos_drm_drivers;
- 
--#ifdef CONFIG_DRM_EXYNOS_IPP
--	ret = platform_driver_register(&ipp_driver);
--	if (ret < 0)
--		goto out_ipp;
-+static int __init exynos_drm_init(void)
-+{
-+	struct platform_driver *pd = &exynos_drm_drivers;
-+	int ret;
- 
- 	ret = exynos_platform_device_ipp_register();
- 	if (ret < 0)
--		goto out_ipp_dev;
--#endif
-+		return ret;
- 
--	ret = platform_driver_register(&exynos_drm_platform_driver);
-+	ret = exynos_platform_device_drm_register();
- 	if (ret < 0)
--		goto out_drm;
--
--	exynos_drm_pdev = platform_device_register_simple("exynos-drm", -1,
--				NULL, 0);
--	if (IS_ERR(exynos_drm_pdev)) {
--		ret = PTR_ERR(exynos_drm_pdev);
--		goto out;
-+		goto err_dev;
-+
-+	while (pd <= &exynos_drm_drv) {
-+		pr_debug("%s: registering %s\n", __func__, pd->driver.name);
-+		ret = platform_driver_register(pd);
-+		if (ret < 0)
-+			goto err;
-+		++pd;
+@@ -1240,29 +1240,32 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_dp_device),
+ 				GFP_KERNEL);
+ 	if (!dp) {
+-		dev_err(&pdev->dev, "no memory for device data\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out;
  	}
  
- 	return 0;
--
--out:
--	platform_driver_unregister(&exynos_drm_platform_driver);
--
--out_drm:
--#ifdef CONFIG_DRM_EXYNOS_IPP
-+err:
-+	while (pd-- > &exynos_drm_drivers)
-+		platform_driver_unregister(pd);
-+err_dev:
- 	exynos_platform_device_ipp_unregister();
--out_ipp_dev:
--	platform_driver_unregister(&ipp_driver);
--out_ipp:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_GSC
--	platform_driver_unregister(&gsc_driver);
--out_gsc:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_ROTATOR
--	platform_driver_unregister(&rotator_driver);
--out_rotator:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_FIMC
--	platform_driver_unregister(&fimc_driver);
--out_fimc:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_G2D
--	platform_driver_unregister(&g2d_driver);
--out_g2d:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_VIDI
--	platform_driver_unregister(&vidi_driver);
--out_vidi:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_HDMI
--	platform_driver_unregister(&mixer_driver);
--out_mixer:
--	platform_driver_unregister(&hdmi_driver);
--out_hdmi:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_FIMD
--	platform_driver_unregister(&fimd_driver);
--out_fimd:
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_DSI
--	platform_driver_unregister(&dsi_driver);
--out_dsi:
--#endif
+ 	dp->dev = &pdev->dev;
+ 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
  
--#ifdef CONFIG_DRM_EXYNOS_DP
--	platform_driver_unregister(&dp_driver);
--out_dp:
--#endif
+ 	dp->video_info = exynos_dp_dt_parse_pdata(&pdev->dev);
+-	if (IS_ERR(dp->video_info))
+-		return PTR_ERR(dp->video_info);
++	if (IS_ERR(dp->video_info)) {
++		ret = PTR_ERR(dp->video_info);
++		goto out;
++	}
+ 
+ 	ret = exynos_dp_dt_parse_phydata(dp);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	ret = exynos_dp_dt_parse_panel(dp);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	dp->clock = devm_clk_get(&pdev->dev, "dp");
+ 	if (IS_ERR(dp->clock)) {
+ 		dev_err(&pdev->dev, "failed to get clock\n");
+-		return PTR_ERR(dp->clock);
++		ret = PTR_ERR(dp->clock);
++		goto out;
+ 	}
+ 
+ 	clk_prepare_enable(dp->clock);
+@@ -1270,13 +1273,16 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	dp->reg_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(dp->reg_base))
+-		return PTR_ERR(dp->reg_base);
++	if (IS_ERR(dp->reg_base)) {
++		ret = PTR_ERR(dp->reg_base);
++		goto out;
++	}
+ 
+ 	dp->irq = platform_get_irq(pdev, 0);
+ 	if (dp->irq == -ENXIO) {
+ 		dev_err(&pdev->dev, "failed to get irq\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ 
+ 	INIT_WORK(&dp->hotplug_work, exynos_dp_hotplug);
+@@ -1289,7 +1295,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 				"exynos-dp", dp);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request irq\n");
+-		return ret;
++		goto out;
+ 	}
+ 	disable_irq(dp->irq);
+ 
+@@ -1298,13 +1304,18 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, &exynos_dp_display);
+ 	exynos_drm_display_register(&exynos_dp_display);
+ 
+-	return 0;
++out:
++	exynos_drm_dev_ready(pdev, ret != -EPROBE_DEFER);
++
++	return ret;
+ }
+ 
+ static int exynos_dp_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_drm_display *display = platform_get_drvdata(pdev);
+ 
++	exynos_drm_dev_ready(pdev, false);
++
+ 	exynos_dp_dpms(display, DRM_MODE_DPMS_OFF);
+ 	exynos_drm_display_unregister(&exynos_dp_display);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 5067b32..d63ae9e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -366,12 +366,12 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+-	return drm_platform_init(&exynos_drm_driver, pdev);
++	return exynos_drm_dev_ready(pdev, true);
+ }
+ 
+ static int exynos_drm_platform_remove(struct platform_device *pdev)
+ {
+-	drm_put_dev(platform_get_drvdata(pdev));
++	exynos_drm_dev_ready(pdev, false);
+ 
+ 	return 0;
+ }
+@@ -455,6 +455,104 @@ static void exynos_platform_device_drm_unregister(void)
+ 	platform_device_unregister(exynos_drm_pdev);
+ }
+ 
++struct pdev_node {
++	struct list_head list;
++	struct platform_device *pdev;
++};
++
++static DEFINE_MUTEX(exynos_drm_blockers_mutex);
++static LIST_HEAD(exynos_drm_blockers);
++
++int exynos_drm_dev_ready(struct platform_device *pdev, bool ready)
++{
++	static bool master_ready;
++	struct pdev_node *n;
++	bool update = false;
++	int ret = 0;
++
++	dev_dbg(&pdev->dev, "exynos_drm %s ready=%d\n",
++		(pdev == exynos_drm_pdev) ? "master" : "subdev", ready);
++
++	mutex_lock(&exynos_drm_blockers_mutex);
++	list_for_each_entry(n, &exynos_drm_blockers, list) {
++		if (n->pdev != pdev)
++			continue;
++
++		if (!ready)
++			goto out;
++
++		list_del(&n->list);
++		kfree(n);
++
++		if (list_empty(&exynos_drm_blockers))
++			update = true;
++		break;
++	}
++
++	if (!ready) {
++		struct pdev_node *p = kmalloc(sizeof(*p), GFP_KERNEL);
++
++		if (!p) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		if (list_empty(&exynos_drm_blockers))
++			update = true;
++
++		p->pdev = pdev;
++		list_add_tail(&p->list, &exynos_drm_blockers);
++	}
++
++	if (pdev == exynos_drm_pdev) {
++		master_ready = ready;
++		update = list_empty(&exynos_drm_blockers) && ready;
++	} else if (!master_ready) {
++		goto out;
++	}
++
++	if (!update)
++		goto out;
++
++	if (ready)
++		ret = drm_platform_init(&exynos_drm_driver, exynos_drm_pdev);
++	else
++		drm_put_dev(platform_get_drvdata(exynos_drm_pdev));
++
++out:
++	mutex_unlock(&exynos_drm_blockers_mutex);
++
++	return ret;
++}
++
++static int exynos_drm_add_blocker(struct device *dev, void *data)
++{
++	struct platform_driver *pd = data;
++
++	if (!platform_bus_type.match(dev, &pd->driver))
++		return 0;
++
++	if (!dev->driver)
++		exynos_drm_dev_ready(to_platform_device(dev), false);
++
++	return 0;
++}
++
++static void exynos_drm_add_pdrv_blockers(struct platform_driver *pd)
++{
++	bus_for_each_dev(&platform_bus_type, NULL, pd, exynos_drm_add_blocker);
++}
++
++static void exynos_drm_remove_blockers(void)
++{
++	struct pdev_node *n, *tmp;
++
++	list_for_each_entry_safe(n, tmp, &exynos_drm_blockers, list) {
++		list_del(&n->list);
++		kfree(n);
++	}
++}
++
+ extern struct platform_driver exynos_drm_drivers;
+ 
+ static int __init exynos_drm_init(void)
+@@ -472,6 +570,7 @@ static int __init exynos_drm_init(void)
+ 
+ 	while (pd <= &exynos_drm_drv) {
+ 		pr_debug("%s: registering %s\n", __func__, pd->driver.name);
++		exynos_drm_add_pdrv_blockers(pd);
+ 		ret = platform_driver_register(pd);
+ 		if (ret < 0)
+ 			goto err;
+@@ -485,6 +584,8 @@ err:
+ err_dev:
+ 	exynos_platform_device_ipp_unregister();
+ 
++	exynos_drm_remove_blockers();
++
  	return ret;
  }
  
- static void __exit exynos_drm_exit(void)
- {
--	platform_device_unregister(exynos_drm_pdev);
-+	struct platform_driver *pd = &exynos_drm_drv + 1;
- 
--	platform_driver_unregister(&exynos_drm_platform_driver);
-+	while (--pd >= &exynos_drm_drivers)
-+		platform_driver_unregister(pd);
- 
--#ifdef CONFIG_DRM_EXYNOS_IPP
-+	exynos_platform_device_drm_unregister();
+@@ -498,6 +599,7 @@ static void __exit exynos_drm_exit(void)
+ 	exynos_platform_device_drm_unregister();
  	exynos_platform_device_ipp_unregister();
--	platform_driver_unregister(&ipp_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_GSC
--	platform_driver_unregister(&gsc_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_ROTATOR
--	platform_driver_unregister(&rotator_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_FIMC
--	platform_driver_unregister(&fimc_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_G2D
--	platform_driver_unregister(&g2d_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_HDMI
--	platform_driver_unregister(&mixer_driver);
--	platform_driver_unregister(&hdmi_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_VIDI
--	platform_driver_unregister(&vidi_driver);
--#endif
  
--#ifdef CONFIG_DRM_EXYNOS_FIMD
--	platform_driver_unregister(&fimd_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_DSI
--	platform_driver_unregister(&dsi_driver);
--#endif
--
--#ifdef CONFIG_DRM_EXYNOS_DP
--	platform_driver_unregister(&dp_driver);
--#endif
++	exynos_drm_remove_blockers();
  }
  
  module_init(exynos_drm_init);
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 4c5cf68..3917200 100644
+index 3917200..743080a 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
 +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -351,15 +351,13 @@ int exynos_platform_device_hdmi_register(void);
-  */
- void exynos_platform_device_hdmi_unregister(void);
- 
--/*
-- * this function registers exynos drm ipp platform device.
-- */
-+#ifdef CONFIG_DRM_EXYNOS_IPP
- int exynos_platform_device_ipp_register(void);
--
--/*
-- * this function unregisters exynos drm ipp platform device if it exists.
-- */
- void exynos_platform_device_ipp_unregister(void);
-+#else
-+static inline int exynos_platform_device_ipp_register() { return 0; }
-+static inline void exynos_platform_device_ipp_unregister() {}
-+#endif
- 
- #ifdef CONFIG_DRM_EXYNOS_DPI
- int exynos_dpi_probe(struct device *dev);
-@@ -369,6 +367,12 @@ static inline int exynos_dpi_probe(struct device *dev) { return 0; }
- static inline int exynos_dpi_remove(struct device *dev) { return 0; }
+@@ -359,6 +359,8 @@ static inline int exynos_platform_device_ipp_register() { return 0; }
+ static inline void exynos_platform_device_ipp_unregister() {}
  #endif
  
-+#define EXYNOS_DRM_DRV(name) \
-+	static struct platform_driver name __section(exynos_drm_drivers)
++int exynos_drm_dev_ready(struct platform_device *pdev, bool ready);
 +
-+#define EXYNOS_DRM_DRV_LAST(name) \
-+	static struct platform_driver name __section(exynos_drm_drivers_last)
-+
- extern struct platform_driver dp_driver;
- extern struct platform_driver dsi_driver;
- extern struct platform_driver fimd_driver;
+ #ifdef CONFIG_DRM_EXYNOS_DPI
+ int exynos_dpi_probe(struct device *dev);
+ int exynos_dpi_remove(struct device *dev);
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index eb73e3b..56230e6 100644
+index 56230e6..948f405 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1507,7 +1507,7 @@ static struct of_device_id exynos_dsi_of_match[] = {
- 	{ }
- };
+@@ -1386,8 +1386,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
  
--struct platform_driver dsi_driver = {
-+EXYNOS_DRM_DRV(dsi_driver) = {
- 	.probe = exynos_dsi_probe,
- 	.remove = exynos_dsi_remove,
- 	.driver = {
+ 	dsi = devm_kzalloc(&pdev->dev, sizeof(*dsi), GFP_KERNEL);
+ 	if (!dsi) {
+-		dev_err(&pdev->dev, "failed to allocate dsi object.\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out;
+ 	}
+ 
+ 	init_completion(&dsi->completed);
+@@ -1401,46 +1401,48 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 
+ 	ret = exynos_dsi_parse_dt(dsi);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	dsi->supplies[0].supply = "vddcore";
+ 	dsi->supplies[1].supply = "vddio";
+ 	ret = devm_regulator_bulk_get(&pdev->dev, ARRAY_SIZE(dsi->supplies),
+ 				      dsi->supplies);
+-	if (ret) {
+-		dev_info(&pdev->dev, "failed to get regulators: %d\n", ret);
+-		return -EPROBE_DEFER;
+-	}
++	if (ret)
++		goto out;
+ 
+ 	dsi->pll_clk = devm_clk_get(&pdev->dev, "pll_clk");
+ 	if (IS_ERR(dsi->pll_clk)) {
+-		dev_info(&pdev->dev, "failed to get dsi pll input clock\n");
+-		return -EPROBE_DEFER;
++		ret = PTR_ERR(dsi->pll_clk);
++		dev_info(&pdev->dev, "failed to get dsi pll clock\n");
++		goto out;
+ 	}
+ 
+ 	dsi->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
+ 	if (IS_ERR(dsi->bus_clk)) {
++		ret = PTR_ERR(dsi->bus_clk);
+ 		dev_info(&pdev->dev, "failed to get dsi bus clock\n");
+-		return -EPROBE_DEFER;
++		goto out;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dsi->reg_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (!dsi->reg_base) {
+ 		dev_err(&pdev->dev, "failed to remap io region\n");
+-		return -EADDRNOTAVAIL;
++		ret = -EADDRNOTAVAIL;
++		goto out;
+ 	}
+ 
+ 	dsi->phy = devm_phy_get(&pdev->dev, "dsim");
+ 	if (IS_ERR(dsi->phy)) {
+-		dev_info(&pdev->dev, "failed to get dsim phy\n");
+-		return -EPROBE_DEFER;
++		ret = PTR_ERR(dsi->phy);
++		goto out;
+ 	}
+ 
+ 	dsi->irq = platform_get_irq(pdev, 0);
+ 	if (dsi->irq < 0) {
++		ret = dsi->irq;
+ 		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
+-		return dsi->irq;
++		goto out;
+ 	}
+ 
+ 	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
+@@ -1449,7 +1451,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 					dev_name(&pdev->dev), dsi);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request dsi irq\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	exynos_dsi_display.ctx = dsi;
+@@ -1457,7 +1459,11 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, &exynos_dsi_display);
+ 	exynos_drm_display_register(&exynos_dsi_display);
+ 
+-	return mipi_dsi_host_register(&dsi->dsi_host);
++	ret = mipi_dsi_host_register(&dsi->dsi_host);
++out:
++	exynos_drm_dev_ready(pdev, ret != -EPROBE_DEFER);
++
++	return ret;
+ }
+ 
+ static int exynos_dsi_remove(struct platform_device *pdev)
+@@ -1465,7 +1471,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
+ 	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
+ 
+ 	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
+-
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_display_unregister(&exynos_dsi_display);
+ 	mipi_dsi_host_unregister(&dsi->dsi_host);
+ 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 30d76b2..0865d5d 100644
+index 0865d5d..3e2bd4d 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -1945,7 +1945,7 @@ static const struct of_device_id fimc_of_match[] = {
- 	{ },
- };
+@@ -1788,37 +1788,44 @@ static int fimc_probe(struct platform_device *pdev)
  
--struct platform_driver fimc_driver = {
-+EXYNOS_DRM_DRV(fimc_driver) = {
- 	.probe		= fimc_probe,
- 	.remove		= fimc_remove,
- 	.driver		= {
+ 	if (!dev->of_node) {
+ 		dev_err(dev, "device tree node not found.\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ 
+ 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	ctx->ippdrv.dev = dev;
+ 
+ 	ret = fimc_parse_dt(ctx);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+ 	ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 						"samsung,sysreg");
+ 	if (IS_ERR(ctx->sysreg)) {
+ 		dev_err(dev, "syscon regmap lookup failed.\n");
+-		return PTR_ERR(ctx->sysreg);
++		ret = PTR_ERR(ctx->sysreg);
++		goto out;
+ 	}
+ 
+ 	/* resource memory */
+ 	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
+-	if (IS_ERR(ctx->regs))
+-		return PTR_ERR(ctx->regs);
++	if (IS_ERR(ctx->regs)) {
++		ret = PTR_ERR(ctx->regs);
++		goto out;
++	}
+ 
+ 	/* resource irq */
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(dev, "failed to request irq resource.\n");
+-		return -ENOENT;
++		ret = -ENOENT;
++		goto out;
+ 	}
+ 
+ 	ctx->irq = res->start;
+@@ -1826,12 +1833,12 @@ static int fimc_probe(struct platform_device *pdev)
+ 		IRQF_ONESHOT, "drm_fimc", ctx);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to request irq.\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	ret = fimc_setup_clocks(ctx);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+ 	ippdrv = &ctx->ippdrv;
+ 	ippdrv->ops[EXYNOS_DRM_OPS_SRC] = &fimc_src_ops;
+@@ -1862,12 +1869,14 @@ static int fimc_probe(struct platform_device *pdev)
+ 
+ 	dev_info(dev, "drm fimc registered successfully.\n");
+ 
+-	return 0;
++	goto out;
+ 
+ err_pm_dis:
+ 	pm_runtime_disable(dev);
+ err_put_clk:
+ 	fimc_put_clocks(ctx);
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 
+ 	return ret;
+ }
+@@ -1878,6 +1887,7 @@ static int fimc_remove(struct platform_device *pdev)
+ 	struct fimc_context *ctx = get_fimc_context(dev);
+ 	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+ 
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_ippdrv_unregister(ippdrv);
+ 	mutex_destroy(&ctx->lock);
+ 
+@@ -1955,4 +1965,3 @@ EXYNOS_DRM_DRV(fimc_driver) = {
+ 		.pm	= &fimc_pm_ops,
+ 	},
+ };
+-
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 40fd6cc..a0f5037 100644
+index a0f5037..5217178 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -937,7 +937,7 @@ static int fimd_remove(struct platform_device *pdev)
- 	return 0;
+@@ -857,12 +857,16 @@ static int fimd_probe(struct platform_device *pdev)
+ 	int win;
+ 	int ret = -EINVAL;
+ 
+-	if (!dev->of_node)
+-		return -ENODEV;
++	if (!dev->of_node) {
++		ret = -ENODEV;
++		goto out;
++	}
+ 
+ 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	ctx->dev = dev;
+ 	ctx->suspended = true;
+@@ -875,32 +879,37 @@ static int fimd_probe(struct platform_device *pdev)
+ 	ctx->bus_clk = devm_clk_get(dev, "fimd");
+ 	if (IS_ERR(ctx->bus_clk)) {
+ 		dev_err(dev, "failed to get bus clock\n");
+-		return PTR_ERR(ctx->bus_clk);
++		ret = PTR_ERR(ctx->bus_clk);
++		goto out;
+ 	}
+ 
+ 	ctx->lcd_clk = devm_clk_get(dev, "sclk_fimd");
+ 	if (IS_ERR(ctx->lcd_clk)) {
+ 		dev_err(dev, "failed to get lcd clock\n");
+-		return PTR_ERR(ctx->lcd_clk);
++		ret = PTR_ERR(ctx->lcd_clk);
++		goto out;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	ctx->regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(ctx->regs))
+-		return PTR_ERR(ctx->regs);
++	if (IS_ERR(ctx->regs)) {
++		ret = PTR_ERR(ctx->regs);
++		goto out;
++	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
+ 	if (!res) {
+ 		dev_err(dev, "irq request failed.\n");
+-		return -ENXIO;
++		ret = -ENXIO;
++		goto out;
+ 	}
+ 
+ 	ret = devm_request_irq(dev, res->start, fimd_irq_handler,
+ 							0, "drm_fimd", ctx);
+ 	if (ret) {
+ 		dev_err(dev, "irq request failed.\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	ctx->driver_data = drm_fimd_get_driver_data(pdev);
+@@ -919,13 +928,18 @@ static int fimd_probe(struct platform_device *pdev)
+ 	for (win = 0; win < WINDOWS_NR; win++)
+ 		fimd_clear_win(ctx, win);
+ 
+-	return 0;
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
++
++	return ret;
  }
  
--struct platform_driver fimd_driver = {
-+EXYNOS_DRM_DRV(fimd_driver) = {
- 	.probe		= fimd_probe,
- 	.remove		= fimd_remove,
- 	.driver		= {
+ static int fimd_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_drm_manager *mgr = platform_get_drvdata(pdev);
+ 
++	exynos_drm_dev_ready(pdev, false);
++
+ 	exynos_dpi_remove(&pdev->dev);
+ 
+ 	exynos_drm_manager_unregister(&fimd_manager);
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 6c1885e..2eb4676 100644
+index 2eb4676..f0203a3 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -1541,7 +1541,7 @@ static const struct of_device_id exynos_g2d_match[] = {
- 	{},
- };
+@@ -1372,13 +1372,17 @@ static int g2d_probe(struct platform_device *pdev)
+ 	int ret;
  
--struct platform_driver g2d_driver = {
-+EXYNOS_DRM_DRV(g2d_driver) = {
- 	.probe		= g2d_probe,
- 	.remove		= g2d_remove,
- 	.driver		= {
+ 	g2d = devm_kzalloc(dev, sizeof(*g2d), GFP_KERNEL);
+-	if (!g2d)
+-		return -ENOMEM;
++	if (!g2d) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	g2d->runqueue_slab = kmem_cache_create("g2d_runqueue_slab",
+ 			sizeof(struct g2d_runqueue_node), 0, 0, NULL);
+-	if (!g2d->runqueue_slab)
+-		return -ENOMEM;
++	if (!g2d->runqueue_slab) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	g2d->dev = dev;
+ 
+@@ -1455,6 +1459,8 @@ err_destroy_workqueue:
+ 	destroy_workqueue(g2d->g2d_workq);
+ err_destroy_slab:
+ 	kmem_cache_destroy(g2d->runqueue_slab);
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 	return ret;
+ }
+ 
+@@ -1463,6 +1469,7 @@ static int g2d_remove(struct platform_device *pdev)
+ 	struct g2d_data *g2d = platform_get_drvdata(pdev);
+ 
+ 	cancel_work_sync(&g2d->runqueue_work);
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_subdrv_unregister(&g2d->subdrv);
+ 
+ 	while (g2d->runqueue_node) {
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index fa75059..76b15fd 100644
+index 76b15fd..f0a7aca 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1796,7 +1796,7 @@ static const struct dev_pm_ops gsc_pm_ops = {
- 	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
- };
+@@ -1659,27 +1659,33 @@ static int gsc_probe(struct platform_device *pdev)
+ 	int ret;
  
--struct platform_driver gsc_driver = {
-+EXYNOS_DRM_DRV(gsc_driver) = {
- 	.probe		= gsc_probe,
- 	.remove		= gsc_remove,
- 	.driver		= {
+ 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	/* clock control */
+ 	ctx->gsc_clk = devm_clk_get(dev, "gscl");
+ 	if (IS_ERR(ctx->gsc_clk)) {
+ 		dev_err(dev, "failed to get gsc clock.\n");
+-		return PTR_ERR(ctx->gsc_clk);
++		ret = PTR_ERR(ctx->gsc_clk);
++		goto out;
+ 	}
+ 
+ 	/* resource memory */
+ 	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
+-	if (IS_ERR(ctx->regs))
+-		return PTR_ERR(ctx->regs);
++	if (IS_ERR(ctx->regs)) {
++		ret = PTR_ERR(ctx->regs);
++		goto out;
++	}
+ 
+ 	/* resource irq */
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(dev, "failed to request irq resource.\n");
+-		return -ENOENT;
++		ret = -ENOENT;
++		goto out;
+ 	}
+ 
+ 	ctx->irq = res->start;
+@@ -1687,7 +1693,7 @@ static int gsc_probe(struct platform_device *pdev)
+ 		IRQF_ONESHOT, "drm_gsc", ctx);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to request irq.\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	/* context initailization */
+@@ -1704,7 +1710,7 @@ static int gsc_probe(struct platform_device *pdev)
+ 	ret = gsc_init_prop_list(ippdrv);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to init property list.\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	DRM_DEBUG_KMS("id[%d]ippdrv[0x%x]\n", ctx->id, (int)ippdrv);
+@@ -1723,10 +1729,12 @@ static int gsc_probe(struct platform_device *pdev)
+ 
+ 	dev_info(dev, "drm gsc registered successfully.\n");
+ 
+-	return 0;
++	goto out;
+ 
+ err_ippdrv_register:
+ 	pm_runtime_disable(dev);
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 	return ret;
+ }
+ 
+@@ -1736,6 +1744,7 @@ static int gsc_remove(struct platform_device *pdev)
+ 	struct gsc_context *ctx = get_gsc_context(dev);
+ 	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+ 
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_ippdrv_unregister(ippdrv);
+ 	mutex_destroy(&ctx->lock);
+ 
+@@ -1805,4 +1814,3 @@ EXYNOS_DRM_DRV(gsc_driver) = {
+ 		.pm	= &gsc_pm_ops,
+ 	},
+ };
+-
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 09312b8..1393486 100644
+index 1393486..c759a6e 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -1973,7 +1973,7 @@ static const struct dev_pm_ops ipp_pm_ops = {
- 	SET_RUNTIME_PM_OPS(ipp_runtime_suspend, ipp_runtime_resume, NULL)
- };
+@@ -1840,8 +1840,10 @@ static int ipp_probe(struct platform_device *pdev)
+ 	int ret;
  
--struct platform_driver ipp_driver = {
-+EXYNOS_DRM_DRV(ipp_driver) = {
- 	.probe		= ipp_probe,
- 	.remove		= ipp_remove,
- 	.driver		= {
+ 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	mutex_init(&ctx->ipp_lock);
+ 	mutex_init(&ctx->prop_lock);
+@@ -1858,7 +1860,8 @@ static int ipp_probe(struct platform_device *pdev)
+ 	ctx->event_workq = create_singlethread_workqueue("ipp_event");
+ 	if (!ctx->event_workq) {
+ 		dev_err(dev, "failed to create event workqueue\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -1893,12 +1896,13 @@ static int ipp_probe(struct platform_device *pdev)
+ 
+ 	dev_info(dev, "drm ipp registered successfully.\n");
+ 
+-	return 0;
+-
++	goto out;
+ err_cmd_workq:
+ 	destroy_workqueue(ctx->cmd_workq);
+ err_event_workq:
+ 	destroy_workqueue(ctx->event_workq);
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 	return ret;
+ }
+ 
+@@ -1907,6 +1911,7 @@ static int ipp_remove(struct platform_device *pdev)
+ 	struct ipp_context *ctx = platform_get_drvdata(pdev);
+ 
+ 	/* unregister sub driver */
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_subdrv_unregister(&ctx->subdrv);
+ 
+ 	/* remove,destroy ipp idr */
+@@ -1982,4 +1987,3 @@ EXYNOS_DRM_DRV(ipp_driver) = {
+ 		.pm	= &ipp_pm_ops,
+ 	},
+ };
+-
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-index 7b90168..625fd9b 100644
+index 625fd9b..59504d9 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-@@ -849,7 +849,7 @@ static const struct dev_pm_ops rotator_pm_ops = {
- 									NULL)
- };
+@@ -707,17 +707,21 @@ static int rotator_probe(struct platform_device *pdev)
  
--struct platform_driver rotator_driver = {
-+EXYNOS_DRM_DRV(rotator_driver) = {
- 	.probe		= rotator_probe,
- 	.remove		= rotator_remove,
- 	.driver		= {
+ 	if (!dev->of_node) {
+ 		dev_err(dev, "cannot find of_node.\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ 
+ 	rot = devm_kzalloc(dev, sizeof(*rot), GFP_KERNEL);
+-	if (!rot)
+-		return -ENOMEM;
++	if (!rot) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	match = of_match_node(exynos_rotator_match, dev->of_node);
+ 	if (!match) {
+ 		dev_err(dev, "failed to match node\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ 	rot->limit_tbl = (struct rot_limit_table *)match->data;
+ 
+@@ -729,20 +733,22 @@ static int rotator_probe(struct platform_device *pdev)
+ 	rot->irq = platform_get_irq(pdev, 0);
+ 	if (rot->irq < 0) {
+ 		dev_err(dev, "failed to get irq\n");
+-		return rot->irq;
++		ret = rot->irq;
++		goto out;
+ 	}
+ 
+ 	ret = devm_request_threaded_irq(dev, rot->irq, NULL,
+ 			rotator_irq_handler, IRQF_ONESHOT, "drm_rotator", rot);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to request irq\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	rot->clock = devm_clk_get(dev, "rotator");
+ 	if (IS_ERR(rot->clock)) {
+ 		dev_err(dev, "failed to get clock\n");
+-		return PTR_ERR(rot->clock);
++		ret = PTR_ERR(rot->clock);
++		goto out;
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+@@ -771,10 +777,12 @@ static int rotator_probe(struct platform_device *pdev)
+ 
+ 	dev_info(dev, "The exynos rotator is probed successfully\n");
+ 
+-	return 0;
++	goto out;
+ 
+ err_ippdrv_register:
+ 	pm_runtime_disable(dev);
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 	return ret;
+ }
+ 
+@@ -784,6 +792,7 @@ static int rotator_remove(struct platform_device *pdev)
+ 	struct rot_context *rot = dev_get_drvdata(dev);
+ 	struct exynos_drm_ippdrv *ippdrv = &rot->ippdrv;
+ 
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_ippdrv_unregister(ippdrv);
+ 
+ 	pm_runtime_disable(dev);
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 7afead9..976a8fe 100644
+index 976a8fe..4e90a9d 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -632,7 +632,7 @@ static int vidi_remove(struct platform_device *pdev)
- 	return 0;
+@@ -593,8 +593,10 @@ static int vidi_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	ctx->default_win = 0;
+ 
+@@ -607,20 +609,22 @@ static int vidi_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, &vidi_manager);
+ 
+-	ret = device_create_file(dev, &dev_attr_connection);
+-	if (ret < 0)
++	if (device_create_file(dev, &dev_attr_connection) < 0)
+ 		DRM_INFO("failed to create connection sysfs.\n");
+ 
+ 	exynos_drm_manager_register(&vidi_manager);
+ 	exynos_drm_display_register(&vidi_display);
+-
+-	return 0;
++	ret = 0;
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
++	return ret;
  }
  
--struct platform_driver vidi_driver = {
-+EXYNOS_DRM_DRV(vidi_driver) = {
- 	.probe		= vidi_probe,
- 	.remove		= vidi_remove,
- 	.driver		= {
+ static int vidi_remove(struct platform_device *pdev)
+ {
+ 	struct vidi_context *ctx = platform_get_drvdata(pdev);
+ 
++	exynos_drm_dev_ready(pdev, false);
+ 	exynos_drm_display_unregister(&vidi_display);
+ 	exynos_drm_manager_unregister(&vidi_manager);
+ 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 9a6d652..3e659e9 100644
+index 3e659e9..2205469 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2175,7 +2175,7 @@ static int hdmi_remove(struct platform_device *pdev)
- 	return 0;
+@@ -2058,24 +2058,32 @@ static int hdmi_probe(struct platform_device *pdev)
+ 	struct hdmi_driver_data *drv_data;
+ 	int ret;
+ 
+-	 if (!dev->of_node)
+-		return -ENODEV;
++	 if (!dev->of_node) {
++		ret = -ENODEV;
++		goto out;
++	 }
+ 
+ 	pdata = drm_hdmi_dt_parse_pdata(dev);
+-	if (!pdata)
+-		return -EINVAL;
++	if (!pdata) {
++		ret = -EINVAL;
++		goto out;
++	}
+ 
+ 	hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
+-	if (!hdata)
+-		return -ENOMEM;
++	if (!hdata) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	mutex_init(&hdata->hdmi_mutex);
+ 
+ 	platform_set_drvdata(pdev, &hdmi_display);
+ 
+ 	match = of_match_node(hdmi_match_types, dev->of_node);
+-	if (!match)
+-		return -ENODEV;
++	if (!match) {
++		ret = -ENODEV;
++		goto out;
++	}
+ 
+ 	drv_data = (struct hdmi_driver_data *)match->data;
+ 	hdata->type = drv_data->type;
+@@ -2086,35 +2094,41 @@ static int hdmi_probe(struct platform_device *pdev)
+ 	ret = hdmi_resources_init(hdata);
+ 	if (ret) {
+ 		DRM_ERROR("hdmi_resources_init failed\n");
+-		return -EINVAL;
++		goto out;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	hdata->regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(hdata->regs))
+-		return PTR_ERR(hdata->regs);
++	if (IS_ERR(hdata->regs)) {
++		ret = PTR_ERR(hdata->regs);
++		goto out;
++	}
+ 
+ 	ret = devm_gpio_request(dev, hdata->hpd_gpio, "HPD");
+ 	if (ret) {
+ 		DRM_ERROR("failed to request HPD gpio\n");
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	/* DDC i2c driver */
+ 	ddc_node = of_parse_phandle(dev->of_node, "ddc", 0);
+ 	if (!ddc_node) {
+ 		DRM_ERROR("Failed to find ddc node in device tree\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ 	hdata->ddc_adpt = of_find_i2c_adapter_by_node(ddc_node);
+ 	if (!hdata->ddc_adpt) {
+ 		DRM_ERROR("Failed to get ddc i2c adapter by node\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ 
+ 	/* Not support APB PHY yet. */
+-	if (drv_data->is_apb_phy)
+-		return -EPERM;
++	if (drv_data->is_apb_phy) {
++		ret = -EPERM;
++		goto out;
++	}
+ 
+ 	/* hdmiphy i2c driver */
+ 	phy_node = of_parse_phandle(dev->of_node, "phy", 0);
+@@ -2153,12 +2167,14 @@ static int hdmi_probe(struct platform_device *pdev)
+ 	hdmi_display.ctx = hdata;
+ 	exynos_drm_display_register(&hdmi_display);
+ 
+-	return 0;
++	goto out;
+ 
+ err_hdmiphy:
+ 	put_device(&hdata->hdmiphy_port->dev);
+ err_ddc:
+ 	put_device(&hdata->ddc_adpt->dev);
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 	return ret;
  }
  
--struct platform_driver hdmi_driver = {
-+EXYNOS_DRM_DRV(hdmi_driver) = {
- 	.probe		= hdmi_probe,
- 	.remove		= hdmi_remove,
- 	.driver		= {
+@@ -2168,6 +2184,7 @@ static int hdmi_remove(struct platform_device *pdev)
+ 	struct exynos_drm_display *display = get_hdmi_display(dev);
+ 	struct hdmi_context *hdata = display->ctx;
+ 
++	exynos_drm_dev_ready(pdev, false);
+ 	put_device(&hdata->hdmiphy_port->dev);
+ 	put_device(&hdata->ddc_adpt->dev);
+ 	pm_runtime_disable(&pdev->dev);
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index ce28881..b978bde 100644
+index b978bde..c17ccb2 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1250,7 +1250,7 @@ static int mixer_remove(struct platform_device *pdev)
- 	return 0;
+@@ -1205,13 +1205,14 @@ static int mixer_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct mixer_context *ctx;
+ 	struct mixer_drv_data *drv;
++	int ret;
+ 
+ 	dev_info(dev, "probe start\n");
+ 
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx) {
+-		DRM_ERROR("failed to alloc mixer context.\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out;
+ 	}
+ 
+ 	mutex_init(&ctx->mixer_mutex);
+@@ -1237,12 +1238,17 @@ static int mixer_probe(struct platform_device *pdev)
+ 	exynos_drm_manager_register(&mixer_manager);
+ 
+ 	pm_runtime_enable(dev);
++	ret = 0;
++out:
++	exynos_drm_dev_ready(pdev, ret != EPROBE_DEFER);
+ 
+-	return 0;
++	return ret;
  }
  
--struct platform_driver mixer_driver = {
-+EXYNOS_DRM_DRV(mixer_driver) = {
- 	.driver = {
- 		.name = "exynos-mixer",
- 		.owner = THIS_MODULE,
+ static int mixer_remove(struct platform_device *pdev)
+ {
++	exynos_drm_dev_ready(pdev, false);
++
+ 	dev_info(&pdev->dev, "remove successful\n");
+ 
+ 	pm_runtime_disable(&pdev->dev);
 -- 
 1.8.3.2
