@@ -1,43 +1,68 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH] i2c: s3c2410: resume race fix
-Date: Fri, 11 Apr 2014 15:19:41 -0700
-Message-ID: <1397254781-23833-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: =?UTF-8?B?7LWc7LCs7Jqw?= <cwchoi00@gmail.com>
+Subject: Re: [PATCH 12/27] ARM: dts: exynos3250: Add default interrupt-parent
+ connected with GIC
+Date: Sat, 12 Apr 2014 07:30:46 +0900
+Message-ID: <CAGTfZH2DEWjLi=d0_U0mHYACY+_EUTt4Y3GyOvzVYb7HQk62mA@mail.gmail.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+	<1397124377-16969-4-git-send-email-cw00.choi@samsung.com>
+	<20140411040050.GD14934@quad.lixom.net>
+	<53477347.1080603@samsung.com>
+	<5347AD19.7080905@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:33658 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754493AbaDKWaq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Apr 2014 18:30:46 -0400
+In-Reply-To: <5347AD19.7080905@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel <linux-kernel@vger.kernel.org>, yj44.cho@samsung.com, inki.dae@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Hi Tomasz,
 
-Don't unmark the device as suspended until after it's been re-setup.
+On Fri, Apr 11, 2014 at 5:51 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Chanwoo,
+>
+>
+> On 11.04.2014 06:44, Chanwoo Choi wrote:
+>>
+>> Hi,
+>>
+>> On 04/11/2014 01:00 PM, Olof Johansson wrote:
+>>>
+>>> On Thu, Apr 10, 2014 at 07:06:02PM +0900, Chanwoo Choi wrote:
+>>>>
+>>>> This patch add interrupt-parent node to connected with GIC.
+>>>> All interrupt-related dt nodes need default interrupt-parent node.
+>>>>
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>
+>>>
+>>> There's no point in splitting these off in separate patches; fold them
+>>> into one patch that introduces the SoC dtsi, please.
+>>
+>>
+>> OK, I will consolidate following two patches into one patch.
+>>
+>> [PATCH 11/27] ARM: dts: exynos3250: Add GIC dt node for Exynos3250
+>> [PATCH 12/27] ARM: dts: exynos3250: Add default interrupt-parent connected
+>> with GIC
+>>
+>
+> I believe the intention was to squash all the patches related to
+> exynos3250.dtsi into a single patch called "ARM: dts: Add device tree
+> sources for Exynos3250". To retain authorship information, signed-off-by
+> tags should be merged from all those patches too.
+>
 
-The main race would be w.r.t. an i2c driver that gets resumed at the same
-time (asyncronously), that is allowed to do a transfer since suspended
-is set to 0 before reinit, but really should have seen the -EIO return
-instead.
+As you comment, I will consolidate exynos3250.dtsi into only one patch
+on next posting(v2).
+Thanks,
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/i2c/busses/i2c-s3c2410.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index ae44910..bb3a996 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1276,10 +1276,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
- 
--	i2c->suspended = 0;
- 	clk_prepare_enable(i2c->clk);
- 	s3c24xx_i2c_init(i2c);
- 	clk_disable_unprepare(i2c->clk);
-+	i2c->suspended = 0;
- 
- 	return 0;
- }
--- 
-1.9.1.423.g4596e3a
+Best Regards,
+Chanwoo Choi
