@@ -1,86 +1,166 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V4 10/20] ARM: exynos: cpuidle: Move clock setup to pm.c
-Date: Fri, 11 Apr 2014 10:30:14 +0200
-Message-ID: <5347A816.4020609@linaro.org>
-References: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org> <1397123751-1957-11-git-send-email-daniel.lezcano@linaro.org> <5346A367.2070107@samsung.com> <5346A958.1030302@linaro.org> <5346BA09.9020708@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
+Date: Fri, 11 Apr 2014 10:39:17 +0200
+Message-ID: <5347AA35.4010504@samsung.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+ <1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
+ <20140411014650.GB14934@quad.lixom.net> <53478C75.60302@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:49685 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751586AbaDKI3z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 04:29:55 -0400
-Received: by mail-wi0-f177.google.com with SMTP id cc10so603536wib.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 01:29:54 -0700 (PDT)
-In-Reply-To: <5346BA09.9020708@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <53478C75.60302@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-On 04/10/2014 05:34 PM, Tomasz Figa wrote:
-> On 10.04.2014 16:23, Daniel Lezcano wrote:
->> On 04/10/2014 03:57 PM, Tomasz Figa wrote:
->>> Hi Daniel,
->>>
->>> On 10.04.2014 11:55, Daniel Lezcano wrote:
->>>> One more step is moving the clock ratio setting at idle time in pm=
-=2Ec
->>>>
->>>> The macro names have been changed to be consistent with the other
->>>> macros
->>>> name in the file.
->>>>
->>>> Note, the clock divider was working only when cpuidle was enabled
->>>> because it
->>>> was in its init routine. With this change, the clock divider is se=
-t in
->>>> the pm's
->>>> init routine, so it will also operate when the cpuidle driver is n=
-ot
->>>> set, which
->>>> is good.
->>>>
->>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>>> ---
->>>>   arch/arm/mach-exynos/cpuidle.c  |   54
->>>> ---------------------------------------
->>>>   arch/arm/mach-exynos/pm.c       |   35 +++++++++++++++++++++++++
->>>>   arch/arm/mach-exynos/regs-pmu.h |   19 ++++++++++++++
->>>>   3 files changed, 54 insertions(+), 54 deletions(-)
->>>
->>> Sorry that I didn't mention that before, but now I recall that ther=
-e was
->>> already a similar patch moving this code to Exynos5250 clock driver=
-,
->>> which is the best place for setup of any CMU registers and a step
->>> towards removing one more static IO mapping.
->>
->> Yes, Bartlomiej mentioned it.
->>
->> Is it possible to merge this mentioned patch or to give a pointer to=
- it
->> so I can integrate it into the patchset ?
+On 11.04.2014 08:32, Chanwoo Choi wrote:
+> Hi,
 >
-> http://marc.info/?l=3Dlinux-arm-kernel&m=3D138147021207626&w=3D2
+> On 04/11/2014 10:46 AM, Olof Johansson wrote:
+>> On Thu, Apr 10, 2014 at 06:37:12PM +0900, Chanwoo Choi wrote:
+>>> This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
+>>> is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
+>>> dual cores and has a target speed of 1.0GHz.
+>>>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>   arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
+>>>   arch/arm/mach-exynos/exynos.c            |  1 +
+>>>   arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
+>>>   3 files changed, 33 insertions(+)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>>> index fc8bf18..6da8a68 100644
+>>> --- a/arch/arm/mach-exynos/Kconfig
+>>> +++ b/arch/arm/mach-exynos/Kconfig
+>>> @@ -11,6 +11,17 @@ if ARCH_EXYNOS
+>>>
+>>>   menu "SAMSUNG EXYNOS SoCs Support"
+>>>
+>>> +config ARCH_EXYNOS3
+>>> +	bool "SAMSUNG EXYNOS3"
+>>> +	select ARM_AMBA
+>>> +	select CLKSRC_OF
+>>> +	select HAVE_ARM_SCU if SMP
+>>> +	select HAVE_SMP
+>>> +	select PINCTRL
+>>> +	select PM_GENERIC_DOMAINS if PM_RUNTIME
+>>> +	help
+>>> +	  Samsung EXYNOS3 SoCs based systems
+>>> +
+>>>   config ARCH_EXYNOS4
+>>>   	bool "SAMSUNG EXYNOS4"
+>>>   	default y
+>>> @@ -41,6 +52,17 @@ config ARCH_EXYNOS5
+>>>
+>>>   comment "EXYNOS SoCs"
+>>>
+>>> +config SOC_EXYNOS3250
+>>> +	bool "SAMSUNG EXYNOS3250"
+>>> +	default y
+>>> +	depends on ARCH_EXYNOS3
+>>> +	select ARCH_HAS_BANDGAP
+>>> +	select ARM_CPU_SUSPEND if PM
+>>> +	select PINCTRL_EXYNOS
+>>> +	select SAMSUNG_DMADEV
+>>> +	help
+>>> +	  Enable EXYNOS3250 CPU support
+>>> +
+>>>   config CPU_EXYNOS4210
+>>>   	bool "SAMSUNG EXYNOS4210"
+>>>   	default y
+>>> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+>>> index b32a907..b134868 100644
+>>> --- a/arch/arm/mach-exynos/exynos.c
+>>> +++ b/arch/arm/mach-exynos/exynos.c
+>>> @@ -370,6 +370,7 @@ static void __init exynos_dt_machine_init(void)
+>>>   }
+>>>
+>>>   static char const *exynos_dt_compat[] __initconst = {
+>>> +	"samsung,exynos3250",
+>>
+>> Please consider samsung,exynos3 instead, so you don't have to update this table
+>> for every SoC. We've talked about this before..
 >
-> I wonder if it still applies cleanly, though...
+> This patchset included only exynos3250.dtsi without exynos3.dtsi.
+> So, I added only "samsung,exynos3250" compatible name.
 
-Ok, if I refer to the date, this patch has been lost in the limbus. So =
-I=20
-can integrate it with my patchset without conflicting with any tree. Ri=
-ght ?
+There is no direct relation between dts file names and compatible string 
+(although usually they correspond). You don't need exynos3.dtsi (at 
+least until another SoC from this family shows up).
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+>
+> Do you prefer to add SoC version as following?
+> +       "samsung,exynos3",
+> +       "samsung,exynos3250",
+>
+> or ?
+> +       "samsung,exynos3",
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+This is actually a good question. If adding exynos3 anyway, it probably 
+wouldn't hurt to add exynos3250 anyway, to avoid adding it in future if 
+some SoC specific quirks show up, especially when both of compatible 
+strings need to be documented anyway.
+
+>
+>>
+>>>   	"samsung,exynos4",
+>>>   	"samsung,exynos4210",
+>>>   	"samsung,exynos4212",
+>>> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+>>> index 5992b8d..3d808f6b 100644
+>>> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+>>> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+>>> @@ -43,6 +43,9 @@ extern unsigned long samsung_cpu_id;
+>>>   #define S5PV210_CPU_ID		0x43110000
+>>>   #define S5PV210_CPU_MASK	0xFFFFF000
+>>>
+>>> +#define EXYNOS3250_SOC_ID       0xE3472000
+>>> +#define EXYNOS3_SOC_MASK        0xFFFFF000
+>>> +
+>>>   #define EXYNOS4210_CPU_ID	0x43210000
+>>>   #define EXYNOS4212_CPU_ID	0x43220000
+>>>   #define EXYNOS4412_CPU_ID	0xE4412200
+>>> @@ -68,6 +71,7 @@ IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
+>>>   IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
+>>>   IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
+>>>   IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
+>>> +IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
+>>>   IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+>>>   IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+>>>   IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+>>> @@ -126,6 +130,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+>>>   # define soc_is_s5pv210()	0
+>>>   #endif
+>>>
+>>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>>> +# define soc_is_exynos3250()    is_samsung_exynos3250()
+>>> +#else
+>>> +# define soc_is_exynos3250()    0
+>>> +#endif
+>>
+>> In general, I think we have too much code littered with soc_is_<foo>() going
+>> on, so please try to avoid adding more for this SoC. Especially in cases where
+>> you just want to bail out of certain features where we might already have
+>> function pointers to control if a function is called or not, such as the
+>> firmware interfaces.
+>>
+>
+> Do you prefer dt helper function such as following function instead of new soc_is_xx() ?
+> - of_machine_is_compatible("samsung,exynos3250")
+>
+> If you are OK, I'll use of_machine_is_compatible() instead of soc_is_xx().
+
+First of all, there is still a lot of code in mach-exynos/ using the 
+soc_is_xx() macros, so having some SoCs use them and other SoCs use 
+of_machine_is_compatible() wouldn't make the code cleaner.
+
+For now, I wouldn't mind adding soc_is_exynos3250(), but in general such 
+code surrounded with if (soc_is_xx()) blocks should be reworked to use 
+something better, for example function pointers, as Olof suggested.
+
+Best regards,
+Tomasz
