@@ -1,115 +1,160 @@
 From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 1/5] drm/exynos: remove dummy hdmiphy clock from hdmi
- driver
-Date: Fri, 11 Apr 2014 07:19:18 +0530
-Message-ID: <CAPdUM4NqBtnynyp23mDRpdre+yR3h40wOk-z=xeM3GWj9ParVg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] drm/exynos: use regmap interface to set hdmiphy
+ control bit in pmu
+Date: Fri, 11 Apr 2014 07:22:05 +0530
+Message-ID: <CAPdUM4MLWgaBMi2cq7Mg3b6todgZ935WY9L050D-BhYyXb3iNg@mail.gmail.com>
 References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
- <1396458826-3051-2-git-send-email-rahul.sharma@samsung.com>
- <5346B985.3000801@samsung.com>
+	<1396458826-3051-3-git-send-email-rahul.sharma@samsung.com>
+	<5346CE3A.4060700@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5346B985.3000801@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:46078 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753294AbaDKBwH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Apr 2014 21:52:07 -0400
+Received: by mail-wi0-f182.google.com with SMTP id d1so262319wiv.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 18:52:05 -0700 (PDT)
+In-Reply-To: <5346CE3A.4060700@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Hi Tomasz,
+Thanks Tomasz,
 
-On 10 April 2014 21:02, Tomasz Figa <t.figa@samsung.com> wrote:
+This patch is not longer required after rebasing to Tomasz Stanislawski's
+Simple Phy patches.
+
+Regards,
+Rahul Sharma.
+
+On 10 April 2014 22:30, Tomasz Figa <t.figa@samsung.com> wrote:
 > Hi Rahul,
 >
 > On 02.04.2014 19:13, Rahul Sharma wrote:
 >>
 >> From: Rahul Sharma <Rahul.Sharma@samsung.com>
 >>
->> Exynos drm hdmi driver used to get dummy hdmiphy clock to
->> control the PMU bit for hdmiphy. This clock is removed
->> during CCF migration. This should also be cleaned from
->> hdmi driver.
+>> Hdmiphy control bit needs to be set before setting the resolution
+>> to hdmi hardware. This was handled using dummy hdmiphy clock which
+>> is removed now.
+>>
+>> PMU is already defined as system controller for exynos SoC. Registers
+>> of PMU are accessed using regmap interfaces.
+>>
+>> Devicetree binding document for hdmi is also updated.
 >>
 >> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
 >> ---
->>   drivers/gpu/drm/exynos/exynos_hdmi.c |    8 --------
->>   1 file changed, 8 deletions(-)
+>>   .../devicetree/bindings/video/exynos_hdmi.txt      |    2 ++
+>>   drivers/gpu/drm/exynos/exynos_hdmi.c               |   17
+>> +++++++++++++++++
+>>   drivers/gpu/drm/exynos/regs-hdmi.h                 |    4 ++++
+>>   3 files changed, 23 insertions(+)
 >>
+>> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> index f9187a2..243a499 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> @@ -27,6 +27,7 @@ Required properties:
+>>         "hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
+>>   - ddc: phandle to the hdmi ddc node
+>>   - phy: phandle to the hdmi phy node
+>> +- samsung,syscon-phandle: phandle for system controller node for PMU.
+>>
+>>   Example:
+>>
+>> @@ -37,4 +38,5 @@ Example:
+>>                 hpd-gpio = <&gpx3 7 1>;
+>>                 ddc = <&hdmi_ddc_node>;
+>>                 phy = <&hdmi_phy_node>;
+>> +               samsung,syscon-phandle = <&pmu_system_controller>;
+>>         };
 >> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c
 >> b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> index 25bf65a..23abfa0 100644
+>> index 23abfa0..47b8c06 100644
 >> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 >> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> @@ -74,7 +74,6 @@ struct hdmi_resources {
->>         struct clk                      *sclk_hdmi;
->>         struct clk                      *sclk_pixel;
->>         struct clk                      *sclk_hdmiphy;
->> -       struct clk                      *hdmiphy;
->>         struct clk                      *mout_hdmi;
->>         struct regulator_bulk_data      *regul_bulk;
->>         int                             regul_count;
->> @@ -1854,7 +1853,6 @@ static void hdmi_poweron(struct exynos_drm_display
+>> @@ -36,6 +36,8 @@
+>>   #include <linux/i2c.h>
+>>   #include <linux/of_gpio.h>
+>>   #include <linux/hdmi.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/regmap.h>
+>>
+>>   #include <drm/exynos_drm.h>
+>>
+>> @@ -194,6 +196,7 @@ struct hdmi_context {
+>>         struct hdmi_resources           res;
+>>
+>>         int                             hpd_gpio;
+>> +       struct regmap                   *pmureg;
+>>
+>>         enum hdmi_type                  type;
+>>   };
+>> @@ -1853,6 +1856,9 @@ static void hdmi_poweron(struct exynos_drm_display
 >> *display)
 >>         if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
 >>                 DRM_DEBUG_KMS("failed to enable regulator bulk\n");
 >>
->> -       clk_prepare_enable(res->hdmiphy);
+>> +       /* set pmu hdmiphy control bit to enable hdmiphy */
+>> +       regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>> +                       PMU_HDMI_PHY_ENABLE_BIT, 1);
 >>         clk_prepare_enable(res->hdmi);
 >>         clk_prepare_enable(res->sclk_hdmi);
 >>
->> @@ -1881,7 +1879,6 @@ static void hdmi_poweroff(struct exynos_drm_display
+>> @@ -1879,6 +1885,10 @@ static void hdmi_poweroff(struct exynos_drm_display
 >> *display)
 >>
 >>         clk_disable_unprepare(res->sclk_hdmi);
 >>         clk_disable_unprepare(res->hdmi);
->> -       clk_disable_unprepare(res->hdmiphy);
+>
+>
+> nit: Blank line would beautify the code a bit.
+>
+>> +       /* reset pmu hdmiphy control bit to disable hdmiphy */
+>> +       regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>> +                       PMU_HDMI_PHY_ENABLE_BIT, 0);
+>> +
 >>         regulator_bulk_disable(res->regul_count, res->regul_bulk);
 >>
 >>         pm_runtime_put_sync(hdata->dev);
->> @@ -1977,11 +1974,6 @@ static int hdmi_resources_init(struct hdmi_context
->> *hdata)
->>                 DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
->>                 goto fail;
+>> @@ -2128,6 +2138,13 @@ static int hdmi_probe(struct platform_device *pdev)
+>>                 goto err_hdmiphy;
 >>         }
->> -       res->hdmiphy = devm_clk_get(dev, "hdmiphy");
->> -       if (IS_ERR(res->hdmiphy)) {
->> -               DRM_ERROR("failed to get clock 'hdmiphy'\n");
->> -               goto fail;
->> -       }
->>         res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
->>         if (IS_ERR(res->mout_hdmi)) {
->>                 DRM_ERROR("failed to get clock 'mout_hdmi'\n");
 >>
+>> +       hdata->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+>> +                       "samsung,syscon-phandle");
+>> +       if (IS_ERR_OR_NULL(hdata->pmureg)) {
 >
-> This patch makes the series non-bisectable. If you remove handling of this
-> dummy clock until you add proper support for PHY isolation setting, then at
-> this point you end up with non-working code.
 >
-> You should first provide new infrastructure in parallel to existing one,
-> then move all users to new one and only then drop the old one.
+> IS_ERR() is the correct macro to check return value of this function.
 >
-
-Actually, this is dead code since CCF migration. After this patch we will get
-probe success but no UI. I will take care about bisection in my series.
-
-Currently planning to discard first 2 patches and rebase on Tomasz
-Stanislawski's
-1 bit phy patches.
-
-Regards,
-Rahul Sharma
-
+>> +               DRM_ERROR("syscon regmap lookup failed.\n");
+>> +               goto err_hdmiphy;
+>> +       }
+>> +
+>>         pm_runtime_enable(dev);
+>>
+>>         hdmi_display.ctx = hdata;
+>> diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h
+>> b/drivers/gpu/drm/exynos/regs-hdmi.h
+>> index ef1b3eb..9811d6f 100644
+>> --- a/drivers/gpu/drm/exynos/regs-hdmi.h
+>> +++ b/drivers/gpu/drm/exynos/regs-hdmi.h
+>> @@ -578,4 +578,8 @@
+>>   #define HDMI_TG_VACT_ST4_H            HDMI_TG_BASE(0x0074)
+>>   #define HDMI_TG_3D                    HDMI_TG_BASE(0x00F0)
+>>
+>> +/* PMU Registers for PHY */
+>> +#define PMU_HDMI_PHY_CONTROL           0x700
+>> +#define PMU_HDMI_PHY_ENABLE_BIT        (1<<0)
+>
+>
+> BIT() macro could be used instead of open coding the shift.
+>
 > Best regards,
 > Tomasz
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
