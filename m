@@ -1,135 +1,51 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V5 08/20] ARM: exynos: cpuidle: Use the cpu_pm notifier
-Date: Fri, 11 Apr 2014 12:40:03 +0200
-Message-ID: <1397212815-16068-9-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V5 14/20] ARM: exynos: cpuidle: Encapsulate the AFTR code into a function
+Date: Fri, 11 Apr 2014 12:40:09 +0200
+Message-ID: <1397212815-16068-15-git-send-email-daniel.lezcano@linaro.org>
 References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:52273 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756766AbaDKKkI (ORCPT
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:38592 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934724AbaDKKkR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 06:40:08 -0400
-Received: by mail-we0-f182.google.com with SMTP id p61so5257577wes.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:07 -0700 (PDT)
+	Fri, 11 Apr 2014 06:40:17 -0400
+Received: by mail-wg0-f49.google.com with SMTP id a1so5177433wgh.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:15 -0700 (PDT)
 In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-Use the cpu_pm_enter/exit notifier to group some pm code inside the pm file.
-
-The save and restore code is duplicated across pm.c and cpuidle.c. By using
-the cpu_pm notifier, we can factor out the routine.
+Let's encapsulate the AFTR state specific call into a single function.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/cpuidle.c |   24 ------------------------
- arch/arm/mach-exynos/pm.c      |   29 +++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 24 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 346c2d0..aa8ab1b 100644
+index 95313ea..fe35fba 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -46,26 +46,6 @@ static void exynos_set_wakeupmask(void)
- 	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
+@@ -51,13 +51,17 @@ static void exynos_cpu_set_boot_vector(long flags)
+ 	__raw_writel(flags, REG_DIRECTGO_FLAG);
  }
  
--static unsigned int g_pwr_ctrl, g_diag_reg;
--
--static void save_cpu_arch_register(void)
--{
--	/*read power control register*/
--	asm("mrc p15, 0, %0, c15, c0, 0" : "=r"(g_pwr_ctrl) : : "cc");
--	/*read diagnostic register*/
--	asm("mrc p15, 0, %0, c15, c0, 1" : "=r"(g_diag_reg) : : "cc");
--	return;
--}
--
--static void restore_cpu_arch_register(void)
--{
--	/*write power control register*/
--	asm("mcr p15, 0, %0, c15, c0, 0" : : "r"(g_pwr_ctrl) : "cc");
--	/*write diagnostic register*/
--	asm("mcr p15, 0, %0, c15, c0, 1" : : "r"(g_diag_reg) : "cc");
--	return;
--}
--
- static int idle_finisher(unsigned long flags)
+-static int idle_finisher(unsigned long flags)
++static void exynos_enter_aftr(void)
  {
- 	exynos_set_wakeupmask();
-@@ -87,8 +67,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- {
- 	unsigned long tmp;
- 
--	save_cpu_arch_register();
--
- 	/* Setting Central Sequence Register for power down mode */
- 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
-@@ -103,8 +81,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- #endif
- 	cpu_pm_exit();
- 
--	restore_cpu_arch_register();
--
- 	/*
- 	 * If PMU failed while entering sleep mode, WFI will be
- 	 * ignored by PMU and then exiting cpu_do_idle().
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index adfdf4b..67d75fe 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/cpu_pm.h>
- #include <linux/io.h>
- #include <linux/irqchip/arm-gic.h>
- #include <linux/err.h>
-@@ -321,10 +322,38 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
- 	.valid		= suspend_valid_only_mem,
- };
- 
-+static int exynos_cpu_pm_notifier(struct notifier_block *self,
-+				  unsigned long cmd, void *v)
-+{
-+	int cpu = smp_processor_id();
-+
-+	switch (cmd) {
-+	case CPU_PM_ENTER:
-+		if (cpu == 0) {
-+			exynos_cpu_save_register();
-+		}
-+		break;
-+
-+	case CPU_PM_EXIT:
-+		if (cpu == 0) {
-+			exynos_cpu_restore_register();
-+		}
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
+ 	exynos_set_wakeupmask(0x0000ff3e);
+ 	exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
+ 	/* Set value of power down register for aftr mode */
+ 	exynos_sys_powerdown_conf(SYS_AFTR);
 +}
-+
-+static struct notifier_block exynos_cpu_pm_notifier_block = {
-+	.notifier_call = exynos_cpu_pm_notifier,
-+};
-+
- void __init exynos_pm_init(void)
- {
- 	u32 tmp;
  
-+	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
-+
- 	/* Platform-specific GIC callback */
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
++static int idle_finisher(unsigned long flags)
++{
++	exynos_enter_aftr();
+ 	cpu_do_idle();
  
+ 	return 1;
 -- 
 1.7.9.5
