@@ -1,113 +1,245 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 04/27] ARM: EXYNOS: Support secondary CPU boot of Exynos4212
-Date: Fri, 11 Apr 2014 14:14:01 +0900
-Message-ID: <53477A19.6070509@samsung.com>
-References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
- <1397122658-16013-5-git-send-email-cw00.choi@samsung.com>
- <20140411014424.GA14934@quad.lixom.net>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [RFC PATCH 1/2] drivers: mfd: Add support of exynos-pmu driver
+Date: Fri, 11 Apr 2014 15:00:30 +0900
+Message-ID: <534784FE.6090107@samsung.com>
+References: <1396427085-4696-1-git-send-email-pankaj.dubey@samsung.com>
+ <1396427085-4696-2-git-send-email-pankaj.dubey@samsung.com>
+ <4187440.t3CeqIPlpy@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:12679 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753037AbaDKFOB (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59132 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750751AbaDKFnH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 01:14:01 -0400
-In-reply-to: <20140411014424.GA14934@quad.lixom.net>
+	Fri, 11 Apr 2014 01:43:07 -0400
+In-reply-to: <4187440.t3CeqIPlpy@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, Younggun Jang <yg1004.jang@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 
-Hi,
+Hi Bartlomiej,
 
-On 04/11/2014 10:44 AM, Olof Johansson wrote:
-> On Thu, Apr 10, 2014 at 06:37:15PM +0900, Chanwoo Choi wrote:
->> From: Kyungmin Park <kyungmin.park@samsung.com>
+Thanks for review.
+
+On 04/03/2014 08:56 PM, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+>
+> On Wednesday, April 02, 2014 05:24:44 PM Pankaj Dubey wrote:
+>> From: Younggun Jang <yg1004.jang@samsung.com>
 >>
->> This patch fix the offset of CPU boot address and change parameter of smc call
->> of SMC_CMD_CPU1BOOT command for Exynos4212.
->>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  arch/arm/mach-exynos/firmware.c | 14 ++++++++++++--
->>  1 file changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
->> index 932129e..91a911d 100644
->> --- a/arch/arm/mach-exynos/firmware.c
->> +++ b/arch/arm/mach-exynos/firmware.c
->> @@ -18,6 +18,8 @@
->>  
->>  #include <mach/map.h>
->>  
->> +#include <plat/cpu.h>
+>> This driver is mainly used for setting misc bits of register from PMU IP
+>> of Exynos SoC which will be required to configure before Suspend/Resume.
+>> Currently all these settings are done in "arch/arm/mach-exynos/pmu.c" but
+>> moving ahead for ARM64 based SoC support, there is a need of DT based
+>> implementation of PMU driver.
+> PMU support for ARM32 EXYNOS SoCs is heavily SoC dependent and there
+> is very little code shared between diffirent SoCs.  Unless PMU setup
+> for Samsung ARM64 SoCs is similar to some existing ARM32 EXYNOS SoCs
+> it may be better to just add a separate PMU driver for Samsung ARM64
+> SoCs. IOW it would be best to show that this patch series is really
+> useful before merging it.
+
+We think it will be useful, but I will consider your point of making driver
+which should have common piece of code to address various EXYNOS SoCs.
+We are working on it, once it takes some proper shape I will post details here.
+
+>
+> When it comes to the current patches it would be better to do changes
+> converting PMU support to be a platform driver first for the existing
+> arch/arm/mach-exynos/pmu.c file and then move+rename this file in
+> the separate patch.  Currently the code changes are done at the same
+> time as the code movement which makes them difficult to review/verify.
+
+OK, will do as you suggested in next version.
+
+> There are also some minor issues with the new code:
+>
+> [...]
+>
+>> diff --git a/drivers/mfd/exynos-pmu.c b/drivers/mfd/exynos-pmu.c
+>> new file mode 100644
+>> index 0000000..24abd9b
+>> --- /dev/null
+>> +++ b/drivers/mfd/exynos-pmu.c
+>> @@ -0,0 +1,534 @@
+>> +/*
+>> + * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com/
+> 2015?
+
+Will fix this.
+
+> [...]
+>
+>> +static int __init exynos4210_pmu_init(void)
+>> +{
+>> +	exynos_pmu_config = exynos4210_pmu_config;
+>> +	pmu_data->pmu_id = PMU_EXYNOS4210;
+>> +	pr_info("EXYNOS4210 PMU Initialize\n");
 >> +
->>  #include "smc.h"
->>  
->>  static int exynos_do_idle(void)
->> @@ -28,14 +30,22 @@ static int exynos_do_idle(void)
->>  
->>  static int exynos_cpu_boot(int cpu)
->>  {
->> -	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
->> +	if (soc_is_exynos4212())
->> +		exynos_smc(SMC_CMD_CPU1BOOT, 0, 0, 0);
->> +	else
->> +		exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
-> 
-> 	/* <explain why you need this special case on 4212> */
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init exynos4212_pmu_init(void)
+>> +{
+>> +	exynos_pmu_config = exynos4x12_pmu_config;
+>> +	pmu_data->pmu_id = PMU_EXYNOS4212;
+>> +	pr_info("EXYNOS4x12 PMU Initialize\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init exynos4412_pmu_init(void)
+>> +{
+>> +	exynos_pmu_config = exynos4x12_pmu_config;
+>> +	pmu_data->pmu_id = PMU_EXYNOS4412;
+>> +	pr_info("EXYNOS4412 PMU Initialize\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init exynos5250_pmu_init(void)
+>> +{
+>> +	unsigned int value;
+>> +
+>> +	/*
+>> +	 * When SYS_WDTRESET is set, watchdog timer reset request
+>> +	 * is ignored by power management unit.
+>> +	 */
+>> +	value = __raw_readl(pmu_data->regs + EXYNOS5_AUTO_WDTRESET_DISABLE);
+>> +	value &= ~EXYNOS5_SYS_WDTRESET;
+>> +	__raw_writel(value, pmu_data->regs + EXYNOS5_AUTO_WDTRESET_DISABLE);
+>> +
+>> +	value = __raw_readl(pmu_data->regs + EXYNOS5_MASK_WDTRESET_REQUEST);
+>> +	value &= ~EXYNOS5_SYS_WDTRESET;
+>> +	__raw_writel(value, pmu_data->regs + EXYNOS5_MASK_WDTRESET_REQUEST);
+>> +
+>> +	exynos_pmu_config = exynos5250_pmu_config;
+>> +	pmu_data->pmu_id = PMU_EXYNOS5250;
+>> +	pr_info("EXYNOS5250 PMU Initialize\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * PMU platform driver and devicetree bindings.
+>> + */
+>> +static struct of_device_id exynos_pmu_of_device_ids[] = {
+>> +	{
+>> +		.compatible = "samsung,exynos4210-pmu",
+>> +		.data = (void *)exynos4210_pmu_init
+>> +	},
+>> +	{
+>> +		.compatible = "samsung,exynos4212-pmu",
+>> +		.data = (void *)exynos4212_pmu_init
+>> +	},
+>> +	{
+>> +		.compatible = "samsung,exynos4412-pmu",
+>> +		.data = (void *)exynos4412_pmu_init
+>> +	},
+>> +	{
+>> +		.compatible = "samsung,exynos5250-pmu",
+>> +		.data = (void *)exynos5250_pmu_init
+>> +	},
+>> +	{},
+>> +};
+>> +
+>> +static int exynos_pmu_probe(struct platform_device *pdev)
+>> +{
+>> +	const struct of_device_id *match;
+>> +	exynos_pmu_init_t exynos_pmu_init;
+>> +	struct resource *res;
+>> +
+>> +	pmu_data = devm_kzalloc(&pdev->dev,
+>> +			sizeof(struct exynos_pmu_data), GFP_KERNEL);
+>> +	if (!pmu_data) {
+>> +		dev_err(&pdev->dev, "exynos_pmu driver probe failed\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	pmu_data->dev = &pdev->dev;
+>> +
+>> +	match = of_match_node(exynos_pmu_of_device_ids, pdev->dev.of_node);
+>> +	exynos_pmu_init = match->data;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	pmu_data->regs = devm_ioremap_resource(&pdev->dev, res);
+> devm_ioremap_resouce() return value should be checked for errors with
+>
+> if (IS_ERR(pmu_data->regs))
+> 	return PTR_ERR(pmu_data->regs);
+Will take care.
+>> +
+>> +	exynos_pmu_init();
+> exynos*_pmu_init() methods should be void as they always return 0 and
+> the return value is ignored anyway.
+>
+> Also they cannot be marked with __init as the driver probe function
+> itself is not marked with __init (it cannot be beacuse of possibility
+> of doing unbind/bind through sysfs).
+Will take care.
+>> +
+>> +	return 0;
+>> +};
+>> +
+>> +static int exynos_pmu_remove(struct platform_device *pdev)
+>> +{
+>> +	exynos_pmu_config = NULL;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct platform_driver exynos_pmu_driver = {
+>> +	.driver  = {
+>> +		.name   = "exynos-pmu",
+>> +		.of_match_table = exynos_pmu_of_device_ids,
+>> +	},
+>> +	.probe = exynos_pmu_probe,
+>> +	.remove = exynos_pmu_remove,
+>> +};
+>> +
+>> +static int __init exynos_pmu_driver_init(void)
+>> +{
+>> +	return platform_driver_register(&exynos_pmu_driver);
+>> +}
+>> +arch_initcall(exynos_pmu_driver_init);
+>> +
+>> +MODULE_AUTHOR("Younggun Jang <yg1004.jang@samsung.com");
+>> +MODULE_DESCRIPTION("Exynos PMU driver");
+>> +MODULE_LICENSE("GPL v2");
+> This driver can be build as module now but:
+> - exynos_sys_powerdown_conf() is not exported
+> - there is no exynos_pmu_driver_exit()
+OK, will take care.
+> Also it is not clear what happens if exynos_sys_powerdown_conf() is called
+> while there are no platform devices binded to a driver but driver itself is
+> loaded.
+>
+> [...]
+>
+>> diff --git a/include/linux/mfd/samsung/exynos-regs-pmu.h b/include/linux/mfd/samsung/exynos-regs-pmu.h
+>> new file mode 100644
+>> index 0000000..ed8259d
+>> --- /dev/null
+>> +++ b/include/linux/mfd/samsung/exynos-regs-pmu.h
+>> @@ -0,0 +1,308 @@
+>> +/*
+>> + * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
+> 2015?
+I will change.
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>
 
-It's better to ask system lsi person. We don't know it well.
-I got the guide about secondary boot from system lsi.
-But, this patch was completely tested.
 
-> 	if (soc_is_exynos4212())
-> 		cpu = 0;
-> 
-> ...and then do the call as before.
-
-OK, I'll modify it as following:
-
- static int exynos_cpu_boot(int cpu)
- {
-+       if (soc_is_exynos4212())
-+               cpu = 0;
-+
-        exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
-        return 0;
- }
-
-> 
-> 
->>  	return 0;
->>  }
->>  
->>  static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->>  {
->> -	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
->> +	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
->>  
->> +	if (soc_is_exynos4212())
->> +		goto out;
->> +	else
->> +		boot_reg += 4*cpu;
-> 
-> 	if (!soc_is_exynos4212())
-> 		boot_reg += 4 * cpu;
-> 
-> That way you avoid a goto, especially since the "goto out" isn't actually
-> an "out", it's still doing stuff at the end of the funciton.
-> 
-
-OK, I'll remove goto statement and then modify it as your comment.
-
--       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
-+       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
-+
-+       if (!soc_is_exynos4212())
-+               boot_reg += 4*cpu;
-
+-- 
 Best Regards,
-Chanwoo Choi
+Pankaj Dubey
