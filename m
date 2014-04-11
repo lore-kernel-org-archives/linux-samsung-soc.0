@@ -1,75 +1,152 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V5 20/20] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle directory
-Date: Fri, 11 Apr 2014 12:40:15 +0200
-Message-ID: <1397212815-16068-21-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V5 16/20] ARM: exynos: cpuidle: Move the power sequence call in the cpu_pm notifier
+Date: Fri, 11 Apr 2014 12:40:11 +0200
+Message-ID: <1397212815-16068-17-git-send-email-daniel.lezcano@linaro.org>
 References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:55098 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756766AbaDKKkZ (ORCPT
+Received: from mail-we0-f176.google.com ([74.125.82.176]:47862 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934741AbaDKKkU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 06:40:25 -0400
-Received: by mail-wi0-f171.google.com with SMTP id q5so765021wiv.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:24 -0700 (PDT)
+	Fri, 11 Apr 2014 06:40:20 -0400
+Received: by mail-we0-f176.google.com with SMTP id x48so5130823wes.21
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:18 -0700 (PDT)
 In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
+The code to initiate and exit the powerdown sequence is the same in pm.c and
+cpuidle.c.
+
+Let's split the common part in the pm.c and reuse it from the cpu_pm notifier.
+
+That is one more step forward to make the cpuidle driver arch indenpendant.
+
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/Makefile                      |    1 -
- drivers/cpuidle/Kconfig.arm                        |    6 ++++++
- drivers/cpuidle/Makefile                           |    1 +
- .../cpuidle.c => drivers/cpuidle/cpuidle-exynos.c  |    0
- 4 files changed, 7 insertions(+), 1 deletion(-)
- rename arch/arm/mach-exynos/cpuidle.c => drivers/cpuidle/cpuidle-exynos.c (100%)
+ arch/arm/mach-exynos/cpuidle.c |   22 ----------------------
+ arch/arm/mach-exynos/pm.c      |   24 ++++++++++++++++++++----
+ 2 files changed, 20 insertions(+), 26 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index a656dbe..21bd364 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -16,7 +16,6 @@ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index e6d813d..02609ac 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -28,7 +28,6 @@
+ #include <mach/map.h>
  
- obj-$(CONFIG_PM_SLEEP)		+= pm.o sleep.o
- obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
--obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+ #include "common.h"
+-#include "regs-pmu.h"
  
- obj-$(CONFIG_ARCH_EXYNOS)	+= pmu.o
+ static int idle_finisher(unsigned long flags)
+ {
+@@ -42,31 +41,10 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
+ 				struct cpuidle_driver *drv,
+ 				int index)
+ {
+-	unsigned long tmp;
+-
+-	/* Setting Central Sequence Register for power down mode */
+-	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+-	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
+-	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+-
+ 	cpu_pm_enter();
+ 	cpu_suspend(0, idle_finisher);
+ 	cpu_pm_exit();
  
-diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-index d988948..364c984 100644
---- a/drivers/cpuidle/Kconfig.arm
-+++ b/drivers/cpuidle/Kconfig.arm
-@@ -44,3 +44,9 @@ config ARM_AT91_CPUIDLE
- 	depends on ARCH_AT91
- 	help
- 	  Select this to enable cpuidle for AT91 processors
+-	/*
+-	 * If PMU failed while entering sleep mode, WFI will be
+-	 * ignored by PMU and then exiting cpu_do_idle().
+-	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
+-	 * in this situation.
+-	 */
+-	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+-	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
+-		tmp |= S5P_CENTRAL_LOWPWR_CFG;
+-		__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+-		/* Clear wakeup state register */
+-		__raw_writel(0x0, S5P_WAKEUP_STAT);
+-	}
+-
+ 	return index;
+ }
+ 
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 50b6b4d..6d9ef69 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -213,15 +213,21 @@ static void exynos_pm_prepare(void)
+ 	__raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+ }
+ 
+-static int exynos_pm_suspend(void)
++static void exynos_pm_central_suspend(void)
+ {
+ 	unsigned long tmp;
+ 
+ 	/* Setting Central Sequence Register for power down mode */
+-
+ 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+ 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
+ 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
++}
 +
-+config ARM_EXYNOS_CPUIDLE
-+	bool "Cpu Idle Driver for the Exynos processors"
-+	depends on ARCH_EXYNOS
-+	help
-+	  Select this to enable cpuidle for Exynos processors
-diff --git a/drivers/cpuidle/Makefile b/drivers/cpuidle/Makefile
-index f71ae1b..0d1540a 100644
---- a/drivers/cpuidle/Makefile
-+++ b/drivers/cpuidle/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)	+= cpuidle-kirkwood.o
- obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)		+= cpuidle-zynq.o
- obj-$(CONFIG_ARM_U8500_CPUIDLE)         += cpuidle-ux500.o
- obj-$(CONFIG_ARM_AT91_CPUIDLE)          += cpuidle-at91.o
-+obj-$(CONFIG_ARM_EXYNOS_CPUIDLE)        += cpuidle-exynos.o
++static int exynos_pm_suspend(void)
++{
++	unsigned long tmp;
++
++	exynos_pm_central_suspend();
  
- ###############################################################################
- # POWERPC drivers
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/drivers/cpuidle/cpuidle-exynos.c
-similarity index 100%
-rename from arch/arm/mach-exynos/cpuidle.c
-rename to drivers/cpuidle/cpuidle-exynos.c
+ 	/* Setting SEQ_OPTION register */
+ 
+@@ -234,7 +240,7 @@ static int exynos_pm_suspend(void)
+ 	return 0;
+ }
+ 
+-static void exynos_pm_resume(void)
++static int exynos_pm_central_resume(void)
+ {
+ 	unsigned long tmp;
+ 
+@@ -251,9 +257,17 @@ static void exynos_pm_resume(void)
+ 		/* clear the wakeup state register */
+ 		__raw_writel(0x0, S5P_WAKEUP_STAT);
+ 		/* No need to perform below restore code */
+-		goto early_wakeup;
++		return -1;
+ 	}
+ 
++	return 0;
++}
++
++static void exynos_pm_resume(void)
++{
++	if (exynos_pm_central_resume())
++		goto early_wakeup;
++
+ 	if (!soc_is_exynos5250())
+ 		exynos_cpu_restore_register();
+ 
+@@ -359,6 +373,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 	switch (cmd) {
+ 	case CPU_PM_ENTER:
+ 		if (cpu == 0) {
++			exynos_pm_central_suspend();
+ 			exynos_cpu_save_register();
+ 		}
+ 		break;
+@@ -368,6 +383,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 			if (!soc_is_exynos5250())
+ 				scu_enable(S5P_VA_SCU);
+ 			exynos_cpu_restore_register();
++			exynos_pm_central_resume();
+ 		}
+ 		break;
+ 	}
 -- 
 1.7.9.5
