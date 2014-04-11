@@ -1,42 +1,30 @@
-From: =?UTF-8?B?7LWc7LCs7Jqw?= <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: =?UTF-8?B?7LWc7LCs7Jqw?= <cwchoi00@gmail.com>
 Subject: Re: [PATCH] iio: adc: exynos_adc: Control special clock of ADC to
  support Exynos3250 ADC
-Date: Sat, 12 Apr 2014 07:45:42 +0900
-Message-ID: <CAGTfZH2Rpa+hooPHY2xmquVHCwcE2X7rqf3rzGKCz02rA9qSzA@mail.gmail.com>
+Date: Sat, 12 Apr 2014 07:49:22 +0900
+Message-ID: <CAGTfZH1t9QEZk5qaDRnGkeMatwtTXFq5SGgR27-4nXhdzKU-Ng@mail.gmail.com>
 References: <1397181640-18513-1-git-send-email-cw00.choi@samsung.com>
-	<18632148.yOYlTYattA@amdc1032>
+	<5347BE67.1080209@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <18632148.yOYlTYattA@amdc1032>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5347BE67.1080209@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-iio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, ch.naveen@samsung.com, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Bartlomiej,
+Hi Sylwester,
 
-On Fri, Apr 11, 2014 at 6:41 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+On Fri, Apr 11, 2014 at 7:05 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Chanwoo,
 >
-> Hi,
->
-> On Friday, April 11, 2014 11:00:40 AM Chanwoo Choi wrote:
+> On 11/04/14 04:00, Chanwoo Choi wrote:
 >> This patch control special clock for ADC in Exynos series's FSYS block.
->
-> s/control/controls/
-
-I'll fix it.
-
->
 >> If special clock of ADC is registerd on clock list of common clk framework,
 >> Exynos ADC drvier have to control this clock.
->
-> s/drvier/driver/
-
-I'll fix it.
-
->
+>>
 >> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
 >> - 'adc' clock: bus clock for ADC
 >>
@@ -46,60 +34,20 @@ I'll fix it.
 >> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_tsadc' clock
 >> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_tsadc'
 >> clock in FSYS_BLK.
->>
->> Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  drivers/iio/adc/exynos_adc.c | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
->> index d25b262..4cd1975 100644
->> --- a/drivers/iio/adc/exynos_adc.c
->> +++ b/drivers/iio/adc/exynos_adc.c
->> @@ -88,6 +88,7 @@ struct exynos_adc {
->>       void __iomem            *regs;
->>       void __iomem            *enable_reg;
->>       struct clk              *clk;
->> +     struct clk              *sclk;
->>       unsigned int            irq;
->>       struct regulator        *vdd;
->>
->> @@ -308,6 +309,13 @@ static int exynos_adc_probe(struct platform_device *pdev)
->>               goto err_irq;
->>       }
->>
->> +     info->sclk = devm_clk_get(&pdev->dev, "sclk_tsadc");
->> +     if (IS_ERR(info->sclk)) {
->> +             dev_warn(&pdev->dev, "failed getting sclk clock, err = %ld\n",
->> +                                                     PTR_ERR(info->sclk));
->> +             info->sclk = NULL;
->> +     }
->> +
->>       info->vdd = devm_regulator_get(&pdev->dev, "vdd");
->>       if (IS_ERR(info->vdd)) {
->>               dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
->> @@ -341,6 +349,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
->>               goto err_iio_dev;
->>
->>       clk_prepare_enable(info->clk);
->> +     clk_prepare_enable(info->sclk);
->>
->>       exynos_adc_hw_init(info);
->>
->> @@ -357,6 +366,7 @@ err_of_populate:
->>                               exynos_adc_remove_devices);
->>       regulator_disable(info->vdd);
->>       clk_disable_unprepare(info->clk);
->> +     clk_disable_unprepare(info->sclk);
 >
-> Please disable clocks in the reverse of order in which they were enabled.
+> I think a new compatible should be added for the ADC device for Exynos3250
+> and the required clocks should be handled properly, based on compatible
+> value. This could be handled, e.g. through some flags in driver's data
+> selected based on the compatible property value.
 
-Is it necessary? I don't think that.
+OK, I'll consider new patch using new compatible string according to
+your comment.
+
+>
+> And the new clocks should be documented in Documentation/devicetree/bindings
+> /arm/samsung/exynos-adc.txt.
+
+OK, I'll modify it. Thanks,
 
 Best Regards,
 Chanwoo Choi
