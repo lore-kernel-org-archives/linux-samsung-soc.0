@@ -1,38 +1,192 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 03/27] ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
-Date: Fri, 11 Apr 2014 11:03:18 +0900
-Message-ID: <53474D66.7020605@samsung.com>
-References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
- <1397122658-16013-4-git-send-email-cw00.choi@samsung.com>
- <20140411014858.GC14934@quad.lixom.net>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 4/5] drm/exynos: add support for apb mapped phys in hdmi driver
+Date: Fri, 11 Apr 2014 08:06:57 +0530
+Message-ID: <CAPdUM4MV6Kk7GmQOCOdV9f6e8=fL0bp74WBBvZJJP3b7pCFaVQ@mail.gmail.com>
+References: <1396458826-3051-1-git-send-email-rahul.sharma@samsung.com>
+	<1396458826-3051-5-git-send-email-rahul.sharma@samsung.com>
+	<5346D242.4090009@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35594 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753294AbaDKCDS (ORCPT
+Received: from mail-we0-f182.google.com ([74.125.82.182]:43795 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754362AbaDKCg6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 22:03:18 -0400
-In-reply-to: <20140411014858.GC14934@quad.lixom.net>
+	Thu, 10 Apr 2014 22:36:58 -0400
+Received: by mail-we0-f182.google.com with SMTP id p61so4842645wes.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Apr 2014 19:36:57 -0700 (PDT)
+In-Reply-To: <5346D242.4090009@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>
 
-On 04/11/2014 10:48 AM, Olof Johansson wrote:
-> On Thu, Apr 10, 2014 at 06:37:14PM +0900, Chanwoo Choi wrote:
->> This patch add memory mapping for PMU (Power Management Unit) which is used
->> for power control of Exynos3250.
+Thanks Tomasz,
+
+On 10 April 2014 22:47, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Rahul,
+>
+> On 02.04.2014 19:13, Rahul Sharma wrote:
 >>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> Signed-off-by is in the wrong order, if Kyungmin wrote the patch and you're
-> just posting it...
+>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>
+>> Previous SoCs have hdmi phys which are accessible through
+>> dedicated i2c lines. Newer SoCs have Apb mapped hdmi phys.
+>> Hdmi driver is modified to support apb mapped phys.
+>>
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_hdmi.c |  142
+>> +++++++++++++++++++++-------------
+>>   drivers/gpu/drm/exynos/regs-hdmi.h   |    7 ++
+>>   2 files changed, 96 insertions(+), 53 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> index 5b2cfe7..5989770 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> @@ -33,6 +33,7 @@
+>>   #include <linux/regulator/consumer.h>
+>>   #include <linux/io.h>
+>>   #include <linux/of.h>
+>> +#include <linux/of_address.h>
+>>   #include <linux/i2c.h>
+>>   #include <linux/of_gpio.h>
+>>   #include <linux/hdmi.h>
+>> @@ -68,6 +69,8 @@ enum hdmi_type {
+>>
+>>   struct hdmi_driver_data {
+>>         unsigned int type;
+>> +       const struct hdmiphy_config *phy_confs;
+>> +       unsigned int phy_conf_count;
+>>         unsigned int is_apb_phy:1;
+>>   };
+>>
+>> @@ -196,9 +199,12 @@ struct hdmi_context {
+>>         struct hdmi_resources           res;
+>>
+>>         int                             hpd_gpio;
+>> +       void __iomem                    *regs_hdmiphy;
+>>         struct regmap                   *pmureg;
+>>
+>>         enum hdmi_type                  type;
+>> +       const struct hdmiphy_config     *phy_confs;
+>> +       unsigned int                    phy_conf_count;
+>>   };
+>>
+>>   struct hdmiphy_config {
+>> @@ -206,14 +212,6 @@ struct hdmiphy_config {
+>>         u8 conf[32];
+>>   };
+>>
+>> -struct hdmi_driver_data exynos4212_hdmi_driver_data = {
+>> -       .type   = HDMI_TYPE14,
+>> -};
+>> -
+>> -struct hdmi_driver_data exynos5_hdmi_driver_data = {
+>> -       .type   = HDMI_TYPE14,
+>> -};
+>> -
+>>   /* list of phy config settings */
+>>   static const struct hdmiphy_config hdmiphy_v13_configs[] = {
+>>         {
+>> @@ -428,6 +426,21 @@ static const struct hdmiphy_config
+>> hdmiphy_v14_configs[] = {
+>>         },
+>>   };
+>>
+>> +
+>> +struct hdmi_driver_data exynos4212_hdmi_driver_data = {
+>> +       .type           = HDMI_TYPE14,
+>> +       .phy_confs      = hdmiphy_v14_configs,
+>> +       .phy_conf_count = ARRAY_SIZE(hdmiphy_v14_configs),
+>> +       .is_apb_phy     = 0,
+>> +};
+>> +
+>> +struct hdmi_driver_data exynos5_hdmi_driver_data = {
+>> +       .type           = HDMI_TYPE14,
+>> +       .phy_confs      = hdmiphy_v13_configs,
+>> +       .phy_conf_count = ARRAY_SIZE(hdmiphy_v13_configs),
+>> +       .is_apb_phy     = 0,
+>> +};
+>> +
+>>   static inline u32 hdmi_reg_read(struct hdmi_context *hdata, u32 reg_id)
+>>   {
+>>         return readl(hdata->regs + reg_id);
+>> @@ -447,6 +460,48 @@ static inline void hdmi_reg_writemask(struct
+>> hdmi_context *hdata,
+>>         writel(value, hdata->regs + reg_id);
+>>   }
+>>
+>> +static int hdmiphy_reg_writeb(struct hdmi_context *hdata,
+>> +                       u32 reg_offset, u8 value)
+>> +{
+>> +       if (hdata->hdmiphy_port) {
+>> +               u8 buffer[2];
+>> +               int ret;
+>> +
+>> +               buffer[0] = reg_offset;
+>> +               buffer[1] = value;
+>> +
+>> +               ret = i2c_master_send(hdata->hdmiphy_port, buffer, 2);
+>> +               if (ret == 2)
+>> +                       return 0;
+>> +               return ret;
+>> +       } else {
+>> +               writeb(value, hdata->regs_hdmiphy + (reg_offset<<2));
+>> +               return 0;
+>> +       }
+>> +}
+>> +
+>> +static int hdmiphy_reg_write_buf(struct hdmi_context *hdata,
+>> +                       u32 reg_offset, const u8 *buf, u32 len)
+>> +{
+>> +       if ((reg_offset + len) > 32)
+>> +               return -EINVAL;
+>> +
+>> +       if (hdata->hdmiphy_port) {
+>> +               int ret;
+>> +
+>> +               ret = i2c_master_send(hdata->hdmiphy_port, buf, len);
+>
+>
+> reg_offset doesn't seem to be used in I2C code path in any way. Are you sure
+> this is correct?
+>
 
+yea ... reg_offset is not required for i2c write as first buffer in
+buffer is taken as offset.
 
-No, I implemented this patch and posted it.
+>> +               if (ret == len)
+>> +                       return 0;
+>> +               return ret;
+>> +       } else {
+>> +               int i;
+>> +               for (i = 0; i < len; i++)
+>> +                       writeb(buf[i], hdata->regs_hdmiphy +
+>> +                               ((reg_offset + i)<<2));
+>> +               return 0;
+>> +       }
+>> +}
+>
+>
+> I wonder if those functions couldn't be abstracted as two callbacks in
+> hdmi_driver_data struct to eliminate such if clauses as above.
+>
 
-Best Regards,
-Chanwoo Choi
+hmn...I can do that... but will it help in anyway. I will end up in changing
+more code in probe, adding 4 callbacks. let me know if you want me to do
+that.
+
+Regards,
+Rahul Sharma.
+
+> --
+> Best regards,
+> Tomasz
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
