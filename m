@@ -1,52 +1,61 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH V2 0/3] Add PMU and S2R support for exynos5420
-Date: Fri, 11 Apr 2014 18:47:11 +0530
-Message-ID: <CAGm_ybhWjc7=OUJ5BTvQ-K6S_RwYVgGV8+vi6iUgKEJb0qSymw@mail.gmail.com>
-References: <1395900785-11334-1-git-send-email-vikas.sajjan@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH RFC 0/2] drm/exynos: refactoring drm device init/deinit
+Date: Fri, 11 Apr 2014 16:11:26 +0200
+Message-ID: <1397225488-6634-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:59602 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754438AbaDKNRM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 09:17:12 -0400
-Received: by mail-oa0-f52.google.com with SMTP id l6so6152871oag.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 06:17:11 -0700 (PDT)
-In-Reply-To: <1395900785-11334-1-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>
 
- Hi,
+Hi Inki,
 
- Any comments on this series.
+This patchset refactors drm device initialization. Details are described
+in respective patches. It is an alternative to DT supernode concept.
 
-On Thu, Mar 27, 2014 at 11:43 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> rebased on kgene tree for-next branch
-> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
->
-> changes since v1:
->         - Addressed comments from Tomasz figa.
->         - restructured/consolidated as per Tomasz figa's PM consolidations for exynos
->
-> Abhilash Kesavan (1):
->   ARM: dts: Add node for GPIO keys on SMDK5420
->
-> Vikas Sajjan (2):
->   ARM: EXYNOS5: Add PMU settings for exynos5420
->   ARM: EXYNOS5: Support Suspend-to-RAM on EXYNOS5420
->
->  arch/arm/boot/dts/exynos5420-smdk5420.dts    |   11 +
->  arch/arm/mach-exynos/common.h                |   10 +
->  arch/arm/mach-exynos/pm.c                    |  148 +++++++++++--
->  arch/arm/mach-exynos/pmu.c                   |  307 ++++++++++++++++++++++++++
->  arch/arm/mach-exynos/regs-pmu.h              |  230 +++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/map-s5p.h |    2 +
->  drivers/clk/samsung/clk-exynos5420.c         |   32 +++
->  7 files changed, 722 insertions(+), 18 deletions(-)
->
-> --
-> 1.7.9.5
->
+The first patch uses linker sections to get rid of ifdef macros, it is not
+essential for 2nd patch but it makes code more readable. Similar approach
+is used by irqchip, clks and clk_sources.
+
+The patchset is based on exynos-drm-next branch.
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (2):
+  drm/exynos: refactor drm drivers registration code
+  drm/exynos: initialize drm master only when all exynos drm devices are
+    ready
+
+ drivers/gpu/drm/exynos/Makefile             |   2 +
+ drivers/gpu/drm/exynos/exynos_dp_core.c     |  37 ++--
+ drivers/gpu/drm/exynos/exynos_drm.lds.S     |   9 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     | 279 +++++++++++++---------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |  20 +-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  42 +++--
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  35 ++--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  38 ++--
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c     |  17 +-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  30 +--
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c     |  18 +-
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c |  27 ++-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  18 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c        |  53 ++++--
+ drivers/gpu/drm/exynos/exynos_mixer.c       |  14 +-
+ 15 files changed, 360 insertions(+), 279 deletions(-)
+ create mode 100644 drivers/gpu/drm/exynos/exynos_drm.lds.S
+
+-- 
+1.8.3.2
