@@ -1,126 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] iio: adc: exynos_adc: Control special clock of ADC to
- support Exynos3250 ADC
-Date: Fri, 11 Apr 2014 12:05:27 +0200
-Message-ID: <5347BE67.1080209@samsung.com>
-References: <1397181640-18513-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH V5 11/20] ARM: exynos: cpuidle: Pass wakeup mask parameter to function
+Date: Fri, 11 Apr 2014 12:40:06 +0200
+Message-ID: <1397212815-16068-12-git-send-email-daniel.lezcano@linaro.org>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41104 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756302AbaDKKFf (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:65376 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757225AbaDKKkM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 06:05:35 -0400
-In-reply-to: <1397181640-18513-1-git-send-email-cw00.choi@samsung.com>
+	Fri, 11 Apr 2014 06:40:12 -0400
+Received: by mail-wg0-f46.google.com with SMTP id b13so5246320wgh.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:11 -0700 (PDT)
+In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, devicetree <devicetree@vger.kernel.org>
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-Hi Chanwoo,
+Pass the wakeup mask to 'exynos_set_wakeupmask' as this function could be used
+for different idle states with different mask.
 
-On 11/04/14 04:00, Chanwoo Choi wrote:
-> This patch control special clock for ADC in Exynos series's FSYS block.
-> If special clock of ADC is registerd on clock list of common clk framework,
-> Exynos ADC drvier have to control this clock.
-> 
-> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
-> - 'adc' clock: bus clock for ADC
-> 
-> Exynos3250 has additional 'sclk_tsadc' clock as following:
-> - 'sclk_tsadc' clock: special clock for ADC which provide clock to internal ADC
-> 
-> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_tsadc' clock
-> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_tsadc'
-> clock in FSYS_BLK.
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ arch/arm/mach-exynos/cpuidle.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I think a new compatible should be added for the ADC device for Exynos3250
-and the required clocks should be handled properly, based on compatible
-value. This could be handled, e.g. through some flags in driver's data
-selected based on the compatible property value.
-
-And the new clocks should be documented in Documentation/devicetree/bindings
-/arm/samsung/exynos-adc.txt.
-
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: linux-iio@vger.kernel.org
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/iio/adc/exynos_adc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index d25b262..4cd1975 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -88,6 +88,7 @@ struct exynos_adc {
->  	void __iomem		*regs;
->  	void __iomem		*enable_reg;
->  	struct clk		*clk;
-> +	struct clk		*sclk;
->  	unsigned int		irq;
->  	struct regulator	*vdd;
->  
-> @@ -308,6 +309,13 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  		goto err_irq;
->  	}
->  
-> +	info->sclk = devm_clk_get(&pdev->dev, "sclk_tsadc");
-> +	if (IS_ERR(info->sclk)) {
-> +		dev_warn(&pdev->dev, "failed getting sclk clock, err = %ld\n",
-> +							PTR_ERR(info->sclk));
-> +		info->sclk = NULL;
-> +	}
-> +
->  	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
->  	if (IS_ERR(info->vdd)) {
->  		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
-> @@ -341,6 +349,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  		goto err_iio_dev;
->  
->  	clk_prepare_enable(info->clk);
-> +	clk_prepare_enable(info->sclk);
->  
->  	exynos_adc_hw_init(info);
->  
-> @@ -357,6 +366,7 @@ err_of_populate:
->  				exynos_adc_remove_devices);
->  	regulator_disable(info->vdd);
->  	clk_disable_unprepare(info->clk);
-> +	clk_disable_unprepare(info->sclk);
->  err_iio_dev:
->  	iio_device_unregister(indio_dev);
->  err_irq:
-> @@ -373,6 +383,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
->  				exynos_adc_remove_devices);
->  	regulator_disable(info->vdd);
->  	clk_disable_unprepare(info->clk);
-> +	clk_disable_unprepare(info->sclk);
->  	writel(0, info->enable_reg);
->  	iio_device_unregister(indio_dev);
->  	free_irq(info->irq, info);
-> @@ -398,6 +409,7 @@ static int exynos_adc_suspend(struct device *dev)
->  	}
->  
->  	clk_disable_unprepare(info->clk);
-> +	clk_disable_unprepare(info->sclk);
->  	writel(0, info->enable_reg);
->  	regulator_disable(info->vdd);
->  
-> @@ -416,6 +428,7 @@ static int exynos_adc_resume(struct device *dev)
->  
->  	writel(1, info->enable_reg);
->  	clk_prepare_enable(info->clk);
-> +	clk_prepare_enable(info->sclk);
->  
->  	exynos_adc_hw_init(info);
->  
-> 
-
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index 95826c6..169db74 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -40,14 +40,14 @@
+ #define S5P_CHECK_AFTR		0xFCBA0D10
+ 
+ /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+-static void exynos_set_wakeupmask(void)
++static void exynos_set_wakeupmask(long mask)
+ {
+-	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
++	__raw_writel(mask, S5P_WAKEUP_MASK);
+ }
+ 
+ static int idle_finisher(unsigned long flags)
+ {
+-	exynos_set_wakeupmask();
++	exynos_set_wakeupmask(0x0000ff3e);
+ 
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
+ 	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
+-- 
+1.7.9.5
