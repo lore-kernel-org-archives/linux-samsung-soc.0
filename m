@@ -1,52 +1,104 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 12/27] ARM: dts: exynos3250: Add default interrupt-parent
- connected with GIC
-Date: Fri, 11 Apr 2014 10:51:37 +0200
-Message-ID: <5347AD19.7080905@samsung.com>
-References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
- <1397124377-16969-4-git-send-email-cw00.choi@samsung.com>
- <20140411040050.GD14934@quad.lixom.net> <53477347.1080603@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V4 10/20] ARM: exynos: cpuidle: Move clock setup to pm.c
+Date: Fri, 11 Apr 2014 10:55:41 +0200
+Message-ID: <5347AE0D.5060008@linaro.org>
+References: <1397123751-1957-1-git-send-email-daniel.lezcano@linaro.org> <1397123751-1957-11-git-send-email-daniel.lezcano@linaro.org> <5346A367.2070107@samsung.com> <5346A958.1030302@linaro.org> <5346BA09.9020708@samsung.com> <5347A816.4020609@linaro.org> <5347AC8A.7090006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37842 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755904AbaDKIvo (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:46477 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750848AbaDKIzW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 04:51:44 -0400
-In-reply-to: <53477347.1080603@samsung.com>
+	Fri, 11 Apr 2014 04:55:22 -0400
+Received: by mail-wi0-f171.google.com with SMTP id q5so623105wiv.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 01:55:21 -0700 (PDT)
+In-Reply-To: <5347AC8A.7090006@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com, sachin.kamat@linaro.org, viresh.kumar@linaro.org, rjw@rjwysocki.net
 
-Hi Chanwoo,
-
-On 11.04.2014 06:44, Chanwoo Choi wrote:
-> Hi,
+On 04/11/2014 10:49 AM, Tomasz Figa wrote:
+> On 11.04.2014 10:30, Daniel Lezcano wrote:
+>> On 04/10/2014 05:34 PM, Tomasz Figa wrote:
+>>> On 10.04.2014 16:23, Daniel Lezcano wrote:
+>>>> On 04/10/2014 03:57 PM, Tomasz Figa wrote:
+>>>>> Hi Daniel,
+>>>>>
+>>>>> On 10.04.2014 11:55, Daniel Lezcano wrote:
+>>>>>> One more step is moving the clock ratio setting at idle time in =
+pm.c
+>>>>>>
+>>>>>> The macro names have been changed to be consistent with the othe=
+r
+>>>>>> macros
+>>>>>> name in the file.
+>>>>>>
+>>>>>> Note, the clock divider was working only when cpuidle was enable=
+d
+>>>>>> because it
+>>>>>> was in its init routine. With this change, the clock divider is
+>>>>>> set in
+>>>>>> the pm's
+>>>>>> init routine, so it will also operate when the cpuidle driver is=
+ not
+>>>>>> set, which
+>>>>>> is good.
+>>>>>>
+>>>>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>>>> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>>>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com=
 >
-> On 04/11/2014 01:00 PM, Olof Johansson wrote:
->> On Thu, Apr 10, 2014 at 07:06:02PM +0900, Chanwoo Choi wrote:
->>> This patch add interrupt-parent node to connected with GIC.
->>> All interrupt-related dt nodes need default interrupt-parent node.
+>>>>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>>>>>> ---
+>>>>>>   arch/arm/mach-exynos/cpuidle.c  |   54
+>>>>>> ---------------------------------------
+>>>>>>   arch/arm/mach-exynos/pm.c       |   35 +++++++++++++++++++++++=
+++
+>>>>>>   arch/arm/mach-exynos/regs-pmu.h |   19 ++++++++++++++
+>>>>>>   3 files changed, 54 insertions(+), 54 deletions(-)
+>>>>>
+>>>>> Sorry that I didn't mention that before, but now I recall that th=
+ere
+>>>>> was
+>>>>> already a similar patch moving this code to Exynos5250 clock driv=
+er,
+>>>>> which is the best place for setup of any CMU registers and a step
+>>>>> towards removing one more static IO mapping.
+>>>>
+>>>> Yes, Bartlomiej mentioned it.
+>>>>
+>>>> Is it possible to merge this mentioned patch or to give a pointer =
+to it
+>>>> so I can integrate it into the patchset ?
 >>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> http://marc.info/?l=3Dlinux-arm-kernel&m=3D138147021207626&w=3D2
+>>>
+>>> I wonder if it still applies cleanly, though...
 >>
->> There's no point in splitting these off in separate patches; fold them
->> into one patch that introduces the SoC dtsi, please.
+>> Ok, if I refer to the date, this patch has been lost in the limbus. =
+So I
+>> can integrate it with my patchset without conflicting with any tree.
+>> Right ?
+>>
 >
-> OK, I will consolidate following two patches into one patch.
->
-> [PATCH 11/27] ARM: dts: exynos3250: Add GIC dt node for Exynos3250
-> [PATCH 12/27] ARM: dts: exynos3250: Add default interrupt-parent connected with GIC
->
+> As I suspected, it doesn't apply onto current sources. I have attache=
+d a
+> rebased version. Feel free to send it as a part of next version of yo=
+ur
+> series.
 
-I believe the intention was to squash all the patches related to 
-exynos3250.dtsi into a single patch called "ARM: dts: Add device tree 
-sources for Exynos3250". To retain authorship information, signed-off-by 
-tags should be merged from all those patches too.
+Thanks Tomasz !
 
-Best regards,
-Tomasz
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
