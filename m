@@ -1,53 +1,70 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 08/27] pinctrl: exynos: Add driver data for Exynos3250
-Date: Fri, 11 Apr 2014 09:44:32 +0900
-Message-ID: <53473AF0.1060103@samsung.com>
+Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
+Date: Fri, 11 Apr 2014 10:31:05 +0900
+Message-ID: <534745D9.30604@samsung.com>
 References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
- <1397122124-15690-9-git-send-email-cw00.choi@samsung.com>
- <CACRpkdYiFCHFifkpRwDhdAGqBrGTU5E4mfdGE8u1c=zrim17aA@mail.gmail.com>
- <5346EE5A.3070408@gmail.com>
+ <1397122124-15690-2-git-send-email-cw00.choi@samsung.com>
+ <5032959.JQvlxpLHiQ@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17040 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750922AbaDKAoc (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:48811 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752611AbaDKBbH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Apr 2014 20:44:32 -0400
-In-reply-to: <5346EE5A.3070408@gmail.com>
+	Thu, 10 Apr 2014 21:31:07 -0400
+In-reply-to: <5032959.JQvlxpLHiQ@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com
 
-Hi, 
+Hi,
 
-On 04/11/2014 04:17 AM, Tomasz Figa wrote:
-> Hi,
-> 
-> On 10.04.2014 20:42, Linus Walleij wrote:
->> On Thu, Apr 10, 2014 at 11:28 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+On 04/10/2014 06:43 PM, Arnd Bergmann wrote:
+> On Thursday 10 April 2014 18:28:18 Chanwoo Choi wrote:
+>> This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
+>> is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
+>> dual cores and has a target speed of 1.0GHz.
 >>
->>> From: Tomasz Figa <t.figa@samsung.com>
->>>
->>> This patch adds driver data (bank list and EINT layout) for Exynos3250
->>> to pinctrl-exynos driver. Exynos3250 includes 158 multi-functional input/output
->>> ports. There are 23 general port groups.
->>>
->>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
+>>  arch/arm/mach-exynos/exynos.c            |  1 +
+>>  arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
+>>  3 files changed, 33 insertions(+)
 >>
->> Ugh can Tomasz send out his patches himself, I get confused...
->> It was also sent two times, the second time with CC:s added.
->> Tomasz, shall I merge this?
+>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>> index fc8bf18..6da8a68 100644
+>> --- a/arch/arm/mach-exynos/Kconfig
+>> +++ b/arch/arm/mach-exynos/Kconfig
+>> @@ -11,6 +11,17 @@ if ARCH_EXYNOS
+>>  
+>>  menu "SAMSUNG EXYNOS SoCs Support"
+>>  
+>> +config ARCH_EXYNOS3
+>> +	bool "SAMSUNG EXYNOS3"
+>> +	select ARM_AMBA
+>> +	select CLKSRC_OF
+>> +	select HAVE_ARM_SCU if SMP
+>> +	select HAVE_SMP
+>> +	select PINCTRL
+>> +	select PM_GENERIC_DOMAINS if PM_RUNTIME
+>> +	help
+>> +	  Samsung EXYNOS3 SoCs based systems
+>> +
 > 
-> I'm fine with this patch being sent by Chanwoo, although he should have probably added his sign-off to the list, as the person sending it.
-> 
-> Chanwoo, can you make sure that there is your sign-off on all the patches from this series?
-> 
+> Isn't S5PV210 also called an Exynos3 these days? Are we going to get
+> any conflicts here when merging that code into Exynos as Tomasz has
+> suggested in the past?
 
-OK, I'll add my sign-off to all the patches on next posting(v2).
+I knew. But, S5PV210/S5PC110 has not yet included in Exynos3 category on mainline.
+Need opinion of Exynos SoC Maintainer to clear this ambiguous stuff.
+
+Dear Kukjin and Tomasz,
+I need your opinion about this patch.
 
 Best Regards,
 Chanwoo Choi
