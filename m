@@ -1,71 +1,70 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V5 06/20] ARM: exynos: cpuidle: Move some code inside the idle_finisher
-Date: Fri, 11 Apr 2014 12:40:01 +0200
-Message-ID: <1397212815-16068-7-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback to the platform_data
+Date: Fri, 11 Apr 2014 12:40:13 +0200
+Message-ID: <1397212815-16068-19-git-send-email-daniel.lezcano@linaro.org>
 References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:56637 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934703AbaDKKkF (ORCPT
+Received: from mail-we0-f172.google.com ([74.125.82.172]:38774 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756741AbaDKKkW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Apr 2014 06:40:05 -0400
-Received: by mail-we0-f179.google.com with SMTP id x48so5153919wes.38
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:04 -0700 (PDT)
+	Fri, 11 Apr 2014 06:40:22 -0400
+Received: by mail-we0-f172.google.com with SMTP id t61so5227875wes.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Apr 2014 03:40:21 -0700 (PDT)
 In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linaro-kernel@lists.linaro.org, rjw@rjwysocki.net
 
-Move the code around to differentiate different section of code and prepare it
-to be factored out in the next patches.
-
-The call order changed but hat doesn't have a side effect because they are
-independent. The important call is cpu_do_idle() which must be done the last.
+No more dependency on the arch code. The platform_data field is used to set the
+PM callback as the other cpuidle drivers.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/cpuidle.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |    4 +++-
+ arch/arm/mach-exynos/exynos.c  |    5 +++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index f565186..4d8bcfd 100644
+index 02609ac..1d1222e 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -68,7 +68,16 @@ static void restore_cpu_arch_register(void)
+@@ -27,7 +27,7 @@
+ 
+ #include <mach/map.h>
+ 
+-#include "common.h"
++static void (*exynos_enter_aftr)(void);
  
  static int idle_finisher(unsigned long flags)
  {
-+	exynos_set_wakeupmask();
+@@ -86,6 +86,8 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 
++	exynos_enter_aftr = (void *)(pdev->dev.platform_data);
 +
-+	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
-+	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
-+
-+	/* Set value of power down register for aftr mode */
-+	exynos_sys_powerdown_conf(SYS_AFTR);
-+
- 	cpu_do_idle();
-+
- 	return 1;
+ 	ret = cpuidle_register(&exynos_idle_driver, NULL);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index fe8dac8..d22f0e4 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -221,8 +221,9 @@ void exynos_restart(enum reboot_mode mode, const char *cmd)
  }
  
-@@ -78,14 +87,6 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
- {
- 	unsigned long tmp;
+ static struct platform_device exynos_cpuidle = {
+-	.name		= "exynos_cpuidle",
+-	.id		= -1,
++	.name              = "exynos_cpuidle",
++	.dev.platform_data = exynos_enter_aftr,
++	.id                = -1,
+ };
  
--	exynos_set_wakeupmask();
--
--	/* Set value of power down register for aftr mode */
--	exynos_sys_powerdown_conf(SYS_AFTR);
--
--	__raw_writel(virt_to_phys(exynos_cpu_resume), REG_DIRECTGO_ADDR);
--	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
--
- 	save_cpu_arch_register();
- 
- 	/* Setting Central Sequence Register for power down mode */
+ void __init exynos_cpuidle_init(void)
 -- 
 1.7.9.5
