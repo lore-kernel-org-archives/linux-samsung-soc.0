@@ -1,126 +1,97 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
-Date: Sat, 12 Apr 2014 08:49:44 +0100
-Message-ID: <f457ceee-ac84-45a4-9274-2ab196f92b96@email.android.com>
-References: <1397181640-18513-1-git-send-email-cw00.choi@samsung.com> <18632148.yOYlTYattA@amdc1032> <CAGTfZH2Rpa+hooPHY2xmquVHCwcE2X7rqf3rzGKCz02rA9qSzA@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH RFC 0/2] drm/exynos: refactoring drm device init/deinit
+Date: Sat, 12 Apr 2014 23:18:42 +0900
+Message-ID: <CAAQKjZMz56YjHtjBrEwOkxbyvdp1t9o9rCU9cFiR7GZOXVsKCw@mail.gmail.com>
+References: <1397225488-6634-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAGTfZH2Rpa+hooPHY2xmquVHCwcE2X7rqf3rzGKCz02rA9qSzA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?7LWc7LCs7Jqw?= <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1397225488-6634-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Andrzej,
 
+Thanks for your contributions.
 
-On April 11, 2014 11:45:42 PM GMT+01:00, "=EC=B5=9C=EC=B0=AC=EC=9A=B0" =
-<cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->Hi Bartlomiej,
+2014-04-11 23:11 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> Hi Inki,
 >
->On Fri, Apr 11, 2014 at 6:41 PM, Bartlomiej Zolnierkiewicz
-><b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>
->> Hi,
->>
->> On Friday, April 11, 2014 11:00:40 AM Chanwoo Choi wrote:
->>> This patch control special clock for ADC in Exynos series's FSYS
->block.
->>
->> s/control/controls/
+> This patchset refactors drm device initialization. Details are described
+> in respective patches. It is an alternative to DT supernode concept.
 >
->I'll fix it.
->
->>
->>> If special clock of ADC is registerd on clock list of common clk
->framework,
->>> Exynos ADC drvier have to control this clock.
->>
->> s/drvier/driver/
->
->I'll fix it.
->
->>
->>> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
->>> - 'adc' clock: bus clock for ADC
->>>
->>> Exynos3250 has additional 'sclk_tsadc' clock as following:
->>> - 'sclk_tsadc' clock: special clock for ADC which provide clock to
->internal ADC
->>>
->>> Exynos 4210/4212/4412 and Exynos5250/5420 has not included
->'sclk_tsadc' clock
->>> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included
->'sclk_tsadc'
->>> clock in FSYS_BLK.
->>>
->>> Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->>> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>  drivers/iio/adc/exynos_adc.c | 13 +++++++++++++
->>>  1 file changed, 13 insertions(+)
->>>
->>> diff --git a/drivers/iio/adc/exynos_adc.c
->b/drivers/iio/adc/exynos_adc.c
->>> index d25b262..4cd1975 100644
->>> --- a/drivers/iio/adc/exynos_adc.c
->>> +++ b/drivers/iio/adc/exynos_adc.c
->>> @@ -88,6 +88,7 @@ struct exynos_adc {
->>>       void __iomem            *regs;
->>>       void __iomem            *enable_reg;
->>>       struct clk              *clk;
->>> +     struct clk              *sclk;
->>>       unsigned int            irq;
->>>       struct regulator        *vdd;
->>>
->>> @@ -308,6 +309,13 @@ static int exynos_adc_probe(struct
->platform_device *pdev)
->>>               goto err_irq;
->>>       }
->>>
->>> +     info->sclk =3D devm_clk_get(&pdev->dev, "sclk_tsadc");
->>> +     if (IS_ERR(info->sclk)) {
->>> +             dev_warn(&pdev->dev, "failed getting sclk clock, err =
-=3D
->%ld\n",
->>> +                                                   =20
->PTR_ERR(info->sclk));
->>> +             info->sclk =3D NULL;
->>> +     }
->>> +
->>>       info->vdd =3D devm_regulator_get(&pdev->dev, "vdd");
->>>       if (IS_ERR(info->vdd)) {
->>>               dev_err(&pdev->dev, "failed getting regulator, err =3D
->%ld\n",
->>> @@ -341,6 +349,7 @@ static int exynos_adc_probe(struct
->platform_device *pdev)
->>>               goto err_iio_dev;
->>>
->>>       clk_prepare_enable(info->clk);
->>> +     clk_prepare_enable(info->sclk);
->>>
->>>       exynos_adc_hw_init(info);
->>>
->>> @@ -357,6 +366,7 @@ err_of_populate:
->>>                               exynos_adc_remove_devices);
->>>       regulator_disable(info->vdd);
->>>       clk_disable_unprepare(info->clk);
->>> +     clk_disable_unprepare(info->sclk);
->>
->> Please disable clocks in the reverse of order in which they were
->enabled.
->
->Is it necessary? I don't think that.
-It is probably not a bug but it is more obviously correct in the revers=
-e order so that is how it should be done!
->
->Best Regards,
->Chanwoo Choi
+> The first patch uses linker sections to get rid of ifdef macros, it is not
 
---=20
-Sent from my Android phone with K-9 Mail. Please excuse my brevity.
+That's a good idea. :) We could avoid ugly #ifdef ~ #endif with this way.
+
+> essential for 2nd patch but it makes code more readable. Similar approach
+> is used by irqchip, clks and clk_sources.
+
+But 2nd patch doesn't seem reasnoable to me. Your approach is same as
+existing one conceptually. I think we need to handle drm driver in a
+different way from irqchip, clks and clk_sources.
+
+DRM driver means one integrated graphics card but in most embedded
+systems, graphics and display relevant devices have separated hardware
+resources. So we would need abstractional integrated hardware,
+display-subsystem, super device. That is why I are trying to use super
+device approach, and conceptually it would be right solution. It
+wouldn't be not good to combine those separated hardware somehow using
+specific codes.
+
+I have updated and tested super device approach with existing dt
+support so there wouldn't be any dt broken issue. I will post next
+version of this patch series soon, maybe tomorrow or the day after
+tomorrow.
+
+Thanks,
+Inki Dae
+
+>
+> The patchset is based on exynos-drm-next branch.
+>
+> Regards
+> Andrzej
+>
+>
+> Andrzej Hajda (2):
+>   drm/exynos: refactor drm drivers registration code
+>   drm/exynos: initialize drm master only when all exynos drm devices are
+>     ready
+>
+>  drivers/gpu/drm/exynos/Makefile             |   2 +
+>  drivers/gpu/drm/exynos/exynos_dp_core.c     |  37 ++--
+>  drivers/gpu/drm/exynos/exynos_drm.lds.S     |   9 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c     | 279 +++++++++++++---------------
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h     |  20 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  42 +++--
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  35 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  38 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c     |  17 +-
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  30 +--
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.c     |  18 +-
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  27 ++-
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  18 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c        |  53 ++++--
+>  drivers/gpu/drm/exynos/exynos_mixer.c       |  14 +-
+>  15 files changed, 360 insertions(+), 279 deletions(-)
+>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm.lds.S
+>
+> --
+> 1.8.3.2
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
