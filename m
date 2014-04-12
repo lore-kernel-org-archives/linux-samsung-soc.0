@@ -1,96 +1,126 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Add facility to toggle vbus gpio
- on/off
-Date: Fri, 11 Apr 2014 22:37:18 -0500
-Message-ID: <20140412033718.GA18777@saruman.home>
-References: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
+Date: Sat, 12 Apr 2014 08:49:44 +0100
+Message-ID: <f457ceee-ac84-45a4-9274-2ab196f92b96@email.android.com>
+References: <1397181640-18513-1-git-send-email-cw00.choi@samsung.com> <18632148.yOYlTYattA@amdc1032> <CAGTfZH2Rpa+hooPHY2xmquVHCwcE2X7rqf3rzGKCz02rA9qSzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1397044485-26483-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, kishon@ti.com, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, sylvester.nawrocki@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAGTfZH2Rpa+hooPHY2xmquVHCwcE2X7rqf3rzGKCz02rA9qSzA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?7LWc7LCs7Jqw?= <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 09, 2014 at 05:24:45PM +0530, Vivek Gautam wrote:
-> Adding support to enable/disable VBUS hooked to a gpio
-> to enable vbus supply on the port.
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
->=20
-> Based on 'phy-exynos5-usbdrd' patches:
-> [PATCH V4 0/5] Add Exynos5 USB 3.0 phy driver based on generic PHY framew=
-ork
-> http://www.spinics.net/lists/linux-usb/msg105507.html
->=20
->  drivers/phy/phy-exynos5-usbdrd.c |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->=20
-> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-u=
-sbdrd.c
-> index ff54a7c..5ca7485 100644
-> --- a/drivers/phy/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/phy-exynos5-usbdrd.c
-> @@ -18,6 +18,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_gpio.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/mutex.h>
-> @@ -176,6 +177,7 @@ struct exynos5_usbdrd_phy {
->  	struct clk *ref_clk;
->  	unsigned long ref_rate;
->  	unsigned int refclk_reg;
-> +	int gpio;
->  };
-> =20
->  #define to_usbdrd_phy(inst) \
-> @@ -460,6 +462,9 @@ static int exynos5_usbdrd_phy_power_on(struct phy *ph=
-y)
->  	if (!IS_ERR(phy_drd->usb30_sclk))
->  		clk_prepare_enable(phy_drd->usb30_sclk);
-> =20
-> +	/* Toggle VBUS gpio - on */
-> +	gpio_set_value(phy_drd->gpio, 1);
 
-It seems like you'd be better off using a regulator_enable() call for
-this.
+On April 11, 2014 11:45:42 PM GMT+01:00, "=EC=B5=9C=EC=B0=AC=EC=9A=B0" =
+<cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>Hi Bartlomiej,
+>
+>On Fri, Apr 11, 2014 at 6:41 PM, Bartlomiej Zolnierkiewicz
+><b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>
+>> Hi,
+>>
+>> On Friday, April 11, 2014 11:00:40 AM Chanwoo Choi wrote:
+>>> This patch control special clock for ADC in Exynos series's FSYS
+>block.
+>>
+>> s/control/controls/
+>
+>I'll fix it.
+>
+>>
+>>> If special clock of ADC is registerd on clock list of common clk
+>framework,
+>>> Exynos ADC drvier have to control this clock.
+>>
+>> s/drvier/driver/
+>
+>I'll fix it.
+>
+>>
+>>> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
+>>> - 'adc' clock: bus clock for ADC
+>>>
+>>> Exynos3250 has additional 'sclk_tsadc' clock as following:
+>>> - 'sclk_tsadc' clock: special clock for ADC which provide clock to
+>internal ADC
+>>>
+>>> Exynos 4210/4212/4412 and Exynos5250/5420 has not included
+>'sclk_tsadc' clock
+>>> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included
+>'sclk_tsadc'
+>>> clock in FSYS_BLK.
+>>>
+>>> Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>>> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>>  drivers/iio/adc/exynos_adc.c | 13 +++++++++++++
+>>>  1 file changed, 13 insertions(+)
+>>>
+>>> diff --git a/drivers/iio/adc/exynos_adc.c
+>b/drivers/iio/adc/exynos_adc.c
+>>> index d25b262..4cd1975 100644
+>>> --- a/drivers/iio/adc/exynos_adc.c
+>>> +++ b/drivers/iio/adc/exynos_adc.c
+>>> @@ -88,6 +88,7 @@ struct exynos_adc {
+>>>       void __iomem            *regs;
+>>>       void __iomem            *enable_reg;
+>>>       struct clk              *clk;
+>>> +     struct clk              *sclk;
+>>>       unsigned int            irq;
+>>>       struct regulator        *vdd;
+>>>
+>>> @@ -308,6 +309,13 @@ static int exynos_adc_probe(struct
+>platform_device *pdev)
+>>>               goto err_irq;
+>>>       }
+>>>
+>>> +     info->sclk =3D devm_clk_get(&pdev->dev, "sclk_tsadc");
+>>> +     if (IS_ERR(info->sclk)) {
+>>> +             dev_warn(&pdev->dev, "failed getting sclk clock, err =
+=3D
+>%ld\n",
+>>> +                                                   =20
+>PTR_ERR(info->sclk));
+>>> +             info->sclk =3D NULL;
+>>> +     }
+>>> +
+>>>       info->vdd =3D devm_regulator_get(&pdev->dev, "vdd");
+>>>       if (IS_ERR(info->vdd)) {
+>>>               dev_err(&pdev->dev, "failed getting regulator, err =3D
+>%ld\n",
+>>> @@ -341,6 +349,7 @@ static int exynos_adc_probe(struct
+>platform_device *pdev)
+>>>               goto err_iio_dev;
+>>>
+>>>       clk_prepare_enable(info->clk);
+>>> +     clk_prepare_enable(info->sclk);
+>>>
+>>>       exynos_adc_hw_init(info);
+>>>
+>>> @@ -357,6 +366,7 @@ err_of_populate:
+>>>                               exynos_adc_remove_devices);
+>>>       regulator_disable(info->vdd);
+>>>       clk_disable_unprepare(info->clk);
+>>> +     clk_disable_unprepare(info->sclk);
+>>
+>> Please disable clocks in the reverse of order in which they were
+>enabled.
+>
+>Is it necessary? I don't think that.
+It is probably not a bug but it is more obviously correct in the revers=
+e order so that is how it should be done!
+>
+>Best Regards,
+>Chanwoo Choi
 
 --=20
-balbi
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTSLTuAAoJEIaOsuA1yqREZQUQAJ7ez8ZDZBRAzn3wjiUQNYfp
-GO3QGVWSsbQe80ONOjde+hOKkCf1cW/mVYgU4Yz4/kZ0J9TuwFTtGWvC+Y8kRGOH
-Ti/gxDCrDu3P7f1TBw3yF8PXNyNU1iuFAiKVQesNzOt8PT7TsRAESLrYQGCX9AnK
-r/MqoN7bbdrFucQ7UxqPMMIReR+HJGUYDv8hcjjpPeffoPi70yVm4/Kf4rloi8Zy
-E/bS9Q1gvSGHx8oVtTZ0ejww6b6f8Jz1yLNa8Bq01ag+kkmqaAI9Aj4379BiV67a
-UeOCdER3vJAaYQp9sgINx3r0+fLNZ1K5Fk0DXgpU+i+TZfzGYfK2zlXVXV/lwS/n
-C9A7K5VOiYWR56pS4EdcH9UKotF5OnHio6XkSp+a5FK7DpJ1nG1A5qusWl4tTrOo
-QlgdnCXLzNUO0htQKo0GRUxQG8LKHFRp22JWw0r3aJHpfDpUmdgj0MHUR634thqt
-N4F6pvrrl6WYrIOj7e+RCMzYC1qWj1vpKSzGENOLI/zCTlAX/3rxi0V5xMAOEQvb
-LqdSiDU09xqkG5N6h/r1RsWwmAbeQRqFKTnHMLsT8agNA6U7CNyvVBq3UnAodU/A
-nG/JUXgdw8M9oxcb9x0XtLvdnRi7xci01A3/NBwkFpJPyh5+mUJPHqa1VYHjRiSC
-POXfoGYZKhsMCUCA5lSr
-=sVm9
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
+Sent from my Android phone with K-9 Mail. Please excuse my brevity.
