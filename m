@@ -1,69 +1,48 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 6/9] exynos/drm: add DT bindings
-Date: Mon, 14 Apr 2014 15:09:51 +0900
-Message-ID: <1397455794-7759-7-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH 3/9] ARM: dts: exynos4210-universal: add super device node for
+ exynos drm
+Date: Mon, 14 Apr 2014 15:09:48 +0900
+Message-ID: <1397455794-7759-4-git-send-email-inki.dae@samsung.com>
 References: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28739 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751279AbaDNGJ7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 02:09:59 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
-
-This patch adds bindings for Exynos drm display subsystem.
-The bindings describes ports containing a list of phandles
-pointing to display controller, image enhancer, and display
-interfaces nodes.
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../bindings/drm/exynos/samsung-exynos-drm.txt     |   32 ++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt b/Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
-new file mode 100644
-index 0000000..6f7fae0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
-@@ -0,0 +1,32 @@
-+Samsung Exynos DRM master device
-+================================
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 0a80a72..5351ac4 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -409,6 +409,11 @@
+ 		};
+ 	};
+ 
++	display-subsystem {
++		compatible = "samsung,exynos-display-subsystem";
++		ports = <&fimd>;
++	};
 +
-+The Samsung Exynos DRM master device is a virtual device needed to list all
-+display controller, image enhancer, and display interface nodes that comprise
-+the graphics subsystem.
-+
-+Required properties:
-+- compatible: Should be "samsung,exynos-display-subsystem"
-+- ports: Should contain a list of phandles pointing to display controller,
-+  image enhancer, and display interface ports.
-+
-+Examples:
-+
-+In case of using MIPI-DSI,
-+display-subsystem {
-+	compatible = "samsung,exynos-display-subsystem";
-+	ports = <&fimd>, <&dsi>;
-+};
-+
-+
-+In case of using DisplayPort,
-+display-subsystem {
-+	compatible = "samsung,exynos-display-subsystem";
-+	ports = <&fimd>, <&dp>;
-+};
-+
-+In case of using parallel panel,
-+display-subsystem {
-+	compatible = "samsung,exynos-display-subsystem";
-+	ports = <&fimd>;
-+};
+ 	pwm@139D0000 {
+ 		compatible = "samsung,s5p6440-pwm";
+ 		status = "okay";
 -- 
 1.7.9.5
