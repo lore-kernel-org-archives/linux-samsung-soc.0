@@ -1,155 +1,112 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH RFC 0/2] drm/exynos: refactoring drm device init/deinit
-Date: Mon, 14 Apr 2014 13:32:20 +0200
-Message-ID: <534BC744.4090406@gmail.com>
-References: <1397225488-6634-1-git-send-email-a.hajda@samsung.com> <CAAQKjZMz56YjHtjBrEwOkxbyvdp1t9o9rCU9cFiR7GZOXVsKCw@mail.gmail.com> <534BA252.7060208@samsung.com> <050a01cf57d1$4fee1c60$efca5520$%dae@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Mon, 14 Apr 2014 17:24:57 +0530
+Message-ID: <534BCC91.8090108@ti.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com> <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com> <534529B2.2020107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:58513 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751852AbaDNLcZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 07:32:25 -0400
-Received: by mail-ee0-f53.google.com with SMTP id b57so6498796eek.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Apr 2014 04:32:23 -0700 (PDT)
-In-Reply-To: <050a01cf57d1$4fee1c60$efca5520$%dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <534529B2.2020107@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, sylvester.nawrocki@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, 'Andrzej Hajda' <a.hajda@samsung.com>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, "'moderated list:ARM/S5P EXYNOS AR...'" <linux-samsung-soc@vger.kernel.org>, 'Russell King' <rmk@arm.linux.org.uk>, dri-devel@lists.freedesktop.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-Hi Inki,
+Hi,
 
-On 14.04.2014 13:04, Inki Dae wrote:
->
->
->> -----Original Message-----
->> From: Andrzej Hajda [mailto:a.hajda@samsung.com]
->> Sent: Monday, April 14, 2014 5:55 PM
->> To: Inki Dae
->> Cc: dri-devel@lists.freedesktop.org; moderated list:ARM/S5P EXYNOS AR...;
->> Kyungmin Park; Marek Szyprowski
->> Subject: Re: [PATCH RFC 0/2] drm/exynos: refactoring drm device
->> init/deinit
+On Wednesday 09 April 2014 04:36 PM, Tomasz Figa wrote:
+> Hi Vivek,
+> 
+> Please see my comments inline.
+> 
+> On 08.04.2014 16:36, Vivek Gautam wrote:
+>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>> The new driver uses the generic PHY framework and will interact
+>> with DWC3 controller present on Exynos5 series of SoCs.
+>> Thereby, removing old phy-samsung-usb3 driver and related code
+>> used untill now which was based on usb/phy framework.
 >>
->> On 04/12/2014 04:18 PM, Inki Dae wrote:
->>> Hi Andrzej,
->>>
->>> Thanks for your contributions.
->>>
->>> 2014-04-11 23:11 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->>>> Hi Inki,
->>>>
->>>> This patchset refactors drm device initialization. Details are
->>>> described in respective patches. It is an alternative to DT supernode
->> concept.
->>>>
->>>> The first patch uses linker sections to get rid of ifdef macros, it
->>>> is not
->>> That's a good idea. :) We could avoid ugly #ifdef ~ #endif with this
-> way.
->>>
->>>> essential for 2nd patch but it makes code more readable. Similar
->>>> approach is used by irqchip, clks and clk_sources.
->>> But 2nd patch doesn't seem reasnoable to me. Your approach is same as
->>> existing one conceptually. I think we need to handle drm driver in a
->>> different way from irqchip, clks and clk_sources.
->>>
->>> DRM driver means one integrated graphics card but in most embedded
->>> systems, graphics and display relevant devices have separated hardware
->>> resources. So we would need abstractional integrated hardware,
->>> display-subsystem, super device. That is why I are trying to use super
->>> device approach, and conceptually it would be right solution. It
->>> wouldn't be not good to combine those separated hardware somehow using
->>> specific codes.
->>
->> Conceptually both approaches are the same: we have number of devices which
->> should be ready before we can start super-device and if any device is to
->> be removed super-device should be removed before.
->> The difference is in 'details':
->> - super-node approach have list of components provided explicitly in DT
->> special node,
->> - in this approach list of components is constructed from devices present
->> in the system.
->>
->> Creating special DT node with information which is available anyway seems
->> to be redundant and against DT rules.
->>
->
-> CCing Russell King,
->
-> What is the special DT node? You mean device node from ports property?
->
-> It is supposed  to use super device and its properties in mainline so I
-> don't see what it is against DT rules. If they are really against DT rules,
-> why component framework is in mainline?
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> ---
+>>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
+>>   drivers/phy/Kconfig                                |   11 +
+>>   drivers/phy/Makefile                               |    1 +
+>>   drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
+>>   4 files changed, 722 insertions(+)
+>>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+> 
+> [snip]
+> 
+>> +    Additional clock required for Exynos5420:
+>> +    - usb30_sclk_100m: Additional special clock used for PHY operation
+>> +               depicted as 'sclk_usbphy30' in CMU of Exynos5420.
+> 
+> Are you sure this isn't simply a gate for the ref clock, as it can be found on
+> another SoC that is not upstream yet? I don't have documentation for Exynos
+> 5420 so I can't tell, but I'd like to ask you to recheck this.
+> 
+>> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
+>> +              control pmu registers for power isolation.
+>> +- samsung,pmu-offset: phy power control register offset to
+>> pmu-system-controller
+>> +              base.
+>> +- #phy-cells : from the generic PHY bindings, must be 1;
+>> +
+>> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
+>> +compatible PHYs, the second cell in the PHY specifier identifies the
+>> +PHY id, which is interpreted as follows:
+>> +  0 - UTMI+ type phy,
+>> +  1 - PIPE3 type phy,
+>> +
+>> +Example:
+>> +    usb3_phy: usbphy@12100000 {
+>> +        compatible = "samsung,exynos5250-usbdrd-phy";
+>> +        reg = <0x12100000 0x100>;
+>> +        clocks = <&clock 286>, <&clock 1>;
+>> +        clock-names = "phy", "usb3phy_refclk";
+> 
+> Binding description above doesn't mention "usb3phy_refclk" entry.
+> 
+>> +        samsung,syscon-phandle = <&pmu_syscon>;
+>> +        samsung,pmu-offset = <0x704>;
+>> +        #phy-cells = <1>;
+>> +    };
+> 
+> [snip]
+> 
+>> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+>> new file mode 100644
+>> index 0000000..ff54a7c
+>> --- /dev/null
+>> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+> 
+> [snip]
+> 
+>> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+>> +{
+>> +    struct device *dev = &pdev->dev;
+>> +    struct device_node *node = dev->of_node;
+>> +    struct exynos5_usbdrd_phy *phy_drd;
+>> +    struct phy_provider *phy_provider;
+>> +    struct resource *res;
+>> +    const struct of_device_id *match;
+>> +    const struct exynos5_usbdrd_phy_drvdata *drv_data;
+>> +    struct regmap *reg_pmu;
+>> +    u32 pmu_offset;
+>> +    int i;
+>> +
+>> +    /*
+>> +     * Exynos systems are completely DT enabled,
+>> +     * so lets not have any platform data support for this driver.
+>> +     */
+>> +    if (!node) {
+>> +        dev_err(dev, "no device node found\n");
+> 
+> This error message is not very meaningful. I'd rather use something like "This
+> driver can be only instantiated using Device Tree".
 
-Component framework in mainline doesn't have anything in common with DT. 
-All it does is providing tools for handling cases where a subsystem can 
-be initialized only after all components are available. It doesn't 
-define any means of getting the list of components, it's a task for the 
-user of this framework to provide it.
+how about just adding depend_on OF in Kconfig?
 
->
-> As you said above, conceptually both approaches may be the same but your
-> approach has no any abstract hardware meaning one integrated hardware. And
-> if conceptually both approaches are the same, it would be good to use
-> existing infrastructure, component framework so there is no any reason to
-> add and use specific codes.
-
-What do you mean by "abstract hardware"? Physically, in the SoC, there 
-is no single integrated hardware block, but multiple IPs and they need 
-to be described this way in DT. There is nothing that prevents using 
-them separately if a user doesn't want to use Exynos DRM. Exynos DRM is 
-a Linux-specific thing and its details should not be leaked into DT, 
-which is a _hardware_ description method.
-
->
-> And component framework says,
-> "Subsystems such as ALSA, DRM and others require a single card-level device
-> structure to represent a subsystem. However, firmware tends to describe the
-> individual devices and the connections between them. Therefore, we need a
-> way to gather up the individual component devices together, and indicate
-> when we have all the component devices."
-
-Note following things:
-
-- Nothing in the quote above says that an additional DT node must be 
-added. The framework works on generic driver model level, above the 
-description level (such as DT).
-
-- Andrzej's method implements the same concept as component framework, 
-except that:
-
-   a) it does so in a much more simple way (compare amount of code 
-needed for Andrzej's approach and inside component framework),
-
-   b) doesn't require component initialization to be undone on every 
-master bring-up failure,
-
-   c) uses the list of drivers known at compilation time to the Exynos 
-DRM subsystem to build the list of devices to wait for
-
-   d) doesn't introduce any new DT bindings, for virtual, Linux-specific 
-things,
-
-   e) doesn't duplicate compatible strings in an array used only to 
-support systems that didn't have nodes required by those new DT bindings 
-(as done in your exynos_drm_bind_lagacy_dt()),
-
-   f) doesn't require two-step initialization (probe() and bind()), as 
-opposed to component subsystem.
-
-As you can see, it's a pure list of benefits, without any obvious 
-drawbacks, except that some generic code (more or less applicable here) 
-is not used.
-
-However, I wonder whether some of Andrzej's ideas couldn't be simply 
-adopted by component framework (mostly b)) and Exynos DRM use of it (c), 
-d), e)) to take best of both worlds and have both a good implementation 
-and generic code reused.
-
-Best regards,
-Tomasz
+Thanks
+Kishon
