@@ -1,119 +1,105 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 14 Apr 2014 18:29:40 +0530
-Message-ID: <534BDBBC.5010701@ti.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>	<534BD447.1080909@ti.com> <CAFp+6iF=SpEax+5KUhZkmtkwp=Pj7LbAHOoySgOwJx_50u6GZQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAFp+6iF=SpEax+5KUhZkmtkwp=Pj7LbAHOoySgOwJx_50u6GZQ@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4: clean up arm-pmu node
+Date: Mon, 14 Apr 2014 22:03:04 +0900
+Message-ID: <1397480584-16195-1-git-send-email-chanho61.park@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:37041 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754377AbaDNNDQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Apr 2014 09:03:16 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N40005KDUXFGMA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 Apr 2014 22:03:15 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, Chanho Park <chanho61.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
+This patch cleans a arm-pmu node up for exynos4. Only exynos4412 series
+boards have four pmu interrupts. Rest of exynos4 boards, except 4412, have only
+two pmu interrupts. Thus, we can define two interrupts in the
+exynos4.dtsi and extends the interrupts only exynos4412.dtsi.
 
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi    | 6 ++++++
+ arch/arm/boot/dts/exynos4210.dtsi | 6 ------
+ arch/arm/boot/dts/exynos4412.dtsi | 6 ++++++
+ arch/arm/boot/dts/exynos4x12.dtsi | 6 ------
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-On Monday 14 April 2014 06:12 PM, Vivek Gautam wrote:
-> Hi,
-> 
-> 
-> On Mon, Apr 14, 2014 at 5:57 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> Hi,
->>
->> On Tuesday 08 April 2014 08:06 PM, Vivek Gautam wrote:
->>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->>> The new driver uses the generic PHY framework and will interact
->>> with DWC3 controller present on Exynos5 series of SoCs.
->>> Thereby, removing old phy-samsung-usb3 driver and related code
->>> used untill now which was based on usb/phy framework.
->>>
->>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->>> ---
->>>  .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
->>>  drivers/phy/Kconfig                                |   11 +
->>>  drivers/phy/Makefile                               |    1 +
->>>  drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
->>>  4 files changed, 722 insertions(+)
->>>  create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
->>> index 28f9edb..6d99ba9 100644
->>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
->>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
->>> @@ -74,3 +74,45 @@ phy-consumer@12340000 {
->>>
->>>  Refer to DT bindings documentation of particular PHY consumer devices for more
->>>  information about required PHYs and the way of specification.
->>> +
->>> +Samsung Exynos5 SoC series USB DRD PHY controller
->>> +--------------------------------------------------
->>> +
->>> +Required properties:
->>> +- compatible : Should be set to one of the following supported values:
->>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
->>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
->>> +- reg : Register offset and length of USB DRD PHY register set;
->>> +- clocks: Clock IDs array as required by the controller
->>> +- clock-names: names of clocks correseponding to IDs in the clock property;
->>> +            Required clocks:
->>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
->>> +            used for register access.
->>> +     - ref: PHY's reference clock (usually crystal clock), associated by
->>> +            phy name, used to determine bit values for clock settings
->>> +            register.
->>> +     Additional clock required for Exynos5420:
->>> +     - usb30_sclk_100m: Additional special clock used for PHY operation
->>> +                        depicted as 'sclk_usbphy30' in CMU of Exynos5420.
->>> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
->>> +                       control pmu registers for power isolation.
->>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
->>> +                   base.
->>> +- #phy-cells : from the generic PHY bindings, must be 1;
->>> +
->>> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
->>> +compatible PHYs, the second cell in the PHY specifier identifies the
->>> +PHY id, which is interpreted as follows:
->>> +  0 - UTMI+ type phy,
->>> +  1 - PIPE3 type phy,
->>> +
->>> +Example:
->>> +     usb3_phy: usbphy@12100000 {
->>> +             compatible = "samsung,exynos5250-usbdrd-phy";
->>> +             reg = <0x12100000 0x100>;
->>> +             clocks = <&clock 286>, <&clock 1>;
->>> +             clock-names = "phy", "usb3phy_refclk";
->>> +             samsung,syscon-phandle = <&pmu_syscon>;
->>> +             samsung,pmu-offset = <0x704>;
->>> +             #phy-cells = <1>;
->>> +     };
->>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->>> index 8d3c49c..d955a05 100644
->>> --- a/drivers/phy/Kconfig
->>> +++ b/drivers/phy/Kconfig
->>> @@ -166,4 +166,15 @@ config PHY_XGENE
->>>       help
->>>         This option enables support for APM X-Gene SoC multi-purpose PHY.
->>>
->>> +config PHY_EXYNOS5_USBDRD
->>> +     tristate "Exynos5 SoC series USB DRD PHY driver"
->>> +     depends on ARCH_EXYNOS5 && OF
->>> +     depends on HAS_IOMEM
->>> +     select GENERIC_PHY
->>> +     select MFD_SYSCON
->>
->> Lets try to avoid select in Kconfig. We've got enough problems with that.
-> 
-> I hope you meant with "select MFD_SYSCON".
-> We are referencing the syscon for accessing pmu reg, for which we need
-> this config to be selected.
-> Other Exynos phy drivers also need this config and for that they have
-> selected this.
-> 
-> Do you want me to do it any other way ?
-
-depends on is one option.
-
-Thanks
-Kishon
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e541ecb..6de978c 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -105,6 +105,12 @@
+ 		reg = <0x10440000 0x1000>;
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 2>, <3 2>;
++	};
++
+ 	sys_reg: syscon@10010000 {
+ 		compatible = "samsung,exynos4-sysreg", "syscon";
+ 		reg = <0x10010000 0x400>;
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index cacf614..4e7610f 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -75,12 +75,6 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
+-	pmu {
+-		compatible = "arm,cortex-a9-pmu";
+-		interrupt-parent = <&combiner>;
+-		interrupts = <2 2>, <3 2>;
+-	};
+-
+ 	pinctrl_0: pinctrl@11400000 {
+ 		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x11400000 0x1000>;
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 15d3c0a..e6af870 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -26,6 +26,12 @@
+ 		samsung,combiner-nr = <20>;
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
++	};
++
+ 	gic: interrupt-controller@10490000 {
+ 		cpu-offset = <0x4000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 3d77a40..318f3ac 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -31,12 +31,6 @@
+ 		mshc0 = &mshc_0;
+ 	};
+ 
+-	pmu {
+-		compatible = "arm,cortex-a9-pmu";
+-		interrupt-parent = <&combiner>;
+-		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+-	};
+-
+ 	pd_isp: isp-power-domain@10023CA0 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10023CA0 0x20>;
+-- 
+1.8.3.2
