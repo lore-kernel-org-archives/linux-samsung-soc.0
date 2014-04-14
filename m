@@ -1,65 +1,45 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 14 Apr 2014 16:37:02 +0200
-Message-ID: <534BF28E.7040906@samsung.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
- <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: [PATCH 0/4] drm: exynos: update/fixes to HDMI driver
+Date: Mon, 14 Apr 2014 17:00:18 +0200
+Message-ID: <1397487622-3577-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, kishon@ti.com, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, pawel.moll@arm.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, rahul.sharma@samsung.com, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/04/14 16:36, Vivek Gautam wrote:
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 28f9edb..6d99ba9 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -74,3 +74,45 @@ phy-consumer@12340000 {
->  
->  Refer to DT bindings documentation of particular PHY consumer devices for more
->  information about required PHYs and the way of specification.
-> +
-> +Samsung Exynos5 SoC series USB DRD PHY controller
-> +--------------------------------------------------
-> +
-> +Required properties:
-> +- compatible : Should be set to one of the following supported values:
-> +	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
-> +	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
-> +- reg : Register offset and length of USB DRD PHY register set;
-> +- clocks: Clock IDs array as required by the controller
-> +- clock-names: names of clocks correseponding to IDs in the clock property;
-> +	       Required clocks:
-> +	- phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
-> +	       used for register access.
-> +	- ref: PHY's reference clock (usually crystal clock), associated by
-> +	       phy name, used to determine bit values for clock settings
-> +	       register.
-> +	Additional clock required for Exynos5420:
-> +	- usb30_sclk_100m: Additional special clock used for PHY operation
-> +			   depicted as 'sclk_usbphy30' in CMU of Exynos5420.
-> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
-> +			  control pmu registers for power isolation.
+Hi everyone,
+This patchset adds 4 fixes/updates to EXYNOS DRM driver for
+HDMI subsystem.
 
-Why to append "-phandle" to the property's name ? If this is for PMU
-perhaps make it more explicit and name it: samsung,pmu-syscon or
-samsung,pmureg ?
+All comments are welcome.
 
-> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
-> +		      base.
-> +- #phy-cells : from the generic PHY bindings, must be 1;
-> +
-> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
-> +compatible PHYs, the second cell in the PHY specifier identifies the
-> +PHY id, which is interpreted as follows:
-> +  0 - UTMI+ type phy,
-> +  1 - PIPE3 type phy,
+Regards,
+Tomasz Stanislawski
+
+Tomasz Stanislawski (4):
+  drm: exynos: hdmi: simplify extracting hpd-gpio from DT
+  drm: exynos: mixer: fix using usleep() in atomic context
+  drm: exynos: add compatibles for HDMI and Mixer chips and exynos4210
+    SoC
+  drm: exynos: hdmi: add support for pixel clock limitation
+
+ .../devicetree/bindings/video/exynos_hdmi.txt      |    4 +++
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   26 ++++++++++++++------
+ drivers/gpu/drm/exynos/exynos_mixer.c              |    5 +++-
+ include/media/s5p_hdmi.h                           |    1 +
+ 4 files changed, 27 insertions(+), 9 deletions(-)
 
 -- 
-Thanks,
-Sylwester
+1.7.9.5
