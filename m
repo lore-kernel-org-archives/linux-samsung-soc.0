@@ -1,112 +1,52 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 14 Apr 2014 17:24:57 +0530
-Message-ID: <534BCC91.8090108@ti.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com> <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com> <534529B2.2020107@samsung.com>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: Re: [PATCH v8 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
+Date: Mon, 14 Apr 2014 15:59:04 +0400
+Message-ID: <534BCD88.4020108@samsung.com>
+References: <1397459860-21869-1-git-send-email-t.dakhran@samsung.com>
+ <1397459860-21869-2-git-send-email-t.dakhran@samsung.com>
+ <5617478.sn2TYu7iO3@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <534529B2.2020107@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, sylvester.nawrocki@gmail.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:62523 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755171AbaDNL7K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Apr 2014 07:59:10 -0400
+In-reply-to: <5617478.sn2TYu7iO3@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>
 
-Hi,
-
-On Wednesday 09 April 2014 04:36 PM, Tomasz Figa wrote:
-> Hi Vivek,
-> 
-> Please see my comments inline.
-> 
-> On 08.04.2014 16:36, Vivek Gautam wrote:
->> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->> The new driver uses the generic PHY framework and will interact
->> with DWC3 controller present on Exynos5 series of SoCs.
->> Thereby, removing old phy-samsung-usb3 driver and related code
->> used untill now which was based on usb/phy framework.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> ---
->>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
->>   drivers/phy/Kconfig                                |   11 +
->>   drivers/phy/Makefile                               |    1 +
->>   drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
->>   4 files changed, 722 insertions(+)
->>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
-> 
-> [snip]
-> 
->> +    Additional clock required for Exynos5420:
->> +    - usb30_sclk_100m: Additional special clock used for PHY operation
->> +               depicted as 'sclk_usbphy30' in CMU of Exynos5420.
-> 
-> Are you sure this isn't simply a gate for the ref clock, as it can be found on
-> another SoC that is not upstream yet? I don't have documentation for Exynos
-> 5420 so I can't tell, but I'd like to ask you to recheck this.
-> 
->> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
->> +              control pmu registers for power isolation.
->> +- samsung,pmu-offset: phy power control register offset to
->> pmu-system-controller
->> +              base.
->> +- #phy-cells : from the generic PHY bindings, must be 1;
+On 04/14/2014 03:03 PM, Arnd Bergmann wrote:
+> On Monday 14 April 2014 11:17:38 Tarek Dakhran wrote:
+>> --- a/arch/arm/mach-exynos/exynos.c
+>> +++ b/arch/arm/mach-exynos/exynos.c
+>> @@ -159,6 +159,15 @@ static struct map_desc exynos5250_iodesc[] __initdata = {
+>>          },
+>>   };
+>>   
+>> +static struct map_desc exynos5410_iodesc[] __initdata = {
+>> +       {
+>> +               .virtual        = (unsigned long)S5P_VA_SYSRAM_NS,
+>> +               .pfn            = __phys_to_pfn(EXYNOS5410_PA_SYSRAM_NS),
+>> +               .length         = SZ_4K,
+>> +               .type           = MT_DEVICE,
+>> +       },
+>> +};
 >> +
->> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
->> +compatible PHYs, the second cell in the PHY specifier identifies the
->> +PHY id, which is interpreted as follows:
->> +  0 - UTMI+ type phy,
->> +  1 - PIPE3 type phy,
->> +
->> +Example:
->> +    usb3_phy: usbphy@12100000 {
->> +        compatible = "samsung,exynos5250-usbdrd-phy";
->> +        reg = <0x12100000 0x100>;
->> +        clocks = <&clock 286>, <&clock 1>;
->> +        clock-names = "phy", "usb3phy_refclk";
-> 
-> Binding description above doesn't mention "usb3phy_refclk" entry.
-> 
->> +        samsung,syscon-phandle = <&pmu_syscon>;
->> +        samsung,pmu-offset = <0x704>;
->> +        #phy-cells = <1>;
->> +    };
-> 
-> [snip]
-> 
->> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
->> new file mode 100644
->> index 0000000..ff54a7c
->> --- /dev/null
->> +++ b/drivers/phy/phy-exynos5-usbdrd.c
-> 
-> [snip]
-> 
->> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->> +{
->> +    struct device *dev = &pdev->dev;
->> +    struct device_node *node = dev->of_node;
->> +    struct exynos5_usbdrd_phy *phy_drd;
->> +    struct phy_provider *phy_provider;
->> +    struct resource *res;
->> +    const struct of_device_id *match;
->> +    const struct exynos5_usbdrd_phy_drvdata *drv_data;
->> +    struct regmap *reg_pmu;
->> +    u32 pmu_offset;
->> +    int i;
->> +
->> +    /*
->> +     * Exynos systems are completely DT enabled,
->> +     * so lets not have any platform data support for this driver.
->> +     */
->> +    if (!node) {
->> +        dev_err(dev, "no device node found\n");
-> 
-> This error message is not very meaningful. I'd rather use something like "This
-> driver can be only instantiated using Device Tree".
+>>   static struct map_desc exynos5_iodesc[] __initdata = {
+> NAK
+>
+> Why does this keep coming up?
+>
+> 	Arnd
+>
+We need this memory region because boot address for exynos5410 located 
+here, same as for 5250.
 
-how about just adding depend_on OF in Kconfig?
-
-Thanks
-Kishon
+-- 
+Best regards,
+     Tarek Dakhran
