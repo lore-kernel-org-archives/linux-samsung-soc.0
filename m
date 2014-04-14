@@ -1,95 +1,27 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V5 00/20] ARM: exynos: cpuidle: Move the driver to
- drivers/cpuidle
-Date: Mon, 14 Apr 2014 11:01:03 +0200
-Message-ID: <534BA3CF.6030701@linaro.org>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com
-Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 0/2] iio: adc: exynos_adc: Support Exynos3250 ADC
+Date: Mon, 14 Apr 2014 18:07:04 +0900
+Message-ID: <1397466426-13870-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CkhpIEt1a2ppbiwKCkkgYmVsaWV2ZSBJIGFkZHJlc3NlZCBhbGwgdGhlIGNvbW1lbnRzLiBJcyBp
-dCBwb3NzaWJsZSB0byB0YWtlIHRoaXMgCnBhdGNoc2V0IGZvciBuZXh0ID8KClJlZ2FyZHMKCiAg
-IC0tIERhbmllbAoKCgpPbiAwNC8xMS8yMDE0IDEyOjM5IFBNLCBEYW5pZWwgTGV6Y2FubyB3cm90
-ZToKPiBDaGFuZ2Vsb2c6Cj4KPiBWNToKPiAJKiBSZW1vdmVkIHBhdGNoIDogIk1vdmUgY2xvY2sg
-c2V0dXAgdG8gcG0uYyIKPiAJKiBBZGRlZCBwYXRjaCAgIDogIk1vdmUgYXJtIGNvcmUgcG93ZXIg
-ZG93biBjbG9jayB0byBleHlub3M1MjUwIGNvbW1vbiBjb2RlIgo+IFY0Ogo+IAkqIFRvb2sgaW50
-byBhY2NvdW50IFRvbWFzeidzIGNvbW1lbnRzCj4gCQkqIEZpeGVkIG1pc3NpbmcgY2FsbCBpbiBm
-b3IgY2VudHJhbCBzdXNwZW5kCj4gCQkqIFBhc3NlZCBwYXJhbWV0ZXIgdG8gdGhlIHdha2V1cCBt
-YXNrIGZ1bmN0aW9uCj4gCQkqIE1vdmVkIHdha2V1cCBtYXNrLCBib290IHZlY3RvciBhbmQgYWZ0
-ciBzdGF0ZSBpbnRvIGEgc2luZ2xlCj4gCQlmdW5jdGlvbgo+IAkJKiBVc2VkIHRoaXMgZnVuY3Rp
-b24gYXMgY2FsbGJhY2sgZm9yIHBsYXRmb3JtIGRhdGEKPiAJCSogTW92ZWQgUzVQX0NIRUNLX0FG
-VFIvUzVQX0NIRUNLX1NMRUVQIGludG8gcG0uYwo+IAkJKiBTZXQgYm9vdCB2ZWN0b3Igb25seSBv
-bmUgdGltZQo+IAkqIFNwbGl0dGVkIHNvbWUgcGF0Y2hlcyB0byBtYWtlIHRoZW0gbW9yZSByZWFk
-YWJsZQo+IFYzOgo+IAkqIEFkZGVkIHBhdGNoICAgOiAiQVJNOiBleHlub3M6IGNwdWlkbGU6IERp
-c2FibGUgY3B1aWRsZSBmb3IgNTQ0MCIKPiAJKiBSZW1vdmVkIHBhdGNoIDogIkFSTTogZXh5bm9z
-OiBjb25maWc6IEVuYWJsZSBjcHVpZGxlIgo+IAkqIFJlbW92ZWQgZGVmYXVsdCBBUk1fRVhZTk9T
-NDIxMF9DUFVJRExFPXkKPiAJKiBBZGRlZCBjb21tZW50IGFib3V0IGJ1ZyBmaXggc2lkZSBlZmZl
-Y3QgJ2Zvcl9lYWNoX3Bvc3NpYmxlX2NwdScKPiBWMjoKPiAJKiBBZGRlZCBjb21tZW50IGluIGNo
-YW5nZWxvZyBmb3IgY2FsbHMgb3JkZXIgKDUvMTcpCj4gCSogQ2FsbCB0aGUgcG93ZXJkb3duIG9u
-bHkgZm9yIGNwdTAgaW4gdGhlIHBtIG5vdGlmaWVyCj4gCSogU2V0IHRoZSBwbSBub3RpZmllciBm
-b3IgYWxsIGJvYXJkcwo+Cj4gVjE6IGluaXRpYWwgcG9zdAo+Cj4gVGhpcyBwYXRjaHNldCByZWxp
-ZXMgb24gdGhlIGNwbV9wbSBub3RpZmllciB0byBpbml0aWF0ZSB0aGUgcG93ZXJkb3duIHNlcXVl
-bmNlCj4gb3BlcmF0aW9ucyBmcm9tIHBtLmMgaW5zdGVhZCBjcHVpZGxlLmMuIFRodXMgdGhlIGNw
-dWlkbGUgZHJpdmVyIGlzIG5vIGxvbmdlcgo+IGRlcGVuZGVudCBmcm9tIGFyY2ggc3BlY2lmaWMg
-Y29kZSBhcyBldmVyeXRoaW5nIGlzIGNhbGxlZCBmcm9tIHRoZSBwbS5jIGZpbGUuCj4KPiBUaGUg
-cGF0Y2hzZXQgYXBwbGllcyBvbiB0b3Agb2YgbGludXgtc2Ftc3VuZy9mb3ItbmV4dC4KPgo+IFRl
-c3RlZCBvbiBleHlub3M0OiA0MjEwCj4gVGVzdGVkIG9uIGV4eW5vczU6IDUyNTAgKHdpdGhvdXQg
-QUZUUikKPgo+IEFtaXQgRGFuaWVsIEthY2hoYXAgKDEpOgo+ICAgIEFSTTogRVhZTk9TOiBNb3Zl
-IGFybSBjb3JlIHBvd2VyIGRvd24gY2xvY2sgdG8gZXh5bm9zNTI1MCBjb21tb24KPiAgICAgIGNs
-b2NrCj4KPiBEYW5pZWwgTGV6Y2FubyAoMTkpOgo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxlOiBQ
-cmV2ZW50IGZvcndhcmQgZGVjbGFyYXRpb24KPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogVXNl
-IGNwdWlkbGVfcmVnaXN0ZXIKPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogQ2hhbmdlIGZ1bmN0
-aW9uIG5hbWUgcHJlZml4Cj4gICAgQVJNOiBleHlub3M6IGNwdWlkbGU6IEVuY2Fwc3VsYXRlIHJl
-Z2lzdGVyIGFjY2VzcyBpbnNpZGUgYSBmdW5jdGlvbgo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxl
-OiBNb3ZlIHNvbWUgY29kZSBpbnNpZGUgdGhlIGlkbGVfZmluaXNoZXIKPiAgICBBUk06IGV4eW5v
-czogY3B1aWRsZTogRml4IFM1UF9XQUtFVVBfU1RBVCBjYWxsCj4gICAgQVJNOiBleHlub3M6IGNw
-dWlkbGU6IFVzZSB0aGUgY3B1X3BtIG5vdGlmaWVyCj4gICAgQVJNOiBleHlub3M6IGNwdWlkbGU6
-IE1vdmUgc2N1X2VuYWJsZSBpbiB0aGUgY3B1X3BtIG5vdGlmaWVyCj4gICAgQVJNOiBleHlub3M6
-IGNwdWlkbGU6IFJlbW92ZSBpZmRlZiBmb3Igc2N1X2VuYWJsZQo+ICAgIEFSTTogZXh5bm9zOiBj
-cHVpZGxlOiBQYXNzIHdha2V1cCBtYXNrIHBhcmFtZXRlciB0byBmdW5jdGlvbgo+ICAgIEFSTTog
-ZXh5bm9zOiBjcHVpZGxlOiBFbmNhcHN1bGF0ZSBib290IHZlY3RvciBjb2RlIGludG8gYSBmdW5j
-dGlvbgo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxlOiBEaXNhYmxlIGNwdWlkbGUgZm9yIDU0NDAK
-PiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogRW5jYXBzdWxhdGUgdGhlIEFGVFIgY29kZSBpbnRv
-IGEgZnVuY3Rpb24KPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogTW92ZSB0aGUgQUZUUiBzdGF0
-ZSBmdW5jdGlvbiBpbnRvIHBtLmMKPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogTW92ZSB0aGUg
-cG93ZXIgc2VxdWVuY2UgY2FsbCBpbiB0aGUgY3B1X3BtCj4gICAgICBub3RpZmllcgo+ICAgIEFS
-TTogZXh5bm9zOiBjcHVpZGxlOiBNb3ZlIFM1UF9DSEVDS19TTEVFUCBpbnRvIHBtLmMKPiAgICBB
-Uk06IGV4eW5vczogY3B1aWRsZTogUGFzcyB0aGUgQUZUUiBjYWxsYmFjayB0byB0aGUgcGxhdGZv
-cm1fZGF0YQo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxlOiBDbGVhbnVwIGFsbCB1bm5lZWRlZCBo
-ZWFkZXJzIGZyb20gY3B1aWRsZS5jCj4gICAgQVJNOiBleHlub3M6IGNwdWlkbGU6IE1vdmUgdGhl
-IGRyaXZlciB0byBkcml2ZXJzL2NwdWlkbGUgZGlyZWN0b3J5Cj4KPiAgIGFyY2gvYXJtL21hY2gt
-ZXh5bm9zL01ha2VmaWxlICAgICAgICB8ICAgIDEgLQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3Mv
-Y29tbW9uLmggICAgICAgIHwgICAgMSArCj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jcHVpZGxl
-LmMgICAgICAgfCAgMjU1IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgIGFy
-Y2gvYXJtL21hY2gtZXh5bm9zL2V4eW5vcy5jICAgICAgICB8ICAgIDggKy0KPiAgIGFyY2gvYXJt
-L21hY2gtZXh5bm9zL3BtLmMgICAgICAgICAgICB8ICAxNTIgKysrKysrKysrKysrKysrKy0tLS0K
-PiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL3JlZ3MtcG11LmggICAgICB8ICAgIDIgLQo+ICAgZHJp
-dmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTI1MC5jIHwgICA0MiArKysrKysKPiAgIGRyaXZl
-cnMvY3B1aWRsZS9LY29uZmlnLmFybSAgICAgICAgICB8ICAgIDYgKwo+ICAgZHJpdmVycy9jcHVp
-ZGxlL01ha2VmaWxlICAgICAgICAgICAgIHwgICAgMSArCj4gICBkcml2ZXJzL2NwdWlkbGUvY3B1
-aWRsZS1leHlub3MuYyAgICAgfCAgIDk4ICsrKysrKysrKysrKysKPiAgIDEwIGZpbGVzIGNoYW5n
-ZWQsIDI3NyBpbnNlcnRpb25zKCspLCAyODkgZGVsZXRpb25zKC0pCj4gICBkZWxldGUgbW9kZSAx
-MDA2NDQgYXJjaC9hcm0vbWFjaC1leHlub3MvY3B1aWRsZS5jCj4gICBjcmVhdGUgbW9kZSAxMDA2
-NDQgZHJpdmVycy9jcHVpZGxlL2NwdWlkbGUtZXh5bm9zLmMKPgoKCi0tIAogIDxodHRwOi8vd3d3
-LmxpbmFyby5vcmcvPiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJN
-IFNvQ3MKCkZvbGxvdyBMaW5hcm86ICA8aHR0cDovL3d3dy5mYWNlYm9vay5jb20vcGFnZXMvTGlu
-YXJvPiBGYWNlYm9vayB8CjxodHRwOi8vdHdpdHRlci5jb20vIyEvbGluYXJvb3JnPiBUd2l0dGVy
-IHwKPGh0dHA6Ly93d3cubGluYXJvLm9yZy9saW5hcm8tYmxvZy8+IEJsb2cKCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
-aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
-c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+This patchset support Exynos3250 ADC (Analog Digital Converter) because
+Exynos3250 has additional special clock for ADC IP.
+
+Changes from v1:
+- Add new "samsung,exynos-adc-v3" compatible to support Exynos3250 ADC
+- Add a patch about DT binding documentation
+
+Chanwoo Choi (2):
+  iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
+  iio: devicetree: Add DT binding documentation for Exynos3250 ADC
+
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt | 20 ++++++++
+ drivers/iio/adc/exynos_adc.c                       | 54 ++++++++++++++++------
+ 2 files changed, 61 insertions(+), 13 deletions(-)
+
+-- 
+1.8.0
