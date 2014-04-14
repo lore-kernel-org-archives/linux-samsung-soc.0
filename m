@@ -1,7 +1,7 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH 1/4] drm: exynos: hdmi: simplify extracting hpd-gpio from DT
-Date: Mon, 14 Apr 2014 17:00:19 +0200
-Message-ID: <1397487622-3577-2-git-send-email-t.stanislaws@samsung.com>
+Subject: [PATCH 2/4] drm: exynos: mixer: fix using usleep() in atomic context
+Date: Mon, 14 Apr 2014 17:00:20 +0200
+Message-ID: <1397487622-3577-3-git-send-email-t.stanislaws@samsung.com>
 References: <1397487622-3577-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,45 +21,29 @@ To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-me
 Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, pawel.moll@arm.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, rahul.sharma@samsung.com, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch eliminates redundant checks while retrieving HPD gpio from DT during
-HDMI's probe().
+This patch fixes calling usleep_range() after taking reg_slock
+using spin_lock_irqsave(). The mdelay() is used instead.
+Waiting in atomic context is not the best idea in general.
+Hopefully, waiting occurs only when Video Processor fails
+to reset correctly.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/exynos/exynos_mixer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 9a6d652..d2d6e2e 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2016,23 +2016,18 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
- {
- 	struct device_node *np = dev->of_node;
- 	struct s5p_hdmi_platform_data *pd;
--	u32 value;
- 
- 	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
- 	if (!pd)
--		goto err_data;
-+		return NULL;
- 
--	if (!of_find_property(np, "hpd-gpio", &value)) {
-+	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
-+	if (gpio_is_valid(pd->hpd_gpio)) {
- 		DRM_ERROR("no hpd gpio property found\n");
--		goto err_data;
-+		return NULL;
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index ce28881..e3306c8 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -615,7 +615,7 @@ static void vp_win_reset(struct mixer_context *ctx)
+ 		/* waiting until VP_SRESET_PROCESSING is 0 */
+ 		if (~vp_reg_read(res, VP_SRESET) & VP_SRESET_PROCESSING)
+ 			break;
+-		usleep_range(10000, 12000);
++		mdelay(10);
  	}
- 
--	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
--
- 	return pd;
--
--err_data:
--	return NULL;
+ 	WARN(tries == 0, "failed to reset Video Processor\n");
  }
- 
- static struct of_device_id hdmi_match_types[] = {
 -- 
 1.7.9.5
