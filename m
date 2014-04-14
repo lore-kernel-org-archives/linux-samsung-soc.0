@@ -1,61 +1,53 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH]  drm: exynos: hdmi: simplify extracting hpd-gpio from DT
-Date: Mon, 14 Apr 2014 12:07:11 +0200
-Message-ID: <534BB34F.7040308@samsung.com>
+From: Srikanth Thokala <sriku.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when possible
+Date: Mon, 14 Apr 2014 16:26:33 +0530
+Message-ID: <CA+mB=1KTqmTW9=NftNXM9V7Pms7zpMHbsW6oThf=cPJ1qGLriw@mail.gmail.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+	<1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
+	<5318B232.2020507@wwwdotorg.org>
+	<1394127555.4582.1.camel@weser.hi.pengutronix.de>
+	<CA+mB=1JCjDMzTuctvSQgjNhBnkyUPC2ooAzJOX_PC5L1gAau8w@mail.gmail.com>
+	<20140411204140.GA8967@obsidianresearch.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>, =?UTF-8?B?J+uwleqyveuvvCc=?= <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140411204140.GA8967-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch eliminates redundant checks while retrieving HPD gpio from DT during
-HDMI's probe().
+On Sat, Apr 12, 2014 at 2:11 AM, Jason Gunthorpe
+<jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org> wrote:
+> On Fri, Apr 11, 2014 at 11:10:59PM +0530, Srikanth Thokala wrote:
+>
+>> I see this error too on my setup (Xilinx PCIe Root Complex Driver),
+>> https://lkml.org/lkml/2014/3/3/183
+>
+>> After digging into it, I see I need to override the API
+>> pcibios_get_phb_of_node()
+>
+> No, as I pointed out before, the DT node comes in through
+> pci_scan_root_bus:
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Thanks Jason for the advice, it is working.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index e1a2e88..300c2af 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2011,23 +2011,18 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
- {
- 	struct device_node *np = dev->of_node;
- 	struct s5p_hdmi_platform_data *pd;
--	u32 value;
+Srikanth
 
- 	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
- 	if (!pd)
--		goto err_data;
-+		return NULL;
-
--	if (!of_find_property(np, "hpd-gpio", &value)) {
-+	pd->hpd_gpio = of_get_named_gpio_flags(np, "hpd-gpio", 0, NULL);
-+	if (pd->hpd_gpio < 0) {
- 		DRM_ERROR("no hpd gpio property found\n");
--		goto err_data;
-+		return NULL;
- 	}
-
--	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
--
- 	return pd;
--
--err_data:
--	return NULL;
- }
-
- static struct of_device_id hdmi_match_types[] = {
+>
+> +static struct pci_bus __init *xilinx_pcie_scan_bus(int nr,
+> +                               struct pci_sys_data *sys)
+> +{
+> +       struct xilinx_pcie_port *port = sys_to_pcie(sys);
+> +       struct pci_bus *bus;
+> +
+> +       if (port) {
+> +               port->root_busno = sys->busnr;
+> +               bus = pci_scan_root_bus(NULL, sys->busnr, &xilinx_pcie_ops,
+>                                        ^^^^^^
+>
+> You can't pass NULL here and have DT work properly.
+>
+> See http://www.spinics.net/lists/arm-kernel/msg312392.html
+>
+> Jason
