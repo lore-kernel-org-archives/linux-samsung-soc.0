@@ -1,126 +1,215 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 14 Apr 2014 17:35:43 +0530
-Message-ID: <CAFp+6iGxhfgZRPysMuj5nALEQBbFXnAXhtDPpbf3P42LDHqFxg@mail.gmail.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
-	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
-	<534529B2.2020107@samsung.com>
-	<534BCC91.8090108@ti.com>
+Date: Mon, 14 Apr 2014 17:57:51 +0530
+Message-ID: <534BD447.1080909@ti.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com> <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <534BCC91.8090108-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:49569 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750948AbaDNM2X (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Apr 2014 08:28:23 -0400
+In-Reply-To: <1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, sylvester.nawrocki@gmail.com
 
-Hi Kishon,
+Hi,
 
+On Tuesday 08 April 2014 08:06 PM, Vivek Gautam wrote:
+> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+> The new driver uses the generic PHY framework and will interact
+> with DWC3 controller present on Exynos5 series of SoCs.
+> Thereby, removing old phy-samsung-usb3 driver and related code
+> used untill now which was based on usb/phy framework.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
+>  drivers/phy/Kconfig                                |   11 +
+>  drivers/phy/Makefile                               |    1 +
+>  drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
+>  4 files changed, 722 insertions(+)
+>  create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> index 28f9edb..6d99ba9 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> @@ -74,3 +74,45 @@ phy-consumer@12340000 {
+>  
+>  Refer to DT bindings documentation of particular PHY consumer devices for more
+>  information about required PHYs and the way of specification.
+> +
+> +Samsung Exynos5 SoC series USB DRD PHY controller
+> +--------------------------------------------------
+> +
+> +Required properties:
+> +- compatible : Should be set to one of the following supported values:
+> +	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+> +	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+> +- reg : Register offset and length of USB DRD PHY register set;
+> +- clocks: Clock IDs array as required by the controller
+> +- clock-names: names of clocks correseponding to IDs in the clock property;
+> +	       Required clocks:
+> +	- phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
+> +	       used for register access.
+> +	- ref: PHY's reference clock (usually crystal clock), associated by
+> +	       phy name, used to determine bit values for clock settings
+> +	       register.
+> +	Additional clock required for Exynos5420:
+> +	- usb30_sclk_100m: Additional special clock used for PHY operation
+> +			   depicted as 'sclk_usbphy30' in CMU of Exynos5420.
+> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
+> +			  control pmu registers for power isolation.
+> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+> +		      base.
+> +- #phy-cells : from the generic PHY bindings, must be 1;
+> +
+> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
+> +compatible PHYs, the second cell in the PHY specifier identifies the
+> +PHY id, which is interpreted as follows:
+> +  0 - UTMI+ type phy,
+> +  1 - PIPE3 type phy,
+> +
+> +Example:
+> +	usb3_phy: usbphy@12100000 {
+> +		compatible = "samsung,exynos5250-usbdrd-phy";
+> +		reg = <0x12100000 0x100>;
+> +		clocks = <&clock 286>, <&clock 1>;
+> +		clock-names = "phy", "usb3phy_refclk";
+> +		samsung,syscon-phandle = <&pmu_syscon>;
+> +		samsung,pmu-offset = <0x704>;
+> +		#phy-cells = <1>;
+> +	};
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 8d3c49c..d955a05 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -166,4 +166,15 @@ config PHY_XGENE
+>  	help
+>  	  This option enables support for APM X-Gene SoC multi-purpose PHY.
+>  
+> +config PHY_EXYNOS5_USBDRD
+> +	tristate "Exynos5 SoC series USB DRD PHY driver"
+> +	depends on ARCH_EXYNOS5 && OF
+> +	depends on HAS_IOMEM
+> +	select GENERIC_PHY
+> +	select MFD_SYSCON
 
-On Mon, Apr 14, 2014 at 5:24 PM, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org> wrote:
-> Hi,
->
-> On Wednesday 09 April 2014 04:36 PM, Tomasz Figa wrote:
->> Hi Vivek,
->>
->> Please see my comments inline.
->>
->> On 08.04.2014 16:36, Vivek Gautam wrote:
->>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->>> The new driver uses the generic PHY framework and will interact
->>> with DWC3 controller present on Exynos5 series of SoCs.
->>> Thereby, removing old phy-samsung-usb3 driver and related code
->>> used untill now which was based on usb/phy framework.
->>>
->>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
->>>   drivers/phy/Kconfig                                |   11 +
->>>   drivers/phy/Makefile                               |    1 +
->>>   drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
->>>   4 files changed, 722 insertions(+)
->>>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
->>
->> [snip]
->>
->>> +    Additional clock required for Exynos5420:
->>> +    - usb30_sclk_100m: Additional special clock used for PHY operation
->>> +               depicted as 'sclk_usbphy30' in CMU of Exynos5420.
->>
->> Are you sure this isn't simply a gate for the ref clock, as it can be found on
->> another SoC that is not upstream yet? I don't have documentation for Exynos
->> 5420 so I can't tell, but I'd like to ask you to recheck this.
->>
->>> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
->>> +              control pmu registers for power isolation.
->>> +- samsung,pmu-offset: phy power control register offset to
->>> pmu-system-controller
->>> +              base.
->>> +- #phy-cells : from the generic PHY bindings, must be 1;
->>> +
->>> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
->>> +compatible PHYs, the second cell in the PHY specifier identifies the
->>> +PHY id, which is interpreted as follows:
->>> +  0 - UTMI+ type phy,
->>> +  1 - PIPE3 type phy,
->>> +
->>> +Example:
->>> +    usb3_phy: usbphy@12100000 {
->>> +        compatible = "samsung,exynos5250-usbdrd-phy";
->>> +        reg = <0x12100000 0x100>;
->>> +        clocks = <&clock 286>, <&clock 1>;
->>> +        clock-names = "phy", "usb3phy_refclk";
->>
->> Binding description above doesn't mention "usb3phy_refclk" entry.
->>
->>> +        samsung,syscon-phandle = <&pmu_syscon>;
->>> +        samsung,pmu-offset = <0x704>;
->>> +        #phy-cells = <1>;
->>> +    };
->>
->> [snip]
->>
->>> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
->>> new file mode 100644
->>> index 0000000..ff54a7c
->>> --- /dev/null
->>> +++ b/drivers/phy/phy-exynos5-usbdrd.c
->>
->> [snip]
->>
->>> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->>> +{
->>> +    struct device *dev = &pdev->dev;
->>> +    struct device_node *node = dev->of_node;
->>> +    struct exynos5_usbdrd_phy *phy_drd;
->>> +    struct phy_provider *phy_provider;
->>> +    struct resource *res;
->>> +    const struct of_device_id *match;
->>> +    const struct exynos5_usbdrd_phy_drvdata *drv_data;
->>> +    struct regmap *reg_pmu;
->>> +    u32 pmu_offset;
->>> +    int i;
->>> +
->>> +    /*
->>> +     * Exynos systems are completely DT enabled,
->>> +     * so lets not have any platform data support for this driver.
->>> +     */
->>> +    if (!node) {
->>> +        dev_err(dev, "no device node found\n");
->>
->> This error message is not very meaningful. I'd rather use something like "This
->> driver can be only instantiated using Device Tree".
->
-> how about just adding depend_on OF in Kconfig?
+Lets try to avoid select in Kconfig. We've got enough problems with that.
+> +	help
+> +	  Enable USB DRD PHY support for Exynos 5 SoC series.
+> +	  This driver provides PHY interface for USB 3.0 DRD controller
+> +	  present on Exynos5 SoC series.
+> +
+>  endmenu
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index 2faf78e..31baa0c 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -18,3 +18,4 @@ obj-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+>  obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
+> +obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
+> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+> new file mode 100644
+> index 0000000..ff54a7c
+> --- /dev/null
+> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+> @@ -0,0 +1,668 @@
+> +/*
+> + * Samsung EXYNOS5 SoC series USB DRD PHY driver
+> + *
+> + * Phy provider for USB 3.0 DRD controller on Exynos5 SoC series
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
 
-Already added a depend on 'OF'. Copying below the part of Kconfig in this patch.
+2014 already ;-)
+> + * Author: Vivek Gautam <gautam.vivek@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+.
+.
+<sniip>
+.
+.
 
-  config PHY_EXYNOS5_USBDRD
-         tristate "Exynos5 SoC series USB DRD PHY driver"
-         depends on ARCH_EXYNOS5 && OF
-         depends on HAS_IOMEM
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +
+> +/*
+> + * Sets the pipe3 phy's clk as EXTREFCLK (XXTI) which is internal clock
+> + * from clock core. Further sets multiplier values and spread spectrum
+> + * clock settings for SuperSpeed operations.
+> + */
+> +static unsigned int
+> +exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
+> +{
+> +	static u32 reg;
+> +	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+> +
+> +	/* restore any previous reference clock settings */
+> +	reg = phy_drd->refclk_reg;
+
+Why don't we just read back from the register instead?
+> +
+> +	/* Use EXTREFCLK as ref clock */
+> +	reg &= ~PHYCLKRST_REFCLKSEL_MASK;
+> +	reg |=	PHYCLKRST_REFCLKSEL_EXT_REFCLK;
+> +
+> +	/* FSEL settings corresponding to reference clock */
+> +	reg &= ~PHYCLKRST_FSEL_PIPE_MASK |
+> +		PHYCLKRST_MPLL_MULTIPLIER_MASK |
+> +		PHYCLKRST_SSC_REFCLKSEL_MASK;
+> +	switch (phy_drd->extrefclk) {
+> +	case EXYNOS5_FSEL_50MHZ:
+> +		reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
+> +			PHYCLKRST_SSC_REFCLKSEL(0x00));
+> +		break;
+> +	case EXYNOS5_FSEL_24MHZ:
+> +		reg |= (PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF |
+> +			PHYCLKRST_SSC_REFCLKSEL(0x88));
+> +		break;
+> +	case EXYNOS5_FSEL_20MHZ:
+> +		reg |= (PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF |
+> +			PHYCLKRST_SSC_REFCLKSEL(0x00));
+> +		break;
+> +	case EXYNOS5_FSEL_19MHZ2:
+> +		reg |= (PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF |
+> +			PHYCLKRST_SSC_REFCLKSEL(0x88));
+> +		break;
+> +	default:
+> +		dev_dbg(phy_drd->dev, "unsupported ref clk\n");
+> +		break;
+> +	}
+> +
+> +	/* save refclk settings for multiple phy inits */
+> +	phy_drd->refclk_reg = reg;
+> +
+> +	return reg;
+> +}
+> +
+> +/*
+> + * Sets the utmi phy's clk as EXTREFCLK (XXTI) which is internal clock
+> + * from clock core. Further sets the FSEL values for HighSpeed operations.
+> + */
+> +static unsigned int
+> +exynos5_usbdrd_utmi_set_refclk(struct phy_usb_instance *inst)
+> +{
+> +	static u32 reg;
+> +	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+> +
+> +	reg = phy_drd->refclk_reg;
+
+same here..
+
+Thanks
+Kishon
