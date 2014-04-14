@@ -1,56 +1,52 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4/4] regulator: s5m8767: Use same binding for external
- control as in s2mps11
-Date: Mon, 14 Apr 2014 22:11:06 +0100
-Message-ID: <20140414211106.GC12304@sirena.org.uk>
+Subject: Re: [PATCH 1/4] regulator: s2mps11: Move DTS parsing code to
+ separate function
+Date: Mon, 14 Apr 2014 22:13:29 +0100
+Message-ID: <20140414211329.GD12304@sirena.org.uk>
 References: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
- <1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
+ <1397462949-22379-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
+	protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1397462949-22379-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---L6iaP+gRLNZHKoI4
+--KdquIMZPjGJQvRdI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Apr 14, 2014 at 10:09:09AM +0200, Krzysztof Kozlowski wrote:
+On Mon, Apr 14, 2014 at 10:09:06AM +0200, Krzysztof Kozlowski wrote:
+> Refactor code for parsing DTS to increase a little code readability. The
+> behaviour should not change.
 
-> -	- s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
-> +	- samsung,ext-control-gpios: (optional) GPIO specifier for one
->  		GPIO controlling this regulator (enable/disable); This is
->  		valid only for buck9.
+Applied, thanks.
 
-This is an incompatible change.  It's OK to deprecate the old property
-but it's bad form to just remove it.
-
---L6iaP+gRLNZHKoI4
+--KdquIMZPjGJQvRdI
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTTE7nAAoJELSic+t+oim9wnQP/j1E9nH/Vo2WkPVYslXz7ClG
-FZcO7kNtYcc7FEHgs/KB+yOCY7qtp9Iu7HcdkJCdaYbTU5QHuGqprPmaFYWFEMPO
-DX4Yyh0qWUXy7hKWJKaD8cpEi/UhwLKaaEsCqFSCKvET8N7GHiRXP6WAeQDdW+LW
-gGQevoqC0cr+5dIPbxhKmuS+79FS1dOpvWW2YvGxYe5TPC43hLfNr3MKI/wnozgW
-PuOsyw43QSvw2LLJfynx2KQHnYL0r65+aqxcfI9Rjhv+bcnukPdQk3uPV2C4Obf/
-TdNGbVvBq97hEDVZHBkFoXqgKtd5b/YXYBudn2Oo3CQtExGUKFrSjnDnFdMTIBqB
-vJjEA+fvhdpj5bb1p+OhwtiUK1/M8QsdY6HmWeGU4ppwoADPaMU7ew9MvInotfnY
-1N+zWZ1ai8rzuzr7zxQ+jaa6oLrSV6IQZlk5gEdWQwAPb5TktYFVSiFPOzaKknEU
-JO5pXd3pnl0rTTRnc0FXWBk/DA8ESD3UdghZdSehP+xC/fpXPruKZT/oC+68VNLk
-A882ZxMILnBlmXjGN9C8XXsPNbS6oJZ3EpE7Na6X6RNn7BuBGjrENR+Bk7/PZUyM
-xKHMOO4MAH0l9ThJmuHnwsoeH9+Nl6EI85y+RL6DZLU7WXjG45pRTIDq2EqL4rV6
-OZyukAI8U7NKPwCKfN4y
-=ddaJ
+iQIcBAEBAgAGBQJTTE92AAoJELSic+t+oim9BxQP/3ecEi6LTE6Ckd1pQ6OqRgz1
+EIufuBNN1Ojs43/AaeKAaeKyV4gCJesBDtQAcznr0GIqNvZ00mRjAp076w/peU6L
+0vMmCmhB1Vq3I8ktUJ8KhX8oMfbYmPRl48dwmEcYFbU88QVfecHM+av+bcLawUTE
+NmGMeSCFYCCTnIa6wZBJCupwzKm9cVN/+sRbEmSyHAbOYqvQsSEo2WXDeDAcWrNk
+iYz7Y3//nPfyzXeN3G+P+M42bswes8V4/0rMk//qe/8UsWuHDRiZSSAvTl79R/Z/
+LLxsn7aDwof81IcXshKKwQYR7Gkc3G7lDHnLZGwoFGgOw7eOrxJ+lhMn58II1zIq
+k9VbM/iChV6GROoOvfChByGx9/0pkzlbg+u5T4Um1xLJTf93PZ6Mt1WpWDtwYiY2
+qK7abevX4XVKaEjwAaX/hjAZ+8xIbtDp4lSHgd5wzeKI9yGAvd0lnqB2nYJXl7Ql
+KD5o87D9GaaNK/PtWN7wDo10HfQSQTHEXabDCKcjNVQ9eKC1wpMopNLrE3kRm+ZU
+y+XoR4zOzmOhOxD6Y+mIA2gGnaKSLKGxxHLM1BXscUasVFsebWRAVfuFXjLfVgN2
+4b2BpH8WNGqT8ORgMp2pXk5P/FNBLvAYxedqaoLMZxJslBKOEqmSxIXzK5oHgwIO
+wiBZL86MRkGNTQMcBsTZ
+=Odcb
 -----END PGP SIGNATURE-----
 
---L6iaP+gRLNZHKoI4--
+--KdquIMZPjGJQvRdI--
