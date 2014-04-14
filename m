@@ -1,68 +1,48 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v3 0/9] drm/exynos: more cleanup with super device support
-Date: Mon, 14 Apr 2014 15:09:45 +0900
-Message-ID: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17604 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751279AbaDNGJ5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 02:09:57 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 4/9] ARM: dts: exynos4210-trats: add super device node for
+ exynos drm
+Date: Mon, 14 Apr 2014 15:09:49 +0900
+Message-ID: <1397455794-7759-5-git-send-email-inki.dae@samsung.com>
+References: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series cleans up exynos drm framework and kms sub drivers
-using the component framework[1]
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-trats.dts |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-[1] http://lists.freedesktop.org/archives/dri-devel/2014-January/051249.html
-
-Previous patches,
-RFC: http://comments.gmane.org/gmane.comp.video.dri.devel/101200
-v1: http://lists.freedesktop.org/archives/dri-devel/2014-March/056387.html
-v2: http://www.spinics.net/lists/dri-devel/msg56372.html
-
-Changelog v3:
-- Add a patch for separating dpi from fimd
-- Add legacy dt binding support
-- Add more cleanup patches
-
-Thanks,
-Inki Dae
-
-
-Andrzej Hajda (1):
-  drm/exynos: separate dpi from fimd
-
-Inki Dae (8):
-  drm/exynos: add super device support
-  drm/exynos: dpi: fix hotplug fail issue
-  ARM: dts: exynos4210-universal: add super device node for exynos drm
-  ARM: dts: exynos4210-trats: add super device node for exynos drm
-  ARM: dts: exynos4412-trats2: add super device node for exynos drm
-  exynos/drm: add DT bindings
-  drm/exynos: fix comment to exynos_drm_device_subdrv_prove call
-  drm/exynos: modify goto labels to meaningful names
-
- .../bindings/drm/exynos/samsung-exynos-drm.txt     |   32 ++
- arch/arm/boot/dts/exynos4210-trats.dts             |    5 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts    |    5 +
- arch/arm/boot/dts/exynos4412-trats2.dts            |    5 +
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   45 +--
- drivers/gpu/drm/exynos/exynos_drm_core.c           |  216 +++-----------
- drivers/gpu/drm/exynos/exynos_drm_crtc.c           |   17 ++
- drivers/gpu/drm/exynos/exynos_drm_crtc.h           |    4 +
- drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   51 ++--
- drivers/gpu/drm/exynos/exynos_drm_drv.c            |  313 +++++++++++++-------
- drivers/gpu/drm/exynos/exynos_drm_drv.h            |   69 ++---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  110 ++++---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   74 +++--
- drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  101 +++++--
- drivers/gpu/drm/exynos/exynos_hdmi.c               |   59 ++--
- drivers/gpu/drm/exynos/exynos_mixer.c              |   54 +++-
- 16 files changed, 675 insertions(+), 485 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
-
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 02c6768..a41c109 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -414,6 +414,11 @@
+ 		status = "okay";
+ 	};
+ 
++	display-subsystem {
++		compatible = "samsung,exynos-display-subsystem";
++		ports = <&fimd>, <&dsi_0>;
++	};
++
+ 	camera {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <>;
 -- 
 1.7.9.5
