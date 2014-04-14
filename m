@@ -1,76 +1,58 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: dts: Add atmel trackpad node to 5250 cros
-Date: Mon, 14 Apr 2014 12:05:25 +0530
-Message-ID: <1397457325-5054-1-git-send-email-arun.kk@samsung.com>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: [PATCH v8 0/3] Exynos 5410 support
+Date: Mon, 14 Apr 2014 11:17:37 +0400
+Message-ID: <1397459860-21869-1-git-send-email-t.dakhran@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:35833 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750807AbaDNGfd (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52539 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790AbaDNHR5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 02:35:33 -0400
-Received: by mail-pa0-f47.google.com with SMTP id lj1so7792063pab.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Apr 2014 23:35:33 -0700 (PDT)
+	Mon, 14 Apr 2014 03:17:57 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, arunkk.samsung@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>
 
-The newer versions of exynos5250 based Snow boards have
-atmel trackpad. Updating relevant nodes for the same.
+The series of patches represent support of Exynos 5410 SoC
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- arch/arm/boot/dts/exynos5250-cros-common.dtsi |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
 
-diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-index 2c1560d..658f086 100644
---- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-@@ -28,6 +28,13 @@
- 			samsung,pin-pud = <0>;
- 		};
- 
-+		trackpad_irq: trackpad-irq {
-+			samsung,pins = "gpx1-2";
-+			samsung,pin-function = <0>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
- 		max77686_irq: max77686-irq {
- 			samsung,pins = "gpx3-2";
- 			samsung,pin-function = <0>;
-@@ -191,6 +198,9 @@
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <378000>;
- 
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c1_bus &trackpad_irq>;
-+
- 		trackpad {
- 			reg = <0x67>;
- 			compatible = "cypress,cyapa";
-@@ -198,6 +208,20 @@
- 			interrupt-parent = <&gpx1>;
- 			wakeup-source;
- 		};
-+		trackpad-alt {
-+			reg = <0x4b>;
-+			compatible = "atmel,atmel_mxt_tp";
-+			interrupts = <2 0>;
-+			interrupt-parent = <&gpx1>;
-+			wakeup-source;
-+		};
-+		trackpad-bootloader {
-+			reg = <0x25>;
-+			compatible = "atmel,atmel_mxt_tp";
-+			interrupts = <2 0>;
-+			interrupt-parent = <&gpx1>;
-+			wakeup-source;
-+		};
- 	};
- 
- 	i2c@12C80000 {
+Patches add new platform description, support of clock controller and device
+tree for Exynos 5410.
+
+Has been build on Linux Kernel v3.15-rc1
+Has been tested on: 1) Exynos 5410 reference board (exynos_defconfig)
+		    2) Odroid-XU board (exynos_defconfig)
+
+I hope, this will be commited to Linux v3.15...
+
+Tarek.
+
+Tarek Dakhran (3):
+  ARM: EXYNOS: Add support for EXYNOS5410 SoC
+  clk: exynos5410: register clocks using common clock framework
+  ARM: dts: Add initial device tree support for EXYNOS5410
+
+ .../devicetree/bindings/clock/exynos5410-clock.txt |   51 +++++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   65 ++++++
+ arch/arm/boot/dts/exynos5410.dtsi                  |  140 ++++++++++++
+ arch/arm/mach-exynos/Kconfig                       |    8 +
+ arch/arm/mach-exynos/exynos.c                      |   12 ++
+ arch/arm/mach-exynos/hotplug.c                     |    4 +-
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/platsmp.c                     |   10 +-
+ arch/arm/mach-exynos/regs-pmu.h                    |    4 +-
+ arch/arm/plat-samsung/include/plat/cpu.h           |   11 +-
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5410.c               |  223 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos5410.h             |   33 +++
+ 14 files changed, 556 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
+ create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+ create mode 100644 include/dt-bindings/clock/exynos5410.h
+
 -- 
 1.7.9.5
