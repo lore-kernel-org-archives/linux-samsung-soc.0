@@ -1,184 +1,224 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] arm: exynos: generalize power register address calculation
-Date: Mon, 14 Apr 2014 09:57:41 +0530
-Message-ID: <CANuQgHG3Thvkx0Jq9GTSq+jMfSXef8=D61Z5eKQBTgyRXn=N9g@mail.gmail.com>
-References: <1396973737-18693-1-git-send-email-chander.kashyap@linaro.org>
-	<1397041783-18531-1-git-send-email-chander.kashyap@linaro.org>
-	<534533E6.10901@samsung.com>
-	<CANuQgHEdks=OwF=N3LULmxujAeVVcLW3H++ixVZ3REfSrOieQA@mail.gmail.com>
-	<53455CF2.9020704@samsung.com>
-	<CANuQgHHjuWzmwKGH3YTznpTR5dRbmrW2fbGFoyroOg-P9rmybw@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
+Date: Mon, 14 Apr 2014 14:13:50 +0900
+Message-ID: <534B6E8E.20506@samsung.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+ <1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
+ <20140411014650.GB14934@quad.lixom.net> <53478C75.60302@samsung.com>
+ <5347AA35.4010504@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:51393 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751198AbaDNE1l (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 00:27:41 -0400
-Received: by mail-ob0-f172.google.com with SMTP id wm4so8598238obc.31
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Apr 2014 21:27:41 -0700 (PDT)
-In-Reply-To: <CANuQgHHjuWzmwKGH3YTznpTR5dRbmrW2fbGFoyroOg-P9rmybw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5347AA35.4010504@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+Dear Olof and Tomasz,
 
-On 10 April 2014 11:18, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> Hi Tomasz,
->
-> On 9 April 2014 20:15, Tomasz Figa <t.figa@samsung.com> wrote:
->> On 09.04.2014 15:49, Chander Kashyap wrote:
->>>
->>> Hi Tomasz,
->>>
->>> On 9 April 2014 17:19, Tomasz Figa <t.figa@samsung.com> wrote:
->>>>
->>>> Hi Chander,
->>>>
->>>>
->>>> On 09.04.2014 13:09, Chander Kashyap wrote:
->>>>>
->>>>>
->>>>> Currently status/configuration power register values are hard-coded for
->>>>> cpu1.
->>>>>
->>>>> Make it generic so that it is useful for SoC's with more than two cpus.
->>>>>
->>>>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->>>>> ---
->>>>> changes in v2 : Used existing macros for clusterid and cpuid calculation
->>>>>
->>>>>    arch/arm/mach-exynos/hotplug.c  |   15 ++++++++++++---
->>>>>    arch/arm/mach-exynos/platsmp.c  |   20 +++++++++++++++-----
->>>>>    arch/arm/mach-exynos/regs-pmu.h |    9 +++++++--
->>>>>    3 files changed, 34 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm/mach-exynos/hotplug.c
->>>>> b/arch/arm/mach-exynos/hotplug.c
->>>>> index 5eead53..eab6121 100644
->>>>> --- a/arch/arm/mach-exynos/hotplug.c
->>>>> +++ b/arch/arm/mach-exynos/hotplug.c
->>>>> @@ -17,6 +17,7 @@
->>>>>
->>>>>    #include <asm/cacheflush.h>
->>>>>    #include <asm/cp15.h>
->>>>> +#include <asm/cputype.h>
->>>>>    #include <asm/smp_plat.h>
->>>>>
->>>>>    #include <plat/cpu.h>
->>>>> @@ -92,11 +93,19 @@ static inline void cpu_leave_lowpower(void)
->>>>>
->>>>>    static inline void platform_do_lowpower(unsigned int cpu, int
->>>>> *spurious)
->>>>>    {
->>>>> +       unsigned int mpidr, cpunr, cluster;
->>>>> +
->>>>> +       mpidr = cpu_logical_map(cpu);
->>>>> +       cpunr = MPIDR_AFFINITY_LEVEL(mpidr, 0);
->>>>> +       cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->>>>> +
->>>>> +       /* Maximum possible cpus in a cluster can be 4 */
->>>>> +       cpunr += cluster * 4;
->>>>
->>>>
->>>>
->>>> I believe this is rather a weak assumption. First of all, the limit seems
->>>> to
->>>> be hardcoded only for the few existing SoCs. In addition, the value is
->>>> not
->>>> used as a maximum, but rather it is assumed that each cluster has always
->>>> four cores.
->>>
->>>
->>> The MPIDR register contains 2 bits for cpu id. Hence maximum number of
->>> cpus can be 4 only (A15/A9/A7).
->>>
+On 04/11/2014 05:39 PM, Tomasz Figa wrote:
+> On 11.04.2014 08:32, Chanwoo Choi wrote:
+>> Hi,
 >>
->> This is not what I meant. Exynos5260 contains 2 big cores (not 4) and 4
->> little cores. Are you sure that PMU register layout on Exynos5260 matches
->> your equation?
->>
->
-> Yes the equation covers that as the PMU register layout takes care for that:
-> Address offset are as follows:
-> 2 Big Cores:
-> cpu0 : 2000
-> cpu1: 2080
->
-> 4 Little cores:
->
-> cpu0: 2200
-> cpu1: 2280
-> cpu2: 2300
-> cpu3: 2380
->
->>
+>> On 04/11/2014 10:46 AM, Olof Johansson wrote:
+>>> On Thu, Apr 10, 2014 at 06:37:12PM +0900, Chanwoo Choi wrote:
+>>>> This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
+>>>> is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
+>>>> dual cores and has a target speed of 1.0GHz.
 >>>>
->>>> Moreover, it is assumed here that the mapping between core ID (calculated
->>>> by
->>>> the equation below) and PMU core numbers is 1:1, which is not true. On
->>>> Exynos4210, the cluster ID is always 0x09 and on Exynos4x12 it is 0x0a,
->>>> which will lead to completely wrong register offsets.
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>>   arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
+>>>>   arch/arm/mach-exynos/exynos.c            |  1 +
+>>>>   arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
+>>>>   3 files changed, 33 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>>>> index fc8bf18..6da8a68 100644
+>>>> --- a/arch/arm/mach-exynos/Kconfig
+>>>> +++ b/arch/arm/mach-exynos/Kconfig
+>>>> @@ -11,6 +11,17 @@ if ARCH_EXYNOS
+>>>>
+>>>>   menu "SAMSUNG EXYNOS SoCs Support"
+>>>>
+>>>> +config ARCH_EXYNOS3
+>>>> +    bool "SAMSUNG EXYNOS3"
+>>>> +    select ARM_AMBA
+>>>> +    select CLKSRC_OF
+>>>> +    select HAVE_ARM_SCU if SMP
+>>>> +    select HAVE_SMP
+>>>> +    select PINCTRL
+>>>> +    select PM_GENERIC_DOMAINS if PM_RUNTIME
+>>>> +    help
+>>>> +      Samsung EXYNOS3 SoCs based systems
+>>>> +
+>>>>   config ARCH_EXYNOS4
+>>>>       bool "SAMSUNG EXYNOS4"
+>>>>       default y
+>>>> @@ -41,6 +52,17 @@ config ARCH_EXYNOS5
+>>>>
+>>>>   comment "EXYNOS SoCs"
+>>>>
+>>>> +config SOC_EXYNOS3250
+>>>> +    bool "SAMSUNG EXYNOS3250"
+>>>> +    default y
+>>>> +    depends on ARCH_EXYNOS3
+>>>> +    select ARCH_HAS_BANDGAP
+>>>> +    select ARM_CPU_SUSPEND if PM
+>>>> +    select PINCTRL_EXYNOS
+>>>> +    select SAMSUNG_DMADEV
+>>>> +    help
+>>>> +      Enable EXYNOS3250 CPU support
+>>>> +
+>>>>   config CPU_EXYNOS4210
+>>>>       bool "SAMSUNG EXYNOS4210"
+>>>>       default y
+>>>> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+>>>> index b32a907..b134868 100644
+>>>> --- a/arch/arm/mach-exynos/exynos.c
+>>>> +++ b/arch/arm/mach-exynos/exynos.c
+>>>> @@ -370,6 +370,7 @@ static void __init exynos_dt_machine_init(void)
+>>>>   }
+>>>>
+>>>>   static char const *exynos_dt_compat[] __initconst = {
+>>>> +    "samsung,exynos3250",
 >>>
->>>
->>> Exynos4210 and Exynos4x12, cluster ids are not passed from DT as it
->>> breaks the gic_init_bases. Hence the Physical CpuID for Exynos4210
->>> will be 0,1 and Exynos4x12 will be 0,1,2,3.
->>>
->>> So it will not break.
+>>> Please consider samsung,exynos3 instead, so you don't have to update this table
+>>> for every SoC. We've talked about this before..
 >>
+>> This patchset included only exynos3250.dtsi without exynos3.dtsi.
+>> So, I added only "samsung,exynos3250" compatible name.
+> 
+> There is no direct relation between dts file names and compatible string (although usually they correspond). You don't need exynos3.dtsi (at least until another SoC from this family shows up).
+> 
 >>
->> I already have patches ready fixing GIC driver, just waiting for 3.15-rc1 to
->> be released. Anyway, CPU topology in DT is mandatory and Exynos4 device tree
->> files need to be fixed to contain them. This needs to be accounted for in
->> any changes touching CPU topology related code.
+>> Do you prefer to add SoC version as following?
+>> +       "samsung,exynos3",
+>> +       "samsung,exynos3250",
 >>
->
-> That's great.
->
+>> or ?
+>> +       "samsung,exynos3",
+> 
+> This is actually a good question. If adding exynos3 anyway, it probably wouldn't hurt to add exynos3250 anyway, to avoid adding it in future if some SoC specific quirks show up, especially when both of compatible strings need to be documented anyway.
+> 
 >>
 >>>
->>>
+>>>>       "samsung,exynos4",
+>>>>       "samsung,exynos4210",
+>>>>       "samsung,exynos4212",
+>>>> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+>>>> index 5992b8d..3d808f6b 100644
+>>>> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+>>>> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+>>>> @@ -43,6 +43,9 @@ extern unsigned long samsung_cpu_id;
+>>>>   #define S5PV210_CPU_ID        0x43110000
+>>>>   #define S5PV210_CPU_MASK    0xFFFFF000
 >>>>
->>>> I believe the proper way to deal with this is to provide per-CPU property
->>>> in
->>>> DT called "samsung,pmu-offset" that could be used be code like this to
->>>> calculate register addresses properly.
+>>>> +#define EXYNOS3250_SOC_ID       0xE3472000
+>>>> +#define EXYNOS3_SOC_MASK        0xFFFFF000
+>>>> +
+>>>>   #define EXYNOS4210_CPU_ID    0x43210000
+>>>>   #define EXYNOS4212_CPU_ID    0x43220000
+>>>>   #define EXYNOS4412_CPU_ID    0xE4412200
+>>>> @@ -68,6 +71,7 @@ IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
+>>>>   IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
+>>>>   IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
+>>>>   IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
+>>>> +IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
+>>>>   IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+>>>>   IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+>>>>   IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+>>>> @@ -126,6 +130,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+>>>>   # define soc_is_s5pv210()    0
+>>>>   #endif
 >>>>
->>>> For now, I would recommend doing the above ignoring cluster ID completely
->>>> to
->>>> not break (and actually fix) single cluster systems and existing multi
->>>> cluster ones on which only the first cluster is supported now.
->>>>
->>>> After that, per-CPU PMU offset should be implemented to support
->>>> multi-cluster SoCs with proper support of multiple clusters.
+>>>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>>>> +# define soc_is_exynos3250()    is_samsung_exynos3250()
+>>>> +#else
+>>>> +# define soc_is_exynos3250()    0
+>>>> +#endif
 >>>
+>>> In general, I think we have too much code littered with soc_is_<foo>() going
+>>> on, so please try to avoid adding more for this SoC. Especially in cases where
+>>> you just want to bail out of certain features where we might already have
+>>> function pointers to control if a function is called or not, such as the
+>>> firmware interfaces.
 >>>
->>> As of now the smp-boot (cores > 2) is broken. This is required to fix it.
 >>
+>> Do you prefer dt helper function such as following function instead of new soc_is_xx() ?
+>> - of_machine_is_compatible("samsung,exynos3250")
 >>
->> SMP boot works fine on all four cores of Exynos 4412. Obiously hot-(un)plug
->> doesn't, but this is another issue.
->>
->
-> It works as of now as at power on all the cores powered on. Hence the
-> powerOn in platsmp.c doent make any difference,  It breaks in hotplug
-> as we always poweron cpu1, not the correct cpu.
->
->> Best regards,
->> Tomasz
->
->
->
-> --
-> with warm regards,
-> Chander Kashyap
+>> If you are OK, I'll use of_machine_is_compatible() instead of soc_is_xx().
+> 
+> First of all, there is still a lot of code in mach-exynos/ using the soc_is_xx() macros, so having some SoCs use them and other SoCs use of_machine_is_compatible() wouldn't make the code cleaner.
+> 
+> For now, I wouldn't mind adding soc_is_exynos3250(), but in general such code surrounded with if (soc_is_xx()) blocks should be reworked to use something better, for example function pointers, as Olof suggested.
 
-Any other comments on this patch. If not then can it be merged?
+I thought 'function pointers' method instead of soc_is_xxx() macro as following two case:
+I need more detailed explanation/example of "for example function pointers, as Olof suggested." sentence.
 
--- 
-with warm regards,
-Chander Kashyap
+[case 1]
+Each Exynos SoC has other function pointers according to compatible name of DT.
+
+For example, arch/arm/mach-exynos/firmware.c
+
+static const struct firmware_ops exynos_firmware_ops = {
+	.do_idle		= exynos_do_idle,
+	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+	.cpu_boot		= exynos_cpu_boot,
+};
+static const struct firmware_ops exynos3250_firmware_ops = {
+	.do_idle		= exynos_do_idle,
+	.set_cpu_boot_addr	= exynos4212_set_cpu_boot_addr,
+	.cpu_boot		= exynos3250_cpu_boot,
+};
+
+static const struct firmware_ops exynos4212_firmware_ops = {
+	.do_idle		= exynos_do_idle,
+	.set_cpu_boot_addr	= exynos4212_set_cpu_boot_addr,
+	.cpu_boot		= exynos4212_cpu_boot,
+};
+
+struct secure_firmware {
+	char *name;
+	const struct firmware_ops *ops;
+} exynos_secure_firmware[] __initconst = {
+	{ "samsung,secure-firmware",		&exynos_firmware_ops },
+	{ "samsung,exynos3250-secure-firmware", &exynos3250_firmware_ops },
+	{ "samsung,exynos4212-secure-firmware", &exynos4212_firmware_ops },
+};
+
+
+[case 2]
+Delete all the soc_is_xxx() macro and then
+use only get_samsung_soc_id() function as following:
+	 
+	switch (get_samsung_soc_id()) {
+	case EXYNOS3250_SOC_ID:
+		// ...
+		break;
+	case EXYNOS4210_CPU_ID:
+		// ...
+		break;
+	case EXYNOS4212_CPU_ID:
+		// ...
+		break;
+	case EXYNOS4412_CPU_ID:
+		// ...
+		break;
+	case EXYNOS5250_SOC_ID:
+		// ...
+		break;
+	case EXYNOS5420_SOC_ID:
+		// ...
+		break;
+	case EXYNOS5440_SOC_ID:
+		// ...
+		break;
+	};
+
+Best Regards,
+Chanwoo Choi
