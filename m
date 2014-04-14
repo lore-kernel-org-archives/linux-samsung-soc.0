@@ -1,49 +1,48 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 2/9] drm/exynos: dpi: fix hotplug fail issue
-Date: Mon, 14 Apr 2014 15:09:47 +0900
-Message-ID: <1397455794-7759-3-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH 5/9] ARM: dts: exynos4412-trats2: add super device node for
+ exynos drm
+Date: Mon, 14 Apr 2014 15:09:50 +0900
+Message-ID: <1397455794-7759-6-git-send-email-inki.dae@samsung.com>
 References: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:48848 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751356AbaDNGJ5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 02:09:57 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
-
-When connector is created, if connector->polled is
-DRM_CONNECTOR_POLL_CONNECT then drm_kms_helper_hotplug_event
-function isn't called at drm_helper_hpd_irq_event because the
-function will be called only in case of DRM_CONNECTOR_POLL_HPD.
-
-So this patch sets always DRM_CONNECTOR_POLL_HPD flag to
-connector->polled of parallel panel driver at connector creation.
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dpi.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos4412-trats2.dts |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index c1f4b35..ac206e7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -123,10 +123,7 @@ static int exynos_dpi_create_connector(struct exynos_drm_display *display,
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 53c717b..115b9ed 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -581,6 +581,11 @@
+ 		status = "okay";
+ 	};
  
- 	ctx->encoder = encoder;
- 
--	if (ctx->panel_node)
--		connector->polled = DRM_CONNECTOR_POLL_CONNECT;
--	else
--		connector->polled = DRM_CONNECTOR_POLL_HPD;
-+	connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
- 	ret = drm_connector_init(encoder->dev, connector,
- 				 &exynos_dpi_connector_funcs,
++	display-subsystem {
++		compatible = "samsung,exynos-display-subsystem";
++		ports = <&fimd>, <&dsi_0>;
++	};
++
+ 	camera {
+ 		pinctrl-0 = <&cam_port_b_clk_active>;
+ 		pinctrl-names = "default";
 -- 
 1.7.9.5
