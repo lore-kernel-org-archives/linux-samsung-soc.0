@@ -1,64 +1,39 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] thermal: samsung: Only update available threshold limits
-Date: Mon, 14 Apr 2014 11:08:15 +0530
-Message-ID: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:59343 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731AbaDNFjF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 01:39:05 -0400
-Received: by mail-pd0-f180.google.com with SMTP id v10so7718664pde.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Apr 2014 22:39:04 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 03/27] ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
+Date: Mon, 14 Apr 2014 15:04:48 +0900
+Message-ID: <534B7A80.3010509@samsung.com>
+References: <1397122124-15690-1-git-send-email-cw00.choi@samsung.com>
+ <1397122124-15690-4-git-send-email-cw00.choi@samsung.com>
+ <4996376.GgWd9rnCP3@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <4996376.GgWd9rnCP3@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: rui.zhang@intel.com, eduardo.valentin@ti.com
 
-Currently the threshold limits are updated in 2 stages, once for all
-software trigger levels and again for hardware trip point.
+Dear Arnd and Kukjin,
 
-While updating the software trigger levels, it overwrites the threshold
-limit for hardware trip point thereby forcing the Exynos core to issue
-an emergency shutdown.
+On 04/10/2014 06:46 PM, Arnd Bergmann wrote:
+> On Thursday 10 April 2014 18:28:20 Chanwoo Choi wrote:
+>> This patch add memory mapping for PMU (Power Management Unit) which is used
+>> for power control of Exynos3250.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Same thing as for the SRAM here, can you work on making this a proper
+> driver instead?
+> 
 
-Updating only the required fields in threshold register fixes this issue.
+As Chanho Park said, Sachin already submitted the DT support[1] for SYSRAM area.
+[1] : http://www.spinics.net/lists/linux-samsung-soc/msg27647.html
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-Based on v3.15-rc1.
+But, this patch has not yet to merge git repository(linux-samsung.git, arm-soc.git).
+So, I'll make a driver to handle PMU memory mapping after Sachin's patch is merged.
 
- drivers/thermal/samsung/exynos_tmu.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 0d96a51..ffccc89 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -225,6 +225,8 @@ skip_calib_data:
- 			trigger_levs++;
- 	}
- 
-+	rising_threshold = readl(data->base + reg->threshold_th0);
-+
- 	if (data->soc == SOC_ARCH_EXYNOS4210) {
- 		/* Write temperature code for threshold */
- 		threshold_code = temp_to_code(data, pdata->threshold);
-@@ -249,6 +251,7 @@ skip_calib_data:
- 				ret = threshold_code;
- 				goto out;
- 			}
-+			rising_threshold &= ~(0xff << 8 * i);
- 			rising_threshold |= threshold_code << 8 * i;
- 			if (pdata->threshold_falling) {
- 				threshold_code = temp_to_code(data,
-@@ -281,6 +284,7 @@ skip_calib_data:
- 			}
- 			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
- 				/* 1-4 level to be assigned in th0 reg */
-+				rising_threshold &= ~(0xff << 8 * i);
- 				rising_threshold |= threshold_code << 8 * i;
- 				writel(rising_threshold,
- 					data->base + reg->threshold_th0);
--- 
-1.7.9.5
+Best Regards,
+Chanwoo Choi
