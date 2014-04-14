@@ -1,124 +1,95 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH RFC 0/2] drm/exynos: refactoring drm device init/deinit
-Date: Mon, 14 Apr 2014 10:54:42 +0200
-Message-ID: <534BA252.7060208@samsung.com>
-References: <1397225488-6634-1-git-send-email-a.hajda@samsung.com>
- <CAAQKjZMz56YjHtjBrEwOkxbyvdp1t9o9rCU9cFiR7GZOXVsKCw@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V5 00/20] ARM: exynos: cpuidle: Move the driver to
+ drivers/cpuidle
+Date: Mon, 14 Apr 2014 11:01:03 +0200
+Message-ID: <534BA3CF.6030701@linaro.org>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:53098 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881AbaDNIy4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 04:54:56 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N40005OWJFFID90@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Apr 2014 09:54:51 +0100 (BST)
-In-reply-to: <CAAQKjZMz56YjHtjBrEwOkxbyvdp1t9o9rCU9cFiR7GZOXVsKCw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene.kim@samsung.com
+Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 04/12/2014 04:18 PM, Inki Dae wrote:
-> Hi Andrzej,
->
-> Thanks for your contributions.
->
-> 2014-04-11 23:11 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->> Hi Inki,
->>
->> This patchset refactors drm device initialization. Details are described
->> in respective patches. It is an alternative to DT supernode concept.
->>
->> The first patch uses linker sections to get rid of ifdef macros, it is not
-> That's a good idea. :) We could avoid ugly #ifdef ~ #endif with this way.
->
->> essential for 2nd patch but it makes code more readable. Similar approach
->> is used by irqchip, clks and clk_sources.
-> But 2nd patch doesn't seem reasnoable to me. Your approach is same as
-> existing one conceptually. I think we need to handle drm driver in a
-> different way from irqchip, clks and clk_sources.
->
-> DRM driver means one integrated graphics card but in most embedded
-> systems, graphics and display relevant devices have separated hardware
-> resources. So we would need abstractional integrated hardware,
-> display-subsystem, super device. That is why I are trying to use super
-> device approach, and conceptually it would be right solution. It
-> wouldn't be not good to combine those separated hardware somehow using
-> specific codes.
-
-Conceptually both approaches are the same: we have number of devices
-which should be ready before we can start super-device and if any device
-is to be removed super-device should be removed before.
-The difference is in 'details':
-- super-node approach have list of components provided explicitly in DT
-special node,
-- in this approach list of components is constructed from devices
-present in the
-system.
-
-Creating special DT node with information which is available anyway seems
-to be redundant and against DT rules.
-
-Regarding the old approach, I would not compare it with the current ones
-as it has two main flaws:
-- it is not aware of deferred probing, or more precisely it assumes that
-driver registration
-instantly triggers device probing (it happens to be true) and no probe
-of drm component
-will happen later (and this is false assumption, eg. deferred probe),
-- it do not remove super-device in case of removal of any of components.
-
-Regards
-Andrzej
-
->
-> I have updated and tested super device approach with existing dt
-> support so there wouldn't be any dt broken issue. I will post next
-> version of this patch series soon, maybe tomorrow or the day after
-> tomorrow.
->
-> Thanks,
-> Inki Dae
->
->> The patchset is based on exynos-drm-next branch.
->>
->> Regards
->> Andrzej
->>
->>
->> Andrzej Hajda (2):
->>   drm/exynos: refactor drm drivers registration code
->>   drm/exynos: initialize drm master only when all exynos drm devices are
->>     ready
->>
->>  drivers/gpu/drm/exynos/Makefile             |   2 +
->>  drivers/gpu/drm/exynos/exynos_dp_core.c     |  37 ++--
->>  drivers/gpu/drm/exynos/exynos_drm.lds.S     |   9 +
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c     | 279 +++++++++++++---------------
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h     |  20 +-
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  42 +++--
->>  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  35 ++--
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  38 ++--
->>  drivers/gpu/drm/exynos/exynos_drm_g2d.c     |  17 +-
->>  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  30 +--
->>  drivers/gpu/drm/exynos/exynos_drm_ipp.c     |  18 +-
->>  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  27 ++-
->>  drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  18 +-
->>  drivers/gpu/drm/exynos/exynos_hdmi.c        |  53 ++++--
->>  drivers/gpu/drm/exynos/exynos_mixer.c       |  14 +-
->>  15 files changed, 360 insertions(+), 279 deletions(-)
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm.lds.S
->>
->> --
->> 1.8.3.2
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+CkhpIEt1a2ppbiwKCkkgYmVsaWV2ZSBJIGFkZHJlc3NlZCBhbGwgdGhlIGNvbW1lbnRzLiBJcyBp
+dCBwb3NzaWJsZSB0byB0YWtlIHRoaXMgCnBhdGNoc2V0IGZvciBuZXh0ID8KClJlZ2FyZHMKCiAg
+IC0tIERhbmllbAoKCgpPbiAwNC8xMS8yMDE0IDEyOjM5IFBNLCBEYW5pZWwgTGV6Y2FubyB3cm90
+ZToKPiBDaGFuZ2Vsb2c6Cj4KPiBWNToKPiAJKiBSZW1vdmVkIHBhdGNoIDogIk1vdmUgY2xvY2sg
+c2V0dXAgdG8gcG0uYyIKPiAJKiBBZGRlZCBwYXRjaCAgIDogIk1vdmUgYXJtIGNvcmUgcG93ZXIg
+ZG93biBjbG9jayB0byBleHlub3M1MjUwIGNvbW1vbiBjb2RlIgo+IFY0Ogo+IAkqIFRvb2sgaW50
+byBhY2NvdW50IFRvbWFzeidzIGNvbW1lbnRzCj4gCQkqIEZpeGVkIG1pc3NpbmcgY2FsbCBpbiBm
+b3IgY2VudHJhbCBzdXNwZW5kCj4gCQkqIFBhc3NlZCBwYXJhbWV0ZXIgdG8gdGhlIHdha2V1cCBt
+YXNrIGZ1bmN0aW9uCj4gCQkqIE1vdmVkIHdha2V1cCBtYXNrLCBib290IHZlY3RvciBhbmQgYWZ0
+ciBzdGF0ZSBpbnRvIGEgc2luZ2xlCj4gCQlmdW5jdGlvbgo+IAkJKiBVc2VkIHRoaXMgZnVuY3Rp
+b24gYXMgY2FsbGJhY2sgZm9yIHBsYXRmb3JtIGRhdGEKPiAJCSogTW92ZWQgUzVQX0NIRUNLX0FG
+VFIvUzVQX0NIRUNLX1NMRUVQIGludG8gcG0uYwo+IAkJKiBTZXQgYm9vdCB2ZWN0b3Igb25seSBv
+bmUgdGltZQo+IAkqIFNwbGl0dGVkIHNvbWUgcGF0Y2hlcyB0byBtYWtlIHRoZW0gbW9yZSByZWFk
+YWJsZQo+IFYzOgo+IAkqIEFkZGVkIHBhdGNoICAgOiAiQVJNOiBleHlub3M6IGNwdWlkbGU6IERp
+c2FibGUgY3B1aWRsZSBmb3IgNTQ0MCIKPiAJKiBSZW1vdmVkIHBhdGNoIDogIkFSTTogZXh5bm9z
+OiBjb25maWc6IEVuYWJsZSBjcHVpZGxlIgo+IAkqIFJlbW92ZWQgZGVmYXVsdCBBUk1fRVhZTk9T
+NDIxMF9DUFVJRExFPXkKPiAJKiBBZGRlZCBjb21tZW50IGFib3V0IGJ1ZyBmaXggc2lkZSBlZmZl
+Y3QgJ2Zvcl9lYWNoX3Bvc3NpYmxlX2NwdScKPiBWMjoKPiAJKiBBZGRlZCBjb21tZW50IGluIGNo
+YW5nZWxvZyBmb3IgY2FsbHMgb3JkZXIgKDUvMTcpCj4gCSogQ2FsbCB0aGUgcG93ZXJkb3duIG9u
+bHkgZm9yIGNwdTAgaW4gdGhlIHBtIG5vdGlmaWVyCj4gCSogU2V0IHRoZSBwbSBub3RpZmllciBm
+b3IgYWxsIGJvYXJkcwo+Cj4gVjE6IGluaXRpYWwgcG9zdAo+Cj4gVGhpcyBwYXRjaHNldCByZWxp
+ZXMgb24gdGhlIGNwbV9wbSBub3RpZmllciB0byBpbml0aWF0ZSB0aGUgcG93ZXJkb3duIHNlcXVl
+bmNlCj4gb3BlcmF0aW9ucyBmcm9tIHBtLmMgaW5zdGVhZCBjcHVpZGxlLmMuIFRodXMgdGhlIGNw
+dWlkbGUgZHJpdmVyIGlzIG5vIGxvbmdlcgo+IGRlcGVuZGVudCBmcm9tIGFyY2ggc3BlY2lmaWMg
+Y29kZSBhcyBldmVyeXRoaW5nIGlzIGNhbGxlZCBmcm9tIHRoZSBwbS5jIGZpbGUuCj4KPiBUaGUg
+cGF0Y2hzZXQgYXBwbGllcyBvbiB0b3Agb2YgbGludXgtc2Ftc3VuZy9mb3ItbmV4dC4KPgo+IFRl
+c3RlZCBvbiBleHlub3M0OiA0MjEwCj4gVGVzdGVkIG9uIGV4eW5vczU6IDUyNTAgKHdpdGhvdXQg
+QUZUUikKPgo+IEFtaXQgRGFuaWVsIEthY2hoYXAgKDEpOgo+ICAgIEFSTTogRVhZTk9TOiBNb3Zl
+IGFybSBjb3JlIHBvd2VyIGRvd24gY2xvY2sgdG8gZXh5bm9zNTI1MCBjb21tb24KPiAgICAgIGNs
+b2NrCj4KPiBEYW5pZWwgTGV6Y2FubyAoMTkpOgo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxlOiBQ
+cmV2ZW50IGZvcndhcmQgZGVjbGFyYXRpb24KPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogVXNl
+IGNwdWlkbGVfcmVnaXN0ZXIKPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogQ2hhbmdlIGZ1bmN0
+aW9uIG5hbWUgcHJlZml4Cj4gICAgQVJNOiBleHlub3M6IGNwdWlkbGU6IEVuY2Fwc3VsYXRlIHJl
+Z2lzdGVyIGFjY2VzcyBpbnNpZGUgYSBmdW5jdGlvbgo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxl
+OiBNb3ZlIHNvbWUgY29kZSBpbnNpZGUgdGhlIGlkbGVfZmluaXNoZXIKPiAgICBBUk06IGV4eW5v
+czogY3B1aWRsZTogRml4IFM1UF9XQUtFVVBfU1RBVCBjYWxsCj4gICAgQVJNOiBleHlub3M6IGNw
+dWlkbGU6IFVzZSB0aGUgY3B1X3BtIG5vdGlmaWVyCj4gICAgQVJNOiBleHlub3M6IGNwdWlkbGU6
+IE1vdmUgc2N1X2VuYWJsZSBpbiB0aGUgY3B1X3BtIG5vdGlmaWVyCj4gICAgQVJNOiBleHlub3M6
+IGNwdWlkbGU6IFJlbW92ZSBpZmRlZiBmb3Igc2N1X2VuYWJsZQo+ICAgIEFSTTogZXh5bm9zOiBj
+cHVpZGxlOiBQYXNzIHdha2V1cCBtYXNrIHBhcmFtZXRlciB0byBmdW5jdGlvbgo+ICAgIEFSTTog
+ZXh5bm9zOiBjcHVpZGxlOiBFbmNhcHN1bGF0ZSBib290IHZlY3RvciBjb2RlIGludG8gYSBmdW5j
+dGlvbgo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxlOiBEaXNhYmxlIGNwdWlkbGUgZm9yIDU0NDAK
+PiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogRW5jYXBzdWxhdGUgdGhlIEFGVFIgY29kZSBpbnRv
+IGEgZnVuY3Rpb24KPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogTW92ZSB0aGUgQUZUUiBzdGF0
+ZSBmdW5jdGlvbiBpbnRvIHBtLmMKPiAgICBBUk06IGV4eW5vczogY3B1aWRsZTogTW92ZSB0aGUg
+cG93ZXIgc2VxdWVuY2UgY2FsbCBpbiB0aGUgY3B1X3BtCj4gICAgICBub3RpZmllcgo+ICAgIEFS
+TTogZXh5bm9zOiBjcHVpZGxlOiBNb3ZlIFM1UF9DSEVDS19TTEVFUCBpbnRvIHBtLmMKPiAgICBB
+Uk06IGV4eW5vczogY3B1aWRsZTogUGFzcyB0aGUgQUZUUiBjYWxsYmFjayB0byB0aGUgcGxhdGZv
+cm1fZGF0YQo+ICAgIEFSTTogZXh5bm9zOiBjcHVpZGxlOiBDbGVhbnVwIGFsbCB1bm5lZWRlZCBo
+ZWFkZXJzIGZyb20gY3B1aWRsZS5jCj4gICAgQVJNOiBleHlub3M6IGNwdWlkbGU6IE1vdmUgdGhl
+IGRyaXZlciB0byBkcml2ZXJzL2NwdWlkbGUgZGlyZWN0b3J5Cj4KPiAgIGFyY2gvYXJtL21hY2gt
+ZXh5bm9zL01ha2VmaWxlICAgICAgICB8ICAgIDEgLQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3Mv
+Y29tbW9uLmggICAgICAgIHwgICAgMSArCj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jcHVpZGxl
+LmMgICAgICAgfCAgMjU1IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgIGFy
+Y2gvYXJtL21hY2gtZXh5bm9zL2V4eW5vcy5jICAgICAgICB8ICAgIDggKy0KPiAgIGFyY2gvYXJt
+L21hY2gtZXh5bm9zL3BtLmMgICAgICAgICAgICB8ICAxNTIgKysrKysrKysrKysrKysrKy0tLS0K
+PiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL3JlZ3MtcG11LmggICAgICB8ICAgIDIgLQo+ICAgZHJp
+dmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTI1MC5jIHwgICA0MiArKysrKysKPiAgIGRyaXZl
+cnMvY3B1aWRsZS9LY29uZmlnLmFybSAgICAgICAgICB8ICAgIDYgKwo+ICAgZHJpdmVycy9jcHVp
+ZGxlL01ha2VmaWxlICAgICAgICAgICAgIHwgICAgMSArCj4gICBkcml2ZXJzL2NwdWlkbGUvY3B1
+aWRsZS1leHlub3MuYyAgICAgfCAgIDk4ICsrKysrKysrKysrKysKPiAgIDEwIGZpbGVzIGNoYW5n
+ZWQsIDI3NyBpbnNlcnRpb25zKCspLCAyODkgZGVsZXRpb25zKC0pCj4gICBkZWxldGUgbW9kZSAx
+MDA2NDQgYXJjaC9hcm0vbWFjaC1leHlub3MvY3B1aWRsZS5jCj4gICBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9jcHVpZGxlL2NwdWlkbGUtZXh5bm9zLmMKPgoKCi0tIAogIDxodHRwOi8vd3d3
+LmxpbmFyby5vcmcvPiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJN
+IFNvQ3MKCkZvbGxvdyBMaW5hcm86ICA8aHR0cDovL3d3dy5mYWNlYm9vay5jb20vcGFnZXMvTGlu
+YXJvPiBGYWNlYm9vayB8CjxodHRwOi8vdHdpdHRlci5jb20vIyEvbGluYXJvb3JnPiBUd2l0dGVy
+IHwKPGh0dHA6Ly93d3cubGluYXJvLm9yZy9saW5hcm8tYmxvZy8+IEJsb2cKCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
+aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
+c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
