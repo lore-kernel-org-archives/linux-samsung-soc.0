@@ -1,8 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 3/9] ARM: dts: exynos4210-universal: add super device node for
- exynos drm
-Date: Mon, 14 Apr 2014 15:09:48 +0900
-Message-ID: <1397455794-7759-4-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH 9/9] drm/exynos: modify goto labels to meaningful names
+Date: Mon, 14 Apr 2014 15:09:54 +0900
+Message-ID: <1397455794-7759-10-git-send-email-inki.dae@samsung.com>
 References: <1397455794-7759-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,26 +22,137 @@ Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.ker
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210-universal_c210.dts |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |   40 +++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 0a80a72..5351ac4 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -409,6 +409,11 @@
- 		};
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index cdd74e2..1d1c604 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -508,56 +508,56 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ #ifdef CONFIG_DRM_EXYNOS_DSI
+ 	ret = platform_driver_register(&dsi_driver);
+ 	if (ret < 0)
+-		goto out_dsi;
++		goto err_unregister_dp;
+ #endif
  
-+	display-subsystem {
-+		compatible = "samsung,exynos-display-subsystem";
-+		ports = <&fimd>;
-+	};
-+
- 	pwm@139D0000 {
- 		compatible = "samsung,s5p6440-pwm";
- 		status = "okay";
+ #ifdef CONFIG_DRM_EXYNOS_FIMD
+ 	ret = platform_driver_register(&fimd_driver);
+ 	if (ret < 0)
+-		goto out_fimd;
++		goto err_unregister_dsi;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_HDMI
+ 	ret = platform_driver_register(&hdmi_driver);
+ 	if (ret < 0)
+-		goto out_hdmi;
++		goto err_unregister_fimd;
+ 	ret = platform_driver_register(&mixer_driver);
+ 	if (ret < 0)
+-		goto out_mixer;
++		goto err_unregister_hdmi;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_G2D
+ 	ret = platform_driver_register(&g2d_driver);
+ 	if (ret < 0)
+-		goto out_g2d;
++		goto err_unregister_mixer;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_FIMC
+ 	ret = platform_driver_register(&fimc_driver);
+ 	if (ret < 0)
+-		goto out_fimc;
++		goto err_unregister_g2d;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_ROTATOR
+ 	ret = platform_driver_register(&rotator_driver);
+ 	if (ret < 0)
+-		goto out_rotator;
++		goto err_unregister_fimc;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_GSC
+ 	ret = platform_driver_register(&gsc_driver);
+ 	if (ret < 0)
+-		goto out_gsc;
++		goto err_unregister_rotator;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_IPP
+ 	ret = platform_driver_register(&ipp_driver);
+ 	if (ret < 0)
+-		goto out_ipp;
++		goto err_unregister_gsc;
+ 
+ 	ret = exynos_platform_device_ipp_register();
+ 	if (ret < 0)
+-		goto out_ipp_dev;
++		goto err_unregister_ipp;
+ #endif
+ 
+ 	ret = component_master_add(&pdev->dev, &exynos_drm_ops);
+@@ -568,46 +568,46 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_DRM_EXYNOS_IPP
+ 	exynos_platform_device_ipp_unregister();
+-out_ipp_dev:
++err_unregister_ipp:
+ 	platform_driver_unregister(&ipp_driver);
+-out_ipp:
++err_unregister_gsc:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_GSC
+ 	platform_driver_unregister(&gsc_driver);
+-out_gsc:
++err_unregister_rotator:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_ROTATOR
+ 	platform_driver_unregister(&rotator_driver);
+-out_rotator:
++err_unregister_fimc:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_FIMC
+ 	platform_driver_unregister(&fimc_driver);
+-out_fimc:
++err_unregister_g2d:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_G2D
+ 	platform_driver_unregister(&g2d_driver);
+-out_g2d:
++err_unregister_mixer:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_HDMI
+ 	platform_driver_unregister(&mixer_driver);
+-out_mixer:
++err_unregister_hdmi:
+ 	platform_driver_unregister(&hdmi_driver);
+-out_hdmi:
++err_unregister_fimd:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_FIMD
+ 	platform_driver_unregister(&fimd_driver);
+-out_fimd:
++err_unregister_dsi:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_DSI
+ 	platform_driver_unregister(&dsi_driver);
+-out_dsi:
++err_unregister_dp:
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_DP
 -- 
 1.7.9.5
