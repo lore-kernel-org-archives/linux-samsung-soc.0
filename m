@@ -1,90 +1,156 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 2/2] iio: devicetree: Add DT binding documentation for
- Exynos3250 ADC
-Date: Mon, 14 Apr 2014 18:07:06 +0900
-Message-ID: <1397466426-13870-3-git-send-email-cw00.choi@samsung.com>
-References: <1397466426-13870-1-git-send-email-cw00.choi@samsung.com>
+From: Steve Capper <steve.capper@linaro.org>
+Subject: Re: [PATCH 7/8] arm64: mm: Implement 4 levels of translation tables
+Date: Mon, 14 Apr 2014 10:14:25 +0100
+Message-ID: <20140414091424.GA14204@linaro.org>
+References: <000501cf57b4$e57e8e80$b07bab80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1397466426-13870-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org, galak@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:61782 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750954AbaDNJOd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Apr 2014 05:14:33 -0400
+Received: by mail-wg0-f48.google.com with SMTP id l18so7910716wgh.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Apr 2014 02:14:32 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <000501cf57b4$e57e8e80$b07bab80$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
 
-This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
-special clock ('sclk_tsadc') for ADC which provide clock to internal ADC.
+On Mon, Apr 13, 2014 at 04:41:07PM +0900, Jungseok Lee wrote:
+> This patch implements 4 levels of translation tables since 3 levels
+> of page tables with 4KB pages cannot support 40-bit physical address
+> space described in [1] due to the following issue.
+> 
+> It is a restriction that kernel logical memory map with 4KB + 3 levels
+> (0xffffffc000000000-0xffffffffffffffff) cannot cover RAM region from
+> 544GB to 1024GB in [1]. Specifically, ARM64 kernel fails to create
+> mapping for this region in map_mem function since __phys_to_virt for
+> this region reaches to address overflow.
+> 
+> If SoC design follows the document, [1], over 32GB RAM would be placed
+> from 544GB. Even 64GB system is supposed to use the region from 544GB
+> to 576GB for only 32GB RAM. Naturally, it would reach to enable 4 levels
+> of page tables to avoid hacking __virt_to_phys and __phys_to_virt.
+> 
+> However, it is recommended 4 levels of page table should be only enabled
+> if memory map is too sparse or there is about 512GB RAM.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- .../devicetree/bindings/arm/samsung/exynos-adc.txt   | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Hi,
+So I thought I'd apply this series and have a play, this patch doesn't apply
+cleanly for me, please see below why...
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-index 5d49f2b..7532ec3 100644
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-@@ -14,6 +14,8 @@ Required properties:
- 				for exynos4412/5250 controllers.
- 			Must be "samsung,exynos-adc-v2" for
- 				future controllers.
-+			Must be "samsung,exynos-adc-v3" for
-+				for exynos3250 controllers.
- - reg:			Contains ADC register address range (base address and
- 			length) and the address of the phy enable register.
- - interrupts: 		Contains the interrupt information for the timer. The
-@@ -21,7 +23,11 @@ Required properties:
- 			the Samsung device uses.
- - #io-channel-cells = <1>; As ADC has multiple outputs
- - clocks		From common clock binding: handle to adc clock.
-+			From common clock binding: handle to sclk_tsadc clock
-+			if using Exynos3250.
- - clock-names		From common clock binding: Shall be "adc".
-+			From common clock binding: Shall be "sclk_tsadc"
-+			if using Exynos3250.
- - vdd-supply		VDD input supply.
- 
- Note: child nodes can be added for auto probing from device tree.
-@@ -41,6 +47,20 @@ adc: adc@12D10000 {
- 	vdd-supply = <&buck5_reg>;
- };
- 
-+If Exynos3250 uses ADC,
-+adc: adc@126C0000 {
-+	compatible = "samsung,exynos-adc-v3";
-+	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+	interrupts = <0 137 0>;
-+	#io-channel-cells = <1>;
-+	io-channel-ranges;
-+
-+	clock-names = "adc", "sclk_tsadc";
-+	clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
-+
-+	vdd-supply = <&buck5_reg>;
-+};
-+
- 
- Example: Adding child nodes in dts file
- 
+[ ... ]
+
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index 0fd5650..0b0b16a 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -46,8 +46,8 @@
+>  #error KERNEL_RAM_VADDR must start at 0xXXX80000
+>  #endif
+>  
+> -#define SWAPPER_DIR_SIZE	(3 * PAGE_SIZE)
+> -#define IDMAP_DIR_SIZE		(2 * PAGE_SIZE)
+> +#define SWAPPER_DIR_SIZE	(4 * PAGE_SIZE)
+> +#define IDMAP_DIR_SIZE		(3 * PAGE_SIZE)
+>  
+>  	.globl	swapper_pg_dir
+>  	.equ	swapper_pg_dir, KERNEL_RAM_VADDR - SWAPPER_DIR_SIZE
+> @@ -384,6 +384,20 @@ ENDPROC(__calc_phys_offset)
+>  	.endm
+>  
+>  /*
+> + * Macro to populate the PUD for the corresponding block entry in the next
+> + * level (tbl) for the given virtual address.
+> + *
+> + * Preserves:	pud, tbl, virt
+> + * Corrupts:	tmp1, tmp2
+> + */
+> +	.macro create_pud_entry, pud, tbl, virt, tmp1, tmp2
+> +	lsr	\tmp1, \virt, #PUD_SHIFT
+> +	and	\tmp1, \tmp1, #PTRS_PER_PUD - 1	// PUD index
+> +	orr	\tmp2, \tbl, #3			// PUD entry table type
+> +	str	\tmp2, [\pud, \tmp1, lsl #3]
+> +	.endm
+> +
+> +/*
+>   * Macro to populate block entries in the page table for the start..end
+>   * virtual range (inclusive).
+>   *
+> @@ -445,10 +459,18 @@ __create_page_tables:
+>  	ldr	x3, =KERNEL_START
+>  	add	x3, x3, x28			// __pa(KERNEL_START)
+
+I don't think we have C++ style comments in the kernel. Also, I can't see
+any references to =KERNEL_START in arch/arm64/kernel/head.S (from 3.14 down).
+
+>  	create_pgd_entry x25, x0, x3, x5, x6
+> +#ifdef CONFIG_ARM64_4_LEVELS
+> +	add	x1, x0, #PAGE_SIZE
+> +	create_pud_entry x0, x1, x3, x5, x6
+> +#endif
+>  	ldr	x6, =KERNEL_END
+>  	mov	x5, x3				// __pa(KERNEL_START)
+>  	add	x6, x6, x28			// __pa(KERNEL_END)
+> +#ifndef CONFIG_ARM64_4_LEVELS
+>  	create_block_map x0, x7, x3, x5, x6
+> +#else
+> +	create_block_map x1, x7, x3, x5, x6
+> +#endif
+>  
+>  	/*
+>  	 * Map the kernel image (starting with PHYS_OFFSET).
+> @@ -456,9 +478,17 @@ __create_page_tables:
+>  	add	x0, x26, #PAGE_SIZE		// section table address
+>  	mov	x5, #PAGE_OFFSET
+>  	create_pgd_entry x26, x0, x5, x3, x6
+> +#ifdef CONFIG_ARM64_4_LEVELS
+> +	add	x1, x0, #PAGE_SIZE
+> +	create_pud_entry x0, x1, x3, x5, x6
+> +#endif
+>  	ldr	x6, =KERNEL_END
+>  	mov	x3, x24				// phys offset
+> +#ifndef CONFIG_ARM64_4_LEVELS
+>  	create_block_map x0, x7, x3, x5, x6
+> +#else
+> +	create_block_map x1, x7, x3, x5, x6
+> +#endif
+>  
+>  	/*
+>  	 * Map the FDT blob (maximum 2MB; must be within 512MB of
+> @@ -474,14 +504,25 @@ __create_page_tables:
+>  	add	x5, x5, x6			// __va(FDT blob)
+>  	add	x6, x5, #1 << 21		// 2MB for the FDT blob
+>  	sub	x6, x6, #1			// inclusive range
+> +#ifndef CONFIG_ARM64_4_LEVELS
+>  	create_block_map x0, x7, x3, x5, x6
+> +#else
+> +	create_block_map x1, x7, x3, x5, x6
+> +#endif
+>  1:
+>  	/*
+>  	 * Create the pgd entry for the fixed mappings.
+>  	 */
+>  	ldr	x5, =FIXADDR_TOP		// Fixed mapping virtual address
+> +#ifndef CONFIG_ARM64_4_LEVELS
+>  	add	x0, x26, #2 * PAGE_SIZE		// section table address
+>  	create_pgd_entry x26, x0, x5, x6, x7
+> +#else
+> +	add	x0, x26, #PAGE_SIZE
+> +	create_pgd_entry x26, x0, x5, x6, x7
+> +	add	x1, x0, #2 * PAGE_SIZE
+> +	create_pud_entry x0, x1, x5, x6, x7
+> +#endif
+>  
+>  	/*
+>  	 * Since the page tables have been populated with non-cacheable
+
+What tree is this series based on?
+
+Thanks,
 -- 
-1.8.0
+Steve
