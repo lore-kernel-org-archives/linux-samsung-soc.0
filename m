@@ -1,241 +1,194 @@
 From: Jungseok Lee <jays.lee@samsung.com>
-Subject: [PATCH 8/8] arm64: KVM: Implement 4 levels of translation tables for
- HYP and stage2
-Date: Mon, 14 Apr 2014 16:41:13 +0900
-Message-ID: <000601cf57b4$e93b9680$bbb2c380$@samsung.com>
+Subject: [PATCH 3/8] arm64: Decouple page size from level of translation
+Date: Mon, 14 Apr 2014 16:40:45 +0900
+Message-ID: <000101cf57b4$d8b58be0$8a20a3a0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+Cc: kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds 4 levels of translation tables implementation for both
-HYP and stage2. A combination of 4KB + 4 levels host and 4KB + 4 levels
-guest can run on ARMv8 architecture as introducing this feature.
+This patch separates page size from level of translation tables in
+configuration. It facilitates introduction of different options,
+such as 4KB + 4 levels, 16KB + 4 levels and 64KB + 3 levels, easily.
 
 Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
 Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
 ---
- arch/arm/kvm/mmu.c               |   96 +++++++++++++++++++++++++++++++++-----
- arch/arm64/include/asm/kvm_arm.h |   20 ++++++++
- arch/arm64/include/asm/kvm_mmu.h |    1 +
- 3 files changed, 106 insertions(+), 11 deletions(-)
+ arch/arm64/Kconfig                     |   36 +++++++++++++++++++++++++++++++-
+ arch/arm64/include/asm/page.h          |    2 +-
+ arch/arm64/include/asm/pgalloc.h       |    4 ++--
+ arch/arm64/include/asm/pgtable-hwdef.h |    2 +-
+ arch/arm64/include/asm/pgtable.h       |    8 +++----
+ arch/arm64/include/asm/tlb.h           |    2 +-
+ 6 files changed, 44 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c
-index e0d4f24..6cf89ad 100644
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -388,13 +388,46 @@ static int create_hyp_pmd_mappings(pud_t *pud, unsigned long start,
- 	return 0;
- }
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index e6e4d37..1a2faf9 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -144,14 +144,48 @@ endmenu
  
-+static int create_hyp_pud_mappings(pgd_t *pgd, unsigned long start,
-+				   unsigned long end, unsigned long pfn,
-+				   pgprot_t prot)
-+{
-+	pud_t *pud;
-+	pmd_t *pmd;
-+	unsigned long addr, next;
-+
-+	addr = start;
-+	do {
-+		pud = pud_offset(pgd, addr);
-+
-+		if (pud_none_or_clear_bad(pud)) {
-+			pmd = pmd_alloc_one(NULL, addr);
-+			if (!pmd) {
-+				kvm_err("Cannot allocate Hyp pmd\n");
-+				return -ENOMEM;
-+			}
-+			pud_populate(NULL, pud, pmd);
-+			get_page(virt_to_page(pud));
-+			kvm_flush_dcache_to_poc(pud, sizeof(*pud));
-+		}
-+
-+		next = pud_addr_end(addr, end);
-+
-+		create_hyp_pmd_mappings(pud, addr, next, pfn, prot);
-+		pfn += (next - addr) >> PAGE_SHIFT;
-+	} while (addr = next, addr != end);
-+
-+	return 0;
-+}
-+
- static int __create_hyp_mappings(pgd_t *pgdp,
- 				 unsigned long start, unsigned long end,
- 				 unsigned long pfn, pgprot_t prot)
- {
- 	pgd_t *pgd;
-+#ifdef CONFIG_ARM64_4_LEVELS
- 	pud_t *pud;
--	pmd_t *pmd;
-+#endif
- 	unsigned long addr, next;
- 	int err = 0;
+ menu "Kernel Features"
  
-@@ -403,22 +436,25 @@ static int __create_hyp_mappings(pgd_t *pgdp,
- 	end = PAGE_ALIGN(end);
- 	do {
- 		pgd = pgdp + pgd_index(addr);
--		pud = pud_offset(pgd, addr);
++choice
++	prompt "Page size"
++	default ARM64_4K_PAGES
++	help
++	  Allows page size.
++
++config ARM64_4K_PAGES
++	bool "4KB"
++	help
++	  This feature enables 4KB pages support.
++
+ config ARM64_64K_PAGES
+-	bool "Enable 64KB pages support"
++	bool "64KB"
+ 	help
+ 	  This feature enables 64KB pages support (4KB by default)
+ 	  allowing only two levels of page tables and faster TLB
+ 	  look-up. AArch32 emulation is not available when this feature
+ 	  is enabled.
  
--		if (pud_none_or_clear_bad(pud)) {
--			pmd = pmd_alloc_one(NULL, addr);
--			if (!pmd) {
--				kvm_err("Cannot allocate Hyp pmd\n");
-+#ifdef CONFIG_ARM64_4_LEVELS
-+		if (pgd_none(*pgd)) {
-+			pud = pud_alloc_one(NULL, addr);
-+			if (!pud) {
-+				kvm_err("Cannot allocate Hyp pud\n");
- 				err = -ENOMEM;
- 				goto out;
- 			}
--			pud_populate(NULL, pud, pmd);
--			get_page(virt_to_page(pud));
--			kvm_flush_dcache_to_poc(pud, sizeof(*pud));
-+			pgd_populate(NULL, pgd, pud);
-+			get_page(virt_to_page(pgd));
-+			kvm_flush_dcache_to_poc(pgd, sizeof(*pgd));
- 		}
-+#endif
++endchoice
++
++choice
++	prompt "Level of translation tables"
++	default ARM64_3_LEVELS if ARM64_4K_PAGES
++	default ARM64_2_LEVELS if ARM64_64K_PAGES
++	help
++	  Allows level of translation tables.
++
++config ARM64_2_LEVELS
++	bool "2 level"
++	depends on ARM64_64K_PAGES
++	help
++	  This feature enables 2 levels of translation tables.
++
++config ARM64_3_LEVELS
++	bool "3 level"
++	depends on ARM64_4K_PAGES
++	help
++	  This feature enables 3 levels of translation tables.
++
++endchoice
++
+ config CPU_BIG_ENDIAN
+        bool "Build big-endian kernel"
+        help
+diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+index 46bf666..268e53d 100644
+--- a/arch/arm64/include/asm/page.h
++++ b/arch/arm64/include/asm/page.h
+@@ -33,7 +33,7 @@
  
- 		next = pgd_addr_end(addr, end);
--		err = create_hyp_pmd_mappings(pud, addr, next, pfn, prot);
-+
-+		err = create_hyp_pud_mappings(pgd, addr, next, pfn, prot);
-+
- 		if (err)
- 			goto out;
- 		pfn += (next - addr) >> PAGE_SHIFT;
-@@ -563,6 +599,26 @@ void kvm_free_stage2_pgd(struct kvm *kvm)
- 	kvm->arch.pgd = NULL;
- }
+ #ifndef __ASSEMBLY__
  
-+#ifdef CONFIG_ARM64_4_LEVELS
-+static pud_t *stage2_get_pud(struct kvm *kvm, struct kvm_mmu_memory_cache
-+			     *cache, phys_addr_t addr)
-+{
-+	pgd_t *pgd;
-+	pud_t *pud;
-+
-+	pgd = kvm->arch.pgd + pgd_index(addr);
-+	if (pgd_none(*pgd)) {
-+		if (!cache)
-+			return NULL;
-+		pud = mmu_memory_cache_alloc(cache);
-+		pgd_populate(NULL, pgd, pud);
-+		get_page(virt_to_page(pgd));
-+	}
-+
-+	return pud_offset(pgd, addr);
-+}
-+#endif
-+
- static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache
- 			     *cache, phys_addr_t addr)
- {
-@@ -617,6 +673,24 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
- 	pmd_t *pmd;
- 	pte_t *pte, old_pte;
- 
-+#ifdef CONFIG_ARM64_4_LEVELS
-+	pud_t *pud;
-+
-+	/* Create stage-2 page table mapping - Level 0 */
-+	pud = stage2_get_pud(kvm, cache, addr);
-+	if (!pud)
-+		return 0;
-+
-+	if (pud_none(*pud)) {
-+		if (!cache)
-+			return 0;
-+		pmd = mmu_memory_cache_alloc(cache);
-+		kvm_clean_pmd(pmd);
-+		pud_populate(NULL, pud, pmd);
-+		get_page(virt_to_page(pud));
-+	}
-+#endif
-+
- 	/* Create stage-2 page table mapping - Level 1 */
- 	pmd = stage2_get_pmd(kvm, cache, addr);
- 	if (!pmd) {
-@@ -675,7 +749,7 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
- 	for (addr = guest_ipa; addr < end; addr += PAGE_SIZE) {
- 		pte_t pte = pfn_pte(pfn, PAGE_S2_DEVICE);
- 
--		ret = mmu_topup_memory_cache(&cache, 2, 2);
-+		ret = mmu_topup_memory_cache(&cache, 3, 3);
- 		if (ret)
- 			goto out;
- 		spin_lock(&kvm->mmu_lock);
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 3d69030..295eda6 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -117,9 +117,11 @@
- #define VTCR_EL2_IRGN0_MASK	(3 << 8)
- #define VTCR_EL2_IRGN0_WBWA	(1 << 8)
- #define VTCR_EL2_SL0_MASK	(3 << 6)
-+#define VTCR_EL2_SL0_LVL0	(2 << 6)
- #define VTCR_EL2_SL0_LVL1	(1 << 6)
- #define VTCR_EL2_T0SZ_MASK	0x3f
- #define VTCR_EL2_T0SZ_40B	24
-+#define VTCR_EL2_T0SZ_48B	16
- 
- #ifdef CONFIG_ARM64_64K_PAGES
- /*
-@@ -134,6 +136,7 @@
- 				 VTCR_EL2_SL0_LVL1 | VTCR_EL2_T0SZ_40B)
- #define VTTBR_X		(38 - VTCR_EL2_T0SZ_40B)
+-#ifdef CONFIG_ARM64_64K_PAGES
++#ifdef CONFIG_ARM64_2_LEVELS
+ #include <asm/pgtable-2level-types.h>
  #else
-+#ifndef CONFIG_ARM64_4_LEVELS
- /*
-  * Stage2 translation configuration:
-  * 40bits output (PS = 2)
-@@ -145,10 +148,27 @@
- 				 VTCR_EL2_ORGN0_WBWA | VTCR_EL2_IRGN0_WBWA | \
- 				 VTCR_EL2_SL0_LVL1 | VTCR_EL2_T0SZ_40B)
- #define VTTBR_X		(37 - VTCR_EL2_T0SZ_40B)
-+#else
-+/*
-+ * Stage2 translation configuration:
-+ * 40bits output (PS = 2)
-+ * 48bits input  (T0SZ = 16)
-+ * 4kB pages (TG0 = 0)
-+ * 4 level page tables (SL = 2)
-+ */
-+#define VTCR_EL2_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SH0_INNER | \
-+				 VTCR_EL2_ORGN0_WBWA | VTCR_EL2_IRGN0_WBWA | \
-+				 VTCR_EL2_SL0_LVL0 | VTCR_EL2_T0SZ_48B)
-+#define VTTBR_X		(29 - VTCR_EL2_T0SZ_48B)
-+#endif
- #endif
+ #include <asm/pgtable-3level-types.h>
+diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+index 9bea6e7..4829837 100644
+--- a/arch/arm64/include/asm/pgalloc.h
++++ b/arch/arm64/include/asm/pgalloc.h
+@@ -26,7 +26,7 @@
  
- #define VTTBR_BADDR_SHIFT (VTTBR_X - 1)
-+#ifndef CONFIG_ARM64_4_LEVELS
- #define VTTBR_BADDR_MASK  (((1LLU << (40 - VTTBR_X)) - 1) << VTTBR_BADDR_SHIFT)
-+#else
-+#define VTTBR_BADDR_MASK  (((1LLU << (48 - VTTBR_X)) - 1) << VTTBR_BADDR_SHIFT)
-+#endif
- #define VTTBR_VMID_SHIFT  (48LLU)
- #define VTTBR_VMID_MASK	  (0xffLLU << VTTBR_VMID_SHIFT)
+ #define check_pgt_cache()		do { } while (0)
  
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 7d29847..ec76cf3 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -107,6 +107,7 @@ static inline bool kvm_is_write_fault(unsigned long esr)
+-#ifndef CONFIG_ARM64_64K_PAGES
++#ifndef CONFIG_ARM64_2_LEVELS
+ 
+ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+ {
+@@ -44,7 +44,7 @@ static inline void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
+ 	set_pud(pud, __pud(__pa(pmd) | PMD_TYPE_TABLE));
  }
  
- static inline void kvm_clean_pgd(pgd_t *pgd) {}
-+static inline void kvm_clean_pmd(pud_t *pud) {}
- static inline void kvm_clean_pmd_entry(pmd_t *pmd) {}
- static inline void kvm_clean_pte(pte_t *pte) {}
- static inline void kvm_clean_pte_entry(pte_t *pte) {}
+-#endif	/* CONFIG_ARM64_64K_PAGES */
++#endif	/* CONFIG_ARM64_2_LEVELS */
+ 
+ extern pgd_t *pgd_alloc(struct mm_struct *mm);
+ extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index 5fc8a66..9cd86c6 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -16,7 +16,7 @@
+ #ifndef __ASM_PGTABLE_HWDEF_H
+ #define __ASM_PGTABLE_HWDEF_H
+ 
+-#ifdef CONFIG_ARM64_64K_PAGES
++#ifdef CONFIG_ARM64_2_LEVELS
+ #include <asm/pgtable-2level-hwdef.h>
+ #else
+ #include <asm/pgtable-3level-hwdef.h>
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 90c811f..a64ce5e 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -47,7 +47,7 @@ extern void __pmd_error(const char *file, int line, unsigned long val);
+ extern void __pgd_error(const char *file, int line, unsigned long val);
+ 
+ #define pte_ERROR(pte)		__pte_error(__FILE__, __LINE__, pte_val(pte))
+-#ifndef CONFIG_ARM64_64K_PAGES
++#ifndef CONFIG_ARM64_2_LEVELS
+ #define pmd_ERROR(pmd)		__pmd_error(__FILE__, __LINE__, pmd_val(pmd))
+ #endif
+ #define pgd_ERROR(pgd)		__pgd_error(__FILE__, __LINE__, pgd_val(pgd))
+@@ -320,7 +320,7 @@ static inline pte_t *pmd_page_vaddr(pmd_t pmd)
+  */
+ #define mk_pte(page,prot)	pfn_pte(page_to_pfn(page),prot)
+ 
+-#ifndef CONFIG_ARM64_64K_PAGES
++#ifndef CONFIG_ARM64_2_LEVELS
+ 
+ #define pud_none(pud)		(!pud_val(pud))
+ #define pud_bad(pud)		(!(pud_val(pud) & 2))
+@@ -342,7 +342,7 @@ static inline pmd_t *pud_page_vaddr(pud_t pud)
+ 	return __va(pud_val(pud) & PHYS_MASK & (s32)PAGE_MASK);
+ }
+ 
+-#endif	/* CONFIG_ARM64_64K_PAGES */
++#endif	/* CONFIG_ARM64_2_LEVELS */
+ 
+ /* to find an entry in a page-table-directory */
+ #define pgd_index(addr)		(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+@@ -353,7 +353,7 @@ static inline pmd_t *pud_page_vaddr(pud_t pud)
+ #define pgd_offset_k(addr)	pgd_offset(&init_mm, addr)
+ 
+ /* Find an entry in the second-level page table.. */
+-#ifndef CONFIG_ARM64_64K_PAGES
++#ifndef CONFIG_ARM64_2_LEVELS
+ #define pmd_index(addr)		(((addr) >> PMD_SHIFT) & (PTRS_PER_PMD - 1))
+ static inline pmd_t *pmd_offset(pud_t *pud, unsigned long addr)
+ {
+diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
+index 72cadf5..df378b2 100644
+--- a/arch/arm64/include/asm/tlb.h
++++ b/arch/arm64/include/asm/tlb.h
+@@ -90,7 +90,7 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+ 	tlb_remove_page(tlb, pte);
+ }
+ 
+-#ifndef CONFIG_ARM64_64K_PAGES
++#ifndef CONFIG_ARM64_2_LEVELS
+ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
+ 				  unsigned long addr)
+ {
 -- 
 1.7.10.4
