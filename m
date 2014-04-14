@@ -1,8 +1,8 @@
 From: Jungseok Lee <jays.lee@samsung.com>
-Subject: [PATCH 5/8] arm64: Add a description on 48-bit address space with 4KB
+Subject: [PATCH 6/8] arm64: Add 4 levels of page tables definition with 4KB
  pages
-Date: Mon, 14 Apr 2014 16:40:55 +0900
-Message-ID: <000301cf57b4$de8ff5a0$9bafe0e0$@samsung.com>
+Date: Mon, 14 Apr 2014 16:41:01 +0900
+Message-ID: <000401cf57b4$e1d3d600$a57b8200$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -21,113 +21,150 @@ To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.
 Cc: kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds memory layout and translation lookup information
-about 48-bit address space with 4K pages. The description is based
-on 4 levels of translation tables.
+This patch adds hardware definition and types for 4 levels of
+translation tables with 4KB pages.
 
 Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
 Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
 ---
- Documentation/arm64/memory.txt |   59 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 51 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/pgtable-4level-hwdef.h |   50 +++++++++++++++++
+ arch/arm64/include/asm/pgtable-4level-types.h |   71 +++++++++++++++++++++++++
+ 2 files changed, 121 insertions(+)
+ create mode 100644 arch/arm64/include/asm/pgtable-4level-hwdef.h
+ create mode 100644 arch/arm64/include/asm/pgtable-4level-types.h
 
-diff --git a/Documentation/arm64/memory.txt b/Documentation/arm64/memory.txt
-index d50fa61..8142709 100644
---- a/Documentation/arm64/memory.txt
-+++ b/Documentation/arm64/memory.txt
-@@ -8,10 +8,11 @@ This document describes the virtual memory layout used by the AArch64
- Linux kernel. The architecture allows up to 4 levels of translation
- tables with a 4KB page size and up to 3 levels with a 64KB page size.
- 
--AArch64 Linux uses 3 levels of translation tables with the 4KB page
--configuration, allowing 39-bit (512GB) virtual addresses for both user
--and kernel. With 64KB pages, only 2 levels of translation tables are
--used but the memory layout is the same.
-+AArch64 Linux uses 3 levels and 4 levels of translation tables with
-+the 4KB page configuration, allowing 39-bit (512GB) and 48-bit (256TB)
-+virtual addresses, respectively, for both user and kernel. With 64KB
-+pages, only 2 levels of translation tables are used but the memory layout
-+is the same.
- 
- User addresses have bits 63:39 set to 0 while the kernel addresses have
- the same bits set to 1. TTBRx selection is given by bit 63 of the
-@@ -21,7 +22,7 @@ The swapper_pgd_dir address is written to TTBR1 and never written to
- TTBR0.
- 
- 
--AArch64 Linux memory layout with 4KB pages:
-+AArch64 Linux memory layout with 4KB pages + 3 levels:
- 
- Start			End			Size		Use
- -----------------------------------------------------------------------
-@@ -48,7 +49,34 @@ ffffffbffc000000	ffffffbfffffffff	  64MB		modules
- ffffffc000000000	ffffffffffffffff	 256GB		kernel logical memory map
- 
- 
--AArch64 Linux memory layout with 64KB pages:
-+AArch64 Linux memory layout with 4KB pages + 4 levels:
+diff --git a/arch/arm64/include/asm/pgtable-4level-hwdef.h b/arch/arm64/include/asm/pgtable-4level-hwdef.h
+new file mode 100644
+index 0000000..0ec84e2
+--- /dev/null
++++ b/arch/arm64/include/asm/pgtable-4level-hwdef.h
+@@ -0,0 +1,50 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++#ifndef __ASM_PGTABLE_4LEVEL_HWDEF_H
++#define __ASM_PGTABLE_4LEVEL_HWDEF_H
 +
-+Start			End			Size		Use
-+-----------------------------------------------------------------------
-+0000000000000000	0000ffffffffffff	 256TB		user
++#define PTRS_PER_PTE		512
++#define PTRS_PER_PMD		512
++#define PTRS_PER_PUD		512
++#define PTRS_PER_PGD		512
 +
-+ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
++/*
++ * PGDIR_SHIFT determines the size a top-level page table entry can map.
++ */
++#define PGDIR_SHIFT		39
++#define PGDIR_SIZE		(_AC(1, UL) << PGDIR_SHIFT)
++#define PGDIR_MASK		(~(PGDIR_SIZE-1))
 +
-+ffff7bffffff0000	ffff7bffffffffff	  64KB		[guard page]
++/*
++ * PUD_SHIFT determines the size the second level page table entry can map.
++ */
++#define PUD_SHIFT		30
++#define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
++#define PUD_MASK		(~(PUD_SIZE-1))
 +
-+ffff7c0000000000	ffff7dffffffffff	   2TB		vmemmap
++/*
++ * PMD_SHIFT determines the size the third level page table entry can map.
++ */
++#define PMD_SHIFT		21
++#define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
++#define PMD_MASK		(~(PMD_SIZE-1))
 +
-+ffff7e0000000000	ffff7ffffbbfffff	  ~2TB		[guard, future vmmemap]
++/*
++ * section address mask and size definitions.
++ */
++#define SECTION_SHIFT		21
++#define SECTION_SIZE		(_AC(1, UL) << SECTION_SHIFT)
++#define SECTION_MASK		(~(SECTION_SIZE-1))
 +
-+ffff7ffffa000000	ffff7ffffaffffff	  16MB		PCI I/O space
++#endif
+diff --git a/arch/arm64/include/asm/pgtable-4level-types.h b/arch/arm64/include/asm/pgtable-4level-types.h
+new file mode 100644
+index 0000000..7ad8dd2
+--- /dev/null
++++ b/arch/arm64/include/asm/pgtable-4level-types.h
+@@ -0,0 +1,71 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++#ifndef __ASM_PGTABLE_4LEVEL_TYPES_H
++#define __ASM_PGTABLE_4LEVEL_TYPES_H
 +
-+ffff7ffffb000000	ffff7ffffbbfffff	  12MB		[guard]
++#include <asm/types.h>
 +
-+ffff7ffffbc00000	ffff7ffffbdfffff	   2MB		earlyprintk device
++typedef u64 pteval_t;
++typedef u64 pmdval_t;
++typedef u64 pudval_t;
++typedef u64 pgdval_t;
 +
-+ffff7ffffbe00000	ffff7ffffbffffff	   2MB		[guard]
++#undef STRICT_MM_TYPECHECKS
 +
-+ffff7ffffc000000	ffff7fffffffffff	  64MB		modules
++#ifdef STRICT_MM_TYPECHECKS
 +
-+ffff800000000000	ffffffffffffffff	 128TB		kernel logical memory map
++/*
++ * These are used to make use of C type-checking..
++ */
++typedef struct { pteval_t pte; } pte_t;
++typedef struct { pmdval_t pmd; } pmd_t;
++typedef struct { pudval_t pud; } pud_t;
++typedef struct { pgdval_t pgd; } pgd_t;
++typedef struct { pteval_t pgprot; } pgprot_t;
 +
++#define pte_val(x)	((x).pte)
++#define pmd_val(x)	((x).pmd)
++#define pud_val(x)	((x).pud)
++#define pgd_val(x)	((x).pgd)
++#define pgprot_val(x)	((x).pgprot)
 +
-+AArch64 Linux memory layout with 64KB pages + 2 levels:
- 
- Start			End			Size		Use
- -----------------------------------------------------------------------
-@@ -75,7 +103,7 @@ fffffdfffc000000	fffffdffffffffff	  64MB		modules
- fffffe0000000000	ffffffffffffffff	   2TB		kernel logical memory map
- 
- 
--Translation table lookup with 4KB pages:
-+Translation table lookup with 4KB pages + 3 levels:
- 
- +--------+--------+--------+--------+--------+--------+--------+--------+
- |63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
-@@ -90,7 +118,22 @@ Translation table lookup with 4KB pages:
-  +-------------------------------------------------> [63] TTBR0/1
- 
- 
--Translation table lookup with 64KB pages:
-+Translation table lookup with 4KB pages + 4 levels:
++#define __pte(x)	((pte_t) { (x) } )
++#define __pmd(x)	((pmd_t) { (x) } )
++#define __pud(x)	((pud_t) { (x) } )
++#define __pgd(x)	((pgd_t) { (x) } )
++#define __pgprot(x)	((pgprot_t) { (x) } )
 +
-++--------+--------+--------+--------+--------+--------+--------+--------+
-+|63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
-++--------+--------+--------+--------+--------+--------+--------+--------+
-+ |                 |         |         |         |         |
-+ |                 |         |         |         |         v
-+ |                 |         |         |         |   [11:0]  in-page offset
-+ |                 |         |         |         +-> [20:12] L3 index
-+ |                 |         |         +-----------> [29:21] L2 index
-+ |                 |         +---------------------> [38:30] L1 index
-+ |                 +-------------------------------> [47:39] L0 index
-+ +-------------------------------------------------> [63] TTBR0/1
++#else	/* !STRICT_MM_TYPECHECKS */
 +
++typedef pteval_t pte_t;
++typedef pmdval_t pmd_t;
++typedef pudval_t pud_t;
++typedef pgdval_t pgd_t;
++typedef pteval_t pgprot_t;
 +
-+Translation table lookup with 64KB pages + 2 levels:
- 
- +--------+--------+--------+--------+--------+--------+--------+--------+
- |63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
++#define pte_val(x)	(x)
++#define pmd_val(x)	(x)
++#define pud_val(x)	(x)
++#define pgd_val(x)	(x)
++#define pgprot_val(x)	(x)
++
++#define __pte(x)	(x)
++#define __pmd(x)	(x)
++#define __pud(x)	(x)
++#define __pgd(x)	(x)
++#define __pgprot(x)	(x)
++
++#endif /* STRICT_MM_TYPECHECKS */
++
++#endif /* __ASM_PGTABLE_4LEVEL_TYPES_H */
 -- 
 1.7.10.4
