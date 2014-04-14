@@ -1,80 +1,126 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH]  drm: exynos: hdmi: simplify extracting hpd-gpio from DT
-Date: Mon, 14 Apr 2014 21:05:27 +0900
-Message-ID: <534BCF07.9060703@samsung.com>
-References: <534BB34F.7040308@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Mon, 14 Apr 2014 17:35:43 +0530
+Message-ID: <CAFp+6iGxhfgZRPysMuj5nALEQBbFXnAXhtDPpbf3P42LDHqFxg@mail.gmail.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
+	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
+	<534529B2.2020107@samsung.com>
+	<534BCC91.8090108@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:63429 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754482AbaDNMFW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 08:05:22 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N4000HW5S8W3090@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Apr 2014 21:05:20 +0900 (KST)
-In-reply-to: <534BB34F.7040308@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <534BCC91.8090108-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>, =?UTF-8?B?J+uwleqyveuvvCc=?= <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Tomasz,
+Hi Kishon,
 
-On 04/14/2014 07:07 PM, Tomasz Stanislawski wrote:
-> This patch eliminates redundant checks while retrieving HPD gpio from DT during
-> HDMI's probe().
->
-> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-> ---
->   drivers/gpu/drm/exynos/exynos_hdmi.c |   13 ++++---------
->   1 file changed, 4 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index e1a2e88..300c2af 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -2011,23 +2011,18 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
->   {
->   	struct device_node *np = dev->of_node;
->   	struct s5p_hdmi_platform_data *pd;
-> -	u32 value;
->
->   	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
->   	if (!pd)
-> -		goto err_data;
-> +		return NULL;
->
-> -	if (!of_find_property(np, "hpd-gpio", &value)) {
-> +	pd->hpd_gpio = of_get_named_gpio_flags(np, "hpd-gpio", 0, NULL);
 
-This is same with
-pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
-
-> +	if (pd->hpd_gpio < 0) {
-
-How about use gpio_is_valid()?
-
->   		DRM_ERROR("no hpd gpio property found\n");
-> -		goto err_data;
-> +		return NULL;
->   	}
+On Mon, Apr 14, 2014 at 5:24 PM, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org> wrote:
+> Hi,
 >
-> -	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
-> -
->   	return pd;
-> -
-> -err_data:
-> -	return NULL;
->   }
+> On Wednesday 09 April 2014 04:36 PM, Tomasz Figa wrote:
+>> Hi Vivek,
+>>
+>> Please see my comments inline.
+>>
+>> On 08.04.2014 16:36, Vivek Gautam wrote:
+>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>>> The new driver uses the generic PHY framework and will interact
+>>> with DWC3 controller present on Exynos5 series of SoCs.
+>>> Thereby, removing old phy-samsung-usb3 driver and related code
+>>> used untill now which was based on usb/phy framework.
+>>>
+>>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
+>>>   drivers/phy/Kconfig                                |   11 +
+>>>   drivers/phy/Makefile                               |    1 +
+>>>   drivers/phy/phy-exynos5-usbdrd.c                   |  668 ++++++++++++++++++++
+>>>   4 files changed, 722 insertions(+)
+>>>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+>>
+>> [snip]
+>>
+>>> +    Additional clock required for Exynos5420:
+>>> +    - usb30_sclk_100m: Additional special clock used for PHY operation
+>>> +               depicted as 'sclk_usbphy30' in CMU of Exynos5420.
+>>
+>> Are you sure this isn't simply a gate for the ref clock, as it can be found on
+>> another SoC that is not upstream yet? I don't have documentation for Exynos
+>> 5420 so I can't tell, but I'd like to ask you to recheck this.
+>>
+>>> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
+>>> +              control pmu registers for power isolation.
+>>> +- samsung,pmu-offset: phy power control register offset to
+>>> pmu-system-controller
+>>> +              base.
+>>> +- #phy-cells : from the generic PHY bindings, must be 1;
+>>> +
+>>> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
+>>> +compatible PHYs, the second cell in the PHY specifier identifies the
+>>> +PHY id, which is interpreted as follows:
+>>> +  0 - UTMI+ type phy,
+>>> +  1 - PIPE3 type phy,
+>>> +
+>>> +Example:
+>>> +    usb3_phy: usbphy@12100000 {
+>>> +        compatible = "samsung,exynos5250-usbdrd-phy";
+>>> +        reg = <0x12100000 0x100>;
+>>> +        clocks = <&clock 286>, <&clock 1>;
+>>> +        clock-names = "phy", "usb3phy_refclk";
+>>
+>> Binding description above doesn't mention "usb3phy_refclk" entry.
+>>
+>>> +        samsung,syscon-phandle = <&pmu_syscon>;
+>>> +        samsung,pmu-offset = <0x704>;
+>>> +        #phy-cells = <1>;
+>>> +    };
+>>
+>> [snip]
+>>
+>>> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+>>> new file mode 100644
+>>> index 0000000..ff54a7c
+>>> --- /dev/null
+>>> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+>>
+>> [snip]
+>>
+>>> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+>>> +{
+>>> +    struct device *dev = &pdev->dev;
+>>> +    struct device_node *node = dev->of_node;
+>>> +    struct exynos5_usbdrd_phy *phy_drd;
+>>> +    struct phy_provider *phy_provider;
+>>> +    struct resource *res;
+>>> +    const struct of_device_id *match;
+>>> +    const struct exynos5_usbdrd_phy_drvdata *drv_data;
+>>> +    struct regmap *reg_pmu;
+>>> +    u32 pmu_offset;
+>>> +    int i;
+>>> +
+>>> +    /*
+>>> +     * Exynos systems are completely DT enabled,
+>>> +     * so lets not have any platform data support for this driver.
+>>> +     */
+>>> +    if (!node) {
+>>> +        dev_err(dev, "no device node found\n");
+>>
+>> This error message is not very meaningful. I'd rather use something like "This
+>> driver can be only instantiated using Device Tree".
 >
->   static struct of_device_id hdmi_match_types[] = {
->
->
+> how about just adding depend_on OF in Kconfig?
 
-Thanks.
+Already added a depend on 'OF'. Copying below the part of Kconfig in this patch.
+
+  config PHY_EXYNOS5_USBDRD
+         tristate "Exynos5 SoC series USB DRD PHY driver"
+         depends on ARCH_EXYNOS5 && OF
+         depends on HAS_IOMEM
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
