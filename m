@@ -1,132 +1,138 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: exynos_adc: Control special clock of ADC to
- support Exynos3250 ADC
-Date: Mon, 14 Apr 2014 09:58:21 +0900
-Message-ID: <534B32AD.2030209@samsung.com>
-References: <1397181640-18513-1-git-send-email-cw00.choi@samsung.com>
- <18632148.yOYlTYattA@amdc1032>
- <CAGTfZH2Rpa+hooPHY2xmquVHCwcE2X7rqf3rzGKCz02rA9qSzA@mail.gmail.com>
- <f457ceee-ac84-45a4-9274-2ab196f92b96@email.android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <f457ceee-ac84-45a4-9274-2ab196f92b96-2ueSQiBKiTY7tOexoI0I+QC/G2K4zDHf@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: =?UTF-8?B?7LWc7LCs7Jqw?= <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2] pinctrl: exynos: Add driver data for Exynos3250
+Date: Mon, 14 Apr 2014 10:45:47 +0900
+Message-ID: <1397439947-31592-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan,
+From: Tomasz Figa <t.figa@samsung.com>
 
-On 04/12/2014 04:49 PM, Jonathan Cameron wrote:
->=20
->=20
-> On April 11, 2014 11:45:42 PM GMT+01:00, "=EC=B5=9C=EC=B0=AC=EC=9A=B0=
-" <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Hi Bartlomiej,
->>
->> On Fri, Apr 11, 2014 at 6:41 PM, Bartlomiej Zolnierkiewicz
->> <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>
->>> Hi,
->>>
->>> On Friday, April 11, 2014 11:00:40 AM Chanwoo Choi wrote:
->>>> This patch control special clock for ADC in Exynos series's FSYS
->> block.
->>>
->>> s/control/controls/
->>
->> I'll fix it.
->>
->>>
->>>> If special clock of ADC is registerd on clock list of common clk
->> framework,
->>>> Exynos ADC drvier have to control this clock.
->>>
->>> s/drvier/driver/
->>
->> I'll fix it.
->>
->>>
->>>> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
->>>> - 'adc' clock: bus clock for ADC
->>>>
->>>> Exynos3250 has additional 'sclk_tsadc' clock as following:
->>>> - 'sclk_tsadc' clock: special clock for ADC which provide clock to
->> internal ADC
->>>>
->>>> Exynos 4210/4212/4412 and Exynos5250/5420 has not included
->> 'sclk_tsadc' clock
->>>> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included
->> 'sclk_tsadc'
->>>> clock in FSYS_BLK.
->>>>
->>>> Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->>>> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> ---
->>>>  drivers/iio/adc/exynos_adc.c | 13 +++++++++++++
->>>>  1 file changed, 13 insertions(+)
->>>>
->>>> diff --git a/drivers/iio/adc/exynos_adc.c
->> b/drivers/iio/adc/exynos_adc.c
->>>> index d25b262..4cd1975 100644
->>>> --- a/drivers/iio/adc/exynos_adc.c
->>>> +++ b/drivers/iio/adc/exynos_adc.c
->>>> @@ -88,6 +88,7 @@ struct exynos_adc {
->>>>       void __iomem            *regs;
->>>>       void __iomem            *enable_reg;
->>>>       struct clk              *clk;
->>>> +     struct clk              *sclk;
->>>>       unsigned int            irq;
->>>>       struct regulator        *vdd;
->>>>
->>>> @@ -308,6 +309,13 @@ static int exynos_adc_probe(struct
->> platform_device *pdev)
->>>>               goto err_irq;
->>>>       }
->>>>
->>>> +     info->sclk =3D devm_clk_get(&pdev->dev, "sclk_tsadc");
->>>> +     if (IS_ERR(info->sclk)) {
->>>> +             dev_warn(&pdev->dev, "failed getting sclk clock, err=
- =3D
->> %ld\n",
->>>> +                                                   =20
->> PTR_ERR(info->sclk));
->>>> +             info->sclk =3D NULL;
->>>> +     }
->>>> +
->>>>       info->vdd =3D devm_regulator_get(&pdev->dev, "vdd");
->>>>       if (IS_ERR(info->vdd)) {
->>>>               dev_err(&pdev->dev, "failed getting regulator, err =3D
->> %ld\n",
->>>> @@ -341,6 +349,7 @@ static int exynos_adc_probe(struct
->> platform_device *pdev)
->>>>               goto err_iio_dev;
->>>>
->>>>       clk_prepare_enable(info->clk);
->>>> +     clk_prepare_enable(info->sclk);
->>>>
->>>>       exynos_adc_hw_init(info);
->>>>
->>>> @@ -357,6 +366,7 @@ err_of_populate:
->>>>                               exynos_adc_remove_devices);
->>>>       regulator_disable(info->vdd);
->>>>       clk_disable_unprepare(info->clk);
->>>> +     clk_disable_unprepare(info->sclk);
->>>
->>> Please disable clocks in the reverse of order in which they were
->> enabled.
->>
->> Is it necessary? I don't think that.
-> It is probably not a bug but it is more obviously correct in the reve=
-rse order so that is how it should be done!
+This patch adds driver data (bank list and EINT layout) for Exynos3250
+to pinctrl-exynos driver. Exynos3250 includes 158 multi-functional input/output
+ports. There are 23 general port groups.
 
-OK, I'll fix it on next posting(v2). Thanks.
+Changes from v1:
+- Add signed-off of sender
+- Post only separated patch for pinctrl from following patchset(v1)
+  : https://lkml.org/lkml/2014/4/10/286
 
-Best Regards,
-Chanwoo Choi
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/pinctrl/pinctrl-exynos.c  | 67 +++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.c |  2 ++
+ drivers/pinctrl/pinctrl-samsung.h |  1 +
+ 3 files changed, 70 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
+index 07c8130..9609c23 100644
+--- a/drivers/pinctrl/pinctrl-exynos.c
++++ b/drivers/pinctrl/pinctrl-exynos.c
+@@ -718,6 +718,73 @@ struct samsung_pin_ctrl s5pv210_pin_ctrl[] = {
+ 	},
+ };
+ 
++/* pin banks of exynos3250 pin-controller 0 */
++static struct samsung_pin_bank exynos3250_pin_banks0[] = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb",  0x08),
++	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0a0, "gpd0", 0x14),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpd1", 0x18),
++};
++
++/* pin banks of exynos3250 pin-controller 1 */
++static struct samsung_pin_bank exynos3250_pin_banks1[] = {
++	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
++	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpl0", 0x18),
++	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
++	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
++	EXYNOS_PIN_BANK_EINTG(5, 0x2a0, "gpm2", 0x2c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2c0, "gpm3", 0x30),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2e0, "gpm4", 0x34),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc00, "gpx0", 0x00),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc20, "gpx1", 0x04),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc40, "gpx2", 0x08),
++	EXYNOS_PIN_BANK_EINTW(8, 0xc60, "gpx3", 0x0c),
++};
++
++/*
++ * Samsung pinctrl driver data for Exynos3250 SoC. Exynos3250 SoC includes
++ * two gpio/pin-mux/pinconfig controllers.
++ */
++struct samsung_pin_ctrl exynos3250_pin_ctrl[] = {
++	{
++		/* pin-controller instance 0 data */
++		.pin_banks	= exynos3250_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks0),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos3250-gpio-ctrl0",
++	}, {
++		/* pin-controller instance 1 data */
++		.pin_banks	= exynos3250_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks1),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
++		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
++		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.eint_wkup_init = exynos_eint_wkup_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos3250-gpio-ctrl1",
++	},
++};
++
+ /* pin banks of exynos4210 pin-controller 0 */
+ static struct samsung_pin_bank exynos4210_pin_banks0[] = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index 0324d4c..3e61d0f 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -1114,6 +1114,8 @@ static struct syscore_ops samsung_pinctrl_syscore_ops = {
+ 
+ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ #ifdef CONFIG_PINCTRL_EXYNOS
++	{ .compatible = "samsung,exynos3250-pinctrl",
++		.data = (void *)exynos3250_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4210-pinctrl",
+ 		.data = (void *)exynos4210_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4x12-pinctrl",
+diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
+index bab9c21..b3e41fa 100644
+--- a/drivers/pinctrl/pinctrl-samsung.h
++++ b/drivers/pinctrl/pinctrl-samsung.h
+@@ -251,6 +251,7 @@ struct samsung_pmx_func {
+ };
+ 
+ /* list of all exported SoC specific data */
++extern struct samsung_pin_ctrl exynos3250_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+-- 
+1.8.0
