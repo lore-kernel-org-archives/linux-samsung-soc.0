@@ -1,203 +1,66 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 resend] clk: s2mps11: Add support for S2MPS14 clocks
-Date: Mon, 14 Apr 2014 09:55:22 +0200
-Message-ID: <1397462122-24447-2-git-send-email-k.kozlowski@samsung.com>
-References: <1397462122-24447-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:48873 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750862AbaDNHzh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 03:55:37 -0400
-In-reply-to: <1397462122-24447-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 4/4] regulator: s5m8767: Use same binding for external control
+ as in s2mps11
+Date: Mon, 14 Apr 2014 10:09:09 +0200
+Message-ID: <1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
+References: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds support for S2MPS14 PMIC clocks (BT and AP) to the
-s2mps11 clock driver.
+Change the binding for regulators external control to the same used in
+s2mps11 driver to be consistent.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
- drivers/clk/Kconfig       |  8 +++----
- drivers/clk/clk-s2mps11.c | 61 +++++++++++++++++++++++++++++++++++------------
- 2 files changed, 50 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt | 4 ++--
+ drivers/regulator/s5m8767.c                                       | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 6f56d3a4f010..8f9ce8ba036d 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -65,12 +65,12 @@ config COMMON_CLK_SI570
- 	  clock generators.
+diff --git a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+index d290988ed975..558c80345ef0 100644
+--- a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+@@ -76,7 +76,7 @@ except these properties:
+ 		1 - on in normal mode
+ 		2 - low power mode
+ 		3 - suspend mode
+-	- s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
++	- samsung,ext-control-gpios: (optional) GPIO specifier for one
+ 		GPIO controlling this regulator (enable/disable); This is
+ 		valid only for buck9.
  
- config COMMON_CLK_S2MPS11
--	tristate "Clock driver for S2MPS11/S5M8767 MFD"
-+	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
- 	depends on MFD_SEC_CORE
- 	---help---
--	  This driver supports S2MPS11/S5M8767 crystal oscillator clock. These
--	  multi-function devices have 3 fixed-rate oscillators, clocked at
--	  32KHz each.
-+	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
-+	  clock. These multi-function devices have two (S2MPS14) or three
-+	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
- 
- config CLK_TWL6040
- 	tristate "External McPDM functional clock from twl6040"
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index f2f62a1bf61a..b78eafeab038 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -1,7 +1,7 @@
- /*
-  * clk-s2mps11.c - Clock driver for S2MPS11.
-  *
-- * Copyright (C) 2013 Samsung Electornics
-+ * Copyright (C) 2013,2014 Samsung Electornics
-  *
-  * This program is free software; you can redistribute  it and/or modify it
-  * under  the terms of  the GNU General  Public License as published by the
-@@ -13,10 +13,6 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-  */
- 
- #include <linux/module.h>
-@@ -27,6 +23,7 @@
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- #include <linux/mfd/samsung/s2mps11.h>
-+#include <linux/mfd/samsung/s2mps14.h>
- #include <linux/mfd/samsung/s5m8767.h>
- #include <linux/mfd/samsung/core.h>
- 
-@@ -125,7 +122,21 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
- 	},
- };
- 
--static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
-+static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
-+	[S2MPS11_CLK_AP] = {
-+		.name = "s2mps14_ap",
-+		.ops = &s2mps11_clk_ops,
-+		.flags = CLK_IS_ROOT,
-+	},
-+	[S2MPS11_CLK_BT] = {
-+		.name = "s2mps14_bt",
-+		.ops = &s2mps11_clk_ops,
-+		.flags = CLK_IS_ROOT,
-+	},
-+};
-+
-+static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
-+		struct clk_init_data *clks_init)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct device_node *clk_np;
-@@ -145,9 +156,12 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
- 	if (!clk_table)
- 		return ERR_PTR(-ENOMEM);
- 
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-+		if (!clks_init[i].name)
-+			continue; /* Skip clocks not present in some devices */
- 		of_property_read_string_index(clk_np, "clock-output-names", i,
--				&s2mps11_clks_init[i].name);
-+				&clks_init[i].name);
-+	}
- 
- 	return clk_np;
- }
-@@ -158,6 +172,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
- 	struct device_node *clk_np = NULL;
- 	unsigned int s2mps11_reg;
-+	struct clk_init_data *clks_init;
- 	int i, ret = 0;
- 	u32 val;
- 
-@@ -168,25 +183,33 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 
- 	s2mps11_clk = s2mps11_clks;
- 
--	clk_np = s2mps11_clk_parse_dt(pdev);
--	if (IS_ERR(clk_np))
--		return PTR_ERR(clk_np);
--
- 	switch(platform_get_device_id(pdev)->driver_data) {
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
-+		clks_init = s2mps11_clks_init;
-+		break;
-+	case S2MPS14X:
-+		s2mps11_reg = S2MPS14_REG_RTCCTRL;
-+		clks_init = s2mps14_clks_init;
- 		break;
- 	case S5M8767X:
- 		s2mps11_reg = S5M8767_REG_CTRL1;
-+		clks_init = s2mps11_clks_init;
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "Invalid device type\n");
- 		return -EINVAL;
+@@ -157,7 +157,7 @@ Example:
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+ 				op_mode = <3>; /* Standby Mode */
+-				s5m8767,pmic-ext-control-gpios = <&gpk0 2 0>;
++				samsung,ext-control-gpios = <&gpk0 2 0>;
+ 			};
+ 		};
  	};
- 
-+	clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
-+	if (IS_ERR(clk_np))
-+		return PTR_ERR(clk_np);
-+
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
-+		if (!clks_init[i].name)
-+			continue; /* Skip clocks not present in some devices */
- 		s2mps11_clk->iodev = iodev;
--		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
-+		s2mps11_clk->hw.init = &clks_init[i];
- 		s2mps11_clk->mask = 1 << i;
- 		s2mps11_clk->reg = s2mps11_reg;
- 
-@@ -220,8 +243,12 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	if (clk_table) {
--		for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-+		for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-+			/* Skip clocks not present on S2MPS14 */
-+			if (!clks_init[i].name)
-+				continue;
- 			clk_table[i] = s2mps11_clks[i].clk;
-+		}
- 
- 		clk_data.clks = clk_table;
- 		clk_data.clk_num = S2MPS11_CLKS_NUM;
-@@ -250,14 +277,18 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
- 	struct s2mps11_clk *s2mps11_clks = platform_get_drvdata(pdev);
- 	int i;
- 
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-+		if (!s2mps11_clks[i].lookup)
-+			continue; /* Skip clocks not present in some devices */
- 		clkdev_drop(s2mps11_clks[i].lookup);
-+	}
- 
- 	return 0;
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 92f19a005dc3..dbfd98b04a77 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -534,7 +534,7 @@ static void s5m8767_pmic_dt_parse_ext_control_gpio(struct sec_pmic_dev *iodev,
+ 		struct device_node *reg_np)
+ {
+ 	rdata->ext_control_gpio = of_get_named_gpio(reg_np,
+-			"s5m8767,pmic-ext-control-gpios", 0);
++			"samsung,ext-control-gpios", 0);
+ 	if (!gpio_is_valid(rdata->ext_control_gpio))
+ 		rdata->ext_control_gpio = 0;
  }
- 
- static const struct platform_device_id s2mps11_clk_id[] = {
- 	{ "s2mps11-clk", S2MPS11X},
-+	{ "s2mps14-clk", S2MPS14X},
- 	{ "s5m8767-clk", S5M8767X},
- 	{ },
- };
 -- 
 1.8.3.2
