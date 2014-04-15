@@ -1,56 +1,51 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 4/4] regulator: s5m8767: Use same binding for external
- control as in s2mps11
-Date: Tue, 15 Apr 2014 10:55:45 +0200
-Message-ID: <1397552145.29169.17.camel@AMDC1943>
-References: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
- <1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
- <20140414211106.GC12304@sirena.org.uk>
- <CAK9yfHwL4o7-7Q03dw9JdD1UDsP_v2=we1kadRXaGAuaN1de_g@mail.gmail.com>
- <1397549539.29169.2.camel@AMDC1943>
- <CAK9yfHwUwjMEXisi5Jf+nAkS7CLnAUt-REkekns9JrRTAGQ=WQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/6] ARM: EXYNOS: Staticize exynos_subsys
+Date: Tue, 15 Apr 2014 14:36:15 +0530
+Message-ID: <CAK9yfHxwTo1WPPS7asJOMAVSK5=3ufFrLuB9mYyT8t-CgMxGWg@mail.gmail.com>
+References: <1397118296-6846-1-git-send-email-sachin.kamat@linaro.org>
+	<1397118296-6846-3-git-send-email-sachin.kamat@linaro.org>
+	<534661C7.9090304@samsung.com>
+	<CAK9yfHwAM0d5JsrhKGP0gkrjQLxGFE0+oEjv26N5jsFnvYku9A@mail.gmail.com>
+	<53468F44.3050109@samsung.com>
+	<CAK9yfHw9fga+1kOo5tpW37wskZEQarrABiyZD+SBzBwk1h6DbQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:42282 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752960AbaDOIzs (ORCPT
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:41247 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750898AbaDOJGP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 04:55:48 -0400
-In-reply-to: <CAK9yfHwUwjMEXisi5Jf+nAkS7CLnAUt-REkekns9JrRTAGQ=WQ@mail.gmail.com>
+	Tue, 15 Apr 2014 05:06:15 -0400
+Received: by mail-oa0-f53.google.com with SMTP id j17so10409512oag.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 02:06:15 -0700 (PDT)
+In-Reply-To: <CAK9yfHw9fga+1kOo5tpW37wskZEQarrABiyZD+SBzBwk1h6DbQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>
 
-On wto, 2014-04-15 at 14:02 +0530, Sachin Kamat wrote:
-> On 15 April 2014 13:42, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> > On wto, 2014-04-15 at 13:26 +0530, Sachin Kamat wrote:
-> >> On 15 April 2014 02:41, Mark Brown <broonie@kernel.org> wrote:
-> >> > On Mon, Apr 14, 2014 at 10:09:09AM +0200, Krzysztof Kozlowski wrote:
-> >> >
-> >> >> -     - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
-> >> >> +     - samsung,ext-control-gpios: (optional) GPIO specifier for one
-> >> >>               GPIO controlling this regulator (enable/disable); This is
-> >> >>               valid only for buck9.
-> >> >
-> >> > This is an incompatible change.  It's OK to deprecate the old property
-> >> > but it's bad form to just remove it.
-> >>
-> >> I agree with Mark. Also, there is no need to make it generic.
-> >
-> > I thought it would be good to make it consistent and to reduce the
-> > number of bindings with same meaning on similar drivers.
-> 
-> How about making the other one use "s5m8767,pmic-ext-control-gpios"
-> compatible instead of introducing a new one?
+Hi Tomasz,
 
-But then we would introduce semi-generic binding with a driver-specific
-name.
+On 10 April 2014 18:05, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 10 April 2014 18:02, Tomasz Figa <t.figa@samsung.com> wrote:
+>> On 10.04.2014 11:22, Sachin Kamat wrote:
+>>>
+>>> Hi Tomasz,
+>>>
+>>> On 10 April 2014 14:47, Tomasz Figa <t.figa@samsung.com> wrote:
+<snip>
+>> Hmm, I don't see why it could break anything as I can't find any users of
+>> it. Anyway I just tested removing this code on Exynos4412-trats2 board and
+>> didn't find any problems.
+>
+> Thanks for testing. Let me check at my end on other boards and if it
+> doesn't cause
+> any problem, will remove this.
 
-Anyway more drivers seem to use this kind of binding (tps65090, max8952,
-da9055, arizona) so maybe there is a point in making this generic?
+Tested after removing this code on various boards and there doesn't
+seem to be any
+problems. Will re-send with this change.
 
-Best regards,
-Krzysztof
+-- 
+With warm regards,
+Sachin
