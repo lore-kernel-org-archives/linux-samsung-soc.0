@@ -1,238 +1,62 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix stall after CPU
- hotplugging
-Date: Tue, 15 Apr 2014 18:20:39 +0200 (CEST)
-Message-ID: <alpine.DEB.2.02.1404151753090.22697@ionos.tec.linutronix.de>
-References: <1396011962-4467-1-git-send-email-k.kozlowski@samsung.com> <1397554445.29169.21.camel@AMDC1943> <534D25DC.4050400@linaro.org> <1397566023.29169.31.camel@AMDC1943> <alpine.DEB.2.02.1404151711250.22697@ionos.tec.linutronix.de>
- <1397576515.752.5.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-942035999-1397578841=:22697"
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: exynos4: Use single clock ID for CLK_MDMA gate clocks
+Date: Tue, 15 Apr 2014 18:30:20 +0200
+Message-ID: <1397579420-18776-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:58051 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750920AbaDOQUd (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57872 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751019AbaDOQag (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 12:20:33 -0400
-In-Reply-To: <1397576515.752.5.camel@AMDC1943>
+	Tue, 15 Apr 2014 12:30:36 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N42004S5Z6YS810@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Apr 2014 01:30:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, stable@vger.kernel.org
+To: t.figa@samsung.com
+Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Exynos4210 and Exynos4x12 SoCs have the PL330 MDMA IP block clock
+defined exactly in same way in documentation. Using different
+names for these clocks is a bit misleading. Since there is no users
+of CLK_MDMA2 in existing dts files this patch drops CLK_MDMA2 and
+replaces it with CLK_MDMA in the driver. This ensures PL330 MDMA
+has correct clock assigned on Exynos4x12 SoCs.
 
---8323329-942035999-1397578841=:22697
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Suggested-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c   |    2 +-
+ include/dt-bindings/clock/exynos4.h |    1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-B1;3202;0cOn Tue, 15 Apr 2014, Krzysztof Kozlowski wrote:
-> On wto, 2014-04-15 at 17:20 +0200, Thomas Gleixner wrote:
-> > On Tue, 15 Apr 2014, Krzysztof Kozlowski wrote:
-> > 
-> > > On wto, 2014-04-15 at 14:28 +0200, Daniel Lezcano wrote:
-> > > > On 04/15/2014 11:34 AM, Krzysztof Kozlowski wrote:
-> > > > > On pią, 2014-03-28 at 14:06 +0100, Krzysztof Kozlowski wrote:
-> > > > >> Fix stall after hotplugging CPU1. Affected are SoCs where Multi Core Timer
-> > > > >> interrupts are shared (SPI), e.g. Exynos 4210. The stall was a result of
-> > > > >> starting the CPU1 local timer not in L1 timer but in L0 (which is used
-> > > > >> by CPU0).
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Do you have any comments on these 3 patches? They fix the CPU stall on
-> > > > > Exynos4210 and also on Exynos3250 (Chanwoo Choi sent patches for it
-> > > > > recently).
-> > > > 
-> > > > You describe this issue as impacting different SoC not only the exynos, 
-> > > > right ?
-> > > >
-> > > > Do you know what other SoCs are impacted by this ?
-> > > 
-> > > No, affected are only Exynos SoC-s. It was confirmed on Exynos4210
-> > > (Trats board) and Exynos3250 (new SoC, patches for it were recently
-> > > posted by Chanwoo).
-> > > 
-> > > Other Exynos SoC-s where MCT local timers use shared interrupts (SPI)
-> > > can also be affected. Candidates are Exynos 5250 and 5420 but I haven't
-> > > tested them.
-> > > 
-> > > > I guess this issue is not reproducible just with the line below, we need 
-> > > > a timer to expire right at the moment CPU1 is hotplugged, right ?
-> > > 
-> > > Right. The timer must fire in short time between enabling local timer
-> > > for CPU1 and setting the affinity for IRQ.
-> > 
-> > Why do you set the affinity in the CPU_ONLINE hotplug callback and not
-> > right away when the interrupt is requested?
-> 
-> Hi,
-> 
-> I think the problem in such code is in GIC. The gic_set_affinity() uses
-> cpu_online_mask:
-> 	unsigned int cpu = cpumask_any_and(mask_val, cpu_online_mask);
-> In that time this CPU is not present in that mask so -EINVAL would be
-> returned.
-
-Hmm, indeed. Stupid me.
-
-Here is a complete solution to the problem. We really want the drivers
-to be fast and clean and not work around such issues.
-
-I'm quite happy that I kept the 'force' argument of set_affinity
-callbacks. I knew that I'd need it at some point.
-
-So with the flag set we can disable the online mask check and force
-the interrupt to the proper cpu.
- 
-Thanks,
-
-	tglx
-
-Index: linux-2.6/drivers/clocksource/exynos_mct.c
-===================================================================
---- linux-2.6.orig/drivers/clocksource/exynos_mct.c
-+++ linux-2.6/drivers/clocksource/exynos_mct.c
-@@ -430,6 +430,7 @@ static int exynos4_local_timer_setup(str
- 				evt->irq);
- 			return -EIO;
- 		}
-+		irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
- 	} else {
- 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
- 	}
-@@ -461,12 +462,6 @@ static int exynos4_mct_cpu_notify(struct
- 		mevt = this_cpu_ptr(&percpu_mct_tick);
- 		exynos4_local_timer_setup(&mevt->evt);
- 		break;
--	case CPU_ONLINE:
--		cpu = (unsigned long)hcpu;
--		if (mct_int_type == MCT_INT_SPI)
--			irq_set_affinity(mct_irqs[MCT_L0_IRQ + cpu],
--						cpumask_of(cpu));
--		break;
- 	case CPU_DYING:
- 		mevt = this_cpu_ptr(&percpu_mct_tick);
- 		exynos4_local_timer_stop(&mevt->evt);
-Index: linux-2.6/drivers/irqchip/irq-gic.c
-===================================================================
---- linux-2.6.orig/drivers/irqchip/irq-gic.c
-+++ linux-2.6/drivers/irqchip/irq-gic.c
-@@ -246,10 +246,14 @@ static int gic_set_affinity(struct irq_d
- 			    bool force)
- {
- 	void __iomem *reg = gic_dist_base(d) + GIC_DIST_TARGET + (gic_irq(d) & ~3);
--	unsigned int shift = (gic_irq(d) % 4) * 8;
--	unsigned int cpu = cpumask_any_and(mask_val, cpu_online_mask);
-+	unsigned int cpu, shift = (gic_irq(d) % 4) * 8;
- 	u32 val, mask, bit;
- 
-+	if (!force)
-+		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-+	else
-+		cpu = cpumask_first(mask_val);
-+
- 	if (cpu >= NR_GIC_CPU_IF || cpu >= nr_cpu_ids)
- 		return -EINVAL;
- 
-Index: linux-2.6/include/linux/interrupt.h
-===================================================================
---- linux-2.6.orig/include/linux/interrupt.h
-+++ linux-2.6/include/linux/interrupt.h
-@@ -204,6 +204,7 @@ static inline int check_wakeup_irqs(void
- extern cpumask_var_t irq_default_affinity;
- 
- extern int irq_set_affinity(unsigned int irq, const struct cpumask *cpumask);
-+extern int irq_force_affinity(unsigned int irq, const struct cpumask *cpumask);
- extern int irq_can_set_affinity(unsigned int irq);
- extern int irq_select_affinity(unsigned int irq);
- 
-Index: linux-2.6/kernel/irq/manage.c
-===================================================================
---- linux-2.6.orig/kernel/irq/manage.c
-+++ linux-2.6/kernel/irq/manage.c
-@@ -180,7 +180,7 @@ int irq_do_set_affinity(struct irq_data
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	int ret;
- 
--	ret = chip->irq_set_affinity(data, mask, false);
-+	ret = chip->irq_set_affinity(data, mask, force);
- 	switch (ret) {
- 	case IRQ_SET_MASK_OK:
- 		cpumask_copy(data->affinity, mask);
-@@ -192,7 +192,8 @@ int irq_do_set_affinity(struct irq_data
- 	return ret;
- }
- 
--int __irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask)
-+static int irq_do_set_affinity_locked(struct irq_data *data,
-+				      const struct cpumask *mask, bool force)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	struct irq_desc *desc = irq_data_to_desc(data);
-@@ -202,7 +203,7 @@ int __irq_set_affinity_locked(struct irq
- 		return -EINVAL;
- 
- 	if (irq_can_move_pcntxt(data)) {
--		ret = irq_do_set_affinity(data, mask, false);
-+		ret = irq_do_set_affinity(data, mask, force);
- 	} else {
- 		irqd_set_move_pending(data);
- 		irq_copy_pending(desc, mask);
-@@ -217,13 +218,13 @@ int __irq_set_affinity_locked(struct irq
- 	return ret;
- }
- 
--/**
-- *	irq_set_affinity - Set the irq affinity of a given irq
-- *	@irq:		Interrupt to set affinity
-- *	@mask:		cpumask
-- *
-- */
--int irq_set_affinity(unsigned int irq, const struct cpumask *mask)
-+int __irq_set_affinity_locked(struct irq_data *data,const struct cpumask *mask)
-+{
-+	return irq_do_set_affinity_locked(data, mask, false);
-+}
-+
-+static int __irq_set_affinity(unsigned int irq, const struct cpumask *mask,
-+			      bool force)
- {
- 	struct irq_desc *desc = irq_to_desc(irq);
- 	unsigned long flags;
-@@ -233,11 +234,33 @@ int irq_set_affinity(unsigned int irq, c
- 		return -EINVAL;
- 
- 	raw_spin_lock_irqsave(&desc->lock, flags);
--	ret =  __irq_set_affinity_locked(irq_desc_get_irq_data(desc), mask);
-+	ret = irq_do_set_affinity_locked(irq_desc_get_irq_data(desc), mask,
-+					 force);
- 	raw_spin_unlock_irqrestore(&desc->lock, flags);
- 	return ret;
- }
- 
-+/**
-+ *	irq_force_affinity - Force the irq affinity of a given irq
-+ *	@irq:		Interrupt to set affinity
-+ *	@mask:		cpumask
-+ */
-+int irq_force_affinity(unsigned int irq, const struct cpumask *mask)
-+{
-+	return __irq_set_affinity(irq, mask, true);
-+}
-+
-+/**
-+ *	irq_set_affinity - Set the irq affinity of a given irq
-+ *	@irq:		Interrupt to set affinity
-+ *	@mask:		cpumask
-+ *
-+ */
-+int irq_set_affinity(unsigned int irq, const struct cpumask *mask)
-+{
-+	return __irq_set_affinity(irq, mask, false);
-+}
-+
- int irq_set_affinity_hint(unsigned int irq, const struct cpumask *m)
- {
- 	unsigned long flags;
---8323329-942035999-1397578841=:22697--
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index b4f9672..5247caa 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -903,7 +903,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 	GATE(CLK_AUDSS, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
+ 	GATE(CLK_MDNIE0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
+ 	GATE(CLK_ROTATOR, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
+-	GATE(CLK_MDMA2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
++	GATE(CLK_MDMA, "mdma", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
+ 	GATE(CLK_SMMU_MDMA, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0,
+ 		0),
+ 	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+index 75aff33..3ff13bc 100644
+--- a/include/dt-bindings/clock/exynos4.h
++++ b/include/dt-bindings/clock/exynos4.h
+@@ -181,7 +181,6 @@
+ #define CLK_KEYIF		347
+ #define CLK_AUDSS		348
+ #define CLK_MIPI_HSI		349 /* Exynos4210 only */
+-#define CLK_MDMA2		350 /* Exynos4210 only */
+ #define CLK_PIXELASYNCM0	351
+ #define CLK_PIXELASYNCM1	352
+ #define CLK_FIMC_LITE0		353 /* Exynos4x12 only */
+-- 
+1.7.9.5
