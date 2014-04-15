@@ -1,506 +1,743 @@
-From: Lukasz Majewski <l.majewski@majess.pl>
-Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
-Date: Wed, 16 Apr 2014 00:19:41 +0200
-Message-ID: <20140416001941.18da9b0c@jawa>
-References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
- <20140415083704.212d3a0f@amdc2363> <534D4ED4.9020203@linaro.org>
- <20140415175432.0d73018e@amdc2363> <534D608F.60007@linaro.org>
+From: Stratos Karafotis <stratosk@semaphore.gr>
+Subject: [PATCH v2 2/8] cpufreq: Use cpufreq_for_each_* macros for frequency
+ table iteration
+Date: Wed, 16 Apr 2014 01:25:47 +0300
+Message-ID: <534DB1EB.1080401@semaphore.gr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6780371636890584306=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <534D608F.60007@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, "ccross@google.com" <ccross@google.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============6780371636890584306==
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/5jcaTZ=C8npQr6ASInN3z_m"; protocol="application/pgp-signature"
+The cpufreq core now supports the cpufreq_for_each_entry and
+cpufreq_for_each_valid_entry macros helpers for iteration over the
+cpufreq_frequency_table, so use them.
 
---Sig_/5jcaTZ=C8npQr6ASInN3z_m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+It should have no functional changes.
 
-On Tue, 15 Apr 2014 18:38:39 +0200
-Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+Signed-off-by: Stratos Karafotis <stratosk@semaphore.gr>
+---
+ drivers/cpufreq/acpi-cpufreq.c       |  9 +++---
+ drivers/cpufreq/arm_big_little.c     | 16 +++++------
+ drivers/cpufreq/cpufreq_stats.c      | 24 ++++++----------
+ drivers/cpufreq/dbx500-cpufreq.c     |  8 ++----
+ drivers/cpufreq/elanfreq.c           |  9 +++---
+ drivers/cpufreq/exynos-cpufreq.c     | 11 ++++---
+ drivers/cpufreq/exynos5440-cpufreq.c | 30 +++++++++----------
+ drivers/cpufreq/freq_table.c         | 56 ++++++++++++++++--------------------
+ drivers/cpufreq/longhaul.c           | 13 ++++-----
+ drivers/cpufreq/pasemi-cpufreq.c     | 10 +++----
+ drivers/cpufreq/powernow-k6.c        | 14 ++++-----
+ drivers/cpufreq/ppc_cbe_cpufreq.c    |  9 +++---
+ drivers/cpufreq/s3c2416-cpufreq.c    | 40 +++++++++++---------------
+ drivers/cpufreq/s3c64xx-cpufreq.c    | 15 ++++------
+ 14 files changed, 117 insertions(+), 147 deletions(-)
 
->=20
-> On 04/15/2014 05:54 PM, Lukasz Majewski wrote:
-> > Hi Daniel,
-> >
-> >> On 04/15/2014 08:37 AM, Lukasz Majewski wrote:
-> >>> Hi Daniel,
-> >>>
-> >>>> The following driver is for exynos4210. I did not yet finished
-> >>>> the other boards, so I created a specific driver for 4210 which
-> >>>> could be merged later.
-> >>>>
-> >>>
-> >>> If I may ask - do you plan to develop this code for Exynos4412 in
-> >>> a near future?
-> >>
-> >> Yes it is in my plan.
-> >>
-> >>> I did some tests (with hotplug) and it turns out, that due to
-> >>> static leakage current one can save up to 12 % of power
-> >>> consumption when power domains for cores are disabled.
-> >>>
-> >>>
-> >>> Such notable power consumption reduction could drive (and justify)
-> >>> the further development of power aware scheduling code.
-> >>>
-> >>> If you don't have time, then I can offer myself to develop the
-> >>> code. I just want to avoid potential duplication of effort.
-> >>
-> >> I would be very glad if we can cooperate. Thanks for proposing your
-> >> help.
-> >
-> > You are welcome :-)
-> >
-> >>
-> >> I have put a branch containing the cleanups + driver moving + dual
-> >> cpu support, so you can base your work in it.
-> >>
-> >> git://git.linaro.org/people/daniel.lezcano/linux.git
-> >> cpuidle/samsung-next
-> >
-> > Thanks for sharing code. I will look into it.
-> >
-> >>
-> >> I am wondering if the 5250 board wouldn't make sense as a primary
-> >> target before the 4412...
-> >
-> > I'm working on a device based on 4412, not 5250. Therefore, I would
-> > prefer to have this concept implemented on 4412 as soon as possible
-> > to not hinder my scheduler related experiments.
-> >
-> > If you have other priorities, then we can split the work. What do
-> > you think?
->=20
-> It is ok for me if you want to handle the cpuidle driver 4412.
-
-Ok. Thanks :-)
-
-> Will
-> you create a new driver or extend this dual cpu driver to support 4
-> cpus ?
-
-For the beginning, I will try to extend the solution proposed for
-Exynos4210.=20
-
-However, because of the Easter break, the code will be delivered at
-next week.
-
->=20
->=20
-> >>>> The driver is based on Colin Cross's driver found at:
-> >>>>
-> >>>> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4f=
-df811f9a4dfa3b393a010%5E%5E!/
-> >>>>
-> >>>> This one was based on a 3.4 kernel and an old API.
-> >>>>
-> >>>> It has been refreshed, simplified and based on the recent code
-> >>>> cleanup I sent today.
-> >>>>
-> >>>> The AFTR could be entered when all the cpus (except cpu0) are
-> >>>> down. In order to reach this situation, the couple idle states
-> >>>> are used.
-> >>>>
-> >>>> There is a sync barrier at the entry and the exit of the low
-> >>>> power function. So all cpus will enter and exit the function at
-> >>>> the same time.
-> >>>>
-> >>>> At this point, CPU0 knows the other cpu will power down itself.
-> >>>> CPU0 waits for the CPU1 to be powered down and then initiate the
-> >>>> AFTR power down sequence.
-> >>>>
-> >>>> No interrupts are handled by CPU1, this is why we switch to the
-> >>>> timer broadcast even if the local timer is not impacted by the
-> >>>> idle state.
-> >>>>
-> >>>> When CPU0 wakes up, it powers up CPU1 and waits for it to boot.
-> >>>> Then they both exit the idle function.
-> >>>>
-> >>>> This driver allows the exynos4210 to have the same power
-> >>>> consumption at idle time than the one when we have to unplug CPU1
-> >>>> in order to let CPU0 to reach the AFTR state.
-> >>>>
-> >>>> This patch is a RFC because, we have to find a way to remove the
-> >>>> macros definitions and cpu powerdown function without pulling the
-> >>>> arch dependent headers.
-> >>>>
-> >>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >>>> ---
-> >>>>    arch/arm/mach-exynos/common.c        |   11 +-
-> >>>>    drivers/cpuidle/Kconfig.arm          |    8 ++
-> >>>>    drivers/cpuidle/Makefile             |    1 +
-> >>>>    drivers/cpuidle/cpuidle-exynos4210.c |  226
-> >>>> ++++++++++++++++++++++++++++++++++ 4 files changed, 245
-> >>>> insertions(+), 1 deletion(-) create mode 100644
-> >>>> drivers/cpuidle/cpuidle-exynos4210.c
-> >>>>
-> >>>> diff --git a/arch/arm/mach-exynos/common.c
-> >>>> b/arch/arm/mach-exynos/common.c index d5fa21e..1765a98 100644
-> >>>> --- a/arch/arm/mach-exynos/common.c
-> >>>> +++ b/arch/arm/mach-exynos/common.c
-> >>>> @@ -299,9 +299,18 @@ static struct platform_device exynos_cpuidle
-> >>>> =3D { .id                =3D -1,
-> >>>>    };
-> >>>>
-> >>>> +static struct platform_device exynos4210_cpuidle =3D {
-> >>>> +       .name              =3D "exynos4210-cpuidle",
-> >>>> +       .dev.platform_data =3D exynos_sys_powerdown_aftr,
-> >>>> +       .id                =3D -1,
-> >>>> +};
-> >>>> +
-> >>>>    void __init exynos_cpuidle_init(void)
-> >>>>    {
-> >>>> -       platform_device_register(&exynos_cpuidle);
-> >>>> +       if (soc_is_exynos4210())
-> >>>> +               platform_device_register(&exynos4210_cpuidle);
-> >>>> +       else
-> >>>> +               platform_device_register(&exynos_cpuidle);
-> >>>>    }
-> >>>>
-> >>>>    void __init exynos_cpufreq_init(void)
-> >>>> diff --git a/drivers/cpuidle/Kconfig.arm
-> >>>> b/drivers/cpuidle/Kconfig.arm index 92f0c12..2772130 100644
-> >>>> --- a/drivers/cpuidle/Kconfig.arm
-> >>>> +++ b/drivers/cpuidle/Kconfig.arm
-> >>>> @@ -51,3 +51,11 @@ config ARM_EXYNOS_CPUIDLE
-> >>>>           depends on ARCH_EXYNOS
-> >>>>           help
-> >>>>             Select this to enable cpuidle for Exynos processors
-> >>>> +
-> >>>> +config ARM_EXYNOS4210_CPUIDLE
-> >>>> +       bool "Cpu Idle Driver for the Exynos 4210 processor"
-> >>>> +       default y
-> >>>> +       depends on ARCH_EXYNOS
-> >>>> +       select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
-> >>>> +       help
-> >>>> +         Select this to enable cpuidle for the Exynos 4210
-> >>>> processors diff --git a/drivers/cpuidle/Makefile
-> >>>> b/drivers/cpuidle/Makefile index 0d1540a..e0ec9bc 100644
-> >>>> --- a/drivers/cpuidle/Makefile
-> >>>> +++ b/drivers/cpuidle/Makefile
-> >>>> @@ -14,6 +14,7 @@ obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)
-> >>>> +=3D cpuidle-zynq.o obj-$(CONFIG_ARM_U8500_CPUIDLE)         +=3D
-> >>>> cpuidle-ux500.o obj-$(CONFIG_ARM_AT91_CPUIDLE)          +=3D
-> >>>> cpuidle-at91.o obj-$(CONFIG_ARM_EXYNOS_CPUIDLE)        +=3D
-> >>>> cpuidle-exynos.o +obj-$(CONFIG_ARM_EXYNOS4210_CPUIDLE)    +=3D
-> >>>> cpuidle-exynos4210.o
-> >>>>
-> >>>>    #################################################################=
-##############
-> >>>>    # POWERPC drivers
-> >>>> diff --git a/drivers/cpuidle/cpuidle-exynos4210.c
-> >>>> b/drivers/cpuidle/cpuidle-exynos4210.c new file mode 100644
-> >>>> index 0000000..56f6d51
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/cpuidle/cpuidle-exynos4210.c
-> >>>> @@ -0,0 +1,226 @@
-> >>>> +/*
-> >>>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> >>>> + *             http://www.samsung.com
-> >>>> + *
-> >>>> + * Copyright (c) 2014 Linaro : Daniel Lezcano
-> >>>> <daniel.lezcano@linaro.org>
-> >>>> + *             http://www.linaro.org
-> >>>> + *
-> >>>> + * Based on the work of Colin Cross <ccross@android.com>
-> >>>> + *
-> >>>> + * This program is free software; you can redistribute it and/or
-> >>>> modify
-> >>>> + * it under the terms of the GNU General Public License version
-> >>>> 2 as
-> >>>> + * published by the Free Software Foundation.
-> >>>> + */
-> >>>> +
-> >>>> +#include <linux/cpuidle.h>
-> >>>> +#include <linux/cpu_pm.h>
-> >>>> +#include <linux/io.h>
-> >>>> +#include <linux/platform_device.h>
-> >>>> +
-> >>>> +#include <asm/proc-fns.h>
-> >>>> +#include <asm/suspend.h>
-> >>>> +#include <asm/cpuidle.h>
-> >>>> +
-> >>>> +#include <plat/pm.h>
-> >>>> +#include <plat/cpu.h>
-> >>>> +#include <plat/map-base.h>
-> >>>> +#include <plat/map-s5p.h>
-> >>>> +
-> >>>> +static atomic_t exynos_idle_barrier;
-> >>>> +static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
-> >>>> +
-> >>>> +#define BOOT_VECTOR S5P_VA_SYSRAM
-> >>>> +#define S5P_VA_PMU                  S3C_ADDR(0x02180000)
-> >>>> +#define S5P_PMUREG(x)              (S5P_VA_PMU + (x))
-> >>>> +#define S5P_ARM_CORE1_CONFIGURATION S5P_PMUREG(0x2080)
-> >>>> +#define S5P_ARM_CORE1_STATUS        S5P_PMUREG(0x2084)
-> >>>> +
-> >>>> +static void (*exynos_aftr)(void);
-> >>>> +
-> >>>> +static int cpu_suspend_finish(unsigned long flags)
-> >>>> +{
-> >>>> +       if (flags)
-> >>>> +               exynos_aftr();
-> >>>> +
-> >>>> +       cpu_do_idle();
-> >>>> +
-> >>>> +       return -1;
-> >>>> +}
-> >>>> +
-> >>>> +static int exynos_cpu0_enter_aftr(void)
-> >>>> +{
-> >>>> +       int ret =3D -1;
-> >>>> +
-> >>>> +       /*
-> >>>> +        * If the other cpu is powered on, we have to power it
-> >>>> off, because
-> >>>> +        * the AFTR state won't work otherwise
-> >>>> +        */
-> >>>> +       if (cpu_online(1)) {
-> >>>> +
-> >>>> +               /*
-> >>>> +                * We reach a sync point with the coupled idle
-> >>>> state, we know
-> >>>> +                * the other cpu will power down itself or will
-> >>>> abort the
-> >>>> +                * sequence, let's wait for one of these to
-> >>>> happen
-> >>>> +                */
-> >>>> +               while (__raw_readl(S5P_ARM_CORE1_STATUS) & 3) {
-> >>>> +
-> >>>> +                       /*
-> >>>> +                        * The other cpu may skip idle and boot
-> >>>> back
-> >>>> +                        * up again
-> >>>> +                        */
-> >>>> +                       if (atomic_read(&cpu1_wakeup))
-> >>>> +                               goto abort;
-> >>>> +
-> >>>> +                       /*
-> >>>> +                        * The other cpu may bounce through idle
-> >>>> and
-> >>>> +                        * boot back up again, getting stuck in
-> >>>> the
-> >>>> +                        * boot rom code
-> >>>> +                        */
-> >>>> +                       if (__raw_readl(BOOT_VECTOR) =3D=3D 0)
-> >>>> +                               goto abort;
-> >>>> +
-> >>>> +                       cpu_relax();
-> >>>> +               }
-> >>>> +       }
-> >>>> +
-> >>>> +       cpu_pm_enter();
-> >>>> +
-> >>>> +       ret =3D cpu_suspend(1, cpu_suspend_finish);
-> >>>> +
-> >>>> +       cpu_pm_exit();
-> >>>> +
-> >>>> +abort:
-> >>>> +       if (cpu_online(1)) {
-> >>>> +               /*
-> >>>> +                * Set the boot vector to something non-zero
-> >>>> +                */
-> >>>> +               __raw_writel(virt_to_phys(s3c_cpu_resume),
-> >>>> +                            BOOT_VECTOR);
-> >>>> +               dsb();
-> >>>> +
-> >>>> +               /*
-> >>>> +                * Turn on cpu1 and wait for it to be on
-> >>>> +                */
-> >>>> +               __raw_writel(0x3, S5P_ARM_CORE1_CONFIGURATION);
-> >>>> +               while ((__raw_readl(S5P_ARM_CORE1_STATUS) & 3) !=3D
-> >>>> 3)
-> >>>> +                       cpu_relax();
-> >>>> +
-> >>>> +               /*
-> >>>> +                * Wait for cpu1 to get stuck in the boot rom
-> >>>> +                */
-> >>>> +               while ((__raw_readl(BOOT_VECTOR) !=3D 0) &&
-> >>>> +                      !atomic_read(&cpu1_wakeup))
-> >>>> +                       cpu_relax();
-> >>>> +
-> >>>> +               if (!atomic_read(&cpu1_wakeup)) {
-> >>>> +                       /*
-> >>>> +                        * Poke cpu1 out of the boot rom
-> >>>> +                        */
-> >>>> +
-> >>>> __raw_writel(virt_to_phys(s3c_cpu_resume),
-> >>>> +                                    BOOT_VECTOR);
-> >>>> +                       dsb_sev();
-> >>>> +               }
-> >>>> +
-> >>>> +               /*
-> >>>> +                * Wait for cpu1 to finish booting
-> >>>> +                */
-> >>>> +               while (!atomic_read(&cpu1_wakeup))
-> >>>> +                       cpu_relax();
-> >>>> +       }
-> >>>> +
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +
-> >>>> +static int exynos_powerdown_cpu1(void)
-> >>>> +{
-> >>>> +       int ret =3D -1;
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Idle sequence for cpu1
-> >>>> +        */
-> >>>> +       if (cpu_pm_enter())
-> >>>> +               goto cpu1_aborted;
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Turn off cpu 1
-> >>>> +        */
-> >>>> +       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
-> >>>> +
-> >>>> +       ret =3D cpu_suspend(0, cpu_suspend_finish);
-> >>>> +
-> >>>> +       cpu_pm_exit();
-> >>>> +
-> >>>> +cpu1_aborted:
-> >>>> +       dsb();
-> >>>> +       /*
-> >>>> +        * Notify cpu 0 that cpu 1 is awake
-> >>>> +        */
-> >>>> +       atomic_set(&cpu1_wakeup, 1);
-> >>>> +
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +
-> >>>> +static int exynos_enter_aftr(struct cpuidle_device *dev,
-> >>>> +                            struct cpuidle_driver *drv, int
-> >>>> index) +{
-> >>>> +       int ret;
-> >>>> +
-> >>>> +       __raw_writel(virt_to_phys(s3c_cpu_resume), BOOT_VECTOR);
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Waiting all cpus to reach this point at the same
-> >>>> moment
-> >>>> +        */
-> >>>> +       cpuidle_coupled_parallel_barrier(dev,
-> >>>> &exynos_idle_barrier); +
-> >>>> +       /*
-> >>>> +        * Both cpus will reach this point at the same time
-> >>>> +        */
-> >>>> +       ret =3D dev->cpu ? exynos_powerdown_cpu1() :
-> >>>> exynos_cpu0_enter_aftr();
-> >>>> +       if (ret)
-> >>>> +               index =3D ret;
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Waiting all cpus to finish the power sequence before
-> >>>> going further
-> >>>> +        */
-> >>>> +       cpuidle_coupled_parallel_barrier(dev,
-> >>>> &exynos_idle_barrier); +
-> >>>> +       atomic_set(&cpu1_wakeup, 0);
-> >>>> +
-> >>>> +       return index;
-> >>>> +}
-> >>>> +
-> >>>> +static struct cpuidle_driver exynos_idle_driver =3D {
-> >>>> +       .name           =3D "exynos4210_idle",
-> >>>> +       .owner          =3D THIS_MODULE,
-> >>>> +       .states =3D {
-> >>>> +               ARM_CPUIDLE_WFI_STATE,
-> >>>> +               [1] =3D {
-> >>>> +                       .enter                  =3D
-> >>>> exynos_enter_aftr,
-> >>>> +                       .exit_latency           =3D 5000,
-> >>>> +                       .target_residency       =3D 10000,
-> >>>> +                       .flags                  =3D
-> >>>> CPUIDLE_FLAG_TIME_VALID |
-> >>>> +                       CPUIDLE_FLAG_COUPLED |
-> >>>> CPUIDLE_FLAG_TIMER_STOP,
-> >>>> +                       .name                   =3D "C1",
-> >>>> +                       .desc                   =3D "ARM power
-> >>>> down",
-> >>>> +               },
-> >>>> +       },
-> >>>> +       .state_count =3D 2,
-> >>>> +       .safe_state_index =3D 0,
-> >>>> +};
-> >>>> +
-> >>>> +static int exynos_cpuidle_probe(struct platform_device *pdev)
-> >>>> +{
-> >>>> +       exynos_aftr =3D (void *)(pdev->dev.platform_data);
-> >>>> +
-> >>>> +       return cpuidle_register(&exynos_idle_driver,
-> >>>> cpu_possible_mask); +}
-> >>>> +
-> >>>> +static struct platform_driver exynos_cpuidle_driver =3D {
-> >>>> +       .driver =3D {
-> >>>> +               .name =3D "exynos4210-cpuidle",
-> >>>> +               .owner =3D THIS_MODULE,
-> >>>> +       },
-> >>>> +       .probe =3D exynos_cpuidle_probe,
-> >>>> +};
-> >>>> +
-> >>>> +module_platform_driver(exynos_cpuidle_driver);
-> >>>> --
-> >>>> 1.7.9.5
-> >>>>
-> >>>>
-> >>>> _______________________________________________
-> >>>> linux-arm-kernel mailing list
-> >>>> linux-arm-kernel@lists.infradead.org
-> >>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >>>
-> >>>
-> >>>
-> >>
-> >>
-> >
-> >
-> >
->=20
->=20
-
-Best regards,
-
-Lukasz Majewski
-
---Sig_/5jcaTZ=C8npQr6ASInN3z_m
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAlNNsH4ACgkQf9/hG2YwgjHn9ACeNRtKtq6zCyC3n4VTvJEwlDHr
-bj4AoKtiQFpBuzbMh+ImCwnwTo9RHYc1
-=OuCo
------END PGP SIGNATURE-----
-
---Sig_/5jcaTZ=C8npQr6ASInN3z_m--
-
-
---===============6780371636890584306==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6780371636890584306==--
+diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
+index 000e4e0..b0c18ed 100644
+--- a/drivers/cpufreq/acpi-cpufreq.c
++++ b/drivers/cpufreq/acpi-cpufreq.c
+@@ -213,7 +213,7 @@ static unsigned extract_io(u32 value, struct acpi_cpufreq_data *data)
+ 
+ static unsigned extract_msr(u32 msr, struct acpi_cpufreq_data *data)
+ {
+-	int i;
++	struct cpufreq_frequency_table *pos;
+ 	struct acpi_processor_performance *perf;
+ 
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+@@ -223,10 +223,9 @@ static unsigned extract_msr(u32 msr, struct acpi_cpufreq_data *data)
+ 
+ 	perf = data->acpi_data;
+ 
+-	for (i = 0; data->freq_table[i].frequency != CPUFREQ_TABLE_END; i++) {
+-		if (msr == perf->states[data->freq_table[i].driver_data].status)
+-			return data->freq_table[i].frequency;
+-	}
++	cpufreq_for_each_entry(pos, data->freq_table)
++		if (msr == perf->states[pos->driver_data].status)
++			return pos->frequency;
+ 	return data->freq_table[0].frequency;
+ }
+ 
+diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
+index bad2ed3..1f4d4e3 100644
+--- a/drivers/cpufreq/arm_big_little.c
++++ b/drivers/cpufreq/arm_big_little.c
+@@ -226,22 +226,22 @@ static inline u32 get_table_count(struct cpufreq_frequency_table *table)
+ /* get the minimum frequency in the cpufreq_frequency_table */
+ static inline u32 get_table_min(struct cpufreq_frequency_table *table)
+ {
+-	int i;
++	struct cpufreq_frequency_table *pos;
+ 	uint32_t min_freq = ~0;
+-	for (i = 0; (table[i].frequency != CPUFREQ_TABLE_END); i++)
+-		if (table[i].frequency < min_freq)
+-			min_freq = table[i].frequency;
++	cpufreq_for_each_entry(pos, table)
++		if (pos->frequency < min_freq)
++			min_freq = pos->frequency;
+ 	return min_freq;
+ }
+ 
+ /* get the maximum frequency in the cpufreq_frequency_table */
+ static inline u32 get_table_max(struct cpufreq_frequency_table *table)
+ {
+-	int i;
++	struct cpufreq_frequency_table *pos;
+ 	uint32_t max_freq = 0;
+-	for (i = 0; (table[i].frequency != CPUFREQ_TABLE_END); i++)
+-		if (table[i].frequency > max_freq)
+-			max_freq = table[i].frequency;
++	cpufreq_for_each_entry(pos, table)
++		if (pos->frequency > max_freq)
++			max_freq = pos->frequency;
+ 	return max_freq;
+ }
+ 
+diff --git a/drivers/cpufreq/cpufreq_stats.c b/drivers/cpufreq/cpufreq_stats.c
+index ecaaebf..0cd9b4d 100644
+--- a/drivers/cpufreq/cpufreq_stats.c
++++ b/drivers/cpufreq/cpufreq_stats.c
+@@ -182,11 +182,11 @@ static void cpufreq_stats_free_table(unsigned int cpu)
+ 
+ static int __cpufreq_stats_create_table(struct cpufreq_policy *policy)
+ {
+-	unsigned int i, j, count = 0, ret = 0;
++	unsigned int i, count = 0, ret = 0;
+ 	struct cpufreq_stats *stat;
+ 	unsigned int alloc_size;
+ 	unsigned int cpu = policy->cpu;
+-	struct cpufreq_frequency_table *table;
++	struct cpufreq_frequency_table *pos, *table;
+ 
+ 	table = cpufreq_frequency_get_table(cpu);
+ 	if (unlikely(!table))
+@@ -205,12 +205,8 @@ static int __cpufreq_stats_create_table(struct cpufreq_policy *policy)
+ 	stat->cpu = cpu;
+ 	per_cpu(cpufreq_stats_table, cpu) = stat;
+ 
+-	for (i = 0; table[i].frequency != CPUFREQ_TABLE_END; i++) {
+-		unsigned int freq = table[i].frequency;
+-		if (freq == CPUFREQ_ENTRY_INVALID)
+-			continue;
++	cpufreq_for_each_valid_entry(pos, table)
+ 		count++;
+-	}
+ 
+ 	alloc_size = count * sizeof(int) + count * sizeof(u64);
+ 
+@@ -228,15 +224,11 @@ static int __cpufreq_stats_create_table(struct cpufreq_policy *policy)
+ #ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+ 	stat->trans_table = stat->freq_table + count;
+ #endif
+-	j = 0;
+-	for (i = 0; table[i].frequency != CPUFREQ_TABLE_END; i++) {
+-		unsigned int freq = table[i].frequency;
+-		if (freq == CPUFREQ_ENTRY_INVALID)
+-			continue;
+-		if (freq_table_get_index(stat, freq) == -1)
+-			stat->freq_table[j++] = freq;
+-	}
+-	stat->state_num = j;
++	i = 0;
++	cpufreq_for_each_valid_entry(pos, table)
++		if (freq_table_get_index(stat, pos->frequency) == -1)
++			stat->freq_table[i++] = pos->frequency;
++	stat->state_num = i;
+ 	spin_lock(&cpufreq_stats_lock);
+ 	stat->last_time = get_jiffies_64();
+ 	stat->last_index = freq_table_get_index(stat, policy->cur);
+diff --git a/drivers/cpufreq/dbx500-cpufreq.c b/drivers/cpufreq/dbx500-cpufreq.c
+index 412a78b..4bebc1b 100644
+--- a/drivers/cpufreq/dbx500-cpufreq.c
++++ b/drivers/cpufreq/dbx500-cpufreq.c
+@@ -45,7 +45,7 @@ static struct cpufreq_driver dbx500_cpufreq_driver = {
+ 
+ static int dbx500_cpufreq_probe(struct platform_device *pdev)
+ {
+-	int i = 0;
++	struct cpufreq_frequency_table *pos;
+ 
+ 	freq_table = dev_get_platdata(&pdev->dev);
+ 	if (!freq_table) {
+@@ -60,10 +60,8 @@ static int dbx500_cpufreq_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pr_info("dbx500-cpufreq: Available frequencies:\n");
+-	while (freq_table[i].frequency != CPUFREQ_TABLE_END) {
+-		pr_info("  %d Mhz\n", freq_table[i].frequency/1000);
+-		i++;
+-	}
++	cpufreq_for_each_entry(pos, freq_table)
++		pr_info("  %d Mhz\n", pos->frequency / 1000);
+ 
+ 	return cpufreq_register_driver(&dbx500_cpufreq_driver);
+ }
+diff --git a/drivers/cpufreq/elanfreq.c b/drivers/cpufreq/elanfreq.c
+index 7f5d2a6..1c06e78 100644
+--- a/drivers/cpufreq/elanfreq.c
++++ b/drivers/cpufreq/elanfreq.c
+@@ -147,7 +147,7 @@ static int elanfreq_target(struct cpufreq_policy *policy,
+ static int elanfreq_cpu_init(struct cpufreq_policy *policy)
+ {
+ 	struct cpuinfo_x86 *c = &cpu_data(0);
+-	unsigned int i;
++	struct cpufreq_frequency_table *pos;
+ 
+ 	/* capability check */
+ 	if ((c->x86_vendor != X86_VENDOR_AMD) ||
+@@ -159,10 +159,9 @@ static int elanfreq_cpu_init(struct cpufreq_policy *policy)
+ 		max_freq = elanfreq_get_cpu_frequency(0);
+ 
+ 	/* table init */
+-	for (i = 0; (elanfreq_table[i].frequency != CPUFREQ_TABLE_END); i++) {
+-		if (elanfreq_table[i].frequency > max_freq)
+-			elanfreq_table[i].frequency = CPUFREQ_ENTRY_INVALID;
+-	}
++	cpufreq_for_each_entry(pos, elanfreq_table)
++		if (pos->frequency > max_freq)
++			pos->frequency = CPUFREQ_ENTRY_INVALID;
+ 
+ 	/* cpuinfo and default policy values */
+ 	policy->cpuinfo.transition_latency = CPUFREQ_ETERNAL;
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index f99cfe2..9c13255 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -29,17 +29,16 @@ static unsigned int locking_frequency;
+ static int exynos_cpufreq_get_index(unsigned int freq)
+ {
+ 	struct cpufreq_frequency_table *freq_table = exynos_info->freq_table;
+-	int index;
++	struct cpufreq_frequency_table *pos;
+ 
+-	for (index = 0;
+-		freq_table[index].frequency != CPUFREQ_TABLE_END; index++)
+-		if (freq_table[index].frequency == freq)
++	cpufreq_for_each_entry(pos, freq_table)
++		if (pos->frequency == freq)
+ 			break;
+ 
+-	if (freq_table[index].frequency == CPUFREQ_TABLE_END)
++	if (pos->frequency == CPUFREQ_TABLE_END)
+ 		return -EINVAL;
+ 
+-	return index;
++	return pos - freq_table;
+ }
+ 
+ static int exynos_cpufreq_scale(unsigned int target_freq)
+diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+index a6b8214..f33f25b 100644
+--- a/drivers/cpufreq/exynos5440-cpufreq.c
++++ b/drivers/cpufreq/exynos5440-cpufreq.c
+@@ -114,25 +114,23 @@ static struct cpufreq_freqs freqs;
+ 
+ static int init_div_table(void)
+ {
+-	struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
++	struct cpufreq_frequency_table *pos, *freq_tbl = dvfs_info->freq_table;
+ 	unsigned int tmp, clk_div, ema_div, freq, volt_id;
+-	int i = 0;
+ 	struct dev_pm_opp *opp;
+ 
+ 	rcu_read_lock();
+-	for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
+-
++	cpufreq_for_each_entry(pos, freq_tbl) {
+ 		opp = dev_pm_opp_find_freq_exact(dvfs_info->dev,
+-					freq_tbl[i].frequency * 1000, true);
++					pos->frequency * 1000, true);
+ 		if (IS_ERR(opp)) {
+ 			rcu_read_unlock();
+ 			dev_err(dvfs_info->dev,
+ 				"failed to find valid OPP for %u KHZ\n",
+-				freq_tbl[i].frequency);
++				pos->frequency);
+ 			return PTR_ERR(opp);
+ 		}
+ 
+-		freq = freq_tbl[i].frequency / 1000; /* In MHZ */
++		freq = pos->frequency / 1000; /* In MHZ */
+ 		clk_div = ((freq / CPU_DIV_FREQ_MAX) & P0_7_CPUCLKDEV_MASK)
+ 					<< P0_7_CPUCLKDEV_SHIFT;
+ 		clk_div |= ((freq / CPU_ATB_FREQ_MAX) & P0_7_ATBCLKDEV_MASK)
+@@ -157,7 +155,8 @@ static int init_div_table(void)
+ 		tmp = (clk_div | ema_div | (volt_id << P0_7_VDD_SHIFT)
+ 			| ((freq / FREQ_UNIT) << P0_7_FREQ_SHIFT));
+ 
+-		__raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 * i);
++		__raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 *
++						(pos - freq_tbl));
+ 	}
+ 
+ 	rcu_read_unlock();
+@@ -166,8 +165,9 @@ static int init_div_table(void)
+ 
+ static void exynos_enable_dvfs(unsigned int cur_frequency)
+ {
+-	unsigned int tmp, i, cpu;
++	unsigned int tmp, cpu;
+ 	struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
++	struct cpufreq_frequency_table *pos;
+ 	/* Disable DVFS */
+ 	__raw_writel(0,	dvfs_info->base + XMU_DVFS_CTRL);
+ 
+@@ -182,15 +182,15 @@ static void exynos_enable_dvfs(unsigned int cur_frequency)
+ 	 __raw_writel(tmp, dvfs_info->base + XMU_PMUIRQEN);
+ 
+ 	/* Set initial performance index */
+-	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
+-		if (freq_table[i].frequency == cur_frequency)
++	cpufreq_for_each_entry(pos, freq_table)
++		if (pos->frequency == cur_frequency)
+ 			break;
+ 
+-	if (freq_table[i].frequency == CPUFREQ_TABLE_END) {
++	if (pos->frequency == CPUFREQ_TABLE_END) {
+ 		dev_crit(dvfs_info->dev, "Boot up frequency not supported\n");
+ 		/* Assign the highest frequency */
+-		i = 0;
+-		cur_frequency = freq_table[i].frequency;
++		pos = freq_table;
++		cur_frequency = pos->frequency;
+ 	}
+ 
+ 	dev_info(dvfs_info->dev, "Setting dvfs initial frequency = %uKHZ",
+@@ -199,7 +199,7 @@ static void exynos_enable_dvfs(unsigned int cur_frequency)
+ 	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
+ 		tmp = __raw_readl(dvfs_info->base + XMU_C0_3_PSTATE + cpu * 4);
+ 		tmp &= ~(P_VALUE_MASK << C0_3_PSTATE_NEW_SHIFT);
+-		tmp |= (i << C0_3_PSTATE_NEW_SHIFT);
++		tmp |= ((pos - freq_table) << C0_3_PSTATE_NEW_SHIFT);
+ 		__raw_writel(tmp, dvfs_info->base + XMU_C0_3_PSTATE + cpu * 4);
+ 	}
+ 
+diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+index 08e7bbc..cf004a5 100644
+--- a/drivers/cpufreq/freq_table.c
++++ b/drivers/cpufreq/freq_table.c
+@@ -21,22 +21,19 @@
+ int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy,
+ 				    struct cpufreq_frequency_table *table)
+ {
++	struct cpufreq_frequency_table *pos;
+ 	unsigned int min_freq = ~0;
+ 	unsigned int max_freq = 0;
+-	unsigned int i;
++	unsigned int freq;
+ 
+-	for (i = 0; (table[i].frequency != CPUFREQ_TABLE_END); i++) {
+-		unsigned int freq = table[i].frequency;
+-		if (freq == CPUFREQ_ENTRY_INVALID) {
+-			pr_debug("table entry %u is invalid, skipping\n", i);
++	cpufreq_for_each_valid_entry(pos, table) {
++		freq = pos->frequency;
+ 
+-			continue;
+-		}
+ 		if (!cpufreq_boost_enabled()
+-		    && (table[i].flags & CPUFREQ_BOOST_FREQ))
++		    && (pos->flags & CPUFREQ_BOOST_FREQ))
+ 			continue;
+ 
+-		pr_debug("table entry %u: %u kHz\n", i, freq);
++		pr_debug("table entry %lu: %u kHz\n", pos - table, freq);
+ 		if (freq < min_freq)
+ 			min_freq = freq;
+ 		if (freq > max_freq)
+@@ -57,7 +54,8 @@ EXPORT_SYMBOL_GPL(cpufreq_frequency_table_cpuinfo);
+ int cpufreq_frequency_table_verify(struct cpufreq_policy *policy,
+ 				   struct cpufreq_frequency_table *table)
+ {
+-	unsigned int next_larger = ~0, freq, i = 0;
++	struct cpufreq_frequency_table *pos;
++	unsigned int freq, next_larger = ~0;
+ 	bool found = false;
+ 
+ 	pr_debug("request for verification of policy (%u - %u kHz) for cpu %u\n",
+@@ -65,9 +63,9 @@ int cpufreq_frequency_table_verify(struct cpufreq_policy *policy,
+ 
+ 	cpufreq_verify_within_cpu_limits(policy);
+ 
+-	for (; freq = table[i].frequency, freq != CPUFREQ_TABLE_END; i++) {
+-		if (freq == CPUFREQ_ENTRY_INVALID)
+-			continue;
++	cpufreq_for_each_valid_entry(pos, table) {
++		freq = pos->frequency;
++
+ 		if ((freq >= policy->min) && (freq <= policy->max)) {
+ 			found = true;
+ 			break;
+@@ -118,7 +116,8 @@ int cpufreq_frequency_table_target(struct cpufreq_policy *policy,
+ 		.driver_data = ~0,
+ 		.frequency = 0,
+ 	};
+-	unsigned int i;
++	struct cpufreq_frequency_table *pos;
++	unsigned int freq, i = 0;
+ 
+ 	pr_debug("request for target %u kHz (relation: %u) for cpu %u\n",
+ 					target_freq, relation, policy->cpu);
+@@ -132,10 +131,10 @@ int cpufreq_frequency_table_target(struct cpufreq_policy *policy,
+ 		break;
+ 	}
+ 
+-	for (i = 0; (table[i].frequency != CPUFREQ_TABLE_END); i++) {
+-		unsigned int freq = table[i].frequency;
+-		if (freq == CPUFREQ_ENTRY_INVALID)
+-			continue;
++	cpufreq_for_each_valid_entry(pos, table) {
++		freq = pos->frequency;
++
++		i = pos - table;
+ 		if ((freq < policy->min) || (freq > policy->max))
+ 			continue;
+ 		switch (relation) {
+@@ -184,8 +183,7 @@ EXPORT_SYMBOL_GPL(cpufreq_frequency_table_target);
+ int cpufreq_frequency_table_get_index(struct cpufreq_policy *policy,
+ 		unsigned int freq)
+ {
+-	struct cpufreq_frequency_table *table;
+-	int i;
++	struct cpufreq_frequency_table *pos, *table;
+ 
+ 	table = cpufreq_frequency_get_table(policy->cpu);
+ 	if (unlikely(!table)) {
+@@ -193,10 +191,9 @@ int cpufreq_frequency_table_get_index(struct cpufreq_policy *policy,
+ 		return -ENOENT;
+ 	}
+ 
+-	for (i = 0; table[i].frequency != CPUFREQ_TABLE_END; i++) {
+-		if (table[i].frequency == freq)
+-			return i;
+-	}
++	cpufreq_for_each_valid_entry(pos, table)
++		if (pos->frequency == freq)
++			return pos - table;
+ 
+ 	return -EINVAL;
+ }
+@@ -208,16 +205,13 @@ EXPORT_SYMBOL_GPL(cpufreq_frequency_table_get_index);
+ static ssize_t show_available_freqs(struct cpufreq_policy *policy, char *buf,
+ 				    bool show_boost)
+ {
+-	unsigned int i = 0;
+ 	ssize_t count = 0;
+-	struct cpufreq_frequency_table *table = policy->freq_table;
++	struct cpufreq_frequency_table *pos, *table = policy->freq_table;
+ 
+ 	if (!table)
+ 		return -ENODEV;
+ 
+-	for (i = 0; (table[i].frequency != CPUFREQ_TABLE_END); i++) {
+-		if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
+-			continue;
++	cpufreq_for_each_valid_entry(pos, table) {
+ 		/*
+ 		 * show_boost = true and driver_data = BOOST freq
+ 		 * display BOOST freqs
+@@ -229,10 +223,10 @@ static ssize_t show_available_freqs(struct cpufreq_policy *policy, char *buf,
+ 		 * show_boost = false and driver_data != BOOST freq
+ 		 * display NON BOOST freqs
+ 		 */
+-		if (show_boost ^ (table[i].flags & CPUFREQ_BOOST_FREQ))
++		if (show_boost ^ (pos->flags & CPUFREQ_BOOST_FREQ))
+ 			continue;
+ 
+-		count += sprintf(&buf[count], "%d ", table[i].frequency);
++		count += sprintf(&buf[count], "%d ", pos->frequency);
+ 	}
+ 	count += sprintf(&buf[count], "\n");
+ 
+diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+index d00e5d1..5e12646 100644
+--- a/drivers/cpufreq/longhaul.c
++++ b/drivers/cpufreq/longhaul.c
+@@ -528,6 +528,7 @@ static int longhaul_get_ranges(void)
+ 
+ static void longhaul_setup_voltagescaling(void)
+ {
++	struct cpufreq_frequency_table *freq_pos;
+ 	union msr_longhaul longhaul;
+ 	struct mV_pos minvid, maxvid, vid;
+ 	unsigned int j, speed, pos, kHz_step, numvscales;
+@@ -606,18 +607,16 @@ static void longhaul_setup_voltagescaling(void)
+ 	/* Calculate kHz for one voltage step */
+ 	kHz_step = (highest_speed - min_vid_speed) / numvscales;
+ 
+-	j = 0;
+-	while (longhaul_table[j].frequency != CPUFREQ_TABLE_END) {
+-		speed = longhaul_table[j].frequency;
++	cpufreq_for_each_entry(freq_pos, longhaul_table) {
++		speed = freq_pos->frequency;
+ 		if (speed > min_vid_speed)
+ 			pos = (speed - min_vid_speed) / kHz_step + minvid.pos;
+ 		else
+ 			pos = minvid.pos;
+-		longhaul_table[j].driver_data |= mV_vrm_table[pos] << 8;
++		freq_pos->driver_data |= mV_vrm_table[pos] << 8;
+ 		vid = vrm_mV_table[mV_vrm_table[pos]];
+-		printk(KERN_INFO PFX "f: %d kHz, index: %d, vid: %d mV\n",
+-				speed, j, vid.mV);
+-		j++;
++		printk(KERN_INFO PFX "f: %u kHz, index: %u, vid: %d mV\n",
++				speed, freq_pos - longhaul_table, vid.mV);
+ 	}
+ 
+ 	can_scale_voltage = 1;
+diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+index 84c84b5..9a64492 100644
+--- a/drivers/cpufreq/pasemi-cpufreq.c
++++ b/drivers/cpufreq/pasemi-cpufreq.c
+@@ -136,9 +136,10 @@ void restore_astate(int cpu)
+ 
+ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ {
++	struct cpufreq_frequency_table *pos;
+ 	const u32 *max_freqp;
+ 	u32 max_freq;
+-	int i, cur_astate;
++	int cur_astate;
+ 	struct resource res;
+ 	struct device_node *cpu, *dn;
+ 	int err = -ENODEV;
+@@ -197,10 +198,9 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	pr_debug("initializing frequency table\n");
+ 
+ 	/* initialize frequency table */
+-	for (i=0; pas_freqs[i].frequency!=CPUFREQ_TABLE_END; i++) {
+-		pas_freqs[i].frequency =
+-			get_astate_freq(pas_freqs[i].driver_data) * 100000;
+-		pr_debug("%d: %d\n", i, pas_freqs[i].frequency);
++	cpufreq_for_each_entry(pos, pas_freqs) {
++		pos->frequency = get_astate_freq(pos->driver_data) * 100000;
++		pr_debug("%lu: %d\n", pos - pas_freqs, pos->frequency);
+ 	}
+ 
+ 	cur_astate = get_cur_astate(policy->cpu);
+diff --git a/drivers/cpufreq/powernow-k6.c b/drivers/cpufreq/powernow-k6.c
+index 49f120e..a133236 100644
+--- a/drivers/cpufreq/powernow-k6.c
++++ b/drivers/cpufreq/powernow-k6.c
+@@ -159,6 +159,7 @@ static int powernow_k6_target(struct cpufreq_policy *policy,
+ 
+ static int powernow_k6_cpu_init(struct cpufreq_policy *policy)
+ {
++	struct cpufreq_frequency_table *pos;
+ 	unsigned int i, f;
+ 	unsigned khz;
+ 
+@@ -176,12 +177,11 @@ static int powernow_k6_cpu_init(struct cpufreq_policy *policy)
+ 		}
+ 	}
+ 	if (param_max_multiplier) {
+-		for (i = 0; (clock_ratio[i].frequency != CPUFREQ_TABLE_END); i++) {
+-			if (clock_ratio[i].driver_data == param_max_multiplier) {
++		cpufreq_for_each_entry(pos, clock_ratio)
++			if (pos->driver_data == param_max_multiplier) {
+ 				max_multiplier = param_max_multiplier;
+ 				goto have_max_multiplier;
+ 			}
+-		}
+ 		printk(KERN_ERR "powernow-k6: invalid max_multiplier parameter, valid parameters 20, 30, 35, 40, 45, 50, 55, 60\n");
+ 		return -EINVAL;
+ 	}
+@@ -209,12 +209,12 @@ have_busfreq:
+ 	param_busfreq = busfreq * 10;
+ 
+ 	/* table init */
+-	for (i = 0; (clock_ratio[i].frequency != CPUFREQ_TABLE_END); i++) {
+-		f = clock_ratio[i].driver_data;
++	cpufreq_for_each_entry(pos, clock_ratio) {
++		f = pos->driver_data;
+ 		if (f > max_multiplier)
+-			clock_ratio[i].frequency = CPUFREQ_ENTRY_INVALID;
++			pos->frequency = CPUFREQ_ENTRY_INVALID;
+ 		else
+-			clock_ratio[i].frequency = busfreq * f;
++			pos->frequency = busfreq * f;
+ 	}
+ 
+ 	/* cpuinfo and default policy values */
+diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
+index 5be8a48..b550d5c 100644
+--- a/drivers/cpufreq/ppc_cbe_cpufreq.c
++++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
+@@ -67,9 +67,10 @@ static int set_pmode(unsigned int cpu, unsigned int slow_mode)
+ 
+ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ {
++	struct cpufreq_frequency_table *pos;
+ 	const u32 *max_freqp;
+ 	u32 max_freq;
+-	int i, cur_pmode;
++	int cur_pmode;
+ 	struct device_node *cpu;
+ 
+ 	cpu = of_get_cpu_node(policy->cpu, NULL);
+@@ -102,9 +103,9 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	pr_debug("initializing frequency table\n");
+ 
+ 	/* initialize frequency table */
+-	for (i=0; cbe_freqs[i].frequency!=CPUFREQ_TABLE_END; i++) {
+-		cbe_freqs[i].frequency = max_freq / cbe_freqs[i].driver_data;
+-		pr_debug("%d: %d\n", i, cbe_freqs[i].frequency);
++	cpufreq_for_each_entry(pos, cbe_freqs) {
++		pos->frequency = max_freq / pos->driver_data;
++		pr_debug("%lu: %d\n", pos - cbe_freqs, pos->frequency);
+ 	}
+ 
+ 	/* if DEBUG is enabled set_pmode() measures the latency
+diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+index 4626f90..2fd53ea 100644
+--- a/drivers/cpufreq/s3c2416-cpufreq.c
++++ b/drivers/cpufreq/s3c2416-cpufreq.c
+@@ -266,7 +266,7 @@ out:
+ static void __init s3c2416_cpufreq_cfg_regulator(struct s3c2416_data *s3c_freq)
+ {
+ 	int count, v, i, found;
+-	struct cpufreq_frequency_table *freq;
++	struct cpufreq_frequency_table *pos;
+ 	struct s3c2416_dvfs *dvfs;
+ 
+ 	count = regulator_count_voltages(s3c_freq->vddarm);
+@@ -275,12 +275,11 @@ static void __init s3c2416_cpufreq_cfg_regulator(struct s3c2416_data *s3c_freq)
+ 		return;
+ 	}
+ 
+-	freq = s3c_freq->freq_table;
+-	while (count > 0 && freq->frequency != CPUFREQ_TABLE_END) {
+-		if (freq->frequency == CPUFREQ_ENTRY_INVALID)
+-			continue;
++	if (!count)
++		goto out;
+ 
+-		dvfs = &s3c2416_dvfs_table[freq->driver_data];
++	cpufreq_for_each_valid_entry(pos, s3c_freq->freq_table) {
++		dvfs = &s3c2416_dvfs_table[pos->driver_data];
+ 		found = 0;
+ 
+ 		/* Check only the min-voltage, more is always ok on S3C2416 */
+@@ -292,13 +291,12 @@ static void __init s3c2416_cpufreq_cfg_regulator(struct s3c2416_data *s3c_freq)
+ 
+ 		if (!found) {
+ 			pr_debug("cpufreq: %dkHz unsupported by regulator\n",
+-				 freq->frequency);
+-			freq->frequency = CPUFREQ_ENTRY_INVALID;
++				 pos->frequency);
++			pos->frequency = CPUFREQ_ENTRY_INVALID;
+ 		}
+-
+-		freq++;
+ 	}
+ 
++out:
+ 	/* Guessed */
+ 	s3c_freq->regulator_latency = 1 * 1000 * 1000;
+ }
+@@ -338,7 +336,7 @@ static struct notifier_block s3c2416_cpufreq_reboot_notifier = {
+ static int __init s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
+ {
+ 	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
+-	struct cpufreq_frequency_table *freq;
++	struct cpufreq_frequency_table *pos;
+ 	struct clk *msysclk;
+ 	unsigned long rate;
+ 	int ret;
+@@ -427,31 +425,27 @@ static int __init s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
+ 	s3c_freq->regulator_latency = 0;
+ #endif
+ 
+-	freq = s3c_freq->freq_table;
+-	while (freq->frequency != CPUFREQ_TABLE_END) {
++	cpufreq_for_each_entry(pos, s3c_freq->freq_table) {
+ 		/* special handling for dvs mode */
+-		if (freq->driver_data == 0) {
++		if (pos->driver_data == 0) {
+ 			if (!s3c_freq->hclk) {
+ 				pr_debug("cpufreq: %dkHz unsupported as it would need unavailable dvs mode\n",
+-					 freq->frequency);
+-				freq->frequency = CPUFREQ_ENTRY_INVALID;
++					 pos->frequency);
++				pos->frequency = CPUFREQ_ENTRY_INVALID;
+ 			} else {
+-				freq++;
+ 				continue;
+ 			}
+ 		}
+ 
+ 		/* Check for frequencies we can generate */
+ 		rate = clk_round_rate(s3c_freq->armdiv,
+-				      freq->frequency * 1000);
++				      pos->frequency * 1000);
+ 		rate /= 1000;
+-		if (rate != freq->frequency) {
++		if (rate != pos->frequency) {
+ 			pr_debug("cpufreq: %dkHz unsupported by clock (clk_round_rate return %lu)\n",
+-				 freq->frequency, rate);
+-			freq->frequency = CPUFREQ_ENTRY_INVALID;
++				pos->frequency, rate);
++			pos->frequency = CPUFREQ_ENTRY_INVALID;
+ 		}
+-
+-		freq++;
+ 	}
+ 
+ 	/* Datasheet says PLL stabalisation time must be at least 300us,
+diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-cpufreq.c
+index ff7d3ec..176e84c 100644
+--- a/drivers/cpufreq/s3c64xx-cpufreq.c
++++ b/drivers/cpufreq/s3c64xx-cpufreq.c
+@@ -118,11 +118,10 @@ static void __init s3c64xx_cpufreq_config_regulator(void)
+ 		pr_err("Unable to check supported voltages\n");
+ 	}
+ 
+-	freq = s3c64xx_freq_table;
+-	while (count > 0 && freq->frequency != CPUFREQ_TABLE_END) {
+-		if (freq->frequency == CPUFREQ_ENTRY_INVALID)
+-			continue;
++	if (!count)
++		goto out;
+ 
++	cpufreq_for_each_valid_entry(freq, s3c64xx_freq_table) {
+ 		dvfs = &s3c64xx_dvfs_table[freq->driver_data];
+ 		found = 0;
+ 
+@@ -137,10 +136,9 @@ static void __init s3c64xx_cpufreq_config_regulator(void)
+ 				 freq->frequency);
+ 			freq->frequency = CPUFREQ_ENTRY_INVALID;
+ 		}
+-
+-		freq++;
+ 	}
+ 
++out:
+ 	/* Guess based on having to do an I2C/SPI write; in future we
+ 	 * will be able to query the regulator performance here. */
+ 	regulator_latency = 1 * 1000 * 1000;
+@@ -179,8 +177,7 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
+ 	}
+ #endif
+ 
+-	freq = s3c64xx_freq_table;
+-	while (freq->frequency != CPUFREQ_TABLE_END) {
++	cpufreq_for_each_entry(freq, s3c64xx_freq_table) {
+ 		unsigned long r;
+ 
+ 		/* Check for frequencies we can generate */
+@@ -196,8 +193,6 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
+ 		 * frequency is the maximum we can support. */
+ 		if (!vddarm && freq->frequency > clk_get_rate(policy->clk) / 1000)
+ 			freq->frequency = CPUFREQ_ENTRY_INVALID;
+-
+-		freq++;
+ 	}
+ 
+ 	/* Datasheet says PLL stabalisation time (if we were to use
+-- 
+1.9.0
