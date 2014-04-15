@@ -1,50 +1,61 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 07/14] ARM: dts: exynos_dsim: add exynos5420 Soc compatible
-Date: Tue, 15 Apr 2014 13:39:02 +0530
-Message-ID: <CAK9yfHwew_O57FuYiwohQUB1nhs5PJ5mg7TiPcPOvpbp=6sFgQ@mail.gmail.com>
-References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
-	<1397540862-21359-8-git-send-email-yj44.cho@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 2/8] arm/arm64: KVM: Fix line length exceeding 80 characters
+Date: Tue, 15 Apr 2014 09:11:05 +0100
+Message-ID: <534CE999.10209@arm.com>
+References: <000001cf57b4$d3450780$79cf1680$@samsung.com> <534C0A89.4090907@arm.com> <001601cf5843$07c38160$174a8420$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1397540862-21359-8-git-send-email-yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:35286 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750911AbaDOILL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 04:11:11 -0400
+In-Reply-To: <001601cf5843$07c38160$174a8420$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Catalin Marinas <Catalin.Marinas@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, "sungjinn.chung@samsung.com" <sungjinn.chung@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>
 
-On 15 April 2014 11:17, YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This patch adds exynos5420 SoC support.
+On 15/04/14 01:38, Jungseok Lee wrote:
+> On Tuesday, April 15, 2014 1:19 AM, Marc Zyngier wrote:
+>> On 14/04/14 08:40, Jungseok Lee wrote:
+>>> This patch deals with checkpatch complaint as fixing line length
+>>> exceeding 80 characters.
+>>>
+>>> WARNING: line over 80 characters
+>>>
+>>> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+>>> Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+>>> ---
+>>>  arch/arm/kvm/mmu.c |    4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c index
+>>> 80bb1e6..e0d4f24 100644
+>>> --- a/arch/arm/kvm/mmu.c
+>>> +++ b/arch/arm/kvm/mmu.c
+>>> @@ -563,8 +563,8 @@ void kvm_free_stage2_pgd(struct kvm *kvm)
+>>>  	kvm->arch.pgd = NULL;
+>>>  }
+>>>
+>>> -static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>>> -			     phys_addr_t addr)
+>>> +static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache
+>>> +			     *cache, phys_addr_t addr)
+>>
+>> Please don't. This makes the code unreadable (and no, I don't care about checkpatch ;-).
+> 
+> Okay. I will drop this patch from the next version.
+> 
+> It would be good to change stage2_set_pmd_huge function for readability
+> if you don't care about checkpatch.
 
-This patch just updates binding documentation :)
+We usually don't change that kind of thing just for the sake of changing
+it. It feels like fairly pointless churn. *IF* someone happens to rework
+that code, then they're welcome to fix it.
 
-> Signed-off-by: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/video/exynos_dsim.txt      |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-> index 33b5730..9bbf82b 100644
-> --- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-> @@ -1,7 +1,9 @@
->  Exynos MIPI DSI Master
->
->  Required properties:
-> -  - compatible: "samsung,exynos4210-mipi-dsi"
-> +  - compatible: value should be one of the following
-> +                       "samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
-> +                       "samsung,exynos5420-mipi-dsi" /* for Exynos5420 Soc */
-s/Soc/SoC
-
-
-
+	M.
 -- 
-With warm regards,
-Sachin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jazz is not dead. It just smells funny...
