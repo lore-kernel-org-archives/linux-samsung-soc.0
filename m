@@ -1,53 +1,111 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when
- possible
-Date: Tue, 15 Apr 2014 12:30:48 -0600
-Message-ID: <20140415182651.GA17721@google.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
- <20140404165559.GE9007@google.com>
- <1397556454.4574.13.camel@weser.hi.pengutronix.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 2/3] ARM: EXYNOS: Add initial support of PMU for Exynos5260
+Date: Tue, 15 Apr 2014 20:34:19 +0200
+Message-ID: <534D7BAB.30503@gmail.com>
+References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com> <1395061795-17777-3-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1397556454.4574.13.camel@weser.hi.pengutronix.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:37569 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754445AbaDOSeX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 14:34:23 -0400
+In-Reply-To: <1395061795-17777-3-git-send-email-vikas.sajjan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, joshi@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On Tue, Apr 15, 2014 at 12:07:34PM +0200, Lucas Stach wrote:
-> Hi Bjorn,
-> 
-> Am Freitag, den 04.04.2014, 10:55 -0600 schrieb Bjorn Helgaas:
-> > On Wed, Mar 05, 2014 at 02:25:47PM +0100, Lucas Stach wrote:
-> > > This is the recommended method of doing the IRQ
-> > > mapping. For old devicetrees we fall back to the
-> > > previous practice.
-> > > 
-> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > Applied with Stephen's Tested-by to my pending/host-tegra branch.  I'll
-> > rebase and rename it after v3.15-rc1, and I think we can squeeze it into
-> > v3.15 shortly after that.  Thanks.
-> > 
-> 
-> Are you still planning to push this into 3.15, or has this slipped to
-> 3.16?
+Hi Vikas,
 
-Yes, I'm hoping to put them in v3.15.  I assume these actually
-fix something, e.g., we need these changes to boot with new devicetrees, or
-something?
+On 17.03.2014 14:09, Vikas Sajjan wrote:
+> Adds PMU support of PMU for Exynos5260. Suspend-to-RAM can be built on
+> top this.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>   arch/arm/mach-exynos/common.h            |   26 ++++
+>   arch/arm/mach-exynos/pm.c                |   34 +++--
+>   arch/arm/mach-exynos/pmu.c               |  238 ++++++++++++++++++++++++++++++
+>   arch/arm/mach-exynos/regs-pmu.h          |  232 +++++++++++++++++++++++++++++
+>   arch/arm/plat-samsung/include/plat/cpu.h |    8 +
+>   5 files changed, 529 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index aba6a2a..a17f701 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -56,6 +56,32 @@ enum sys_powerdown {
+>   	NUM_SYS_POWERDOWN,
+>   };
+>
+> +enum running_cpu {
+> +	EXYNOS5_KFC,
+> +	EXYNOS5_ARM,
+> +};
+> +
+> +enum reg_op {
+> +	REG_INIT,	/* write new value */
+> +	REG_RESET,	/* clear with zero */
+> +	REG_SET,	/* bit set */
+> +	REG_CLEAR,	/* bit clear */
+> +};
+> +
+> +/* reg/value set */
+> +#define EXYNOS_PMU_REG(REG, VAL, OP)		\
+> +{						\
+> +	.reg	=	(void __iomem *)REG,	\
+> +	.val	=	VAL,			\
+> +	.op	=	OP,			\
+> +}
+> +
+> +struct exynos_pmu_init_reg {
+> +	void __iomem *reg;
+> +	unsigned int val;
+> +	enum reg_op op;
+> +};
+> +
+>   extern unsigned long l2x0_regs_phys;
+>   struct exynos_pmu_conf {
+>   	void __iomem *reg;
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 15af0ce..dbe9670 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -109,7 +109,7 @@ static int exynos_cpu_suspend(unsigned long arg)
+>   	outer_flush_all();
+>   #endif
+>
+> -	if (soc_is_exynos5250())
+> +	if (soc_is_exynos5250() || soc_is_exynos5260())
+>   		flush_cache_all();
 
-The changelogs don't make it clear that these are fixes, and I want to heed
-Linus' guidance: "Anyway, because -rc1 is already pretty darn big, I do
-*not* want to hear about 'sorry this missed the window, can I still sneak
-in'.  Fixes only."
+I think it's the right time for this code to be restructured. Adding 
+more and more SoCs over this cruft is making this code worse and worse.
 
-I should have applied these sooner to make the merge window; I apologize
-for that.  Anyway, if you outline what these fix, I'll update the
-changelogs in my tree.
+I believe this should be done as follows:
 
-Bjorn
+  - a generic struct describing particular PMU variant should be 
+defined, with things like
+
+	bool flush_cache_on_suspend;
+	struct exynos_pmu_conf *pmu_conf;
+
+or even function pointers, like
+
+	void (*cpu_suspend)(unsigned long arg);
+
+to handle things done currently using soc_is_*() macros, which we should 
+get rid of.
+
+- a DT match table would bind particular compatible strings with 
+respective PMU variants structs,
+
+- in general, this code should be made more like a normal driver, e.g. 
+bind to a DT node and map registers dynamically.
+
+Best regards,
+Tomasz
