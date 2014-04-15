@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC PATCH 09/14] ARM: dts: s6e3fa0: add DT bindings
-Date: Tue, 15 Apr 2014 14:47:37 +0900
-Message-ID: <1397540862-21359-10-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC PATCH 07/14] ARM: dts: exynos_dsim: add exynos5420 Soc compatible
+Date: Tue, 15 Apr 2014 14:47:35 +0900
+Message-ID: <1397540862-21359-8-git-send-email-yj44.cho@samsung.com>
 References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,75 +21,29 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds DT bindings for s6e3fa0 panel.
-The bindings describes panel resources, display timings, delays
-and physical size.
+This patch adds exynos5420 SoC support.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   52 ++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+ .../devicetree/bindings/video/exynos_dsim.txt      |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-new file mode 100644
-index 0000000..5986899
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-@@ -0,0 +1,52 @@
-+Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-+
-+Required properties:
-+  - compatible: "samsung,s6e3fa0"
-+  - reg: the virtual channel number of a DSI peripheral
-+  - vdd3-supply: core voltage supply
-+  - vci-supply: voltage supply for analog circuits
-+  - reset-gpio: a GPIO spec for the reset pin
-+  - display-timings: timings for the connected panel as described by [1]
-+
-+Optional properties:
-+  - power-on-delay: delay after turning regulators on [ms]
-+  - reset-delay: delay after reset sequence [ms]
-+  - init-delay: delay after initialization sequence [ms]
-+  - panel-width-mm: physical panel width [mm]
-+  - panel-height-mm: physical panel height [mm]
-+
-+The device node can contain one 'port' child node with one child
-+'endpoint' node, according to the bindings defined in [2]. This
-+node should describe panel's video bus.
-+
-+[1]: Documentation/devicetree/bindings/video/display-timing.txt
-+[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Example:
-+
-+	panel {
-+		compatible = "samsung,s6e3fa0";
-+		reg = <0>;
-+		vdd3-supply = <&vcclcd_reg>;
-+		vci-supply = <&vlcd_reg>;
-+		reset-gpio = <&gpy7 4 0>;
-+		power-on-delay= <10>;
-+		reset-delay = <5>;
-+		init-delay = <120>;
-+		panel-width-mm = <71>;
-+		panel-height-mm = <126>;
-+
-+		display-timings {
-+			timing0: timing-0 {
-+				clock-frequency = <57153600>;
-+				hactive = <1080>;
-+				vactive = <1920>;
-+				hfront-porch = <2>;
-+				hback-porch = <2>;
-+				hsync-len = <1>;
-+				vfront-porch = <1>;
-+				vback-porch = <4>;
-+				vsync-len = <1>;
-+			};
-+		};
-+	};
+diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+index 33b5730..9bbf82b 100644
+--- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+@@ -1,7 +1,9 @@
+ Exynos MIPI DSI Master
+ 
+ Required properties:
+-  - compatible: "samsung,exynos4210-mipi-dsi"
++  - compatible: value should be one of the following
++			"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
++			"samsung,exynos5420-mipi-dsi" /* for Exynos5420 Soc */
+   - reg: physical base address and length of the registers set for the device
+   - interrupts: should contain DSI interrupt
+   - clocks: list of clock specifiers, must contain an entry for each required
 -- 
 1.7.9.5
