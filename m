@@ -1,91 +1,65 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 6/6] ARM: multi_v7_defconfig: Enable Exynos platform
-Date: Tue, 15 Apr 2014 14:58:54 +0530
-Message-ID: <1397554134-11827-7-git-send-email-sachin.kamat@linaro.org>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [RFC PATCH 12/14] ARM: dts: exynos5: add system register support
+Date: Tue, 15 Apr 2014 15:01:59 +0530
+Message-ID: <CAK9yfHyuD=uD7QDezX3wSFBwLEvzs6NfSkzcOWkbnU=591U=YA@mail.gmail.com>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+	<1397540862-21359-13-git-send-email-yj44.cho@samsung.com>
+	<CAK9yfHz9yFjQ8x2UuR7uvPTR+E8wUo4W+2XYKiF17RmwMji8OQ@mail.gmail.com>
+	<534CF982.4020102@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:49600 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750909AbaDOJaE (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:51391 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750855AbaDOJcA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 05:30:04 -0400
-Received: by mail-pa0-f53.google.com with SMTP id ld10so9300263pab.26
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 02:30:04 -0700 (PDT)
-In-Reply-To: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 15 Apr 2014 05:32:00 -0400
+Received: by mail-ob0-f174.google.com with SMTP id gq1so2168431obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 02:32:00 -0700 (PDT)
+In-Reply-To: <534CF982.4020102@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: YoungJun Cho <yj44.cho@samsung.com>, Dave Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Enable Exynos platform and its related IPs.
+On 15 April 2014 14:48, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> On 15/04/14 10:41, Sachin Kamat wrote:
+>> On 15 April 2014 11:17, YoungJun Cho <yj44.cho@samsung.com> wrote:
+>>> This patch adds sysreg device node, and sysreg property to fimd device node
+>>> which is required to use I80 interface.
+>>>
+>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>  arch/arm/boot/dts/exynos5.dtsi |    6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+>>> index 258dca4..f938bbb 100644
+>>> --- a/arch/arm/boot/dts/exynos5.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5.dtsi
+>>> @@ -88,12 +88,18 @@
+>>>                 status = "disabled";
+>>>         };
+>>>
+>>> +       sys_reg: syscon@10050000 {
+>>> +               compatible = "samsung,exynos5-sysreg", "syscon";
+>>
+>> Do we really need a separate string for this? Can't we use
+>> "samsung,exynos4-sysreg" itself?
+>
+> Currently only "syscon" is meaningful in Linux, and we add second SoC
+> specific compatible to be able to distinguish between various SoC
+> revisions, should any SoC specific quirks be handled in future.
+> Thus there is no much point in adding "samsung,exynos4-sysreg" to
+> exynos5.dtsi. We could as well only leave "syscon" entry alone.
+> My suggestion is to keep "samsung,exynos5-sysreg", so for instance
+> Exynos4 and Exynos5 SOC series SYSREG blocks can be identified in
+> an OS.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/configs/multi_v7_defconfig |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+Yes, this sounds reasonable.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index d4e8a47a2f7c..298057a0324c 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -47,6 +47,7 @@ CONFIG_ARCH_SPEAR13XX=y
- CONFIG_MACH_SPEAR1310=y
- CONFIG_MACH_SPEAR1340=y
- CONFIG_ARCH_STI=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_SIRF=y
- CONFIG_ARCH_TEGRA=y
-@@ -71,6 +72,7 @@ CONFIG_PCI_MSI=y
- CONFIG_PCI_MVEBU=y
- CONFIG_PCI_TEGRA=y
- CONFIG_SMP=y
-+CONFIG_NR_CPUS=8
- CONFIG_HIGHPTE=y
- CONFIG_CMA=y
- CONFIG_ARM_APPENDED_DTB=y
-@@ -153,6 +155,8 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_AMBA_PL011=y
- CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
-+CONFIG_SERIAL_SAMSUNG=y
-+CONFIG_SERIAL_SAMSUNG_CONSOLE=y
- CONFIG_SERIAL_SIRFSOC=y
- CONFIG_SERIAL_SIRFSOC_CONSOLE=y
- CONFIG_SERIAL_TEGRA=y
-@@ -176,6 +180,7 @@ CONFIG_I2C_MUX=y
- CONFIG_I2C_MUX_PCA954x=y
- CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_DESIGNWARE_PLATFORM=y
-+CONFIG_I2C_EXYNOS5=y
- CONFIG_I2C_MV64XXX=y
- CONFIG_I2C_SIRF=y
- CONFIG_I2C_TEGRA=y
-@@ -210,6 +215,7 @@ CONFIG_MFD_AS3722=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX8907=y
-+CONFIG_MFD_SEC_CORE=y
- CONFIG_MFD_PALMAS=y
- CONFIG_MFD_TPS65090=y
- CONFIG_MFD_TPS6586X=y
-@@ -220,6 +226,8 @@ CONFIG_REGULATOR_AS3722=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8907=y
- CONFIG_REGULATOR_PALMAS=y
-+CONFIG_REGULATOR_S2MPS11=y
-+CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS51632=y
- CONFIG_REGULATOR_TPS62360=y
- CONFIG_REGULATOR_TPS65090=y
-@@ -280,6 +288,8 @@ CONFIG_MMC_SDHCI_BCM_KONA=y
- CONFIG_MMC_OMAP=y
- CONFIG_MMC_OMAP_HS=y
- CONFIG_MMC_MVSDIO=y
-+CONFIG_MMC_DW=y
-+CONFIG_MMC_DW_EXYNOS=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
 -- 
-1.7.9.5
+With warm regards,
+Sachin
