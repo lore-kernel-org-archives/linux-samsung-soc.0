@@ -1,47 +1,39 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when
- possible
-Date: Tue, 15 Apr 2014 12:07:34 +0200
-Message-ID: <1397556454.4574.13.camel@weser.hi.pengutronix.de>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
-	 <1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
-	 <20140404165559.GE9007@google.com>
+From: Stratos Karafotis <stratosk@semaphore.gr>
+Subject: Re: [PATCH 08/20] cpufreq: exynos5440: Use cpufreq_for_each_entry
+ macro for iteration
+Date: Tue, 15 Apr 2014 14:02:26 +0300
+Message-ID: <534D11C2.3080206@semaphore.gr>
+References: <534C4E7E.4090806@semaphore.gr> <CAKohpokfsR3soykZbtH4-L=4TC6Oab=jyzUr=W-EfkRFfefRDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:37892 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750934AbaDOKIi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 06:08:38 -0400
-In-Reply-To: <20140404165559.GE9007@google.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohpokfsR3soykZbtH4-L=4TC6Oab=jyzUr=W-EfkRFfefRDQ@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
 
-Hi Bjorn,
+On 15/04/2014 08:44 =CF=80=CE=BC, Viresh Kumar wrote:
+> On 15 April 2014 02:39, Stratos Karafotis <stratosk@semaphore.gr> wro=
+te:
+>=20
+>> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/=
+exynos5440-cpufreq.c
+>=20
+>>  static void exynos_enable_dvfs(unsigned int cur_frequency)
+>>  {
+>> -       unsigned int tmp, i, cpu;
+>> +       unsigned int tmp, cpu;
+>>         struct cpufreq_frequency_table *freq_table =3D dvfs_info->fr=
+eq_table;
+>> +       struct cpufreq_frequency_table *pos;
+>=20
+> Merge above two.
+>=20
 
-Am Freitag, den 04.04.2014, 10:55 -0600 schrieb Bjorn Helgaas:
-> On Wed, Mar 05, 2014 at 02:25:47PM +0100, Lucas Stach wrote:
-> > This is the recommended method of doing the IRQ
-> > mapping. For old devicetrees we fall back to the
-> > previous practice.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Applied with Stephen's Tested-by to my pending/host-tegra branch.  I'll
-> rebase and rename it after v3.15-rc1, and I think we can squeeze it into
-> v3.15 shortly after that.  Thanks.
-> 
+Then the line will be 82 characters long.
+Do you mind to keep it as is?
 
-Are you still planning to push this into 3.15, or has this slipped to
-3.16?
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+Stratos
