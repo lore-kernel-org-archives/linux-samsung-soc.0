@@ -1,51 +1,56 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 3/8] ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
-Date: Tue, 15 Apr 2014 17:51:15 +0900
-Message-ID: <534CF303.6050100@samsung.com>
-References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
- <4788081.xvaJfdGTMu@wuerfel> <534CEEA8.6020800@samsung.com>
- <5677551.At1Foxml9e@wuerfel>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 4/4] regulator: s5m8767: Use same binding for external
+ control as in s2mps11
+Date: Tue, 15 Apr 2014 10:55:45 +0200
+Message-ID: <1397552145.29169.17.camel@AMDC1943>
+References: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
+ <1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
+ <20140414211106.GC12304@sirena.org.uk>
+ <CAK9yfHwL4o7-7Q03dw9JdD1UDsP_v2=we1kadRXaGAuaN1de_g@mail.gmail.com>
+ <1397549539.29169.2.camel@AMDC1943>
+ <CAK9yfHwUwjMEXisi5Jf+nAkS7CLnAUt-REkekns9JrRTAGQ=WQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64723 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750911AbaDOIvS (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:42282 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752960AbaDOIzs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 04:51:18 -0400
-In-reply-to: <5677551.At1Foxml9e@wuerfel>
+	Tue, 15 Apr 2014 04:55:48 -0400
+In-reply-to: <CAK9yfHwUwjMEXisi5Jf+nAkS7CLnAUt-REkekns9JrRTAGQ=WQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, t.figa@samsung.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, olof@lixom.net, marc.zyngier@arm.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-On 04/15/2014 05:46 PM, Arnd Bergmann wrote:
-> On Tuesday 15 April 2014 17:32:40 Chanwoo Choi wrote:
->> On 04/15/2014 05:11 PM, Arnd Bergmann wrote:
->>> On Tuesday 15 April 2014 10:59:47 Chanwoo Choi wrote:
->>
->>> I don't think we have a patch for the PMU yet, Sachin was looking at the SYSRAM
->>> only.
->>
->> You are right. Sachin's patch only included the solution of SYSRAM memory mapping.
->> I set out the plan that I would implment proper driver for PMU memory mapping
->> instead of static method after merged Sachin's patch for SYSRAM.
->>
->> But,
->> If you'd like me to implment PMU memory mapping instead of static mapping right now,
->> I'll implement it for PMU such as Sachin's patch on next posting(v3).
+On wto, 2014-04-15 at 14:02 +0530, Sachin Kamat wrote:
+> On 15 April 2014 13:42, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> > On wto, 2014-04-15 at 13:26 +0530, Sachin Kamat wrote:
+> >> On 15 April 2014 02:41, Mark Brown <broonie@kernel.org> wrote:
+> >> > On Mon, Apr 14, 2014 at 10:09:09AM +0200, Krzysztof Kozlowski wrote:
+> >> >
+> >> >> -     - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
+> >> >> +     - samsung,ext-control-gpios: (optional) GPIO specifier for one
+> >> >>               GPIO controlling this regulator (enable/disable); This is
+> >> >>               valid only for buck9.
+> >> >
+> >> > This is an incompatible change.  It's OK to deprecate the old property
+> >> > but it's bad form to just remove it.
+> >>
+> >> I agree with Mark. Also, there is no need to make it generic.
+> >
+> > I thought it would be good to make it consistent and to reduce the
+> > number of bindings with same meaning on similar drivers.
 > 
-> I don't really want to merge a new SoC type until these are resolved, so
-> it would definitely be better to implement this for v3.
-> 
+> How about making the other one use "s5m8767,pmic-ext-control-gpios"
+> compatible instead of introducing a new one?
 
-OK,
-I'll rebase this patch on following patch which support PMU memory mapping through DT.
+But then we would introduce semi-generic binding with a driver-specific
+name.
 
-[1] http://www.spinics.net/lists/arm-kernel/msg316013.html
+Anyway more drivers seem to use this kind of binding (tps65090, max8952,
+da9055, arizona) so maybe there is a point in making this generic?
 
-Thanks for your review.
-
-Best Regards,
-Chanwoo Choi
+Best regards,
+Krzysztof
