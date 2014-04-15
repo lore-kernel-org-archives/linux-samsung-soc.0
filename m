@@ -1,125 +1,220 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 1/8] ARM: EXYNOS: Add Exynos3250 SoC ID
-Date: Tue, 15 Apr 2014 10:59:45 +0900
-Message-ID: <1397527192-21988-2-git-send-email-cw00.choi@samsung.com>
-References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] arm: exynos: generalize power register address calculation
+Date: Tue, 15 Apr 2014 09:28:03 +0530
+Message-ID: <CANuQgHEbepUZO279+Bsx7Ynep6ZPQQJj+zCW3S2k50Cw5SLOdA@mail.gmail.com>
+References: <1396973737-18693-1-git-send-email-chander.kashyap@linaro.org>
+	<1397041783-18531-1-git-send-email-chander.kashyap@linaro.org>
+	<534C1AB7.3020007@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, marc.zyngier@arm.com, t.figa@samsung.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, yj44.cho@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org, olof@lixom.net, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:62452 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750823AbaDOD6E (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Apr 2014 23:58:04 -0400
+Received: by mail-oa0-f42.google.com with SMTP id i4so10161458oah.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Apr 2014 20:58:03 -0700 (PDT)
+In-Reply-To: <534C1AB7.3020007@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
-is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
-dual cores and has a target speed of 1.0GHz.
+Hi Tomasz,
+Thanks for the review comments,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/Kconfig             | 22 ++++++++++++++++++++++
- arch/arm/mach-exynos/exynos.c            |  2 ++
- arch/arm/plat-samsung/include/plat/cpu.h | 10 ++++++++++
- 3 files changed, 34 insertions(+)
+On 14 April 2014 22:58, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Chander,
+>
+> Few more comments inline.
+>
+>
+> On 09.04.2014 13:09, Chander Kashyap wrote:
+>>
+>> Currently status/configuration power register values are hard-coded for
+>> cpu1.
+>>
+>> Make it generic so that it is useful for SoC's with more than two cpus.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> ---
+>> changes in v2 : Used existing macros for clusterid and cpuid calculation
+>>
+>>   arch/arm/mach-exynos/hotplug.c  |   15 ++++++++++++---
+>>   arch/arm/mach-exynos/platsmp.c  |   20 +++++++++++++++-----
+>>   arch/arm/mach-exynos/regs-pmu.h |    9 +++++++--
+>>   3 files changed, 34 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>> b/arch/arm/mach-exynos/hotplug.c
+>> index 5eead53..eab6121 100644
+>> --- a/arch/arm/mach-exynos/hotplug.c
+>> +++ b/arch/arm/mach-exynos/hotplug.c
+>> @@ -17,6 +17,7 @@
+>>
+>>   #include <asm/cacheflush.h>
+>>   #include <asm/cp15.h>
+>> +#include <asm/cputype.h>
+>>   #include <asm/smp_plat.h>
+>>
+>>   #include <plat/cpu.h>
+>> @@ -92,11 +93,19 @@ static inline void cpu_leave_lowpower(void)
+>>
+>>   static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>>   {
+>> +       unsigned int mpidr, cpunr, cluster;
+>> +
+>> +       mpidr = cpu_logical_map(cpu);
+>> +       cpunr = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +       cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +       /* Maximum possible cpus in a cluster can be 4 */
+>> +       cpunr += cluster * 4;
+>
+>
+> This could be put in a helper, as it seems to be used both by hotplug and
+> platsmp code. Also 4 could be defined as a preprocessor macro.
+>
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index fc8bf18..6da8a68 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -11,6 +11,17 @@ if ARCH_EXYNOS
- 
- menu "SAMSUNG EXYNOS SoCs Support"
- 
-+config ARCH_EXYNOS3
-+	bool "SAMSUNG EXYNOS3"
-+	select ARM_AMBA
-+	select CLKSRC_OF
-+	select HAVE_ARM_SCU if SMP
-+	select HAVE_SMP
-+	select PINCTRL
-+	select PM_GENERIC_DOMAINS if PM_RUNTIME
-+	help
-+	  Samsung EXYNOS3 SoCs based systems
-+
- config ARCH_EXYNOS4
- 	bool "SAMSUNG EXYNOS4"
- 	default y
-@@ -41,6 +52,17 @@ config ARCH_EXYNOS5
- 
- comment "EXYNOS SoCs"
- 
-+config SOC_EXYNOS3250
-+	bool "SAMSUNG EXYNOS3250"
-+	default y
-+	depends on ARCH_EXYNOS3
-+	select ARCH_HAS_BANDGAP
-+	select ARM_CPU_SUSPEND if PM
-+	select PINCTRL_EXYNOS
-+	select SAMSUNG_DMADEV
-+	help
-+	  Enable EXYNOS3250 CPU support
-+
- config CPU_EXYNOS4210
- 	bool "SAMSUNG EXYNOS4210"
- 	default y
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index b32a907..a603dfa 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -370,6 +370,8 @@ static void __init exynos_dt_machine_init(void)
- }
- 
- static char const *exynos_dt_compat[] __initconst = {
-+	"samsung,exynos3",
-+	"samsung,exynos3250",
- 	"samsung,exynos4",
- 	"samsung,exynos4210",
- 	"samsung,exynos4212",
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 5992b8d..3d808f6b 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -43,6 +43,9 @@ extern unsigned long samsung_cpu_id;
- #define S5PV210_CPU_ID		0x43110000
- #define S5PV210_CPU_MASK	0xFFFFF000
- 
-+#define EXYNOS3250_SOC_ID       0xE3472000
-+#define EXYNOS3_SOC_MASK        0xFFFFF000
-+
- #define EXYNOS4210_CPU_ID	0x43210000
- #define EXYNOS4212_CPU_ID	0x43220000
- #define EXYNOS4412_CPU_ID	0xE4412200
-@@ -68,6 +71,7 @@ IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
- IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
- IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
- IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
-+IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
- IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
-@@ -126,6 +130,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_s5pv210()	0
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS3250)
-+# define soc_is_exynos3250()    is_samsung_exynos3250()
-+#else
-+# define soc_is_exynos3250()    0
-+#endif
-+
- #if defined(CONFIG_CPU_EXYNOS4210)
- # define soc_is_exynos4210()	is_samsung_exynos4210()
- #else
+Sounds great. I will modify this.
+
+
+>
+>>         for (;;) {
+>>
+>> -               /* make cpu1 to be turned off at next WFI command */
+>> -               if (cpu == 1)
+>> -                       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
+>> +               /* make cpu to be turned off at next WFI command */
+>> +               if (cpu)
+>
+>
+> Do you need this if here at all? I don't think there would be any problem
+> with this function called for CPU 0 (which shouldn't happen anyway, without
+> CPU 0 hotplug support enabled).
+>
+
+Well this is to avoid corner case where someone does cpu-hotplug-out
+on cpu0 manually.
+
+>
+>> +                       __raw_writel(0,
+>> S5P_ARM_CORE_CONFIGURATION(cpunr));
+>>
+>>                 /*
+>>                  * here's the WFI
+>> diff --git a/arch/arm/mach-exynos/platsmp.c
+>> b/arch/arm/mach-exynos/platsmp.c
+>> index 8ea02f6..8d06b2c 100644
+>> --- a/arch/arm/mach-exynos/platsmp.c
+>> +++ b/arch/arm/mach-exynos/platsmp.c
+>> @@ -22,6 +22,7 @@
+>>   #include <linux/io.h>
+>>
+>>   #include <asm/cacheflush.h>
+>> +#include <asm/cputype.h>
+>>   #include <asm/smp_plat.h>
+>>   #include <asm/smp_scu.h>
+>>   #include <asm/firmware.h>
+>> @@ -92,6 +93,14 @@ static int exynos_boot_secondary(unsigned int cpu,
+>> struct task_struct *idle)
+>>   {
+>>         unsigned long timeout;
+>>         unsigned long phys_cpu = cpu_logical_map(cpu);
+>> +       unsigned int mpidr, cpunr, cluster;
+>> +
+>> +       mpidr = cpu_logical_map(cpu);
+>> +       cpunr = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +       cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +       /* Maximum possible cpus in a cluster can be 4 */
+>> +       cpunr += cluster * 4;
+>
+>
+> Here basically the same code is used as in hotplug.c, so a helper would be
+> nice. (e.g. cpunr = exynos_pmu_cpunr(mpidr)).
+
+Yes,
+
+>
+>
+>>
+>>         /*
+>>          * Set synchronisation state between this boot processor
+>> @@ -109,14 +118,15 @@ static int exynos_boot_secondary(unsigned int cpu,
+>> struct task_struct *idle)
+>>          */
+>>         write_pen_release(phys_cpu);
+>>
+>> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN))
+>> {
+>> +       if (!(__raw_readl(S5P_ARM_CORE_STATUS(cpunr))
+>> +               & S5P_CORE_LOCAL_PWR_EN)) {
+>>                 __raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>> -                            S5P_ARM_CORE1_CONFIGURATION);
+>> +                            S5P_ARM_CORE_CONFIGURATION(cpunr));
+>>
+>>                 timeout = 10;
+>>
+>> -               /* wait max 10 ms until cpu1 is on */
+>> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+>> +               /* wait max 10 ms until secondary cpu is on */
+>> +               while ((__raw_readl(S5P_ARM_CORE_STATUS(cpunr))
+>>                         & S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN)
+>> {
+>>                         if (timeout-- == 0)
+>>                                 break;
+>> @@ -125,7 +135,7 @@ static int exynos_boot_secondary(unsigned int cpu,
+>> struct task_struct *idle)
+>>                 }
+>>
+>>                 if (timeout == 0) {
+>> -                       printk(KERN_ERR "cpu1 power enable failed");
+>> +                       pr_err("cpu%x power enable failed", cpu);
+>
+>
+> Shouldn't %d be used instead? "cpu a" on a 10-core machine would sound
+> weird.
+
+Ok.
+
+>
+>
+>>                         spin_unlock(&boot_lock);
+>>                         return -ETIMEDOUT;
+>>                 }
+>> diff --git a/arch/arm/mach-exynos/regs-pmu.h
+>> b/arch/arm/mach-exynos/regs-pmu.h
+>> index 7c029ce..16e17e4 100644
+>> --- a/arch/arm/mach-exynos/regs-pmu.h
+>> +++ b/arch/arm/mach-exynos/regs-pmu.h
+>> @@ -104,8 +104,13 @@
+>>   #define S5P_GPS_LOWPWR                                S5P_PMUREG(0x139C)
+>>   #define S5P_GPS_ALIVE_LOWPWR                  S5P_PMUREG(0x13A0)
+>>
+>> -#define S5P_ARM_CORE1_CONFIGURATION            S5P_PMUREG(0x2080)
+>> -#define S5P_ARM_CORE1_STATUS                   S5P_PMUREG(0x2084)
+>> +#define S5P_ARM_CORE0_CONFIGURATION            S5P_PMUREG(0x2000)
+>> +#define S5P_ARM_CORE0_STATUS                   S5P_PMUREG(0x2004)
+>> +
+>> +#define S5P_ARM_CORE_CONFIGURATION(_cpunr)     \
+>> +               (S5P_ARM_CORE0_CONFIGURATION + 0x80 * _cpunr)
+>> +#define S5P_ARM_CORE_STATUS(_cpunr)            \
+>> +               (S5P_ARM_CORE0_STATUS + 0x80 * _cpunr)
+>
+>
+> Please wrap _cpunr in parentheses to make sure that passed value doesn't
+> affect the order of computations.
+
+ok.
+
+>
+> Best regards,
+> Tomasz
+
+Thanks again,
+
 -- 
-1.8.0
+with warm regards,
+Chander Kashyap
