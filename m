@@ -1,66 +1,55 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC PATCH 00/14] drm/exynos: support MIPI DSI command mode display
-Date: Tue, 15 Apr 2014 14:47:28 +0900
-Message-ID: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49989 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750950AbaDOFrv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 01:47:51 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RFC PATCH 05/14] ARM: dts: samsung-fimd: add I80 specific properties
+Date: Tue, 15 Apr 2014 14:47:33 +0900
+Message-ID: <1397540862-21359-6-git-send-email-yj44.cho@samsung.com>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series includes the following:
-- FIMD I80 interface
-- DSI command mode interface for Exynos5420
-- S6E3FA0 command mode type panel driver
-- Some bugs modification
+In case of using CPU interface panel, the relevant registers should be set.
+So this patch adds relevant dt bindings.
 
-The patch series is based on exynos-drm-next branch.
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Thank you.
-Best regards YJ
-
-YoungJun Cho (14):
-  drm/exynos: dsi: move the Eot packets configuration point
-  drm/exynos: dsi: delay setting clocks after reset
-  drm/exynos: use wait_event_timeout() for safety usage
-  ARM: dts: add exynos5 compatible to sysreg
-  ARM: dts: samsung-fimd: add I80 specific properties
-  drm/exynos: support MIPI DSI command mode
-  ARM: dts: exynos_dsim: add exynos5420 Soc compatible
-  drm/exynos: dsi: add driver data to support Exynos5420
-  ARM: dts: s6e3fa0: add DT bindings
-  drm/panel: add S6E3FA0 driver
-  ARM: dts: exynos4: add system register node
-  ARM: dts: exynos5: add system register support
-  ARM: dts: exynos5420: add mipi-phy node
-  ARM: dts: exynos5420: add dsi node
-
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
- .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   52 ++
- .../devicetree/bindings/video/exynos_dsim.txt      |    4 +-
- .../devicetree/bindings/video/samsung-fimd.txt     |    9 +
- arch/arm/boot/dts/exynos4.dtsi                     |    1 +
- arch/arm/boot/dts/exynos5.dtsi                     |    6 +
- arch/arm/boot/dts/exynos5420.dtsi                  |   20 +
- drivers/gpu/drm/exynos/Kconfig                     |    1 +
- drivers/gpu/drm/exynos/exynos_drm_crtc.c           |   16 +-
- drivers/gpu/drm/exynos/exynos_drm_crtc.h           |    2 +
- drivers/gpu/drm/exynos/exynos_drm_drv.h            |    2 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  121 ++++-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  280 ++++++++--
- drivers/gpu/drm/panel/Kconfig                      |    7 +
- drivers/gpu/drm/panel/Makefile                     |    1 +
- drivers/gpu/drm/panel/panel-s6e3fa0.c              |  544 ++++++++++++++++++++
- include/drm/drm_mipi_dsi.h                         |    2 +
- include/video/samsung_fimd.h                       |    3 +-
- 18 files changed, 1001 insertions(+), 71 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
- create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
-
+diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+index 2dad41b..924c2e1 100644
+--- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+@@ -44,6 +44,15 @@ Optional Properties:
+ - display-timings: timing settings for FIMD, as described in document [1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
++- samsung,sysreg-phandle: handle to syscon used to control the system registers
++- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
++- cs-setup: clock cycles for the active period of address signal enable until
++	chip select is enable in i80 interface
++- wr-setup: clock cycles for the active period of CS signal enable until
++	write signal is enable in i80 interface
++- wr-act: clock cycles for the active period of CS enable in i80 interface
++- wr-hold: clock cycles for the active period of CS disable until write signal
++	is disable in i80 interface
+ 
+ The device node can contain 'port' child nodes according to the bindings defined
+ in [2]. The following are properties specific to those nodes:
 -- 
 1.7.9.5
