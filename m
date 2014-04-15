@@ -1,57 +1,50 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 8/8] ARM: dts: Add device tree sources for Exynos3250
-Date: Tue, 15 Apr 2014 17:27:34 +0900
-Message-ID: <534CED76.9010302@samsung.com>
-References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
- <1397527192-21988-9-git-send-email-cw00.choi@samsung.com>
- <534CEAB7.6020600@arm.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 4/4] regulator: s5m8767: Use same binding for external
+ control as in s2mps11
+Date: Tue, 15 Apr 2014 14:02:02 +0530
+Message-ID: <CAK9yfHwUwjMEXisi5Jf+nAkS7CLnAUt-REkekns9JrRTAGQ=WQ@mail.gmail.com>
+References: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
+	<1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
+	<20140414211106.GC12304@sirena.org.uk>
+	<CAK9yfHwL4o7-7Q03dw9JdD1UDsP_v2=we1kadRXaGAuaN1de_g@mail.gmail.com>
+	<1397549539.29169.2.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <534CEAB7.6020600@arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jaehoon Chung <jh80.chung@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, linux-ker
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:55393 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751185AbaDOIcE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 04:32:04 -0400
+Received: by mail-ob0-f177.google.com with SMTP id vb8so2009263obc.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 01:32:02 -0700 (PDT)
+In-Reply-To: <1397549539.29169.2.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Hi,
-
-On 04/15/2014 05:15 PM, Marc Zyngier wrote:
-> On 15/04/14 02:59, Chanwoo Choi wrote:
->> From: Tomasz Figa <t.figa@samsung.com>
+On 15 April 2014 13:42, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> On wto, 2014-04-15 at 13:26 +0530, Sachin Kamat wrote:
+>> On 15 April 2014 02:41, Mark Brown <broonie@kernel.org> wrote:
+>> > On Mon, Apr 14, 2014 at 10:09:09AM +0200, Krzysztof Kozlowski wrote:
+>> >
+>> >> -     - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
+>> >> +     - samsung,ext-control-gpios: (optional) GPIO specifier for one
+>> >>               GPIO controlling this regulator (enable/disable); This is
+>> >>               valid only for buck9.
+>> >
+>> > This is an incompatible change.  It's OK to deprecate the old property
+>> > but it's bad form to just remove it.
 >>
->> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on Cortex-A7
->> dual core and includes following dt nodes:
->>
->> - GIC interrupt controller
->> - Pinctrl to control GPIOs
->> - Clock controller
->> - CPU information (Cortex-A7 dual core)
->> - UART to support serial port
->> - MCT (Multi Core Timer)
->> - ADC (Analog Digital Converter)
->> - I2C/SPI bus
->> - Power domain
->> - PMU (Performance Monitoring Unit)
->> - MSHC (Mobile Storage Host Controller)
->> - PWM (Pluse Width Modulation)
->> - AMBA bus
-> 
-> [...]
-> 
-> Where is the arch timer node?
+>> I agree with Mark. Also, there is no need to make it generic.
+>
+> I thought it would be good to make it consistent and to reduce the
+> number of bindings with same meaning on similar drivers.
 
-Exynos3250 uses MCT (Multi Core Timer) instead of ARM_ARCH_TIMER.
-- in drivers/clocksource/exynos_mct.c
+How about making the other one use "s5m8767,pmic-ext-control-gpios"
+compatible instead of introducing a new one?
 
-Best Regards,
-Chanwoo Choi
+-- 
+With warm regards,
+Sachin
