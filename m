@@ -1,45 +1,207 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 7/7] ARM: dts: update macros in clock bindings for
- exynos5420
-Date: Tue, 15 Apr 2014 20:01:48 +0200
-Message-ID: <534D740C.2060904@gmail.com>
-References: <1395918470-16374-1-git-send-email-shaik.ameer@samsung.com> <1395918470-16374-8-git-send-email-shaik.ameer@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/3] ARM: EXYNOS: Map PMU address through DT
+Date: Tue, 15 Apr 2014 20:28:11 +0200
+Message-ID: <534D7A3B.5000502@gmail.com>
+References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com> <1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1395918470-16374-8-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f42.google.com ([74.125.83.42]:36412 "EHLO
+	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751161AbaDOS2P (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 14:28:15 -0400
+In-Reply-To: <1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, joshi@samsung.com
 
-Hi Shaik,
+Hi Vikas,
 
-On 27.03.2014 12:07, Shaik Ameer Basha wrote:
-> From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On 17.03.2014 14:09, Vikas Sajjan wrote:
+> Instead of hardcoding the PMU details for each SoC, pass this information
+> through device tree (DT).
 >
-> This patch updates the macros as per the latest changes and
-> replaces magic numbers with macros defined in DT header for
-> exynos5420.
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>   .../devicetree/bindings/arm/samsung/pmu.txt        |    5 +-
+>   arch/arm/boot/dts/exynos4.dtsi                     |    5 ++
+>   arch/arm/boot/dts/exynos5260.dtsi                  |    5 ++
+>   arch/arm/mach-exynos/common.c                      |   51 +++++++++++++-------
+>   arch/arm/mach-exynos/include/mach/map.h            |    3 --
+>   5 files changed, 47 insertions(+), 22 deletions(-)
 >
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> index f1f1552..667a7f0 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -2,14 +2,15 @@ SAMSUNG Exynos SoC series PMU Registers
+>
+>   Properties:
+>    - compatible : should contain two values. First value must be one from following list:
+> +		   - "samsung,exynos4210-pmu" - for Exynos4210 and Exynos4x12 SoC,
+>   		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+> -		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+> +		   - "samsung,exynos5420-pmu" - for Exynos5420 and Exynos5260 SoC.
 
-Contents of dts files are not "bindings", they are just device tree 
-sources/data, defined according to some bindings. Bindings are defined 
-sets of nodes and properties and their formats, as you can see in 
-Documentation/devicetree/bindings/, where documentation of supported 
-bindings is available.
+Do Exynos5420 and 5260 really have identical PMU blocks with the same 
+register layouts? If not, they should have different compatible strings.
 
-So this patch doesn't update clock bindings, but rather device nodes. 
-Following would be more appropriate: "ARM: dts: update clock IDs in 
-device tree of Exynos5420".
+>   		second value must be always "syscon".
+>
+>    - reg : offset and length of the register set.
+>
+>   Example :
+>   pmu_system_controller: system-controller@10040000 {
+> -	compatible = "samsung,exynos5250-pmu", "syscon";
+> +	compatible = "samsung,exynos5250-pmu";
+>   	reg = <0x10040000 0x5000>;
+>   };
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 08452e1..94cbafa 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -55,6 +55,11 @@
+>   		#phy-cells = <1>;
+>   	};
+>
+> +	pmu_system_controller: system-controller@10020000 {
+> +		compatible = "samsung,exynos4210-pmu";
 
-However, as mentioned in comments to previous patches, most (if not all) 
-of the changes below could be probably dropped.
+Missing "syscon" compatible string.
+
+> +		reg = <0x10020000 0x4000>;
+> +	};
+> +
+>   	pd_mfc: mfc-power-domain@10023C40 {
+>   		compatible = "samsung,exynos4210-pd";
+>   		reg = <0x10023C40 0x20>;
+> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+> index a93fea8..2a4dace 100644
+> --- a/arch/arm/boot/dts/exynos5260.dtsi
+> +++ b/arch/arm/boot/dts/exynos5260.dtsi
+> @@ -264,6 +264,11 @@
+>   			};
+>   		};
+>
+> +		pmu_system_controller: system-controller@10D50000 {
+> +			compatible = "samsung,exynos5420-pmu";
+
+Missing "syscon" compatible string.
+
+> +			reg = <0x10D50000 0x5000>;
+> +		};
+> +
+>   		pinctrl_0: pinctrl@11600000 {
+>   			compatible = "samsung,exynos5260-pinctrl";
+>   			reg = <0x11600000 0x1000>;
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 1df81ff..c75733b 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -79,11 +79,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+>   		.length		= SZ_4K,
+>   		.type		= MT_DEVICE,
+>   	}, {
+> -		.virtual	= (unsigned long)S5P_VA_PMU,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_PMU),
+> -		.length		= SZ_64K,
+> -		.type		= MT_DEVICE,
+> -	}, {
+>   		.virtual	= (unsigned long)S5P_VA_COMBINER_BASE,
+>   		.pfn		= __phys_to_pfn(EXYNOS4_PA_COMBINER),
+>   		.length		= SZ_4K,
+> @@ -157,11 +152,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+>   		.pfn		= __phys_to_pfn(EXYNOS5_PA_CMU),
+>   		.length		= 144 * SZ_1K,
+>   		.type		= MT_DEVICE,
+> -	}, {
+> -		.virtual	= (unsigned long)S5P_VA_PMU,
+> -		.pfn		= __phys_to_pfn(EXYNOS5_PA_PMU),
+> -		.length		= SZ_64K,
+> -		.type		= MT_DEVICE,
+>   	},
+>   };
+>
+> @@ -243,12 +233,12 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+>   	return 1;
+>   }
+>
+> -struct __sysram_desc {
+> +struct __exynos_reg_desc {
+>   	char name[32];
+>   	unsigned long addr;
+>   };
+>
+> -static struct __sysram_desc sysram_desc[] __initdata = {
+> +static struct __exynos_reg_desc exynos_sysram_desc[] __initdata = {
+>   	{
+>   		.name = "samsung,exynos4210-sysram",
+>   		.addr = (unsigned long)S5P_VA_SYSRAM,
+> @@ -258,7 +248,20 @@ static struct __sysram_desc sysram_desc[] __initdata = {
+>   	},
+>   };
+>
+> -static int __init exynos_fdt_map_sysram(unsigned long node, const char *uname,
+> +static struct __exynos_reg_desc exynos_pmu_desc[] __initdata = {
+> +	{
+> +		.name = "samsung,exynos4210-pmu",
+> +		.addr = (unsigned long)S5P_VA_PMU,
+> +	}, {
+> +		.name = "samsung,exynos5250-pmu",
+> +		.addr = (unsigned long)S5P_VA_PMU,
+> +	}, {
+> +		.name = "samsung,exynos5420-pmu",
+> +		.addr = (unsigned long)S5P_VA_PMU,
+> +	},
+> +};
+> +
+> +static int __init exynos_fdt_map_reg(unsigned long node, const char *uname,
+>   					int depth, void *data)
+>   {
+>   	struct map_desc iodesc;
+> @@ -266,12 +269,26 @@ static int __init exynos_fdt_map_sysram(unsigned long node, const char *uname,
+>   	unsigned long len;
+>   	int i;
+>
+> -	for (i = 0; i < ARRAY_SIZE(sysram_desc); i++) {
+> -		if (of_flat_dt_is_compatible(node, sysram_desc[i].name)) {
+> +	for (i = 0; i < ARRAY_SIZE(exynos_sysram_desc); i++) {
+> +		if (of_flat_dt_is_compatible(node,
+> +					exynos_sysram_desc[i].name)) {
+> +			reg = of_get_flat_dt_prop(node, "reg", &len);
+> +			if (!reg || len != (sizeof(unsigned long) * 2))
+> +				return -ENODEV;
+> +			iodesc.virtual = exynos_sysram_desc[i].addr;
+> +			iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
+> +			iodesc.length = be32_to_cpu(reg[1]);
+> +			iodesc.type = MT_DEVICE;
+> +			iotable_init(&iodesc, 1);
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(exynos_pmu_desc); i++) {
+> +		if (of_flat_dt_is_compatible(node, exynos_pmu_desc[i].name)) {
+>   			reg = of_get_flat_dt_prop(node, "reg", &len);
+>   			if (!reg || len != (sizeof(unsigned long) * 2))
+>   				return -ENODEV;
+> -			iodesc.virtual = sysram_desc[i].addr;
+> +			iodesc.virtual = exynos_pmu_desc[i].addr;
+>   			iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
+>   			iodesc.length = be32_to_cpu(reg[1]);
+>   			iodesc.type = MT_DEVICE;
+> @@ -298,7 +315,7 @@ void __init exynos_init_io(void)
+>
+>   	exynos_map_io();
+>
+> -	of_scan_flat_dt(exynos_fdt_map_sysram, NULL);
+> +	of_scan_flat_dt(exynos_fdt_map_reg, NULL);
+
+Do you really need to map PMU statically using iotable_init() at fixed 
+virtual address? Shouldn't rather actual users of PMU registers bind to 
+PMU node and use of_iomap()?
 
 Best regards,
 Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
