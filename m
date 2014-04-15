@@ -1,87 +1,64 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 0/8] Support new Exynos3250 SoC based on Cortex-A7 dual core
-Date: Tue, 15 Apr 2014 10:59:44 +0900
-Message-ID: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:28212 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751229AbaDOB7w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 21:59:52 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCHv2 4/8] ARM: EXYNOS: Support secondary CPU boot of Exynos4212
+Date: Tue, 15 Apr 2014 10:59:48 +0900
+Message-ID: <1397527192-21988-5-git-send-email-cw00.choi@samsung.com>
+References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: linux@arm.linux.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, t.figa@samsung.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patchset support new Exynos3250 Samsung SoC based on Cortex-A7 dual core.
-Exynos3250 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
-for Smartphone. It is desigend with the 28nm low-power high-K metal gate process
-and provides the best performance features.
+From: Kyungmin Park <kyungmin.park@samsung.com>
 
-This patchset include some patches such as:
-- Support secondary CPU of Exynos3250 (cpu up/down)
-- Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/pwm/amba
-- Support the clock control for Exynos3250 using common clk framework
+This patch fix the offset of CPU boot address and change parameter of smc call
+of SMC_CMD_CPU1BOOT command for Exynos4212.
 
-This patchset is completely tested and is based on following git repo/branch.
-- git repo : git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-- branch   : for-next (Linux 3.15-rc1)
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/mach-exynos/firmware.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-Additional patch description about static memory mapping:
-Arnd Bergmann suggested that need proper driver instead of static memory mapping.
-As Chanho Park reply[2], Sachin Kamat already posted the DT support patch[1]
-for memory mapping for SYSRAM.
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg27647.html
-[2] https://lkml.org/lkml/2014/4/10/161
-
-So, I'm going to re-implement following patches related to static memory mapping
-after merged Sachin Kamat patch[1].
-  ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
-  ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
-
-Changes from v1:
-- Add new "samsung,exynos3" compatible name
-- Add comment about exynos_cpu_boot in Exynos4212
-- Remove unnecessary 'goto' statement in firmware.c
-- Use read_cpuid_part_number() function instead of assembler directly
-- Post separated pinctrl patch from this patchset
-  : https://lkml.org/lkml/2014/4/13/156
-- Remove unused pmu interrupts due to Exynos3250 dual-core
-- Cosolidate all the patches related to exynos3250.dtsi into one patch
-- Fix gic compatible name to "cortex-a15-gic" because Cortex-A7 GIC is same
-- Add sign-off of sender to all this patches
-- Fix minor typo
-
-Chanwoo Choi (5):
-  ARM: EXYNOS: Add Exynos3250 SoC ID
-  ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
-  ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
-  ARM: EXYNOS: Support secondary CPU boot of Exynos3250
-  ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
-
-Kyungmin Park (1):
-  ARM: EXYNOS: Support secondary CPU boot of Exynos4212
-
-Tomasz Figa (2):
-  clk: samsung: exynos3250: Add clocks using common clock framework
-  ARM: dts: Add device tree sources for Exynos3250
-
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 477 ++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 410 ++++++++++++++++
- arch/arm/mach-exynos/Kconfig              |  22 +
- arch/arm/mach-exynos/exynos.c             |  19 +
- arch/arm/mach-exynos/firmware.c           |  18 +-
- arch/arm/mach-exynos/hotplug.c            |  16 +-
- arch/arm/mach-exynos/include/mach/map.h   |   2 +
- arch/arm/plat-samsung/include/plat/cpu.h  |  10 +
- drivers/clk/samsung/Makefile              |   1 +
- drivers/clk/samsung/clk-exynos3250.c      | 785 ++++++++++++++++++++++++++++++
- include/dt-bindings/clock/exynos3250.h    | 256 ++++++++++
- 11 files changed, 2010 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
- create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
- create mode 100644 drivers/clk/samsung/clk-exynos3250.c
- create mode 100644 include/dt-bindings/clock/exynos3250.h
-
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 932129e..aa01c42 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -18,6 +18,8 @@
+ 
+ #include <mach/map.h>
+ 
++#include <plat/cpu.h>
++
+ #include "smc.h"
+ 
+ static int exynos_do_idle(void)
+@@ -28,13 +30,24 @@ static int exynos_do_idle(void)
+ 
+ static int exynos_cpu_boot(int cpu)
+ {
++	/*
++	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
++	 * But, Exynos4212 has only one secondary CPU so second parameter
++	 * isn't used for informing secure firmware about CPU id.
++	 */
++	if (soc_is_exynos4212())
++		cpu = 0;
++
+ 	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
+ 	return 0;
+ }
+ 
+ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ {
+-	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
++	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
++
++	if (!soc_is_exynos4212())
++		boot_reg += 4*cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
+ 	return 0;
 -- 
 1.8.0
