@@ -1,79 +1,150 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH RFC 3/4] xhci: Tune PHY for the DWC3-Exynos host controller
-Date: Tue, 15 Apr 2014 18:24:11 +0530
-Message-ID: <CAFp+6iGAdDgC=21VjCUjx3u_ZohhCyj2nG8qzvz3CHTZzoXWJQ@mail.gmail.com>
-References: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
-	<1386672926-26885-4-git-send-email-gautam.vivek@samsung.com>
-	<20131210135548.GA28456@xps8300>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCHv2 4/4] drm: exynos: hdmi: add support for pixel clock
+ limitation
+Date: Tue, 15 Apr 2014 15:11:29 +0200
+Message-ID: <534D3001.2030707@samsung.com>
+References: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
+ <1397554040-4037-5-git-send-email-t.stanislaws@samsung.com>
+ <CAPdUM4NysWMpy3PZhJdKXFa96Oy4kG4dKkDdrabbAmM3+f5kag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131210135548.GA28456@xps8300>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Kukjin Kim <kgene.kim@samsung.com>, kishon <kishon@ti.com>, Jingoo Han <jg1.han@samsung.com>, Julius Werner <jwerner@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPdUM4NysWMpy3PZhJdKXFa96Oy4kG4dKkDdrabbAmM3+f5kag@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, b.zolnierkie@samsung.com, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Heikki,
-
-
-On Tue, Dec 10, 2013 at 7:25 PM, Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
-
-Giving life to this thread after long time.
-
-> Hi,
->
-> On Tue, Dec 10, 2013 at 04:25:25PM +0530, Vivek Gautam wrote:
->> @@ -170,6 +189,15 @@ static int xhci_plat_probe(struct platform_device *pdev)
->>       }
+On 04/15/2014 11:42 AM, Rahul Sharma wrote:
+> Hi Tomasz,
+> 
+> On 15 April 2014 14:57, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
+>> Adds support for limitation of maximal pixel clock of HDMI
+>> signal. This feature is needed on boards that contains
+>> lines or bridges with frequency limitations.
 >>
->>       /*
->> +      * The parent of the xhci-plat device may pass in a PHY via
->> +      * platform data.  If it exists, store it in our struct usb_hcd
->> +      * so that we can use it later.
->> +      */
->> +     phy_generic = dev_get_platdata(&pdev->dev);
->> +     if (phy_generic)
->> +             xhci->shared_hcd->phy_generic = *phy_generic;
->
-> Getting the handle to the phy from platform data like this is not
-> going to work for long. It should be possible to get it normally with
-> phy_get(). It's not going to be possible to get the handle from the
-> platform data like this if the xhci-hcd platform device is created
-> from ACPI or DT. You are also not considering case where you have two
-> phys.
->
-> Vivek, I have made a patch set for the phy framework allowing
-> associations between the phys and their users to be made in same way
-> gpios and clk make them. With those you should be able to create a
-> lookup entry to the phy framework in drivers/usb/dwc3/host.c. Then we
-> could use phy_get() here already. Please check them. Subject of the
-> thread:
->
-> "phy: remove the need for the phys to know about their users"
+>> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+>> ---
+>>  .../devicetree/bindings/video/exynos_hdmi.txt      |    4 ++++
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c               |   12 ++++++++++++
+>>  include/media/s5p_hdmi.h                           |    1 +
+>>  3 files changed, 17 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> index f9187a2..8718f8d 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> @@ -28,6 +28,10 @@ Required properties:
+>>  - ddc: phandle to the hdmi ddc node
+>>  - phy: phandle to the hdmi phy node
+>>
+>> +Optional properties:
+>> +- max-pixel-clock: used to limit the maximal pixel clock if a board has lines,
+>> +       connectors or bridges not capable of carring higher frequencies
+>> +
+>>  Example:
+>>
+>>         hdmi {
+>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> index 2a18f4e..404f1b7 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> @@ -195,6 +195,7 @@ struct hdmi_context {
+>>         struct hdmi_resources           res;
+>>
+>>         int                             hpd_gpio;
+>> +       u32                             max_pixel_clock;
+>>
+>>         enum hdmi_type                  type;
+>>  };
+>> @@ -887,6 +888,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
+>>         if (ret)
+>>                 return MODE_BAD;
+>>
+>> +       if (mode->clock * 1000 > hdata->max_pixel_clock)
+>> +               return MODE_BAD;
+>> +
+>>         ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
+>>         if (ret < 0)
+>>                 return MODE_BAD;
+>> @@ -2031,6 +2035,8 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
+>>                 return NULL;
+>>         }
+>>
+>> +       of_property_read_u32(np, "max-pixel-clock", &pd->max_pixel_clock);
+>> +
+>>         return pd;
+>>  }
+>>
+>> @@ -2067,6 +2073,11 @@ static int hdmi_probe(struct platform_device *pdev)
+>>         if (!pdata)
+>>                 return -EINVAL;
+>>
+>> +       if (!pdata->max_pixel_clock) {
+>> +               DRM_INFO("max-pixel-clock is zero, using INF\n");
+>> +               pdata->max_pixel_clock = U32_MAX;
+>> +       }
+>> +
+>>         hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
+>>         if (!hdata)
+>>                 return -ENOMEM;
+>> @@ -2083,6 +2094,7 @@ static int hdmi_probe(struct platform_device *pdev)
+>>         hdata->type = drv_data->type;
+>>
+>>         hdata->hpd_gpio = pdata->hpd_gpio;
+>> +       hdata->max_pixel_clock = pdata->max_pixel_clock;
+>>         hdata->dev = dev;
+>>
+>>         ret = hdmi_resources_init(hdata);
+>> diff --git a/include/media/s5p_hdmi.h b/include/media/s5p_hdmi.h
+>> index 181642b..7272d65 100644
+>> --- a/include/media/s5p_hdmi.h
+>> +++ b/include/media/s5p_hdmi.h
+>> @@ -31,6 +31,7 @@ struct s5p_hdmi_platform_data {
+>>         int mhl_bus;
+>>         struct i2c_board_info *mhl_info;
+>>         int hpd_gpio;
+>> +       u32 max_pixel_clock;
+>>  };
+> 
+> We have already removed Non DT support from the drm hdmi
+> driver. IMO we should not be extending the pdata struct.
+> 
+> Regards,
+> Rahul Sharma
 
-I had seen your patches in the mailing list, but i don't see any
-updated version of these patches.
-Are you planning to work on this above mentioned patch-series any time soon ?
+Hi Rahul,
 
-Or, should i try to find a different approach for handling the phy
-from the host controller (child of DWC3 in this case, which has the
-phys).
+This is not a non-DT patch. The s5p_hdmi_platform_data is
+generated from DT itself. This structure is just
+a parsed version of DT attributes.
 
->
-> The lookup table can then be added in drivers/usb/dwc3/host.c with
-> something like this:
->
-> int dwc3_host_init(struct dwc3 *dwc)
-> {
->         struct platform_device  *xhci;
->         struct phy_lookup_table *table;
->         ...
->         table->dev_id = dev_name(&xhci->dev);
->         if (dwc->usb2_generic_phy)
->                 table->table[0].phy_name = dev_name(&dwc->usb2_generic_phy->dev);
->         if (dwc->usb3_generic_phy)
->                 table->table[1].phy_name = dev_name(&dwc->usb3_generic_phy->dev);
->         phy_add_lookup_table(table);
->         ...
+It may be a good idea to rename s5p_hdmi_platform_data
+to exynos_hdmi_pdata and move it to exynos_hdmi_drm.c file
+or parse DT directly in probe function.
+
+I can prepare a patch for that.
+
+Regards,
+Tomasz Stanislawski
+
+
+> 
+>>
+>>  #endif /* S5P_HDMI_H */
+>> --
+>> 1.7.9.5
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
