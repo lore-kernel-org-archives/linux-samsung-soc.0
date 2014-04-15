@@ -1,111 +1,156 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 2/3] ARM: EXYNOS: Add initial support of PMU for Exynos5260
-Date: Tue, 15 Apr 2014 20:34:19 +0200
-Message-ID: <534D7BAB.30503@gmail.com>
-References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com> <1395061795-17777-3-git-send-email-vikas.sajjan@samsung.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 3/3] arm: exynos5260: add support for S2R
+Date: Tue, 15 Apr 2014 20:41:57 +0200
+Message-ID: <534D7D75.8080701@gmail.com>
+References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com> <1395061795-17777-4-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:37569 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754445AbaDOSeX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 14:34:23 -0400
-In-Reply-To: <1395061795-17777-3-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1395061795-17777-4-git-send-email-vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vikas Sajjan <vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, joshi@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
 Hi Vikas,
 
 On 17.03.2014 14:09, Vikas Sajjan wrote:
-> Adds PMU support of PMU for Exynos5260. Suspend-to-RAM can be built on
-> top this.
+> Adds Suspend to RAM (S2R) support to exynos5260.
 >
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> Signed-off-by: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->   arch/arm/mach-exynos/common.h            |   26 ++++
->   arch/arm/mach-exynos/pm.c                |   34 +++--
->   arch/arm/mach-exynos/pmu.c               |  238 ++++++++++++++++++++++++++++++
->   arch/arm/mach-exynos/regs-pmu.h          |  232 +++++++++++++++++++++++++++++
->   arch/arm/plat-samsung/include/plat/cpu.h |    8 +
->   5 files changed, 529 insertions(+), 9 deletions(-)
+>   arch/arm/mach-exynos/pm.c       |   62 +++++++++++++++++++++++++++++++--------
+>   arch/arm/mach-exynos/regs-pmu.h |   12 ++++++++
+>   2 files changed, 61 insertions(+), 13 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index aba6a2a..a17f701 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -56,6 +56,32 @@ enum sys_powerdown {
->   	NUM_SYS_POWERDOWN,
->   };
->
-> +enum running_cpu {
-> +	EXYNOS5_KFC,
-> +	EXYNOS5_ARM,
-> +};
-> +
-> +enum reg_op {
-> +	REG_INIT,	/* write new value */
-> +	REG_RESET,	/* clear with zero */
-> +	REG_SET,	/* bit set */
-> +	REG_CLEAR,	/* bit clear */
-> +};
-> +
-> +/* reg/value set */
-> +#define EXYNOS_PMU_REG(REG, VAL, OP)		\
-> +{						\
-> +	.reg	=	(void __iomem *)REG,	\
-> +	.val	=	VAL,			\
-> +	.op	=	OP,			\
-> +}
-> +
-> +struct exynos_pmu_init_reg {
-> +	void __iomem *reg;
-> +	unsigned int val;
-> +	enum reg_op op;
-> +};
-> +
->   extern unsigned long l2x0_regs_phys;
->   struct exynos_pmu_conf {
->   	void __iomem *reg;
 > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 15af0ce..dbe9670 100644
+> index dbe9670..12cc241 100644
 > --- a/arch/arm/mach-exynos/pm.c
 > +++ b/arch/arm/mach-exynos/pm.c
-> @@ -109,7 +109,7 @@ static int exynos_cpu_suspend(unsigned long arg)
->   	outer_flush_all();
->   #endif
+> @@ -77,12 +77,20 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+>   	{ /* sentinel */ },
+>   };
 >
-> -	if (soc_is_exynos5250())
-> +	if (soc_is_exynos5250() || soc_is_exynos5260())
->   		flush_cache_all();
+> +static const struct exynos_wkup_irq exynos5260_wkup_irq[] = {
+> +	{ 105, BIT(1) }, /* RTC alarm */
+> +	{ 106, BIT(2) }, /* RTC tick */
+> +	{ /* sentinel */ },
+> +};
+> +
+>   static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+>   {
+>   	const struct exynos_wkup_irq *wkup_irq;
+>
+>   	if (soc_is_exynos5250())
+>   		wkup_irq = exynos5250_wkup_irq;
+> +	else if (soc_is_exynos5260())
+> +		wkup_irq = exynos5260_wkup_irq;
+>   	else
+>   		wkup_irq = exynos4_wkup_irq;
 
-I think it's the right time for this code to be restructured. Adding 
-more and more SoCs over this cruft is making this code worse and worse.
+This should probably be tied to some DT match table as match data for 
+particular compatible strings. Also to eliminate the need to add such 
+change for every new SoC, the mapping between wake-up sources and GIC 
+interrupts should be probably parsed from DT.
 
-I believe this should be done as follows:
+Adding some people on CC for further comments.
 
-  - a generic struct describing particular PMU variant should be 
-defined, with things like
+>
+> @@ -124,10 +132,20 @@ static void exynos_pm_prepare(void)
+>   	unsigned int tmp;
+>
+>   	/* Set wake-up mask registers */
+> -	__raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
+> -	__raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
+> +	if (soc_is_exynos5260()) {
+> +		__raw_writel(exynos_get_eint_wake_mask(),
+> +					EXYNOS5260_EINT_WAKEUP_MASK);
+> +		__raw_writel(exynos_irqwake_intmask & ~(1 << 31),
+> +					EXYNOS5260_WAKEUP_MASK);
+> +	} else {
+> +		__raw_writel(exynos_get_eint_wake_mask(),
+> +					S5P_EINT_WAKEUP_MASK);
+> +		__raw_writel(exynos_irqwake_intmask & ~(1 << 31),
+> +					S5P_WAKEUP_MASK);
+> +	}
 
-	bool flush_cache_on_suspend;
-	struct exynos_pmu_conf *pmu_conf;
+Same here. I wonder what we could do to eliminate the need for such changes.
 
-or even function pointers, like
+By the way, don't you need to handle here EXYNOS5260_WAKEUP_MASK2 and 
+EXYNOS5260_WAKEUP_MASK3 as well?
 
-	void (*cpu_suspend)(unsigned long arg);
+>
+> -	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +	if (!soc_is_exynos5260())
+> +		s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
 
-to handle things done currently using soc_is_*() macros, which we should 
-get rid of.
+Ugly.
 
-- a DT match table would bind particular compatible strings with 
-respective PMU variants structs,
+>
+>   	if (soc_is_exynos5250()) {
+>   		s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> @@ -221,21 +239,39 @@ static void exynos_pm_resume(void)
+>   			      : "cc");
+>   	}
+>
+> -	/* For release retention */
+> -
+> -	__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+> -	__raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
+> -	__raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
+> -	__raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
+> -	__raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
+> -	__raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
+> -	__raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
+> +	if (soc_is_exynos5250()) {
+> +		/* For release retention */
+> +
+> +		__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+> +		__raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
+> +		__raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
+> +		__raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
+> +		__raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
+> +		__raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
+> +		__raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
+> +	} else if (soc_is_exynos5260()) {
+> +		/* For release retention */
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_LPDDR3_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RET_MAUDIO_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RET_JTAG_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MMC2_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_TOP_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_UART_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MMC0_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MMC1_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_SPI_OPTION);
+> +		__raw_writel((1 << 28), EXYNOS5260_PAD_RETENTION_MIF_OPTION);
+> +		__raw_writel((1 << 28),
+> +				EXYNOS5260_PAD_RETENTION_BOOTLDO_OPTION);
+> +	}
+>
 
-- in general, this code should be made more like a normal driver, e.g. 
-bind to a DT node and map registers dynamically.
+Ugly.
+
+>   	if (soc_is_exynos5250())
+>   		s3c_pm_do_restore(exynos5_sys_save,
+>   			ARRAY_SIZE(exynos5_sys_save));
+>
+> -	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +	if (!soc_is_exynos5260())
+> +		s3c_pm_do_restore_core(exynos_core_save,
+> +				ARRAY_SIZE(exynos_core_save));
+
+Ugly.
+
+I believe that exactly the same comments apply to this file as mentioned 
+in my review of patch 2/3 for pmu.c. The code needs to be reworked to 
+let us remove soc_is_exynos*() macros.
 
 Best regards,
 Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
