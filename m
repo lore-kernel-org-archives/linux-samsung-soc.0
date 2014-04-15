@@ -1,101 +1,95 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCHv2 4/4] drm: exynos: hdmi: add support for pixel clock
- limitation
-Date: Tue, 15 Apr 2014 16:29:25 +0200
-Message-ID: <534D4245.2040901@samsung.com>
-References: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
- <1397554040-4037-5-git-send-email-t.stanislaws@samsung.com>
- <CAPdUM4NysWMpy3PZhJdKXFa96Oy4kG4dKkDdrabbAmM3+f5kag@mail.gmail.com>
- <534D3001.2030707@samsung.com>
- <CAPdUM4PCDC8J5k2uNv6DYf8FzXKcNcm7JQZ-cbAzmXzx9YDAAw@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix stall after CPU
+ hotplugging
+Date: Tue, 15 Apr 2014 17:20:04 +0200 (CEST)
+Message-ID: <alpine.DEB.2.02.1404151711250.22697@ionos.tec.linutronix.de>
+References: <1396011962-4467-1-git-send-email-k.kozlowski@samsung.com> <1397554445.29169.21.camel@AMDC1943> <534D25DC.4050400@linaro.org> <1397566023.29169.31.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:61847 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751006AbaDOO3c (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 10:29:32 -0400
-In-reply-to: <CAPdUM4PCDC8J5k2uNv6DYf8FzXKcNcm7JQZ-cbAzmXzx9YDAAw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-890712702-1397575206=:22697"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1397566023.29169.31.camel@AMDC1943>
+Sender: stable-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, b.zolnierkie@samsung.com, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, m.chehab@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 
-On 04/15/2014 03:42 PM, Rahul Sharma wrote:
-> On 15 April 2014 18:41, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
->> On 04/15/2014 11:42 AM, Rahul Sharma wrote:
->>> Hi Tomasz,
->>>
->>> On 15 April 2014 14:57, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
->>>> Adds support for limitation of maximal pixel clock of HDMI
->>>> signal. This feature is needed on boards that contains
->>>> lines or bridges with frequency limitations.
->>>>
->>>> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-[snip]
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
->>>> diff --git a/include/media/s5p_hdmi.h b/include/media/s5p_hdmi.h
->>>> index 181642b..7272d65 100644
->>>> --- a/include/media/s5p_hdmi.h
->>>> +++ b/include/media/s5p_hdmi.h
->>>> @@ -31,6 +31,7 @@ struct s5p_hdmi_platform_data {
->>>>         int mhl_bus;
->>>>         struct i2c_board_info *mhl_info;
->>>>         int hpd_gpio;
->>>> +       u32 max_pixel_clock;
->>>>  };
->>>
->>> We have already removed Non DT support from the drm hdmi
->>> driver. IMO we should not be extending the pdata struct.
->>>
->>> Regards,
->>> Rahul Sharma
->>
->> Hi Rahul,
->>
->> This is not a non-DT patch. The s5p_hdmi_platform_data is
->> generated from DT itself. This structure is just
->> a parsed version of DT attributes.
->>
->> It may be a good idea to rename s5p_hdmi_platform_data
->> to exynos_hdmi_pdata and move it to exynos_hdmi_drm.c file
->> or parse DT directly in probe function.
->>
->> I can prepare a patch for that.
+--8323329-890712702-1397575206=:22697
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Tue, 15 Apr 2014, Krzysztof Kozlowski wrote:
+
+> On wto, 2014-04-15 at 14:28 +0200, Daniel Lezcano wrote:
+> > On 04/15/2014 11:34 AM, Krzysztof Kozlowski wrote:
+> > > On pią, 2014-03-28 at 14:06 +0100, Krzysztof Kozlowski wrote:
+> > >> Fix stall after hotplugging CPU1. Affected are SoCs where Multi Core Timer
+> > >> interrupts are shared (SPI), e.g. Exynos 4210. The stall was a result of
+> > >> starting the CPU1 local timer not in L1 timer but in L0 (which is used
+> > >> by CPU0).
+> > >
+> > > Hi,
+> > >
+> > > Do you have any comments on these 3 patches? They fix the CPU stall on
+> > > Exynos4210 and also on Exynos3250 (Chanwoo Choi sent patches for it
+> > > recently).
+> > 
+> > You describe this issue as impacting different SoC not only the exynos, 
+> > right ?
+> >
+> > Do you know what other SoCs are impacted by this ?
 > 
-> Else we can completely remove the dependency from
-> s5p_hdmi_platform_data. We can directly assign to hdmi context
-> variables. Later we can remove that struct itself from include/.
-> What you say?
-
-This structure cannot be removed from include yet because it is used by s5p-tv driver.
-However its usage can be removed from both drivers.
-I can prepare both.
-
+> No, affected are only Exynos SoC-s. It was confirmed on Exynos4210
+> (Trats board) and Exynos3250 (new SoC, patches for it were recently
+> posted by Chanwoo).
 > 
-> Regards,
-> Rahul Sharma
+> Other Exynos SoC-s where MCT local timers use shared interrupts (SPI)
+> can also be affected. Candidates are Exynos 5250 and 5420 but I haven't
+> tested them.
 > 
-
-Regards,
-Tomasz Stanislawski
-
->>
->> Regards,
->> Tomasz Stanislawski
->>
->>
->>>
->>>>
->>>>  #endif /* S5P_HDMI_H */
->>>> --
->>>> 1.7.9.5
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
+> > I guess this issue is not reproducible just with the line below, we need 
+> > a timer to expire right at the moment CPU1 is hotplugged, right ?
 > 
+> Right. The timer must fire in short time between enabling local timer
+> for CPU1 and setting the affinity for IRQ.
+
+Why do you set the affinity in the CPU_ONLINE hotplug callback and not
+right away when the interrupt is requested?
+
+Thanks,
+
+	tglx
+
+
+Index: linux-2.6/drivers/clocksource/exynos_mct.c
+===================================================================
+--- linux-2.6.orig/drivers/clocksource/exynos_mct.c
++++ linux-2.6/drivers/clocksource/exynos_mct.c
+@@ -430,6 +430,7 @@ static int exynos4_local_timer_setup(str
+ 				evt->irq);
+ 			return -EIO;
+ 		}
++		irq_set_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
+ 	} else {
+ 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+ 	}
+@@ -461,12 +462,6 @@ static int exynos4_mct_cpu_notify(struct
+ 		mevt = this_cpu_ptr(&percpu_mct_tick);
+ 		exynos4_local_timer_setup(&mevt->evt);
+ 		break;
+-	case CPU_ONLINE:
+-		cpu = (unsigned long)hcpu;
+-		if (mct_int_type == MCT_INT_SPI)
+-			irq_set_affinity(mct_irqs[MCT_L0_IRQ + cpu],
+-						cpumask_of(cpu));
+-		break;
+ 	case CPU_DYING:
+ 		mevt = this_cpu_ptr(&percpu_mct_tick);
+ 		exynos4_local_timer_stop(&mevt->evt);
+
+
+
+
+--8323329-890712702-1397575206=:22697--
