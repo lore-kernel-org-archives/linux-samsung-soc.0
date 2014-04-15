@@ -1,51 +1,80 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCHv2 8/8] ARM: dts: Add device tree sources for Exynos3250
-Date: Tue, 15 Apr 2014 09:15:51 +0100
-Message-ID: <534CEAB7.6020600@arm.com>
-References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
- <1397527192-21988-9-git-send-email-cw00.choi@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [RFC PATCH 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Tue, 15 Apr 2014 13:48:13 +0530
+Message-ID: <CAK9yfHyJTpYNCwjCSAmFR-sHRMu5Z94k5eT78WmD-cwmYOEQyw@mail.gmail.com>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+	<1397540862-21359-10-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1397527192-21988-9-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jaehoon Chung <jh80.chung@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, linux-ker
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:56673 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751159AbaDOISO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 04:18:14 -0400
+Received: by mail-oa0-f51.google.com with SMTP id i4so10517507oah.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 01:18:14 -0700 (PDT)
+In-Reply-To: <1397540862-21359-10-git-send-email-yj44.cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: Dave Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-On 15/04/14 02:59, Chanwoo Choi wrote:
-> From: Tomasz Figa <t.figa@samsung.com>
-> 
-> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on Cortex-A7
-> dual core and includes following dt nodes:
-> 
-> - GIC interrupt controller
-> - Pinctrl to control GPIOs
-> - Clock controller
-> - CPU information (Cortex-A7 dual core)
-> - UART to support serial port
-> - MCT (Multi Core Timer)
-> - ADC (Analog Digital Converter)
-> - I2C/SPI bus
-> - Power domain
-> - PMU (Performance Monitoring Unit)
-> - MSHC (Mobile Storage Host Controller)
-> - PWM (Pluse Width Modulation)
-> - AMBA bus
+On 15 April 2014 11:17, YoungJun Cho <yj44.cho@samsung.com> wrote:
+> This patch adds DT bindings for s6e3fa0 panel.
+> The bindings describes panel resources, display timings, delays
+> and physical size.
+>
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   52 ++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>
+> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> new file mode 100644
+> index 0000000..5986899
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> @@ -0,0 +1,52 @@
+> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+> +
+> +Required properties:
+> +  - compatible: "samsung,s6e3fa0"
+> +  - reg: the virtual channel number of a DSI peripheral
+> +  - vdd3-supply: core voltage supply
+> +  - vci-supply: voltage supply for analog circuits
+> +  - reset-gpio: a GPIO spec for the reset pin
+> +  - display-timings: timings for the connected panel as described by [1]
+> +
+> +Optional properties:
+> +  - power-on-delay: delay after turning regulators on [ms]
+> +  - reset-delay: delay after reset sequence [ms]
+> +  - init-delay: delay after initialization sequence [ms]
+> +  - panel-width-mm: physical panel width [mm]
+> +  - panel-height-mm: physical panel height [mm]
+> +
+> +The device node can contain one 'port' child node with one child
+> +'endpoint' node, according to the bindings defined in [2]. This
+> +node should describe panel's video bus.
+> +
+> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +Example:
+> +
+> +       panel {
 
-[...]
+How about panel@0?
 
-Where is the arch timer node?
+> +               compatible = "samsung,s6e3fa0";
+> +               reg = <0>;
 
-	M.
+
+
+
 -- 
-Jazz is not dead. It just smells funny...
+With warm regards,
+Sachin
