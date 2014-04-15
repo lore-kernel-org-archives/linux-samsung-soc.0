@@ -1,71 +1,123 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: exynos4: Use single clock ID for CLK_MDMA gate clocks
-Date: Tue, 15 Apr 2014 18:43:20 +0200
-Message-ID: <534D61A8.9090204@gmail.com>
-References: <1397579420-18776-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/7] clk: exynos5420: Add more clock register offsets
+Date: Tue, 15 Apr 2014 18:45:54 +0200
+Message-ID: <534D6242.9000605@gmail.com>
+References: <1395918470-16374-1-git-send-email-shaik.ameer@samsung.com> <1395918470-16374-2-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:54544 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751016AbaDOQnY (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:41396 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750849AbaDOQp5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 12:43:24 -0400
-Received: by mail-we0-f178.google.com with SMTP id u56so9571876wes.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 09:43:22 -0700 (PDT)
-In-Reply-To: <1397579420-18776-1-git-send-email-s.nawrocki@samsung.com>
+	Tue, 15 Apr 2014 12:45:57 -0400
+In-Reply-To: <1395918470-16374-2-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, t.figa@samsung.com
-Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Sylwester,
+Hi Shaik,
 
-On 15.04.2014 18:30, Sylwester Nawrocki wrote:
-> Exynos4210 and Exynos4x12 SoCs have the PL330 MDMA IP block clock
-> defined exactly in same way in documentation. Using different
-> names for these clocks is a bit misleading. Since there is no users
-> of CLK_MDMA2 in existing dts files this patch drops CLK_MDMA2 and
-> replaces it with CLK_MDMA in the driver. This ensures PL330 MDMA
-> has correct clock assigned on Exynos4x12 SoCs.
+On 27.03.2014 12:07, Shaik Ameer Basha wrote:
+> From: Rahul Sharma <rahul.sharma@samsung.com>
 >
-> Suggested-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> This patch adds the missing clock register offsets for Exynos5420.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 > ---
->   drivers/clk/samsung/clk-exynos4.c   |    2 +-
->   include/dt-bindings/clock/exynos4.h |    1 -
->   2 files changed, 1 insertion(+), 2 deletions(-)
+>   drivers/clk/samsung/clk-exynos5420.c |   29 ++++++++++++++++++++++++++++-
+>   1 file changed, 28 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index b4f9672..5247caa 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -903,7 +903,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->   	GATE(CLK_AUDSS, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
->   	GATE(CLK_MDNIE0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
->   	GATE(CLK_ROTATOR, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
-> -	GATE(CLK_MDMA2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-> +	GATE(CLK_MDMA, "mdma", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
->   	GATE(CLK_SMMU_MDMA, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0,
->   		0),
->   	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
-> diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-> index 75aff33..3ff13bc 100644
-> --- a/include/dt-bindings/clock/exynos4.h
-> +++ b/include/dt-bindings/clock/exynos4.h
-> @@ -181,7 +181,6 @@
->   #define CLK_KEYIF		347
->   #define CLK_AUDSS		348
->   #define CLK_MIPI_HSI		349 /* Exynos4210 only */
-> -#define CLK_MDMA2		350 /* Exynos4210 only */
->   #define CLK_PIXELASYNCM0	351
->   #define CLK_PIXELASYNCM1	352
->   #define CLK_FIMC_LITE0		353 /* Exynos4x12 only */
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 13f624d..3d0fb77 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -27,6 +27,9 @@
+>   #define DIV_CPU1		0x504
+>   #define GATE_BUS_CPU		0x700
+>   #define GATE_SCLK_CPU		0x800
+> +#define CLKOUT_CMU_CPU		0xa00
+> +#define DIV_G2D			0x8500
+> +#define GATE_BUS_G2D		0x8700
+>   #define GATE_IP_G2D		0x8800
+>   #define CPLL_LOCK		0x10020
+>   #define DPLL_LOCK		0x10030
+> @@ -39,7 +42,11 @@
+>   #define CPLL_CON0		0x10120
+>   #define DPLL_CON0		0x10128
+>   #define EPLL_CON0		0x10130
+> +#define EPLL_CON1		0x10134
+> +#define EPLL_CON2		0x10138
+>   #define RPLL_CON0		0x10140
+> +#define RPLL_CON1		0x10144
+> +#define RPLL_CON2		0x10148
+>   #define IPLL_CON0		0x10150
+>   #define SPLL_CON0		0x10160
+>   #define VPLL_CON0		0x10170
+> @@ -57,10 +64,13 @@
+>   #define SRC_FSYS		0x10244
+>   #define SRC_PERIC0		0x10250
+>   #define SRC_PERIC1		0x10254
+> +#define SRC_ISP			0x10270
+>   #define SRC_TOP10		0x10280
+>   #define SRC_TOP11		0x10284
+>   #define SRC_TOP12		0x10288
+> -#define	SRC_MASK_DISP10		0x1032c
+> +#define SRC_MASK_TOP2		0x10308
+> +#define SRC_MASK_DISP10		0x1032c
+> +#define SRC_MASK_MAU		0x10334
+>   #define SRC_MASK_FSYS		0x10340
+>   #define SRC_MASK_PERIC0		0x10350
+>   #define SRC_MASK_PERIC1		0x10354
+> @@ -77,24 +87,41 @@
+>   #define DIV_PERIC2		0x10560
+>   #define DIV_PERIC3		0x10564
+>   #define DIV_PERIC4		0x10568
+> +#define SCLK_DIV_ISP0		0x10580
+> +#define SCLK_DIV_ISP1		0x10584
+> +#define DIV2_RATIO0		0x10590
+> +#define DIV4_RATIO		0x105a0
+>   #define GATE_BUS_TOP		0x10700
+> +#define GATE_BUS_GSCL0		0x10710
+> +#define GATE_BUS_GSCL1		0x10720
+> +#define GATE_BUS_DISP1		0x10728
+> +#define GATE_BUS_MFC		0x10734
+> +#define GATE_BUS_GEN		0x1073c
+>   #define GATE_BUS_FSYS0		0x10740
+> +#define GATE_BUS_FSYS2		0x10748
+> +#define GATE_BUS_MSCL		0x1074C
+>   #define GATE_BUS_PERIC		0x10750
+>   #define GATE_BUS_PERIC1		0x10754
+>   #define GATE_BUS_PERIS0		0x10760
+>   #define GATE_BUS_PERIS1		0x10764
+> +#define GATE_BUS_NOC		0x10770
+> +#define GATE_TOP_SCLK_ISP	0x10870
+>   #define GATE_IP_GSCL0		0x10910
+>   #define GATE_IP_GSCL1		0x10920
+>   #define GATE_IP_MFC		0x1092c
+>   #define GATE_IP_DISP1		0x10928
+>   #define GATE_IP_G3D		0x10930
+>   #define GATE_IP_GEN		0x10934
+> +#define GATE_IP_FSYS		0x10944
+> +#define GATE_IP_PERIC		0x10950
+> +#define GATE_IP_PERIS		0x10960
+>   #define GATE_IP_MSCL		0x10970
+>   #define GATE_TOP_SCLK_GSCL	0x10820
+>   #define GATE_TOP_SCLK_DISP1	0x10828
+>   #define GATE_TOP_SCLK_MAU	0x1083c
+>   #define GATE_TOP_SCLK_FSYS	0x10840
+>   #define GATE_TOP_SCLK_PERIC	0x10850
+> +#define TOP_SPARE2		0x10b08
+>   #define BPLL_LOCK		0x20010
+>   #define BPLL_CON0		0x20110
+>   #define SRC_CDREX		0x20200
 >
 
-Looks good, will apply. Thanks.
+ From this patch, it's hard to tell what is the use for those registers. 
+I think they should be added along with definitions that need them.
 
 Best regards,
 Tomasz
