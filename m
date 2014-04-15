@@ -1,70 +1,47 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 08/20] cpufreq: exynos5440: Use cpufreq_for_each_entry
- macro for iteration
-Date: Tue, 15 Apr 2014 11:14:11 +0530
-Message-ID: <CAKohpokfsR3soykZbtH4-L=4TC6Oab=jyzUr=W-EfkRFfefRDQ@mail.gmail.com>
-References: <534C4E7E.4090806@semaphore.gr>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [RFC PATCH 11/14] ARM: dts: exynos4: add system register node
+Date: Tue, 15 Apr 2014 14:47:39 +0900
+Message-ID: <1397540862-21359-12-git-send-email-yj44.cho@samsung.com>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <534C4E7E.4090806@semaphore.gr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stratos Karafotis <stratosk@semaphore.gr>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15 April 2014 02:39, Stratos Karafotis <stratosk@semaphore.gr> wrote:
+This patch adds sysreg property to fimd device node which is required
+to use I80 interface.
 
-> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
->  static void exynos_enable_dvfs(unsigned int cur_frequency)
->  {
-> -       unsigned int tmp, i, cpu;
-> +       unsigned int tmp, cpu;
->         struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
-> +       struct cpufreq_frequency_table *pos;
-
-Merge above two.
-
->         /* Disable DVFS */
->         __raw_writel(0, dvfs_info->base + XMU_DVFS_CTRL);
->
-> @@ -182,15 +182,15 @@ static void exynos_enable_dvfs(unsigned int cur_frequency)
->          __raw_writel(tmp, dvfs_info->base + XMU_PMUIRQEN);
->
->         /* Set initial performance index */
-> -       for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
-> -               if (freq_table[i].frequency == cur_frequency)
-> +       cpufreq_for_each_entry(pos, freq_table) {
-> +               if (pos->frequency == cur_frequency)
->                         break;
-> +       }
->
-> -       if (freq_table[i].frequency == CPUFREQ_TABLE_END) {
-> +       if (pos->frequency == CPUFREQ_TABLE_END) {
->                 dev_crit(dvfs_info->dev, "Boot up frequency not supported\n");
->                 /* Assign the highest frequency */
-> -               i = 0;
-> -               cur_frequency = freq_table[i].frequency;
-> +               cur_frequency = freq_table->frequency;
-
-First this is not readable enough and you introduced a bug here, see
-below.
-
->         }
->
->         dev_info(dvfs_info->dev, "Setting dvfs initial frequency = %uKHZ",
-> @@ -199,7 +199,7 @@ static void exynos_enable_dvfs(unsigned int cur_frequency)
->         for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
->                 tmp = __raw_readl(dvfs_info->base + XMU_C0_3_PSTATE + cpu * 4);
->                 tmp &= ~(P_VALUE_MASK << C0_3_PSTATE_NEW_SHIFT);
-> -               tmp |= (i << C0_3_PSTATE_NEW_SHIFT);
-> +               tmp |= ((pos - freq_table) << C0_3_PSTATE_NEW_SHIFT);
-
-We used modified value of 'i' here earlier, i.e. 0 ..
-
->                 __raw_writel(tmp, dvfs_info->base + XMU_C0_3_PSTATE + cpu * 4);
->         }
->
-> --
-> 1.9.0
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 3d14cdb..a10aa50 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -528,6 +528,7 @@
+ 		clocks = <&clock 140>, <&clock 283>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 		samsung,power-domain = <&pd_lcd0>;
++		samsung,sysreg = <&sys_reg>;
+ 		status = "disabled";
+ 	};
+ };
+-- 
+1.7.9.5
