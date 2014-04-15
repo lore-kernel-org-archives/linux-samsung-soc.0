@@ -1,41 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 4/4] ARM: dts: exynos5250-snow: add ptn3460 node
-Date: Mon, 14 Apr 2014 15:54:24 -0700
-Message-ID: <CAOesGMh3bpJtphTFz_3ZZXBPTi_RFXv24tKyTPWa=rHq3xkP8Q@mail.gmail.com>
-References: <1397481367-12652-1-git-send-email-sachin.kamat@linaro.org>
-	<1397481367-12652-4-git-send-email-sachin.kamat@linaro.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 3/4] drm: exynos: add compatibles for HDMI and Mixer chips
+ and exynos4210 SoC
+Date: Tue, 15 Apr 2014 09:28:31 +0900
+Message-ID: <534C7D2F.2060504@samsung.com>
+References: <1397487622-3577-1-git-send-email-t.stanislaws@samsung.com>
+ <1397487622-3577-4-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f53.google.com ([209.85.216.53]:61587 "EHLO
-	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752798AbaDNXBo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:54221 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750875AbaDOA2Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 19:01:44 -0400
-Received: by mail-qa0-f53.google.com with SMTP id w8so8472399qac.26
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Apr 2014 16:01:43 -0700 (PDT)
-In-Reply-To: <1397481367-12652-4-git-send-email-sachin.kamat@linaro.org>
+	Mon, 14 Apr 2014 20:28:25 -0400
+In-reply-to: <1397487622-3577-4-git-send-email-t.stanislaws@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, sunil joshi <joshi@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: m.chehab@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, t.figa@samsung.com, b.zolnierkie@samsung.com, rahul.sharma@samsung.com, pawel.moll@arm.com
 
-Hi Sachin,
+Hi Tomasz,
 
-On Mon, Apr 14, 2014 at 6:16 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> From: Doug Anderson <dianders@chromium.org>
+On 04/15/2014 12:00 AM, Tomasz Stanislawski wrote:
+> This patch add proper compatibles for Mixer and HDMI chip
+> available on exynos4210 SoCs.
 >
-> Added nodes for ptn3460 driver to Snow board.
+> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> ---
+>   drivers/gpu/drm/exynos/exynos_hdmi.c  |    3 +++
+>   drivers/gpu/drm/exynos/exynos_mixer.c |    3 +++
+>   2 files changed, 6 insertions(+)
 >
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index d2d6e2e..6fa63ea 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -2032,6 +2032,9 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
+>   
+>   static struct of_device_id hdmi_match_types[] = {
+>   	{
+> +		.compatible = "samsung,exynos4210-hdmi",
+> +		.data	= (void	*)HDMI_TYPE13,
 
-I'm curious, how are you testing this code on the upstream kernel
-before you post the patches?
+It's consistent with others to use struct hdmi_driver_data like
+exynos5_hdmi_driver_data.
 
-Especially since Doug was referring to some of these containing parts
-that is needed for drivers that are not yet upstreamed.
-
-
--Olof
+> +	}, {
+>   		.compatible = "samsung,exynos5-hdmi",
+>   		.data = &exynos5_hdmi_driver_data,
+>   	}, {
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index e3306c8..fd8a9a0 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1187,6 +1187,9 @@ static struct platform_device_id mixer_driver_types[] = {
+>   
+>   static struct of_device_id mixer_match_types[] = {
+>   	{
+> +		.compatible = "samsung,exynos4210-mixer",
+> +		.data	= &exynos4210_mxr_drv_data,
+> +	}, {
+>   		.compatible = "samsung,exynos5-mixer",
+>   		.data	= &exynos5250_mxr_drv_data,
+>   	}, {
