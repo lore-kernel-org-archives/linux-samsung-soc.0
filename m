@@ -1,63 +1,177 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/4] regulator: s5m8767: Use same binding for external
- control as in s2mps11
-Date: Tue, 15 Apr 2014 15:21:55 +0530
-Message-ID: <CAK9yfHzgH-4C5agpu9SFckp1BcB6s9jeviDVZBokhS+aRh9RUA@mail.gmail.com>
-References: <1397462949-22379-1-git-send-email-k.kozlowski@samsung.com>
-	<1397462949-22379-5-git-send-email-k.kozlowski@samsung.com>
-	<20140414211106.GC12304@sirena.org.uk>
-	<CAK9yfHwL4o7-7Q03dw9JdD1UDsP_v2=we1kadRXaGAuaN1de_g@mail.gmail.com>
-	<1397549539.29169.2.camel@AMDC1943>
-	<CAK9yfHwUwjMEXisi5Jf+nAkS7CLnAUt-REkekns9JrRTAGQ=WQ@mail.gmail.com>
-	<1397552145.29169.17.camel@AMDC1943>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 3/4] ARM: dts: exynos5250-snow: add tps65090 power regulator
+Date: Tue, 15 Apr 2014 15:25:56 +0530
+Message-ID: <CAK9yfHw=8q03Qj5H2XeT+hN8R6vQdJAoiv2TgHBi6PWqi_ozow@mail.gmail.com>
+References: <1397481367-12652-1-git-send-email-sachin.kamat@linaro.org>
+	<1397481367-12652-3-git-send-email-sachin.kamat@linaro.org>
+	<CAD=FV=Vv5SuBDohaNQ=ry1ctHnwQodu3xuFr3XkqBuX5tobwAQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1397552145.29169.17.camel@AMDC1943>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:53210 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751352AbaDOJz4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 05:55:56 -0400
+Received: by mail-ob0-f182.google.com with SMTP id uz6so10538616obc.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 02:55:56 -0700 (PDT)
+In-Reply-To: <CAD=FV=Vv5SuBDohaNQ=ry1ctHnwQodu3xuFr3XkqBuX5tobwAQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>
 
-On 15 April 2014 14:25, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On wto, 2014-04-15 at 14:02 +0530, Sachin Kamat wrote:
->> On 15 April 2014 13:42, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> > On wto, 2014-04-15 at 13:26 +0530, Sachin Kamat wrote:
->> >> On 15 April 2014 02:41, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->> >> > On Mon, Apr 14, 2014 at 10:09:09AM +0200, Krzysztof Kozlowski wrote:
->> >> >
->> >> >> -     - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
->> >> >> +     - samsung,ext-control-gpios: (optional) GPIO specifier for one
->> >> >>               GPIO controlling this regulator (enable/disable); This is
->> >> >>               valid only for buck9.
->> >> >
->> >> > This is an incompatible change.  It's OK to deprecate the old property
->> >> > but it's bad form to just remove it.
->> >>
->> >> I agree with Mark. Also, there is no need to make it generic.
->> >
->> > I thought it would be good to make it consistent and to reduce the
->> > number of bindings with same meaning on similar drivers.
+Hi Doug,
+
+On 15 April 2014 04:13, Doug Anderson <dianders@chromium.org> wrote:
+> Sachin,
+>
+> On Mon, Apr 14, 2014 at 6:16 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+>> From: Doug Anderson <dianders@chromium.org>
 >>
->> How about making the other one use "s5m8767,pmic-ext-control-gpios"
->> compatible instead of introducing a new one?
+>> Added TPS65090 regulator related nodes to Snow board.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-snow.dts |   90 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 90 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index 469c85d..a38fd18 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -44,6 +44,13 @@
+>>                 sd3_bus4: sd3-bus-width4 {
+>>                         samsung,pin-drv = <0>;
+>>                 };
+>> +
+>> +               tps65090_irq: tps65090-irq {
+>> +                       samsung,pins = "gpx2-6";
+>> +                       samsung,pin-function = <0>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>>         };
+>>
+>>         pinctrl@13400000 {
+>> @@ -75,6 +82,12 @@
+>>                 };
+>>         };
+>>
+>> +       vbat: vbat-fixed-regulator {
+>> +               compatible = "regulator-fixed";
+>> +               regulator-name = "vbat-supply";
+>> +               regulator-boot-on;
+>> +       };
+>> +
+>>         i2c-arbitrator {
+>>                 compatible = "i2c-arb-gpio-challenge";
+>>                 #address-cells = <1>;
+>> @@ -201,6 +214,83 @@
+>>                                                         0x070c0069>;    /* LEFT */
+>>                                 };
+>>                         };
+>> +
+>> +                       power-regulator {
+>> +                               compatible = "ti,tps65090";
+>> +                               reg = <0x48>;
+>> +
+>> +                               /*
+>> +                                * Config irq to disable internal pulls
+>> +                                * even though we run in polling mode.
 >
-> But then we would introduce semi-generic binding with a driver-specific
-> name.
-
-We can have a IP specific name (first IP to have this property) common
-across family of IPs.
-
+> This comment refers to a feature that hasn't yet been sent upstream.
+> ...but it's a good reminder and I can send it upstream now.  You can
+> see it at:
 >
-> Anyway more drivers seem to use this kind of binding (tps65090, max8952,
-> da9055, arizona) so maybe there is a point in making this generic?
+> * https://chromium-review.googlesource.com/62630
+> * https://chromium-review.googlesource.com/175653
+>
+> Since this is only a comment I guess it's OK to refer to a feature
+> that hasn't yet landed (?).
+>
+>
+>> +                                */
+>> +                               pinctrl-names = "default";
+>> +                               pinctrl-0 = <&tps65090_irq>;
+>> +
+>> +                               vsys1-supply = <&vbat>;
+>> +                               vsys2-supply = <&vbat>;
+>> +                               vsys3-supply = <&vbat>;
+>> +                               infet1-supply = <&vbat>;
+>> +                               infet2-supply = <&vbat>;
+>> +                               infet3-supply = <&vbat>;
+>> +                               infet4-supply = <&vbat>;
+>> +                               infet5-supply = <&vbat>;
+>> +                               infet6-supply = <&vbat>;
+>> +                               infet7-supply = <&vbat>;
+>> +                               vsys-l1-supply = <&vbat>;
+>> +                               vsys-l2-supply = <&vbat>;
+>> +
+>> +                               regulators {
+>> +                                       dcdc1 {
+>> +                                               ti,enable-ext-control;
+>> +                                       };
+>> +                                       dcdc2 {
+>> +                                               ti,enable-ext-control;
+>> +                                       };
+>> +                                       dcdc3 {
+>> +                                               ti,enable-ext-control;
+>> +                                       };
+>> +                                       fet1 {
+>> +                                               regulator-name = "vcd_led";
+>> +                                               ti,overcurrent-wait = <3>;
+>
+> This is also referring to something that hasn't been sent upstream yet.  See:
+> * https://chromium-review.googlesource.com/184607
+>
+>> +                                       };
+>> +                                       tps65090_fet2: fet2 {
+>> +                                               regulator-name = "video_mid";
+>> +                                               regulator-always-on;
+>> +                                               ti,overcurrent-wait = <3>;
+>> +                                       };
+>> +                                       fet3 {
+>> +                                               regulator-name = "wwan_r";
+>> +                                               regulator-always-on;
+>> +                                               ti,overcurrent-wait = <3>;
+>> +                                       };
+>> +                                       fet4 {
+>> +                                               regulator-name = "sdcard";
+>> +                                               ti,overcurrent-wait = <3>;
+>> +                                       };
+>> +                                       fet5 {
+>> +                                               regulator-name = "camout";
+>> +                                               regulator-always-on;
+>> +                                               ti,overcurrent-wait = <3>;
+>> +                                       };
+>> +                                       fet6 {
+>> +                                               regulator-name = "lcd_vdd";
+>> +                                               ti,overcurrent-wait = <3>;
+>> +                                       };
+>> +                                       tps65090_fet7: fet7 {
+>> +                                               regulator-name = "video_mid_1a";
+>> +                                               regulator-always-on;
+>> +                                               ti,overcurrent-wait = <3>;
+>> +                                       };
+>> +                                       ldo1 {
+>> +                                       };
+>> +                                       ldo2 {
+>> +                                       };
+>> +                               };
+>> +
+>> +                               charger {
+>> +                                       compatible = "ti,tps65090-charger";
+>> +                               };
+>
+> I'm nearly certain that the charger will be pretty unhappy without the
+> polling mode change mentioned above.
 
-In that case we could but probably not with samsung prefix.
+Since the patches that you pointed out were in the internal tree, did
+not realise they
+had not yet hit mainline. This patch should certainly come after that.
 
 -- 
 With warm regards,
 Sachin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
