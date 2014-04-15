@@ -1,115 +1,57 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCHv2 4/4] drm: exynos: hdmi: add support for pixel clock
- limitation
-Date: Tue, 15 Apr 2014 11:27:20 +0200
-Message-ID: <1397554040-4037-5-git-send-email-t.stanislaws@samsung.com>
-References: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, pawel.moll@arm.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, rahul.sharma@samsung.com, m.chehab@samsung.com
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH v2 0/6] Further cleanup and enable multiplat build
+Date: Tue, 15 Apr 2014 14:58:48 +0530
+Message-ID: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:33353 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750909AbaDOJ3q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Apr 2014 05:29:46 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rq2so9226879pbb.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 02:29:45 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
 
-Adds support for limitation of maximal pixel clock of HDMI
-signal. This feature is needed on boards that contains
-lines or bridges with frequency limitations.
+This series is based on latest linux-next and depends on the
+following patch:
+ARM: EXYNOS: Consolidate Kconfig entries
+http://article.gmane.org/gmane.linux.kernel.samsung-soc/28642
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
----
- .../devicetree/bindings/video/exynos_hdmi.txt      |    4 ++++
- drivers/gpu/drm/exynos/exynos_hdmi.c               |   12 ++++++++++++
- include/media/s5p_hdmi.h                           |    1 +
- 3 files changed, 17 insertions(+)
+Changes since v2:
+Replaced patch 2, "ARM: EXYNOS: Staticize exynos_subsys"
+with "ARM: EXYNOS: Remove exynos_subsys registration" as that
+code is no more used.
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index f9187a2..8718f8d 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -28,6 +28,10 @@ Required properties:
- - ddc: phandle to the hdmi ddc node
- - phy: phandle to the hdmi phy node
- 
-+Optional properties:
-+- max-pixel-clock: used to limit the maximal pixel clock if a board has lines,
-+	connectors or bridges not capable of carring higher frequencies
-+
- Example:
- 
- 	hdmi {
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 2a18f4e..404f1b7 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -195,6 +195,7 @@ struct hdmi_context {
- 	struct hdmi_resources		res;
- 
- 	int				hpd_gpio;
-+	u32				max_pixel_clock;
- 
- 	enum hdmi_type			type;
- };
-@@ -887,6 +888,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
- 	if (ret)
- 		return MODE_BAD;
- 
-+	if (mode->clock * 1000 > hdata->max_pixel_clock)
-+		return MODE_BAD;
-+
- 	ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
- 	if (ret < 0)
- 		return MODE_BAD;
-@@ -2031,6 +2035,8 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
- 		return NULL;
- 	}
- 
-+	of_property_read_u32(np, "max-pixel-clock", &pd->max_pixel_clock);
-+
- 	return pd;
- }
- 
-@@ -2067,6 +2073,11 @@ static int hdmi_probe(struct platform_device *pdev)
- 	if (!pdata)
- 		return -EINVAL;
- 
-+	if (!pdata->max_pixel_clock) {
-+		DRM_INFO("max-pixel-clock is zero, using INF\n");
-+		pdata->max_pixel_clock = U32_MAX;
-+	}
-+
- 	hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
- 	if (!hdata)
- 		return -ENOMEM;
-@@ -2083,6 +2094,7 @@ static int hdmi_probe(struct platform_device *pdev)
- 	hdata->type = drv_data->type;
- 
- 	hdata->hpd_gpio = pdata->hpd_gpio;
-+	hdata->max_pixel_clock = pdata->max_pixel_clock;
- 	hdata->dev = dev;
- 
- 	ret = hdmi_resources_init(hdata);
-diff --git a/include/media/s5p_hdmi.h b/include/media/s5p_hdmi.h
-index 181642b..7272d65 100644
---- a/include/media/s5p_hdmi.h
-+++ b/include/media/s5p_hdmi.h
-@@ -31,6 +31,7 @@ struct s5p_hdmi_platform_data {
- 	int mhl_bus;
- 	struct i2c_board_info *mhl_info;
- 	int hpd_gpio;
-+	u32 max_pixel_clock;
- };
- 
- #endif /* S5P_HDMI_H */
+Tested on Exynos4210, 4412, 5250 and 5420 based boards.
+
+Arnd Bergmann (1):
+  ARM: EXYNOS: Enable multi-platform build support
+
+Sachin Kamat (5):
+  ARM: EXYNOS: Remove duplicate lines in Makefile
+  ARM: EXYNOS: Remove exynos_subsys registration
+  ARM: EXYNOS: Migrate Exynos specific macros from plat to mach
+  ARM: EXYNOS: Remove unnecessary inclusion of cpu.h
+  ARM: multi_v7_defconfig: Enable Exynos platform
+
+ arch/arm/Kconfig                         |   27 ++---------
+ arch/arm/configs/exynos_defconfig        |    2 +-
+ arch/arm/configs/multi_v7_defconfig      |   10 +++++
+ arch/arm/mach-exynos/Kconfig             |   27 +++++++++++
+ arch/arm/mach-exynos/Makefile            |    9 ++--
+ arch/arm/mach-exynos/common.h            |   72 ++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/cpuidle.c           |    1 -
+ arch/arm/mach-exynos/exynos.c            |   13 ------
+ arch/arm/mach-exynos/hotplug.c           |    2 -
+ arch/arm/mach-exynos/platsmp.c           |    2 -
+ arch/arm/mach-exynos/pm.c                |    1 -
+ arch/arm/mach-exynos/pmu.c               |    2 -
+ arch/arm/plat-samsung/Makefile           |    3 ++
+ arch/arm/plat-samsung/include/plat/cpu.h |   61 -------------------------
+ 14 files changed, 119 insertions(+), 113 deletions(-)
+
 -- 
 1.7.9.5
