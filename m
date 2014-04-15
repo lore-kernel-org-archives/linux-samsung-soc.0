@@ -1,52 +1,51 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC PATCH 01/14] drm/exynos: dsi: move the Eot packets configuration
- point
-Date: Tue, 15 Apr 2014 14:47:29 +0900
-Message-ID: <1397540862-21359-2-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC PATCH 13/14] ARM: dts: exynos5420: add mipi-phy node
+Date: Tue, 15 Apr 2014 14:47:41 +0900
+Message-ID: <1397540862-21359-14-git-send-email-yj44.cho@samsung.com>
 References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19357 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768AbaDOFrv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Apr 2014 01:47:51 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This configuration could be used in MIPI DSI command mode also.
+This patch adds mipi-phy node for MIPI-DSI device.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index eb73e3b..956e5f3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -472,8 +472,6 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8db792b..f0184c7 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -416,6 +416,12 @@
+ 		phy-names = "dp";
+ 	};
  
- 		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
- 			reg |= DSIM_MFLUSH_VS;
--		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
--			reg |= DSIM_EOT_DISABLE;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
- 			reg |= DSIM_SYNC_INFORM;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-@@ -490,6 +488,9 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
- 			reg |= DSIM_HSA_MODE;
- 	}
- 
-+	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
-+		reg |= DSIM_EOT_DISABLE;
++	mipi_phy: video-phy@10040714 {
++		compatible = "samsung,s5pv210-mipi-video-phy";
++		reg = <0x10040714 12>;
++		#phy-cells = <1>;
++	};
 +
- 	switch (dsi->format) {
- 	case MIPI_DSI_FMT_RGB888:
- 		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
+ 	fimd@14400000 {
+ 		samsung,power-domain = <&disp_pd>;
+ 		clocks = <&clock 147>, <&clock 421>;
 -- 
 1.7.9.5
