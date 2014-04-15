@@ -1,8 +1,7 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCHv2 3/4] drm: exynos: add compatibles for HDMI and Mixer chips
- and exynos4210 SoC
-Date: Tue, 15 Apr 2014 11:27:19 +0200
-Message-ID: <1397554040-4037-4-git-send-email-t.stanislaws@samsung.com>
+Subject: [PATCHv2 2/4] drm: exynos: mixer: fix using usleep() in atomic context
+Date: Tue, 15 Apr 2014 11:27:18 +0200
+Message-ID: <1397554040-4037-3-git-send-email-t.stanislaws@samsung.com>
 References: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,53 +21,29 @@ To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-me
 Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, pawel.moll@arm.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, rahul.sharma@samsung.com, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add proper compatibles for Mixer and HDMI chip
-available on exynos4210 SoCs.
+This patch fixes calling usleep_range() after taking reg_slock
+using spin_lock_irqsave(). The mdelay() is used instead.
+Waiting in atomic context is not the best idea in general.
+Hopefully, waiting occurs only when Video Processor fails
+to reset correctly.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c  |    7 +++++++
- drivers/gpu/drm/exynos/exynos_mixer.c |    3 +++
- 2 files changed, 10 insertions(+)
+ drivers/gpu/drm/exynos/exynos_mixer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 47c6e85..2a18f4e 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -204,6 +204,10 @@ struct hdmiphy_config {
- 	u8 conf[32];
- };
- 
-+struct hdmi_driver_data exynos4210_hdmi_driver_data = {
-+	.type	= HDMI_TYPE13,
-+};
-+
- struct hdmi_driver_data exynos4212_hdmi_driver_data = {
- 	.type	= HDMI_TYPE14,
- };
-@@ -2032,6 +2036,9 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
- 
- static struct of_device_id hdmi_match_types[] = {
- 	{
-+		.compatible = "samsung,exynos4210-hdmi",
-+		.data = &exynos4210_hdmi_driver_data,
-+	}, {
- 		.compatible = "samsung,exynos5-hdmi",
- 		.data = &exynos5_hdmi_driver_data,
- 	}, {
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index e3306c8..fd8a9a0 100644
+index ce28881..e3306c8 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1187,6 +1187,9 @@ static struct platform_device_id mixer_driver_types[] = {
- 
- static struct of_device_id mixer_match_types[] = {
- 	{
-+		.compatible = "samsung,exynos4210-mixer",
-+		.data	= &exynos4210_mxr_drv_data,
-+	}, {
- 		.compatible = "samsung,exynos5-mixer",
- 		.data	= &exynos5250_mxr_drv_data,
- 	}, {
+@@ -615,7 +615,7 @@ static void vp_win_reset(struct mixer_context *ctx)
+ 		/* waiting until VP_SRESET_PROCESSING is 0 */
+ 		if (~vp_reg_read(res, VP_SRESET) & VP_SRESET_PROCESSING)
+ 			break;
+-		usleep_range(10000, 12000);
++		mdelay(10);
+ 	}
+ 	WARN(tries == 0, "failed to reset Video Processor\n");
+ }
 -- 
 1.7.9.5
