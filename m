@@ -1,7 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC PATCH 13/14] ARM: dts: exynos5420: add mipi-phy node
-Date: Tue, 15 Apr 2014 14:47:41 +0900
-Message-ID: <1397540862-21359-14-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC PATCH 03/14] drm/exynos: use wait_event_timeout() for safety
+ usage
+Date: Tue, 15 Apr 2014 14:47:31 +0900
+Message-ID: <1397540862-21359-4-git-send-email-yj44.cho@samsung.com>
 References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,31 +22,33 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds mipi-phy node for MIPI-DSI device.
+There could be the case that the page flip operation isn't finished correctly
+with some abnormal condition such as panel reset. So this patch replaces
+wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+infinitely.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8db792b..f0184c7 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -416,6 +416,12 @@
- 		phy-names = "dp";
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index e930d4f..1419d11 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -69,8 +69,9 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
  
-+	mipi_phy: video-phy@10040714 {
-+		compatible = "samsung,s5pv210-mipi-video-phy";
-+		reg = <0x10040714 12>;
-+		#phy-cells = <1>;
-+	};
-+
- 	fimd@14400000 {
- 		samsung,power-domain = <&disp_pd>;
- 		clocks = <&clock 147>, <&clock 421>;
+ 	if (mode > DRM_MODE_DPMS_ON) {
+ 		/* wait for the completion of page flip. */
+-		wait_event(exynos_crtc->pending_flip_queue,
+-				atomic_read(&exynos_crtc->pending_flip) == 0);
++		wait_event_timeout(exynos_crtc->pending_flip_queue,
++				!atomic_read(&exynos_crtc->pending_flip),
++				HZ/20);
+ 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+ 	}
+ 
 -- 
 1.7.9.5
