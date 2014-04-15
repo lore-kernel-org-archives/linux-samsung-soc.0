@@ -1,152 +1,184 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCHv2 4/4] drm: exynos: hdmi: add support for pixel clock limitation
-Date: Tue, 15 Apr 2014 19:12:38 +0530
-Message-ID: <CAPdUM4PCDC8J5k2uNv6DYf8FzXKcNcm7JQZ-cbAzmXzx9YDAAw@mail.gmail.com>
-References: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
-	<1397554040-4037-5-git-send-email-t.stanislaws@samsung.com>
-	<CAPdUM4NysWMpy3PZhJdKXFa96Oy4kG4dKkDdrabbAmM3+f5kag@mail.gmail.com>
-	<534D3001.2030707@samsung.com>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Tue, 15 Apr 2014 19:29:52 +0530
+Message-ID: <534D3B58.8010606@ti.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>	<534BD447.1080909@ti.com>	<CAFp+6iF=SpEax+5KUhZkmtkwp=Pj7LbAHOoySgOwJx_50u6GZQ@mail.gmail.com>	<534BDBBC.5010701@ti.com>	<CAFp+6iFFW8XQg_UtYEZfaiENULZDD8A7_9fr4f2no=qfau7-sQ@mail.gmail.com>	<534BE200.8080009@ti.com> <CAFp+6iHWa8RoO8Ey5B+Lj6Z10ZRJ5+2BDrTD=VNUv5Hw=9gUCg@mail.gmail.com> <534BE77E.5090902@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <534D3001.2030707@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, b.zolnierkie@samsung.com, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, m.chehab@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <534BE77E.5090902-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15 April 2014 18:41, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
-> On 04/15/2014 11:42 AM, Rahul Sharma wrote:
->> Hi Tomasz,
->>
->> On 15 April 2014 14:57, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
->>> Adds support for limitation of maximal pixel clock of HDMI
->>> signal. This feature is needed on boards that contains
->>> lines or bridges with frequency limitations.
->>>
->>> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
->>> ---
->>>  .../devicetree/bindings/video/exynos_hdmi.txt      |    4 ++++
->>>  drivers/gpu/drm/exynos/exynos_hdmi.c               |   12 ++++++++++++
->>>  include/media/s5p_hdmi.h                           |    1 +
->>>  3 files changed, 17 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->>> index f9187a2..8718f8d 100644
->>> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->>> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->>> @@ -28,6 +28,10 @@ Required properties:
->>>  - ddc: phandle to the hdmi ddc node
->>>  - phy: phandle to the hdmi phy node
->>>
->>> +Optional properties:
->>> +- max-pixel-clock: used to limit the maximal pixel clock if a board has lines,
->>> +       connectors or bridges not capable of carring higher frequencies
->>> +
->>>  Example:
->>>
->>>         hdmi {
->>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
->>> index 2a18f4e..404f1b7 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
->>> @@ -195,6 +195,7 @@ struct hdmi_context {
->>>         struct hdmi_resources           res;
->>>
->>>         int                             hpd_gpio;
->>> +       u32                             max_pixel_clock;
->>>
->>>         enum hdmi_type                  type;
->>>  };
->>> @@ -887,6 +888,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
->>>         if (ret)
->>>                 return MODE_BAD;
->>>
->>> +       if (mode->clock * 1000 > hdata->max_pixel_clock)
->>> +               return MODE_BAD;
->>> +
->>>         ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
->>>         if (ret < 0)
->>>                 return MODE_BAD;
->>> @@ -2031,6 +2035,8 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
->>>                 return NULL;
->>>         }
->>>
->>> +       of_property_read_u32(np, "max-pixel-clock", &pd->max_pixel_clock);
->>> +
->>>         return pd;
->>>  }
->>>
->>> @@ -2067,6 +2073,11 @@ static int hdmi_probe(struct platform_device *pdev)
->>>         if (!pdata)
->>>                 return -EINVAL;
->>>
->>> +       if (!pdata->max_pixel_clock) {
->>> +               DRM_INFO("max-pixel-clock is zero, using INF\n");
->>> +               pdata->max_pixel_clock = U32_MAX;
->>> +       }
->>> +
->>>         hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
->>>         if (!hdata)
->>>                 return -ENOMEM;
->>> @@ -2083,6 +2094,7 @@ static int hdmi_probe(struct platform_device *pdev)
->>>         hdata->type = drv_data->type;
->>>
->>>         hdata->hpd_gpio = pdata->hpd_gpio;
->>> +       hdata->max_pixel_clock = pdata->max_pixel_clock;
->>>         hdata->dev = dev;
->>>
->>>         ret = hdmi_resources_init(hdata);
->>> diff --git a/include/media/s5p_hdmi.h b/include/media/s5p_hdmi.h
->>> index 181642b..7272d65 100644
->>> --- a/include/media/s5p_hdmi.h
->>> +++ b/include/media/s5p_hdmi.h
->>> @@ -31,6 +31,7 @@ struct s5p_hdmi_platform_data {
->>>         int mhl_bus;
->>>         struct i2c_board_info *mhl_info;
->>>         int hpd_gpio;
->>> +       u32 max_pixel_clock;
->>>  };
->>
->> We have already removed Non DT support from the drm hdmi
->> driver. IMO we should not be extending the pdata struct.
->>
->> Regards,
->> Rahul Sharma
->
-> Hi Rahul,
->
-> This is not a non-DT patch. The s5p_hdmi_platform_data is
-> generated from DT itself. This structure is just
-> a parsed version of DT attributes.
->
-> It may be a good idea to rename s5p_hdmi_platform_data
-> to exynos_hdmi_pdata and move it to exynos_hdmi_drm.c file
-> or parse DT directly in probe function.
->
-> I can prepare a patch for that.
 
-Else we can completely remove the dependency from
-s5p_hdmi_platform_data. We can directly assign to hdmi context
-variables. Later we can remove that struct itself from include/.
-What you say?
+Hi,
 
-Regards,
-Rahul Sharma
-
->
-> Regards,
-> Tomasz Stanislawski
->
->
+On Monday 14 April 2014 07:19 PM, Tomasz Figa wrote:
+> On 14.04.2014 15:40, Vivek Gautam wrote:
+>> On Mon, Apr 14, 2014 at 6:56 PM, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org> wrote:
+>>>
+>>>
+>>> On Monday 14 April 2014 06:50 PM, Vivek Gautam wrote:
+>>>> On Mon, Apr 14, 2014 at 6:29 PM, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org> wrote:
+>>>>>
+>>>>>
+>>>>> On Monday 14 April 2014 06:12 PM, Vivek Gautam wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>>
+>>>>>> On Mon, Apr 14, 2014 at 5:57 PM, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+>>>>>> wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On Tuesday 08 April 2014 08:06 PM, Vivek Gautam wrote:
+>>>>>>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>>>>>>>> The new driver uses the generic PHY framework and will interact
+>>>>>>>> with DWC3 controller present on Exynos5 series of SoCs.
+>>>>>>>> Thereby, removing old phy-samsung-usb3 driver and related code
+>>>>>>>> used untill now which was based on usb/phy framework.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>>>> ---
+>>>>>>>>   .../devicetree/bindings/phy/samsung-phy.txt        |   42 ++
+>>>>>>>>   drivers/phy/Kconfig                                |   11 +
+>>>>>>>>   drivers/phy/Makefile                               |    1 +
+>>>>>>>>   drivers/phy/phy-exynos5-usbdrd.c                   |  668
+>>>>>>>> ++++++++++++++++++++
+>>>>>>>>   4 files changed, 722 insertions(+)
+>>>>>>>>   create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>>>> b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>>>> index 28f9edb..6d99ba9 100644
+>>>>>>>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>>>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>>>> @@ -74,3 +74,45 @@ phy-consumer@12340000 {
+>>>>>>>>
+>>>>>>>>   Refer to DT bindings documentation of particular PHY consumer devices
+>>>>>>>> for more
+>>>>>>>>   information about required PHYs and the way of specification.
+>>>>>>>> +
+>>>>>>>> +Samsung Exynos5 SoC series USB DRD PHY controller
+>>>>>>>> +--------------------------------------------------
+>>>>>>>> +
+>>>>>>>> +Required properties:
+>>>>>>>> +- compatible : Should be set to one of the following supported values:
+>>>>>>>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>>>>>>>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+>>>>>>>> +- reg : Register offset and length of USB DRD PHY register set;
+>>>>>>>> +- clocks: Clock IDs array as required by the controller
+>>>>>>>> +- clock-names: names of clocks correseponding to IDs in the clock
+>>>>>>>> property;
+>>>>>>>> +            Required clocks:
+>>>>>>>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP
+>>>>>>>> clock),
+>>>>>>>> +            used for register access.
+>>>>>>>> +     - ref: PHY's reference clock (usually crystal clock), associated by
+>>>>>>>> +            phy name, used to determine bit values for clock settings
+>>>>>>>> +            register.
+>>>>>>>> +     Additional clock required for Exynos5420:
+>>>>>>>> +     - usb30_sclk_100m: Additional special clock used for PHY operation
+>>>>>>>> +                        depicted as 'sclk_usbphy30' in CMU of Exynos5420.
+>>>>>>>> +- samsung,syscon-phandle: phandle for syscon interface, which is used to
+>>>>>>>> +                       control pmu registers for power isolation.
+>>>>>>>> +- samsung,pmu-offset: phy power control register offset to
+>>>>>>>> pmu-system-controller
+>>>>>>>> +                   base.
+>>>>>>>> +- #phy-cells : from the generic PHY bindings, must be 1;
+>>>>>>>> +
+>>>>>>>> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
+>>>>>>>> +compatible PHYs, the second cell in the PHY specifier identifies the
+>>>>>>>> +PHY id, which is interpreted as follows:
+>>>>>>>> +  0 - UTMI+ type phy,
+>>>>>>>> +  1 - PIPE3 type phy,
+>>>>>>>> +
+>>>>>>>> +Example:
+>>>>>>>> +     usb3_phy: usbphy@12100000 {
+>>>>>>>> +             compatible = "samsung,exynos5250-usbdrd-phy";
+>>>>>>>> +             reg = <0x12100000 0x100>;
+>>>>>>>> +             clocks = <&clock 286>, <&clock 1>;
+>>>>>>>> +             clock-names = "phy", "usb3phy_refclk";
+>>>>>>>> +             samsung,syscon-phandle = <&pmu_syscon>;
+>>>>>>>> +             samsung,pmu-offset = <0x704>;
+>>>>>>>> +             #phy-cells = <1>;
+>>>>>>>> +     };
+>>>>>>>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+>>>>>>>> index 8d3c49c..d955a05 100644
+>>>>>>>> --- a/drivers/phy/Kconfig
+>>>>>>>> +++ b/drivers/phy/Kconfig
+>>>>>>>> @@ -166,4 +166,15 @@ config PHY_XGENE
+>>>>>>>>        help
+>>>>>>>>          This option enables support for APM X-Gene SoC multi-purpose PHY.
+>>>>>>>>
+>>>>>>>> +config PHY_EXYNOS5_USBDRD
+>>>>>>>> +     tristate "Exynos5 SoC series USB DRD PHY driver"
+>>>>>>>> +     depends on ARCH_EXYNOS5 && OF
+>>>>>>>> +     depends on HAS_IOMEM
+>>>>>>>> +     select GENERIC_PHY
+>>>>>>>> +     select MFD_SYSCON
+>>>>>>>
+>>>>>>> Lets try to avoid select in Kconfig. We've got enough problems with that.
+>>>>>>
+>>>>>> I hope you meant with "select MFD_SYSCON".
+>>>>>> We are referencing the syscon for accessing pmu reg, for which we need
+>>>>>> this config to be selected.
+>>>>>> Other Exynos phy drivers also need this config and for that they have
+>>>>>> selected this.
+>>>>>>
+>>>>>> Do you want me to do it any other way ?
+>>>>>
+>>>>> depends on is one option.
+>>>>
+>>>> Ok, i can see there are places where depends_on MFD_SYSCON is used.
+>>>> "drivers/gpu/drm/exynos/Kconfig:60"
+>>>>
+>>>> so, do you want me to fix at other places too ?
+>>>>
+>>>> But i also have a question here.
+>>>> MFD_SYSCON is a subsystem that's facilitating us in getting our work
+>>>> done here by giving an access to pmu_system_controller.
+>>>> So unless MFD_SYSCON is exposed, the phy driver will not be exposed to us.
+>>>> So is that valid enough really ?
+>>>
+>>> maybe in the Kconfig for MFD_SYSCON, we can select it if PHY_EXYNOS5_USBDRD is
+>>> enabled?
+>>>
+>>> config MFD_SYSCON
+>>> default y if PHY_EXYNOS5_USBDRD
 >>
->>>
->>>  #endif /* S5P_HDMI_H */
->>> --
->>> 1.7.9.5
->>>
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+>> Yes, that seems to be one option. But we will end up adding this
+>> dependency for all the drivers which want to use syscon.
+>>
+>> Adding few people who worked on MFS_SYSCON, just to gather ideas.
+>>
+>> Re-quoting our problem here:
+>> "Inside our phy driver we are accessing power mgt unit registers,
+>> which we register using syscon in ut device tree.
+>> Now we don't want to select MFD_SYSCON from our phy driver, instead
+>> want to go 'depend_on' way."
+>>
+>> So one solution seems to be enabling MFD_SYSCON by default, if any of
+>> driver using syscon is enabled.
+>> Can we use some other way here ?
+> 
+> This is an awful idea from maintainability perspective... This means that every
+> driver depending on MFD_SYSCON would have to add new "default y if" to
+> MFD_SYSCON Kconfig entry. Even with respect to readability, it is more logical
+> to have all dependencies of a driver listed in its Kconfig entry.
+> 
+> Anyway, PHY_EXYNOS5_USBDRD can't work without MFD_SYSCON and somehow this needs
+> to be stated. I believe select is the right thing here and I'm not sure why it
+> could be a problem. The biggest reason for going this way is that users
+
+'select' selects a module without caring for the dependencies and introduce
+compilation warnings. It should always be used with caution.
+
+Thanks
+Kishon
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
