@@ -1,79 +1,87 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH 7/8] arm64: mm: Implement 4 levels of translation tables
-Date: Tue, 15 Apr 2014 10:37:11 +0900
-Message-ID: <001a01cf584b$38945370$a9bcfa50$@samsung.com>
-References: <000501cf57b4$e57e8e80$b07bab80$@samsung.com>
- <20140414151333.GA29654@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 0/8] Support new Exynos3250 SoC based on Cortex-A7 dual core
+Date: Tue, 15 Apr 2014 10:59:44 +0900
+Message-ID: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14537 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750828AbaDOBhP (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:28212 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751229AbaDOB7w (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Apr 2014 21:37:15 -0400
-In-reply-to: <20140414151333.GA29654@linaro.org>
-Content-language: ko
+	Mon, 14 Apr 2014 21:59:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Steve Capper' <steve.capper@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, kgene.kim@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
+To: linux-kernel@vger.kernel.org
+Cc: linux@arm.linux.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, t.figa@samsung.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Tuesday, April 15, 2014 12:14 AM, Steve Capper wrote:
-> On Mon, Apr 14, 2014 at 04:41:07PM +0900, Jungseok Lee wrote:
-> > This patch implements 4 levels of translation tables since 3 levels of
-> > page tables with 4KB pages cannot support 40-bit physical address
-> > space described in [1] due to the following issue.
-> >
-> > It is a restriction that kernel logical memory map with 4KB + 3 levels
-> > (0xffffffc000000000-0xffffffffffffffff) cannot cover RAM region from
-> > 544GB to 1024GB in [1]. Specifically, ARM64 kernel fails to create
-> > mapping for this region in map_mem function since __phys_to_virt for
-> > this region reaches to address overflow.
-> >
-> > If SoC design follows the document, [1], over 32GB RAM would be placed
-> > from 544GB. Even 64GB system is supposed to use the region from 544GB
-> > to 576GB for only 32GB RAM. Naturally, it would reach to enable 4
-> > levels of page tables to avoid hacking __virt_to_phys and __phys_to_virt.
-> >
-> > However, it is recommended 4 levels of page table should be only
-> > enabled if memory map is too sparse or there is about 512GB RAM.
-> >
-> > References
-> > ----------
-> > [1]: Principle of ARM Memory Maps, White Paper, Issue C
-> >
+This patchset support new Exynos3250 Samsung SoC based on Cortex-A7 dual core.
+Exynos3250 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
+for Smartphone. It is desigend with the 28nm low-power high-K metal gate process
+and provides the best performance features.
 
-[ ... ]
+This patchset include some patches such as:
+- Support secondary CPU of Exynos3250 (cpu up/down)
+- Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/pwm/amba
+- Support the clock control for Exynos3250 using common clk framework
 
-> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c index
-> > 6b7e895..321f569 100644
-> > --- a/arch/arm64/mm/mmu.c
-> > +++ b/arch/arm64/mm/mmu.c
-> > @@ -222,9 +222,17 @@ static void __init alloc_init_pmd(pud_t *pud,
-> > unsigned long addr,  static void __init alloc_init_pud(pgd_t *pgd, unsigned long addr,
-> >  				  unsigned long end, unsigned long phys)  {
-> > -	pud_t *pud = pud_offset(pgd, addr);
-> > +	pud_t *pud;
-> >  	unsigned long next;
-> >
-> > +#ifdef CONFIG_ARM64_4_LEVELS
-> > +	if (pgd_none(*pgd) || pgd_bad(*pgd)) {
-> > +		pud = early_alloc(PTRS_PER_PUD * sizeof(pud_t));
-> > +		pgd_populate(&init_mm, pgd, pud);
-> > +	}
-> > +#endif
-> 
-> We don't need this #ifdef block, as pgd_none and pgd_bad should be zero when we have fewer than 4
-> levels.
+This patchset is completely tested and is based on following git repo/branch.
+- git repo : git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+- branch   : for-next (Linux 3.15-rc1)
 
-This block is needed to cover the third RAM region from 544GB to 1024GB
-described in the document [1].
+Additional patch description about static memory mapping:
+Arnd Bergmann suggested that need proper driver instead of static memory mapping.
+As Chanho Park reply[2], Sachin Kamat already posted the DT support patch[1]
+for memory mapping for SYSRAM.
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg27647.html
+[2] https://lkml.org/lkml/2014/4/10/161
 
-A single PGD can cover only up to 512GB with 4KB+4Level. In other words,
-kernel would reach to panic if a system has RAM over 512GB memory map space.
-That is why pgd_none should be handled.
+So, I'm going to re-implement following patches related to static memory mapping
+after merged Sachin Kamat patch[1].
+  ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
+  ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
 
-Best Regards
-Jungseok Lee
+Changes from v1:
+- Add new "samsung,exynos3" compatible name
+- Add comment about exynos_cpu_boot in Exynos4212
+- Remove unnecessary 'goto' statement in firmware.c
+- Use read_cpuid_part_number() function instead of assembler directly
+- Post separated pinctrl patch from this patchset
+  : https://lkml.org/lkml/2014/4/13/156
+- Remove unused pmu interrupts due to Exynos3250 dual-core
+- Cosolidate all the patches related to exynos3250.dtsi into one patch
+- Fix gic compatible name to "cortex-a15-gic" because Cortex-A7 GIC is same
+- Add sign-off of sender to all this patches
+- Fix minor typo
+
+Chanwoo Choi (5):
+  ARM: EXYNOS: Add Exynos3250 SoC ID
+  ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
+  ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
+  ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+  ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
+
+Kyungmin Park (1):
+  ARM: EXYNOS: Support secondary CPU boot of Exynos4212
+
+Tomasz Figa (2):
+  clk: samsung: exynos3250: Add clocks using common clock framework
+  ARM: dts: Add device tree sources for Exynos3250
+
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 477 ++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 410 ++++++++++++++++
+ arch/arm/mach-exynos/Kconfig              |  22 +
+ arch/arm/mach-exynos/exynos.c             |  19 +
+ arch/arm/mach-exynos/firmware.c           |  18 +-
+ arch/arm/mach-exynos/hotplug.c            |  16 +-
+ arch/arm/mach-exynos/include/mach/map.h   |   2 +
+ arch/arm/plat-samsung/include/plat/cpu.h  |  10 +
+ drivers/clk/samsung/Makefile              |   1 +
+ drivers/clk/samsung/clk-exynos3250.c      | 785 ++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h    | 256 ++++++++++
+ 11 files changed, 2010 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos3250.c
+ create mode 100644 include/dt-bindings/clock/exynos3250.h
+
+-- 
+1.8.0
