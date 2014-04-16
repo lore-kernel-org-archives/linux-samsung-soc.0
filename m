@@ -1,117 +1,215 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Wed, 16 Apr 2014 20:14:27 +0200
-Message-ID: <5094962.iM2Kd6gfjd@wuerfel>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org> <CAJuA9ajXa+mejdUvWATHjmmin8hoRhX0wueg5g8rDbJR4AWZ7A@mail.gmail.com> <534E9AA3.10409@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v2 2/5] charger: tps65090: Allow charger module to be used when no irq
+Date: Wed, 16 Apr 2014 11:25:21 -0700
+Message-ID: <1397672724-9063-3-git-send-email-dianders@chromium.org>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+ <1397672724-9063-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.130]:55781 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754083AbaDPSPJ (ORCPT
+Received: from mail-ig0-f201.google.com ([209.85.213.201]:63714 "EHLO
+	mail-ig0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754294AbaDPSZe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 14:15:09 -0400
-In-Reply-To: <534E9AA3.10409@samsung.com>
+	Wed, 16 Apr 2014 14:25:34 -0400
+Received: by mail-ig0-f201.google.com with SMTP id l13so115703iga.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 11:25:33 -0700 (PDT)
+In-Reply-To: <1397672724-9063-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>
-Cc: Thomas Abraham <ta.omasab@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangsu Park <sangsu4u.park@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
+To: Anton Vorontsov <anton@enomsg.org>
+Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-On Wednesday 16 April 2014 16:58:43 Tomasz Figa wrote:
+On the ARM Chromebook tps65090 has two masters: the AP (the main
+processor running linux) and the EC (the embedded controller).  The AP
+is allowed to mess with FETs but the EC is in charge of charge control.
 
-> On 16.04.2014 16:55, Thomas Abraham wrote:
-> > On Wed, Apr 16, 2014 at 8:18 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> >> On 16.04.2014 16:31, Arnd Bergmann wrote:
-> >>> sparsemem is still not supported in multiplatform, but after I looked
-> >>> at it in more detail, I came to the conclusion that there is no
-> >>> reason why it couldn't be. It just needs testing so we are confident
-> >>> that it doesn't break other platforms, and we need to find good
-> >>> platform-independent values for MAX_PHYSMEM_BITS and SECTION_SIZE_BITS
-> >>> to put into asm/memory.h, since we can't have them set in mach/memory.h
-> >>> for multiplatform.
-> >>>
-> >>> Looking at my patch again now, I would actually prefer to kill off
-> >>> the single-platform support for exynos right away. I don't see
-> >>> any reason to keep it now, and it complicates the test matrix.
-> >>
-> >>
-> >> That would be the best option, assuming that it wouldn't introduce feature
-> >> regressions. Unfortunately there is still ongoing work on cpufreq driver to
-> >> make it multiplatform-aware, so dropping single platform support right now
-> >> would introduce at least this one regression.
-> >>
-> >> Thomas, is there any progress on new version of Exynos cpufreq rework
-> >> series?
-> >
-> > Hi Tomasz,
-> >
-> > Yes, I am preparing the fourth version of the cpufreq patches and will
-> > post it next week. Mostly, the changes will be addressing your review
-> > comments.
-> 
-> OK. Looking forward to it. Thanks for an update on this.
-> 
+The tps65090 interupt line is routed to both the AP and the EC, which
+can cause quite a headache.  Having two people adjusting masks and
+acking interrupts is a recipe for disaster.
 
-Cool! This is the only major issue I'm aware of, so I think we're good.
+In the shipping kernel we had a hack to have the AP pay attention to
+the IRQ but not to ack it.  It also wasn't supposed to configure the
+IRQ in any way.  That hack allowed us to detect when the device was
+charging without messing with the EC's state.
 
-If SPARSEMEM support is still relevant to anybody, I'm sure we can
-get that to work as well.
+The current tps65090 infrastructure makes the above difficult, and it
+was a bit of a hack to begin with.  Rather than uglify the driver to
+support it, just extend the driver's existing notion of "no irq" to
+the charger.  This makes the charger code poll every 2 seconds for AC
+detect, which is sufficient.
 
-There is one small issue with the sound drivers that came up, and I
-assume it was just a mistake. If not, some more work on that might
-be needed. See patch below.
+For proper functioning, requires (mfd: tps65090: Don't tell child
+devices we have an IRQ if we don't).  If we don't have that patch
+we'll simply fail to probe on devices without an interrupt (just like
+we did before this patch).
 
-	Arnd
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v2:
+- Split noirq (polling mode) changes into MFD and charger
 
-8<-------
->From 6f3921c3218509114e855a8ea5932aeea5d3ddfd Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 18 Mar 2014 17:04:59 +0100
-Subject: [PATCH] ASoC: samsung: don't build pcm and spdif on exynos
+ drivers/power/tps65090-charger.c | 76 +++++++++++++++++++++++++++++++---------
+ 1 file changed, 59 insertions(+), 17 deletions(-)
 
-In commit d37bdf736d9b "ASoC: samsung: Use ASoC dmaengine code where
-possible", Mark Brown changed the EXYNOS ASoC code to no longer
-use the private dma interfaces that are standing in the way of
-multiplatform enablement.
-
-However, in 313367e7bfa "ASoC: Samsung: Update Kconfig for I2S,SPDIF
-and PCM audio", two new users of that interface appeared, since it
-is now possible to enable SND_SOC_SAMSUNG_SMDK_SPDIF and
-SND_SOC_SMDK_WM8994_PCM on all Samsung SoCs including EXYNOS.
-
-This patch does a partial revert of 313367e7bfa by allowing these
-drivers on all samsung platforms except EXYNOS, so we can proceed
-with the multiplatform patches.
-
-If support for these drivers is actually needed on EXYNOS machines,
-the drivers should first be moved over to use the dmaengine code.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Sangsu Park <sangsu4u.park@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 7b610a8..efc01e0 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -167,7 +167,7 @@ config SND_SOC_GONI_AQUILA_WM8994
+diff --git a/drivers/power/tps65090-charger.c b/drivers/power/tps65090-charger.c
+index 8fc9d6d..cc26c12 100644
+--- a/drivers/power/tps65090-charger.c
++++ b/drivers/power/tps65090-charger.c
+@@ -17,9 +17,11 @@
+  */
+ #include <linux/delay.h>
+ #include <linux/err.h>
++#include <linux/freezer.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
++#include <linux/kthread.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+@@ -43,11 +45,15 @@
+ #define TPS65090_VACG		BIT(1)
+ #define TPS65090_NOITERM	BIT(5)
  
- config SND_SOC_SAMSUNG_SMDK_SPDIF
- 	tristate "SoC S/PDIF Audio support for SMDK"
--	depends on SND_SOC_SAMSUNG
-+	depends on SND_SOC_SAMSUNG && !ARCH_EXYNOS
- 	select SND_SAMSUNG_SPDIF
- 	help
- 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
-@@ -183,7 +183,7 @@ config SND_SOC_SMDK_WM8580_PCM
++#define POLL_INTERVAL		(HZ * 2)	/* Used when no irq */
++
+ struct tps65090_charger {
+ 	struct	device	*dev;
+ 	int	ac_online;
+ 	int	prev_ac_online;
+ 	int	irq;
++	struct task_struct	*poll_task;
++	bool			passive_mode;
+ 	struct power_supply	ac;
+ 	struct tps65090_platform_data *pdata;
+ };
+@@ -60,6 +66,9 @@ static int tps65090_low_chrg_current(struct tps65090_charger *charger)
+ {
+ 	int ret;
  
- config SND_SOC_SMDK_WM8994_PCM
- 	tristate "SoC PCM Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG
-+	depends on SND_SOC_SAMSUNG && !ARCH_EXYNOS
- 	depends on I2C=y
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
++	if (charger->passive_mode)
++		return 0;
++
+ 	ret = tps65090_write(charger->dev->parent, TPS65090_REG_CG_CTRL5,
+ 			TPS65090_NOITERM);
+ 	if (ret < 0) {
+@@ -75,6 +84,9 @@ static int tps65090_enable_charging(struct tps65090_charger *charger)
+ 	int ret;
+ 	uint8_t ctrl0 = 0;
+ 
++	if (charger->passive_mode)
++		return 0;
++
+ 	ret = tps65090_read(charger->dev->parent, TPS65090_REG_CG_CTRL0,
+ 			    &ctrl0);
+ 	if (ret < 0) {
+@@ -98,6 +110,9 @@ static int tps65090_config_charger(struct tps65090_charger *charger)
+ 	uint8_t intrmask = 0;
+ 	int ret;
+ 
++	if (charger->passive_mode)
++		return 0;
++
+ 	if (charger->pdata->enable_low_current_chrg) {
+ 		ret = tps65090_low_chrg_current(charger);
+ 		if (ret < 0) {
+@@ -175,10 +190,14 @@ static irqreturn_t tps65090_charger_isr(int irq, void *dev_id)
+ 	}
+ 
+ 	/* Clear interrupts. */
+-	ret = tps65090_write(charger->dev->parent, TPS65090_REG_INTR_STS, 0x00);
+-	if (ret < 0) {
+-		dev_err(charger->dev, "%s(): Error in writing reg 0x%x\n",
++	if (!charger->passive_mode) {
++		ret = tps65090_write(charger->dev->parent,
++				     TPS65090_REG_INTR_STS, 0x00);
++		if (ret < 0) {
++			dev_err(charger->dev,
++				"%s(): Error in writing reg 0x%x\n",
+ 				__func__, TPS65090_REG_INTR_STS);
++		}
+ 	}
+ 
+ 	if (charger->prev_ac_online != charger->ac_online)
+@@ -209,6 +228,18 @@ static struct tps65090_platform_data *
+ 
+ }
+ 
++static int tps65090_charger_poll_task(void *data)
++{
++	set_freezable();
++
++	while (!kthread_should_stop()) {
++		schedule_timeout_interruptible(POLL_INTERVAL);
++		try_to_freeze();
++		tps65090_charger_isr(-1, data);
++	}
++	return 0;
++}
++
+ static int tps65090_charger_probe(struct platform_device *pdev)
+ {
+ 	struct tps65090_charger *cdata;
+@@ -255,22 +286,10 @@ static int tps65090_charger_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0) {
+-		dev_warn(&pdev->dev, "Unable to get charger irq = %d\n", irq);
+-		ret = irq;
+-		goto fail_unregister_supply;
+-	}
+-
++	if (irq < 0)
++		irq = NO_IRQ;
+ 	cdata->irq = irq;
+ 
+-	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+-		tps65090_charger_isr, 0, "tps65090-charger", cdata);
+-	if (ret) {
+-		dev_err(cdata->dev, "Unable to register irq %d err %d\n", irq,
+-			ret);
+-		goto fail_unregister_supply;
+-	}
+-
+ 	ret = tps65090_config_charger(cdata);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "charger config failed, err %d\n", ret);
+@@ -296,6 +315,27 @@ static int tps65090_charger_probe(struct platform_device *pdev)
+ 		power_supply_changed(&cdata->ac);
+ 	}
+ 
++	if (irq != NO_IRQ) {
++		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
++			tps65090_charger_isr, 0, "tps65090-charger", cdata);
++		if (ret) {
++			dev_err(cdata->dev,
++				"Unable to register irq %d err %d\n", irq,
++				ret);
++			goto fail_unregister_supply;
++		}
++	} else {
++		cdata->poll_task = kthread_run(tps65090_charger_poll_task,
++					      cdata, "ktps65090charger");
++		cdata->passive_mode = true;
++		if (IS_ERR(cdata->poll_task)) {
++			ret = PTR_ERR(cdata->poll_task);
++			dev_err(cdata->dev,
++				"Unable to run kthread err %d\n", ret);
++			goto fail_unregister_supply;
++		}
++	}
++
+ 	return 0;
+ 
+ fail_unregister_supply:
+@@ -308,6 +348,8 @@ static int tps65090_charger_remove(struct platform_device *pdev)
+ {
+ 	struct tps65090_charger *cdata = platform_get_drvdata(pdev);
+ 
++	if (cdata->irq == NO_IRQ)
++		kthread_stop(cdata->poll_task);
+ 	power_supply_unregister(&cdata->ac);
+ 
+ 	return 0;
+-- 
+1.9.1.423.g4596e3a
