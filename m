@@ -1,90 +1,74 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] arm: dts: exynos4: add missing pinctrls for I2C controllers
-Date: Wed, 16 Apr 2014 15:01:14 +0200
-Message-ID: <534E7F1A.8080502@samsung.com>
-References: <534E7A3F.7050406@samsung.com>
+From: Richard Genoud <richard.genoud@gmail.com>
+Subject: Re: [PATCH V4 5/5] usb-phy: samsung-usb3: Remove older
+ phy-samsung-usb3 driver
+Date: Wed, 16 Apr 2014 15:33:04 +0200
+Message-ID: <CACQ1gAgbiQJmpJDebeKSRGKhDjOcmOAdt8L3CmNAO=h5i7yV1A@mail.gmail.com>
+References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
+ <1396967803-28868-6-git-send-email-gautam.vivek@samsung.com>
+ <53452B59.8030901@samsung.com> <CAFp+6iGQMS5_YAimBRdV-P2h3LczQEHMq_cXGrOtHJSZqM7UfQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <534E7A3F.7050406@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?B?J+uwleqyvQ==?= =?UTF-8?B?66+8Jw==?= <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAFp+6iGQMS5_YAimBRdV-P2h3LczQEHMq_cXGrOtHJSZqM7UfQ@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
+Hi Vivek,
 
-On 16.04.2014 14:40, Tomasz Stanislawski wrote:
-> This patch adds missing pinctrls for I2C controllers 2-7.
+2014-04-09 13:34 GMT+02:00 Vivek Gautam <gautam.vivek@samsung.com>:
+> Hi Tomasz,
+> '
 >
-> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos4.dtsi |   12 ++++++++++++
->   1 file changed, 12 insertions(+)
+> On Wed, Apr 9, 2014 at 4:43 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Vivek,
+>>
+> Thanks for reviewing the patch series.
 >
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 0401f4d..288aa81 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -357,6 +357,8 @@
->   		interrupts = <0 60 0>;
->   		clocks = <&clock CLK_I2C2>;
->   		clock-names = "i2c";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2c2_bus>;
->   		status = "disabled";
->   	};
+>>
+>> On 08.04.2014 16:36, Vivek Gautam wrote:
+>>>
+>>> Removing this older USB 3.0 DRD controller PHY driver, since
+>>> a new driver based on generic phy framework is now available.
+>>>
+>>> Also removing the dt node for older driver from Exynos5250
+>>> device tree and updating the dt node for DWC3 controller.
+>>>
+>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>> ---
+>>>
+>>> NOTE: This patch should be merged only when the new USB 3.0
+>>> DRD phy controller driver is available in the tree from the
+>>> patches:
+>>>         phy: Add new Exynos5 USB 3.0 PHY driver; and
+>>>         dt: exynos5250: Enable support for generic USB DRD phy
+>>>
+>>>   arch/arm/boot/dts/exynos5250.dtsi  |   17 +-
+>>>   drivers/usb/phy/phy-samsung-usb.h  |   83 ---------
+>>>   drivers/usb/phy/phy-samsung-usb3.c |  350
+>>> ------------------------------------
+>>>   3 files changed, 2 insertions(+), 448 deletions(-)
+>>>   delete mode 100644 drivers/usb/phy/phy-samsung-usb3.c
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>>> b/arch/arm/boot/dts/exynos5250.dtsi
+>>> index 92c6fcd..1cb1e91 100644
+>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>
+>>
+>> IMHO driver and dts changes should be separated into two patches, first
+>> updating device tree to use the new driver and second removing the driver.
 >
-> @@ -368,6 +370,8 @@
->   		interrupts = <0 61 0>;
->   		clocks = <&clock CLK_I2C3>;
->   		clock-names = "i2c";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2c3_bus>;
->   		status = "disabled";
->   	};
+> Sure will separate the patch into driver and dts change.
 >
-> @@ -379,6 +383,8 @@
->   		interrupts = <0 62 0>;
->   		clocks = <&clock CLK_I2C4>;
->   		clock-names = "i2c";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2c4_bus>;
->   		status = "disabled";
->   	};
->
-> @@ -390,6 +396,8 @@
->   		interrupts = <0 63 0>;
->   		clocks = <&clock CLK_I2C5>;
->   		clock-names = "i2c";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2c5_bus>;
->   		status = "disabled";
->   	};
->
-> @@ -401,6 +409,8 @@
->   		interrupts = <0 64 0>;
->   		clocks = <&clock CLK_I2C6>;
->   		clock-names = "i2c";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2c6_bus>;
->   		status = "disabled";
->   	};
->
-> @@ -412,6 +422,8 @@
->   		interrupts = <0 65 0>;
->   		clocks = <&clock CLK_I2C7>;
->   		clock-names = "i2c";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2c7_bus>;
->   		status = "disabled";
->   	};
->
->
+>>
+>> After fixing this issue,
+>>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>>
+I guess you should also remove phy-samsung-usb3.c references in the
+Makefile, Kconfig and exynos_defconfig
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
---
-Best regards,
-Tomasz
+Richard.
