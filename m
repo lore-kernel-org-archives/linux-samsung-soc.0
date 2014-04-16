@@ -1,44 +1,53 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC PATCH v2 04/14] ARM: dts: sysreg: add exynos5 compatible to DT
- bindings
-Date: Wed, 16 Apr 2014 13:38:07 +0900
-Message-ID: <1397623087-11421-1-git-send-email-yj44.cho@samsung.com>
-References: <CAK9yfHw9-8eHuB-w5Yk-332_EUObYcYVOjpc09Ob6oZv7uJZ_w@mail.gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39053 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751845AbaDPEiM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 00:38:12 -0400
-In-reply-to: <CAK9yfHw9-8eHuB-w5Yk-332_EUObYcYVOjpc09Ob6oZv7uJZ_w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RFC PATCH v2 07/14] ARM: dts: exynos_dsim: add exynos5420 compatible
+ to DT bindings
+Date: Wed, 16 Apr 2014 13:38:27 +0900
+Message-ID: <1397623107-11467-1-git-send-email-yj44.cho@samsung.com>
+References: <CAK9yfHwew_O57FuYiwohQUB1nhs5PJ5mg7TiPcPOvpbp=6sFgQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAK9yfHwew_O57FuYiwohQUB1nhs5PJ5mg7TiPcPOvpbp=6sFgQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, sachin.kamat@linaro.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds relevant to exynos5 compatible for exynos5 SoCs.
+This patch adds relevant to exynos5420 compatible for exynos5420 SoC support.
 
 Changelog v2:
-- Changes title and description (commented by Sachin Kamat)
+- Changes title, description and fixes typo (commented by Sachin Kamat)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/video/exynos_dsim.txt      |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-index 0ab3251..fd71581 100644
---- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-@@ -3,6 +3,7 @@ SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
- Properties:
-  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
-    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
-+   For Exynos5 SoC series it should be "samsung,exynos5-sysreg", "syscon";
-  - reg : offset and length of the register set.
+diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+index 33b5730..29bf3b2 100644
+--- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+@@ -1,7 +1,9 @@
+ Exynos MIPI DSI Master
  
- Example:
+ Required properties:
+-  - compatible: "samsung,exynos4210-mipi-dsi"
++  - compatible: value should be one of the following
++			"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
++			"samsung,exynos5420-mipi-dsi" /* for Exynos5420 SoCs */
+   - reg: physical base address and length of the registers set for the device
+   - interrupts: should contain DSI interrupt
+   - clocks: list of clock specifiers, must contain an entry for each required
 -- 
 1.7.9.5
