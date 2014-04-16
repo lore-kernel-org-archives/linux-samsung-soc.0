@@ -1,37 +1,43 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Wed, 16 Apr 2014 23:00:50 +0200
-Message-ID: <4235968.l5YN2u3Kvp@wuerfel>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org> <5094962.iM2Kd6gfjd@wuerfel> <20140416205001.GY12304@sirena.org.uk>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
+ adding retries
+Date: Wed, 16 Apr 2014 14:25:45 -0700
+Message-ID: <CAD=FV=V+xpMEFVqH2Afo8XmCJsUPU2Y8xcmR3rwi+V25KKx8DQ@mail.gmail.com>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+	<1397672724-9063-1-git-send-email-dianders@chromium.org>
+	<1397672724-9063-6-git-send-email-dianders@chromium.org>
+	<CAPnjgZ2pPa=-L6UxRR3KKF-3Ghi63gEU+5RRybLDHOwKL2cs7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.24]:61536 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754827AbaDPVA6 (ORCPT
+Received: from mail-vc0-f182.google.com ([209.85.220.182]:37554 "EHLO
+	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754914AbaDPVZq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 17:00:58 -0400
-In-Reply-To: <20140416205001.GY12304@sirena.org.uk>
+	Wed, 16 Apr 2014 17:25:46 -0400
+Received: by mail-vc0-f182.google.com with SMTP id ib6so11687579vcb.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 14:25:45 -0700 (PDT)
+In-Reply-To: <CAPnjgZ2pPa=-L6UxRR3KKF-3Ghi63gEU+5RRybLDHOwKL2cs7Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangsu Park <sangsu4u.park@samsung.com>
+To: Simon Glass <sjg@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, lk <linux-kernel@vger.kernel.org>
 
-On Wednesday 16 April 2014 21:50:01 Mark Brown wrote:
-> On Wed, Apr 16, 2014 at 08:14:27PM +0200, Arnd Bergmann wrote:
-> 
-> > This patch does a partial revert of 313367e7bfa by allowing these
-> > drivers on all samsung platforms except EXYNOS, so we can proceed
-> > with the multiplatform patches.
-> 
-> > If support for these drivers is actually needed on EXYNOS machines,
-> > the drivers should first be moved over to use the dmaengine code.
-> 
-> I would be surprised if neither IP is present on any Exynos SoC, they
-> were added in the s5p range.  Is Sachin's fix for building these
-> (present in -rc1) not doing the job?
+Simon,
 
-I hadn't noticed that patch, it probably does, so nevermind.
+On Wed, Apr 16, 2014 at 1:50 PM, Simon Glass <sjg@chromium.org> wrote:
+>> +#define MAX_CTRL_READ_TRIES    5
+>> +#define MAX_FET_ENABLE_TRIES   1000
+>
+> Gosh that is a lot of tries - should we maybe give up sooner?
 
-	Arnd
+That's actually a squash of a recent patch.  See
+<https://chromium-review.googlesource.com/189239>.  I've specifically
+seen at least one case on my device where it needed 888 retries at
+bootup!
+
+...on my really old Chromebook, it seems to get into a bad state if it
+sits on my desk for a long time.  After I use it a bit it rarely needs
+more than 10 retries.
+
+-Doug
