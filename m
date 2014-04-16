@@ -1,175 +1,243 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 4/5] regulator: tps65090: Allow setting the overcurrent wait time
-Date: Wed, 16 Apr 2014 16:12:28 -0700
-Message-ID: <1397689950-1568-5-git-send-email-dianders@chromium.org>
+Subject: [PATCH v3 5/5] regulator: tps65090: Make FETs more reliable by adding retries
+Date: Wed, 16 Apr 2014 16:12:29 -0700
+Message-ID: <1397689950-1568-6-git-send-email-dianders@chromium.org>
 References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f74.google.com ([209.85.213.74]:37786 "EHLO
-	mail-yh0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757028AbaDPXMv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 19:12:51 -0400
-Received: by mail-yh0-f74.google.com with SMTP id f10so1713704yha.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 16:12:50 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1397689950-1568-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Anton Vorontsov <anton@enomsg.org>
-Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The tps65090 regulator allows you to specify how long you want it to
-wait before detecting an overcurrent condition.  Allow specifying that
-through the device tree (or through platform data).
+An issue was discovered with tps65090 where sometimes the FETs
+wouldn't actually turn on when requested (they would report
+overcurrent).  The most problematic FET was the one used for the LCD
+backlight on the Samsung ARM Chromebook (FET1).  Problems were
+especially prevalent when the device was plugged in to AC power (when
+the backlight voltage was higher).
+
+Mitigate the problem by adding retries on the enables of the FETs,
+which works around the problem fairly effectively.
 
 Signed-off-by: Doug Anderson <dianders@chromium.org>
 Signed-off-by: Simon Glass <sjg@chromium.org>
 Signed-off-by: Michael Spang <spang@chromium.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: Simon Glass <sjg@chromium.org>
 ---
 Changes in v3:
 - Fixed kernel-doc notation for return
 
 Changes in v2:
 - Separated the overcurrent and retries changes into two patches.
-- Now set overcurrent at probe time since it doesn't change.
+- No longer open code fet_is_enabled().
+- Fixed tps6090 typo.
+- For loop => "while true".
+- Removed a set of braces.
 
- .../devicetree/bindings/regulator/tps65090.txt     |  4 ++
- drivers/regulator/tps65090-regulator.c             | 56 ++++++++++++++++++++++
- include/linux/mfd/tps65090.h                       |  5 ++
- 3 files changed, 65 insertions(+)
+ drivers/regulator/tps65090-regulator.c | 155 +++++++++++++++++++++++++++++----
+ 1 file changed, 140 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/tps65090.txt b/Documentation/devicetree/bindings/regulator/tps65090.txt
-index 313a60b..34098023 100644
---- a/Documentation/devicetree/bindings/regulator/tps65090.txt
-+++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
-@@ -21,6 +21,10 @@ Optional properties:
-   number should be provided. If it is externally controlled and no GPIO
-   entry then driver will just configure this rails as external control
-   and will not provide any enable/disable APIs.
-+- ti,overcurrent-wait: This is applicable to FET registers, which have a
-+  poorly defined "overcurrent wait" field.  If this property is present it
-+  should be between 0 - 3.  If this property isn't present we won't touch the
-+  "overcurrent wait" field and we'll leave it to the BIOS/EC to deal with.
- 
- Each regulator is defined using the standard binding for regulators.
- 
 diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-index 2e92ef6..ca04e9f 100644
+index ca04e9f..2057e2e 100644
 --- a/drivers/regulator/tps65090-regulator.c
 +++ b/drivers/regulator/tps65090-regulator.c
-@@ -28,15 +28,58 @@
+@@ -17,6 +17,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/gpio.h>
+ #include <linux/of_gpio.h>
+@@ -28,7 +29,13 @@
  #include <linux/regulator/of_regulator.h>
  #include <linux/mfd/tps65090.h>
  
-+#define CTRL_WT_BIT		2 /* Regulator wait time 0 bit */
++#define MAX_CTRL_READ_TRIES	5
++#define MAX_FET_ENABLE_TRIES	1000
 +
-+#define MAX_OVERCURRENT_WAIT	3 /* Overcurrent wait must be <= this */
-+
-+/**
-+ * struct tps65090_regulator - Per-regulator data for a tps65090 regulator
-+ *
-+ * @dev: Pointer to our device.
-+ * @desc: The struct regulator_desc for the regulator.
-+ * @rdev: The struct regulator_dev for the regulator.
-+ * @overcurrent_wait_valid: True if overcurrent_wait is valid.
-+ * @overcurrent_wait: For FETs, the value to put in the WTFET bitfield.
-+ */
-+
- struct tps65090_regulator {
- 	struct device		*dev;
- 	struct regulator_desc	*desc;
- 	struct regulator_dev	*rdev;
-+	bool			overcurrent_wait_valid;
-+	int			overcurrent_wait;
- };
++#define CTRL_EN_BIT		0 /* Regulator enable bit, active high */
+ #define CTRL_WT_BIT		2 /* Regulator wait time 0 bit */
++#define CTRL_PG_BIT		4 /* Regulator power good bit, 1=good */
++#define CTRL_TO_BIT		7 /* Regulator timeout bit, 1=wait */
  
- static struct regulator_ops tps65090_ext_control_ops = {
- };
+ #define MAX_OVERCURRENT_WAIT	3 /* Overcurrent wait must be <= this */
  
+@@ -80,40 +87,158 @@ static int tps65090_reg_set_overcurrent_wait(struct tps65090_regulator *ri,
+ 	return ret;
+ }
+ 
+-static struct regulator_ops tps65090_reg_contol_ops = {
 +/**
-+ * tps65090_reg_set_overcurrent_wait - Setup overcurrent wait
++ * tps65090_try_enable_fet - Try to enable a FET
 + *
-+ * This will set the overcurrent wait time based on what's in the regulator
-+ * info.
-+ *
-+ * @ri:		Overall regulator data
 + * @rdev:	Regulator device
 + *
-+ * Return: 0 if no error, non-zero if there was an error writing the register.
++ * Return: 0 if ok, -ENOTRECOVERABLE if the FET power good bit did not get
++ * set, or some other -ve value if another error occurred (e.g. i2c error)
 + */
-+static int tps65090_reg_set_overcurrent_wait(struct tps65090_regulator *ri,
-+					     struct regulator_dev *rdev)
++static int tps65090_try_enable_fet(struct regulator_dev *rdev)
 +{
-+	int ret;
++	unsigned int control;
++	int ret, i;
 +
 +	ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-+				 MAX_OVERCURRENT_WAIT << CTRL_WT_BIT,
-+				 ri->overcurrent_wait << CTRL_WT_BIT);
-+	if (ret) {
-+		dev_err(&rdev->dev, "Error updating overcurrent wait %#x\n",
++				 rdev->desc->enable_mask,
++				 rdev->desc->enable_mask);
++	if (ret < 0) {
++		dev_err(&rdev->dev, "Error in updating reg %#x\n",
 +			rdev->desc->enable_reg);
++		return ret;
 +	}
++
++	for (i = 0; i < MAX_CTRL_READ_TRIES; i++) {
++		ret = regmap_read(rdev->regmap, rdev->desc->enable_reg,
++				  &control);
++		if (ret < 0)
++			return ret;
++
++		if (!(control & BIT(CTRL_TO_BIT)))
++			break;
++
++		usleep_range(1000, 1500);
++	}
++	if (!(control & BIT(CTRL_PG_BIT)))
++		return -ENOTRECOVERABLE;
++
++	return 0;
++}
++
++/**
++ * tps65090_fet_enable - Enable a FET, trying a few times if it fails
++ *
++ * Some versions of the tps65090 have issues when turning on the FETs.
++ * This function goes through several steps to ensure the best chance of the
++ * FET going on.  Specifically:
++ * - We'll make sure that we bump the "overcurrent wait" to the maximum, which
++ *   increases the chances that we'll turn on properly.
++ * - We'll retry turning the FET on multiple times (turning off in between).
++ *
++ * @rdev:	Regulator device
++ *
++ * Return: 0 if ok, non-zero if it fails.
++ */
++static int tps65090_fet_enable(struct regulator_dev *rdev)
++{
++	int ret, tries;
++
++	/*
++	 * Try enabling multiple times until we succeed since sometimes the
++	 * first try times out.
++	 */
++	tries = 0;
++	while (true) {
++		ret = tps65090_try_enable_fet(rdev);
++		if (!ret)
++			break;
++		if (ret != -ENOTRECOVERABLE || tries == MAX_FET_ENABLE_TRIES)
++			goto err;
++
++		/* Try turning the FET off (and then on again) */
++		ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
++					 rdev->desc->enable_mask, 0);
++		if (ret)
++			goto err;
++
++		tries++;
++	}
++
++	if (tries)
++		dev_warn(&rdev->dev, "reg %#x enable ok after %d tries\n",
++			 rdev->desc->enable_reg, tries);
++
++	return 0;
++err:
++	dev_warn(&rdev->dev, "reg %#x enable failed\n", rdev->desc->enable_reg);
++	WARN_ON(1);
 +
 +	return ret;
 +}
 +
- static struct regulator_ops tps65090_reg_contol_ops = {
++static struct regulator_ops tps65090_reg_control_ops = {
  	.enable		= regulator_enable_regmap,
  	.disable	= regulator_disable_regmap,
-@@ -209,6 +252,11 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
- 			rpdata->gpio = of_get_named_gpio(np,
- 					"dcdc-ext-control-gpios", 0);
- 
-+		if (of_property_read_u32(tps65090_matches[idx].of_node,
-+					 "ti,overcurrent-wait",
-+					 &rpdata->overcurrent_wait) == 0)
-+			rpdata->overcurrent_wait_valid = true;
-+
- 		tps65090_pdata->reg_pdata[idx] = rpdata;
- 	}
- 	return tps65090_pdata;
-@@ -258,6 +306,8 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
- 		ri = &pmic[num];
- 		ri->dev = &pdev->dev;
- 		ri->desc = &tps65090_regulator_desc[num];
-+		ri->overcurrent_wait_valid = tps_pdata->overcurrent_wait_valid;
-+		ri->overcurrent_wait = tps_pdata->overcurrent_wait;
- 
- 		/*
- 		 * TPS5090 DCDC support the control from external digital input.
-@@ -299,6 +349,12 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
- 		}
- 		ri->rdev = rdev;
- 
-+		if (ri->overcurrent_wait_valid) {
-+			ret = tps65090_reg_set_overcurrent_wait(ri, rdev);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
- 		/* Enable external control if it is require */
- 		if (tps_pdata && is_dcdc(num) && tps_pdata->reg_init_data &&
- 				tps_pdata->enable_ext_control) {
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 45f0f9d..0bf2708 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -92,11 +92,16 @@ struct tps65090 {
-  *     DCDC1, DCDC2 and DCDC3.
-  * @gpio: Gpio number if external control is enabled and controlled through
-  *     gpio.
-+ * @overcurrent_wait_valid: True if the overcurrent_wait should be applied.
-+ * @overcurrent_wait: Value to set as the overcurrent wait time.  This is the
-+ *     actual bitfield value, not a time in ms (valid value are 0 - 3).
-  */
- struct tps65090_regulator_plat_data {
- 	struct regulator_init_data *reg_init_data;
- 	bool enable_ext_control;
- 	int gpio;
-+	bool overcurrent_wait_valid;
-+	int overcurrent_wait;
+ 	.is_enabled	= regulator_is_enabled_regmap,
  };
  
- struct tps65090_platform_data {
++static struct regulator_ops tps65090_fet_control_ops = {
++	.enable		= tps65090_fet_enable,
++	.disable	= regulator_disable_regmap,
++	.is_enabled	= regulator_is_enabled_regmap,
++};
++
+ static struct regulator_ops tps65090_ldo_ops = {
+ };
+ 
+-#define tps65090_REG_DESC(_id, _sname, _en_reg, _ops)	\
++#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _ops)	\
+ {							\
+ 	.name = "TPS65090_RAILS"#_id,			\
+ 	.supply_name = _sname,				\
+ 	.id = TPS65090_REGULATOR_##_id,			\
+ 	.ops = &_ops,					\
+ 	.enable_reg = _en_reg,				\
+-	.enable_mask = BIT(0),				\
++	.enable_val = _en_bits,				\
++	.enable_mask = _en_bits,			\
+ 	.type = REGULATOR_VOLTAGE,			\
+ 	.owner = THIS_MODULE,				\
+ }
+ 
+ static struct regulator_desc tps65090_regulator_desc[] = {
+-	tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET1,  "infet1",  0x0F, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET2,  "infet2",  0x10, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET3,  "infet3",  0x11, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET4,  "infet4",  0x12, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET5,  "infet5",  0x13, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET6,  "infet6",  0x14, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(FET7,  "infet7",  0x15, tps65090_reg_contol_ops),
+-	tps65090_REG_DESC(LDO1,  "vsys-l1", 0,    tps65090_ldo_ops),
+-	tps65090_REG_DESC(LDO2,  "vsys-l2", 0,    tps65090_ldo_ops),
++	tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT),
++			  tps65090_reg_control_ops),
++	tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT),
++			  tps65090_reg_control_ops),
++	tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
++			  tps65090_reg_control_ops),
++
++	tps65090_REG_DESC(FET1,  "infet1",  0x0F,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++	tps65090_REG_DESC(FET2,  "infet2",  0x10,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++	tps65090_REG_DESC(FET3,  "infet3",  0x11,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++	tps65090_REG_DESC(FET4,  "infet4",  0x12,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++	tps65090_REG_DESC(FET5,  "infet5",  0x13,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++	tps65090_REG_DESC(FET6,  "infet6",  0x14,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++	tps65090_REG_DESC(FET7,  "infet7",  0x15,
++			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			  tps65090_fet_control_ops),
++
++	tps65090_REG_DESC(LDO1,  "vsys-l1", 0, 0,
++			  tps65090_ldo_ops),
++	tps65090_REG_DESC(LDO2,  "vsys-l2", 0, 0,
++			  tps65090_ldo_ops),
+ };
+ 
+ static inline bool is_dcdc(int id)
 -- 
 1.9.1.423.g4596e3a
