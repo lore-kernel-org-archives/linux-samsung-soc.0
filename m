@@ -1,90 +1,72 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv3 2/2] iio: devicetree: Add DT binding documentation for
- Exynos3250 ADC
-Date: Wed, 16 Apr 2014 19:11:58 +0900
-Message-ID: <1397643118-6934-3-git-send-email-cw00.choi@samsung.com>
-References: <1397643118-6934-1-git-send-email-cw00.choi@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/3] mfd: tps65090: Stop caching registers
+Date: Wed, 16 Apr 2014 11:13:23 +0100
+Message-ID: <20140416101323.GP12304@sirena.org.uk>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+ <1397592876-5741-3-git-send-email-dianders@chromium.org>
+ <20140416095922.GG4754@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1397643118-6934-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, robh+dt@kernel.org, galak@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/F2XdnRjS8y2HUtp"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140416095922.GG4754@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
-special clock ('sclk_tsadc') for ADC which provide clock to internal ADC.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- .../devicetree/bindings/arm/samsung/exynos-adc.txt   | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+--/F2XdnRjS8y2HUtp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-index 5d49f2b..7532ec3 100644
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-@@ -14,6 +14,8 @@ Required properties:
- 				for exynos4412/5250 controllers.
- 			Must be "samsung,exynos-adc-v2" for
- 				future controllers.
-+			Must be "samsung,exynos-adc-v3" for
-+				for exynos3250 controllers.
- - reg:			Contains ADC register address range (base address and
- 			length) and the address of the phy enable register.
- - interrupts: 		Contains the interrupt information for the timer. The
-@@ -21,7 +23,11 @@ Required properties:
- 			the Samsung device uses.
- - #io-channel-cells = <1>; As ADC has multiple outputs
- - clocks		From common clock binding: handle to adc clock.
-+			From common clock binding: handle to sclk_tsadc clock
-+			if using Exynos3250.
- - clock-names		From common clock binding: Shall be "adc".
-+			From common clock binding: Shall be "sclk_tsadc"
-+			if using Exynos3250.
- - vdd-supply		VDD input supply.
- 
- Note: child nodes can be added for auto probing from device tree.
-@@ -41,6 +47,20 @@ adc: adc@12D10000 {
- 	vdd-supply = <&buck5_reg>;
- };
- 
-+If Exynos3250 uses ADC,
-+adc: adc@126C0000 {
-+	compatible = "samsung,exynos-adc-v3";
-+	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+	interrupts = <0 137 0>;
-+	#io-channel-cells = <1>;
-+	io-channel-ranges;
-+
-+	clock-names = "adc", "sclk_tsadc";
-+	clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
-+
-+	vdd-supply = <&buck5_reg>;
-+};
-+
- 
- Example: Adding child nodes in dts file
- 
--- 
-1.8.0
+On Wed, Apr 16, 2014 at 10:59:22AM +0100, Lee Jones wrote:
+
+> > NOTE: the IRQnMASK and CG_CTRLn registers are the exception and could
+> > be cached.  If we find that we spend a lot of time reading those we
+> > can turn on cache for just those registers.
+
+> > -static bool is_volatile_reg(struct device *dev, unsigned int reg)
+> > -{
+> > -	if ((reg == TPS65090_INT_STS) || (reg == TPS65090_INT_STS2))
+> > -		return true;
+> > -	else
+> > -		return false;
+> > -}
+> > -
+
+> I don't know enough about Regmap internals to know what this actually
+> affects in real terms.
+
+> Mark,
+>   Does this change seem sane to you?
+
+It does what it says, it stops us caching stuff.  It would seem better
+to do what the changelog suggests above and keep caching the registers
+that can be cached - especially the interrupt masks, they should get
+read in the interrupt path and that tends to be a bit latency sensitive.
+
+--/F2XdnRjS8y2HUtp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTTlfAAAoJELSic+t+oim9XG0P/0GYEXL3COJuPxqh4msPQdvE
+kGpJmlst0l7U6EU3MVJT3VTqCv6ZuXhxiklxyZYI4CckicqcR2/ob6YiMrcUN9km
+FoFclt5EDxWzLAz7GvvxjCNHfllFnju80CSMr9RQD91sWp7Wo5+XyKwRu3t312lk
+N50sFcSmk/arIdp6NvQiMXATFjilq13rlfKtKVisIEj92E4DZTgQ3qePl+9USv8K
+vMIijoBMIMZyN7ieKDynXUuPNKfykhkkxSR3qBGqeG9x+Uq7rl3sq/4SmVNxo8jx
+gLANJ/QXbc7R4lvZcF+xhJiHikl+TQY2A757Kvdmeg/N9YmpvNU2KgLr/ODvqoOk
+lzj6J3Rvxmf60ocipoQtzln6A6R3EQDyFKlWsdxyAalBotXSmwK2YLxf5Ypgl8Ye
+CCSWGk+WSGwUwiYA5e50O8KICbv55C9YLIe35XdSUT91thEFendF7eevRbyP/jmR
+PkS/kcVii4NkLmmk46COre7TO5bxXJYwp1grrfTmuluZXWOPSCSjs2t+33sbM2Bt
+xbX08biXZJaZjLfPUOvDK2lV6ivLhWYqoepzl6G48qsd6UUUNcemsPjHvNov2eEH
+1v9A0bQ3GDkso7NbEPvhhdjxawbx/VN0cPQc127rnY6l6S/ceNPAfCUFxKK9sai+
+aJydW/fwYzo5qXPnTDqG
+=kwAY
+-----END PGP SIGNATURE-----
+
+--/F2XdnRjS8y2HUtp--
