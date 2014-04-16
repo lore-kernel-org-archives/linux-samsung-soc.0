@@ -1,217 +1,114 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv2 1/2] iio: adc: exynos_adc: Control special clock of ADC
- to support Exynos3250 ADC
-Date: Wed, 16 Apr 2014 10:13:39 +0900
-Message-ID: <534DD943.8050707@samsung.com>
-References: <1397466426-13870-1-git-send-email-cw00.choi@samsung.com>
- <1397466426-13870-2-git-send-email-cw00.choi@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCHv2 4/4] drm: exynos: hdmi: add support for pixel clock
+ limitation
+Date: Wed, 16 Apr 2014 07:37:04 +0530
+Message-ID: <CAPdUM4MhcOhTcAaMLWidqw6str8-oUvnYC+dyQKZUbp7_4wMuA@mail.gmail.com>
+References: <1397554040-4037-1-git-send-email-t.stanislaws@samsung.com>
+ <1397554040-4037-5-git-send-email-t.stanislaws@samsung.com>
+ <CAPdUM4NysWMpy3PZhJdKXFa96Oy4kG4dKkDdrabbAmM3+f5kag@mail.gmail.com>
+ <534D3001.2030707@samsung.com>
+ <CAPdUM4PCDC8J5k2uNv6DYf8FzXKcNcm7JQZ-cbAzmXzx9YDAAw@mail.gmail.com>
+ <534D4245.2040901@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1397466426-13870-2-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <534D4245.2040901@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, b.zolnierkie@samsung.com, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan,
+On 15 April 2014 19:59, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
+> On 04/15/2014 03:42 PM, Rahul Sharma wrote:
+>> On 15 April 2014 18:41, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
+>>> On 04/15/2014 11:42 AM, Rahul Sharma wrote:
+>>>> Hi Tomasz,
+>>>>
+>>>> On 15 April 2014 14:57, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
+>>>>> Adds support for limitation of maximal pixel clock of HDMI
+>>>>> signal. This feature is needed on boards that contains
+>>>>> lines or bridges with frequency limitations.
+>>>>>
+>>>>> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> [snip]
+>
+>>>>> diff --git a/include/media/s5p_hdmi.h b/include/media/s5p_hdmi.h
+>>>>> index 181642b..7272d65 100644
+>>>>> --- a/include/media/s5p_hdmi.h
+>>>>> +++ b/include/media/s5p_hdmi.h
+>>>>> @@ -31,6 +31,7 @@ struct s5p_hdmi_platform_data {
+>>>>>         int mhl_bus;
+>>>>>         struct i2c_board_info *mhl_info;
+>>>>>         int hpd_gpio;
+>>>>> +       u32 max_pixel_clock;
+>>>>>  };
+>>>>
+>>>> We have already removed Non DT support from the drm hdmi
+>>>> driver. IMO we should not be extending the pdata struct.
+>>>>
+>>>> Regards,
+>>>> Rahul Sharma
+>>>
+>>> Hi Rahul,
+>>>
+>>> This is not a non-DT patch. The s5p_hdmi_platform_data is
+>>> generated from DT itself. This structure is just
+>>> a parsed version of DT attributes.
+>>>
+>>> It may be a good idea to rename s5p_hdmi_platform_data
+>>> to exynos_hdmi_pdata and move it to exynos_hdmi_drm.c file
+>>> or parse DT directly in probe function.
+>>>
+>>> I can prepare a patch for that.
+>>
+>> Else we can completely remove the dependency from
+>> s5p_hdmi_platform_data. We can directly assign to hdmi context
+>> variables. Later we can remove that struct itself from include/.
+>> What you say?
+>
+> This structure cannot be removed from include yet because it is used by s5p-tv driver.
+> However its usage can be removed from both drivers.
+> I can prepare both.
+>
 
-Any comment of this patchset?
+yea correct. but if you doing it for both of them, it can be removed, I guess.
+your call.
 
-Best Regards,
-Chanwoo Choi
+Regards,
+Rahul Sharma
 
-On 04/14/2014 06:07 PM, Chanwoo Choi wrote:
-> This patch control special clock for ADC in Exynos series's FSYS block.
-> If special clock of ADC is registerd on clock list of common clk framework,
-> Exynos ADC drvier have to control this clock.
-> 
-> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
-> - 'adc' clock: bus clock for ADC
-> 
-> Exynos3250 has additional 'sclk_tsadc' clock as following:
-> - 'sclk_tsadc' clock: special clock for ADC which provide clock to internal ADC
-> 
-> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_tsadc' clock
-> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_tsadc'
-> clock in FSYS_BLK.
-> 
-> Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Naveen Krishna Chatradhi
-> Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/iio/adc/exynos_adc.c | 54 +++++++++++++++++++++++++++++++++-----------
->  1 file changed, 41 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index d25b262..3c99243 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -40,8 +40,9 @@
->  #include <linux/iio/driver.h>
->  
->  enum adc_version {
-> -	ADC_V1,
-> -	ADC_V2
-> +	ADC_V1 = 0x1,
-> +	ADC_V2 = 0x2,
-> +	ADC_V3 = (ADC_V1 | ADC_V2),
->  };
->  
->  /* EXYNOS4412/5250 ADC_V1 registers definitions */
-> @@ -88,6 +89,7 @@ struct exynos_adc {
->  	void __iomem		*regs;
->  	void __iomem		*enable_reg;
->  	struct clk		*clk;
-> +	struct clk		*sclk;
->  	unsigned int		irq;
->  	struct regulator	*vdd;
->  
-> @@ -100,6 +102,7 @@ struct exynos_adc {
->  static const struct of_device_id exynos_adc_match[] = {
->  	{ .compatible = "samsung,exynos-adc-v1", .data = (void *)ADC_V1 },
->  	{ .compatible = "samsung,exynos-adc-v2", .data = (void *)ADC_V2 },
-> +	{ .compatible = "samsung,exynos-adc-v3", .data = (void *)ADC_V3 },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, exynos_adc_match);
-> @@ -128,7 +131,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->  	mutex_lock(&indio_dev->mlock);
->  
->  	/* Select the channel to be used and Trigger conversion */
-> -	if (info->version == ADC_V2) {
-> +	if (info->version & ADC_V2) {
->  		con2 = readl(ADC_V2_CON2(info->regs));
->  		con2 &= ~ADC_V2_CON2_ACH_MASK;
->  		con2 |= ADC_V2_CON2_ACH_SEL(chan->address);
-> @@ -165,7 +168,7 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
->  	info->value = readl(ADC_V1_DATX(info->regs)) &
->  						ADC_DATX_MASK;
->  	/* clear irq */
-> -	if (info->version == ADC_V2)
-> +	if (info->version & ADC_V2)
->  		writel(1, ADC_V2_INT_ST(info->regs));
->  	else
->  		writel(1, ADC_V1_INTCLR(info->regs));
-> @@ -226,11 +229,25 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
->  	return 0;
->  }
->  
-> +static void exynos_adc_enable_clock(struct exynos_adc *info, bool enable)
-> +{
-> +	if (enable) {
-> +		clk_prepare_enable(info->clk);
-> +		if (info->version == ADC_V3)
-> +			clk_prepare_enable(info->sclk);
-> +
-> +	} else {
-> +		if (info->version == ADC_V3)
-> +			clk_disable_unprepare(info->sclk);
-> +		clk_disable_unprepare(info->clk);
-> +	}
-> +}
-> +
->  static void exynos_adc_hw_init(struct exynos_adc *info)
->  {
->  	u32 con1, con2;
->  
-> -	if (info->version == ADC_V2) {
-> +	if (info->version & ADC_V2) {
->  		con1 = ADC_V2_CON1_SOFT_RESET;
->  		writel(con1, ADC_V2_CON1(info->regs));
->  
-> @@ -300,6 +317,8 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  
->  	writel(1, info->enable_reg);
->  
-> +	info->version = exynos_adc_get_version(pdev);
-> +
->  	info->clk = devm_clk_get(&pdev->dev, "adc");
->  	if (IS_ERR(info->clk)) {
->  		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
-> @@ -308,6 +327,17 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  		goto err_irq;
->  	}
->  
-> +	if (info->version == ADC_V3) {
-> +		info->sclk = devm_clk_get(&pdev->dev, "sclk_tsadc");
-> +		if (IS_ERR(info->sclk)) {
-> +			dev_warn(&pdev->dev,
-> +				"failed getting sclk clock, err = %ld\n",
-> +				PTR_ERR(info->sclk));
-> +			ret = PTR_ERR(info->sclk);
-> +			goto err_irq;
-> +		}
-> +	}
-> +
->  	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
->  	if (IS_ERR(info->vdd)) {
->  		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
-> @@ -316,8 +346,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  		goto err_irq;
->  	}
->  
-> -	info->version = exynos_adc_get_version(pdev);
-> -
->  	platform_set_drvdata(pdev, indio_dev);
->  
->  	indio_dev->name = dev_name(&pdev->dev);
-> @@ -340,7 +368,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_iio_dev;
->  
-> -	clk_prepare_enable(info->clk);
-> +	exynos_adc_enable_clock(info, true);
->  
->  	exynos_adc_hw_init(info);
->  
-> @@ -356,7 +384,7 @@ err_of_populate:
->  	device_for_each_child(&pdev->dev, NULL,
->  				exynos_adc_remove_devices);
->  	regulator_disable(info->vdd);
-> -	clk_disable_unprepare(info->clk);
-> +	exynos_adc_enable_clock(info, false);
->  err_iio_dev:
->  	iio_device_unregister(indio_dev);
->  err_irq:
-> @@ -372,7 +400,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
->  	device_for_each_child(&pdev->dev, NULL,
->  				exynos_adc_remove_devices);
->  	regulator_disable(info->vdd);
-> -	clk_disable_unprepare(info->clk);
-> +	exynos_adc_enable_clock(info, false);
->  	writel(0, info->enable_reg);
->  	iio_device_unregister(indio_dev);
->  	free_irq(info->irq, info);
-> @@ -387,7 +415,7 @@ static int exynos_adc_suspend(struct device *dev)
->  	struct exynos_adc *info = iio_priv(indio_dev);
->  	u32 con;
->  
-> -	if (info->version == ADC_V2) {
-> +	if (info->version & ADC_V2) {
->  		con = readl(ADC_V2_CON1(info->regs));
->  		con &= ~ADC_CON_EN_START;
->  		writel(con, ADC_V2_CON1(info->regs));
-> @@ -397,7 +425,7 @@ static int exynos_adc_suspend(struct device *dev)
->  		writel(con, ADC_V1_CON(info->regs));
->  	}
->  
-> -	clk_disable_unprepare(info->clk);
-> +	exynos_adc_enable_clock(info, false);
->  	writel(0, info->enable_reg);
->  	regulator_disable(info->vdd);
->  
-> @@ -415,7 +443,7 @@ static int exynos_adc_resume(struct device *dev)
->  		return ret;
->  
->  	writel(1, info->enable_reg);
-> -	clk_prepare_enable(info->clk);
-> +	exynos_adc_enable_clock(info, true);
->  
->  	exynos_adc_hw_init(info);
->  
-> 
+>>
+>> Regards,
+>> Rahul Sharma
+>>
+>
+> Regards,
+> Tomasz Stanislawski
+>
+>>>
+>>> Regards,
+>>> Tomasz Stanislawski
+>>>
+>>>
+>>>>
+>>>>>
+>>>>>  #endif /* S5P_HDMI_H */
+>>>>> --
+>>>>> 1.7.9.5
+>>>>>
+>>>>> _______________________________________________
+>>>>> dri-devel mailing list
+>>>>> dri-devel@lists.freedesktop.org
+>>>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
+>>
+>
