@@ -1,156 +1,121 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2] pinctrl: exynos: Add driver data for Exynos3250
-Date: Wed, 16 Apr 2014 19:15:10 +0900
-Message-ID: <534E582E.2030108@samsung.com>
-References: <1397439947-31592-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCHv2 8/8] ARM: dts: Add device tree sources for Exynos3250
+Date: Wed, 16 Apr 2014 19:23:49 +0900
+Message-ID: <534E5A35.7050708@samsung.com>
+References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
+ <1397527192-21988-9-git-send-email-cw00.choi@samsung.com>
+ <534CEAB7.6020600@arm.com> <534CED76.9010302@samsung.com>
+ <534CF847.5040008@arm.com> <534CF9B4.306@samsung.com>
+ <534CFAD7.4030508@arm.com> <534E3DC0.40502@samsung.com>
+ <534E4089.9070804@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35460 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754701AbaDPKPI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 06:15:08 -0400
-In-reply-to: <1397439947-31592-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <534E4089.9070804@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jaehoon Chung <jh80.chung@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "hyunhee.kim@samsung.com" <hyunhee.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, linux-ker
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Linus Walleij,
+Hi Marc,
 
-I sent this patch with minor modification.
-Any comment of this patch?
+On 04/16/2014 05:34 PM, Marc Zyngier wrote:
+> On 16/04/14 09:22, Chanwoo Choi wrote:
+>> Hi Marc,
+>>
+>> On 04/15/2014 06:24 PM, Marc Zyngier wrote:
+>>> On 15/04/14 10:19, Chanwoo Choi wrote:
+>>>> On 04/15/2014 06:13 PM, Marc Zyngier wrote:
+>>>>> On 15/04/14 09:27, Chanwoo Choi wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 04/15/2014 05:15 PM, Marc Zyngier wrote:
+>>>>>>> On 15/04/14 02:59, Chanwoo Choi wrote:
+>>>>>>>> From: Tomasz Figa <t.figa@samsung.com>
+>>>>>>>>
+>>>>>>>> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on Cortex-A7
+>>>>>>>> dual core and includes following dt nodes:
+>>>>>>>>
+>>>>>>>> - GIC interrupt controller
+>>>>>>>> - Pinctrl to control GPIOs
+>>>>>>>> - Clock controller
+>>>>>>>> - CPU information (Cortex-A7 dual core)
+>>>>>>>> - UART to support serial port
+>>>>>>>> - MCT (Multi Core Timer)
+>>>>>>>> - ADC (Analog Digital Converter)
+>>>>>>>> - I2C/SPI bus
+>>>>>>>> - Power domain
+>>>>>>>> - PMU (Performance Monitoring Unit)
+>>>>>>>> - MSHC (Mobile Storage Host Controller)
+>>>>>>>> - PWM (Pluse Width Modulation)
+>>>>>>>> - AMBA bus
+>>>>>>>
+>>>>>>> [...]
+>>>>>>>
+>>>>>>> Where is the arch timer node?
+>>>>>>
+>>>>>> Exynos3250 uses MCT (Multi Core Timer) instead of ARM_ARCH_TIMER.
+>>>>>> - in drivers/clocksource/exynos_mct.c
+>>>>>
+>>>>> Don't you have a Cortex-A7? If so, you have the arch timer.
+>>>>
+>>>> Do you means that 'arch timer" is ARM_ARCH_TIMER?
+>>>
+>>> Yes.
+>>>
+>>>> As I knew, ARM_ARCH_TIMER is clocksource driver for system timer.
+>>>> But, Exynos SoC used MCT clocksource for system timer.
+>>>>
+>>>> Exynos dts file didn't include arch timer node but only include mct node.
+>>>
+>>> Well, it is a bug, and a recurrent one. A Cortex-A7 has the arch timers
+>>> implemented. Always.
+>>>
+>>> http://infocenter.arm.com/help/topic/com.arm.doc.ddi0464f/BABFEBJJ.html
+>>>
+>>> All Cortex-A7 have it, and so do A12, A15, A17, A53, A57.
+>>
+>> I tested 'arch_timer'(drivers/clocksource/arm_arch_timer.c) on Exynos3250 based on Cortex-A7.
+>>
+>> To test arch timer, I used the clocksource of arch_timer for timekeeping instead of clocksource
+>> of Exynos MCT. But, I faced with issue. The following function return only same value(zero)
+>> as following kernel log:
+>> - arch_counter_get_cntvct() in arch/arm/include/asm/arch_timer.h
+>>
+>> Uncompressing Linux... done, booting the kernel.
+>> [    0.000000] Booting Linux on physical CPU 0x0
+>> [    0.000000] Initializing cgroup subsys cpuset
+>> [    0.000000] Initializing cgroup subsys cpu
+>> [    0.000000] Initializing cgroup subsys cpuacct
+>> [    0.000000] Linux version 3.15.0-rc1-00020-gf452826-dirty ...
+>> [    0.000000] CPU: ARMv7 Processor ...
+>> ...
+>> [    0.000000] Architected cp15 timer(s) running at 24.00MHz (virt).
+>> [    0.000000] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps every 2863311519744ns
+>> ...
+>>
+>> Could you give me a solution to resolve this issue or a expected cause?
+> 
+> My guess is that you need to enable some clock for the timer to tick.
+> Ask your HW guys how they have wired this clock.
+> 
+> Also, I cannot help but notice that you are entering your kernel at SVC
+> instead of HYP. I suggest you fix your bootloader/firmware to allow all
+> CPUs to enter the kernel in HYP.
+
+I think again that I would like to add arch_timer dt node to exynos3250.dtsi
+as separated patchset after finishing the test arch_timer clocksource for timekeeping.
+
+Thanks for your review.
 
 Best Regards,
 Chanwoo Choi
-
-On 04/14/2014 10:45 AM, Chanwoo Choi wrote:
-> From: Tomasz Figa <t.figa@samsung.com>
-> 
-> This patch adds driver data (bank list and EINT layout) for Exynos3250
-> to pinctrl-exynos driver. Exynos3250 includes 158 multi-functional input/output
-> ports. There are 23 general port groups.
-> 
-> Changes from v1:
-> - Add signed-off of sender
-> - Post only separated patch for pinctrl from following patchset(v1)
->   : https://lkml.org/lkml/2014/4/10/286
-> 
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/pinctrl/pinctrl-exynos.c  | 67 +++++++++++++++++++++++++++++++++++++++
->  drivers/pinctrl/pinctrl-samsung.c |  2 ++
->  drivers/pinctrl/pinctrl-samsung.h |  1 +
->  3 files changed, 70 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
-> index 07c8130..9609c23 100644
-> --- a/drivers/pinctrl/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/pinctrl-exynos.c
-> @@ -718,6 +718,73 @@ struct samsung_pin_ctrl s5pv210_pin_ctrl[] = {
->  	},
->  };
->  
-> +/* pin banks of exynos3250 pin-controller 0 */
-> +static struct samsung_pin_bank exynos3250_pin_banks0[] = {
-> +	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-> +	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
-> +	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb",  0x08),
-> +	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
-> +	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
-> +	EXYNOS_PIN_BANK_EINTG(4, 0x0a0, "gpd0", 0x14),
-> +	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpd1", 0x18),
-> +};
-> +
-> +/* pin banks of exynos3250 pin-controller 1 */
-> +static struct samsung_pin_bank exynos3250_pin_banks1[] = {
-> +	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
-> +	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
-> +	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
-> +	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
-> +	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
-> +	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
-> +	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpl0", 0x18),
-> +	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
-> +	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
-> +	EXYNOS_PIN_BANK_EINTG(5, 0x2a0, "gpm2", 0x2c),
-> +	EXYNOS_PIN_BANK_EINTG(8, 0x2c0, "gpm3", 0x30),
-> +	EXYNOS_PIN_BANK_EINTG(8, 0x2e0, "gpm4", 0x34),
-> +	EXYNOS_PIN_BANK_EINTW(8, 0xc00, "gpx0", 0x00),
-> +	EXYNOS_PIN_BANK_EINTW(8, 0xc20, "gpx1", 0x04),
-> +	EXYNOS_PIN_BANK_EINTW(8, 0xc40, "gpx2", 0x08),
-> +	EXYNOS_PIN_BANK_EINTW(8, 0xc60, "gpx3", 0x0c),
-> +};
-> +
-> +/*
-> + * Samsung pinctrl driver data for Exynos3250 SoC. Exynos3250 SoC includes
-> + * two gpio/pin-mux/pinconfig controllers.
-> + */
-> +struct samsung_pin_ctrl exynos3250_pin_ctrl[] = {
-> +	{
-> +		/* pin-controller instance 0 data */
-> +		.pin_banks	= exynos3250_pin_banks0,
-> +		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks0),
-> +		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-> +		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-> +		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-> +		.svc		= EXYNOS_SVC_OFFSET,
-> +		.eint_gpio_init = exynos_eint_gpio_init,
-> +		.suspend	= exynos_pinctrl_suspend,
-> +		.resume		= exynos_pinctrl_resume,
-> +		.label		= "exynos3250-gpio-ctrl0",
-> +	}, {
-> +		/* pin-controller instance 1 data */
-> +		.pin_banks	= exynos3250_pin_banks1,
-> +		.nr_banks	= ARRAY_SIZE(exynos3250_pin_banks1),
-> +		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-> +		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-> +		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-> +		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
-> +		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
-> +		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
-> +		.svc		= EXYNOS_SVC_OFFSET,
-> +		.eint_gpio_init = exynos_eint_gpio_init,
-> +		.eint_wkup_init = exynos_eint_wkup_init,
-> +		.suspend	= exynos_pinctrl_suspend,
-> +		.resume		= exynos_pinctrl_resume,
-> +		.label		= "exynos3250-gpio-ctrl1",
-> +	},
-> +};
-> +
->  /* pin banks of exynos4210 pin-controller 0 */
->  static struct samsung_pin_bank exynos4210_pin_banks0[] = {
->  	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-> diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-> index 0324d4c..3e61d0f 100644
-> --- a/drivers/pinctrl/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/pinctrl-samsung.c
-> @@ -1114,6 +1114,8 @@ static struct syscore_ops samsung_pinctrl_syscore_ops = {
->  
->  static const struct of_device_id samsung_pinctrl_dt_match[] = {
->  #ifdef CONFIG_PINCTRL_EXYNOS
-> +	{ .compatible = "samsung,exynos3250-pinctrl",
-> +		.data = (void *)exynos3250_pin_ctrl },
->  	{ .compatible = "samsung,exynos4210-pinctrl",
->  		.data = (void *)exynos4210_pin_ctrl },
->  	{ .compatible = "samsung,exynos4x12-pinctrl",
-> diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-> index bab9c21..b3e41fa 100644
-> --- a/drivers/pinctrl/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/pinctrl-samsung.h
-> @@ -251,6 +251,7 @@ struct samsung_pmx_func {
->  };
->  
->  /* list of all exported SoC specific data */
-> +extern struct samsung_pin_ctrl exynos3250_pin_ctrl[];
->  extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
->  extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
->  extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
-> 
