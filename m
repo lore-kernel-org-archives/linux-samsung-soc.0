@@ -1,85 +1,61 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Wed, 16 Apr 2014 21:50:01 +0100
-Message-ID: <20140416205001.GY12304@sirena.org.uk>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
- <CAJuA9ajXa+mejdUvWATHjmmin8hoRhX0wueg5g8rDbJR4AWZ7A@mail.gmail.com>
- <534E9AA3.10409@samsung.com> <5094962.iM2Kd6gfjd@wuerfel>
+Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
+ adding retries
+Date: Wed, 16 Apr 2014 21:51:36 +0100
+Message-ID: <20140416205136.GZ12304@sirena.org.uk>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+ <1397672724-9063-1-git-send-email-dianders@chromium.org>
+ <1397672724-9063-6-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3660089221173819745=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5094962.iM2Kd6gfjd@wuerfel>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangsu Park <sangsu4u.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============3660089221173819745==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="We3kTPdwkBGsLLkt"
+	protocol="application/pgp-signature"; boundary="AVsU0XxfC6ed1aQ6"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35380 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756599AbaDPUvw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 16:51:52 -0400
 Content-Disposition: inline
+In-Reply-To: <1397672724-9063-6-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
 
 
---We3kTPdwkBGsLLkt
+--AVsU0XxfC6ed1aQ6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Apr 16, 2014 at 08:14:27PM +0200, Arnd Bergmann wrote:
+On Wed, Apr 16, 2014 at 11:25:24AM -0700, Doug Anderson wrote:
+> An issue was discovered with tps65090 where sometimes the FETs
+> wouldn't actually turn on when requested (they would report
+> overcurrent).  The most problematic FET was the one used for the LCD
 
-> This patch does a partial revert of 313367e7bfa by allowing these
-> drivers on all samsung platforms except EXYNOS, so we can proceed
-> with the multiplatform patches.
+Please don't send new patches as replies in the middle of threads, it
+makes it confusing trying to work out which versions of things should be
+applied.
 
-> If support for these drivers is actually needed on EXYNOS machines,
-> the drivers should first be moved over to use the dmaengine code.
-
-I would be surprised if neither IP is present on any Exynos SoC, they
-were added in the s5p range.  Is Sachin's fix for building these
-(present in -rc1) not doing the job?
-
---We3kTPdwkBGsLLkt
+--AVsU0XxfC6ed1aQ6
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTTuz2AAoJELSic+t+oim9SPIP/1BhuK45RgpvnDyykgMDYkyz
-PAOPizj0c+kCEHAT+hQiUsRSmPIYXp9rmIZ1TQW/sfZwNOe+VvM0K9uASCZ4TWWU
-miyP6cbVsrOe8nCBx7bECy2B9QnYnhxnqbU+aoJwVSF/mUiwuPZ2S1iZdAZZnApy
-XmIJd36rrzhjA24AEK0eEx66qFmwxXsUVgKDo3z0f7jFh/n85JZ1siSaAOJDxHSK
-dSGOgw8J2oBW7NbcG+0xKSbyDJ/LDE6+Bct+t4kGqJ2VlR4+o+7hn0EfdFMP6bzk
-1oBucgEvZ5LW9AK2xGNN5cukJ19Jotzyqew6ZcagkLWOrP1MkJVMbVGYulPPRvzH
-uAljaihCsBJexOYYXTvsumXEwaRgeyUXrNdv0JDh3wcLHoo5G7vWd5juWSlEw9Cd
-BbRYkTLAm7MRLGB57YaWZA59mGCGqJsM1imm0b8qTjq06TXilizcpf/R7SIHX3NL
-GdQ1oupcMROV5i/2N3NoD0WJnmPGWV6xzbszEi0y1zDEskZPngxtmOHpvZ3FVqig
-hsLfeudPPED+1kEwTEob/9VUHuVFlzCk0nuB+pk4h92r5YOZec5M8MAojH3IGran
-JmVgFwCw3rNisThuG2tl9xRtIPHempP5RL5IYjMjuNsqIxnaPRz5ISOI1tle9nPa
-K9/DIXgwlyP68I5i/8m2
-=xY0P
+iQIcBAEBAgAGBQJTTu1UAAoJELSic+t+oim9gdQP/jgL1zeFa70WHw73//08m5pc
+5iiD5gVA1IYjfbVNMlP1qclGO+PvK5bEQ/Su8pTnB1idN5OTiyksubFSmCHNAUyf
+Jw/Gwd8ZHX7YlZcmZyFvoHM5+zGMMEGvNTXwe6es48kcUOLVXBzyJ5kLBWgQQ/1T
+1hSWtV3imc6SmX8tW3t+uV4SFRHoqi2U3C0KDmpDy8iOOJc/lx8sNiq5T1Rfcuy7
+DqTRISD1GDzfB77ao9a2RZosF4ktjOkg9sILzkQ4zXNP/cpmsKbL48J0RRCXrS7Z
+zfbjte492EA76jBm70tTCMwZ7SOmKB09bVv2geM9qsd2B5gBuCyz/WRKyS+xvy71
+1BqSoMSqCZ9dFrCk0j1xZJ3Uf6ksCYRRHV5dcqJAWKGmzIsH6nT9YZBNlNChzUoJ
+0VVtYwU6G7Rf5YsdKHSzkUlJPSHlvxFBs+wuHPZ/V6OJ/wMJtzK6fmLcUfn4DqG4
+8f5iv5pXcRshlGovFk5W0qP8A0ZaW+Me2ODj+8UKl48/9qOcaHt4Wp9UG2Ug9ql6
+YNZYCmb1aYmFV4dv9m4gY9AuEjV8FFK06xRO7qSusKKCZyzMdvDs5MeGizYyxYMW
+ppURY2sz/8r6DgEkxR2T18yZ0LxtKgkEHwxgRYc5EYqR4hIlPb6S4J9sjy5gjMsU
+k2KzLgDFdF8Q4GOMSM1N
+=UN3W
 -----END PGP SIGNATURE-----
 
---We3kTPdwkBGsLLkt--
-
-
---===============3660089221173819745==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============3660089221173819745==--
+--AVsU0XxfC6ed1aQ6--
