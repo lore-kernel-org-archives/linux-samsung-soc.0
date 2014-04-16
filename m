@@ -1,79 +1,71 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v8 0/3] exynos: arch: add support for exynos5260 SoC
-Date: Wed, 16 Apr 2014 09:55:29 +0530
-Message-ID: <CAK9yfHz4=5H-PKUGmL0CAetJ3jABgoPAZx1cPBjfCw40_GmtgQ@mail.gmail.com>
-References: <1397620738-14431-1-git-send-email-rahul.sharma@samsung.com>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: [PATCH v2 0/7] Support 4 levels of translation tables for ARM64
+Date: Wed, 16 Apr 2014 13:33:06 +0900
+Message-ID: <004001cf592c$f64eb4a0$e2ec1de0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:41347 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754369AbaDPEZa (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:41733 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbaDPEdI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 00:25:30 -0400
-Received: by mail-ob0-f178.google.com with SMTP id wn1so236510obc.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Apr 2014 21:25:30 -0700 (PDT)
-In-Reply-To: <1397620738-14431-1-git-send-email-rahul.sharma@samsung.com>
+	Wed, 16 Apr 2014 00:33:08 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-Hi Rahul,
+Hi All,
 
-On 16 April 2014 09:28, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->
-> v8:
->   1) Removed exynos5260 compatible from mach/exynos5.c
->   2) Added generic "exynos5" compatible in board and soc dts file.
->
-> v7:
->   1) Renamed board file
->
-> V6:
->   1) Renamed mmc nodes.
->   2) Removed PHY clocks from DT and put them inside clock driver.
->   3) Added clock-cells property for all fixed clocks.
->   4) Removed spdif_ext_clk fixed rate clock.
->
-> V5:
->   1) Removed SYSRAM related code.
->   2) Fixed mct clocks.
->   3) Add SoC and Board specifc fixed-rate clocks in respective files.
->
-> V4:
->   1) Removed duplicate MMC Soc property from Board file.
->
-> V3:
->   1) Addressed review comments from Tomasz figa.
->
-> V2:
->   1) Split up DT patch into SoC and Board patch.
->
-> This series is based on Kukjin's for-next branch at
-> http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
->
-> Pankaj Dubey (1):
->   ARM: EXYNOS: initial board support for exynos5260 SoC
->
-> Rahul Sharma (2):
->   ARM: dts: add dts files for exynos5260 SoC
->   ARM: dts: add dts files for xyref5260 board
->
->  arch/arm/boot/dts/Makefile                 |    1 +
->  arch/arm/boot/dts/exynos5260-pinctrl.dtsi  |  574 ++++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5260-xyref5260.dts |  103 +++++
->  arch/arm/boot/dts/exynos5260.dtsi          |  304 +++++++++++++++
->  arch/arm/mach-exynos/Kconfig               |    5 +
->  5 files changed, 987 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260.dts
->  create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+This the 2nd patchset supports 4 levels of tranlsation tables for ARM64.
 
-Series looks good.
-Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+Firstly, The patchset decouples page size from level of translation tables
+as taking account into the comment from Catalin Marinas:
+http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
 
--- 
-With warm regards,
-Sachin
+Then, it implements 4 levels of translation tables for native, HYP
+and stage2 sides.
+
+All ARMv8 and ARMv7 related changes are validated with FastModels+kvmtool
+and A15+QEMU, respectively.
+
+Changes since v1:
+- fixed unmatched data types as per Steve's comment
+- removed unnecessary #ifdef in arch/arm64/mm/* as per Steve's comment
+- revised create_pgd_entry to deal with PUD entry as per Steve's comment
+- introduced a macro for initial memblock limit as per Steve's comment
+- dropped "Fix line length exceeding 80 characters" patch as per Marc's comment
+- removed unnecessary #ifdef in arch/arm/kvm/mmu.c as per Marc's comment
+- added a macro for a number of objects of as per Marc's comment
+
+Jungseok Lee (7):
+      arm64: Use pr_* instead of printk
+      arm64: Decouple page size from level of translation tables
+      arm64: Introduce a kernel configuration option for VA_BITS
+      arm64: Add a description on 48-bit address space with 4KB pages
+      arm64: Add 4 levels of page tables definition with 4KB pages
+      arm64: mm: Implement 4 levels of translation tables
+      arm64: KVM: Implement 4 levels of translation tables for HYP and stage2
+
+Documentation/arm64/memory.txt                |   59 +++++++++--
+ arch/arm/include/asm/kvm_mmu.h                |   10 ++
+ arch/arm/kvm/mmu.c                            |   88 ++++++++++++++---
+ arch/arm64/Kconfig                            |   51 +++++++++-
+ arch/arm64/include/asm/kvm_arm.h              |   20 ++++
+ arch/arm64/include/asm/kvm_mmu.h              |   10 ++
+ arch/arm64/include/asm/memblock.h             |    6 ++
+ arch/arm64/include/asm/memory.h               |    6 +-
+ arch/arm64/include/asm/page.h                 |    6 +-
+ arch/arm64/include/asm/pgalloc.h              |   24 ++++-
+ arch/arm64/include/asm/pgtable-4level-hwdef.h |   50 ++++++++++
+ arch/arm64/include/asm/pgtable-4level-types.h |   71 +++++++++++++
+ arch/arm64/include/asm/pgtable-hwdef.h        |    8 +-
+ arch/arm64/include/asm/pgtable.h              |   52 ++++++++--
+ arch/arm64/include/asm/tlb.h                  |   10 +-
+ arch/arm64/kernel/head.S                      |   40 +++++---
+ arch/arm64/kernel/traps.c                     |   19 ++--
+ arch/arm64/mm/fault.c                         |    1 +
+ arch/arm64/mm/mmu.c                           |   16 ++-
+ 19 files changed, 485 insertions(+), 62 deletions(-)
