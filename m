@@ -1,72 +1,104 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 1/5] mfd: tps65090: Don't tell child devices we have an IRQ if we don't
-Date: Wed, 16 Apr 2014 11:25:20 -0700
-Message-ID: <1397672724-9063-2-git-send-email-dianders@chromium.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/3] mfd: tps65090: Allow charger module to be used when
+ no irq
+Date: Wed, 16 Apr 2014 20:03:36 +0100
+Message-ID: <20140416190336.GB28725@lee--X1>
 References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
- <1397672724-9063-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f73.google.com ([209.85.213.73]:64233 "EHLO
-	mail-yh0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753811AbaDPSdm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 14:33:42 -0400
-Received: by mail-yh0-f73.google.com with SMTP id c41so1660863yho.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 11:33:41 -0700 (PDT)
-In-Reply-To: <1397672724-9063-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+ <1397592876-5741-2-git-send-email-dianders@chromium.org>
+ <20140416095229.GF4754@lee--X1>
+ <CAD=FV=VjmXGjDHTcm=E2eEPtkOa5DxKG70jXj22RbbN1VfeGjw@mail.gmail.com>
+ <20140416162621.GA28725@lee--X1>
+ <CAD=FV=Vh=Ej3znMmQDfWyLbhhzZh424Kx8BA=86qcwp+AmMqBw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Vh=Ej3znMmQDfWyLbhhzZh424Kx8BA=86qcwp+AmMqBw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anton Vorontsov <anton@enomsg.org>
-Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
 
-If we weren't given an interrupt we shouldn't tell child devices (like
-the tps65090 charger) that they have an interrupt.  This is needed so
-that we can support polling mode in the tps65090 charger driver.
 
-See also (charger: tps65090: Allow charger module to be used when no
-irq).
+> >> >> On the ARM Chromebook tps65090 has two masters: the AP (the mai=
+n
+> >> >> processor running linux) and the EC (the embedded controller). =
+ The AP
+> >> >> is allowed to mess with FETs but the EC is in charge of charge =
+control.
+> >> >>
+> >> >> The tps65090 interupt line is routed to both the AP and the EC,=
+ which
+> >> >> can cause quite a headache.  Having two people adjusting masks =
+and
+> >> >> acking interrupts is a recipe for disaster.
+> >> >>
+> >> >> In the shipping kernel we had a hack to have the AP pay attenti=
+on to
+> >> >> the IRQ but not to ack it.  It also wasn't supposed to configur=
+e the
+> >> >> IRQ in any way.  That hack allowed us to detect when the device=
+ was
+> >> >> charging without messing with the EC's state.
+> >> >>
+> >> >> The current tps65090 infrastructure makes the above difficult, =
+and it
+> >> >> was a bit of a hack to begin with.  Rather than uglify the driv=
+er to
+> >> >> support it, just extend the driver's existing notion of "no irq=
+" to
+> >> >> the charger.  This makes the charger code poll every 2 seconds =
+for AC
+> >> >> detect, which is sufficient.
+> >> >>
+> >> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> >> >> ---
+> >> >>  drivers/mfd/tps65090.c           | 14 ++++++--
+> >> >>  drivers/power/tps65090-charger.c | 76 ++++++++++++++++++++++++=
++++++++---------
+> >> >>  2 files changed, 70 insertions(+), 20 deletions(-)
+> >> >
+> >> > For the MFD part:
+> >> >   Acked-by: Lee Jones <lee.jones@linaro.org>
+> >> >
+> >> > Anton,
+> >> >   If you are okay with this patch I'd be happy to create an immu=
+table
+> >> > branch for you to pull from?
+> >> >
+> >> > Doug,
+> >> >   What is the relationship (dependencies) between this and the o=
+ther
+> >> > patches in the set?
+> >>
+> >> This patch can be applied irrespective of other others in the seri=
+es.
+> >
+> > What about the files in the patch? Could you make two separate patc=
+hes
+> > from this one patch and it would still compile okay? I'm _guessing_
+> > the answer is yes?
+>=20
+> Yes, they'll compile and even boot on their own.  I just tested it.
+>=20
+> If I put only the MFD part in, then at boot I see:
+>   tps65090-charger tps65090-charger: Unable to get charger irq =3D -6
+> ...but otherwise the system functions.
+>=20
+> If I put only the charger part in, then at boot:
+>   tps65090-charger tps65090-charger: Unable to register irq 1 err -22
+>   tps65090-charger: probe of tps65090-charger failed with error -22
+>=20
+> ...so you need both patches in order to make things function, but the=
+y
+> can be applied separately.  I'll assume it will make your life easier
+> if I split this into two patches so I'll do that.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-Changes in v2:
-- Split noirq (polling mode) changes into MFD and charger
+Yes please.
 
- drivers/mfd/tps65090.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
-index ba1a25d..c3cddb4 100644
---- a/drivers/mfd/tps65090.c
-+++ b/drivers/mfd/tps65090.c
-@@ -64,11 +64,16 @@ static struct resource charger_resources[] = {
- 	}
- };
- 
--static const struct mfd_cell tps65090s[] = {
--	{
-+enum tps65090_cells {
-+	PMIC = 0,
-+	CHARGER = 1,
-+};
-+
-+static struct mfd_cell tps65090s[] = {
-+	[PMIC] = {
- 		.name = "tps65090-pmic",
- 	},
--	{
-+	[CHARGER] = {
- 		.name = "tps65090-charger",
- 		.num_resources = ARRAY_SIZE(charger_resources),
- 		.resources = &charger_resources[0],
-@@ -211,6 +216,9 @@ static int tps65090_i2c_probe(struct i2c_client *client,
- 					"IRQ init failed with err: %d\n", ret);
- 			return ret;
- 		}
-+	} else {
-+		/* Don't tell children they have an IRQ that'll never fire */
-+		tps65090s[CHARGER].num_resources = 0;
- 	}
- 
- 	ret = mfd_add_devices(tps65090->dev, -1, tps65090s,
--- 
-1.9.1.423.g4596e3a
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
