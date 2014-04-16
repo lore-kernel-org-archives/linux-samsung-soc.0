@@ -1,87 +1,75 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/3] mfd: tps65090: Allow charger module to be used when
- no irq
-Date: Wed, 16 Apr 2014 17:26:21 +0100
-Message-ID: <20140416162621.GA28725@lee--X1>
-References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
- <1397592876-5741-2-git-send-email-dianders@chromium.org>
- <20140416095229.GF4754@lee--X1>
- <CAD=FV=VjmXGjDHTcm=E2eEPtkOa5DxKG70jXj22RbbN1VfeGjw@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when
+ possible
+Date: Wed, 16 Apr 2014 10:29:31 -0600
+Message-ID: <20140416162931.GA13168@google.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+ <1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
+ <20140404165559.GE9007@google.com>
+ <1397556454.4574.13.camel@weser.hi.pengutronix.de>
+ <20140415182651.GA17721@google.com>
+ <1397636445.5070.8.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:60889 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751016AbaDPQ01 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 12:26:27 -0400
-Received: by mail-we0-f177.google.com with SMTP id u57so10686547wes.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 09:26:26 -0700 (PDT)
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=VjmXGjDHTcm=E2eEPtkOa5DxKG70jXj22RbbN1VfeGjw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1397636445.5070.8.camel@weser.hi.pengutronix.de>
+Sender: linux-sh-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-> >> On the ARM Chromebook tps65090 has two masters: the AP (the main
-> >> processor running linux) and the EC (the embedded controller).  Th=
-e AP
-> >> is allowed to mess with FETs but the EC is in charge of charge con=
-trol.
-> >>
-> >> The tps65090 interupt line is routed to both the AP and the EC, wh=
-ich
-> >> can cause quite a headache.  Having two people adjusting masks and
-> >> acking interrupts is a recipe for disaster.
-> >>
-> >> In the shipping kernel we had a hack to have the AP pay attention =
-to
-> >> the IRQ but not to ack it.  It also wasn't supposed to configure t=
-he
-> >> IRQ in any way.  That hack allowed us to detect when the device wa=
-s
-> >> charging without messing with the EC's state.
-> >>
-> >> The current tps65090 infrastructure makes the above difficult, and=
- it
-> >> was a bit of a hack to begin with.  Rather than uglify the driver =
-to
-> >> support it, just extend the driver's existing notion of "no irq" t=
-o
-> >> the charger.  This makes the charger code poll every 2 seconds for=
- AC
-> >> detect, which is sufficient.
-> >>
-> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> >> ---
-> >>  drivers/mfd/tps65090.c           | 14 ++++++--
-> >>  drivers/power/tps65090-charger.c | 76 +++++++++++++++++++++++++++=
-++++---------
-> >>  2 files changed, 70 insertions(+), 20 deletions(-)
-> >
-> > For the MFD part:
-> >   Acked-by: Lee Jones <lee.jones@linaro.org>
-> >
-> > Anton,
-> >   If you are okay with this patch I'd be happy to create an immutab=
-le
-> > branch for you to pull from?
-> >
-> > Doug,
-> >   What is the relationship (dependencies) between this and the othe=
-r
-> > patches in the set?
->=20
-> This patch can be applied irrespective of other others in the series.
+On Wed, Apr 16, 2014 at 10:20:45AM +0200, Lucas Stach wrote:
+> Am Dienstag, den 15.04.2014, 12:30 -0600 schrieb Bjorn Helgaas:
+> > On Tue, Apr 15, 2014 at 12:07:34PM +0200, Lucas Stach wrote:
+> > > Hi Bjorn,
+> > > 
+> > > Am Freitag, den 04.04.2014, 10:55 -0600 schrieb Bjorn Helgaas:
+> > > > On Wed, Mar 05, 2014 at 02:25:47PM +0100, Lucas Stach wrote:
+> > > > > This is the recommended method of doing the IRQ
+> > > > > mapping. For old devicetrees we fall back to the
+> > > > > previous practice.
+> > > > > 
+> > > > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > > 
+> > > > Applied with Stephen's Tested-by to my pending/host-tegra branch.  I'll
+> > > > rebase and rename it after v3.15-rc1, and I think we can squeeze it into
+> > > > v3.15 shortly after that.  Thanks.
+> > > > 
+> > > 
+> > > Are you still planning to push this into 3.15, or has this slipped to
+> > > 3.16?
+> > 
+> > Yes, I'm hoping to put them in v3.15.  I assume these actually
+> > fix something, e.g., we need these changes to boot with new devicetrees, or
+> > something?
+> > 
+> > The changelogs don't make it clear that these are fixes, and I want to heed
+> > Linus' guidance: "Anyway, because -rc1 is already pretty darn big, I do
+> > *not* want to hear about 'sorry this missed the window, can I still sneak
+> > in'.  Fixes only."
+> > 
+> > I should have applied these sooner to make the merge window; I apologize
+> > for that.  Anyway, if you outline what these fix, I'll update the
+> > changelogs in my tree.
+> > 
+> Actually they are a bit on the fence.
+> 
+> The i.MX and thus the designware patch actually fixes wrong behavior,
+> where all PCI legacy interrupts would be mapped to a single GIC
+> interrupt, which would leave INT B,C,D nonfunctional on i.MX.
+> 
+> The others only make DT interrupt mapping functional for all drivers, so
+> they would be useful if you need to remap interrupts across bridges or
+> something. But apparently nobody had the need to to this on platforms
+> other than i.MX until now, so those patches only fix a theoretical
+> issue.
 
-What about the files in the patch? Could you make two separate patches
-from this one patch and it would still compile okay? I'm _guessing_
-the answer is yes?
+It sounds like the others should fix real problems; it's just that nobody
+has actually tested relevant configurations yet.  I think that's fair game,
+so I updated the changelogs and put them in my for-linus branch for v3.15.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+This includes the designware, rcar, and tegra patches.
+
+Bjorn
