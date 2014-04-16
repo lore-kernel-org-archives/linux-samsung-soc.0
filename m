@@ -1,8 +1,8 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCHv3 4/5] drm: exynos: add compatibles for HDMI and Mixer chips
- and exynos4210 SoC
-Date: Wed, 16 Apr 2014 17:12:57 +0200
-Message-ID: <1397661178-6016-5-git-send-email-t.stanislaws@samsung.com>
+Subject: [PATCHv3 5/5] drm: exynos: hdmi: add support for pixel clock
+ limitation
+Date: Wed, 16 Apr 2014 17:12:58 +0200
+Message-ID: <1397661178-6016-6-git-send-email-t.stanislaws@samsung.com>
 References: <1397661178-6016-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,53 +22,66 @@ To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, pawel.moll@arm.com, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, rahul.sharma@samsung.com, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add proper compatibles for Mixer and HDMI chip
-available on exynos4210 SoCs.
+Adds support for limitation of maximal pixel clock of HDMI
+signal. This feature is needed on boards that contains
+lines or bridges with frequency limitations.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c  |    7 +++++++
- drivers/gpu/drm/exynos/exynos_mixer.c |    3 +++
- 2 files changed, 10 insertions(+)
+ .../devicetree/bindings/video/exynos_hdmi.txt      |    4 ++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   11 +++++++++++
+ 2 files changed, 15 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+index f9187a2..8718f8d 100644
+--- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
++++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+@@ -28,6 +28,10 @@ Required properties:
+ - ddc: phandle to the hdmi ddc node
+ - phy: phandle to the hdmi phy node
+ 
++Optional properties:
++- max-pixel-clock: used to limit the maximal pixel clock if a board has lines,
++	connectors or bridges not capable of carring higher frequencies
++
+ Example:
+ 
+ 	hdmi {
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 176e764..9adbd34 100644
+index 9adbd34..e012ba9 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -203,6 +203,10 @@ struct hdmiphy_config {
- 	u8 conf[32];
- };
+@@ -194,6 +194,7 @@ struct hdmi_context {
+ 	struct hdmi_resources		res;
  
-+struct hdmi_driver_data exynos4210_hdmi_driver_data = {
-+	.type	= HDMI_TYPE13,
-+};
+ 	int				hpd_gpio;
++	u32				max_pixel_clock;
+ 
+ 	enum hdmi_type			type;
+ };
+@@ -886,6 +887,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
+ 	if (ret)
+ 		return MODE_BAD;
+ 
++	if (mode->clock * 1000 > hdata->max_pixel_clock)
++		return MODE_CLOCK_HIGH;
 +
- struct hdmi_driver_data exynos4212_hdmi_driver_data = {
- 	.type	= HDMI_TYPE14,
- };
-@@ -2023,6 +2027,9 @@ static int drm_hdmi_dt_parse(struct hdmi_context *hdata, struct device_node *np)
+ 	ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
+ 	if (ret < 0)
+ 		return MODE_BAD;
+@@ -2022,6 +2026,13 @@ static int drm_hdmi_dt_parse(struct hdmi_context *hdata, struct device_node *np)
+ 		return -ENOENT;
+ 	}
  
- static struct of_device_id hdmi_match_types[] = {
- 	{
-+		.compatible = "samsung,exynos4210-hdmi",
-+		.data = &exynos4210_hdmi_driver_data,
-+	}, {
- 		.compatible = "samsung,exynos5-hdmi",
- 		.data = &exynos5_hdmi_driver_data,
- 	}, {
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index e3306c8..fd8a9a0 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1187,6 +1187,9 @@ static struct platform_device_id mixer_driver_types[] = {
++	of_property_read_u32(np, "max-pixel-clock", &hdata->max_pixel_clock);
++	if (!hdata->max_pixel_clock) {
++		DRM_INFO("max-pixel-clock is zero, using INF\n");
++		hdata->max_pixel_clock = U32_MAX;
++	}
++
++
+ 	return 0;
+ }
  
- static struct of_device_id mixer_match_types[] = {
- 	{
-+		.compatible = "samsung,exynos4210-mixer",
-+		.data	= &exynos4210_mxr_drv_data,
-+	}, {
- 		.compatible = "samsung,exynos5-mixer",
- 		.data	= &exynos5250_mxr_drv_data,
- 	}, {
 -- 
 1.7.9.5
