@@ -1,74 +1,60 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC PATCH 05/14] ARM: dts: samsung-fimd: add I80 specific
- properties
-Date: Wed, 16 Apr 2014 23:26:45 +0200
-Message-ID: <1673300.nbbjNiKf1K@avalon>
-References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
- <1397540862-21359-6-git-send-email-yj44.cho@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
+ adding retries
+Date: Wed, 16 Apr 2014 14:34:47 -0700
+Message-ID: <CAD=FV=Wf=hdggX-Z1gtiVJdwr7jwjY1owCVZDq_BrWOyj-3m3A@mail.gmail.com>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+	<1397672724-9063-1-git-send-email-dianders@chromium.org>
+	<1397672724-9063-6-git-send-email-dianders@chromium.org>
+	<20140416205136.GZ12304@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1397540862-21359-6-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:40144 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756643AbaDPVes (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 17:34:48 -0400
+Received: by mail-vc0-f169.google.com with SMTP id ik5so11496635vcb.14
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 14:34:47 -0700 (PDT)
+In-Reply-To: <20140416205136.GZ12304@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi YoungJun,
+Mark,
 
-Thank you for the patch.
+On Wed, Apr 16, 2014 at 1:51 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Apr 16, 2014 at 11:25:24AM -0700, Doug Anderson wrote:
+>> An issue was discovered with tps65090 where sometimes the FETs
+>> wouldn't actually turn on when requested (they would report
+>> overcurrent).  The most problematic FET was the one used for the LCD
+>
+> Please don't send new patches as replies in the middle of threads, it
+> makes it confusing trying to work out which versions of things should be
+> applied.
 
-On Tuesday 15 April 2014 14:47:33 YoungJun Cho wrote:
-> In case of using CPU interface panel, the relevant registers should be set.
-> So this patch adds relevant dt bindings.
-> 
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> b/Documentation/devicetree/bindings/video/samsung-fimd.txt index
-> 2dad41b..924c2e1 100644
-> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> @@ -44,6 +44,15 @@ Optional Properties:
->  - display-timings: timing settings for FIMD, as described in document [1].
->  		Can be used in case timings cannot be provided otherwise
->  		or to override timings provided by the panel.
-> +- samsung,sysreg-phandle: handle to syscon used to control the system
-> registers +- vidout-i80-ldi: boolean to support i80 interface instead of
-> rgb one +- cs-setup: clock cycles for the active period of address signal
-> enable until +	chip select is enable in i80 interface
-> +- wr-setup: clock cycles for the active period of CS signal enable until
-> +	write signal is enable in i80 interface
-> +- wr-act: clock cycles for the active period of CS enable in i80 interface
-> +- wr-hold: clock cycles for the active period of CS disable until write
-> signal +	is disable in i80 interface
+I'm a little confused about what I did wrong.  Can you give more details?
 
-Shouldn't the interface parameters be considered as a property of the slave 
-device instead ? The bus master side is programmable, and different slaves 
-would have different timing requirements. I think it would make more sense to 
-specify the timings on the slave (panel) side and query them dynamically at 
-runtime. Depending on the slave the timings could be hardcoded in the driver 
-(as they're usually an intrinsic property of the slave) or partially or fully 
-specified in the slave DT node.
+* V1 had 3 patches plus a cover letter.
 
->  The device node can contain 'port' child nodes according to the bindings
-> defined in [2]. The following are properties specific to those nodes:
+* I was asked to split two patches, so V2 has 5 patches plus a cover letter.
 
--- 
-Regards,
+* My v2 series was all "in reply to" the v1 cover letter, which I
+thought was best practice.
 
-Laurent Pinchart
+* All of my v2 patches were marked with v2 and included changes
+between v1 and v2.
+
+* Everyone was CCed on the cover letter.  Only appropriate people were
+CCed on the individual patches (as per get_maintainer, automated by
+patman).
+
+* All patches were resent at v2.
+
+
+If I had to answer your question, I'd say that you should now
+completely ignore v1 and look at v2.
+
+-Doug
