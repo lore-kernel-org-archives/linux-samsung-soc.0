@@ -1,77 +1,61 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH] arm: dts: exynos4: add missing pinctrls for I2C controllers
-Date: Wed, 16 Apr 2014 14:40:31 +0200
-Message-ID: <534E7A3F.7050406@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?B?J+uwleqyveuvvCc=?= <kyungmin.park@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH 1/2] v4l: Add resolution change event.
+Date: Wed, 16 Apr 2014 18:29:21 +0530
+Message-ID: <1397653162-10179-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:47818 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753240AbaDPM72 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 08:59:28 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, hverkuil@xs4all.nl, posciak@chromium.org, arunkk.samsung@gmail.com
 
-This patch adds missing pinctrls for I2C controllers 2-7.
+From: Pawel Osciak <posciak@chromium.org>
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+This event indicates that the decoder has reached a point in the stream,
+at which the resolution changes. The userspace is expected to provide a new
+set of CAPTURE buffers for the new format before decoding can continue.
+
+Signed-off-by: Pawel Osciak <posciak@chromium.org>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../DocBook/media/v4l/vidioc-subscribe-event.xml   |    8 ++++++++
+ include/uapi/linux/videodev2.h                     |    1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 0401f4d..288aa81 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -357,6 +357,8 @@
- 		interrupts = <0 60 0>;
- 		clocks = <&clock CLK_I2C2>;
- 		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
- 		status = "disabled";
- 	};
-
-@@ -368,6 +370,8 @@
- 		interrupts = <0 61 0>;
- 		clocks = <&clock CLK_I2C3>;
- 		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c3_bus>;
- 		status = "disabled";
- 	};
-
-@@ -379,6 +383,8 @@
- 		interrupts = <0 62 0>;
- 		clocks = <&clock CLK_I2C4>;
- 		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c4_bus>;
- 		status = "disabled";
- 	};
-
-@@ -390,6 +396,8 @@
- 		interrupts = <0 63 0>;
- 		clocks = <&clock CLK_I2C5>;
- 		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c5_bus>;
- 		status = "disabled";
- 	};
-
-@@ -401,6 +409,8 @@
- 		interrupts = <0 64 0>;
- 		clocks = <&clock CLK_I2C6>;
- 		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c6_bus>;
- 		status = "disabled";
- 	};
-
-@@ -412,6 +422,8 @@
- 		interrupts = <0 65 0>;
- 		clocks = <&clock CLK_I2C7>;
- 		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c7_bus>;
- 		status = "disabled";
- 	};
+diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+index 5c70b61..d848628 100644
+--- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
++++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+@@ -155,6 +155,14 @@
+ 	    </entry>
+ 	  </row>
+ 	  <row>
++	    <entry><constant>V4L2_EVENT_RESOLUTION_CHANGE</constant></entry>
++	    <entry>5</entry>
++	    <entry>This event is triggered when a resolution change is detected
++	    during runtime by the video decoder. Application may need to
++	    reinitialize buffers before proceeding further.
++	    </entry>
++	  </row>
++	  <row>
+ 	    <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
+ 	    <entry>0x08000000</entry>
+ 	    <entry>Base event number for driver-private events.</entry>
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 6ae7bbe..58488b7 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -1733,6 +1733,7 @@ struct v4l2_streamparm {
+ #define V4L2_EVENT_EOS				2
+ #define V4L2_EVENT_CTRL				3
+ #define V4L2_EVENT_FRAME_SYNC			4
++#define V4L2_EVENT_RESOLUTION_CHANGE		5
+ #define V4L2_EVENT_PRIVATE_START		0x08000000
+ 
+ /* Payload for V4L2_EVENT_VSYNC */
+-- 
+1.7.9.5
