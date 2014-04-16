@@ -1,86 +1,117 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] mfd: tps65090: Allow charger module to be used when
- no irq
-Date: Wed, 16 Apr 2014 10:45:15 -0700
-Message-ID: <CAD=FV=Vh=Ej3znMmQDfWyLbhhzZh424Kx8BA=86qcwp+AmMqBw@mail.gmail.com>
-References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
-	<1397592876-5741-2-git-send-email-dianders@chromium.org>
-	<20140416095229.GF4754@lee--X1>
-	<CAD=FV=VjmXGjDHTcm=E2eEPtkOa5DxKG70jXj22RbbN1VfeGjw@mail.gmail.com>
-	<20140416162621.GA28725@lee--X1>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
+Date: Wed, 16 Apr 2014 20:14:27 +0200
+Message-ID: <5094962.iM2Kd6gfjd@wuerfel>
+References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org> <CAJuA9ajXa+mejdUvWATHjmmin8hoRhX0wueg5g8rDbJR4AWZ7A@mail.gmail.com> <534E9AA3.10409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f181.google.com ([209.85.128.181]:45013 "EHLO
-	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753868AbaDPRpQ (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.130]:55781 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754083AbaDPSPJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 13:45:16 -0400
-Received: by mail-ve0-f181.google.com with SMTP id oy12so11369921veb.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 10:45:15 -0700 (PDT)
-In-Reply-To: <20140416162621.GA28725@lee--X1>
+	Wed, 16 Apr 2014 14:15:09 -0400
+In-Reply-To: <534E9AA3.10409@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Tomasz Figa <t.figa@samsung.com>, Mark Brown <broonie@kernel.org>
+Cc: Thomas Abraham <ta.omasab@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangsu Park <sangsu4u.park@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
 
-Lee,
+On Wednesday 16 April 2014 16:58:43 Tomasz Figa wrote:
 
-On Wed, Apr 16, 2014 at 9:26 AM, Lee Jones <lee.jones@linaro.org> wrote:
->> >> On the ARM Chromebook tps65090 has two masters: the AP (the main
->> >> processor running linux) and the EC (the embedded controller).  The AP
->> >> is allowed to mess with FETs but the EC is in charge of charge control.
->> >>
->> >> The tps65090 interupt line is routed to both the AP and the EC, which
->> >> can cause quite a headache.  Having two people adjusting masks and
->> >> acking interrupts is a recipe for disaster.
->> >>
->> >> In the shipping kernel we had a hack to have the AP pay attention to
->> >> the IRQ but not to ack it.  It also wasn't supposed to configure the
->> >> IRQ in any way.  That hack allowed us to detect when the device was
->> >> charging without messing with the EC's state.
->> >>
->> >> The current tps65090 infrastructure makes the above difficult, and it
->> >> was a bit of a hack to begin with.  Rather than uglify the driver to
->> >> support it, just extend the driver's existing notion of "no irq" to
->> >> the charger.  This makes the charger code poll every 2 seconds for AC
->> >> detect, which is sufficient.
->> >>
->> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> >> ---
->> >>  drivers/mfd/tps65090.c           | 14 ++++++--
->> >>  drivers/power/tps65090-charger.c | 76 +++++++++++++++++++++++++++++++---------
->> >>  2 files changed, 70 insertions(+), 20 deletions(-)
->> >
->> > For the MFD part:
->> >   Acked-by: Lee Jones <lee.jones@linaro.org>
->> >
->> > Anton,
->> >   If you are okay with this patch I'd be happy to create an immutable
->> > branch for you to pull from?
->> >
->> > Doug,
->> >   What is the relationship (dependencies) between this and the other
->> > patches in the set?
->>
->> This patch can be applied irrespective of other others in the series.
->
-> What about the files in the patch? Could you make two separate patches
-> from this one patch and it would still compile okay? I'm _guessing_
-> the answer is yes?
+> On 16.04.2014 16:55, Thomas Abraham wrote:
+> > On Wed, Apr 16, 2014 at 8:18 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> >> On 16.04.2014 16:31, Arnd Bergmann wrote:
+> >>> sparsemem is still not supported in multiplatform, but after I looked
+> >>> at it in more detail, I came to the conclusion that there is no
+> >>> reason why it couldn't be. It just needs testing so we are confident
+> >>> that it doesn't break other platforms, and we need to find good
+> >>> platform-independent values for MAX_PHYSMEM_BITS and SECTION_SIZE_BITS
+> >>> to put into asm/memory.h, since we can't have them set in mach/memory.h
+> >>> for multiplatform.
+> >>>
+> >>> Looking at my patch again now, I would actually prefer to kill off
+> >>> the single-platform support for exynos right away. I don't see
+> >>> any reason to keep it now, and it complicates the test matrix.
+> >>
+> >>
+> >> That would be the best option, assuming that it wouldn't introduce feature
+> >> regressions. Unfortunately there is still ongoing work on cpufreq driver to
+> >> make it multiplatform-aware, so dropping single platform support right now
+> >> would introduce at least this one regression.
+> >>
+> >> Thomas, is there any progress on new version of Exynos cpufreq rework
+> >> series?
+> >
+> > Hi Tomasz,
+> >
+> > Yes, I am preparing the fourth version of the cpufreq patches and will
+> > post it next week. Mostly, the changes will be addressing your review
+> > comments.
+> 
+> OK. Looking forward to it. Thanks for an update on this.
+> 
 
-Yes, they'll compile and even boot on their own.  I just tested it.
+Cool! This is the only major issue I'm aware of, so I think we're good.
 
-If I put only the MFD part in, then at boot I see:
-  tps65090-charger tps65090-charger: Unable to get charger irq = -6
-...but otherwise the system functions.
+If SPARSEMEM support is still relevant to anybody, I'm sure we can
+get that to work as well.
 
-If I put only the charger part in, then at boot:
-  tps65090-charger tps65090-charger: Unable to register irq 1 err -22
-  tps65090-charger: probe of tps65090-charger failed with error -22
+There is one small issue with the sound drivers that came up, and I
+assume it was just a mistake. If not, some more work on that might
+be needed. See patch below.
 
-...so you need both patches in order to make things function, but they
-can be applied separately.  I'll assume it will make your life easier
-if I split this into two patches so I'll do that.
+	Arnd
 
--Doug
+8<-------
+>From 6f3921c3218509114e855a8ea5932aeea5d3ddfd Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 18 Mar 2014 17:04:59 +0100
+Subject: [PATCH] ASoC: samsung: don't build pcm and spdif on exynos
+
+In commit d37bdf736d9b "ASoC: samsung: Use ASoC dmaengine code where
+possible", Mark Brown changed the EXYNOS ASoC code to no longer
+use the private dma interfaces that are standing in the way of
+multiplatform enablement.
+
+However, in 313367e7bfa "ASoC: Samsung: Update Kconfig for I2S,SPDIF
+and PCM audio", two new users of that interface appeared, since it
+is now possible to enable SND_SOC_SAMSUNG_SMDK_SPDIF and
+SND_SOC_SMDK_WM8994_PCM on all Samsung SoCs including EXYNOS.
+
+This patch does a partial revert of 313367e7bfa by allowing these
+drivers on all samsung platforms except EXYNOS, so we can proceed
+with the multiplatform patches.
+
+If support for these drivers is actually needed on EXYNOS machines,
+the drivers should first be moved over to use the dmaengine code.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Sangsu Park <sangsu4u.park@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>
+
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 7b610a8..efc01e0 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -167,7 +167,7 @@ config SND_SOC_GONI_AQUILA_WM8994
+ 
+ config SND_SOC_SAMSUNG_SMDK_SPDIF
+ 	tristate "SoC S/PDIF Audio support for SMDK"
+-	depends on SND_SOC_SAMSUNG
++	depends on SND_SOC_SAMSUNG && !ARCH_EXYNOS
+ 	select SND_SAMSUNG_SPDIF
+ 	help
+ 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
+@@ -183,7 +183,7 @@ config SND_SOC_SMDK_WM8580_PCM
+ 
+ config SND_SOC_SMDK_WM8994_PCM
+ 	tristate "SoC PCM Audio support for WM8994 on SMDK"
+-	depends on SND_SOC_SAMSUNG
++	depends on SND_SOC_SAMSUNG && !ARCH_EXYNOS
+ 	depends on I2C=y
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
