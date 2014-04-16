@@ -1,74 +1,83 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 0/6] Further cleanup and enable multiplat build
-Date: Wed, 16 Apr 2014 15:51:53 +0200
-Message-ID: <534E8AF9.4050206@samsung.com>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/2] v4l: Add resolution change event.
+Date: Wed, 16 Apr 2014 16:09:37 +0200
+Message-ID: <4943000.PTOl0cPirQ@avalon>
+References: <1397653162-10179-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49684 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161259AbaDPNv5 (ORCPT
+Received: from perceval.ideasonboard.com ([95.142.166.194]:59574 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932080AbaDPOJf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 09:51:57 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N44007GUMIAAH10@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Apr 2014 14:51:46 +0100 (BST)
-In-reply-to: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 16 Apr 2014 10:09:35 -0400
+In-Reply-To: <1397653162-10179-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, s.nawrocki@samsung.com, hverkuil@xs4all.nl, posciak@chromium.org, arunkk.samsung@gmail.com
 
-Hi Sachin,
+Hi Arun,
 
-On 15.04.2014 11:28, Sachin Kamat wrote:
-> This series is based on latest linux-next and depends on the
-> following patch:
-> ARM: EXYNOS: Consolidate Kconfig entries
-> http://article.gmane.org/gmane.linux.kernel.samsung-soc/28642
->
-> Changes since v2:
-> Replaced patch 2, "ARM: EXYNOS: Staticize exynos_subsys"
-> with "ARM: EXYNOS: Remove exynos_subsys registration" as that
-> code is no more used.
->
-> Tested on Exynos4210, 4412, 5250 and 5420 based boards.
->
-> Arnd Bergmann (1):
->    ARM: EXYNOS: Enable multi-platform build support
->
-> Sachin Kamat (5):
->    ARM: EXYNOS: Remove duplicate lines in Makefile
->    ARM: EXYNOS: Remove exynos_subsys registration
->    ARM: EXYNOS: Migrate Exynos specific macros from plat to mach
->    ARM: EXYNOS: Remove unnecessary inclusion of cpu.h
->    ARM: multi_v7_defconfig: Enable Exynos platform
->
->   arch/arm/Kconfig                         |   27 ++---------
->   arch/arm/configs/exynos_defconfig        |    2 +-
->   arch/arm/configs/multi_v7_defconfig      |   10 +++++
->   arch/arm/mach-exynos/Kconfig             |   27 +++++++++++
->   arch/arm/mach-exynos/Makefile            |    9 ++--
->   arch/arm/mach-exynos/common.h            |   72 ++++++++++++++++++++++++++++++
->   arch/arm/mach-exynos/cpuidle.c           |    1 -
->   arch/arm/mach-exynos/exynos.c            |   13 ------
->   arch/arm/mach-exynos/hotplug.c           |    2 -
->   arch/arm/mach-exynos/platsmp.c           |    2 -
->   arch/arm/mach-exynos/pm.c                |    1 -
->   arch/arm/mach-exynos/pmu.c               |    2 -
->   arch/arm/plat-samsung/Makefile           |    3 ++
->   arch/arm/plat-samsung/include/plat/cpu.h |   61 -------------------------
->   14 files changed, 119 insertions(+), 113 deletions(-)
->
+Thank you for the patch.
+On Wednesday 16 April 2014 18:29:21 Arun Kumar K wrote:
+> From: Pawel Osciak <posciak@chromium.org>
+> 
+> This event indicates that the decoder has reached a point in the stream,
+> at which the resolution changes. The userspace is expected to provide a new
+> set of CAPTURE buffers for the new format before decoding can continue.
+> 
+> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |    8 ++++++++
+>  include/uapi/linux/videodev2.h                     |    1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml index
+> 5c70b61..d848628 100644
+> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> @@ -155,6 +155,14 @@
+>  	    </entry>
+>  	  </row>
+>  	  <row>
+> +	    <entry><constant>V4L2_EVENT_RESOLUTION_CHANGE</constant></entry>
+> +	    <entry>5</entry>
+> +	    <entry>This event is triggered when a resolution change is detected
+> +	    during runtime by the video decoder. Application may need to
+> +	    reinitialize buffers before proceeding further.
+> +	    </entry>
+> +	  </row>
 
-For the whole series:
+Would it make sense to report the new resolution in the event data ? I suppose 
+it might not be available in all cases though. If we can't report it, would it 
+make sense to document how applications should proceed to retrieve it ?
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+A similar resolution change event might be useful on subdevs, in which case we 
+would need to add a pad number to the event data. We could possibly leave that 
+for later, but it would be worth considering the problem already.
 
---
-Best regards,
-Tomasz
+> +	  <row>
+>  	    <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
+>  	    <entry>0x08000000</entry>
+>  	    <entry>Base event number for driver-private events.</entry>
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 6ae7bbe..58488b7 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -1733,6 +1733,7 @@ struct v4l2_streamparm {
+>  #define V4L2_EVENT_EOS				2
+>  #define V4L2_EVENT_CTRL				3
+>  #define V4L2_EVENT_FRAME_SYNC			4
+> +#define V4L2_EVENT_RESOLUTION_CHANGE		5
+>  #define V4L2_EVENT_PRIVATE_START		0x08000000
+> 
+>  /* Payload for V4L2_EVENT_VSYNC */
+
+-- 
+Regards,
+
+Laurent Pinchart
