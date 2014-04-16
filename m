@@ -1,60 +1,120 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
- adding retries
-Date: Wed, 16 Apr 2014 14:34:47 -0700
-Message-ID: <CAD=FV=Wf=hdggX-Z1gtiVJdwr7jwjY1owCVZDq_BrWOyj-3m3A@mail.gmail.com>
-References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
-	<1397672724-9063-1-git-send-email-dianders@chromium.org>
-	<1397672724-9063-6-git-send-email-dianders@chromium.org>
-	<20140416205136.GZ12304@sirena.org.uk>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [RFC PATCH v2 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Wed, 16 Apr 2014 23:45:01 +0200
+Message-ID: <2105764.669WcFsSVk@avalon>
+References: <CAK9yfHyJTpYNCwjCSAmFR-sHRMu5Z94k5eT78WmD-cwmYOEQyw@mail.gmail.com>
+ <1397623138-11526-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:40144 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756643AbaDPVes (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 17:34:48 -0400
-Received: by mail-vc0-f169.google.com with SMTP id ik5so11496635vcb.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 14:34:47 -0700 (PDT)
-In-Reply-To: <20140416205136.GZ12304@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1397623138-11526-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Mark,
+Hi YoungJun,
 
-On Wed, Apr 16, 2014 at 1:51 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Apr 16, 2014 at 11:25:24AM -0700, Doug Anderson wrote:
->> An issue was discovered with tps65090 where sometimes the FETs
->> wouldn't actually turn on when requested (they would report
->> overcurrent).  The most problematic FET was the one used for the LCD
->
-> Please don't send new patches as replies in the middle of threads, it
-> makes it confusing trying to work out which versions of things should be
-> applied.
+Thank you for the patch.
 
-I'm a little confused about what I did wrong.  Can you give more details?
+On Wednesday 16 April 2014 13:38:57 YoungJun Cho wrote:
+> This patch adds DT bindings for s6e3fa0 panel.
+> The bindings describes panel resources, display timings, delays
+> and physical size.
+> 
+> Changelog v2:
+> - Adds unit address (commented by Sachin Kamat)
+> 
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   52 +++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt new file mode
+> 100644
+> index 0000000..889a74d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> @@ -0,0 +1,52 @@
+> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+> +
+> +Required properties:
+> +  - compatible: "samsung,s6e3fa0"
+> +  - reg: the virtual channel number of a DSI peripheral
+> +  - vdd3-supply: core voltage supply
+> +  - vci-supply: voltage supply for analog circuits
+> +  - reset-gpio: a GPIO spec for the reset pin
+> +  - display-timings: timings for the connected panel as described by [1]
+> +
+> +Optional properties:
+> +  - power-on-delay: delay after turning regulators on [ms]
+> +  - reset-delay: delay after reset sequence [ms]
+> +  - init-delay: delay after initialization sequence [ms]
+> +  - panel-width-mm: physical panel width [mm]
+> +  - panel-height-mm: physical panel height [mm]
 
-* V1 had 3 patches plus a cover letter.
+Based on the next patch the panel seems to require quite a lot of device-
+specific handling, although I might be mistaken as I'm not too familiar with 
+DSI. If my understanding is correct, do we really need to specify all those 
+properties in DT, or could they be hardcoded in the driver ? I would usually 
+push for generic drivers that read device information from DT, but I'm 
+wondering whether that is the right choice here.
 
-* I was asked to split two patches, so V2 has 5 patches plus a cover letter.
+If you decide to keep the information in DT I think you should document what 
+happens when optional properties are not specified. I suppose the driver uses 
+a default value, I would document it in the DT bindings.
 
-* My v2 series was all "in reply to" the v1 cover letter, which I
-thought was best practice.
+> +The device node can contain one 'port' child node with one child
+> +'endpoint' node, according to the bindings defined in [2]. This
+> +node should describe panel's video bus.
+> +
+> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +Example:
+> +
+> +	panel@0 {
+> +		compatible = "samsung,s6e3fa0";
+> +		reg = <0>;
+> +		vdd3-supply = <&vcclcd_reg>;
+> +		vci-supply = <&vlcd_reg>;
+> +		reset-gpio = <&gpy7 4 0>;
+> +		power-on-delay= <10>;
+> +		reset-delay = <5>;
+> +		init-delay = <120>;
+> +		panel-width-mm = <71>;
+> +		panel-height-mm = <126>;
+> +
+> +		display-timings {
+> +			timing0: timing-0 {
+> +				clock-frequency = <57153600>;
+> +				hactive = <1080>;
+> +				vactive = <1920>;
+> +				hfront-porch = <2>;
+> +				hback-porch = <2>;
+> +				hsync-len = <1>;
+> +				vfront-porch = <1>;
+> +				vback-porch = <4>;
+> +				vsync-len = <1>;
+> +			};
+> +		};
+> +	};
 
-* All of my v2 patches were marked with v2 and included changes
-between v1 and v2.
+-- 
+Regards,
 
-* Everyone was CCed on the cover letter.  Only appropriate people were
-CCed on the individual patches (as per get_maintainer, automated by
-patman).
-
-* All patches were resent at v2.
-
-
-If I had to answer your question, I'd say that you should now
-completely ignore v1 and look at v2.
-
--Doug
+Laurent Pinchart
