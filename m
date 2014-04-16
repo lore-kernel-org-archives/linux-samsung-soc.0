@@ -1,170 +1,44 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: [PATCH v2 5/7] arm64: Add 4 levels of page tables definition with 4KB
- pages
-Date: Wed, 16 Apr 2014 13:33:25 +0900
-Message-ID: <004501cf592d$01b05f10$05111d30$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
-Cc: kgene.kim@samsung.com, steve.capper@linaro.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [RFC PATCH v2 04/14] ARM: dts: sysreg: add exynos5 compatible to DT
+ bindings
+Date: Wed, 16 Apr 2014 13:38:07 +0900
+Message-ID: <1397623087-11421-1-git-send-email-yj44.cho@samsung.com>
+References: <CAK9yfHw9-8eHuB-w5Yk-332_EUObYcYVOjpc09Ob6oZv7uJZ_w@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:39053 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751845AbaDPEiM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 00:38:12 -0400
+In-reply-to: <CAK9yfHw9-8eHuB-w5Yk-332_EUObYcYVOjpc09Ob6oZv7uJZ_w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, sachin.kamat@linaro.org
 
-This patch adds hardware definition and types for 4 levels of
-translation tables with 4KB pages.
+This patch adds relevant to exynos5 compatible for exynos5 SoCs.
 
-Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+Changelog v2:
+- Changes title and description (commented by Sachin Kamat)
+
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm64/include/asm/pgtable-4level-hwdef.h |   50 +++++++++++++++++
- arch/arm64/include/asm/pgtable-4level-types.h |   71 +++++++++++++++++++++++++
- 2 files changed, 121 insertions(+)
- create mode 100644 arch/arm64/include/asm/pgtable-4level-hwdef.h
- create mode 100644 arch/arm64/include/asm/pgtable-4level-types.h
+ .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/include/asm/pgtable-4level-hwdef.h b/arch/arm64/include/asm/pgtable-4level-hwdef.h
-new file mode 100644
-index 0000000..0ec84e2
---- /dev/null
-+++ b/arch/arm64/include/asm/pgtable-4level-hwdef.h
-@@ -0,0 +1,50 @@
-+/*
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#ifndef __ASM_PGTABLE_4LEVEL_HWDEF_H
-+#define __ASM_PGTABLE_4LEVEL_HWDEF_H
-+
-+#define PTRS_PER_PTE		512
-+#define PTRS_PER_PMD		512
-+#define PTRS_PER_PUD		512
-+#define PTRS_PER_PGD		512
-+
-+/*
-+ * PGDIR_SHIFT determines the size a top-level page table entry can map.
-+ */
-+#define PGDIR_SHIFT		39
-+#define PGDIR_SIZE		(_AC(1, UL) << PGDIR_SHIFT)
-+#define PGDIR_MASK		(~(PGDIR_SIZE-1))
-+
-+/*
-+ * PUD_SHIFT determines the size the second level page table entry can map.
-+ */
-+#define PUD_SHIFT		30
-+#define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
-+#define PUD_MASK		(~(PUD_SIZE-1))
-+
-+/*
-+ * PMD_SHIFT determines the size the third level page table entry can map.
-+ */
-+#define PMD_SHIFT		21
-+#define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
-+#define PMD_MASK		(~(PMD_SIZE-1))
-+
-+/*
-+ * section address mask and size definitions.
-+ */
-+#define SECTION_SHIFT		21
-+#define SECTION_SIZE		(_AC(1, UL) << SECTION_SHIFT)
-+#define SECTION_MASK		(~(SECTION_SIZE-1))
-+
-+#endif
-diff --git a/arch/arm64/include/asm/pgtable-4level-types.h b/arch/arm64/include/asm/pgtable-4level-types.h
-new file mode 100644
-index 0000000..7ad8dd2
---- /dev/null
-+++ b/arch/arm64/include/asm/pgtable-4level-types.h
-@@ -0,0 +1,71 @@
-+/*
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#ifndef __ASM_PGTABLE_4LEVEL_TYPES_H
-+#define __ASM_PGTABLE_4LEVEL_TYPES_H
-+
-+#include <asm/types.h>
-+
-+typedef u64 pteval_t;
-+typedef u64 pmdval_t;
-+typedef u64 pudval_t;
-+typedef u64 pgdval_t;
-+
-+#undef STRICT_MM_TYPECHECKS
-+
-+#ifdef STRICT_MM_TYPECHECKS
-+
-+/*
-+ * These are used to make use of C type-checking..
-+ */
-+typedef struct { pteval_t pte; } pte_t;
-+typedef struct { pmdval_t pmd; } pmd_t;
-+typedef struct { pudval_t pud; } pud_t;
-+typedef struct { pgdval_t pgd; } pgd_t;
-+typedef struct { pteval_t pgprot; } pgprot_t;
-+
-+#define pte_val(x)	((x).pte)
-+#define pmd_val(x)	((x).pmd)
-+#define pud_val(x)	((x).pud)
-+#define pgd_val(x)	((x).pgd)
-+#define pgprot_val(x)	((x).pgprot)
-+
-+#define __pte(x)	((pte_t) { (x) } )
-+#define __pmd(x)	((pmd_t) { (x) } )
-+#define __pud(x)	((pud_t) { (x) } )
-+#define __pgd(x)	((pgd_t) { (x) } )
-+#define __pgprot(x)	((pgprot_t) { (x) } )
-+
-+#else	/* !STRICT_MM_TYPECHECKS */
-+
-+typedef pteval_t pte_t;
-+typedef pmdval_t pmd_t;
-+typedef pudval_t pud_t;
-+typedef pgdval_t pgd_t;
-+typedef pteval_t pgprot_t;
-+
-+#define pte_val(x)	(x)
-+#define pmd_val(x)	(x)
-+#define pud_val(x)	(x)
-+#define pgd_val(x)	(x)
-+#define pgprot_val(x)	(x)
-+
-+#define __pte(x)	(x)
-+#define __pmd(x)	(x)
-+#define __pud(x)	(x)
-+#define __pgd(x)	(x)
-+#define __pgprot(x)	(x)
-+
-+#endif /* STRICT_MM_TYPECHECKS */
-+
-+#endif /* __ASM_PGTABLE_4LEVEL_TYPES_H */
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+index 0ab3251..fd71581 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+@@ -3,6 +3,7 @@ SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
+ Properties:
+  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
+    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
++   For Exynos5 SoC series it should be "samsung,exynos5-sysreg", "syscon";
+  - reg : offset and length of the register set.
+ 
+ Example:
 -- 
-1.7.10.4
+1.7.9.5
