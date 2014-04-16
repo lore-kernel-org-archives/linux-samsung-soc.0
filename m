@@ -1,93 +1,79 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH 1/2] v4l: Add resolution change event.
-Date: Wed, 16 Apr 2014 20:06:42 +0530
-Message-ID: <CALt3h7_=ASEhEtGA1DXbozhbdRrGbBLFxeUdoa=OyvHrezSagA@mail.gmail.com>
-References: <1397653162-10179-1-git-send-email-arun.kk@samsung.com>
-	<4943000.PTOl0cPirQ@avalon>
-	<534E90D5.7030809@xs4all.nl>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCHv2 6/8] ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250
+ based on Cortex-a7
+Date: Wed, 16 Apr 2014 23:39:32 +0900
+Message-ID: <CAGTfZH1Dc0YctmGjhS93GpF3aRmw9t4cOBSakO3C3gEKRE9mSg@mail.gmail.com>
+References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
+	<1397527192-21988-7-git-send-email-cw00.choi@samsung.com>
+	<534E9517.2040409@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:50844 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161487AbaDPOgn (ORCPT
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:33330 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161446AbaDPOjc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 10:36:43 -0400
-In-Reply-To: <534E90D5.7030809@xs4all.nl>
+	Wed, 16 Apr 2014 10:39:32 -0400
+In-Reply-To: <534E9517.2040409@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@chromium.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, thomas.abraham@linaro.org, Kyungmin Park <kyungmin.park@samsung.com>, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, marc.zyngier@arm.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
 
-Hi Laurent and Hans,
+Hi Tomasz,
 
-Thank you for the review.
-
-On Wed, Apr 16, 2014 at 7:46 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 04/16/2014 04:09 PM, Laurent Pinchart wrote:
->> Hi Arun,
+On Wed, Apr 16, 2014 at 11:35 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Chanwoo,
+>
+>
+> On 15.04.2014 03:59, Chanwoo Choi wrote:
 >>
->> Thank you for the patch.
->> On Wednesday 16 April 2014 18:29:21 Arun Kumar K wrote:
->>> From: Pawel Osciak <posciak@chromium.org>
->>>
->>> This event indicates that the decoder has reached a point in the stream,
->>> at which the resolution changes. The userspace is expected to provide a new
->>> set of CAPTURE buffers for the new format before decoding can continue.
->>>
->>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
->>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->>> ---
->>>  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |    8 ++++++++
->>>  include/uapi/linux/videodev2.h                     |    1 +
->>>  2 files changed, 9 insertions(+)
->>>
->>> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
->>> b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml index
->>> 5c70b61..d848628 100644
->>> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
->>> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
->>> @@ -155,6 +155,14 @@
->>>          </entry>
->>>        </row>
->>>        <row>
->>> +        <entry><constant>V4L2_EVENT_RESOLUTION_CHANGE</constant></entry>
->>> +        <entry>5</entry>
->>> +        <entry>This event is triggered when a resolution change is detected
->>> +        during runtime by the video decoder. Application may need to
->>> +        reinitialize buffers before proceeding further.
->>> +        </entry>
->>> +      </row>
+>> This patch decide proper lowpower mode of either a15 or a9 according to
+>> own ID
+>> from Main ID register.
 >>
->> Would it make sense to report the new resolution in the event data ? I suppose
->> it might not be available in all cases though. If we can't report it, would it
->> make sense to document how applications should proceed to retrieve it ?
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>   arch/arm/mach-exynos/hotplug.c | 16 +++++++++++-----
+>>   1 file changed, 11 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>> b/arch/arm/mach-exynos/hotplug.c
+>> index 5eead53..99e54e0 100644
+>> --- a/arch/arm/mach-exynos/hotplug.c
+>> +++ b/arch/arm/mach-exynos/hotplug.c
+>> @@ -135,16 +135,22 @@ void __ref exynos_cpu_die(unsigned int cpu)
+>>         int primary_part = 0;
+>>
+>>         /*
+>> -        * we're ready for shutdown now, so do it.
+>> -        * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
+>> +        * we're ready for shutdown now, so do it. Exynos4 is A9 based
+>> +        * while Exynos5 is A15/Exynos3 is A7; check the CPU part
+>>          * number by reading the Main ID register and then perform the
+>>          * appropriate sequence for entering low power.
 >
-> I wouldn't report that. We played with this in Cisco, and in the end you just
-> want to know something changed and you can take it from there. Besides, what
-> constitutes a 'resolution' change? If my HDMI input switches from 720p60 to
-> 720p30 the resolution stays the same, but I most definitely have to get the new
-> timings.
 >
-> So I would call the event something different: EVENT_SOURCE_CHANGE or something
-> like that.
->
-> Getting the new timings is done through QUERYSTD or QUERY_DV_TIMINGS.
->
+> If changing this comment anyway, I'd suggest removing particular SoC series
+> from it and also correct writing style. My suggestion is:
 
-Ok will use the name V4L2_EVENT_SOURCE_CHANGE and update description
-to reflect the generic usecase (not just for video decoders).
+OK, I'll fix it.
 
->> A similar resolution change event might be useful on subdevs, in which case we
->> would need to add a pad number to the event data. We could possibly leave that
->> for later, but it would be worth considering the problem already.
+Best regards,
+Chanwoo Choi
+
 >
-> Actually, I would add that right away. That's some thing that the adv7604
-> driver can implement right away: it has multiple inputs and it can detect
-> when something is plugged in or unplugged.
+> /*
+>  * Prepare the CPU for shutting down. The required sequence of
+>  * operations depends on core type. CPUID part number can be used to
+>  * determine the right way.
+>  */
 >
-
-Ok will add support for mentioning pad number in event data.
-
-Regards
-Arun
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
