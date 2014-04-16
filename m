@@ -1,120 +1,65 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC PATCH v2 09/14] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 16 Apr 2014 23:45:01 +0200
-Message-ID: <2105764.669WcFsSVk@avalon>
-References: <CAK9yfHyJTpYNCwjCSAmFR-sHRMu5Z94k5eT78WmD-cwmYOEQyw@mail.gmail.com>
- <1397623138-11526-1-git-send-email-yj44.cho@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
+ adding retries
+Date: Wed, 16 Apr 2014 22:54:50 +0100
+Message-ID: <20140416215450.GF12304@sirena.org.uk>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+ <1397672724-9063-1-git-send-email-dianders@chromium.org>
+ <1397672724-9063-6-git-send-email-dianders@chromium.org>
+ <20140416205136.GZ12304@sirena.org.uk>
+ <CAD=FV=Wf=hdggX-Z1gtiVJdwr7jwjY1owCVZDq_BrWOyj-3m3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1397623138-11526-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MAI/ZU7774XuDDY6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Wf=hdggX-Z1gtiVJdwr7jwjY1owCVZDq_BrWOyj-3m3A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi YoungJun,
 
-Thank you for the patch.
+--MAI/ZU7774XuDDY6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wednesday 16 April 2014 13:38:57 YoungJun Cho wrote:
-> This patch adds DT bindings for s6e3fa0 panel.
-> The bindings describes panel resources, display timings, delays
-> and physical size.
-> 
-> Changelog v2:
-> - Adds unit address (commented by Sachin Kamat)
-> 
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   52 +++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt new file mode
-> 100644
-> index 0000000..889a74d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> @@ -0,0 +1,52 @@
-> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-> +
-> +Required properties:
-> +  - compatible: "samsung,s6e3fa0"
-> +  - reg: the virtual channel number of a DSI peripheral
-> +  - vdd3-supply: core voltage supply
-> +  - vci-supply: voltage supply for analog circuits
-> +  - reset-gpio: a GPIO spec for the reset pin
-> +  - display-timings: timings for the connected panel as described by [1]
-> +
-> +Optional properties:
-> +  - power-on-delay: delay after turning regulators on [ms]
-> +  - reset-delay: delay after reset sequence [ms]
-> +  - init-delay: delay after initialization sequence [ms]
-> +  - panel-width-mm: physical panel width [mm]
-> +  - panel-height-mm: physical panel height [mm]
+On Wed, Apr 16, 2014 at 02:34:47PM -0700, Doug Anderson wrote:
+> On Wed, Apr 16, 2014 at 1:51 PM, Mark Brown <broonie@kernel.org> wrote:
 
-Based on the next patch the panel seems to require quite a lot of device-
-specific handling, although I might be mistaken as I'm not too familiar with 
-DSI. If my understanding is correct, do we really need to specify all those 
-properties in DT, or could they be hardcoded in the driver ? I would usually 
-push for generic drivers that read device information from DT, but I'm 
-wondering whether that is the right choice here.
+> > Please don't send new patches as replies in the middle of threads, it
+> > makes it confusing trying to work out which versions of things should be
+> > applied.
 
-If you decide to keep the information in DT I think you should document what 
-happens when optional properties are not specified. I suppose the driver uses 
-a default value, I would document it in the DT bindings.
+> I'm a little confused about what I did wrong.  Can you give more details?
 
-> +The device node can contain one 'port' child node with one child
-> +'endpoint' node, according to the bindings defined in [2]. This
-> +node should describe panel's video bus.
-> +
-> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
-> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> +
-> +Example:
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6e3fa0";
-> +		reg = <0>;
-> +		vdd3-supply = <&vcclcd_reg>;
-> +		vci-supply = <&vlcd_reg>;
-> +		reset-gpio = <&gpy7 4 0>;
-> +		power-on-delay= <10>;
-> +		reset-delay = <5>;
-> +		init-delay = <120>;
-> +		panel-width-mm = <71>;
-> +		panel-height-mm = <126>;
-> +
-> +		display-timings {
-> +			timing0: timing-0 {
-> +				clock-frequency = <57153600>;
-> +				hactive = <1080>;
-> +				vactive = <1920>;
-> +				hfront-porch = <2>;
-> +				hback-porch = <2>;
-> +				hsync-len = <1>;
-> +				vfront-porch = <1>;
-> +				vback-porch = <4>;
-> +				vsync-len = <1>;
-> +			};
-> +		};
-> +	};
+I'm seeing a reply which looks like it was sent as a followup to Randy's
+comment, although now I look at everything together I think that's due
+to you sending your new thread in reply to the old thread (that can also
+be a problem due to threading either burying the new mail or putting
+things in odd places) and my mailer trying to tie the one mail from your
+first series that I'd not deleted into the thread.
 
--- 
-Regards,
+--MAI/ZU7774XuDDY6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Laurent Pinchart
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTTvwmAAoJELSic+t+oim9+agP/Rf4h6nG3RtYbK/F6MIcGy2m
+GlEWAYfInW33fe/ugtOgO+jF2ZgafnR3Fj8IvDOg1SSGB1XwFhQdpwzT69x5SNCk
+LdDnj7VbNgqiWcQ+CycC6nqnJgsAeqOjOvULB7yuzDxpFNFZOAhJ0aagrUzBm7Fr
+VmJtNIpfkdu3q9iLO4N/m4CkjNdvecOOWyCq2Z0XuQCL4CPBiKe1BTLkZ4Bdy3PR
+/HUVoUSmBUNUQNxcpGNaDjPFEeL23EP9txlF7O5q5PLF/cZ8GQl5/oxkfSvetynC
+bRPsIs7gKQqQvxYNs8HCrb2T6ldOF0nfwO8fbQF3bUHoI1XNNKFrsKfL1+OaaBLU
+0jb2cbiF/sVF6a4rDEF74fn4o1ShpYAKGgaFpnIs+ceeeSymtGuw3tjn+2RWltpE
+09UHRPmMVHl4YgT+gtV+vVTbb1ACor+9qOetypFVTAK6sJXNYMzW/O2OltiaNq7C
+viIyJLkYirc94XB0S2oXRkIRMiC3HfFv2z8ebRDZOHPxBfXuUCfgOGLxGhCWMidH
+nojdPDdcGNr4A4XNw7E3ctCt8BFiIBY4GgF+BHRaqVDLFE8ZqXBZ/WwzWld+P49L
+JTSNYmGnOJsPMZgtRUC80ct4I0bBo3T7gX9+WE8Vi0qqEnjUBUW7sns9kriOJrLh
+O2Icj/1Xic+b5JqViZYz
+=cXj3
+-----END PGP SIGNATURE-----
+
+--MAI/ZU7774XuDDY6--
