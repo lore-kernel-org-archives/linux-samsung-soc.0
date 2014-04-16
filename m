@@ -1,257 +1,85 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
- adding retries
-Date: Wed, 16 Apr 2014 14:50:26 -0600
-Message-ID: <CAPnjgZ2pPa=-L6UxRR3KKF-3Ghi63gEU+5RRybLDHOwKL2cs7Q@mail.gmail.com>
-References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
-	<1397672724-9063-1-git-send-email-dianders@chromium.org>
-	<1397672724-9063-6-git-send-email-dianders@chromium.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
+Date: Wed, 16 Apr 2014 21:50:01 +0100
+Message-ID: <20140416205001.GY12304@sirena.org.uk>
+References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
+ <CAJuA9ajXa+mejdUvWATHjmmin8hoRhX0wueg5g8rDbJR4AWZ7A@mail.gmail.com>
+ <534E9AA3.10409@samsung.com> <5094962.iM2Kd6gfjd@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1397672724-9063-6-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, lk <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============3660089221173819745=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <5094962.iM2Kd6gfjd@wuerfel>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangsu Park <sangsu4u.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Doug, (take 2)
 
-On 16 April 2014 12:25, Doug Anderson <dianders@chromium.org> wrote:
-> An issue was discovered with tps65090 where sometimes the FETs
-> wouldn't actually turn on when requested (they would report
-> overcurrent).  The most problematic FET was the one used for the LCD
-> backlight on the Samsung ARM Chromebook (FET1).  Problems were
-> especially prevalent when the device was plugged in to AC power (when
-> the backlight voltage was higher).
->
-> Mitigate the problem by adding retries on the enables of the FETs,
-> which works around the problem fairly effectively.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-> Signed-off-by: Michael Spang <spang@chromium.org>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> ---
-> Changes in v2:
-> - Separated the overcurrent and retries changes into two patches.
-> - No longer open code fet_is_enabled().
-> - Fixed tps6090 typo.
-> - For loop => "while true".
-> - Removed a set of braces.
->
->  drivers/regulator/tps65090-regulator.c | 153 +++++++++++++++++++++++++++++----
->  1 file changed, 138 insertions(+), 15 deletions(-)
+--===============3660089221173819745==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="We3kTPdwkBGsLLkt"
+Content-Disposition: inline
 
-Reviewed-by: Simon Glass <sjg@chromium.org>
 
-(see minor comment below)
+--We3kTPdwkBGsLLkt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-> index ca13a1a..c37ffb72 100644
-> --- a/drivers/regulator/tps65090-regulator.c
-> +++ b/drivers/regulator/tps65090-regulator.c
-> @@ -17,6 +17,7 @@
->   */
->
->  #include <linux/module.h>
-> +#include <linux/delay.h>
->  #include <linux/init.h>
->  #include <linux/gpio.h>
->  #include <linux/of_gpio.h>
-> @@ -28,7 +29,13 @@
->  #include <linux/regulator/of_regulator.h>
->  #include <linux/mfd/tps65090.h>
->
-> +#define MAX_CTRL_READ_TRIES    5
-> +#define MAX_FET_ENABLE_TRIES   1000
+On Wed, Apr 16, 2014 at 08:14:27PM +0200, Arnd Bergmann wrote:
 
-Gosh that is a lot of tries - should we maybe give up sooner?
+> This patch does a partial revert of 313367e7bfa by allowing these
+> drivers on all samsung platforms except EXYNOS, so we can proceed
+> with the multiplatform patches.
 
-> +
-> +#define CTRL_EN_BIT            0 /* Regulator enable bit, active high */
->  #define CTRL_WT_BIT            2 /* Regulator wait time 0 bit */
-> +#define CTRL_PG_BIT            4 /* Regulator power good bit, 1=good */
-> +#define CTRL_TO_BIT            7 /* Regulator timeout bit, 1=wait */
->
->  #define MAX_OVERCURRENT_WAIT   3 /* Overcurrent wait must be <= this */
->
-> @@ -79,40 +86,156 @@ static int tps65090_reg_set_overcurrent_wait(struct tps65090_regulator *ri,
->         return ret;
->  }
->
-> -static struct regulator_ops tps65090_reg_contol_ops = {
-> +/**
-> + * tps65090_try_enable_fet - Try to enable a FET
-> + *
-> + * @rdev:      Regulator device
-> + * @return 0 if ok, -ENOTRECOVERABLE if the FET power good bit did not get set,
-> + * or some other -ve value if another error occurred (e.g. i2c error)
-> + */
-> +static int tps65090_try_enable_fet(struct regulator_dev *rdev)
-> +{
-> +       unsigned int control;
-> +       int ret, i;
-> +
-> +       ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-> +                                rdev->desc->enable_mask,
-> +                                rdev->desc->enable_mask);
-> +       if (ret < 0) {
-> +               dev_err(&rdev->dev, "Error in updating reg %#x\n",
-> +                       rdev->desc->enable_reg);
-> +               return ret;
-> +       }
-> +
-> +       for (i = 0; i < MAX_CTRL_READ_TRIES; i++) {
-> +               ret = regmap_read(rdev->regmap, rdev->desc->enable_reg,
-> +                                 &control);
-> +               if (ret < 0)
-> +                       return ret;
-> +
-> +               if (!(control & BIT(CTRL_TO_BIT)))
-> +                       break;
-> +
-> +               usleep_range(1000, 1500);
-> +       }
-> +       if (!(control & BIT(CTRL_PG_BIT)))
-> +               return -ENOTRECOVERABLE;
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * tps65090_fet_enable - Enable a FET, trying a few times if it fails
-> + *
-> + * Some versions of the tps65090 have issues when turning on the FETs.
-> + * This function goes through several steps to ensure the best chance of the
-> + * FET going on.  Specifically:
-> + * - We'll make sure that we bump the "overcurrent wait" to the maximum, which
-> + *   increases the chances that we'll turn on properly.
-> + * - We'll retry turning the FET on multiple times (turning off in between).
-> + *
-> + * @rdev:      Regulator device
-> + * @return 0 if ok, non-zero if it fails.
-> + */
-> +static int tps65090_fet_enable(struct regulator_dev *rdev)
-> +{
-> +       int ret, tries;
-> +
-> +       /*
-> +        * Try enabling multiple times until we succeed since sometimes the
-> +        * first try times out.
-> +        */
-> +       tries = 0;
-> +       while (true) {
-> +               ret = tps65090_try_enable_fet(rdev);
-> +               if (!ret)
-> +                       break;
-> +               if (ret != -ENOTRECOVERABLE || tries == MAX_FET_ENABLE_TRIES)
-> +                       goto err;
-> +
-> +               /* Try turning the FET off (and then on again) */
-> +               ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-> +                                        rdev->desc->enable_mask, 0);
-> +               if (ret)
-> +                       goto err;
-> +
-> +               tries++;
-> +       }
-> +
-> +       if (tries)
-> +               dev_warn(&rdev->dev, "reg %#x enable ok after %d tries\n",
-> +                        rdev->desc->enable_reg, tries);
-> +
-> +       return 0;
-> +err:
-> +       dev_warn(&rdev->dev, "reg %#x enable failed\n", rdev->desc->enable_reg);
-> +       WARN_ON(1);
-> +
-> +       return ret;
-> +}
-> +
-> +static struct regulator_ops tps65090_reg_control_ops = {
->         .enable         = regulator_enable_regmap,
->         .disable        = regulator_disable_regmap,
->         .is_enabled     = regulator_is_enabled_regmap,
->  };
->
-> +static struct regulator_ops tps65090_fet_control_ops = {
-> +       .enable         = tps65090_fet_enable,
-> +       .disable        = regulator_disable_regmap,
-> +       .is_enabled     = regulator_is_enabled_regmap,
-> +};
-> +
->  static struct regulator_ops tps65090_ldo_ops = {
->  };
->
-> -#define tps65090_REG_DESC(_id, _sname, _en_reg, _ops)  \
-> +#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _ops)        \
->  {                                                      \
->         .name = "TPS65090_RAILS"#_id,                   \
->         .supply_name = _sname,                          \
->         .id = TPS65090_REGULATOR_##_id,                 \
->         .ops = &_ops,                                   \
->         .enable_reg = _en_reg,                          \
-> -       .enable_mask = BIT(0),                          \
-> +       .enable_val = _en_bits,                         \
-> +       .enable_mask = _en_bits,                        \
->         .type = REGULATOR_VOLTAGE,                      \
->         .owner = THIS_MODULE,                           \
->  }
->
->  static struct regulator_desc tps65090_regulator_desc[] = {
-> -       tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET1,  "infet1",  0x0F, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET2,  "infet2",  0x10, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET3,  "infet3",  0x11, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET4,  "infet4",  0x12, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET5,  "infet5",  0x13, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET6,  "infet6",  0x14, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(FET7,  "infet7",  0x15, tps65090_reg_contol_ops),
-> -       tps65090_REG_DESC(LDO1,  "vsys-l1", 0,    tps65090_ldo_ops),
-> -       tps65090_REG_DESC(LDO2,  "vsys-l2", 0,    tps65090_ldo_ops),
-> +       tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT),
-> +                         tps65090_reg_control_ops),
-> +       tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT),
-> +                         tps65090_reg_control_ops),
-> +       tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
-> +                         tps65090_reg_control_ops),
-> +
-> +       tps65090_REG_DESC(FET1,  "infet1",  0x0F,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +       tps65090_REG_DESC(FET2,  "infet2",  0x10,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +       tps65090_REG_DESC(FET3,  "infet3",  0x11,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +       tps65090_REG_DESC(FET4,  "infet4",  0x12,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +       tps65090_REG_DESC(FET5,  "infet5",  0x13,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +       tps65090_REG_DESC(FET6,  "infet6",  0x14,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +       tps65090_REG_DESC(FET7,  "infet7",  0x15,
-> +                         BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-> +                         tps65090_fet_control_ops),
-> +
-> +       tps65090_REG_DESC(LDO1,  "vsys-l1", 0, 0,
-> +                         tps65090_ldo_ops),
-> +       tps65090_REG_DESC(LDO2,  "vsys-l2", 0, 0,
-> +                         tps65090_ldo_ops),
->  };
->
->  static inline bool is_dcdc(int id)
-> --
-> 1.9.1.423.g4596e3a
->
+> If support for these drivers is actually needed on EXYNOS machines,
+> the drivers should first be moved over to use the dmaengine code.
 
-Regards,
-Simon
+I would be surprised if neither IP is present on any Exynos SoC, they
+were added in the s5p range.  Is Sachin's fix for building these
+(present in -rc1) not doing the job?
+
+--We3kTPdwkBGsLLkt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTTuz2AAoJELSic+t+oim9SPIP/1BhuK45RgpvnDyykgMDYkyz
+PAOPizj0c+kCEHAT+hQiUsRSmPIYXp9rmIZ1TQW/sfZwNOe+VvM0K9uASCZ4TWWU
+miyP6cbVsrOe8nCBx7bECy2B9QnYnhxnqbU+aoJwVSF/mUiwuPZ2S1iZdAZZnApy
+XmIJd36rrzhjA24AEK0eEx66qFmwxXsUVgKDo3z0f7jFh/n85JZ1siSaAOJDxHSK
+dSGOgw8J2oBW7NbcG+0xKSbyDJ/LDE6+Bct+t4kGqJ2VlR4+o+7hn0EfdFMP6bzk
+1oBucgEvZ5LW9AK2xGNN5cukJ19Jotzyqew6ZcagkLWOrP1MkJVMbVGYulPPRvzH
+uAljaihCsBJexOYYXTvsumXEwaRgeyUXrNdv0JDh3wcLHoo5G7vWd5juWSlEw9Cd
+BbRYkTLAm7MRLGB57YaWZA59mGCGqJsM1imm0b8qTjq06TXilizcpf/R7SIHX3NL
+GdQ1oupcMROV5i/2N3NoD0WJnmPGWV6xzbszEi0y1zDEskZPngxtmOHpvZ3FVqig
+hsLfeudPPED+1kEwTEob/9VUHuVFlzCk0nuB+pk4h92r5YOZec5M8MAojH3IGran
+JmVgFwCw3rNisThuG2tl9xRtIPHempP5RL5IYjMjuNsqIxnaPRz5ISOI1tle9nPa
+K9/DIXgwlyP68I5i/8m2
+=xY0P
+-----END PGP SIGNATURE-----
+
+--We3kTPdwkBGsLLkt--
+
+
+--===============3660089221173819745==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============3660089221173819745==--
