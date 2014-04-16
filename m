@@ -1,139 +1,47 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 3/5] mfd: tps65090: Stop caching most registers
-Date: Wed, 16 Apr 2014 11:25:22 -0700
-Message-ID: <1397672724-9063-4-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH 2/3] mfd: tps65090: Stop caching registers
+Date: Wed, 16 Apr 2014 11:27:25 -0700
+Message-ID: <CAD=FV=WRJgWVB4TjHa04JjH6XBbPf1-SeV5Y+QXo=uGU8FYKdw@mail.gmail.com>
 References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
- <1397672724-9063-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f73.google.com ([209.85.213.73]:36868 "EHLO
-	mail-yh0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755261AbaDPSZe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 14:25:34 -0400
-Received: by mail-yh0-f73.google.com with SMTP id c41so1659227yho.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 11:25:33 -0700 (PDT)
-In-Reply-To: <1397672724-9063-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+	<1397592876-5741-3-git-send-email-dianders@chromium.org>
+	<20140416095922.GG4754@lee--X1>
+	<20140416101323.GP12304@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140416101323.GP12304@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anton Vorontsov <anton@enomsg.org>
-Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-Nearly all of the registers in tps65090 combine control bits and
-status bits.  Turn off caching of all registers except the select few
-that can be cached.
+Mark,
 
-In order to avoid adding more duplicate #defines, we also move some
-register offset definitions to the mfd driver (and resolve
-inconsistent names).
+On Wed, Apr 16, 2014 at 3:13 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Apr 16, 2014 at 10:59:22AM +0100, Lee Jones wrote:
+>
+>> > NOTE: the IRQnMASK and CG_CTRLn registers are the exception and could
+>> > be cached.  If we find that we spend a lot of time reading those we
+>> > can turn on cache for just those registers.
+>
+>> > -static bool is_volatile_reg(struct device *dev, unsigned int reg)
+>> > -{
+>> > -   if ((reg == TPS65090_INT_STS) || (reg == TPS65090_INT_STS2))
+>> > -           return true;
+>> > -   else
+>> > -           return false;
+>> > -}
+>> > -
+>
+>> I don't know enough about Regmap internals to know what this actually
+>> affects in real terms.
+>
+>> Mark,
+>>   Does this change seem sane to you?
+>
+> It does what it says, it stops us caching stuff.  It would seem better
+> to do what the changelog suggests above and keep caching the registers
+> that can be cached - especially the interrupt masks, they should get
+> read in the interrupt path and that tends to be a bit latency sensitive.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Leave cache on for the registers that can be cached.
-- Move register offsets to mfd header file.
-
- drivers/mfd/tps65090.c           | 27 ++++++++++++++-------------
- drivers/power/tps65090-charger.c | 11 -----------
- include/linux/mfd/tps65090.h     | 14 ++++++++++++++
- 3 files changed, 28 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
-index c3cddb4..1c3e6e2 100644
---- a/drivers/mfd/tps65090.c
-+++ b/drivers/mfd/tps65090.c
-@@ -32,14 +32,6 @@
- #define NUM_INT_REG 2
- #define TOTAL_NUM_REG 0x18
- 
--/* interrupt status registers */
--#define TPS65090_INT_STS	0x0
--#define TPS65090_INT_STS2	0x1
--
--/* interrupt mask registers */
--#define TPS65090_INT_MSK	0x2
--#define TPS65090_INT_MSK2	0x3
--
- #define TPS65090_INT1_MASK_VAC_STATUS_CHANGE		1
- #define TPS65090_INT1_MASK_VSYS_STATUS_CHANGE		2
- #define TPS65090_INT1_MASK_BAT_STATUS_CHANGE		3
-@@ -144,17 +136,26 @@ static struct regmap_irq_chip tps65090_irq_chip = {
- 	.irqs = tps65090_irqs,
- 	.num_irqs = ARRAY_SIZE(tps65090_irqs),
- 	.num_regs = NUM_INT_REG,
--	.status_base = TPS65090_INT_STS,
--	.mask_base = TPS65090_INT_MSK,
-+	.status_base = TPS65090_REG_INTR_STS,
-+	.mask_base = TPS65090_REG_INTR_MASK,
- 	.mask_invert = true,
- };
- 
- static bool is_volatile_reg(struct device *dev, unsigned int reg)
- {
--	if ((reg == TPS65090_INT_STS) || (reg == TPS65090_INT_STS2))
--		return true;
--	else
-+	/* Nearly all registers have status bits mixed in, except a few */
-+	switch (reg) {
-+	case TPS65090_REG_INTR_MASK:
-+	case TPS65090_REG_INTR_MASK2:
-+	case TPS65090_REG_CG_CTRL0:
-+	case TPS65090_REG_CG_CTRL1:
-+	case TPS65090_REG_CG_CTRL2:
-+	case TPS65090_REG_CG_CTRL3:
-+	case TPS65090_REG_CG_CTRL4:
-+	case TPS65090_REG_CG_CTRL5:
- 		return false;
-+	}
-+	return true;
- }
- 
- static const struct regmap_config tps65090_regmap_config = {
-diff --git a/drivers/power/tps65090-charger.c b/drivers/power/tps65090-charger.c
-index cc26c12..31a3ba4 100644
---- a/drivers/power/tps65090-charger.c
-+++ b/drivers/power/tps65090-charger.c
-@@ -30,17 +30,6 @@
- 
- #include <linux/mfd/tps65090.h>
- 
--#define TPS65090_REG_INTR_STS	0x00
--#define TPS65090_REG_INTR_MASK	0x02
--#define TPS65090_REG_CG_CTRL0	0x04
--#define TPS65090_REG_CG_CTRL1	0x05
--#define TPS65090_REG_CG_CTRL2	0x06
--#define TPS65090_REG_CG_CTRL3	0x07
--#define TPS65090_REG_CG_CTRL4	0x08
--#define TPS65090_REG_CG_CTRL5	0x09
--#define TPS65090_REG_CG_STATUS1	0x0a
--#define TPS65090_REG_CG_STATUS2	0x0b
--
- #define TPS65090_CHARGER_ENABLE	BIT(0)
- #define TPS65090_VACG		BIT(1)
- #define TPS65090_NOITERM	BIT(5)
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 3f43069..45f0f9d 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -64,6 +64,20 @@ enum {
- 	TPS65090_REGULATOR_MAX,
- };
- 
-+/* Register addresses */
-+#define TPS65090_REG_INTR_STS	0x00
-+#define TPS65090_REG_INTR_STS2	0x01
-+#define TPS65090_REG_INTR_MASK	0x02
-+#define TPS65090_REG_INTR_MASK2	0x03
-+#define TPS65090_REG_CG_CTRL0	0x04
-+#define TPS65090_REG_CG_CTRL1	0x05
-+#define TPS65090_REG_CG_CTRL2	0x06
-+#define TPS65090_REG_CG_CTRL3	0x07
-+#define TPS65090_REG_CG_CTRL4	0x08
-+#define TPS65090_REG_CG_CTRL5	0x09
-+#define TPS65090_REG_CG_STATUS1	0x0a
-+#define TPS65090_REG_CG_STATUS2	0x0b
-+
- struct tps65090 {
- 	struct device		*dev;
- 	struct regmap		*rmap;
--- 
-1.9.1.423.g4596e3a
+Done
