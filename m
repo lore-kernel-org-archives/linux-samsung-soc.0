@@ -1,72 +1,68 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 1/5] mfd: tps65090: Don't tell child devices we have an IRQ if we don't
-Date: Wed, 16 Apr 2014 16:12:25 -0700
-Message-ID: <1397689950-1568-2-git-send-email-dianders@chromium.org>
-References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+Subject: [PATCH v3 0/5] Fixes for tps65090 for Samsung ARM Chromebook
+Date: Wed, 16 Apr 2014 16:12:24 -0700
+Message-ID: <1397689950-1568-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f73.google.com ([209.85.219.73]:52233 "EHLO
-	mail-oa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757027AbaDPXMu (ORCPT
+Received: from mail-ob0-f202.google.com ([209.85.214.202]:39140 "EHLO
+	mail-ob0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755031AbaDPXMu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 16 Apr 2014 19:12:50 -0400
-Received: by mail-oa0-f73.google.com with SMTP id n16so2454761oag.0
+Received: by mail-ob0-f202.google.com with SMTP id gq1so936001obb.3
         for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 16:12:50 -0700 (PDT)
-In-Reply-To: <1397689950-1568-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Anton Vorontsov <anton@enomsg.org>
-Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, devicetree@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@kernel.org>, Simon Glass <sjg@chromium.org>, linux-doc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Rob Herring <robh+dt@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Pawel Moll <pawel.moll@arm.com>, Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Sean Paul <seanpaul@chromium.org>, Michael Spang <spang@chromium.org>
 
-If we weren't given an interrupt we shouldn't tell child devices (like
-the tps65090 charger) that they have an interrupt.  This is needed so
-that we can support polling mode in the tps65090 charger driver.
+These five patches bring tps65090 up to speed with what's currently
+in the Chromium OS kernel 3.8 tree and running on the Samsung ARM
+Chromebook.  Changes were tested atop the current linux tree
+(v3.15-rc1).  FET retries were tested on a machine with a known flaky
+tps65090.  Since display isn't working on pure upstream, I augmented
+the code to turn FET1 (vcd_led) on/off 500 times at bootup.  When
+testing I included <https://patchwork.kernel.org/patch/3980731/> to
+make sure tps65090 was in exynos5250-snow's device tree.
 
-See also (charger: tps65090: Allow charger module to be used when no
-irq).
+Dependencies:
+- Patch #1 (mfd no irq) has no dependencies, though patch #2 won't
+  work without it.
+- Patch #2 (charger polling) can be applied without patch #1 but won't
+  actually make charger polling work without it.
+- Patch #3 (caching) can be applied before retries patch but not
+  after.
+- Patch #4 (overcurrent wait time) can be applied before retries patch
+  but not after (just due to merge conflicts, no other reason).
+- Patch #5 (retries) absolutely requires patch #3 (caching).
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-Changes in v3: None
+Changes in v3:
+- Fixed kernel-doc notation for return
+
 Changes in v2:
 - Split noirq (polling mode) changes into MFD and charger
+- Leave cache on for the registers that can be cached.
+- Move register offsets to mfd header file.
+- Separated the overcurrent and retries changes into two patches.
+- Now set overcurrent at probe time since it doesn't change.
+- Separated the overcurrent and retries changes into two patches.
+- No longer open code fet_is_enabled().
+- Fixed tps6090 typo.
+- For loop => "while true".
+- Removed a set of braces.
 
- drivers/mfd/tps65090.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Doug Anderson (5):
+  mfd: tps65090: Don't tell child devices we have an IRQ if we don't
+  charger: tps65090: Allow charger module to be used when no irq
+  mfd: tps65090: Stop caching most registers
+  regulator: tps65090: Allow setting the overcurrent wait time
+  regulator: tps65090: Make FETs more reliable by adding retries
 
-diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
-index ba1a25d..c3cddb4 100644
---- a/drivers/mfd/tps65090.c
-+++ b/drivers/mfd/tps65090.c
-@@ -64,11 +64,16 @@ static struct resource charger_resources[] = {
- 	}
- };
- 
--static const struct mfd_cell tps65090s[] = {
--	{
-+enum tps65090_cells {
-+	PMIC = 0,
-+	CHARGER = 1,
-+};
-+
-+static struct mfd_cell tps65090s[] = {
-+	[PMIC] = {
- 		.name = "tps65090-pmic",
- 	},
--	{
-+	[CHARGER] = {
- 		.name = "tps65090-charger",
- 		.num_resources = ARRAY_SIZE(charger_resources),
- 		.resources = &charger_resources[0],
-@@ -211,6 +216,9 @@ static int tps65090_i2c_probe(struct i2c_client *client,
- 					"IRQ init failed with err: %d\n", ret);
- 			return ret;
- 		}
-+	} else {
-+		/* Don't tell children they have an IRQ that'll never fire */
-+		tps65090s[CHARGER].num_resources = 0;
- 	}
- 
- 	ret = mfd_add_devices(tps65090->dev, -1, tps65090s,
+ .../devicetree/bindings/regulator/tps65090.txt     |   4 +
+ drivers/mfd/tps65090.c                             |  41 ++--
+ drivers/power/tps65090-charger.c                   |  87 ++++++---
+ drivers/regulator/tps65090-regulator.c             | 211 +++++++++++++++++++--
+ include/linux/mfd/tps65090.h                       |  19 ++
+ 5 files changed, 303 insertions(+), 59 deletions(-)
+
 -- 
 1.9.1.423.g4596e3a
