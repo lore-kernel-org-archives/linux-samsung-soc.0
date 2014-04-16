@@ -1,53 +1,69 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix stall after CPU
- hotplugging
-Date: Wed, 16 Apr 2014 11:41:13 +0200 (CEST)
-Message-ID: <alpine.DEB.2.02.1404161137100.22697@ionos.tec.linutronix.de>
-References: <1396011962-4467-1-git-send-email-k.kozlowski@samsung.com> <1397554445.29169.21.camel@AMDC1943> <534D25DC.4050400@linaro.org> <1397566023.29169.31.camel@AMDC1943> <alpine.DEB.2.02.1404151711250.22697@ionos.tec.linutronix.de> <1397576515.752.5.camel@AMDC1943>
- <alpine.DEB.2.02.1404151753090.22697@ionos.tec.linutronix.de> <1397638263.6147.7.camel@AMDC1943>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/3] mfd: tps65090: Allow charger module to be used when
+ no irq
+Date: Wed, 16 Apr 2014 10:52:29 +0100
+Message-ID: <20140416095229.GF4754@lee--X1>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+ <1397592876-5741-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1397638263.6147.7.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:53708 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258AbaDPJwf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 05:52:35 -0400
+Received: by mail-wg0-f44.google.com with SMTP id m15so10572655wgh.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 02:52:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1397592876-5741-2-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-On Wed, 16 Apr 2014, Krzysztof Kozlowski wrote:
-> On wto, 2014-04-15 at 18:20 +0200, Thomas Gleixner wrote:
-> > Here is a complete solution to the problem. We really want the drivers
-> > to be fast and clean and not work around such issues.
-> > 
-> > I'm quite happy that I kept the 'force' argument of set_affinity
-> > callbacks. I knew that I'd need it at some point.
-> > 
-> > So with the flag set we can disable the online mask check and force
-> > the interrupt to the proper cpu.
-> 
-> Thanks for the solution.
-> 
-> I tested your patch on Exynos 3250 and it is still not sufficient. After
-> hotplugging CPU1 ~10 times the stall happens (set_next_event is called
-> on wrong CPU).
-> 
-> The patch 3/3 ("clocksource: exynos_mct: Fix too early ISR fire up on
-> wrong CPU") is needed as the clockevents_config_and_register should be
-> called a little later.
+> On the ARM Chromebook tps65090 has two masters: the AP (the main
+> processor running linux) and the EC (the embedded controller).  The A=
+P
+> is allowed to mess with FETs but the EC is in charge of charge contro=
+l.
+>=20
+> The tps65090 interupt line is routed to both the AP and the EC, which
+> can cause quite a headache.  Having two people adjusting masks and
+> acking interrupts is a recipe for disaster.
+>=20
+> In the shipping kernel we had a hack to have the AP pay attention to
+> the IRQ but not to ack it.  It also wasn't supposed to configure the
+> IRQ in any way.  That hack allowed us to detect when the device was
+> charging without messing with the EC's state.
+>=20
+> The current tps65090 infrastructure makes the above difficult, and it
+> was a bit of a hack to begin with.  Rather than uglify the driver to
+> support it, just extend the driver's existing notion of "no irq" to
+> the charger.  This makes the charger code poll every 2 seconds for AC
+> detect, which is sufficient.
+>=20
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  drivers/mfd/tps65090.c           | 14 ++++++--
+>  drivers/power/tps65090-charger.c | 76 ++++++++++++++++++++++++++++++=
++---------
+>  2 files changed, 70 insertions(+), 20 deletions(-)
 
-Ok. That makes sense.
- 
-> Do you have rest of patches (2/3 and 3/3) or should I resend them?
-> 
-> And one minor nit in your patch: 'cpu' local variable in
-> exynos4_mct_cpu_notify() is no longer used so it can be removed.
+=46or the MFD part:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Right.
+Anton,
+  If you are okay with this patch I'd be happy to create an immutable
+branch for you to pull from?
 
-I'm going to create a proper patch for the interrupt side and stick
-that into irq/urgent. It's trivial enough to go in right away and I'll
-tag it stable as well. You can build your changes on top then.
+Doug,
+  What is the relationship (dependencies) between this and the other
+patches in the set?
 
-Thanks,
-
-	tglx
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
