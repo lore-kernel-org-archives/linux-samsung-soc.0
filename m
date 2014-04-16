@@ -1,46 +1,68 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Wed, 16 Apr 2014 16:31:54 +0200
-Message-ID: <4516298.kO98TB1Ozz@wuerfel>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org> <1397554134-11827-6-git-send-email-sachin.kamat@linaro.org> <534E8AE1.4010402@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 0/7] drm: exynos: few patches to enhance bridge chip support
+Date: Wed, 16 Apr 2014 20:02:59 +0530
+Message-ID: <1397658786-26138-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.24]:58409 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161109AbaDPOcE (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:39984 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161072AbaDPOde (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 10:32:04 -0400
-In-Reply-To: <534E8AE1.4010402@samsung.com>
+	Wed, 16 Apr 2014 10:33:34 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4400HO4OFXB510@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Apr 2014 23:33:33 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, a.hajda@samsung.com, treding@nvidia.com, kyungmin.park@samsung.com, seanpaul@google.com, abrestic@chromium.org, rahul.sharma@samsung.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On Wednesday 16 April 2014 15:51:29 Tomasz Figa wrote:
-> On 15.04.2014 11:28, Sachin Kamat wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > This makes it possible to enable the exynos platform as part of a
-> > multiplatform kernel, in addition to keeping the single-platform
-> > Exynos support.
-> > sparsemem is currently not supported in multiplatform.
-> 
-> Is this still true as of today?
-> 
-> Otherwise looks fine.
+This series is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
-sparsemem is still not supported in multiplatform, but after I looked
-at it in more detail, I came to the conclusion that there is no
-reason why it couldn't be. It just needs testing so we are confident
-that it doesn't break other platforms, and we need to find good
-platform-independent values for MAX_PHYSMEM_BITS and SECTION_SIZE_BITS
-to put into asm/memory.h, since we can't have them set in mach/memory.h
-for multiplatform.
+This set of drm patches are needed to support bridge chips and
+eDP/LVDS panels with exynos_dp.
+For testing, I have used exynos5250-snow board along with a few local
+arch side patches.
 
-Looking at my patch again now, I would actually prefer to kill off
-the single-platform support for exynos right away. I don't see
-any reason to keep it now, and it complicates the test matrix.
+This patchset tries to create a simple exynos_dp panel framework
+to control power up/down sequence of the eDP/eDP-LVDS panel, and
+the same is used to control the panel power sequence for the
+LVDS panel on snow.
 
-	Arnd
+Andrew Bresticker (1):
+  [PATCH 1/7] drm/exynos: dp: support hotplug detection via GPIO
+
+Ajay Kumar (5):
+  [PATCH 2/7] drm/panel: add pre_enable routine to drm panel
+  [PATCH 3/7] drm/panel: Add driver for exynos_dp based panels
+  [PATCH 4/7] drm/exynos: add exynos_dp_panel driver registration to drm driver
+  [PATCH 5/7] drm/exynos: dp: modify driver to support drm_panel
+  [PATCH 7/7] drm/bridge: ptn3460: add drm_panel controls
+
+Rahul Sharma (1):
+  [PATCH 6/7] drm/bridge: ptn3460: enable polling based detection
+
+ .../devicetree/bindings/panel/exynos-dp-panel.txt  |  32 ++++
+ .../devicetree/bindings/video/exynos_dp.txt        |   4 +
+ drivers/gpu/drm/bridge/Kconfig                     |   1 +
+ drivers/gpu/drm/bridge/ptn3460.c                   |  18 +-
+ drivers/gpu/drm/exynos/Kconfig                     |   1 +
+ drivers/gpu/drm/exynos/exynos_dp_core.c            |  66 ++++++-
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |   2 +
+ drivers/gpu/drm/exynos/exynos_dp_reg.c             |  26 ++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |  11 ++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |   1 +
+ drivers/gpu/drm/panel/Kconfig                      |   9 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-exynos-dp.c            | 213 +++++++++++++++++++++
+ include/drm/bridge/ptn3460.h                       |   6 +-
+ include/drm/drm_panel.h                            |   9 +
+ 15 files changed, 387 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+
+-- 
+1.8.1.2
