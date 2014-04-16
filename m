@@ -1,139 +1,45 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 3/5] mfd: tps65090: Stop caching most registers
-Date: Wed, 16 Apr 2014 16:12:27 -0700
-Message-ID: <1397689950-1568-4-git-send-email-dianders@chromium.org>
-References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f202.google.com ([209.85.216.202]:62505 "EHLO
-	mail-qc0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757035AbaDPXMv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 19:12:51 -0400
-Received: by mail-qc0-f202.google.com with SMTP id m20so1726999qcx.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Apr 2014 16:12:50 -0700 (PDT)
-In-Reply-To: <1397689950-1568-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
+ adding retries
+Date: Wed, 16 Apr 2014 17:24:55 -0600
+Message-ID: <CAPnjgZ13C78CoWHnpB5j=FBBQgYfe7+Si+JiUbuaV+ty3u-Oww@mail.gmail.com>
+References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
+	<1397672724-9063-1-git-send-email-dianders@chromium.org>
+	<1397672724-9063-6-git-send-email-dianders@chromium.org>
+	<CAPnjgZ2pPa=-L6UxRR3KKF-3Ghi63gEU+5RRybLDHOwKL2cs7Q@mail.gmail.com>
+	<CAD=FV=V+xpMEFVqH2Afo8XmCJsUPU2Y8xcmR3rwi+V25KKx8DQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=V+xpMEFVqH2Afo8XmCJsUPU2Y8xcmR3rwi+V25KKx8DQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, lk <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anton Vorontsov <anton@enomsg.org>
-Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-Nearly all of the registers in tps65090 combine control bits and
-status bits.  Turn off caching of all registers except the select few
-that can be cached.
+Hi Doug,
 
-In order to avoid adding more duplicate #defines, we also move some
-register offset definitions to the mfd driver (and resolve
-inconsistent names).
+On 16 April 2014 15:25, Doug Anderson <dianders@chromium.org> wrote:
+> Simon,
+>
+> On Wed, Apr 16, 2014 at 1:50 PM, Simon Glass <sjg@chromium.org> wrote:
+>>> +#define MAX_CTRL_READ_TRIES    5
+>>> +#define MAX_FET_ENABLE_TRIES   1000
+>>
+>> Gosh that is a lot of tries - should we maybe give up sooner?
+>
+> That's actually a squash of a recent patch.  See
+> <https://chromium-review.googlesource.com/189239>.  I've specifically
+> seen at least one case on my device where it needed 888 retries at
+> bootup!
+>
+> ...on my really old Chromebook, it seems to get into a bad state if it
+> sits on my desk for a long time.  After I use it a bit it rarely needs
+> more than 10 retries.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v3: None
-Changes in v2:
-- Leave cache on for the registers that can be cached.
-- Move register offsets to mfd header file.
+Try to be kinder to your hardware?
 
- drivers/mfd/tps65090.c           | 27 ++++++++++++++-------------
- drivers/power/tps65090-charger.c | 11 -----------
- include/linux/mfd/tps65090.h     | 14 ++++++++++++++
- 3 files changed, 28 insertions(+), 24 deletions(-)
+Anyway, fair enough, if you've seen 888 then we need to deal with that case.
 
-diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
-index c3cddb4..1c3e6e2 100644
---- a/drivers/mfd/tps65090.c
-+++ b/drivers/mfd/tps65090.c
-@@ -32,14 +32,6 @@
- #define NUM_INT_REG 2
- #define TOTAL_NUM_REG 0x18
- 
--/* interrupt status registers */
--#define TPS65090_INT_STS	0x0
--#define TPS65090_INT_STS2	0x1
--
--/* interrupt mask registers */
--#define TPS65090_INT_MSK	0x2
--#define TPS65090_INT_MSK2	0x3
--
- #define TPS65090_INT1_MASK_VAC_STATUS_CHANGE		1
- #define TPS65090_INT1_MASK_VSYS_STATUS_CHANGE		2
- #define TPS65090_INT1_MASK_BAT_STATUS_CHANGE		3
-@@ -144,17 +136,26 @@ static struct regmap_irq_chip tps65090_irq_chip = {
- 	.irqs = tps65090_irqs,
- 	.num_irqs = ARRAY_SIZE(tps65090_irqs),
- 	.num_regs = NUM_INT_REG,
--	.status_base = TPS65090_INT_STS,
--	.mask_base = TPS65090_INT_MSK,
-+	.status_base = TPS65090_REG_INTR_STS,
-+	.mask_base = TPS65090_REG_INTR_MASK,
- 	.mask_invert = true,
- };
- 
- static bool is_volatile_reg(struct device *dev, unsigned int reg)
- {
--	if ((reg == TPS65090_INT_STS) || (reg == TPS65090_INT_STS2))
--		return true;
--	else
-+	/* Nearly all registers have status bits mixed in, except a few */
-+	switch (reg) {
-+	case TPS65090_REG_INTR_MASK:
-+	case TPS65090_REG_INTR_MASK2:
-+	case TPS65090_REG_CG_CTRL0:
-+	case TPS65090_REG_CG_CTRL1:
-+	case TPS65090_REG_CG_CTRL2:
-+	case TPS65090_REG_CG_CTRL3:
-+	case TPS65090_REG_CG_CTRL4:
-+	case TPS65090_REG_CG_CTRL5:
- 		return false;
-+	}
-+	return true;
- }
- 
- static const struct regmap_config tps65090_regmap_config = {
-diff --git a/drivers/power/tps65090-charger.c b/drivers/power/tps65090-charger.c
-index cc26c12..31a3ba4 100644
---- a/drivers/power/tps65090-charger.c
-+++ b/drivers/power/tps65090-charger.c
-@@ -30,17 +30,6 @@
- 
- #include <linux/mfd/tps65090.h>
- 
--#define TPS65090_REG_INTR_STS	0x00
--#define TPS65090_REG_INTR_MASK	0x02
--#define TPS65090_REG_CG_CTRL0	0x04
--#define TPS65090_REG_CG_CTRL1	0x05
--#define TPS65090_REG_CG_CTRL2	0x06
--#define TPS65090_REG_CG_CTRL3	0x07
--#define TPS65090_REG_CG_CTRL4	0x08
--#define TPS65090_REG_CG_CTRL5	0x09
--#define TPS65090_REG_CG_STATUS1	0x0a
--#define TPS65090_REG_CG_STATUS2	0x0b
--
- #define TPS65090_CHARGER_ENABLE	BIT(0)
- #define TPS65090_VACG		BIT(1)
- #define TPS65090_NOITERM	BIT(5)
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 3f43069..45f0f9d 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -64,6 +64,20 @@ enum {
- 	TPS65090_REGULATOR_MAX,
- };
- 
-+/* Register addresses */
-+#define TPS65090_REG_INTR_STS	0x00
-+#define TPS65090_REG_INTR_STS2	0x01
-+#define TPS65090_REG_INTR_MASK	0x02
-+#define TPS65090_REG_INTR_MASK2	0x03
-+#define TPS65090_REG_CG_CTRL0	0x04
-+#define TPS65090_REG_CG_CTRL1	0x05
-+#define TPS65090_REG_CG_CTRL2	0x06
-+#define TPS65090_REG_CG_CTRL3	0x07
-+#define TPS65090_REG_CG_CTRL4	0x08
-+#define TPS65090_REG_CG_CTRL5	0x09
-+#define TPS65090_REG_CG_STATUS1	0x0a
-+#define TPS65090_REG_CG_STATUS2	0x0b
-+
- struct tps65090 {
- 	struct device		*dev;
- 	struct regmap		*rmap;
--- 
-1.9.1.423.g4596e3a
+Regards,
+Simon
