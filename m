@@ -1,161 +1,66 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCHv2 1/2] iio: adc: exynos_adc: Control special clock of ADC
- to support Exynos3250 ADC
-Date: Wed, 16 Apr 2014 09:18:17 +0530
-Message-ID: <CAK9yfHzdPu67JKrww-VFjFvKni7S_y_hvLKKUdeQe-_pxjoBAQ@mail.gmail.com>
-References: <1397466426-13870-1-git-send-email-cw00.choi@samsung.com>
-	<1397466426-13870-2-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1397466426-13870-2-git-send-email-cw00.choi@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, naveen krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, rdunlap@infradead.org, Tomasz Figa <t.figa@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v8 0/3] exynos: arch: add support for exynos5260 SoC
+Date: Wed, 16 Apr 2014 09:28:55 +0530
+Message-ID: <1397620738-14431-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:30430 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132AbaDPEAg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 00:00:36 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Chanwoo,
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-On 14 April 2014 14:37, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch control special clock for ADC in Exynos series's FSYS block.
-> If special clock of ADC is registerd on clock list of common clk framework,
-> Exynos ADC drvier have to control this clock.
->
-> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
-> - 'adc' clock: bus clock for ADC
->
-> Exynos3250 has additional 'sclk_tsadc' clock as following:
-> - 'sclk_tsadc' clock: special clock for ADC which provide clock to internal ADC
->
-> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_tsadc' clock
-> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_tsadc'
-> clock in FSYS_BLK.
->
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Naveen Krishna Chatradhi
-> Cc: linux-iio@vger.kernel.org
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/iio/adc/exynos_adc.c | 54 +++++++++++++++++++++++++++++++++-----------
->  1 file changed, 41 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index d25b262..3c99243 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -40,8 +40,9 @@
->  #include <linux/iio/driver.h>
->
->  enum adc_version {
-> -       ADC_V1,
-> -       ADC_V2
-> +       ADC_V1 = 0x1,
-> +       ADC_V2 = 0x2,
-> +       ADC_V3 = (ADC_V1 | ADC_V2),
+v8:
+  1) Removed exynos5260 compatible from mach/exynos5.c
+  2) Added generic "exynos5" compatible in board and soc dts file.
 
-Can't this be simply 0x3? Or is this not really a h/w version?
+v7:
+  1) Renamed board file
 
->  };
->
->  /* EXYNOS4412/5250 ADC_V1 registers definitions */
-> @@ -88,6 +89,7 @@ struct exynos_adc {
->         void __iomem            *regs;
->         void __iomem            *enable_reg;
->         struct clk              *clk;
-> +       struct clk              *sclk;
->         unsigned int            irq;
->         struct regulator        *vdd;
->
-> @@ -100,6 +102,7 @@ struct exynos_adc {
->  static const struct of_device_id exynos_adc_match[] = {
->         { .compatible = "samsung,exynos-adc-v1", .data = (void *)ADC_V1 },
->         { .compatible = "samsung,exynos-adc-v2", .data = (void *)ADC_V2 },
-> +       { .compatible = "samsung,exynos-adc-v3", .data = (void *)ADC_V3 },
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, exynos_adc_match);
-> @@ -128,7 +131,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->         mutex_lock(&indio_dev->mlock);
->
->         /* Select the channel to be used and Trigger conversion */
-> -       if (info->version == ADC_V2) {
-> +       if (info->version & ADC_V2) {
+V6:
+  1) Renamed mmc nodes.
+  2) Removed PHY clocks from DT and put them inside clock driver.
+  3) Added clock-cells property for all fixed clocks.
+  4) Removed spdif_ext_clk fixed rate clock.
 
-So, now this would be applicable for ADC_V3 too, right?
+V5:
+  1) Removed SYSRAM related code.
+  2) Fixed mct clocks.
+  3) Add SoC and Board specifc fixed-rate clocks in respective files.
 
+V4:
+  1) Removed duplicate MMC Soc property from Board file.
 
->                 con2 = readl(ADC_V2_CON2(info->regs));
->                 con2 &= ~ADC_V2_CON2_ACH_MASK;
->                 con2 |= ADC_V2_CON2_ACH_SEL(chan->address);
-> @@ -165,7 +168,7 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
->         info->value = readl(ADC_V1_DATX(info->regs)) &
->                                                 ADC_DATX_MASK;
->         /* clear irq */
-> -       if (info->version == ADC_V2)
-> +       if (info->version & ADC_V2)
->                 writel(1, ADC_V2_INT_ST(info->regs));
->         else
->                 writel(1, ADC_V1_INTCLR(info->regs));
-> @@ -226,11 +229,25 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
->         return 0;
->  }
->
-> +static void exynos_adc_enable_clock(struct exynos_adc *info, bool enable)
-> +{
-> +       if (enable) {
-> +               clk_prepare_enable(info->clk);
+V3:
+  1) Addressed review comments from Tomasz figa.
 
-This could fail. Is it OK without any checks?
+V2:
+  1) Split up DT patch into SoC and Board patch.
 
-> +               if (info->version == ADC_V3)
-> +                       clk_prepare_enable(info->sclk);
+This series is based on Kukjin's for-next branch at
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git
 
-ditto.
+Pankaj Dubey (1):
+  ARM: EXYNOS: initial board support for exynos5260 SoC
 
-> +
-> +       } else {
-> +               if (info->version == ADC_V3)
-> +                       clk_disable_unprepare(info->sclk);
-> +               clk_disable_unprepare(info->clk);
-> +       }
-> +}
-> +
->  static void exynos_adc_hw_init(struct exynos_adc *info)
->  {
->         u32 con1, con2;
->
-> -       if (info->version == ADC_V2) {
-> +       if (info->version & ADC_V2) {
->                 con1 = ADC_V2_CON1_SOFT_RESET;
->                 writel(con1, ADC_V2_CON1(info->regs));
->
-> @@ -300,6 +317,8 @@ static int exynos_adc_probe(struct platform_device *pdev)
->
->         writel(1, info->enable_reg);
->
-> +       info->version = exynos_adc_get_version(pdev);
-> +
->         info->clk = devm_clk_get(&pdev->dev, "adc");
->         if (IS_ERR(info->clk)) {
->                 dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
-> @@ -308,6 +327,17 @@ static int exynos_adc_probe(struct platform_device *pdev)
->                 goto err_irq;
->         }
->
-> +       if (info->version == ADC_V3) {
-> +               info->sclk = devm_clk_get(&pdev->dev, "sclk_tsadc");
-> +               if (IS_ERR(info->sclk)) {
-> +                       dev_warn(&pdev->dev,
-> +                               "failed getting sclk clock, err = %ld\n",
-> +                               PTR_ERR(info->sclk));
-> +                       ret = PTR_ERR(info->sclk);
+Rahul Sharma (2):
+  ARM: dts: add dts files for exynos5260 SoC
+  ARM: dts: add dts files for xyref5260 board
 
-nit: you could move this line above dev_warn and use 'ret' in the print
-statement.
-
+ arch/arm/boot/dts/Makefile                 |    1 +
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi  |  574 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5260-xyref5260.dts |  103 +++++
+ arch/arm/boot/dts/exynos5260.dtsi          |  304 +++++++++++++++
+ arch/arm/mach-exynos/Kconfig               |    5 +
+ 5 files changed, 987 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260.dts
+ create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
 
 -- 
-With warm regards,
-Sachin
+1.7.9.5
