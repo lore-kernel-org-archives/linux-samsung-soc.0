@@ -1,58 +1,117 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 5/8] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
-Date: Thu, 17 Apr 2014 19:15:09 +0900
-Message-ID: <534FA9AD.7000406@samsung.com>
-References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
- <1397527192-21988-6-git-send-email-cw00.choi@samsung.com>
- <CAHbNUh3m7n1OT9fc715vth=k6BdAvVZoYJjBvo8xT25TPji18w@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 3/5] mfd: tps65090: Stop caching most registers
+Date: Thu, 17 Apr 2014 12:00:28 +0100
+Message-ID: <20140417110028.GO28725@lee--X1>
+References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+ <1397689950-1568-4-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAHbNUh3m7n1OT9fc715vth=k6BdAvVZoYJjBvo8xT25TPji18w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, =?UTF-8?B?67CV7LCs7Zi4?= <chanho61.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, marc.zyngier@arm.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:53997 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751335AbaDQLAe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Apr 2014 07:00:34 -0400
+Received: by mail-wi0-f174.google.com with SMTP id d1so2729279wiv.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Apr 2014 04:00:33 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1397689950-1568-4-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-Hi Tushar,
+> Nearly all of the registers in tps65090 combine control bits and
+> status bits.  Turn off caching of all registers except the select few
+> that can be cached.
+>=20
+> In order to avoid adding more duplicate #defines, we also move some
+> register offset definitions to the mfd driver (and resolve
+> inconsistent names).
+>=20
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v3: None
+> Changes in v2:
+> - Leave cache on for the registers that can be cached.
+> - Move register offsets to mfd header file.
+>=20
+>  drivers/mfd/tps65090.c           | 27 ++++++++++++++-------------
+>  drivers/power/tps65090-charger.c | 11 -----------
+>  include/linux/mfd/tps65090.h     | 14 ++++++++++++++
+>  3 files changed, 28 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+> index c3cddb4..1c3e6e2 100644
+> --- a/drivers/mfd/tps65090.c
+> +++ b/drivers/mfd/tps65090.c
+> @@ -32,14 +32,6 @@
+>  #define NUM_INT_REG 2
+>  #define TOTAL_NUM_REG 0x18
+> =20
+> -/* interrupt status registers */
+> -#define TPS65090_INT_STS	0x0
+> -#define TPS65090_INT_STS2	0x1
+> -
+> -/* interrupt mask registers */
+> -#define TPS65090_INT_MSK	0x2
+> -#define TPS65090_INT_MSK2	0x3
+> -
+>  #define TPS65090_INT1_MASK_VAC_STATUS_CHANGE		1
+>  #define TPS65090_INT1_MASK_VSYS_STATUS_CHANGE		2
+>  #define TPS65090_INT1_MASK_BAT_STATUS_CHANGE		3
+> @@ -144,17 +136,26 @@ static struct regmap_irq_chip tps65090_irq_chip=
+ =3D {
+>  	.irqs =3D tps65090_irqs,
+>  	.num_irqs =3D ARRAY_SIZE(tps65090_irqs),
+>  	.num_regs =3D NUM_INT_REG,
+> -	.status_base =3D TPS65090_INT_STS,
+> -	.mask_base =3D TPS65090_INT_MSK,
+> +	.status_base =3D TPS65090_REG_INTR_STS,
+> +	.mask_base =3D TPS65090_REG_INTR_MASK,
+>  	.mask_invert =3D true,
+>  };
+> =20
+>  static bool is_volatile_reg(struct device *dev, unsigned int reg)
+>  {
+> -	if ((reg =3D=3D TPS65090_INT_STS) || (reg =3D=3D TPS65090_INT_STS2)=
+)
+> -		return true;
+> -	else
+> +	/* Nearly all registers have status bits mixed in, except a few */
+> +	switch (reg) {
+> +	case TPS65090_REG_INTR_MASK:
+> +	case TPS65090_REG_INTR_MASK2:
+> +	case TPS65090_REG_CG_CTRL0:
+> +	case TPS65090_REG_CG_CTRL1:
+> +	case TPS65090_REG_CG_CTRL2:
+> +	case TPS65090_REG_CG_CTRL3:
+> +	case TPS65090_REG_CG_CTRL4:
+> +	case TPS65090_REG_CG_CTRL5:
+>  		return false;
+> +	}
+> +	return true;
+>  }
 
-On 04/15/2014 02:09 PM, Tushar Behera wrote:
-> On 15 April 2014 07:29, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> This patch fix the offset of CPU boot address and don't operate smc call
->> of SMC_CMD_CPU1BOOT command for Exynos3250.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  arch/arm/mach-exynos/firmware.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
->> index aa01c42..6205d4f 100644
->> --- a/arch/arm/mach-exynos/firmware.c
->> +++ b/arch/arm/mach-exynos/firmware.c
->> @@ -30,13 +30,16 @@ static int exynos_do_idle(void)
->>
->>  static int exynos_cpu_boot(int cpu)
->>  {
->> +       if (soc_is_exynos3250()) {
->> +               return 0;
->>         /*
->>          * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
->>          * But, Exynos4212 has only one secondary CPU so second parameter
->>          * isn't used for informing secure firmware about CPU id.
->>          */
->> -       if (soc_is_exynos4212())
->> +       } else if (soc_is_exynos4212()) {
->>                 cpu = 0;
->> +       }
->>
-> 
-> As you already return in case of Exynos3250, you need not change this.
-> First commit hunk without the opening brace should be sufficient.
+I'll not force the issue, but if you wanted to do this more succinctly
+you could also do:
 
-OK, I'll remove brace.
+  case TPS65090_REG_INTR_MASK ... TPS65090_REG_INTR_MASK:
+  case TPS65090_REG_CG_CTRL0  ... TPS65090_REG_CG_CTRL5:
 
-Best Regards,
-Chanwoo Choi
+or
+
+  if (reg >=3D TPS65090_REG_INTR_MASK && reg <=3D TPS65090_REG_CG_CTRL5=
+)
+
+Ect.
+
+Otherwise patch looks fine:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
