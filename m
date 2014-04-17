@@ -1,80 +1,58 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 4/5] exynos4-is: Remove requirement for "simple-bus"
- compatible
-Date: Thu, 17 Apr 2014 11:29:00 +0200
-Message-ID: <534F9EDC.4030202@samsung.com>
-References: <1397583272-28295-1-git-send-email-s.nawrocki@samsung.com>
- <1397583272-28295-5-git-send-email-s.nawrocki@samsung.com>
- <CAL_Jsq+VRGpVZwFs1QwCz6YY8WmPUO7ZJtWQ3kVY8p1jWe0LGg@mail.gmail.com>
- <534EBB88.9020109@samsung.com>
- <CAL_JsqKH8o-0H4+2jv-6xh96Twh9UCXZV+LtmiUGHJmhUxCUVA@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv2 5/8] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+Date: Thu, 17 Apr 2014 19:15:09 +0900
+Message-ID: <534FA9AD.7000406@samsung.com>
+References: <1397527192-21988-1-git-send-email-cw00.choi@samsung.com>
+ <1397527192-21988-6-git-send-email-cw00.choi@samsung.com>
+ <CAHbNUh3m7n1OT9fc715vth=k6BdAvVZoYJjBvo8xT25TPji18w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CAL_JsqKH8o-0H4+2jv-6xh96Twh9UCXZV+LtmiUGHJmhUxCUVA@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAHbNUh3m7n1OT9fc715vth=k6BdAvVZoYJjBvo8xT25TPji18w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, =?UTF-8?B?67CV7LCs7Zi4?= <chanho61.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, marc.zyngier@arm.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-(restoring the Cc list I cleared accidentally in previous reply)
+Hi Tushar,
 
-On 16/04/14 21:29, Rob Herring wrote:
-> On Wed, Apr 16, 2014 at 12:19 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 16/04/14 17:34, Rob Herring wrote:
->>> On Tue, Apr 15, 2014 at 12:34 PM, Sylwester Nawrocki
->>> <s.nawrocki@samsung.com> wrote:
->>>>> This patch makes the driver instantiating its child devices itself,
->>>>> rather than relying on an OS to instantiate devices as children
->>>>> of "simple-bus". This removes an incorrect usage of "simple-bus"
->>>>> compatible.
->>>
->>> Good, but why can't you use of_platform_populate with the root being
->>> the "samsung,fimc" node? The code to instantiate the devices belongs
->>> in the core OF code.
+On 04/15/2014 02:09 PM, Tushar Behera wrote:
+> On 15 April 2014 07:29, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patch fix the offset of CPU boot address and don't operate smc call
+>> of SMC_CMD_CPU1BOOT command for Exynos3250.
 >>
->> As I mentioned in other thread, I couldn't see anything like
->> of_platform_unpopulate(), which would allow to destroy any created
->> devices. I can't have of_platform_populate() called as last thing
->> in probe() as some drivers do, so at least deferred probe works.
->> Anyway, it wouldn't be a solution since on a driver removal the
->> created devices must be unregistered.
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/firmware.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+>> index aa01c42..6205d4f 100644
+>> --- a/arch/arm/mach-exynos/firmware.c
+>> +++ b/arch/arm/mach-exynos/firmware.c
+>> @@ -30,13 +30,16 @@ static int exynos_do_idle(void)
+>>
+>>  static int exynos_cpu_boot(int cpu)
+>>  {
+>> +       if (soc_is_exynos3250()) {
+>> +               return 0;
+>>         /*
+>>          * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+>>          * But, Exynos4212 has only one secondary CPU so second parameter
+>>          * isn't used for informing secure firmware about CPU id.
+>>          */
+>> -       if (soc_is_exynos4212())
+>> +       } else if (soc_is_exynos4212()) {
+>>                 cpu = 0;
+>> +       }
+>>
 > 
-> I think the deferred probe will get fixed in 3.16, but I'm not
-> following how deferred probe is relevant here.
+> As you already return in case of Exynos3250, you need not change this.
+> First commit hunk without the opening brace should be sufficient.
 
-What I meant was that when something fails in the middle of probe() 
-callback and of_platform_populate() was already called any devices 
-created by it must be destroyed before returning an error from probe().
-And some drivers seem to never free their devices created by 
-of_platform_populate().
+OK, I'll remove brace.
 
->> I read through thread [1] and I didn't immediately have an idea how
->> to fix the core OF code. So I thought I'd come up with this partial
->> solution.
->>
->> I was wondering if creating functions like of_platform_device_delete(),
->> of_amba_device_delete() and a function that would walk device tree and
->> call them would be a way to go ? I could spend some time on that, any
->> suggestions would be appreciated.
-> 
-> I need to look at the other removal case, but perhaps the way you did
-> using children of the struct device parent is the right way. I'm fine
-> with that, but I just want to see this in the core code.
-
-All right, I'll have a closer look then if it can be done that way.
- 
-> Rob
-> 
->>
->> --
->> Regards,
->> Sylwester
->>
->> [1] http://www.spinics.net/lists/linux-omap/msg94484.html
-
---
-Thanks,
-Sylwester
+Best Regards,
+Chanwoo Choi
