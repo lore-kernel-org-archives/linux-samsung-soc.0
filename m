@@ -1,45 +1,130 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v2 5/5] regulator: tps65090: Make FETs more reliable by
- adding retries
-Date: Wed, 16 Apr 2014 17:24:55 -0600
-Message-ID: <CAPnjgZ13C78CoWHnpB5j=FBBQgYfe7+Si+JiUbuaV+ty3u-Oww@mail.gmail.com>
-References: <1397592876-5741-1-git-send-email-dianders@chromium.org>
-	<1397672724-9063-1-git-send-email-dianders@chromium.org>
-	<1397672724-9063-6-git-send-email-dianders@chromium.org>
-	<CAPnjgZ2pPa=-L6UxRR3KKF-3Ghi63gEU+5RRybLDHOwKL2cs7Q@mail.gmail.com>
-	<CAD=FV=V+xpMEFVqH2Afo8XmCJsUPU2Y8xcmR3rwi+V25KKx8DQ@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
+Date: Thu, 17 Apr 2014 10:37:32 +0900
+Message-ID: <534F305C.2050407@samsung.com>
+References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
+ <1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
+ <20140411014650.GB14934@quad.lixom.net> <53478C75.60302@samsung.com>
+ <5347AA35.4010504@samsung.com> <534B6E8E.20506@samsung.com>
+ <534EA773.30006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=V+xpMEFVqH2Afo8XmCJsUPU2Y8xcmR3rwi+V25KKx8DQ@mail.gmail.com>
+In-reply-to: <534EA773.30006@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, lk <linux-kernel@vger.kernel.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Doug,
+Hi Tomasz,
 
-On 16 April 2014 15:25, Doug Anderson <dianders@chromium.org> wrote:
-> Simon,
->
-> On Wed, Apr 16, 2014 at 1:50 PM, Simon Glass <sjg@chromium.org> wrote:
->>> +#define MAX_CTRL_READ_TRIES    5
->>> +#define MAX_FET_ENABLE_TRIES   1000
+On 04/17/2014 12:53 AM, Tomasz Figa wrote:
+> Hi Chanwoo,
+> 
+> On 14.04.2014 07:13, Chanwoo Choi wrote:
+>> On 04/11/2014 05:39 PM, Tomasz Figa wrote:
+>>> On 11.04.2014 08:32, Chanwoo Choi wrote:
+>>>> On 04/11/2014 10:46 AM, Olof Johansson wrote:
+>>>>> On Thu, Apr 10, 2014 at 06:37:12PM +0900, Chanwoo Choi wrote:
+>>>>>> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+>>>>>> index 5992b8d..3d808f6b 100644
+>>>>>> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+>>>>>> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+>>>>>> @@ -43,6 +43,9 @@ extern unsigned long samsung_cpu_id;
+>>>>>>    #define S5PV210_CPU_ID        0x43110000
+>>>>>>    #define S5PV210_CPU_MASK    0xFFFFF000
+>>>>>>
+>>>>>> +#define EXYNOS3250_SOC_ID       0xE3472000
+>>>>>> +#define EXYNOS3_SOC_MASK        0xFFFFF000
+>>>>>> +
+>>>>>>    #define EXYNOS4210_CPU_ID    0x43210000
+>>>>>>    #define EXYNOS4212_CPU_ID    0x43220000
+>>>>>>    #define EXYNOS4412_CPU_ID    0xE4412200
+>>>>>> @@ -68,6 +71,7 @@ IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
+>>>>>>    IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
+>>>>>>    IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
+>>>>>>    IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
+>>>>>> +IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
+>>>>>>    IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+>>>>>>    IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+>>>>>>    IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+>>>>>> @@ -126,6 +130,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+>>>>>>    # define soc_is_s5pv210()    0
+>>>>>>    #endif
+>>>>>>
+>>>>>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>>>>>> +# define soc_is_exynos3250()    is_samsung_exynos3250()
+>>>>>> +#else
+>>>>>> +# define soc_is_exynos3250()    0
+>>>>>> +#endif
+>>>>>
+>>>>> In general, I think we have too much code littered with soc_is_<foo>() going
+>>>>> on, so please try to avoid adding more for this SoC. Especially in cases where
+>>>>> you just want to bail out of certain features where we might already have
+>>>>> function pointers to control if a function is called or not, such as the
+>>>>> firmware interfaces.
+>>>>>
+>>>>
+>>>> Do you prefer dt helper function such as following function instead of new soc_is_xx() ?
+>>>> - of_machine_is_compatible("samsung,exynos3250")
+>>>>
+>>>> If you are OK, I'll use of_machine_is_compatible() instead of soc_is_xx().
+>>>
+>>> First of all, there is still a lot of code in mach-exynos/ using the soc_is_xx() macros, so having some SoCs use them and other SoCs use of_machine_is_compatible() wouldn't make the code cleaner.
+>>>
+>>> For now, I wouldn't mind adding soc_is_exynos3250(), but in general such code surrounded with if (soc_is_xx()) blocks should be reworked to use something better, for example function pointers, as Olof suggested.
 >>
->> Gosh that is a lot of tries - should we maybe give up sooner?
->
-> That's actually a squash of a recent patch.  See
-> <https://chromium-review.googlesource.com/189239>.  I've specifically
-> seen at least one case on my device where it needed 888 retries at
-> bootup!
->
-> ...on my really old Chromebook, it seems to get into a bad state if it
-> sits on my desk for a long time.  After I use it a bit it rarely needs
-> more than 10 retries.
+>> I thought 'function pointers' method instead of soc_is_xxx() macro as following two case:
+>> I need more detailed explanation/example of "for example function pointers, as Olof suggested." sentence.
+>>
+>> [case 1]
+>> Each Exynos SoC has other function pointers according to compatible name of DT.
+>>
+>> For example, arch/arm/mach-exynos/firmware.c
+>>
+>> static const struct firmware_ops exynos_firmware_ops = {
+>>     .do_idle        = exynos_do_idle,
+>>     .set_cpu_boot_addr    = exynos_set_cpu_boot_addr,
+>>     .cpu_boot        = exynos_cpu_boot,
+>> };
+>> static const struct firmware_ops exynos3250_firmware_ops = {
+>>     .do_idle        = exynos_do_idle,
+>>     .set_cpu_boot_addr    = exynos4212_set_cpu_boot_addr,
+>>     .cpu_boot        = exynos3250_cpu_boot,
+>> };
+>>
+>> static const struct firmware_ops exynos4212_firmware_ops = {
+>>     .do_idle        = exynos_do_idle,
+>>     .set_cpu_boot_addr    = exynos4212_set_cpu_boot_addr,
+>>     .cpu_boot        = exynos4212_cpu_boot,
+>> };
+>>
+>> struct secure_firmware {
+>>     char *name;
+>>     const struct firmware_ops *ops;
+>> } exynos_secure_firmware[] __initconst = {
+>>     { "samsung,secure-firmware",        &exynos_firmware_ops },
+>>     { "samsung,exynos3250-secure-firmware", &exynos3250_firmware_ops },
+>>     { "samsung,exynos4212-secure-firmware", &exynos4212_firmware_ops },
+>> };
+>>
+> 
+> This is probably the right solution. Another would be to detect which firmware ops to use by matching root node with particular SoC compatible strings.
+> 
 
-Try to be kinder to your hardware?
+OK, I'll modify firmware.c using this method on separated patch apart from Exynos3250 patchset.
+But, I want to implment it after completed Exynos3250 patchset.
+Because Exynos3250 patchset needs other patch such as following patch:
+Following patches has not yet to be confirmed or merged.
 
-Anyway, fair enough, if you've seen 888 then we need to deal with that case.
+[PATCH Resend] ARM: EXYNOS: Map SYSRAM address through DT
+- http://www.spinics.net/lists/arm-kernel/msg323011.html
 
-Regards,
-Simon
+[PATCH v2 1/3] ARM: EXYNOS: Map PMU address through DT
+- http://www.spinics.net/lists/arm-kernel/msg316013.html
+ 
+Thanks for your review.
+
+Best regards,
+Chanwoo Choi
