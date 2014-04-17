@@ -1,58 +1,80 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH resend] mfd/rtc: s5m: Do not allocate RTC I2C dummy and
- regmap for unsupported chipsets
-Date: Thu, 17 Apr 2014 09:08:47 +0100
-Message-ID: <20140417080847.GF28725@lee--X1>
-References: <1397461245-818-1-git-send-email-k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 4/5] exynos4-is: Remove requirement for "simple-bus"
+ compatible
+Date: Thu, 17 Apr 2014 11:29:00 +0200
+Message-ID: <534F9EDC.4030202@samsung.com>
+References: <1397583272-28295-1-git-send-email-s.nawrocki@samsung.com>
+ <1397583272-28295-5-git-send-email-s.nawrocki@samsung.com>
+ <CAL_Jsq+VRGpVZwFs1QwCz6YY8WmPUO7ZJtWQ3kVY8p1jWe0LGg@mail.gmail.com>
+ <534EBB88.9020109@samsung.com>
+ <CAL_JsqKH8o-0H4+2jv-6xh96Twh9UCXZV+LtmiUGHJmhUxCUVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:44729 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754437AbaDQIIw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Apr 2014 04:08:52 -0400
-Received: by mail-we0-f182.google.com with SMTP id p61so110447wes.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Apr 2014 01:08:51 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1397461245-818-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CAL_JsqKH8o-0H4+2jv-6xh96Twh9UCXZV+LtmiUGHJmhUxCUVA@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-> The rtc-s5m driver does not support all of S2M and S5M chipsets
-> supported by main MFD sec-core driver. For such chipsets unsupported =
-by
-> rtc-s5m, the MFD sec-core driver initialized regmap with default conf=
-ig.
-> This config in such cases wouldn't work at all.
->=20
-> The main MFD sec-core driver shouldn't initialize regmap for child
-> drivers which is not used by them and even not valid.
->=20
-> Move the allocation of RTC I2C dummy device and initialization of RTC
-> regmap from main MFD sec-core driver to the rtc-s5m driver. The rtc-s=
-5m
-> driver will use proper regmap config for supported devices.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/mfd/sec-core.c           | 53 +---------------------------
->  drivers/rtc/rtc-s5m.c            | 75 ++++++++++++++++++++++++++++++=
-+++++++---
->  include/linux/mfd/samsung/core.h |  3 --
->  3 files changed, 71 insertions(+), 60 deletions(-)
+(restoring the Cc list I cleared accidentally in previous reply)
 
-MFD changes look good to me. If Alessandro provides his Ack for the
-RTC adaptions I can setup an MFD-RTC branch for him to pull from in
-order to save conflicts at merge time.
+On 16/04/14 21:29, Rob Herring wrote:
+> On Wed, Apr 16, 2014 at 12:19 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> On 16/04/14 17:34, Rob Herring wrote:
+>>> On Tue, Apr 15, 2014 at 12:34 PM, Sylwester Nawrocki
+>>> <s.nawrocki@samsung.com> wrote:
+>>>>> This patch makes the driver instantiating its child devices itself,
+>>>>> rather than relying on an OS to instantiate devices as children
+>>>>> of "simple-bus". This removes an incorrect usage of "simple-bus"
+>>>>> compatible.
+>>>
+>>> Good, but why can't you use of_platform_populate with the root being
+>>> the "samsung,fimc" node? The code to instantiate the devices belongs
+>>> in the core OF code.
+>>
+>> As I mentioned in other thread, I couldn't see anything like
+>> of_platform_unpopulate(), which would allow to destroy any created
+>> devices. I can't have of_platform_populate() called as last thing
+>> in probe() as some drivers do, so at least deferred probe works.
+>> Anyway, it wouldn't be a solution since on a driver removal the
+>> created devices must be unregistered.
+> 
+> I think the deferred probe will get fixed in 3.16, but I'm not
+> following how deferred probe is relevant here.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+What I meant was that when something fails in the middle of probe() 
+callback and of_platform_populate() was already called any devices 
+created by it must be destroyed before returning an error from probe().
+And some drivers seem to never free their devices created by 
+of_platform_populate().
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+>> I read through thread [1] and I didn't immediately have an idea how
+>> to fix the core OF code. So I thought I'd come up with this partial
+>> solution.
+>>
+>> I was wondering if creating functions like of_platform_device_delete(),
+>> of_amba_device_delete() and a function that would walk device tree and
+>> call them would be a way to go ? I could spend some time on that, any
+>> suggestions would be appreciated.
+> 
+> I need to look at the other removal case, but perhaps the way you did
+> using children of the struct device parent is the right way. I'm fine
+> with that, but I just want to see this in the core code.
+
+All right, I'll have a closer look then if it can be done that way.
+ 
+> Rob
+> 
+>>
+>> --
+>> Regards,
+>> Sylwester
+>>
+>> [1] http://www.spinics.net/lists/linux-omap/msg94484.html
+
+--
+Thanks,
+Sylwester
