@@ -1,130 +1,110 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 01/27] ARM: EXYNOS: Add Exynos3250 SoC ID
-Date: Thu, 17 Apr 2014 10:37:32 +0900
-Message-ID: <534F305C.2050407@samsung.com>
-References: <1397122658-16013-1-git-send-email-cw00.choi@samsung.com>
- <1397122658-16013-2-git-send-email-cw00.choi@samsung.com>
- <20140411014650.GB14934@quad.lixom.net> <53478C75.60302@samsung.com>
- <5347AA35.4010504@samsung.com> <534B6E8E.20506@samsung.com>
- <534EA773.30006@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCHv3 1/5] drm: exynos: hdmi: remove usage of struct
+ s5p_hdmi_platform_data
+Date: Thu, 17 Apr 2014 10:54:47 +0900
+Message-ID: <534F3467.1070707@samsung.com>
+References: <1397661178-6016-1-git-send-email-t.stanislaws@samsung.com>
+ <1397661178-6016-2-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <534EA773.30006@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:22600 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbaDQByk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Apr 2014 21:54:40 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4500AALJZ2L6A0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Apr 2014 10:54:38 +0900 (KST)
+In-reply-to: <1397661178-6016-2-git-send-email-t.stanislaws@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: m.chehab@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, t.figa@samsung.com, b.zolnierkie@samsung.com, rahul.sharma@samsung.com, pawel.moll@arm.com, l.stach@pengutronix.de
 
 Hi Tomasz,
 
-On 04/17/2014 12:53 AM, Tomasz Figa wrote:
-> Hi Chanwoo,
-> 
-> On 14.04.2014 07:13, Chanwoo Choi wrote:
->> On 04/11/2014 05:39 PM, Tomasz Figa wrote:
->>> On 11.04.2014 08:32, Chanwoo Choi wrote:
->>>> On 04/11/2014 10:46 AM, Olof Johansson wrote:
->>>>> On Thu, Apr 10, 2014 at 06:37:12PM +0900, Chanwoo Choi wrote:
->>>>>> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
->>>>>> index 5992b8d..3d808f6b 100644
->>>>>> --- a/arch/arm/plat-samsung/include/plat/cpu.h
->>>>>> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
->>>>>> @@ -43,6 +43,9 @@ extern unsigned long samsung_cpu_id;
->>>>>>    #define S5PV210_CPU_ID        0x43110000
->>>>>>    #define S5PV210_CPU_MASK    0xFFFFF000
->>>>>>
->>>>>> +#define EXYNOS3250_SOC_ID       0xE3472000
->>>>>> +#define EXYNOS3_SOC_MASK        0xFFFFF000
->>>>>> +
->>>>>>    #define EXYNOS4210_CPU_ID    0x43210000
->>>>>>    #define EXYNOS4212_CPU_ID    0x43220000
->>>>>>    #define EXYNOS4412_CPU_ID    0xE4412200
->>>>>> @@ -68,6 +71,7 @@ IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
->>>>>>    IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
->>>>>>    IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
->>>>>>    IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
->>>>>> +IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
->>>>>>    IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
->>>>>>    IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
->>>>>>    IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
->>>>>> @@ -126,6 +130,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
->>>>>>    # define soc_is_s5pv210()    0
->>>>>>    #endif
->>>>>>
->>>>>> +#if defined(CONFIG_SOC_EXYNOS3250)
->>>>>> +# define soc_is_exynos3250()    is_samsung_exynos3250()
->>>>>> +#else
->>>>>> +# define soc_is_exynos3250()    0
->>>>>> +#endif
->>>>>
->>>>> In general, I think we have too much code littered with soc_is_<foo>() going
->>>>> on, so please try to avoid adding more for this SoC. Especially in cases where
->>>>> you just want to bail out of certain features where we might already have
->>>>> function pointers to control if a function is called or not, such as the
->>>>> firmware interfaces.
->>>>>
->>>>
->>>> Do you prefer dt helper function such as following function instead of new soc_is_xx() ?
->>>> - of_machine_is_compatible("samsung,exynos3250")
->>>>
->>>> If you are OK, I'll use of_machine_is_compatible() instead of soc_is_xx().
->>>
->>> First of all, there is still a lot of code in mach-exynos/ using the soc_is_xx() macros, so having some SoCs use them and other SoCs use of_machine_is_compatible() wouldn't make the code cleaner.
->>>
->>> For now, I wouldn't mind adding soc_is_exynos3250(), but in general such code surrounded with if (soc_is_xx()) blocks should be reworked to use something better, for example function pointers, as Olof suggested.
->>
->> I thought 'function pointers' method instead of soc_is_xxx() macro as following two case:
->> I need more detailed explanation/example of "for example function pointers, as Olof suggested." sentence.
->>
->> [case 1]
->> Each Exynos SoC has other function pointers according to compatible name of DT.
->>
->> For example, arch/arm/mach-exynos/firmware.c
->>
->> static const struct firmware_ops exynos_firmware_ops = {
->>     .do_idle        = exynos_do_idle,
->>     .set_cpu_boot_addr    = exynos_set_cpu_boot_addr,
->>     .cpu_boot        = exynos_cpu_boot,
->> };
->> static const struct firmware_ops exynos3250_firmware_ops = {
->>     .do_idle        = exynos_do_idle,
->>     .set_cpu_boot_addr    = exynos4212_set_cpu_boot_addr,
->>     .cpu_boot        = exynos3250_cpu_boot,
->> };
->>
->> static const struct firmware_ops exynos4212_firmware_ops = {
->>     .do_idle        = exynos_do_idle,
->>     .set_cpu_boot_addr    = exynos4212_set_cpu_boot_addr,
->>     .cpu_boot        = exynos4212_cpu_boot,
->> };
->>
->> struct secure_firmware {
->>     char *name;
->>     const struct firmware_ops *ops;
->> } exynos_secure_firmware[] __initconst = {
->>     { "samsung,secure-firmware",        &exynos_firmware_ops },
->>     { "samsung,exynos3250-secure-firmware", &exynos3250_firmware_ops },
->>     { "samsung,exynos4212-secure-firmware", &exynos4212_firmware_ops },
->> };
->>
-> 
-> This is probably the right solution. Another would be to detect which firmware ops to use by matching root node with particular SoC compatible strings.
-> 
+On 04/17/2014 12:12 AM, Tomasz Stanislawski wrote:
+> This patch continues shift of DRM EXYNOS to DT-only configuration.
+> The usage of the old structure for HDMI's platform data is
+> removed.
+>
+> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> ---
+>   drivers/gpu/drm/exynos/exynos_hdmi.c |   30 ++++++++----------------------
+>   1 file changed, 8 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 9a6d652..482ca77 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -43,7 +43,6 @@
+>   #include "exynos_mixer.h"
+>   
+>   #include <linux/gpio.h>
+> -#include <media/s5p_hdmi.h>
+>   
+>   #define get_hdmi_display(dev)	platform_get_drvdata(to_platform_device(dev))
+>   #define ctx_from_connector(c)	container_of(c, struct hdmi_context, connector)
+> @@ -2011,28 +2010,18 @@ fail:
+>   	return -ENODEV;
+>   }
+>   
+> -static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
+> -					(struct device *dev)
+> +static int drm_hdmi_dt_parse(struct hdmi_context *hdata, struct device_node *np)
+>   {
+> -	struct device_node *np = dev->of_node;
+> -	struct s5p_hdmi_platform_data *pd;
+>   	u32 value;
+>   
+> -	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> -	if (!pd)
+> -		goto err_data;
+> -
+>   	if (!of_find_property(np, "hpd-gpio", &value)) {
+>   		DRM_ERROR("no hpd gpio property found\n");
+> -		goto err_data;
+> +		return -ENOENT;
+>   	}
+>   
+> -	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
+> -
+> -	return pd;
+> +	hdata->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
+>   
+> -err_data:
+> -	return NULL;
+> +	return 0;
+>   }
+>   
+>   static struct of_device_id hdmi_match_types[] = {
+> @@ -2051,7 +2040,6 @@ static int hdmi_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+>   	struct hdmi_context *hdata;
+> -	struct s5p_hdmi_platform_data *pdata;
+>   	struct resource *res;
+>   	const struct of_device_id *match;
+>   	struct device_node *ddc_node, *phy_node;
+> @@ -2061,14 +2049,14 @@ static int hdmi_probe(struct platform_device *pdev)
+>   	 if (!dev->of_node)
+>   		return -ENODEV;
+>   
+> -	pdata = drm_hdmi_dt_parse_pdata(dev);
+> -	if (!pdata)
+> -		return -EINVAL;
+> -
+>   	hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
+>   	if (!hdata)
+>   		return -ENOMEM;
+>   
+> +	ret = drm_hdmi_dt_parse(hdata, dev->of_node);
+> +	if (ret)
+> +		return -EINVAL;
 
-OK, I'll modify firmware.c using this method on separated patch apart from Exynos3250 patchset.
-But, I want to implment it after completed Exynos3250 patchset.
-Because Exynos3250 patchset needs other patch such as following patch:
-Following patches has not yet to be confirmed or merged.
-
-[PATCH Resend] ARM: EXYNOS: Map SYSRAM address through DT
-- http://www.spinics.net/lists/arm-kernel/msg323011.html
-
-[PATCH v2 1/3] ARM: EXYNOS: Map PMU address through DT
-- http://www.spinics.net/lists/arm-kernel/msg316013.html
- 
-Thanks for your review.
-
-Best regards,
-Chanwoo Choi
+It's better to return ret value.
