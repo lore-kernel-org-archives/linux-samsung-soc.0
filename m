@@ -1,221 +1,92 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 1/3] ARM: EXYNOS: Map PMU address through DT
-Date: Thu, 17 Apr 2014 12:44:01 +0900
-Message-ID: <534F4E01.7080704@samsung.com>
-References: <1395061795-17777-1-git-send-email-vikas.sajjan@samsung.com>
- <1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC PATCH 05/14] ARM: dts: samsung-fimd: add I80 specific
+ properties
+Date: Thu, 17 Apr 2014 14:33:37 +0900
+Message-ID: <534F67B1.2020001@samsung.com>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+ <1397540862-21359-6-git-send-email-yj44.cho@samsung.com>
+ <1673300.nbbjNiKf1K@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:24933 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755225AbaDQDn7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Apr 2014 23:43:59 -0400
-In-reply-to: <1395061795-17777-2-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1673300.nbbjNiKf1K@avalon>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com
 
-Hi Vikas,
+Hi Laurent
 
-As you comment, I found the history of this patch in mailing list.
-It seems like that this patch stop the review.
+Thank you for the comment.
 
-Besides, Pankaj posted same patch to support PMU as following:
-- https://lkml.org/lkml/2014/4/2/48
+On 04/17/2014 06:26 AM, Laurent Pinchart wrote:
+> Hi YoungJun,
+>
+> Thank you for the patch.
+>
+> On Tuesday 15 April 2014 14:47:33 YoungJun Cho wrote:
+>> In case of using CPU interface panel, the relevant registers should be set.
+>> So this patch adds relevant dt bindings.
+>>
+>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>   .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+>> b/Documentation/devicetree/bindings/video/samsung-fimd.txt index
+>> 2dad41b..924c2e1 100644
+>> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+>> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+>> @@ -44,6 +44,15 @@ Optional Properties:
+>>   - display-timings: timing settings for FIMD, as described in document [1].
+>>   		Can be used in case timings cannot be provided otherwise
+>>   		or to override timings provided by the panel.
+>> +- samsung,sysreg-phandle: handle to syscon used to control the system
 
-Do you have a plan to resend or not?
-because I need this patch to remove PMU static memory mapping for Exynos3250.
+Oops... I have to change "samsung,sysreg-phandle" to "samsung,sysreg".
 
-Best Regards,
-Chanwoo Choi
+>> registers +- vidout-i80-ldi: boolean to support i80 interface instead of
+>> rgb one +- cs-setup: clock cycles for the active period of address signal
+>> enable until +	chip select is enable in i80 interface
+>> +- wr-setup: clock cycles for the active period of CS signal enable until
+>> +	write signal is enable in i80 interface
+>> +- wr-act: clock cycles for the active period of CS enable in i80 interface
+>> +- wr-hold: clock cycles for the active period of CS disable until write
+>> signal +	is disable in i80 interface
+>
+> Shouldn't the interface parameters be considered as a property of the slave
+> device instead ? The bus master side is programmable, and different slaves
+> would have different timing requirements. I think it would make more sense to
+> specify the timings on the slave (panel) side and query them dynamically at
+> runtime. Depending on the slave the timings could be hardcoded in the driver
+> (as they're usually an intrinsic property of the slave) or partially or fully
+> specified in the slave DT node.
+>
 
-On 03/17/2014 10:09 PM, Vikas Sajjan wrote:
-> Instead of hardcoding the PMU details for each SoC, pass this information
-> through device tree (DT).
-> 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-> ---
->  .../devicetree/bindings/arm/samsung/pmu.txt        |    5 +-
->  arch/arm/boot/dts/exynos4.dtsi                     |    5 ++
->  arch/arm/boot/dts/exynos5260.dtsi                  |    5 ++
->  arch/arm/mach-exynos/common.c                      |   51 +++++++++++++-------
->  arch/arm/mach-exynos/include/mach/map.h            |    3 --
->  5 files changed, 47 insertions(+), 22 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> index f1f1552..667a7f0 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> @@ -2,14 +2,15 @@ SAMSUNG Exynos SoC series PMU Registers
->  
->  Properties:
->   - compatible : should contain two values. First value must be one from following list:
-> +		   - "samsung,exynos4210-pmu" - for Exynos4210 and Exynos4x12 SoC,
->  		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
-> -		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-> +		   - "samsung,exynos5420-pmu" - for Exynos5420 and Exynos5260 SoC.
->  		second value must be always "syscon".
->  
->   - reg : offset and length of the register set.
->  
->  Example :
->  pmu_system_controller: system-controller@10040000 {
-> -	compatible = "samsung,exynos5250-pmu", "syscon";
-> +	compatible = "samsung,exynos5250-pmu";
->  	reg = <0x10040000 0x5000>;
->  };
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 08452e1..94cbafa 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -55,6 +55,11 @@
->  		#phy-cells = <1>;
->  	};
->  
-> +	pmu_system_controller: system-controller@10020000 {
-> +		compatible = "samsung,exynos4210-pmu";
-> +		reg = <0x10020000 0x4000>;
-> +	};
-> +
->  	pd_mfc: mfc-power-domain@10023C40 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10023C40 0x20>;
-> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-> index a93fea8..2a4dace 100644
-> --- a/arch/arm/boot/dts/exynos5260.dtsi
-> +++ b/arch/arm/boot/dts/exynos5260.dtsi
-> @@ -264,6 +264,11 @@
->  			};
->  		};
->  
-> +		pmu_system_controller: system-controller@10D50000 {
-> +			compatible = "samsung,exynos5420-pmu";
-> +			reg = <0x10D50000 0x5000>;
-> +		};
-> +
->  		pinctrl_0: pinctrl@11600000 {
->  			compatible = "samsung,exynos5260-pinctrl";
->  			reg = <0x11600000 0x1000>;
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 1df81ff..c75733b 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -79,11 +79,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
->  		.length		= SZ_4K,
->  		.type		= MT_DEVICE,
->  	}, {
-> -		.virtual	= (unsigned long)S5P_VA_PMU,
-> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_PMU),
-> -		.length		= SZ_64K,
-> -		.type		= MT_DEVICE,
-> -	}, {
->  		.virtual	= (unsigned long)S5P_VA_COMBINER_BASE,
->  		.pfn		= __phys_to_pfn(EXYNOS4_PA_COMBINER),
->  		.length		= SZ_4K,
-> @@ -157,11 +152,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->  		.pfn		= __phys_to_pfn(EXYNOS5_PA_CMU),
->  		.length		= 144 * SZ_1K,
->  		.type		= MT_DEVICE,
-> -	}, {
-> -		.virtual	= (unsigned long)S5P_VA_PMU,
-> -		.pfn		= __phys_to_pfn(EXYNOS5_PA_PMU),
-> -		.length		= SZ_64K,
-> -		.type		= MT_DEVICE,
->  	},
->  };
->  
-> @@ -243,12 +233,12 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
->  	return 1;
->  }
->  
-> -struct __sysram_desc {
-> +struct __exynos_reg_desc {
->  	char name[32];
->  	unsigned long addr;
->  };
->  
-> -static struct __sysram_desc sysram_desc[] __initdata = {
-> +static struct __exynos_reg_desc exynos_sysram_desc[] __initdata = {
->  	{
->  		.name = "samsung,exynos4210-sysram",
->  		.addr = (unsigned long)S5P_VA_SYSRAM,
-> @@ -258,7 +248,20 @@ static struct __sysram_desc sysram_desc[] __initdata = {
->  	},
->  };
->  
-> -static int __init exynos_fdt_map_sysram(unsigned long node, const char *uname,
-> +static struct __exynos_reg_desc exynos_pmu_desc[] __initdata = {
-> +	{
-> +		.name = "samsung,exynos4210-pmu",
-> +		.addr = (unsigned long)S5P_VA_PMU,
-> +	}, {
-> +		.name = "samsung,exynos5250-pmu",
-> +		.addr = (unsigned long)S5P_VA_PMU,
-> +	}, {
-> +		.name = "samsung,exynos5420-pmu",
-> +		.addr = (unsigned long)S5P_VA_PMU,
-> +	},
-> +};
-> +
-> +static int __init exynos_fdt_map_reg(unsigned long node, const char *uname,
->  					int depth, void *data)
->  {
->  	struct map_desc iodesc;
-> @@ -266,12 +269,26 @@ static int __init exynos_fdt_map_sysram(unsigned long node, const char *uname,
->  	unsigned long len;
->  	int i;
->  
-> -	for (i = 0; i < ARRAY_SIZE(sysram_desc); i++) {
-> -		if (of_flat_dt_is_compatible(node, sysram_desc[i].name)) {
-> +	for (i = 0; i < ARRAY_SIZE(exynos_sysram_desc); i++) {
-> +		if (of_flat_dt_is_compatible(node,
-> +					exynos_sysram_desc[i].name)) {
-> +			reg = of_get_flat_dt_prop(node, "reg", &len);
-> +			if (!reg || len != (sizeof(unsigned long) * 2))
-> +				return -ENODEV;
-> +			iodesc.virtual = exynos_sysram_desc[i].addr;
-> +			iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
-> +			iodesc.length = be32_to_cpu(reg[1]);
-> +			iodesc.type = MT_DEVICE;
-> +			iotable_init(&iodesc, 1);
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(exynos_pmu_desc); i++) {
-> +		if (of_flat_dt_is_compatible(node, exynos_pmu_desc[i].name)) {
->  			reg = of_get_flat_dt_prop(node, "reg", &len);
->  			if (!reg || len != (sizeof(unsigned long) * 2))
->  				return -ENODEV;
-> -			iodesc.virtual = sysram_desc[i].addr;
-> +			iodesc.virtual = exynos_pmu_desc[i].addr;
->  			iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
->  			iodesc.length = be32_to_cpu(reg[1]);
->  			iodesc.type = MT_DEVICE;
-> @@ -298,7 +315,7 @@ void __init exynos_init_io(void)
->  
->  	exynos_map_io();
->  
-> -	of_scan_flat_dt(exynos_fdt_map_sysram, NULL);
-> +	of_scan_flat_dt(exynos_fdt_map_reg, NULL);
->  }
->  
->  static void __init exynos_map_io(void)
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 548269a..34eee6e 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -28,9 +28,6 @@
->  #define EXYNOS4_PA_SYSCON		0x10010000
->  #define EXYNOS5_PA_SYSCON		0x10050100
->  
-> -#define EXYNOS4_PA_PMU			0x10020000
-> -#define EXYNOS5_PA_PMU			0x10040000
-> -
->  #define EXYNOS4_PA_CMU			0x10030000
->  #define EXYNOS5_PA_CMU			0x10010000
->  
-> 
+Yes, you're right. These properties are related to panel in a sense.
+
+But my intention is to use these properties to fimd node in the board
+specific dts file, because it decides the interface with panel and
+these are required by fimd only.
+
+If dynamic query is more logical approach, I should find some ways
+with considering probing order.
+
+Thank you.
+Best regards YJ
+
+>>   The device node can contain 'port' child nodes according to the bindings
+>> defined in [2]. The following are properties specific to those nodes:
+>
