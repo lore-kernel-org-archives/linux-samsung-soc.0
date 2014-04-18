@@ -1,117 +1,33 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Move at91.h to dt-bindigs/clock
-Date: Fri, 18 Apr 2014 17:53:25 +0200
-Message-ID: <53514A75.2030908@atmel.com>
-References: <1394085884-13081-1-git-send-email-tushar.behera@linaro.org> <1394085884-13081-2-git-send-email-tushar.behera@linaro.org>
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH 3/7] mfd: cros_ec: spi: Make the cros_ec_spi timeout more reliable
+Date: Fri, 18 Apr 2014 11:26:56 -0600
+Message-ID: <CAPnjgZ2J8V=ZtivYZJOepBi_6h7VEhZ+R-XjjT+yA0YeW9+Tqw@mail.gmail.com>
+References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
+	<1397757570-19750-4-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1394085884-13081-2-git-send-email-tushar.behera@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net, linux@maxim.org.za, plagnioj@jcrosoft.com, kgene.kim@samsung.com, t.figa@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:47064 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752453AbaDRR05 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Apr 2014 13:26:57 -0400
+Received: by mail-wg0-f49.google.com with SMTP id a1so710854wgh.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Apr 2014 10:26:56 -0700 (PDT)
+In-Reply-To: <1397757570-19750-4-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, lk <linux-kernel@vger.kernel.org>
 
-On 06/03/2014 07:04, Tushar Behera :
-> Most of the clock related dt-binding header files are located in
-> dt-bindings/clock folder. It would be good to keep all the similar
-> header files at a single location.
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> CC: Rob Landley <rob@landley.net>
-> CC: Andrew Victor <linux@maxim.org.za>
-> CC: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+On 17 April 2014 11:59, Doug Anderson <dianders@chromium.org> wrote:
+> The cros_ec_spi transfer had two problems with its timeout code:
+>
+> 1. It looked at the timeout even in the case that it found valid data.
+> 2. If the cros_ec_spi code got switched out for a while, it's possible
+>    it could get a timeout after a single loop.  Let's be paranoid and
+>    make sure we do one last transfer after the timeout expires.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 
-I have just added at91sam9261 and at91sam9rl which appeared in 3.15
-merge window and stacked this patch on top of at91-3.15-fixes.
-
-I hope that it will be accepted for 3.15.
-
-Bye,
-
-
-> ---
->  .../devicetree/bindings/clock/at91-clock.txt       |    2 +-
->  arch/arm/boot/dts/sama5d3.dtsi                     |    2 +-
->  arch/arm/boot/dts/sama5d3_mci2.dtsi                |    2 +-
->  arch/arm/boot/dts/sama5d3_tcb1.dtsi                |    2 +-
->  arch/arm/boot/dts/sama5d3_uart.dtsi                |    2 +-
->  include/dt-bindings/{clk => clock}/at91.h          |    0
->  6 files changed, 5 insertions(+), 5 deletions(-)
->  rename include/dt-bindings/{clk => clock}/at91.h (100%)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-> index cd5e239..6794cdc 100644
-> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-> @@ -62,7 +62,7 @@ Required properties for PMC node:
->  - interrupt-controller : tell that the PMC is an interrupt controller.
->  - #interrupt-cells : must be set to 1. The first cell encodes the interrupt id,
->  	and reflect the bit position in the PMC_ER/DR/SR registers.
-> -	You can use the dt macros defined in dt-bindings/clk/at91.h.
-> +	You can use the dt macros defined in dt-bindings/clock/at91.h.
->  	0 (AT91_PMC_MOSCS) -> main oscillator ready
->  	1 (AT91_PMC_LOCKA) -> PLL A ready
->  	2 (AT91_PMC_LOCKB) -> PLL B ready
-> diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
-> index 3d5faf8..8c977b5 100644
-> --- a/arch/arm/boot/dts/sama5d3.dtsi
-> +++ b/arch/arm/boot/dts/sama5d3.dtsi
-> @@ -13,7 +13,7 @@
->  #include <dt-bindings/pinctrl/at91.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/gpio/gpio.h>
-> -#include <dt-bindings/clk/at91.h>
-> +#include <dt-bindings/clock/at91.h>
->  
->  / {
->  	model = "Atmel SAMA5D3 family SoC";
-> diff --git a/arch/arm/boot/dts/sama5d3_mci2.dtsi b/arch/arm/boot/dts/sama5d3_mci2.dtsi
-> index b029fe7..1b02208 100644
-> --- a/arch/arm/boot/dts/sama5d3_mci2.dtsi
-> +++ b/arch/arm/boot/dts/sama5d3_mci2.dtsi
-> @@ -9,7 +9,7 @@
->  
->  #include <dt-bindings/pinctrl/at91.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> -#include <dt-bindings/clk/at91.h>
-> +#include <dt-bindings/clock/at91.h>
->  
->  / {
->  	ahb {
-> diff --git a/arch/arm/boot/dts/sama5d3_tcb1.dtsi b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-> index 382b044..0284845 100644
-> --- a/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-> +++ b/arch/arm/boot/dts/sama5d3_tcb1.dtsi
-> @@ -9,7 +9,7 @@
->  
->  #include <dt-bindings/pinctrl/at91.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> -#include <dt-bindings/clk/at91.h>
-> +#include <dt-bindings/clock/at91.h>
->  
->  / {
->  	aliases {
-> diff --git a/arch/arm/boot/dts/sama5d3_uart.dtsi b/arch/arm/boot/dts/sama5d3_uart.dtsi
-> index a9fa75e..7a8d4c6 100644
-> --- a/arch/arm/boot/dts/sama5d3_uart.dtsi
-> +++ b/arch/arm/boot/dts/sama5d3_uart.dtsi
-> @@ -9,7 +9,7 @@
->  
->  #include <dt-bindings/pinctrl/at91.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> -#include <dt-bindings/clk/at91.h>
-> +#include <dt-bindings/clock/at91.h>
->  
->  / {
->  	aliases {
-> diff --git a/include/dt-bindings/clk/at91.h b/include/dt-bindings/clock/at91.h
-> similarity index 100%
-> rename from include/dt-bindings/clk/at91.h
-> rename to include/dt-bindings/clock/at91.h
-> 
-
-
--- 
-Nicolas Ferre
+Reviewed-by: Simon Glass <sjg@chromium.org>
