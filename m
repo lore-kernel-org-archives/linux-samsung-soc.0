@@ -1,7 +1,8 @@
 From: Jungseok Lee <jays.lee@samsung.com>
-Subject: [PATCH v3 0/7] Support 4 levels of translation tables for ARM64
-Date: Fri, 18 Apr 2014 16:58:59 +0900
-Message-ID: <000101cf5adc$0e403e70$2ac0bb50$@samsung.com>
+Subject: [PATCH v3 4/7] arm64: Add a description on 48-bit address space with
+ 4KB pages
+Date: Fri, 18 Apr 2014 16:59:13 +0900
+Message-ID: <000501cf5adc$169481d0$43bd8570$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -20,59 +21,113 @@ To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.
 Cc: kgene.kim@samsung.com, steve.capper@linaro.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi All,
+This patch adds memory layout and translation lookup information
+about 48-bit address space with 4K pages. The description is based
+on 4 levels of translation tables.
 
-This the 3rd patchset supports 4 levels of tranlsation tables for ARM64.
+Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+---
+ Documentation/arm64/memory.txt |   59 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 51 insertions(+), 8 deletions(-)
 
-Firstly, The patchset decouples page size from level of translation tables
-as taking account into the comment from Catalin Marinas:
-http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
-
-Then, it implements 4 levels of translation tables for native, HYP
-and stage2 sides.
-
-All ARMv8 and ARMv7 related changes are validated with FastModels+kvmtool
-and A15+QEMU, respectively.
-
-Changes since v1:
-- fixed unmatched data types as per Steve's comment
-- removed unnecessary #ifdef in arch/arm64/mm/* as per Steve's comment
-- revised create_pgd_entry to deal with PUD entry as per Steve's comment
-- introduced a macro for initial memblock limit as per Steve's comment
-- dropped "Fix line length exceeding 80 characters" patch as per Marc's comment
-- removed unnecessary #ifdef in arch/arm/kvm/mmu.c as per Marc's comment
-- added a macro for a number of objects of as per Marc's comment
-
-Changes since v2:
-- revised some macros in a generic way as per Marc's comment
-- added a 2 level option for kvm mmu cache allocation as per Marc's comment
-
-Jungseok Lee (7):
-      arm64: Use pr_* instead of printk
-      arm64: Decouple page size from level of translation tables
-      arm64: Introduce a kernel configuration option for VA_BITS
-      arm64: Add a description on 48-bit address space with 4KB pages
-      arm64: Add 4 levels of page tables definition with 4KB pages
-      arm64: mm: Implement 4 levels of translation tables
-      arm64: KVM: Implement 4 levels of translation tables for HYP and stage2
-
- Documentation/arm64/memory.txt                |   59 +++++++++--
- arch/arm/include/asm/kvm_mmu.h                |   10 ++
- arch/arm/kvm/mmu.c                            |   88 ++++++++++++++---
- arch/arm64/Kconfig                            |   51 +++++++++-
- arch/arm64/include/asm/kvm_arm.h              |   34 +++++--
- arch/arm64/include/asm/kvm_mmu.h              |   12 +++
- arch/arm64/include/asm/memblock.h             |    6 ++
- arch/arm64/include/asm/memory.h               |    6 +-
- arch/arm64/include/asm/page.h                 |    6 +-
- arch/arm64/include/asm/pgalloc.h              |   24 ++++-
- arch/arm64/include/asm/pgtable-4level-hwdef.h |   50 ++++++++++
- arch/arm64/include/asm/pgtable-4level-types.h |   71 +++++++++++++
- arch/arm64/include/asm/pgtable-hwdef.h        |    8 +-
- arch/arm64/include/asm/pgtable.h              |   52 ++++++++--
- arch/arm64/include/asm/tlb.h                  |   10 +-
- arch/arm64/kernel/head.S                      |   40 +++++---
- arch/arm64/kernel/traps.c                     |   19 ++--
- arch/arm64/mm/fault.c                         |    1 +
- arch/arm64/mm/mmu.c                           |   16 ++-
- 19 files changed, 495 insertions(+), 68 deletions(-)
+diff --git a/Documentation/arm64/memory.txt b/Documentation/arm64/memory.txt
+index d50fa61..8142709 100644
+--- a/Documentation/arm64/memory.txt
++++ b/Documentation/arm64/memory.txt
+@@ -8,10 +8,11 @@ This document describes the virtual memory layout used by the AArch64
+ Linux kernel. The architecture allows up to 4 levels of translation
+ tables with a 4KB page size and up to 3 levels with a 64KB page size.
+ 
+-AArch64 Linux uses 3 levels of translation tables with the 4KB page
+-configuration, allowing 39-bit (512GB) virtual addresses for both user
+-and kernel. With 64KB pages, only 2 levels of translation tables are
+-used but the memory layout is the same.
++AArch64 Linux uses 3 levels and 4 levels of translation tables with
++the 4KB page configuration, allowing 39-bit (512GB) and 48-bit (256TB)
++virtual addresses, respectively, for both user and kernel. With 64KB
++pages, only 2 levels of translation tables are used but the memory layout
++is the same.
+ 
+ User addresses have bits 63:39 set to 0 while the kernel addresses have
+ the same bits set to 1. TTBRx selection is given by bit 63 of the
+@@ -21,7 +22,7 @@ The swapper_pgd_dir address is written to TTBR1 and never written to
+ TTBR0.
+ 
+ 
+-AArch64 Linux memory layout with 4KB pages:
++AArch64 Linux memory layout with 4KB pages + 3 levels:
+ 
+ Start			End			Size		Use
+ -----------------------------------------------------------------------
+@@ -48,7 +49,34 @@ ffffffbffc000000	ffffffbfffffffff	  64MB		modules
+ ffffffc000000000	ffffffffffffffff	 256GB		kernel logical memory map
+ 
+ 
+-AArch64 Linux memory layout with 64KB pages:
++AArch64 Linux memory layout with 4KB pages + 4 levels:
++
++Start			End			Size		Use
++-----------------------------------------------------------------------
++0000000000000000	0000ffffffffffff	 256TB		user
++
++ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
++
++ffff7bffffff0000	ffff7bffffffffff	  64KB		[guard page]
++
++ffff7c0000000000	ffff7dffffffffff	   2TB		vmemmap
++
++ffff7e0000000000	ffff7ffffbbfffff	  ~2TB		[guard, future vmmemap]
++
++ffff7ffffa000000	ffff7ffffaffffff	  16MB		PCI I/O space
++
++ffff7ffffb000000	ffff7ffffbbfffff	  12MB		[guard]
++
++ffff7ffffbc00000	ffff7ffffbdfffff	   2MB		earlyprintk device
++
++ffff7ffffbe00000	ffff7ffffbffffff	   2MB		[guard]
++
++ffff7ffffc000000	ffff7fffffffffff	  64MB		modules
++
++ffff800000000000	ffffffffffffffff	 128TB		kernel logical memory map
++
++
++AArch64 Linux memory layout with 64KB pages + 2 levels:
+ 
+ Start			End			Size		Use
+ -----------------------------------------------------------------------
+@@ -75,7 +103,7 @@ fffffdfffc000000	fffffdffffffffff	  64MB		modules
+ fffffe0000000000	ffffffffffffffff	   2TB		kernel logical memory map
+ 
+ 
+-Translation table lookup with 4KB pages:
++Translation table lookup with 4KB pages + 3 levels:
+ 
+ +--------+--------+--------+--------+--------+--------+--------+--------+
+ |63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
+@@ -90,7 +118,22 @@ Translation table lookup with 4KB pages:
+  +-------------------------------------------------> [63] TTBR0/1
+ 
+ 
+-Translation table lookup with 64KB pages:
++Translation table lookup with 4KB pages + 4 levels:
++
+++--------+--------+--------+--------+--------+--------+--------+--------+
++|63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
+++--------+--------+--------+--------+--------+--------+--------+--------+
++ |                 |         |         |         |         |
++ |                 |         |         |         |         v
++ |                 |         |         |         |   [11:0]  in-page offset
++ |                 |         |         |         +-> [20:12] L3 index
++ |                 |         |         +-----------> [29:21] L2 index
++ |                 |         +---------------------> [38:30] L1 index
++ |                 +-------------------------------> [47:39] L0 index
++ +-------------------------------------------------> [63] TTBR0/1
++
++
++Translation table lookup with 64KB pages + 2 levels:
+ 
+ +--------+--------+--------+--------+--------+--------+--------+--------+
+ |63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
+-- 
+1.7.10.4
