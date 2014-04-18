@@ -1,71 +1,71 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC PATCH 02/14] drm/exynos: dsi: delay setting clocks after
- reset
-Date: Fri, 18 Apr 2014 14:15:48 +0200
-Message-ID: <53511774.7030607@samsung.com>
-References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
- <1397540862-21359-3-git-send-email-yj44.cho@samsung.com>
+Subject: Re: [RFC PATCH v2 05/14] ARM: dts: samsung-fimd: add I80 specific
+ properties
+Date: Fri, 18 Apr 2014 14:32:49 +0200
+Message-ID: <53511B71.8090506@samsung.com>
+References: <534F67B1.2020001@samsung.com>
+ <1397735629-24028-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1397540862-21359-3-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:17601 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751034AbaDRMc6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Apr 2014 08:32:58 -0400
+In-reply-to: <1397735629-24028-1-git-send-email-yj44.cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
 
-Hi YoungJun,
+Hi again,
 
-Thanks for the whole patchset.
-
-On 04/15/2014 07:47 AM, YoungJun Cho wrote:
-> Some phy control registers are not kept after software reset.
-> So this patch makes the clocks containing phy control to be set
-> after software reset.
+On 04/17/2014 01:53 PM, YoungJun Cho wrote:
+> In case of using CPU interface panel, the relevant registers should be set.
+> So this patch adds relevant dt bindings.
+>
+> Changelog v2:
+> - Changes "samsung,sysreg-phandle" to "samsung,sysreg"
 >
 > Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 > Signed-off-by: Inki Dae <inki.dae@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 956e5f3..2cf1f0b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
->  
->  static int exynos_dsi_init(struct exynos_dsi *dsi)
->  {
-> -	exynos_dsi_enable_clock(dsi);
->  	exynos_dsi_reset(dsi);
->  	enable_irq(dsi->irq);
->  	exynos_dsi_wait_for_reset(dsi);
-> +	exynos_dsi_enable_clock(dsi);
->  	exynos_dsi_init_link(dsi);
->  
->  	return 0;
-Are you sure this sequence is OK? I have observed that sequence:
+> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> index 2dad41b..6ea1adc 100644
+> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> @@ -44,6 +44,15 @@ Optional Properties:
+>  - display-timings: timing settings for FIMD, as described in document [1].
+>  		Can be used in case timings cannot be provided otherwise
+>  		or to override timings provided by the panel.
+> +- samsung,sysreg: handle to syscon used to control the system registers
+> +- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
+> +- cs-setup: clock cycles for the active period of address signal enable until
+> +	chip select is enable in i80 interface
+> +- wr-setup: clock cycles for the active period of CS signal enable until
+> +	write signal is enable in i80 interface
+> +- wr-act: clock cycles for the active period of CS enable in i80 interface
+> +- wr-hold: clock cycles for the active period of CS disable until write signal
+> +	is disable in i80 interface
 
-dsi power off
-dsi power on
-dsi_reset
-
-on 4210 or 4412 resulted in lack of irq after reset, only enabling
-clocks helped.
-And according to documentation reset do not touch registers set by
-exynos_dsi_enable_clock,
-so the current solution should work.
+As Laurent wrote earlier it would be good to consider providing these
+properties
+by panel. Panel can pass it to DSI probably via mipi_dsi_device
+structure. DSI to FIMD
+can use exynos drm_framework probably.
+Anyway if you add optional properties please add info about default
+value, ie when property
+is not present.
 
 Regards
 Andrzej
+
+>  
+>  The device node can contain 'port' child nodes according to the bindings defined
+>  in [2]. The following are properties specific to those nodes:
