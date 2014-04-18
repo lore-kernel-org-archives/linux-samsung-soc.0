@@ -1,83 +1,102 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH] net: sxgbe: Added phy_found error path
-Date: Fri, 18 Apr 2014 20:59:39 +0900
-Message-ID: <000701cf5afd$ad1e65f0$075b31d0$%an@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH RFC 3/3] drm/exynos: use pending_components for	components
+ tracking
+Date: Fri, 18 Apr 2014 14:02:37 +0200
+Message-ID: <5351145D.8070207@samsung.com>
+References: <1397734130-21019-1-git-send-email-a.hajda@samsung.com>
+ <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
+ <20140417220412.GZ24070@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20181 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbaDRL7k (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Apr 2014 07:59:40 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140417220412.GZ24070@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davem@davemloft.net, ks.giri@samsung.com, vipul.pandya@samsung.com
 
+On 04/18/2014 12:04 AM, Russell King - ARM Linux wrote:
+> On Thu, Apr 17, 2014 at 01:28:50PM +0200, Andrzej Hajda wrote:
+>> +static int exynos_drm_add_blocker(struct device *dev, void *data)
+>> +{
+>> +	struct device_driver *drv = data;
+>> +
+>> +	if (!platform_bus_type.match(dev, drv))
+>> +		return 0;
+>> +
+>> +	device_lock(dev);
+>> +	if (!dev->driver)
+>> +		exynos_drm_dev_busy(dev);
+>> +	device_unlock(dev);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void exynos_drm_init_blockers(struct device_driver *drv)
+>> +{
+>> +	bus_for_each_dev(&platform_bus_type, NULL, drv, exynos_drm_add_blocker);
+>> +}
+> This feels very wrong to be dumping the above code into every driver which
+> wants to make use of some kind of componentised support.
+>
+> You also appear to need to know the struct device_driver's for every
+> component.  While that may work for exynos, it doesn't work elsewhere
+> where the various components of the system are very real separate
+> kernel modules - for example, a separate I2C driver such as the TDA998x
+> case I mentioned in my first reply.
+>
+> I can't see how your solution would be usable in that circumstance.
 
-This patch adds phy_found error path when there is no phy device 
-and changes bus_name.
+It is up to the master driver how it want to create list of required
+devices,
+this is why I put it into exynos_drm and not into the framework.
+You can use superdevice DT node for it, fixed list whatever you want.
+It is not a part of the framework, it is just part of exynos_drm specific
+implementation.
+Component framework also does not provide mechanism for it.
 
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Regarding TDA998x I have replied in the previous e-mail.
 
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
-index 01af2cb..7dcaf1a 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
-@@ -27,7 +27,7 @@
- #define SXGBE_SMA_PREAD_CMD	0x02 /* post read  increament address */
- #define SXGBE_SMA_READ_CMD	0x03 /* read command */
- #define SXGBE_SMA_SKIP_ADDRFRM	0x00040000 /* skip the address frame */
--#define SXGBE_MII_BUSY		0x00800000 /* mii busy */
-+#define SXGBE_MII_BUSY		0x00400000 /* mii busy */
- 
- static int sxgbe_mdio_busy_wait(void __iomem *ioaddr, unsigned int mii_data)
- {
-@@ -147,6 +147,7 @@ int sxgbe_mdio_register(struct net_device *ndev)
- 	struct sxgbe_mdio_bus_data *mdio_data = priv->plat->mdio_bus_data;
- 	int err, phy_addr;
- 	int *irqlist;
-+	bool phy_found = false;
- 	bool act;
- 
- 	/* allocate the new mdio bus */
-@@ -162,7 +163,7 @@ int sxgbe_mdio_register(struct net_device *ndev)
- 		irqlist = priv->mii_irq;
- 
- 	/* assign mii bus fields */
--	mdio_bus->name = "samsxgbe";
-+	mdio_bus->name = "sxgbe";
- 	mdio_bus->read = &sxgbe_mdio_read;
- 	mdio_bus->write = &sxgbe_mdio_write;
- 	snprintf(mdio_bus->id, MII_BUS_ID_SIZE, "%s-%x",
-@@ -216,13 +217,22 @@ int sxgbe_mdio_register(struct net_device *ndev)
- 			netdev_info(ndev, "PHY ID %08x at %d IRQ %s (%s)%s\n",
- 				    phy->phy_id, phy_addr, irq_str,
- 				    dev_name(&phy->dev), act ? " active" : "");
-+			phy_found = true;
- 		}
- 	}
- 
-+	if (!phy_found) {
-+		netdev_err(ndev, "PHY not found\n");
-+		goto phyfound_err;
-+	}
-+
- 	priv->mii = mdio_bus;
- 
- 	return 0;
- 
-+phyfound_err:
-+	err = -ENODEV;
-+	mdiobus_unregister(mdio_bus);
- mdiobus_err:
- 	mdiobus_free(mdio_bus);
- 	return err;
--- 
-1.7.10.4
+>
+> The third issue I have is that you're still needing to have internal
+> exynos sub-device management - you're having to add the individual
+> devices to some kind of list, array or static data, and during DRM
+> probe you're having to then walk these lists/arrays/static data to
+> locate these sub-devices and finish each of their individual
+> initialisations.  So you're ending up with a two-tier initialisation.
+>
+> That's not particularly good because it means you're exposed to
+> problems where the state is different between two initialisations -
+> when the device is recreated, your component attempts to re-finalise
+> the initialisation a second time.  It wouldn't take much for a field
+> to be assumed to be zero at init time somewhere for a bug to creep
+> in.
+>
+
+Separation of the interfaces exposed by the device from the device itself
+seems to me a good thing. I would even consider it as a biggest
+advantage of this solution :)
+
+The problem of re-initialization does not seems to be relevant here, it
+is classic
+problem of coding correctness nothing more, it can appear here and in
+many different
+places.
+
+Anyway it seems we have different point of view on the problem, your say
+about
+devices with two stage initialization. I see it more as devices
+registering interfaces and superdevice
+using it.
+
+Regards
+Andrzej
