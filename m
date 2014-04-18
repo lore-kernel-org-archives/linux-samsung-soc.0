@@ -1,42 +1,51 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 2/5] ARM: dts: exynos4210-universal: add super device node for
- exynos drm
-Date: Fri, 18 Apr 2014 15:41:07 +0900
-Message-ID: <1397803270-5377-3-git-send-email-inki.dae@samsung.com>
-References: <1397803270-5377-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:16062 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751039AbaDRGlN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Apr 2014 02:41:13 -0400
-In-reply-to: <1397803270-5377-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/5] add super device node support
+Date: Fri, 18 Apr 2014 15:41:05 +0900
+Message-ID: <1397803270-5377-1-git-send-email-inki.dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, linux@arm.linux.org.uk, a.hajda@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4210-universal_c210.dts |    5 +++++
- 1 file changed, 5 insertions(+)
+This patch series adds super device node approach and relevant
+dt bindings, and rebased on top of below patch series,
+   http://www.spinics.net/lists/dri-devel/msg57673.html
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 0a80a72..5351ac4 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -409,6 +409,11 @@
- 		};
- 	};
- 
-+	display-subsystem {
-+		compatible = "samsung,exynos-display-subsystem";
-+		ports = <&fimd>;
-+	};
-+
- 	pwm@139D0000 {
- 		compatible = "samsung,s5p6440-pwm";
- 		status = "okay";
+Thanks,
+Inki Dae
+
+Inki Dae (5):
+  drm/exynos: add super device support
+  ARM: dts: exynos4210-universal: add super device node for exynos drm
+  ARM: dts: exynos4210-trats: add super device node for exynos drm
+  ARM: dts: exynos4412-trats2: add super device node for exynos drm
+  exynos/drm: add DT bindings for super device node
+
+ .../bindings/drm/exynos/samsung-exynos-drm.txt     |   32 ++++++
+ arch/arm/boot/dts/exynos4210-trats.dts             |    5 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |    5 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    5 +
+ drivers/gpu/drm/exynos/exynos_dp_core.c            |    4 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |  119 ++++++++++----------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |    7 --
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |    4 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |    4 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |    4 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c              |    4 +-
+ 11 files changed, 116 insertions(+), 77 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
+
 -- 
 1.7.9.5
