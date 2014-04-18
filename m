@@ -1,139 +1,66 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: exynos4: Add CPU topology data
-Date: Fri, 18 Apr 2014 16:43:01 +0200
-Message-ID: <1397832181-5153-5-git-send-email-t.figa@samsung.com>
-References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 4/5] regulator: tps65090: Allow setting the
+ overcurrent wait time
+Date: Fri, 18 Apr 2014 16:06:51 +0100
+Message-ID: <20140418150651.GW12304@sirena.org.uk>
+References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+ <1397689950-1568-5-git-send-email-dianders@chromium.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1nR+rbHAiJEL631A"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:19765 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753350AbaDROnQ (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37934 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753294AbaDRPHf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Apr 2014 10:43:16 -0400
-In-reply-to: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
+	Fri, 18 Apr 2014 11:07:35 -0400
+Content-Disposition: inline
+In-Reply-To: <1397689950-1568-5-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-After fixing non-banked GIC support in GIC driver, CPU nodes can be
-safely added to Exynos4 device tree sources, along with appropriate
-gic-offset properties.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos4210.dtsi | 19 +++++++++++++++++++
- arch/arm/boot/dts/exynos4212.dtsi | 19 +++++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi | 37 +++++++++++++++++++++++++++++++++----
- 3 files changed, 71 insertions(+), 4 deletions(-)
+--1nR+rbHAiJEL631A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index cacf614..e463361 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -25,6 +25,25 @@
- / {
- 	compatible = "samsung,exynos4210", "samsung,exynos4";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@900 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0x900>;
-+			gic-offset = <0x0000>;
-+		};
-+
-+		cpu@901 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0x901>;
-+			gic-offset = <0x8000>;
-+		};
-+	};
-+
- 	aliases {
- 		pinctrl0 = &pinctrl_0;
- 		pinctrl1 = &pinctrl_1;
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 3c00e6e..211e129 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -22,6 +22,25 @@
- / {
- 	compatible = "samsung,exynos4212", "samsung,exynos4";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@a00 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0xa00>;
-+			gic-offset = <0x0000>;
-+		};
-+
-+		cpu@a01 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0xa01>;
-+			gic-offset = <0x8000>;
-+		};
-+	};
-+
- 	combiner: interrupt-controller@10440000 {
- 		samsung,combiner-nr = <18>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 15d3c0a..04530ef 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -22,11 +22,40 @@
- / {
- 	compatible = "samsung,exynos4412", "samsung,exynos4";
- 
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <20>;
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@a00 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0xa00>;
-+			gic-offset = <0x0000>;
-+		};
-+
-+		cpu@a01 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0xa01>;
-+			gic-offset = <0x4000>;
-+		};
-+
-+		cpu@a02 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0xa02>;
-+			gic-offset = <0x8000>;
-+		};
-+
-+		cpu@a03 {
-+			compatible = "arm,cortex-a9";
-+			device_type = "cpu";
-+			reg = <0xa03>;
-+			gic-offset = <0xc000>;
-+		};
- 	};
- 
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x4000>;
-+	combiner: interrupt-controller@10440000 {
-+		samsung,combiner-nr = <20>;
- 	};
- };
--- 
-1.9.2
+On Wed, Apr 16, 2014 at 04:12:28PM -0700, Doug Anderson wrote:
+> The tps65090 regulator allows you to specify how long you want it to
+> wait before detecting an overcurrent condition.  Allow specifying that
+> through the device tree (or through platform data).
+
+Applied, thanks.
+
+> +- ti,overcurrent-wait: This is applicable to FET registers, which have a
+> +  poorly defined "overcurrent wait" field.  If this property is present it
+> +  should be between 0 - 3.  If this property isn't present we won't touch the
+> +  "overcurrent wait" field and we'll leave it to the BIOS/EC to deal with.
+
+What I was driving at by asking if this was the raw register value was
+that the binding should make this clearer ideally.
+
+--1nR+rbHAiJEL631A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTUT+IAAoJELSic+t+oim9j8UP/3DomAkluVtsjECQ0zQhMleu
+wf2m9lA1wm47hvQSah5FWauysoSfKryrbODUAw1F+Uy19UIZEU/X1HatllWWQT7y
+RQiDXYIlU/W9TK6d6B574Ct64PvGnfLXMg2LUV0JFKUXOOm6o+N6hVQfjlY2O7Qp
+bqsFcK3TP7+slXMCR+f2eoBoUiGj4L8BSq+fU6VWahpLsGWQlHlASlUj/HcMKajw
+a1IJtgrb/ddZb56qjr8ijxZ7aMIapQpgqrmkfuugtrOgNTmwwR7B3H841uwFm8MH
+OolspJDPEJm9NSK10597drGLKriOJbds+alS+gWyY1moZfgE3U/Z+OLze2m6QcHi
+JP+Pw6vGTLpGY8zILfxDJLa2aiFRz+0og9ah3/YRGrCipKT8RcoyU/ZqRESDmbXk
+zMSyOs95mV6S09csHcAocOso4p9rkr+wJ9WjsrtczarwdiV9MMzb9nuZTwdCwfD7
+vC478LKjPQ15Sg5zzbLFiH6rY5UKnQxPuOUuE+fWSLYzR+/pk4Geri7qwVUYNFHI
+aWZb0hlCnSUewy39s0/qW3voDTDRsKCQ+PPlhVNREU+Amc0+AmKoTamHY+NXj5c4
+2ljPQ65EXsCqd1wZCA/KYq/zD/sd3LARVF/HBX0DW0SylzBV0QlKRzntweHI3FRE
+uJGoXESN0wZGfSkdYko4
+=jtIa
+-----END PGP SIGNATURE-----
+
+--1nR+rbHAiJEL631A--
