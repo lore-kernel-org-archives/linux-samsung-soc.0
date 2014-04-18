@@ -1,8 +1,8 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 3/5] ARM: dts: exynos4210-trats: add super device node for
+Subject: [PATCH 4/5] ARM: dts: exynos4412-trats2: add super device node for
  exynos drm
-Date: Fri, 18 Apr 2014 15:41:08 +0900
-Message-ID: <1397803270-5377-4-git-send-email-inki.dae@samsung.com>
+Date: Fri, 18 Apr 2014 15:41:09 +0900
+Message-ID: <1397803270-5377-5-git-send-email-inki.dae@samsung.com>
 References: <1397803270-5377-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -25,14 +25,14 @@ List-Id: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210-trats.dts |    5 +++++
+ arch/arm/boot/dts/exynos4412-trats2.dts |    5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 02c6768..a41c109 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -414,6 +414,11 @@
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 53c717b..115b9ed 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -581,6 +581,11 @@
  		status = "okay";
  	};
  
@@ -42,7 +42,7 @@ index 02c6768..a41c109 100644
 +	};
 +
  	camera {
+ 		pinctrl-0 = <&cam_port_b_clk_active>;
  		pinctrl-names = "default";
- 		pinctrl-0 = <>;
 -- 
 1.7.9.5
