@@ -1,71 +1,80 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC PATCH v2 05/14] ARM: dts: samsung-fimd: add I80 specific
- properties
-Date: Fri, 18 Apr 2014 14:32:49 +0200
-Message-ID: <53511B71.8090506@samsung.com>
-References: <534F67B1.2020001@samsung.com>
- <1397735629-24028-1-git-send-email-yj44.cho@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH RFC 3/3] drm/exynos: use pending_components for
+ components tracking
+Date: Fri, 18 Apr 2014 13:42:02 +0100
+Message-ID: <20140418124202.GD24070@n2100.arm.linux.org.uk>
+References: <1397734130-21019-1-git-send-email-a.hajda@samsung.com>
+ <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
+ <20140417214709.GY24070@n2100.arm.linux.org.uk>
+ <53510C39.1020205@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17601 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751034AbaDRMc6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Apr 2014 08:32:58 -0400
-In-reply-to: <1397735629-24028-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <53510C39.1020205@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com
 
-Hi again,
+On Fri, Apr 18, 2014 at 01:27:53PM +0200, Andrzej Hajda wrote:
+> Hi Russel,
+> 
+> Thanks for comments.
+> 
+> On 04/17/2014 11:47 PM, Russell King - ARM Linux wrote:
+> > On Thu, Apr 17, 2014 at 01:28:50PM +0200, Andrzej Hajda wrote:
+> >> +out:
+> >> +	if (ret != -EPROBE_DEFER)
+> >> +		exynos_drm_dev_ready(&pdev->dev);
+> > So we end up with everyone needing a "ready" call in each sub-driver
+> > back into the main driver... this makes it impossible to write a
+> > generic subcomponent driver which is not tied in any way to the
+> > main driver.
+> >
+> > That is quite some restriction, and would prevent, for example, the
+> > TDA998x driver being used both with Armada DRM, tilcdc and any other
+> > driver.
+> 
+> As I see in armada driver drm is deferred in case tda998x is not yet
+> available. The same solution can be still used with pending_devices
+> approach - the main driver will not report its readiness until tda998x
+> is present.
+> 
+> Anyway it still seems to be better than componentize every driver which can
+> probably become a part of some superdevice.
+> 
+> If you want to get rid of deferred probe one can make global list of
+> 'ready' devices with notifications systems for master devices.
+> 
+> Maybe it would be good to consider notification system for devices probe
+> result,
+> it will require that driver register all its interfaces in probe, ie its
+> readiness cannot
+> be reported later but will not require to add new framework. I hope just
+> extending current
+> notification system should be enough.
 
-On 04/17/2014 01:53 PM, YoungJun Cho wrote:
-> In case of using CPU interface panel, the relevant registers should be set.
-> So this patch adds relevant dt bindings.
->
-> Changelog v2:
-> - Changes "samsung,sysreg-phandle" to "samsung,sysreg"
->
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> index 2dad41b..6ea1adc 100644
-> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> @@ -44,6 +44,15 @@ Optional Properties:
->  - display-timings: timing settings for FIMD, as described in document [1].
->  		Can be used in case timings cannot be provided otherwise
->  		or to override timings provided by the panel.
-> +- samsung,sysreg: handle to syscon used to control the system registers
-> +- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
-> +- cs-setup: clock cycles for the active period of address signal enable until
-> +	chip select is enable in i80 interface
-> +- wr-setup: clock cycles for the active period of CS signal enable until
-> +	write signal is enable in i80 interface
-> +- wr-act: clock cycles for the active period of CS enable in i80 interface
-> +- wr-hold: clock cycles for the active period of CS disable until write signal
-> +	is disable in i80 interface
+You aren't addressing my point.  If I were to convert tda998x to use
+your infrastructure, then I would have to add in ifdefs to tie it into
+armada DRM _and_ a different set of ifdefs to tie it into tilcdc.  Then
+when someone else wanted to use it in their driver, they'd have to add
+yet more ifdefs into it to tie it into their driver.
 
-As Laurent wrote earlier it would be good to consider providing these
-properties
-by panel. Panel can pass it to DSI probably via mipi_dsi_device
-structure. DSI to FIMD
-can use exynos drm_framework probably.
-Anyway if you add optional properties please add info about default
-value, ie when property
-is not present.
+This does not scale.
 
-Regards
-Andrzej
+So, please address my point: in your system, how can a single component
+be shared between multiple different master drivers?
 
->  
->  The device node can contain 'port' child nodes according to the bindings defined
->  in [2]. The following are properties specific to those nodes:
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
