@@ -1,75 +1,97 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH RFC 3/3] drm/exynos: use pending_components for
- components tracking
-Date: Thu, 17 Apr 2014 23:04:12 +0100
-Message-ID: <20140417220412.GZ24070@n2100.arm.linux.org.uk>
-References: <1397734130-21019-1-git-send-email-a.hajda@samsung.com>
- <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCHv3 0/7] Support new Exynos3250 SoC based on Cortex-A7 dual core
+Date: Fri, 18 Apr 2014 10:15:21 +0900
+Message-ID: <1397783728-6193-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hyunhee.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sajjan.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 17, 2014 at 01:28:50PM +0200, Andrzej Hajda wrote:
-> +static int exynos_drm_add_blocker(struct device *dev, void *data)
-> +{
-> +	struct device_driver *drv = data;
-> +
-> +	if (!platform_bus_type.match(dev, drv))
-> +		return 0;
-> +
-> +	device_lock(dev);
-> +	if (!dev->driver)
-> +		exynos_drm_dev_busy(dev);
-> +	device_unlock(dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static void exynos_drm_init_blockers(struct device_driver *drv)
-> +{
-> +	bus_for_each_dev(&platform_bus_type, NULL, drv, exynos_drm_add_blocker);
-> +}
+This patchset support new Exynos3250 Samsung SoC based on Cortex-A7 dual core.
+Exynos3250 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
+for Smartphone. It is desigend with the 28nm low-power high-K metal gate process
+and provides the best performance features.
 
-This feels very wrong to be dumping the above code into every driver which
-wants to make use of some kind of componentised support.
+This patchset include some patches such as:
+- Support secondary CPU of Exynos3250 (cpu up/down)
+- Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/pwm/amba
+- Support the clock control for Exynos3250 using common clk framework
 
-You also appear to need to know the struct device_driver's for every
-component.  While that may work for exynos, it doesn't work elsewhere
-where the various components of the system are very real separate
-kernel modules - for example, a separate I2C driver such as the TDA998x
-case I mentioned in my first reply.
+This patchset is based on following git repo/branch.
+- git repo : git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+- branch   : for-next (Linux 3.15-rc1)
 
-I can't see how your solution would be usable in that circumstance.
+Additional patch description about static memory mapping:
+This patchset must need to map memory mapping about SYSRAM/PMU for CPU UP/DOWN.
+So, this patchset need to merge following patchset to remove static memory
+mapping for SYSRAM[1] / PMU ([2] or [3]).
 
-The third issue I have is that you're still needing to have internal
-exynos sub-device management - you're having to add the individual
-devices to some kind of list, array or static data, and during DRM
-probe you're having to then walk these lists/arrays/static data to
-locate these sub-devices and finish each of their individual
-initialisations.  So you're ending up with a two-tier initialisation.
+[1] http://www.spinics.net/lists/arm-kernel/msg323011.html
+[2] https://lkml.org/lkml/2014/4/2/48
+[3] http://www.spinics.net/lists/arm-kernel/msg316013.html
 
-That's not particularly good because it means you're exposed to
-problems where the state is different between two initialisations -
-when the device is recreated, your component attempts to re-finalise
-the initialisation a second time.  It wouldn't take much for a field
-to be assumed to be zero at init time somewhere for a bug to creep
-in.
+And,
+The pinctrl patch for Exynos3250 was posted as separated patch[4].
+[4] https://lkml.org/lkml/2014/4/13/156
+
+Changes from v2:
+- Remove static memory mapping about SYSRAM/PMU such as following patches:
+  ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
+  ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
+- Add description for secondary CPU boot of Exynos4212/Exynos3250
+- Fix description in exynos_cpu_die() to remove particular SoC series
+- Fix minor coding style
+- Add documentation for Exynos3250 clock controller
+
+Changes from v1:
+- Add new "samsung,exynos3" compatible name
+- Add comment about exynos_cpu_boot in Exynos4212
+- Remove unnecessary 'goto' statement in firmware.c
+- Use read_cpuid_part_number() function instead of assembler directly
+- Post separated pinctrl patch from this patchset
+  : https://lkml.org/lkml/2014/4/13/156
+- Remove unused pmu interrupts due to Exynos3250 dual-core
+- Cosolidate all the patches related to exynos3250.dtsi into one patch
+- Fix gic compatible name to "cortex-a15-gic" because Cortex-A7 GIC is same
+- Add sign-off of sender to all this patches
+- Fix minor typo
+
+Chanwoo Choi (4):
+  ARM: EXYNOS: Add Exynos3250 SoC ID
+  ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+  ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
+  dt-bindings: add documentation for Exynos3250 clock controller
+
+Kyungmin Park (1):
+  ARM: EXYNOS: Support secondary CPU boot of Exynos4212
+
+Tomasz Figa (2):
+  clk: samsung: exynos3250: Add clocks using common clock framework
+  ARM: dts: Add device tree sources for Exynos3250
+
+ .../devicetree/bindings/clock/exynos3250-clock.txt |  41 ++
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi          | 477 +++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi                  | 427 +++++++++++
+ arch/arm/mach-exynos/Kconfig                       |  22 +
+ arch/arm/mach-exynos/exynos.c                      |   2 +
+ arch/arm/mach-exynos/firmware.c                    |  21 +-
+ arch/arm/mach-exynos/hotplug.c                     |  19 +-
+ arch/arm/plat-samsung/include/plat/cpu.h           |  10 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos3250.c               | 785 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h             | 256 +++++++
+ 11 files changed, 2053 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos3250.c
+ create mode 100644 include/dt-bindings/clock/exynos3250.h
 
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+1.8.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
