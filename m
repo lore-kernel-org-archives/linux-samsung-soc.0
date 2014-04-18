@@ -1,65 +1,118 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH RFC 3/3] drm/exynos: use pending_components for	components
- tracking
-Date: Fri, 18 Apr 2014 13:27:53 +0200
-Message-ID: <53510C39.1020205@samsung.com>
-References: <1397734130-21019-1-git-send-email-a.hajda@samsung.com>
- <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
- <20140417214709.GY24070@n2100.arm.linux.org.uk>
+From: Byungho An <bh74.an@samsung.com>
+Subject: [PATCH] net: sxgbe: rearrange dma descriptor
+Date: Fri, 18 Apr 2014 20:59:36 +0900
+Message-ID: <000601cf5afd$ab2e55c0$018b0140$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140417214709.GY24070@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:20176 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751269AbaDRL7h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Apr 2014 07:59:37 -0400
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davem@davemloft.net, ks.giri@samsung.com, vipul.pandya@samsung.com
 
-Hi Russel,
 
-Thanks for comments.
+This patch moves cksum_ctl to tx_rd_des23 from cksum_pktlen for correct checksum 
+offloading and modifies size for Tx/Rx descriptor.
 
-On 04/17/2014 11:47 PM, Russell King - ARM Linux wrote:
-> On Thu, Apr 17, 2014 at 01:28:50PM +0200, Andrzej Hajda wrote:
->> +out:
->> +	if (ret != -EPROBE_DEFER)
->> +		exynos_drm_dev_ready(&pdev->dev);
-> So we end up with everyone needing a "ready" call in each sub-driver
-> back into the main driver... this makes it impossible to write a
-> generic subcomponent driver which is not tied in any way to the
-> main driver.
->
-> That is quite some restriction, and would prevent, for example, the
-> TDA998x driver being used both with Armada DRM, tilcdc and any other
-> driver.
+Signed-off-by: Byungho An <bh74.an@samsung.com>
+---
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c |    4 +--
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h |   39 ++++++++++-------------
+ 2 files changed, 19 insertions(+), 24 deletions(-)
 
-As I see in armada driver drm is deferred in case tda998x is not yet
-available. The same solution can be still used with pending_devices
-approach - the main driver will not report its readiness until tda998x
-is present.
-
-Anyway it still seems to be better than componentize every driver which can
-probably become a part of some superdevice.
-
-If you want to get rid of deferred probe one can make global list of
-'ready' devices with notifications systems for master devices.
-
-Maybe it would be good to consider notification system for devices probe
-result,
-it will require that driver register all its interfaces in probe, ie its
-readiness cannot
-be reported later but will not require to add new framework. I hope just
-extending current
-notification system should be enough.
-
-Regards
-Andrzej
+diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
+index e896dbb..d71691b 100644
+--- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
++++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
+@@ -45,10 +45,10 @@ static void sxgbe_prepare_tx_desc(struct sxgbe_tx_norm_desc *p, u8 is_fd,
+ 	p->tdes23.tx_rd_des23.first_desc = is_fd;
+ 	p->tdes23.tx_rd_des23.buf1_size = buf1_len;
+ 
+-	p->tdes23.tx_rd_des23.tx_pkt_len.cksum_pktlen.total_pkt_len = pkt_len;
++	p->tdes23.tx_rd_des23.tx_pkt_len.pkt_len.total_pkt_len = pkt_len;
+ 
+ 	if (cksum)
+-		p->tdes23.tx_rd_des23.tx_pkt_len.cksum_pktlen.cksum_ctl = cic_full;
++		p->tdes23.tx_rd_des23.cksum_ctl = cic_full;
+ }
+ 
+ /* Set VLAN control information */
+diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h
+index 838cb9f..0226300 100644
+--- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h
++++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h
+@@ -39,22 +39,22 @@ struct sxgbe_tx_norm_desc {
+ 			u32 int_on_com:1;
+ 			/* TDES3 */
+ 			union {
+-				u32 tcp_payload_len:18;
++				u16 tcp_payload_len;
+ 				struct {
+ 					u32 total_pkt_len:15;
+ 					u32 reserved1:1;
+-					u32 cksum_ctl:2;
+-				} cksum_pktlen;
++				} pkt_len;
+ 			} tx_pkt_len;
+ 
+-			u32 tse_bit:1;
+-			u32 tcp_hdr_len:4;
+-			u32 sa_insert_ctl:3;
+-			u32 crc_pad_ctl:2;
+-			u32 last_desc:1;
+-			u32 first_desc:1;
+-			u32 ctxt_bit:1;
+-			u32 own_bit:1;
++			u16 cksum_ctl:2;
++			u16 tse_bit:1;
++			u16 tcp_hdr_len:4;
++			u16 sa_insert_ctl:3;
++			u16 crc_pad_ctl:2;
++			u16 last_desc:1;
++			u16 first_desc:1;
++			u16 ctxt_bit:1;
++			u16 own_bit:1;
+ 		} tx_rd_des23;
+ 
+ 		/* tx write back Desc 2,3 */
+@@ -70,25 +70,20 @@ struct sxgbe_tx_norm_desc {
+ 
+ struct sxgbe_rx_norm_desc {
+ 	union {
+-		u32 rdes0; /* buf1 address */
+-		struct {
++		u64 rdes01; /* buf1 address */
++		union {
+ 			u32 out_vlan_tag:16;
+ 			u32 in_vlan_tag:16;
+-		} wb_rx_des0;
+-	} rd_wb_des0;
+-
+-	union {
+-		u32 rdes1;	/* buf2 address or buf1[63:32] */
+-		u32 rss_hash;	/* Write-back RX */
+-	} rd_wb_des1;
++			u32 rss_hash;
++		} rx_wb_des01;
++	} rdes01;
+ 
+ 	union {
+ 		/* RX Read format Desc 2,3 */
+ 		struct{
+ 			/* RDES2 */
+-			u32 buf2_addr;
++			u64 buf2_addr:62;
+ 			/* RDES3 */
+-			u32 buf2_hi_addr:30;
+ 			u32 int_on_com:1;
+ 			u32 own_bit:1;
+ 		} rx_rd_des23;
+-- 
+1.7.10.4
