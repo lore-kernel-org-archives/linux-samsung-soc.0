@@ -1,8 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 4/5] ARM: dts: exynos4412-trats2: add super device node for
- exynos drm
-Date: Fri, 18 Apr 2014 15:41:09 +0900
-Message-ID: <1397803270-5377-5-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH 5/5] exynos/drm: add DT bindings for super device node
+Date: Fri, 18 Apr 2014 15:41:10 +0900
+Message-ID: <1397803270-5377-6-git-send-email-inki.dae@samsung.com>
 References: <1397803270-5377-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,27 +21,55 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+This patch adds bindings for Exynos drm display subsystem.
+The bindings describes ports containing a list of phandles
+pointing to display controller, image enhancer, and display
+interfaces nodes.
+
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts |    5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/drm/exynos/samsung-exynos-drm.txt     |   32 ++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 53c717b..115b9ed 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -581,6 +581,11 @@
- 		status = "okay";
- 	};
- 
-+	display-subsystem {
-+		compatible = "samsung,exynos-display-subsystem";
-+		ports = <&fimd>, <&dsi_0>;
-+	};
+diff --git a/Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt b/Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
+new file mode 100644
+index 0000000..6f7fae0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/drm/exynos/samsung-exynos-drm.txt
+@@ -0,0 +1,32 @@
++Samsung Exynos DRM master device
++================================
 +
- 	camera {
- 		pinctrl-0 = <&cam_port_b_clk_active>;
- 		pinctrl-names = "default";
++The Samsung Exynos DRM master device is a virtual device needed to list all
++display controller, image enhancer, and display interface nodes that comprise
++the graphics subsystem.
++
++Required properties:
++- compatible: Should be "samsung,exynos-display-subsystem"
++- ports: Should contain a list of phandles pointing to display controller,
++  image enhancer, and display interface ports.
++
++Examples:
++
++In case of using MIPI-DSI,
++display-subsystem {
++	compatible = "samsung,exynos-display-subsystem";
++	ports = <&fimd>, <&dsi>;
++};
++
++
++In case of using DisplayPort,
++display-subsystem {
++	compatible = "samsung,exynos-display-subsystem";
++	ports = <&fimd>, <&dp>;
++};
++
++In case of using parallel panel,
++display-subsystem {
++	compatible = "samsung,exynos-display-subsystem";
++	ports = <&fimd>;
++};
 -- 
 1.7.9.5
