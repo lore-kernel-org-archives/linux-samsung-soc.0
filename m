@@ -1,73 +1,84 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH 2/7] mfd: cros_ec: spi: Add mutex to cros_ec_spi
-Date: Fri, 18 Apr 2014 15:43:23 -0600
-Message-ID: <CAPnjgZ1px6fvDmr59b4g-u2pXqtr_bFnDYXXqR5whTOxoY+ZsQ@mail.gmail.com>
-References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
-	<1397757570-19750-3-git-send-email-dianders@chromium.org>
-	<CAPnjgZ034FrVVphJCmX5jZE8LeWOEBjsH7M=2C_meM0fMss1NA@mail.gmail.com>
-	<CAD=FV=XhtW9ZORJLh396FZ=eE+szrTZN94KpoZj-9HVg7TaVRA@mail.gmail.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 1/4] ARM: EXYNOS: Fix definitions of S5P_ARM_CORE_* registers
+Date: Sat, 19 Apr 2014 16:47:33 +0900
+Message-ID: <CAGTfZH1Lg=2thqGSgyTehzM_UO1meyOcdXcn-b0AJnrm9dgwXQ@mail.gmail.com>
+References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
+	<1397832181-5153-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:63781 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753068AbaDRVnY (ORCPT
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:43470 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751267AbaDSHre (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Apr 2014 17:43:24 -0400
-Received: by mail-wi0-f177.google.com with SMTP id cc10so1115641wib.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Apr 2014 14:43:23 -0700 (PDT)
-In-Reply-To: <CAD=FV=XhtW9ZORJLh396FZ=eE+szrTZN94KpoZj-9HVg7TaVRA@mail.gmail.com>
+	Sat, 19 Apr 2014 03:47:34 -0400
+In-Reply-To: <1397832181-5153-2-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, lk <linux-kernel@vger.kernel.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Doug,
+Hi Tomasz,
 
-On 18 April 2014 15:15, Doug Anderson <dianders@chromium.org> wrote:
+On Fri, Apr 18, 2014 at 11:42 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On SoCs with more than 2 cores there are more than 2 S5P_ARM_CORE_*
+> registers that can be addressed with fixed stride of 0x80. This patch
+> renames the definitions of S5P_ARM_CORE1_* registers to be S5P_ARM_CORE_*
+> and make them take physical core ID as argument to calculate register
+> address.
 >
-> Simon,
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/hotplug.c  | 2 +-
+>  arch/arm/mach-exynos/platsmp.c  | 6 +++---
+>  arch/arm/mach-exynos/regs-pmu.h | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
 >
-> On Fri, Apr 18, 2014 at 10:28 AM, Simon Glass <sjg@chromium.org> wrote:
-> > Hi Doug,
-> >
-> > On 17 April 2014 11:59, Doug Anderson <dianders@chromium.org> wrote:
-> >> The main transfer function for cros_ec_spi can be called by more than
-> >> one client at a time.  Make sure that those clients don't stomp on
-> >> each other by locking the bus for the duration of the transfer
-> >> function.
-> >
-> > Is there no lock at the cros_ec layer?
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+> index 5eead53..7e0f31a 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -96,7 +96,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
 >
-> Not with what's upstream.
->
-> Locally in the Chromium OS tree:
->
-> * You can see that Bill removed the dev_lock at
-> <https://chromium-review.googlesource.com/#/c/57051/> since it wasn't
-> used.
->
-> * Andrew moved to a common locking scheme later in
-> <https://chromium-review.googlesource.com/#/c/170747/> (thus adding
-> roughly the same lock back and using it), but in order to do that
-> we've got a dozen pathces in between, some of which are big
-> reorganizations.  This includes at least:
->
-> 6820b91 CHROMIUM: cros_ec: Tweak struct cros_ec_device for clarity
-> 5e8e562 CHROMIUM: Use struct cros_ec_command to communicate with the EC
-> 9e7db82 CHROMIUM: cleanup: remove unused fields from struct cros_ec_device
-> 866e62d CHROMIUM: cleanup: Remove EC wrapper functions.
-> 8a372b2 cros_ec: move locking into cros_ec_cmd_xfer
-> 981c4aa cros_ec: stop calling ->cmd_xfer() directly
->
-> I think we should take in some of those other changes but I'd rather
-> get correctness in first (since people are wanting to use this driver
-> in upstream kernel) and get cleanups posted after this lands.  I was
-> also trying not to spam the list with a 20-patch series...
+>                 /* make cpu1 to be turned off at next WFI command */
+>                 if (cpu == 1)
+> -                       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
+> +                       __raw_writel(0, S5P_ARM_CORE_CONFIGURATION(1));
 
-That explains it, thank you. I should have guessed that for myself.
+Exynos4412 has quad cores. If turn off third/fourth core, this patch
+could not turn off third/fourth cores.
 
-Reviewed-by: Simon Glass <sjg@chromium.org>
+Why didn't you use cpu number for argument of
+S5P_ARM_CORE_CONFIGURATION() as following?
+- __raw_writel(0, S5P_ARM_CORE_CONFIGURATION(cpu));
 
-Regards,
-Simon
+>
+>                 /*
+>                  * here's the WFI
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 03e5e9f..7b7de4b 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -107,14 +107,14 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>          */
+>         write_pen_release(phys_cpu);
+>
+> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+> +       if (!(__raw_readl(S5P_ARM_CORE_STATUS(1)) & S5P_CORE_LOCAL_PWR_EN)) {
+>                 __raw_writel(S5P_CORE_LOCAL_PWR_EN,
+> -                            S5P_ARM_CORE1_CONFIGURATION);
+> +                            S5P_ARM_CORE_CONFIGURATION(1));
+
+ditto.
+
+>
+>                 timeout = 10;
+>
+>                 /* wait max 10 ms until cpu1 is on */
+> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+> +               while ((__raw_readl(S5P_ARM_CORE_STATUS(1))
+
+ditto.
+
+Best regards,
+Chanwoo Choi
