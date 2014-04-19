@@ -1,94 +1,39 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/4] ARM: EXYNOS: Fix definitions of S5P_ARM_CORE_* registers
-Date: Sat, 19 Apr 2014 10:42:02 +0200
-Message-ID: <535236DA.1030806@gmail.com>
-References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>	<1397832181-5153-2-git-send-email-t.figa@samsung.com> <CAGTfZH1Lg=2thqGSgyTehzM_UO1meyOcdXcn-b0AJnrm9dgwXQ@mail.gmail.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 0/2] Support cpufreq driver for Exynos3250
+Date: Sat, 19 Apr 2014 22:43:20 +0900
+Message-ID: <CAGTfZH1M9h3Sx73wJsD=_vnSyV-+fyOY041PN_7ea718B0mFoQ@mail.gmail.com>
+References: <1397787634-9334-1-git-send-email-cw00.choi@samsung.com>
+	<CAK9yfHygoHZ7hnAcLuuaMEsPb8Tqw-QbcTrQ+b=2CD6kK3odmw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:44503 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750905AbaDSImL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Apr 2014 04:42:11 -0400
-In-Reply-To: <CAGTfZH1Lg=2thqGSgyTehzM_UO1meyOcdXcn-b0AJnrm9dgwXQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK9yfHygoHZ7hnAcLuuaMEsPb8Tqw-QbcTrQ+b=2CD6kK3odmw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cwchoi00@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Chanwoo,
+Hi Sachin,
 
-On 19.04.2014 09:47, Chanwoo Choi wrote:
-> Hi Tomasz,
+On Fri, Apr 18, 2014 at 5:14 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Chanwoo,
 >
-> On Fri, Apr 18, 2014 at 11:42 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> On SoCs with more than 2 cores there are more than 2 S5P_ARM_CORE_*
->> registers that can be addressed with fixed stride of 0x80. This patch
->> renames the definitions of S5P_ARM_CORE1_* registers to be S5P_ARM_CORE_*
->> and make them take physical core ID as argument to calculate register
->> address.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->>   arch/arm/mach-exynos/hotplug.c  | 2 +-
->>   arch/arm/mach-exynos/platsmp.c  | 6 +++---
->>   arch/arm/mach-exynos/regs-pmu.h | 4 ++--
->>   3 files changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
->> index 5eead53..7e0f31a 100644
->> --- a/arch/arm/mach-exynos/hotplug.c
->> +++ b/arch/arm/mach-exynos/hotplug.c
->> @@ -96,7 +96,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
->>
->>                  /* make cpu1 to be turned off at next WFI command */
->>                  if (cpu == 1)
->> -                       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
->> +                       __raw_writel(0, S5P_ARM_CORE_CONFIGURATION(1));
+> On 18 April 2014 07:50, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patchset support cpufreq driver for Exynos3250 which uses the Cortex-A7
+>> dual cores and has a target speed of 1.0 GHz and code clean using dev_err/info
+>> instead of pr_err/info function.
 >
-> Exynos4412 has quad cores. If turn off third/fourth core, this patch
-> could not turn off third/fourth cores.
+> Per SoC cpufreq driver which does not use CCF is no more encouraged for new
+> Exynos platforms. Thomas has already posted patches to make use of
+> generic cpu freq driver
+> on Exynos platforms. Please refer to [1] and try to utilize it for
+> this platform as well.
 >
-> Why didn't you use cpu number for argument of
-> S5P_ARM_CORE_CONFIGURATION() as following?
-> - __raw_writel(0, S5P_ARM_CORE_CONFIGURATION(cpu));
->
->>
->>                  /*
->>                   * here's the WFI
->> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
->> index 03e5e9f..7b7de4b 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -107,14 +107,14 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->>           */
->>          write_pen_release(phys_cpu);
->>
->> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
->> +       if (!(__raw_readl(S5P_ARM_CORE_STATUS(1)) & S5P_CORE_LOCAL_PWR_EN)) {
->>                  __raw_writel(S5P_CORE_LOCAL_PWR_EN,
->> -                            S5P_ARM_CORE1_CONFIGURATION);
->> +                            S5P_ARM_CORE_CONFIGURATION(1));
->
-> ditto.
->
->>
->>                  timeout = 10;
->>
->>                  /* wait max 10 ms until cpu1 is on */
->> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
->> +               while ((__raw_readl(S5P_ARM_CORE_STATUS(1))
->
-> ditto.
+> [1] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/26886
 
-You are absolutely correct, this needs to be fixed, but this series just 
-keeps current behavior for now to just make CPU topology in DT not break 
-things that are working.
+OK, I'll refer to this new patch for cpufreq and rebase it.
 
-I have further patches that clean up platsmp and hotplug code and they 
-will add proper support for arbitrary number of cores.
+Thanks for your reply.
 
-Best regards,
-Tomasz
+Best Regards,
+Chanwoo Choi
