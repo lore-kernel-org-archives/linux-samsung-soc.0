@@ -1,71 +1,89 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/2] Support cpufreq driver for Exynos3250
-Date: Sat, 19 Apr 2014 16:36:48 +0200
-Message-ID: <53528A00.6090906@gmail.com>
-References: <1397787634-9334-1-git-send-email-cw00.choi@samsung.com>	<CAK9yfHygoHZ7hnAcLuuaMEsPb8Tqw-QbcTrQ+b=2CD6kK3odmw@mail.gmail.com>	<CAGTfZH1M9h3Sx73wJsD=_vnSyV-+fyOY041PN_7ea718B0mFoQ@mail.gmail.com>	<53527F54.5020601@gmail.com> <CAK9yfHxdC7JAJ6CiBsoHWcdbnv53qzs0XNtfjsabGmA6Sgv=ww@mail.gmail.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC PATCH 02/14] drm/exynos: dsi: delay setting clocks after
+ reset
+Date: Sun, 20 Apr 2014 07:30:10 +0900
+Message-ID: <5352F8F2.9040003@samsung.com>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+ <1397540862-21359-3-git-send-email-yj44.cho@samsung.com>
+ <53511774.7030607@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAK9yfHxdC7JAJ6CiBsoHWcdbnv53qzs0XNtfjsabGmA6Sgv=ww@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <53511774.7030607@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Andrzej
 
+Thank you for comments.
 
-On 19.04.2014 16:35, Sachin Kamat wrote:
-> Hi Tomasz,
+On 04/18/2014 09:15 PM, Andrzej Hajda wrote:
+> Hi YoungJun,
 >
+> Thanks for the whole patchset.
 >
-> On 19 April 2014 19:21, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Chanwoo, Sachin,
+> On 04/15/2014 07:47 AM, YoungJun Cho wrote:
+>> Some phy control registers are not kept after software reset.
+>> So this patch makes the clocks containing phy control to be set
+>> after software reset.
 >>
+>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> On 19.04.2014 15:43, Chanwoo Choi wrote:
->>>
->>> Hi Sachin,
->>>
->>> On Fri, Apr 18, 2014 at 5:14 PM, Sachin Kamat <sachin.kamat@linaro.org>
->>> wrote:
->>>>
->>>> Hi Chanwoo,
->>>>
->>>> On 18 April 2014 07:50, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->>>>>
->>>>> This patchset support cpufreq driver for Exynos3250 which uses the
->>>>> Cortex-A7
->>>>> dual cores and has a target speed of 1.0 GHz and code clean using
->>>>> dev_err/info
->>>>> instead of pr_err/info function.
->>>>
->>>>
->>>> Per SoC cpufreq driver which does not use CCF is no more encouraged for
->>>> new
->>>> Exynos platforms. Thomas has already posted patches to make use of
->>>> generic cpu freq driver
->>>> on Exynos platforms. Please refer to [1] and try to utilize it for
->>>> this platform as well.
->>>>
->>>> [1] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/26886
->>>
->>>
->>> OK, I'll refer to this new patch for cpufreq and rebase it.
->>>
->>> Thanks for your reply.
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> index 956e5f3..2cf1f0b 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
 >>
+>>   static int exynos_dsi_init(struct exynos_dsi *dsi)
+>>   {
+>> -	exynos_dsi_enable_clock(dsi);
+>>   	exynos_dsi_reset(dsi);
+>>   	enable_irq(dsi->irq);
+>>   	exynos_dsi_wait_for_reset(dsi);
+>> +	exynos_dsi_enable_clock(dsi);
+>>   	exynos_dsi_init_link(dsi);
 >>
->> The last version posted by Thomas still had several comments to be addressed
->> that could lead to quite big changes in the whole design in next version.
->> According to the information from Thomas, the work on it is in progress and
->> we should see updated patchset soon.
+>>   	return 0;
+> Are you sure this sequence is OK? I have observed that sequence:
 >
-> Yes, that is right. I wanted Chanwoo to be aware of this new design
-> and track the same.
+> dsi power off
+> dsi power on
+> dsi_reset
 >
+> on 4210 or 4412 resulted in lack of irq after reset, only enabling
+> clocks helped.
+> And according to documentation reset do not touch registers set by
+> exynos_dsi_enable_clock,
+> so the current solution should work.
 
-Sure. Just wanted to make sure this is clear.
+As I mentioned in description, it came from phy control registers.
+Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
+DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
+affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
 
-Best regards,
-Tomasz
+So this patch is required for Exynos5 SoCs.
+
+Thank you
+best regards YJ
+
+>
+> Regards
+> Andrzej
+>
