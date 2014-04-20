@@ -1,16 +1,16 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC PATCH 02/14] drm/exynos: dsi: delay setting clocks after
- reset
-Date: Sun, 20 Apr 2014 07:30:10 +0900
-Message-ID: <5352F8F2.9040003@samsung.com>
-References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
- <1397540862-21359-3-git-send-email-yj44.cho@samsung.com>
- <53511774.7030607@samsung.com>
+Subject: Re: [RFC PATCH v2 05/14] ARM: dts: samsung-fimd: add I80 specific
+ properties
+Date: Sun, 20 Apr 2014 09:34:44 +0900
+Message-ID: <53531624.8070802@samsung.com>
+References: <534F67B1.2020001@samsung.com>
+ <1397735629-24028-1-git-send-email-yj44.cho@samsung.com>
+ <53511B71.8090506@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53511774.7030607@samsung.com>
+In-reply-to: <53511B71.8090506@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -28,62 +28,73 @@ Hi Andrzej
 
 Thank you for comments.
 
-On 04/18/2014 09:15 PM, Andrzej Hajda wrote:
-> Hi YoungJun,
+On 04/18/2014 09:32 PM, Andrzej Hajda wrote:
+> Hi again,
 >
-> Thanks for the whole patchset.
->
-> On 04/15/2014 07:47 AM, YoungJun Cho wrote:
->> Some phy control registers are not kept after software reset.
->> So this patch makes the clocks containing phy control to be set
->> after software reset.
+> On 04/17/2014 01:53 PM, YoungJun Cho wrote:
+>> In case of using CPU interface panel, the relevant registers should be set.
+>> So this patch adds relevant dt bindings.
+>>
+>> Changelog v2:
+>> - Changes "samsung,sysreg-phandle" to "samsung,sysreg"
 >>
 >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 >> Signed-off-by: Inki Dae <inki.dae@samsung.com>
 >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> ---
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>   .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
+>>   1 file changed, 9 insertions(+)
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index 956e5f3..2cf1f0b 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
->>
->>   static int exynos_dsi_init(struct exynos_dsi *dsi)
->>   {
->> -	exynos_dsi_enable_clock(dsi);
->>   	exynos_dsi_reset(dsi);
->>   	enable_irq(dsi->irq);
->>   	exynos_dsi_wait_for_reset(dsi);
->> +	exynos_dsi_enable_clock(dsi);
->>   	exynos_dsi_init_link(dsi);
->>
->>   	return 0;
-> Are you sure this sequence is OK? I have observed that sequence:
+>> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+>> index 2dad41b..6ea1adc 100644
+>> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+>> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+>> @@ -44,6 +44,15 @@ Optional Properties:
+>>   - display-timings: timing settings for FIMD, as described in document [1].
+>>   		Can be used in case timings cannot be provided otherwise
+>>   		or to override timings provided by the panel.
+>> +- samsung,sysreg: handle to syscon used to control the system registers
+>> +- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
+>> +- cs-setup: clock cycles for the active period of address signal enable until
+>> +	chip select is enable in i80 interface
+>> +- wr-setup: clock cycles for the active period of CS signal enable until
+>> +	write signal is enable in i80 interface
+>> +- wr-act: clock cycles for the active period of CS enable in i80 interface
+>> +- wr-hold: clock cycles for the active period of CS disable until write signal
+>> +	is disable in i80 interface
 >
-> dsi power off
-> dsi power on
-> dsi_reset
->
-> on 4210 or 4412 resulted in lack of irq after reset, only enabling
-> clocks helped.
-> And according to documentation reset do not touch registers set by
-> exynos_dsi_enable_clock,
-> so the current solution should work.
+> As Laurent wrote earlier it would be good to consider providing these
+> properties
+> by panel. Panel can pass it to DSI probably via mipi_dsi_device
+> structure. DSI to FIMD
+> can use exynos drm_framework probably.
+> Anyway if you add optional properties please add info about default
+> value, ie when property
+> is not present.
 
-As I mentioned in description, it came from phy control registers.
-Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
-DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
-affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
+You and Laurent thought these CPU timings should be in panel.
 
-So this patch is required for Exynos5 SoCs.
+Ok, how about that vidout-i80-ldi is remained in fimd board specific DT
+entry and other CPU timings relevant properties are moved to panel for
+considering probe order?
+
+That's because the IRQ resource of fimd should be "lcd_sys" for I80
+interface and decided in probe time(bind time after adopting super
+device node).
+But the fimd probe routine is prior to panel probe routine and
+it is also ugly that fimd parses the properties of panel DT for that.
+
+Do you have any better idea?
 
 Thank you
-best regards YJ
+Best regards YJ
 
 >
 > Regards
 > Andrzej
+>
+>>
+>>   The device node can contain 'port' child nodes according to the bindings defined
+>>   in [2]. The following are properties specific to those nodes:
+>
 >
