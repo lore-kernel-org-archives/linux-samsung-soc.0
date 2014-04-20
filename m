@@ -1,100 +1,84 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC PATCH v2 05/14] ARM: dts: samsung-fimd: add I80 specific
- properties
-Date: Sun, 20 Apr 2014 09:34:44 +0900
-Message-ID: <53531624.8070802@samsung.com>
-References: <534F67B1.2020001@samsung.com>
- <1397735629-24028-1-git-send-email-yj44.cho@samsung.com>
- <53511B71.8090506@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53511B71.8090506@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+From: Davidlohr Bueso <davidlohr@hp.com>
+Subject: [PATCH 6/6] drm/exynos: call find_vma with the mmap_sem held
+Date: Sat, 19 Apr 2014 19:26:31 -0700
+Message-ID: <1397960791-16320-7-git-send-email-davidlohr@hp.com>
+References: <1397960791-16320-1-git-send-email-davidlohr@hp.com>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1397960791-16320-1-git-send-email-davidlohr@hp.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: zeus@gnu.org, aswin@hp.com, davidlohr@hp.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej
+From: Jonathan Gonzalez V <zeus@gnu.org>
 
-Thank you for comments.
+Performing vma lookups without taking the mm->mmap_sem is asking
+for trouble. While doing the search, the vma in question can be
+modified or even removed before returning to the caller. Take the
+lock (exclusively) in order to avoid races while iterating through
+the vmacache and/or rbtree.
 
-On 04/18/2014 09:32 PM, Andrzej Hajda wrote:
-> Hi again,
->
-> On 04/17/2014 01:53 PM, YoungJun Cho wrote:
->> In case of using CPU interface panel, the relevant registers should be set.
->> So this patch adds relevant dt bindings.
->>
->> Changelog v2:
->> - Changes "samsung,sysreg-phandle" to "samsung,sysreg"
->>
->> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>   .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
->> index 2dad41b..6ea1adc 100644
->> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
->> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
->> @@ -44,6 +44,15 @@ Optional Properties:
->>   - display-timings: timing settings for FIMD, as described in document [1].
->>   		Can be used in case timings cannot be provided otherwise
->>   		or to override timings provided by the panel.
->> +- samsung,sysreg: handle to syscon used to control the system registers
->> +- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
->> +- cs-setup: clock cycles for the active period of address signal enable until
->> +	chip select is enable in i80 interface
->> +- wr-setup: clock cycles for the active period of CS signal enable until
->> +	write signal is enable in i80 interface
->> +- wr-act: clock cycles for the active period of CS enable in i80 interface
->> +- wr-hold: clock cycles for the active period of CS disable until write signal
->> +	is disable in i80 interface
->
-> As Laurent wrote earlier it would be good to consider providing these
-> properties
-> by panel. Panel can pass it to DSI probably via mipi_dsi_device
-> structure. DSI to FIMD
-> can use exynos drm_framework probably.
-> Anyway if you add optional properties please add info about default
-> value, ie when property
-> is not present.
+This patch is completely *untested*.
 
-You and Laurent thought these CPU timings should be in panel.
+Signed-off-by: Jonathan Gonzalez V <zeus@gnu.org>
+Signed-off-by: Davidlohr Bueso <davidlohr@hp.com>
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Ok, how about that vidout-i80-ldi is remained in fimd board specific DT
-entry and other CPU timings relevant properties are moved to panel for
-considering probe order?
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 6c1885e..8001587 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -467,14 +467,17 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 		goto err_free;
+ 	}
+ 
++	down_read(&current->mm->mmap_sem);
+ 	vma = find_vma(current->mm, userptr);
+ 	if (!vma) {
++		up_read(&current->mm->mmap_sem);
+ 		DRM_ERROR("failed to get vm region.\n");
+ 		ret = -EFAULT;
+ 		goto err_free_pages;
+ 	}
+ 
+ 	if (vma->vm_end < userptr + size) {
++		up_read(&current->mm->mmap_sem);
+ 		DRM_ERROR("vma is too small.\n");
+ 		ret = -EFAULT;
+ 		goto err_free_pages;
+@@ -482,6 +485,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 
+ 	g2d_userptr->vma = exynos_gem_get_vma(vma);
+ 	if (!g2d_userptr->vma) {
++		up_read(&current->mm->mmap_sem);
+ 		DRM_ERROR("failed to copy vma.\n");
+ 		ret = -ENOMEM;
+ 		goto err_free_pages;
+@@ -492,10 +496,12 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 	ret = exynos_gem_get_pages_from_userptr(start & PAGE_MASK,
+ 						npages, pages, vma);
+ 	if (ret < 0) {
++		up_read(&current->mm->mmap_sem);
+ 		DRM_ERROR("failed to get user pages from userptr.\n");
+ 		goto err_put_vma;
+ 	}
+ 
++	up_read(&current->mm->mmap_sem);
+ 	g2d_userptr->pages = pages;
+ 
+ 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+-- 
+1.8.1.4
 
-That's because the IRQ resource of fimd should be "lcd_sys" for I80
-interface and decided in probe time(bind time after adopting super
-device node).
-But the fimd probe routine is prior to panel probe routine and
-it is also ugly that fimd parses the properties of panel DT for that.
-
-Do you have any better idea?
-
-Thank you
-Best regards YJ
-
->
-> Regards
-> Andrzej
->
->>
->>   The device node can contain 'port' child nodes according to the bindings defined
->>   in [2]. The following are properties specific to those nodes:
->
->
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
