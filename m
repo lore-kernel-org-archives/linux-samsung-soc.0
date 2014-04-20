@@ -1,271 +1,197 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: dts: Add peach-pit board support
-Date: Sun, 20 Apr 2014 10:56:49 +0530
-Message-ID: <1397971609-6144-1-git-send-email-arun.kk@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] arm: exynos: generalize power register address calculation
+Date: Sun, 20 Apr 2014 12:09:19 +0530
+Message-ID: <CANuQgHGh_LZ5m-4PFrun5NpLPTO5oXJjQCpx3ix6KWkAoO=PNg@mail.gmail.com>
+References: <CANuQgHEbepUZO279+Bsx7Ynep6ZPQQJj+zCW3S2k50Cw5SLOdA@mail.gmail.com>
+	<1397547498-21729-1-git-send-email-chander.kashyap@linaro.org>
+	<535132CC.8000206@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:59421 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaDTF1E (ORCPT
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:42211 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751044AbaDTGjU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Apr 2014 01:27:04 -0400
+	Sun, 20 Apr 2014 02:39:20 -0400
+Received: by mail-oa0-f49.google.com with SMTP id o6so3162750oag.22
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Apr 2014 23:39:19 -0700 (PDT)
+In-Reply-To: <535132CC.8000206@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, dianders@google.com, olofj@google.com, arunkk.samsung@gmail.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Adds the google peach-pit board dts file which uses
-exynos5420 SoC.
+Hi Tomasz,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- arch/arm/boot/dts/Makefile                 |    1 +
- arch/arm/boot/dts/exynos5420-peach-pit.dts |  225 ++++++++++++++++++++++++++++
- 2 files changed, 226 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
+On 18 April 2014 19:42, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Chander,
+>
+>
+> On 15.04.2014 09:38, Chander Kashyap wrote:
+>>
+>> Currently status/configuration power register values are hard-coded for
+>> cpu1.
+>>
+>> Make it generic so that it is useful for SoC's with more than two cpus.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> ---
+>> changes in v3:
+>>         1. Move cpunr calculation to a macro
+>>         2. Changed printk format specifier from unsigned hex to unsigned
+>> decimal
+>> Changes in v2:
+>>         1. Used existing macros for clusterid and cpuid calculation
+>>
+>>   arch/arm/mach-exynos/hotplug.c  |    7 ++++---
+>>   arch/arm/mach-exynos/platsmp.c  |   13 +++++++------
+>>   arch/arm/mach-exynos/regs-pmu.h |   15 +++++++++++++--
+>>   3 files changed, 24 insertions(+), 11 deletions(-)
+>>
+>
+> Now as I think of it, the code that is touched by this patch is not supposed
+> to be used on multi-cluster systems. Instead a separate MCPM driver should.
+> As far as I know, somebody is said to be already working on this.
+>
+> This means that we don't need to consider multi-cluster support in this
+> patch and simplify any calculations to just account for core ID. This would
+> also eliminate any need to handle non-zero cluster ID on single-cluster
+> SoCs.
+>
+> Please correct me if I'm wrong.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b9d6a8b..09bcb8d 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos5250-snow.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-smdk5420.dtb \
-+	exynos5420-peach-pit.dtb \
- 	exynos5440-sd5v1.dtb \
- 	exynos5440-ssdk5440.dtb
- dtb-$(CONFIG_ARCH_HI3xxx) += hi3620-hi4511.dtb
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-new file mode 100644
-index 0000000..4d61a5e
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -0,0 +1,225 @@
-+/*
-+ * Google Peach Pit Rev 6+ board device tree source
-+ *
-+ * Copyright (c) 2014 Google, Inc
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include "exynos5420.dtsi"
-+
-+/ {
-+	model = "Google Peach Pit Rev 6+";
-+
-+	compatible = "google,pit-rev16",
-+		"google,pit-rev15", "google,pit-rev14",
-+		"google,pit-rev13", "google,pit-rev12",
-+		"google,pit-rev11", "google,pit-rev10",
-+		"google,pit-rev9", "google,pit-rev8",
-+		"google,pit-rev7", "google,pit-rev6",
-+		"google,pit", "google,peach", "samsung,exynos5420";
-+
-+	memory {
-+		reg = <0x20000000 0x80000000>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	pinctrl@13400000 {
-+		lid_irq: lid-irq {
-+			samsung,pins = "gpx3-4";
-+			samsung,pin-function = <0>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
-+		power_key_irq: power-key-irq {
-+			samsung,pins = "gpx1-2";
-+			samsung,pin-function = <0>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
-+		tpm_irq: tpm-irq {
-+			samsung,pins = "gpx1-0";
-+			samsung,pin-function = <0>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+	};
-+
-+	pinctrl@14010000 {
-+		spi_flash_cs: spi-flash-cs {
-+			samsung,pins = "gpa2-5";
-+			samsung,pin-function = <1>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <3>;
-+		};
-+
-+		backlight_pwm: backlight-pwm {
-+			samsung,pins = "gpb2-0";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&power_key_irq &lid_irq>;
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpx1 2 1>;
-+			linux,code = <116>; /* KEY_POWER */
-+			gpio-key,wakeup;
-+		};
-+
-+		lid-switch {
-+			label = "Lid";
-+			gpios = <&gpx3 4 1>;
-+			linux,input-type = <5>; /* EV_SW */
-+			linux,code = <0>; /* SW_LID */
-+			debounce-interval = <1>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	rtc@101E0000 {
-+		status = "okay";
-+	};
-+
-+	serial@12C30000 {
-+		status = "okay";
-+	};
-+
-+	mmc@12200000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		broken-cd;
-+		caps2-mmc-hs200-1_8v;
-+		supports-highspeed;
-+		non-removable;
-+		card-detect-delay = <200>;
-+		clock-frequency = <400000000>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <0 4>;
-+		samsung,dw-mshc-ddr-timing = <0 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	mmc@12220000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		supports-highspeed;
-+		card-detect-delay = <200>;
-+		clock-frequency = <400000000>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+		};
-+	};
-+
-+	i2c@12E10000 {
-+		status = "okay";
-+		clock-frequency = <400000>;
-+
-+		tpm@20 {
-+			/* Unused irq; but still need to configure the pins */
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&tpm_irq>;
-+
-+			compatible = "infineon,slb9645tt";
-+			reg = <0x20>;
-+		};
-+	};
-+
-+	spi@12d30000 {
-+		status = "okay";
-+		samsung,spi-src-clk = <0>;
-+		num-cs = <1>;
-+
-+		spidev@0 {
-+			compatible = "spidev";
-+			reg = <0>;
-+			spi-max-frequency = <50000000>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi_flash_cs>;
-+
-+			controller-data {
-+				cs-gpio = <&gpa2 5 0>;
-+				samsung,spi-feedback-delay = <2>;
-+			};
-+		};
-+	};
-+
-+	adc@12D10000 {
-+		ncp15wb473@3 {
-+			compatible = "ntc,ncp15wb473";
-+			pullup-uv = <1800000>;
-+			pullup-ohm = <47000>;
-+			pulldown-ohm = <0>;
-+			io-channels = <&adc 3>;
-+		};
-+		ncp15wb473@4 {
-+			compatible = "ntc,ncp15wb473";
-+			pullup-uv = <1800000>;
-+			pullup-ohm = <47000>;
-+			pulldown-ohm = <0>;
-+			io-channels = <&adc 4>;
-+		};
-+		ncp15wb473@5 {
-+			compatible = "ntc,ncp15wb473";
-+			pullup-uv = <1800000>;
-+			pullup-ohm = <47000>;
-+			pulldown-ohm = <0>;
-+			io-channels = <&adc 5>;
-+		};
-+		ncp15wb473@6 {
-+			compatible = "ntc,ncp15wb473";
-+			pullup-uv = <1800000>;
-+			pullup-ohm = <47000>;
-+			pulldown-ohm = <0>;
-+			io-channels = <&adc 6>;
-+		};
-+	};
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 1000000 0>;
-+		default-brightness-level = <2800>;
-+		pinctrl-0 = <&backlight_pwm>;
-+		pinctrl-names = "default";
-+	};
-+
-+	/*
-+	 * Use longest HW watchdog in SoC (32 seconds) since the hardware
-+	 * watchdog provides no debugging information (compared to soft/hard
-+	 * lockup detectors) and so should be last resort.
-+	 */
-+	watchdog@101D0000 {
-+		timeout-sec = <32>;
-+	};
-+};
+Yes thats true.
+As mcpm code is in review process, so i will remove platsmp.c and
+hotplug.c changes and respin the patch.
+The  patch will add support for cpunr calculation and offset calculation.
+
+>
+>
+>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>> b/arch/arm/mach-exynos/hotplug.c
+>> index 5eead53..9f74be2 100644
+>> --- a/arch/arm/mach-exynos/hotplug.c
+>> +++ b/arch/arm/mach-exynos/hotplug.c
+>> @@ -92,11 +92,12 @@ static inline void cpu_leave_lowpower(void)
+>>
+>>   static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>>   {
+>> +       unsigned int cpunr = ENYNOS_PMU_CPUNR(cpu_logical_map(cpu));
+>>         for (;;) {
+>>
+>> -               /* make cpu1 to be turned off at next WFI command */
+>> -               if (cpu == 1)
+>> -                       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
+>> +               /* make cpu to be turned off at next WFI command */
+>> +               if (cpu)
+>
+>
+> As I mentioned in my previous reply, I don't see what could go wrong if this
+> check is omitted. What happens if CPU0 is being hot-unplugged?
+>
+> If hardware doesn't support this (but I don't see any mention about this in
+> the documentation), such hotplug attempt should either simply fail on
+> .cpu_kill() operation for CPU0 or even have CPU0 marked as non-hotpluggable.
+
+That makes more sense, but i need to cross verify.
+
+>
+>
+>> +                       __raw_writel(0,
+>> S5P_ARM_CORE_CONFIGURATION(cpunr));
+>>
+>>                 /*
+>>                  * here's the WFI
+>> diff --git a/arch/arm/mach-exynos/platsmp.c
+>> b/arch/arm/mach-exynos/platsmp.c
+>> index 03e5e9f..d9c182f 100644
+>> --- a/arch/arm/mach-exynos/platsmp.c
+>> +++ b/arch/arm/mach-exynos/platsmp.c
+>> @@ -90,7 +90,7 @@ static int exynos_boot_secondary(unsigned int cpu,
+>> struct task_struct *idle)
+>>   {
+>>         unsigned long timeout;
+>>         unsigned long phys_cpu = cpu_logical_map(cpu);
+>> -
+>> +       unsigned int cpunr = ENYNOS_PMU_CPUNR(cpu_logical_map(cpu));
+>>         /*
+>>          * Set synchronisation state between this boot processor
+>>          * and the secondary one
+>> @@ -107,14 +107,15 @@ static int exynos_boot_secondary(unsigned int cpu,
+>> struct task_struct *idle)
+>>          */
+>>         write_pen_release(phys_cpu);
+>>
+>> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN))
+>> {
+>> +       if (!(__raw_readl(S5P_ARM_CORE_STATUS(cpunr))
+>> +               & S5P_CORE_LOCAL_PWR_EN)) {
+>>                 __raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>> -                            S5P_ARM_CORE1_CONFIGURATION);
+>> +                            S5P_ARM_CORE_CONFIGURATION(cpunr));
+>>
+>>                 timeout = 10;
+>>
+>> -               /* wait max 10 ms until cpu1 is on */
+>> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+>> +               /* wait max 10 ms until secondary cpu is on */
+>> +               while ((__raw_readl(S5P_ARM_CORE_STATUS(cpunr))
+>>                         & S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN)
+>> {
+>>                         if (timeout-- == 0)
+>>                                 break;
+>> @@ -123,7 +124,7 @@ static int exynos_boot_secondary(unsigned int cpu,
+>> struct task_struct *idle)
+>>                 }
+>>
+>>                 if (timeout == 0) {
+>> -                       printk(KERN_ERR "cpu1 power enable failed");
+>> +                       pr_err("cpu%u power enable failed", cpu);
+>>                         spin_unlock(&boot_lock);
+>>                         return -ETIMEDOUT;
+>>                 }
+>> diff --git a/arch/arm/mach-exynos/regs-pmu.h
+>> b/arch/arm/mach-exynos/regs-pmu.h
+>> index 4f6a256..0de6df4 100644
+>> --- a/arch/arm/mach-exynos/regs-pmu.h
+>> +++ b/arch/arm/mach-exynos/regs-pmu.h
+>> @@ -105,8 +105,13 @@
+>>   #define S5P_GPS_LOWPWR                                S5P_PMUREG(0x139C)
+>>   #define S5P_GPS_ALIVE_LOWPWR                  S5P_PMUREG(0x13A0)
+>>
+>> -#define S5P_ARM_CORE1_CONFIGURATION            S5P_PMUREG(0x2080)
+>> -#define S5P_ARM_CORE1_STATUS                   S5P_PMUREG(0x2084)
+>> +#define S5P_ARM_CORE0_CONFIGURATION            S5P_PMUREG(0x2000)
+>> +#define S5P_ARM_CORE0_STATUS                   S5P_PMUREG(0x2004)
+>> +
+>> +#define S5P_ARM_CORE_CONFIGURATION(_cpunr)     \
+>> +               (S5P_ARM_CORE0_CONFIGURATION + 0x80 * (_cpunr))
+>> +#define S5P_ARM_CORE_STATUS(_cpunr)            \
+>> +               (S5P_ARM_CORE0_STATUS + 0x80 * (_cpunr))
+>>
+>>   #define S5P_PAD_RET_MAUDIO_OPTION             S5P_PMUREG(0x3028)
+>>   #define S5P_PAD_RET_GPIO_OPTION                       S5P_PMUREG(0x3108)
+>> @@ -313,4 +318,10 @@
+>>
+>>   #define EXYNOS5_OPTION_USE_RETENTION                          (1 << 4)
+>>
+>> +#include <asm/cputype.h>
+>> +#define MAX_CPUS_IN_CLUSTER    4
+>> +#define ENYNOS_PMU_CPUNR(mpidr) \
+>> +               ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER) \
+>> +                 + MPIDR_AFFINITY_LEVEL(mpidr, 0));
+>
+>
+> Static inline would be preferred and then name in lowercase.
+
+ok
+
+>
+> Best regards,
+> Tomasz
+
+ Thanks again
+
 -- 
-1.7.9.5
+with warm regards,
+Chander Kashyap
