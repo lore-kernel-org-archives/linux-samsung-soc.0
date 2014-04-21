@@ -1,154 +1,110 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
-Date: Mon, 21 Apr 2014 22:59:02 +0200
-Message-ID: <3623958.Gv7Rj4f0MS@avalon>
-References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com> <1751714.6NNU6hXYoN@avalon> <CALt3h7921Ad9RCFit70ZFavoKhqjZpYLfvYiXh_ttqnhLQtZSA@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/14] ARM: dts: samsung-fimd: add I80 specific
+ properties
+Date: Tue, 22 Apr 2014 00:35:29 +0200
+Message-ID: <1903586.zxepIQYiBA@avalon>
+References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
+ <1673300.nbbjNiKf1K@avalon> <534F67B1.2020001@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:41456 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754467AbaDUU6y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 16:58:54 -0400
-In-Reply-To: <CALt3h7921Ad9RCFit70ZFavoKhqjZpYLfvYiXh_ttqnhLQtZSA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <534F67B1.2020001@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Pawel Osciak <posciak@chromium.org>
 
-Hi Arun,
+Hi YoungJun,
 
-On Monday 21 April 2014 17:19:26 Arun Kumar K wrote:
-> On Mon, Apr 21, 2014 at 3:54 PM, Laurent Pinchart wrote:
-> > On Monday 21 April 2014 14:56:01 Arun Kumar K wrote:
-> >> From: Pawel Osciak <posciak@chromium.org>
+On Thursday 17 April 2014 14:33:37 YoungJun Cho wrote:
+> On 04/17/2014 06:26 AM, Laurent Pinchart wrote:
+> > On Tuesday 15 April 2014 14:47:33 YoungJun Cho wrote:
+> >> In case of using CPU interface panel, the relevant registers should be
+> >> set. So this patch adds relevant dt bindings.
 > >> 
-> >> This event indicates that the decoder has reached a point in the stream,
-> >> at which the resolution changes. The userspace is expected to provide a
-> >> new
-> >> set of CAPTURE buffers for the new format before decoding can continue.
-> >> The event can also be used for more generic events involving resolution
-> >> or format changes at runtime for all kinds of video devices.
-> >> 
-> >> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> >> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > >> ---
 > >> 
-> >>  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |   16
-> >>  ++++++++++++++++
-> >>  include/uapi/linux/videodev2.h                     |    6 ++++++
-> >>  2 files changed, 22 insertions(+)
+> >>   .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
+> >>   1 file changed, 9 insertions(+)
 > >> 
-> >> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
-> >> b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml index
-> >> 5c70b61..0aec831 100644
-> >> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
-> >> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
-> >> @@ -155,6 +155,22 @@
-> >>           </entry>
-> >>         </row>
-> >>         <row>
-> >> +         <entry><constant>V4L2_EVENT_SOURCE_CHANGE</constant></entry>
-> >> +         <entry>5</entry>
-> >> +         <entry>
-> >> +           <para>This event is triggered when a resolution or format
-> >> change +            is detected during runtime by the video device. It
-> >> can be a +            runtime resolution change triggered by a video
-> >> decoder or the +            format change happening on an HDMI
-> >> connector. Application may +            need to reinitialize buffers
-> >> before proceeding further.</para> +
-> >> +              <para>This event has a &v4l2-event-source-change;
-> >> associated
-> >> +           with it. This has significance only for v4l2 subdevs where
-> >> the
-> >> +           <structfield>pad_num</structfield> field will be updated with
-> >> +           the pad number on which the event is triggered.</para>
-> >> +         </entry>
-> >> +       </row>
-> >> +       <row>
+> >> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> >> b/Documentation/devicetree/bindings/video/samsung-fimd.txt index
+> >> 2dad41b..924c2e1 100644
+> >> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> >> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
 > >> 
-> >>           <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
-> >>           <entry>0x08000000</entry>
-> >>           <entry>Base event number for driver-private events.</entry>
-> >> diff --git a/include/uapi/linux/videodev2.h
-> >> b/include/uapi/linux/videodev2.h index 6ae7bbe..12e0614 100644
-> >> --- a/include/uapi/linux/videodev2.h
-> >> +++ b/include/uapi/linux/videodev2.h
-> >> @@ -1733,6 +1733,7 @@ struct v4l2_streamparm {
-> >>  #define V4L2_EVENT_EOS                               2
-> >>  #define V4L2_EVENT_CTRL                              3
-> >>  #define V4L2_EVENT_FRAME_SYNC                        4
-> >> +#define V4L2_EVENT_SOURCE_CHANGE             5
-> >>  #define V4L2_EVENT_PRIVATE_START             0x08000000
-> >>  
-> >>  /* Payload for V4L2_EVENT_VSYNC */
-> >> @@ -1764,12 +1765,17 @@ struct v4l2_event_frame_sync {
-> >>       __u32 frame_sequence;
-> >>  };
+> >> @@ -44,6 +44,15 @@ Optional Properties:
+> >>   - display-timings: timing settings for FIMD, as described in document
+> >>   [1].
+> >>   
+> >>   		Can be used in case timings cannot be provided otherwise
+> >>   		or to override timings provided by the panel.
 > >> 
-> >> +struct v4l2_event_source_change {
-> >> +     __u32 pad_num;
-> > 
-> > I would call the field just "pad",
+> >> +- samsung,sysreg-phandle: handle to syscon used to control the system
 > 
-> Ok.
+> Oops... I have to change "samsung,sysreg-phandle" to "samsung,sysreg".
 > 
-> >> +};
-> >> +
+> >> registers
+> >> +- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
+> >> +- cs-setup: clock cycles for the active period of address signal enable
+> >> until
+> >> +	chip select is enable in i80 interface
+> >> +- wr-setup: clock cycles for the active period of CS signal enable until
+> >> +	write signal is enable in i80 interface
+> >> +- wr-act: clock cycles for the active period of CS enable in i80
+> >> interface
+> >> +- wr-hold: clock cycles for the active period of CS disable until write
+> >> signal
+> >> +	is disable in i80 interface
+> > 
+> > Shouldn't the interface parameters be considered as a property of the
+> > slave device instead ? The bus master side is programmable, and different
+> > slaves would have different timing requirements. I think it would make
+> > more sense to specify the timings on the slave (panel) side and query them
+> > dynamically at runtime. Depending on the slave the timings could be
+> > hardcoded in the driver (as they're usually an intrinsic property of the
+> > slave) or partially or fully specified in the slave DT node.
+> 
+> Yes, you're right. These properties are related to panel in a sense.
+> 
+> But my intention is to use these properties to fimd node in the board
+> specific dts file, because it decides the interface with panel and
+> these are required by fimd only.
+
+I agree, it's a bit of a gray area. The properties describe the connection 
+between the display controller output and the panel. As such they're shared 
+between the two components, so deciding on which node to include them in is a 
+bit difficult. In this specific case, as the panel dictates the interface 
+timings and the display controller is then programmed to comply with those 
+timings, I would be tempted to consider timing information as panel 
+properties. This obviously complicates driver implementation, as we would need 
+to communicate timing information from panel drivers to display controller 
+drivers.
+
+> If dynamic query is more logical approach, I should find some ways
+> with considering probing order.
+
+I won't push too much for storing interface timing information in the panel DT 
+node, but I'm a bit worried that storing it in the display controller DT node 
+might cause issues at some point. As DT is an ABI, we need to carefully 
+consider the potential issues.
+
+> >>   The device node can contain 'port' child nodes according to the
+> >>   bindings
 > >> 
-> >>  struct v4l2_event {
-> >>       __u32                           type;
-> >>       union {
-> >>               struct v4l2_event_vsync         vsync;
-> >>               struct v4l2_event_ctrl          ctrl;
-> >>               struct v4l2_event_frame_sync    frame_sync;
-> >> +             struct v4l2_event_source_change source_change;
-> >>               __u8                            data[64];
-> > 
-> > This looks pretty good to me, but I'm a bit concerned about future
-> > compatibility. We might need to report more information to userspace, and
-> > in particular what has been changed at the source (resolution, format,
-> > ...). In order to do so, we'll need to add a flag field to
-> > v4l2_event_source_change.
->
-> Ok a flag can be added with bitfields for reporting specific event type.
-
-I don't think we need to add it now. Just making sure it can be added later 
-without breaking the userspace API would be enough for me.
-
-> > The next __u32 right after the source_change field must thus be zeroed. I
-> > see two ways of doing so:
-> > 
-> > - zeroing the whole data array before setting event-specific data
-> > - adding a reserved must-be-zeroed field to v4l2_event_source_change
-> > 
-> > I like the former better as it's more generic, but we then need to ensure
-> > that all drivers zero the whole data field correctly. Adding a new
-> > v4l2_event_init() function would help with that.
-> 
-> Is that a good idea to have an init() function just for zeroing the data
-> field? If this is agreed upon, I can add this, but it can be easily missed
-> out by drivers.
-
-I'm not sure. On one hand it would be easier to catch missing calls if we use 
-a dedicated function, as the function could set an initialized flag in the 
-event structure that would be checked by v4l2_event_queue. On the other hand, 
-that might be overengineering, and we could just manually check that all 
-drivers memset the structure to 0 before initializing fields. In both cases 
-the goal is to make sure that the structure is properly initialized, to avoid 
-leaking kernel data to userspace, and to avoid breaking the ABI when we'll 
-need to extend the v4l2_event_source_change structure. Hans might have an 
-opinion on that.
-
-> Also how about the drivers already using the v4l2_event. Should we
-> update those drivers too with v4l2_event_init() ?
-
-If we decide to introduce a new function, yes. Otherwise, no :-)
-
-> >>       } u;
-> >>       __u32                           pending;
+> >> defined in [2]. The following are properties specific to those nodes:
 
 -- 
 Regards,
