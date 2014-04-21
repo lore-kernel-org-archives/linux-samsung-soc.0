@@ -1,112 +1,77 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC PATCH 05/14] ARM: dts: samsung-fimd: add I80 specific
- properties
-Date: Tue, 22 Apr 2014 00:35:29 +0200
-Message-ID: <1903586.zxepIQYiBA@avalon>
-References: <1397540862-21359-1-git-send-email-yj44.cho@samsung.com>
- <1673300.nbbjNiKf1K@avalon> <534F67B1.2020001@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <534F67B1.2020001@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH V2 0/9] drm: exynos: few patches to enhance bridge chip support
+Date: Tue, 22 Apr 2014 04:09:09 +0530
+Message-ID: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:60518 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754527AbaDUWjv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Apr 2014 18:39:51 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4E00HN3KAE1Z20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Apr 2014 07:39:50 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hi YoungJun,
+This series is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
-On Thursday 17 April 2014 14:33:37 YoungJun Cho wrote:
-> On 04/17/2014 06:26 AM, Laurent Pinchart wrote:
-> > On Tuesday 15 April 2014 14:47:33 YoungJun Cho wrote:
-> >> In case of using CPU interface panel, the relevant registers should be
-> >> set. So this patch adds relevant dt bindings.
-> >> 
-> >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> >> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> ---
-> >> 
-> >>   .../devicetree/bindings/video/samsung-fimd.txt     |    9 +++++++++
-> >>   1 file changed, 9 insertions(+)
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> >> b/Documentation/devicetree/bindings/video/samsung-fimd.txt index
-> >> 2dad41b..924c2e1 100644
-> >> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> >> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-> >> 
-> >> @@ -44,6 +44,15 @@ Optional Properties:
-> >>   - display-timings: timing settings for FIMD, as described in document
-> >>   [1].
-> >>   
-> >>   		Can be used in case timings cannot be provided otherwise
-> >>   		or to override timings provided by the panel.
-> >> 
-> >> +- samsung,sysreg-phandle: handle to syscon used to control the system
-> 
-> Oops... I have to change "samsung,sysreg-phandle" to "samsung,sysreg".
-> 
-> >> registers
-> >> +- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
-> >> +- cs-setup: clock cycles for the active period of address signal enable
-> >> until
-> >> +	chip select is enable in i80 interface
-> >> +- wr-setup: clock cycles for the active period of CS signal enable until
-> >> +	write signal is enable in i80 interface
-> >> +- wr-act: clock cycles for the active period of CS enable in i80
-> >> interface
-> >> +- wr-hold: clock cycles for the active period of CS disable until write
-> >> signal
-> >> +	is disable in i80 interface
-> > 
-> > Shouldn't the interface parameters be considered as a property of the
-> > slave device instead ? The bus master side is programmable, and different
-> > slaves would have different timing requirements. I think it would make
-> > more sense to specify the timings on the slave (panel) side and query them
-> > dynamically at runtime. Depending on the slave the timings could be
-> > hardcoded in the driver (as they're usually an intrinsic property of the
-> > slave) or partially or fully specified in the slave DT node.
-> 
-> Yes, you're right. These properties are related to panel in a sense.
-> 
-> But my intention is to use these properties to fimd node in the board
-> specific dts file, because it decides the interface with panel and
-> these are required by fimd only.
+This set of drm patches are needed to support bridge chips and
+eDP/LVDS panels with exynos_dp.
 
-I agree, it's a bit of a gray area. The properties describe the connection 
-between the display controller output and the panel. As such they're shared 
-between the two components, so deciding on which node to include them in is a 
-bit difficult. In this specific case, as the panel dictates the interface 
-timings and the display controller is then programmed to comply with those 
-timings, I would be tempted to consider timing information as panel 
-properties. This obviously complicates driver implementation, as we would need 
-to communicate timing information from panel drivers to display controller 
-drivers.
+Bridge chip driver for parade DP to LVDS converter is also added.
 
-> If dynamic query is more logical approach, I should find some ways
-> with considering probing order.
+For testing, I have used exynos5250-snow, and exynos5420-peach-pit boards
+along with a few local arch side patches.
 
-I won't push too much for storing interface timing information in the panel DT 
-node, but I'm a bit worried that storing it in the display controller DT node 
-might cause issues at some point. As DT is an ABI, we need to carefully 
-consider the potential issues.
+Andrew Bresticker (1):
+  [PATCH 1/9] drm/exynos: dp: support hotplug detection via GPIO
 
-> >>   The device node can contain 'port' child nodes according to the
-> >>   bindings
-> >> 
-> >> defined in [2]. The following are properties specific to those nodes:
+Ajay Kumar (7):
+  [PATCH 2/9] drm/panel: add pre_enable and post_disable routines
+  [PATCH 3/9] drm/panel: Add driver for exynos_dp based panels
+  [PATCH 4/9] drm/exynos: add exynos_dp_panel driver registration to drm driver
+  [PATCH 5/9] drm/exynos: dp: modify driver to support drm_panel
+  [PATCH 7/9] drm/bridge: ptn3460: add drm_panel controls
+  [PATCH 8/9] drm/bridge: Add PS8622 bridge driver
+  [PATCH 9/9] drm/exynos: Add ps8622 lvds bridge discovery to DP driver
+
+Rahul Sharma (1):
+  [PATCH 6/9] drm/bridge: ptn3460: enable polling based detection
+
+Major changes since V1:
+	Add post_disable callback and add bridge chip driver for parade DP
+	to LVDS converter
+
+ .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++
+ .../devicetree/bindings/video/exynos_dp.txt        |    4 +
+ drivers/gpu/drm/bridge/Kconfig                     |    8 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/ps8622.c                    |  566 ++++++++++++++++++++
+ drivers/gpu/drm/bridge/ptn3460.c                   |   21 +-
+ drivers/gpu/drm/exynos/Kconfig                     |    1 +
+ drivers/gpu/drm/exynos/exynos_dp_core.c            |   75 ++-
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 +
+ drivers/gpu/drm/exynos/exynos_dp_reg.c             |   44 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |   15 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |    1 +
+ drivers/gpu/drm/panel/Kconfig                      |    9 +
+ drivers/gpu/drm/panel/Makefile                     |    1 +
+ drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 +++++++++
+ include/drm/bridge/ps8622.h                        |   42 ++
+ include/drm/bridge/ptn3460.h                       |    6 +-
+ include/drm/drm_panel.h                            |   18 +
+ 18 files changed, 1088 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+ create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+ create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+ create mode 100644 include/drm/bridge/ps8622.h
 
 -- 
-Regards,
-
-Laurent Pinchart
+1.7.9.5
