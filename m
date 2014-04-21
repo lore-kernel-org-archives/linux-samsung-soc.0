@@ -1,40 +1,55 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 3/4] ARM: dts: Add 5800 dt files
-Date: Mon, 21 Apr 2014 07:28:52 -0700
-Message-ID: <CAOesGMgc3geQPZe_YB=N=WSLzss8a-5p8Mh0NsEMAjpCepwzqQ@mail.gmail.com>
-References: <1398062712-28602-1-git-send-email-arun.kk@samsung.com>
-	<1398062712-28602-4-git-send-email-arun.kk@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f46.google.com ([209.85.192.46]:48346 "EHLO
-	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751073AbaDUO2x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 10:28:53 -0400
-Received: by mail-qg0-f46.google.com with SMTP id j107so661130qga.33
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 07:28:52 -0700 (PDT)
-In-Reply-To: <1398062712-28602-4-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 2/3] serial: samsung: don't check config for every character
+Date: Mon, 21 Apr 2014 09:40:35 -0700
+Message-ID: <1398098436-31895-2-git-send-email-dianders@chromium.org>
+References: <1398098436-31895-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <1398098436-31895-1-git-send-email-dianders@chromium.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org
+Cc: olof@lixom.net, Doug Anderson <dianders@chromium.org>, jslaby@suse.cz, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olofj@google.com>, Arun Kumar <arunkk.samsung@gmail.com>
 
-On Sun, Apr 20, 2014 at 11:45 PM, Arun Kumar K <arun.kk@samsung.com> wrote:
-> Most of the nodes of exynos5420 remains same for exynos5800.
-> So moving the common dt nodes to exynos5-octa.dtsi.
-> The pinctrl dtsi is completely re-used and is renamed to
-> exynos5-octa-pinctrl.dtsi.
+The s3c24xx_serial_console_putchar() is _only_ ever used by
+s3c24xx_serial_console_write() and is called in a loop (indirectly
+through uart_console_write()).  There's no reason to call
+s3c24xx_port_configured() for every iteration through the loop.  Move
+it outside the loop.
 
-Again, naming here doesn't work.
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/tty/serial/samsung.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Also, if all you need to revise are a few properties, then you should
-just include 5420.dtsi in the 5422.dtsi file, and override, instead of
-adding another layer of indireciton.
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index a8e8b79..12442748 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1464,11 +1464,6 @@ static void
+ s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
+ {
+ 	unsigned int ufcon = rd_regl(port, S3C2410_UFCON);
+-	unsigned int ucon = rd_regl(port, S3C2410_UCON);
+-
+-	/* not possible to xmit on unconfigured port */
+-	if (!s3c24xx_port_configured(ucon))
+-		return;
+ 
+ 	while (!s3c24xx_serial_console_txrdy(port, ufcon))
+ 		barrier();
+@@ -1479,6 +1474,12 @@ static void
+ s3c24xx_serial_console_write(struct console *co, const char *s,
+ 			     unsigned int count)
+ {
++	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
++
++	/* not possible to xmit on unconfigured port */
++	if (!s3c24xx_port_configured(ucon))
++		return;
++
+ 	uart_console_write(cons_uart, s, count, s3c24xx_serial_console_putchar);
+ }
+ 
+-- 
+1.9.1.423.g4596e3a
 
-The multiple layers of includes and modifications makes it very hard
-to figure out where to find a specific definition for a platform, and
-I don't think we should encourage more use of it.
-
-
--Olof
