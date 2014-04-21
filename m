@@ -1,143 +1,56 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] serial_core: Commonalize crlf when working w/ a non open console port
-Date: Mon, 21 Apr 2014 10:06:43 -0700
-Message-ID: <1398100003-4172-1-git-send-email-dianders@chromium.org>
-References: <1397841448-12942-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f202.google.com ([209.85.223.202]:59547 "EHLO
-	mail-ie0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752654AbaDURHY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 13:07:24 -0400
-Received: by mail-ie0-f202.google.com with SMTP id lx4so911338iec.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 10:07:24 -0700 (PDT)
-In-Reply-To: <1397841448-12942-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RESEND PATCH 6/7] i2c: ChromeOS EC tunnel driver
+Date: Mon, 21 Apr 2014 11:53:00 -0600
+Message-ID: <53555AFC.5020203@wwwdotorg.org>
+References: <1397759814-3588-1-git-send-email-dianders@chromium.org> <1397759814-3588-7-git-send-email-dianders@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1397759814-3588-7-git-send-email-dianders@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, lee.jones@linaro.org, swarren@nvidia.com, wsa@the-dreams.de
+Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jason Wessel <jason.wessel@windriver.com>, linux-samsung-soc@vger.kernel.org, olof@lixom.net, Doug Anderson <dianders@chromium.org>, jslaby@suse.cz, paul.gortmaker@windriver.com, jg1.han@samsung.com, asierra@xes-inc.com, swarren@nvidia.com, heikki.krogerus@linux.intel.com, jschultz@xes-inc.com, kyle@infradead.org, mingo@elte.hu, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In (efe2f29 kgdboc,kdb: Allow kdb to work on a non open console port)
-support was added to directly use the "write_char" functions when
-doing kdb over a non-open console port.  This is great, but it ends up
-bypassing the normal code in uart_console_write() that adds a carriage
-return before any newlines.
+On 04/17/2014 12:36 PM, Doug Anderson wrote:
+> On ARM Chromebooks we have a few devices that are accessed by both the
+> AP (the main "Application Processor") and the EC (the Embedded
+> Controller).  These are:
+> * The battery (sbs-battery).
+> * The power management unit tps65090.
+...
+> On the Samsung ARM Chromebook 2 the scheme is changed yet again, now:
+> * The AP/EC comms are now using SPI for faster speeds.
+> * The EC's i2c bus is exposed to the AP through a full i2c tunnel.
+...
+> This driver supports the scheme used by the Samsung ARM Chromebook 2.
+> Future patches to this driver could add support for the battery tunnel
+> on the HP Chromebook 11 (and perhaps could even be used to access
+> tps65090 on the HP Chromebook 11 instead of using a special driver,
+> but I haven't researched that enough).
 
-There appears to have been a trend to add this support directly in
-some console driver's poll_put_char() functions.  This had a few side
-effects, including:
-- In this case we were doing LFCR, not CRLF.  This was fixed in
-  uart_console_write() back in (d358788 [SERIAL] kernel console should
-  send CRLF not LFCR)
-- Not all serial drivers had the LFCR code in their poll_put_char()
-  functions.  In my case I was running serial/samsung.c which lacked
-  it.
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
 
-I've moved the handling to uart_poll_put_char() to fix the above
-problems.  Now when I use kdb (and don't point console= to the same
-UART) I no longer get:
+> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
+> +======================================================
+> +On some ChromeOS board designs we've got a connection to the EC (embedded
+> +controller) but no direct connection to some devices on the other side of
+> +the EC (like a battery and PMIC).  To get access to those devices we need
+> +to tunnel our i2c commands through the EC.
+> +
+> +The node for this device should be under a cros-ec node like google,cros-ec-spi
+> +or google,cros-ec-i2c.
+> +
+> +
+> +Required properties:
+> +- compatible: google,cros-ec-i2c-tunnel
+> +- google,remote-bus: The EC bus we'd like to talk to.
 
-[0]kdb>
-       [0]kdb>
-              [0]kdb>
+It's probably worth mentioning here that the node represents a single
+I2C bus, and hence is expected to contain child nodes representing I2C
+devices. Perhaps:
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Moved from kdb to serial_core
+Optional child nodes:
+- One node per I2C device connected to the tunnelled I2C bus.
 
- drivers/tty/serial/8250/8250_core.c | 5 -----
- drivers/tty/serial/pch_uart.c       | 5 -----
- drivers/tty/serial/pxa.c            | 5 -----
- drivers/tty/serial/serial_core.c    | 3 +++
- drivers/tty/serial/serial_txx9.c    | 5 -----
- 5 files changed, 3 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 81f909c..ffee982 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -1926,13 +1926,8 @@ static void serial8250_put_poll_char(struct uart_port *port,
- 	wait_for_xmitr(up, BOTH_EMPTY);
- 	/*
- 	 *	Send the character out.
--	 *	If a LF, also do CR...
- 	 */
- 	serial_port_out(port, UART_TX, c);
--	if (c == 10) {
--		wait_for_xmitr(up, BOTH_EMPTY);
--		serial_port_out(port, UART_TX, 13);
--	}
- 
- 	/*
- 	 *	Finally, wait for transmitter to become empty
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index 0931b3f..11e631d 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -1588,13 +1588,8 @@ static void pch_uart_put_poll_char(struct uart_port *port,
- 	wait_for_xmitr(priv, UART_LSR_THRE);
- 	/*
- 	 * Send the character out.
--	 * If a LF, also do CR...
- 	 */
- 	iowrite8(c, priv->membase + PCH_UART_THR);
--	if (c == 10) {
--		wait_for_xmitr(priv, UART_LSR_THRE);
--		iowrite8(13, priv->membase + PCH_UART_THR);
--	}
- 
- 	/*
- 	 * Finally, wait for transmitter to become empty
-diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
-index f9f20f3..9e7ee39 100644
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -711,13 +711,8 @@ static void serial_pxa_put_poll_char(struct uart_port *port,
- 	wait_for_xmitr(up);
- 	/*
- 	 *	Send the character out.
--	 *	If a LF, also do CR...
- 	 */
- 	serial_out(up, UART_TX, c);
--	if (c == 10) {
--		wait_for_xmitr(up);
--		serial_out(up, UART_TX, 13);
--	}
- 
- 	/*
- 	 *	Finally, wait for transmitter to become empty
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index f26834d..5dba976 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -2236,6 +2236,9 @@ static void uart_poll_put_char(struct tty_driver *driver, int line, char ch)
- 		return;
- 
- 	port = state->uart_port;
-+
-+	if (ch == '\n')
-+		port->ops->poll_put_char(port, '\r');
- 	port->ops->poll_put_char(port, ch);
- }
- #endif
-diff --git a/drivers/tty/serial/serial_txx9.c b/drivers/tty/serial/serial_txx9.c
-index 90a080b..60f49b9 100644
---- a/drivers/tty/serial/serial_txx9.c
-+++ b/drivers/tty/serial/serial_txx9.c
-@@ -535,13 +535,8 @@ static void serial_txx9_put_poll_char(struct uart_port *port, unsigned char c)
- 	wait_for_xmitr(up);
- 	/*
- 	 *	Send the character out.
--	 *	If a LF, also do CR...
- 	 */
- 	sio_out(up, TXX9_SITFIFO, c);
--	if (c == 10) {
--		wait_for_xmitr(up);
--		sio_out(up, TXX9_SITFIFO, 13);
--	}
- 
- 	/*
- 	 *	Finally, wait for transmitter to become empty
--- 
-1.9.1.423.g4596e3a
