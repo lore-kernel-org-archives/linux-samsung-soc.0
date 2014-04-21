@@ -1,43 +1,75 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/2] cpufreq: exynos: Use dev_err/info function instead of
- pr_err/info
-Date: Mon, 21 Apr 2014 16:03:43 +0900
-Message-ID: <5354C2CF.5020206@samsung.com>
-References: <1397787634-9334-1-git-send-email-cw00.choi@samsung.com>
- <1397787634-9334-2-git-send-email-cw00.choi@samsung.com>
- <CAKohpo=-Oxu6ZoB4B2H4552meq46iXrVzKbP5ZwnG==sCc2_MA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [PATCH v4] arm: exynos: generalize power register address calculation
+Date: Mon, 21 Apr 2014 13:59:49 +0530
+Message-ID: <1398068989-9905-1-git-send-email-chander.kashyap@linaro.org>
+References: <CANuQgHGh_LZ5m-4PFrun5NpLPTO5oXJjQCpx3ix6KWkAoO=PNg@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23658 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750774AbaDUHDj (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:49318 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750774AbaDUIaE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 03:03:39 -0400
-In-reply-to: <CAKohpo=-Oxu6ZoB4B2H4552meq46iXrVzKbP5ZwnG==sCc2_MA@mail.gmail.com>
+	Mon, 21 Apr 2014 04:30:04 -0400
+Received: by mail-pa0-f44.google.com with SMTP id bj1so3509093pad.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 01:30:03 -0700 (PDT)
+In-Reply-To: <CANuQgHGh_LZ5m-4PFrun5NpLPTO5oXJjQCpx3ix6KWkAoO=PNg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.org>
 
-On 04/21/2014 03:05 PM, Viresh Kumar wrote:
-> On 18 April 2014 07:50, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> This patch uses dev_err/info function to show accurate log message with device name
->> instead of pr_err/info function.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  drivers/cpufreq/exynos-cpufreq.c | 21 ++++++++++++---------
->>  drivers/cpufreq/exynos-cpufreq.h |  1 +
->>  2 files changed, 13 insertions(+), 9 deletions(-)
-> 
-> This still looks fine even if we don't take the new driver ?
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Currently status/configuration power register values are hard-coded for cpu1.
 
-Thanks for your review.
+Make it generic so that it is useful for SoC's with more than two cpus.
 
-Best regards,
-Chanwoo Choi
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+Signed-off-by: Chander Kashyap <k.chander@samsung.org>
+---
+changes in v4:
+	1: Dropped changes in platsmp.c and hotplug.c as those are taken care by
+	   Tomasz Patches.
+	2. Converted ENYNOS_PMU_CPUNR macro to static inline function
+changes in v3:
+	1. Move cpunr calculation to a macro
+	2. Changed printk format specifier from unsigned hex to unsigned decimal
+Changes in v2:
+	1. Used existing macros for clusterid and cpuid calculation
+
+ arch/arm/mach-exynos/regs-pmu.h |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 4f6a256..f39e78c 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -105,8 +105,13 @@
+ #define S5P_GPS_LOWPWR				S5P_PMUREG(0x139C)
+ #define S5P_GPS_ALIVE_LOWPWR			S5P_PMUREG(0x13A0)
+ 
+-#define S5P_ARM_CORE1_CONFIGURATION		S5P_PMUREG(0x2080)
+-#define S5P_ARM_CORE1_STATUS			S5P_PMUREG(0x2084)
++#define S5P_ARM_CORE0_CONFIGURATION		S5P_PMUREG(0x2000)
++#define S5P_ARM_CORE0_STATUS			S5P_PMUREG(0x2004)
++
++#define S5P_ARM_CORE_CONFIGURATION(_cpunr) \
++		(S5P_ARM_CORE0_CONFIGURATION + 0x80 * (_cpunr))
++#define S5P_ARM_CORE_STATUS(_cpunr) \
++		(S5P_ARM_CORE0_STATUS + 0x80 * (_cpunr))
+ 
+ #define S5P_PAD_RET_MAUDIO_OPTION		S5P_PMUREG(0x3028)
+ #define S5P_PAD_RET_GPIO_OPTION			S5P_PMUREG(0x3108)
+@@ -313,4 +318,13 @@
+ 
+ #define EXYNOS5_OPTION_USE_RETENTION				(1 << 4)
+ 
++#include <asm/cputype.h>
++#define MAX_CPUS_IN_CLUSTER	4
++
++static inline unsigned int enynos_pmu_cpunr(unsigned int mpidr)
++{
++	return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
++		 + MPIDR_AFFINITY_LEVEL(mpidr, 0));
++}
++
+ #endif /* __ASM_ARCH_REGS_PMU_H */
+-- 
+1.7.9.5
