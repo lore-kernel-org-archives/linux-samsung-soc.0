@@ -1,51 +1,47 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v2 PATCH 13/14] ARM: dts: exynos5420: add mipi-phy node
-Date: Mon, 21 Apr 2014 21:28:40 +0900
-Message-ID: <1398083321-8668-14-git-send-email-yj44.cho@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 0/4] Add support for Exynos5800 SoC
+Date: Mon, 21 Apr 2014 07:07:02 -0700
+Message-ID: <CAOesGMi-ewBVQEq74fwfAf8rhwJ5QZ1xDpf3yF1QsygmKiygag@mail.gmail.com>
+References: <1398062712-28602-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f177.google.com ([209.85.216.177]:50203 "EHLO
+	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136AbaDUOHD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Apr 2014 10:07:03 -0400
+Received: by mail-qc0-f177.google.com with SMTP id w7so3991353qcr.36
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 07:07:02 -0700 (PDT)
+In-Reply-To: <1398062712-28602-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olofj@google.com>, Arun Kumar <arunkk.samsung@gmail.com>
 
-This patch adds mipi-phy node for MIPI-DSI device.
+[from the right account and without html formatting this time]
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8db792b..f0184c7 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -416,6 +416,12 @@
- 		phy-names = "dp";
- 	};
- 
-+	mipi_phy: video-phy@10040714 {
-+		compatible = "samsung,s5pv210-mipi-video-phy";
-+		reg = <0x10040714 12>;
-+		#phy-cells = <1>;
-+	};
-+
- 	fimd@14400000 {
- 		samsung,power-domain = <&disp_pd>;
- 		clocks = <&clock 147>, <&clock 421>;
--- 
-1.7.9.5
+On Sun, Apr 20, 2014 at 11:45 PM, Arun Kumar K <arun.kk@samsung.com> wrote:
+> Exynos5800 is a derivative of Exynos5420 with higher
+> clock speeds and most other IP blocks remaining the same
+> except for a few.
+> Due to the similarities with 5420, following is done to
+> achieve maximum code re-use:
+> - Use the same 5420 clock file with few changes for adding
+>   extra 5800 clocks.
+> - Re-use the 5420 dtsi by renaming it to exynos5-octa.
+
+
+Nack, this is a bad idea. You're not converting over 5410, which is
+also marketed as an exynos octa chip. There's definitely no guarantee
+that future octa-core chips will fit into this naming scheme either.
+
+Just call it 5422 like you did in the Chrome OS code base. It is after
+all the product name that is fused in as chip id on these parts, and
+all the other naming falls out much better from that.
+
+No more soc_is_5420 || soc_is_5800, since you can add a soc_is_542x. Etc.
+
+
+-Olof
