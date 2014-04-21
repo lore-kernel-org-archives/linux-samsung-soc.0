@@ -1,65 +1,68 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V2 9/9] drm/exynos: Add ps8622 lvds bridge discovery to DP
- driver
-Date: Tue, 22 Apr 2014 04:09:18 +0530
-Message-ID: <1398119958-32005-10-git-send-email-ajaykumar.rs@samsung.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [RFC v2 PATCH v2 06/14] drm/exynos: support MIPI DSI command mode
+Date: Tue, 22 Apr 2014 00:52:02 +0200
+Message-ID: <1460689.BVNsEv5Rlh@avalon>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com> <1398083321-8668-7-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:57840 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754949AbaDUWkE (ORCPT
+Received: from perceval.ideasonboard.com ([95.142.166.194]:41992 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754527AbaDUWvx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 18:40:04 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N4E00FAZKARW9A0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Apr 2014 07:40:03 +0900 (KST)
-In-reply-to: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+	Mon, 21 Apr 2014 18:51:53 -0400
+In-Reply-To: <1398083321-8668-7-git-send-email-yj44.cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+To: dri-devel@lists.freedesktop.org
+Cc: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 
-This patch adds ps8622 lvds bridge discovery code to the dp driver.
+Hi YoungJun,
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
-Changes since V1:
-	Pushing V1 for this as V2 because this patch holds good in this series.
+Thank you for the patch.
 
- drivers/gpu/drm/exynos/exynos_dp_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+On Monday 21 April 2014 21:28:33 YoungJun Cho wrote:
+> This patch adds I80 interface for FIMD to support command mode panel.
+> 
+> For this, the below features are added:
+> - Sets display interface mode relevant registers properly according to the
+>   interface type from DT
+> - Adds drm_panel_cpu_timings structure
+>  . The command mode panel sets them as the private attributes in struct
+>    drm_display_mode and FIMD gets them by fimd_mode_set().
+> - Adds TE interrupt handler
+>   . FIMD driver should know TE signal from lcd panel to avoid tearing issue.
+> - Adds trigger feature
+>   . In case of command mode panel, FIMD should set trigger bit,
+>     so that image data has to be transferred to display bus or lcd panel.
+> 
+> Changelog v2:
+> - Moves CPU timings relevant properties to panel DT
+>   (commented by Laurent Pinchart, Andrzej Hajda)
+> 
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/Kconfig           |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |   11 ++
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.h |    2 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h  |    2 +
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c  |   13 ++
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |  280 ++++++++++++++++++++++-----
+>  include/drm/drm_mipi_dsi.h               |    2 +
+>  include/drm/drm_panel.h                  |    7 +
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 4853f31..0006412 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -30,6 +30,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_panel.h>
- #include <drm/bridge/ptn3460.h>
-+#include <drm/bridge/ps8622.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_dp_core.h"
-@@ -999,7 +1000,15 @@ static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
- 				panel);
- 		if (!ret)
- 			return 1;
-+	} else if (find_bridge("parade,ps8625", &bridge)) {
-+
-+		ret = ps8622_init(dev, encoder, bridge.client, bridge.node,
-+				panel);
-+
-+		if (!ret)
-+			return 1;
- 	}
-+
- 	return 0;
- }
- 
+Could you please split the DRM core changes into two separate standalone 
+patches (as they're unrelated to each other) ?
+
+>  include/video/samsung_fimd.h             |    3 +-
+>  9 files changed, 277 insertions(+), 44 deletions(-)
+
+[snip]
+
 -- 
-1.7.9.5
+Regards,
+
+Laurent Pinchart
