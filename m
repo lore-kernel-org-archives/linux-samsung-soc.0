@@ -1,55 +1,68 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
-Date: Mon, 21 Apr 2014 14:03:49 -0600
-Message-ID: <535579A5.2060603@wwwdotorg.org>
-References: <1397757570-19750-1-git-send-email-dianders@chromium.org>	<1397757570-19750-8-git-send-email-dianders@chromium.org>	<535560E9.5040108@wwwdotorg.org> <CAD=FV=W8=SLxF=goYm9p3Dr0ZQYy9FzN0hbE+MwWFYGarZB9tw@mail.gmail.com>
+From: Doug Anderson <dianders@google.com>
+Subject: clocksources, rtcs, and sleeps, oh my!
+Date: Mon, 21 Apr 2014 13:50:04 -0700
+Message-ID: <CAD=FV=Wxk4dWSZw0=joLqX+P9uqKiWrz8vkO2iZf+E_i-nu57g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:41761 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaDUUDy (ORCPT
+Received: from mail-ve0-f173.google.com ([209.85.128.173]:35767 "EHLO
+	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754469AbaDUUuG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 16:03:54 -0400
-In-Reply-To: <CAD=FV=W8=SLxF=goYm9p3Dr0ZQYy9FzN0hbE+MwWFYGarZB9tw@mail.gmail.com>
+	Mon, 21 Apr 2014 16:50:06 -0400
+Received: by mail-ve0-f173.google.com with SMTP id oy12so8451040veb.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 13:50:04 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Alexander Graf <agraf@suse.de>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sean Paul <seanpaul@chromium.org>, Prashanth G <prashanth.g@samsung.com>
 
-On 04/21/2014 01:35 PM, Doug Anderson wrote:
-> Stephen,
-> 
-> On Mon, Apr 21, 2014 at 11:18 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> On 04/17/2014 11:59 AM, Doug Anderson wrote:
->>> This adds the EC i2c tunnel (and devices under it) to the
->>> tegra124-venice2 device tree.
+Hi,
 
->>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
->>
->>>       aliases {
->>> +             i2c20 = "/spi@0,7000d400/cros-ec@0/i2c-tunnel";
->>
->> Is that needed? I'd prefer not to add it unless there's a specific
->> reason. I don't think I2C buses need specific names, do they?
-> 
-> It is not strictly needed, but from a usability standpoint it is
-> terribly helpful.  It serves to make it obvious to someone looking at
-> the device that it's _not_ an i2c bus associated with the main SoC.
-> If you don't include a number I believe that the i2c core will pick
-> the first available number.
-> 
-> It seems worth it to save a few people a few hours of head scratching.
-> 
-> ...but this is your dts and if you think it's a terrible idea then
-> I'll remove it.  It looks to be less critical on tegra than it is on
-> exynos (which has ~9 i2c busses, they are numbered in the user manual,
-> and if you have one set to "disable" in the dts then the tunnel will
-> end up getting a very confusing number).
+I've been doing a bit of work with the upstream kernel on
+exynos5250-snow and noticed an annoying delay of several seconds when
+the max77686 rtc gets probed.  The longer time that I sit in the
+bootloader the longer the delay is.
 
-My opinion is that the in-kernel I2C bus numbering is an entirely
-unrelated numbering space to the HW controller numbering space precisely
-because of issues like that. DT aliases are more useful for user-visible
-port numbering (e.g. HDMI 0, 1 connectors on a case) than purely
-internal details like this. So, I would leave it out.
+I've tracked down the line and found that this little piece of code is
+causing the delay:
+
+   /* Minimum 16ms delay required before RTC update. */
+   msleep(MAX77686_RTC_UPDATE_DELAY);
+
+...that doesn't make a whole lot of sense, so I tracked things down a
+bit more.  It appears that if I disable _either_ the MCT timer _or_
+the ARM arch timers that the problem magically goes away.  In other
+words, either of these will do it:
+
+mct@101C0000 {
+   status = "disabled";
+};
+
+timer {
+   status = "disabled";
+};
+
+Disabling either of the timers also fixes the rather annoying jump
+from 0 seconds to ~2910 seconds at boot time.
+
+Does anyone have time to dig into this?
+
+---
+
+Here's the log showing the big jump in time:
+
+[    0.008067] Switching to timer-based delay loop
+[ 2910.537817] Console: colour dummy device 80x30
+
+---
+
+...and the big delay when the RTC is probed:
+
+[ 2911.609317] max77686-rtc max77686-rtc: max77686_rtc_probe
+[ 2920.652394] max77686-rtc max77686-rtc: rtc core: registered
+max77686-rtc as rtc0
+
+---
+
+-Doug
