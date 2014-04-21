@@ -1,1545 +1,274 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: Add 5800 dt files
-Date: Mon, 21 Apr 2014 12:15:11 +0530
-Message-ID: <1398062712-28602-4-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: Add peach-pi board support
+Date: Mon, 21 Apr 2014 12:15:12 +0530
+Message-ID: <1398062712-28602-5-git-send-email-arun.kk@samsung.com>
 References: <1398062712-28602-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:48941 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751091AbaDUGp3 (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:36520 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751269AbaDUGpd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 02:45:29 -0400
+	Mon, 21 Apr 2014 02:45:33 -0400
 In-Reply-To: <1398062712-28602-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kgene.kim@samsung.com, dianders@chromium.org, alim.akhtar@samsung.com, tomasz.figa@gmail.com, olofj@google.com, arunkk.samsung@gmail.com
 
-Most of the nodes of exynos5420 remains same for exynos5800.
-So moving the common dt nodes to exynos5-octa.dtsi.
-The pinctrl dtsi is completely re-used and is renamed to
-exynos5-octa-pinctrl.dtsi.
+Adds support for google peach-pi board having the
+Exynos5800 SoC.
 
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
- ...5420-pinctrl.dtsi => exynos5-octa-pinctrl.dtsi} |    0
- arch/arm/boot/dts/exynos5-octa.dtsi                |  732 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |  713 +------------------
- arch/arm/boot/dts/exynos5800.dtsi                  |   24 +
- 4 files changed, 759 insertions(+), 710 deletions(-)
- rename arch/arm/boot/dts/{exynos5420-pinctrl.dtsi => exynos5-octa-pinctrl.dtsi} (100%)
- create mode 100644 arch/arm/boot/dts/exynos5-octa.dtsi
- create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
+ arch/arm/boot/dts/Makefile                |    3 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts |  225 +++++++++++++++++++++++++++++
+ 2 files changed, 227 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
 
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5-octa-pinctrl.dtsi
-similarity index 100%
-rename from arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-rename to arch/arm/boot/dts/exynos5-octa-pinctrl.dtsi
-diff --git a/arch/arm/boot/dts/exynos5-octa.dtsi b/arch/arm/boot/dts/exynos5-octa.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index c17cf4b..6ed6467 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -77,7 +77,8 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos5420-smdk5420.dtb \
+ 	exynos5420-peach-pit.dtb \
+ 	exynos5440-sd5v1.dtb \
+-	exynos5440-ssdk5440.dtb
++	exynos5440-ssdk5440.dtb \
++	exynos5800-peach-pi.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += hi3620-hi4511.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
+ 	ecx-2000.dtb
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
 new file mode 100644
-index 0000000..4b606ad
+index 0000000..3ea6c8a
 --- /dev/null
-+++ b/arch/arm/boot/dts/exynos5-octa.dtsi
-@@ -0,0 +1,732 @@
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -0,0 +1,225 @@
 +/*
-+ * SAMSUNG EXYNOS5 Octa SoC device tree source
++ * Google Peach Pi Rev 10+ board device tree source
 + *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * SAMSUNG EXYNOS5 Octa SoC device nodes are listed in this file.
-+ * EXYNOS5420 and EXYNOS5800 based board files can include this
-+ * file and provide values for board specfic bindings.
++ * Copyright (c) 2014 Google, Inc
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + */
 +
-+#include <dt-bindings/clock/exynos5420.h>
-+#include "exynos5.dtsi"
-+#include "exynos5-octa-pinctrl.dtsi"
-+
-+#include <dt-bindings/clock/exynos-audss-clk.h>
++/dts-v1/;
++#include <include/dt-bindings/input/input.h>
++#include "exynos5800.dtsi"
 +
 +/ {
-+	aliases {
-+		mshc0 = &mmc_0;
-+		mshc1 = &mmc_1;
-+		mshc2 = &mmc_2;
-+		pinctrl0 = &pinctrl_0;
-+		pinctrl1 = &pinctrl_1;
-+		pinctrl2 = &pinctrl_2;
-+		pinctrl3 = &pinctrl_3;
-+		pinctrl4 = &pinctrl_4;
-+		i2c0 = &i2c_0;
-+		i2c1 = &i2c_1;
-+		i2c2 = &i2c_2;
-+		i2c3 = &i2c_3;
-+		i2c4 = &hsi2c_4;
-+		i2c5 = &hsi2c_5;
-+		i2c6 = &hsi2c_6;
-+		i2c7 = &hsi2c_7;
-+		i2c8 = &hsi2c_8;
-+		i2c9 = &hsi2c_9;
-+		i2c10 = &hsi2c_10;
-+		gsc0 = &gsc_0;
-+		gsc1 = &gsc_1;
-+		spi0 = &spi_0;
-+		spi1 = &spi_1;
-+		spi2 = &spi_2;
++	model = "Google Peach Pi Rev 10+";
++
++	compatible = "google,pi-rev16",
++		"google,pi-rev15", "google,pi-rev14",
++		"google,pi-rev13", "google,pi-rev12",
++		"google,pi-rev11", "google,pi-rev10",
++		"google,pi", "google,peach", "samsung,exynos5800",
++		"samsung,exynos5";
++
++	memory {
++		reg = <0x20000000 0xE0000000>;
 +	};
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0x0>;
-+			clock-frequency = <1800000000>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0x1>;
-+			clock-frequency = <1800000000>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0x2>;
-+			clock-frequency = <1800000000>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0x3>;
-+			clock-frequency = <1800000000>;
-+		};
-+
-+		cpu4: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x100>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		cpu5: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x101>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		cpu6: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x102>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		cpu7: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x103>;
-+			clock-frequency = <1000000000>;
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
 +		};
 +	};
 +
-+	clock: clock-controller@10010000 {
-+		compatible = "samsung,exynos5420-clock";
-+		reg = <0x10010000 0x30000>;
-+		#clock-cells = <1>;
-+	};
++	pinctrl@13400000 {
++		lid_irq: lid-irq {
++			samsung,pins = "gpx3-4";
++			samsung,pin-function = <0>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
 +
-+	clock_audss: audss-clock-controller@3810000 {
-+		compatible = "samsung,exynos5420-audss-clock";
-+		reg = <0x03810000 0x0C>;
-+		#clock-cells = <1>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
-+			 <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
-+		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
-+	};
++		power_key_irq: power-key-irq {
++			samsung,pins = "gpx1-2";
++			samsung,pin-function = <0>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
 +
-+	codec@11000000 {
-+		reg = <0x11000000 0x10000>;
-+		interrupts = <0 96 0>;
-+		clocks = <&clock CLK_ACLK_MFC>;
-+		clock-names = "mfc";
-+	};
-+
-+	mmc_0: mmc@12200000 {
-+		compatible = "samsung,exynos5420-dw-mshc-smu";
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12200000 0x2000>;
-+		clocks = <&clock CLK_ACLK_MMC0>, <&clock CLK_SCLK_MMC0>;
-+		clock-names = "biu", "ciu";
-+		fifo-depth = <0x40>;
-+		status = "disabled";
-+	};
-+
-+	mmc_1: mmc@12210000 {
-+		compatible = "samsung,exynos5420-dw-mshc-smu";
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12210000 0x2000>;
-+		clocks = <&clock CLK_ACLK_MMC1>, <&clock CLK_SCLK_MMC1>;
-+		clock-names = "biu", "ciu";
-+		fifo-depth = <0x40>;
-+		status = "disabled";
-+	};
-+
-+	mmc_2: mmc@12220000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12220000 0x1000>;
-+		clocks = <&clock CLK_ACLK_MMC2>, <&clock CLK_SCLK_MMC2>;
-+		clock-names = "biu", "ciu";
-+		fifo-depth = <0x40>;
-+		status = "disabled";
-+	};
-+
-+	mct@101C0000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x101C0000 0x800>;
-+		interrupt-controller;
-+		#interrups-cells = <1>;
-+		interrupt-parent = <&mct_map>;
-+		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
-+				<8>, <9>, <10>, <11>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_PCLK_MCT>;
-+		clock-names = "fin_pll", "mct";
-+
-+		mct_map: mct-map {
-+			#interrupt-cells = <1>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0 &combiner 23 3>,
-+					<1 &combiner 23 4>,
-+					<2 &combiner 25 2>,
-+					<3 &combiner 25 3>,
-+					<4 &gic 0 120 0>,
-+					<5 &gic 0 121 0>,
-+					<6 &gic 0 122 0>,
-+					<7 &gic 0 123 0>,
-+					<8 &gic 0 128 0>,
-+					<9 &gic 0 129 0>,
-+					<10 &gic 0 130 0>,
-+					<11 &gic 0 131 0>;
++		tpm_irq: tpm-irq {
++			samsung,pins = "gpx1-0";
++			samsung,pin-function = <0>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
 +		};
 +	};
 +
-+	gsc_pd: power-domain@10044000 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044000 0x20>;
-+	};
++	pinctrl@14010000 {
++		spi_flash_cs: spi-flash-cs {
++			samsung,pins = "gpa2-5";
++			samsung,pin-function = <1>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
 +
-+	isp_pd: power-domain@10044020 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044020 0x20>;
-+	};
-+
-+	mfc_pd: power-domain@10044060 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044060 0x20>;
-+	};
-+
-+	disp_pd: power-domain@100440C0 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x100440C0 0x20>;
-+	};
-+
-+	mau_pd: power-domain@100440E0 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x100440E0 0x20>;
-+	};
-+
-+	g2d_pd: power-domain@10044100 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044100 0x20>;
-+	};
-+
-+	msc_pd: power-domain@10044120 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044120 0x20>;
-+	};
-+
-+	pinctrl_0: pinctrl@13400000 {
-+		compatible = "samsung,exynos5420-pinctrl";
-+		reg = <0x13400000 0x1000>;
-+		interrupts = <0 45 0>;
-+
-+		wakeup-interrupt-controller {
-+			compatible = "samsung,exynos4210-wakeup-eint";
-+			interrupt-parent = <&gic>;
-+			interrupts = <0 32 0>;
++		backlight_pwm: backlight-pwm {
++			samsung,pins = "gpb2-0";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
 +		};
 +	};
 +
-+	pinctrl_1: pinctrl@13410000 {
-+		compatible = "samsung,exynos5420-pinctrl";
-+		reg = <0x13410000 0x1000>;
-+		interrupts = <0 78 0>;
-+	};
++	gpio-keys {
++		compatible = "gpio-keys";
 +
-+	pinctrl_2: pinctrl@14000000 {
-+		compatible = "samsung,exynos5420-pinctrl";
-+		reg = <0x14000000 0x1000>;
-+		interrupts = <0 46 0>;
-+	};
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_key_irq &lid_irq>;
 +
-+	pinctrl_3: pinctrl@14010000 {
-+		compatible = "samsung,exynos5420-pinctrl";
-+		reg = <0x14010000 0x1000>;
-+		interrupts = <0 50 0>;
-+	};
++		power {
++			label = "Power";
++			gpios = <&gpx1 2 1>;
++			linux,code = <KEY_POWER>;
++			gpio-key,wakeup;
++		};
 +
-+	pinctrl_4: pinctrl@03860000 {
-+		compatible = "samsung,exynos5420-pinctrl";
-+		reg = <0x03860000 0x1000>;
-+		interrupts = <0 47 0>;
++		lid-switch {
++			label = "Lid";
++			gpios = <&gpx3 4 1>;
++			linux,input-type = <5>; /* EV_SW */
++			linux,code = <0>; /* SW_LID */
++			debounce-interval = <1>;
++			gpio-key,wakeup;
++		};
 +	};
 +
 +	rtc@101E0000 {
-+		clocks = <&clock CLK_PCLK_RTC>;
-+		clock-names = "rtc";
-+		status = "disabled";
-+	};
-+
-+	amba {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "arm,amba-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		adma: adma@03880000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x03880000 0x1000>;
-+			interrupts = <0 110 0>;
-+			clocks = <&clock_audss EXYNOS_ADMA>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <6>;
-+			#dma-requests = <16>;
-+		};
-+
-+		pdma0: pdma@121A0000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x121A0000 0x1000>;
-+			interrupts = <0 34 0>;
-+			clocks = <&clock CLK_ACLK_PDMA0>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+		};
-+
-+		pdma1: pdma@121B0000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x121B0000 0x1000>;
-+			interrupts = <0 35 0>;
-+			clocks = <&clock CLK_ACLK_PDMA1>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+		};
-+
-+		mdma0: mdma@10800000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x10800000 0x1000>;
-+			interrupts = <0 33 0>;
-+			clocks = <&clock CLK_ACLK_MDMA0>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <1>;
-+		};
-+
-+		mdma1: mdma@11C10000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x11C10000 0x1000>;
-+			interrupts = <0 124 0>;
-+			clocks = <&clock CLK_ACLK_MDMA1>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <1>;
-+		};
-+	};
-+
-+	i2s0: i2s@03830000 {
-+		compatible = "samsung,exynos5420-i2s";
-+		reg = <0x03830000 0x100>;
-+		dmas = <&adma 0
-+			&adma 2
-+			&adma 1>;
-+		dma-names = "tx", "rx", "tx-sec";
-+		clocks = <&clock_audss EXYNOS_I2S_BUS>,
-+			<&clock_audss EXYNOS_I2S_BUS>,
-+			<&clock_audss EXYNOS_SCLK_I2S>;
-+		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-+		samsung,idma-addr = <0x03000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2s0_bus>;
-+		status = "disabled";
-+	};
-+
-+	i2s1: i2s@12D60000 {
-+		compatible = "samsung,exynos5420-i2s";
-+		reg = <0x12D60000 0x100>;
-+		dmas = <&pdma1 12
-+			&pdma1 11>;
-+		dma-names = "tx", "rx";
-+		clocks = <&clock CLK_PCLK_I2S1>, <&clock CLK_SCLK_I2S1>;
-+		clock-names = "iis", "i2s_opclk0";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2s1_bus>;
-+		status = "disabled";
-+	};
-+
-+	i2s2: i2s@12D70000 {
-+		compatible = "samsung,exynos5420-i2s";
-+		reg = <0x12D70000 0x100>;
-+		dmas = <&pdma0 12
-+			&pdma0 11>;
-+		dma-names = "tx", "rx";
-+		clocks = <&clock CLK_PCLK_I2S2>, <&clock CLK_SCLK_I2S2>;
-+		clock-names = "iis", "i2s_opclk0";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2s2_bus>;
-+		status = "disabled";
-+	};
-+
-+	spi_0: spi@12d20000 {
-+		compatible = "samsung,exynos4210-spi";
-+		reg = <0x12d20000 0x100>;
-+		interrupts = <0 66 0>;
-+		dmas = <&pdma0 5
-+			&pdma0 4>;
-+		dma-names = "tx", "rx";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spi0_bus>;
-+		clocks = <&clock CLK_PCLK_SPI0>, <&clock CLK_SCLK_SPI0>;
-+		clock-names = "spi", "spi_busclk0";
-+		status = "disabled";
-+	};
-+
-+	spi_1: spi@12d30000 {
-+		compatible = "samsung,exynos4210-spi";
-+		reg = <0x12d30000 0x100>;
-+		interrupts = <0 67 0>;
-+		dmas = <&pdma1 5
-+			&pdma1 4>;
-+		dma-names = "tx", "rx";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spi1_bus>;
-+		clocks = <&clock CLK_PCLK_SPI1>, <&clock CLK_SCLK_SPI1>;
-+		clock-names = "spi", "spi_busclk0";
-+		status = "disabled";
-+	};
-+
-+	spi_2: spi@12d40000 {
-+		compatible = "samsung,exynos4210-spi";
-+		reg = <0x12d40000 0x100>;
-+		interrupts = <0 68 0>;
-+		dmas = <&pdma0 7
-+			&pdma0 6>;
-+		dma-names = "tx", "rx";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spi2_bus>;
-+		clocks = <&clock CLK_PCLK_SPI2>, <&clock CLK_SCLK_SPI2>;
-+		clock-names = "spi", "spi_busclk0";
-+		status = "disabled";
-+	};
-+
-+	serial@12C00000 {
-+		clocks = <&clock CLK_PCLK_UART0>, <&clock CLK_SCLK_UART0>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
-+
-+	serial@12C10000 {
-+		clocks = <&clock CLK_PCLK_UART1>, <&clock CLK_SCLK_UART1>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
-+
-+	serial@12C20000 {
-+		clocks = <&clock CLK_PCLK_UART2>, <&clock CLK_SCLK_UART2>;
-+		clock-names = "uart", "clk_uart_baud0";
++		status = "okay";
 +	};
 +
 +	serial@12C30000 {
-+		clocks = <&clock CLK_PCLK_UART3>, <&clock CLK_SCLK_UART3>;
-+		clock-names = "uart", "clk_uart_baud0";
++		status = "okay";
 +	};
 +
-+	pwm: pwm@12dd0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12dd0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+		clocks = <&clock CLK_PCLK_PWM>;
-+		clock-names = "timers";
-+	};
-+
-+	dp_phy: video-phy@10040728 {
-+		compatible = "samsung,exynos5250-dp-video-phy";
-+		reg = <0x10040728 4>;
-+		#phy-cells = <0>;
-+	};
-+
-+	dp-controller@145B0000 {
-+		clocks = <&clock CLK_PCLK_DP1>;
-+		clock-names = "dp";
-+		phys = <&dp_phy>;
-+		phy-names = "dp";
-+	};
-+
-+	fimd@14400000 {
-+		samsung,power-domain = <&disp_pd>;
-+		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_ACLK_FIMD1>;
-+		clock-names = "sclk_fimd", "fimd";
-+	};
-+
-+	adc: adc@12D10000 {
-+		compatible = "samsung,exynos-adc-v2";
-+		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
-+		interrupts = <0 106 0>;
-+		clocks = <&clock CLK_PCLK_TSADC>;
-+		clock-names = "adc";
-+		#io-channel-cells = <1>;
-+		io-channel-ranges;
-+		status = "disabled";
-+	};
-+
-+	i2c_0: i2c@12C60000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C60000 0x100>;
-+		interrupts = <0 56 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock CLK_PCLK_I2C0>;
-+		clock-names = "i2c";
++	mmc@12200000 {
++		status = "okay";
++		num-slots = <1>;
++		broken-cd;
++		caps2-mmc-hs200-1_8v;
++		supports-highspeed;
++		non-removable;
++		card-detect-delay = <200>;
++		clock-frequency = <400000000>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c0_bus>;
-+		status = "disabled";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
 +	};
 +
-+	i2c_1: i2c@12C70000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C70000 0x100>;
-+		interrupts = <0 57 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock CLK_PCLK_I2C1>;
-+		clock-names = "i2c";
++	mmc@12220000 {
++		status = "okay";
++		num-slots = <1>;
++		supports-highspeed;
++		card-detect-delay = <200>;
++		clock-frequency = <400000000>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c1_bus>;
-+		status = "disabled";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
 +	};
 +
-+	i2c_2: i2c@12C80000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C80000 0x100>;
-+		interrupts = <0 58 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock CLK_PCLK_I2C2>;
-+		clock-names = "i2c";
++	i2c@12E10000 {
++		status = "okay";
++		clock-frequency = <400000>;
++
++		tpm@20 {
++			/* Unused irq; but still need to configure the pins */
++			pinctrl-names = "default";
++			pinctrl-0 = <&tpm_irq>;
++
++			compatible = "infineon,slb9645tt";
++			reg = <0x20>;
++		};
++	};
++
++	spi@12d30000 {
++		status = "okay";
++		samsung,spi-src-clk = <0>;
++		num-cs = <1>;
++
++		spidev@0 {
++			compatible = "spidev";
++			reg = <0>;
++			spi-max-frequency = <50000000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi_flash_cs>;
++
++			controller-data {
++				cs-gpio = <&gpa2 5 0>;
++				samsung,spi-feedback-delay = <2>;
++			};
++		};
++	};
++
++	adc@12D10000 {
++		ncp15wb473@3 {
++			compatible = "ntc,ncp15wb473";
++			pullup-uv = <1800000>;
++			pullup-ohm = <47000>;
++			pulldown-ohm = <0>;
++			io-channels = <&adc 3>;
++		};
++		ncp15wb473@4 {
++			compatible = "ntc,ncp15wb473";
++			pullup-uv = <1800000>;
++			pullup-ohm = <47000>;
++			pulldown-ohm = <0>;
++			io-channels = <&adc 4>;
++		};
++		ncp15wb473@5 {
++			compatible = "ntc,ncp15wb473";
++			pullup-uv = <1800000>;
++			pullup-ohm = <47000>;
++			pulldown-ohm = <0>;
++			io-channels = <&adc 5>;
++		};
++		ncp15wb473@6 {
++			compatible = "ntc,ncp15wb473";
++			pullup-uv = <1800000>;
++			pullup-ohm = <47000>;
++			pulldown-ohm = <0>;
++			io-channels = <&adc 6>;
++		};
++	};
++
++	backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 0 1000000 0>;
++		default-brightness-level = <2800>;
++		pinctrl-0 = <&backlight_pwm>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
-+		status = "disabled";
 +	};
 +
-+	i2c_3: i2c@12C90000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C90000 0x100>;
-+		interrupts = <0 59 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock CLK_PCLK_I2C3>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c3_bus>;
-+		status = "disabled";
-+	};
-+
-+	hsi2c_4: i2c@12CA0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CA0000 0x1000>;
-+		interrupts = <0 60 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c4_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI0>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_5: i2c@12CB0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CB0000 0x1000>;
-+		interrupts = <0 61 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c5_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI1>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_6: i2c@12CC0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CC0000 0x1000>;
-+		interrupts = <0 62 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c6_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI2>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_7: i2c@12CD0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CD0000 0x1000>;
-+		interrupts = <0 63 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c7_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI3>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_8: i2c@12E00000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E00000 0x1000>;
-+		interrupts = <0 87 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c8_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI4>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_9: i2c@12E10000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E10000 0x1000>;
-+		interrupts = <0 88 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c9_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI5>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_10: i2c@12E20000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E20000 0x1000>;
-+		interrupts = <0 203 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c10_hs_bus>;
-+		clocks = <&clock CLK_PCLK_USI6>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hdmi@14530000 {
-+		compatible = "samsung,exynos4212-hdmi";
-+		reg = <0x14530000 0x70000>;
-+		interrupts = <0 95 0>;
-+		clocks = <&clock CLK_PCLK_HDMI>, <&clock CLK_SCLK_HDMI>,
-+			 <&clock CLK_DOUT_PIXEL>, <&clock CLK_SCLK_HDMIPHY>,
-+			 <&clock CLK_MOUT_HDMI>;
-+		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
-+			"sclk_hdmiphy", "mout_hdmi";
-+		status = "disabled";
-+	};
-+
-+	mixer@14450000 {
-+		compatible = "samsung,exynos5420-mixer";
-+		reg = <0x14450000 0x10000>;
-+		interrupts = <0 94 0>;
-+		clocks = <&clock CLK_ACLK_MIXER>, <&clock CLK_SCLK_HDMI>;
-+		clock-names = "mixer", "sclk_hdmi";
-+	};
-+
-+	gsc_0: video-scaler@13e00000 {
-+		compatible = "samsung,exynos5-gsc";
-+		reg = <0x13e00000 0x1000>;
-+		interrupts = <0 85 0>;
-+		clocks = <&clock CLK_ACLK_GSCL0>;
-+		clock-names = "gscl";
-+		samsung,power-domain = <&gsc_pd>;
-+	};
-+
-+	gsc_1: video-scaler@13e10000 {
-+		compatible = "samsung,exynos5-gsc";
-+		reg = <0x13e10000 0x1000>;
-+		interrupts = <0 86 0>;
-+		clocks = <&clock CLK_ACLK_GSCL1>;
-+		clock-names = "gscl";
-+		samsung,power-domain = <&gsc_pd>;
-+	};
-+
-+	pmu_system_controller: system-controller@10040000 {
-+		compatible = "samsung,exynos5420-pmu", "syscon";
-+		reg = <0x10040000 0x5000>;
-+	};
-+
-+	tmu_cpu0: tmu@10060000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+		clocks = <&clock CLK_PCLK_TMU>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu1: tmu@10064000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10064000 0x100>;
-+		interrupts = <0 183 0>;
-+		clocks = <&clock CLK_PCLK_TMU>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu2: tmu@10068000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+		interrupts = <0 184 0>;
-+		clocks = <&clock CLK_PCLK_TMU>, <&clock CLK_PCLK_TMU>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+	tmu_cpu3: tmu@1006c000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+		interrupts = <0 185 0>;
-+		clocks = <&clock CLK_PCLK_TMU>, <&clock CLK_PCLK_TMU_GPU>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+	tmu_gpu: tmu@100a0000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-+		interrupts = <0 215 0>;
-+		clocks = <&clock CLK_PCLK_TMU_GPU>, <&clock CLK_PCLK_TMU>;
-+		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-+	};
-+
-+        watchdog@101D0000 {
-+		compatible = "samsung,exynos5420-wdt";
-+		reg = <0x101D0000 0x100>;
-+		interrupts = <0 42 0>;
-+		clocks = <&clock CLK_PCLK_WDT>;
-+		clock-names = "watchdog";
-+		samsung,syscon-phandle = <&pmu_system_controller>;
-+        };
-+
-+	sss@10830000 {
-+		compatible = "samsung,exynos4210-secss";
-+		reg = <0x10830000 0x10000>;
-+		interrupts = <0 112 0>;
-+		clocks = <&clock CLK_ACLK_SSS>;
-+		clock-names = "secss";
-+		samsung,power-domain = <&g2d_pd>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index bae7e10..a6b1375 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -4,7 +4,7 @@
-  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-- * SAMSUNG EXYNOS54200 SoC device nodes are listed in this file.
-+ * SAMSUNG EXYNOS5420 SoC device nodes are listed in this file.
-  * EXYNOS5420 based board files can include this file and provide
-  * values for board specfic bindings.
-  *
-@@ -13,723 +13,16 @@
-  * published by the Free Software Foundation.
-  */
- 
--#include <dt-bindings/clock/exynos5420.h>
--#include "exynos5.dtsi"
--#include "exynos5420-pinctrl.dtsi"
--
--#include <dt-bindings/clock/exynos-audss-clk.h>
-+#include "exynos5-octa.dtsi"
- 
- / {
- 	compatible = "samsung,exynos5420", "samsung,exynos5";
- 
--	aliases {
--		mshc0 = &mmc_0;
--		mshc1 = &mmc_1;
--		mshc2 = &mmc_2;
--		pinctrl0 = &pinctrl_0;
--		pinctrl1 = &pinctrl_1;
--		pinctrl2 = &pinctrl_2;
--		pinctrl3 = &pinctrl_3;
--		pinctrl4 = &pinctrl_4;
--		i2c0 = &i2c_0;
--		i2c1 = &i2c_1;
--		i2c2 = &i2c_2;
--		i2c3 = &i2c_3;
--		i2c4 = &hsi2c_4;
--		i2c5 = &hsi2c_5;
--		i2c6 = &hsi2c_6;
--		i2c7 = &hsi2c_7;
--		i2c8 = &hsi2c_8;
--		i2c9 = &hsi2c_9;
--		i2c10 = &hsi2c_10;
--		gsc0 = &gsc_0;
--		gsc1 = &gsc_1;
--		spi0 = &spi_0;
--		spi1 = &spi_1;
--		spi2 = &spi_2;
--	};
--
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cpu0: cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a15";
--			reg = <0x0>;
--			clock-frequency = <1800000000>;
--		};
--
--		cpu1: cpu@1 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a15";
--			reg = <0x1>;
--			clock-frequency = <1800000000>;
--		};
--
--		cpu2: cpu@2 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a15";
--			reg = <0x2>;
--			clock-frequency = <1800000000>;
--		};
--
--		cpu3: cpu@3 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a15";
--			reg = <0x3>;
--			clock-frequency = <1800000000>;
--		};
--
--		cpu4: cpu@100 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0x100>;
--			clock-frequency = <1000000000>;
--		};
--
--		cpu5: cpu@101 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0x101>;
--			clock-frequency = <1000000000>;
--		};
--
--		cpu6: cpu@102 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0x102>;
--			clock-frequency = <1000000000>;
--		};
--
--		cpu7: cpu@103 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0x103>;
--			clock-frequency = <1000000000>;
--		};
--	};
--
- 	clock: clock-controller@10010000 {
- 		compatible = "samsung,exynos5420-clock";
--		reg = <0x10010000 0x30000>;
--		#clock-cells = <1>;
- 	};
- 
--	clock_audss: audss-clock-controller@3810000 {
--		compatible = "samsung,exynos5420-audss-clock";
--		reg = <0x03810000 0x0C>;
--		#clock-cells = <1>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
--			 <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
--		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
--	};
--
--	codec@11000000 {
-+	mfc: codec@11000000 {
- 		compatible = "samsung,mfc-v7";
--		reg = <0x11000000 0x10000>;
--		interrupts = <0 96 0>;
--		clocks = <&clock CLK_ACLK_MFC>;
--		clock-names = "mfc";
--	};
--
--	mmc_0: mmc@12200000 {
--		compatible = "samsung,exynos5420-dw-mshc-smu";
--		interrupts = <0 75 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <0x12200000 0x2000>;
--		clocks = <&clock CLK_ACLK_MMC0>, <&clock CLK_SCLK_MMC0>;
--		clock-names = "biu", "ciu";
--		fifo-depth = <0x40>;
--		status = "disabled";
--	};
--
--	mmc_1: mmc@12210000 {
--		compatible = "samsung,exynos5420-dw-mshc-smu";
--		interrupts = <0 76 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <0x12210000 0x2000>;
--		clocks = <&clock CLK_ACLK_MMC1>, <&clock CLK_SCLK_MMC1>;
--		clock-names = "biu", "ciu";
--		fifo-depth = <0x40>;
--		status = "disabled";
--	};
--
--	mmc_2: mmc@12220000 {
--		compatible = "samsung,exynos5420-dw-mshc";
--		interrupts = <0 77 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <0x12220000 0x1000>;
--		clocks = <&clock CLK_ACLK_MMC2>, <&clock CLK_SCLK_MMC2>;
--		clock-names = "biu", "ciu";
--		fifo-depth = <0x40>;
--		status = "disabled";
--	};
--
--	mct@101C0000 {
--		compatible = "samsung,exynos4210-mct";
--		reg = <0x101C0000 0x800>;
--		interrupt-controller;
--		#interrups-cells = <1>;
--		interrupt-parent = <&mct_map>;
--		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
--				<8>, <9>, <10>, <11>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_PCLK_MCT>;
--		clock-names = "fin_pll", "mct";
--
--		mct_map: mct-map {
--			#interrupt-cells = <1>;
--			#address-cells = <0>;
--			#size-cells = <0>;
--			interrupt-map = <0 &combiner 23 3>,
--					<1 &combiner 23 4>,
--					<2 &combiner 25 2>,
--					<3 &combiner 25 3>,
--					<4 &gic 0 120 0>,
--					<5 &gic 0 121 0>,
--					<6 &gic 0 122 0>,
--					<7 &gic 0 123 0>,
--					<8 &gic 0 128 0>,
--					<9 &gic 0 129 0>,
--					<10 &gic 0 130 0>,
--					<11 &gic 0 131 0>;
--		};
--	};
--
--	gsc_pd: power-domain@10044000 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044000 0x20>;
--	};
--
--	isp_pd: power-domain@10044020 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044020 0x20>;
--	};
--
--	mfc_pd: power-domain@10044060 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044060 0x20>;
--	};
--
--	disp_pd: power-domain@100440C0 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x100440C0 0x20>;
--	};
--
--	mau_pd: power-domain@100440E0 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x100440E0 0x20>;
--	};
--
--	g2d_pd: power-domain@10044100 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044100 0x20>;
--	};
--
--	msc_pd: power-domain@10044120 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044120 0x20>;
--	};
--
--	pinctrl_0: pinctrl@13400000 {
--		compatible = "samsung,exynos5420-pinctrl";
--		reg = <0x13400000 0x1000>;
--		interrupts = <0 45 0>;
--
--		wakeup-interrupt-controller {
--			compatible = "samsung,exynos4210-wakeup-eint";
--			interrupt-parent = <&gic>;
--			interrupts = <0 32 0>;
--		};
--	};
--
--	pinctrl_1: pinctrl@13410000 {
--		compatible = "samsung,exynos5420-pinctrl";
--		reg = <0x13410000 0x1000>;
--		interrupts = <0 78 0>;
--	};
--
--	pinctrl_2: pinctrl@14000000 {
--		compatible = "samsung,exynos5420-pinctrl";
--		reg = <0x14000000 0x1000>;
--		interrupts = <0 46 0>;
--	};
--
--	pinctrl_3: pinctrl@14010000 {
--		compatible = "samsung,exynos5420-pinctrl";
--		reg = <0x14010000 0x1000>;
--		interrupts = <0 50 0>;
--	};
--
--	pinctrl_4: pinctrl@03860000 {
--		compatible = "samsung,exynos5420-pinctrl";
--		reg = <0x03860000 0x1000>;
--		interrupts = <0 47 0>;
--	};
--
--	rtc@101E0000 {
--		clocks = <&clock CLK_PCLK_RTC>;
--		clock-names = "rtc";
--		status = "disabled";
--	};
--
--	amba {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		compatible = "arm,amba-bus";
--		interrupt-parent = <&gic>;
--		ranges;
--
--		adma: adma@03880000 {
--			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x03880000 0x1000>;
--			interrupts = <0 110 0>;
--			clocks = <&clock_audss EXYNOS_ADMA>;
--			clock-names = "apb_pclk";
--			#dma-cells = <1>;
--			#dma-channels = <6>;
--			#dma-requests = <16>;
--		};
--
--		pdma0: pdma@121A0000 {
--			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x121A0000 0x1000>;
--			interrupts = <0 34 0>;
--			clocks = <&clock CLK_ACLK_PDMA0>;
--			clock-names = "apb_pclk";
--			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <32>;
--		};
--
--		pdma1: pdma@121B0000 {
--			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x121B0000 0x1000>;
--			interrupts = <0 35 0>;
--			clocks = <&clock CLK_ACLK_PDMA1>;
--			clock-names = "apb_pclk";
--			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <32>;
--		};
--
--		mdma0: mdma@10800000 {
--			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x10800000 0x1000>;
--			interrupts = <0 33 0>;
--			clocks = <&clock CLK_ACLK_MDMA0>;
--			clock-names = "apb_pclk";
--			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <1>;
--		};
--
--		mdma1: mdma@11C10000 {
--			compatible = "arm,pl330", "arm,primecell";
--			reg = <0x11C10000 0x1000>;
--			interrupts = <0 124 0>;
--			clocks = <&clock CLK_ACLK_MDMA1>;
--			clock-names = "apb_pclk";
--			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <1>;
--		};
--	};
--
--	i2s0: i2s@03830000 {
--		compatible = "samsung,exynos5420-i2s";
--		reg = <0x03830000 0x100>;
--		dmas = <&adma 0
--			&adma 2
--			&adma 1>;
--		dma-names = "tx", "rx", "tx-sec";
--		clocks = <&clock_audss EXYNOS_I2S_BUS>,
--			<&clock_audss EXYNOS_I2S_BUS>,
--			<&clock_audss EXYNOS_SCLK_I2S>;
--		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
--		samsung,idma-addr = <0x03000000>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2s0_bus>;
--		status = "disabled";
--	};
--
--	i2s1: i2s@12D60000 {
--		compatible = "samsung,exynos5420-i2s";
--		reg = <0x12D60000 0x100>;
--		dmas = <&pdma1 12
--			&pdma1 11>;
--		dma-names = "tx", "rx";
--		clocks = <&clock CLK_PCLK_I2S1>, <&clock CLK_SCLK_I2S1>;
--		clock-names = "iis", "i2s_opclk0";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2s1_bus>;
--		status = "disabled";
--	};
--
--	i2s2: i2s@12D70000 {
--		compatible = "samsung,exynos5420-i2s";
--		reg = <0x12D70000 0x100>;
--		dmas = <&pdma0 12
--			&pdma0 11>;
--		dma-names = "tx", "rx";
--		clocks = <&clock CLK_PCLK_I2S2>, <&clock CLK_SCLK_I2S2>;
--		clock-names = "iis", "i2s_opclk0";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2s2_bus>;
--		status = "disabled";
--	};
--
--	spi_0: spi@12d20000 {
--		compatible = "samsung,exynos4210-spi";
--		reg = <0x12d20000 0x100>;
--		interrupts = <0 66 0>;
--		dmas = <&pdma0 5
--			&pdma0 4>;
--		dma-names = "tx", "rx";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&spi0_bus>;
--		clocks = <&clock CLK_PCLK_SPI0>, <&clock CLK_SCLK_SPI0>;
--		clock-names = "spi", "spi_busclk0";
--		status = "disabled";
--	};
--
--	spi_1: spi@12d30000 {
--		compatible = "samsung,exynos4210-spi";
--		reg = <0x12d30000 0x100>;
--		interrupts = <0 67 0>;
--		dmas = <&pdma1 5
--			&pdma1 4>;
--		dma-names = "tx", "rx";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&spi1_bus>;
--		clocks = <&clock CLK_PCLK_SPI1>, <&clock CLK_SCLK_SPI1>;
--		clock-names = "spi", "spi_busclk0";
--		status = "disabled";
--	};
--
--	spi_2: spi@12d40000 {
--		compatible = "samsung,exynos4210-spi";
--		reg = <0x12d40000 0x100>;
--		interrupts = <0 68 0>;
--		dmas = <&pdma0 7
--			&pdma0 6>;
--		dma-names = "tx", "rx";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&spi2_bus>;
--		clocks = <&clock CLK_PCLK_SPI2>, <&clock CLK_SCLK_SPI2>;
--		clock-names = "spi", "spi_busclk0";
--		status = "disabled";
--	};
--
--	serial@12C00000 {
--		clocks = <&clock CLK_PCLK_UART0>, <&clock CLK_SCLK_UART0>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	serial@12C10000 {
--		clocks = <&clock CLK_PCLK_UART1>, <&clock CLK_SCLK_UART1>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	serial@12C20000 {
--		clocks = <&clock CLK_PCLK_UART2>, <&clock CLK_SCLK_UART2>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	serial@12C30000 {
--		clocks = <&clock CLK_PCLK_UART3>, <&clock CLK_SCLK_UART3>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	pwm: pwm@12dd0000 {
--		compatible = "samsung,exynos4210-pwm";
--		reg = <0x12dd0000 0x100>;
--		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
--		#pwm-cells = <3>;
--		clocks = <&clock CLK_PCLK_PWM>;
--		clock-names = "timers";
--	};
--
--	dp_phy: video-phy@10040728 {
--		compatible = "samsung,exynos5250-dp-video-phy";
--		reg = <0x10040728 4>;
--		#phy-cells = <0>;
--	};
--
--	dp-controller@145B0000 {
--		clocks = <&clock CLK_PCLK_DP1>;
--		clock-names = "dp";
--		phys = <&dp_phy>;
--		phy-names = "dp";
--	};
--
--	fimd@14400000 {
--		samsung,power-domain = <&disp_pd>;
--		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_ACLK_FIMD1>;
--		clock-names = "sclk_fimd", "fimd";
--	};
--
--	adc: adc@12D10000 {
--		compatible = "samsung,exynos-adc-v2";
--		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
--		interrupts = <0 106 0>;
--		clocks = <&clock CLK_PCLK_TSADC>;
--		clock-names = "adc";
--		#io-channel-cells = <1>;
--		io-channel-ranges;
--		status = "disabled";
--	};
--
--	i2c_0: i2c@12C60000 {
--		compatible = "samsung,s3c2440-i2c";
--		reg = <0x12C60000 0x100>;
--		interrupts = <0 56 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clock CLK_PCLK_I2C0>;
--		clock-names = "i2c";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c0_bus>;
--		status = "disabled";
--	};
--
--	i2c_1: i2c@12C70000 {
--		compatible = "samsung,s3c2440-i2c";
--		reg = <0x12C70000 0x100>;
--		interrupts = <0 57 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clock CLK_PCLK_I2C1>;
--		clock-names = "i2c";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c1_bus>;
--		status = "disabled";
--	};
--
--	i2c_2: i2c@12C80000 {
--		compatible = "samsung,s3c2440-i2c";
--		reg = <0x12C80000 0x100>;
--		interrupts = <0 58 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clock CLK_PCLK_I2C2>;
--		clock-names = "i2c";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c2_bus>;
--		status = "disabled";
--	};
--
--	i2c_3: i2c@12C90000 {
--		compatible = "samsung,s3c2440-i2c";
--		reg = <0x12C90000 0x100>;
--		interrupts = <0 59 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clock CLK_PCLK_I2C3>;
--		clock-names = "i2c";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c3_bus>;
--		status = "disabled";
--	};
--
--	hsi2c_4: i2c@12CA0000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12CA0000 0x1000>;
--		interrupts = <0 60 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c4_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI0>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hsi2c_5: i2c@12CB0000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12CB0000 0x1000>;
--		interrupts = <0 61 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c5_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI1>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hsi2c_6: i2c@12CC0000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12CC0000 0x1000>;
--		interrupts = <0 62 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c6_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI2>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hsi2c_7: i2c@12CD0000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12CD0000 0x1000>;
--		interrupts = <0 63 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c7_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI3>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hsi2c_8: i2c@12E00000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12E00000 0x1000>;
--		interrupts = <0 87 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c8_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI4>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hsi2c_9: i2c@12E10000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12E10000 0x1000>;
--		interrupts = <0 88 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c9_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI5>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hsi2c_10: i2c@12E20000 {
--		compatible = "samsung,exynos5-hsi2c";
--		reg = <0x12E20000 0x1000>;
--		interrupts = <0 203 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2c10_hs_bus>;
--		clocks = <&clock CLK_PCLK_USI6>;
--		clock-names = "hsi2c";
--		status = "disabled";
--	};
--
--	hdmi@14530000 {
--		compatible = "samsung,exynos4212-hdmi";
--		reg = <0x14530000 0x70000>;
--		interrupts = <0 95 0>;
--		clocks = <&clock CLK_PCLK_HDMI>, <&clock CLK_SCLK_HDMI>,
--			 <&clock CLK_DOUT_PIXEL>, <&clock CLK_SCLK_HDMIPHY>,
--			 <&clock CLK_MOUT_HDMI>;
--		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
--			"sclk_hdmiphy", "mout_hdmi";
--		status = "disabled";
--	};
--
--	mixer@14450000 {
--		compatible = "samsung,exynos5420-mixer";
--		reg = <0x14450000 0x10000>;
--		interrupts = <0 94 0>;
--		clocks = <&clock CLK_ACLK_MIXER>, <&clock CLK_SCLK_HDMI>;
--		clock-names = "mixer", "sclk_hdmi";
--	};
--
--	gsc_0: video-scaler@13e00000 {
--		compatible = "samsung,exynos5-gsc";
--		reg = <0x13e00000 0x1000>;
--		interrupts = <0 85 0>;
--		clocks = <&clock CLK_ACLK_GSCL0>;
--		clock-names = "gscl";
--		samsung,power-domain = <&gsc_pd>;
--	};
--
--	gsc_1: video-scaler@13e10000 {
--		compatible = "samsung,exynos5-gsc";
--		reg = <0x13e10000 0x1000>;
--		interrupts = <0 86 0>;
--		clocks = <&clock CLK_ACLK_GSCL1>;
--		clock-names = "gscl";
--		samsung,power-domain = <&gsc_pd>;
--	};
--
--	pmu_system_controller: system-controller@10040000 {
--		compatible = "samsung,exynos5420-pmu", "syscon";
--		reg = <0x10040000 0x5000>;
--	};
--
--	tmu_cpu0: tmu@10060000 {
--		compatible = "samsung,exynos5420-tmu";
--		reg = <0x10060000 0x100>;
--		interrupts = <0 65 0>;
--		clocks = <&clock CLK_PCLK_TMU>;
--		clock-names = "tmu_apbif";
--	};
--
--	tmu_cpu1: tmu@10064000 {
--		compatible = "samsung,exynos5420-tmu";
--		reg = <0x10064000 0x100>;
--		interrupts = <0 183 0>;
--		clocks = <&clock CLK_PCLK_TMU>;
--		clock-names = "tmu_apbif";
--	};
--
--	tmu_cpu2: tmu@10068000 {
--		compatible = "samsung,exynos5420-tmu-ext-triminfo";
--		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
--		interrupts = <0 184 0>;
--		clocks = <&clock CLK_PCLK_TMU>, <&clock CLK_PCLK_TMU>;
--		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--	};
--
--	tmu_cpu3: tmu@1006c000 {
--		compatible = "samsung,exynos5420-tmu-ext-triminfo";
--		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
--		interrupts = <0 185 0>;
--		clocks = <&clock CLK_PCLK_TMU>, <&clock CLK_PCLK_TMU_GPU>;
--		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--	};
--
--	tmu_gpu: tmu@100a0000 {
--		compatible = "samsung,exynos5420-tmu-ext-triminfo";
--		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
--		interrupts = <0 215 0>;
--		clocks = <&clock CLK_PCLK_TMU_GPU>, <&clock CLK_PCLK_TMU>;
--		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--	};
--
--        watchdog@101D0000 {
--		compatible = "samsung,exynos5420-wdt";
--		reg = <0x101D0000 0x100>;
--		interrupts = <0 42 0>;
--		clocks = <&clock CLK_PCLK_WDT>;
--		clock-names = "watchdog";
--		samsung,syscon-phandle = <&pmu_system_controller>;
--        };
--
--	sss@10830000 {
--		compatible = "samsung,exynos4210-secss";
--		reg = <0x10830000 0x10000>;
--		interrupts = <0 112 0>;
--		clocks = <&clock CLK_ACLK_SSS>;
--		clock-names = "secss";
--		samsung,power-domain = <&g2d_pd>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-new file mode 100644
-index 0000000..2b8d05d
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -0,0 +1,24 @@
-+/*
-+ * SAMSUNG EXYNOS5800 SoC device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
-+ * EXYNOS5800 based board files can include this file and provide
-+ * values for board specfic bindings.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include "exynos5-octa.dtsi"
-+
-+/ {
-+	compatible = "samsung,exynos5800", "samsung,exynos5";
-+
-+	clock: clock-controller@10010000 {
-+		compatible = "samsung,exynos5800-clock";
++	/*
++	 * Use longest HW watchdog in SoC (32 seconds) since the hardware
++	 * watchdog provides no debugging information (compared to soft/hard
++	 * lockup detectors) and so should be last resort.
++	 */
++	watchdog@101D0000 {
++		timeout-sec = <32>;
 +	};
 +};
 -- 
