@@ -1,145 +1,55 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 2/3] usb: ehci-exynos: Make provision for vdd regulators
-Date: Mon, 21 Apr 2014 17:46:43 +0530
-Message-ID: <1398082604-3013-2-git-send-email-gautam.vivek@samsung.com>
-References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [RFC v2 PATCH v3 05/14] ARM: dts: samsung-fimd: add I80 specific
+ properties
+Date: Mon, 21 Apr 2014 21:28:32 +0900
+Message-ID: <1398083321-8668-6-git-send-email-yj44.cho@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, gregkh@linuxfoundation.org, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org, balbi@ti.com, stern@rowland.harvard.edu, Vivek Gautam <gautam.vivek@samsung.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Facilitate getting required 3.3V and 1.0V VDD supply for
-EHCI controller on Exynos.
+In case of using CPU interface panel, the relevant registers should be set.
+So this patch adds relevant dt bindings.
 
-With patches for regulators' nodes merged in 3.15:
-c8c253f ARM: dts: Add regulator entries to smdk5420
-275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+Changelog v2:
+- Changes "samsung,sysreg-phandle" to "samsung,sysreg"
+Changelog v3:
+- Moves CPU timings relevant properties to panel DT
+  (commented by Laurent Pinchart, Andrzej Hajda)
 
-certain perripherals will now need to ensure that,
-they request VDD regulators in their drivers, and enable
-them so as to make them working.
-
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
+ .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Based on 'usb-next' branch of Greg's usb tree.
-
- drivers/usb/host/ehci-exynos.c |   47 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
-
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index d1d8c47..a3ca8cc 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -20,6 +20,7 @@
- #include <linux/of.h>
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
-@@ -46,6 +47,8 @@ struct exynos_ehci_hcd {
- 	struct clk *clk;
- 	struct usb_phy *phy;
- 	struct usb_otg *otg;
-+	struct regulator *vdd33;
-+	struct regulator *vdd10;
- };
+diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+index 2dad41b..6bf93e9 100644
+--- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+@@ -44,6 +44,8 @@ Optional Properties:
+ - display-timings: timing settings for FIMD, as described in document [1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
++- samsung,sysreg: handle to syscon used to control the system registers
++- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
  
- #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
-@@ -112,6 +115,28 @@ static int exynos_ehci_probe(struct platform_device *pdev)
- 		exynos_ehci->otg = phy->otg;
- 	}
- 
-+	exynos_ehci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
-+	if (IS_ERR(exynos_ehci->vdd33)) {
-+		err = PTR_ERR(exynos_ehci->vdd33);
-+		goto fail_regulator1;
-+	}
-+	err = regulator_enable(exynos_ehci->vdd33);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
-+		goto fail_regulator1;
-+	}
-+
-+	exynos_ehci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
-+	if (IS_ERR(exynos_ehci->vdd10)) {
-+		err = PTR_ERR(exynos_ehci->vdd10);
-+		goto fail_regulator2;
-+	}
-+	err = regulator_enable(exynos_ehci->vdd10);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
-+		goto fail_regulator2;
-+	}
-+
- skip_phy:
- 
- 	exynos_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
-@@ -178,6 +203,10 @@ fail_add_hcd:
- fail_io:
- 	clk_disable_unprepare(exynos_ehci->clk);
- fail_clk:
-+	regulator_disable(exynos_ehci->vdd10);
-+fail_regulator2:
-+	regulator_disable(exynos_ehci->vdd33);
-+fail_regulator1:
- 	usb_put_hcd(hcd);
- 	return err;
- }
-@@ -197,6 +226,9 @@ static int exynos_ehci_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(exynos_ehci->clk);
- 
-+	regulator_disable(exynos_ehci->vdd10);
-+	regulator_disable(exynos_ehci->vdd33);
-+
- 	usb_put_hcd(hcd);
- 
- 	return 0;
-@@ -221,6 +253,9 @@ static int exynos_ehci_suspend(struct device *dev)
- 
- 	clk_disable_unprepare(exynos_ehci->clk);
- 
-+	regulator_disable(exynos_ehci->vdd10);
-+	regulator_disable(exynos_ehci->vdd33);
-+
- 	return rc;
- }
- 
-@@ -228,6 +263,18 @@ static int exynos_ehci_resume(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
-+	int ret;
-+
-+	ret = regulator_enable(exynos_ehci->vdd33);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable VDD33 supply\n");
-+		return ret;
-+	}
-+	ret = regulator_enable(exynos_ehci->vdd10);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable VDD10 supply\n");
-+		return ret;
-+	}
- 
- 	clk_prepare_enable(exynos_ehci->clk);
- 
+ The device node can contain 'port' child nodes according to the bindings defined
+ in [2]. The following are properties specific to those nodes:
 -- 
-1.7.10.4
+1.7.9.5
