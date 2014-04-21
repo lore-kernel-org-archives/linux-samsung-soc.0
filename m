@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v2 PATCH 12/14] ARM: dts: exynos5: add system register support
-Date: Mon, 21 Apr 2014 21:28:39 +0900
-Message-ID: <1398083321-8668-13-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v2 PATCH 13/14] ARM: dts: exynos5420: add mipi-phy node
+Date: Mon, 21 Apr 2014 21:28:40 +0900
+Message-ID: <1398083321-8668-14-git-send-email-yj44.cho@samsung.com>
 References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,38 +21,31 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds sysreg device node, and sysreg property to fimd device node
-which is required to use I80 interface.
+This patch adds mipi-phy node for MIPI-DSI device.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi |    6 ++++++
+ arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 258dca4..f938bbb 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -88,12 +88,18 @@
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8db792b..f0184c7 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -416,6 +416,12 @@
+ 		phy-names = "dp";
  	};
  
-+	sys_reg: syscon@10050000 {
-+		compatible = "samsung,exynos5-sysreg", "syscon";
-+		reg = <0x10050000 0x500>;
++	mipi_phy: video-phy@10040714 {
++		compatible = "samsung,s5pv210-mipi-video-phy";
++		reg = <0x10040714 12>;
++		#phy-cells = <1>;
 +	};
 +
  	fimd@14400000 {
- 		compatible = "samsung,exynos5250-fimd";
- 		interrupt-parent = <&combiner>;
- 		reg = <0x14400000 0x40000>;
- 		interrupt-names = "fifo", "vsync", "lcd_sys";
- 		interrupts = <18 4>, <18 5>, <18 6>;
-+		samsung,sysreg = <&sys_reg>;
- 		status = "disabled";
- 	};
- 
+ 		samsung,power-domain = <&disp_pd>;
+ 		clocks = <&clock 147>, <&clock 421>;
 -- 
 1.7.9.5
