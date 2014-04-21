@@ -1,104 +1,58 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv3 0/7] Support new Exynos3250 SoC based on Cortex-A7 dual
- core
-Date: Mon, 21 Apr 2014 10:10:30 +0900
-Message-ID: <53547006.8030307@samsung.com>
-References: <1397783728-6193-1-git-send-email-cw00.choi@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH RFC 3/4] xhci: Tune PHY for the DWC3-Exynos host controller
+Date: Mon, 21 Apr 2014 09:50:47 +0530
+Message-ID: <CAFp+6iGictwugB2A3ddpW2T7h-eSQ5vkM1RVrWsboGtWE1SkMg@mail.gmail.com>
+References: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
+	<1386672926-26885-4-git-send-email-gautam.vivek@samsung.com>
+	<20131210135548.GA28456@xps8300>
+	<CAFp+6iGAdDgC=21VjCUjx3u_ZohhCyj2nG8qzvz3CHTZzoXWJQ@mail.gmail.com>
+	<20140416141239.GB30528@xps8300>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1397783728-6193-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, t.figa@samsung.com, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20140416141239.GB30528@xps8300>
+Sender: linux-omap-owner@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, kishon <kishon@ti.com>, Jingoo Han <jg1.han@samsung.com>, Julius Werner <jwerner@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Kukjin,
+Hi,
 
-Please review this patchset for Exynos3250 SoC.
 
-Best Regards,
-Chanwoo Choi
+On Wed, Apr 16, 2014 at 7:42 PM, Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+> Hi,
+>
+> On Tue, Apr 15, 2014 at 06:24:11PM +0530, Vivek Gautam wrote:
+>> I had seen your patches in the mailing list, but i don't see any
+>> updated version of these patches.
+>> Are you planning to work on this above mentioned patch-series any time soon ?
+>
+> I'm sorry, I forgot this completely. I have not prepared new version
+> of those patches as the drivers I need them for are not ready yet, but
+> I guess I can also use this case as justification for them.
+>
+>> Or, should i try to find a different approach for handling the phy
+>> from the host controller (child of DWC3 in this case, which has the
+>> phys).
+>
+> Well, there is now an issue with the lookup method I'm suggesting in
+> this case. Since the device ID is now generated automatically for
+> xhci-hcd in dwc3, we don't know the xhci-hcd device name before
+> platform_device_add(), and that is too late.
 
-On 04/18/2014 10:15 AM, Chanwoo Choi wrote:
-> This patchset support new Exynos3250 Samsung SoC based on Cortex-A7 dual core.
-> Exynos3250 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
-> for Smartphone. It is desigend with the 28nm low-power high-K metal gate process
-> and provides the best performance features.
-> 
-> This patchset include some patches such as:
-> - Support secondary CPU of Exynos3250 (cpu up/down)
-> - Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/pwm/amba
-> - Support the clock control for Exynos3250 using common clk framework
-> 
-> This patchset is based on following git repo/branch.
-> - git repo : git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> - branch   : for-next (Linux 3.15-rc1)
-> 
-> Additional patch description about static memory mapping:
-> This patchset must need to map memory mapping about SYSRAM/PMU for CPU UP/DOWN.
-> So, this patchset need to merge following patchset to remove static memory
-> mapping for SYSRAM[1] / PMU ([2] or [3]).
-> 
-> [1] http://www.spinics.net/lists/arm-kernel/msg323011.html
-> [2] https://lkml.org/lkml/2014/4/2/48
-> [3] http://www.spinics.net/lists/arm-kernel/msg316013.html
-> 
-> And,
-> The pinctrl patch for Exynos3250 was posted as separated patch[4].
-> [4] https://lkml.org/lkml/2014/4/13/156
-> 
-> Changes from v2:
-> - Remove static memory mapping about SYSRAM/PMU such as following patches:
->   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
->   ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
-> - Add description for secondary CPU boot of Exynos4212/Exynos3250
-> - Fix description in exynos_cpu_die() to remove particular SoC series
-> - Fix minor coding style
-> - Add documentation for Exynos3250 clock controller
-> 
-> Changes from v1:
-> - Add new "samsung,exynos3" compatible name
-> - Add comment about exynos_cpu_boot in Exynos4212
-> - Remove unnecessary 'goto' statement in firmware.c
-> - Use read_cpuid_part_number() function instead of assembler directly
-> - Post separated pinctrl patch from this patchset
->   : https://lkml.org/lkml/2014/4/13/156
-> - Remove unused pmu interrupts due to Exynos3250 dual-core
-> - Cosolidate all the patches related to exynos3250.dtsi into one patch
-> - Fix gic compatible name to "cortex-a15-gic" because Cortex-A7 GIC is same
-> - Add sign-off of sender to all this patches
-> - Fix minor typo
-> 
-> Chanwoo Choi (4):
->   ARM: EXYNOS: Add Exynos3250 SoC ID
->   ARM: EXYNOS: Support secondary CPU boot of Exynos3250
->   ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
->   dt-bindings: add documentation for Exynos3250 clock controller
-> 
-> Kyungmin Park (1):
->   ARM: EXYNOS: Support secondary CPU boot of Exynos4212
-> 
-> Tomasz Figa (2):
->   clk: samsung: exynos3250: Add clocks using common clock framework
->   ARM: dts: Add device tree sources for Exynos3250
-> 
->  .../devicetree/bindings/clock/exynos3250-clock.txt |  41 ++
->  arch/arm/boot/dts/exynos3250-pinctrl.dtsi          | 477 +++++++++++++
->  arch/arm/boot/dts/exynos3250.dtsi                  | 427 +++++++++++
->  arch/arm/mach-exynos/Kconfig                       |  22 +
->  arch/arm/mach-exynos/exynos.c                      |   2 +
->  arch/arm/mach-exynos/firmware.c                    |  21 +-
->  arch/arm/mach-exynos/hotplug.c                     |  19 +-
->  arch/arm/plat-samsung/include/plat/cpu.h           |  10 +
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos3250.c               | 785 +++++++++++++++++++++
->  include/dt-bindings/clock/exynos3250.h             | 256 +++++++
->  11 files changed, 2053 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
->  create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
->  create mode 100644 drivers/clk/samsung/clk-exynos3250.c
->  create mode 100644 include/dt-bindings/clock/exynos3250.h
-> 
+True, the xhci-hcd are getting AUTO ID, so it might not be possible to
+get their device
+names in dwc3.
+
+> I don't see why the
+> device could not be named when platform_device_alloc() is called, so I
+> think I'll suggest something like the attached patch to fix this
+> issue
+
+Ok, i had a look at the patch, and it looks promising.
+
+>
+> In any case, I'll send an updated version of the phy patches soon.
+
+Thanks for your efforts.
