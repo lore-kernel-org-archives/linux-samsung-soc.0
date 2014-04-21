@@ -1,124 +1,57 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/2] cpufreq: exynos: Use dev_err/info function instead of pr_err/info
-Date: Mon, 21 Apr 2014 11:35:19 +0530
-Message-ID: <CAKohpo=-Oxu6ZoB4B2H4552meq46iXrVzKbP5ZwnG==sCc2_MA@mail.gmail.com>
-References: <1397787634-9334-1-git-send-email-cw00.choi@samsung.com>
-	<1397787634-9334-2-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1397787634-9334-2-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH 0/4] Add support for Exynos5800 SoC
+Date: Mon, 21 Apr 2014 12:15:08 +0530
+Message-ID: <1398062712-28602-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:46156 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751091AbaDUGpS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Apr 2014 02:45:18 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, alim.akhtar@samsung.com, tomasz.figa@gmail.com, olofj@google.com, arunkk.samsung@gmail.com
 
-On 18 April 2014 07:50, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch uses dev_err/info function to show accurate log message with device name
-> instead of pr_err/info function.
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c | 21 ++++++++++++---------
->  drivers/cpufreq/exynos-cpufreq.h |  1 +
->  2 files changed, 13 insertions(+), 9 deletions(-)
+Exynos5800 is a derivative of Exynos5420 with higher
+clock speeds and most other IP blocks remaining the same
+except for a few.
+Due to the similarities with 5420, following is done to
+achieve maximum code re-use:
+- Use the same 5420 clock file with few changes for adding
+  extra 5800 clocks.
+- Re-use the 5420 dtsi by renaming it to exynos5-octa.
 
-This still looks fine even if we don't take the new driver ?
+This series is re-based on the 5420 clock cleanup series
+posted by Shaik [1].
+[1] http://www.spinics.net/lists/arm-kernel/msg318493.html
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Alim Akhtar (1):
+  clk: exynos5420: Add 5800 specific clocks
 
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index f99cfe2..8b4bb4a 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -49,6 +49,7 @@ static int exynos_cpufreq_scale(unsigned int target_freq)
->         struct cpufreq_policy *policy = cpufreq_cpu_get(0);
->         unsigned int arm_volt, safe_arm_volt = 0;
->         unsigned int mpll_freq_khz = exynos_info->mpll_freq_khz;
-> +       struct device *dev = exynos_info->dev;
->         unsigned int old_freq;
->         int index, old_index;
->         int ret = 0;
-> @@ -90,8 +91,8 @@ static int exynos_cpufreq_scale(unsigned int target_freq)
->                 /* Firstly, voltage up to increase frequency */
->                 ret = regulator_set_voltage(arm_regulator, arm_volt, arm_volt);
->                 if (ret) {
-> -                       pr_err("%s: failed to set cpu voltage to %d\n",
-> -                               __func__, arm_volt);
-> +                       dev_err(dev, "failed to set cpu voltage to %d\n",
-> +                               arm_volt);
->                         return ret;
->                 }
->         }
-> @@ -100,8 +101,8 @@ static int exynos_cpufreq_scale(unsigned int target_freq)
->                 ret = regulator_set_voltage(arm_regulator, safe_arm_volt,
->                                       safe_arm_volt);
->                 if (ret) {
-> -                       pr_err("%s: failed to set cpu voltage to %d\n",
-> -                               __func__, safe_arm_volt);
-> +                       dev_err(dev, "failed to set cpu voltage to %d\n",
-> +                               safe_arm_volt);
->                         return ret;
->                 }
->         }
-> @@ -115,8 +116,8 @@ static int exynos_cpufreq_scale(unsigned int target_freq)
->                 ret = regulator_set_voltage(arm_regulator, arm_volt,
->                                 arm_volt);
->                 if (ret) {
-> -                       pr_err("%s: failed to set cpu voltage to %d\n",
-> -                               __func__, arm_volt);
-> +                       dev_err(dev, "failed to set cpu voltage to %d\n",
-> +                               arm_volt);
->                         goto out;
->                 }
->         }
-> @@ -163,6 +164,8 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->         if (!exynos_info)
->                 return -ENOMEM;
->
-> +       exynos_info->dev = &pdev->dev;
-> +
->         if (soc_is_exynos4210())
->                 ret = exynos4210_cpufreq_init(exynos_info);
->         else if (soc_is_exynos4212() || soc_is_exynos4412())
-> @@ -176,13 +179,13 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->                 goto err_vdd_arm;
->
->         if (exynos_info->set_freq == NULL) {
-> -               pr_err("%s: No set_freq function (ERR)\n", __func__);
-> +               dev_err(&pdev->dev, "No set_freq function (ERR)\n");
->                 goto err_vdd_arm;
->         }
->
->         arm_regulator = regulator_get(NULL, "vdd_arm");
->         if (IS_ERR(arm_regulator)) {
-> -               pr_err("%s: failed to get resource vdd_arm\n", __func__);
-> +               dev_err(&pdev->dev, "failed to get resource vdd_arm\n");
->                 goto err_vdd_arm;
->         }
->
-> @@ -192,7 +195,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->         if (!cpufreq_register_driver(&exynos_driver))
->                 return 0;
->
-> -       pr_err("%s: failed to register cpufreq driver\n", __func__);
-> +       dev_err(&pdev->dev, "failed to register cpufreq driver\n");
->         regulator_put(arm_regulator);
->  err_vdd_arm:
->         kfree(exynos_info);
-> diff --git a/drivers/cpufreq/exynos-cpufreq.h b/drivers/cpufreq/exynos-cpufreq.h
-> index 3ddade8..b72ff10 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.h
-> +++ b/drivers/cpufreq/exynos-cpufreq.h
-> @@ -34,6 +34,7 @@ struct apll_freq {
->  };
->
->  struct exynos_dvfs_info {
-> +       struct device   *dev;
->         unsigned long   mpll_freq_khz;
->         unsigned int    pll_safe_idx;
->         struct clk      *cpu_clk;
-> --
-> 1.8.0
->
+Arun Kumar K (3):
+  ARM: EXYNOS: Add 5800 SoC support
+  ARM: dts: Add 5800 dt files
+  ARM: dts: Add peach-pi board support
+
+ .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
+ arch/arm/boot/dts/Makefile                         |    3 +-
+ ...5420-pinctrl.dtsi => exynos5-octa-pinctrl.dtsi} |    0
+ arch/arm/boot/dts/exynos5-octa.dtsi                |  732 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |  713 +------------------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  225 ++++++
+ arch/arm/boot/dts/exynos5800.dtsi                  |   24 +
+ arch/arm/mach-exynos/Kconfig                       |    8 +
+ arch/arm/mach-exynos/exynos.c                      |    1 +
+ arch/arm/mach-exynos/platsmp.c                     |    2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h           |   11 +-
+ drivers/clk/samsung/clk-exynos5420.c               |  276 ++++++--
+ include/dt-bindings/clock/exynos5420.h             |    4 +
+ 13 files changed, 1230 insertions(+), 772 deletions(-)
+ rename arch/arm/boot/dts/{exynos5420-pinctrl.dtsi => exynos5-octa-pinctrl.dtsi} (100%)
+ create mode 100644 arch/arm/boot/dts/exynos5-octa.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+ create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
+
+-- 
+1.7.9.5
