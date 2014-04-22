@@ -1,160 +1,87 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Add peach-pit board support
-Date: Tue, 22 Apr 2014 12:01:23 +0530
-Message-ID: <CALt3h79bZGBFCykW9maw1pM0hZnjkYt5nZPO9t881=mn+Hqn6g@mail.gmail.com>
-References: <1397971609-6144-1-git-send-email-arun.kk@samsung.com>
-	<CAK9yfHxxkF_=8phxO8dim6F_BCbYcbsGQHPE4jBaQh=sLoFyvg@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] ARM: dts: disable MDMA1 node for smdk5420 board
+Date: Tue, 22 Apr 2014 16:01:53 +0900
+Message-ID: <000001cf5df8$bdc6f900$3954eb00$%jun@samsung.com>
+References: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
+ <021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
+ <CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:61538 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751933AbaDVGbY (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:57473 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752280AbaDVHBz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 02:31:24 -0400
-In-Reply-To: <CAK9yfHxxkF_=8phxO8dim6F_BCbYcbsGQHPE4jBaQh=sLoFyvg@mail.gmail.com>
+	Tue, 22 Apr 2014 03:01:55 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4F00KW47J5EN80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Apr 2014 16:01:53 +0900 (KST)
+In-reply-to: <CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@google.com>, Olof Johansson <olofj@google.com>
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Javi Merino' <javi.merino@arm.com>
 
-Hi Sachin,
+On Tue, April 22, 2014, Tushar Behera wrote:
+> On 22 April 2014 07:48, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Seungwon Jeon wrote:
+> >>
+> >
+> > + Javi Merino and Tushar Behera
+> >
+> >> This change is similar to commit 3da355c(ARM: dts: Disable MDMA1 node
+> >> for arndale-octa board). If MDMA1 region is configured with secure mode,
+> >> it makes the boot failure with the following.
+> >>
+> >> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+> >>
+> > If so, how about adding the 'disabled' status in 5420 dtsi file? Then if 'enabling' is required, we
+> can enable in each board dt file...
+> >
+> 
+> That should be okay. While at it, we can remove the node disabling
+> code from Arndale-Octa board DTS file.
 
-Thank you for the review.
-Will address you comments and post the next version.
+OK, I'll consider both.
 
-Regards
-Arun
+Thanks,
+Seungwon Jeon
 
-On Mon, Apr 21, 2014 at 10:59 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Arun,
->
-> On 20 April 2014 10:56, Arun Kumar K <arun.kk@samsung.com> wrote:
->> Adds the google peach-pit board dts file which uses
->> exynos5420 SoC.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->>  arch/arm/boot/dts/Makefile                 |    1 +
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |  225 ++++++++++++++++++++++++++++
->>  2 files changed, 226 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index b9d6a8b..09bcb8d 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->>         exynos5250-snow.dtb \
->>         exynos5420-arndale-octa.dtb \
->>         exynos5420-smdk5420.dtb \
->> +       exynos5420-peach-pit.dtb \
->
-> Please arrange alphabetically. This should be added above smdk.
->
->>         exynos5440-sd5v1.dtb \
->>         exynos5440-ssdk5440.dtb
->>  dtb-$(CONFIG_ARCH_HI3xxx) += hi3620-hi4511.dtb
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> new file mode 100644
->> index 0000000..4d61a5e
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -0,0 +1,225 @@
->> +/*
->> + * Google Peach Pit Rev 6+ board device tree source
->> + *
->> + * Copyright (c) 2014 Google, Inc
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +/dts-v1/;
->> +#include "exynos5420.dtsi"
->> +
->> +/ {
->> +       model = "Google Peach Pit Rev 6+";
->> +
->> +       compatible = "google,pit-rev16",
->> +               "google,pit-rev15", "google,pit-rev14",
->> +               "google,pit-rev13", "google,pit-rev12",
->> +               "google,pit-rev11", "google,pit-rev10",
->> +               "google,pit-rev9", "google,pit-rev8",
->> +               "google,pit-rev7", "google,pit-rev6",
->> +               "google,pit", "google,peach", "samsung,exynos5420";
->
-> Please include the generic "samsung,exynos5" string.
->
->> +
->> +       memory {
->> +               reg = <0x20000000 0x80000000>;
->> +       };
->> +
->> +       fixed-rate-clocks {
->> +               oscclk {
->> +                       compatible = "samsung,exynos5420-oscclk";
->> +                       clock-frequency = <24000000>;
->> +               };
->> +       };
->> +
->> +       pinctrl@13400000 {
->> +               lid_irq: lid-irq {
->> +                       samsung,pins = "gpx3-4";
->> +                       samsung,pin-function = <0>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               power_key_irq: power-key-irq {
->> +                       samsung,pins = "gpx1-2";
->> +                       samsung,pin-function = <0>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               tpm_irq: tpm-irq {
->> +                       samsung,pins = "gpx1-0";
->> +                       samsung,pin-function = <0>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +       };
->> +
->> +       pinctrl@14010000 {
->> +               spi_flash_cs: spi-flash-cs {
->> +                       samsung,pins = "gpa2-5";
->> +                       samsung,pin-function = <1>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <3>;
->> +               };
->> +
->> +               backlight_pwm: backlight-pwm {
->> +                       samsung,pins = "gpb2-0";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +       };
->> +
->> +       gpio-keys {
->> +               compatible = "gpio-keys";
->> +
->> +               pinctrl-names = "default";
->> +               pinctrl-0 = <&power_key_irq &lid_irq>;
->> +
->> +               power {
->> +                       label = "Power";
->> +                       gpios = <&gpx1 2 1>;
->> +                       linux,code = <116>; /* KEY_POWER */
->
-> You may use the macro directly (instead of code) by including the
-> appropriate header file
-> (include/dt-bindings/input/input.h).
->
->
+> 
+> 
+> > - Kukjin
+> >
+> >> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> >> ---
+> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    6 ++++++
+> >>  1 files changed, 6 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> index 6910485..9a48e3f 100644
+> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> @@ -373,4 +373,10 @@
+> >>                       };
+> >>               };
+> >>       };
+> >> +
+> >> +     amba {
+> >> +             mdma1: mdma@11C10000 {
+> >> +                     status = "disabled";
+> >> +             };
+> >> +     };
+> >>  };
+> >> --
+> >> 1.7.0.4
+> >
+> 
+> 
+> 
 > --
-> With warm regards,
-> Sachin
+> Tushar Behera
