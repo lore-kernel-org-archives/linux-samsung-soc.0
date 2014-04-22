@@ -1,196 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4/4] drm/tegra: Implement race-free hotplug detection
-Date: Tue, 22 Apr 2014 16:42:21 +0200
-Message-ID: <1398177741-28482-4-git-send-email-thierry.reding@gmail.com>
-References: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V2 3/9] drm/panel: Add driver for exynos_dp based panels
+Date: Tue, 22 Apr 2014 20:23:03 +0530
+Message-ID: <CAEC9eQPnmx+EDk3FK7V+gbf6eP9SXyBHQVOxHUGHG82iyK2zbA@mail.gmail.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
+	<20140422082606.GB17275@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:47692 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932572AbaDVOnp (ORCPT
+Received: from mail-ve0-f174.google.com ([209.85.128.174]:35540 "EHLO
+	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932661AbaDVOxE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 10:43:45 -0400
-In-Reply-To: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
+	Tue, 22 Apr 2014 10:53:04 -0400
+Received: by mail-ve0-f174.google.com with SMTP id oz11so9495655veb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 07:53:03 -0700 (PDT)
+In-Reply-To: <20140422082606.GB17275@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-From: Thierry Reding <treding@nvidia.com>
+Hi Thierry,
 
-A race condition currently exists on Tegra, where it can happen that a
-monitor attached via HDMI isn't detected during the initial FB helper
-setup, but the hotplug event happens too early to be processed by the
-poll helpers because they haven't been initialized yet. This happens
-because on some boards the HDMI driver can control the regulator that
-supplies the +5V pin on the HDMI connector. Therefore depending on the
-timing between the initialization of the HDMI driver and the rest of
-DRM, it's possible that the monitor returns the hotplug signal right
-within the window where we would miss it.
 
-Unfortunately, drm_kms_helper_poll_init() will wreak havoc when called
-before at least some parts of the FB helpers have been set up.
+On Tue, Apr 22, 2014 at 1:56 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Tue, Apr 22, 2014 at 04:09:12AM +0530, Ajay Kumar wrote:
+>> This patch adds a simple driver to handle all the LCD and LED
+>> powerup/down routines needed to support eDP/eDP-LVDS panels
+>> supported on exynos boards.
+>>
+>> The LCD and LED units are usually powered up via regulators,
+>> and almost on all boards, we will have a BL_EN pin to enable/
+>> disable the backlight. Sometimes, we can have LCD_EN switches
+>> as well. The routines in this driver can be used to control
+>> panel power sequence on such boards.
+>>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>> Changes since V1:
+>>       Added routine for post_disable, removed few unwanted headers.
+>>       Refactored a lot of code.
+>>
+>>  .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++++
+>>  drivers/gpu/drm/panel/Kconfig                      |    9 +
+>>  drivers/gpu/drm/panel/Makefile                     |    1 +
+>>  drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 ++++++++++++++++++++
+>>  4 files changed, 306 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+>>  create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+>
+> What this patch does is in no way Exynos specific. It is also not eDP
+> specific.
+>
+Right. This is not at all writing into any "exynos" specific register,
+but can't this be just a placeholder for all the panel controls
+which can serve boards which use exynos_dp?
 
-This commit fixes this by splitting out the minimum of initialization
-required to make drm_kms_helper_poll_init() work into a separate
-function that can be called early. It is then safe to move all of the
-poll helper initialization to an earlier point in time (before the
-HDMI output driver has a chance to enable the +5V supply). That way if
-the hotplug signal is returned before the initial FB helper setup, the
-monitor will be forcefully detected at that point, and if the hotplug
-signal is returned after that it will be properly handled by the poll
-helpers.
+> This conflates panel drivers with board drivers in a strange way. Panel
+> drivers should be for *panels*, not for a given SoC or specific outputs
+> on that SoC.
+>
+Right. But for that matter, even the "panel-simple" driver is doing the same,
+which is just a placeholder for "generic" panel controls which serves
+multiple boards.
+I din't choose to reuse that because the boards which I have expect more
+control over the panel sequence as mentioned before.
+If you don't mind, I can fit in all these settings into panel-simple
+driver itself ;)
+But again, I should be able to register the panel driver much before
+exynos_dp gets probed, That's the actual catch!
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/drm/tegra/drm.c |  8 ++++++--
- drivers/gpu/drm/tegra/drm.h |  1 +
- drivers/gpu/drm/tegra/fb.c  | 47 ++++++++++++++++++++++++++++++---------------
- 3 files changed, 39 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 6f5b6e2f552e..4d36debe3de6 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -41,6 +41,12 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
- 
- 	drm_mode_config_init(drm);
- 
-+	err = tegra_drm_fb_prepare(drm);
-+	if (err < 0)
-+		return err;
-+
-+	drm_kms_helper_poll_init(drm);
-+
- 	err = host1x_device_init(device);
- 	if (err < 0)
- 		return err;
-@@ -60,8 +66,6 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
- 	if (err < 0)
- 		return err;
- 
--	drm_kms_helper_poll_init(drm);
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 126332c3ecbb..c2d9705de1f9 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -288,6 +288,7 @@ struct tegra_bo *tegra_fb_get_plane(struct drm_framebuffer *framebuffer,
- 				    unsigned int index);
- bool tegra_fb_is_bottom_up(struct drm_framebuffer *framebuffer);
- bool tegra_fb_is_tiled(struct drm_framebuffer *framebuffer);
-+int tegra_drm_fb_prepare(struct drm_device *drm);
- extern int tegra_drm_fb_init(struct drm_device *drm);
- extern void tegra_drm_fb_exit(struct drm_device *drm);
- #ifdef CONFIG_DRM_TEGRA_FBDEV
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 2e3758542c89..70d0e07d353c 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -271,13 +271,9 @@ static const struct drm_fb_helper_funcs tegra_fb_helper_funcs = {
- 	.fb_probe = tegra_fbdev_probe,
- };
- 
--static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm,
--					      unsigned int preferred_bpp,
--					      unsigned int num_crtc,
--					      unsigned int max_connectors)
-+static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
- {
- 	struct tegra_fbdev *fbdev;
--	int err;
- 
- 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
- 	if (!fbdev) {
-@@ -287,10 +283,21 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm,
- 
- 	drm_fb_helper_prepare(drm, &fbdev->base, &tegra_fb_helper_funcs);
- 
-+	return fbdev;
-+}
-+
-+static int tegra_fbdev_init(struct tegra_fbdev *fbdev,
-+			    unsigned int preferred_bpp,
-+			    unsigned int num_crtc,
-+			    unsigned int max_connectors)
-+{
-+	struct drm_device *drm = fbdev->base.dev;
-+	int err;
-+
- 	err = drm_fb_helper_init(drm, &fbdev->base, num_crtc, max_connectors);
- 	if (err < 0) {
- 		dev_err(drm->dev, "failed to initialize DRM FB helper\n");
--		goto free;
-+		return err;
- 	}
- 
- 	err = drm_fb_helper_single_add_all_connectors(&fbdev->base);
-@@ -299,21 +306,17 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm,
- 		goto fini;
- 	}
- 
--	drm_helper_disable_unused_functions(drm);
--
- 	err = drm_fb_helper_initial_config(&fbdev->base, preferred_bpp);
- 	if (err < 0) {
- 		dev_err(drm->dev, "failed to set initial configuration\n");
- 		goto fini;
- 	}
- 
--	return fbdev;
-+	return 0;
- 
- fini:
- 	drm_fb_helper_fini(&fbdev->base);
--free:
--	kfree(fbdev);
--	return ERR_PTR(err);
-+	return err;
- }
- 
- static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
-@@ -367,7 +370,7 @@ static const struct drm_mode_config_funcs tegra_drm_mode_funcs = {
- #endif
- };
- 
--int tegra_drm_fb_init(struct drm_device *drm)
-+int tegra_drm_fb_prepare(struct drm_device *drm)
- {
- #ifdef CONFIG_DRM_TEGRA_FBDEV
- 	struct tegra_drm *tegra = drm->dev_private;
-@@ -382,8 +385,7 @@ int tegra_drm_fb_init(struct drm_device *drm)
- 	drm->mode_config.funcs = &tegra_drm_mode_funcs;
- 
- #ifdef CONFIG_DRM_TEGRA_FBDEV
--	tegra->fbdev = tegra_fbdev_create(drm, 32, drm->mode_config.num_crtc,
--					  drm->mode_config.num_connector);
-+	tegra->fbdev = tegra_fbdev_create(drm);
- 	if (IS_ERR(tegra->fbdev))
- 		return PTR_ERR(tegra->fbdev);
- #endif
-@@ -391,6 +393,21 @@ int tegra_drm_fb_init(struct drm_device *drm)
- 	return 0;
- }
- 
-+int tegra_drm_fb_init(struct drm_device *drm)
-+{
-+#ifdef CONFIG_DRM_TEGRA_FBDEV
-+	struct tegra_drm *tegra = drm->dev_private;
-+	int err;
-+
-+	err = tegra_fbdev_init(tegra->fbdev, 32, drm->mode_config.num_crtc,
-+			       drm->mode_config.num_connector);
-+	if (err < 0)
-+		return err;
-+#endif
-+
-+	return 0;
-+}
-+
- void tegra_drm_fb_exit(struct drm_device *drm)
- {
- #ifdef CONFIG_DRM_TEGRA_FBDEV
--- 
-1.9.2
+Thanks and regards,
+Ajay Kumar
