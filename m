@@ -1,93 +1,83 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2 3/9] drm/panel: Add driver for exynos_dp based panels
-Date: Tue, 22 Apr 2014 16:22:39 +0900
-Message-ID: <001b01cf5dfb$a4ab54e0$ee01fea0$%han@samsung.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH v2 1/2] v4l: Add resolution change event.
+Date: Tue, 22 Apr 2014 09:34:32 +0200
+Message-ID: <042601cf5dfd$4dfa44b0$e9eece10$%debski@samsung.com>
+References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com>
+ <1398072362-24962-2-git-send-email-arun.kk@samsung.com>
+ <CACHYQ-qE4Qnwa9txUsx=MSM4NRG6HrDxqp=qOJUzCPv6uf9egw@mail.gmail.com>
+ <CALt3h7--QSL-UD=mAa5NPvy8UUeZB02o097y_+LqZTp2mXD5Pg@mail.gmail.com>
+ <CACHYQ-p564-HHpx0mY6rcq+Mg3kPp24pvfk2_MH7Vf5U0ygSOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
-Content-language: ko
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48966 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752096AbaDVHea (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 03:34:30 -0400
+In-reply-to: <CACHYQ-p564-HHpx0mY6rcq+Mg3kPp24pvfk2_MH7Vf5U0ygSOw@mail.gmail.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Pawel Osciak' <posciak@chromium.org>, 'Arun Kumar K' <arunkk.samsung@gmail.com>
+Cc: linux-media@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Hans Verkuil' <hverkuil@xs4all.nl>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>
 
-On Tuesday, April 22, 2014 7:39 AM, Ajay Kumar wrote:
+Hi Pawel,
+
+> From: Pawel Osciak [mailto:posciak@chromium.org]
+> Sent: Monday, April 21, 2014 12:27 PM
+> To: Arun Kumar K
+> Cc: linux-media@vger.kernel.org; linux-samsung-soc; Kamil Debski;
+> Sylwester Nawrocki; Hans Verkuil; Laurent Pinchart
+> Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
 > 
-> This patch adds a simple driver to handle all the LCD and LED
-> powerup/down routines needed to support eDP/eDP-LVDS panels
-> supported on exynos boards.
+> As a side note, because this is not really codified in the API, I would
+> like this event to indicate not only resolution change mid-stream, but
+> also detection of initial resolution, which should be a subset of
+> resolution change. I think this would make sense for the codec
+> interface:
 > 
-> The LCD and LED units are usually powered up via regulators,
-> and almost on all boards, we will have a BL_EN pin to enable/
-> disable the backlight. Sometimes, we can have LCD_EN switches
-> as well. The routines in this driver can be used to control
-> panel power sequence on such boards.
+> Video decode:
+> 1. S_FMT to given codec on OUTPUT queue.
+> 2. REQBUFS(n) and STREAMON on OUTPUT queue.
+> 3. Keep QBUFing until we get an resolution change event on the CAPTURE
+> queue; until then, the driver/codec HW will operate on the OUTPUT queue
+> only and try to detect relevant headers in the OUTPUT buffers, and will
+> send resolution change event once it finds resolution, profile, etc.
+> info). DQEVENT.
+> 4. G_FMT on CAPTURE to get the discovered output format (resolution),
+> REQBUFS and STREAMON on the CAPTURE queue.
+> 5. Normal mem-to-mem decoding.
+> 6. If a resolution change event arrives on CAPTURE queue, DQEVENT,
+> STREAMOFF, REQBUFS(0) only on CAPTURE queue, and goto 4. OUTPUT queue
+> operates completely independently of this.
 > 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
-> Changes since V1:
-> 	Added routine for post_disable, removed few unwanted headers.
-> 	Refactored a lot of code.
+> Also, this event should invariably indicate all of the below:
+> - all output buffers from before resolution change are already ready on
+> the CAPTURE queue to DQBUF (so it's ready to REQBUFS(0) after DQBUFs),
+> and
+> - there will be no more new ready buffers on the CAPTURE queue until
+> the streamoff-reqbufs(0)-g_fmt-reqbufs()-streamon is performed, and
+> - OUTPUT queue is completely independent of all of the above and can be
+> still used as normal, i.e. stream buffers can still keep being queued
+> at any stage of the resolution change and they will be decoded after
+> resolution change sequence is finished;
 > 
->  .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++++
->  drivers/gpu/drm/panel/Kconfig                      |    9 +
->  drivers/gpu/drm/panel/Makefile                     |    1 +
->  drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 ++++++++++++++++++++
->  4 files changed, 306 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
->  create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+> If we all agree to the above, I will prepare a subsequent patch for the
+> documentation to include the above.
+
+If I understand correctly this will keep the old application working.
+By this I mean application that do not use events and rely on the current
+mechanism to detect initial header parsing and resolution change.
+
+If backward compatibility is kept I am all for the changes proposed by you.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> b/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> new file mode 100644
-> index 0000000..3fbca54
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> @@ -0,0 +1,45 @@
-> +exynos_DP_panel/DP_to_LVDS_panel
+> Thanks,
+> Pawel
 
-Please fix it as below.
-
-+Exynos DP panel/DP to LVDS panel
-
-[....]
-
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 4ec874d..ea9d5ac 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -30,4 +30,13 @@ config DRM_PANEL_S6E8AA0
->  	select DRM_MIPI_DSI
->  	select VIDEOMODE_HELPERS
-> 
-> +config DRM_PANEL_EXYNOS_DP
-> +	tristate "support for DP panels"
-
-It looks very general. Please fix it as below.
-
-+	tristate "support for Exynos DP panels"
-
-Best regards,
-Jingoo Han
-
-> +	depends on OF && DRM_PANEL && DRM_EXYNOS_DP
-> +	help
-> +	  DRM panel driver for DP panels and LVDS connected via DP bridges
-> +	  that need at most a regulator for LCD unit, a regulator for LED unit
-> +	  and/or enable GPIOs for LCD or LED units. Delay values can also be
-> +	  specified to support powerup and powerdown process.
-> +
-
-[.....]
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
