@@ -1,105 +1,66 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: Add IOMMU support
-Date: Tue, 22 Apr 2014 16:32:48 +0530
-Message-ID: <1398164568-6048-1-git-send-email-arun.kk@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 5/5] regulator: tps65090: Make FETs more reliable by
+ adding retries
+Date: Tue, 22 Apr 2014 12:02:36 +0100
+Message-ID: <20140422110236.GN12304@sirena.org.uk>
+References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+ <1397689950-1568-6-git-send-email-dianders@chromium.org>
+ <20140418174353.GX12304@sirena.org.uk>
+ <CAD=FV=VQckC34rZwF2RP3F+2T1CRVs0JwtgoqUeA1NVmB20=sA@mail.gmail.com>
+ <20140422074709.GD17657@lee--X1>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7n4sH0AOSdTe0Gi7"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:59352 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932150AbaDVLCy (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41337 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932154AbaDVLCz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 07:02:54 -0400
+	Tue, 22 Apr 2014 07:02:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20140422074709.GD17657@lee--X1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, arunkk.samsung@gmail.com
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The patch adds IOMMU support for MFC driver.
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
-This patch is tested on IOMMU support series [1] posted
-by KyonHo Cho.
-[1] https://lkml.org/lkml/2014/3/14/9
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c |   33 ++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+--7n4sH0AOSdTe0Gi7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 89356ae..1f248ba 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -32,11 +32,18 @@
- #include "s5p_mfc_opr.h"
- #include "s5p_mfc_cmd.h"
- #include "s5p_mfc_pm.h"
-+#ifdef CONFIG_EXYNOS_IOMMU
-+#include <asm/dma-iommu.h>
-+#endif
- 
- #define S5P_MFC_NAME		"s5p-mfc"
- #define S5P_MFC_DEC_NAME	"s5p-mfc-dec"
- #define S5P_MFC_ENC_NAME	"s5p-mfc-enc"
- 
-+#ifdef CONFIG_EXYNOS_IOMMU
-+static struct dma_iommu_mapping *mapping;
-+#endif
-+
- int debug;
- module_param(debug, int, S_IRUGO | S_IWUSR);
- MODULE_PARM_DESC(debug, "Debug level - higher value produces more verbose messages");
-@@ -1013,6 +1020,23 @@ static void *mfc_get_drv_data(struct platform_device *pdev);
- 
- static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
- {
-+#ifdef CONFIG_EXYNOS_IOMMU
-+	struct device *mdev = &dev->plat_dev->dev;
-+
-+	mapping = arm_iommu_create_mapping(&platform_bus_type, 0x20000000,
-+			SZ_256M);
-+	if (mapping == NULL) {
-+		mfc_err("IOMMU mapping failed\n");
-+		return -EFAULT;
-+	}
-+	mdev->dma_parms = devm_kzalloc(&dev->plat_dev->dev,
-+			sizeof(*mdev->dma_parms), GFP_KERNEL);
-+	dma_set_max_seg_size(mdev, 0xffffffffu);
-+	arm_iommu_attach_device(mdev, mapping);
-+
-+	dev->mem_dev_l = dev->mem_dev_r = mdev;
-+	return 0;
-+#else
- 	unsigned int mem_info[2] = { };
- 
- 	dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
-@@ -1049,6 +1073,7 @@ static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
- 		return -ENOMEM;
- 	}
- 	return 0;
-+#endif
- }
- 
- /* MFC probe function */
-@@ -1228,6 +1253,10 @@ err_mem_init_ctx_1:
- 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
- err_res:
- 	s5p_mfc_final_pm(dev);
-+#ifdef CONFIG_EXYNOS_IOMMU
-+	if (mapping)
-+		arm_iommu_release_mapping(mapping);
-+#endif
- 
- 	pr_debug("%s-- with error\n", __func__);
- 	return ret;
-@@ -1256,6 +1285,10 @@ static int s5p_mfc_remove(struct platform_device *pdev)
- 		put_device(dev->mem_dev_r);
- 	}
- 
-+#ifdef CONFIG_EXYNOS_IOMMU
-+	if (mapping)
-+		arm_iommu_release_mapping(mapping);
-+#endif
- 	s5p_mfc_final_pm(dev);
- 	return 0;
- }
--- 
-1.7.9.5
+On Tue, Apr 22, 2014 at 08:47:09AM +0100, Lee Jones wrote:
+
+> If there are cross-subsystem dependencies I prefer to use immutable
+> branches to eliminate any change of merge conflicts in -next or the
+> next merge window. I'm happy to either create on with Mark's Acks, or
+> receive a pull-request from Mark with mine applied.
+
+> Up to Mark.
+
+Well, Doug didn't send me the MFD patch so I can't do anything with it
+anyway.
+
+--7n4sH0AOSdTe0Gi7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTVkxJAAoJELSic+t+oim9b0UQAJ3/Ie7fvY23Vspef191P0fO
+3gLow7Q44cFH8GW06LJEyeJoKP1YGf1RHMcZQeO3FqKrPE7avtvzCZkfgKzKxzAv
+526m9rM6fCLWdAJX9ZEaiEGznsT/mfBjd/WDuJpf83yOPk6cbrFJG+7NQDaF3mN6
+ugaJXcqnJ6TVHzDWGemhrkswN1KlJ7oArq60OvndcnplpX3i5s+fjq4EN8LuaL5J
+zLF+4vDRssyrciiH3cS8MQX7T/tp8TvMK/VIVIRchydoUTf/qIBXOiM9hVqANfsy
+mquChJOXbS/MXa0GmpA+MUp/YEq7o2QEKGdKuONxVQ19/SSxn7o6WPsVVOPp4npx
+v9aIWJu7GyN/W3fP99ug5IHMZnrHRDa4ExSP7lL5DKvAf51YhIKyYHHo9i/+ijAU
+5iruNJNJW8LKPPwc9T5X9xcnvEfaLGnpmzsRJancDEs9bQAFSeZ4cJo1VrKpkoog
+gYu0yV6zxwy3tLpBccGEvkiyPY8xSuhj0RC4yFE2rP7ho4xBL9RPakV+ZvCQb6rG
+VaGDnhglLY12SV2dAqGIjXD/UC1MIoD6gJKE05Zl9kq+x+EgYn4qPu3hqNPYTtVU
+DkVv2Z1s30HLALnDijm2dvHs95EJwIm+UuDeiqJjK36o1df2y3+Jd54IzH94j7iW
+WBHXsY+J+5K8mlgfLvS4
+=6Jv/
+-----END PGP SIGNATURE-----
+
+--7n4sH0AOSdTe0Gi7--
