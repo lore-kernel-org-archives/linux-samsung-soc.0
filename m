@@ -1,35 +1,126 @@
-From: Javi Merino <javi.merino@arm.com>
-Subject: Re: [PATCH v2] ARM: dts: disable MDMA1 node for Exynos5420
-Date: Tue, 22 Apr 2014 14:45:54 +0100
-Message-ID: <20140422134554.GA6991@e102654-lin.cambridge.arm.com>
-References: <000a01cf5e2b$87601760$96204620$%jun@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Tue, 22 Apr 2014 19:17:54 +0530
+Message-ID: <CAHbNUh3G5HLaGXddPgjthWTu_VQ95xo=2Lii2BM6iSc-ipnm=w@mail.gmail.com>
+References: <1398153834-16199-1-git-send-email-tushar.behera@linaro.org>
+	<20140422104447.GK12304@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:38063 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756088AbaDVNp6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 09:45:58 -0400
-In-Reply-To: <000a01cf5e2b$87601760$96204620$%jun@samsung.com>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140422104447.GK12304@sirena.org.uk>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, rdunlap@infradead.org, "robh+dt@kernel.org" <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
 
-On Tue, Apr 22, 2014 at 02:05:26PM +0100, Seungwon Jeon wrote:
-> This change places MDMA1 in disabled node for Exynos5420.
-> If MDMA1 region is configured with secure mode, it makes
-> the boot failure with the following on smdk5420 board.
-> ("Unhandled fault: imprecise external abort (0x1406) at 0x00000000")
-> Thus, arndale-octa board don't need to do the same thing anymore.
-> 
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+On 22 April 2014 16:14, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Apr 22, 2014 at 01:33:54PM +0530, Tushar Behera wrote:
+>
+>> Added machine driver to instantiate I2S based sound card on Snow
+>> board. It has MAX98095 audio codec on board.
+>
+> In general this isn't up to modern standards, please do try to check
+> that new code is following best practices.  Did the support for setting
+> the clocking up in the device tree get merged already?
+>
 
-I've had some problem applying it (wrong EOL?).  Not sure if it's my
-email client.  In any case, I've manually fixed the rejects and tested
-it in my Arndale Octa.  It works for me so
+I didn't get this point. Would you please elaborate?
 
-Tested-by: Javi Merino <javi.merino@arm.com>
+> Please do also pay attention to the CC lists when posting patches, this
+> seems to have been sent to a fairly random selection of people and
+> lists.
+>
+
+Okay, I will update the CC list as per get_maintainer script during
+next revision.
+
+>> +     switch (params_format(params)) {
+>
+> params_width().
+>
+>> +     ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
+>> +                                          SND_SOC_DAIFMT_NB_NF |
+>> +                                          SND_SOC_DAIFMT_CBS_CFS);
+>
+> Set this in the dai_link.
+>
+
+Ok.
+
+However, setting this in dai_link is not working if I2S is running is
+master mode. The bug is with I2S driver as it is setting rclk_srcrate
+as 0 during startup. I will fix that in another patch.
+
+>> +     ret = snd_soc_dai_set_sysclk(codec_dai, 0,
+>> +                                     FIN_PLL_RATE, SND_SOC_CLOCK_IN);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
+>> +                                     0, SND_SOC_CLOCK_OUT);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     ret = snd_soc_dai_set_clkdiv(cpu_dai, SAMSUNG_I2S_DIV_BCLK, bfs);
+>> +     if (ret < 0)
+>> +             return ret;
+>
+> Set this stuff up on probe.  I'm surprised that you need to set BCLK at
+> all...
+>
+
+Should I create a late_probe call for this (in line with tobermory.c)?
+
+Setting BCLK was an oversight, that is not required. I will remove that.
+
+>> +static int snow_init(struct snd_soc_pcm_runtime *rtd)
+>> +{
+>> +     struct snd_soc_codec *codec = rtd->codec;
+>> +     struct snd_soc_dapm_context *dapm = &codec->dapm;
+>> +
+>> +     snd_soc_dapm_sync(dapm);
+>> +
+>> +     return 0;
+>> +}
+>
+> This does nothing, remove it.
+>
+
+Sure.
+
+>> +     if (!pdev->dev.platform_data && !pdev->dev.of_node) {
+>> +             dev_err(&pdev->dev, "No platform data supplied\n");
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     name = of_get_property(pdev->dev.of_node, "card-name", NULL);
+>> +     if (name)
+>> +             card->name = name;
+>> +
+>> +     i2s_node = of_parse_phandle(pdev->dev.of_node,
+>> +                                 "samsung,i2s-controller", 0);
+>> +     if (!i2s_node) {
+>> +             dev_err(&pdev->dev,
+>> +                     "Property 'i2s-controller' missing or invalid\n");
+>> +             return -EINVAL;
+>> +     }
+>
+> You're allowing platform data above but I see DT is mandatory here.
+>
+
+I will keep this as DT only, will remove the above check for platform data.
+
+>> +     ret = snd_soc_register_card(card);
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
+>> +             return ret;
+>> +     }
+>
+> devm_snd_soc_register_card().
+
+Ok.
+
+Thanks for reviewing.
+
+-- 
+Tushar Behera
