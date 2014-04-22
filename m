@@ -1,181 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH Resend] ARM: EXYNOS: Map SYSRAM address through DT
-Date: Tue, 22 Apr 2014 11:09:36 +0900
-Message-ID: <01ad01cf5dcf$eabfde50$c03f9af0$@samsung.com>
-References: <1397649051-3288-1-git-send-email-sachin.kamat@linaro.org>
- <CAL_JsqLjPZmPrd=qmcxUCosx=Xu87NSTvG0d-LrGR=uncBHE5g@mail.gmail.com>
+Subject: RE: [PATCH] ARM: dts: disable MDMA1 node for smdk5420 board
+Date: Tue, 22 Apr 2014 11:18:13 +0900
+Message-ID: <021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
+References: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45452 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751236AbaDVCJt convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:8279 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751217AbaDVCSP convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Apr 2014 22:09:49 -0400
-In-reply-to: <CAL_JsqLjPZmPrd=qmcxUCosx=Xu87NSTvG0d-LrGR=uncBHE5g@mail.gmail.com>
+	Mon, 21 Apr 2014 22:18:15 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4E00DYSUEDWS80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Apr 2014 11:18:13 +0900 (KST)
+In-reply-to: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rob Herring' <robherring2@gmail.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Chanwoo Choi' <cw00.choi@samsung.com>
+To: 'Seungwon Jeon' <tgih.jun@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: javi.merino@arm.com, tushar.behera@linaro.org
 
-Rob Herring wrote:
+Seungwon Jeon wrote:
 > 
-> On Wed, Apr 16, 2014 at 6:50 AM, Sachin Kamat <sachin.kamat@linaro.org>
-> wrote:
-> > Instead of hardcoding the SYSRAM details for each SoC,
-> > pass this information through device tree (DT) and make
-> > the code SoC agnostic.
-> >
-> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> > ---
-> > Rebased on latest linux-next.
-> > ---
-> >  .../devicetree/bindings/arm/samsung-boards.txt     |   11 +++
-> >  arch/arm/boot/dts/exynos4210-universal_c210.dts    |    9 ++
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |   10 ++
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   10 ++
-> >  arch/arm/boot/dts/exynos5.dtsi                     |    5 +
-> >  arch/arm/boot/dts/exynos5250.dtsi                  |    5 +
-> >  arch/arm/boot/dts/exynos5420.dtsi                  |    5 +
-> >  arch/arm/mach-exynos/exynos.c                      |  104 ++++++++-----------
-> -
-> >  arch/arm/mach-exynos/include/mach/map.h            |    7 --
-> >  9 files changed, 95 insertions(+), 71 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> > index 2168ed31e1b0..f79710eb7e79 100644
-> > --- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> > +++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> > @@ -7,6 +7,17 @@ Required root node properties:
-> >          (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
-> >          (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
-> >
-> > +    - sysram node, specifying the type (secure or non-secure) of SYSRAM
-> > +       - compatible: following types are supported
-> > +               "samsung,exynos4210-sysram" : Secure SYSRAM
-> > +               "samsung,exynos4210-sysram-ns" : Non-secure SYSRAM
+
++ Javi Merino and Tushar Behera
+
+> This change is similar to commit 3da355c(ARM: dts: Disable MDMA1 node
+> for arndale-octa board). If MDMA1 region is configured with secure mode,
+> it makes the boot failure with the following.
 > 
-> Base this on mmio-sram binding please.
+> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
 > 
-> > +       - reg: address of SYSRAM bank
-> > +
-> > +       sysram@02020000 {
-> > +               compatible = "samsung,exynos4210-sysram";
-> > +               reg = <0x02020000 0x1000>;
-> > +       };
-> > +
-> >  Optional:
-> >      - firmware node, specifying presence and type of secure firmware:
-> >          - compatible: only "samsung,secure-firmware" is currently
-> supported
-> > diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > index 63e34b24b04f..cf4158728108 100644
-> > --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > @@ -28,6 +28,15 @@
-> >                 bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw
-> rootwait earlyprintk panic=5 maxcpus=1";
-> >         };
-> >
-> > +       sysram@02020000 {
-> > +               status = "disabled";
-> > +       };
-> > +
-> > +       sysram@02025000 {
-> > +               compatible = "samsung,exynos4210-sysram";
-> > +               reg = <0x02025000 0x1000>;
-> > +       };
-> > +
-> >         mct@10050000 {
-> >                 compatible = "none";
-> >         };
-> > diff --git a/arch/arm/boot/dts/exynos4210.dtsi
-> b/arch/arm/boot/dts/exynos4210.dtsi
-> > index cacf6140dd2f..a3f4bba099e6 100644
-> > --- a/arch/arm/boot/dts/exynos4210.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> > @@ -31,6 +31,16 @@
-> >                 pinctrl2 = &pinctrl_2;
-> >         };
-> >
-> > +       sysram@02020000 {
-> > +               compatible = "samsung,exynos4210-sysram";
-> > +               reg = <0x02020000 0x1000>;
-> > +       };
-> > +
-> > +       sysram-ns@0203F000 {
-> > +               compatible = "samsung,exynos4210-sysram-ns";
-> > +               reg = <0x0203F000 0x1000>;
-> 
-> hex should be lower case.
-> 
-> 
-> [...]
-> 
-> > @@ -268,6 +218,44 @@ static int __init exynos_fdt_map_chipid(unsigned
-> long node, const char *uname,
-> >         return 1;
-> >  }
-> >
-> > +struct __sysram_desc {
-> > +       char name[32];
-> > +       unsigned long addr;
-> > +};
-> > +
-> > +static struct __sysram_desc sysram_desc[] __initdata = {
-> > +       {
-> > +               .name = "samsung,exynos4210-sysram",
-> > +               .addr = (unsigned long)S5P_VA_SYSRAM,
-> > +       }, {
-> > +               .name = "samsung,exynos4210-sysram-ns",
-> > +               .addr = (unsigned long)S5P_VA_SYSRAM_NS,
-> > +       },
-> > +};
-> > +
-> > +static int __init exynos_fdt_map_sysram(unsigned long node, const char
-> *uname,
-> > +                                       int depth, void *data)
-> > +{
-> > +       struct map_desc iodesc;
-> > +       __be32 *reg;
-> > +       unsigned long len;
-> > +       int i;
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(sysram_desc); i++) {
-> > +               if (of_flat_dt_is_compatible(node, sysram_desc[i].name)) {
-> > +                       reg = of_get_flat_dt_prop(node, "reg", &len);
-> > +                       if (!reg || len != (sizeof(unsigned long) * 2))
-> > +                               return -ENODEV;
-> > +                       iodesc.virtual = sysram_desc[i].addr;
-> > +                       iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
-> > +                       iodesc.length = be32_to_cpu(reg[1]);
-> > +                       iodesc.type = MT_DEVICE;
-> > +                       iotable_init(&iodesc, 1);
-> 
-> I don't think this needs to be a static mapping at all. Fix your SMP
-> code. Move the code setting the boot address in prepare_cpus to
-> boot_secondary.
-> 
-> Also, the pen code is all unnecessary if you can properly reset a core
-> on hotplug. Given this code:
-> 
-> if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
-> __raw_writel(S5P_CORE_LOCAL_PWR_EN,
->     S5P_ARM_CORE1_CONFIGURATION);
-> 
-> and:
-> 
-> /* make cpu1 to be turned off at next WFI command */
-> if (cpu == 1)
-> __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
-> 
-> It would appear you probably have this capability and the exynos smp
-> code is pure mindless cut n' paste.
-> 
-Basically, I have no strong objection on Rob's suggestion but I'd like to pick this one after small addressing because of other patches' dependency. Then how about addressing comments?
+If so, how about adding the 'disabled' status in 5420 dtsi file? Then if 'enabling' is required, we can enable in each board dt file...
 
 - Kukjin
+
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> index 6910485..9a48e3f 100644
+> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -373,4 +373,10 @@
+>  			};
+>  		};
+>  	};
+> +
+> +	amba {
+> +		mdma1: mdma@11C10000 {
+> +			status = "disabled";
+> +		};
+> +	};
+>  };
+> --
+> 1.7.0.4
