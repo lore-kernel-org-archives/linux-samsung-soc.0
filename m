@@ -1,129 +1,105 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: cpu hotplug: use v7_exit_coherency_flush
- macro for cache disabling
-Date: Tue, 22 Apr 2014 16:36:34 +0200
-Message-ID: <53567E72.1030201@linaro.org>
-References: <1398176280-7258-1-git-send-email-leela.krishna@linaro.org>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V2 3/9] drm/panel: Add driver for exynos_dp based panels
+Date: Tue, 22 Apr 2014 20:07:51 +0530
+Message-ID: <CAEC9eQPzaUDPBH7MRYz-NfQHays9tVk5x7PTnHN_zhD5EVS0pA@mail.gmail.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
+	<001b01cf5dfb$a4ab54e0$ee01fea0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1398176280-7258-1-git-send-email-leela.krishna@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, amit.kucheria@linaro.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f169.google.com ([209.85.128.169]:56815 "EHLO
+	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755198AbaDVOhw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 10:37:52 -0400
+Received: by mail-ve0-f169.google.com with SMTP id pa12so10109726veb.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 07:37:51 -0700 (PDT)
+In-Reply-To: <001b01cf5dfb$a4ab54e0$ee01fea0$%han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On 04/22/2014 04:18 PM, Leela Krishna Amudala wrote:
-> Remove the duplicated code for cache disabling and use "v7_exit_coher=
-ency_flush"
-> macro to do the same job.
+Hi Jingoo,
 
-Hi Leela,
 
-thanks for this patch! It would be nice if you can describe why those=20
-macros can be replaced by the generic v7_exit_coherency_flush macro.
+On Tue, Apr 22, 2014 at 12:52 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+>
+> On Tuesday, April 22, 2014 7:39 AM, Ajay Kumar wrote:
+> >
+> > This patch adds a simple driver to handle all the LCD and LED
+> > powerup/down routines needed to support eDP/eDP-LVDS panels
+> > supported on exynos boards.
+> >
+> > The LCD and LED units are usually powered up via regulators,
+> > and almost on all boards, we will have a BL_EN pin to enable/
+> > disable the backlight. Sometimes, we can have LCD_EN switches
+> > as well. The routines in this driver can be used to control
+> > panel power sequence on such boards.
+> >
+> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> > ---
+> > Changes since V1:
+> >       Added routine for post_disable, removed few unwanted headers.
+> >       Refactored a lot of code.
+> >
+> >  .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++++
+> >  drivers/gpu/drm/panel/Kconfig                      |    9 +
+> >  drivers/gpu/drm/panel/Makefile                     |    1 +
+> >  drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 ++++++++++++++++++++
+> >  4 files changed, 306 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+> >  create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+> >
+> > diff --git a/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+> > b/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+> > new file mode 100644
+> > index 0000000..3fbca54
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
+> > @@ -0,0 +1,45 @@
+> > +exynos_DP_panel/DP_to_LVDS_panel
+>
+> Please fix it as below.
+>
+> +Exynos DP panel/DP to LVDS panel
+>
+Ok.
 
+> [....]
 >
-> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
+> > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> > index 4ec874d..ea9d5ac 100644
+> > --- a/drivers/gpu/drm/panel/Kconfig
+> > +++ b/drivers/gpu/drm/panel/Kconfig
+> > @@ -30,4 +30,13 @@ config DRM_PANEL_S6E8AA0
+> >       select DRM_MIPI_DSI
+> >       select VIDEOMODE_HELPERS
+> >
+> > +config DRM_PANEL_EXYNOS_DP
+> > +     tristate "support for DP panels"
 >
-> ---
-> cpu hotplug is tested with 3.15-rc1 on Origen(which has cortex A9) an=
-d
-> Arndale octa(which has cortex A7 and A15) boards.
+> It looks very general. Please fix it as below.
 >
->   arch/arm/mach-exynos/hotplug.c |   56 ++---------------------------=
------------
->   1 file changed, 2 insertions(+), 54 deletions(-)
+> +       tristate "support for Exynos DP panels"
 >
-> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/ho=
-tplug.c
-> index 5eead53..9eb8d1b 100644
-> --- a/arch/arm/mach-exynos/hotplug.c
-> +++ b/arch/arm/mach-exynos/hotplug.c
-> @@ -24,56 +24,6 @@
->   #include "common.h"
->   #include "regs-pmu.h"
->
-> -static inline void cpu_enter_lowpower_a9(void)
-> -{
-> -	unsigned int v;
-> -
-> -	asm volatile(
-> -	"	mcr	p15, 0, %1, c7, c5, 0\n"
-> -	"	mcr	p15, 0, %1, c7, c10, 4\n"
-> -	/*
-> -	 * Turn off coherency
-> -	 */
-> -	"	mrc	p15, 0, %0, c1, c0, 1\n"
-> -	"	bic	%0, %0, %3\n"
-> -	"	mcr	p15, 0, %0, c1, c0, 1\n"
-> -	"	mrc	p15, 0, %0, c1, c0, 0\n"
-> -	"	bic	%0, %0, %2\n"
-> -	"	mcr	p15, 0, %0, c1, c0, 0\n"
-> -	  : "=3D&r" (v)
-> -	  : "r" (0), "Ir" (CR_C), "Ir" (0x40)
-> -	  : "cc");
-> -}
-> -
-> -static inline void cpu_enter_lowpower_a15(void)
-> -{
-> -	unsigned int v;
-> -
-> -	asm volatile(
-> -	"	mrc	p15, 0, %0, c1, c0, 0\n"
-> -	"	bic	%0, %0, %1\n"
-> -	"	mcr	p15, 0, %0, c1, c0, 0\n"
-> -	  : "=3D&r" (v)
-> -	  : "Ir" (CR_C)
-> -	  : "cc");
-> -
-> -	flush_cache_louis();
-> -
-> -	asm volatile(
-> -	/*
-> -	* Turn off coherency
-> -	*/
-> -	"	mrc	p15, 0, %0, c1, c0, 1\n"
-> -	"	bic	%0, %0, %1\n"
-> -	"	mcr	p15, 0, %0, c1, c0, 1\n"
-> -	: "=3D&r" (v)
-> -	: "Ir" (0x40)
-> -	: "cc");
-> -
-> -	isb();
-> -	dsb();
-> -}
-> -
->   static inline void cpu_leave_lowpower(void)
->   {
->   	unsigned int v;
-> @@ -141,10 +91,8 @@ void __ref exynos_cpu_die(unsigned int cpu)
->   	 * appropriate sequence for entering low power.
->   	 */
->   	asm("mrc p15, 0, %0, c0, c0, 0" : "=3Dr"(primary_part) : : "cc");
+Ok.
 
-Can't you remove this asm line above as well as the primary_part variab=
-le ?
-
-> -	if ((primary_part & 0xfff0) =3D=3D 0xc0f0)
-> -		cpu_enter_lowpower_a15();
-> -	else
-> -		cpu_enter_lowpower_a9();
-> +
-> +	v7_exit_coherency_flush(louis);
+> Best regards,
+> Jingoo Han
 >
->   	platform_do_lowpower(cpu, &spurious);
+> > +     depends on OF && DRM_PANEL && DRM_EXYNOS_DP
+> > +     help
+> > +       DRM panel driver for DP panels and LVDS connected via DP bridges
+> > +       that need at most a regulator for LCD unit, a regulator for LED unit
+> > +       and/or enable GPIOs for LCD or LED units. Delay values can also be
+> > +       specified to support powerup and powerdown process.
+> > +
+>
+> [.....]
 >
 >
 
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Thanks and Regards,
+Ajay Kumar
