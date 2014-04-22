@@ -1,16 +1,14 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
-Date: Tue, 22 Apr 2014 15:53:46 +0200
-Message-ID: <20140422135346.GP10722@phenom.ffwll.local>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
- <CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC v2 PATCH v4 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Tue, 22 Apr 2014 16:02:43 +0200
+Message-ID: <53567683.1020206@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1398083321-8668-10-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
+In-reply-to: <1398083321-8668-10-git-send-email-yj44.cho@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,234 +18,111 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, seanpaul@google.com, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, ajaynumb@gmail.com, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 22, 2014 at 07:34:03AM -0400, Rob Clark wrote:
-> So what about, rather than adding drm_panel support to each bridge
-> individually, we introduce a drm_panel_bridge (with a form of
-> chaining).. ie:
+On 04/21/2014 02:28 PM, YoungJun Cho wrote:
+> This patch adds DT bindings for s6e3fa0 panel.
+> The bindings describes panel resources, display timings and cpu timings.
 > 
->   struct drm_panel_bridge {
->     struct drm_bridge base;
->     struct drm_panel *panel;
->     struct drm_bridge *bridge; /* optional */
->   };
+> Changelog v2:
+> - Adds unit address (commented by Sachin Kamat)
+> Changelog v3:
+> - Removes optional delay, size properties (commented by Laurent Pinchart)
+> - Adds OLED detection, TE gpio properties
+> Changelog v4:
+> - Moves CPU timings relevant properties from FIMD DT
+>   (commeted by Laurent Pinchart, Andrzej Hajda)
 > 
->   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
->   {
->     struct drm_panel_bridge *pb = to_panel_bridge(bridge);
->     if (pb->bridge)
->       pb->bridge->funcs->enable(pb->bridge);
->     pb->panel->funcs->enable(pb->panel);
->   }
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   63 ++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
 > 
-> ... and so on.
-> 
-> If you don't need a real bridge, just create one of these w/
-> pb->bridge==NULL, otherwise create it as a wrapper for your real
-> bridge.
+> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> new file mode 100644
+> index 0000000..9eeb38b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> @@ -0,0 +1,63 @@
+> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+> +
+> +Required properties:
+> +  - compatible: "samsung,s6e3fa0"
+> +  - reg: the virtual channel number of a DSI peripheral
+> +  - vdd3-supply: core voltage supply
+> +  - vci-supply: voltage supply for analog circuits
+> +  - reset-gpio: a GPIO spec for the reset pin
+> +  - det-gpio: a GPIO spec for the OLED detection pin
+> +  - te-gpio: a GPIO spec for the TE pin
 
-Yeah I think that's how I'd have implemented some generic abstraction for
-drivers using the crtc helpers. This allows you to keep bridge drivers,
-panel drivers and anything else you might have in your driver to feed the
-pixel stream to those 2 guys separate. And it also allows you to set it
-all up in different ways, e.g. using device tree metadata, or acpi or some
-other table hardcoded in a video rom somewhere.
+Just FYI, according to DT documentation [1] gpio spec should be in form
+[name]-gpios, however there is plenty bindings with -gpio suffix, so I
+am not sure if it is really enforced. On the other side it is enforced
+by descriptor based gpio framework[2]. Integer-based gpio framework
+used in your driver is obsolete according to [2].
 
-Imo we also should have something similar to chain up drm_bridge devices.
-tbh I'm not terribly happy about how the current integration with the crtc
-modeset helpers is done ...
--Daniel
+[1]: Documentation/devicetree/bindings/gpio/gpio.txt
+[2]: Documentation/gpio/gpio.txt
 
+Regards
+Andrzej
+
+> +  - display-timings: timings for the connected panel as described by [1]
+> +  - cpu-timings: CPU interface timings for the connected panel, and it contains
+> +        following optional properties.
+> +          - cs-setup: clock cycles for the active period of address signal
+> +                enable until chip select is enable in CPU interface
+> +          - wr-setup: clock cycles for the active period of CS signal enable
+> +                until write signal is enable in CPU interface
+> +          - wr-act: clock cycles for the active period of CS enable in CPU
+> +                interface
+> +          - wr-hold: clock cycles for the active period of CS disable until
+> +                write signal is disable in CPU interface
+> +
+> +Optional properties:
+> +
+> +The device node can contain one 'port' child node with one child
+> +'endpoint' node, according to the bindings defined in [2]. This
+> +node should describe panel's video bus.
+> +
+> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +Example:
+> +
+> +	panel@0 {
+> +		compatible = "samsung,s6e3fa0";
+> +		reg = <0>;
+> +		vdd3-supply = <&vcclcd_reg>;
+> +		vci-supply = <&vlcd_reg>;
+> +		reset-gpio = <&gpy7 4 0>;
+> +		det-gpio = <&gpg0 6 0>;
+> +		te-gpio = <&gpd1 7 0>;
+> +
+> +		display-timings {
+> +			timing0: timing-0 {
+> +				clock-frequency = <0>;
+> +				hactive = <1080>;
+> +				vactive = <1920>;
+> +				hfront-porch = <2>;
+> +				hback-porch = <2>;
+> +				hsync-len = <1>;
+> +				vfront-porch = <1>;
+> +				vback-porch = <4>;
+> +				vsync-len = <1>;
+> +			};
+> +		};
+> +
+> +		cpu-timings {
+> +			cs-setup = <0>;
+> +			wr-setup = <0>;
+> +			wr-act = <1>;
+> +			wr-hold = <0>;
+> +		};
+> +	};
 > 
-> BR,
-> -R
-> 
-> On Mon, Apr 21, 2014 at 6:39 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> > attach ptn3460 connector to drm_panel and support drm_panel routines,
-> > if a valid drm_panel object is passed to ptn3460_init.
-> >
-> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> > ---
-> > Changes since V1:
-> >         Address few coding style comments from Jingoo Han
-> >
-> >  drivers/gpu/drm/bridge/Kconfig          |    1 +
-> >  drivers/gpu/drm/bridge/ptn3460.c        |   20 +++++++++++++++++++-
-> >  drivers/gpu/drm/exynos/exynos_dp_core.c |   16 ++++++++++++----
-> >  include/drm/bridge/ptn3460.h            |    6 ++++--
-> >  4 files changed, 36 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> > index 884923f..3bc6845 100644
-> > --- a/drivers/gpu/drm/bridge/Kconfig
-> > +++ b/drivers/gpu/drm/bridge/Kconfig
-> > @@ -2,4 +2,5 @@ config DRM_PTN3460
-> >         tristate "PTN3460 DP/LVDS bridge"
-> >         depends on DRM
-> >         select DRM_KMS_HELPER
-> > +       select DRM_PANEL
-> >         ---help---
-> > diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-> > index f1d2afc..3920202 100644
-> > --- a/drivers/gpu/drm/bridge/ptn3460.c
-> > +++ b/drivers/gpu/drm/bridge/ptn3460.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/i2c.h>
-> >  #include <linux/gpio.h>
-> >  #include <linux/delay.h>
-> > +#include <drm/drm_panel.h>
-> >
-> >  #include "drmP.h"
-> >  #include "drm_edid.h"
-> > @@ -38,6 +39,7 @@ struct ptn3460_bridge {
-> >         struct i2c_client *client;
-> >         struct drm_encoder *encoder;
-> >         struct drm_bridge *bridge;
-> > +       struct drm_panel *panel;
-> >         struct edid *edid;
-> >         int gpio_pd_n;
-> >         int gpio_rst_n;
-> > @@ -126,6 +128,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
-> >                 gpio_set_value(ptn_bridge->gpio_rst_n, 1);
-> >         }
-> >
-> > +       drm_panel_pre_enable(ptn_bridge->panel);
-> > +
-> >         /*
-> >          * There's a bug in the PTN chip where it falsely asserts hotplug before
-> >          * it is fully functional. We're forced to wait for the maximum start up
-> > @@ -142,6 +146,10 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
-> >
-> >  static void ptn3460_enable(struct drm_bridge *bridge)
-> >  {
-> > +       struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
-> > +
-> > +       if (ptn_bridge->enabled)
-> > +               drm_panel_enable(ptn_bridge->panel);
-> >  }
-> >
-> >  static void ptn3460_disable(struct drm_bridge *bridge)
-> > @@ -153,6 +161,9 @@ static void ptn3460_disable(struct drm_bridge *bridge)
-> >
-> >         ptn_bridge->enabled = false;
-> >
-> > +       drm_panel_disable(ptn_bridge->panel);
-> > +       drm_panel_post_disable(ptn_bridge->panel);
-> > +
-> >         if (gpio_is_valid(ptn_bridge->gpio_rst_n))
-> >                 gpio_set_value(ptn_bridge->gpio_rst_n, 1);
-> >
-> > @@ -198,6 +209,7 @@ int ptn3460_get_modes(struct drm_connector *connector)
-> >
-> >         power_off = !ptn_bridge->enabled;
-> >         ptn3460_pre_enable(ptn_bridge->bridge);
-> > +       ptn3460_enable(ptn_bridge->bridge);
-> >
-> >         edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
-> >         if (!edid) {
-> > @@ -265,7 +277,8 @@ struct drm_connector_funcs ptn3460_connector_funcs = {
-> >  };
-> >
-> >  int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
-> > -               struct i2c_client *client, struct device_node *node)
-> > +               struct i2c_client *client, struct device_node *node,
-> > +               struct drm_panel *panel)
-> >  {
-> >         int ret;
-> >         struct drm_bridge *bridge;
-> > @@ -324,6 +337,11 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
-> >                 goto err;
-> >         }
-> >
-> > +       if (panel) {
-> > +               ptn_bridge->panel = panel;
-> > +               drm_panel_attach(ptn_bridge->panel, &ptn_bridge->connector);
-> > +       }
-> > +
-> >         bridge->driver_private = ptn_bridge;
-> >         encoder->bridge = bridge;
-> >         ptn_bridge->connector.polled = DRM_CONNECTOR_POLL_HPD;
-> > diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > index dbc5ccc..4853f31 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > @@ -989,13 +989,14 @@ static bool find_bridge(const char *compat, struct bridge_init *bridge)
-> >
-> >  /* returns the number of bridges attached */
-> >  static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-> > -               struct drm_encoder *encoder)
-> > +               struct drm_encoder *encoder, struct drm_panel *panel)
-> >  {
-> >         struct bridge_init bridge;
-> >         int ret;
-> >
-> >         if (find_bridge("nxp,ptn3460", &bridge)) {
-> > -               ret = ptn3460_init(dev, encoder, bridge.client, bridge.node);
-> > +               ret = ptn3460_init(dev, encoder, bridge.client, bridge.node,
-> > +                               panel);
-> >                 if (!ret)
-> >                         return 1;
-> >         }
-> > @@ -1012,9 +1013,16 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
-> >         dp->encoder = encoder;
-> >
-> >         /* Pre-empt DP connector creation if there's a bridge */
-> > -       ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
-> > -       if (ret)
-> > +       ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder, dp->drm_panel);
-> > +       if (ret) {
-> > +               /*
-> > +                * Also set "dp->drm_panel = NULL" so that we don't end up
-> > +                * controlling panel power both in exynos_dp and bridge
-> > +                * DPMS routines.
-> > +                */
-> > +               dp->drm_panel = NULL;
-> >                 return 0;
-> > +       }
-> >
-> >         connector->polled = DRM_CONNECTOR_POLL_HPD;
-> >
-> > diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
-> > index ff62344..570cebb 100644
-> > --- a/include/drm/bridge/ptn3460.h
-> > +++ b/include/drm/bridge/ptn3460.h
-> > @@ -18,16 +18,18 @@ struct drm_device;
-> >  struct drm_encoder;
-> >  struct i2c_client;
-> >  struct device_node;
-> > +struct drm_panel;
-> >
-> >  #if defined(CONFIG_DRM_PTN3460) || defined(CONFIG_DRM_PTN3460_MODULE)
-> >
-> >  int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
-> > -               struct i2c_client *client, struct device_node *node);
-> > +               struct i2c_client *client, struct device_node *node,
-> > +               struct drm_panel *panel);
-> >  #else
-> >
-> >  static inline int ptn3460_init(struct drm_device *dev,
-> >                 struct drm_encoder *encoder, struct i2c_client *client,
-> > -               struct device_node *node)
-> > +               struct device_node *node, struct drm_panel *panel)
-> >  {
-> >         return 0;
-> >  }
-> > --
-> > 1.7.9.5
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > http://lists.freedesktop.org/mailman/listinfo/dri-devel
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
