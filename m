@@ -1,741 +1,293 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v5 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Tue, 22 Apr 2014 13:33:14 +0530
-Message-ID: <1398153795-28475-2-git-send-email-gautam.vivek@samsung.com>
-References: <1398153795-28475-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398153795-28475-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, sylvester.nawrocki@gmail.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Tue, 22 Apr 2014 13:33:54 +0530
+Message-ID: <1398153834-16199-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:38423 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753840AbaDVIFB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 04:05:01 -0400
+Received: by mail-pa0-f52.google.com with SMTP id kx10so665047pab.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 01:05:00 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: broonie@kernel.org, rdunlap@infradead.org, robh+dt@kernel.org
 
-Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
-The new driver uses the generic PHY framework and will interact
-with DWC3 controller present on Exynos5 series of SoCs.
-Thereby, removing old phy-samsung-usb3 driver and related code
-used untill now which was based on usb/phy framework.
+Added machine driver to instantiate I2S based sound card on Snow
+board. It has MAX98095 audio codec on board.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+There are some other variants for Snow board which have MAX98090
+audio codec. Hence support for MAX98090 is also added to this
+driver.
+
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- .../devicetree/bindings/phy/samsung-phy.txt        |   40 ++
- drivers/phy/Kconfig                                |   11 +
- drivers/phy/Makefile                               |    1 +
- drivers/phy/phy-exynos5-usbdrd.c                   |  629 ++++++++++++++++++++
- 4 files changed, 681 insertions(+)
- create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+ Documentation/devicetree/bindings/sound/snow.txt |   17 ++
+ sound/soc/samsung/Kconfig                        |   11 ++
+ sound/soc/samsung/Makefile                       |    2 +
+ sound/soc/samsung/snow.c                         |  190 ++++++++++++++++++++++
+ 4 files changed, 220 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/snow.txt
+ create mode 100644 sound/soc/samsung/snow.c
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index b422e38..51efe4c 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -114,3 +114,43 @@ Example:
- 		compatible = "samsung,exynos-sataphy-i2c";
- 		reg = <0x38>;
- 	};
-+
-+Samsung Exynos5 SoC series USB DRD PHY controller
-+--------------------------------------------------
+diff --git a/Documentation/devicetree/bindings/sound/snow.txt b/Documentation/devicetree/bindings/sound/snow.txt
+new file mode 100644
+index 0000000..6f3fd02
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/snow.txt
+@@ -0,0 +1,17 @@
++Audio Binding for Snow boards
 +
 +Required properties:
-+- compatible : Should be set to one of the following supported values:
-+	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
-+	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
-+- reg : Register offset and length of USB DRD PHY register set;
-+- clocks: Clock IDs array as required by the controller
-+- clock-names: names of clocks correseponding to IDs in the clock property;
-+	       Required clocks:
-+	- phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
-+	       used for register access.
-+	- ref: PHY's reference clock (usually crystal clock), used for
-+	       PHY operations, associated by phy name. It is used to
-+	       determine bit values for clock settings register.
-+	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
-+- samsung,pmu-syscon: phandle for PMU system controller interface, used to
-+		      control pmu registers for power isolation.
-+- samsung,pmu-offset: phy power control register offset to pmu-system-controller
-+		      base.
-+- #phy-cells : from the generic PHY bindings, must be 1;
-+
-+For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
-+compatible PHYs, the second cell in the PHY specifier identifies the
-+PHY id, which is interpreted as follows:
-+  0 - UTMI+ type phy,
-+  1 - PIPE3 type phy,
++- compatible : Can be one of the following,
++			"google,snow-audio-max98090" or
++			"google,snow-audio-max98095"
++- samsung,i2s-controller: The phandle of the Samsung I2S0 controller
++- samsung,audio-codec: The phandle of the audio codec
 +
 +Example:
-+	usb3_phy: usbphy@12100000 {
-+		compatible = "samsung,exynos5250-usbdrd-phy";
-+		reg = <0x12100000 0x100>;
-+		clocks = <&clock 286>, <&clock 1>;
-+		clock-names = "phy", "ref";
-+		samsung,pmu-syscon = <&pmu_system_controller>;
-+		samsung,pmu-offset = <0x704>;
-+		#phy-cells = <1>;
-+	};
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 3bb05f1..8a5d2b4 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -166,4 +166,15 @@ config PHY_XGENE
- 	help
- 	  This option enables support for APM X-Gene SoC multi-purpose PHY.
- 
-+config PHY_EXYNOS5_USBDRD
-+	tristate "Exynos5 SoC series USB DRD PHY driver"
-+	depends on ARCH_EXYNOS5 && OF
-+	depends on HAS_IOMEM
-+	select GENERIC_PHY
-+	select MFD_SYSCON
++
++sound {
++		compatible = "google,snow-audio-max98095";
++
++		samsung,i2s-controller = <&i2s0>;
++		samsung,audio-codec = <&max98095>;
++};
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index f2e2891..d07b04f 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -231,3 +231,13 @@ config SND_SOC_LITTLEMILL
+ 	select SND_SAMSUNG_I2S
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
++
++config SND_SOC_SNOW
++	tristate "Audio support for Google Snow boards"
++	depends on SND_SOC_SAMSUNG
++	select SND_SOC_MAX98090
++	select SND_SOC_MAX98095
++	select SND_SAMSUNG_I2S
 +	help
-+	  Enable USB DRD PHY support for Exynos 5 SoC series.
-+	  This driver provides PHY interface for USB 3.0 DRD controller
-+	  present on Exynos5 SoC series.
-+
- endmenu
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index 2faf78e..31baa0c 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -18,3 +18,4 @@ obj-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
- obj-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
- obj-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
- obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
-+obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
-diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
++	  Say Y if you want to add audio support for various Snow
++	  boards based on Exynos5 series of SoCs.
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 86715d8..6d0212b 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -34,6 +34,7 @@ snd-soc-h1940-uda1380-objs := h1940_uda1380.o
+ snd-soc-rx1950-uda1380-objs := rx1950_uda1380.o
+ snd-soc-smdk-wm8580-objs := smdk_wm8580.o
+ snd-soc-smdk-wm8994-objs := smdk_wm8994.o
++snd-soc-snow-objs := snow.o
+ snd-soc-smdk-wm9713-objs := smdk_wm9713.o
+ snd-soc-s3c64xx-smartq-wm8987-objs := smartq_wm8987.o
+ snd-soc-goni-wm8994-objs := goni_wm8994.o
+@@ -58,6 +59,7 @@ obj-$(CONFIG_SND_SOC_SAMSUNG_H1940_UDA1380) += snd-soc-h1940-uda1380.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_RX1950_UDA1380) += snd-soc-rx1950-uda1380.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM8580) += snd-soc-smdk-wm8580.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994) += snd-soc-smdk-wm8994.o
++obj-$(CONFIG_SND_SOC_SNOW) += snd-soc-snow.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM9713) += snd-soc-smdk-wm9713.o
+ obj-$(CONFIG_SND_SOC_SMARTQ) += snd-soc-s3c64xx-smartq-wm8987.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_SPDIF) += snd-soc-smdk-spdif.o
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
 new file mode 100644
-index 0000000..89d7ae8
+index 0000000..e8eedd8
 --- /dev/null
-+++ b/drivers/phy/phy-exynos5-usbdrd.c
-@@ -0,0 +1,629 @@
++++ b/sound/soc/samsung/snow.c
+@@ -0,0 +1,190 @@
 +/*
-+ * Samsung EXYNOS5 SoC series USB DRD PHY driver
++ * ASoC machine driver for Snow boards
 + *
-+ * Phy provider for USB 3.0 DRD controller on Exynos5 SoC series
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
 + *
-+ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-+ * Author: Vivek Gautam <gautam.vivek@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/phy/phy.h>
 +#include <linux/platform_device.h>
-+#include <linux/mutex.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
 +
-+/* Exynos USB PHY registers */
-+#define EXYNOS5_FSEL_9MHZ6		0x0
-+#define EXYNOS5_FSEL_10MHZ		0x1
-+#define EXYNOS5_FSEL_12MHZ		0x2
-+#define EXYNOS5_FSEL_19MHZ2		0x3
-+#define EXYNOS5_FSEL_20MHZ		0x4
-+#define EXYNOS5_FSEL_24MHZ		0x5
-+#define EXYNOS5_FSEL_50MHZ		0x7
++#include <sound/soc.h>
++#include <sound/soc-dapm.h>
++#include <sound/pcm_params.h>
 +
-+/* EXYNOS5: USB 3.0 DRD PHY registers */
-+#define EXYNOS5_DRD_LINKSYSTEM			0x04
++#include "i2s.h"
 +
-+#define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
-+#define LINKSYSTEM_FLADJ(_x)			((_x) << 1)
-+#define LINKSYSTEM_XHCI_VERSION_CONTROL		BIT(27)
++#define FIN_PLL_RATE		24000000
 +
-+#define EXYNOS5_DRD_PHYUTMI			0x08
-+
-+#define PHYUTMI_OTGDISABLE			BIT(6)
-+#define PHYUTMI_FORCESUSPEND			BIT(1)
-+#define PHYUTMI_FORCESLEEP			BIT(0)
-+
-+#define EXYNOS5_DRD_PHYPIPE			0x0c
-+
-+#define EXYNOS5_DRD_PHYCLKRST			0x10
-+
-+#define PHYCLKRST_EN_UTMISUSPEND		BIT(31)
-+
-+#define PHYCLKRST_SSC_REFCLKSEL_MASK		(0xff << 23)
-+#define PHYCLKRST_SSC_REFCLKSEL(_x)		((_x) << 23)
-+
-+#define PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
-+#define PHYCLKRST_SSC_RANGE(_x)			((_x) << 21)
-+
-+#define PHYCLKRST_SSC_EN			BIT(20)
-+#define PHYCLKRST_REF_SSP_EN			BIT(19)
-+#define PHYCLKRST_REF_CLKDIV2			BIT(18)
-+
-+#define PHYCLKRST_MPLL_MULTIPLIER_MASK		(0x7f << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF	(0x19 << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_50M_REF	(0x32 << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF	(0x68 << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF	(0x7d << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF	(0x02 << 11)
-+
-+#define PHYCLKRST_FSEL_UTMI_MASK		(0x7 << 5)
-+#define PHYCLKRST_FSEL_PIPE_MASK		(0x7 << 8)
-+#define PHYCLKRST_FSEL(_x)			((_x) << 5)
-+#define PHYCLKRST_FSEL_PAD_100MHZ		(0x27 << 5)
-+#define PHYCLKRST_FSEL_PAD_24MHZ		(0x2a << 5)
-+#define PHYCLKRST_FSEL_PAD_20MHZ		(0x31 << 5)
-+#define PHYCLKRST_FSEL_PAD_19_2MHZ		(0x38 << 5)
-+
-+#define PHYCLKRST_RETENABLEN			BIT(4)
-+
-+#define PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
-+#define PHYCLKRST_REFCLKSEL_PAD_REFCLK		(0x2 << 2)
-+#define PHYCLKRST_REFCLKSEL_EXT_REFCLK		(0x3 << 2)
-+
-+#define PHYCLKRST_PORTRESET			BIT(1)
-+#define PHYCLKRST_COMMONONN			BIT(0)
-+
-+#define EXYNOS5_DRD_PHYREG0			0x14
-+#define EXYNOS5_DRD_PHYREG1			0x18
-+
-+#define EXYNOS5_DRD_PHYPARAM0			0x1c
-+
-+#define PHYPARAM0_REF_USE_PAD			BIT(31)
-+#define PHYPARAM0_REF_LOSLEVEL_MASK		(0x1f << 26)
-+#define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
-+
-+#define EXYNOS5_DRD_PHYPARAM1			0x20
-+
-+#define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
-+#define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
-+
-+#define EXYNOS5_DRD_PHYTERM			0x24
-+
-+#define EXYNOS5_DRD_PHYTEST			0x28
-+
-+#define PHYTEST_POWERDOWN_SSP			BIT(3)
-+#define PHYTEST_POWERDOWN_HSP			BIT(2)
-+
-+#define EXYNOS5_DRD_PHYADP			0x2c
-+
-+#define EXYNOS5_DRD_PHYUTMICLKSEL		0x30
-+
-+#define PHYUTMICLKSEL_UTMI_CLKSEL		BIT(2)
-+
-+#define EXYNOS5_DRD_PHYRESUME			0x34
-+#define EXYNOS5_DRD_LINKPORT			0x44
-+
-+/* Power isolation defined in power management unit */
-+#define EXYNOS5_USBDRD_PMU_ISOL			BIT(0)
-+
-+#define KHZ	1000
-+#define MHZ	(KHZ * KHZ)
-+
-+enum exynos5_usbdrd_phy_id {
-+	EXYNOS5_DRDPHY_UTMI,
-+	EXYNOS5_DRDPHY_PIPE3,
-+	EXYNOS5_DRDPHYS_NUM,
-+};
-+
-+struct phy_usb_instance;
-+struct exynos5_usbdrd_phy;
-+
-+struct usbdrd_phy_config {
-+	u32 id;
-+	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
-+	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
-+	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
-+};
-+
-+struct exynos5_usbdrd_phy_drvdata {
-+	bool has_usb30_sclk;
-+	const struct usbdrd_phy_config *phy_cfg;
-+};
-+
-+/**
-+ * struct exynos5_usbdrd_phy - driver data for USB 3.0 PHY
-+ * @dev: pointer to device instance of this platform device
-+ * @reg_phy: usb phy controller register memory base
-+ * @clk: phy clock for register access
-+ * @drv_data: pointer to SoC level driver data structure
-+ * @phys[]: array for 'EXYNOS5_DRDPHYS_NUM' number of PHY
-+ *	    instances each with its 'phy' and 'phy_cfg'.
-+ * @extrefclk: frequency select settings when using 'separate
-+ *	       reference clocks' for SS and HS operations
-+ * @ref_clk: reference clock to PHY block from which PHY's
-+ *	     operational clocks are derived
-+ * @ref_rate: rate of above reference clock
-+ */
-+struct exynos5_usbdrd_phy {
-+	struct device *dev;
-+	void __iomem *reg_phy;
-+	struct clk *clk;
-+	const struct exynos5_usbdrd_phy_drvdata *drv_data;
-+	struct phy_usb_instance {
-+		struct phy *phy;
-+		u32 index;
-+		struct regmap *reg_pmu;
-+		u32 pmu_offset;
-+		const struct usbdrd_phy_config *phy_cfg;
-+	} phys[EXYNOS5_DRDPHYS_NUM];
-+	unsigned int extrefclk;
-+	struct clk *ref_clk;
-+	unsigned long ref_rate;
-+};
-+
-+#define to_usbdrd_phy(inst) \
-+	container_of((inst), struct exynos5_usbdrd_phy, \
-+		     phys[(inst)->index]);
-+
-+/*
-+ * exynos5_rate_to_clk() converts the supplied clock rate to the value that
-+ * can be written to the phy register.
-+ */
-+static unsigned int exynos5_rate_to_clk(unsigned long rate)
++static int snow_hw_params(struct snd_pcm_substream *substream,
++	struct snd_pcm_hw_params *params)
 +{
-+	unsigned int clksel;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	int bfs, ret;
 +
-+	/* EXYNOS5_FSEL_MASK */
-+
-+	switch (rate) {
-+	case 9600 * KHZ:
-+		clksel = EXYNOS5_FSEL_9MHZ6;
++	switch (params_format(params)) {
++	case SNDRV_PCM_FORMAT_U24:
++	case SNDRV_PCM_FORMAT_S24:
++		bfs = 48;
 +		break;
-+	case 10 * MHZ:
-+		clksel = EXYNOS5_FSEL_10MHZ;
-+		break;
-+	case 12 * MHZ:
-+		clksel = EXYNOS5_FSEL_12MHZ;
-+		break;
-+	case 19200 * KHZ:
-+		clksel = EXYNOS5_FSEL_19MHZ2;
-+		break;
-+	case 20 * MHZ:
-+		clksel = EXYNOS5_FSEL_20MHZ;
-+		break;
-+	case 24 * MHZ:
-+		clksel = EXYNOS5_FSEL_24MHZ;
-+		break;
-+	case 50 * MHZ:
-+		clksel = EXYNOS5_FSEL_50MHZ;
++	case SNDRV_PCM_FORMAT_U16_LE:
++	case SNDRV_PCM_FORMAT_S16_LE:
++		bfs = 32;
 +		break;
 +	default:
-+		clksel = -EINVAL;
-+	}
-+
-+	return clksel;
-+}
-+
-+static void exynos5_usbdrd_phy_isol(struct phy_usb_instance *inst,
-+						unsigned int on)
-+{
-+	if (!inst->reg_pmu)
-+		return;
-+
-+	regmap_update_bits(inst->reg_pmu, inst->pmu_offset,
-+			   EXYNOS5_USBDRD_PMU_ISOL, ~on);
-+}
-+
-+/*
-+ * Sets the pipe3 phy's clk as EXTREFCLK (XXTI) which is internal clock
-+ * from clock core. Further sets multiplier values and spread spectrum
-+ * clock settings for SuperSpeed operations.
-+ */
-+static unsigned int
-+exynos5_usbdrd_pipe3_set_refclk(struct phy_usb_instance *inst)
-+{
-+	static u32 reg;
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	/* restore any previous reference clock settings */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+
-+	/* Use EXTREFCLK as ref clock */
-+	reg &= ~PHYCLKRST_REFCLKSEL_MASK;
-+	reg |=	PHYCLKRST_REFCLKSEL_EXT_REFCLK;
-+
-+	/* FSEL settings corresponding to reference clock */
-+	reg &= ~PHYCLKRST_FSEL_PIPE_MASK |
-+		PHYCLKRST_MPLL_MULTIPLIER_MASK |
-+		PHYCLKRST_SSC_REFCLKSEL_MASK;
-+	switch (phy_drd->extrefclk) {
-+	case EXYNOS5_FSEL_50MHZ:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x00));
-+		break;
-+	case EXYNOS5_FSEL_24MHZ:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x88));
-+		break;
-+	case EXYNOS5_FSEL_20MHZ:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x00));
-+		break;
-+	case EXYNOS5_FSEL_19MHZ2:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x88));
-+		break;
-+	default:
-+		dev_dbg(phy_drd->dev, "unsupported ref clk\n");
-+		break;
-+	}
-+
-+	return reg;
-+}
-+
-+/*
-+ * Sets the utmi phy's clk as EXTREFCLK (XXTI) which is internal clock
-+ * from clock core. Further sets the FSEL values for HighSpeed operations.
-+ */
-+static unsigned int
-+exynos5_usbdrd_utmi_set_refclk(struct phy_usb_instance *inst)
-+{
-+	static u32 reg;
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	/* restore any previous reference clock settings */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+
-+	reg &= ~PHYCLKRST_REFCLKSEL_MASK;
-+	reg |=	PHYCLKRST_REFCLKSEL_EXT_REFCLK;
-+
-+	reg &= ~PHYCLKRST_FSEL_UTMI_MASK |
-+		PHYCLKRST_MPLL_MULTIPLIER_MASK |
-+		PHYCLKRST_SSC_REFCLKSEL_MASK;
-+	reg |= PHYCLKRST_FSEL(phy_drd->extrefclk);
-+
-+	return reg;
-+}
-+
-+static void exynos5_usbdrd_pipe3_init(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	u32 reg;
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
-+	/* Set Tx De-Emphasis level */
-+	reg &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
-+	reg |=	PHYPARAM1_PCS_TXDEEMPH;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
-+	reg &= ~PHYTEST_POWERDOWN_SSP;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
-+}
-+
-+static void exynos5_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	u32 reg;
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-+	/* Set Loss-of-Signal Detector sensitivity */
-+	reg &= ~PHYPARAM0_REF_LOSLEVEL_MASK;
-+	reg |=	PHYPARAM0_REF_LOSLEVEL;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
-+	/* Set Tx De-Emphasis level */
-+	reg &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
-+	reg |=	PHYPARAM1_PCS_TXDEEMPH;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
-+
-+	/* UTMI Power Control */
-+	writel(PHYUTMI_OTGDISABLE, phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMI);
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
-+	reg &= ~PHYTEST_POWERDOWN_HSP;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
-+}
-+
-+static int exynos5_usbdrd_phy_init(struct phy *phy)
-+{
-+	int ret;
-+	u32 reg;
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	ret = clk_prepare_enable(phy_drd->clk);
-+	if (ret)
-+		return ret;
-+
-+	phy_drd->extrefclk = exynos5_rate_to_clk(phy_drd->ref_rate);
-+	if (phy_drd->extrefclk == -EINVAL) {
-+		dev_err(phy_drd->dev, "Clock rate (%ld) not supported\n",
-+						phy_drd->ref_rate);
 +		return -EINVAL;
 +	}
 +
-+	/* Reset USB 3.0 PHY */
-+	writel(0x0, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+	writel(0x0, phy_drd->reg_phy + EXYNOS5_DRD_PHYRESUME);
-+
-+	/*
-+	 * Setting the Frame length Adj value[6:1] to default 0x20
-+	 * See xHCI 1.0 spec, 5.2.4
-+	 */
-+	reg =	LINKSYSTEM_XHCI_VERSION_CONTROL |
-+		LINKSYSTEM_FLADJ(0x20);
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
-+
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-+	/* Select PHY CLK source */
-+	reg &= ~PHYPARAM0_REF_USE_PAD;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-+
-+	/* This bit must be set for both HS and SS operations */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMICLKSEL);
-+	reg |= PHYUTMICLKSEL_UTMI_CLKSEL;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMICLKSEL);
-+
-+	/* UTMI or PIPE3 specific init */
-+	inst->phy_cfg->phy_init(phy_drd);
-+
-+	/* reference clock settings */
-+	reg = inst->phy_cfg->set_refclk(inst);
-+
-+		/* Digital power supply in normal operating mode */
-+	reg |=	PHYCLKRST_RETENABLEN |
-+		/* Enable ref clock for SS function */
-+		PHYCLKRST_REF_SSP_EN |
-+		/* Enable spread spectrum */
-+		PHYCLKRST_SSC_EN |
-+		/* Power down HS Bias and PLL blocks in suspend mode */
-+		PHYCLKRST_COMMONONN |
-+		/* Reset the port */
-+		PHYCLKRST_PORTRESET;
-+
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+
-+	udelay(10);
-+
-+	reg &= ~PHYCLKRST_PORTRESET;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+
-+	clk_disable_unprepare(phy_drd->clk);
-+
-+	return 0;
-+}
-+
-+static int exynos5_usbdrd_phy_exit(struct phy *phy)
-+{
-+	int ret;
-+	u32 reg;
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	ret = clk_prepare_enable(phy_drd->clk);
-+	if (ret)
++	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
++					     SND_SOC_DAIFMT_NB_NF |
++					     SND_SOC_DAIFMT_CBS_CFS);
++	if (ret < 0)
 +		return ret;
 +
-+	reg =	PHYUTMI_OTGDISABLE |
-+		PHYUTMI_FORCESUSPEND |
-+		PHYUTMI_FORCESLEEP;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYUTMI);
++	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S |
++					   SND_SOC_DAIFMT_NB_NF |
++					   SND_SOC_DAIFMT_CBS_CFS);
++	if (ret < 0)
++		return ret;
 +
-+	/* Resetting the PHYCLKRST enable bits to reduce leakage current */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-+	reg &= ~(PHYCLKRST_REF_SSP_EN |
-+		 PHYCLKRST_SSC_EN |
-+		 PHYCLKRST_COMMONONN);
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
++	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
++					FIN_PLL_RATE, SND_SOC_CLOCK_IN);
++	if (ret < 0)
++		return ret;
 +
-+	/* Control PHYTEST to remove leakage current */
-+	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
-+	reg |=	PHYTEST_POWERDOWN_SSP |
-+		PHYTEST_POWERDOWN_HSP;
-+	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
++	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
++					0, SND_SOC_CLOCK_OUT);
++	if (ret < 0)
++		return ret;
 +
-+	clk_disable_unprepare(phy_drd->clk);
-+
-+	return 0;
-+}
-+
-+static int exynos5_usbdrd_phy_power_on(struct phy *phy)
-+{
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	dev_dbg(phy_drd->dev, "Request to power_on usbdrd_phy phy\n");
-+
-+	clk_prepare_enable(phy_drd->ref_clk);
-+
-+	/* Power-on PHY*/
-+	inst->phy_cfg->phy_isol(inst, 0);
++	ret = snd_soc_dai_set_clkdiv(cpu_dai, SAMSUNG_I2S_DIV_BCLK, bfs);
++	if (ret < 0)
++		return ret;
 +
 +	return 0;
 +}
 +
-+static int exynos5_usbdrd_phy_power_off(struct phy *phy)
-+{
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	dev_dbg(phy_drd->dev, "Request to power_off usbdrd_phy phy\n");
-+
-+	/* Power-off the PHY */
-+	inst->phy_cfg->phy_isol(inst, 1);
-+
-+	clk_disable_unprepare(phy_drd->ref_clk);
-+
-+	return 0;
-+}
-+
-+static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
-+					struct of_phandle_args *args)
-+{
-+	struct exynos5_usbdrd_phy *phy_drd = dev_get_drvdata(dev);
-+
-+	if (WARN_ON(args->args[0] > EXYNOS5_DRDPHYS_NUM))
-+		return ERR_PTR(-ENODEV);
-+
-+	return phy_drd->phys[args->args[0]].phy;
-+}
-+
-+static struct phy_ops exynos5_usbdrd_phy_ops = {
-+	.init		= exynos5_usbdrd_phy_init,
-+	.exit		= exynos5_usbdrd_phy_exit,
-+	.power_on	= exynos5_usbdrd_phy_power_on,
-+	.power_off	= exynos5_usbdrd_phy_power_off,
-+	.owner		= THIS_MODULE,
++static struct snd_soc_ops snow_ops = {
++	.hw_params = snow_hw_params,
 +};
 +
-+const struct usbdrd_phy_config exynos5_usbdrd_phy_cfg[] = {
-+	{
-+		.id		= EXYNOS5_DRDPHY_UTMI,
-+		.phy_isol	= exynos5_usbdrd_phy_isol,
-+		.phy_init	= exynos5_usbdrd_utmi_init,
-+		.set_refclk	= exynos5_usbdrd_utmi_set_refclk,
++static int snow_init(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_soc_codec *codec = rtd->codec;
++	struct snd_soc_dapm_context *dapm = &codec->dapm;
++
++	snd_soc_dapm_sync(dapm);
++
++	return 0;
++}
++
++static struct snd_soc_dai_link snow_dai[] = {
++	{ /* Playback DAI i/f */
++		.name = "Playback",
++		.stream_name = "Playback",
++		.codec_dai_name = "HiFi",
++		.init = snow_init,
++		.ops = &snow_ops,
++	}, { /* Capture DAI i/f */
++		.name = "Capture",
++		.stream_name = "Capture",
++		.codec_dai_name = "HiFi",
++		.ops = &snow_ops,
 +	},
-+	{
-+		.id		= EXYNOS5_DRDPHY_PIPE3,
-+		.phy_isol	= exynos5_usbdrd_phy_isol,
-+		.phy_init	= exynos5_usbdrd_pipe3_init,
-+		.set_refclk	= exynos5_usbdrd_pipe3_set_refclk,
-+	},
++};
++
++static struct snd_soc_card snow_snd = {
++	.name = "Snow-I2S",
++	.dai_link = snow_dai,
++	.num_links = ARRAY_SIZE(snow_dai),
++};
++
++static int snow_driver_probe(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = &snow_snd;
++	struct device_node *i2s_node, *codec_node;
++	const char *name;
++	int i, ret;
++
++	if (!pdev->dev.platform_data && !pdev->dev.of_node) {
++		dev_err(&pdev->dev, "No platform data supplied\n");
++		return -EINVAL;
++	}
++
++	name = of_get_property(pdev->dev.of_node, "card-name", NULL);
++	if (name)
++		card->name = name;
++
++	i2s_node = of_parse_phandle(pdev->dev.of_node,
++				    "samsung,i2s-controller", 0);
++	if (!i2s_node) {
++		dev_err(&pdev->dev,
++			"Property 'i2s-controller' missing or invalid\n");
++		return -EINVAL;
++	}
++
++	codec_node = of_parse_phandle(pdev->dev.of_node,
++				      "samsung,audio-codec", 0);
++	if (!codec_node) {
++		dev_err(&pdev->dev,
++			"Property 'audio-codec' missing or invalid\n");
++		return -EINVAL;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(snow_dai); i++) {
++		snow_dai[i].codec_of_node = codec_node;
++		snow_dai[i].cpu_of_node = i2s_node;
++		snow_dai[i].platform_of_node = i2s_node;
++	}
++
++	card->dev = &pdev->dev;
++
++	ret = snd_soc_register_card(card);
++	if (ret) {
++		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
++		return ret;
++	}
++
++	return ret;
++}
++
++static int snow_driver_remove(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = platform_get_drvdata(pdev);
++
++	snd_soc_unregister_card(card);
++
++	return 0;
++}
++
++static const struct of_device_id snow_of_match[] = {
++	{ .compatible = "google,snow-audio-max98090", },
++	{ .compatible = "google,snow-audio-max98095", },
 +	{},
 +};
 +
-+const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
-+	.has_usb30_sclk		= true,
-+	.phy_cfg		= exynos5_usbdrd_phy_cfg,
-+};
-+
-+const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
-+	.has_usb30_sclk		= false,
-+	.phy_cfg		= exynos5_usbdrd_phy_cfg,
-+};
-+
-+static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
-+	{
-+		.compatible = "samsung,exynos5250-usbdrd-phy",
-+		.data = &exynos5250_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynos5420-usbdrd-phy",
-+		.data = &exynos5420_usbdrd_phy
-+	},
-+	{ },
-+};
-+
-+static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct exynos5_usbdrd_phy *phy_drd;
-+	struct phy_provider *phy_provider;
-+	struct resource *res;
-+	const struct of_device_id *match;
-+	const struct exynos5_usbdrd_phy_drvdata *drv_data;
-+	struct regmap *reg_pmu;
-+	u32 pmu_offset;
-+	int i;
-+
-+	phy_drd = devm_kzalloc(dev, sizeof(*phy_drd), GFP_KERNEL);
-+	if (!phy_drd)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, phy_drd);
-+	phy_drd->dev = dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	phy_drd->reg_phy = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(phy_drd->reg_phy))
-+		return PTR_ERR(phy_drd->reg_phy);
-+
-+	match = of_match_node(exynos5_usbdrd_phy_of_match, pdev->dev.of_node);
-+	if (!match) {
-+		dev_err(dev, "of_match_node() failed\n");
-+		return -EINVAL;
-+	}
-+	drv_data = match->data;
-+
-+	phy_drd->drv_data = drv_data;
-+
-+	phy_drd->clk = devm_clk_get(dev, "phy");
-+	if (IS_ERR(phy_drd->clk)) {
-+		dev_err(dev, "Failed to get clock of phy controller\n");
-+		return PTR_ERR(phy_drd->clk);
-+	}
-+
-+	phy_drd->ref_clk = devm_clk_get(dev, "ref");
-+	if (IS_ERR(phy_drd->ref_clk)) {
-+		dev_err(dev, "Failed to get reference clock of usbdrd_phy phy\n");
-+		return PTR_ERR(phy_drd->ref_clk);
-+	}
-+	phy_drd->ref_rate = clk_get_rate(phy_drd->ref_clk);
-+
-+	reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						   "samsung,pmu-syscon");
-+	if (IS_ERR(reg_pmu)) {
-+		dev_err(dev, "Failed to map PMU register (via syscon)\n");
-+		return PTR_ERR(reg_pmu);
-+	}
-+
-+	if (of_property_read_u32(node, "samsung,pmu-offset", &pmu_offset)) {
-+		dev_err(dev, "Missing pmu-offset for phy isolation\n");
-+		return -EINVAL;
-+	}
-+
-+	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
-+
-+	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
-+		struct phy *phy = devm_phy_create(dev, &exynos5_usbdrd_phy_ops,
-+						  NULL);
-+		if (IS_ERR(phy)) {
-+			dev_err(dev, "Failed to create usbdrd_phy phy\n");
-+			return PTR_ERR(phy);
-+		}
-+
-+		phy_drd->phys[i].phy = phy;
-+		phy_drd->phys[i].index = i;
-+		phy_drd->phys[i].reg_pmu = reg_pmu;
-+		phy_drd->phys[i].pmu_offset = pmu_offset;
-+		phy_drd->phys[i].phy_cfg = &drv_data->phy_cfg[i];
-+		phy_set_drvdata(phy, &phy_drd->phys[i]);
-+	}
-+
-+	phy_provider = devm_of_phy_provider_register(dev,
-+						     exynos5_usbdrd_phy_xlate);
-+	if (IS_ERR(phy_provider)) {
-+		dev_err(phy_drd->dev, "Failed to register phy provider\n");
-+		return PTR_ERR(phy_provider);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver exynos5_usb3drd_phy = {
-+	.probe	= exynos5_usbdrd_phy_probe,
++static struct platform_driver snow_driver = {
 +	.driver = {
-+		.of_match_table	= exynos5_usbdrd_phy_of_match,
-+		.name		= "exynos5_usb3drd_phy",
-+		.owner		= THIS_MODULE,
-+	}
++		.name = "snow-audio",
++		.owner = THIS_MODULE,
++		.pm = &snd_soc_pm_ops,
++		.of_match_table = snow_of_match,
++	},
++	.probe = snow_driver_probe,
++	.remove = snow_driver_remove,
 +};
 +
-+module_platform_driver(exynos5_usb3drd_phy);
-+MODULE_DESCRIPTION("Samsung EXYNOS5 SoCs USB 3.0 DRD controller PHY driver");
-+MODULE_AUTHOR("Vivek Gautam <gautam.vivek@samsung.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:exynos5_usb3drd_phy");
++module_platform_driver(snow_driver);
++
++MODULE_DESCRIPTION("ALSA SoC Audio machine driver for Snow");
++MODULE_LICENSE("GPL");
 -- 
-1.7.10.4
+1.7.9.5
