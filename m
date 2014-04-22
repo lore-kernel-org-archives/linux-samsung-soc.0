@@ -1,105 +1,160 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 3/9] drm/panel: Add driver for exynos_dp based panels
-Date: Tue, 22 Apr 2014 20:07:51 +0530
-Message-ID: <CAEC9eQPzaUDPBH7MRYz-NfQHays9tVk5x7PTnHN_zhD5EVS0pA@mail.gmail.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
-	<001b01cf5dfb$a4ab54e0$ee01fea0$%han@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/4] drm/fb-helper: Fix hpd vs. initial config races
+Date: Tue, 22 Apr 2014 16:42:18 +0200
+Message-ID: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f169.google.com ([209.85.128.169]:56815 "EHLO
-	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755198AbaDVOhw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 10:37:52 -0400
-Received: by mail-ve0-f169.google.com with SMTP id pa12so10109726veb.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 07:37:51 -0700 (PDT)
-In-Reply-To: <001b01cf5dfb$a4ab54e0$ee01fea0$%han@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hi Jingoo,
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
+Some drivers need to be able to have a perfect race-free fbcon setup.
+Current drivers only enable hotplug processing after the call to
+drm_fb_helper_initial_config which leaves a tiny but important race.
 
-On Tue, Apr 22, 2014 at 12:52 PM, Jingoo Han <jg1.han@samsung.com> wrote:
->
-> On Tuesday, April 22, 2014 7:39 AM, Ajay Kumar wrote:
-> >
-> > This patch adds a simple driver to handle all the LCD and LED
-> > powerup/down routines needed to support eDP/eDP-LVDS panels
-> > supported on exynos boards.
-> >
-> > The LCD and LED units are usually powered up via regulators,
-> > and almost on all boards, we will have a BL_EN pin to enable/
-> > disable the backlight. Sometimes, we can have LCD_EN switches
-> > as well. The routines in this driver can be used to control
-> > panel power sequence on such boards.
-> >
-> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> > ---
-> > Changes since V1:
-> >       Added routine for post_disable, removed few unwanted headers.
-> >       Refactored a lot of code.
-> >
-> >  .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++++
-> >  drivers/gpu/drm/panel/Kconfig                      |    9 +
-> >  drivers/gpu/drm/panel/Makefile                     |    1 +
-> >  drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 ++++++++++++++++++++
-> >  4 files changed, 306 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> >  create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
-> >
-> > diff --git a/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> > b/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> > new file mode 100644
-> > index 0000000..3fbca54
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
-> > @@ -0,0 +1,45 @@
-> > +exynos_DP_panel/DP_to_LVDS_panel
->
-> Please fix it as below.
->
-> +Exynos DP panel/DP to LVDS panel
->
-Ok.
+This race is especially noticable on embedded platforms where the
+driver itself enables the voltage for the hdmi output, since only then
+will monitors (after a bit of delay, as usual) respond by asserting
+the hpd pin.
 
-> [....]
->
-> > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> > index 4ec874d..ea9d5ac 100644
-> > --- a/drivers/gpu/drm/panel/Kconfig
-> > +++ b/drivers/gpu/drm/panel/Kconfig
-> > @@ -30,4 +30,13 @@ config DRM_PANEL_S6E8AA0
-> >       select DRM_MIPI_DSI
-> >       select VIDEOMODE_HELPERS
-> >
-> > +config DRM_PANEL_EXYNOS_DP
-> > +     tristate "support for DP panels"
->
-> It looks very general. Please fix it as below.
->
-> +       tristate "support for Exynos DP panels"
->
-Ok.
+Most of the infrastructure is already there with the split-out
+drm_fb_helper_init. And drm_fb_helper_initial_config already has all
+the required locking to handle concurrent hpd events since
 
-> Best regards,
-> Jingoo Han
->
-> > +     depends on OF && DRM_PANEL && DRM_EXYNOS_DP
-> > +     help
-> > +       DRM panel driver for DP panels and LVDS connected via DP bridges
-> > +       that need at most a regulator for LCD unit, a regulator for LED unit
-> > +       and/or enable GPIOs for LCD or LED units. Delay values can also be
-> > +       specified to support powerup and powerdown process.
-> > +
->
-> [.....]
->
->
+commit 53f1904bced78d7c00f5d874c662ec3ac85d0f9f
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu Mar 20 14:26:35 2014 +0100
 
-Thanks and Regards,
-Ajay Kumar
+    drm/fb-helper: improve drm_fb_helper_initial_config locking
+
+The only missing bit is making drm_fb_helper_hotplug_event save
+against concurrent calls of drm_fb_helper_initial_config. The only
+unprotected bit is the check for fb_helper->fb.
+
+With that drivers can first initialize the fb helper, then enabel
+hotplug processing and then set up the initial config all in a
+completely race-free manner. Update kerneldoc and convert i915 as a
+proof of concept.
+
+Feature requested by Thierry since his tegra driver atm reliably boots
+slowly enough to misses the hotplug event for an external hdmi screen,
+but also reliably boots to quickly for the hpd pin to be asserted when
+the fb helper calls into the hdmi ->detect function.
+
+Cc: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/drm_fb_helper.c | 11 +++++------
+ drivers/gpu/drm/i915/i915_dma.c |  3 ---
+ drivers/gpu/drm/i915/i915_drv.c |  2 --
+ drivers/gpu/drm/i915/i915_drv.h |  1 -
+ drivers/gpu/drm/i915/i915_irq.c |  4 ----
+ 5 files changed, 5 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index e95ed5805f07..80ce92ab91f9 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1587,8 +1587,10 @@ EXPORT_SYMBOL(drm_fb_helper_initial_config);
+  * either the output polling work or a work item launched from the driver's
+  * hotplug interrupt).
+  *
+- * Note that the driver must ensure that this is only called _after_ the fb has
+- * been fully set up, i.e. after the call to drm_fb_helper_initial_config.
++ * Note that drivers may call this even before calling
++ * drm_fb_helper_initial_config but only aftert drm_fb_helper_init. This allows
++ * for a race-free fbcon setup and will make sure that the fbdev emulation will
++ * not miss any hotplug events.
+  *
+  * RETURNS:
+  * 0 on success and a non-zero error code otherwise.
+@@ -1598,11 +1600,8 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
+ 	struct drm_device *dev = fb_helper->dev;
+ 	u32 max_width, max_height;
+ 
+-	if (!fb_helper->fb)
+-		return 0;
+-
+ 	mutex_lock(&fb_helper->dev->mode_config.mutex);
+-	if (!drm_fb_helper_is_bound(fb_helper)) {
++	if (!fb_helper->fb || !drm_fb_helper_is_bound(fb_helper)) {
+ 		fb_helper->delayed_hotplug = true;
+ 		mutex_unlock(&fb_helper->dev->mode_config.mutex);
+ 		return 0;
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index cc0c6eded51c..89ba88d37ae1 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -1375,9 +1375,6 @@ static int i915_load_modeset_init(struct drm_device *dev)
+ 	 */
+ 	intel_fbdev_initial_config(dev);
+ 
+-	/* Only enable hotplug handling once the fbdev is fully set up. */
+-	dev_priv->enable_hotplug_processing = true;
+-
+ 	drm_kms_helper_poll_init(dev);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 254b3236200b..dee36a5b7fae 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -448,7 +448,6 @@ static int i915_drm_freeze(struct drm_device *dev)
+ 		cancel_delayed_work_sync(&dev_priv->rps.delayed_resume_work);
+ 
+ 		drm_irq_uninstall(dev);
+-		dev_priv->enable_hotplug_processing = false;
+ 		/*
+ 		 * Disable CRTCs directly since we want to preserve sw state
+ 		 * for _thaw.
+@@ -589,7 +588,6 @@ static int __i915_drm_thaw(struct drm_device *dev, bool restore_gtt_mappings)
+ 		 * notifications.
+ 		 * */
+ 		intel_hpd_init(dev);
+-		dev_priv->enable_hotplug_processing = true;
+ 		/* Config may have changed between suspend and resume */
+ 		intel_resume_hotplug(dev);
+ 	}
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index 7d6acb401fd9..41094d6357b1 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1321,7 +1321,6 @@ struct drm_i915_private {
+ 	u32 pipestat_irq_mask[I915_MAX_PIPES];
+ 
+ 	struct work_struct hotplug_work;
+-	bool enable_hotplug_processing;
+ 	struct {
+ 		unsigned long hpd_last_jiffies;
+ 		int hpd_cnt;
+diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+index c828f5b78250..179588b2368f 100644
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -1003,10 +1003,6 @@ static void i915_hotplug_work_func(struct work_struct *work)
+ 	bool changed = false;
+ 	u32 hpd_event_bits;
+ 
+-	/* HPD irq before everything is fully set up. */
+-	if (!dev_priv->enable_hotplug_processing)
+-		return;
+-
+ 	mutex_lock(&mode_config->mutex);
+ 	DRM_DEBUG_KMS("running encoder hotplug functions\n");
+ 
+-- 
+1.9.2
