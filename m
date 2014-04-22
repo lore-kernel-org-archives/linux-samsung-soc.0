@@ -1,102 +1,72 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH V4 1/5] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Tue, 22 Apr 2014 09:05:07 +0530
-Message-ID: <CAFp+6iHvFtMbzr1NG7J_DS5upzhgaKOiuKTk_9cUNpfLswbJyQ@mail.gmail.com>
-References: <1396967803-28868-1-git-send-email-gautam.vivek@samsung.com>
-	<1396967803-28868-2-git-send-email-gautam.vivek@samsung.com>
-	<534529B2.2020107@samsung.com>
-	<CAFp+6iEzaxCQNkGZWuBnAaAHk0uXrX4KhjVbaJfZFChB6uzk4A@mail.gmail.com>
-	<53454C11.7060607@samsung.com>
-	<CAFp+6iHU0YXj18ajDwOqPh_SJWr6GkMPRr6qaGdmPoCc0+tz5g@mail.gmail.com>
-	<CAFp+6iH7-O8pNNMrk7Yhg1u+DXcXD1Tp9RYdiFg+-Om5Toojfw@mail.gmail.com>
-	<534E892B.6090409@samsung.com>
-	<CAFp+6iGYfz+ZT9zxgeVefLhtb0mb-=K4faUZC+1FtQoO0hMoqw@mail.gmail.com>
-	<001101cf5dd1$2e04d390$8a0e7ab0$%han@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: dts: disable MDMA1 node for smdk5420 board
+Date: Tue, 22 Apr 2014 09:55:35 +0530
+Message-ID: <CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
+References: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
+	<021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <001101cf5dd1$2e04d390$8a0e7ab0$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, kishon <kishon@ti.com>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:42929 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897AbaDVEZf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 00:25:35 -0400
+Received: by mail-oa0-f51.google.com with SMTP id i4so5127410oah.38
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 21:25:35 -0700 (PDT)
+In-Reply-To: <021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javi Merino <javi.merino@arm.com>
 
-Hi Jingoo,
-
-
-On Tue, Apr 22, 2014 at 7:48 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Wednesday, April 16, 2014 11:49 PM, Vivek Gautam wrote:
->> On Wed, Apr 16, 2014 at 7:14 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> > On 15.04.2014 08:09, Vivek Gautam wrote:
->> >> On Thu, Apr 10, 2014 at 5:09 PM, Vivek Gautam wrote:
->> >>> On Wed, Apr 9, 2014 at 7:03 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> >>>> On 09.04.2014 13:49, Vivek Gautam wrote:
->> >>>
->> >>> So, USB30_SCLK_100M is the SCLK that we are talking in the driver. I
->> >>> don't see any reference to XXTI in the USB 3.0 DRD controller chapter
->> >>> (in both Exynos5250 and 5420)
->> >>> In addition to this there's one more point to be noticed here.
->> >>> On Exynos5420 system, the sclk_usbphy300 (which is the sclk_usbphy30
->> >>> for USB DRD channel 0), is also the PICO phy clock, i.e. USB 2.0 phy
->> >>> clock.
->> >>> So we should add a similar clk_get() for this clock in the
->> >>> phy-exynos5250-usb2 driver too, to support Exynos5420.
->> >>
->> >>
->> >> Is something clear from the above block diagram ? (although the
->> >> diagram looks weird - space and tabs problem :-(  )
->> >> Basically there's the clock USB30_SCLK_100M which is going into the
->> >> USB 3.0 DRD PHY controller.
->> >> And this is the only sclk mentioned in the block diagram for USB 3.0
->> >> DRD controller in Exynos5420.
->> >> Same is not there in the block diagram in Exynos5250 UM.
->> >
->> >
->> > From what I can see in the documentation, there are 4 USB 3.0 related clocks
->> > generated in CMU:
->> >
->> >  - sclk_usbphy300,
->> >  - sclk_usbphy301,
->> >  - sclk_usbdrd300,
->> >  - sclk_usbdrd301,
->> >
->> > They are all rated to max. 24 MHz and the recommended operating frequency is
->> > 24 MHz, so it looks exactly like USB PHY reference, which is usually a 24
->> > MHz clock.
->> >
->> > To me, this looks like on Exynos5420 a separate special clock path is used
->> > instead of xusbxti as reference of USB 3.0 PHY and so the sclk should be
->> > simply passed as the "ref" clock.
+On 22 April 2014 07:48, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Seungwon Jeon wrote:
 >>
->> Ok, i will clear on this with the hardware engineer also once.
->> May be Jingoo can help me with this.
+>
+> + Javi Merino and Tushar Behera
+>
+>> This change is similar to commit 3da355c(ARM: dts: Disable MDMA1 node
+>> for arndale-octa board). If MDMA1 region is configured with secure mode,
+>> it makes the boot failure with the following.
 >>
->> Jingoo,
->> Can you please enquire about the clock path of usbphy30 reference
->> clocks on Exynos5420.
->> As mentioned by Tomasz above, we have sclk_usbphy300 and
->> sclk_usbphy301 as the reference clocks for USB3.0 DRD phy. *Also*
->> sclk_usbphy300 is used for Pico phy (which is the USb 2.0 phy used by
->> ehci/ohci controller on Exynos5420).
->> It will be of great help.
+>> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+>>
+> If so, how about adding the 'disabled' status in 5420 dtsi file? Then if 'enabling' is required, we can enable in each board dt file...
 >
-> Hi Vevek, Tomasz
->
-> Long time no see.
->
-> I asked USB S/W engineer and USB H/W engineer.
->
-> There are two USB3.0 on Exynos5420; thus there are two sclks
-> such as 'sclk_usbphy300 and sclk_usbphy301'.
->
-> As Tomasz mentioned, 'sclk_usbphy300 and sclk_usbphy301' can
-> be used instead of 'xusbxti' as reference of USB 3.0 PHY.
 
-Thank you so much for getting this information.
-I can re-spin the patch. :-)
+That should be okay. While at it, we can remove the node disabling
+code from Arndale-Octa board DTS file.
 
+
+> - Kukjin
 >
-> However, on Exynos5420, "ONLY" 'sclk_usbphy300' can be used
-> for USB2.0 pico phy. (so, '301' CANNOT support USB2.0 pico phy.)
+>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    6 ++++++
+>>  1 files changed, 6 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index 6910485..9a48e3f 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -373,4 +373,10 @@
+>>                       };
+>>               };
+>>       };
+>> +
+>> +     amba {
+>> +             mdma1: mdma@11C10000 {
+>> +                     status = "disabled";
+>> +             };
+>> +     };
+>>  };
+>> --
+>> 1.7.0.4
+>
 
-True, for USB 2.0 pico phy, only sclk_usbphy300 can be used.
+
+
+-- 
+Tushar Behera
