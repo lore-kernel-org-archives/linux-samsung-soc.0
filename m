@@ -1,128 +1,105 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 4/4] mcpm: exynos: populate suspend and powered_up callbacks
-Date: Tue, 22 Apr 2014 12:51:06 +0200
-Message-ID: <5356499A.20609@linaro.org>
-References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org> <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH] [media] s5p-mfc: Add IOMMU support
+Date: Tue, 22 Apr 2014 16:32:48 +0530
+Message-ID: <1398164568-6048-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:60046 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753042AbaDVKul (ORCPT
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:59352 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932150AbaDVLCy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 06:50:41 -0400
-Received: by mail-wg0-f42.google.com with SMTP id y10so3674122wgg.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 03:50:40 -0700 (PDT)
-In-Reply-To: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
+	Tue, 22 Apr 2014 07:02:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <k.chander@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, arunkk.samsung@gmail.com
 
-On 04/21/2014 01:49 PM, Chander Kashyap wrote:
-> In order to support cpuidle through mcpm, suspend and powered-up
-> callbacks are required in mcpm platform code.
-> Hence populate the same callbacks.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-> ---
->   arch/arm/mach-exynos/mcpm-exynos.c |   53 +++++++++++++++++++++++++=
-+++++++++++
->   1 file changed, 53 insertions(+)
->
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exyno=
-s/mcpm-exynos.c
-> index 46d4968..16af0bd 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -318,10 +318,63 @@ static int exynos_power_down_finish(unsigned in=
-t cpu, unsigned int cluster)
->   	return 0; /* success: the CPU is halted */
->   }
->
-> +static void enable_coherency(void)
-> +{
-> +	unsigned long v, u;
-> +
-> +	asm volatile(
-> +		"mrc	p15, 0, %0, c1, c0, 1\n"
-> +		"orr	%0, %0, %2\n"
-> +		"ldr	%1, [%3]\n"
-> +		"and	%1, %1, #0\n"
-> +		"orr	%0, %0, %1\n"
-> +		"mcr	p15, 0, %0, c1, c0, 1\n"
-> +		: "=3D&r" (v), "=3D&r" (u)
-> +		: "Ir" (0x40), "Ir" (S5P_INFORM0)
-> +		: "cc");
-> +}
+The patch adds IOMMU support for MFC driver.
 
-Shouldn't this function to be used from hotplug.c also ?
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+This patch is tested on IOMMU support series [1] posted
+by KyonHo Cho.
+[1] https://lkml.org/lkml/2014/3/14/9
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c |   33 ++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-> +
-> +void exynos_powered_up(void)
-> +{
-> +	unsigned int mpidr, cpu, cluster;
-> +
-> +	mpidr =3D read_cpuid_mpidr();
-> +	cpu =3D MPIDR_AFFINITY_LEVEL(mpidr, 0);
-> +	cluster =3D MPIDR_AFFINITY_LEVEL(mpidr, 1);
-> +
-> +	arch_spin_lock(&bl_lock);
-> +	if (cpu_use_count[cpu][cluster] =3D=3D 0)
-> +		cpu_use_count[cpu][cluster] =3D 1;
-> +	arch_spin_unlock(&bl_lock);
-> +}
-> +
-> +static void exynos_suspend(u64 residency)
-> +{
-> +	unsigned int mpidr, cpunr;
-> +
-> +	mpidr =3D read_cpuid_mpidr();
-> +	cpunr =3D enynos_pmu_cpunr(mpidr);
-
-*enynos*_pmu_cpunr ?
-
-> +
-> +	__raw_writel(virt_to_phys(mcpm_entry_point), REG_ENTRY_ADDR);
-> +
-> +	exynos_power_down();
-> +
-> +	/*
-> +	 * Execution reaches here only if cpu did not power down.
-> +	 * Hence roll back the changes done in exynos_power_down function.
-> +	*/
-> +	__raw_writel(EXYNOS_CORE_LOCAL_PWR_EN,
-> +			EXYNOS_ARM_CORE_CONFIGURATION(cpunr));
-
-Why don't you use the functions defined in the
-
-patch 5/5 arm: exynos: Add MCPM call-back functions
-
-exynos_core_power_control() ?
-
-> +	set_cr(get_cr() | CR_C);
-> +	enable_coherency();
-> +}
-> +
->   static const struct mcpm_platform_ops exynos_power_ops =3D {
->   	.power_up		=3D exynos_power_up,
->   	.power_down		=3D exynos_power_down,
->   	.power_down_finish	=3D exynos_power_down_finish,
-> +	.suspend		=3D exynos_suspend,
-> +	.powered_up		=3D exynos_powered_up,
->   };
->
->   static void __init exynos_mcpm_usage_count_init(void)
->
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 89356ae..1f248ba 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -32,11 +32,18 @@
+ #include "s5p_mfc_opr.h"
+ #include "s5p_mfc_cmd.h"
+ #include "s5p_mfc_pm.h"
++#ifdef CONFIG_EXYNOS_IOMMU
++#include <asm/dma-iommu.h>
++#endif
+ 
+ #define S5P_MFC_NAME		"s5p-mfc"
+ #define S5P_MFC_DEC_NAME	"s5p-mfc-dec"
+ #define S5P_MFC_ENC_NAME	"s5p-mfc-enc"
+ 
++#ifdef CONFIG_EXYNOS_IOMMU
++static struct dma_iommu_mapping *mapping;
++#endif
++
+ int debug;
+ module_param(debug, int, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(debug, "Debug level - higher value produces more verbose messages");
+@@ -1013,6 +1020,23 @@ static void *mfc_get_drv_data(struct platform_device *pdev);
+ 
+ static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
+ {
++#ifdef CONFIG_EXYNOS_IOMMU
++	struct device *mdev = &dev->plat_dev->dev;
++
++	mapping = arm_iommu_create_mapping(&platform_bus_type, 0x20000000,
++			SZ_256M);
++	if (mapping == NULL) {
++		mfc_err("IOMMU mapping failed\n");
++		return -EFAULT;
++	}
++	mdev->dma_parms = devm_kzalloc(&dev->plat_dev->dev,
++			sizeof(*mdev->dma_parms), GFP_KERNEL);
++	dma_set_max_seg_size(mdev, 0xffffffffu);
++	arm_iommu_attach_device(mdev, mapping);
++
++	dev->mem_dev_l = dev->mem_dev_r = mdev;
++	return 0;
++#else
+ 	unsigned int mem_info[2] = { };
+ 
+ 	dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
+@@ -1049,6 +1073,7 @@ static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
++#endif
+ }
+ 
+ /* MFC probe function */
+@@ -1228,6 +1253,10 @@ err_mem_init_ctx_1:
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+ err_res:
+ 	s5p_mfc_final_pm(dev);
++#ifdef CONFIG_EXYNOS_IOMMU
++	if (mapping)
++		arm_iommu_release_mapping(mapping);
++#endif
+ 
+ 	pr_debug("%s-- with error\n", __func__);
+ 	return ret;
+@@ -1256,6 +1285,10 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+ 		put_device(dev->mem_dev_r);
+ 	}
+ 
++#ifdef CONFIG_EXYNOS_IOMMU
++	if (mapping)
++		arm_iommu_release_mapping(mapping);
++#endif
+ 	s5p_mfc_final_pm(dev);
+ 	return 0;
+ }
+-- 
+1.7.9.5
