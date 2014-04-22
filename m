@@ -1,72 +1,48 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: dts: disable MDMA1 node for smdk5420 board
-Date: Tue, 22 Apr 2014 09:55:35 +0530
-Message-ID: <CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
-References: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
-	<021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Tue, 22 Apr 2014 11:09:15 +0530
+Message-ID: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:42929 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750897AbaDVEZf (ORCPT
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:40663 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751166AbaDVFkU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 00:25:35 -0400
-Received: by mail-oa0-f51.google.com with SMTP id i4so5127410oah.38
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 21:25:35 -0700 (PDT)
-In-Reply-To: <021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
+	Tue, 22 Apr 2014 01:40:20 -0400
+Received: by mail-pd0-f169.google.com with SMTP id fp1so4500173pdb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Apr 2014 22:40:20 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Seungwon Jeon <tgih.jun@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javi Merino <javi.merino@arm.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-On 22 April 2014 07:48, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Seungwon Jeon wrote:
->>
->
-> + Javi Merino and Tushar Behera
->
->> This change is similar to commit 3da355c(ARM: dts: Disable MDMA1 node
->> for arndale-octa board). If MDMA1 region is configured with secure mode,
->> it makes the boot failure with the following.
->>
->> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->>
-> If so, how about adding the 'disabled' status in 5420 dtsi file? Then if 'enabling' is required, we can enable in each board dt file...
->
+MAU powerdomain provides clocks for Audio sub-system block. This block
+comprises of the I2S audio controller, audio DMA blocks and Audio
+sub-system clock registers.
 
-That should be okay. While at it, we can remove the node disabling
-code from Arndale-Octa board DTS file.
+Right now, there is no way to hook up power-domains with clock providers.
+During late boot when this power-domain gets disabled, we get following
+external abort.
 
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420.dtsi |    5 -----
+ 1 file changed, 5 deletions(-)
 
-> - Kukjin
->
->> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    6 ++++++
->>  1 files changed, 6 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> index 6910485..9a48e3f 100644
->> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> @@ -373,4 +373,10 @@
->>                       };
->>               };
->>       };
->> +
->> +     amba {
->> +             mdma1: mdma@11C10000 {
->> +                     status = "disabled";
->> +             };
->> +     };
->>  };
->> --
->> 1.7.0.4
->
-
-
-
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index c3a9a66..68e0f24 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -219,11 +219,6 @@
+ 		reg = <0x100440C0 0x20>;
+ 	};
+ 
+-	mau_pd: power-domain@100440E0 {
+-		compatible = "samsung,exynos4210-pd";
+-		reg = <0x100440E0 0x20>;
+-	};
+-
+ 	g2d_pd: power-domain@10044100 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044100 0x20>;
 -- 
-Tushar Behera
+1.7.9.5
