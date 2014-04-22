@@ -1,13 +1,17 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 5/9] drm/exynos: dp: modify driver to support drm_panel
-Date: Tue, 22 Apr 2014 10:37:46 +0200
-Message-ID: <20140422083745.GD17275@ulmo>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-6-git-send-email-ajaykumar.rs@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH RFC 3/3] drm/exynos: use pending_components for	components
+ tracking
+Date: Tue, 22 Apr 2014 10:43:16 +0200
+Message-ID: <53562BA4.6020902@samsung.com>
+References: <1397734130-21019-1-git-send-email-a.hajda@samsung.com>
+ <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
+ <20140417214709.GY24070@n2100.arm.linux.org.uk> <53510C39.1020205@samsung.com>
+ <20140418124202.GD24070@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1395650424=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1398119958-32005-6-git-send-email-ajaykumar.rs@samsung.com>
+In-reply-to: <20140418124202.GD24070@n2100.arm.linux.org.uk>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,90 +21,83 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Russel,
 
---===============1395650424==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cHMo6Wbp1wrKhbfi"
-Content-Disposition: inline
+My answer little bit later due to Easter.
+
+On 04/18/2014 02:42 PM, Russell King - ARM Linux wrote:
+> On Fri, Apr 18, 2014 at 01:27:53PM +0200, Andrzej Hajda wrote:
+>> Hi Russel,
+>>
+>> Thanks for comments.
+>>
+>> On 04/17/2014 11:47 PM, Russell King - ARM Linux wrote:
+>>> On Thu, Apr 17, 2014 at 01:28:50PM +0200, Andrzej Hajda wrote:
+>>>> +out:
+>>>> +	if (ret != -EPROBE_DEFER)
+>>>> +		exynos_drm_dev_ready(&pdev->dev);
+>>> So we end up with everyone needing a "ready" call in each sub-driver
+>>> back into the main driver... this makes it impossible to write a
+>>> generic subcomponent driver which is not tied in any way to the
+>>> main driver.
+>>>
+>>> That is quite some restriction, and would prevent, for example, the
+>>> TDA998x driver being used both with Armada DRM, tilcdc and any other
+>>> driver.
+>> As I see in armada driver drm is deferred in case tda998x is not yet
+>> available. The same solution can be still used with pending_devices
+>> approach - the main driver will not report its readiness until tda998x
+>> is present.
+>>
+>> Anyway it still seems to be better than componentize every driver which can
+>> probably become a part of some superdevice.
+>>
+>> If you want to get rid of deferred probe one can make global list of
+>> 'ready' devices with notifications systems for master devices.
+>>
+>> Maybe it would be good to consider notification system for devices probe
+>> result,
+>> it will require that driver register all its interfaces in probe, ie its
+>> readiness cannot
+>> be reported later but will not require to add new framework. I hope just
+>> extending current
+>> notification system should be enough.
+> You aren't addressing my point.  If I were to convert tda998x to use
+> your infrastructure, then I would have to add in ifdefs to tie it into
+> armada DRM _and_ a different set of ifdefs to tie it into tilcdc.  Then
+> when someone else wanted to use it in their driver, they'd have to add
+> yet more ifdefs into it to tie it into their driver.
+>
+> This does not scale.
+
+As I already answered, you should not use 'my' framework for tda998x
+driver, you can still use current approach with deferred probe. I am not
+sure
+why have you used ifdefs in armada, tilcdc also uses tda998x and without
+ifdefs.
+
+'My' framework (I think helper library is a better name) was created to
+use with
+devices which are closely tied together by another framework - case
+of some SoC devices.
 
 
---cHMo6Wbp1wrKhbfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>
+> So, please address my point: in your system, how can a single component
+> be shared between multiple different master drivers?
+>
 
-On Tue, Apr 22, 2014 at 04:09:14AM +0530, Ajay Kumar wrote:
-[...]
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
-ynos/exynos_dp_core.c
-[...]
-> @@ -1299,6 +1308,15 @@ static int exynos_dp_bind(struct device *dev, stru=
-ct device *master, void *data)
-> =20
->  	INIT_WORK(&dp->hotplug_work, exynos_dp_hotplug);
-> =20
-> +	panel_node =3D of_find_compatible_node(NULL, NULL,
-> +						"samsung,exynos-dp-panel");
+I have answered this question above, again. But your question suggests
+you want to componentize
+also drivers which are shared by different DRMs. How do you want to do it?
+- componentize all DRM drivers sharing given driver?
+- componentize shared device in a way that it can used by
+non-componentized devices? how? I guess it
+will be possible but will have some price.
 
-No, please don't do this. It will break as soon as you have two panels
-of the same type in one system.
-
-Also the compatible value of a panel should describe the specific panel
-in use (e.g. "samsung,s6e8aa0"), so you shouldn't rely on "magic" like
-this. Use a phandle to find the panel's struct device_node.
-
-[...]
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/ex=
-ynos/exynos_dp_core.h
-> index 56fa43e..9dc7991 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-> @@ -148,6 +148,7 @@ struct exynos_dp_device {
->  	struct drm_device	*drm_dev;
->  	struct drm_connector	connector;
->  	struct drm_encoder	*encoder;
-> +	struct drm_panel	*drm_panel;
-
-I don't think you need the drm_ prefix here.
-
-Thierry
-
---cHMo6Wbp1wrKhbfi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTVipZAAoJEN0jrNd/PrOhFXkQAJae30uX/829Vn6EFxT1xwGt
-iR4/YuoWVFNUmnh6hJ87Sh3Upi9JqIumd9d8Q2NMSZih6CHNBYKBTeMg+ZYf1sOH
-ZXz35qOE5iPOb9Ni3GHHGGgplQSMsGvn9RxhKugKqfH1rCZrai3bft1G0KcwEDLZ
-eZXkQ+j5HoM01gdZAaO0S0pAljgbLznVUYmy9ePkRHt6YhBgCGMJFntiR5sn6fTG
-5xKSbwxpdKpEO9pSC1sVul/tC6nUAxSMsX6vGemoTuWDMoc5MBhLsaCVbhKOKUMR
-mku1wLZjecaEE6dgtESaoqQjQCvkHcyR3ue3PGlc2bWWtmz/TihakLUXuILx+k79
-W1BO1wy9BgW0128e5cMsfmwQYufLME4hihtPGTXouCd5t+vEt06pXDa6Q5kuzPBX
-TFnEdUjT3dOtDWaDb5Wo2IOXtBt5lKjVI6VIT9fpHDNaGBvVnFMdc+OhNkNFDYU6
-WTvEwNC8oFrk4yTJRmH31bIP6a2jATBcfSoFviY7QdVdQe60e5JAekcde1/HYbIX
-e6+hbv7kWufZZDvmkwP/Rt2inEaOdB0/mEWn+fHS6Eg45cDQB2t+60xNRAA8podF
-Wi93sfJpI+MW2tN4wZDPbKSRF8aUj8lV9wqv8LX5O+PakMnYJ99x31En9MGBHS8Z
-3JuCC3UJpQ9NtXBee+pl
-=Yw1/
------END PGP SIGNATURE-----
-
---cHMo6Wbp1wrKhbfi--
-
---===============1395650424==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1395650424==--
+Regards
+Andrzej
