@@ -1,15 +1,15 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH v2 06/14] drm/exynos: support MIPI DSI command mode
-Date: Tue, 22 Apr 2014 10:06:13 +0900
-Message-ID: <5355C085.8000703@samsung.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Tue, 22 Apr 2014 10:24:39 +0900
+Message-ID: <5355C4D7.7010109@samsung.com>
 References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-7-git-send-email-yj44.cho@samsung.com>
- <1460689.BVNsEv5Rlh@avalon>
+ <1398083321-8668-11-git-send-email-yj44.cho@samsung.com>
+ <5275422.8CoHT7g51N@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1460689.BVNsEv5Rlh@avalon>
+In-reply-to: <5275422.8CoHT7g51N@avalon>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -27,57 +27,89 @@ Hi Laurent,
 
 Thank you for the comment.
 
-On 04/22/2014 07:52 AM, Laurent Pinchart wrote:
+On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
 > Hi YoungJun,
 >
 > Thank you for the patch.
 >
-> On Monday 21 April 2014 21:28:33 YoungJun Cho wrote:
->> This patch adds I80 interface for FIMD to support command mode panel.
->>
->> For this, the below features are added:
->> - Sets display interface mode relevant registers properly according to the
->>    interface type from DT
->> - Adds drm_panel_cpu_timings structure
->>   . The command mode panel sets them as the private attributes in struct
->>     drm_display_mode and FIMD gets them by fimd_mode_set().
->> - Adds TE interrupt handler
->>    . FIMD driver should know TE signal from lcd panel to avoid tearing issue.
->> - Adds trigger feature
->>    . In case of command mode panel, FIMD should set trigger bit,
->>      so that image data has to be transferred to display bus or lcd panel.
+> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel driver.
 >>
 >> Changelog v2:
->> - Moves CPU timings relevant properties to panel DT
+>> - Declares delay, size properties in probe routine instead of DT
+>> Changelog v3:
+>> - Moves CPU timings relevant properties from FIMD DT
 >>    (commented by Laurent Pinchart, Andrzej Hajda)
 >>
 >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 >> Acked-by: Inki Dae <inki.dae@samsung.com>
 >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> ---
->>   drivers/gpu/drm/exynos/Kconfig           |    1 +
->>   drivers/gpu/drm/exynos/exynos_drm_crtc.c |   11 ++
->>   drivers/gpu/drm/exynos/exynos_drm_crtc.h |    2 +
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h  |    2 +
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c  |   13 ++
->>   drivers/gpu/drm/exynos/exynos_drm_fimd.c |  280 ++++++++++++++++++++++-----
->>   include/drm/drm_mipi_dsi.h               |    2 +
->>   include/drm/drm_panel.h                  |    7 +
+>>   drivers/gpu/drm/panel/Kconfig         |    7 +
+>>   drivers/gpu/drm/panel/Makefile        |    1 +
+>>   drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 ++++++++++++++++++++++++++++++
+>>   3 files changed, 577 insertions(+)
+>>   create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
 >
-> Could you please split the DRM core changes into two separate standalone
-> patches (as they're unrelated to each other) ?
+> [snip]
+>
+>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+>> index 0000000..1282678
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>> @@ -0,0 +1,569 @@
+>
+> [snip]
+>
+>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+>> +{
+>> +	struct drm_connector *connector = panel->connector;
+>> +	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
+>> +	struct drm_display_mode *mode;
+>> +
+>> +	mode = drm_mode_create(connector->dev);
+>> +	if (!mode) {
+>> +		DRM_ERROR("failed to create a new display mode\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	drm_display_mode_from_videomode(&ctx->vm, mode);
+>> +	mode->width_mm = ctx->width_mm;
+>> +	mode->height_mm = ctx->height_mm;
+>> +	connector->display_info.width_mm = mode->width_mm;
+>> +	connector->display_info.height_mm = mode->height_mm;
+>> +
+>> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+>> +	mode->private = (void *)&ctx->cpu_timings;
+>
+> Wouldn't it make sense to create a new get_interface_params (or similar)
+> operation for drm_panel to query interface configuration parameters instead of
+> shoving it in the mode private field ?
 
-Ok, it could be split into core and driver ones.
-The DRM core changes are required to link with TE irq handler callback.
+You mean "new get_interface_params operation" is different from
+get_modes() ?
 
-I'll do it next patch set.
+Till now, struct drm_display_mode and most of mode relevant APIs are
+only for video interface.
+And CPU interface also needs video mode configurations.
+
+I have a plan to implement the CPU interface relevant APIs like video
+mode ones, but I think they should be used under current DRM mode APIs
+like fill_modes, get_modes and so on.
+So after that implementation, this private field will be replaced by
+new ones.
+
+Could you explain it in more detail?
 
 Thank you.
 Best regards YJ
 
 >
->>   include/video/samsung_fimd.h             |    3 +-
->>   9 files changed, 277 insertions(+), 44 deletions(-)
+>> +	drm_mode_probed_add(connector, mode);
+>> +
+>> +	return 1;
+>> +}
 >
 > [snip]
 >
