@@ -1,332 +1,125 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: Re: [PATCH v11 12/27] ARM: dts: Add description of System MMU of
- Exynos SoCs
-Date: Tue, 22 Apr 2014 21:36:25 +0900
-Message-ID: <20140422213625.e5470ec6680bd4c875f0f02f@samsung.com>
-References: <20140314140649.dc5958f420770af48e2376d9@samsung.com>
- <CAOD6ATr56P03Y3GChOTfTSHGrokU3do-YcRhk_voXSKcJVi8mA@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
+Date: Tue, 22 Apr 2014 14:52:17 +0200
+Message-ID: <53566601.2080801@xs4all.nl>
+References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com> <1398072362-24962-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25823 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755509AbaDVMgb (ORCPT
+Received: from smtp-vbr9.xs4all.nl ([194.109.24.29]:2957 "EHLO
+	smtp-vbr9.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751924AbaDVMwi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 08:36:31 -0400
-In-reply-to: <CAOD6ATr56P03Y3GChOTfTSHGrokU3do-YcRhk_voXSKcJVi8mA@mail.gmail.com>
+	Tue, 22 Apr 2014 08:52:38 -0400
+In-Reply-To: <1398072362-24962-2-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>
+To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-On Sun, 20 Apr 2014 15:25:59 +0530, Shaik Ameer Basha wrote:
-> Hi KyongHo Cho,
+On 04/21/2014 11:26 AM, Arun Kumar K wrote:
+> From: Pawel Osciak <posciak@chromium.org>
 > 
-> Please find the comments inline.
+> This event indicates that the decoder has reached a point in the stream,
+> at which the resolution changes. The userspace is expected to provide a new
+> set of CAPTURE buffers for the new format before decoding can continue.
+> The event can also be used for more generic events involving resolution
+> or format changes at runtime for all kinds of video devices.
 > 
-> On Fri, Mar 14, 2014 at 10:36 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
-> > This patch adds dts entries for the System MMU devices found on
-> > Exynos4 and Exynos5 SoC series and the System MMU binding
-> > documentation.
-> >
-> > CC: Rob Herring <robherring2@gmail.com>
-> > CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
-> > ---
-> >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |   86 +++++++
-> >  arch/arm/boot/dts/exynos4.dtsi                     |  107 ++++++++
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |   23 +-
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   77 +++++-
-> >  arch/arm/boot/dts/exynos5250.dtsi                  |  266 +++++++++++++++++++-
-> >  arch/arm/boot/dts/exynos5420.dtsi                  |  205 ++++++++++++++-
-> >  6 files changed, 758 insertions(+), 6 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> > new file mode 100644
-> > index 0000000..e4417bb
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> > @@ -0,0 +1,86 @@
-> > +Samsung Exynos IOMMU H/W, System MMU (System Memory Management Unit)
-> > +
-> > +Samsung's Exynos architecture contains System MMUs that enables scattered
-> > +physical memory chunks visible as a contiguous region to DMA-capable peripheral
-> > +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
-> > +
+> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |   16 ++++++++++++++++
+>  include/uapi/linux/videodev2.h                     |    6 ++++++
+>  2 files changed, 22 insertions(+)
 > 
-> [snip]
-> 
-> 
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> > index 8f6300f..df336ea 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -80,6 +80,16 @@
-> >                 reg = <0x10044040 0x20>;
-> >         };
-> >
-> > +       pd_isp: isp-power-domain@0x10044020 {
-> > +               compatible = "samsung,exynos4210-pd";
-> > +               reg = <0x10044020 0x20>;
-> > +       };
-> > +
-> > +       pd_disp1: disp1-power-domain@0x100440A0 {
-> > +               compatible = "samsung,exynos4210-pd";
-> > +               reg = <0x100440A0 0x20>;
-> > +       };
-> > +
-> >         clock: clock-controller@10010000 {
-> >                 compatible = "samsung,exynos5250-clock";
-> >                 reg = <0x10010000 0x30000>;
-> > @@ -679,7 +689,7 @@
-> >                                 "sclk_hdmiphy", "mout_hdmi";
-> >         };
-> >
-> > -       mixer {
-> > +       mixer: mixer {
-> >                 compatible = "samsung,exynos5250-mixer";
-> >                 reg = <0x14450000 0x10000>;
-> >                 interrupts = <0 94 0>;
-> > @@ -700,7 +710,7 @@
-> >                 phy-names = "dp";
-> >         };
-> >
-> > -       fimd@14400000 {
-> > +       fimd: fimd@14400000 {
-> >                 clocks = <&clock 133>, <&clock 339>;
-> >                 clock-names = "sclk_fimd", "fimd";
-> >         };
-> > @@ -715,4 +725,256 @@
-> >                 io-channel-ranges;
-> >                 status = "disabled";
-> >         };
-> > +
-> > +       sysmmu_g2d: sysmmu@10A60000 {
-> > +               compatible = "samsung,sysmmu-v1";
-> > +               reg = <0x10A60000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <24 5>;
-> > +               clock-names = "sysmmu";
-> > +               clocks = <&clock 361>;
-> > +       };
-> > +
-> > +       sysmmu_mfc_r: sysmmu@11200000 {
-> > +               compatible = "samsung,sysmmu-v2";
-> > +               reg = <0x11200000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <6 2>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 268>, <&clock 266>;
-> 
-> Add mmu-masters...
->                     mmu-masters = <&mfc>;
+> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> index 5c70b61..0aec831 100644
+> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> @@ -155,6 +155,22 @@
+>  	    </entry>
+>  	  </row>
+>  	  <row>
+> +	    <entry><constant>V4L2_EVENT_SOURCE_CHANGE</constant></entry>
+> +	    <entry>5</entry>
+> +	    <entry>
+> +	      <para>This event is triggered when a resolution or format change
+> +	       is detected during runtime by the video device. It can be a
+> +	       runtime resolution change triggered by a video decoder or the
+> +	       format change happening on an HDMI connector. Application may
+> +	       need to reinitialize buffers before proceeding further.</para>
+> +
+> +              <para>This event has a &v4l2-event-source-change; associated
+> +	      with it. This has significance only for v4l2 subdevs where the
+> +	      <structfield>pad_num</structfield> field will be updated with
+> +	      the pad number on which the event is triggered.</para>
+> +	    </entry>
+> +	  </row>
+> +	  <row>
+>  	    <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
+>  	    <entry>0x08000000</entry>
+>  	    <entry>Base event number for driver-private events.</entry>
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 6ae7bbe..12e0614 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -1733,6 +1733,7 @@ struct v4l2_streamparm {
+>  #define V4L2_EVENT_EOS				2
+>  #define V4L2_EVENT_CTRL				3
+>  #define V4L2_EVENT_FRAME_SYNC			4
+> +#define V4L2_EVENT_SOURCE_CHANGE		5
+>  #define V4L2_EVENT_PRIVATE_START		0x08000000
+>  
+>  /* Payload for V4L2_EVENT_VSYNC */
+> @@ -1764,12 +1765,17 @@ struct v4l2_event_frame_sync {
+>  	__u32 frame_sequence;
+>  };
+>  
+> +struct v4l2_event_source_change {
+> +	__u32 pad_num;
+> +};
+> +
+>  struct v4l2_event {
+>  	__u32				type;
+>  	union {
+>  		struct v4l2_event_vsync		vsync;
+>  		struct v4l2_event_ctrl		ctrl;
+>  		struct v4l2_event_frame_sync	frame_sync;
+> +		struct v4l2_event_source_change source_change;
+>  		__u8				data[64];
+>  	} u;
+>  	__u32				pending;
 > 
 
-Ok.
+This needs to be done differently. The problem is that you really have multiple
+events that you want to subscribe to: one for each pad (or input: see the way
+VIDIOC_G/S_EDID maps pad to an input or output index when used with a video node,
+we have to support that for this event as well).
 
-> > +               samsung,power-domain = <&pd_mfc>;
-> > +       };
-> > +
-> > +       sysmmu_mfc_l: sysmmu@11210000 {
-> > +               compatible = "samsung,sysmmu-v2";
-> > +               reg = <0x11210000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <8 5>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 267>, <&clock 266>;
-> 
-> Add mmu-masters...
->                     mmu-masters = <&mfc>;
-> 
+What you want to do is similar to what is done for control events: there you can
+subscribe for a specific control and get notified when that control changes.
 
-OK.
+The way that works in the event code is that the 'id' field in the v4l2_event
+struct contains that control ID, or, in this case, the pad/input/output index.
 
-> 
-> > +               samsung,power-domain = <&pd_mfc>;
-> > +       };
-> > +
-> > +       sysmmu_rotator: sysmmu@11D40000 {
-> > +               compatible = "samsung,sysmmu-v1";
-> > +               reg = <0x11D40000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <4 0>;
-> > +               clock-names = "sysmmu";
-> > +               clocks = <&clock 272>;
-> > +       };
-> > +
-> 
-> [snip]
-> 
-> >  };
-> > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> > index 45e2e65..a736f09 100644
-> > --- a/arch/arm/boot/dts/exynos5420.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> > @@ -470,7 +470,7 @@
-> >                 phy-names = "dp";
-> >         };
-> >
-> > -       fimd@14400000 {
-> > +       fimd: fimd@14400000 {
-> >                 samsung,power-domain = <&disp_pd>;
-> >                 clocks = <&clock 147>, <&clock 421>;
-> >                 clock-names = "sclk_fimd", "fimd";
-> > @@ -641,7 +641,7 @@
-> >                 status = "disabled";
-> >         };
-> >
-> > -       mixer@14450000 {
-> > +       mixer: mixer@14450000 {
-> >                 compatible = "samsung,exynos5420-mixer";
-> >                 reg = <0x14450000 0x10000>;
-> >                 interrupts = <0 94 0>;
-> > @@ -720,4 +720,205 @@
-> >                 clock-names = "watchdog";
-> >                 samsung,syscon-phandle = <&pmu_system_controller>;
-> >          };
-> > +
-> > +       sysmmu_g2dr: sysmmu@10A60000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x10A60000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <24 5>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 482>, <&clock 481>;
-> > +       };
-> > +
-> > +       sysmmu_g2dw: sysmmu@10A70000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x10A60000 0x1000>;
-> 
-> Duplicate sysmmu reg base address.
->                     reg = <0x10A70000 0x1000>;
-> 
+In the application you will subscribe to the SOURCE_CHANGE event for a specific
+pad/input/output index.
 
-Oh, really it is.
-Thanks.
+In other words, the pad_num field should be dropped and the id field used
+instead.
 
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <22 2>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 482>, <&clock 481>;
-> > +       };
-> > +
-> > +       sysmmu_scaler0r: sysmmu@12880000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x12880000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <22 4>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 384>, <&clock 381>;
-> > +       };
-> > +
-> > +       sysmmu_scaler1r: sysmmu@12890000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x12890000 0x1000>;
-> > +               interrupts = <0 186 0>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 385>, <&clock 382>;
-> > +       };
-> > +
-> > +       sysmmu_scaler2r: sysmmu@128A0000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x128A0000 0x1000>;
-> > +               interrupts = <0 188 0>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 386>, <&clock 383>;
-> > +       };
-> > +
-> > +       sysmmu_scaler0w: sysmmu@128C0000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x128C0000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <27 2>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 384>, <&clock 381>;
-> > +       };
-> > +
-> > +       sysmmu_scaler1w: sysmmu@128D0000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x128D0000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <22 6>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 385>, <&clock 382>;
-> > +       };
-> > +
-> > +       sysmmu_scaler2w: sysmmu@128E0000 {
-> > +               compatible = "samsung,sysmmu-v3.2";
-> > +               reg = <0x128E0000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <19 6>;
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 386>, <&clock 383>;
-> > +       };
-> > +
-> > +       sysmmu_mfc_r: sysmmu@11200000 {
-> 
-> 0x11200000 belongs to mfc_l
->              sysmmu_mfc_l: sysmmu@11200000
-> 
+Assuming we will also add a 'changes' field (see my reply to the other post
+on that topic), then you should also provide replace and merge ops (see
+v4l2-ctrls.c). That way it is sufficient to use just one element when calling
+v4l2_event_subscribe(): you will never loose information since if multiple
+events arrive before the application can dequeue them, the 'changes' information
+will be the ORed value of all those intermediate events.
 
-OK. thanks.
-
-> > +               compatible = "samsung,sysmmu-v2";
-> > +               reg = <0x11200000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <6 2>;
-> 
->                     interrupts = <8 5>;
-> Add mmu-masters field,
->                     mmu-masters = <&mfc>;
-
-Oh, irq is also changed.
-Thanks.
-
-> 
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 402>, <&clock 401>;
-> 
-> clocks = <&clock 403>, <&clock 401>;
-
-Thanks.
-
-This will be fixed with macro names.
-
-> 
-> > +               samsung,power-domain = <&mfc_pd>;
-> > +       };
-> > +
-> > +       sysmmu_mfc_l: sysmmu@11210000 {
-> 
-> 0x11210000 belongs to mfc_r
->                     sysmmu_mfc_r: sysmmu@11210000
-> 
-
-OK.
-
-> > +               compatible = "samsung,sysmmu-v2";
-> > +               reg = <0x11210000 0x1000>;
-> > +               interrupt-parent = <&combiner>;
-> > +               interrupts = <8 5>;
-> 
-> interrupts = <6 2>;
-> Add mmu-masters field,
->                     mmu-masters = <&mfc>;
-> 
-
-OK. 
-
-> > +               clock-names = "sysmmu", "master";
-> > +               clocks = <&clock 403>, <&clock 401>;
-> 
-> clocks = <&clock 402>, <&clock 401>;
-> 
-
-Thanks for pointing out many mistakes.
+It's all more work, but it is critical to ensure that the application never
+misses events.
 
 Regards,
 
-KyongHo
+	Hans
