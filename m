@@ -1,138 +1,100 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v2 1/2] v4l: Add resolution change event.
-Date: Tue, 22 Apr 2014 10:46:36 +0200
-Message-ID: <044f01cf5e07$5f6f1090$1e4d31b0$%debski@samsung.com>
-References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com>
- <1398072362-24962-2-git-send-email-arun.kk@samsung.com>
- <CACHYQ-qE4Qnwa9txUsx=MSM4NRG6HrDxqp=qOJUzCPv6uf9egw@mail.gmail.com>
- <CALt3h7--QSL-UD=mAa5NPvy8UUeZB02o097y_+LqZTp2mXD5Pg@mail.gmail.com>
- <CACHYQ-p564-HHpx0mY6rcq+Mg3kPp24pvfk2_MH7Vf5U0ygSOw@mail.gmail.com>
- <042601cf5dfd$4dfa44b0$e9eece10$%debski@samsung.com>
- <CACHYQ-pk1VkDj8YATkVGcrdv96wkmnK41UR68400oQQMM7asTw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
+Date: Tue, 22 Apr 2014 10:55:19 +0200
+Message-ID: <20140422085513.GF17275@ulmo>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CACHYQ-pk1VkDj8YATkVGcrdv96wkmnK41UR68400oQQMM7asTw@mail.gmail.com>
-Content-language: pl
-Sender: linux-media-owner@vger.kernel.org
-To: 'Pawel Osciak' <posciak@chromium.org>
-Cc: 'Arun Kumar K' <arunkk.samsung@gmail.com>, linux-media@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Hans Verkuil' <hverkuil@xs4all.nl>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>
+Content-Type: multipart/mixed; boundary="===============0072282637=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pawel,
 
-> From: Pawel Osciak [mailto:posciak@chromium.org]
-> Sent: Tuesday, April 22, 2014 9:46 AM
-> To: Kamil Debski
-> Cc: Arun Kumar K; linux-media@vger.kernel.org; linux-samsung-soc;
-> Sylwester Nawrocki; Hans Verkuil; Laurent Pinchart
-> Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
-> 
-> Hi Kamil,
-> 
-> On Tue, Apr 22, 2014 at 4:34 PM, Kamil Debski <k.debski@samsung.com>
-> wrote:
-> 
-> 
-> 	Hi Pawel,
-> 
-> 	> From: Pawel Osciak [mailto:posciak@chromium.org]
-> 	> Sent: Monday, April 21, 2014 12:27 PM
-> 	> To: Arun Kumar K
-> 	> Cc: linux-media@vger.kernel.org; linux-samsung-soc; Kamil
-> Debski;
-> 	> Sylwester Nawrocki; Hans Verkuil; Laurent Pinchart
-> 	> Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
-> 
-> 	>
-> 	> As a side note, because this is not really codified in the API,
-> I would
-> 	> like this event to indicate not only resolution change mid-
-> stream, but
-> 	> also detection of initial resolution, which should be a subset
-> of
-> 	> resolution change. I think this would make sense for the codec
-> 	> interface:
-> 	>
-> 	> Video decode:
-> 	> 1. S_FMT to given codec on OUTPUT queue.
-> 	> 2. REQBUFS(n) and STREAMON on OUTPUT queue.
-> 	> 3. Keep QBUFing until we get an resolution change event on the
-> CAPTURE
-> 	> queue; until then, the driver/codec HW will operate on the
-> OUTPUT queue
-> 	> only and try to detect relevant headers in the OUTPUT buffers,
-> and will
-> 	> send resolution change event once it finds resolution, profile,
-> etc.
-> 	> info). DQEVENT.
-> 	> 4. G_FMT on CAPTURE to get the discovered output format
-> (resolution),
-> 	> REQBUFS and STREAMON on the CAPTURE queue.
-> 	> 5. Normal mem-to-mem decoding.
-> 	> 6. If a resolution change event arrives on CAPTURE queue,
-> DQEVENT,
-> 	> STREAMOFF, REQBUFS(0) only on CAPTURE queue, and goto 4. OUTPUT
-> queue
-> 	> operates completely independently of this.
-> 	>
-> 	> Also, this event should invariably indicate all of the below:
-> 	> - all output buffers from before resolution change are already
-> ready on
-> 	> the CAPTURE queue to DQBUF (so it's ready to REQBUFS(0) after
-> DQBUFs),
-> 	> and
-> 	> - there will be no more new ready buffers on the CAPTURE queue
-> until
-> 	> the streamoff-reqbufs(0)-g_fmt-reqbufs()-streamon is performed,
-> and
-> 	> - OUTPUT queue is completely independent of all of the above
-> and can be
-> 	> still used as normal, i.e. stream buffers can still keep being
-> queued
-> 	> at any stage of the resolution change and they will be decoded
-> after
-> 	> resolution change sequence is finished;
-> 	>
-> 	> If we all agree to the above, I will prepare a subsequent patch
-> for the
-> 	> documentation to include the above.
-> 
-> 
-> 	If I understand correctly this will keep the old application
-> working.
-> 	By this I mean application that do not use events and rely on the
-> current
-> 	mechanism to detect initial header parsing and resolution change.
-> 
-> 	If backward compatibility is kept I am all for the changes
-> proposed by you.
-> 
-> 
-> 
-> MFC codec depends on the userspace to parse the stream and pass the
-> stream header with resolution info before calling G_FMT. So if it
-> ignores the events but keeps doing this, things should keep working I
-> think, as the G_FMT should still work as before.
-> 
-> This event will help userspace that doesn't want to bother itself with
-> parsing the stream to know if the right header was queued and rely on
-> events to know when to call G_FMT instead.
-> 
-> What do you think? Am I missing something?
+--===============0072282637==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vSsTm1kUtxIHoa7M"
+Content-Disposition: inline
 
-Do you think this will work with all MFC versions? I guess that your focus
-is on the newer MFC version such as v6 or even v7. I had worked mostly with
-the v5 version and I am not sure how well it will handle the situation when
-it does not receive the header as the first frame. Do you have a target with
-v5 of MFC at hand?
 
-I really like your idea. If you haven't got the possibility to check how it
-works on v5 then I suggest you go ahead with patches and later I will do some
-testing on MFC v5.
+--vSsTm1kUtxIHoa7M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+On Tue, Apr 22, 2014 at 04:09:16AM +0530, Ajay Kumar wrote:
+[...]
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
+ynos/exynos_dp_core.c
+[...]
+> @@ -1012,9 +1013,16 @@ static int exynos_dp_create_connector(struct exyno=
+s_drm_display *display,
+>  	dp->encoder =3D encoder;
+> =20
+>  	/* Pre-empt DP connector creation if there's a bridge */
+> -	ret =3D exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
+> -	if (ret)
+> +	ret =3D exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder, dp->drm_pane=
+l);
+> +	if (ret) {
+> +		/*
+> +		 * Also set "dp->drm_panel =3D NULL" so that we don't end up
+> +		 * controlling panel power both in exynos_dp and bridge
+> +		 * DPMS routines.
+> +		 */
+> +		dp->drm_panel =3D NULL;
+>  		return 0;
+> +	}
+
+This kind of hack should set off an alarm that you're doing something
+wrong. I'm not sure integration of bridges and panels has been thought
+about or discussed a lot, but this doesn't look right to me at all.
+
+Thierry
+
+--vSsTm1kUtxIHoa7M
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTVi51AAoJEN0jrNd/PrOh1VQP/AyyuW4rFFw/XIqgEvEFFuq+
+4HL8UJTkm5dQetbw1EPZI3bmY3caLeoJtexnG8fsg9G5IEjCLcSAHy3jNyjGBSce
+fOljqB9RDyOFpdQqKONG+BnRKfc7D6VJzAQeLqVwPjWvXtqHOs3lwbj/QyQNHuP/
+x7Z8P/gyAtnx+uJPzRoj8MYaELHM40YKAAFtnzlii4hKONS2zngAhfHRbR2Vi1sQ
+bhyd/xCp8yPEjroV+cJmVC9Lr/ct6cf/IVIhmI98wMTdXKhnHkrYTX6+6PD8g4sa
++wspcMWDx3N/CE1n7aAKfqNPpxRbIXF1XqaPnRCZvuopcRgBpdURs0s/ZrWjm1eY
+dYY3QhRVF4Od8ZqrUmrOy/F0AGUJoSrlUD4M702syB4c4s8yBD2wWUuhy7efAOlH
+DhV73Quz6Iee33UCossKRnyNrMVmTW+Qp9fYAcJKp+AhVcRsjHsBWDcLgEskiY6e
+9TgzuGnYTbedNCBX3SdTlYwQESKTkvHTsfdPHvPUYb+idsU5JQWXI8kgUrGgZ6+o
+hQTt8CD77hWJx64WX8+63oxI/4KOulYcs3K6g4SC5N25ypjjGNR/wV80EZa1UNC5
+ZB6N/WoR9fBl9tC1UjFXGcS0DqCHfHcSWVEjbxJ24siFcU0M/l+DTFK40kx+fKGC
+Ow5rGskl3UCzTdCEtKqy
+=jYTj
+-----END PGP SIGNATURE-----
+
+--vSsTm1kUtxIHoa7M--
+
+--===============0072282637==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0072282637==--
