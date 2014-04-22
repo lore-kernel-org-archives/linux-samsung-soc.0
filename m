@@ -1,21 +1,22 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 3/9] drm/panel: Add driver for exynos_dp based panels
-Date: Tue, 22 Apr 2014 20:23:03 +0530
-Message-ID: <CAEC9eQPnmx+EDk3FK7V+gbf6eP9SXyBHQVOxHUGHG82iyK2zbA@mail.gmail.com>
+Subject: Re: [PATCH V2 4/9] drm/exynos: add exynos_dp_panel driver
+ registration to drm driver
+Date: Tue, 22 Apr 2014 20:33:23 +0530
+Message-ID: <CAEC9eQPGfFFRNF4nOgci8KCc+9E=MQRmU-Cz=TGgEdiaOVqTMg@mail.gmail.com>
 References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
-	<20140422082606.GB17275@ulmo>
+	<1398119958-32005-5-git-send-email-ajaykumar.rs@samsung.com>
+	<20140422083311.GC17275@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:35540 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932661AbaDVOxE (ORCPT
+Received: from mail-vc0-f173.google.com ([209.85.220.173]:60250 "EHLO
+	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932828AbaDVPDY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 10:53:04 -0400
-Received: by mail-ve0-f174.google.com with SMTP id oz11so9495655veb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 07:53:03 -0700 (PDT)
-In-Reply-To: <20140422082606.GB17275@ulmo>
+	Tue, 22 Apr 2014 11:03:24 -0400
+Received: by mail-vc0-f173.google.com with SMTP id il7so2770544vcb.32
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 08:03:23 -0700 (PDT)
+In-Reply-To: <20140422083311.GC17275@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
@@ -23,55 +24,66 @@ Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dr
 
 Hi Thierry,
 
-
-On Tue, Apr 22, 2014 at 1:56 PM, Thierry Reding
+On Tue, Apr 22, 2014 at 2:03 PM, Thierry Reding
 <thierry.reding@gmail.com> wrote:
-> On Tue, Apr 22, 2014 at 04:09:12AM +0530, Ajay Kumar wrote:
->> This patch adds a simple driver to handle all the LCD and LED
->> powerup/down routines needed to support eDP/eDP-LVDS panels
->> supported on exynos boards.
+> On Tue, Apr 22, 2014 at 04:09:13AM +0530, Ajay Kumar wrote:
+>> Register exynos_dp_panel before the list of exynos crtcs and
+>> connectors are probed.
 >>
->> The LCD and LED units are usually powered up via regulators,
->> and almost on all boards, we will have a BL_EN pin to enable/
->> disable the backlight. Sometimes, we can have LCD_EN switches
->> as well. The routines in this driver can be used to control
->> panel power sequence on such boards.
+>> This is needed because exynos_dp_panel should be registered to
+>> the drm_panel list via panel-exynos-dp probe, i.e much before
+>> exynos_dp_bind calls of_drm_find_panel().
 >>
 >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 >> ---
 >> Changes since V1:
->>       Added routine for post_disable, removed few unwanted headers.
->>       Refactored a lot of code.
+>>       Added platform_driver_unregister(&exynos_dp_panel_driver) to
+>>       exynos_drm_platform_remove as per Jingoo Han's correction
 >>
->>  .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++++
->>  drivers/gpu/drm/panel/Kconfig                      |    9 +
->>  drivers/gpu/drm/panel/Makefile                     |    1 +
->>  drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 ++++++++++++++++++++
->>  4 files changed, 306 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-panel.txt
->>  create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.c |   15 +++++++++++++++
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 +
+>>  2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> index 1d653f8..2db7f67 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> @@ -530,12 +530,23 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+>>               goto err_unregister_ipp_drv;
+>>  #endif
+>>
+>> +#ifdef CONFIG_DRM_PANEL_EXYNOS_DP
+>> +     ret = platform_driver_register(&exynos_dp_panel_driver);
+>> +     if (ret < 0)
+>> +             goto err_unregister_dp_panel;
+>> +#endif
 >
-> What this patch does is in no way Exynos specific. It is also not eDP
-> specific.
+> No, this is not how you're supposed to use DRM panel drivers. The idea
+> is that you write a standalone driver for a given panel.
 >
-Right. This is not at all writing into any "exynos" specific register,
-but can't this be just a placeholder for all the panel controls
-which can serve boards which use exynos_dp?
+> What you do here has a number of problems. For one it's a driver that's
+> tightly coupled to Exynos SoCs. But if I have a different SoC that uses
+> the same panel I want to be able to use the same driver, and not have to
+> rewrite the driver for my SoC.
+>
+> Another problem is that you're assuming here that the driver is built in
+> and it will break if you try to build either Exynos DRM or the panel
+> driver as a module. This is perhaps nothing you care about right now,
+> but eventually people will want to ship a single kernel that can run on
+> a number of SoCs. But if we keep adding things like this, that kernel
+> will keep growing in size until it no longer fits in any kind of memory.
+>
+> Thierry
 
-> This conflates panel drivers with board drivers in a strange way. Panel
-> drivers should be for *panels*, not for a given SoC or specific outputs
-> on that SoC.
->
-Right. But for that matter, even the "panel-simple" driver is doing the same,
-which is just a placeholder for "generic" panel controls which serves
-multiple boards.
-I din't choose to reuse that because the boards which I have expect more
-control over the panel sequence as mentioned before.
-If you don't mind, I can fit in all these settings into panel-simple
-driver itself ;)
-But again, I should be able to register the panel driver much before
-exynos_dp gets probed, That's the actual catch!
+I completely agree with you in this!
 
+Yes, this is not acceptable, but I want to know an "acceptable"
+workaround for the situation below:
+I register the driver using module_init().
+And, exynos_drm gets probed much before the panel driver probe happens.
+So, the panel driver hasn't probed yet, but exynos_dp via exynos_drm
+tries to call
+"of_drm_find_panel" which always returns NULL.
 
 Thanks and regards,
 Ajay Kumar
