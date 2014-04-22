@@ -1,83 +1,105 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v2 1/2] v4l: Add resolution change event.
-Date: Tue, 22 Apr 2014 09:34:32 +0200
-Message-ID: <042601cf5dfd$4dfa44b0$e9eece10$%debski@samsung.com>
-References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com>
- <1398072362-24962-2-git-send-email-arun.kk@samsung.com>
- <CACHYQ-qE4Qnwa9txUsx=MSM4NRG6HrDxqp=qOJUzCPv6uf9egw@mail.gmail.com>
- <CALt3h7--QSL-UD=mAa5NPvy8UUeZB02o097y_+LqZTp2mXD5Pg@mail.gmail.com>
- <CACHYQ-p564-HHpx0mY6rcq+Mg3kPp24pvfk2_MH7Vf5U0ygSOw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC v2 PATCH v2 06/14] drm/exynos: support MIPI DSI command mode
+Date: Tue, 22 Apr 2014 09:34:44 +0200
+Message-ID: <20140422073442.GC11766@ulmo>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1398083321-8668-7-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48966 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752096AbaDVHea (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 03:34:30 -0400
-In-reply-to: <CACHYQ-p564-HHpx0mY6rcq+Mg3kPp24pvfk2_MH7Vf5U0ygSOw@mail.gmail.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0126362987=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1398083321-8668-7-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Pawel Osciak' <posciak@chromium.org>, 'Arun Kumar K' <arunkk.samsung@gmail.com>
-Cc: linux-media@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Hans Verkuil' <hverkuil@xs4all.nl>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>
 
-Hi Pawel,
 
-> From: Pawel Osciak [mailto:posciak@chromium.org]
-> Sent: Monday, April 21, 2014 12:27 PM
-> To: Arun Kumar K
-> Cc: linux-media@vger.kernel.org; linux-samsung-soc; Kamil Debski;
-> Sylwester Nawrocki; Hans Verkuil; Laurent Pinchart
-> Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
-> 
-> As a side note, because this is not really codified in the API, I would
-> like this event to indicate not only resolution change mid-stream, but
-> also detection of initial resolution, which should be a subset of
-> resolution change. I think this would make sense for the codec
-> interface:
-> 
-> Video decode:
-> 1. S_FMT to given codec on OUTPUT queue.
-> 2. REQBUFS(n) and STREAMON on OUTPUT queue.
-> 3. Keep QBUFing until we get an resolution change event on the CAPTURE
-> queue; until then, the driver/codec HW will operate on the OUTPUT queue
-> only and try to detect relevant headers in the OUTPUT buffers, and will
-> send resolution change event once it finds resolution, profile, etc.
-> info). DQEVENT.
-> 4. G_FMT on CAPTURE to get the discovered output format (resolution),
-> REQBUFS and STREAMON on the CAPTURE queue.
-> 5. Normal mem-to-mem decoding.
-> 6. If a resolution change event arrives on CAPTURE queue, DQEVENT,
-> STREAMOFF, REQBUFS(0) only on CAPTURE queue, and goto 4. OUTPUT queue
-> operates completely independently of this.
-> 
-> Also, this event should invariably indicate all of the below:
-> - all output buffers from before resolution change are already ready on
-> the CAPTURE queue to DQBUF (so it's ready to REQBUFS(0) after DQBUFs),
-> and
-> - there will be no more new ready buffers on the CAPTURE queue until
-> the streamoff-reqbufs(0)-g_fmt-reqbufs()-streamon is performed, and
-> - OUTPUT queue is completely independent of all of the above and can be
-> still used as normal, i.e. stream buffers can still keep being queued
-> at any stage of the resolution change and they will be decoded after
-> resolution change sequence is finished;
-> 
-> If we all agree to the above, I will prepare a subsequent patch for the
-> documentation to include the above.
+--===============0126362987==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vEao7xgI/oilGqZ+"
+Content-Disposition: inline
 
-If I understand correctly this will keep the old application working.
-By this I mean application that do not use events and rely on the current
-mechanism to detect initial header parsing and resolution change.
 
-If backward compatibility is kept I am all for the changes proposed by you.
+--vEao7xgI/oilGqZ+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Thanks,
-> Pawel
+On Mon, Apr 21, 2014 at 09:28:33PM +0900, YoungJun Cho wrote:
+[...]
+> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+> index 7209df1..244d197 100644
+> --- a/include/drm/drm_mipi_dsi.h
+> +++ b/include/drm/drm_mipi_dsi.h
+> @@ -49,6 +49,7 @@ struct mipi_dsi_msg {
+>   * @detach: detach DSI device from DSI host
+>   * @transfer: send and/or receive DSI packet, return number of received =
+bytes,
+>   * 	      or error
+> + * @te_handler: call CRTC TE handler callback from DSI host
 
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+Perhaps you can explain some more what this means or why it would be
+necessary.
+
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> index c2ab77a..0ad64ed 100644
+> --- a/include/drm/drm_panel.h
+> +++ b/include/drm/drm_panel.h
+> @@ -46,6 +46,13 @@ struct drm_panel {
+>  	struct list_head list;
+>  };
+> =20
+> +struct drm_panel_cpu_timings {
+> +	unsigned int cs_setup;
+> +	unsigned int wr_setup;
+> +	unsigned int wr_act;
+> +	unsigned int wr_hold;
+> +};
+
+Similarily here. What's this?
+
+Thierry
+
+--vEao7xgI/oilGqZ+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTVhuSAAoJEN0jrNd/PrOhVnEP/jTXnbpA27V1EegTsy7lapnK
+3qn2B3sOooknTEkujeiqCKjrP6eXGUSwAjBa68I7usskj0A9FtkqcrVVusWmLheO
+pu5eSZCV+56Otb1r/3vFS+tPMdVsmQl2TGlKRBgd0HwOg1F1SUD/z5GvD1Sa0vtf
+6+Jai901+a9MyI7tPX8LH5TtAG9b66yoLQwJZHyEFk1R1Pht+V5WxCWqlZUJV8mQ
+E//ukYMSCgyHO47oyi06neEYHNw6Hwa14u4PphQuJN5phfyO42A1tbbMzBZ3jydd
+hZIzCEAAyuLYpkjQR7PgPQNvQNTA9tlaW4GecJX+TIdblbk7Vd7P89bBbaBhnu70
+LcfsMW5HarapB8WXouP1iyLUUa5bNspkAkqUDj37dDjBujsyfwC3GTG0L0uZzPCz
+wTdDXis/S65GUPjFxKFPhFa1KDtzoECJKspT7z4ysPZa5Q5NoUXGT3w1sdHezJmn
+epswMuNw2asnQCdhP80nMpYIxPNSLjMNslv1h4nZyb1q4UdoUMciIRiJFGR5Sbof
+TH6HT7tI17ZRphFvvuTEApkt2gCIAEwDFy3Y9lwPbBgJghzElD75HFCglncC0VV2
+JyOU+pz7o1Ryj2ImhpWPTVknEN2Omj6Vrw4dsGDs5LvXYVF7DLw+obeeE4ua2AvE
+v0pSbXIS7h1NghHYzbwY
+=KfD9
+-----END PGP SIGNATURE-----
+
+--vEao7xgI/oilGqZ+--
+
+--===============0126362987==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0126362987==--
