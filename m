@@ -1,125 +1,63 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 2/2] phy: exynos5-usbdrd: Add facility for VBUS supply
-Date: Tue, 22 Apr 2014 16:54:30 +0530
-Message-ID: <1398165871-20326-2-git-send-email-gautam.vivek@samsung.com>
-References: <1398165871-20326-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1398165871-20326-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH RFC 3/3] drm/exynos: use pending_components for	components
+ tracking
+Date: Tue, 22 Apr 2014 13:29:54 +0200
+Message-ID: <535652B2.7000607@samsung.com>
+References: <1397734130-21019-1-git-send-email-a.hajda@samsung.com>
+ <1397734130-21019-4-git-send-email-a.hajda@samsung.com>
+ <20140417220412.GZ24070@n2100.arm.linux.org.uk> <5351145D.8070207@samsung.com>
+ <20140418124652.GE24070@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140418124652.GE24070@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding support to enable/disable VBUS controlled by a
-regulator, to enable vbus supply on the port.
+On 04/18/2014 02:46 PM, Russell King - ARM Linux wrote:
+> On Fri, Apr 18, 2014 at 02:02:37PM +0200, Andrzej Hajda wrote:
+>> Separation of the interfaces exposed by the device from the device itself
+>> seems to me a good thing. I would even consider it as a biggest
+>> advantage of this solution :)
+>>
+>> The problem of re-initialization does not seems to be relevant here, it
+>> is classic
+>> problem of coding correctness nothing more, it can appear here and in
+>> many different
+>> places.
+> It may be a problem of coding correctless, but it's also a maintainability
+> problem too - it makes it _much_ more difficult to ensure that everything
+> is correct.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
+But forcibly re-initializing all component devices instead of fixing bugs
+in specific drivers seems to be 'absolutely absurd' as classic says.
+>> Anyway it seems we have different point of view on the problem, your say
+>> about devices with two stage initialization. I see it more as devices
+>> registering interfaces and superdevice using it.
+> Right, so please make this exynos-specific, because from what I can see it
+> has no reason to pretend to be generic.  As I've already pointed out, it
+> can't be used in the general case because it ties sub-components directly
+> to their main driver, which is absolutely absurd.  Please keep this
+> absurdness in exynos and don't spread it around.  Thanks.
 
-Mistakenly sent a WIP patchset in v5 version of this patch, that gives
-build errors. So fixed those.
+As I wrote already, this framework was proposed for drivers which
+are tied together anyway, and this is case of many drivers, not only exynos.
+Standalone drivers were not at my sight but I have also described in
+other mail
+how the framework can be 'improved' to support standalone drivers also.
 
-Changes from v5:
- - Removed any mention about sclk_usbphy30* in the driver.
+Regards
+Andrzej
 
- drivers/phy/phy-exynos5-usbdrd.c |   34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-index ca1f6ab..ad94c98 100644
---- a/drivers/phy/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/phy-exynos5-usbdrd.c
-@@ -23,6 +23,7 @@
- #include <linux/mutex.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- 
- /* Exynos USB PHY registers */
- #define EXYNOS5_FSEL_9MHZ6		0x0
-@@ -171,6 +172,7 @@ struct exynos5_usbdrd_phy {
- 	unsigned int extrefclk;
- 	struct clk *ref_clk;
- 	unsigned long ref_rate;
-+	struct regulator *vbus;
- };
- 
- #define to_usbdrd_phy(inst) \
-@@ -441,6 +443,7 @@ static int exynos5_usbdrd_phy_exit(struct phy *phy)
- 
- static int exynos5_usbdrd_phy_power_on(struct phy *phy)
- {
-+	int ret;
- 	struct phy_usb_instance *inst = phy_get_drvdata(phy);
- 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
- 
-@@ -448,10 +451,24 @@ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
- 
- 	clk_prepare_enable(phy_drd->ref_clk);
- 
-+	/* Enable VBUS supply */
-+	if (phy_drd->vbus) {
-+		ret = regulator_enable(phy_drd->vbus);
-+		if (ret) {
-+			dev_err(phy_drd->dev, "Failed to enable VBUS supply\n");
-+			goto fail_vbus;
-+		}
-+	}
-+
- 	/* Power-on PHY*/
- 	inst->phy_cfg->phy_isol(inst, 0);
- 
- 	return 0;
-+
-+fail_vbus:
-+	clk_disable_unprepare(phy_drd->ref_clk);
-+
-+	return ret;
- }
- 
- static int exynos5_usbdrd_phy_power_off(struct phy *phy)
-@@ -464,6 +481,10 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- 	/* Power-off the PHY */
- 	inst->phy_cfg->phy_isol(inst, 1);
- 
-+	/* Disable VBUS supply */
-+	if (phy_drd->vbus)
-+		regulator_disable(phy_drd->vbus);
-+
- 	clk_disable_unprepare(phy_drd->ref_clk);
- 
- 	return 0;
-@@ -534,7 +555,7 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 	const struct exynos5_usbdrd_phy_drvdata *drv_data;
- 	struct regmap *reg_pmu;
- 	u32 pmu_offset;
--	int i;
-+	int i, ret;
- 
- 	phy_drd = devm_kzalloc(dev, sizeof(*phy_drd), GFP_KERNEL);
- 	if (!phy_drd)
-@@ -577,6 +598,17 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 		return PTR_ERR(reg_pmu);
- 	}
- 
-+	/* Get required GPIO for vbus */
-+	phy_drd->vbus = devm_regulator_get(dev, "vbus");
-+	if (IS_ERR(phy_drd->vbus)) {
-+		ret = PTR_ERR(phy_drd->vbus);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+
-+		dev_warn(dev, "Failed to get VBUS supply regulator\n");
-+		phy_drd->vbus = NULL;
-+	}
-+
- 	if (of_property_read_u32(node, "samsung,pmu-offset", &pmu_offset)) {
- 		dev_err(dev, "Missing pmu-offset for phy isolation\n");
- 		return -EINVAL;
--- 
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
