@@ -1,66 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 5/5] regulator: tps65090: Make FETs more reliable by
- adding retries
-Date: Tue, 22 Apr 2014 12:02:36 +0100
-Message-ID: <20140422110236.GN12304@sirena.org.uk>
-References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
- <1397689950-1568-6-git-send-email-dianders@chromium.org>
- <20140418174353.GX12304@sirena.org.uk>
- <CAD=FV=VQckC34rZwF2RP3F+2T1CRVs0JwtgoqUeA1NVmB20=sA@mail.gmail.com>
- <20140422074709.GD17657@lee--X1>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 2/4] driver: cpuidle: cpuidle-big-little: init driver
+ for Exynos5420
+Date: Tue, 22 Apr 2014 13:12:00 +0200
+Message-ID: <53564E80.1050006@linaro.org>
+References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org> <1398080958-21677-3-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7n4sH0AOSdTe0Gi7"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41337 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932154AbaDVLCz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 07:02:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20140422074709.GD17657@lee--X1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1398080958-21677-3-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <k.chander@samsung.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+On 04/21/2014 01:49 PM, Chander Kashyap wrote:
+> Add "samsung,exynos5420" compatible string to initialize generic
+> big-little cpuidle driver for Exynos5420.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> Signed-off-by: Chander Kashyap <k.chander@samsung.org>
+> ---
+>   drivers/cpuidle/cpuidle-big_little.c |    3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/c=
+puidle-big_little.c
+> index b45fc62..d0fac53 100644
+> --- a/drivers/cpuidle/cpuidle-big_little.c
+> +++ b/drivers/cpuidle/cpuidle-big_little.c
+> @@ -170,7 +170,8 @@ static int __init bl_idle_init(void)
+>   	/*
+>   	 * Initialize the driver just for a compliant set of machines
+>   	 */
+> -	if (!of_machine_is_compatible("arm,vexpress,v2p-ca15_a7"))
+> +	if (!of_machine_is_compatible("arm,vexpress,v2p-ca15_a7") &&
+> +		(!of_machine_is_compatible("samsung,exynos5420")))
+>   		return -ENODEV;
+>   	/*
+>   	 * For now the differentiation between little and big cores
+
+BTW, are the latencies the same than the TC2 ?
 
 
---7n4sH0AOSdTe0Gi7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
-On Tue, Apr 22, 2014 at 08:47:09AM +0100, Lee Jones wrote:
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-> If there are cross-subsystem dependencies I prefer to use immutable
-> branches to eliminate any change of merge conflicts in -next or the
-> next merge window. I'm happy to either create on with Mark's Acks, or
-> receive a pull-request from Mark with mine applied.
-
-> Up to Mark.
-
-Well, Doug didn't send me the MFD patch so I can't do anything with it
-anyway.
-
---7n4sH0AOSdTe0Gi7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTVkxJAAoJELSic+t+oim9b0UQAJ3/Ie7fvY23Vspef191P0fO
-3gLow7Q44cFH8GW06LJEyeJoKP1YGf1RHMcZQeO3FqKrPE7avtvzCZkfgKzKxzAv
-526m9rM6fCLWdAJX9ZEaiEGznsT/mfBjd/WDuJpf83yOPk6cbrFJG+7NQDaF3mN6
-ugaJXcqnJ6TVHzDWGemhrkswN1KlJ7oArq60OvndcnplpX3i5s+fjq4EN8LuaL5J
-zLF+4vDRssyrciiH3cS8MQX7T/tp8TvMK/VIVIRchydoUTf/qIBXOiM9hVqANfsy
-mquChJOXbS/MXa0GmpA+MUp/YEq7o2QEKGdKuONxVQ19/SSxn7o6WPsVVOPp4npx
-v9aIWJu7GyN/W3fP99ug5IHMZnrHRDa4ExSP7lL5DKvAf51YhIKyYHHo9i/+ijAU
-5iruNJNJW8LKPPwc9T5X9xcnvEfaLGnpmzsRJancDEs9bQAFSeZ4cJo1VrKpkoog
-gYu0yV6zxwy3tLpBccGEvkiyPY8xSuhj0RC4yFE2rP7ho4xBL9RPakV+ZvCQb6rG
-VaGDnhglLY12SV2dAqGIjXD/UC1MIoD6gJKE05Zl9kq+x+EgYn4qPu3hqNPYTtVU
-DkVv2Z1s30HLALnDijm2dvHs95EJwIm+UuDeiqJjK36o1df2y3+Jd54IzH94j7iW
-WBHXsY+J+5K8mlgfLvS4
-=6Jv/
------END PGP SIGNATURE-----
-
---7n4sH0AOSdTe0Gi7--
