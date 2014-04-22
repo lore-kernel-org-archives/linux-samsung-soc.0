@@ -1,30 +1,68 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH v2] serial_core: Commonalize crlf when working w/ a non
- open console port
-Date: Tue, 22 Apr 2014 10:55:17 +0100
-Message-ID: <20140422105517.087a4459@alan.etchedpixels.co.uk>
-References: <1397841448-12942-1-git-send-email-dianders@chromium.org>
-	<1398100003-4172-1-git-send-email-dianders@chromium.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 3/4] exynos: cpuidle: do not allow cpuidle registration
+ for Exynos5420
+Date: Tue, 22 Apr 2014 12:38:25 +0200
+Message-ID: <535646A1.1020201@linaro.org>
+References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org> <1398080958-21677-4-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1398100003-4172-1-git-send-email-dianders@chromium.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jason Wessel <jason.wessel@windriver.com>, linux-samsung-soc@vger.kernel.org, olof@lixom.net, jslaby@suse.cz, paul.gortmaker@windriver.com, jg1.han@samsung.com, asierra@xes-inc.com, swarren@nvidia.com, heikki.krogerus@linux.intel.com, jschultz@xes-inc.com, kyle@infradead.org, mingo@elte.hu, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f169.google.com ([74.125.82.169]:38232 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755763AbaDVKiA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 06:38:00 -0400
+Received: by mail-we0-f169.google.com with SMTP id w62so4843625wes.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 03:37:59 -0700 (PDT)
+In-Reply-To: <1398080958-21677-4-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <k.chander@samsung.com>
 
-> I've moved the handling to uart_poll_put_char() to fix the above
-> problems.  Now when I use kdb (and don't point console= to the same
-> UART) I no longer get:
-> 
-> [0]kdb>
->        [0]kdb>
->               [0]kdb>
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+On 04/21/2014 01:49 PM, Chander Kashyap wrote:
+> Exynos5420 is big.Little Soc. It uses cpuidle-big-litle generic cpuid=
+le driver.
+> Hence do not allow exynos cpuidle driver registration for Exynos5420.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+> ---
 
-This seems sensible
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Reviewed-by: Alan Cox <alan@linux.intel.com>
+but will conflict with:
+
+http://www.spinics.net/lists/arm-kernel/msg319862.html
+
+>   arch/arm/mach-exynos/cpuidle.c |    3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cp=
+uidle.c
+> index c57cae0..242f75d 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -219,6 +219,9 @@ static int exynos_cpuidle_probe(struct platform_d=
+evice *pdev)
+>   	int cpu_id, ret;
+>   	struct cpuidle_device *device;
+>
+> +	if (soc_is_exynos5420())
+> +		return -ENODEV;
+> +
+>   	if (soc_is_exynos5250())
+>   		exynos5_core_down_clk();
+>
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
