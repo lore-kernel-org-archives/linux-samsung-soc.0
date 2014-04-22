@@ -1,41 +1,116 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH] usb: ohci-exynos: Add facility to use phy provided by
- the generic phy framework
-Date: Tue, 22 Apr 2014 13:59:43 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1404221358530.1326-100000@iolanthe.rowland.org>
-References: <CAFp+6iGrgMTE27FxpFTQfALJO_XypxGSZ1-wny8KAoY1sLBbWw@mail.gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: cpu hotplug: use v7_exit_coherency_flush
+ macro for cache disabling
+Date: Tue, 22 Apr 2014 14:14:32 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1404221414060.980@knanqh.ubzr>
+References: <1398176280-7258-1-git-send-email-leela.krishna@linaro.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:42675 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S933515AbaDVR7o (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 13:59:44 -0400
-In-Reply-To: <CAFp+6iGrgMTE27FxpFTQfALJO_XypxGSZ1-wny8KAoY1sLBbWw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1398176280-7258-1-git-send-email-leela.krishna@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Leela Krishna Amudala <leela.krishna@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, kgene.kim@samsung.com, amit.kucheria@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, robh+dt@kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-On Tue, 22 Apr 2014, Vivek Gautam wrote:
+On Tue, 22 Apr 2014, Leela Krishna Amudala wrote:
 
-> On Thu, Apr 10, 2014 at 6:54 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> > Add support to consume phy provided by Generic phy framework.
-> > Keeping the support for older usb-phy intact right now, in order
-> > to prevent any functionality break in absence of relevant
-> > device tree side change for ohci-exynos.
-> > Once we move to new phy in the device nodes for ohci, we can
-> > remove the support for older phys.
+> Remove the duplicated code for cache disabling and use "v7_exit_coherency_flush"
+> macro to do the same job.
 > 
-> Any comments on this please.
-> I think whatever the approach we follow, that can be common to both
-> ehci-exynos[1], and ohci-exynos, since
-> both are needed to move to the new generic phy framework, keeping
-> support for older usb-phy
-> so as to have smooth transition, in order to avoid any regression.
+> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
 
-I lost my copies of the ehci-exynos patch, but probably the same 
-comments apply as for the ohci-exynos patch.
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
-Alan Stern
+
+> 
+> ---
+> cpu hotplug is tested with 3.15-rc1 on Origen(which has cortex A9) and
+> Arndale octa(which has cortex A7 and A15) boards.
+> 
+>  arch/arm/mach-exynos/hotplug.c |   56 ++--------------------------------------
+>  1 file changed, 2 insertions(+), 54 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+> index 5eead53..9eb8d1b 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -24,56 +24,6 @@
+>  #include "common.h"
+>  #include "regs-pmu.h"
+>  
+> -static inline void cpu_enter_lowpower_a9(void)
+> -{
+> -	unsigned int v;
+> -
+> -	asm volatile(
+> -	"	mcr	p15, 0, %1, c7, c5, 0\n"
+> -	"	mcr	p15, 0, %1, c7, c10, 4\n"
+> -	/*
+> -	 * Turn off coherency
+> -	 */
+> -	"	mrc	p15, 0, %0, c1, c0, 1\n"
+> -	"	bic	%0, %0, %3\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 1\n"
+> -	"	mrc	p15, 0, %0, c1, c0, 0\n"
+> -	"	bic	%0, %0, %2\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 0\n"
+> -	  : "=&r" (v)
+> -	  : "r" (0), "Ir" (CR_C), "Ir" (0x40)
+> -	  : "cc");
+> -}
+> -
+> -static inline void cpu_enter_lowpower_a15(void)
+> -{
+> -	unsigned int v;
+> -
+> -	asm volatile(
+> -	"	mrc	p15, 0, %0, c1, c0, 0\n"
+> -	"	bic	%0, %0, %1\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 0\n"
+> -	  : "=&r" (v)
+> -	  : "Ir" (CR_C)
+> -	  : "cc");
+> -
+> -	flush_cache_louis();
+> -
+> -	asm volatile(
+> -	/*
+> -	* Turn off coherency
+> -	*/
+> -	"	mrc	p15, 0, %0, c1, c0, 1\n"
+> -	"	bic	%0, %0, %1\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 1\n"
+> -	: "=&r" (v)
+> -	: "Ir" (0x40)
+> -	: "cc");
+> -
+> -	isb();
+> -	dsb();
+> -}
+> -
+>  static inline void cpu_leave_lowpower(void)
+>  {
+>  	unsigned int v;
+> @@ -141,10 +91,8 @@ void __ref exynos_cpu_die(unsigned int cpu)
+>  	 * appropriate sequence for entering low power.
+>  	 */
+>  	asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
+> -	if ((primary_part & 0xfff0) == 0xc0f0)
+> -		cpu_enter_lowpower_a15();
+> -	else
+> -		cpu_enter_lowpower_a9();
+> +
+> +	v7_exit_coherency_flush(louis);
+>  
+>  	platform_do_lowpower(cpu, &spurious);
+>  
+> -- 
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
