@@ -1,56 +1,88 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: dts: disable MDMA1 node for smdk5420 board
-Date: Tue, 22 Apr 2014 13:53:59 +0530
-Message-ID: <CAHbNUh0caDOxVt2gjti5Jyv04d7=EbE_z5X7cZWv_VevcRNofg@mail.gmail.com>
-References: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
-	<021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
-	<CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
-	<000001cf5df8$bdc6f900$3954eb00$%jun@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 3/9] drm/panel: Add driver for exynos_dp based panels
+Date: Tue, 22 Apr 2014 10:26:07 +0200
+Message-ID: <20140422082606.GB17275@ulmo>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:51484 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752750AbaDVIYA (ORCPT
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:51752 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751280AbaDVI10 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 04:24:00 -0400
-Received: by mail-ie0-f177.google.com with SMTP id rl12so4674705iec.8
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 01:24:00 -0700 (PDT)
-In-Reply-To: <000001cf5df8$bdc6f900$3954eb00$%jun@samsung.com>
+	Tue, 22 Apr 2014 04:27:26 -0400
+Received: by mail-ee0-f45.google.com with SMTP id d17so4308405eek.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 01:27:24 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1398119958-32005-4-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javi Merino <javi.merino@arm.com>
-
-On 22 April 2014 12:31, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> On Tue, April 22, 2014, Tushar Behera wrote:
->> On 22 April 2014 07:48, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > Seungwon Jeon wrote:
->> >>
->> >
->> > + Javi Merino and Tushar Behera
->> >
->> >> This change is similar to commit 3da355c(ARM: dts: Disable MDMA1 node
->> >> for arndale-octa board). If MDMA1 region is configured with secure mode,
->> >> it makes the boot failure with the following.
->> >>
->> >> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->> >>
->> > If so, how about adding the 'disabled' status in 5420 dtsi file? Then if 'enabling' is required, we
->> can enable in each board dt file...
->> >
->>
->> That should be okay. While at it, we can remove the node disabling
->> code from Arndale-Octa board DTS file.
->
-> OK, I'll consider both.
->
-Seungwon,
-
-Please move the comments for MDMA1 from Arndale-Octa dts file too.
-
-Thanks.
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com
 
 
--- 
-Tushar Behera
+--FkmkrVfFsRoUs1wW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Apr 22, 2014 at 04:09:12AM +0530, Ajay Kumar wrote:
+> This patch adds a simple driver to handle all the LCD and LED
+> powerup/down routines needed to support eDP/eDP-LVDS panels
+> supported on exynos boards.
+>=20
+> The LCD and LED units are usually powered up via regulators,
+> and almost on all boards, we will have a BL_EN pin to enable/
+> disable the backlight. Sometimes, we can have LCD_EN switches
+> as well. The routines in this driver can be used to control
+> panel power sequence on such boards.
+>=20
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+> Changes since V1:
+> 	Added routine for post_disable, removed few unwanted headers.
+> 	Refactored a lot of code.
+>=20
+>  .../devicetree/bindings/panel/exynos-dp-panel.txt  |   45 ++++
+>  drivers/gpu/drm/panel/Kconfig                      |    9 +
+>  drivers/gpu/drm/panel/Makefile                     |    1 +
+>  drivers/gpu/drm/panel/panel-exynos-dp.c            |  251 ++++++++++++++=
+++++++
+>  4 files changed, 306 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/panel/exynos-dp-pan=
+el.txt
+>  create mode 100644 drivers/gpu/drm/panel/panel-exynos-dp.c
+
+What this patch does is in no way Exynos specific. It is also not eDP
+specific.
+
+This conflates panel drivers with board drivers in a strange way. Panel
+drivers should be for *panels*, not for a given SoC or specific outputs
+on that SoC.
+
+Thierry
+
+--FkmkrVfFsRoUs1wW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTVieeAAoJEN0jrNd/PrOhTV4QAIFbB/KuE6+3pVxT/0iobDfp
+/JkqbkManiNDrOdYM4Awl0upK9zi55Z3L1uffiFUNnA0ejZfKyu9UCmvk0aJUf3V
+tZq0uYXoTrTnNKZMX3e9l8GdK16kSE45nKcUZrToCMvdE3+pdCpfJVRD6/HG+kSI
+MJIrOnV1YjwPjbfFx158MuAByQi7CRoK9jd7CDTpjhylh/ORepxZVedVIeRsB51L
+CMb3PGj4efiTUg3J3H+dNMTSJas3nG0pdE4iuuJoKeLVXi90Z5qF/V8sokazxvxM
+ofLsSw9oh/AgigZ7YAM+7sOIWUj+MN6TucOH4STmmBdc4Ro/J+bPOjzY+lVQGH7J
+S/lOuaP4+TcY/rFnMCvcsmVyxqpF7DDbHbfIAMYGi9Gdls5FKWUR3NFXIMCX5NTu
+Wsc9wBLnwl8TSgDKR3KbsCy3qXiRdQdhlrwihysKHHOaiwOm0daPP6dWV8Wc0vJ5
+OmfO41q9JhXqWp/NMmGGFh9Z4Lrpu2RpH+XJ8dXRWcfXzCXkOP1Y0IjroIUZaIvT
+Yj94vpKBDkwuhsv9PcTruYGyOgYOT3x/FPytLdDxxdmLTEpk8AhPDJCkpFTAfoHJ
+d0axV3v+cdVMAP4O6AjU4SpVz3By2EQmVLxb25brZz3tdbQvTt/beNjNi2Q2stnW
+MeQkeL9oleU2BJivSLsT
+=9sGu
+-----END PGP SIGNATURE-----
+
+--FkmkrVfFsRoUs1wW--
