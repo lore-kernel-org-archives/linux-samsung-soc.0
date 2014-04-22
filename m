@@ -1,86 +1,138 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 6/9] drm/bridge: ptn3460: enable polling based detection
-Date: Tue, 22 Apr 2014 10:43:27 +0200
-Message-ID: <20140422084321.GE17275@ulmo>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-7-git-send-email-ajaykumar.rs@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH v2 1/2] v4l: Add resolution change event.
+Date: Tue, 22 Apr 2014 10:46:36 +0200
+Message-ID: <044f01cf5e07$5f6f1090$1e4d31b0$%debski@samsung.com>
+References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com>
+ <1398072362-24962-2-git-send-email-arun.kk@samsung.com>
+ <CACHYQ-qE4Qnwa9txUsx=MSM4NRG6HrDxqp=qOJUzCPv6uf9egw@mail.gmail.com>
+ <CALt3h7--QSL-UD=mAa5NPvy8UUeZB02o097y_+LqZTp2mXD5Pg@mail.gmail.com>
+ <CACHYQ-p564-HHpx0mY6rcq+Mg3kPp24pvfk2_MH7Vf5U0ygSOw@mail.gmail.com>
+ <042601cf5dfd$4dfa44b0$e9eece10$%debski@samsung.com>
+ <CACHYQ-pk1VkDj8YATkVGcrdv96wkmnK41UR68400oQQMM7asTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0808442494=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1398119958-32005-7-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CACHYQ-pk1VkDj8YATkVGcrdv96wkmnK41UR68400oQQMM7asTw@mail.gmail.com>
+Content-language: pl
+Sender: linux-media-owner@vger.kernel.org
+To: 'Pawel Osciak' <posciak@chromium.org>
+Cc: 'Arun Kumar K' <arunkk.samsung@gmail.com>, linux-media@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Hans Verkuil' <hverkuil@xs4all.nl>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Pawel,
 
---===============0808442494==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ryJZkp9/svQ58syV"
-Content-Disposition: inline
+> From: Pawel Osciak [mailto:posciak@chromium.org]
+> Sent: Tuesday, April 22, 2014 9:46 AM
+> To: Kamil Debski
+> Cc: Arun Kumar K; linux-media@vger.kernel.org; linux-samsung-soc;
+> Sylwester Nawrocki; Hans Verkuil; Laurent Pinchart
+> Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
+> 
+> Hi Kamil,
+> 
+> On Tue, Apr 22, 2014 at 4:34 PM, Kamil Debski <k.debski@samsung.com>
+> wrote:
+> 
+> 
+> 	Hi Pawel,
+> 
+> 	> From: Pawel Osciak [mailto:posciak@chromium.org]
+> 	> Sent: Monday, April 21, 2014 12:27 PM
+> 	> To: Arun Kumar K
+> 	> Cc: linux-media@vger.kernel.org; linux-samsung-soc; Kamil
+> Debski;
+> 	> Sylwester Nawrocki; Hans Verkuil; Laurent Pinchart
+> 	> Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
+> 
+> 	>
+> 	> As a side note, because this is not really codified in the API,
+> I would
+> 	> like this event to indicate not only resolution change mid-
+> stream, but
+> 	> also detection of initial resolution, which should be a subset
+> of
+> 	> resolution change. I think this would make sense for the codec
+> 	> interface:
+> 	>
+> 	> Video decode:
+> 	> 1. S_FMT to given codec on OUTPUT queue.
+> 	> 2. REQBUFS(n) and STREAMON on OUTPUT queue.
+> 	> 3. Keep QBUFing until we get an resolution change event on the
+> CAPTURE
+> 	> queue; until then, the driver/codec HW will operate on the
+> OUTPUT queue
+> 	> only and try to detect relevant headers in the OUTPUT buffers,
+> and will
+> 	> send resolution change event once it finds resolution, profile,
+> etc.
+> 	> info). DQEVENT.
+> 	> 4. G_FMT on CAPTURE to get the discovered output format
+> (resolution),
+> 	> REQBUFS and STREAMON on the CAPTURE queue.
+> 	> 5. Normal mem-to-mem decoding.
+> 	> 6. If a resolution change event arrives on CAPTURE queue,
+> DQEVENT,
+> 	> STREAMOFF, REQBUFS(0) only on CAPTURE queue, and goto 4. OUTPUT
+> queue
+> 	> operates completely independently of this.
+> 	>
+> 	> Also, this event should invariably indicate all of the below:
+> 	> - all output buffers from before resolution change are already
+> ready on
+> 	> the CAPTURE queue to DQBUF (so it's ready to REQBUFS(0) after
+> DQBUFs),
+> 	> and
+> 	> - there will be no more new ready buffers on the CAPTURE queue
+> until
+> 	> the streamoff-reqbufs(0)-g_fmt-reqbufs()-streamon is performed,
+> and
+> 	> - OUTPUT queue is completely independent of all of the above
+> and can be
+> 	> still used as normal, i.e. stream buffers can still keep being
+> queued
+> 	> at any stage of the resolution change and they will be decoded
+> after
+> 	> resolution change sequence is finished;
+> 	>
+> 	> If we all agree to the above, I will prepare a subsequent patch
+> for the
+> 	> documentation to include the above.
+> 
+> 
+> 	If I understand correctly this will keep the old application
+> working.
+> 	By this I mean application that do not use events and rely on the
+> current
+> 	mechanism to detect initial header parsing and resolution change.
+> 
+> 	If backward compatibility is kept I am all for the changes
+> proposed by you.
+> 
+> 
+> 
+> MFC codec depends on the userspace to parse the stream and pass the
+> stream header with resolution info before calling G_FMT. So if it
+> ignores the events but keeps doing this, things should keep working I
+> think, as the G_FMT should still work as before.
+> 
+> This event will help userspace that doesn't want to bother itself with
+> parsing the stream to know if the right header was queued and rely on
+> events to know when to call G_FMT instead.
+> 
+> What do you think? Am I missing something?
 
+Do you think this will work with all MFC versions? I guess that your focus
+is on the newer MFC version such as v6 or even v7. I had worked mostly with
+the v5 version and I am not sure how well it will handle the situation when
+it does not receive the header as the first frame. Do you have a target with
+v5 of MFC at hand?
 
---ryJZkp9/svQ58syV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I really like your idea. If you haven't got the possibility to check how it
+works on v5 then I suggest you go ahead with patches and later I will do some
+testing on MFC v5.
 
-On Tue, Apr 22, 2014 at 04:09:15AM +0530, Ajay Kumar wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->=20
-> Add DRM_CONNECTOR_POLL_HPD to the set of connector flags while
-> registering drm_connector for ptn3460.
->=20
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-
-This needs to explain *why* you think this change is necessary. As far
-as I can see, the PTN3460 bridge doesn't support hotplug detection at
-all, in which case setting DRM_CONNECTOR_POLL_HPD would be completely
-wrong.
-
-Thierry
-
---ryJZkp9/svQ58syV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTViupAAoJEN0jrNd/PrOh57oP+wfls9U0eFgEhKd2ssY5Yypf
-OPVdFRlbdRSpmHMsgLxngDIB/RiMAWUG882bbYPkazTDZWtKSxK3yNEjKjShDICy
-/FOMtygX1zr91VufPlzbRNcS5E2gw5D1ivcCgirwrnQQ2MozS3veqkyyx3RNAKpp
-Yk8TdcYPu2iWZ6ThgC4g5dCuEp5ao2r9Uyi0itRo7dmlUPAF2gMKT4vU41JU3Utr
-Eb0ya4djhWs/YvibRLxR1AP61Q2nB11cq/RNoElSroZ0jqBOKdR6UleQJkGByMr2
-9JsPK1uuxppmCitiPcZE9NcuQWIjpEz8YqlR80fqJJ+cnj9N3GyIVo9R/HaPr9tX
-A+/eoxGlOPPBAAbWtnd5KmTHHr/5tVKH+eEPKTTw9J7C3lh3RAm8XpWpmF7ZQL//
-hOs05tO32KPMA7T3pZfz7YCNWoGm7H9CxmJ4t0P2JVBpaES7LIUJE4ZJxGjtY5/s
-ZbCPWFnockFw077o2tuYoMavkyNMt7yoSNQHNTRdkiyUHBf7Ki8+ZVt14F12NCyi
-fcADGOa+cRHLbp90SOityN/sBZg2XRRpIr3CMKw6uBdcgInLUPt4odGV0AX3v57+
-FWWXS7M2ghN0XeBcAV7n6IZUK3rgSEWs8KZ0oYeqT/V7iEaWU59O5F/WFPpJQMf9
-mGN4dhwxPMpcdwQKqGpi
-=sQCH
------END PGP SIGNATURE-----
-
---ryJZkp9/svQ58syV--
-
---===============0808442494==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0808442494==--
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
