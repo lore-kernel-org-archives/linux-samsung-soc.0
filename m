@@ -1,87 +1,56 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH] ARM: dts: disable MDMA1 node for smdk5420 board
-Date: Tue, 22 Apr 2014 16:01:53 +0900
-Message-ID: <000001cf5df8$bdc6f900$3954eb00$%jun@samsung.com>
-References: <001a01cf5b0c$5ddc7d60$19957820$%jun@samsung.com>
- <021301cf5dd1$1d0ec910$572c5b30$@samsung.com>
- <CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 1/9] drm/exynos: dp: support hotplug detection via GPIO
+Date: Tue, 22 Apr 2014 16:13:54 +0900
+Message-ID: <001901cf5dfa$6bcda480$4368ed80$%han@samsung.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-2-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57473 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280AbaDVHBz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 03:01:55 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N4F00KW47J5EN80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Apr 2014 16:01:53 +0900 (KST)
-In-reply-to: <CAHbNUh3G1NUUfAwh=B+rDwVkfsAetUpDspiPS-JbK3oYuxSd_A@mail.gmail.com>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1398119958-32005-2-git-send-email-ajaykumar.rs@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, 'Andrew Bresticker' <abrestic@chromium.org>, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com, 'Rahul Sharma' <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Javi Merino' <javi.merino@arm.com>
 
-On Tue, April 22, 2014, Tushar Behera wrote:
-> On 22 April 2014 07:48, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Seungwon Jeon wrote:
-> >>
-> >
-> > + Javi Merino and Tushar Behera
-> >
-> >> This change is similar to commit 3da355c(ARM: dts: Disable MDMA1 node
-> >> for arndale-octa board). If MDMA1 region is configured with secure mode,
-> >> it makes the boot failure with the following.
-> >>
-> >> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-> >>
-> > If so, how about adding the 'disabled' status in 5420 dtsi file? Then if 'enabling' is required, we
-> can enable in each board dt file...
-> >
+On Tuesday, April 22, 2014 7:39 AM, Ajay Kumar wrote:
 > 
-> That should be okay. While at it, we can remove the node disabling
-> code from Arndale-Octa board DTS file.
+> From: Andrew Bresticker <abrestic@chromium.org>
+> 
+> Certain bridge chips use a GPIO to indicate the cable status instead
+> of the I_DP_HPD pin.  This adds an optional device-tree property,
+> "samsung,hpd-gpio", to the exynos-dp controller which indicates that
+> the specified GPIO should be used for hotplug detection.
+> The GPIO is then set up as an edge-triggered interrupt where the
+> rising edge indicates hotplug-in and the falling edge indicates hotplug-out.
+> 
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 
-OK, I'll consider both.
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-Thanks,
-Seungwon Jeon
+Best regards,
+Jingoo Han
 
+> ---
+> Changes since V1:
+> 	Address reiew comments from Jingoo Han
 > 
-> 
-> > - Kukjin
-> >
-> >> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> >> ---
-> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    6 ++++++
-> >>  1 files changed, 6 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> index 6910485..9a48e3f 100644
-> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> @@ -373,4 +373,10 @@
-> >>                       };
-> >>               };
-> >>       };
-> >> +
-> >> +     amba {
-> >> +             mdma1: mdma@11C10000 {
-> >> +                     status = "disabled";
-> >> +             };
-> >> +     };
-> >>  };
-> >> --
-> >> 1.7.0.4
-> >
-> 
-> 
-> 
-> --
-> Tushar Behera
+>  .../devicetree/bindings/video/exynos_dp.txt        |    4 ++
+>  drivers/gpu/drm/exynos/exynos_dp_core.c            |   32 ++++++++++++--
+>  drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
+>  drivers/gpu/drm/exynos/exynos_dp_reg.c             |   44 ++++++++++++++------
+>  4 files changed, 66 insertions(+), 15 deletions(-)
+
+[.....]
