@@ -1,123 +1,128 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Tue, 22 Apr 2014 11:44:47 +0100
-Message-ID: <20140422104447.GK12304@sirena.org.uk>
-References: <1398153834-16199-1-git-send-email-tushar.behera@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 4/4] mcpm: exynos: populate suspend and powered_up callbacks
+Date: Tue, 22 Apr 2014 12:51:06 +0200
+Message-ID: <5356499A.20609@linaro.org>
+References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org> <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cqUZ7tFrnhCvEBfZ"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1398153834-16199-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, rdunlap@infradead.org, robh+dt@kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:60046 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753042AbaDVKul (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 06:50:41 -0400
+Received: by mail-wg0-f42.google.com with SMTP id y10so3674122wgg.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 03:50:40 -0700 (PDT)
+In-Reply-To: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <k.chander@samsung.com>
 
-
---cqUZ7tFrnhCvEBfZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Apr 22, 2014 at 01:33:54PM +0530, Tushar Behera wrote:
-
-> Added machine driver to instantiate I2S based sound card on Snow
-> board. It has MAX98095 audio codec on board.
-
-In general this isn't up to modern standards, please do try to check
-that new code is following best practices.  Did the support for setting
-the clocking up in the device tree get merged already?
-
-Please do also pay attention to the CC lists when posting patches, this
-seems to have been sent to a fairly random selection of people and
-lists.
-
-> +	switch (params_format(params)) {
-
-params_width().
-
-> +	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
-> +					     SND_SOC_DAIFMT_NB_NF |
-> +					     SND_SOC_DAIFMT_CBS_CFS);
-
-Set this in the dai_link.
-
-> +	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
-> +					FIN_PLL_RATE, SND_SOC_CLOCK_IN);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-> +					0, SND_SOC_CLOCK_OUT);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = snd_soc_dai_set_clkdiv(cpu_dai, SAMSUNG_I2S_DIV_BCLK, bfs);
-> +	if (ret < 0)
-> +		return ret;
-
-Set this stuff up on probe.  I'm surprised that you need to set BCLK at
-all...
-
-> +static int snow_init(struct snd_soc_pcm_runtime *rtd)
+On 04/21/2014 01:49 PM, Chander Kashyap wrote:
+> In order to support cpuidle through mcpm, suspend and powered-up
+> callbacks are required in mcpm platform code.
+> Hence populate the same callbacks.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+> ---
+>   arch/arm/mach-exynos/mcpm-exynos.c |   53 +++++++++++++++++++++++++=
++++++++++++
+>   1 file changed, 53 insertions(+)
+>
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exyno=
+s/mcpm-exynos.c
+> index 46d4968..16af0bd 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -318,10 +318,63 @@ static int exynos_power_down_finish(unsigned in=
+t cpu, unsigned int cluster)
+>   	return 0; /* success: the CPU is halted */
+>   }
+>
+> +static void enable_coherency(void)
 > +{
-> +	struct snd_soc_codec *codec = rtd->codec;
-> +	struct snd_soc_dapm_context *dapm = &codec->dapm;
+> +	unsigned long v, u;
 > +
-> +	snd_soc_dapm_sync(dapm);
-> +
-> +	return 0;
+> +	asm volatile(
+> +		"mrc	p15, 0, %0, c1, c0, 1\n"
+> +		"orr	%0, %0, %2\n"
+> +		"ldr	%1, [%3]\n"
+> +		"and	%1, %1, #0\n"
+> +		"orr	%0, %0, %1\n"
+> +		"mcr	p15, 0, %0, c1, c0, 1\n"
+> +		: "=3D&r" (v), "=3D&r" (u)
+> +		: "Ir" (0x40), "Ir" (S5P_INFORM0)
+> +		: "cc");
 > +}
 
-This does nothing, remove it.
+Shouldn't this function to be used from hotplug.c also ?
 
-> +	if (!pdev->dev.platform_data && !pdev->dev.of_node) {
-> +		dev_err(&pdev->dev, "No platform data supplied\n");
-> +		return -EINVAL;
-> +	}
 > +
-> +	name = of_get_property(pdev->dev.of_node, "card-name", NULL);
-> +	if (name)
-> +		card->name = name;
+> +void exynos_powered_up(void)
+> +{
+> +	unsigned int mpidr, cpu, cluster;
 > +
-> +	i2s_node = of_parse_phandle(pdev->dev.of_node,
-> +				    "samsung,i2s-controller", 0);
-> +	if (!i2s_node) {
-> +		dev_err(&pdev->dev,
-> +			"Property 'i2s-controller' missing or invalid\n");
-> +		return -EINVAL;
-> +	}
+> +	mpidr =3D read_cpuid_mpidr();
+> +	cpu =3D MPIDR_AFFINITY_LEVEL(mpidr, 0);
+> +	cluster =3D MPIDR_AFFINITY_LEVEL(mpidr, 1);
+> +
+> +	arch_spin_lock(&bl_lock);
+> +	if (cpu_use_count[cpu][cluster] =3D=3D 0)
+> +		cpu_use_count[cpu][cluster] =3D 1;
+> +	arch_spin_unlock(&bl_lock);
+> +}
+> +
+> +static void exynos_suspend(u64 residency)
+> +{
+> +	unsigned int mpidr, cpunr;
+> +
+> +	mpidr =3D read_cpuid_mpidr();
+> +	cpunr =3D enynos_pmu_cpunr(mpidr);
 
-You're allowing platform data above but I see DT is mandatory here.
+*enynos*_pmu_cpunr ?
 
-> +	ret = snd_soc_register_card(card);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
-> +		return ret;
-> +	}
+> +
+> +	__raw_writel(virt_to_phys(mcpm_entry_point), REG_ENTRY_ADDR);
+> +
+> +	exynos_power_down();
+> +
+> +	/*
+> +	 * Execution reaches here only if cpu did not power down.
+> +	 * Hence roll back the changes done in exynos_power_down function.
+> +	*/
+> +	__raw_writel(EXYNOS_CORE_LOCAL_PWR_EN,
+> +			EXYNOS_ARM_CORE_CONFIGURATION(cpunr));
 
-devm_snd_soc_register_card().
+Why don't you use the functions defined in the
 
---cqUZ7tFrnhCvEBfZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+patch 5/5 arm: exynos: Add MCPM call-back functions
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+exynos_core_power_control() ?
 
-iQIcBAEBAgAGBQJTVkgcAAoJELSic+t+oim9gwYQAJBsHURQWvolGhdfIdpsyJ7j
-V53YeEWQBHQEq9R/FOdvHwjlbgc0Kl1dT7SwueuSBBigLx7tW1KfT32g8nV9oSgw
-2/7xL1EmOTZciOHgO8hLcD7Yv29hb4YLiqfyM/gSl6Ck5o16+zJSnLbZqUdg/ffW
-1gfdM7nArNl10xGdPh/3azX8R0wNUBIfRFYtuwRxjdzJHKKe0bJOyxlM6eoSYXCG
-ojKQSFEBIlAdqA7acMxp+w88ssxxJAjYN5wB0sOWuz2q5oIgrhCyMCWU/xcM78qq
-SQbWEEwsShAs1QxVM8zr1kU00TTzrPc8SRa4kuJo9RNXWzYnf2OymwI2qMjNNdpS
-2uISuVLqzLXI6dZFw6aMJMMLOYxHzrQg5HH8sEVoKy+pDhlQMNyM//zRBWxpbc96
-UIJt29yS+eheGFZcQF49WD0bQXG8ZFYp2xqRTlnbvuJMPs8lDo5hYJvtwiHR5kJA
-GNf9LkJQ09QeksLgXvwWBUy9M6G6KNx2bERUejf9LhSq0GImwL20e/hkRW8CQeB4
-x9+AIIG/7VKoXnIBpCs5o9n43SHKPBlBFTObxqj1G6I2tdgy0E5M67Q3K4t9lfOi
-rZhjIgJLkj1gi9LZbSqVFfryM5xKB1enM79aMnpaTJDray916zSrac9X1bth1fTZ
-cTfaHrEFGdLx440EM+Oq
-=nbGw
------END PGP SIGNATURE-----
+> +	set_cr(get_cr() | CR_C);
+> +	enable_coherency();
+> +}
+> +
+>   static const struct mcpm_platform_ops exynos_power_ops =3D {
+>   	.power_up		=3D exynos_power_up,
+>   	.power_down		=3D exynos_power_down,
+>   	.power_down_finish	=3D exynos_power_down_finish,
+> +	.suspend		=3D exynos_suspend,
+> +	.powered_up		=3D exynos_powered_up,
+>   };
+>
+>   static void __init exynos_mcpm_usage_count_init(void)
+>
 
---cqUZ7tFrnhCvEBfZ--
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
