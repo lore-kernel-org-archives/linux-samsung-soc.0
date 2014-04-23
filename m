@@ -1,8 +1,8 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v5 4/9] dts: exynos5250: Update DWC3 usb controller to use new
- phy driver
-Date: Wed, 23 Apr 2014 20:00:46 +0530
-Message-ID: <1398263451-18023-5-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v5 6/9] dts: exynos5420-peach-pit: Add Vbus regulator for USB
+ 3.0
+Date: Wed, 23 Apr 2014 20:00:48 +0530
+Message-ID: <1398263451-18023-7-git-send-email-gautam.vivek@samsung.com>
 References: <1398263451-18023-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,43 +22,79 @@ To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vge
 Cc: kgene.kim@samsung.com, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, robh+dt@kernel.org, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Removing the dt node for older usb3 phy driver from Exynos5250
-device tree and updating the dt node for DWC3 controller to
-use new phy driver based on generic phy framework.
+Add required fixed-regulator for VBUS supply for USB 3.0
+controller phy.
 
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi |   17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index d4254c0..d7c65e6 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -533,21 +533,8 @@
- 			compatible = "synopsys,dwc3";
- 			reg = <0x12000000 0x10000>;
- 			interrupts = <0 72 0>;
--			usb-phy = <&usb2_phy &usb3_phy>;
--		};
--	};
--
--	usb3_phy: usbphy@12100000 {
--		compatible = "samsung,exynos5250-usb3phy";
--		reg = <0x12100000 0x100>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_USB3>;
--		clock-names = "ext_xtal", "usbdrd30";
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		usbphy-sys {
--			reg = <0x10040704 0x8>;
-+			phys = <&usbdrd_phy 0>, <&usbdrd_phy 1>;
-+			phy-names = "usb2-phy", "usb3-phy";
+This is first version of the patch for VBUS support for USB3DRD phy.
+v5 is just and indicative of the patch-series.
+
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |   44 ++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 4d61a5e..45c0fef 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -70,6 +70,20 @@
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
  		};
++
++		usb300_vbus_en: usb300-vbus-en {
++			samsung,pins = "gph0-0";
++			samsung,pin-function = <1>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		usb301_vbus_en: usb301-vbus-en {
++			samsung,pins = "gph0-1";
++			samsung,pin-function = <1>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
  	};
  
+ 	gpio-keys {
+@@ -103,6 +117,36 @@
+ 		status = "okay";
+ 	};
+ 
++	usb300_vbus_reg: regulator-usb300 {
++		compatible = "regulator-fixed";
++		regulator-name = "P5.0V_USB3CON0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gph0 0 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb300_vbus_en>;
++		enable-active-high;
++	};
++
++	usb301_vbus_reg: regulator-usb301 {
++		compatible = "regulator-fixed";
++		regulator-name = "P5.0V_USB3CON1";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gph0 1 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb301_vbus_en>;
++		enable-active-high;
++	};
++
++	phy@12100000 {
++		vbus-supply = <&usb300_vbus_reg>;
++	};
++
++	phy@12500000 {
++		vbus-supply = <&usb301_vbus_reg>;
++	};
++
+ 	mmc@12200000 {
+ 		status = "okay";
+ 		num-slots = <1>;
 -- 
 1.7.10.4
