@@ -1,99 +1,52 @@
-From: Anton Tikhomirov <av.tikhomirov@samsung.com>
-Subject: RE: [PATCH 3/3] usb: dwc3-exynos: Make provision for vdd regulators
-Date: Wed, 23 Apr 2014 18:26:51 +0900
-Message-ID: <00bf01cf5ed6$28de18d0$7a9a4a70$%tikhomirov@samsung.com>
-References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
- <1398082604-3013-3-git-send-email-gautam.vivek@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [Patch v2 1/4] cpuidle: config: Add SOC_EXYNOS5420 entry to select
+ cpuidle-big-little driver
+Date: Wed, 23 Apr 2014 14:55:51 +0530
+Message-ID: <1398245154-18771-2-git-send-email-chander.kashyap@linaro.org>
+References: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
+ <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-reply-to: <1398082604-3013-3-git-send-email-gautam.vivek@samsung.com>
-Content-language: en-us
-Sender: linux-omap-owner@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Chander Kashyap <k.chander@samsung.com>, kgene.kim@samsung.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, Chander Kashyap <chander.kashyap@linaro.org>, lorenzo.pieralisi@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Exynos5420 is a big-little SoC from Samsung. It has 4 A15 and 4 A7 cores.
+In order to use generic cpuidle-big-little driver, this patch adds Exynos5420
+specific check to initialize generic cpuidle driver.
 
-> -----Original Message-----
-> From: Vivek Gautam [mailto:gautamvivek1987@gmail.com] On Behalf Of
-> Vivek Gautam
-> Sent: Monday, April 21, 2014 9:17 PM
-> To: linux-usb@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-omap@vger.kernel.org; linux-
-> arm-kernel@lists.infradead.org; gregkh@linuxfoundation.org;
-> stern@rowland.harvard.edu; balbi@ti.com; kgene.kim@samsung.com; Vivek
-> Gautam; Anton Tikhomirov
-> Subject: [PATCH 3/3] usb: dwc3-exynos: Make provision for vdd
-> regulators
-> 
-> Facilitate getting required 3.3V and 1.0V VDD supply for
-> DWC3 controller on Exynos.
-> 
-> With patches for regulators' nodes merged in 3.15:
-> c8c253f ARM: dts: Add regulator entries to smdk5420
-> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
-> 
-> certain perripherals will now need to ensure that,
-> they request VDD regulators in their drivers, and enable
-> them so as to make them working.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Anton Tikhomirov <av.tikhomirov@samsung.com>
-> ---
-> 
-> Based on 'usb-next' branch of Greg's USB tree.
-> Also cleanly applies on 'next' branch of Balbi's USB tree.
-> 
->  drivers/usb/dwc3/dwc3-exynos.c |   51
-> ++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 49 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
-> exynos.c
-> index 28c8ad7..c9d9102 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -27,6 +27,7 @@
->  #include <linux/usb/usb_phy_gen_xceiv.h>
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
-> +#include <linux/regulator/consumer.h>
-> 
->  struct dwc3_exynos {
->  	struct platform_device	*usb2_phy;
-> @@ -34,6 +35,8 @@ struct dwc3_exynos {
->  	struct device		*dev;
-> 
->  	struct clk		*clk;
-> +	struct regulator	*vdd33;
-> +	struct regulator	*vdd10;
->  };
-> 
->  static int dwc3_exynos_register_phys(struct dwc3_exynos *exynos)
-> @@ -144,20 +147,46 @@ static int dwc3_exynos_probe(struct
-> platform_device *pdev)
-> 
->  	clk_prepare_enable(exynos->clk);
-> 
-> +	exynos->vdd33 = devm_regulator_get(dev, "vdd33");
-> +	if (IS_ERR(exynos->vdd33)) {
-> +		ret = PTR_ERR(exynos->vdd33);
-> +		goto err2;
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+---
+Changes in v2:
+	1. Changed config macro from SOC_EXYNOS5420 to SOC_EXYNOS5420
+ drivers/cpuidle/Kconfig.arm |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is regulator property mandatory for dwc3-exynos? If it is not
-and device tree doesn't provide it, dwc3-exynos driver probe shouldn't
-fail here.
-
-> +	}
-> +	ret = regulator_enable(exynos->vdd33);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable VDD33 supply\n");
-> +		goto err2;
-> +	}
-> +
-
-Thanks
-
+diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+index 97ccc31..d9596e7 100644
+--- a/drivers/cpuidle/Kconfig.arm
++++ b/drivers/cpuidle/Kconfig.arm
+@@ -4,7 +4,7 @@
+ 
+ config ARM_BIG_LITTLE_CPUIDLE
+ 	bool "Support for ARM big.LITTLE processors"
+-	depends on ARCH_VEXPRESS_TC2_PM
++	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+ 	select ARM_CPU_SUSPEND
+ 	select CPU_IDLE_MULTIPLE_DRIVERS
+ 	help
+-- 
+1.7.9.5
