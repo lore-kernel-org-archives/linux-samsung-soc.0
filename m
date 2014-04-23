@@ -1,111 +1,44 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [Patch v2 4/4] mcpm: exynos: populate suspend and powered_up
- callbacks
-Date: Wed, 23 Apr 2014 17:02:56 +0100
-Message-ID: <20140423160256.GA1243@e102568-lin.cambridge.arm.com>
-References: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
- <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
- <1398245154-18771-5-git-send-email-chander.kashyap@linaro.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
+Date: Wed, 23 Apr 2014 10:20:02 -0600
+Message-ID: <5357E832.1000806@wwwdotorg.org>
+References: <1398185154-19404-1-git-send-email-dianders@chromium.org> <20140423123240.GA640@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:45111 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757810AbaDWQDD convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 12:03:03 -0400
-In-Reply-To: <1398245154-18771-5-git-send-email-chander.kashyap@linaro.org>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140423123240.GA640@lee--X1>
+Sender: linux-doc-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>
+Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, mark.rutland@arm.com, andrew@lunn.ch, thierry.reding@gmail.com, linux-i2c@vger.kernel.org, matt.porter@linaro.org, jdelvare@suse.de, laurent.pinchart+renesas@ideasonboard.com, vpalatin@chromium.org, sameo@linux.intel.com, linux-doc@vger.kernel.org, bjorn.andersson@sonymobile.com, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, linux@arm.linux.org.uk, andriy.shevchenko@linux.intel.com, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, shane.huang@amd.com, rdunlap@infradead.org, linux-kernel@vger.kernel.org, linux@prisktech.co.nz, galak@codeaurora.org, schwidefsky@de.ib
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>, nicolas.pitre@linaro.org
 
-[added Nico in CC]
-
-On Wed, Apr 23, 2014 at 10:25:54AM +0100, Chander Kashyap wrote:
-> In order to support cpuidle through mcpm, suspend and powered-up
-> callbacks are required in mcpm platform code.
-> Hence populate the same callbacks.
+On 04/23/2014 06:32 AM, Lee Jones wrote:
+> On Tue, 22 Apr 2014, Doug Anderson wrote:
 > 
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-> ---
-> changes in v2:
-> 	1. Fixed typo: enynos_pmu_cpunr to exynos_pmu_cpunr
-> 
->  arch/arm/mach-exynos/mcpm-exynos.c |   53 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-> index 6c74c82..d53f597 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -272,10 +272,63 @@ static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
->  	return 0; /* success: the CPU is halted */
->  }
->  
-> +static void enable_coherency(void)
-> +{
-> +	unsigned long v, u;
-> +
-> +	asm volatile(
-> +		"mrc	p15, 0, %0, c1, c0, 1\n"
-> +		"orr	%0, %0, %2\n"
-> +		"ldr	%1, [%3]\n"
-> +		"and	%1, %1, #0\n"
-> +		"orr	%0, %0, %1\n"
-> +		"mcr	p15, 0, %0, c1, c0, 1\n"
-> +		: "=&r" (v), "=&r" (u)
-> +		: "Ir" (0x40), "Ir" (S5P_INFORM0)
-> +		: "cc");
-> +}
-> +
-> +void exynos_powered_up(void)
-> +{
-> +	unsigned int mpidr, cpu, cluster;
-> +
-> +	mpidr = read_cpuid_mpidr();
-> +	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-> +
-> +	arch_spin_lock(&exynos_mcpm_lock);
-> +	if (cpu_use_count[cpu][cluster] == 0)
-> +		cpu_use_count[cpu][cluster] = 1;
-> +	arch_spin_unlock(&exynos_mcpm_lock);
-> +}
-> +
-> +static void exynos_suspend(u64 residency)
-> +{
-> +	unsigned int mpidr, cpunr;
-> +
-> +	mpidr = read_cpuid_mpidr();
-> +	cpunr = exynos_pmu_cpunr(mpidr);
-> +
-> +	__raw_writel(virt_to_phys(mcpm_entry_point), REG_ENTRY_ADDR);
-> +
-> +	exynos_power_down();
-> +
-> +	/*
-> +	 * Execution reaches here only if cpu did not power down.
-> +	 * Hence roll back the changes done in exynos_power_down function.
-> +	*/
-> +	__raw_writel(EXYNOS_CORE_LOCAL_PWR_EN,
-> +			EXYNOS_ARM_CORE_CONFIGURATION(cpunr));
-> +	set_cr(get_cr() | CR_C);
-> +	enable_coherency();
+>> This series adds the most critical cros_ec changes for newer boards
+>> using cros_ec.  Specifically:
+>> * Fixes timing/locking issues with the previously upstreamed (but
+>>   never used upstream) cros_ec_spi driver.
+>> * Updates the cros_ec header file to the latest version which allows
+>>   us to use newer EC features like i2c tunneling.
+>> * Adds an i2c tunnel driver to allow communication to the EC's i2c
+>>   devices.
+>>
+>> This _doesn't_ get the EC driver fully up to speed with what's in the
+>> current Chromium OS trees.  There are a whole slew of cleanup patches
+>> there, an addition of an LPC transport mode, and exports of functions
+>> to userspace.  Once these patches land and we have functionality we
+>> can continue to pick more cleanup patches.
+...
+> Need to wait for the ARM, DT and I2C guys to review, at which point
+> I'll be happy to take in and supply a branch for them to pull from if
+> required. If there are no _true_ dependencies and the MFD changes can
+> be added independently without fear of build breakages, let me know
+> and I'll apply them separately.
 
-This is wrong:
-
-1) MCPM would eventually reboot the CPU in question if the suspend call
-   returns (and restore SCTLR and ACTLR in cpu_resume), so there is 0 point
-   in doing that here.
-2) The core would have executed out of coherency for a "while" so the
-   tlbs could be stale and you do not invalidate them. But given (1), (2)
-   becomes just informational. The register write must be executed
-   though (I guess...). Now, on restoring the SMP bit in cpu_resume
-   (errata 799270) I need to verify this is safe and get back to you.
-
-Cheers,
-Lorenzo
+I believe there aren't direct dependencies between the patches. So, the
+MFD patches can be applied to the MFD tree and the DT patch applied to
+the Tegra tree. I'm simply waiting for the MFD patches to be applied
+before applying the DT patch so that I know the DT binding definition is
+fully accepted before applying a patch that uses it.
