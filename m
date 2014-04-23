@@ -1,131 +1,185 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH 06/10] ARM: EXYNOS: Add support for mapping PMU base
- address via DT
-Date: Wed, 23 Apr 2014 18:32:56 +0530
-Message-ID: <CAGm_ybgEfqYfKJch58_svA5GAbkFXfXb1FyOiMSrX12PzBHxyA@mail.gmail.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
-	<1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC v2 PATCH v4 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Wed, 23 Apr 2014 15:33:38 +0200
+Message-ID: <5357C132.9000107@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1827288.zC58DZqqVB@avalon> <5357B69F.7070405@samsung.com>
+ <2706453.n69EBJuI3j@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:38073 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751363AbaDWNDH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 09:03:07 -0400
-In-Reply-To: <1396425058-4012-7-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <2706453.n69EBJuI3j@avalon>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux@arm.linux.org.uk, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi,
+On 04/23/2014 02:55 PM, Laurent Pinchart wrote:
+> Hi Andrzej,
+>
+> On Wednesday 23 April 2014 14:48:31 Andrzej Hajda wrote:
+>> On 04/23/2014 01:34 PM, Laurent Pinchart wrote:
+>>> On Wednesday 23 April 2014 11:02:21 Andrzej Hajda wrote:
+>>>> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
+>>>>> This patch adds DT bindings for s6e3fa0 panel.
+>>>>> The bindings describes panel resources, display timings and cpu timings.
+>>>>>
+>>>>> Changelog v2:
+>>>>> - Adds unit address (commented by Sachin Kamat)
+>>>>> Changelog v3:
+>>>>> - Removes optional delay, size properties (commented by Laurent
+>>>>> Pinchart)
+>>>>> - Adds OLED detection, TE gpio properties
+>>>>> Changelog v4:
+>>>>> - Moves CPU timings relevant properties from FIMD DT
+>>>>>
+>>>>>   (commeted by Laurent Pinchart, Andrzej Hajda)
+>>>>>
+>>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>> ---
+>>>>>
+>>>>>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   63
+>>>>>  +++++++++++++++
+>>>>>
+>>>>> 1 file changed, 63 insertions(+)
+>>>>>
+>>>>>  create mode 100644
+>>>>>  Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt>
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>>>>> b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt new file
+>>>>> mode 100644
+>>>>> index 0000000..9eeb38b
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>>>>> @@ -0,0 +1,63 @@
+>>>>> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+>>>>> +
+>>>>> +Required properties:
+>>>>> +  - compatible: "samsung,s6e3fa0"
+>>>>> +  - reg: the virtual channel number of a DSI peripheral
+>>>>> +  - vdd3-supply: core voltage supply
+>>>>> +  - vci-supply: voltage supply for analog circuits
+>>>>> +  - reset-gpio: a GPIO spec for the reset pin
+>>>>> +  - det-gpio: a GPIO spec for the OLED detection pin
+>>>>> +  - te-gpio: a GPIO spec for the TE pin
+>>>>> +  - display-timings: timings for the connected panel as described by
+>>>>> [1]
+>>>> Which properties of display-timings are relevant for CPU mode?
+>>>> I guess width and height. Anything more?
+>>>>
+>>>>> +  - cpu-timings: CPU interface timings for the connected panel, and it
+>>>>> contains
+>>>>> +        following optional properties.
+>>>>> +          - cs-setup: clock cycles for the active period of address
+>>>>> signal
+>>>>> +                enable until chip select is enable in CPU interface
+>>>>> +          - wr-setup: clock cycles for the active period of CS signal
+>>>>> enable
+>>>>> +                until write signal is enable in CPU interface
+>>>>> +          - wr-act: clock cycles for the active period of CS enable in
+>>>>> CPU
+>>>>> +                interface
+>>> What about calling this property wr-active ? I had called this wr-cycle in
+>>> a previous implementation, that could be an option as well.
+>>>
+>>>>> +          - wr-hold: clock cycles for the active period of CS disable
+>>>>> until
+>>>>> +                write signal is disable in CPU interface
+>>>> cpu-timings name does not sound to be related to display.
+>>>> I wonder if it would not be better to merge cpu-timings into
+>>>> display-timings but this will require more discussion I guess.
+>>> The panel has a memory-like interface with chip select, read/write and
+>>> access strobe, address (1 bit) and data signals. The interface is defined
+>>> in the MIPI DBI specification (a quick search turned up
+>>> http://www.scribd.com/doc/206899854/MIPI-DPI-Specification-v2, there might
+>>> be direct PDF downloads available), even if some panels implement a
+>>> similar interface that predates MIPI DBI (with names such as i80 or
+>>> SYS-80 probably due to the similarities with the 8051 external bus).
+>>>
+>>> The cpu-timings properties describe the read and write access timings for
+>>> those signals, unrelated to the display video timings. I thus believe that
+>>> they should be separate from the display timings. We will probably need to
+>>> add properties for the read signal as well, but that can be done later.
+>> cpu-timings suggests these timings are for CPU, but they are for display
+>> panel in CPU mode.
+>> I though rather about something like display-cpu-timings or i80-timings,
+>> just to avoid confusion.
+> mipi-dbi-timings maybe ?
 
-On Wed, Apr 2, 2014 at 1:20 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> From: Young-Gun Jang <yg1004.jang@samsung.com>
->
-> Add support for mapping Exynos Power Management Unit (PMU) base address
-> from device tree. Code will use existing samsung pmu binding information.
-> This patch also adds "get_exynos_pmubase" a helper function to return mapped base
-> address to various other files under "mach-exynos".
->
-> Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h |    2 ++
->  arch/arm/mach-exynos/exynos.c |   44 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 46 insertions(+)
->
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index ff28334..9a55cf6 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -61,4 +61,6 @@ struct exynos_pmu_conf {
->
->  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
->
-> +extern void __iomem *get_exynos_pmubase(void);
-> +
->  #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index a5e1349..a5127fb 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -35,6 +35,8 @@
->  #define L2_AUX_VAL 0x7C470001
->  #define L2_AUX_MASK 0xC200ffff
->
-> +static void __iomem *exynos_pmu_base __initdata;
+It looks OK.
 
-Are you sure you want to keep exynos_pmu_base in .init section.
-I am seeing a crash in platform_do_lowpower()
-I think you should remove __initdata.
+I guess only hactive, and vactive props of display-timings are used,
+maybe some flags?
+I wonder if it would not be better to drop display-timings node
+and place all props into mipi-dbi-timings or mipi-dbi-settings node.
+Or rather all timings props should be put into port/endpoint node with
+or without
+any container node.
 
-> +
->  static struct map_desc exynos4_iodesc[] __initdata = {
->         {
->                 .virtual        = (unsigned long)S3C_VA_SYS,
-> @@ -245,6 +247,47 @@ void __init exynos_init_late(void)
->         exynos_pm_init();
->  }
+Regards
+Andrzej
+
 >
-> +static char const *exynos_dt_pmu_match[] __initconst = {
-> +       "samsung,exynos4210-pmu",
-> +       "samsung,exynos4212-pmu",
-> +       "samsung,exynos4412-pmu",
-> +       "samsung,exynos5250-pmu",
-> +       NULL
-> +};
-> +
-> +static int __init exynos_fdt_map_pmu(unsigned long node,
-> +               const char *uname, int depth, void *data)
-> +{
-> +       struct map_desc iodesc;
-> +       __be32 *reg;
-> +       unsigned long len;
-> +
-> +       if (of_flat_dt_match(node, exynos_dt_pmu_match)) {
-> +               phys_addr_t phys_addr;
-> +               reg = of_get_flat_dt_prop(node, "reg", &len);
-> +               if (reg == NULL || len != (sizeof(unsigned long) * 2))
-> +                       return 0;
-> +
-> +               phys_addr = be32_to_cpu(reg[0]);
-> +               iodesc.pfn = __phys_to_pfn(phys_addr);
-> +               iodesc.length = be32_to_cpu(reg[1]) - 1;
-> +               iodesc.virtual = (unsigned long)S5P_VA_PMU;
-> +               iodesc.type = MT_DEVICE;
-> +               iotable_init(&iodesc, 1);
-> +
-> +               exynos_pmu_base = ioremap(phys_addr, be32_to_cpu(reg[1]));
-> +               if (WARN_ON(!exynos_pmu_base))
-> +                       return -EFAULT;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +inline void __iomem *get_exynos_pmubase()
-> +{
-> +       return exynos_pmu_base;
-> +}
-> +
->  static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
->                                         int depth, void *data)
->  {
-> @@ -301,6 +344,7 @@ void __init exynos_init_io(void)
->         debug_ll_io_init();
->
->         of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
-> +       of_scan_flat_dt(exynos_fdt_map_pmu, NULL);
->
->         /* detect cpu id and rev. */
->         s5p_init_cpu(S5P_VA_CHIPID);
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+>>>> If you want to stay with separate node please consider to make it
+>>>> optional as whole node or make some properties required. Making node
+>>>> required with all sub-properties optional is weird.
+>>>> By the way I hope all timings properties are generic for CPU mode,
+>>>> if not they should be prefixed by vendor or model.
+>>> The timings description should be pretty generic I believe, especially
+>>> given that the interface is standardized by the MIPI alliance. Could you
+>>> have a quick look at the spec and share your opinion ?
+>>>
+>>>>> +
+>>>>> +Optional properties:
+>>>>> +
+>>>>> +The device node can contain one 'port' child node with one child
+>>>>> +'endpoint' node, according to the bindings defined in [2]. This
+>>>>> +node should describe panel's video bus.
+>>>>> +
+>>>>> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+>>>>> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>>>>> +
+>>>>> +Example:
+>>>>> +
+>>>>> +	panel@0 {
+>>>>> +		compatible = "samsung,s6e3fa0";
+>>>>> +		reg = <0>;
+>>>>> +		vdd3-supply = <&vcclcd_reg>;
+>>>>> +		vci-supply = <&vlcd_reg>;
+>>>>> +		reset-gpio = <&gpy7 4 0>;
+>>>>> +		det-gpio = <&gpg0 6 0>;
+>>>>> +		te-gpio = <&gpd1 7 0>;
+>>>>> +
+>>>>> +		display-timings {
+>>>>> +			timing0: timing-0 {
+>>>>> +				clock-frequency = <0>;
+>>>>> +				hactive = <1080>;
+>>>>> +				vactive = <1920>;
+>>>>> +				hfront-porch = <2>;
+>>>>> +				hback-porch = <2>;
+>>>>> +				hsync-len = <1>;
+>>>>> +				vfront-porch = <1>;
+>>>>> +				vback-porch = <4>;
+>>>>> +				vsync-len = <1>;
+>>>>> +			};
+>>>>> +		};
+>>>>> +
+>>>>> +		cpu-timings {
+>>>>> +			cs-setup = <0>;
+>>>>> +			wr-setup = <0>;
+>>>>> +			wr-act = <1>;
+>>>>> +			wr-hold = <0>;
+>>>>> +		};
+>>>>> +	};
