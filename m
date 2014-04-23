@@ -1,165 +1,46 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC v2 PATCH 02/14] drm/exynos: dsi: delay setting clocks after
- reset
-Date: Wed, 23 Apr 2014 09:37:45 +0200
-Message-ID: <53576DC9.2010601@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-3-git-send-email-yj44.cho@samsung.com>
- <53565D54.1050609@samsung.com> <535710E0.40702@samsung.com>
- <5357373C.5080002@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH] usb: ohci-exynos: Add facility to use phy provided by the
+ generic phy framework
+Date: Wed, 23 Apr 2014 13:10:20 +0530
+Message-ID: <CAFp+6iG8moJdpq2kLsG_yJysJpk7BZ9EJw9=i=AmpCxsCQjefQ@mail.gmail.com>
+References: <CAFp+6iGrgMTE27FxpFTQfALJO_XypxGSZ1-wny8KAoY1sLBbWw@mail.gmail.com>
+	<Pine.LNX.4.44L0.1404221358530.1326-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5357373C.5080002@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.1404221358530.1326-100000@iolanthe.rowland.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, robh+dt <robh+dt@kernel.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/23/2014 05:45 AM, YoungJun Cho wrote:
-> Hi again Andrzej,
-> 
-> On 04/23/2014 10:01 AM, YoungJun Cho wrote:
->> Hi Andrzej
->>
->> Thank you for comments.
->>
->> On 04/22/2014 09:15 PM, Andrzej Hajda wrote:
->>> Hi YoungJun,
->>>
->>> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
->>>> Some phy control registers are not kept after software reset.
->>>> So this patch makes the clocks containing phy control to be set
->>>> after software reset.
->>>>
->>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>> ---
->>>>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>> b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>> index 956e5f3..2cf1f0b 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void
->>>> *dev_id)
->>>>
->>>>   static int exynos_dsi_init(struct exynos_dsi *dsi)
->>>>   {
->>>> -    exynos_dsi_enable_clock(dsi);
->>>>       exynos_dsi_reset(dsi);
->>>>       enable_irq(dsi->irq);
->>>>       exynos_dsi_wait_for_reset(dsi);
->>>> +    exynos_dsi_enable_clock(dsi);
->>>>       exynos_dsi_init_link(dsi);
->>>>
->>>>       return 0;
->>>
->>> I have commented it in the previous version of the patchset. I repeat it
->>> again.
->>> This is a regression, on exynos4210-trats I have 'timeout waiting for
->>> reset' message after dpms off, on.
->>
->> I'm really sorry for that. I misunderstood last time.
->>
->> I think the original codes were correct, because the reset timeout would
->> be occurred without clock activation.
-> 
-> This is not true.
-> 
->>
->> I'll check and fix again.
->> (By the way, why am I ok?)
-> 
-> I have not verified with exynos4210-trats board yet(I have to get it),
-> but reset timeout is occured in exynos_dsi_wait_for_reset()
-> with &dsi->completed and that is completed by exynos_dsi_irq().
-> 
-> And the regulators and clocks are enabled by exynos_dsi_poweron(),
-> NOT by exynos_dsi_enable_clock().
-> 
-> So I think the reset timeout is not related with this patch.
+Hi,
 
-
-As far as I remember there were at least two issues with init sequence:
-- spurious irq storm after power on and before reset,
-- irq reset timeouts after reset and without enabled clock.
-
-The current sequence is a result of tests on live hw (documentation were
-not helpful in this case). I think it could be improved little bit more
-by moving exynos_dsi_enable_clock just after enable_irq this will
-eliminate possible timeout when RST_RELEASE irq is signaled but irq is
-still disabled. The sequence should look like below:
-
-	exynos_dsi_reset(dsi);
-	enable_irq(dsi->irq);
-	exynos_dsi_enable_clock(dsi);
-	exynos_dsi_wait_for_reset(dsi);
-	exynos_dsi_init_link(dsi);
-
-And PHY related configuration could be put somewhere after
-exynos_dsi_wait_for_reset.
-
-I have tested this sequence on trats, it seems to be OK.
-
-Regards
-Andrzej
-
-
-> 
-> Anyway I need more investigation.
-> 
-> Thank you.
-> Best regards YJ
-> 
+On Tue, Apr 22, 2014 at 11:29 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Tue, 22 Apr 2014, Vivek Gautam wrote:
+>
+>> On Thu, Apr 10, 2014 at 6:54 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> > Add support to consume phy provided by Generic phy framework.
+>> > Keeping the support for older usb-phy intact right now, in order
+>> > to prevent any functionality break in absence of relevant
+>> > device tree side change for ohci-exynos.
+>> > Once we move to new phy in the device nodes for ohci, we can
+>> > remove the support for older phys.
 >>
->>>
->>> I will comment your previous answer here to make the discussion easier:
->>>> As I mentioned in description, it came from phy control registers.
->>>> Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
->>>> DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
->>>> affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
->>>>
->>>> So this patch is required for Exynos5 SoCs.
->>>
->>> In the moment this patch is applied exynos_dsi_set_pll do not touch phy
->>> registers you have mentioned.
->>> Your change would be more clear if it will be merged together with the
->>> patch adding PHYCTRL settings.
->>>
->>> Anyway, solution is simple - please set PHY registers after reset and
->>> configure clocks before reset to avoid
->>> reset timeouts, is there any reason to not do it this way?
->>
->> The only reason is that the PHY control is related with PLL control and
->> that was in exynos_dsi_enable_clock() call path.
->> So I just wanted to keep current sequence.
->>
->> If there is no way to use previous one, I'll consider your approach.
->>
->> Thank you.
->> Best regards YJ
->>
->>>
->>> Regards
->>> Andrzej
->>>
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
-> 
+>> Any comments on this please.
+>> I think whatever the approach we follow, that can be common to both
+>> ehci-exynos[1], and ohci-exynos, since
+>> both are needed to move to the new generic phy framework, keeping
+>> support for older usb-phy
+>> so as to have smooth transition, in order to avoid any regression.
+>
+> I lost my copies of the ehci-exynos patch, but probably the same
+> comments apply as for the ohci-exynos patch.
+
+Ok, i will be reworking on the ehci-exynos patch also (which was
+earlier posted by Kamil [1]),
+after addressing the review comments on that, and will post the same.
+
+[1] [PATCH v6 8/8] usb: ehci-exynos: Change to use phy provided by the
+generic phy framework
+https://lkml.org/lkml/2014/1/29/298
