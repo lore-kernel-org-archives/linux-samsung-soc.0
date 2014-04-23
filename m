@@ -1,132 +1,62 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH 02/14] drm/exynos: dsi: delay setting clocks after
- reset
-Date: Wed, 23 Apr 2014 12:45:00 +0900
-Message-ID: <5357373C.5080002@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-3-git-send-email-yj44.cho@samsung.com>
- <53565D54.1050609@samsung.com> <535710E0.40702@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc: Don't print data errors
+Date: Wed, 23 Apr 2014 09:32:36 +0530
+Message-ID: <CAGOxZ52ChD+KExT75Zz5e4j7=fN5bt1py6C04V+czHOfv0tYNQ@mail.gmail.com>
+References: <1398210681-22976-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40772 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753361AbaDWDpH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Apr 2014 23:45:07 -0400
-In-reply-to: <535710E0.40702@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1398210681-22976-1-git-send-email-dianders@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, chris@printf.net, Ulf Hansson <ulf.hansson@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 
-Hi again Andrzej,
+Hi Doug,
 
-On 04/23/2014 10:01 AM, YoungJun Cho wrote:
-> Hi Andrzej
+On Wed, Apr 23, 2014 at 5:21 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Data errors are completely expected during tuning.  Printing them out
+> is confusing people looking at the kernel logs.  They see things like:
 >
-> Thank you for comments.
+>  [    3.613296] dwmmc_exynos 12200000.dwmmc0: data error, status 0x00000088
 >
-> On 04/22/2014 09:15 PM, Andrzej Hajda wrote:
->> Hi YoungJun,
->>
->> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
->>> Some phy control registers are not kept after software reset.
->>> So this patch makes the clocks containing phy control to be set
->>> after software reset.
->>>
->>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>> b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>> index 956e5f3..2cf1f0b 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void
->>> *dev_id)
->>>
->>>   static int exynos_dsi_init(struct exynos_dsi *dsi)
->>>   {
->>> -    exynos_dsi_enable_clock(dsi);
->>>       exynos_dsi_reset(dsi);
->>>       enable_irq(dsi->irq);
->>>       exynos_dsi_wait_for_reset(dsi);
->>> +    exynos_dsi_enable_clock(dsi);
->>>       exynos_dsi_init_link(dsi);
->>>
->>>       return 0;
->>
->> I have commented it in the previous version of the patchset. I repeat it
->> again.
->> This is a regression, on exynos4210-trats I have 'timeout waiting for
->> reset' message after dpms off, on.
+> ...and they think something is wrong with their hardware.
 >
-> I'm really sorry for that. I misunderstood last time.
+> Remove the printouts.  We'll leave it up to a higher level to report
+> about errors.
 >
-> I think the original codes were correct, because the reset timeout would
-> be occurred without clock activation.
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 
-This is not true.
+This looks reasonable
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
+> ---
+>  drivers/mmc/host/dw_mmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> I'll check and fix again.
-> (By the way, why am I ok?)
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index cced599..4c8d423 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1248,7 +1248,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
+>                         data->error = -EIO;
+>                 }
+>
+> -               dev_err(host->dev, "data error, status 0x%08x\n", status);
+> +               dev_dbg(host->dev, "data error, status 0x%08x\n", status);
+>
+>                 /*
+>                  * After an error, there may be data lingering
+> --
+> 1.9.1.423.g4596e3a
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I have not verified with exynos4210-trats board yet(I have to get it),
-but reset timeout is occured in exynos_dsi_wait_for_reset()
-with &dsi->completed and that is completed by exynos_dsi_irq().
 
-And the regulators and clocks are enabled by exynos_dsi_poweron(),
-NOT by exynos_dsi_enable_clock().
 
-So I think the reset timeout is not related with this patch.
-
-Anyway I need more investigation.
-
-Thank you.
-Best regards YJ
-
->
->>
->> I will comment your previous answer here to make the discussion easier:
->>> As I mentioned in description, it came from phy control registers.
->>> Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
->>> DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
->>> affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
->>>
->>> So this patch is required for Exynos5 SoCs.
->>
->> In the moment this patch is applied exynos_dsi_set_pll do not touch phy
->> registers you have mentioned.
->> Your change would be more clear if it will be merged together with the
->> patch adding PHYCTRL settings.
->>
->> Anyway, solution is simple - please set PHY registers after reset and
->> configure clocks before reset to avoid
->> reset timeouts, is there any reason to not do it this way?
->
-> The only reason is that the PHY control is related with PLL control and
-> that was in exynos_dsi_enable_clock() call path.
-> So I just wanted to keep current sequence.
->
-> If there is no way to use previous one, I'll consider your approach.
->
-> Thank you.
-> Best regards YJ
->
->>
->> Regards
->> Andrzej
->>
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+-- 
+Regards,
+Alim
