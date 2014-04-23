@@ -1,141 +1,107 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC v2 PATCH v4 09/14] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 23 Apr 2014 09:33:47 +0200
-Message-ID: <20140423073341.GE31226@ulmo>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-10-git-send-email-yj44.cho@samsung.com>
- <53567683.1020206@samsung.com> <535716BC.2080702@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 3/4] drm: Introduce drm_fb_helper_prepare()
+Date: Wed, 23 Apr 2014 09:35:48 +0200
+Message-ID: <20140423073548.GW10722@phenom.ffwll.local>
+References: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
+ <1398177741-28482-3-git-send-email-thierry.reding@gmail.com>
+ <20140422155406.GU10722@phenom.ffwll.local>
+ <20140423071439.GA31226@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0618461094=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <535716BC.2080702@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20140423071439.GA31226@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Wed, Apr 23, 2014 at 09:14:41AM +0200, Thierry Reding wrote:
+> On Tue, Apr 22, 2014 at 05:54:06PM +0200, Daniel Vetter wrote:
+> > On Tue, Apr 22, 2014 at 04:42:20PM +0200, Thierry Reding wrote:
+> [...]
+> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> [...]
+> > > @@ -502,6 +503,33 @@ static void drm_fb_helper_crtc_free(struct drm_fb_helper *helper)
+> > >  }
+> > >  
+> > >  /**
+> > > + * drm_fb_helper_prepare - setup a drm_fb_helper structure
+> > > + * @dev: DRM device
+> > > + * @helper: driver-allocated fbdev helper structure to set up
+> > > + * @funcs: pointer to structure of functions associate with this helper
+> > > + *
+> > > + * Sets up the bare minimum to make the framebuffer helper usable. This is
+> > > + * useful to implement race-free initialization of the polling helpers. In
+> > > + * that case a typical sequence would be:
+> > > + *
+> > > + *   - call drm_fb_helper_prepare()
+> > > + *   - set dev->mode_config.funcs
+> > 
+> > This step is done in drm_fb_helper_prepare already.
+> 
+> drm_fb_helper_prepare() sets fb_helper->funcs. dev->mode_config.funcs
+> needs to be set because it gets called by drm_kms_helper_hotplug_event()
+> which in turn is called by output_poll_execute(), which can be called at
+> any point after drm_kms_helper_poll_init(). It could be scheduled
+> immediately by drm_kms_helper_poll_enable().
+> 
+> I wonder if perhaps we should be wrapping that into a function as well.
+> Currently this is only documented in code by the drivers that call this.
+> But since it's only a single step it doesn't seem worth it. Perhaps if
+> we rolled the min/max_width/height into that function as well it would
+> be more worth it? That could be difficult to do since a couple of
+> drivers need to set those depending on the chipset generation.
 
---===============0618461094==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+SfteS7bOf3dGlBC"
-Content-Disposition: inline
+Oh I've misread this step for the fb_helper->funcs assignment. Makes sense
+and I don't think we need to augment your kerneldoc more to explain this.
 
+> > > + *   - perform driver-specific setup
 
---+SfteS7bOf3dGlBC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hm, maybe clarify this as "initialize modeset objects like crtcs, encoders
+and connectors"? Since that's the important part we need to get done here.
 
-On Wed, Apr 23, 2014 at 10:26:20AM +0900, YoungJun Cho wrote:
-> Hi Andrzej
->=20
-> Thank you for comment.
->=20
-> On 04/22/2014 11:02 PM, Andrzej Hajda wrote:
-> >On 04/21/2014 02:28 PM, YoungJun Cho wrote:
-> >>This patch adds DT bindings for s6e3fa0 panel.
-> >>The bindings describes panel resources, display timings and cpu timings.
-> >>
-> >>Changelog v2:
-> >>- Adds unit address (commented by Sachin Kamat)
-> >>Changelog v3:
-> >>- Removes optional delay, size properties (commented by Laurent Pinchar=
-t)
-> >>- Adds OLED detection, TE gpio properties
-> >>Changelog v4:
-> >>- Moves CPU timings relevant properties from FIMD DT
-> >>   (commeted by Laurent Pinchart, Andrzej Hajda)
-> >>
-> >>Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> >>Acked-by: Inki Dae <inki.dae@samsung.com>
-> >>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >>---
-> >>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   63 +++++++++++=
-+++++++++
-> >>  1 file changed, 63 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6=
-e3fa0.txt
-> >>
-> >>diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.tx=
-t b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> >>new file mode 100644
-> >>index 0000000..9eeb38b
-> >>--- /dev/null
-> >>+++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> >>@@ -0,0 +1,63 @@
-> >>+Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-> >>+
-> >>+Required properties:
-> >>+  - compatible: "samsung,s6e3fa0"
-> >>+  - reg: the virtual channel number of a DSI peripheral
-> >>+  - vdd3-supply: core voltage supply
-> >>+  - vci-supply: voltage supply for analog circuits
-> >>+  - reset-gpio: a GPIO spec for the reset pin
-> >>+  - det-gpio: a GPIO spec for the OLED detection pin
-> >>+  - te-gpio: a GPIO spec for the TE pin
-> >
-> >Just FYI, according to DT documentation [1] gpio spec should be in form
-> >[name]-gpios, however there is plenty bindings with -gpio suffix, so I
-> >am not sure if it is really enforced. On the other side it is enforced
-> >by descriptor based gpio framework[2]. Integer-based gpio framework
-> >used in your driver is obsolete according to [2].
->=20
-> Yes, you're right. That is my mistake.
-> They should be attached 's'.
-> At first I used integer-based gpio framework and replaced to descriptor
-> based one, but did not updated DT bindings.
+> > > + *   - call drm_kms_helper_poll_init()
+> > 
+> > Maybe mention that after this you can start to handle hpd events using the
+> > probe helpers?
+> 
+> Isn't that somewhat implied already? The poll helpers call directly the
+> dev->mode_config.funcs->output_poll_changed() function, which has
+> already been set up earlier.
 
-I've been working on a patch to support both *-gpios and *-gpio variants
-with the GPIO descriptor framework. *-gpios makes sense if there can
-indeed be several, but for something like hotplug detection I don't
-think there's a reason to require the plural.
+I've more meant that after this it's save for drivers to enable hpd
+interrupts and start to process them. I.e.
 
-Furthermore some bindings already use the singular *-gpio anyway, so if
-we ever want to convert drivers using those bindings to the GPIO
-descriptor API we have to support that form too.
+	- enable interrupts and start processing hpd events
 
-Thierry
+as an additional step to make it really cleear how it all fits together.
+Otherwise driver authors are left wondering wtf this isn't just one
+function call to do it all for them ;-)
 
---+SfteS7bOf3dGlBC
-Content-Type: application/pgp-signature
+> > > + *   - call drm_fb_helper_init()
+> > > + *   - call drm_fb_helper_single_add_all_connectors()
+> > > + *   - call drm_fb_helper_initial_config()
+> > 
+> > Does this list look sane in the generated DocBook? Afaik kerneldoc
+> > unfortunately lacks any form of markup, at least afaik :(
+> 
+> I must admit I didn't check. I'll make sure I do that before sending out
+> the next version.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTV2zVAAoJEN0jrNd/PrOhlf4QAJMXm3uJOjbn99PCvVKTGJoC
-hXtogifVuMu7qONkAQ+6pJs4o9aG3kfqp31b6jCwni38ixFIPTX42MdXaVvvcOl3
-nOhbr4PukD08E/gCWMFbVx9H9zPHwAlJ7Ug5O/zzT6C6mE9NZyIQmpYoXfJ0W0Ed
-ATToA8sLiLRUcbp945MSkvWfuImjUGyqcdvVCImKCp/KrfSA20/VxSbfpynvClGO
-rn6xEErLVkTeLzVs305rnl8Oz+7y1qWqQG24nSFFcIqtpIbhnr99Cg7jR6IuYoaI
-OeW+8PeK8D1aDo6N/G692AZdBfkRCp941xGWFOknbw7Cw3O3YCqgKeYLCE1Ms0sc
-pQ3UcjNnUghiFxVXlkkRlQQp5raT/z/uA6G5HiyRgfEI6Bs9v2LvHj04XFFU+8A9
-k38Z0Nv+s8XuouP7hCWM6VqkC9mxzpzw7Bv8Yr2Tr43E28ubhpp6txVeXhJ2QC5l
-t/9EPKneROhNPhCXhy+/AGHA6+zjxdfu9qOwTutHHQVUGBw0+b1/wFHcUbjqA9Dm
-1UnIiVcVWutQCv7XXu1c9m7CzSjS9u8EOeZjkT2DV95t02bN6YPsfdbXNk5HiJaX
-vOAD0ts2PWx0GjTPi3+diizEMrzIZ0rnwU00Z0LRacQ3XxfxoL9h7RsD+w0Giu8O
-qd9aL0ibDwuqXj2hPVA6
-=XHoo
------END PGP SIGNATURE-----
-
---+SfteS7bOf3dGlBC--
-
---===============0618461094==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0618461094==--
+If it looks ugly I'm ok as-is, just wondered. Kerneldoc is a bit
+simplistic ime.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
