@@ -1,71 +1,75 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v5 5/9] dts: exynos5250-snow: Add Vbus regulator for USB 3.0
-Date: Wed, 23 Apr 2014 20:00:47 +0530
-Message-ID: <1398263451-18023-6-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v5 2/9] dt: exynos5420: Enable support for DWC3 controller
+Date: Wed, 23 Apr 2014 20:00:44 +0530
+Message-ID: <1398263451-18023-3-git-send-email-gautam.vivek@samsung.com>
 References: <1398263451-18023-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1398263451-18023-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398263451-18023-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, robh+dt@kernel.org, gregkh@linuxfoundation.org, olof@lixom.net, balbi@ti.com, jg1.han@samsung.com, t.figa@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add required fixed-regulator for VBUS supply for USB 3.0
-controller phy.
+Add device tree nodes for DWC3 controller present on
+Exynos 5420 SoC, to enable support for USB 3.0.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
+ arch/arm/boot/dts/exynos5420.dtsi |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-This is first version of the patch for VBUS support for USB3DRD phy.
-v5 is just and indicative of the patch-series.
-
- arch/arm/boot/dts/exynos5250-snow.dts |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1ce1088..fd9b3b3 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -37,6 +37,13 @@
- 		sd3_bus4: sd3-bus-width4 {
- 			samsung,pin-drv = <0>;
- 		};
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index f69745f..e808d1b 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -733,6 +733,23 @@
+ 		samsung,power-domain = <&g2d_pd>;
+ 	};
+ 
++	usb@12000000 {
++		compatible = "samsung,exynos5250-dwusb3";
++		clocks = <&clock CLK_USBD300>;
++		clock-names = "usbdrd30";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
 +
-+		usb3_vbus_en: usb3-vbus-en {
-+			samsung,pins = "gpx2-7";
-+			samsung,pin-function = <1>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
++		dwc3 {
++			compatible = "synopsys,dwc3";
++			reg = <0x12000000 0x10000>;
++			interrupts = <0 72 0>;
++			phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
++			phy-names = "usb2-phy", "usb3-phy";
 +		};
- 	};
- 
- 	gpio-keys {
-@@ -196,6 +203,21 @@
- 		};
- 	};
- 
-+	usb3_vbus_reg: regulator-usb3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "P5.0V_USB3CON";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpx2 7 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb3_vbus_en>;
-+		enable-active-high;
 +	};
 +
-+	phy@12100000 {
-+		vbus-supply = <&usb3_vbus_reg>;
+ 	usbdrd_phy0: phy@12100000 {
+ 		compatible = "samsung,exynos5420-usbdrd-phy";
+ 		reg = <0x12100000 0x100>;
+@@ -743,6 +760,23 @@
+ 		#phy-cells = <1>;
+ 	};
+ 
++	usb@12400000 {
++		compatible = "samsung,exynos5250-dwusb3";
++		clocks = <&clock CLK_USBD301>;
++		clock-names = "usbdrd30";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		dwc3 {
++			compatible = "synopsys,dwc3";
++			reg = <0x12400000 0x10000>;
++			interrupts = <0 73 0>;
++			phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
++			phy-names = "usb2-phy", "usb3-phy";
++		};
 +	};
 +
- 	usb@12110000 {
- 		samsung,vbus-gpio = <&gpx1 1 0>;
- 	};
+ 	usbdrd_phy1: phy@12500000 {
+ 		compatible = "samsung,exynos5420-usbdrd-phy";
+ 		reg = <0x12500000 0x100>;
 -- 
 1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
