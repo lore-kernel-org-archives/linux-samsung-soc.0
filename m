@@ -1,43 +1,46 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 0/3] dts: exynos5: Add required VDD supplies for USB
-Date: Wed, 23 Apr 2014 20:59:26 +0530
-Message-ID: <1398266969-26000-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Subject: [PATCH 1/3] dts: exynos5250: Add required VDD regulator supplies for usb
+Date: Wed, 23 Apr 2014 20:59:27 +0530
+Message-ID: <1398266969-26000-2-git-send-email-gautam.vivek@samsung.com>
+References: <1398266969-26000-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398266969-26000-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, av.tikhomirov@samsung.com, stern@rowland.harvard.edu, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, stern@rowland.harvard.edu, balbi@ti.com, jg1.han@samsung.com, av.tikhomirov@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Based on for-next branch of Kgene's linux-samsung tree, with
-following patch series:
-[PATCH 0/9] Enable USB 3.0 support on Exynos5 systems
-https://lkml.org/lkml/2014/4/23/389
+Add required VDD 3.3V and VDD 1.0V regulator supplies to usb nodes.
 
-These are device tree patches corresponding to the usb driver patch-series:
-[PATCH 1/3] usb: ohci-exynos: Make provision for vdd regulators
-[PATCH 2/3] usb: ehci-exynos: Make provision for vdd regulators
-[PATCH 3/3] usb: dwc3-exynos: Make provision for vdd regulators
-
-Vivek Gautam (3):
-  dts: exynos5250: Add required VDD regulator supplies for usb
-  dts: exynos5250-snow: Add required VDD regulator supplies for usb
-  dts: exynos5420-smdk5420: Add required VDD regulator supplies for usb
-
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
  arch/arm/boot/dts/exynos5250-smdk5250.dts |   12 ++++++++++++
- arch/arm/boot/dts/exynos5250-snow.dts     |   12 ++++++++++++
- arch/arm/boot/dts/exynos5420-smdk5420.dts |   20 ++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+ 1 file changed, 12 insertions(+)
 
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index a794a70..2f183b8 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -363,8 +363,20 @@
+ 		samsung,audio-codec = <&wm8994>;
+ 	};
+ 
++	usb@12000000 {
++		vdd33-supply = <&ldo12_reg>;
++		vdd10-supply = <&ldo15_reg>;
++	};
++
+ 	usb@12110000 {
+ 		samsung,vbus-gpio = <&gpx2 6 0>;
++		vdd33-supply = <&ldo12_reg>;
++		vdd10-supply = <&ldo15_reg>;
++	};
++
++	usb@12120000 {
++		vdd33-supply = <&ldo12_reg>;
++		vdd10-supply = <&ldo15_reg>;
+ 	};
+ 
+ 	dp-controller@145B0000 {
 -- 
 1.7.10.4
