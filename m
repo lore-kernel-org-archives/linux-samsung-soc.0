@@ -1,106 +1,165 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH 02/14] drm/exynos: dsi: delay setting clocks after
- reset
-Date: Wed, 23 Apr 2014 10:01:20 +0900
-Message-ID: <535710E0.40702@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-3-git-send-email-yj44.cho@samsung.com>
- <53565D54.1050609@samsung.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: Re: [PATCH v11 20/27] iommu/exynos: allow having multiple System MMUs
+ for a master H/W
+Date: Wed, 23 Apr 2014 10:15:24 +0900
+Message-ID: <20140423101524.4145e9f88300293e0cea92c4@samsung.com>
+References: <20140314141050.c8bedcb66532d277c496796d@samsung.com>
+ <CAOD6ATobD8HCJWXeRgoXYaBBuKxy_TPj_AuWOfdPhJRF=Gxz5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53565D54.1050609@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:64908 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751314AbaDWBP0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Apr 2014 21:15:26 -0400
+In-reply-to: <CAOD6ATobD8HCJWXeRgoXYaBBuKxy_TPj_AuWOfdPhJRF=Gxz5w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>
 
-Hi Andrzej
+On Tue, 22 Apr 2014 18:53:51 +0530, Shaik Ameer Basha wrote:
+> Hi KyongHo Cho,
+> 
+> 
+> 
+> On Fri, Mar 14, 2014 at 10:40 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+> > Some master device descriptor like fimc-is which is an abstraction
+> > of very complex H/W may have multiple System MMUs. For those devices,
+> > the design of the link between System MMU and its master H/W is needed
+> > to be reconsidered.
+> >
+> > A link structure, sysmmu_list_data is introduced that provides a link
+> > to master H/W and that has a pointer to the device descriptor of a
+> > System MMU. Given a device descriptor of a master H/W, it is possible
+> > to traverse all System MMUs that must be controlled along with the
+> > master H/W.
+> >
+> > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> > ---
+> >  drivers/iommu/exynos-iommu.c |  534 ++++++++++++++++++++++++++----------------
+> >  1 file changed, 333 insertions(+), 201 deletions(-)
+> >
+> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> > index 84ba29a..7489343 100644
+> > --- a/drivers/iommu/exynos-iommu.c
+> > +++ b/drivers/iommu/exynos-iommu.c
+> > @@ -128,6 +128,10 @@
+> >  #define __master_clk_disable(data)     __clk_gate_ctrl(data, clk_master, dis)
+> >
+> 
+> [snip]
+> 
+> > +static int __init __sysmmu_init_master(struct device *dev)
+> > +{
+> > +       int ret;
+> > +       int i = 0;
+> > +       struct device_node *node;
+> > +
+> > +       while ((node = of_parse_phandle(dev->of_node, "mmu-masters", i++))) {
+> >                 struct platform_device *master = of_find_device_by_node(node);
+> > +               struct exynos_iommu_owner *owner;
+> > +               struct sysmmu_list_data *list_data;
+> >
+> >                 if (!master) {
+> >                         dev_err(dev, "%s: mmu-master '%s' not found\n",
+> >                                 __func__, node->name);
+> > -                       return -EINVAL;
+> > +                       ret = -EINVAL;
+> > +                       goto err;
+> >                 }
+> >
+> > -               if (master->dev.archdata.iommu != NULL) {
+> > -                       dev_err(dev, "%s: '%s' is master of other MMU\n",
+> > -                               __func__, node->name);
+> > -                       return -EINVAL;
+> > +               owner = master->dev.archdata.iommu;
+> > +               if (!owner) {
+> > +                       owner = devm_kzalloc(dev, sizeof(*owner), GFP_KERNEL);
+> > +                       if (!owner) {
+> > +                               dev_err(dev,
+> > +                               "%s: Failed to allocate owner structure\n",
+> > +                               __func__);
+> > +                               ret = -ENOMEM;
+> > +                               goto err;
+> > +                       }
+> > +
+> > +                       INIT_LIST_HEAD(&owner->mmu_list);
+> > +                       INIT_LIST_HEAD(&owner->client);
+> > +                       owner->dev = &master->dev;
+> > +                       spin_lock_init(&owner->lock);
+> > +
+> > +                       master->dev.archdata.iommu = owner;
+> >                 }
+> >
+> > +               list_data = devm_kzalloc(dev, sizeof(*list_data), GFP_KERNEL);
+> > +               if (!list_data) {
+> > +                       dev_err(dev,
+> > +                               "%s: Failed to allocate sysmmu_list_data\n",
+> > +                               __func__);
+> > +                       ret = -ENOMEM;
+> > +                       goto err;
+> > +               }
+> > +
+> > +               INIT_LIST_HEAD(&list_data->entry);
+> > +               list_data->sysmmu = dev;
+> > +
+> >                 /*
+> > -                * archdata.iommu will be initialized with exynos_iommu_client
+> > -                * in sysmmu_hook_driver_register().
+> > +                * System MMUs are attached in the order of the presence
+> > +                * in device tree
+> >                  */
+> > -               master->dev.archdata.iommu = dev;
+> > +               list_add_tail(&list_data->entry, &owner->mmu_list);
+> >         }
+> >
+> > -       data->sysmmu = dev;
+> > -       rwlock_init(&data->lock);
+> > +       return 0;
+> > +err:
+> > +       while ((node = of_parse_phandle(dev->of_node, "mmu-masters", i++))) {
+> 
+> Don't we need to reinitialize variable 'i' here before using?
+> i = 0;
+> 
 
-Thank you for comments.
+Oh. You are right.
 
-On 04/22/2014 09:15 PM, Andrzej Hajda wrote:
-> Hi YoungJun,
->
-> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
->> Some phy control registers are not kept after software reset.
->> So this patch makes the clocks containing phy control to be set
->> after software reset.
->>
->> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index 956e5f3..2cf1f0b 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
->>
->>   static int exynos_dsi_init(struct exynos_dsi *dsi)
->>   {
->> -	exynos_dsi_enable_clock(dsi);
->>   	exynos_dsi_reset(dsi);
->>   	enable_irq(dsi->irq);
->>   	exynos_dsi_wait_for_reset(dsi);
->> +	exynos_dsi_enable_clock(dsi);
->>   	exynos_dsi_init_link(dsi);
->>
->>   	return 0;
->
-> I have commented it in the previous version of the patchset. I repeat it
-> again.
-> This is a regression, on exynos4210-trats I have 'timeout waiting for
-> reset' message after dpms off, on.
+Thanks.
 
-I'm really sorry for that. I misunderstood last time.
-
-I think the original codes were correct, because the reset timeout would
-be occurred without clock activation.
-
-I'll check and fix again.
-(By the way, why am I ok?)
-
->
-> I will comment your previous answer here to make the discussion easier:
->> As I mentioned in description, it came from phy control registers.
->> Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
->> DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
->> affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
->>
->> So this patch is required for Exynos5 SoCs.
->
-> In the moment this patch is applied exynos_dsi_set_pll do not touch phy
-> registers you have mentioned.
-> Your change would be more clear if it will be merged together with the
-> patch adding PHYCTRL settings.
->
-> Anyway, solution is simple - please set PHY registers after reset and
-> configure clocks before reset to avoid
-> reset timeouts, is there any reason to not do it this way?
-
-The only reason is that the PHY control is related with PLL control and
-that was in exynos_dsi_enable_clock() call path.
-So I just wanted to keep current sequence.
-
-If there is no way to use previous one, I'll consider your approach.
-
-Thank you.
-Best regards YJ
-
->
-> Regards
-> Andrzej
->
+> 
+> 
+> 
+> > +               struct platform_device *master = of_find_device_by_node(node);
+> > +               struct exynos_iommu_owner *owner;
+> > +               struct sysmmu_list_data *list_data;
+> >
+> > -       platform_set_drvdata(pdev, data);
+> > +               if (!master)
+> > +                       continue;
+> >
+> > -       pm_runtime_enable(dev);
+> > -       data->runtime_active = !pm_runtime_enabled(dev);
+> > +               owner = master->dev.archdata.iommu;
+> > +               if (!owner)
+> > +                       continue;
+> >
+> > -       dev_dbg(dev, "Probed and initialized\n");
+> > -       return 0;
+> > +               for_each_sysmmu_list(owner->dev, list_data) {
+> > +                       if (list_data->sysmmu == dev) {
+> > +                               list_del(&list_data->entry);
+> > +                               kfree(list_data);
+> > +                               break;
+> > +                       }
+> > +               }
+> > +       }
+> > +
+> > +       return ret;
+> >  }
+> >
+> 
+> [snip]
