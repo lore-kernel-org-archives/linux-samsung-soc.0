@@ -1,107 +1,97 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 3/4] drm: Introduce drm_fb_helper_prepare()
-Date: Wed, 23 Apr 2014 09:35:48 +0200
-Message-ID: <20140423073548.GW10722@phenom.ffwll.local>
-References: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
- <1398177741-28482-3-git-send-email-thierry.reding@gmail.com>
- <20140422155406.GU10722@phenom.ffwll.local>
- <20140423071439.GA31226@ulmo>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] usb: ohci-exynos: Add facility to use phy provided by the
+ generic phy framework
+Date: Wed, 23 Apr 2014 13:07:28 +0530
+Message-ID: <CAFp+6iGfsv7tLvaqCp6=BNSX3dtwuSLRGfOMDoFD4zSQHd9m3g@mail.gmail.com>
+References: <1397136261-16408-1-git-send-email-gautam.vivek@samsung.com>
+	<Pine.LNX.4.44L0.1404221350300.1326-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20140423071439.GA31226@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1404221350300.1326-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Apr 23, 2014 at 09:14:41AM +0200, Thierry Reding wrote:
-> On Tue, Apr 22, 2014 at 05:54:06PM +0200, Daniel Vetter wrote:
-> > On Tue, Apr 22, 2014 at 04:42:20PM +0200, Thierry Reding wrote:
-> [...]
-> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> [...]
-> > > @@ -502,6 +503,33 @@ static void drm_fb_helper_crtc_free(struct drm_fb_helper *helper)
-> > >  }
-> > >  
-> > >  /**
-> > > + * drm_fb_helper_prepare - setup a drm_fb_helper structure
-> > > + * @dev: DRM device
-> > > + * @helper: driver-allocated fbdev helper structure to set up
-> > > + * @funcs: pointer to structure of functions associate with this helper
-> > > + *
-> > > + * Sets up the bare minimum to make the framebuffer helper usable. This is
-> > > + * useful to implement race-free initialization of the polling helpers. In
-> > > + * that case a typical sequence would be:
-> > > + *
-> > > + *   - call drm_fb_helper_prepare()
-> > > + *   - set dev->mode_config.funcs
-> > 
-> > This step is done in drm_fb_helper_prepare already.
-> 
-> drm_fb_helper_prepare() sets fb_helper->funcs. dev->mode_config.funcs
-> needs to be set because it gets called by drm_kms_helper_hotplug_event()
-> which in turn is called by output_poll_execute(), which can be called at
-> any point after drm_kms_helper_poll_init(). It could be scheduled
-> immediately by drm_kms_helper_poll_enable().
-> 
-> I wonder if perhaps we should be wrapping that into a function as well.
-> Currently this is only documented in code by the drivers that call this.
-> But since it's only a single step it doesn't seem worth it. Perhaps if
-> we rolled the min/max_width/height into that function as well it would
-> be more worth it? That could be difficult to do since a couple of
-> drivers need to set those depending on the chipset generation.
+Hi Alan,
 
-Oh I've misread this step for the fb_helper->funcs assignment. Makes sense
-and I don't think we need to augment your kerneldoc more to explain this.
 
-> > > + *   - perform driver-specific setup
+On Tue, Apr 22, 2014 at 11:28 PM, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org> wrote:
 
-Hm, maybe clarify this as "initialize modeset objects like crtcs, encoders
-and connectors"? Since that's the important part we need to get done here.
+Thanks for reviewing this. Please find my comments inline below.
 
-> > > + *   - call drm_kms_helper_poll_init()
-> > 
-> > Maybe mention that after this you can start to handle hpd events using the
-> > probe helpers?
-> 
-> Isn't that somewhat implied already? The poll helpers call directly the
-> dev->mode_config.funcs->output_poll_changed() function, which has
-> already been set up earlier.
+> On Thu, 10 Apr 2014, Vivek Gautam wrote:
+>
+>> Add support to consume phy provided by Generic phy framework.
+>> Keeping the support for older usb-phy intact right now, in order
+>> to prevent any functionality break in absence of relevant
+>> device tree side change for ohci-exynos.
+>> Once we move to new phy in the device nodes for ohci, we can
+>> remove the support for older phys.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+>
+>> +static int exynos_ohci_phyg_on(struct phy *phy, bool on)
+>> +{
+>> +     int ret = 0;
+>> +
+>> +     if (phy) {
+>> +             if (on)
+>> +                     ret = phy_power_on(phy);
+>> +             else
+>> +                     ret = phy_power_off(phy);
+>> +     }
+>> +
+>> +     return ret;
+>> +}
+>
+> This would be cleaner if you had separate routines for
+> exynos_ohci_phyg_of and exynos_ohci_phyg_off.  For example:
+>
+> static int exynos_ohci_phyg_on(struct phy *phy)
+> {
+>         return phy ? phy_power_on(phy) : 0;
+> }
 
-I've more meant that after this it's save for drivers to enable hpd
-interrupts and start to process them. I.e.
+Sure, i will make two separate routines here.
 
-	- enable interrupts and start processing hpd events
+>
+>> @@ -88,16 +104,49 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+>>                                       "samsung,exynos5440-ohci"))
+>>               goto skip_phy;
+>>
+>> -     phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+>> -     if (IS_ERR(phy)) {
+>> -             usb_put_hcd(hcd);
+>> -             dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
+>> -             return -EPROBE_DEFER;
+>> +     exynos_ohci->phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+>> +     if (IS_ERR(exynos_ohci->phy)) {
+>> +             err = PTR_ERR(exynos_ohci->phy);
+>> +             if (err == -ENXIO || err == -ENODEV) {
+>> +                     exynos_ohci->phy = NULL;
+>> +             } else if (err == -EPROBE_DEFER) {
+>> +                     usb_put_hcd(hcd);
+>> +                     return err;
+>> +             } else {
+>> +                     dev_err(&pdev->dev, "no usb2 phy configured\n");
+>> +                     usb_put_hcd(hcd);
+>> +                     return err;
+>> +             }
+>
+> Instead of all the calls to usb_put_hcd() here and below, just goto
+> fail_clk.  Or add a new fail_phy label at the same spot and goto it.
 
-as an additional step to make it really cleear how it all fits together.
-Otherwise driver authors are left wondering wtf this isn't just one
-function call to do it all for them ;-)
+Sure, i can use a new label here.
 
-> > > + *   - call drm_fb_helper_init()
-> > > + *   - call drm_fb_helper_single_add_all_connectors()
-> > > + *   - call drm_fb_helper_initial_config()
-> > 
-> > Does this list look sane in the generated DocBook? Afaik kerneldoc
-> > unfortunately lacks any form of markup, at least afaik :(
-> 
-> I must admit I didn't check. I'll make sure I do that before sending out
-> the next version.
+>
+> Otherwise this looks basically okay.
 
-If it looks ugly I'm ok as-is, just wondered. Kerneldoc is a bit
-simplistic ime.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Sure, i will send the next version of this patch after rework.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
