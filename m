@@ -1,89 +1,63 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH 1/4] cpuidle: config: Add SOC_EXYNOS5420 entry to select
- cpuidle-big-little driver
-Date: Wed, 23 Apr 2014 11:50:01 +0530
-Message-ID: <CANuQgHHx+EyPXK0joYU-Af4dj+=ikW0SWE6g2-N0=K-dK3nMRw@mail.gmail.com>
-References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org>
-	<1398080958-21677-2-git-send-email-chander.kashyap@linaro.org>
-	<5356477C.1070403@linaro.org>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: dw_mmc: Don't print data errors
+Date: Wed, 23 Apr 2014 15:22:44 +0900
+Message-ID: <000201cf5ebc$70213200$50639600$%jun@samsung.com>
+References: <1398210681-22976-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:40300 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751436AbaDWGUC convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:17244 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752773AbaDWGWq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 02:20:02 -0400
-Received: by mail-ob0-f172.google.com with SMTP id wo20so550877obc.31
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Apr 2014 23:20:01 -0700 (PDT)
-In-Reply-To: <5356477C.1070403@linaro.org>
+	Wed, 23 Apr 2014 02:22:46 -0400
+In-reply-to: <1398210681-22976-1-git-send-email-dianders@chromium.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
+To: 'Doug Anderson' <dianders@chromium.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+Cc: yuvaraj.cd@samsung.com, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Sonny Rao' <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, chris@printf.net, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On Wed, April 23, 2014, Doug Anderson wrote:
+> Data errors are completely expected during tuning.  Printing them out
+> is confusing people looking at the kernel logs.  They see things like:
+> 
+>  [    3.613296] dwmmc_exynos 12200000.dwmmc0: data error, status 0x00000088
+> 
+> ...and they think something is wrong with their hardware.
+> 
+> Remove the printouts.  We'll leave it up to a higher level to report
+> about errors.
+Yes, your saying makes sense.
+But in normal I/O, actual error information such as status below is useful, isn't it?
 
-On 22 April 2014 16:12, Daniel Lezcano <daniel.lezcano@linaro.org> wrot=
-e:
-> On 04/21/2014 01:49 PM, Chander Kashyap wrote:
->>
->> Exynos5420 is a big-little SoC from Samsung. It has 4 A15 and 4 A7 c=
-ores.
->> In order to use generic cpuidle-big-little driver, this patch adds
->> Exynos5420
->> specific check to initialize generic cpuidle driver.
->>
->> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
->> ---
->>   drivers/cpuidle/Kconfig.arm |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.a=
-rm
->> index 97ccc31..5244d87 100644
->> --- a/drivers/cpuidle/Kconfig.arm
->> +++ b/drivers/cpuidle/Kconfig.arm
->> @@ -4,7 +4,7 @@
->>
->>   config ARM_BIG_LITTLE_CPUIDLE
->>         bool "Support for ARM big.LITTLE processors"
->> -       depends on ARCH_VEXPRESS_TC2_PM
->> +       depends on ARCH_VEXPRESS_TC2_PM || SOC_EXYNOS5420
->
->
-> For the sake of consistency, I would prefer:
->
-> depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+Thanks,
+Seungwon Jeon
 
-Yes i will change it.
-
-Thanks
->
-> and let the current code (and future platform driver) to handle the l=
-oading
-> of the driver.
->
->
->>         select ARM_CPU_SUSPEND
->>         select CPU_IDLE_MULTIPLE_DRIVERS
->>         help
->>
->
->
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  drivers/mmc/host/dw_mmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index cced599..4c8d423 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1248,7 +1248,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
+>  			data->error = -EIO;
+>  		}
+> 
+> -		dev_err(host->dev, "data error, status 0x%08x\n", status);
+> +		dev_dbg(host->dev, "data error, status 0x%08x\n", status);
+> 
+>  		/*
+>  		 * After an error, there may be data lingering
 > --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
-or ARM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
-
-
-
---=20
-with warm regards,
-Chander Kashyap
+> 1.9.1.423.g4596e3a
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
