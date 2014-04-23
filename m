@@ -1,134 +1,108 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 2/9] drm/panel: add pre_enable and post_disable routines
-Date: Thu, 24 Apr 2014 00:56:02 +0530
-Message-ID: <CAEC9eQNCvfUbaRL7DnNVF21QjwCX2E2sndHRDvLUE9EL1cVN4Q@mail.gmail.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1398119958-32005-3-git-send-email-ajaykumar.rs@samsung.com>
-	<20140422081948.GA17275@ulmo>
-	<CAEC9eQO8Kahh2YVO4nCjk2m+TzJNJ_iSkVRLe0NM_yqL9uPNaw@mail.gmail.com>
-	<20140423072915.GV10722@phenom.ffwll.local>
-	<20140423074212.GF31226@ulmo>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/9] ARM: S3C24XX: convert s3c2410, s3c2440 s3c2442 to common clock framework
+Date: Wed, 23 Apr 2014 21:32:58 +0200
+Message-ID: <2104342.rkElQpXtvM@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:55366 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754146AbaDWT0D (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:40412 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753943AbaDWTa6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 15:26:03 -0400
-Received: by mail-vc0-f170.google.com with SMTP id hr9so1766087vcb.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2014 12:26:02 -0700 (PDT)
-In-Reply-To: <20140423074212.GF31226@ulmo>
+	Wed, 23 Apr 2014 15:30:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: t.figa@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Thierry,
+At least, here is v2 of the common clock conversion of s3c2410 - s3c2442.
+If suitable this will finish the conversion of s3c24xx arches.
 
-On Wed, Apr 23, 2014 at 1:12 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Wed, Apr 23, 2014 at 09:29:15AM +0200, Daniel Vetter wrote:
->> On Tue, Apr 22, 2014 at 08:06:19PM +0530, Ajay kumar wrote:
->> > Hi Thierry,
->> >
->> >
->> > On Tue, Apr 22, 2014 at 1:49 PM, Thierry Reding <thierry.reding@gmail.com>
->> > wrote:
->> > > On Tue, Apr 22, 2014 at 04:09:11AM +0530, Ajay Kumar wrote:
->> > >> Most of the panels need an init sequence as mentioned below:
->> > >>       -- poweron LCD unit/LCD_EN
->> > >>       -- start video data
->> > >>       -- poweron LED unit/BL_EN
->> > >> And, a de-init sequence as mentioned below:
->> > >>       -- poweroff LED unit/BL_EN
->> > >>       -- stop video data
->> > >>       -- poweroff LCD unit/LCD_EN
->> > >> With existing callbacks for drm panel, we cannot accomodate such panels,
->> > >> since only two callbacks, i.e "panel_enable" and panel_disable are
->> > supported.
->> > >>
->> > >> This patch adds:
->> > >>       -- "pre_enable" callback which can be called before
->> > >>       the actual video data is on, and then call the "enable"
->> > >>       callback after the video data is available.
->> > >>
->> > >>       -- "post_disable" callback which can be called after
->> > >>       the video data is off, and use "disable" callback
->> > >>       to do something before switching off the video data.
->> > >>
->> > >> Now, we can easily map the above scenario as shown below:
->> > >>       poweron LCD unit/LCD_EN = "pre_enable" callback
->> > >>       poweron LED unit/BL_EN = "enable" callback
->> > >>       poweroff LED unit/BL_EN = "disable" callback
->> > >>       poweroff LCD unit/LCD_EN = "post_disable" callback
->> > >
->> > > I don't like this. What happens when the next panel comes around that
->> > > has a yet slightly different requirement? Will we introduce a new
->> > > pre_pre_enable() and post_post_disable() function then?
->> > >
->> > As I have already explained, these 2 callbacks are sufficient enough to
->> > take care
->> > the power up/down sequence for LVDS and eDP panels. And, definitely having
->> > just 2 callbacks "enable" and "disable" is not at all sufficient.
->> >
->> > I initially thought of using panel_simple_enable from panel-simple driver.
->> > But it doesn't go well with case wherein there are 2 regulators(one for LCD
->> > and one for LED)
->> > a BL_EN signal etc. And, often(Believe me, I have referred to both eDP
->> > panel datasheets
->> > and LVDS panel datasheets) proper powerup sequence for such panels is as
->> > mentioned below:
->> >
->> > powerup:
->> > -- power up the supply (LCD_VCC).
->> > -- start video data.
->> > -- enable backlight.
->> >
->> > powerdown
->> > -- disable backlight.
->> > -- stop video data.
->> > -- power off the supply (LCD VCC)
->> >
->> > For the above cases, if I have to somehow fit in all the required settings,
->> > it breaks the sequence and I end up getting glitches during bootup/DPMS.
->> >
->> > Also, when the drm_bridge can support pre_enable and post_disable, why not
->> > drm_panel provide that both should work in tandem?
->>
->> Imo this makes sense, especially if we go through with the idea talked
->> about yesterday of creating a drm_bridge to wrap-up a drm_panel with
->> sufficient isolation between all components.
->
-> I'm not at all comfortable with these. The names are totally confusing.
-> Next somebody will need to do something after the panel has been enabled
-> and we'll have to introduce .post_enable() and .pre_disable() functions.
-> And worse, what if somebody needs something to be done between
-> .pre_enable() and .enable()? .post_pre_enable()? Where does it end?
->
-> According to the above description the only reason why we need this is
-> to avoid visible glitches when the panel is already on, but the video
-> stream hasn't started yet. If that's the only reason why we need this,
-> then perhaps adding a way for a panel to expose the associated backlight
-> would be better?
-Actually, we need not expose the entire backlight device.
-AFAIK, the glitch is caused when you enable BL_EN before
-there is valid video data. So, one way to mask off the glitch is to
-follow this sequence:
--- power up the panel.
--- start video data, (start PWM here or)
--- (start PWM here), enable backlight
+Tested on an Openmoko Neo Freerunner (GTA02).
 
-The problem is that the above scenario cannot be mapped to panel-simple driver.
-IMO, panel_simple should provide enable/disable controls both for LCD
-and backlight.
-something like panel_simple_lcd_enable/panel_simple_led_enable, and
-panel_simple_lcd_disable/panel_simple_led_disable.
+It is meant to go on top of the s3c2412 ccf conversion already in
+linux-samsung.
 
-Then we can call panel_simple_lcd_enable before video stream is present,
-And call panel_simple_led_enable after the video stream is present.
-In that way we can accomodate majority of LVDS and eDP panels inside
-panel_simple driver without having to worry about the glitch :)
+changes since v1:
+- add already received Acks and Reviews
+- remove patches that were already part of the s3c2412 submission
+- implement suggestions from Tomasz Figa:
+- in cpufreq-utils only request mpll clock the first time
+- in dclk driver
+  - use variant list to describe SoC differences
+  - do not provide a dt binding at this time, as the dclk
+    parts should probably be part of the pinctrl driver
+    In any case this can be solved when the first dt platform needs
+    support for the external clock outputs
+- in clk-s3c2410
+  - fix sentinels
+  - rename dt-bindings header
+  - don't export XTI clock id
 
-Thanks and regards,
-Ajay Kumar
+
+Heiko Stuebner (9):
+  ARM: S3C24XX: cpufreq-utils: don't write raw values to MPLLCON when
+    using ccf
+  clk: samsung: add clock driver for external clock outputs
+  ARM: S3C24XX: enable usage of common dclk if common clock framework is
+    enabled
+  dt-bindings: add documentation for s3c2410 clock controller
+  clk: samsung: add clock controller driver for s3c2410, s3c2440 and
+    s3c2442
+  ARM: S3C24XX: add platform code for conversion to the common clock
+    framework
+  ARM: S3C24XX: convert s3c2440 and s3c2442 to common clock framework
+  ARM: S3C24XX: convert s3c2410 to common clock framework
+  ARM: S3C24XX: remove legacy clock code
+
+ .../bindings/clock/samsung,s3c2410-clock.txt       |  50 +++
+ arch/arm/mach-s3c24xx/Kconfig                      |  50 ++-
+ arch/arm/mach-s3c24xx/Makefile                     |   6 +-
+ arch/arm/mach-s3c24xx/clock-dclk.c                 | 195 ---------
+ arch/arm/mach-s3c24xx/clock-s3c2410.c              | 285 ------------
+ arch/arm/mach-s3c24xx/clock-s3c2440.c              | 217 ----------
+ arch/arm/mach-s3c24xx/clock-s3c244x.c              | 141 ------
+ arch/arm/mach-s3c24xx/common.c                     |  45 +-
+ arch/arm/mach-s3c24xx/common.h                     |  11 +-
+ arch/arm/mach-s3c24xx/cpufreq-utils.c              |  14 +
+ arch/arm/mach-s3c24xx/include/mach/regs-clock.h    |  18 -
+ arch/arm/mach-s3c24xx/include/mach/regs-gpio.h     |   3 -
+ arch/arm/mach-s3c24xx/mach-amlm5900.c              |   9 +-
+ arch/arm/mach-s3c24xx/mach-anubis.c                |  15 +-
+ arch/arm/mach-s3c24xx/mach-at2440evb.c             |  10 +-
+ arch/arm/mach-s3c24xx/mach-bast.c                  |  15 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c                 |   8 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |  10 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c              |  10 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                   |  12 +-
+ arch/arm/mach-s3c24xx/mach-nexcoder.c              |  10 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c                |  15 +-
+ arch/arm/mach-s3c24xx/mach-otom.c                  |  10 +-
+ arch/arm/mach-s3c24xx/mach-qt2410.c                |   9 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |  15 +-
+ arch/arm/mach-s3c24xx/mach-rx3715.c                |  10 +-
+ arch/arm/mach-s3c24xx/mach-smdk2410.c              |   9 +-
+ arch/arm/mach-s3c24xx/mach-smdk2440.c              |  10 +-
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c            |   9 +-
+ arch/arm/mach-s3c24xx/mach-vr1000.c                |  15 +-
+ arch/arm/mach-s3c24xx/pm.c                         |  12 -
+ arch/arm/mach-s3c24xx/s3c2410.c                    |  56 ---
+ arch/arm/mach-s3c24xx/s3c2442.c                    | 111 -----
+ arch/arm/mach-s3c24xx/s3c244x.c                    |  59 +--
+ drivers/clk/samsung/Makefile                       |   2 +
+ drivers/clk/samsung/clk-s3c2410-dclk.c             | 440 +++++++++++++++++++
+ drivers/clk/samsung/clk-s3c2410.c                  | 477 +++++++++++++++++++++
+ include/dt-bindings/clock/s3c2410.h                |  62 +++
+ 38 files changed, 1276 insertions(+), 1179 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2410-clock.txt
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-dclk.c
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2410.c
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2440.c
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c244x.c
+ create mode 100644 drivers/clk/samsung/clk-s3c2410-dclk.c
+ create mode 100644 drivers/clk/samsung/clk-s3c2410.c
+ create mode 100644 include/dt-bindings/clock/s3c2410.h
+
+-- 
+1.9.0
