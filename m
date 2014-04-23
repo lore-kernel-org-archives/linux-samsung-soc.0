@@ -1,133 +1,248 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC v2 PATCH v4 09/14] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 23 Apr 2014 11:02:21 +0200
-Message-ID: <5357819D.7050802@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-10-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1398083321-8668-10-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Wed, 23 Apr 2014 14:31:45 +0530
+Message-ID: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/21/2014 02:28 PM, YoungJun Cho wrote:
-> This patch adds DT bindings for s6e3fa0 panel.
-> The bindings describes panel resources, display timings and cpu timings.
-> 
-> Changelog v2:
-> - Adds unit address (commented by Sachin Kamat)
-> Changelog v3:
-> - Removes optional delay, size properties (commented by Laurent Pinchart)
-> - Adds OLED detection, TE gpio properties
-> Changelog v4:
-> - Moves CPU timings relevant properties from FIMD DT
->   (commeted by Laurent Pinchart, Andrzej Hajda)
-> 
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   63 ++++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> new file mode 100644
-> index 0000000..9eeb38b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> @@ -0,0 +1,63 @@
-> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-> +
-> +Required properties:
-> +  - compatible: "samsung,s6e3fa0"
-> +  - reg: the virtual channel number of a DSI peripheral
-> +  - vdd3-supply: core voltage supply
-> +  - vci-supply: voltage supply for analog circuits
-> +  - reset-gpio: a GPIO spec for the reset pin
-> +  - det-gpio: a GPIO spec for the OLED detection pin
-> +  - te-gpio: a GPIO spec for the TE pin
-> +  - display-timings: timings for the connected panel as described by [1]
+Added machine driver to instantiate I2S based sound card on Snow
+board. It has MAX98095 audio codec on board.
 
-Which properties of display-timings are relevant for CPU mode?
-I guess width and height. Anything more?
+There are some other variants for Snow board which have MAX98090
+audio codec. Hence support for MAX98090 is also added to this
+driver.
 
-> +  - cpu-timings: CPU interface timings for the connected panel, and it contains
-> +        following optional properties.
-> +          - cs-setup: clock cycles for the active period of address signal
-> +                enable until chip select is enable in CPU interface
-> +          - wr-setup: clock cycles for the active period of CS signal enable
-> +                until write signal is enable in CPU interface
-> +          - wr-act: clock cycles for the active period of CS enable in CPU
-> +                interface
-> +          - wr-hold: clock cycles for the active period of CS disable until
-> +                write signal is disable in CPU interface
+Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+Changes for V2:
+Addressed various comments from Mark Brown.
+1. Moved DAIFMT flags to dai_link. Removed snd_soc_dai_set_fmt calls.
+2. Removed BCLK settings.
+3. Moved sysclk settings to late_probe.
+4. Removed now empty snow_hw_params.
+5. Removed snow_init
+6. Used devm_snd_soc_register_card. Also removed empty remove function.
+7. Removed non-DT handling as the driver is DT only.
 
-cpu-timings name does not sound to be related to display.
-I wonder if it would not be better to merge cpu-timings into
-display-timings but this will require more discussion I guess.
+Additional nits:
+1. Renamed snow_driver_probe to snow_probe
+2. Removed unused pm_ops.
+3. Updated clock settings for I2S block (Earlier it was I2S_CDCLK,
+   whereas it should be I2S_RCLKSRC_0).
+4. Removed 'card-name' DT property as it was not used in earlier
+   sound-card driver DT bindings. Will be added later.
 
-If you want to stay with separate node please consider to make it
-optional as whole node or make some properties required. Making node
-required with all sub-properties optional is weird.
-By the way I hope all timings properties are generic for CPU mode,
-if not they should be prefixed by vendor or model.
+ Documentation/devicetree/bindings/sound/snow.txt |   17 +++
+ sound/soc/samsung/Kconfig                        |   10 ++
+ sound/soc/samsung/Makefile                       |    2 +
+ sound/soc/samsung/snow.c                         |  129 ++++++++++++++++++++++
+ 4 files changed, 158 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/snow.txt
+ create mode 100644 sound/soc/samsung/snow.c
 
-Regards
-Andrzej
+diff --git a/Documentation/devicetree/bindings/sound/snow.txt b/Documentation/devicetree/bindings/sound/snow.txt
+new file mode 100644
+index 0000000..6f3fd02
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/snow.txt
+@@ -0,0 +1,17 @@
++Audio Binding for Snow boards
++
++Required properties:
++- compatible : Can be one of the following,
++			"google,snow-audio-max98090" or
++			"google,snow-audio-max98095"
++- samsung,i2s-controller: The phandle of the Samsung I2S0 controller
++- samsung,audio-codec: The phandle of the audio codec
++
++Example:
++
++sound {
++		compatible = "google,snow-audio-max98095";
++
++		samsung,i2s-controller = <&i2s0>;
++		samsung,audio-codec = <&max98095>;
++};
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index f2e2891..50aa289 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -231,3 +231,13 @@ config SND_SOC_LITTLEMILL
+ 	select SND_SAMSUNG_I2S
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
++
++config SND_SOC_SNOW
++	tristate "Audio support for Google Snow boards"
++	depends on SND_SOC_SAMSUNG
++	select SND_SOC_MAX98090
++	select SND_SOC_MAX98095
++	select SND_SAMSUNG_I2S
++	help
++	  Say Y if you want to add audio support for various Snow
++	  boards based on Exynos5 series of SoCs.
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 86715d8..6d0212b 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -34,6 +34,7 @@ snd-soc-h1940-uda1380-objs := h1940_uda1380.o
+ snd-soc-rx1950-uda1380-objs := rx1950_uda1380.o
+ snd-soc-smdk-wm8580-objs := smdk_wm8580.o
+ snd-soc-smdk-wm8994-objs := smdk_wm8994.o
++snd-soc-snow-objs := snow.o
+ snd-soc-smdk-wm9713-objs := smdk_wm9713.o
+ snd-soc-s3c64xx-smartq-wm8987-objs := smartq_wm8987.o
+ snd-soc-goni-wm8994-objs := goni_wm8994.o
+@@ -58,6 +59,7 @@ obj-$(CONFIG_SND_SOC_SAMSUNG_H1940_UDA1380) += snd-soc-h1940-uda1380.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_RX1950_UDA1380) += snd-soc-rx1950-uda1380.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM8580) += snd-soc-smdk-wm8580.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994) += snd-soc-smdk-wm8994.o
++obj-$(CONFIG_SND_SOC_SNOW) += snd-soc-snow.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM9713) += snd-soc-smdk-wm9713.o
+ obj-$(CONFIG_SND_SOC_SMARTQ) += snd-soc-s3c64xx-smartq-wm8987.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_SPDIF) += snd-soc-smdk-spdif.o
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+new file mode 100644
+index 0000000..e1a4b45
+--- /dev/null
++++ b/sound/soc/samsung/snow.c
+@@ -0,0 +1,129 @@
++/*
++ * ASoC machine driver for Snow boards
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++
++#include <sound/soc.h>
++
++#include "i2s.h"
++
++#define FIN_PLL_RATE		24000000
++
++static struct snd_soc_dai_link snow_dai[] = {
++	{ /* Playback DAI i/f */
++		.name = "Playback",
++		.stream_name = "Playback",
++		.codec_dai_name = "HiFi",
++		.dai_fmt = SND_SOC_DAIFMT_I2S |
++				SND_SOC_DAIFMT_NB_NF |
++				SND_SOC_DAIFMT_CBS_CFS,
++	}, { /* Capture DAI i/f */
++		.name = "Capture",
++		.stream_name = "Capture",
++		.codec_dai_name = "HiFi",
++		.dai_fmt = SND_SOC_DAIFMT_I2S |
++				SND_SOC_DAIFMT_NB_NF |
++				SND_SOC_DAIFMT_CBS_CFS,
++	},
++};
++
++static int snow_late_probe(struct snd_soc_card *card)
++{
++	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
++	struct snd_soc_dai *cpu_dai = card->rtd[0].cpu_dai;
++	int ret;
++
++	/* Set the MCLK rate for the codec */
++	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
++					FIN_PLL_RATE, SND_SOC_CLOCK_IN);
++	if (ret < 0)
++		return ret;
++
++	/* Select I2S Bus clock to set RCLK and BCLK */
++	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_RCLKSRC_0,
++					0, SND_SOC_CLOCK_IN);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static struct snd_soc_card snow_snd = {
++	.name = "Snow-I2S",
++	.dai_link = snow_dai,
++	.num_links = ARRAY_SIZE(snow_dai),
++
++	.late_probe = snow_late_probe,
++};
++
++static int snow_probe(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = &snow_snd;
++	struct device_node *i2s_node, *codec_node;
++	int i, ret;
++
++	i2s_node = of_parse_phandle(pdev->dev.of_node,
++				    "samsung,i2s-controller", 0);
++	if (!i2s_node) {
++		dev_err(&pdev->dev,
++			"Property 'i2s-controller' missing or invalid\n");
++		return -EINVAL;
++	}
++
++	codec_node = of_parse_phandle(pdev->dev.of_node,
++				      "samsung,audio-codec", 0);
++	if (!codec_node) {
++		dev_err(&pdev->dev,
++			"Property 'audio-codec' missing or invalid\n");
++		return -EINVAL;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(snow_dai); i++) {
++		snow_dai[i].codec_of_node = codec_node;
++		snow_dai[i].cpu_of_node = i2s_node;
++		snow_dai[i].platform_of_node = i2s_node;
++	}
++
++	card->dev = &pdev->dev;
++
++	ret = devm_snd_soc_register_card(&pdev->dev, card);
++	if (ret) {
++		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
++		return ret;
++	}
++
++	return ret;
++}
++
++static const struct of_device_id snow_of_match[] = {
++	{ .compatible = "google,snow-audio-max98090", },
++	{ .compatible = "google,snow-audio-max98095", },
++	{},
++};
++
++static struct platform_driver snow_driver = {
++	.driver = {
++		.name = "snow-audio",
++		.owner = THIS_MODULE,
++		.of_match_table = snow_of_match,
++	},
++	.probe = snow_probe,
++};
++
++module_platform_driver(snow_driver);
++
++MODULE_DESCRIPTION("ALSA SoC Audio machine driver for Snow");
++MODULE_LICENSE("GPL");
+-- 
+1.7.9.5
 
-> +
-> +Optional properties:
-> +
-> +The device node can contain one 'port' child node with one child
-> +'endpoint' node, according to the bindings defined in [2]. This
-> +node should describe panel's video bus.
-> +
-> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
-> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> +
-> +Example:
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6e3fa0";
-> +		reg = <0>;
-> +		vdd3-supply = <&vcclcd_reg>;
-> +		vci-supply = <&vlcd_reg>;
-> +		reset-gpio = <&gpy7 4 0>;
-> +		det-gpio = <&gpg0 6 0>;
-> +		te-gpio = <&gpd1 7 0>;
-> +
-> +		display-timings {
-> +			timing0: timing-0 {
-> +				clock-frequency = <0>;
-> +				hactive = <1080>;
-> +				vactive = <1920>;
-> +				hfront-porch = <2>;
-> +				hback-porch = <2>;
-> +				hsync-len = <1>;
-> +				vfront-porch = <1>;
-> +				vback-porch = <4>;
-> +				vsync-len = <1>;
-> +			};
-> +		};
-> +
-> +		cpu-timings {
-> +			cs-setup = <0>;
-> +			wr-setup = <0>;
-> +			wr-act = <1>;
-> +			wr-hold = <0>;
-> +		};
-> +	};
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
