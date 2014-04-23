@@ -1,54 +1,68 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [Patch v2 0/4] add cpuidle support for Exynos5420
-Date: Wed, 23 Apr 2014 12:18:24 +0200
-Message-ID: <4517423.BmCv8cudjC@vostro.rjw.lan>
-References: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org> <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Wed, 23 Apr 2014 19:13:32 +0900
+Message-ID: <03b001cf5edc$ae42e770$0ac8b650$@samsung.com>
+References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org>
+ <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com>
+ <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:49566 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756095AbaDWKCD (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40735 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755458AbaDWKNg convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 06:02:03 -0400
-In-Reply-To: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+	Wed, 23 Apr 2014 06:13:36 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4H00789B2LWF30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Apr 2014 19:13:33 +0900 (KST)
+In-reply-to: <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, kgene.kim@samsung.com
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Alim Akhtar' <alim.akhtar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com
 
-On Wednesday, April 23, 2014 02:55:50 PM Chander Kashyap wrote:
-> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
+Tushar Behera wrote:
 > 
-> This patchset adds cpuidle support for Exynos5420 SoC based on
-> generic big.little cpuidle driver.
-> 
-> Tested on SMDK5420.
-> 
-> This patch set depends on:
-> 	1. [PATCH 0/5] MCPM backend for Exynos5420
-> 	   http://www.spinics.net/lists/arm-kernel/msg321666.html
-> 
-> 	2. [PATCH v4] arm: exynos: generalize power register address calculation
-> 	   http://www.spinics.net/lists/arm-kernel/msg324024.html
-> 		
-> Changelog is in respective patches.
-> Chander Kashyap (4):
->   cpuidle: config: Add SOC_EXYNOS5420 entry to select
->     cpuidle-big-little driver
->   driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
->   exynos: cpuidle: do not allow cpuidle registration for Exynos5420
->   mcpm: exynos: populate suspend and powered_up callbacks
-> 
->  arch/arm/mach-exynos/cpuidle.c       |    3 ++
->  arch/arm/mach-exynos/mcpm-exynos.c   |   53 ++++++++++++++++++++++++++++++++++
->  drivers/cpuidle/Kconfig.arm          |    2 +-
->  drivers/cpuidle/cpuidle-big_little.c |    3 +-
->  4 files changed, 59 insertions(+), 2 deletions(-)
+> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+> > Hi Tushar
+> >
+> > On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
+> > <tushar.behera@linaro.org> wrote:
+> >> MAU powerdomain provides clocks for Audio sub-system block. This block
+> >> comprises of the I2S audio controller, audio DMA blocks and Audio
+> >> sub-system clock registers.
+> >>
+> >> Right now, there is no way to hook up power-domains with clock
+> providers.
+> >> During late boot when this power-domain gets disabled, we get following
+> >> external abort.
 
-I'm assuming that the Exynos maintainers will take care of this, correct?
++ Jonghwan Choi
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Well, this is not a perfect solution to support MAU power domain, it's true it is a problem right now though.
+
+In other words, this is just temporal fix for the problem.
+
+How about accessing clock stuff for audio sub-system with handling MAU power domain via generic IO power domain?
+
+> > ?? which abort?? Can you please mention it here?
+> >>
+> 
+> Thanks Alim for spotting this ... I somehow missed adding this.
+> 
+> <<<<
+> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
+> >>>>
+> 
+> Kukjin,
+> 
+> Let me know if I need to resend the patch.
+
+- Kukjin
