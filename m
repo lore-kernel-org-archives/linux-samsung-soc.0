@@ -1,64 +1,152 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: dw_mmc: Don't print data errors
-Date: Wed, 23 Apr 2014 10:17:30 +0200
-Message-ID: <CAPDyKFpzPCi2Yb_33akh5dg1NjudydLkJrdGnQ_xJtsEGGcQ3g@mail.gmail.com>
-References: <1398210681-22976-1-git-send-email-dianders@chromium.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH 4/4] mcpm: exynos: populate suspend and powered_up callbacks
+Date: Wed, 23 Apr 2014 13:52:40 +0530
+Message-ID: <CANuQgHEQ_G-fuT6_hyKQ+bT0dsnNW5QnTTLBvX+BZUr4w0Fg2Q@mail.gmail.com>
+References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org>
+	<1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
+	<5356499A.20609@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f180.google.com ([209.85.216.180]:46875 "EHLO
-	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751275AbaDWIRb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 04:17:31 -0400
-Received: by mail-qc0-f180.google.com with SMTP id w7so576042qcr.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2014 01:17:30 -0700 (PDT)
-In-Reply-To: <1398210681-22976-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <5356499A.20609@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-pm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, yuvaraj.cd@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 23 April 2014 01:51, Doug Anderson <dianders@chromium.org> wrote:
-> Data errors are completely expected during tuning.  Printing them out
-> is confusing people looking at the kernel logs.  They see things like:
+On 22 April 2014 16:21, Daniel Lezcano <daniel.lezcano@linaro.org> wrot=
+e:
+> On 04/21/2014 01:49 PM, Chander Kashyap wrote:
+>>
+>> In order to support cpuidle through mcpm, suspend and powered-up
+>> callbacks are required in mcpm platform code.
+>> Hence populate the same callbacks.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>>   arch/arm/mach-exynos/mcpm-exynos.c |   53
+>> ++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 53 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
+>> b/arch/arm/mach-exynos/mcpm-exynos.c
+>> index 46d4968..16af0bd 100644
+>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+>> @@ -318,10 +318,63 @@ static int exynos_power_down_finish(unsigned i=
+nt
+>> cpu, unsigned int cluster)
+>>         return 0; /* success: the CPU is halted */
+>>   }
+>>
+>> +static void enable_coherency(void)
+>> +{
+>> +       unsigned long v, u;
+>> +
+>> +       asm volatile(
+>> +               "mrc    p15, 0, %0, c1, c0, 1\n"
+>> +               "orr    %0, %0, %2\n"
+>> +               "ldr    %1, [%3]\n"
+>> +               "and    %1, %1, #0\n"
+>> +               "orr    %0, %0, %1\n"
+>> +               "mcr    p15, 0, %0, c1, c0, 1\n"
+>> +               : "=3D&r" (v), "=3D&r" (u)
+>> +               : "Ir" (0x40), "Ir" (S5P_INFORM0)
+>> +               : "cc");
+>> +}
 >
->  [    3.613296] dwmmc_exynos 12200000.dwmmc0: data error, status 0x00000088
 >
-> ...and they think something is wrong with their hardware.
->
-> Remove the printouts.  We'll leave it up to a higher level to report
-> about errors.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/mmc/host/dw_mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index cced599..4c8d423 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1248,7 +1248,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
->                         data->error = -EIO;
->                 }
->
-> -               dev_err(host->dev, "data error, status 0x%08x\n", status);
-> +               dev_dbg(host->dev, "data error, status 0x%08x\n", status);
->
+> Shouldn't this function to be used from hotplug.c also ?
 
-The "status" here could be useful information about the status
-register, which is not considered while printing errors by the "higher
-levels". An option could be to print the error, but not when you
-perform tuning.
+Hotplug.c already taking care for this. And anyhow that will go away
+for mcpm dependent SoCs
 
-No big deal though, just a thought.
+>
+>
+>> +
+>> +void exynos_powered_up(void)
+>> +{
+>> +       unsigned int mpidr, cpu, cluster;
+>> +
+>> +       mpidr =3D read_cpuid_mpidr();
+>> +       cpu =3D MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +       cluster =3D MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +       arch_spin_lock(&bl_lock);
+>> +       if (cpu_use_count[cpu][cluster] =3D=3D 0)
+>> +               cpu_use_count[cpu][cluster] =3D 1;
+>> +       arch_spin_unlock(&bl_lock);
+>> +}
+>> +
+>> +static void exynos_suspend(u64 residency)
+>> +{
+>> +       unsigned int mpidr, cpunr;
+>> +
+>> +       mpidr =3D read_cpuid_mpidr();
+>> +       cpunr =3D enynos_pmu_cpunr(mpidr);
+>
+>
+> *enynos*_pmu_cpunr ?
 
->                 /*
->                  * After an error, there may be data lingering
+oops, I will fix typo
+
+>
+>
+>> +
+>> +       __raw_writel(virt_to_phys(mcpm_entry_point), REG_ENTRY_ADDR)=
+;
+>> +
+>> +       exynos_power_down();
+>> +
+>> +       /*
+>> +        * Execution reaches here only if cpu did not power down.
+>> +        * Hence roll back the changes done in exynos_power_down fun=
+ction.
+>> +       */
+>> +       __raw_writel(EXYNOS_CORE_LOCAL_PWR_EN,
+>> +                       EXYNOS_ARM_CORE_CONFIGURATION(cpunr));
+>
+>
+> Why don't you use the functions defined in the
+>
+> patch 5/5 arm: exynos: Add MCPM call-back functions
+
+In exynos_core_power_control it powerup the alreay powered down core.
+But here i need to simply set this value as core never powered down.
+
+>
+> exynos_core_power_control() ?
+>
+>
+>> +       set_cr(get_cr() | CR_C);
+>> +       enable_coherency();
+>> +}
+>> +
+>>   static const struct mcpm_platform_ops exynos_power_ops =3D {
+>>         .power_up               =3D exynos_power_up,
+>>         .power_down             =3D exynos_power_down,
+>>         .power_down_finish      =3D exynos_power_down_finish,
+>> +       .suspend                =3D exynos_suspend,
+>> +       .powered_up             =3D exynos_powered_up,
+>>   };
+>>
+>>   static void __init exynos_mcpm_usage_count_init(void)
+>>
+>
+>
 > --
-> 1.9.1.423.g4596e3a
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
+or ARM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
 >
 
-Kind regards
-Ulf Hansson
+
+
+--=20
+with warm regards,
+Chander Kashyap
