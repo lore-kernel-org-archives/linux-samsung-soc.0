@@ -1,53 +1,51 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [Patch v2 0/4] add cpuidle support for Exynos5420
-Date: Thu, 24 Apr 2014 00:42:11 +0900
-Message-ID: <5357DF53.4010806@samsung.com>
-References: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org> <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org> <4517423.BmCv8cudjC@vostro.rjw.lan>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v3 4/5] regulator: tps65090: Allow setting the overcurrent
+ wait time
+Date: Wed, 23 Apr 2014 08:48:07 -0700
+Message-ID: <CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
+References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+	<1397689950-1568-5-git-send-email-dianders@chromium.org>
+	<20140423115102.GO21613@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <4517423.BmCv8cudjC@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140423115102.GO21613@lee--X1>
+Sender: linux-doc-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/23/14 19:18, Rafael J. Wysocki wrote:
-> On Wednesday, April 23, 2014 02:55:50 PM Chander Kashyap wrote:
->> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
+Lee,
+
+On Wed, Apr 23, 2014 at 4:51 AM, Lee Jones <lee.jones@linaro.org> wrote:
+>> The tps65090 regulator allows you to specify how long you want it to
+>> wait before detecting an overcurrent condition.  Allow specifying that
+>> through the device tree (or through platform data).
 >>
->> This patchset adds cpuidle support for Exynos5420 SoC based on
->> generic big.little cpuidle driver.
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Simon Glass <sjg@chromium.org>
+>> Signed-off-by: Michael Spang <spang@chromium.org>
+>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>> ---
+>> Changes in v3:
+>> - Fixed kernel-doc notation for return
 >>
->> Tested on SMDK5420.
+>> Changes in v2:
+>> - Separated the overcurrent and retries changes into two patches.
+>> - Now set overcurrent at probe time since it doesn't change.
 >>
->> This patch set depends on:
->> 	1. [PATCH 0/5] MCPM backend for Exynos5420
->> 	   http://www.spinics.net/lists/arm-kernel/msg321666.html
->>
->> 	2. [PATCH v4] arm: exynos: generalize power register address calculation
->> 	   http://www.spinics.net/lists/arm-kernel/msg324024.html
->> 		
->> Changelog is in respective patches.
->> Chander Kashyap (4):
->>    cpuidle: config: Add SOC_EXYNOS5420 entry to select
->>      cpuidle-big-little driver
->>    driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
->>    exynos: cpuidle: do not allow cpuidle registration for Exynos5420
->>    mcpm: exynos: populate suspend and powered_up callbacks
->>
->>   arch/arm/mach-exynos/cpuidle.c       |    3 ++
->>   arch/arm/mach-exynos/mcpm-exynos.c   |   53 ++++++++++++++++++++++++++++++++++
->>   drivers/cpuidle/Kconfig.arm          |    2 +-
->>   drivers/cpuidle/cpuidle-big_little.c |    3 +-
->>   4 files changed, 59 insertions(+), 2 deletions(-)
+>>  .../devicetree/bindings/regulator/tps65090.txt     |  4 ++
+>>  drivers/regulator/tps65090-regulator.c             | 56 ++++++++++++++++++++++
+>>  include/linux/mfd/tps65090.h                       |  5 ++
+>>  3 files changed, 65 insertions(+)
 >
-> I'm assuming that the Exynos maintainers will take care of this, correct?
->
+> Applied, thanks.
 
-Yeah, I will if you have any objection :-)
+Ummmm, Mark said that he had already applied this patch to his tree (I
+mentioned it in my recent summary and you can see it in this thread
+too).  I don't see it on git.kernel.org though
+<https://git.kernel.org/cgit/linux/kernel/git/broonie/regulator.git/log/?h=for-next>
 
-BTW, I need to look at the dependent patches.
+I'm worried this will cause a merge conflict if you both apply it.
 
-- Kukjin
+-Doug
