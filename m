@@ -1,73 +1,147 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH V2] mmc: dw_mmc: exynos: Turn SDIO interrupts on
-Date: Wed, 23 Apr 2014 09:42:47 +0530
-Message-ID: <CAGOxZ53urGaOmezRi35fGpz_sR+E8Ukq3s9v08pAGLL6ChOWKw@mail.gmail.com>
-References: <1395635037-24081-1-git-send-email-yuvaraj.cd@samsung.com>
- <532FB4A7.7020700@samsung.com> <CAKuRcOKOBebW157R16_KtSR541MwwZ4pyynBRnbvOLm9RK4SAg@mail.gmail.com>
+From: Leela Krishna Amudala <leela.krishna@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: cpu hotplug: use v7_exit_coherency_flush
+ macro for cache disabling
+Date: Wed, 23 Apr 2014 11:14:36 +0530
+Message-ID: <CAM7CM0=zVH-zvcAFAnmSWYL3F=ZUZJL0iGp5mRFKmxt-n+i=3w@mail.gmail.com>
+References: <1398176280-7258-1-git-send-email-leela.krishna@linaro.org> <53567E72.1030201@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAKuRcOKOBebW157R16_KtSR541MwwZ4pyynBRnbvOLm9RK4SAg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53567E72.1030201@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-pm <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "kgene.kim" <kgene.kim@samsung.com>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Yuvaraj,
+Hi Daniel,
 
-On Mon, Mar 24, 2014 at 10:12 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
-> On Mon, Mar 24, 2014 at 9:59 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> Hi, Yuvaraj.
+Thanks for reviewing the patch.
+
+On Tue, Apr 22, 2014 at 8:06 PM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On 04/22/2014 04:18 PM, Leela Krishna Amudala wrote:
 >>
->> NACK. we can use "mmc_of_parese()".
-> Thanks Jaehoon for the pointer.I will use "mmc_of_parse()".
-Are you planning to re-spin this patch? Now Jaehoon's changes for
-using mmc_of_parse() is landed in mmc-next.
-Thanks!!
+>> Remove the duplicated code for cache disabling and use
+>> "v7_exit_coherency_flush"
+>> macro to do the same job.
+>
+>
+> Hi Leela,
+>
+> thanks for this patch! It would be nice if you can describe why those=
+ macros
+> can be replaced by the generic v7_exit_coherency_flush macro.
+>
+
+Okay, will give the description in commit message
+
+>
 >>
->> I have sent the patch that use "mmc_of_parse()".
->> https://patchwork.kernel.org/patch/3750681/
+>> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
 >>
->> Best Regards,
->> Jaehoon Chung
+>> ---
+>> cpu hotplug is tested with 3.15-rc1 on Origen(which has cortex A9) a=
+nd
+>> Arndale octa(which has cortex A7 and A15) boards.
 >>
->> On 03/24/2014 01:23 PM, Yuvaraj Kumar C D wrote:
->>> The mmc part in exynos supports SDIO interrupts and they work fine, so
->>> turn the capability on.  With this I see download speeds increase
->>> about 10x.
->>>
->>> This V1 of this patch is posted to LKML at
->>> https://patchwork.kernel.org/patch/2429661/) by Doug Anderson.
->>>
->>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->>> ---
->>>  drivers/mmc/host/dw_mmc.c |    3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>> index 0c56faa..240949d 100644
->>> --- a/drivers/mmc/host/dw_mmc.c
->>> +++ b/drivers/mmc/host/dw_mmc.c
->>> @@ -2417,6 +2417,9 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
->>>       if (of_get_property(np, "cd-inverted", NULL))
->>>               pdata->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
->>>
->>> +     if (of_find_property(np, "cap-sdio-irq", NULL))
->>> +             pdata->caps |= MMC_CAP_SDIO_IRQ;
->>> +
->>>       return pdata;
->>>  }
->>>
->>>
+>>   arch/arm/mach-exynos/hotplug.c |   56
+>> ++--------------------------------------
+>>   1 file changed, 2 insertions(+), 54 deletions(-)
 >>
+>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>> b/arch/arm/mach-exynos/hotplug.c
+>> index 5eead53..9eb8d1b 100644
+>> --- a/arch/arm/mach-exynos/hotplug.c
+>> +++ b/arch/arm/mach-exynos/hotplug.c
+>> @@ -24,56 +24,6 @@
+>>   #include "common.h"
+>>   #include "regs-pmu.h"
+>>
+>> -static inline void cpu_enter_lowpower_a9(void)
+>> -{
+>> -       unsigned int v;
+>> -
+>> -       asm volatile(
+>> -       "       mcr     p15, 0, %1, c7, c5, 0\n"
+>> -       "       mcr     p15, 0, %1, c7, c10, 4\n"
+>> -       /*
+>> -        * Turn off coherency
+>> -        */
+>> -       "       mrc     p15, 0, %0, c1, c0, 1\n"
+>> -       "       bic     %0, %0, %3\n"
+>> -       "       mcr     p15, 0, %0, c1, c0, 1\n"
+>> -       "       mrc     p15, 0, %0, c1, c0, 0\n"
+>> -       "       bic     %0, %0, %2\n"
+>> -       "       mcr     p15, 0, %0, c1, c0, 0\n"
+>> -         : "=3D&r" (v)
+>> -         : "r" (0), "Ir" (CR_C), "Ir" (0x40)
+>> -         : "cc");
+>> -}
+>> -
+>> -static inline void cpu_enter_lowpower_a15(void)
+>> -{
+>> -       unsigned int v;
+>> -
+>> -       asm volatile(
+>> -       "       mrc     p15, 0, %0, c1, c0, 0\n"
+>> -       "       bic     %0, %0, %1\n"
+>> -       "       mcr     p15, 0, %0, c1, c0, 0\n"
+>> -         : "=3D&r" (v)
+>> -         : "Ir" (CR_C)
+>> -         : "cc");
+>> -
+>> -       flush_cache_louis();
+>> -
+>> -       asm volatile(
+>> -       /*
+>> -       * Turn off coherency
+>> -       */
+>> -       "       mrc     p15, 0, %0, c1, c0, 1\n"
+>> -       "       bic     %0, %0, %1\n"
+>> -       "       mcr     p15, 0, %0, c1, c0, 1\n"
+>> -       : "=3D&r" (v)
+>> -       : "Ir" (0x40)
+>> -       : "cc");
+>> -
+>> -       isb();
+>> -       dsb();
+>> -}
+>> -
+>>   static inline void cpu_leave_lowpower(void)
+>>   {
+>>         unsigned int v;
+>> @@ -141,10 +91,8 @@ void __ref exynos_cpu_die(unsigned int cpu)
+>>          * appropriate sequence for entering low power.
+>>          */
+>>         asm("mrc p15, 0, %0, c0, c0, 0" : "=3Dr"(primary_part) : : "=
+cc");
+>
+>
+> Can't you remove this asm line above as well as the primary_part vari=
+able ?
+
+Didn't notice it, will remove this.
+
+>
+>
+>> -       if ((primary_part & 0xfff0) =3D=3D 0xc0f0)
+>> -               cpu_enter_lowpower_a15();
+>> -       else
+>> -               cpu_enter_lowpower_a9();
+>> +
+>> +       v7_exit_coherency_flush(louis);
+>>
+>>         platform_do_lowpower(cpu, &spurious);
+>>
+>>
+>
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Regards,
-Alim
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
+or ARM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
