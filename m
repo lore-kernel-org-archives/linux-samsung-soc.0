@@ -1,152 +1,236 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH 4/4] mcpm: exynos: populate suspend and powered_up callbacks
-Date: Wed, 23 Apr 2014 13:52:40 +0530
-Message-ID: <CANuQgHEQ_G-fuT6_hyKQ+bT0dsnNW5QnTTLBvX+BZUr4w0Fg2Q@mail.gmail.com>
-References: <1398080958-21677-1-git-send-email-chander.kashyap@linaro.org>
-	<1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
-	<5356499A.20609@linaro.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC v2 PATCH 08/14] drm/exynos: dsi: add driver data to support
+ Exynos5420
+Date: Wed, 23 Apr 2014 10:29:13 +0200
+Message-ID: <535779D9.6010804@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1398083321-8668-9-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <5356499A.20609@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1398083321-8668-9-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 22 April 2014 16:21, Daniel Lezcano <daniel.lezcano@linaro.org> wrot=
-e:
-> On 04/21/2014 01:49 PM, Chander Kashyap wrote:
->>
->> In order to support cpuidle through mcpm, suspend and powered-up
->> callbacks are required in mcpm platform code.
->> Hence populate the same callbacks.
->>
->> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
->> ---
->>   arch/arm/mach-exynos/mcpm-exynos.c |   53
->> ++++++++++++++++++++++++++++++++++++
->>   1 file changed, 53 insertions(+)
->>
->> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
->> b/arch/arm/mach-exynos/mcpm-exynos.c
->> index 46d4968..16af0bd 100644
->> --- a/arch/arm/mach-exynos/mcpm-exynos.c
->> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
->> @@ -318,10 +318,63 @@ static int exynos_power_down_finish(unsigned i=
-nt
->> cpu, unsigned int cluster)
->>         return 0; /* success: the CPU is halted */
->>   }
->>
->> +static void enable_coherency(void)
->> +{
->> +       unsigned long v, u;
->> +
->> +       asm volatile(
->> +               "mrc    p15, 0, %0, c1, c0, 1\n"
->> +               "orr    %0, %0, %2\n"
->> +               "ldr    %1, [%3]\n"
->> +               "and    %1, %1, #0\n"
->> +               "orr    %0, %0, %1\n"
->> +               "mcr    p15, 0, %0, c1, c0, 1\n"
->> +               : "=3D&r" (v), "=3D&r" (u)
->> +               : "Ir" (0x40), "Ir" (S5P_INFORM0)
->> +               : "cc");
->> +}
+On 04/21/2014 02:28 PM, YoungJun Cho wrote:
+> The offset of register DSIM_PLLTMR_REG in Exynos5420 is different
+> from the one in Exynos4 SoC.
 >
+> In case of Exynos5420 SoC, there is no frequency band bit in DSIM_PLLCTRL_REG,
+> and it uses DSIM_PHYCTRL_REG and DSIM_PHYTIMING*_REG instead.
+> So this patch adds driver data to distinguish it.
 >
-> Shouldn't this function to be used from hotplug.c also ?
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c |  101 ++++++++++++++++++++++++-------
+>  1 file changed, 80 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index 179f2fa..fcd577f 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -17,6 +17,7 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/irq.h>
+> +#include <linux/of_device.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/regulator/consumer.h>
+>  
+> @@ -54,9 +55,12 @@
+>  
+>  /* FIFO memory AC characteristic register */
+>  #define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
+> -#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
+>  #define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
+>  #define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
+> +#define DSIM_PHYCTRL_REG	0x5c
+> +#define DSIM_PHYTIMING_REG	0x64
+> +#define DSIM_PHYTIMING1_REG	0x68
+> +#define DSIM_PHYTIMING2_REG	0x6c
+>  
+>  /* DSIM_STATUS */
+>  #define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
+> @@ -233,6 +237,12 @@ struct exynos_dsi_transfer {
+>  #define DSIM_STATE_INITIALIZED		BIT(1)
+>  #define DSIM_STATE_CMD_LPM		BIT(2)
+>  
+> +struct exynos_dsi_driver_data {
+> +	unsigned int plltmr_reg;
+> +
+> +	unsigned int has_freqband:1;
+> +};
+> +
+>  struct exynos_dsi {
+>  	struct mipi_dsi_host dsi_host;
+>  	struct drm_connector connector;
+> @@ -262,11 +272,39 @@ struct exynos_dsi {
+>  
+>  	spinlock_t transfer_lock; /* protects transfer_list */
+>  	struct list_head transfer_list;
+> +
+> +	struct exynos_dsi_driver_data *driver_data;
+>  };
+>  
+>  #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+>  #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+>  
+> +static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+> +	.plltmr_reg = 0x50,
+> +	.has_freqband = 1,
+> +};
+> +
+> +static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+> +	.plltmr_reg = 0x58,
+> +};
+> +
+> +static struct of_device_id exynos_dsi_of_match[] = {
+> +	{ .compatible = "samsung,exynos4210-mipi-dsi",
+> +	  .data = &exynos4_dsi_driver_data },
+> +	{ .compatible = "samsung,exynos5420-mipi-dsi",
+> +	  .data = &exynos5_dsi_driver_data },
+> +	{ }
+> +};
 
-Hotplug.c already taking care for this. And anyhow that will go away
-for mcpm dependent SoCs
-
->
->
->> +
->> +void exynos_powered_up(void)
->> +{
->> +       unsigned int mpidr, cpu, cluster;
->> +
->> +       mpidr =3D read_cpuid_mpidr();
->> +       cpu =3D MPIDR_AFFINITY_LEVEL(mpidr, 0);
->> +       cluster =3D MPIDR_AFFINITY_LEVEL(mpidr, 1);
->> +
->> +       arch_spin_lock(&bl_lock);
->> +       if (cpu_use_count[cpu][cluster] =3D=3D 0)
->> +               cpu_use_count[cpu][cluster] =3D 1;
->> +       arch_spin_unlock(&bl_lock);
->> +}
->> +
->> +static void exynos_suspend(u64 residency)
->> +{
->> +       unsigned int mpidr, cpunr;
->> +
->> +       mpidr =3D read_cpuid_mpidr();
->> +       cpunr =3D enynos_pmu_cpunr(mpidr);
->
->
-> *enynos*_pmu_cpunr ?
-
-oops, I will fix typo
-
->
->
->> +
->> +       __raw_writel(virt_to_phys(mcpm_entry_point), REG_ENTRY_ADDR)=
-;
->> +
->> +       exynos_power_down();
->> +
->> +       /*
->> +        * Execution reaches here only if cpu did not power down.
->> +        * Hence roll back the changes done in exynos_power_down fun=
-ction.
->> +       */
->> +       __raw_writel(EXYNOS_CORE_LOCAL_PWR_EN,
->> +                       EXYNOS_ARM_CORE_CONFIGURATION(cpunr));
->
->
-> Why don't you use the functions defined in the
->
-> patch 5/5 arm: exynos: Add MCPM call-back functions
-
-In exynos_core_power_control it powerup the alreay powered down core.
-But here i need to simply set this value as core never powered down.
-
->
-> exynos_core_power_control() ?
->
->
->> +       set_cr(get_cr() | CR_C);
->> +       enable_coherency();
->> +}
->> +
->>   static const struct mcpm_platform_ops exynos_power_ops =3D {
->>         .power_up               =3D exynos_power_up,
->>         .power_down             =3D exynos_power_down,
->>         .power_down_finish      =3D exynos_power_down_finish,
->> +       .suspend                =3D exynos_suspend,
->> +       .powered_up             =3D exynos_powered_up,
->>   };
->>
->>   static void __init exynos_mcpm_usage_count_init(void)
->>
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
-or ARM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+I wonder if it wouldn't be better to use "samsung,exynos5410-mipi-dsi"
+compatible and distinguish 5410 and 5420 by DSIM_VERSION register.
 
 
+> +
+> +static inline struct exynos_dsi_driver_data *exynos_dsi_get_driver_data(
+> +						struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *of_id =
+> +			of_match_device(exynos_dsi_of_match, &pdev->dev);
+> +
+> +	return (struct exynos_dsi_driver_data *)of_id->data;
+> +}
+> +
+>  static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
+>  {
+>  	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
+> @@ -340,14 +378,9 @@ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
+>  static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+>  					unsigned long freq)
+>  {
+> -	static const unsigned long freq_bands[] = {
+> -		100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
+> -		270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
+> -		510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
+> -		770 * MHZ, 870 * MHZ, 950 * MHZ,
+> -	};
+> +	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+>  	unsigned long fin, fout;
+> -	int timeout, band;
+> +	int timeout;
+>  	u8 p, s;
+>  	u16 m;
+>  	u32 reg;
+> @@ -368,18 +401,30 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+>  			"failed to find PLL PMS for requested frequency\n");
+>  		return -EFAULT;
+>  	}
+> +	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
+>  
+> -	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
+> -		if (fout < freq_bands[band])
+> -			break;
+> +	writel(500, dsi->reg_base + driver_data->plltmr_reg);
+> +
+> +	reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
+> +
+> +	if (driver_data->has_freqband) {
+> +		static const unsigned long freq_bands[] = {
+> +			100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
+> +			270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
+> +			510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
+> +			770 * MHZ, 870 * MHZ, 950 * MHZ,
+> +		};
+> +		int band;
+>  
+> -	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d), band %d\n", fout,
+> -		p, m, s, band);
+> +		for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
+> +			if (fout < freq_bands[band])
+> +				break;
+>  
+> -	writel(500, dsi->reg_base + DSIM_PLLTMR_REG);
+> +		dev_dbg(dsi->dev, "band %d\n", band);
+> +
+> +		reg |= DSIM_FREQ_BAND(band);
+> +	}
+>  
+> -	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
+> -			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
+>  	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
+>  
+>  	timeout = 1000;
+> @@ -391,6 +436,24 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+>  		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
+>  	} while ((reg & DSIM_PLL_STABLE) == 0);
+>  
+> +	if (!driver_data->has_freqband) {
 
---=20
-with warm regards,
-Chander Kashyap
+Could you explain why lack of freqband determines necessity of setting PHY
+registers, is this a kind of hardware setting dependency?
+
+> +		/* b dphy ctrl */
+> +		reg = 0x0af & 0x1ff;
+> +		writel(reg, dsi->reg_base + DSIM_PHYCTRL_REG);
+> +
+> +		/* phy timing */
+> +		reg = 0x06 << 8 | 0x0b;
+> +		writel(reg, dsi->reg_base + DSIM_PHYTIMING_REG);
+> +
+> +		/* phy timing 1 */
+> +		reg = 0x07 << 24 | 0x27 << 16 | 0x0d << 8 | 0x08;
+> +		writel(reg, dsi->reg_base + DSIM_PHYTIMING1_REG);
+> +
+> +		/* phy timing 2 */
+> +		reg = 0x09 << 16 | 0x0d << 8 | 0x0b;
+> +		writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
+> +	}
+> +
+
+Please use macros if possible instead of magic numbers.
+
+As I wrote in comment for earlier patch it would be better to separate
+setting PHY registers
+from clock registers.
+
+>  	return fout;
+>  }
+>  
+> @@ -1412,6 +1475,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+>  	dsi->dsi_host.dev = &pdev->dev;
+>  
+>  	dsi->dev = &pdev->dev;
+> +	dsi->driver_data = exynos_dsi_get_driver_data(pdev);
+>  
+>  	ret = exynos_dsi_parse_dt(dsi);
+>  	if (ret)
+> @@ -1516,11 +1580,6 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
+>  	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
+>  };
+>  
+> -static struct of_device_id exynos_dsi_of_match[] = {
+> -	{ .compatible = "samsung,exynos4210-mipi-dsi" },
+> -	{ }
+> -};
+> -
+>  struct platform_driver dsi_driver = {
+>  	.probe = exynos_dsi_probe,
+>  	.remove = exynos_dsi_remove,
