@@ -1,51 +1,78 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 0/2] Add generic cpu power control functions for exynos
-Date: Thu, 24 Apr 2014 11:54:24 +0200
-Message-ID: <5358DF50.9010106@linaro.org>
-References: <1398331919-28321-1-git-send-email-leela.krishna@linaro.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Thu, 24 Apr 2014 12:06:59 +0200
+Message-ID: <5358E243.7010004@samsung.com>
+References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org>
+ <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com>
+ <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com>
+ <03b001cf5edc$ae42e770$0ac8b650$@samsung.com> <5358D46F.2050303@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398331919-28321-1-git-send-email-leela.krishna@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: nicolas.pitre@linaro.org, kgene.kim@samsung.com, amit.kucheria@linaro.org, Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44299 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754218AbaDXKHI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 06:07:08 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N4J002Z15FSH720@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Apr 2014 11:07:04 +0100 (BST)
+In-reply-to: <5358D46F.2050303@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com
 
-
-Hi Abhilash and Leela,
-
-=46YI I think you are working on similar patches.
-
-On 04/24/2014 11:31 AM, Leela Krishna Amudala wrote:
- > This patchset adds the generic cpu power control functions for
-> exynos based SoCs to power up/down and to know the status of the cpu.
+On 24.04.2014 11:07, Tushar Behera wrote:
+> On 04/23/2014 03:43 PM, Kukjin Kim wrote:
+>> Tushar Behera wrote:
+>>>
+>>> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>>>> Hi Tushar
+>>>>
+>>>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
+>>>> <tushar.behera@linaro.org> wrote:
+>>>>> MAU powerdomain provides clocks for Audio sub-system block. This block
+>>>>> comprises of the I2S audio controller, audio DMA blocks and Audio
+>>>>> sub-system clock registers.
+>>>>>
+>>>>> Right now, there is no way to hook up power-domains with clock
+>>> providers.
+>>>>> During late boot when this power-domain gets disabled, we get following
+>>>>> external abort.
+>>
+>> + Jonghwan Choi
+>>
+>> Well, this is not a perfect solution to support MAU power domain, it's true it is a problem right now though.
+>>
+>> In other words, this is just temporal fix for the problem.
+>>
+>> How about accessing clock stuff for audio sub-system with handling MAU power domain via generic IO power domain?
+>>
 >
-> Note: This series has been rebased on 3.15-rc1 and tested on
-> Exynos based Origen(Cortex-A9) and Arndale-octa(Cortex A7,A15) boards=
-=2E
+> + Tomasz Figa
 >
-> Leela Krishna Amudala (2):
->    ARM: EXYNOS: Add generic cpu power control functions for all exyno=
-s
->      based SoCs
->    ARM: EXYNOS: use generic exynos cpu power control functions
+> Existing power domain driver exynos4_pm_init_power_domain is registered
+> with an arch_initcall whereas the clk-exynos-audss driver is registered
+> with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
+> node, the binding with power-domain doesn't happen.
+
+I'd say core_initcall is way too early for clk-exynos-audss driver. It 
+should be at most subsys_initcall. As far as I can see, all users of 
+clocks provided by this driver (i.e. i2s) are probed at device_initcall 
+level anyway.
+
 >
->   arch/arm/mach-exynos/common.h   |    3 +++
->   arch/arm/mach-exynos/platsmp.c  |    9 +++------
->   arch/arm/mach-exynos/pm.c       |   36 ++++++++++++++++++++++++++++=
-++++++++
->   arch/arm/mach-exynos/regs-pmu.h |    6 ++++++
->   4 files changed, 48 insertions(+), 6 deletions(-)
->
+> Alternately, if Tomasz's patches are applied [1], power-domain binding
+> is successful. But because of the init order, clk-exynos-audss defers
+> probe resulting in a kernel crash. Forcing clk-exynos-audss to register
+> through arch_initcall() fixes this issue, but I am not sure if that is okay.
 
+If the driver crashes on deferred probe, then it's a bug and it should 
+be fixed.
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Best regards,
+Tomasz
