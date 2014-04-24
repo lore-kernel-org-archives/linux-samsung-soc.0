@@ -1,45 +1,58 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: dw_mmc: Don't print data errors
-Date: Thu, 24 Apr 2014 11:14:51 +0200
-Message-ID: <CAPDyKFo7Mi9+WJx+7rcB_fqdi59TuY+FhT=Ued9Zi=rhNGnYtA@mail.gmail.com>
-References: <1398210681-22976-1-git-send-email-dianders@chromium.org>
-	<CAPDyKFpzPCi2Yb_33akh5dg1NjudydLkJrdGnQ_xJtsEGGcQ3g@mail.gmail.com>
-	<CAD=FV=U_H_RdoMr2R9TAgj9HmaU0zm=UxcvvMXErzQ-acwZJwA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] ARM: exynos: register sched_clock callback
+Date: Thu, 24 Apr 2014 11:21:26 +0200
+Message-ID: <1398331286-2020-1-git-send-email-vincent.guittot@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f44.google.com ([209.85.192.44]:38932 "EHLO
-	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755782AbaDXJOw (ORCPT
+Received: from mail-we0-f170.google.com ([74.125.82.170]:34677 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755130AbaDXJW2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 05:14:52 -0400
-Received: by mail-qg0-f44.google.com with SMTP id q108so2208007qgd.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 02:14:51 -0700 (PDT)
-In-Reply-To: <CAD=FV=U_H_RdoMr2R9TAgj9HmaU0zm=UxcvvMXErzQ-acwZJwA@mail.gmail.com>
+	Thu, 24 Apr 2014 05:22:28 -0400
+Received: by mail-we0-f170.google.com with SMTP id w61so1984453wes.15
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 02:22:27 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, Vincent Guittot <vincent.guittot@linaro.org>
 
->> The "status" here could be useful information about the status
->> register, which is not considered while printing errors by the "higher
->> levels". An option could be to print the error, but not when you
->> perform tuning.
->>
->> No big deal though, just a thought.
->
-> Right, I could potentially put the driver into "tuning" mode and then
-> suppress the errors during that time.  If you request it I will do
-> that.
->
-> I will also note that there are many other error conditions in the
-> driver that don't have such printouts.  I think the general philosophy
-> of this driver is not to print them...
+Use the clocksource mct-frc for sched_clock
 
-So, then let's stick to that philosophy and keep this as is.
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ drivers/clocksource/exynos_mct.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Kind regards
-Ulf Hansson
-
->
-> -Doug
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index a6ee6d7..61b0577 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -24,6 +24,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
+ #include <linux/clocksource.h>
++#include <linux/sched_clock.h>
+ 
+ #define EXYNOS4_MCTREG(x)		(x)
+ #define EXYNOS4_MCT_G_CNT_L		EXYNOS4_MCTREG(0x100)
+@@ -192,12 +193,19 @@ struct clocksource mct_frc = {
+ 	.resume		= exynos4_frc_resume,
+ };
+ 
++static u64 notrace exynos4_read_sched_clock(void)
++{
++	return exynos4_frc_read(&mct_frc);
++}
++
+ static void __init exynos4_clocksource_init(void)
+ {
+ 	exynos4_mct_frc_start(0, 0);
+ 
+ 	if (clocksource_register_hz(&mct_frc, clk_rate))
+ 		panic("%s: can't register clocksource\n", mct_frc.name);
++
++	sched_clock_register(exynos4_read_sched_clock, 64, clk_rate);
+ }
+ 
+ static void exynos4_mct_comp0_stop(void)
+-- 
+1.9.1
