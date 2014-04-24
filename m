@@ -1,92 +1,160 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v2.1 1/9] ARM: S3C24XX: cpufreq-utils: don't write raw values to MPLLCON when using ccf
-Date: Thu, 24 Apr 2014 00:08:23 +0200
-Message-ID: <2638137.1oBdcbvcY8@phil>
-References: <2104342.rkElQpXtvM@phil> <5855371.5GIoOu8EnE@phil>
+From: Anton Tikhomirov <av.tikhomirov@samsung.com>
+Subject: RE: [PATCH 1/3] usb: ohci-exynos: Make provision for vdd regulators
+Date: Thu, 24 Apr 2014 09:18:02 +0900
+Message-ID: <002b01cf5f52$a7bc0d70$f7342850$%tikhomirov@samsung.com>
+References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:42580 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751538AbaDWWGV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 18:06:21 -0400
-In-Reply-To: <5855371.5GIoOu8EnE@phil>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-reply-to: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
+Content-language: en-us
+Sender: linux-omap-owner@vger.kernel.org
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: t.figa@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-The s3c24xx cpufreq driver needs to change the mpll speed and was doing
-this by writing raw values from a translation table into the MPLLCON
-register.
+Hi,
 
-Change this to use a regular clk_set_rate call when using the common
-clock framework and only write the raw value in the samsung_clock case.
+> -----Original Message-----
+> From: linux-usb-owner@vger.kernel.org [mailto:linux-usb-
+> owner@vger.kernel.org] On Behalf Of Vivek Gautam
+> Sent: Monday, April 21, 2014 9:17 PM
+> 
+> Facilitate getting required 3.3V and 1.0V VDD supply for
+> OHCI controller on Exynos.
+> 
+> With patches for regulators' nodes merged in 3.15:
+> c8c253f ARM: dts: Add regulator entries to smdk5420
+> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+> 
+> certain perripherals will now need to ensure that,
+> they request VDD regulators in their drivers, and enable
+> them so as to make them working.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> ---
+> 
+> Based on 'usb-next' branch of Greg's usb tree.
+> 
+>  drivers/usb/host/ohci-exynos.c |   47
+> ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
+> exynos.c
+> index 68588d8..e2e72a8 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/usb/phy.h>
+>  #include <linux/usb/samsung_usb_phy.h>
+>  #include <linux/usb.h>
+> @@ -37,6 +38,8 @@ struct exynos_ohci_hcd {
+>  	struct clk *clk;
+>  	struct usb_phy *phy;
+>  	struct usb_otg *otg;
+> +	struct regulator *vdd33;
+> +	struct regulator *vdd10;
+>  };
+> 
+>  static void exynos_ohci_phy_enable(struct platform_device *pdev)
+> @@ -98,6 +101,28 @@ static int exynos_ohci_probe(struct platform_device
+> *pdev)
+>  		exynos_ohci->otg = phy->otg;
+>  	}
+> 
+> +	exynos_ohci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
+> +	if (IS_ERR(exynos_ohci->vdd33)) {
+> +		err = PTR_ERR(exynos_ohci->vdd33);
+> +		goto fail_regulator1;
+> +	}
+> +	err = regulator_enable(exynos_ohci->vdd33);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
+> +		goto fail_regulator1;
+> +	}
+> +
+> +	exynos_ohci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
+> +	if (IS_ERR(exynos_ohci->vdd10)) {
+> +		err = PTR_ERR(exynos_ohci->vdd10);
+> +		goto fail_regulator2;
+> +	}
+> +	err = regulator_enable(exynos_ohci->vdd10);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
+> +		goto fail_regulator2;
+> +	}
+> +
 
-The s3c cpufreq driver does already aquire the mpll, so simply add a reference
-to struct s3c_cpufreq_config to let set_fvco access it.
+Do we need to skip regulator settings together with PHY configuration
+in case of exynos5440?
 
-While struct clk is opaque the differenciation between samsung clock and
-common clock is kept, as the samsung-clock mpll clk does not implement a
-real set_rate.
+>  skip_phy:
+>  	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
+> 
+> @@ -154,6 +179,10 @@ fail_add_hcd:
+>  fail_io:
+>  	clk_disable_unprepare(exynos_ohci->clk);
+>  fail_clk:
+> +	regulator_disable(exynos_ohci->vdd10);
+> +fail_regulator2:
+> +	regulator_disable(exynos_ohci->vdd33);
+> +fail_regulator1:
+>  	usb_put_hcd(hcd);
+>  	return err;
+>  }
+> @@ -172,6 +201,9 @@ static int exynos_ohci_remove(struct
+> platform_device *pdev)
+> 
+>  	clk_disable_unprepare(exynos_ohci->clk);
+> 
+> +	regulator_disable(exynos_ohci->vdd10);
+> +	regulator_disable(exynos_ohci->vdd33);
+> +
+>  	usb_put_hcd(hcd);
+> 
+>  	return 0;
+> @@ -208,6 +240,9 @@ static int exynos_ohci_suspend(struct device *dev)
+> 
+>  	clk_disable_unprepare(exynos_ohci->clk);
+> 
+> +	regulator_disable(exynos_ohci->vdd10);
+> +	regulator_disable(exynos_ohci->vdd33);
+> +
+>  	spin_unlock_irqrestore(&ohci->lock, flags);
+> 
+>  	return 0;
+> @@ -218,6 +253,18 @@ static int exynos_ohci_resume(struct device *dev)
+>  	struct usb_hcd *hcd			= dev_get_drvdata(dev);
+>  	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
+>  	struct platform_device *pdev		= to_platform_device(dev);
+> +	int ret;
+> +
+> +	ret = regulator_enable(exynos_ohci->vdd33);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable VDD33 supply\n");
+> +		return ret;
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/cpufreq-utils.c              | 8 ++++++++
- arch/arm/plat-samsung/include/plat/cpu-freq-core.h | 1 +
- drivers/cpufreq/s3c24xx-cpufreq.c                  | 1 +
- 3 files changed, 10 insertions(+)
+Not sure, but shall we continue resuming and do everything
+we can in case of error? At least it will avoid
+WARN_ON(clk->enable_count == 0) on next system suspend.
 
-diff --git a/arch/arm/mach-s3c24xx/cpufreq-utils.c b/arch/arm/mach-s3c24xx/cpufreq-utils.c
-index 2a0aa56..c1b7508 100644
---- a/arch/arm/mach-s3c24xx/cpufreq-utils.c
-+++ b/arch/arm/mach-s3c24xx/cpufreq-utils.c
-@@ -14,6 +14,7 @@
- #include <linux/errno.h>
- #include <linux/cpufreq.h>
- #include <linux/io.h>
-+#include <linux/clk.h>
- 
- #include <mach/map.h>
- #include <mach/regs-clock.h>
-@@ -60,5 +61,12 @@ void s3c2410_cpufreq_setrefresh(struct s3c_cpufreq_config *cfg)
-  */
- void s3c2410_set_fvco(struct s3c_cpufreq_config *cfg)
- {
-+#ifdef CONFIG_SAMSUNG_CLOCK
- 	__raw_writel(cfg->pll.driver_data, S3C2410_MPLLCON);
-+#endif
-+
-+#ifdef CONFIG_COMMON_CLK
-+	if (!IS_ERR(cfg->mpll))
-+		clk_set_rate(cfg->mpll, cfg->pll.frequency);
-+#endif
- }
-diff --git a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-index 7231c8e..72d4178 100644
---- a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-@@ -119,6 +119,7 @@ struct s3c_plltab {
- struct s3c_cpufreq_config {
- 	struct s3c_freq		freq;
- 	struct s3c_freq		max;
-+	struct clk		*mpll;
- 	struct cpufreq_frequency_table pll;
- 	struct s3c_clkdivs	divs;
- 	struct s3c_cpufreq_info *info;	/* for core, not drivers */
-diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-index be1b2b5..227ebf7 100644
---- a/drivers/cpufreq/s3c24xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-@@ -141,6 +141,7 @@ static int s3c_cpufreq_calcdivs(struct s3c_cpufreq_config *cfg)
- 
- static void s3c_cpufreq_setfvco(struct s3c_cpufreq_config *cfg)
- {
-+	cfg->mpll = _clk_mpll;
- 	(cfg->info->set_fvco)(cfg);
- }
- 
--- 
-1.9.0
+> +	}
+> +	ret = regulator_enable(exynos_ohci->vdd10);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable VDD10 supply\n");
+> +		return ret;
+> +	}
+> 
+>  	clk_prepare_enable(exynos_ohci->clk);
+> 
+> --
+
+Thanks
+
