@@ -1,51 +1,82 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable HS-I2C
-Date: Thu, 24 Apr 2014 13:32:41 +0530
-Message-ID: <5358C521.9060103@linaro.org>
-References: <1393935776-22657-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Thu, 24 Apr 2014 14:37:59 +0530
+Message-ID: <5358D46F.2050303@linaro.org>
+References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org> <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com> <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com> <03b001cf5edc$ae42e770$0ac8b650$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:57068 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751363AbaDXICq (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:59844 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752605AbaDXJIE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 04:02:46 -0400
-Received: by mail-pb0-f48.google.com with SMTP id md12so1696388pbc.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 01:02:45 -0700 (PDT)
-In-Reply-To: <1393935776-22657-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 24 Apr 2014 05:08:04 -0400
+Received: by mail-pa0-f46.google.com with SMTP id kp14so1715318pab.33
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 02:08:03 -0700 (PDT)
+In-Reply-To: <03b001cf5edc$ae42e770$0ac8b650$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com, Tomasz Figa <t.figa@samsung.com>
 
-On 03/04/2014 05:52 PM, Sachin Kamat wrote:
-> High speed I2C is used on Exynos5 based SoCs. Enable it.
+On 04/23/2014 03:43 PM, Kukjin Kim wrote:
+> Tushar Behera wrote:
+>>
+>> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>>> Hi Tushar
+>>>
+>>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
+>>> <tushar.behera@linaro.org> wrote:
+>>>> MAU powerdomain provides clocks for Audio sub-system block. This block
+>>>> comprises of the I2S audio controller, audio DMA blocks and Audio
+>>>> sub-system clock registers.
+>>>>
+>>>> Right now, there is no way to hook up power-domains with clock
+>> providers.
+>>>> During late boot when this power-domain gets disabled, we get following
+>>>> external abort.
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/configs/exynos_defconfig |    1 +
->  1 file changed, 1 insertion(+)
+> + Jonghwan Choi
 > 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 4ce7b70ea901..e07a227ec0db 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -65,6 +65,7 @@ CONFIG_TCG_TIS_I2C_INFINEON=y
->  CONFIG_I2C=y
->  CONFIG_I2C_MUX=y
->  CONFIG_I2C_ARB_GPIO_CHALLENGE=y
-> +CONFIG_I2C_EXYNOS5=y
->  CONFIG_I2C_S3C2410=y
->  CONFIG_DEBUG_GPIO=y
->  # CONFIG_HWMON is not set
+> Well, this is not a perfect solution to support MAU power domain, it's true it is a problem right now though.
 > 
-Kukjin,
+> In other words, this is just temporal fix for the problem.
+> 
+> How about accessing clock stuff for audio sub-system with handling MAU power domain via generic IO power domain?
+> 
 
-Please consider picking this patch when you plan to update
-exynos_defconfig. With this change on upstream kernel, we are able to
-get Arndale_Octa board to boot and mount an MMC partition successfully.
++ Tomasz Figa
+
+Existing power domain driver exynos4_pm_init_power_domain is registered
+with an arch_initcall whereas the clk-exynos-audss driver is registered
+with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
+node, the binding with power-domain doesn't happen.
+
+Alternately, if Tomasz's patches are applied [1], power-domain binding
+is successful. But because of the init order, clk-exynos-audss defers
+probe resulting in a kernel crash. Forcing clk-exynos-audss to register
+through arch_initcall() fixes this issue, but I am not sure if that is okay.
+
+[1] http://www.spinics.net/lists/kernel/msg1728566.html
+
+>>> ?? which abort?? Can you please mention it here?
+>>>>
+>>
+>> Thanks Alim for spotting this ... I somehow missed adding this.
+>>
+>> <<<<
+>> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
+>>>>>>
+>>
+>> Kukjin,
+>>
+>> Let me know if I need to resend the patch.
+> 
+> - Kukjin
+> 
+
 
 -- 
 Tushar Behera
