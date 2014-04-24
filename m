@@ -1,60 +1,58 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/4] ARM: dts: exynos4: add hsotg device node
-Date: Thu, 24 Apr 2014 18:16:37 +0200
-Message-ID: <535938E5.5020204@samsung.com>
-References: <1397479700-15864-1-git-send-email-chanho61.park@samsung.com>
- <1397479700-15864-4-git-send-email-chanho61.park@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C
+ controller early
+Date: Thu, 24 Apr 2014 17:25:58 +0100
+Message-ID: <20140424162558.GB12304@sirena.org.uk>
+References: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:65298 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753425AbaDXQQr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 12:16:47 -0400
-In-reply-to: <1397479700-15864-4-git-send-email-chanho61.park@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QeltdQgz4fvqE4Zk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-i2c@vger.kernel.org, naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Chanho,
 
-On 14.04.2014 14:48, Chanho Park wrote:
-> This patch adds a hsotg node for exynos4 USB2.0 device controller.
->
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Kamil Debski <k.debski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos4.dtsi | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 0e32d7f..e541ecb 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -288,6 +288,17 @@
->   		#phy-cells = <1>;
->   	};
->
-> +	hsotg@12480000 {
-> +		compatible = "samsung,s3c6400-hsotg";
-> +		reg = <0x12480000 0x20000>;
-> +		interrupts = <0 71 0>;
-> +		clocks = <&clock 305>;
+--QeltdQgz4fvqE4Zk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please use clock macros.
+On Thu, Apr 24, 2014 at 08:18:36PM +0530, Naveen Krishna Chatradhi wrote:
+> This patch moves initialization code to subsys_initcall() to ensure
+> that the i2c bus is available early so the regulators can be quickly
+> probed and available for other devices on their probe() call.
 
-> +		clock-names = "otg";
-> +		phys = <&exynos_usbphy 0>;
-> +		phy-names = "device";
+> Such solution has been proposed by Mark Brown to fix the problem of
+> the regulators not beeing available on the peripheral device probe():
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2010-March/011971.html
 
-This is not the correct phy name for this binding. According to what the 
-driver uses and the example in ...bindings/usb/dwc2.txt "usb2-phy" 
-should be used.
+What specifically is this needed for?  We *should* be able to use
+deferred probe for most things, but I know that not all subsystems are
+able to yet.
 
-Best regards,
-Tomasz
+--QeltdQgz4fvqE4Zk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTWTsTAAoJELSic+t+oim9IEYP+gJK9puc8vR5pTCxJdPLCo4J
+rnD+aSHJMTdoIaay5rqaH+ESsmTyskwLF5t8kLleaOa1lZSSaaxBJVJlx1wUnD7O
+wy2quNT8Jxf1A1vvc6R4Pn4wxjlxgSmLhHQJ0wNi9TC7LsNUxglUsoIdE9htjkxy
+vJrbNjbQtRYzCupDfbvV7IlBUg2LRwfZ9ZKGDRlQQBhAvAzYqsNRA3EGokpl16T/
+slseb7kKzghCf0/UF4SPyzziCor9+vDSWSykEBuHzGapSgoK+MSa81BkrkZUnvog
+FBeuGJvYh9RaYl0F0h2rK5NzNoVllPxGPAuHwKjcQV0At3G/Qf+zfZOVivpCDAig
+oo+Xr8b2+IADofb8HNOrcfaHEm1ran1i38Kw6F6uy2I1XFJnWxBuv37fwgg31xiy
+ZhqsUQyu5P0B3DGN1+PT9iSRzvXrg72klwwnOcPCMDKzV/vIM41nf+xCImZ004t1
+o8UwiU54XMN01RiVGPVPhcaUxmgIfDkl8nzGFy+eJZCw5jKsQa0/NEmtQ+sZAhfl
+5fG22Nfmz8oD9kU7aJhHL+sJdUZTSIlwJ85b3JNnMU+IOXiUrcAd/VBztEKiVomc
+6u9UN5JeVGsdgsRtIzNpZ3r0M+SDFUO9brsguTqiL9lx6PBbHlTdDjNhr8OwpL8k
+tpWZaCCPZP3o2S4ZasO8
+=/VdO
+-----END PGP SIGNATURE-----
+
+--QeltdQgz4fvqE4Zk--
