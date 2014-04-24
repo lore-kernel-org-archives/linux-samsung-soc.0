@@ -1,78 +1,48 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
-Date: Thu, 24 Apr 2014 12:06:59 +0200
-Message-ID: <5358E243.7010004@samsung.com>
-References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org>
- <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com>
- <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com>
- <03b001cf5edc$ae42e770$0ac8b650$@samsung.com> <5358D46F.2050303@linaro.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/4] ARM: S3C24XX: cleanup debug macro/earlyprintk
+Date: Thu, 24 Apr 2014 12:23:14 +0200
+Message-ID: <1544889.hRy2JpKRQe@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44299 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754218AbaDXKHI (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:50962 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754234AbaDXKVL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 06:07:08 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N4J002Z15FSH720@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 Apr 2014 11:07:04 +0100 (BST)
-In-reply-to: <5358D46F.2050303@linaro.org>
+	Thu, 24 Apr 2014 06:21:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Russell King <linux@arm.linux.org.uk>
 
-On 24.04.2014 11:07, Tushar Behera wrote:
-> On 04/23/2014 03:43 PM, Kukjin Kim wrote:
->> Tushar Behera wrote:
->>>
->>> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
->>>> Hi Tushar
->>>>
->>>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
->>>> <tushar.behera@linaro.org> wrote:
->>>>> MAU powerdomain provides clocks for Audio sub-system block. This block
->>>>> comprises of the I2S audio controller, audio DMA blocks and Audio
->>>>> sub-system clock registers.
->>>>>
->>>>> Right now, there is no way to hook up power-domains with clock
->>> providers.
->>>>> During late boot when this power-domain gets disabled, we get following
->>>>> external abort.
->>
->> + Jonghwan Choi
->>
->> Well, this is not a perfect solution to support MAU power domain, it's true it is a problem right now though.
->>
->> In other words, this is just temporal fix for the problem.
->>
->> How about accessing clock stuff for audio sub-system with handling MAU power domain via generic IO power domain?
->>
->
-> + Tomasz Figa
->
-> Existing power domain driver exynos4_pm_init_power_domain is registered
-> with an arch_initcall whereas the clk-exynos-audss driver is registered
-> with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
-> node, the binding with power-domain doesn't happen.
+This series tries to simplify the s3c24xx debug macro, removing dependencies
+on mach/ includes, static mappings and finally moving it into include/debug.
 
-I'd say core_initcall is way too early for clk-exynos-audss driver. It 
-should be at most subsys_initcall. As far as I can see, all users of 
-clocks provided by this driver (i.e. i2s) are probed at device_initcall 
-level anyway.
+The one slightly invasive change is the need for the developer to select
+the uart type by himself, which gets rid of the debug macro trying to
+determine the uart type itself.
 
->
-> Alternately, if Tomasz's patches are applied [1], power-domain binding
-> is successful. But because of the init order, clk-exynos-audss defers
-> probe resulting in a kernel crash. Forcing clk-exynos-audss to register
-> through arch_initcall() fixes this issue, but I am not sure if that is okay.
+But as usage of the debug-uart is not the common case - especially in a
+multiplatform scenario - I didn't worry to much.
 
-If the driver crashes on deferred probe, then it's a bug and it should 
-be fixed.
+Based on 3.15-rc1 and tested on a S3C2442 Openmoko Freerunner (GTA02)
 
-Best regards,
-Tomasz
+
+Heiko Stuebner (4):
+  ARM: compressed/head.S: remove s3c24xx special case
+  ARM: S3C24XX: trim down debug uart handling
+  ARM: S3C24XX: use generic DEBUG_UART_PHY/_VIRT in debug macro
+  ARM: S3C24XX: move debug-macro.S into the common space
+
+ arch/arm/Kconfig.debug                           |  36 +++++++-
+ arch/arm/boot/compressed/head.S                  |   5 --
+ arch/arm/include/debug/s3c24xx.S                 |  46 +++++++++++
+ arch/arm/mach-s3c24xx/Kconfig                    |  28 -------
+ arch/arm/mach-s3c24xx/include/mach/debug-macro.S | 101 -----------------------
+ 5 files changed, 80 insertions(+), 136 deletions(-)
+ create mode 100644 arch/arm/include/debug/s3c24xx.S
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/debug-macro.S
+
+-- 
+1.9.0
