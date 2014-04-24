@@ -1,64 +1,51 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v3 16/16] clk: exynos5420: add more registers to restore list
-Date: Thu, 24 Apr 2014 18:33:52 +0530
-Message-ID: <1398344632-18623-17-git-send-email-shaik.ameer@samsung.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/4] ARM: S3C24XX: cleanup debug macro/earlyprintk
+Date: Thu, 24 Apr 2014 15:21:48 +0200
+Message-ID: <1856986.kkQFKFg1L2@phil>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48236 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753141AbaDXNLF (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:54225 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757118AbaDXNUK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 09:11:05 -0400
-In-reply-to: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
+	Thu, 24 Apr 2014 09:20:10 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This patch adds more register offsets to the restore list.
+This series tries to simplify the s3c24xx debug macro, removing dependencies
+on mach/ includes, static mappings and finally moving it into include/debug.
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+The one slightly invasive change is the need for the developer to select
+the uart type by himself, which gets rid of the debug macro trying to
+determine the uart type itself.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 33a48d2..6dfd3fd 100755
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -27,6 +27,7 @@
- #define DIV_CPU1		0x504
- #define GATE_BUS_CPU		0x700
- #define GATE_SCLK_CPU		0x800
-+#define CLKOUT_CMU_CPU		0xa00
- #define GATE_IP_G2D		0x8800
- #define CPLL_LOCK		0x10020
- #define DPLL_LOCK		0x10030
-@@ -39,7 +40,11 @@
- #define CPLL_CON0		0x10120
- #define DPLL_CON0		0x10128
- #define EPLL_CON0		0x10130
-+#define EPLL_CON1		0x10134
-+#define EPLL_CON2		0x10138
- #define RPLL_CON0		0x10140
-+#define RPLL_CON1		0x10144
-+#define RPLL_CON2		0x10148
- #define IPLL_CON0		0x10150
- #define SPLL_CON0		0x10160
- #define VPLL_CON0		0x10170
-@@ -139,6 +144,13 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
- 	DIV_CPU1,
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
-+	CLKOUT_CMU_CPU,
-+	EPLL_CON0,
-+	EPLL_CON1,
-+	EPLL_CON2,
-+	RPLL_CON0,
-+	RPLL_CON1,
-+	RPLL_CON2,
- 	SRC_TOP0,
- 	SRC_TOP1,
- 	SRC_TOP2,
+But as usage of the debug-uart is not the common case - especially in a
+multiplatform scenario - I didn't worry to much.
+
+Based on 3.15-rc1 and tested on a S3C2442 Openmoko Freerunner (GTA02)
+
+changes since v1:
+- do not introduce a secondary choice option, instead implement the
+  s3c2410 debug uarts as separate options
+
+Heiko Stuebner (4):
+  ARM: compressed/head.S: remove s3c24xx special case
+  ARM: S3C24XX: trim down debug uart handling
+  ARM: S3C24XX: use generic DEBUG_UART_PHY/_VIRT in debug macro
+  ARM: S3C24XX: move debug-macro.S into the common space
+
+ arch/arm/Kconfig.debug                           |  54 +++++++++++-
+ arch/arm/boot/compressed/head.S                  |   5 --
+ arch/arm/include/debug/s3c24xx.S                 |  46 +++++++++++
+ arch/arm/mach-s3c24xx/Kconfig                    |  28 -------
+ arch/arm/mach-s3c24xx/include/mach/debug-macro.S | 101 -----------------------
+ 5 files changed, 98 insertions(+), 136 deletions(-)
+ create mode 100644 arch/arm/include/debug/s3c24xx.S
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/debug-macro.S
+
 -- 
-1.7.9.5
+1.9.0
