@@ -1,75 +1,75 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 1/2] ARM: dts: Add sound node for Snow board
-Date: Thu, 24 Apr 2014 11:46:58 +0530
-Message-ID: <1398320219-23362-2-git-send-email-tushar.behera@linaro.org>
-References: <1398320219-23362-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:39481 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860AbaDXGSM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 02:18:12 -0400
-Received: by mail-pd0-f173.google.com with SMTP id p10so1238265pdj.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Apr 2014 23:18:11 -0700 (PDT)
-In-Reply-To: <1398320219-23362-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH] thermal: samsung: Only update available threshold limits
+Date: Thu, 24 Apr 2014 11:48:36 +0530
+Message-ID: <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
+References: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, robh+dt@kernel.org
 
-The audio codec on Snow board, MAX98095 is connected on I2C7 bus.
-Also it requires the GPX1-7 line to be pulled up.
+On 4/14/14, Tushar Behera <tushar.behera@linaro.org> wrote:
+> Currently the threshold limits are updated in 2 stages, once for all
+> software trigger levels and again for hardware trip point.
+I guess the first stage is bootloader as could not find this in this file.
+Anyways the changes looks fine to me.
 
-Updated Snow DTS file to incorporate above changes and added a
-sound node to instantiate the I2S-based sound card.
+Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/boot/dts/exynos5250-snow.dts |   32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1bc9b50..f63df3c 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -196,6 +196,38 @@
- 		};
- 	};
- 
-+	regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		max98095-en-regulator {
-+			compatible = "regulator-fixed";
-+			gpio = <&gpx1 7 0>;
-+			enable-active-high;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+	};
-+
-+	i2c@12CD0000 {
-+		max98095: codec@11 {
-+			compatible = "maxim,max98095";
-+			reg = <0x11>;
-+		};
-+	};
-+
-+	i2s0: i2s@03830000 {
-+		status = "okay";
-+	};
-+
-+	sound {
-+		compatible = "google,snow-audio-max98095";
-+
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,audio-codec = <&max98095>;
-+	};
-+
- 	usb@12110000 {
- 		samsung,vbus-gpio = <&gpx1 1 0>;
- 	};
--- 
-1.7.9.5
+>
+> While updating the software trigger levels, it overwrites the threshold
+> limit for hardware trip point thereby forcing the Exynos core to issue
+> an emergency shutdown.
+>
+> Updating only the required fields in threshold register fixes this issue.
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+> Based on v3.15-rc1.
+>
+>  drivers/thermal/samsung/exynos_tmu.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+> b/drivers/thermal/samsung/exynos_tmu.c
+> index 0d96a51..ffccc89 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -225,6 +225,8 @@ skip_calib_data:
+>  			trigger_levs++;
+>  	}
+>
+> +	rising_threshold = readl(data->base + reg->threshold_th0);
+> +
+>  	if (data->soc == SOC_ARCH_EXYNOS4210) {
+>  		/* Write temperature code for threshold */
+>  		threshold_code = temp_to_code(data, pdata->threshold);
+> @@ -249,6 +251,7 @@ skip_calib_data:
+>  				ret = threshold_code;
+>  				goto out;
+>  			}
+> +			rising_threshold &= ~(0xff << 8 * i);
+>  			rising_threshold |= threshold_code << 8 * i;
+>  			if (pdata->threshold_falling) {
+>  				threshold_code = temp_to_code(data,
+> @@ -281,6 +284,7 @@ skip_calib_data:
+>  			}
+>  			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
+>  				/* 1-4 level to be assigned in th0 reg */
+> +				rising_threshold &= ~(0xff << 8 * i);
+>  				rising_threshold |= threshold_code << 8 * i;
+>  				writel(rising_threshold,
+>  					data->base + reg->threshold_th0);
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
