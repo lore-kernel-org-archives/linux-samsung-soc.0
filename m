@@ -1,75 +1,139 @@
-From: Amit Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH] thermal: samsung: Only update available threshold limits
-Date: Thu, 24 Apr 2014 11:48:36 +0530
-Message-ID: <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
-References: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH 1/3] usb: ohci-exynos: Make provision for vdd regulators
+Date: Thu, 24 Apr 2014 12:02:57 +0530
+Message-ID: <CAFp+6iFTVKHcF8zyfmFcrALHDaRHwXOC3Wbd7rv_X5LvjznPgg@mail.gmail.com>
+References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
+	<002b01cf5f52$a7bc0d70$f7342850$%tikhomirov@samsung.com>
+	<002e01cf5f55$74aff060$5e0fd120$%tikhomirov@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <002e01cf5f55$74aff060$5e0fd120$%tikhomirov@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Tikhomirov <av.tikhomirov@samsung.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4/14/14, Tushar Behera <tushar.behera@linaro.org> wrote:
-> Currently the threshold limits are updated in 2 stages, once for all
-> software trigger levels and again for hardware trip point.
-I guess the first stage is bootloader as could not find this in this file.
-Anyways the changes looks fine to me.
+Hi,
 
-Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
+On Thu, Apr 24, 2014 at 6:08 AM, Anton Tikhomirov
+<av.tikhomirov@samsung.com> wrote:
+> Hi,
 >
-> While updating the software trigger levels, it overwrites the threshold
-> limit for hardware trip point thereby forcing the Exynos core to issue
-> an emergency shutdown.
+>> Hi,
+>>
+>> > -----Original Message-----
+>> > From: linux-usb-owner@vger.kernel.org [mailto:linux-usb-
+>> > owner@vger.kernel.org] On Behalf Of Vivek Gautam
+>> > Sent: Monday, April 21, 2014 9:17 PM
+>> >
+>> > Facilitate getting required 3.3V and 1.0V VDD supply for
+>> > OHCI controller on Exynos.
+>> >
+>> > With patches for regulators' nodes merged in 3.15:
+>> > c8c253f ARM: dts: Add regulator entries to smdk5420
+>> > 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+>> >
+>> > certain perripherals will now need to ensure that,
+>> > they request VDD regulators in their drivers, and enable
+>> > them so as to make them working.
+>> >
+>> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> > Cc: Jingoo Han <jg1.han@samsung.com>
+>> > ---
+>> >
+>> > Based on 'usb-next' branch of Greg's usb tree.
+>> >
+>> >  drivers/usb/host/ohci-exynos.c |   47
+>> > ++++++++++++++++++++++++++++++++++++++++
+>> >  1 file changed, 47 insertions(+)
+>> >
+>> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
+>> > exynos.c
+>> > index 68588d8..e2e72a8 100644
+>> > --- a/drivers/usb/host/ohci-exynos.c
+>> > +++ b/drivers/usb/host/ohci-exynos.c
+
+[snip]
+
+>> >  static void exynos_ohci_phy_enable(struct platform_device *pdev)
+>> > @@ -98,6 +101,28 @@ static int exynos_ohci_probe(struct
+>> platform_device
+>> > *pdev)
+>> >             exynos_ohci->otg = phy->otg;
+>> >     }
+>> >
+>> > +   exynos_ohci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
+>> > +   if (IS_ERR(exynos_ohci->vdd33)) {
+>> > +           err = PTR_ERR(exynos_ohci->vdd33);
+>> > +           goto fail_regulator1;
+>> > +   }
+>> > +   err = regulator_enable(exynos_ohci->vdd33);
+>> > +   if (err) {
+>> > +           dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
+>> > +           goto fail_regulator1;
+>> > +   }
+>> > +
+>> > +   exynos_ohci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
+>> > +   if (IS_ERR(exynos_ohci->vdd10)) {
+>> > +           err = PTR_ERR(exynos_ohci->vdd10);
+>> > +           goto fail_regulator2;
+>> > +   }
+>> > +   err = regulator_enable(exynos_ohci->vdd10);
+>> > +   if (err) {
+>> > +           dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
+>> > +           goto fail_regulator2;
+>> > +   }
+>> > +
+>>
+>> Do we need to skip regulator settings together with PHY configuration
+>> in case of exynos5440?
+>>
+>> >  skip_phy:
+>> >     exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
+>> >
+
+[snip]
+
+>> > @@ -218,6 +253,18 @@ static int exynos_ohci_resume(struct device *dev)
+>> >     struct usb_hcd *hcd                     = dev_get_drvdata(dev);
+>> >     struct exynos_ohci_hcd *exynos_ohci     = to_exynos_ohci(hcd);
+>> >     struct platform_device *pdev            = to_platform_device(dev);
+>> > +   int ret;
+>> > +
+>> > +   ret = regulator_enable(exynos_ohci->vdd33);
+>> > +   if (ret) {
+>> > +           dev_err(dev, "Failed to enable VDD33 supply\n");
+>> > +           return ret;
+>>
+>> Not sure, but shall we continue resuming and do everything
+>> we can in case of error? At least it will avoid
+>> WARN_ON(clk->enable_count == 0) on next system suspend.
+
+True, i will modify it.
 >
-> Updating only the required fields in threshold register fixes this issue.
->
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
-> Based on v3.15-rc1.
->
->  drivers/thermal/samsung/exynos_tmu.c |    4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> b/drivers/thermal/samsung/exynos_tmu.c
-> index 0d96a51..ffccc89 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -225,6 +225,8 @@ skip_calib_data:
->  			trigger_levs++;
->  	}
->
-> +	rising_threshold = readl(data->base + reg->threshold_th0);
-> +
->  	if (data->soc == SOC_ARCH_EXYNOS4210) {
->  		/* Write temperature code for threshold */
->  		threshold_code = temp_to_code(data, pdata->threshold);
-> @@ -249,6 +251,7 @@ skip_calib_data:
->  				ret = threshold_code;
->  				goto out;
->  			}
-> +			rising_threshold &= ~(0xff << 8 * i);
->  			rising_threshold |= threshold_code << 8 * i;
->  			if (pdata->threshold_falling) {
->  				threshold_code = temp_to_code(data,
-> @@ -281,6 +284,7 @@ skip_calib_data:
->  			}
->  			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
->  				/* 1-4 level to be assigned in th0 reg */
-> +				rising_threshold &= ~(0xff << 8 * i);
->  				rising_threshold |= threshold_code << 8 * i;
->  				writel(rising_threshold,
->  					data->base + reg->threshold_th0);
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> On the other hand, if power is not applied to the controller,
+> register access in ohci_resume() may lead to undefined behavior.
+> What's your opinion?
+
+AFA i think, it is obvious that the regulators would not work without
+a VDD supply.
+So the question is, do we have VDD LDOs available on all Exynos
+systems for usb ?
+>From the schemata of Exynos5250 and Exynos5420 boards, i can see the
+required VDD LDOs
+for USB. Unfortunately at present i don't have a Exynos4* schemata.
+
+If regulator is not a mandatory, then we can make it option similar to
+what Jingoo has also suggested
+in subsequent mail.
+
+[snip]
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
