@@ -1,64 +1,56 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] i2c: mux: Use subsys_initcall for the i2c-arb-gpio-challenge
-Date: Thu, 24 Apr 2014 20:35:22 +0530
-Message-ID: <1398351922-1647-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11812 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757400AbaDXPHO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 11:07:14 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v8 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
+Date: Thu, 24 Apr 2014 18:01:06 +0200
+Message-ID: <53593542.9010106@samsung.com>
+References: <1397459860-21869-1-git-send-email-t.dakhran@samsung.com>
+ <1397459860-21869-2-git-send-email-t.dakhran@samsung.com>
+ <5617478.sn2TYu7iO3@wuerfel> <534BCD88.4020108@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <534BCD88.4020108@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tarek Dakhran <t.dakhran@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, broonie@kernel.org, Doug Anderson <dianders@chromium.org>
 
-From: Doug Anderson <dianders@chromium.org>
+Hi Tarek,
 
-Since many drivers rely on FETs that live behind this arbitrator, they
-can't successfully probe until after the arbitrator comes up.  They
-ought to handle things properly with EPROBE_DEFER and still work, but
-that has some downsides:
+On 14.04.2014 13:59, Tarek Dakhran wrote:
+> On 04/14/2014 03:03 PM, Arnd Bergmann wrote:
+>> On Monday 14 April 2014 11:17:38 Tarek Dakhran wrote:
+>>> --- a/arch/arm/mach-exynos/exynos.c
+>>> +++ b/arch/arm/mach-exynos/exynos.c
+>>> @@ -159,6 +159,15 @@ static struct map_desc exynos5250_iodesc[]
+>>> __initdata = {
+>>>          },
+>>>   };
+>>> +static struct map_desc exynos5410_iodesc[] __initdata = {
+>>> +       {
+>>> +               .virtual        = (unsigned long)S5P_VA_SYSRAM_NS,
+>>> +               .pfn            =
+>>> __phys_to_pfn(EXYNOS5410_PA_SYSRAM_NS),
+>>> +               .length         = SZ_4K,
+>>> +               .type           = MT_DEVICE,
+>>> +       },
+>>> +};
+>>> +
+>>>   static struct map_desc exynos5_iodesc[] __initdata = {
+>> NAK
+>>
+>> Why does this keep coming up?
+>>
+>>     Arnd
+>>
+> We need this memory region because boot address for exynos5410 located
+> here, same as for 5250.
+>
 
-1. Those drivers don't come up till later in the boot process.  That
-   really not so nice for the LCD--we want that to init early.
-2. Some drivers have bugs and don't handle EPROBE_DEFER.  Those
-   drivers should be fixed but not all of them have been fixed yet.
-   HDMI is one example since DRM doesn't really have good support for
-   deferring probes.
+Is there really no way to map this region dynamically in the entity 
+(driver, source file, whatever) that actually uses it? The goal is to 
+get rid of all the static mappings entirely, so adding new one makes us 
+further from it.
 
-With this change We end up using the same init level as the main i2c bus.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-on: https://gerrit.chromium.org/gerrit/57007
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
----
- drivers/i2c/muxes/i2c-arb-gpio-challenge.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/muxes/i2c-arb-gpio-challenge.c b/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
-index 69afffa..6cf52bb 100644
---- a/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
-+++ b/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
-@@ -241,7 +241,17 @@ static struct platform_driver i2c_arbitrator_driver = {
- 	},
- };
- 
--module_platform_driver(i2c_arbitrator_driver);
-+static int __init i2c_arbitrator_init(void)
-+{
-+	return platform_driver_register(&i2c_arbitrator_driver);
-+}
-+subsys_initcall(i2c_arbitrator_init);
-+
-+static void __exit i2c_arbitrator_exit(void)
-+{
-+	platform_driver_unregister(&i2c_arbitrator_driver);
-+}
-+module_exit(i2c_arbitrator_exit);
- 
- MODULE_DESCRIPTION("GPIO-based I2C Arbitration");
- MODULE_AUTHOR("Doug Anderson <dianders@chromium.org>");
--- 
-1.7.9.5
+Best regards,
+Tomasz
