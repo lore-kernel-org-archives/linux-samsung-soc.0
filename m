@@ -1,125 +1,128 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/3] usb: ohci-exynos: Make provision for vdd regulators
-Date: Thu, 24 Apr 2014 15:57:31 +0900
-Message-ID: <000201cf5f8a$76c7b9c0$64572d40$%han@samsung.com>
-References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
- <002b01cf5f52$a7bc0d70$f7342850$%tikhomirov@samsung.com>
- <001a01cf5f54$af090810$0d1b1830$%han@samsung.com>
- <000001cf5f5c$2f6c2440$8e446cc0$%han@samsung.com>
- <CAFp+6iGo-Rk8d28=dosVW63f-ZrZjmxj9fsm7D7Vn4-HdhSgjw@mail.gmail.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [Patch v2 4/4] mcpm: exynos: populate suspend and powered_up callbacks
+Date: Thu, 24 Apr 2014 13:14:44 +0530
+Message-ID: <CANuQgHGiNqJHdB70fGeN_ueVDALM=aRPbku91XjO82Cw0uEYEQ@mail.gmail.com>
+References: <1398080958-21677-5-git-send-email-chander.kashyap@linaro.org>
+	<1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+	<1398245154-18771-5-git-send-email-chander.kashyap@linaro.org>
+	<20140423160256.GA1243@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-reply-to: <CAFp+6iGo-Rk8d28=dosVW63f-ZrZjmxj9fsm7D7Vn4-HdhSgjw@mail.gmail.com>
-Content-language: ko
-Sender: linux-omap-owner@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>
-Cc: 'Anton Tikhomirov' <av.tikhomirov@samsung.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Greg KH' <gregkh@linuxfoundation.org>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Felipe Balbi' <balbi@ti.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:38551 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752488AbaDXHop (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 03:44:45 -0400
+Received: by mail-oa0-f44.google.com with SMTP id n16so2255015oag.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 00:44:45 -0700 (PDT)
+In-Reply-To: <20140423160256.GA1243@e102568-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-On Thursday, April 24, 2014 3:40 PM, Vivek Gautam wrote:
-> On Thu, Apr 24, 2014 at 6:56 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> > On Thursday, April 24, 2014 9:33 AM, Jingoo Han wrote:
-> >> On Thursday, April 24, 2014 9:18 AM, Anton Tikhomirov wrote:
-> >> > On Monday, April 21, 2014 9:17 PM, Vivek Gautam wrote:
-> >> > >
-> >> > > Facilitate getting required 3.3V and 1.0V VDD supply for
-> >> > > OHCI controller on Exynos.
-> >> > >
-> >> > > With patches for regulators' nodes merged in 3.15:
-> >> > > c8c253f ARM: dts: Add regulator entries to smdk5420
-> >> > > 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
-> >> > >
-> >> > > certain perripherals will now need to ensure that,
-> >> > > they request VDD regulators in their drivers, and enable
-> >> > > them so as to make them working.
-> >> > >
-> >> > > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> >> > > Cc: Jingoo Han <jg1.han@samsung.com>
-> >> > > ---
-> >> > >
-> >> > > Based on 'usb-next' branch of Greg's usb tree.
-> >> > >
-> >> > >  drivers/usb/host/ohci-exynos.c |   47
-> >> > > ++++++++++++++++++++++++++++++++++++++++
-> >> > >  1 file changed, 47 insertions(+)
-> >> > >
-> >> > > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
-> >> > > exynos.c
-> >> > > index 68588d8..e2e72a8 100644
-> >> > > --- a/drivers/usb/host/ohci-exynos.c
-> >> > > +++ b/drivers/usb/host/ohci-exynos.c
-> 
-> [snip]
-> 
-> >> > > @@ -98,6 +101,28 @@ static int exynos_ohci_probe(struct platform_device
-> >> > > *pdev)
-> >> > >           exynos_ohci->otg = phy->otg;
-> >> > >   }
-> >> > >
-> >> > > + exynos_ohci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
-> >> > > + if (IS_ERR(exynos_ohci->vdd33)) {
-> >> > > +         err = PTR_ERR(exynos_ohci->vdd33);
-> >> > > +         goto fail_regulator1;
-> >> > > + }
-> >> > > + err = regulator_enable(exynos_ohci->vdd33);
-> >> > > + if (err) {
-> >> > > +         dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
-> >> > > +         goto fail_regulator1;
-> >> > > + }
-> >> > > +
-> >> > > + exynos_ohci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
-> >> > > + if (IS_ERR(exynos_ohci->vdd10)) {
-> >> > > +         err = PTR_ERR(exynos_ohci->vdd10);
-> >> > > +         goto fail_regulator2;
-> >> > > + }
-> >> > > + err = regulator_enable(exynos_ohci->vdd10);
-> >> > > + if (err) {
-> >> > > +         dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
-> >> > > +         goto fail_regulator2;
-> >> > > + }
-> >> > > +
-> >> >
-> >> > Do we need to skip regulator settings together with PHY configuration
-> >> > in case of exynos5440?
-> >>
-> >> Oh, right. In the case of exynos5440, regulator settings is not
-> >> necessary. Vivek, would you fix it in order skip regulator settings
-> >> in exynos5440? It also applies to ehci-exynos.
-> >
-> > Sorry, in the case of exynos5440, this patch already skips
-> > regulator settings.
-> >
-> > In the case of exynos5440, there is no need to set PHY setting
-> > and regulator setting.
-> 
-> Right, in case of exynos5440, we are skipping PHY setting and regulator setting.
-> Actually i had missed taking into account 5440, so just curious. Do we
-> really not need a regulator
-> settings for Exynos5440 ?
+On 23 April 2014 21:32, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> [added Nico in CC]
+>
+> On Wed, Apr 23, 2014 at 10:25:54AM +0100, Chander Kashyap wrote:
+>> In order to support cpuidle through mcpm, suspend and powered-up
+>> callbacks are required in mcpm platform code.
+>> Hence populate the same callbacks.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>> changes in v2:
+>>       1. Fixed typo: enynos_pmu_cpunr to exynos_pmu_cpunr
+>>
+>>  arch/arm/mach-exynos/mcpm-exynos.c |   53 ++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 53 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+>> index 6c74c82..d53f597 100644
+>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+>> @@ -272,10 +272,63 @@ static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
+>>       return 0; /* success: the CPU is halted */
+>>  }
+>>
+>> +static void enable_coherency(void)
+>> +{
+>> +     unsigned long v, u;
+>> +
+>> +     asm volatile(
+>> +             "mrc    p15, 0, %0, c1, c0, 1\n"
+>> +             "orr    %0, %0, %2\n"
+>> +             "ldr    %1, [%3]\n"
+>> +             "and    %1, %1, #0\n"
+>> +             "orr    %0, %0, %1\n"
+>> +             "mcr    p15, 0, %0, c1, c0, 1\n"
+>> +             : "=&r" (v), "=&r" (u)
+>> +             : "Ir" (0x40), "Ir" (S5P_INFORM0)
+>> +             : "cc");
+>> +}
+>> +
+>> +void exynos_powered_up(void)
+>> +{
+>> +     unsigned int mpidr, cpu, cluster;
+>> +
+>> +     mpidr = read_cpuid_mpidr();
+>> +     cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +     cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +     arch_spin_lock(&exynos_mcpm_lock);
+>> +     if (cpu_use_count[cpu][cluster] == 0)
+>> +             cpu_use_count[cpu][cluster] = 1;
+>> +     arch_spin_unlock(&exynos_mcpm_lock);
+>> +}
+>> +
+>> +static void exynos_suspend(u64 residency)
+>> +{
+>> +     unsigned int mpidr, cpunr;
+>> +
+>> +     mpidr = read_cpuid_mpidr();
+>> +     cpunr = exynos_pmu_cpunr(mpidr);
+>> +
+>> +     __raw_writel(virt_to_phys(mcpm_entry_point), REG_ENTRY_ADDR);
+>> +
+>> +     exynos_power_down();
+>> +
+>> +     /*
+>> +      * Execution reaches here only if cpu did not power down.
+>> +      * Hence roll back the changes done in exynos_power_down function.
+>> +     */
+>> +     __raw_writel(EXYNOS_CORE_LOCAL_PWR_EN,
+>> +                     EXYNOS_ARM_CORE_CONFIGURATION(cpunr));
+>> +     set_cr(get_cr() | CR_C);
+>> +     enable_coherency();
+>
+> This is wrong:
+>
+> 1) MCPM would eventually reboot the CPU in question if the suspend call
+>    returns (and restore SCTLR and ACTLR in cpu_resume), so there is 0 point
+>    in doing that here.
 
-To be more specific, there is no regulator on ssdk5440 board
-which is the Exynos5440-based board.
+Yes i missed that. I will correct it.
 
-Best regards,
-Jingoo Han
+> 2) The core would have executed out of coherency for a "while" so the
+>    tlbs could be stale and you do not invalidate them. But given (1), (2)
+>    becomes just informational. The register write must be executed
+>    though (I guess...). Now, on restoring the SMP bit in cpu_resume
+>    (errata 799270) I need to verify this is safe and get back to you.
 
-> > How about making regulator setting "optional"?
-> > Then, regulator setting can be done, only when regulator
-> > is supported.
-> 
-> True, so with Exynos5440 not needing the regulator, we should make the
-> regulator settings optional.
+Ok
 
-[.....]
+Thanks Lorenzo.
 
-> Thanks for the suggestion.
-> I will make the required changes, and post the patchset again.
 
-OK, I see.
-Thank you for accepting my suggestion.
+>
+> Cheers,
+> Lorenzo
+>
 
-Best regards,
-Jingoo Han
 
+
+-- 
+with warm regards,
+Chander Kashyap
