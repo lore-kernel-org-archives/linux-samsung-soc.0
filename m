@@ -1,230 +1,151 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/3] usb: ohci-exynos: Make provision for vdd regulators
-Date: Thu, 24 Apr 2014 10:26:15 +0900
-Message-ID: <000001cf5f5c$2f6c2440$8e446cc0$%han@samsung.com>
-References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
- <002b01cf5f52$a7bc0d70$f7342850$%tikhomirov@samsung.com>
- <001a01cf5f54$af090810$0d1b1830$%han@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v2 PATCH v4 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Thu, 24 Apr 2014 10:31:29 +0900
+Message-ID: <53586971.8050102@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1398083321-8668-10-git-send-email-yj44.cho@samsung.com>
+ <5357819D.7050802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64086 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752325AbaDXB0R (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 21:26:17 -0400
-In-reply-to: <001a01cf5f54$af090810$0d1b1830$%han@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <5357819D.7050802@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Anton Tikhomirov' <av.tikhomirov@samsung.com>, 'Vivek Gautam' <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Thursday, April 24, 2014 9:33 AM, Jingoo Han wrote:
-> On Thursday, April 24, 2014 9:18 AM, Anton Tikhomirov wrote:
-> > On Monday, April 21, 2014 9:17 PM, Vivek Gautam wrote:
-> > >
-> > > Facilitate getting required 3.3V and 1.0V VDD supply for
-> > > OHCI controller on Exynos.
-> > >
-> > > With patches for regulators' nodes merged in 3.15:
-> > > c8c253f ARM: dts: Add regulator entries to smdk5420
-> > > 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
-> > >
-> > > certain perripherals will now need to ensure that,
-> > > they request VDD regulators in their drivers, and enable
-> > > them so as to make them working.
-> > >
-> > > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> > > Cc: Jingoo Han <jg1.han@samsung.com>
-> > > ---
-> > >
-> > > Based on 'usb-next' branch of Greg's usb tree.
-> > >
-> > >  drivers/usb/host/ohci-exynos.c |   47
-> > > ++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 47 insertions(+)
-> > >
-> > > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
-> > > exynos.c
-> > > index 68588d8..e2e72a8 100644
-> > > --- a/drivers/usb/host/ohci-exynos.c
-> > > +++ b/drivers/usb/host/ohci-exynos.c
-> > > @@ -18,6 +18,7 @@
-> > >  #include <linux/module.h>
-> > >  #include <linux/of.h>
-> > >  #include <linux/platform_device.h>
-> > > +#include <linux/regulator/consumer.h>
-> > >  #include <linux/usb/phy.h>
-> > >  #include <linux/usb/samsung_usb_phy.h>
-> > >  #include <linux/usb.h>
-> > > @@ -37,6 +38,8 @@ struct exynos_ohci_hcd {
-> > >  	struct clk *clk;
-> > >  	struct usb_phy *phy;
-> > >  	struct usb_otg *otg;
-> > > +	struct regulator *vdd33;
-> > > +	struct regulator *vdd10;
-> > >  };
-> > >
-> > >  static void exynos_ohci_phy_enable(struct platform_device *pdev)
-> > > @@ -98,6 +101,28 @@ static int exynos_ohci_probe(struct platform_device
-> > > *pdev)
-> > >  		exynos_ohci->otg = phy->otg;
-> > >  	}
-> > >
-> > > +	exynos_ohci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
-> > > +	if (IS_ERR(exynos_ohci->vdd33)) {
-> > > +		err = PTR_ERR(exynos_ohci->vdd33);
-> > > +		goto fail_regulator1;
-> > > +	}
-> > > +	err = regulator_enable(exynos_ohci->vdd33);
-> > > +	if (err) {
-> > > +		dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
-> > > +		goto fail_regulator1;
-> > > +	}
-> > > +
-> > > +	exynos_ohci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
-> > > +	if (IS_ERR(exynos_ohci->vdd10)) {
-> > > +		err = PTR_ERR(exynos_ohci->vdd10);
-> > > +		goto fail_regulator2;
-> > > +	}
-> > > +	err = regulator_enable(exynos_ohci->vdd10);
-> > > +	if (err) {
-> > > +		dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
-> > > +		goto fail_regulator2;
-> > > +	}
-> > > +
-> >
-> > Do we need to skip regulator settings together with PHY configuration
-> > in case of exynos5440?
-> 
-> Oh, right. In the case of exynos5440, regulator settings is not
-> necessary. Vivek, would you fix it in order skip regulator settings
-> in exynos5440? It also applies to ehci-exynos.
+Hi Andrzej,
 
-Sorry, in the case of exynos5440, this patch already skips
-regulator settings.
+Thank you for comments.
 
-In the case of exynos5440, there is no need to set PHY setting
-and regulator setting.
+On 04/23/2014 06:02 PM, Andrzej Hajda wrote:
+> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
+>> This patch adds DT bindings for s6e3fa0 panel.
+>> The bindings describes panel resources, display timings and cpu timings.
+>>
+>> Changelog v2:
+>> - Adds unit address (commented by Sachin Kamat)
+>> Changelog v3:
+>> - Removes optional delay, size properties (commented by Laurent Pinchart)
+>> - Adds OLED detection, TE gpio properties
+>> Changelog v4:
+>> - Moves CPU timings relevant properties from FIMD DT
+>>    (commeted by Laurent Pinchart, Andrzej Hajda)
+>>
+>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>   .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   63 ++++++++++++++++++++
+>>   1 file changed, 63 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>> new file mode 100644
+>> index 0000000..9eeb38b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>> @@ -0,0 +1,63 @@
+>> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+>> +
+>> +Required properties:
+>> +  - compatible: "samsung,s6e3fa0"
+>> +  - reg: the virtual channel number of a DSI peripheral
+>> +  - vdd3-supply: core voltage supply
+>> +  - vci-supply: voltage supply for analog circuits
+>> +  - reset-gpio: a GPIO spec for the reset pin
+>> +  - det-gpio: a GPIO spec for the OLED detection pin
+>> +  - te-gpio: a GPIO spec for the TE pin
+>> +  - display-timings: timings for the connected panel as described by [1]
+>
+> Which properties of display-timings are relevant for CPU mode?
+> I guess width and height. Anything more?
 
-How about making regulator setting "optional"?
-Then, regulator setting can be done, only when regulator
-is supported.
+The CPU interface panel also requires hfront-porch, hback-porch,
+hsync-len, vfront-porch, vback-porch and vsync-len.
 
-exynos_ohci_probe()
-	exynos_ohci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
-	if (IS_ERR(exynos_ohci->vdd33)) {
-		dev_err(&pdev->dev, "Failed to get VDD33 supply\n");
-	} else {
-		err = regulator_enable(exynos_ohci->vdd33);
-		if (err) {
-			dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
-			goto fail_regulator1;
-		}
-	}
+>
+>> +  - cpu-timings: CPU interface timings for the connected panel, and it contains
+>> +        following optional properties.
+>> +          - cs-setup: clock cycles for the active period of address signal
+>> +                enable until chip select is enable in CPU interface
+>> +          - wr-setup: clock cycles for the active period of CS signal enable
+>> +                until write signal is enable in CPU interface
+>> +          - wr-act: clock cycles for the active period of CS enable in CPU
+>> +                interface
+>> +          - wr-hold: clock cycles for the active period of CS disable until
+>> +                write signal is disable in CPU interface
+>
+> cpu-timings name does not sound to be related to display.
+> I wonder if it would not be better to merge cpu-timings into
+> display-timings but this will require more discussion I guess.
+>
+> If you want to stay with separate node please consider to make it
+> optional as whole node or make some properties required. Making node
+> required with all sub-properties optional is weird.
 
-	exynos_ohci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
-	if (IS_ERR(exynos_ohci->vdd10)) {
-		dev_err(&pdev->dev, "Failed to get VDD10 supply\n");
-	} else {
-		err = regulator_enable(exynos_ohci->vdd10);
-		if (err) {
-			dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
-			goto fail_regulator2;
-		}
-	}
+Yes, I'll fix.
 
-In this case, suspend/resume can be fixed as below.
+Thank you.
+Best regards YJ
 
-exynos_ohci_suspend()
-	if (exynos_ohci->vdd10)
-		regulator_disable(exynos_ohci->vdd10);
-	if (exynos_ohci->vdd33)
-		regulator_disable(exynos_ohci->vdd33);
-
-exynos_ohci_resume()
-
-	if (exynos_ohci->vdd33) {
-		ret = regulator_enable(exynos_ohci->vdd33);
-		if (ret) {
-			dev_err(dev, "Failed to enable VDD33 supply\n");
-			return ret;
-		}
-	}
-	if (exynos_ohci->vdd10) {
-		ret = regulator_enable(exynos_ohci->vdd10);
-		if (ret) {
-			dev_err(dev, "Failed to enable VDD10 supply\n");
-			return ret;
-		}
-	}
-
-Best regards,
-Jingoo Han
-
-> 
-> >
-> > >  skip_phy:
-> > >  	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
-> > >
-> > > @@ -154,6 +179,10 @@ fail_add_hcd:
-> > >  fail_io:
-> > >  	clk_disable_unprepare(exynos_ohci->clk);
-> > >  fail_clk:
-> > > +	regulator_disable(exynos_ohci->vdd10);
-> > > +fail_regulator2:
-> > > +	regulator_disable(exynos_ohci->vdd33);
-> > > +fail_regulator1:
-> > >  	usb_put_hcd(hcd);
-> > >  	return err;
-> > >  }
-> > > @@ -172,6 +201,9 @@ static int exynos_ohci_remove(struct
-> > > platform_device *pdev)
-> > >
-> > >  	clk_disable_unprepare(exynos_ohci->clk);
-> > >
-> > > +	regulator_disable(exynos_ohci->vdd10);
-> > > +	regulator_disable(exynos_ohci->vdd33);
-> > > +
-> > >  	usb_put_hcd(hcd);
-> > >
-> > >  	return 0;
-> > > @@ -208,6 +240,9 @@ static int exynos_ohci_suspend(struct device *dev)
-> > >
-> > >  	clk_disable_unprepare(exynos_ohci->clk);
-> > >
-> > > +	regulator_disable(exynos_ohci->vdd10);
-> > > +	regulator_disable(exynos_ohci->vdd33);
-> > > +
-> > >  	spin_unlock_irqrestore(&ohci->lock, flags);
-> > >
-> > >  	return 0;
-> > > @@ -218,6 +253,18 @@ static int exynos_ohci_resume(struct device *dev)
-> > >  	struct usb_hcd *hcd			= dev_get_drvdata(dev);
-> > >  	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
-> > >  	struct platform_device *pdev		= to_platform_device(dev);
-> > > +	int ret;
-> > > +
-> > > +	ret = regulator_enable(exynos_ohci->vdd33);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to enable VDD33 supply\n");
-> > > +		return ret;
-> >
-> > Not sure, but shall we continue resuming and do everything
-> > we can in case of error? At least it will avoid
-> > WARN_ON(clk->enable_count == 0) on next system suspend.
-> >
-> > > +	}
-> > > +	ret = regulator_enable(exynos_ohci->vdd10);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to enable VDD10 supply\n");
-> > > +		return ret;
-> > > +	}
-> > >
-> > >  	clk_prepare_enable(exynos_ohci->clk);
-> > >
-> > > --
-> >
-> > Thanks
+> By the way I hope all timings properties are generic for CPU mode,
+> if not they should be prefixed by vendor or model.
+>
+> Regards
+> Andrzej
+>
+>> +
+>> +Optional properties:
+>> +
+>> +The device node can contain one 'port' child node with one child
+>> +'endpoint' node, according to the bindings defined in [2]. This
+>> +node should describe panel's video bus.
+>> +
+>> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+>> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>> +
+>> +Example:
+>> +
+>> +	panel@0 {
+>> +		compatible = "samsung,s6e3fa0";
+>> +		reg = <0>;
+>> +		vdd3-supply = <&vcclcd_reg>;
+>> +		vci-supply = <&vlcd_reg>;
+>> +		reset-gpio = <&gpy7 4 0>;
+>> +		det-gpio = <&gpg0 6 0>;
+>> +		te-gpio = <&gpd1 7 0>;
+>> +
+>> +		display-timings {
+>> +			timing0: timing-0 {
+>> +				clock-frequency = <0>;
+>> +				hactive = <1080>;
+>> +				vactive = <1920>;
+>> +				hfront-porch = <2>;
+>> +				hback-porch = <2>;
+>> +				hsync-len = <1>;
+>> +				vfront-porch = <1>;
+>> +				vback-porch = <4>;
+>> +				vsync-len = <1>;
+>> +			};
+>> +		};
+>> +
+>> +		cpu-timings {
+>> +			cs-setup = <0>;
+>> +			wr-setup = <0>;
+>> +			wr-act = <1>;
+>> +			wr-hold = <0>;
+>> +		};
+>> +	};
+>>
+>
+>
