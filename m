@@ -1,89 +1,51 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v5] arm: exynos: generalize power register address calculation
-Date: Thu, 24 Apr 2014 13:18:43 +0530
-Message-ID: <CANuQgHHqtf_AdnhYdRbD8ReSXtbsszZ=FZtTRp13xhjgBjdD3w@mail.gmail.com>
-References: <1398068989-9905-1-git-send-email-chander.kashyap@linaro.org>
-	<1398169501-7251-1-git-send-email-chander.kashyap@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable HS-I2C
+Date: Thu, 24 Apr 2014 13:32:41 +0530
+Message-ID: <5358C521.9060103@linaro.org>
+References: <1393935776-22657-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:60254 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752933AbaDXHso (ORCPT
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:57068 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751363AbaDXICq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 03:48:44 -0400
-Received: by mail-oa0-f52.google.com with SMTP id l6so2221778oag.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 00:48:43 -0700 (PDT)
-In-Reply-To: <1398169501-7251-1-git-send-email-chander.kashyap@linaro.org>
+	Thu, 24 Apr 2014 04:02:46 -0400
+Received: by mail-pb0-f48.google.com with SMTP id md12so1696388pbc.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 01:02:45 -0700 (PDT)
+In-Reply-To: <1393935776-22657-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+Cc: Sachin Kamat <sachin.kamat@linaro.org>
 
-On 22 April 2014 17:55, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> Currently status/configuration power register values are hard-coded for cpu1.
->
-> Make it generic so that it is useful for SoC's with more than two cpus.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+On 03/04/2014 05:52 PM, Sachin Kamat wrote:
+> High speed I2C is used on Exynos5 based SoCs. Enable it.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
-> changes in v5:
->         1. Fix typo: enynos_pmu_cpunr -> exynos_pmu_cpunr
-> changes in v4:
->         1: Dropped changes in platsmp.c and hotplug.c as those are taken care by
->            Tomasz Patches.
->         2. Converted ENYNOS_PMU_CPUNR macro to static inline function
-> changes in v3:
->         1. Move cpunr calculation to a macro
->         2. Changed printk format specifier from unsigned hex to unsigned decimal
-> Changes in v2:
->         1. Used existing macros for clusterid and cpuid calculation
->
->  arch/arm/mach-exynos/regs-pmu.h |   18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-> index 4f6a256..f39e78c 100644
-> --- a/arch/arm/mach-exynos/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/regs-pmu.h
-> @@ -105,8 +105,13 @@
->  #define S5P_GPS_LOWPWR                         S5P_PMUREG(0x139C)
->  #define S5P_GPS_ALIVE_LOWPWR                   S5P_PMUREG(0x13A0)
->
-> -#define S5P_ARM_CORE1_CONFIGURATION            S5P_PMUREG(0x2080)
-> -#define S5P_ARM_CORE1_STATUS                   S5P_PMUREG(0x2084)
-> +#define S5P_ARM_CORE0_CONFIGURATION            S5P_PMUREG(0x2000)
-> +#define S5P_ARM_CORE0_STATUS                   S5P_PMUREG(0x2004)
-> +
-> +#define S5P_ARM_CORE_CONFIGURATION(_cpunr) \
-> +               (S5P_ARM_CORE0_CONFIGURATION + 0x80 * (_cpunr))
-> +#define S5P_ARM_CORE_STATUS(_cpunr) \
-> +               (S5P_ARM_CORE0_STATUS + 0x80 * (_cpunr))
->
->  #define S5P_PAD_RET_MAUDIO_OPTION              S5P_PMUREG(0x3028)
->  #define S5P_PAD_RET_GPIO_OPTION                        S5P_PMUREG(0x3108)
-> @@ -313,4 +318,13 @@
->
->  #define EXYNOS5_OPTION_USE_RETENTION                           (1 << 4)
->
-> +#include <asm/cputype.h>
-> +#define MAX_CPUS_IN_CLUSTER    4
-> +
-> +static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
-> +{
-> +       return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
-> +                + MPIDR_AFFINITY_LEVEL(mpidr, 0));
-> +}
-> +
->  #endif /* __ASM_ARCH_REGS_PMU_H */
-> --
-> 1.7.9.5
->
+>  arch/arm/configs/exynos_defconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 4ce7b70ea901..e07a227ec0db 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -65,6 +65,7 @@ CONFIG_TCG_TIS_I2C_INFINEON=y
+>  CONFIG_I2C=y
+>  CONFIG_I2C_MUX=y
+>  CONFIG_I2C_ARB_GPIO_CHALLENGE=y
+> +CONFIG_I2C_EXYNOS5=y
+>  CONFIG_I2C_S3C2410=y
+>  CONFIG_DEBUG_GPIO=y
+>  # CONFIG_HWMON is not set
+> 
+Kukjin,
 
-Any other comment on this. If not can this be merged?
-
+Please consider picking this patch when you plan to update
+exynos_defconfig. With this change on upstream kernel, we are able to
+get Arndale_Octa board to boot and mount an MMC partition successfully.
 
 -- 
-with warm regards,
-Chander Kashyap
+Tushar Behera
