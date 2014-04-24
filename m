@@ -1,84 +1,145 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Thu, 24 Apr 2014 14:39:20 +0100
-Message-ID: <20140424133920.GA12304@sirena.org.uk>
-References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fqxOrU+oVxTp8sLK"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v5] clk: Exynos5250: Add clocks for G3D
+Date: Thu, 24 Apr 2014 20:19:56 +0530
+Message-ID: <1398350996-9644-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:50028 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757262AbaDXOuB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 10:50:01 -0400
+Received: by mail-pa0-f49.google.com with SMTP id lj1so1993216pab.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 07:50:01 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
+This patch adds the required clocks for ARM Mali IP
+in Exynos5250.
 
---fqxOrU+oVxTp8sLK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+This patch somehow got missed getting merged long time
+back after Acks by Mike and Kukjin and review done by
+Tomasz and Doug.
+http://www.spinics.net/lists/linux-samsung-soc/msg21608.html
+Resending it now after rebasing and testing on the latest kernel.
 
-On Wed, Apr 23, 2014 at 02:31:45PM +0530, Tushar Behera wrote:
+Changes from v4
+- Rebased on latest kernel
+- Added macros
+Changes from v3
+- Renamed some clocks as per Tomasz Figa's comments
+Changes from v2
+- Rebased on clk-next
+Changes from v1
+- Removed exporting of parent DIV clock for g3d
+  as per Tomsz Figa's comment.
+---
+ drivers/clk/samsung/clk-exynos5250.c   |   14 ++++++++++++++
+ include/dt-bindings/clock/exynos5250.h |    2 ++
+ 2 files changed, 16 insertions(+)
 
-> +Required properties:
-> +- compatible : Can be one of the following,
-> +			"google,snow-audio-max98090" or
-> +			"google,snow-audio-max98095"
-> +- samsung,i2s-controller: The phandle of the Samsung I2S0 controller
-
-This should be any I2S controller, not just I2S0?
-
-> +- samsung,audio-codec: The phandle of the audio codec
-
-This binding only has one I2S controller and CODEC.  However...
-
-> +static struct snd_soc_dai_link snow_dai[] = {
-> +	{ /* Playback DAI i/f */
-> +		.name = "Playback",
-> +		.stream_name = "Playback",
-> +		.codec_dai_name = "HiFi",
-> +		.dai_fmt = SND_SOC_DAIFMT_I2S |
-> +				SND_SOC_DAIFMT_NB_NF |
-> +				SND_SOC_DAIFMT_CBS_CFS,
-> +	}, { /* Capture DAI i/f */
-> +		.name = "Capture",
-> +		.stream_name = "Capture",
-> +		.codec_dai_name = "HiFi",
-> +		.dai_fmt = SND_SOC_DAIFMT_I2S |
-> +				SND_SOC_DAIFMT_NB_NF |
-> +				SND_SOC_DAIFMT_CBS_CFS,
-> +	},
-> +};
-
-...for some reason we have separate capture and playback DAI links
-defined.  Why is that?  Also, why is the secondary I2S playback stream
-not supported (this may be a reason to restrict to only the one I2S
-interface)?
-
-Please also use subject lines consistent with the subsystem - NO NEED TO
-SHOUT.
-
---fqxOrU+oVxTp8sLK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTWRQFAAoJELSic+t+oim9FLEP/2a7HlgBLyAyhlBpVVq4cudI
-UXXiPqrnYEprtqB+UouodnWQDLcn7EuEIa2YiE9Z9YbzUmn/0rNusq1UBgzkgTZo
-OOSiKknpOqJmwHig39tXdoyW+Q3Gf2FP945rcHI38ogXDqYt6OVNCJ93wOutYBpf
-tKgejkbuSYLLB7ypk+x0xtmipWA6/0TLwf06CBGtICzWk7SoGdZP54rFtjacTEYJ
-x4XXlGMJX1Wp8vrRopSSHFWSMXet8m2lFvRgv8PIvHyQZsrvSGNS4v1hdSiqSoyH
-Vl0tp68YPcoK25RJojB0n4gPKoXi2ysqv1U3yvPtCXee+cUmaHv2P/HvR4VtVkMh
-uAaiDab6fbisJOPL3iSrZKgZulzLac9mUpO4Tqe09E7OdwJK4ffLXt/mBaPxh79A
-g+eScceRhWEpfy8nW5Kxe8/blRy8E/QX2H9Ray5e9k17tLCtfvnQ51uXM2bHt1EI
-bCDNz8wxJSRBWyU2UwjLqRTSAUYiC2HVEoYksDyIzycUZ+fyZyP1ryiPtEKZixgb
-fnRFyEeO5pn+HFH4ANxGp6UK2doZMLSFAvap6KSaIsHm4usZ9gLsgarMzdKCcLcL
-tmPea5SImfWgqKzh41Zy1pFmwzlyUhfoAD3AQgtcMQbkJHgFa1qFdRR53UApOyoh
-ncpz8pHpV7F85EYSLPwM
-=3Q3e
------END PGP SIGNATURE-----
-
---fqxOrU+oVxTp8sLK--
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index e7ee442..14a1d49 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -37,6 +37,7 @@
+ #define VPLL_CON0		0x10140
+ #define GPLL_CON0		0x10150
+ #define SRC_TOP0		0x10210
++#define SRC_TOP1		0x10214
+ #define SRC_TOP2		0x10218
+ #define SRC_TOP3		0x1021c
+ #define SRC_GSCL		0x10220
+@@ -71,6 +72,7 @@
+ #define GATE_IP_GSCL		0x10920
+ #define GATE_IP_DISP1		0x10928
+ #define GATE_IP_MFC		0x1092c
++#define GATE_IP_G3D		0x10930
+ #define GATE_IP_GEN		0x10934
+ #define GATE_IP_FSYS		0x10944
+ #define GATE_IP_PERIC		0x10950
+@@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[] __initdata = {
+ 	DIV_CPU0,
+ 	SRC_CORE1,
+ 	SRC_TOP0,
++	SRC_TOP1,
+ 	SRC_TOP2,
+ 	SRC_TOP3,
+ 	SRC_GSCL,
+@@ -189,10 +192,12 @@ PNAME(mout_vpllsrc_p)	= { "fin_pll", "sclk_hdmi27m" };
+ PNAME(mout_vpll_p)	= { "mout_vpllsrc", "fout_vpll" };
+ PNAME(mout_cpll_p)	= { "fin_pll", "fout_cpll" };
+ PNAME(mout_epll_p)	= { "fin_pll", "fout_epll" };
++PNAME(mout_gpll_p)	= { "fin_pll", "fout_gpll" };
+ PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
+ PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
+ PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
+ PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
++PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
+ PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
+ PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
+ PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
+@@ -273,12 +278,16 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+ 	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+ 	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+ 	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
++	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
++
++	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+ 
+ 	MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
+ 	MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
+ 	MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
+ 	MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
+ 	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
++	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+ 
+ 	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
+ 	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
+@@ -326,6 +335,7 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+ 
+ 	MUX(0, "mout_mpll_fout", mout_mpll_fout_p, PLL_DIV2_SEL, 4, 1),
+ 	MUX(0, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
++
+ };
+ 
+ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+@@ -351,6 +361,8 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+ 	DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+ 	DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
+ 	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
++	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
++							24, 3),
+ 
+ 	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
+ 
+@@ -615,6 +627,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
+ 	GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
+ 	GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
++	GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
++					CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
+diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
+index 922f2dc..751915e 100644
+--- a/include/dt-bindings/clock/exynos5250.h
++++ b/include/dt-bindings/clock/exynos5250.h
+@@ -150,9 +150,11 @@
+ #define CLK_G2D			345
+ #define CLK_MDMA0		346
+ #define CLK_SMMU_MDMA0		347
++#define CLK_G3D			348
+ 
+ /* mux clocks */
+ #define CLK_MOUT_HDMI		1024
++#define CLK_MOUT_GPLL		1025
+ 
+ /* must be greater than maximal clock id */
+ #define CLK_NR_CLKS		1025
+-- 
+1.7.9.5
