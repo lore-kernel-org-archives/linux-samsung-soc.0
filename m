@@ -1,48 +1,114 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 4/4] ARM: S3C24XX: move debug-macro.S into the common space
-Date: Thu, 24 Apr 2014 15:24:16 +0200
-Message-ID: <3878407.PNqnVqHnak@phil>
-References: <1856986.kkQFKFg1L2@phil>
+From: Vikas Sajjan <sajjan.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: dts: Add PMU reg node to exynos4210
+Date: Thu, 24 Apr 2014 18:56:47 +0530
+Message-ID: <CAGm_ybi+QiC95-aJtzbpY8CCv9f6+NDC4HHrC8RuCmkUHDGB5A@mail.gmail.com>
+References: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com>
+	<1396425778-4379-2-git-send-email-pankaj.dubey@samsung.com>
+	<CAGm_ybjfxprtLUX6Vs8QVvXoMOaHez4-Og8a9n3UevibvmzbZA@mail.gmail.com>
+	<53590A3D.1020308@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:54287 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753240AbaDXNWL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 09:22:11 -0400
-In-Reply-To: <1856986.kkQFKFg1L2@phil>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53590A3D.1020308-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, chow.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Move debug-macro.S from mach/include to include/debug where all other common
-debug macros are.
+Hi Pankaj,
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/Kconfig.debug                                                   | 1 +
- .../{mach-s3c24xx/include/mach/debug-macro.S => include/debug/s3c24xx.S} | 0
- 2 files changed, 1 insertion(+)
- rename arch/arm/{mach-s3c24xx/include/mach/debug-macro.S => include/debug/s3c24xx.S} (100%)
+On Thu, Apr 24, 2014 at 6:27 PM, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi Vikas,
+>
+>
+> On 04/24/2014 08:59 PM, Vikas Sajjan wrote:
+>>
+>> +Tomasz
+>>
+>>
+>> On Wed, Apr 2, 2014 at 1:32 PM, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> wrote:
+>>>
+>>> This patch adds pmu regnode to exynos4210 dtsi to handle
+>>> PMU register access via DT.
+>>>
+>>> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>>   arch/arm/boot/dts/exynos4210.dtsi |    5 +++++
+>>>   1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
+>>> b/arch/arm/boot/dts/exynos4210.dtsi
+>>> index cacf614..0a2c0fe 100644
+>>> --- a/arch/arm/boot/dts/exynos4210.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+>>> @@ -81,6 +81,11 @@
+>>>                  interrupts = <2 2>, <3 2>;
+>>>          };
+>>>
+>>> +       pmu_system_controller: system-controller@10020000 {
+>>> +               compatible = "samsung,exynos4210-pmu", "syscon";
+>>> +               reg = <0x10020000 0x5000>;
+>>
+>> Can we have 2 strings as "compatible" and these 2 strings are used by
+>> 2 different driver?
+>>
+>> Because once syscon driver gets probed, exynos-pmu.c [1] driver will
+>> never be probed.
+>>
+>> The new PMU driver [1] completely relies on this. With just
+>> exynos_defconfig, you will not notice this issue, since syscon is NOT
+>> enabled by exynos_defconfig. When I enabled "System Controller
+>> Register R/W Based on Regmap" in menuconfig, I could see PMU driver
+>> [1] is NEVER probed.
+>>
+>> Let me know, if I am missing something.
+>>
+>>   [1] http://www.spinics.net/lists/arm-kernel/msg319750.html
+>
+>
+> You are correct. We also missed this because "SYSCON" option was
+> not enabled in exynos_defconfig.
+> I noticed this during preparation of V2 when I planned to use
+> "early_syscon_init" [1] as suggested by Sylwester here [2].
+>
+OK.
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 9755e63..2e1bd76 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -1010,6 +1010,7 @@ config DEBUG_LL_INCLUDE
- 				 DEBUG_IMX6SL_UART
- 	default "debug/msm.S" if DEBUG_MSM_UART
- 	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
-+	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART
- 	default "debug/sirf.S" if DEBUG_SIRFPRIMA2_UART1 || DEBUG_SIRFMARCO_UART1
- 	default "debug/sti.S" if DEBUG_STI_UART
- 	default "debug/tegra.S" if DEBUG_TEGRA_UART
-diff --git a/arch/arm/mach-s3c24xx/include/mach/debug-macro.S b/arch/arm/include/debug/s3c24xx.S
-similarity index 100%
-rename from arch/arm/mach-s3c24xx/include/mach/debug-macro.S
-rename to arch/arm/include/debug/s3c24xx.S
--- 
-1.9.0
+> In V2 I will take care of this. I hope soon I will be able to post second
+
+So in your V2, will you be adding new DT node altogether for PMU?
+Because with existing DT node "pmu_system_controller"  (which is
+already present in mailine for exynos 5250) and SYSCON driver enable,
+exynos PMU driver will NEVER probed.
+
+> version of this series, just waiting for testing and internal code review.
+>
+> [1] https://lkml.org/lkml/2014/4/8/239
+> [2] https://lkml.org/lkml/2014/4/2/171
+>
+>>
+>>
+>>> +       };
+>>> +
+>>>          pinctrl_0: pinctrl@11400000 {
+>>>                  compatible = "samsung,exynos4210-pinctrl";
+>>>                  reg = <0x11400000 0x1000>;
+>>> --
+>>> 1.7.10.4
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
+>
+> --
+> Best Regards,
+> Pankaj Dubey
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
