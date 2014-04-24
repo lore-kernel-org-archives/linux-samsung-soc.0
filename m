@@ -1,178 +1,271 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH 02/14] drm/exynos: dsi: delay setting clocks after
- reset
-Date: Thu, 24 Apr 2014 09:54:01 +0900
-Message-ID: <535860A9.8030003@samsung.com>
+Subject: Re: [RFC v2 PATCH 08/14] drm/exynos: dsi: add driver data to support
+ Exynos5420
+Date: Thu, 24 Apr 2014 10:23:26 +0900
+Message-ID: <5358678E.3020903@samsung.com>
 References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <1398083321-8668-3-git-send-email-yj44.cho@samsung.com>
- <53565D54.1050609@samsung.com> <535710E0.40702@samsung.com>
- <5357373C.5080002@samsung.com> <53576DC9.2010601@samsung.com>
+ <1398083321-8668-9-git-send-email-yj44.cho@samsung.com>
+ <535779D9.6010804@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:22603 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751892AbaDXAyE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 20:54:04 -0400
-In-reply-to: <53576DC9.2010601@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <535779D9.6010804@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Andrzej,
 
-Thank you for the comments.
+Thank you for comments.
 
-On 04/23/2014 04:37 PM, Andrzej Hajda wrote:
-> On 04/23/2014 05:45 AM, YoungJun Cho wrote:
->> Hi again Andrzej,
+On 04/23/2014 05:29 PM, Andrzej Hajda wrote:
+> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
+>> The offset of register DSIM_PLLTMR_REG in Exynos5420 is different
+>> from the one in Exynos4 SoC.
 >>
->> On 04/23/2014 10:01 AM, YoungJun Cho wrote:
->>> Hi Andrzej
->>>
->>> Thank you for comments.
->>>
->>> On 04/22/2014 09:15 PM, Andrzej Hajda wrote:
->>>> Hi YoungJun,
->>>>
->>>> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
->>>>> Some phy control registers are not kept after software reset.
->>>>> So this patch makes the clocks containing phy control to be set
->>>>> after software reset.
->>>>>
->>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>> ---
->>>>>    drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>>> b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>>> index 956e5f3..2cf1f0b 100644
->>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->>>>> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void
->>>>> *dev_id)
->>>>>
->>>>>    static int exynos_dsi_init(struct exynos_dsi *dsi)
->>>>>    {
->>>>> -    exynos_dsi_enable_clock(dsi);
->>>>>        exynos_dsi_reset(dsi);
->>>>>        enable_irq(dsi->irq);
->>>>>        exynos_dsi_wait_for_reset(dsi);
->>>>> +    exynos_dsi_enable_clock(dsi);
->>>>>        exynos_dsi_init_link(dsi);
->>>>>
->>>>>        return 0;
->>>>
->>>> I have commented it in the previous version of the patchset. I repeat it
->>>> again.
->>>> This is a regression, on exynos4210-trats I have 'timeout waiting for
->>>> reset' message after dpms off, on.
->>>
->>> I'm really sorry for that. I misunderstood last time.
->>>
->>> I think the original codes were correct, because the reset timeout would
->>> be occurred without clock activation.
+>> In case of Exynos5420 SoC, there is no frequency band bit in DSIM_PLLCTRL_REG,
+>> and it uses DSIM_PHYCTRL_REG and DSIM_PHYTIMING*_REG instead.
+>> So this patch adds driver data to distinguish it.
 >>
->> This is not true.
+>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |  101 ++++++++++++++++++++++++-------
+>>   1 file changed, 80 insertions(+), 21 deletions(-)
 >>
->>>
->>> I'll check and fix again.
->>> (By the way, why am I ok?)
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> index 179f2fa..fcd577f 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> @@ -17,6 +17,7 @@
 >>
->> I have not verified with exynos4210-trats board yet(I have to get it),
->> but reset timeout is occured in exynos_dsi_wait_for_reset()
->> with &dsi->completed and that is completed by exynos_dsi_irq().
+>>   #include <linux/clk.h>
+>>   #include <linux/irq.h>
+>> +#include <linux/of_device.h>
+>>   #include <linux/phy/phy.h>
+>>   #include <linux/regulator/consumer.h>
 >>
->> And the regulators and clocks are enabled by exynos_dsi_poweron(),
->> NOT by exynos_dsi_enable_clock().
+>> @@ -54,9 +55,12 @@
 >>
->> So I think the reset timeout is not related with this patch.
+>>   /* FIFO memory AC characteristic register */
+>>   #define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
+>> -#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
+>>   #define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
+>>   #define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
+>> +#define DSIM_PHYCTRL_REG	0x5c
+>> +#define DSIM_PHYTIMING_REG	0x64
+>> +#define DSIM_PHYTIMING1_REG	0x68
+>> +#define DSIM_PHYTIMING2_REG	0x6c
+>>
+>>   /* DSIM_STATUS */
+>>   #define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
+>> @@ -233,6 +237,12 @@ struct exynos_dsi_transfer {
+>>   #define DSIM_STATE_INITIALIZED		BIT(1)
+>>   #define DSIM_STATE_CMD_LPM		BIT(2)
+>>
+>> +struct exynos_dsi_driver_data {
+>> +	unsigned int plltmr_reg;
+>> +
+>> +	unsigned int has_freqband:1;
+>> +};
+>> +
+>>   struct exynos_dsi {
+>>   	struct mipi_dsi_host dsi_host;
+>>   	struct drm_connector connector;
+>> @@ -262,11 +272,39 @@ struct exynos_dsi {
+>>
+>>   	spinlock_t transfer_lock; /* protects transfer_list */
+>>   	struct list_head transfer_list;
+>> +
+>> +	struct exynos_dsi_driver_data *driver_data;
+>>   };
+>>
+>>   #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+>>   #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+>>
+>> +static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+>> +	.plltmr_reg = 0x50,
+>> +	.has_freqband = 1,
+>> +};
+>> +
+>> +static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+>> +	.plltmr_reg = 0x58,
+>> +};
+>> +
+>> +static struct of_device_id exynos_dsi_of_match[] = {
+>> +	{ .compatible = "samsung,exynos4210-mipi-dsi",
+>> +	  .data = &exynos4_dsi_driver_data },
+>> +	{ .compatible = "samsung,exynos5420-mipi-dsi",
+>> +	  .data = &exynos5_dsi_driver_data },
+>> +	{ }
+>> +};
 >
+> I wonder if it wouldn't be better to use "samsung,exynos5410-mipi-dsi"
+> compatible and distinguish 5410 and 5420 by DSIM_VERSION register.
 >
-> As far as I remember there were at least two issues with init sequence:
-> - spurious irq storm after power on and before reset,
-> - irq reset timeouts after reset and without enabled clock.
->
-> The current sequence is a result of tests on live hw (documentation were
-> not helpful in this case). I think it could be improved little bit more
-> by moving exynos_dsi_enable_clock just after enable_irq this will
-> eliminate possible timeout when RST_RELEASE irq is signaled but irq is
-> still disabled. The sequence should look like below:
->
-> 	exynos_dsi_reset(dsi);
-> 	enable_irq(dsi->irq);
-> 	exynos_dsi_enable_clock(dsi);
-> 	exynos_dsi_wait_for_reset(dsi);
-> 	exynos_dsi_init_link(dsi);
->
-> And PHY related configuration could be put somewhere after
-> exynos_dsi_wait_for_reset.
->
-> I have tested this sequence on trats, it seems to be OK.
 
-It also works well in Exynos5420 target.
+That's because I have only Exynos5420 SoC based target,
+so made DT for that and tested it only.
 
-I think it would be better to remove this patch and implement new PHY
-control functions with this modification.
+But it seems to be no problem to use exynos5410 compatible at least
+for the dsi device :).
+
+I'll try.
+
+>
+>> +
+>> +static inline struct exynos_dsi_driver_data *exynos_dsi_get_driver_data(
+>> +						struct platform_device *pdev)
+>> +{
+>> +	const struct of_device_id *of_id =
+>> +			of_match_device(exynos_dsi_of_match, &pdev->dev);
+>> +
+>> +	return (struct exynos_dsi_driver_data *)of_id->data;
+>> +}
+>> +
+>>   static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
+>>   {
+>>   	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
+>> @@ -340,14 +378,9 @@ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
+>>   static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+>>   					unsigned long freq)
+>>   {
+>> -	static const unsigned long freq_bands[] = {
+>> -		100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
+>> -		270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
+>> -		510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
+>> -		770 * MHZ, 870 * MHZ, 950 * MHZ,
+>> -	};
+>> +	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+>>   	unsigned long fin, fout;
+>> -	int timeout, band;
+>> +	int timeout;
+>>   	u8 p, s;
+>>   	u16 m;
+>>   	u32 reg;
+>> @@ -368,18 +401,30 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+>>   			"failed to find PLL PMS for requested frequency\n");
+>>   		return -EFAULT;
+>>   	}
+>> +	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
+>>
+>> -	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
+>> -		if (fout < freq_bands[band])
+>> -			break;
+>> +	writel(500, dsi->reg_base + driver_data->plltmr_reg);
+>> +
+>> +	reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
+>> +
+>> +	if (driver_data->has_freqband) {
+>> +		static const unsigned long freq_bands[] = {
+>> +			100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
+>> +			270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
+>> +			510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
+>> +			770 * MHZ, 870 * MHZ, 950 * MHZ,
+>> +		};
+>> +		int band;
+>>
+>> -	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d), band %d\n", fout,
+>> -		p, m, s, band);
+>> +		for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
+>> +			if (fout < freq_bands[band])
+>> +				break;
+>>
+>> -	writel(500, dsi->reg_base + DSIM_PLLTMR_REG);
+>> +		dev_dbg(dsi->dev, "band %d\n", band);
+>> +
+>> +		reg |= DSIM_FREQ_BAND(band);
+>> +	}
+>>
+>> -	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
+>> -			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
+>>   	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
+>>
+>>   	timeout = 1000;
+>> @@ -391,6 +436,24 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+>>   		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
+>>   	} while ((reg & DSIM_PLL_STABLE) == 0);
+>>
+>> +	if (!driver_data->has_freqband) {
+>
+> Could you explain why lack of freqband determines necessity of setting PHY
+> registers, is this a kind of hardware setting dependency?
+
+Yes, there is H/W dependency.
+In Exynos4 SoCs, from 24th to 26th bits of DSIM_PLLCTRL register are
+for frequency band.
+But in Exynos5410 / 5420 SoCs, those bits are used for DpDnSwap relevant
+things.
+So PHY ctrl and timing registers are required instead for it.
+
+>
+>> +		/* b dphy ctrl */
+>> +		reg = 0x0af & 0x1ff;
+>> +		writel(reg, dsi->reg_base + DSIM_PHYCTRL_REG);
+>> +
+>> +		/* phy timing */
+>> +		reg = 0x06 << 8 | 0x0b;
+>> +		writel(reg, dsi->reg_base + DSIM_PHYTIMING_REG);
+>> +
+>> +		/* phy timing 1 */
+>> +		reg = 0x07 << 24 | 0x27 << 16 | 0x0d << 8 | 0x08;
+>> +		writel(reg, dsi->reg_base + DSIM_PHYTIMING1_REG);
+>> +
+>> +		/* phy timing 2 */
+>> +		reg = 0x09 << 16 | 0x0d << 8 | 0x0b;
+>> +		writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
+>> +	}
+>> +
+>
+> Please use macros if possible instead of magic numbers.
+
+Right, I'll fix.
+
+>
+> As I wrote in comment for earlier patch it would be better to separate
+> setting PHY registers
+> from clock registers.
+>
+
+Ok, I'll implement new function
+and call it just after exynos_dsi_wait_for_reset().
 
 Thank you.
 Best regards YJ
 
->
-> Regards
-> Andrzej
->
->
+>>   	return fout;
+>>   }
 >>
->> Anyway I need more investigation.
+>> @@ -1412,6 +1475,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+>>   	dsi->dsi_host.dev = &pdev->dev;
 >>
->> Thank you.
->> Best regards YJ
+>>   	dsi->dev = &pdev->dev;
+>> +	dsi->driver_data = exynos_dsi_get_driver_data(pdev);
 >>
->>>
->>>>
->>>> I will comment your previous answer here to make the discussion easier:
->>>>> As I mentioned in description, it came from phy control registers.
->>>>> Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
->>>>> DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
->>>>> affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
->>>>>
->>>>> So this patch is required for Exynos5 SoCs.
->>>>
->>>> In the moment this patch is applied exynos_dsi_set_pll do not touch phy
->>>> registers you have mentioned.
->>>> Your change would be more clear if it will be merged together with the
->>>> patch adding PHYCTRL settings.
->>>>
->>>> Anyway, solution is simple - please set PHY registers after reset and
->>>> configure clocks before reset to avoid
->>>> reset timeouts, is there any reason to not do it this way?
->>>
->>> The only reason is that the PHY control is related with PLL control and
->>> that was in exynos_dsi_enable_clock() call path.
->>> So I just wanted to keep current sequence.
->>>
->>> If there is no way to use previous one, I'll consider your approach.
->>>
->>> Thank you.
->>> Best regards YJ
->>>
->>>>
->>>> Regards
->>>> Andrzej
->>>>
->>>
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>
+>>   	ret = exynos_dsi_parse_dt(dsi);
+>>   	if (ret)
+>> @@ -1516,11 +1580,6 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
+>>   	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
+>>   };
 >>
+>> -static struct of_device_id exynos_dsi_of_match[] = {
+>> -	{ .compatible = "samsung,exynos4210-mipi-dsi" },
+>> -	{ }
+>> -};
+>> -
+>>   struct platform_driver dsi_driver = {
+>>   	.probe = exynos_dsi_probe,
+>>   	.remove = exynos_dsi_remove,
 >
 >
