@@ -1,58 +1,29 @@
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] ARM: exynos: register sched_clock callback
-Date: Thu, 24 Apr 2014 11:21:26 +0200
-Message-ID: <1398331286-2020-1-git-send-email-vincent.guittot@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f170.google.com ([74.125.82.170]:34677 "EHLO
-	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755130AbaDXJW2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 05:22:28 -0400
-Received: by mail-we0-f170.google.com with SMTP id w61so1984453wes.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 02:22:27 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Leela Krishna Amudala <leela.krishna@linaro.org>
+Subject: [PATCH 0/2] Add generic cpu power control functions for exynos
+Date: Thu, 24 Apr 2014 15:01:57 +0530
+Message-ID: <1398331919-28321-1-git-send-email-leela.krishna@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: daniel.lezcano@linaro.org, nicolas.pitre@linaro.org, kgene.kim@samsung.com, amit.kucheria@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, Vincent Guittot <vincent.guittot@linaro.org>
 
-Use the clocksource mct-frc for sched_clock
+This patchset adds the generic cpu power control functions for
+exynos based SoCs to power up/down and to know the status of the cpu.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- drivers/clocksource/exynos_mct.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Note: This series has been rebased on 3.15-rc1 and tested on 
+Exynos based Origen(Cortex-A9) and Arndale-octa(Cortex A7,A15) boards.
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index a6ee6d7..61b0577 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -24,6 +24,7 @@
- #include <linux/of_irq.h>
- #include <linux/of_address.h>
- #include <linux/clocksource.h>
-+#include <linux/sched_clock.h>
- 
- #define EXYNOS4_MCTREG(x)		(x)
- #define EXYNOS4_MCT_G_CNT_L		EXYNOS4_MCTREG(0x100)
-@@ -192,12 +193,19 @@ struct clocksource mct_frc = {
- 	.resume		= exynos4_frc_resume,
- };
- 
-+static u64 notrace exynos4_read_sched_clock(void)
-+{
-+	return exynos4_frc_read(&mct_frc);
-+}
-+
- static void __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start(0, 0);
- 
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
-+
-+	sched_clock_register(exynos4_read_sched_clock, 64, clk_rate);
- }
- 
- static void exynos4_mct_comp0_stop(void)
+Leela Krishna Amudala (2):
+  ARM: EXYNOS: Add generic cpu power control functions for all exynos
+    based SoCs
+  ARM: EXYNOS: use generic exynos cpu power control functions
+
+ arch/arm/mach-exynos/common.h   |    3 +++
+ arch/arm/mach-exynos/platsmp.c  |    9 +++------
+ arch/arm/mach-exynos/pm.c       |   36 ++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/regs-pmu.h |    6 ++++++
+ 4 files changed, 48 insertions(+), 6 deletions(-)
+
 -- 
-1.9.1
+1.7.9.5
