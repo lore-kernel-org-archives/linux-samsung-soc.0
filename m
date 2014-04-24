@@ -1,54 +1,127 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
-Date: Thu, 24 Apr 2014 11:58:44 -0600
-Message-ID: <20140424175844.GD29593@google.com>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 2/9] drm/panel: add pre_enable and post_disable routines
+Date: Thu, 24 Apr 2014 20:31:06 +0200
+Message-ID: <20140424183104.GB27443@ulmo>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-3-git-send-email-ajaykumar.rs@samsung.com>
+ <20140422081948.GA17275@ulmo>
+ <CAEC9eQO8Kahh2YVO4nCjk2m+TzJNJ_iSkVRLe0NM_yqL9uPNaw@mail.gmail.com>
+ <20140423072915.GV10722@phenom.ffwll.local>
+ <20140423074212.GF31226@ulmo>
+ <CAEC9eQNCvfUbaRL7DnNVF21QjwCX2E2sndHRDvLUE9EL1cVN4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:37634 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758830AbaDXR6s (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 13:58:48 -0400
-Received: by mail-pa0-f54.google.com with SMTP id lf10so2195216pab.27
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 10:58:47 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1290531267=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQNCvfUbaRL7DnNVF21QjwCX2E2sndHRDvLUE9EL1cVN4Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Richard Zhu <r65037@freescale.com>, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 
-On Fri, Mar 28, 2014 at 05:52:51PM +0100, Lucas Stach wrote:
-> While working on MSI support for the i.MX6 PCIe host driver
-> it has been discovered that the binding for this host controller
-> is broken in many ways (refer to the patch descriptions for more
-> info) and was introduced without proper discussion about what
-> should/should not be in the binding.
-> 
-> This series fixes this and minimizes the difference of the
-> i.MX6 binding to the common designware PCIe binding. I'm aware
-> that this is a quite radical change, but I think it's justified
-> to do this as long as there aren't many user of the old binding
-> (most of the optional properties in the binding aren't even
-> implemented).
-> 
-> Looking forward to your feedback.
-> 
-> Lucas Stach (8):
->   ARM: imx6q-clk: parent lvds_gate from lvds_sel
->   PCI: designware: split Exynos and i.MX bindings
->   ARM: dts: imx6: update pcie to bring in line with new binding
->   PCI: imx6: use new clock names
->   PCI: imx6: drop old irq mapping
->   PCI: imx6: rip out optional (and unused) irqs
->   PCI: designware: make MSI isr shared irq aware
->   PCI: imx6: add support for MSI
 
-What's the status of all these?  I would normally apply patches 4-8 of this
-series through my tree, given the appropriate acks, but I haven't seen
-those yet.  And I'm not sure what dependencies there are between the
-non-PCI patches and the PCI ones.
+--===============1290531267==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
+Content-Disposition: inline
 
-Bjorn
+
+--pvezYHf7grwyp3Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 24, 2014 at 12:56:02AM +0530, Ajay kumar wrote:
+> Thierry,
+>=20
+> On Wed, Apr 23, 2014 at 1:12 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Wed, Apr 23, 2014 at 09:29:15AM +0200, Daniel Vetter wrote:
+[...]
+> >> Imo this makes sense, especially if we go through with the idea talked
+> >> about yesterday of creating a drm_bridge to wrap-up a drm_panel with
+> >> sufficient isolation between all components.
+> >
+> > I'm not at all comfortable with these. The names are totally confusing.
+> > Next somebody will need to do something after the panel has been enabled
+> > and we'll have to introduce .post_enable() and .pre_disable() functions.
+> > And worse, what if somebody needs something to be done between
+> > .pre_enable() and .enable()? .post_pre_enable()? Where does it end?
+> >
+> > According to the above description the only reason why we need this is
+> > to avoid visible glitches when the panel is already on, but the video
+> > stream hasn't started yet. If that's the only reason why we need this,
+> > then perhaps adding a way for a panel to expose the associated backlight
+> > would be better?
+> Actually, we need not expose the entire backlight device.
+> AFAIK, the glitch is caused when you enable BL_EN before
+> there is valid video data. So, one way to mask off the glitch is to
+> follow this sequence:
+> -- power up the panel.
+> -- start video data, (start PWM here or)
+> -- (start PWM here), enable backlight
+
+That's very difficult to get right, isn't it? Even if you have fine-
+grained control over what to enable you still need a way to determine
+_when_ it's safe to enable the backlight. Typically I guess that would
+be the duration of one frame (or perhaps 2, depending on when the panel
+syncs to the video signal).
+
+Perhaps it could even by sync'ed to the VBLANK?
+
+> The problem is that the above scenario cannot be mapped to panel-simple d=
+river.
+> IMO, panel_simple should provide enable/disable controls both for LCD
+> and backlight.
+> something like panel_simple_lcd_enable/panel_simple_led_enable, and
+> panel_simple_lcd_disable/panel_simple_led_disable.
+
+That's not what the simple panel driver can do. If we want this it needs
+to be solved in a generic way for all panels since they all need to use
+the drm_panel_*() functions to abstract away the details from drivers
+that use the panels.
+
+Thierry
+
+--pvezYHf7grwyp3Bc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTWVhoAAoJEN0jrNd/PrOhigMQAKunx3qoA20Eq1WIkKATk1OL
+Kb5k8aWohvpt0rJVdTj6bvUVeCE+Y4CTdmR5HuucvQaFvYMYU2X3ThqTy9YyWjaj
+q9HEdyl1vIJDoef2Ux9q2+R3batal0Ht2PMBH1G9G0Z7YEacjhgwjrsCxwouPs1m
+wwkuL5iSSVtv797/Ul+9I0QbvFybMxjEDm1Zg9nW0QjG7bmdTLc2rPvQxXz76Orq
+dtQacBbJyx9+IwlGJEnO7gHx77S2xl6PNp5ABLjiH0ltSOQPhRk8wpxOZqV8e4q1
+XaicbI9igdFuplco1RSLDEajZ/S6qYvL/NMCCYHnvhbmdBtNPkpx/sqACt6BbsKL
+iu32DmAhitBGaOFTNW5UP/tPGwyk9cN1apjSqP4k08pILtNHpNKDKBYp8DsxR7V0
+eRWI80DXYOPw0rvdzAfggpqNKr1/Of1B5xV/kBEPVluhWDBA4Az63Wek6lnbcFer
+f2EuC+HmWvUS8EvZqMdBbSnLg3YlnnkSCotmFlUKUZ+6MB7WVfozjd1may3P7ZED
+VCdnvyf+i6UjtSx129OpxiJKC3KhLQpqVEqwCdFcWoG5yUJQKznoGfufaU8i+mib
+oCPLmM/7aac97H5kdrVqj1+pZ+6enKc/GlW8Lj6S1gFg7uJEwyUZGZ+LmZtDjpO6
+DJgxtZiIwoVcQUGerOUl
+=BDSN
+-----END PGP SIGNATURE-----
+
+--pvezYHf7grwyp3Bc--
+
+--===============1290531267==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1290531267==--
