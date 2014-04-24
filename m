@@ -1,50 +1,64 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C controller
- early
-Date: Thu, 24 Apr 2014 20:18:36 +0530
-Message-ID: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] i2c: mux: Use subsys_initcall for the i2c-arb-gpio-challenge
+Date: Thu, 24 Apr 2014 20:35:22 +0530
+Message-ID: <1398351922-1647-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:11812 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757400AbaDXPHO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 11:07:14 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, broonie@kernel.org, Doug Anderson <dianders@chromium.org>
 
-This patch moves initialization code to subsys_initcall() to ensure
-that the i2c bus is available early so the regulators can be quickly
-probed and available for other devices on their probe() call.
+From: Doug Anderson <dianders@chromium.org>
 
-Such solution has been proposed by Mark Brown to fix the problem of
-the regulators not beeing available on the peripheral device probe():
-http://lists.infradead.org/pipermail/linux-arm-kernel/2010-March/011971.html
+Since many drivers rely on FETs that live behind this arbitrator, they
+can't successfully probe until after the arbitrator comes up.  They
+ought to handle things properly with EPROBE_DEFER and still work, but
+that has some downsides:
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+1. Those drivers don't come up till later in the boot process.  That
+   really not so nice for the LCD--we want that to init early.
+2. Some drivers have bugs and don't handle EPROBE_DEFER.  Those
+   drivers should be fixed but not all of them have been fixed yet.
+   HDMI is one example since DRM doesn't really have good support for
+   deferring probes.
+
+With this change We end up using the same init level as the main i2c bus.
+
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+Reviewed-on: https://gerrit.chromium.org/gerrit/57007
+Reviewed-by: Simon Glass <sjg@chromium.org>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
- drivers/i2c/busses/i2c-exynos5.c |   12 +++++++++++-
+ drivers/i2c/muxes/i2c-arb-gpio-challenge.c |   12 +++++++++++-
  1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 00af0a0..20e3077 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -762,8 +762,18 @@ static struct platform_driver exynos5_i2c_driver = {
+diff --git a/drivers/i2c/muxes/i2c-arb-gpio-challenge.c b/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
+index 69afffa..6cf52bb 100644
+--- a/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
++++ b/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
+@@ -241,7 +241,17 @@ static struct platform_driver i2c_arbitrator_driver = {
  	},
  };
  
--module_platform_driver(exynos5_i2c_driver);
-+static int __init i2c_adap_exynos5_init(void)
+-module_platform_driver(i2c_arbitrator_driver);
++static int __init i2c_arbitrator_init(void)
 +{
-+	return platform_driver_register(&exynos5_i2c_driver);
++	return platform_driver_register(&i2c_arbitrator_driver);
 +}
-+subsys_initcall(i2c_adap_exynos5_init);
++subsys_initcall(i2c_arbitrator_init);
 +
-+static void __exit i2c_adap_exynos5_exit(void)
++static void __exit i2c_arbitrator_exit(void)
 +{
-+	platform_driver_unregister(&exynos5_i2c_driver);
++	platform_driver_unregister(&i2c_arbitrator_driver);
 +}
++module_exit(i2c_arbitrator_exit);
  
-+module_exit(i2c_adap_exynos5_exit);
- MODULE_DESCRIPTION("Exynos5 HS-I2C Bus driver");
- MODULE_AUTHOR("Naveen Krishna Chatradhi, <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
- MODULE_AUTHOR("Taekgyun Ko, <taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+ MODULE_DESCRIPTION("GPIO-based I2C Arbitration");
+ MODULE_AUTHOR("Doug Anderson <dianders@chromium.org>");
 -- 
 1.7.9.5
