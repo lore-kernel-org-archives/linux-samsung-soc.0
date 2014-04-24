@@ -1,84 +1,60 @@
-From: Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
-Date: Thu, 24 Apr 2014 12:11:47 -0400
-Message-ID: <CAF6AEGuL3=bvBPGCDW5_db58ie23enY8VwNG7wCeQTn+JM4-Rw@mail.gmail.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
- <CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
- <CAEC9eQPiUdR_0gKVxmA8KhHD7z2AehRGOUU25e5zQz=PQyDqpA@mail.gmail.com>
- <CAEC9eQPPoU3wWgzOi6DQP=Lxq8EC-AOpRJS20uTjwZa=vfY_Rw@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/4] ARM: dts: exynos4: add hsotg device node
+Date: Thu, 24 Apr 2014 18:16:37 +0200
+Message-ID: <535938E5.5020204@samsung.com>
+References: <1397479700-15864-1-git-send-email-chanho61.park@samsung.com>
+ <1397479700-15864-4-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQPPoU3wWgzOi6DQP=Lxq8EC-AOpRJS20uTjwZa=vfY_Rw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:65298 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753425AbaDXQQr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 12:16:47 -0400
+In-reply-to: <1397479700-15864-4-git-send-email-chanho61.park@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, Apr 23, 2014 at 3:02 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
-> Sorry for the previous reply,
+Hi Chanho,
+
+On 14.04.2014 14:48, Chanho Park wrote:
+> This patch adds a hsotg node for exynos4 USB2.0 device controller.
 >
-> Here goes the full explaination:
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: Kamil Debski <k.debski@samsung.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos4.dtsi | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
 >
->> Rob,
->>
->> On Tue, Apr 22, 2014 at 5:04 PM, Rob Clark <robdclark@gmail.com> wrote:
->>> So what about, rather than adding drm_panel support to each bridge
->>> individually, we introduce a drm_panel_bridge (with a form of
->>> chaining).. ie:
->>>
->>>   struct drm_panel_bridge {
->>>     struct drm_bridge base;
->>>     struct drm_panel *panel;
->>>     struct drm_bridge *bridge; /* optional */
->>>   };
->>>
->>>   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
->>>   {
->>>     struct drm_panel_bridge *pb = to_panel_bridge(bridge);
->>>     if (pb->bridge)
->>>       pb->bridge->funcs->enable(pb->bridge);
->>>     pb->panel->funcs->enable(pb->panel);
->>>   }
->>>
-> We cannot call them like this from crtc helpers in the order you mentioned,
-> since each individual bridge chip expects the panel controls at
-> different places.
-> I mean,
-> -- sometimes panel controls needs to be done before bridge
-> controls(ptn3460: before RST_N and PD_N)
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 0e32d7f..e541ecb 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -288,6 +288,17 @@
+>   		#phy-cells = <1>;
+>   	};
+>
+> +	hsotg@12480000 {
+> +		compatible = "samsung,s3c6400-hsotg";
+> +		reg = <0x12480000 0x20000>;
+> +		interrupts = <0 71 0>;
+> +		clocks = <&clock 305>;
 
-well, this is why bridge has pre-enable/enable/disable/post-disable
-hooks, so you can choose before or after..
+Please use clock macros.
 
-> -- sometimes in between the bridge controls (ps8622: one panel control
-> before SLP_N and one after SLP_N)
-> -- sometimes panel controls needs to be done after bridge controls.
+> +		clock-names = "otg";
+> +		phys = <&exynos_usbphy 0>;
+> +		phy-names = "device";
 
-I am not convinced that a generic panel/bridge adapter is not
-possible.  Maybe we need more fine grained fxn ptr callbacks, although
-seems like pre+post should give you enough.  It would certainly be
-easier than having to add panel support in each individual bridge
-driver (which seems like it will certainly result that only certain
-combinations of panel+bridge actually work as intended)
+This is not the correct phy name for this binding. According to what the 
+driver uses and the example in ...bindings/usb/dwc2.txt "usb2-phy" 
+should be used.
 
-> So, putting these drm_panel controls inside individual bridge drivers will work,
-> but keeping them in crtc_helpers might break stuff.
-
-I'm not talking about crtc changing helpers.
-
-BR,
--R
-
-> Thanks and regards,
-> Ajay Kumar
+Best regards,
+Tomasz
