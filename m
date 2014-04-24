@@ -1,175 +1,178 @@
-From: Anton Tikhomirov <av.tikhomirov@samsung.com>
-Subject: RE: [PATCH 1/3] usb: ohci-exynos: Make provision for vdd regulators
-Date: Thu, 24 Apr 2014 09:38:04 +0900
-Message-ID: <002e01cf5f55$74aff060$5e0fd120$%tikhomirov@samsung.com>
-References: <1398082604-3013-1-git-send-email-gautam.vivek@samsung.com>
- <002b01cf5f52$a7bc0d70$f7342850$%tikhomirov@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v2 PATCH 02/14] drm/exynos: dsi: delay setting clocks after
+ reset
+Date: Thu, 24 Apr 2014 09:54:01 +0900
+Message-ID: <535860A9.8030003@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1398083321-8668-3-git-send-email-yj44.cho@samsung.com>
+ <53565D54.1050609@samsung.com> <535710E0.40702@samsung.com>
+ <5357373C.5080002@samsung.com> <53576DC9.2010601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:18672 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:22603 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544AbaDXAiH (ORCPT
+	with ESMTP id S1751892AbaDXAyE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Apr 2014 20:38:07 -0400
-In-reply-to: <002b01cf5f52$a7bc0d70$f7342850$%tikhomirov@samsung.com>
-Content-language: en-us
+	Wed, 23 Apr 2014 20:54:04 -0400
+In-reply-to: <53576DC9.2010601@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 
-Hi,
+Hi Andrzej,
 
-> Hi,
-> 
-> > -----Original Message-----
-> > From: linux-usb-owner@vger.kernel.org [mailto:linux-usb-
-> > owner@vger.kernel.org] On Behalf Of Vivek Gautam
-> > Sent: Monday, April 21, 2014 9:17 PM
-> >
-> > Facilitate getting required 3.3V and 1.0V VDD supply for
-> > OHCI controller on Exynos.
-> >
-> > With patches for regulators' nodes merged in 3.15:
-> > c8c253f ARM: dts: Add regulator entries to smdk5420
-> > 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
-> >
-> > certain perripherals will now need to ensure that,
-> > they request VDD regulators in their drivers, and enable
-> > them so as to make them working.
-> >
-> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> > Cc: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >
-> > Based on 'usb-next' branch of Greg's usb tree.
-> >
-> >  drivers/usb/host/ohci-exynos.c |   47
-> > ++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> >
-> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
-> > exynos.c
-> > index 68588d8..e2e72a8 100644
-> > --- a/drivers/usb/host/ohci-exynos.c
-> > +++ b/drivers/usb/host/ohci-exynos.c
-> > @@ -18,6 +18,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/regulator/consumer.h>
-> >  #include <linux/usb/phy.h>
-> >  #include <linux/usb/samsung_usb_phy.h>
-> >  #include <linux/usb.h>
-> > @@ -37,6 +38,8 @@ struct exynos_ohci_hcd {
-> >  	struct clk *clk;
-> >  	struct usb_phy *phy;
-> >  	struct usb_otg *otg;
-> > +	struct regulator *vdd33;
-> > +	struct regulator *vdd10;
-> >  };
-> >
-> >  static void exynos_ohci_phy_enable(struct platform_device *pdev)
-> > @@ -98,6 +101,28 @@ static int exynos_ohci_probe(struct
-> platform_device
-> > *pdev)
-> >  		exynos_ohci->otg = phy->otg;
-> >  	}
-> >
-> > +	exynos_ohci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
-> > +	if (IS_ERR(exynos_ohci->vdd33)) {
-> > +		err = PTR_ERR(exynos_ohci->vdd33);
-> > +		goto fail_regulator1;
-> > +	}
-> > +	err = regulator_enable(exynos_ohci->vdd33);
-> > +	if (err) {
-> > +		dev_err(&pdev->dev, "Failed to enable VDD33 supply\n");
-> > +		goto fail_regulator1;
-> > +	}
-> > +
-> > +	exynos_ohci->vdd10 = devm_regulator_get(&pdev->dev, "vdd10");
-> > +	if (IS_ERR(exynos_ohci->vdd10)) {
-> > +		err = PTR_ERR(exynos_ohci->vdd10);
-> > +		goto fail_regulator2;
-> > +	}
-> > +	err = regulator_enable(exynos_ohci->vdd10);
-> > +	if (err) {
-> > +		dev_err(&pdev->dev, "Failed to enable VDD10 supply\n");
-> > +		goto fail_regulator2;
-> > +	}
-> > +
-> 
-> Do we need to skip regulator settings together with PHY configuration
-> in case of exynos5440?
-> 
-> >  skip_phy:
-> >  	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
-> >
-> > @@ -154,6 +179,10 @@ fail_add_hcd:
-> >  fail_io:
-> >  	clk_disable_unprepare(exynos_ohci->clk);
-> >  fail_clk:
-> > +	regulator_disable(exynos_ohci->vdd10);
-> > +fail_regulator2:
-> > +	regulator_disable(exynos_ohci->vdd33);
-> > +fail_regulator1:
-> >  	usb_put_hcd(hcd);
-> >  	return err;
-> >  }
-> > @@ -172,6 +201,9 @@ static int exynos_ohci_remove(struct
-> > platform_device *pdev)
-> >
-> >  	clk_disable_unprepare(exynos_ohci->clk);
-> >
-> > +	regulator_disable(exynos_ohci->vdd10);
-> > +	regulator_disable(exynos_ohci->vdd33);
-> > +
-> >  	usb_put_hcd(hcd);
-> >
-> >  	return 0;
-> > @@ -208,6 +240,9 @@ static int exynos_ohci_suspend(struct device *dev)
-> >
-> >  	clk_disable_unprepare(exynos_ohci->clk);
-> >
-> > +	regulator_disable(exynos_ohci->vdd10);
-> > +	regulator_disable(exynos_ohci->vdd33);
-> > +
-> >  	spin_unlock_irqrestore(&ohci->lock, flags);
-> >
-> >  	return 0;
-> > @@ -218,6 +253,18 @@ static int exynos_ohci_resume(struct device *dev)
-> >  	struct usb_hcd *hcd			= dev_get_drvdata(dev);
-> >  	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
-> >  	struct platform_device *pdev		= to_platform_device(dev);
-> > +	int ret;
-> > +
-> > +	ret = regulator_enable(exynos_ohci->vdd33);
-> > +	if (ret) {
-> > +		dev_err(dev, "Failed to enable VDD33 supply\n");
-> > +		return ret;
-> 
-> Not sure, but shall we continue resuming and do everything
-> we can in case of error? At least it will avoid
-> WARN_ON(clk->enable_count == 0) on next system suspend.
+Thank you for the comments.
 
-On the other hand, if power is not applied to the controller,
-register access in ohci_resume() may lead to undefined behavior.
-What's your opinion?
+On 04/23/2014 04:37 PM, Andrzej Hajda wrote:
+> On 04/23/2014 05:45 AM, YoungJun Cho wrote:
+>> Hi again Andrzej,
+>>
+>> On 04/23/2014 10:01 AM, YoungJun Cho wrote:
+>>> Hi Andrzej
+>>>
+>>> Thank you for comments.
+>>>
+>>> On 04/22/2014 09:15 PM, Andrzej Hajda wrote:
+>>>> Hi YoungJun,
+>>>>
+>>>> On 04/21/2014 02:28 PM, YoungJun Cho wrote:
+>>>>> Some phy control registers are not kept after software reset.
+>>>>> So this patch makes the clocks containing phy control to be set
+>>>>> after software reset.
+>>>>>
+>>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>> ---
+>>>>>    drivers/gpu/drm/exynos/exynos_drm_dsi.c |    2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>>>> b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>>>> index 956e5f3..2cf1f0b 100644
+>>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>>>> @@ -946,10 +946,10 @@ static irqreturn_t exynos_dsi_irq(int irq, void
+>>>>> *dev_id)
+>>>>>
+>>>>>    static int exynos_dsi_init(struct exynos_dsi *dsi)
+>>>>>    {
+>>>>> -    exynos_dsi_enable_clock(dsi);
+>>>>>        exynos_dsi_reset(dsi);
+>>>>>        enable_irq(dsi->irq);
+>>>>>        exynos_dsi_wait_for_reset(dsi);
+>>>>> +    exynos_dsi_enable_clock(dsi);
+>>>>>        exynos_dsi_init_link(dsi);
+>>>>>
+>>>>>        return 0;
+>>>>
+>>>> I have commented it in the previous version of the patchset. I repeat it
+>>>> again.
+>>>> This is a regression, on exynos4210-trats I have 'timeout waiting for
+>>>> reset' message after dpms off, on.
+>>>
+>>> I'm really sorry for that. I misunderstood last time.
+>>>
+>>> I think the original codes were correct, because the reset timeout would
+>>> be occurred without clock activation.
+>>
+>> This is not true.
+>>
+>>>
+>>> I'll check and fix again.
+>>> (By the way, why am I ok?)
+>>
+>> I have not verified with exynos4210-trats board yet(I have to get it),
+>> but reset timeout is occured in exynos_dsi_wait_for_reset()
+>> with &dsi->completed and that is completed by exynos_dsi_irq().
+>>
+>> And the regulators and clocks are enabled by exynos_dsi_poweron(),
+>> NOT by exynos_dsi_enable_clock().
+>>
+>> So I think the reset timeout is not related with this patch.
+>
+>
+> As far as I remember there were at least two issues with init sequence:
+> - spurious irq storm after power on and before reset,
+> - irq reset timeouts after reset and without enabled clock.
+>
+> The current sequence is a result of tests on live hw (documentation were
+> not helpful in this case). I think it could be improved little bit more
+> by moving exynos_dsi_enable_clock just after enable_irq this will
+> eliminate possible timeout when RST_RELEASE irq is signaled but irq is
+> still disabled. The sequence should look like below:
+>
+> 	exynos_dsi_reset(dsi);
+> 	enable_irq(dsi->irq);
+> 	exynos_dsi_enable_clock(dsi);
+> 	exynos_dsi_wait_for_reset(dsi);
+> 	exynos_dsi_init_link(dsi);
+>
+> And PHY related configuration could be put somewhere after
+> exynos_dsi_wait_for_reset.
+>
+> I have tested this sequence on trats, it seems to be OK.
 
-> 
-> > +	}
-> > +	ret = regulator_enable(exynos_ohci->vdd10);
-> > +	if (ret) {
-> > +		dev_err(dev, "Failed to enable VDD10 supply\n");
-> > +		return ret;
-> > +	}
-> >
-> >  	clk_prepare_enable(exynos_ohci->clk);
-> >
-> > --
-> 
-> Thanks
+It also works well in Exynos5420 target.
 
-Thanks
+I think it would be better to remove this patch and implement new PHY
+control functions with this modification.
+
+Thank you.
+Best regards YJ
+
+>
+> Regards
+> Andrzej
+>
+>
+>>
+>> Anyway I need more investigation.
+>>
+>> Thank you.
+>> Best regards YJ
+>>
+>>>
+>>>>
+>>>> I will comment your previous answer here to make the discussion easier:
+>>>>> As I mentioned in description, it came from phy control registers.
+>>>>> Fortunately Exynos4 SoCs are safe, but the DSIM_PHYCTRL_REG,
+>>>>> DSIM_PHYTIMING_REG, DSIM_PHYTIMING1_REG and DSIM_PHYTIMING2_REG are
+>>>>> affected which are used in exynos_dsi_set_pll() for Exynos5 SoCs.
+>>>>>
+>>>>> So this patch is required for Exynos5 SoCs.
+>>>>
+>>>> In the moment this patch is applied exynos_dsi_set_pll do not touch phy
+>>>> registers you have mentioned.
+>>>> Your change would be more clear if it will be merged together with the
+>>>> patch adding PHYCTRL settings.
+>>>>
+>>>> Anyway, solution is simple - please set PHY registers after reset and
+>>>> configure clocks before reset to avoid
+>>>> reset timeouts, is there any reason to not do it this way?
+>>>
+>>> The only reason is that the PHY control is related with PLL control and
+>>> that was in exynos_dsi_enable_clock() call path.
+>>> So I just wanted to keep current sequence.
+>>>
+>>> If there is no way to use previous one, I'll consider your approach.
+>>>
+>>> Thank you.
+>>> Best regards YJ
+>>>
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>
+>>> _______________________________________________
+>>> dri-devel mailing list
+>>> dri-devel@lists.freedesktop.org
+>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
+>>
+>
+>
