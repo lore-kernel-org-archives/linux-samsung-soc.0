@@ -1,56 +1,56 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v8 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
-Date: Thu, 24 Apr 2014 18:01:06 +0200
-Message-ID: <53593542.9010106@samsung.com>
-References: <1397459860-21869-1-git-send-email-t.dakhran@samsung.com>
- <1397459860-21869-2-git-send-email-t.dakhran@samsung.com>
- <5617478.sn2TYu7iO3@wuerfel> <534BCD88.4020108@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos4: add PMU syscon node
+Date: Thu, 24 Apr 2014 18:07:03 +0200
+Message-ID: <535936A7.9050003@samsung.com>
+References: <1397479700-15864-1-git-send-email-chanho61.park@samsung.com>
+ <1397479700-15864-2-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <534BCD88.4020108@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56240 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932321AbaDXQHN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 12:07:13 -0400
+In-reply-to: <1397479700-15864-2-git-send-email-chanho61.park@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Hi Tarek,
+Hi Chanho,
 
-On 14.04.2014 13:59, Tarek Dakhran wrote:
-> On 04/14/2014 03:03 PM, Arnd Bergmann wrote:
->> On Monday 14 April 2014 11:17:38 Tarek Dakhran wrote:
->>> --- a/arch/arm/mach-exynos/exynos.c
->>> +++ b/arch/arm/mach-exynos/exynos.c
->>> @@ -159,6 +159,15 @@ static struct map_desc exynos5250_iodesc[]
->>> __initdata = {
->>>          },
->>>   };
->>> +static struct map_desc exynos5410_iodesc[] __initdata = {
->>> +       {
->>> +               .virtual        = (unsigned long)S5P_VA_SYSRAM_NS,
->>> +               .pfn            =
->>> __phys_to_pfn(EXYNOS5410_PA_SYSRAM_NS),
->>> +               .length         = SZ_4K,
->>> +               .type           = MT_DEVICE,
->>> +       },
->>> +};
->>> +
->>>   static struct map_desc exynos5_iodesc[] __initdata = {
->> NAK
->>
->> Why does this keep coming up?
->>
->>     Arnd
->>
-> We need this memory region because boot address for exynos5410 located
-> here, same as for 5250.
+On 14.04.2014 14:48, Chanho Park wrote:
+> This patch adds a PMU(Power Management Unit) syscon node. This
+> should be required for USB Phy syscon regmap I/F.
 >
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos4.dtsi | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 2f8bcd0..e565b86 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -110,6 +110,11 @@
+>   		reg = <0x10010000 0x400>;
+>   	};
+>
+> +	pmu_reg: syscon@10020000 {
+> +		compatible = "samsung,exynos4-pmureg", "syscon";
 
-Is there really no way to map this region dynamically in the entity 
-(driver, source file, whatever) that actually uses it? The goal is to 
-get rid of all the static mappings entirely, so adding new one makes us 
-further from it.
+This compatible string doesn't seem to be defined in [1], please add it 
+there,
+
+[1] Documentation/devicetree/bindings/arm/samsung/pmu.txt
+
+Otherwise looks good, so after fixing that you may add my
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
