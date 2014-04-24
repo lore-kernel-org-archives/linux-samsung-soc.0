@@ -1,114 +1,84 @@
-From: Vikas Sajjan <sajjan.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dts: Add PMU reg node to exynos4210
-Date: Thu, 24 Apr 2014 18:56:47 +0530
-Message-ID: <CAGm_ybi+QiC95-aJtzbpY8CCv9f6+NDC4HHrC8RuCmkUHDGB5A@mail.gmail.com>
-References: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com>
-	<1396425778-4379-2-git-send-email-pankaj.dubey@samsung.com>
-	<CAGm_ybjfxprtLUX6Vs8QVvXoMOaHez4-Og8a9n3UevibvmzbZA@mail.gmail.com>
-	<53590A3D.1020308@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Thu, 24 Apr 2014 14:39:20 +0100
+Message-ID: <20140424133920.GA12304@sirena.org.uk>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53590A3D.1020308-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, chow.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fqxOrU+oVxTp8sLK"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pankaj,
 
-On Thu, Apr 24, 2014 at 6:27 PM, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi Vikas,
->
->
-> On 04/24/2014 08:59 PM, Vikas Sajjan wrote:
->>
->> +Tomasz
->>
->>
->> On Wed, Apr 2, 2014 at 1:32 PM, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> wrote:
->>>
->>> This patch adds pmu regnode to exynos4210 dtsi to handle
->>> PMU register access via DT.
->>>
->>> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>   arch/arm/boot/dts/exynos4210.dtsi |    5 +++++
->>>   1 file changed, 5 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
->>> b/arch/arm/boot/dts/exynos4210.dtsi
->>> index cacf614..0a2c0fe 100644
->>> --- a/arch/arm/boot/dts/exynos4210.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->>> @@ -81,6 +81,11 @@
->>>                  interrupts = <2 2>, <3 2>;
->>>          };
->>>
->>> +       pmu_system_controller: system-controller@10020000 {
->>> +               compatible = "samsung,exynos4210-pmu", "syscon";
->>> +               reg = <0x10020000 0x5000>;
->>
->> Can we have 2 strings as "compatible" and these 2 strings are used by
->> 2 different driver?
->>
->> Because once syscon driver gets probed, exynos-pmu.c [1] driver will
->> never be probed.
->>
->> The new PMU driver [1] completely relies on this. With just
->> exynos_defconfig, you will not notice this issue, since syscon is NOT
->> enabled by exynos_defconfig. When I enabled "System Controller
->> Register R/W Based on Regmap" in menuconfig, I could see PMU driver
->> [1] is NEVER probed.
->>
->> Let me know, if I am missing something.
->>
->>   [1] http://www.spinics.net/lists/arm-kernel/msg319750.html
->
->
-> You are correct. We also missed this because "SYSCON" option was
-> not enabled in exynos_defconfig.
-> I noticed this during preparation of V2 when I planned to use
-> "early_syscon_init" [1] as suggested by Sylwester here [2].
->
-OK.
+--fqxOrU+oVxTp8sLK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> In V2 I will take care of this. I hope soon I will be able to post second
+On Wed, Apr 23, 2014 at 02:31:45PM +0530, Tushar Behera wrote:
 
-So in your V2, will you be adding new DT node altogether for PMU?
-Because with existing DT node "pmu_system_controller"  (which is
-already present in mailine for exynos 5250) and SYSCON driver enable,
-exynos PMU driver will NEVER probed.
+> +Required properties:
+> +- compatible : Can be one of the following,
+> +			"google,snow-audio-max98090" or
+> +			"google,snow-audio-max98095"
+> +- samsung,i2s-controller: The phandle of the Samsung I2S0 controller
 
-> version of this series, just waiting for testing and internal code review.
->
-> [1] https://lkml.org/lkml/2014/4/8/239
-> [2] https://lkml.org/lkml/2014/4/2/171
->
->>
->>
->>> +       };
->>> +
->>>          pinctrl_0: pinctrl@11400000 {
->>>                  compatible = "samsung,exynos4210-pinctrl";
->>>                  reg = <0x11400000 0x1000>;
->>> --
->>> 1.7.10.4
->>>
->>>
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
->
-> --
-> Best Regards,
-> Pankaj Dubey
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This should be any I2S controller, not just I2S0?
+
+> +- samsung,audio-codec: The phandle of the audio codec
+
+This binding only has one I2S controller and CODEC.  However...
+
+> +static struct snd_soc_dai_link snow_dai[] = {
+> +	{ /* Playback DAI i/f */
+> +		.name = "Playback",
+> +		.stream_name = "Playback",
+> +		.codec_dai_name = "HiFi",
+> +		.dai_fmt = SND_SOC_DAIFMT_I2S |
+> +				SND_SOC_DAIFMT_NB_NF |
+> +				SND_SOC_DAIFMT_CBS_CFS,
+> +	}, { /* Capture DAI i/f */
+> +		.name = "Capture",
+> +		.stream_name = "Capture",
+> +		.codec_dai_name = "HiFi",
+> +		.dai_fmt = SND_SOC_DAIFMT_I2S |
+> +				SND_SOC_DAIFMT_NB_NF |
+> +				SND_SOC_DAIFMT_CBS_CFS,
+> +	},
+> +};
+
+...for some reason we have separate capture and playback DAI links
+defined.  Why is that?  Also, why is the secondary I2S playback stream
+not supported (this may be a reason to restrict to only the one I2S
+interface)?
+
+Please also use subject lines consistent with the subsystem - NO NEED TO
+SHOUT.
+
+--fqxOrU+oVxTp8sLK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTWRQFAAoJELSic+t+oim9FLEP/2a7HlgBLyAyhlBpVVq4cudI
+UXXiPqrnYEprtqB+UouodnWQDLcn7EuEIa2YiE9Z9YbzUmn/0rNusq1UBgzkgTZo
+OOSiKknpOqJmwHig39tXdoyW+Q3Gf2FP945rcHI38ogXDqYt6OVNCJ93wOutYBpf
+tKgejkbuSYLLB7ypk+x0xtmipWA6/0TLwf06CBGtICzWk7SoGdZP54rFtjacTEYJ
+x4XXlGMJX1Wp8vrRopSSHFWSMXet8m2lFvRgv8PIvHyQZsrvSGNS4v1hdSiqSoyH
+Vl0tp68YPcoK25RJojB0n4gPKoXi2ysqv1U3yvPtCXee+cUmaHv2P/HvR4VtVkMh
+uAaiDab6fbisJOPL3iSrZKgZulzLac9mUpO4Tqe09E7OdwJK4ffLXt/mBaPxh79A
+g+eScceRhWEpfy8nW5Kxe8/blRy8E/QX2H9Ray5e9k17tLCtfvnQ51uXM2bHt1EI
+bCDNz8wxJSRBWyU2UwjLqRTSAUYiC2HVEoYksDyIzycUZ+fyZyP1ryiPtEKZixgb
+fnRFyEeO5pn+HFH4ANxGp6UK2doZMLSFAvap6KSaIsHm4usZ9gLsgarMzdKCcLcL
+tmPea5SImfWgqKzh41Zy1pFmwzlyUhfoAD3AQgtcMQbkJHgFa1qFdRR53UApOyoh
+ncpz8pHpV7F85EYSLPwM
+=3Q3e
+-----END PGP SIGNATURE-----
+
+--fqxOrU+oVxTp8sLK--
