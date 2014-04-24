@@ -1,82 +1,45 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
-Date: Thu, 24 Apr 2014 14:37:59 +0530
-Message-ID: <5358D46F.2050303@linaro.org>
-References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org> <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com> <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com> <03b001cf5edc$ae42e770$0ac8b650$@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc: Don't print data errors
+Date: Thu, 24 Apr 2014 11:14:51 +0200
+Message-ID: <CAPDyKFo7Mi9+WJx+7rcB_fqdi59TuY+FhT=Ued9Zi=rhNGnYtA@mail.gmail.com>
+References: <1398210681-22976-1-git-send-email-dianders@chromium.org>
+	<CAPDyKFpzPCi2Yb_33akh5dg1NjudydLkJrdGnQ_xJtsEGGcQ3g@mail.gmail.com>
+	<CAD=FV=U_H_RdoMr2R9TAgj9HmaU0zm=UxcvvMXErzQ-acwZJwA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:59844 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752605AbaDXJIE (ORCPT
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:38932 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755782AbaDXJOw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 05:08:04 -0400
-Received: by mail-pa0-f46.google.com with SMTP id kp14so1715318pab.33
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 02:08:03 -0700 (PDT)
-In-Reply-To: <03b001cf5edc$ae42e770$0ac8b650$@samsung.com>
+	Thu, 24 Apr 2014 05:14:52 -0400
+Received: by mail-qg0-f44.google.com with SMTP id q108so2208007qgd.31
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 02:14:51 -0700 (PDT)
+In-Reply-To: <CAD=FV=U_H_RdoMr2R9TAgj9HmaU0zm=UxcvvMXErzQ-acwZJwA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com, Tomasz Figa <t.figa@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 04/23/2014 03:43 PM, Kukjin Kim wrote:
-> Tushar Behera wrote:
+>> The "status" here could be useful information about the status
+>> register, which is not considered while printing errors by the "higher
+>> levels". An option could be to print the error, but not when you
+>> perform tuning.
 >>
->> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
->>> Hi Tushar
->>>
->>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
->>> <tushar.behera@linaro.org> wrote:
->>>> MAU powerdomain provides clocks for Audio sub-system block. This block
->>>> comprises of the I2S audio controller, audio DMA blocks and Audio
->>>> sub-system clock registers.
->>>>
->>>> Right now, there is no way to hook up power-domains with clock
->> providers.
->>>> During late boot when this power-domain gets disabled, we get following
->>>> external abort.
-> 
-> + Jonghwan Choi
-> 
-> Well, this is not a perfect solution to support MAU power domain, it's true it is a problem right now though.
-> 
-> In other words, this is just temporal fix for the problem.
-> 
-> How about accessing clock stuff for audio sub-system with handling MAU power domain via generic IO power domain?
-> 
+>> No big deal though, just a thought.
+>
+> Right, I could potentially put the driver into "tuning" mode and then
+> suppress the errors during that time.  If you request it I will do
+> that.
+>
+> I will also note that there are many other error conditions in the
+> driver that don't have such printouts.  I think the general philosophy
+> of this driver is not to print them...
 
-+ Tomasz Figa
+So, then let's stick to that philosophy and keep this as is.
 
-Existing power domain driver exynos4_pm_init_power_domain is registered
-with an arch_initcall whereas the clk-exynos-audss driver is registered
-with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
-node, the binding with power-domain doesn't happen.
+Kind regards
+Ulf Hansson
 
-Alternately, if Tomasz's patches are applied [1], power-domain binding
-is successful. But because of the init order, clk-exynos-audss defers
-probe resulting in a kernel crash. Forcing clk-exynos-audss to register
-through arch_initcall() fixes this issue, but I am not sure if that is okay.
-
-[1] http://www.spinics.net/lists/kernel/msg1728566.html
-
->>> ?? which abort?? Can you please mention it here?
->>>>
->>
->> Thanks Alim for spotting this ... I somehow missed adding this.
->>
->> <<<<
->> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
->>>>>>
->>
->> Kukjin,
->>
->> Let me know if I need to resend the patch.
-> 
-> - Kukjin
-> 
-
-
--- 
-Tushar Behera
+>
+> -Doug
