@@ -1,70 +1,79 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v8 2/2] usb: ehci-exynos: Change to use phy provided by
- the generic phy framework
-Date: Fri, 25 Apr 2014 10:41:50 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1404251039210.1140-100000@iolanthe.rowland.org>
-References: <1398424873-20257-1-git-send-email-gautam.vivek@samsung.com>
+From: "Hong-Xing.Zhu@freescale.com" <Hong-Xing.Zhu@freescale.com>
+Subject: RE: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
+Date: Fri, 25 Apr 2014 15:04:28 +0000
+Message-ID: <0e2b9e103e54467a9f0d0ee44d5763bf@BLUPR03MB136.namprd03.prod.outlook.com>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+ <20140424175844.GD29593@google.com>
+ <1398421265.4657.25.camel@weser.hi.pengutronix.de>
+ <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398424873-20257-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Lucas Stach <l.stach@pengutronix.de>
+Cc: Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, linux-arm <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 25 Apr 2014, Vivek Gautam wrote:
-
-> From: Kamil Debski <k.debski@samsung.com>
-> 
-> Add the phy provider, supplied by new Exynos-usb2phy using
-> Generic phy framework.
-> Keeping the support for older USB phy intact right now, in order
-> to prevent any functionality break in absence of relevant
-> device tree side change for ehci-exynos.
-> Once we move to new phy in the device nodes for ehci, we can
-> remove the support for older phys.
-> 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> [gautam.vivek@samsung.com: Addressed review comments from mailing list]
-> [gautam.vivek@samsung.com: Kept the code for old usb-phy, and just
-> added support for new exynos5-usb2phy in generic phy framework]
-> [gautam.vivek@samsung.com: Edited the commit message]
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-
-> +static int exynos_ehci_phyg_off(struct phy *phy[])
-> +{
-> +	int i;
-> +	int ret = 0;
-> +
-> +	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
-> +		if (phy[i])
-> +			ret = phy_power_off(phy[i]);
-> +
-> +	return ret;
-> +}
-
-Same comment as in the OHCI driver about ret.
-
-> @@ -175,6 +269,7 @@ skip_phy:
->  fail_add_hcd:
->  	if (exynos_ehci->phy)
->  		usb_phy_shutdown(exynos_ehci->phy);
-> +	exynos_ehci_phyg_off(exynos_ehci->phy_g);
->  fail_io:
->  	clk_disable_unprepare(exynos_ehci->clk);
->  fail_clk:
-> @@ -195,6 +290,8 @@ static int exynos_ehci_remove(struct platform_device *pdev)
->  	if (exynos_ehci->phy)
->  		usb_phy_shutdown(exynos_ehci->phy);
->  
-> +	exynos_ehci_phyg_off(exynos_ehci->phy_g);
-> +
-
-In both these places, you need to test exynos_ehci->phyg before calling 
-exynos_ehci_phyg_off().
-
-Maybe it would help to add exynos_ehci_phy_enable/disable routines, 
-like in the OHCI driver.
-
-Alan Stern
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEJqb3JuIEhlbGdhYXMgW21h
+aWx0bzpiaGVsZ2Fhc0Bnb29nbGUuY29tXQ0KPiBTZW50OiBGcmlkYXksIEFwcmlsIDI1LCAyMDE0
+IDEwOjQwIFBNDQo+IFRvOiBMdWNhcyBTdGFjaA0KPiBDYzogWmh1IFJpY2hhcmQtUjY1MDM3OyBK
+aW5nb28gSGFuOyBTaGF3biBHdW87IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
+LWFybTsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIu
+a2VybmVsLm9yZzsgU2Vhbg0KPiBDcm9zczsgTWFyZWsgVmFzdXQ7IElhbiBDYW1wYmVsbDsgTWFy
+ayBSdXRsYW5kOyBQYXdlbCBNb2xsOyBSb2IgSGVycmluZzsgQXJuZA0KPiBCZXJnbWFubjsgVGlt
+IEhhcnZleTsga2VybmVsQHBlbmd1dHJvbml4LmRlDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMC84
+XSBpLk1YNiBQQ0llIGJpbmRpbmcgY2hhbmdlIGFuZCBNU0kgc3VwcG9ydA0KPiANCj4gT24gRnJp
+LCBBcHIgMjUsIDIwMTQgYXQgNDoyMSBBTSwgTHVjYXMgU3RhY2ggPGwuc3RhY2hAcGVuZ3V0cm9u
+aXguZGU+IHdyb3RlOg0KPiA+IEFtIERvbm5lcnN0YWcsIGRlbiAyNC4wNC4yMDE0LCAxMTo1OCAt
+MDYwMCBzY2hyaWViIEJqb3JuIEhlbGdhYXM6DQo+ID4+IE9uIEZyaSwgTWFyIDI4LCAyMDE0IGF0
+IDA1OjUyOjUxUE0gKzAxMDAsIEx1Y2FzIFN0YWNoIHdyb3RlOg0KPiA+PiA+IFdoaWxlIHdvcmtp
+bmcgb24gTVNJIHN1cHBvcnQgZm9yIHRoZSBpLk1YNiBQQ0llIGhvc3QgZHJpdmVyIGl0IGhhcw0K
+PiA+PiA+IGJlZW4gZGlzY292ZXJlZCB0aGF0IHRoZSBiaW5kaW5nIGZvciB0aGlzIGhvc3QgY29u
+dHJvbGxlciBpcyBicm9rZW4NCj4gPj4gPiBpbiBtYW55IHdheXMgKHJlZmVyIHRvIHRoZSBwYXRj
+aCBkZXNjcmlwdGlvbnMgZm9yIG1vcmUNCj4gPj4gPiBpbmZvKSBhbmQgd2FzIGludHJvZHVjZWQg
+d2l0aG91dCBwcm9wZXIgZGlzY3Vzc2lvbiBhYm91dCB3aGF0DQo+ID4+ID4gc2hvdWxkL3Nob3Vs
+ZCBub3QgYmUgaW4gdGhlIGJpbmRpbmcuDQo+ID4+ID4NCj4gPj4gPiBUaGlzIHNlcmllcyBmaXhl
+cyB0aGlzIGFuZCBtaW5pbWl6ZXMgdGhlIGRpZmZlcmVuY2Ugb2YgdGhlDQo+ID4+ID4gaS5NWDYg
+YmluZGluZyB0byB0aGUgY29tbW9uIGRlc2lnbndhcmUgUENJZSBiaW5kaW5nLiBJJ20gYXdhcmUg
+dGhhdA0KPiA+PiA+IHRoaXMgaXMgYSBxdWl0ZSByYWRpY2FsIGNoYW5nZSwgYnV0IEkgdGhpbmsg
+aXQncyBqdXN0aWZpZWQgdG8gZG8NCj4gPj4gPiB0aGlzIGFzIGxvbmcgYXMgdGhlcmUgYXJlbid0
+IG1hbnkgdXNlciBvZiB0aGUgb2xkIGJpbmRpbmcgKG1vc3Qgb2YNCj4gPj4gPiB0aGUgb3B0aW9u
+YWwgcHJvcGVydGllcyBpbiB0aGUgYmluZGluZyBhcmVuJ3QgZXZlbiBpbXBsZW1lbnRlZCkuDQo+
+ID4+ID4NCj4gPj4gPiBMb29raW5nIGZvcndhcmQgdG8geW91ciBmZWVkYmFjay4NCj4gPj4gPg0K
+PiA+PiA+IEx1Y2FzIFN0YWNoICg4KToNCj4gPj4gPiAgIEFSTTogaW14NnEtY2xrOiBwYXJlbnQg
+bHZkc19nYXRlIGZyb20gbHZkc19zZWwNCj4gPiBUaGlzIG9uZSBpcyBhbHJlYWR5IGFwcGxpZWQu
+DQo+ID4NCj4gPj4gPiAgIFBDSTogZGVzaWdud2FyZTogc3BsaXQgRXh5bm9zIGFuZCBpLk1YIGJp
+bmRpbmdzDQo+ID4+ID4gICBBUk06IGR0czogaW14NjogdXBkYXRlIHBjaWUgdG8gYnJpbmcgaW4g
+bGluZSB3aXRoIG5ldyBiaW5kaW5nDQo+ID4+ID4gICBQQ0k6IGlteDY6IHVzZSBuZXcgY2xvY2sg
+bmFtZXMNCj4gPj4gPiAgIFBDSTogaW14NjogZHJvcCBvbGQgaXJxIG1hcHBpbmcNCj4gPj4gPiAg
+IFBDSTogaW14NjogcmlwIG91dCBvcHRpb25hbCAoYW5kIHVudXNlZCkgaXJxcw0KPiA+PiA+ICAg
+UENJOiBkZXNpZ253YXJlOiBtYWtlIE1TSSBpc3Igc2hhcmVkIGlycSBhd2FyZQ0KPiA+PiA+ICAg
+UENJOiBpbXg2OiBhZGQgc3VwcG9ydCBmb3IgTVNJDQo+ID4+DQo+ID4+IFdoYXQncyB0aGUgc3Rh
+dHVzIG9mIGFsbCB0aGVzZT8gIEkgd291bGQgbm9ybWFsbHkgYXBwbHkgcGF0Y2hlcyA0LTgNCj4g
+Pj4gb2YgdGhpcyBzZXJpZXMgdGhyb3VnaCBteSB0cmVlLCBnaXZlbiB0aGUgYXBwcm9wcmlhdGUg
+YWNrcywgYnV0IEkNCj4gPj4gaGF2ZW4ndCBzZWVuIHRob3NlIHlldC4gIEFuZCBJJ20gbm90IHN1
+cmUgd2hhdCBkZXBlbmRlbmNpZXMgdGhlcmUgYXJlDQo+ID4+IGJldHdlZW4gdGhlIG5vbi1QQ0kg
+cGF0Y2hlcyBhbmQgdGhlIFBDSSBvbmVzLg0KPiA+Pg0KPiA+IEl0J3MgYSBjb21wbGV0ZSBiaW5k
+aW5nIGNoYW5nZSwgc28gYXBwbHlpbmcgb25lIHBhcnQgd2l0aG91dCB0aGUgb3RoZXINCj4gPiBp
+cyBnb2luZyB0byBob3JyaWJseSBicmVhayB0aGluZ3MuDQo+ID4NCj4gPiBTbyBJIHdvdWxkIGF0
+IGxlYXN0IHdhbnQgdG8gc2VlIGFuIGFjayBmb3IgdGhlIGJpbmRpbmcgY2hhbmdlIG9uIHRoZQ0K
+PiA+IGkuTVggc2lkZSBmcm9tIFNoYXduIGFuZCBSaWNoYXJkLiBUaGlzIHdpbGwgbmVlZCBzb21l
+IGZvbGxvdyBvbg0KPiA+IHBhdGNoZXMsIGFzIHNvbWUgYm9hcmRzIGFkZGluZyBQQ0llIHVzaW5n
+IHRoZSBvbGQgYmluZGluZyBoYXZlIGNyb3BwZWQNCj4gPiB1cCBpbiBsaW51eC1uZXh0LCBidXQg
+SSBjYW4gZG8gdGhlIHBhdGNoZXMgb24gc2hvcnQgbm90aWNlIGlmIGV2ZXJ5b25lDQo+ID4gYWdy
+ZWVzIHRvIG1lcmdlIHRoaXMgcGF0Y2hzZXQuDQo+ID4NCj4gPiBUaGUgZGVzaWdud2FyZSBwYXJ0
+IGlzIHByZXR0eSBzaW1wbGUgYW5kIGRvZXNuJ3QgY2hhbmdlIGFueXRoaW5nIGZvcg0KPiA+IG90
+aGVyIHVzZXJzIHRoYW4gaS5NWC4gVGhvdWdoIEkgd291bGQgbGlrZSB0byBzZWUgYW4gYWNrIGZy
+b20gSmluZ29vDQo+ID4gZm9yIHRob3NlLg0KPiA+DQo+ID4gSSBoYXZlIHNvbWUgbW9yZSBzdHVm
+ZiBpbiB0aGUgcGlwZXMgcmVnYXJkaW5nIG11bHRpcGxlIE1TSSBpcnFzLCB0aGF0DQo+ID4gZGVw
+ZW5kIG9uIHRoaXMgc2VyaWVzIGFuZCBhbHNvIHRoZSBLZXlzdG9uZSBwZW9wbGUgYXJlIHdhaXRp
+bmcgZm9yDQo+ID4gdGhpcyB0byBiZSBhcHBsaWVkIGluIG9yZGVyIHRvIGNvbnNvbGlkYXRlIHRo
+ZSBjbG9jayBoYW5kbGluZyBvZiB0aGUNCj4gPiBkZXNpZ253YXJlIGNvcmUgZHJpdmVyLCBzbyBp
+dCB3b3VsZCBiZSBuaWNlIHRvIGdldCB0aGlzIG1vdmluZyBhZ2Fpbi4NCltSaWNoYXJkXSBIaSBM
+dWNhcywgdGhhbmtzLiBJJ20gb2sgZm9yIHRoaXMgcGF0Y2gtc2V0Lg0KQWNrZWQtYnk6IFJpY2hh
+cmQgWmh1IDxyNjUwMzdAZnJlZXNjYWxlLmNvbT4NCg0KPiANCj4gT0ssIGp1c3QgcG9rZSBtZSBh
+Z2FpbiB3aGVuIHlvdSdyZSByZWFkeSBmb3IgbWUgdG8gZG8gc29tZXRoaW5nIHdpdGggdGhlc2Uu
+DQo+IA0KPiBCam9ybg0KPiANCg0KDQpCZXN0IFJlZ2FyZHMNClJpY2hhcmQgWmh1DQoNCg==
