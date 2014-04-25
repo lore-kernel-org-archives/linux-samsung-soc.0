@@ -1,84 +1,100 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 3/5] iio: exynos_adc: reduce timeout and use
- wait_for_completion_timeout
-Date: Fri, 25 Apr 2014 15:44:45 +0530
-Message-ID: <1398420888-5506-4-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 4/5] iio: exynos_adc: do a soft reset in case of timeout
+Date: Fri, 25 Apr 2014 15:44:46 +0530
+Message-ID: <1398420888-5506-5-git-send-email-ch.naveen@samsung.com>
 References: <1398420888-5506-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28122 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751866AbaDYKQl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 06:16:41 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1398420888-5506-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-iio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-ADC module on Exynos5 SoCs runs at 600KSPS. At this conversion rate,
-waiting for 1000 msecs is wasteful (incase of h/w failure).
+Do a soft reset software if a timeout happens.
+This is applicable only for ADC_V2.
 
-Hence, reduce the time out to 100msecs and use
-wait_for_completion_timeout() instead of
-wait_for_completion_interruptible_timeout()
-
-Also, handle the return values in exynos_raw_read() call.
-
-Change-Id: Icb8cade162094b2777c9f3c77120635deef5947c
+Change-Id: I939eaa06254e0b246dd636df9470f2eb392c2be1
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
-This change is a part of the patch reviewd at https://lkml.org/lkml/2013/11/5/92
+This change is a part of the patch reviewed at https://lkml.org/lkml/2013/11/5/92
 
- drivers/iio/adc/exynos_adc.c |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/iio/adc/exynos_adc.c |   50 ++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index a2b8b1a..4d2467a 100644
+index 4d2467a..805c9f6 100644
 --- a/drivers/iio/adc/exynos_adc.c
 +++ b/drivers/iio/adc/exynos_adc.c
-@@ -82,7 +82,7 @@ enum adc_version {
- #define ADC_CON_EN_START	(1u << 0)
- #define ADC_DATX_MASK		0xFFF
- 
--#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(1000))
-+#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
- 
- struct exynos_adc {
- 	void __iomem		*regs;
-@@ -121,6 +121,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 	struct exynos_adc *info = iio_priv(indio_dev);
- 	unsigned long timeout;
- 	u32 con1, con2;
-+	int ret;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
- 		return -EINVAL;
-@@ -145,16 +146,19 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				ADC_V1_CON(info->regs));
- 	}
- 
--	timeout = wait_for_completion_interruptible_timeout
-+	timeout = wait_for_completion_timeout
- 			(&info->completion, EXYNOS_ADC_TIMEOUT);
--	*val = info->value;
-+	if (timeout == 0) {
-+		ret = -ETIMEDOUT;
-+	} else {
-+		*val = info->value;
-+		*val2 = 0;
-+		ret = IIO_VAL_INT;
-+	}
- 
- 	mutex_unlock(&indio_dev->mlock);
- 
--	if (timeout == 0)
--		return -ETIMEDOUT;
--
--	return IIO_VAL_INT;
-+	return ret;
+@@ -112,6 +112,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+ 	return (unsigned int)match->data;
  }
  
- static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
++static void exynos_adc_hw_init(struct exynos_adc *info)
++{
++	u32 con1, con2;
++
++	if (info->version == ADC_V2) {
++		con1 = ADC_V2_CON1_SOFT_RESET;
++		writel(con1, ADC_V2_CON1(info->regs));
++
++		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
++			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
++		writel(con2, ADC_V2_CON2(info->regs));
++
++		/* Enable interrupts */
++		writel(1, ADC_V2_INT_EN(info->regs));
++	} else {
++		/* set default prescaler values and Enable prescaler */
++		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
++
++		/* Enable 12-bit ADC resolution */
++		con1 |= ADC_V1_CON_RES;
++		writel(con1, ADC_V1_CON(info->regs));
++	}
++}
++
+ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 				struct iio_chan_spec const *chan,
+ 				int *val,
+@@ -149,6 +173,8 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 	timeout = wait_for_completion_timeout
+ 			(&info->completion, EXYNOS_ADC_TIMEOUT);
+ 	if (timeout == 0) {
++		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
++		exynos_adc_hw_init(info);
+ 		ret = -ETIMEDOUT;
+ 	} else {
+ 		*val = info->value;
+@@ -230,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
+ 	return 0;
+ }
+ 
+-static void exynos_adc_hw_init(struct exynos_adc *info)
+-{
+-	u32 con1, con2;
+-
+-	if (info->version == ADC_V2) {
+-		con1 = ADC_V2_CON1_SOFT_RESET;
+-		writel(con1, ADC_V2_CON1(info->regs));
+-
+-		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+-			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+-		writel(con2, ADC_V2_CON2(info->regs));
+-
+-		/* Enable interrupts */
+-		writel(1, ADC_V2_INT_EN(info->regs));
+-	} else {
+-		/* set default prescaler values and Enable prescaler */
+-		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+-
+-		/* Enable 12-bit ADC resolution */
+-		con1 |= ADC_V1_CON_RES;
+-		writel(con1, ADC_V1_CON(info->regs));
+-	}
+-}
+-
+ static int exynos_adc_probe(struct platform_device *pdev)
+ {
+ 	struct exynos_adc *info = NULL;
 -- 
 1.7.9.5
