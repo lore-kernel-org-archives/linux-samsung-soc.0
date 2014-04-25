@@ -1,109 +1,64 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 2/9] drm/panel: add pre_enable and post_disable routines
-Date: Fri, 25 Apr 2014 23:46:47 +0530
-Message-ID: <CAEC9eQNaMgvpr73Nq2wz+MuvWBUCy=1gEUpsxHLHHqX_KPiLDg@mail.gmail.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1398119958-32005-3-git-send-email-ajaykumar.rs@samsung.com>
-	<20140422081948.GA17275@ulmo>
-	<CAEC9eQO8Kahh2YVO4nCjk2m+TzJNJ_iSkVRLe0NM_yqL9uPNaw@mail.gmail.com>
-	<20140423072915.GV10722@phenom.ffwll.local>
-	<20140423074212.GF31226@ulmo>
-	<CAEC9eQNCvfUbaRL7DnNVF21QjwCX2E2sndHRDvLUE9EL1cVN4Q@mail.gmail.com>
-	<20140424183104.GB27443@ulmo>
-	<CAEC9eQNCnp5GzrG82OKf5LOo=VE1S-aKy5OVQTEAG53RX4QDnw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Javi Merino <javi.merino@arm.com>
+Subject: [PATCH] ARM: dts: Remove vmmc-supply for mmc@12220000 on arndale-octa board
+Date: Fri, 25 Apr 2014 21:11:12 +0100
+Message-ID: <1398456672-3936-1-git-send-email-javi.merino@arm.com>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:37012 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751342AbaDYSQs (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:43262 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754494AbaDYULW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 14:16:48 -0400
-Received: by mail-vc0-f169.google.com with SMTP id im17so5409745vcb.28
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Apr 2014 11:16:47 -0700 (PDT)
-In-Reply-To: <CAEC9eQNCnp5GzrG82OKf5LOo=VE1S-aKy5OVQTEAG53RX4QDnw@mail.gmail.com>
+	Fri, 25 Apr 2014 16:11:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javi Merino <javi.merino@arm.com>
 
-On Fri, Apr 25, 2014 at 11:34 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
-> On Friday, April 25, 2014, Thierry Reding <thierry.reding@gmail.com> wrote:
->>
->> On Thu, Apr 24, 2014 at 12:56:02AM +0530, Ajay kumar wrote:
->> > Thierry,
->> >
->> > On Wed, Apr 23, 2014 at 1:12 PM, Thierry Reding
->> > <thierry.reding@gmail.com> wrote:
->> > > On Wed, Apr 23, 2014 at 09:29:15AM +0200, Daniel Vetter wrote:
->> [...]
->> > >> Imo this makes sense, especially if we go through with the idea talked
->> > >> about yesterday of creating a drm_bridge to wrap-up a drm_panel with
->> > >> sufficient isolation between all components.
->> > >
->> > > I'm not at all comfortable with these. The names are totally confusing.
->> > > Next somebody will need to do something after the panel has been enabled
->> > > and we'll have to introduce .post_enable() and .pre_disable() functions.
->> > > And worse, what if somebody needs something to be done between
->> > > .pre_enable() and .enable()? .post_pre_enable()? Where does it end?
->> > >
->> > > According to the above description the only reason why we need this is
->> > > to avoid visible glitches when the panel is already on, but the video
->> > > stream hasn't started yet. If that's the only reason why we need this,
->> > > then perhaps adding a way for a panel to expose the associated backlight
->> > > would be better?
->> > Actually, we need not expose the entire backlight device.
->> > AFAIK, the glitch is caused when you enable BL_EN before
->> > there is valid video data. So, one way to mask off the glitch is to
->> > follow this sequence:
->> > -- power up the panel.
->> > -- start video data, (start PWM here or)
->> > -- (start PWM here), enable backlight
->>
->> That's very difficult to get right, isn't it? Even if you have fine-
->> grained control over what to enable you still need a way to determine
->> _when_ it's safe to enable the backlight. Typically I guess that would
->> be the duration of one frame (or perhaps 2, depending on when the panel
->> syncs to the video signal).
-> We need not "determine", its already present in LVDS datasheet.
-> The LVDS datasheet says at least 200ms delay is needed from "Valid
-> data" to "BL on".
->
->> Perhaps it could even by sync'ed to the VBLANK?
-> No. vblanks are related to crtc. And the bridge/panel driver should be
-> independent of vblank.
->
->> > The problem is that the above scenario cannot be mapped to panel-simple driver.
->> > IMO, panel_simple should provide enable/disable controls both for LCD
->> > and backlight.
->> > something like panel_simple_lcd_enable/panel_simple_led_enable, and
->> > panel_simple_lcd_disable/panel_simple_led_disable.
->>
->> That's not what the simple panel driver can do. If we want this it needs
->> to be solved in a generic way for all panels since they all need to use
->> the drm_panel_*() functions to abstract away the details from drivers
->> that use the panels.
-> Right. So only I have added pre_enable and post_disable callbacks.
-> Using that name won't harm existing panel drivers and still addresses
-> our requirement.
->
->
-> Regards,
-> Ajay
+d726ca2d3316 (ARM: dts: Add vmmc-supply to MMC on arndale-octa board)
+added the vmmc-supply to nodes mmc@12200000 and mmc@12220000 of the
+DT.  However, this makes the kernel fail to boot on the arndale-octa
+spews:
 
+[    5.060000] dwmmc_exynos 12200000.mmc: num-slots property not found, ass=
+uming 1 slot is available
+[    5.065000] platform 12200000.mmc: Driver dwmmc_exynos requests probe de=
+ferral
+[    5.075000] dwmmc_exynos 12220000.mmc: num-slots property not found, ass=
+uming 1 slot is available
+[    5.085000] platform 12220000.mmc: Driver dwmmc_exynos requests probe de=
+ferral
 
-Thierry :
-Are you really ok with the new callback names? like pre_enable and post_disable?
-Adding those new callbacks really won't harm the existing panels anyhow.
+And eventually hangs.  Without the vmmc-supply property in the
+mmc@12220000 node, the kernel boots again.
 
-Daniel, Rob :
-I think I have given sufficient amount of information as to why the concept of
-drm_panel_bridge fails and why we cannot have callbacks for drm_panel
-inside crtc helpers
-or any other generic place.
+Signed-off-by: Javi Merino <javi.merino@arm.com>
+---
 
-Please let me know your final opinion so that I can start reworking on
-this series.
+Hi,
 
-Thanks and regards,
-Ajay Kumar
+Note that I don't know *why* removing the property works, all I know
+is that 3.15-rc2 fails to boot on my Arndale Octa unless I apply this
+patch.
+
+Cheers,
+Javi
+
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/=
+dts/exynos5420-arndale-octa.dts
+index 80a3bf4..722fb6c 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -64,7 +64,6 @@
+ =09=09samsung,dw-mshc-ddr-timing =3D <1 2>;
+ =09=09pinctrl-names =3D "default";
+ =09=09pinctrl-0 =3D <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-=09=09vmmc-supply =3D <&ldo10_reg>;
+=20
+ =09=09slot@0 {
+ =09=09=09reg =3D <0>;
+--=20
+1.7.9.5
