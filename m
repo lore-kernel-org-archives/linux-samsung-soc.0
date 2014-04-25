@@ -1,75 +1,50 @@
 From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv2 1/4] ARM: dts: exynos4: add PMU syscon node
-Date: Fri, 25 Apr 2014 15:59:09 +0900
-Message-ID: <1398409152-14770-2-git-send-email-chanho61.park@samsung.com>
+Subject: [PATCHv2 4/4] ARM: dts: exynos4412-trats2: enable usb nodes
+Date: Fri, 25 Apr 2014 15:59:12 +0900
+Message-ID: <1398409152-14770-5-git-send-email-chanho61.park@samsung.com>
 References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30229 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844AbaDYG72 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:59608 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751651AbaDYG73 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 02:59:28 -0400
+	Fri, 25 Apr 2014 02:59:29 -0400
 In-reply-to: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
+Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patch adds a PMU(Power Management Unit) syscon node. This
-should be required for USB Phy syscon regmap I/F.
+This patch enables exynos_usbphy and hsotg device nodes.
 
+Cc: Tomasz Figa <t.figa@samsung.com>
 Cc: Kamil Debski <k.debski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- Documentation/devicetree/bindings/arm/samsung/pmu.txt | 2 ++
- arch/arm/boot/dts/exynos4.dtsi                        | 5 +++++
- arch/arm/boot/dts/exynos4x12.dtsi                     | 4 ++++
- 3 files changed, 11 insertions(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index f1f1552..e2797d1 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -2,6 +2,8 @@ SAMSUNG Exynos SoC series PMU Registers
- 
- Properties:
-  - compatible : should contain two values. First value must be one from following list:
-+		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
-+		   - "samsung,exynos4x12-pmu" - for Exynos4212/4412 SoC,
- 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
- 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
- 		second value must be always "syscon".
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 2f8bcd0..264066f 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -110,6 +110,11 @@
- 		reg = <0x10010000 0x400>;
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 9583563..a16db6c 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -665,6 +665,16 @@
+ 		};
  	};
  
-+	pmu_system_controller: system-controller@10020000 {
-+		compatible = "samsung,exynos4210-pmu", "syscon";
-+		reg = <0x10020000 0x4000>;
++	exynos-usbphy@125B0000 {
++		status = "okay";
 +	};
 +
- 	dsi_0: dsi@11C80000 {
- 		compatible = "samsung,exynos4210-mipi-dsi";
- 		reg = <0x11C80000 0x10000>;
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index c4a9306..7f767f7 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -119,6 +119,10 @@
- 		interrupts = <0 72 0>;
- 	};
- 
-+	pmu_system_controller: system-controller@10020000 {
-+		compatible = "samsung,exynos4x12-pmu", "syscon";
++	hsotg@12480000 {
++		vusb_d-supply = <&ldo15_reg>;
++		vusb_a-supply = <&ldo12_reg>;
++		status = "okay";
 +	};
 +
- 	g2d@10800000 {
- 		compatible = "samsung,exynos4212-g2d";
- 		reg = <0x10800000 0x1000>;
+ 	thermistor-ap@0 {
+ 		compatible = "ntc,ncp15wb473";
+ 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
 -- 
 1.8.3.2
