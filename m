@@ -1,50 +1,66 @@
 From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv2 4/4] ARM: dts: exynos4412-trats2: enable usb nodes
-Date: Fri, 25 Apr 2014 15:59:12 +0900
-Message-ID: <1398409152-14770-5-git-send-email-chanho61.park@samsung.com>
+Subject: [PATCHv2 2/4] ARM: dts: exynos4: add exynos_usbphy node
+Date: Fri, 25 Apr 2014 15:59:10 +0900
+Message-ID: <1398409152-14770-3-git-send-email-chanho61.park@samsung.com>
 References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59608 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751651AbaDYG73 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:14188 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751664AbaDYG73 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 25 Apr 2014 02:59:29 -0400
 In-reply-to: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
 
-This patch enables exynos_usbphy and hsotg device nodes.
+This patch enables a exynos_usbphy node for exynos4 SoCs.
+A exynos4x12 usb phy node is almost same with 4210's one
+except compatible string and pmu syscon.
 
 Cc: Tomasz Figa <t.figa@samsung.com>
 Cc: Kamil Debski <k.debski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/exynos4.dtsi    | 10 ++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi |  5 +++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 9583563..a16db6c 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -665,6 +665,16 @@
- 		};
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 264066f..5f9b23b 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -278,6 +278,16 @@
+ 		status = "disabled";
  	};
  
++	exynos_usbphy: exynos-usbphy@125B0000 {
++		compatible = "samsung,exynos4210-usb2-phy";
++		reg = <0x125B0000 0x100>;
++		samsung,pmureg-phandle = <&pmu_system_controller>;
++		clocks = <&clock CLK_USB_DEVICE>, <&clock CLK_XUSBXTI>;
++		clock-names = "phy", "ref";
++		status = "disabled";
++		#phy-cells = <1>;
++	};
++
+ 	ehci@12580000 {
+ 		compatible = "samsung,exynos4210-ehci";
+ 		reg = <0x12580000 0x100>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 7f767f7..6d9a21a 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -247,4 +247,9 @@
+ 		clock-names = "biu", "ciu";
+ 		status = "disabled";
+ 	};
++
 +	exynos-usbphy@125B0000 {
-+		status = "okay";
++		compatible = "samsung,exynos4x12-usb2-phy";
++		samsung,sysreg-phandle = <&sys_reg>;
 +	};
-+
-+	hsotg@12480000 {
-+		vusb_d-supply = <&ldo15_reg>;
-+		vusb_a-supply = <&ldo12_reg>;
-+		status = "okay";
-+	};
-+
- 	thermistor-ap@0 {
- 		compatible = "ntc,ncp15wb473";
- 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
+ };
 -- 
 1.8.3.2
