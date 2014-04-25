@@ -1,90 +1,149 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 2/9] drm/panel: add pre_enable and post_disable routines
-Date: Fri, 25 Apr 2014 11:34:48 +0530
-Message-ID: <CAEC9eQNCnp5GzrG82OKf5LOo=VE1S-aKy5OVQTEAG53RX4QDnw@mail.gmail.com>
+Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
+Date: Fri, 25 Apr 2014 11:40:39 +0530
+Message-ID: <CAEC9eQPxsdtKZdFx91gkNbbrQM+Ch9TpguzPe55-YUFM0=zOVw@mail.gmail.com>
 References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1398119958-32005-3-git-send-email-ajaykumar.rs@samsung.com>
-	<20140422081948.GA17275@ulmo>
-	<CAEC9eQO8Kahh2YVO4nCjk2m+TzJNJ_iSkVRLe0NM_yqL9uPNaw@mail.gmail.com>
-	<20140423072915.GV10722@phenom.ffwll.local>
-	<20140423074212.GF31226@ulmo>
-	<CAEC9eQNCvfUbaRL7DnNVF21QjwCX2E2sndHRDvLUE9EL1cVN4Q@mail.gmail.com>
-	<20140424183104.GB27443@ulmo>
+	<1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
+	<CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
+	<CAEC9eQPiUdR_0gKVxmA8KhHD7z2AehRGOUU25e5zQz=PQyDqpA@mail.gmail.com>
+	<CAEC9eQPPoU3wWgzOi6DQP=Lxq8EC-AOpRJS20uTjwZa=vfY_Rw@mail.gmail.com>
+	<CAF6AEGuL3=bvBPGCDW5_db58ie23enY8VwNG7wCeQTn+JM4-Rw@mail.gmail.com>
+	<CAEC9eQPtBCtUtRsHsJ4u_58PX7_UrcVJRkL4XOoM9M1sT1eiCQ@mail.gmail.com>
+	<CAF6AEGspP6itAuioyQSQapvbG95MzFvJABg2UrgvNaX7hempsg@mail.gmail.com>
+	<CAEC9eQOtDtwswxBV_qCmm_23TYY74PuiYt=SS+Z=vPw0ZOFijg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:45365 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751176AbaDYGEt (ORCPT
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:59455 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbaDYGKk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 02:04:49 -0400
-Received: by mail-vc0-f173.google.com with SMTP id il7so4187585vcb.18
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 23:04:48 -0700 (PDT)
-In-Reply-To: <20140424183104.GB27443@ulmo>
+	Fri, 25 Apr 2014 02:10:40 -0400
+Received: by mail-vc0-f177.google.com with SMTP id if17so4168546vcb.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 23:10:39 -0700 (PDT)
+In-Reply-To: <CAEC9eQOtDtwswxBV_qCmm_23TYY74PuiYt=SS+Z=vPw0ZOFijg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Friday, April 25, 2014, Thierry Reding <thierry.reding@gmail.com> wrote:
+On Thu, Apr 24, 2014 at 11:08 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> On Thu, Apr 24, 2014 at 10:55 PM, Rob Clark <robdclark@gmail.com> wrote:
+>> On Thu, Apr 24, 2014 at 12:55 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>>> Rob,
+>>>
+>>> On Thu, Apr 24, 2014 at 9:41 PM, Rob Clark <robdclark@gmail.com> wrote:
+>>>> On Wed, Apr 23, 2014 at 3:02 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>>>>> Sorry for the previous reply,
+>>>>>
+>>>>> Here goes the full explaination:
+>>>>>
+>>>>>> Rob,
+>>>>>>
+>>>>>> On Tue, Apr 22, 2014 at 5:04 PM, Rob Clark <robdclark@gmail.com> wrote:
+>>>>>>> So what about, rather than adding drm_panel support to each bridge
+>>>>>>> individually, we introduce a drm_panel_bridge (with a form of
+>>>>>>> chaining).. ie:
+>>>>>>>
+>>>>>>>   struct drm_panel_bridge {
+>>>>>>>     struct drm_bridge base;
+>>>>>>>     struct drm_panel *panel;
+>>>>>>>     struct drm_bridge *bridge; /* optional */
+>>>>>>>   };
+>>>>>>>
+>>>>>>>   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
+>>>>>>>   {
+>>>>>>>     struct drm_panel_bridge *pb = to_panel_bridge(bridge);
+>>>>>>>     if (pb->bridge)
+>>>>>>>       pb->bridge->funcs->enable(pb->bridge);
+>>>>>>>     pb->panel->funcs->enable(pb->panel);
+>>>>>>>   }
+>>>>>>>
+>>>>> We cannot call them like this from crtc helpers in the order you mentioned,
+>>>>> since each individual bridge chip expects the panel controls at
+>>>>> different places.
+>>>>> I mean,
+>>>>> -- sometimes panel controls needs to be done before bridge
+>>>>> controls(ptn3460: before RST_N and PD_N)
+>>>>
+>>>> well, this is why bridge has pre-enable/enable/disable/post-disable
+>>>> hooks, so you can choose before or after..
+>>> These calls are for a bridge to sync with the encoder calls.
+>>> We might end up defining pre-enable/enable/disable/post-disable for a
+>>> panel to sync
+>>> with the bridge calls! I have explained below.
+>>>
+>>>>> -- sometimes in between the bridge controls (ps8622: one panel control
+>>>>> before SLP_N and one after SLP_N)
+>>>>> -- sometimes panel controls needs to be done after bridge controls.
+>>>>
+>>>> I am not convinced that a generic panel/bridge adapter is not
+>>>> possible.  Maybe we need more fine grained fxn ptr callbacks, although
+>>>> seems like pre+post should give you enough.  It would certainly be
+>>>> easier than having to add panel support in each individual bridge
+>>>> driver (which seems like it will certainly result that only certain
+>>>> combinations of panel+bridge actually work as intended)
+>>> Ok. Consider this case:
+>>> Currently, we have the sequence as "bridge->pre_enable,
+>>> encoder_enable, bridge->enable"
+>>> And, the bridge should obviously be enabled in bridge->pre_enable.
+>>> Now, where do you choose to call panel->pre_enable?
+>>> -- as the first step of bridge->pre_enable, before we pull up/down bridge GPIOs.
+>>> -- at the last step of bridge->pre_enable, after we pull up/down the
+>>> bridge GPIOs.
+>>>
+>>> Ideally, PTN3460 expects it to be the second case, and PS8625 expects
+>>> it to be the first case.
+>>> So, we will end up adding pre_pre_enable, post_pre_enable to
+>>> accomodate such scenarios.
+>>
+>> ok, well I think we can deal with this with a slight modification of
+>> my original proposal.  Split drm_panel_bridge into
+>> drm_composite_bridge and drm_panel_bridge:
+>>
+>>   struct drm_composite_bridge {
+>>     struct drm_bridge base;
+>>     struct drm_bridge *b1, *b2;
+>>   }
+>>
+>>   static void drm_composite_bridge_enable(struct drm_bridge *bridge)
+>>   {
+>>     struct drm_composite_bridge *cbridge = to_composite_bridge(bridge);
+>>     cbridge->b1->funcs->enable(cbridge->b1);
+>>     cbridge->b2->funcs->enable(cbridge->b2);
+>>   }
+>>
+>>   .. and so on ..
+>>
+>>   struct drm_panel_bridge {
+>>     struct drm_bridge base;
+>>     struct drm_panel *panel;
+>>   }
+>>
+>>   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
+>>   {
+>>     struct drm_panel_bridge *pbridge = to_panel_bridge(bridge);
+>>     pbridge->panel->funcs->enable(pbridge->panel);
+>>   }
+>>
+>>   .. and so on..
+>>
+>>
+>> then in initialization, order can be managed like:
+>>
+>>   if (panel_first)
+>>     bridge = drm_composite_bridge_init(panel_bridge, actual_bridge)
+>>   else
+>>     bridge = drm_composite_bridge_init(actual_bridge, panel_bridge);
+>>
+>>   possibly parametrize drm_panel_bridge if we need to map
+>> panel->enable() to bridge->pre_enable() vs bridge->enable(), etc..
 >
-> On Thu, Apr 24, 2014 at 12:56:02AM +0530, Ajay kumar wrote:
-> > Thierry,
-> >
-> > On Wed, Apr 23, 2014 at 1:12 PM, Thierry Reding
-> > <thierry.reding@gmail.com> wrote:
-> > > On Wed, Apr 23, 2014 at 09:29:15AM +0200, Daniel Vetter wrote:
-> [...]
-> > >> Imo this makes sense, especially if we go through with the idea talked
-> > >> about yesterday of creating a drm_bridge to wrap-up a drm_panel with
-> > >> sufficient isolation between all components.
-> > >
-> > > I'm not at all comfortable with these. The names are totally confusing.
-> > > Next somebody will need to do something after the panel has been enabled
-> > > and we'll have to introduce .post_enable() and .pre_disable() functions.
-> > > And worse, what if somebody needs something to be done between
-> > > .pre_enable() and .enable()? .post_pre_enable()? Where does it end?
-> > >
-> > > According to the above description the only reason why we need this is
-> > > to avoid visible glitches when the panel is already on, but the video
-> > > stream hasn't started yet. If that's the only reason why we need this,
-> > > then perhaps adding a way for a panel to expose the associated backlight
-> > > would be better?
-> > Actually, we need not expose the entire backlight device.
-> > AFAIK, the glitch is caused when you enable BL_EN before
-> > there is valid video data. So, one way to mask off the glitch is to
-> > follow this sequence:
-> > -- power up the panel.
-> > -- start video data, (start PWM here or)
-> > -- (start PWM here), enable backlight
->
-> That's very difficult to get right, isn't it? Even if you have fine-
-> grained control over what to enable you still need a way to determine
-> _when_ it's safe to enable the backlight. Typically I guess that would
-> be the duration of one frame (or perhaps 2, depending on when the panel
-> syncs to the video signal).
-We need not "determine", its already present in LVDS datasheet.
-The LVDS datasheet says at least 200ms delay is needed from "Valid
-data" to "BL on".
-
-> Perhaps it could even by sync'ed to the VBLANK?
-No. vblanks are related to crtc. And the bridge/panel driver should be
-independent of vblank.
-
-> > The problem is that the above scenario cannot be mapped to panel-simple driver.
-> > IMO, panel_simple should provide enable/disable controls both for LCD
-> > and backlight.
-> > something like panel_simple_lcd_enable/panel_simple_led_enable, and
-> > panel_simple_lcd_disable/panel_simple_led_disable.
->
-> That's not what the simple panel driver can do. If we want this it needs
-> to be solved in a generic way for all panels since they all need to use
-> the drm_panel_*() functions to abstract away the details from drivers
-> that use the panels.
-Right. So only I have added pre_enable and post_disable callbacks.
-Using that name won't harm existing panel drivers and still addresses
-our requirement.
-
-
-Regards,
-Ajay
+> Well, this really does seems complex to me.
+> Don't you think just having a drm_panel inside drm_bridge structure is
+> sufficient?!
+> And, make a call for pre_panel_enable and post_panel_enable around
+> bridge->pre_enable..and so on.?
+Adding more comments:
+The beauty of drm_panel is in the flexibility which it provides.
+We can call panel_enable/disable at the right point. Even the
