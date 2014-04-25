@@ -1,99 +1,83 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v5] arm: exynos: generalize power register address calculation
-Date: Fri, 25 Apr 2014 11:02:43 +0530
-Message-ID: <CANuQgHHDCP_ppSnh2KodG-Aw69kZkEB9nuTaq-sqN2z88oypDg@mail.gmail.com>
-References: <1398068989-9905-1-git-send-email-chander.kashyap@linaro.org>
-	<1398169501-7251-1-git-send-email-chander.kashyap@linaro.org>
-	<CANuQgHHqtf_AdnhYdRbD8ReSXtbsszZ=FZtTRp13xhjgBjdD3w@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 3/7] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+Date: Fri, 25 Apr 2014 14:43:17 +0900
+Message-ID: <5359F5F5.7030109@samsung.com>
+References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
+ <1398388572-30239-4-git-send-email-cw00.choi@samsung.com>
+ <5359E4E6.90102@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:62310 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888AbaDYFcn (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:17792 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750888AbaDYFnU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 01:32:43 -0400
-Received: by mail-ob0-f180.google.com with SMTP id wm4so3672990obc.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 22:32:43 -0700 (PDT)
-In-Reply-To: <CANuQgHHqtf_AdnhYdRbD8ReSXtbsszZ=FZtTRp13xhjgBjdD3w@mail.gmail.com>
+	Fri, 25 Apr 2014 01:43:20 -0400
+In-reply-to: <5359E4E6.90102@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On 24 April 2014 13:18, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> On 22 April 2014 17:55, Chander Kashyap <chander.kashyap@linaro.org> wrote:
->> Currently status/configuration power register values are hard-coded for cpu1.
+Hi,
+
+On 04/25/2014 01:30 PM, Tushar Behera wrote:
+> On 04/25/2014 06:46 AM, Chanwoo Choi wrote:
+>> This patch fix the offset of CPU boot address and don't need to send smc call
+>> of SMC_CMD_CPU1BOOT command for secondary CPU boot because Exynos3250 removes
+>> WFE in secure mode.
 >>
->> Make it generic so that it is useful for SoC's with more than two cpus.
->>
->> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> ---
->> changes in v5:
->>         1. Fix typo: enynos_pmu_cpunr -> exynos_pmu_cpunr
->> changes in v4:
->>         1: Dropped changes in platsmp.c and hotplug.c as those are taken care by
->>            Tomasz Patches.
->>         2. Converted ENYNOS_PMU_CPUNR macro to static inline function
->> changes in v3:
->>         1. Move cpunr calculation to a macro
->>         2. Changed printk format specifier from unsigned hex to unsigned decimal
->> Changes in v2:
->>         1. Used existing macros for clusterid and cpuid calculation
+>>  arch/arm/mach-exynos/firmware.c | 10 ++++++++--
+>>  1 file changed, 8 insertions(+), 2 deletions(-)
 >>
->>  arch/arm/mach-exynos/regs-pmu.h |   18 ++++++++++++++++--
->>  1 file changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
->> index 4f6a256..f39e78c 100644
->> --- a/arch/arm/mach-exynos/regs-pmu.h
->> +++ b/arch/arm/mach-exynos/regs-pmu.h
->> @@ -105,8 +105,13 @@
->>  #define S5P_GPS_LOWPWR                         S5P_PMUREG(0x139C)
->>  #define S5P_GPS_ALIVE_LOWPWR                   S5P_PMUREG(0x13A0)
->>
->> -#define S5P_ARM_CORE1_CONFIGURATION            S5P_PMUREG(0x2080)
->> -#define S5P_ARM_CORE1_STATUS                   S5P_PMUREG(0x2084)
->> +#define S5P_ARM_CORE0_CONFIGURATION            S5P_PMUREG(0x2000)
->> +#define S5P_ARM_CORE0_STATUS                   S5P_PMUREG(0x2004)
->> +
->> +#define S5P_ARM_CORE_CONFIGURATION(_cpunr) \
->> +               (S5P_ARM_CORE0_CONFIGURATION + 0x80 * (_cpunr))
->> +#define S5P_ARM_CORE_STATUS(_cpunr) \
->> +               (S5P_ARM_CORE0_STATUS + 0x80 * (_cpunr))
->>
->>  #define S5P_PAD_RET_MAUDIO_OPTION              S5P_PMUREG(0x3028)
->>  #define S5P_PAD_RET_GPIO_OPTION                        S5P_PMUREG(0x3108)
->> @@ -313,4 +318,13 @@
->>
->>  #define EXYNOS5_OPTION_USE_RETENTION                           (1 << 4)
->>
->> +#include <asm/cputype.h>
->> +#define MAX_CPUS_IN_CLUSTER    4
->> +
->> +static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
->> +{
->> +       return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
->> +                + MPIDR_AFFINITY_LEVEL(mpidr, 0));
->> +}
->> +
->>  #endif /* __ASM_ARCH_REGS_PMU_H */
->> --
->> 1.7.9.5
->>
->
-> Any other comment on this. If not can this be merged?
+>> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+>> index aa01c42..386d01d 100644
+>> --- a/arch/arm/mach-exynos/firmware.c
+>> +++ b/arch/arm/mach-exynos/firmware.c
+>> @@ -31,11 +31,17 @@ static int exynos_do_idle(void)
+>>  static int exynos_cpu_boot(int cpu)
+>>  {
+>>  	/*
+>> +	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
+>> +	 * because Exynos3250 removes WFE in secure mode.
+>> +	 */
+>> +	if (soc_is_exynos3250())
+>> +		return 0;
+>> +	/*
+>>  	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+>>  	 * But, Exynos4212 has only one secondary CPU so second parameter
+>>  	 * isn't used for informing secure firmware about CPU id.
+>>  	 */
+>> -	if (soc_is_exynos4212())
+>> +	else if (soc_is_exynos4212())
+> 
+> This changes is not required.
 
-Please reject this patch as some of changes also done by Tomasz in his patches.
->
->
-> --
-> with warm regards,
-> Chander Kashyap
+Do you mean it as following?
 
+	if (soc_is_exynos3250())
+		return 0
 
+	if (soc_is_exynos4212())
+		cpu = 0;
 
--- 
-with warm regards,
-Chander Kashyap
+> 
+>>  		cpu = 0;
+>>  
+>>  	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
+>> @@ -46,7 +52,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>>  {
+>>  	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
+>>  
+>> -	if (!soc_is_exynos4212())
+>> +	if (!soc_is_exynos4212() && !soc_is_exynos3250())
+>>  		boot_reg += 4*cpu;
+>>  
+>>  	__raw_writel(boot_addr, boot_reg);
+>>
+> 
+> 
