@@ -1,159 +1,76 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
-Date: Fri, 25 Apr 2014 11:47:25 +0530
-Message-ID: <CAEC9eQPvYQqU2Xem2sCYW0tM9+d68+4WLfC47G79NUXE4kzpMg@mail.gmail.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
-	<CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
-	<CAEC9eQPiUdR_0gKVxmA8KhHD7z2AehRGOUU25e5zQz=PQyDqpA@mail.gmail.com>
-	<CAEC9eQPPoU3wWgzOi6DQP=Lxq8EC-AOpRJS20uTjwZa=vfY_Rw@mail.gmail.com>
-	<CAF6AEGuL3=bvBPGCDW5_db58ie23enY8VwNG7wCeQTn+JM4-Rw@mail.gmail.com>
-	<CAEC9eQPtBCtUtRsHsJ4u_58PX7_UrcVJRkL4XOoM9M1sT1eiCQ@mail.gmail.com>
-	<CAF6AEGspP6itAuioyQSQapvbG95MzFvJABg2UrgvNaX7hempsg@mail.gmail.com>
-	<CAEC9eQOtDtwswxBV_qCmm_23TYY74PuiYt=SS+Z=vPw0ZOFijg@mail.gmail.com>
-	<CAEC9eQPxsdtKZdFx91gkNbbrQM+Ch9TpguzPe55-YUFM0=zOVw@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH v5 1/9] dt: exynos5420: Enable support for USB 3.0 PHY
+ controller
+Date: Fri, 25 Apr 2014 11:57:05 +0530
+Message-ID: <535A0039.3040307@linaro.org>
+References: <1398263451-18023-1-git-send-email-gautam.vivek@samsung.com> <1398263451-18023-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:33137 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750840AbaDYGR0 (ORCPT
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:34808 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751196AbaDYG1Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 02:17:26 -0400
-Received: by mail-vc0-f178.google.com with SMTP id hu19so4146156vcb.23
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 23:17:25 -0700 (PDT)
-In-Reply-To: <CAEC9eQPxsdtKZdFx91gkNbbrQM+Ch9TpguzPe55-YUFM0=zOVw@mail.gmail.com>
+	Fri, 25 Apr 2014 02:27:16 -0400
+Received: by mail-pb0-f49.google.com with SMTP id rr13so2826642pbb.36
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 23:27:15 -0700 (PDT)
+In-Reply-To: <1398263451-18023-2-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Clark <robdclark@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, robh+dt@kernel.org, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 
-Sorry for the previous reply. Here goes the full explaination.
+On 04/23/2014 08:00 PM, Vivek Gautam wrote:
+> Add device tree nodes for USB 3.0 PHY present alongwith
+> USB 3.0 controller Exynos 5420 SoC. This phy driver is
+> based on generic phy framework.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi |   20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index c3a9a66..f69745f 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -732,4 +732,24 @@
+>  		clock-names = "secss";
+>  		samsung,power-domain = <&g2d_pd>;
+>  	};
+> +
+> +	usbdrd_phy0: phy@12100000 {
+> +		compatible = "samsung,exynos5420-usbdrd-phy";
+> +		reg = <0x12100000 0x100>;
+> +		clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
+> +		clock-names = "phy", "ref";
+> +		samsung,pmu-syscon = <&pmu_system_controller>;
 
-On Fri, Apr 25, 2014 at 11:40 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
-> On Thu, Apr 24, 2014 at 11:08 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
->> On Thu, Apr 24, 2014 at 10:55 PM, Rob Clark <robdclark@gmail.com> wrote:
->>> On Thu, Apr 24, 2014 at 12:55 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
->>>> Rob,
->>>>
->>>> On Thu, Apr 24, 2014 at 9:41 PM, Rob Clark <robdclark@gmail.com> wrote:
->>>>> On Wed, Apr 23, 2014 at 3:02 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
->>>>>> Sorry for the previous reply,
->>>>>>
->>>>>> Here goes the full explaination:
->>>>>>
->>>>>>> Rob,
->>>>>>>
->>>>>>> On Tue, Apr 22, 2014 at 5:04 PM, Rob Clark <robdclark@gmail.com> wrote:
->>>>>>>> So what about, rather than adding drm_panel support to each bridge
->>>>>>>> individually, we introduce a drm_panel_bridge (with a form of
->>>>>>>> chaining).. ie:
->>>>>>>>
->>>>>>>>   struct drm_panel_bridge {
->>>>>>>>     struct drm_bridge base;
->>>>>>>>     struct drm_panel *panel;
->>>>>>>>     struct drm_bridge *bridge; /* optional */
->>>>>>>>   };
->>>>>>>>
->>>>>>>>   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
->>>>>>>>   {
->>>>>>>>     struct drm_panel_bridge *pb = to_panel_bridge(bridge);
->>>>>>>>     if (pb->bridge)
->>>>>>>>       pb->bridge->funcs->enable(pb->bridge);
->>>>>>>>     pb->panel->funcs->enable(pb->panel);
->>>>>>>>   }
->>>>>>>>
->>>>>> We cannot call them like this from crtc helpers in the order you mentioned,
->>>>>> since each individual bridge chip expects the panel controls at
->>>>>> different places.
->>>>>> I mean,
->>>>>> -- sometimes panel controls needs to be done before bridge
->>>>>> controls(ptn3460: before RST_N and PD_N)
->>>>>
->>>>> well, this is why bridge has pre-enable/enable/disable/post-disable
->>>>> hooks, so you can choose before or after..
->>>> These calls are for a bridge to sync with the encoder calls.
->>>> We might end up defining pre-enable/enable/disable/post-disable for a
->>>> panel to sync
->>>> with the bridge calls! I have explained below.
->>>>
->>>>>> -- sometimes in between the bridge controls (ps8622: one panel control
->>>>>> before SLP_N and one after SLP_N)
->>>>>> -- sometimes panel controls needs to be done after bridge controls.
->>>>>
->>>>> I am not convinced that a generic panel/bridge adapter is not
->>>>> possible.  Maybe we need more fine grained fxn ptr callbacks, although
->>>>> seems like pre+post should give you enough.  It would certainly be
->>>>> easier than having to add panel support in each individual bridge
->>>>> driver (which seems like it will certainly result that only certain
->>>>> combinations of panel+bridge actually work as intended)
->>>> Ok. Consider this case:
->>>> Currently, we have the sequence as "bridge->pre_enable,
->>>> encoder_enable, bridge->enable"
->>>> And, the bridge should obviously be enabled in bridge->pre_enable.
->>>> Now, where do you choose to call panel->pre_enable?
->>>> -- as the first step of bridge->pre_enable, before we pull up/down bridge GPIOs.
->>>> -- at the last step of bridge->pre_enable, after we pull up/down the
->>>> bridge GPIOs.
->>>>
->>>> Ideally, PTN3460 expects it to be the second case, and PS8625 expects
->>>> it to be the first case.
->>>> So, we will end up adding pre_pre_enable, post_pre_enable to
->>>> accomodate such scenarios.
->>>
->>> ok, well I think we can deal with this with a slight modification of
->>> my original proposal.  Split drm_panel_bridge into
->>> drm_composite_bridge and drm_panel_bridge:
->>>
->>>   struct drm_composite_bridge {
->>>     struct drm_bridge base;
->>>     struct drm_bridge *b1, *b2;
->>>   }
->>>
->>>   static void drm_composite_bridge_enable(struct drm_bridge *bridge)
->>>   {
->>>     struct drm_composite_bridge *cbridge = to_composite_bridge(bridge);
->>>     cbridge->b1->funcs->enable(cbridge->b1);
->>>     cbridge->b2->funcs->enable(cbridge->b2);
->>>   }
->>>
->>>   .. and so on ..
->>>
->>>   struct drm_panel_bridge {
->>>     struct drm_bridge base;
->>>     struct drm_panel *panel;
->>>   }
->>>
->>>   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
->>>   {
->>>     struct drm_panel_bridge *pbridge = to_panel_bridge(bridge);
->>>     pbridge->panel->funcs->enable(pbridge->panel);
->>>   }
->>>
->>>   .. and so on..
->>>
->>>
->>> then in initialization, order can be managed like:
->>>
->>>   if (panel_first)
->>>     bridge = drm_composite_bridge_init(panel_bridge, actual_bridge)
->>>   else
->>>     bridge = drm_composite_bridge_init(actual_bridge, panel_bridge);
->>>
->>>   possibly parametrize drm_panel_bridge if we need to map
->>> panel->enable() to bridge->pre_enable() vs bridge->enable(), etc..
->>
->> Well, this really does seems complex to me.
->> Don't you think just having a drm_panel inside drm_bridge structure is
->> sufficient?!
->> And, make a call for pre_panel_enable and post_panel_enable around
->> bridge->pre_enable..and so on.?
-Adding more comments:
-The beauty of drm_panel is in the flexibility which it provides.
-We can call panel_enable/disable at the right point. Even the bridge chips
-expect the same. So, I am not ok with combining the bridge and panel and
-calling the fxn pointers from crtc_helpers.
-So, either we leave it the way it is in this patch (call drm_panel
-functions at right points) or
-we don't use drm_panel to control the panel sequence and instead use few DT
-properties and regulators, inside the bridge chip driver.
+Should the property name be samsung,syscon-phandle as used elsewhere?
+
+samsung,syscon-phandle = <&pmu_system_controller>;
+
+> +		samsung,pmu-offset = <0x704>;
+> +		#phy-cells = <1>;
+> +	};
+> +
+> +	usbdrd_phy1: phy@12500000 {
+> +		compatible = "samsung,exynos5420-usbdrd-phy";
+> +		reg = <0x12500000 0x100>;
+> +		clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBPHY301>;
+> +		clock-names = "phy", "ref";
+> +		samsung,pmu-syscon = <&pmu_system_controller>;
+
+ditto
+
+> +		samsung,pmu-offset = <0x708>;
+> +		#phy-cells = <1>;
+> +	};
+>  };
+> 
+
+
+-- 
+Tushar Behera
