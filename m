@@ -1,19 +1,18 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 03/10] ARM: EXYNOS: Move SYSREG definition into sys-reg
- specific file.
-Date: Fri, 25 Apr 2014 23:08:15 +0200
-Message-ID: <535ACEBF.3090201@gmail.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-4-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v2 04/10] ARM: EXYNOS: Remove file path from comment section
+Date: Fri, 25 Apr 2014 23:14:01 +0200
+Message-ID: <535AD019.8050207@gmail.com>
+References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-5-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:63563 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751364AbaDYVIS (ORCPT
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:52592 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750734AbaDYVOE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 17:08:18 -0400
-In-Reply-To: <1398429166-5539-4-git-send-email-pankaj.dubey@samsung.com>
+	Fri, 25 Apr 2014 17:14:04 -0400
+In-Reply-To: <1398429166-5539-5-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -22,22 +21,17 @@ Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@
 Hi Pankaj,
 
 On 25.04.2014 14:32, Pankaj Dubey wrote:
-> From: Young-Gun Jang <yg1004.jang@samsung.com>
+> Many files under "arm/mach-exynos" are having file path in file
+> comment section which is invalid now.
+> So for better code maintainability let's remove them.
 >
-> While making PMU implementation to be device tree based, there are
-> few register offsets related with SYSREG present in regs-pmu.h, so
-> let's make a new header file "regs-sys.h" to keep all such SYSREG
-> related register offsets and remove them from "regs-pmu.h"
->
-> Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->   arch/arm/mach-exynos/exynos.c   |    1 +
->   arch/arm/mach-exynos/pm.c       |    1 +
->   arch/arm/mach-exynos/regs-pmu.h |    3 ---
->   arch/arm/mach-exynos/regs-sys.h |   22 ++++++++++++++++++++++
->   4 files changed, 24 insertions(+), 3 deletions(-)
->   create mode 100644 arch/arm/mach-exynos/regs-sys.h
+>   arch/arm/mach-exynos/headsmp.S             |    2 --
+>   arch/arm/mach-exynos/hotplug.c             |    3 +--
+>   arch/arm/mach-exynos/include/mach/memory.h |    3 +--
+>   arch/arm/mach-exynos/platsmp.c             |    3 +--
+>   4 files changed, 3 insertions(+), 8 deletions(-)
 
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
