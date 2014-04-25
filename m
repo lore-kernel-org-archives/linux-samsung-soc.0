@@ -1,8 +1,8 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 10/10] ARM: EXYNOS: Add device tree based initialization
- support for PMU.
-Date: Fri, 25 Apr 2014 21:32:46 +0900
-Message-ID: <1398429166-5539-11-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v2 03/10] ARM: EXYNOS: Move SYSREG definition into sys-reg
+ specific file.
+Date: Fri, 25 Apr 2014 21:32:39 +0900
+Message-ID: <1398429166-5539-4-git-send-email-pankaj.dubey@samsung.com>
 References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
  <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -12,264 +12,95 @@ To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-k
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, s.nawrocki@samsung.com, b.zolnierkie@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds device tree based initialization for PMU and modifies
-PMU initialization implementation in following way:
+From: Young-Gun Jang <yg1004.jang@samsung.com>
 
-1: Let's initialize PMU based on device tree compatibility string.
-2: Obtain PMU regmap handle using "syscon_early_regmap_lookup_by_phandle"
-so that we can reduce dependency over machine header files.
-3: Separate each SoC's PMU initialization function and bind this initialization
-function with PMU compatibility string.
-4 : It also removes uses of soc_is_exynosXXXX() thus making PMU implementation
-independent of "plat/cpu.h".
+While making PMU implementation to be device tree based, there are
+few register offsets related with SYSREG present in regs-pmu.h, so
+let's make a new header file "regs-sys.h" to keep all such SYSREG
+related register offsets and remove them from "regs-pmu.h"
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/pmu.c |  182 +++++++++++++++++++++++++++++++++-----------
- 1 file changed, 138 insertions(+), 44 deletions(-)
+ arch/arm/mach-exynos/exynos.c   |    1 +
+ arch/arm/mach-exynos/pm.c       |    1 +
+ arch/arm/mach-exynos/regs-pmu.h |    3 ---
+ arch/arm/mach-exynos/regs-sys.h |   22 ++++++++++++++++++++++
+ 4 files changed, 24 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/regs-sys.h
 
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 67116a5..abcf753 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -9,17 +9,31 @@
-  * published by the Free Software Foundation.
-  */
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 2388ee4..d6f405f 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -31,6 +31,7 @@
+ #include "common.h"
+ #include "mfc.h"
+ #include "regs-pmu.h"
++#include "regs-sys.h"
  
--#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/regmap.h>
--
--#include <plat/cpu.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/syscon.h>
+ #define L2_AUX_VAL 0x7C470001
+ #define L2_AUX_MASK 0xC200ffff
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 15af0ce..723c988 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -35,6 +35,7 @@
  
  #include "common.h"
  #include "regs-pmu.h"
++#include "regs-sys.h"
  
-+enum exynos_pmu_id {
-+	PMU_EXYNOS4210,
-+	PMU_EXYNOS4X12,
-+	PMU_EXYNOS4412,
-+	PMU_EXYNOS5250,
-+};
-+
-+struct exynos_pmu_data {
-+	enum exynos_pmu_id	pmu_id;
-+	struct regmap		*pmu_regmap;
-+};
-+
-+struct exynos_pmu_data		*pmu_data;
- static const struct exynos_pmu_conf *exynos_pmu_config;
--static struct regmap *pmu_regmap;
-+typedef void (*exynos_pmu_init_t)(void);
+ /**
+  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 4f6a256..4ee706d 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -15,7 +15,6 @@
+ #include <mach/map.h>
  
- static const struct exynos_pmu_conf exynos4210_pmu_config[] = {
- 	/* { .reg = address, .val = { AFTR, LPA, SLEEP } */
-@@ -348,28 +362,31 @@ static void exynos5_init_pmu(void)
- 	 * Enable both SC_FEEDBACK and SC_COUNTER
- 	 */
- 	for (i = 0 ; i < ARRAY_SIZE(exynos5_list_both_cnt_feed) ; i++) {
--		regmap_read(pmu_regmap, exynos5_list_both_cnt_feed[i], &tmp);
-+		regmap_read(pmu_data->pmu_regmap,
-+				exynos5_list_both_cnt_feed[i], &tmp);
- 		tmp |= (EXYNOS5_USE_SC_FEEDBACK |
- 			EXYNOS5_USE_SC_COUNTER);
--		regmap_write(pmu_regmap, exynos5_list_both_cnt_feed[i], tmp);
-+		regmap_write(pmu_data->pmu_regmap,
-+				exynos5_list_both_cnt_feed[i], tmp);
- 	}
+ #define S5P_PMUREG(x)				(S5P_VA_PMU + (x))
+-#define S5P_SYSREG(x)				(S3C_VA_SYS + (x))
  
- 	/*
- 	 * SKIP_DEACTIVATE_ACEACP_IN_PWDN_BITFIELD Enable
- 	 */
--	regmap_read(pmu_regmap, EXYNOS5_ARM_COMMON_OPTION, &tmp);
-+	regmap_read(pmu_data->pmu_regmap, EXYNOS5_ARM_COMMON_OPTION, &tmp);
- 	tmp |= EXYNOS5_SKIP_DEACTIVATE_ACEACP_IN_PWDN;
--	regmap_write(pmu_regmap, EXYNOS5_ARM_COMMON_OPTION, tmp);
-+	regmap_write(pmu_data->pmu_regmap, EXYNOS5_ARM_COMMON_OPTION, tmp);
+ #define S5P_CENTRAL_SEQ_CONFIGURATION		S5P_PMUREG(0x0200)
  
- 	/*
- 	 * Disable WFI/WFE on XXX_OPTION
- 	 */
- 	for (i = 0 ; i < ARRAY_SIZE(exynos5_list_diable_wfi_wfe) ; i++) {
--		tmp = regmap_read(pmu_regmap, exynos5_list_diable_wfi_wfe[i],
--				&tmp);
-+		tmp = regmap_read(pmu_data->pmu_regmap,
-+				exynos5_list_diable_wfi_wfe[i], &tmp);
- 		tmp &= ~(EXYNOS5_OPTION_USE_STANDBYWFE |
- 			 EXYNOS5_OPTION_USE_STANDBYWFI);
--		regmap_write(pmu_regmap, exynos5_list_diable_wfi_wfe[i], tmp);
-+		regmap_write(pmu_data->pmu_regmap,
-+				exynos5_list_diable_wfi_wfe[i], tmp);
- 	}
- }
+@@ -180,8 +179,6 @@
  
-@@ -377,52 +394,129 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
- {
- 	unsigned int i;
+ /* For EXYNOS5 */
  
--	if (soc_is_exynos5250())
-+	if (pmu_data->pmu_id == PMU_EXYNOS5250)
- 		exynos5_init_pmu();
- 
- 	for (i = 0; (exynos_pmu_config[i].offset != PMU_TABLE_END) ; i++)
--		regmap_write(pmu_regmap, exynos_pmu_config[i].offset,
-+		regmap_write(pmu_data->pmu_regmap, exynos_pmu_config[i].offset,
- 				exynos_pmu_config[i].val[mode]);
- 
--	if (soc_is_exynos4412()) {
-+	if (pmu_data->pmu_id == PMU_EXYNOS4412) {
- 		for (i = 0; exynos4412_pmu_config[i].offset != PMU_TABLE_END; i++)
--			regmap_write(pmu_regmap, exynos4412_pmu_config[i].offset,
-+			regmap_write(pmu_data->pmu_regmap,
-+					exynos4412_pmu_config[i].offset,
- 					exynos4412_pmu_config[i].val[mode]);
- 	}
- }
- 
--static int __init exynos_pmu_init(void)
-+static void exynos4210_pmu_init(void)
- {
--	unsigned int value;
+-#define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
 -
- 	exynos_pmu_config = exynos4210_pmu_config;
--	pmu_regmap = get_exynos_pmuregmap();
--
--	if (soc_is_exynos4210()) {
--		exynos_pmu_config = exynos4210_pmu_config;
--		pr_info("EXYNOS4210 PMU Initialize\n");
--	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
--		exynos_pmu_config = exynos4x12_pmu_config;
--		pr_info("EXYNOS4x12 PMU Initialize\n");
--	} else if (soc_is_exynos5250()) {
--		/*
--		 * When SYS_WDTRESET is set, watchdog timer reset request
--		 * is ignored by power management unit.
--		 */
--		regmap_read(pmu_regmap, EXYNOS5_AUTO_WDTRESET_DISABLE, &value);
--		value &= ~EXYNOS5_SYS_WDTRESET;
--		regmap_write(pmu_regmap, EXYNOS5_AUTO_WDTRESET_DISABLE, value);
--
--		regmap_read(pmu_regmap, EXYNOS5_MASK_WDTRESET_REQUEST, &value);
--		value &= ~EXYNOS5_SYS_WDTRESET;
--		regmap_write(pmu_regmap, EXYNOS5_MASK_WDTRESET_REQUEST, value);
--
--		exynos_pmu_config = exynos5250_pmu_config;
--		pr_info("EXYNOS5250 PMU Initialize\n");
--	} else {
--		pr_info("EXYNOS: PMU not supported\n");
-+	pmu_data->pmu_id = PMU_EXYNOS4210;
-+
-+	pr_info("EXYNOS4210 PMU Initialize\n");
-+}
-+
-+static void exynos4x12_pmu_init(void)
-+{
-+	exynos_pmu_config = exynos4x12_pmu_config;
-+	pmu_data->pmu_id = PMU_EXYNOS4X12;
-+
-+	pr_info("EXYNOS4x12 PMU Initialize\n");
-+}
-+
-+static void exynos4412_pmu_init(void)
-+{
-+	exynos_pmu_config = exynos4x12_pmu_config;
-+	pmu_data->pmu_id = PMU_EXYNOS4412;
-+
-+	pr_info("EXYNOS4412 PMU Initialize\n");
-+}
-+
-+static void exynos5250_pmu_init(void)
-+{
-+	unsigned int tmp;
-+
-+	/*
-+	 * When SYS_WDTRESET is set, watchdog timer reset request
-+	 * is ignored by power management unit.
-+	 */
-+	regmap_read(pmu_data->pmu_regmap, EXYNOS5_AUTO_WDTRESET_DISABLE, &tmp);
-+	tmp &= ~EXYNOS5_SYS_WDTRESET;
-+	regmap_write(pmu_data->pmu_regmap, EXYNOS5_AUTO_WDTRESET_DISABLE, tmp);
-+
-+	regmap_read(pmu_data->pmu_regmap, EXYNOS5_MASK_WDTRESET_REQUEST, &tmp);
-+	tmp &= ~EXYNOS5_SYS_WDTRESET;
-+	regmap_write(pmu_data->pmu_regmap, EXYNOS5_MASK_WDTRESET_REQUEST, tmp);
-+
-+	exynos_pmu_config = exynos5250_pmu_config;
-+	pmu_data->pmu_id = PMU_EXYNOS5250;
-+
-+	pr_info("EXYNOS5250 PMU Initialize\n");
-+}
-+
+ #define EXYNOS5_AUTO_WDTRESET_DISABLE				S5P_PMUREG(0x0408)
+ #define EXYNOS5_MASK_WDTRESET_REQUEST				S5P_PMUREG(0x040C)
+ 
+diff --git a/arch/arm/mach-exynos/regs-sys.h b/arch/arm/mach-exynos/regs-sys.h
+new file mode 100644
+index 0000000..84332b0
+--- /dev/null
++++ b/arch/arm/mach-exynos/regs-sys.h
+@@ -0,0 +1,22 @@
 +/*
-+ * PMU platform driver and devicetree bindings.
-+ */
-+static struct of_device_id exynos_pmu_of_device_ids[] = {
-+	{
-+		.compatible = "samsung,exynos4210-pmu",
-+		.data = (void *)exynos4210_pmu_init
-+	},
-+	{
-+		.compatible = "samsung,exynos4212-pmu",
-+		.data = (void *)exynos4x12_pmu_init
-+	},
-+	{
-+		.compatible = "samsung,exynos4412-pmu",
-+		.data = (void *)exynos4412_pmu_init
-+	},
-+	{
-+		.compatible = "samsung,exynos5250-pmu",
-+		.data = (void *)exynos5250_pmu_init
-+	},
-+	{},
-+};
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *             http://www.samsung.com
++ *
++ * EXYNOS - system register definition
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+static int exynos_pmu_probe(struct device_node *np)
-+{
-+	const struct of_device_id *match;
-+	exynos_pmu_init_t exynos_pmu_init;
++#ifndef __ASM_ARCH_REGS_SYS_H
++#define __ASM_ARCH_REGS_SYS_H __FILE__
 +
-+	pmu_data = kzalloc(sizeof(struct exynos_pmu_data), GFP_KERNEL);
-+	if (!pmu_data) {
-+		pr_err("exynos_pmu driver probe failed\n");
-+		return -ENOMEM;
- 	}
- 
-+	match = of_match_node(exynos_pmu_of_device_ids, np);
-+	if (!match) {
-+		pr_err("fail to get matching of_match struct\n");
-+		return -EINVAL;
-+	}
++#include <mach/map.h>
 +
-+	exynos_pmu_init = match->data;
++#define S5P_SYSREG(x)                          (S3C_VA_SYS + (x))
 +
-+	pmu_data->pmu_regmap = syscon_early_regmap_lookup_by_phandle(np,
-+			"samsung,syscon-phandle");
-+	if (IS_ERR(pmu_data->pmu_regmap)) {
-+		pr_err("failed to find exynos_pmu_regmap\n");
-+		return PTR_ERR(pmu_data->pmu_regmap);
-+	}
++/* For EXYNOS5 */
++#define EXYNOS5_SYS_I2C_CFG                    S5P_SYSREG(0x0234)
 +
-+	exynos_pmu_init();
-+
- 	return 0;
-+};
-+
-+static int __init exynos_pmu_of_init(void)
-+{
-+	int ret = 0;
-+	struct device_node *np;
-+
-+	for_each_matching_node_and_match(np, exynos_pmu_of_device_ids, NULL)
-+		ret = exynos_pmu_probe(np);
-+
-+	return ret ? ret:0;
- }
--arch_initcall(exynos_pmu_init);
-+arch_initcall(exynos_pmu_of_init);
++#endif /* __ASM_ARCH_REGS_SYS_H */
 -- 
 1.7.10.4
