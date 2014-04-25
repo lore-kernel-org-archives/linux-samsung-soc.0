@@ -1,93 +1,57 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 5/5] devfreq: exynos5: Use devm_devfreq_* function using device
- resource management
-Date: Fri, 25 Apr 2014 18:08:14 +0900
-Message-ID: <1398416894-6782-6-git-send-email-cw00.choi@samsung.com>
-References: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Cc: rafael.j.wysocki@intel.com, nm@ti.com, cw00.choi@samsung.com, jkosina@suse.cz, labbe.montjoie@gmail.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Manish Badarkhe <badarkhe.manish@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Arun Kumar K <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/5] ARM: dts: enable display for peach-pit and snow boards
+Date: Fri, 25 Apr 2014 15:15:57 +0530
+Message-ID: <CALt3h78pPMMDaQ495U6SCN8xwY8Wt6AD6tnie9CYdg2DMGPhEA@mail.gmail.com>
+References: <1397994525-18537-1-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1397994525-18537-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch uses devm_devfreq_add_device()/devm_devfreq_register_opp_notifier()
-to control automatically the resource of devfreq.
+Hi,
+Tested this whole series on peach-pit board.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Manish Badarkhe <badarkhe.manish@gmail.com>
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/devfreq/exynos/exynos5_bus.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+Tested-by : Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
-index ab54a69..1f622f8 100644
---- a/drivers/devfreq/exynos/exynos5_bus.c
-+++ b/drivers/devfreq/exynos/exynos5_bus.c
-@@ -165,11 +165,6 @@ static int exynos5_int_get_dev_status(struct device *dev,
- }
- static void exynos5_int_exit(struct device *dev)
- {
--	struct platform_device *pdev = container_of(dev, struct platform_device,
--						    dev);
--	struct busfreq_data_int *data = platform_get_drvdata(pdev);
--
--	devfreq_unregister_opp_notifier(dev, data->devfreq);
- }
- 
- static struct devfreq_dev_profile exynos5_devfreq_int_profile = {
-@@ -343,30 +338,29 @@ static int exynos5_busfreq_int_probe(struct platform_device *pdev)
- 
- 	busfreq_mon_reset(ppmu_data);
- 
--	data->devfreq = devfreq_add_device(dev, &exynos5_devfreq_int_profile,
-+	data->devfreq = devm_devfreq_add_device(dev, &exynos5_devfreq_int_profile,
- 					   "simple_ondemand", NULL);
--
- 	if (IS_ERR(data->devfreq)) {
- 		err = PTR_ERR(data->devfreq);
--		goto err_devfreq_add;
-+		return err;
- 	}
- 
--	devfreq_register_opp_notifier(dev, data->devfreq);
-+	err = devm_devfreq_register_opp_notifier(dev, data->devfreq);
-+	if (err < 0) {
-+		dev_err(dev, "Failed to register opp notifier\n");
-+		return err;
-+	}
- 
- 	err = register_pm_notifier(&data->pm_notifier);
- 	if (err) {
- 		dev_err(dev, "Failed to setup pm notifier\n");
--		goto err_devfreq_add;
-+		return err;
- 	}
- 
- 	/* TODO: Add a new QOS class for int/mif bus */
- 	pm_qos_add_request(&data->int_req, PM_QOS_NETWORK_THROUGHPUT, -1);
- 
- 	return 0;
--
--err_devfreq_add:
--	devfreq_remove_device(data->devfreq);
--	return err;
- }
- 
- static int exynos5_busfreq_int_remove(struct platform_device *pdev)
-@@ -375,7 +369,6 @@ static int exynos5_busfreq_int_remove(struct platform_device *pdev)
- 
- 	pm_qos_remove_request(&data->int_req);
- 	unregister_pm_notifier(&data->pm_notifier);
--	devfreq_remove_device(data->devfreq);
- 
- 	return 0;
- }
--- 
-1.8.0
+On Sun, Apr 20, 2014 at 5:18 PM, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> From: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> Add nodes for fimd and dp controller for exynos5250 based snow
+> and exynos5420 based peach-pit board.
+>
+> This series is based on Kukjin Kims, for-next branch.
+>
+> It is dependent on
+> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
+> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html
+> 2) Arun's patch for adding peach-pit board dts file at
+> http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg28846.html.
+>
+> Rahul Sharma (5):
+>   ARM: dts: move dp hpd line to the board file for exynos5420
+>   ARM: dts: enable fimd for exynos5250 based snow board
+>   ARM: dts: enable dp-controller for exynos5250 based snow board
+>   ARM: dts: enable fimd for exynos5420 based peach-pit board
+>   ARM: dts: enable dp-controller for exynos5420 based peach-pit board
+>
+>  arch/arm/boot/dts/exynos5250-snow.dts      |   32 +++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   39 ++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 -----
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    7 +++++
+>  4 files changed, 78 insertions(+), 7 deletions(-)
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
