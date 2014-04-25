@@ -1,26 +1,17 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v7 2/2] usb: ehci-exynos: Change to use phy provided by the
- generic phy framework
-Date: Fri, 25 Apr 2014 16:48:03 +0530
-Message-ID: <1398424683-20168-3-git-send-email-gautam.vivek@samsung.com>
-References: <1398424683-20168-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1398424683-20168-1-git-send-email-gautam.vivek@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: k.debski@samsung.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, stern@rowland.harvard.edu, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v8 2/2] usb: ehci-exynos: Change to use phy provided by the generic phy framework
+Date: Fri, 25 Apr 2014 16:51:13 +0530
+Message-ID: <1398424873-20257-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:59115 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751529AbaDYLVX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Apr 2014 07:21:23 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com
 
 From: Kamil Debski <k.debski@samsung.com>
 
@@ -29,7 +20,7 @@ Generic phy framework.
 Keeping the support for older USB phy intact right now, in order
 to prevent any functionality break in absence of relevant
 device tree side change for ehci-exynos.
-Once we move to new phy in the device nodes for ohci, we can
+Once we move to new phy in the device nodes for ehci, we can
 remove the support for older phys.
 
 Signed-off-by: Kamil Debski <k.debski@samsung.com>
@@ -39,6 +30,9 @@ added support for new exynos5-usb2phy in generic phy framework]
 [gautam.vivek@samsung.com: Edited the commit message]
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
+
+Changes from v7:
+just edited in the commit message: s/ohci/ehci
 
 Although the patch-series is named as 'v2' version, but
 this patch is named as 'v7' since it is the next version of the patch
