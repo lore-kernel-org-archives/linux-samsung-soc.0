@@ -1,200 +1,78 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 3/3] ARM: exynos: Move to generic power domain bindings
-Date: Fri, 25 Apr 2014 13:47:34 +0200
-Message-ID: <CAPDyKFog0_8DKrzXcXT8Ztj3eY92EqY4YdKrsP7jkm59=XbKzA@mail.gmail.com>
-References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>
- <1398271618-28932-4-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1398271618-28932-4-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J. Wyso
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [RFC PATCH v2 0/3] Add support for Exynos PMU driver
+Date: Fri, 25 Apr 2014 22:05:28 +0900
+Message-ID: <1398431131-5946-1-git-send-email-pankaj.dubey@samsung.com>
+References: <1396427085-4696-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:46026 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753749AbaDYMrs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Apr 2014 08:47:48 -0400
+In-reply-to: <1396427085-4696-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, b.zolnierkie@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 23 April 2014 18:46, Tomasz Figa <t.figa@samsung.com> wrote:
-> This patch moves Exynos power domain code to use the new generic power
-> domain look-up framework introduced by previous patch, allowing the new
-> code to be compiled with CONFIG_ARCH_EXYNOS selected as well.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+This patch series moves PMU implementation from "mach-exynos/pmu.c" to
+"drivers/mfd/exynos-pmu.c". Patch v1 was posted as RFC [1].
 
-Besides that I don't like new Kconfig CONFIG_PM_GENERIC_DOMAINS_OF,
-this looks good to me.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+In case of ARM32 we had machine folder such as "mach-exynos" but
+moving forward with ARM64 SoC support we can not have any more such
+machine folders, keeping that in mind we have planned to move PMU
+implementation out of machine folder, so that common piece of code
+can be reused.
 
-> ---
->  .../bindings/arm/exynos/power_domain.txt           | 12 ++--
->  arch/arm/mach-exynos/pm_domains.c                  | 81 +---------------------
->  kernel/power/Kconfig                               |  2 +-
->  3 files changed, 7 insertions(+), 88 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> index 5216b41..60f26a8 100644
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> @@ -8,6 +8,8 @@ Required Properties:
->      * samsung,exynos4210-pd - for exynos4210 type power domain.
->  - reg: physical base address of the controller and length of memory mapped
->      region.
-> +- #power-domain-cells: number of cells in power domain specifier;
-> +    must be 0.
->
->  Node of a device using power domains must have a samsung,power-domain property
->  defined with a phandle to respective power domain.
-> @@ -17,12 +19,8 @@ Example:
->         lcd0: power-domain-lcd0 {
->                 compatible = "samsung,exynos4210-pd";
->                 reg = <0x10023C00 0x10>;
-> +               #power-domain-cells = <0>;
->         };
->
-> -Example of the node using power domain:
-> -
-> -       node {
-> -               /* ... */
-> -               samsung,power-domain = <&lcd0>;
-> -               /* ... */
-> -       };
-> +See Documentation/devicetree/bindings/power/power_domain.txt for description
-> +of consumer-side bindings.
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index fe6570e..9cad3c6 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -73,89 +73,14 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
->         return exynos_pd_power(domain, false);
->  }
->
-> -static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
-> -                                        struct device *dev)
-> -{
-> -       int ret;
-> -
-> -       dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
-> -
-> -       while (1) {
-> -               ret = pm_genpd_add_device(&pd->pd, dev);
-> -               if (ret != -EAGAIN)
-> -                       break;
-> -               cond_resched();
-> -       }
-> -
-> -       pm_genpd_dev_need_restore(dev, true);
-> -}
-> -
-> -static void exynos_remove_device_from_domain(struct device *dev)
-> -{
-> -       struct generic_pm_domain *genpd = dev_to_genpd(dev);
-> -       int ret;
-> -
-> -       dev_dbg(dev, "removing from power domain %s\n", genpd->name);
-> -
-> -       while (1) {
-> -               ret = pm_genpd_remove_device(genpd, dev);
-> -               if (ret != -EAGAIN)
-> -                       break;
-> -               cond_resched();
-> -       }
-> -}
-> -
-> -static void exynos_read_domain_from_dt(struct device *dev)
-> -{
-> -       struct platform_device *pd_pdev;
-> -       struct exynos_pm_domain *pd;
-> -       struct device_node *node;
-> -
-> -       node = of_parse_phandle(dev->of_node, "samsung,power-domain", 0);
-> -       if (!node)
-> -               return;
-> -       pd_pdev = of_find_device_by_node(node);
-> -       if (!pd_pdev)
-> -               return;
-> -       pd = platform_get_drvdata(pd_pdev);
-> -       exynos_add_device_to_domain(pd, dev);
-> -}
-> -
-> -static int exynos_pm_notifier_call(struct notifier_block *nb,
-> -                                   unsigned long event, void *data)
-> -{
-> -       struct device *dev = data;
-> -
-> -       switch (event) {
-> -       case BUS_NOTIFY_BIND_DRIVER:
-> -               if (dev->of_node)
-> -                       exynos_read_domain_from_dt(dev);
-> -
-> -               break;
-> -
-> -       case BUS_NOTIFY_UNBOUND_DRIVER:
-> -               exynos_remove_device_from_domain(dev);
-> -
-> -               break;
-> -       }
-> -       return NOTIFY_DONE;
-> -}
-> -
-> -static struct notifier_block platform_nb = {
-> -       .notifier_call = exynos_pm_notifier_call,
-> -};
-> -
->  static __init int exynos4_pm_init_power_domain(void)
->  {
-> -       struct platform_device *pdev;
->         struct device_node *np;
->
->         for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
->                 struct exynos_pm_domain *pd;
->                 int on;
->
-> -               pdev = of_find_device_by_node(np);
-> -
->                 pd = kzalloc(sizeof(*pd), GFP_KERNEL);
->                 if (!pd) {
->                         pr_err("%s: failed to allocate memory for domain\n",
-> @@ -168,17 +93,13 @@ static __init int exynos4_pm_init_power_domain(void)
->                 pd->base = of_iomap(np, 0);
->                 pd->pd.power_off = exynos_pd_power_off;
->                 pd->pd.power_on = exynos_pd_power_on;
-> -               pd->pd.of_node = np;
-> -
-> -               platform_set_drvdata(pdev, pd);
->
->                 on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
->
->                 pm_genpd_init(&pd->pd, NULL, !on);
-> +               of_genpd_add_provider(np, of_genpd_xlate_simple, &pd->pd);
->         }
->
-> -       bus_register_notifier(&platform_bus_type, &platform_nb);
-> -
->         return 0;
->  }
->  arch_initcall(exynos4_pm_init_power_domain);
-> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> index 45aa98e..b17588c 100644
-> --- a/kernel/power/Kconfig
-> +++ b/kernel/power/Kconfig
-> @@ -308,7 +308,7 @@ config PM_GENERIC_DOMAINS_RUNTIME
->
->  config PM_GENERIC_DOMAINS_OF
->         def_bool y
-> -       depends on PM_GENERIC_DOMAINS && OF && !ARCH_EXYNOS
-> +       depends on PM_GENERIC_DOMAINS && OF
->
->  config CPU_PM
->         bool
-> --
-> 1.9.2
->
+This patch series is based on kgene for-next and depends on following
+patch series
+ a) [PATCH v2 0/5] Add PMU node for Exynos SoCs
+	https://lkml.org/lkml/2014/4/25/216
+ b) [PATCH v2 00/10] ARM: Exynos: PMU cleanup and refactoring for using DT
+	https://lkml.org/lkml/2014/4/25/252
+
+
+1) [RFC PATCH 0/2] Add support for Exynos PMU driver
+	https://lkml.org/lkml/2014/4/2/69
+
+Changes since v1:
+ - Rebased on Kukjin Kim's for-next (3.15_rc1 tag)
+ - Added patch: Move PMU specific definitions from common.h
+ - Added patch: Move pmu specific header files under "linux/mfd/samsung"
+ - Removed patch: ARM: EXYNOS: remove arch specific PMU implementation
+	As suggested breaking down patches into smalled pieces for better review.
+	Also modified all changes in pmu.c under mach-exynos itself and then
+	prepared patches moving files from mach-exynos to "drivers/mfd"
+
+Pankaj Dubey (2):
+  ARM: EXYNOS: Move pmu specific header files under "linux/mfd/samsung"
+  drivers: mfd: Add support for Exynos PMU driver
+
+Younggun Jang (1):
+  ARM: EXYNOS: Move PMU specific definitions from common.h
+
+ arch/arm/mach-exynos/Kconfig                |    2 +
+ arch/arm/mach-exynos/Makefile               |    2 -
+ arch/arm/mach-exynos/common.h               |   17 -
+ arch/arm/mach-exynos/cpuidle.c              |    3 +-
+ arch/arm/mach-exynos/exynos.c               |    2 +-
+ arch/arm/mach-exynos/hotplug.c              |    2 +-
+ arch/arm/mach-exynos/platsmp.c              |    2 +-
+ arch/arm/mach-exynos/pm.c                   |    3 +-
+ arch/arm/mach-exynos/pmu.c                  |  522 ---------------------------
+ arch/arm/mach-exynos/regs-pmu.h             |  308 ----------------
+ drivers/mfd/Kconfig                         |    9 +
+ drivers/mfd/Makefile                        |    1 +
+ drivers/mfd/exynos-pmu.c                    |  521 ++++++++++++++++++++++++++
+ include/linux/mfd/samsung/exynos-pmu.h      |   31 ++
+ include/linux/mfd/samsung/exynos-regs-pmu.h |  308 ++++++++++++++++
+ 15 files changed, 879 insertions(+), 854 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/pmu.c
+ delete mode 100644 arch/arm/mach-exynos/regs-pmu.h
+ create mode 100644 drivers/mfd/exynos-pmu.c
+ create mode 100644 include/linux/mfd/samsung/exynos-pmu.h
+ create mode 100644 include/linux/mfd/samsung/exynos-regs-pmu.h
+
+-- 
+1.7.10.4
