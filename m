@@ -1,94 +1,115 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv4 6/7] dt-bindings: add documentation for Exynos3250 clock
- controller
-Date: Fri, 25 Apr 2014 10:16:11 +0900
-Message-ID: <1398388572-30239-7-git-send-email-cw00.choi@samsung.com>
-References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: RE: [PATCH] ARM: dts: exynos4: clean up arm-pmu node
+Date: Fri, 25 Apr 2014 11:03:54 +0900
+Message-ID: <00e201cf602a$9c8b6df0$d5a249d0$@samsung.com>
+References: <1397480584-16195-1-git-send-email-chanho61.park@samsung.com>
+ <53594416.4070601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com, t.figa@samsung.com
-Cc: Mark Rutland <mark.rutland@arm.com>, Randy Dunlap <rdunlap@infradead.org>, tushar.behera@linaro.org, sajjan.linux@gmail.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Pawel Moll <pawel.moll@arm.com>, sachin.kamat@linaro.org, cw00.choi@samsung.com, thomas.abraham@linaro.org, devicetree@vger.kernel.org, arnd@arndb.de, Ian Campbell <ijc+devicetree@hellion.org.uk>, marc.zyngier@arm.com, inki.dae@samsung.com, Rob Herring <robh+dt@kernel.org>, ben-linux@fluff.org, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, kyungmin.park@samsung.com, Kumar Gala <galak@codeaurora.org>, olof@lixom.net, chanho61.park@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:29388 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751408AbaDYCEA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Apr 2014 22:04:00 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4K006WUDQJF6D0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Apr 2014 11:03:55 +0900 (KST)
+In-reply-to: <53594416.4070601@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: 'Chanwoo Choi' <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-The Exynos3250 clocks are statically listed and registered using the
-Samsung specific common clock helper functions. Both device tree based
-clock lookup and clkdev based clock lookups are supported.
+Hi Tomasz,
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- .../devicetree/bindings/clock/exynos3250-clock.txt | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+> -----Original Message-----
+> From: linux-arm-kernel [mailto:linux-arm-kernel-
+> bounces@lists.infradead.org] On Behalf Of Tomasz Figa
+> Sent: Friday, April 25, 2014 2:04 AM
+> To: Chanho Park; kgene.kim@samsung.com; linux-samsung-
+> soc@vger.kernel.org
+> Cc: Chanwoo Choi; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH] ARM: dts: exynos4: clean up arm-pmu node
+> 
+> Hi Chanho,
+> 
+> On 14.04.2014 15:03, Chanho Park wrote:
+> > This patch cleans a arm-pmu node up for exynos4. Only exynos4412
+> series
+> > boards have four pmu interrupts. Rest of exynos4 boards, except 4412,
+> have only
+> > two pmu interrupts. Thus, we can define two interrupts in the
+> > exynos4.dtsi and extends the interrupts only exynos4412.dtsi.
+> >
+> > Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > ---
+> >   arch/arm/boot/dts/exynos4.dtsi    | 6 ++++++
+> >   arch/arm/boot/dts/exynos4210.dtsi | 6 ------
+> >   arch/arm/boot/dts/exynos4412.dtsi | 6 ++++++
+> >   arch/arm/boot/dts/exynos4x12.dtsi | 6 ------
+> >   4 files changed, 12 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> b/arch/arm/boot/dts/exynos4.dtsi
+> > index e541ecb..6de978c 100644
+> > --- a/arch/arm/boot/dts/exynos4.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4.dtsi
+> > @@ -105,6 +105,12 @@
+> >   		reg = <0x10440000 0x1000>;
+> >   	};
+> >
+> > +	pmu {
+> > +		compatible = "arm,cortex-a9-pmu";
+> > +		interrupt-parent = <&combiner>;
+> > +		interrupts = <2 2>, <3 2>;
+> > +	};
+> > +
+> >   	sys_reg: syscon@10010000 {
+> >   		compatible = "samsung,exynos4-sysreg", "syscon";
+> >   		reg = <0x10010000 0x400>;
+> > diff --git a/arch/arm/boot/dts/exynos4210.dtsi
+> b/arch/arm/boot/dts/exynos4210.dtsi
+> > index cacf614..4e7610f 100644
+> > --- a/arch/arm/boot/dts/exynos4210.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> > @@ -75,12 +75,6 @@
+> >   		#clock-cells = <1>;
+> >   	};
+> >
+> > -	pmu {
+> > -		compatible = "arm,cortex-a9-pmu";
+> > -		interrupt-parent = <&combiner>;
+> > -		interrupts = <2 2>, <3 2>;
+> > -	};
+> > -
+> >   	pinctrl_0: pinctrl@11400000 {
+> >   		compatible = "samsung,exynos4210-pinctrl";
+> >   		reg = <0x11400000 0x1000>;
+> > diff --git a/arch/arm/boot/dts/exynos4412.dtsi
+> b/arch/arm/boot/dts/exynos4412.dtsi
+> > index 15d3c0a..e6af870 100644
+> > --- a/arch/arm/boot/dts/exynos4412.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> > @@ -26,6 +26,12 @@
+> >   		samsung,combiner-nr = <20>;
+> >   	};
+> >
+> > +	pmu {
+> > +		compatible = "arm,cortex-a9-pmu";
+> > +		interrupt-parent = <&combiner>;
+> 
+> I guess you could omit the two properties above and let them be
+> inherited from exynos4.dtsi.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
-new file mode 100644
-index 0000000..aadc9c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
-@@ -0,0 +1,41 @@
-+* Samsung Exynos3250 Clock Controller
-+
-+The Exynos3250 clock controller generates and supplies clock to various
-+controllers within the Exynos3250 SoC.
-+
-+Required Properties:
-+
-+- compatible: should be one of the following.
-+  - "samsung,exynos3250-cmu" - controller compatible with Exynos3250 SoC.
-+
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+
-+- #clock-cells: should be 1.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume.
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/exynos3250.h header and can be used in device
-+tree sources.
-+
-+Example 1: An example of a clock controller node is listed below.
-+
-+	cmu: clock-controller@10030000 {
-+		compatible = "samsung,exynos3250-cmu";
-+		reg = <0x10030000 0x20000>;
-+		#clock-cells = <1>;
-+	};
-+
-+Example 2: UART controller node that consumes the clock generated by the clock
-+	   controller. Refer to the standard clock bindings for information
-+	   about 'clocks' and 'clock-names' property.
-+
-+	serial@13800000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x13800000 0x100>;
-+		interrupts = <0 109 0>;
-+		clocks = <&cmu CLK_UART0>, <&cmu CLK_SCLK_UART0>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
--- 
-1.8.0
+Yes. It can be omitted in the exynos4412.dtsi. Thank you for your review.
+I'll send V2 Patch.
+
+Best Regards,
+Chanho Park
