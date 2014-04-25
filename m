@@ -1,107 +1,87 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv2] ARM: dts: exynos4: clean up arm-pmu node
-Date: Fri, 25 Apr 2014 11:05:53 +0900
-Message-ID: <1398391553-4797-1-git-send-email-chanho61.park@samsung.com>
+From: Beomho Seo <beomho.seo@samsung.com>
+Subject: [RESEND PATCH 2/3] ARM: dts: add cm36651 light/proximity sensor node
+Date: Fri, 25 Apr 2014 11:06:06 +0900
+Message-ID: <5359C30E.8090903@samsung.com>
+References: <53327CEB.7080505@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21354 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125AbaDYCGL (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63823 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751361AbaDYCGM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Apr 2014 22:06:11 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N4K001EADU9VS60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Apr 2014 11:06:09 +0900 (KST)
+	Thu, 24 Apr 2014 22:06:12 -0400
+In-reply-to: <53327CEB.7080505@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Chanho Park <chanho61.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-This patch cleans a arm-pmu node up for exynos4. Only exynos4412 series
-boards have four pmu interrupts. Rest of exynos4 boards, except 4412, have only
-two pmu interrupts. Thus, we can define two interrupts in the
-exynos4.dtsi and extends the interrupts only exynos4412.dtsi.
+Exynos4412-trats2 board have light/proximity sensor.
+This patch add cm36651 light/ proximity sensor node for exynos4412.
+cm36651 is required properties as below.
+- Use i2c-gpio for cm36651 sensor.
+- Use fixed regulator for the IR LED.
+  It is a part of the cm36651 for proximity detection.
+- cm36651 is i2c device driver so need to use i2c-gpio driver.
 
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 ---
-Changes from v1:
- - Remove duplicated properties in exynos4412.dtsi(Comment from Tomasz Figa)
+ arch/arm/boot/dts/exynos4412-trats2.dts |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
- arch/arm/boot/dts/exynos4.dtsi    | 6 ++++++
- arch/arm/boot/dts/exynos4210.dtsi | 6 ------
- arch/arm/boot/dts/exynos4412.dtsi | 4 ++++
- arch/arm/boot/dts/exynos4x12.dtsi | 6 ------
- 4 files changed, 10 insertions(+), 12 deletions(-)
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 42418e2..c9f3c6e 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -21,6 +21,7 @@
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 0401f4d..b43dc24 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -105,6 +105,12 @@
- 		reg = <0x10440000 0x1000>;
+ 	aliases {
+ 		i2c8 = &i2c_ak8975;
++		i2c9 = &i2c_cm36651;
  	};
- 
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 2>, <3 2>;
+
+ 	memory {
+@@ -71,6 +72,14 @@
+ 			enable-active-high;
+ 		};
+
++		ps_als_reg: voltage-regulator-2 {
++			compatible = "regulator-fixed";
++			regulator-name = "LED_A_3.0V";
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3000000>;
++			gpio = <&gpj0 5 0>;
++			enable-active-high;
++		};
+ 		/* More to come */
+ 	};
+
+@@ -500,6 +509,23 @@
+ 		};
+ 	};
+
++	i2c_cm36651: i2c-gpio-2 {
++		compatible = "i2c-gpio";
++		gpios = <&gpf0 0 0>, <&gpf0 1 0>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		cm36651@18 {
++			compatible = "cm36651";
++			reg = <0x18>;
++			interrupt-parent = <&gpx0>;
++			interrupts = <2 0>;
++			vled-supply = <&ps_als_reg>;
++		};
 +	};
 +
- 	sys_reg: syscon@10010000 {
- 		compatible = "samsung,exynos4-sysreg", "syscon";
- 		reg = <0x10010000 0x400>;
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index cb0e768d..e19c154 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -75,12 +75,6 @@
- 		#clock-cells = <1>;
- 	};
- 
--	pmu {
--		compatible = "arm,cortex-a9-pmu";
--		interrupt-parent = <&combiner>;
--		interrupts = <2 2>, <3 2>;
--	};
--
- 	pinctrl_0: pinctrl@11400000 {
- 		compatible = "samsung,exynos4210-pinctrl";
- 		reg = <0x11400000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index a40b6e2..7b75762 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -26,6 +26,10 @@
- 		samsung,combiner-nr = <20>;
- 	};
- 
-+	pmu {
-+		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
-+	};
-+
- 	gic: interrupt-controller@10490000 {
- 		cpu-offset = <0x4000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index c4a9306..b730a74 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -31,12 +31,6 @@
- 		mshc0 = &mshc_0;
- 	};
- 
--	pmu {
--		compatible = "arm,cortex-a9-pmu";
--		interrupt-parent = <&combiner>;
--		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
--	};
--
- 	pd_isp: isp-power-domain@10023CA0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023CA0 0x20>;
+ 	spi_1: spi@13930000 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&spi1_bus>;
 -- 
-1.8.3.2
+1.7.9.5
