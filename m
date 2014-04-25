@@ -1,79 +1,45 @@
-From: "Hong-Xing.Zhu@freescale.com" <Hong-Xing.Zhu@freescale.com>
-Subject: RE: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
-Date: Fri, 25 Apr 2014 15:04:28 +0000
-Message-ID: <0e2b9e103e54467a9f0d0ee44d5763bf@BLUPR03MB136.namprd03.prod.outlook.com>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
- <20140424175844.GD29593@google.com>
- <1398421265.4657.25.camel@weser.hi.pengutronix.de>
- <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
+From: Stratos Karafotis <stratosk@semaphore.gr>
+Subject: Re: [PATCH v4 2/8] cpufreq: Use cpufreq_for_each_* macros for frequency
+ table iteration
+Date: Fri, 25 Apr 2014 18:11:20 +0300
+Message-ID: <535A7B18.9070505@semaphore.gr>
+References: <534DB1EB.1080401@semaphore.gr> <5355A327.3020308@semaphore.gr> <CA+V-a8swMCPkf=rwbLOjiqAgpaQ7TZPutTQTh_sSFmbJvHz-1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>, Lucas Stach <l.stach@pengutronix.de>
-Cc: Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, linux-arm <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+V-a8swMCPkf=rwbLOjiqAgpaQ7TZPutTQTh_sSFmbJvHz-1Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEJqb3JuIEhlbGdhYXMgW21h
-aWx0bzpiaGVsZ2Fhc0Bnb29nbGUuY29tXQ0KPiBTZW50OiBGcmlkYXksIEFwcmlsIDI1LCAyMDE0
-IDEwOjQwIFBNDQo+IFRvOiBMdWNhcyBTdGFjaA0KPiBDYzogWmh1IFJpY2hhcmQtUjY1MDM3OyBK
-aW5nb28gSGFuOyBTaGF3biBHdW87IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
-LWFybTsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIu
-a2VybmVsLm9yZzsgU2Vhbg0KPiBDcm9zczsgTWFyZWsgVmFzdXQ7IElhbiBDYW1wYmVsbDsgTWFy
-ayBSdXRsYW5kOyBQYXdlbCBNb2xsOyBSb2IgSGVycmluZzsgQXJuZA0KPiBCZXJnbWFubjsgVGlt
-IEhhcnZleTsga2VybmVsQHBlbmd1dHJvbml4LmRlDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMC84
-XSBpLk1YNiBQQ0llIGJpbmRpbmcgY2hhbmdlIGFuZCBNU0kgc3VwcG9ydA0KPiANCj4gT24gRnJp
-LCBBcHIgMjUsIDIwMTQgYXQgNDoyMSBBTSwgTHVjYXMgU3RhY2ggPGwuc3RhY2hAcGVuZ3V0cm9u
-aXguZGU+IHdyb3RlOg0KPiA+IEFtIERvbm5lcnN0YWcsIGRlbiAyNC4wNC4yMDE0LCAxMTo1OCAt
-MDYwMCBzY2hyaWViIEJqb3JuIEhlbGdhYXM6DQo+ID4+IE9uIEZyaSwgTWFyIDI4LCAyMDE0IGF0
-IDA1OjUyOjUxUE0gKzAxMDAsIEx1Y2FzIFN0YWNoIHdyb3RlOg0KPiA+PiA+IFdoaWxlIHdvcmtp
-bmcgb24gTVNJIHN1cHBvcnQgZm9yIHRoZSBpLk1YNiBQQ0llIGhvc3QgZHJpdmVyIGl0IGhhcw0K
-PiA+PiA+IGJlZW4gZGlzY292ZXJlZCB0aGF0IHRoZSBiaW5kaW5nIGZvciB0aGlzIGhvc3QgY29u
-dHJvbGxlciBpcyBicm9rZW4NCj4gPj4gPiBpbiBtYW55IHdheXMgKHJlZmVyIHRvIHRoZSBwYXRj
-aCBkZXNjcmlwdGlvbnMgZm9yIG1vcmUNCj4gPj4gPiBpbmZvKSBhbmQgd2FzIGludHJvZHVjZWQg
-d2l0aG91dCBwcm9wZXIgZGlzY3Vzc2lvbiBhYm91dCB3aGF0DQo+ID4+ID4gc2hvdWxkL3Nob3Vs
-ZCBub3QgYmUgaW4gdGhlIGJpbmRpbmcuDQo+ID4+ID4NCj4gPj4gPiBUaGlzIHNlcmllcyBmaXhl
-cyB0aGlzIGFuZCBtaW5pbWl6ZXMgdGhlIGRpZmZlcmVuY2Ugb2YgdGhlDQo+ID4+ID4gaS5NWDYg
-YmluZGluZyB0byB0aGUgY29tbW9uIGRlc2lnbndhcmUgUENJZSBiaW5kaW5nLiBJJ20gYXdhcmUg
-dGhhdA0KPiA+PiA+IHRoaXMgaXMgYSBxdWl0ZSByYWRpY2FsIGNoYW5nZSwgYnV0IEkgdGhpbmsg
-aXQncyBqdXN0aWZpZWQgdG8gZG8NCj4gPj4gPiB0aGlzIGFzIGxvbmcgYXMgdGhlcmUgYXJlbid0
-IG1hbnkgdXNlciBvZiB0aGUgb2xkIGJpbmRpbmcgKG1vc3Qgb2YNCj4gPj4gPiB0aGUgb3B0aW9u
-YWwgcHJvcGVydGllcyBpbiB0aGUgYmluZGluZyBhcmVuJ3QgZXZlbiBpbXBsZW1lbnRlZCkuDQo+
-ID4+ID4NCj4gPj4gPiBMb29raW5nIGZvcndhcmQgdG8geW91ciBmZWVkYmFjay4NCj4gPj4gPg0K
-PiA+PiA+IEx1Y2FzIFN0YWNoICg4KToNCj4gPj4gPiAgIEFSTTogaW14NnEtY2xrOiBwYXJlbnQg
-bHZkc19nYXRlIGZyb20gbHZkc19zZWwNCj4gPiBUaGlzIG9uZSBpcyBhbHJlYWR5IGFwcGxpZWQu
-DQo+ID4NCj4gPj4gPiAgIFBDSTogZGVzaWdud2FyZTogc3BsaXQgRXh5bm9zIGFuZCBpLk1YIGJp
-bmRpbmdzDQo+ID4+ID4gICBBUk06IGR0czogaW14NjogdXBkYXRlIHBjaWUgdG8gYnJpbmcgaW4g
-bGluZSB3aXRoIG5ldyBiaW5kaW5nDQo+ID4+ID4gICBQQ0k6IGlteDY6IHVzZSBuZXcgY2xvY2sg
-bmFtZXMNCj4gPj4gPiAgIFBDSTogaW14NjogZHJvcCBvbGQgaXJxIG1hcHBpbmcNCj4gPj4gPiAg
-IFBDSTogaW14NjogcmlwIG91dCBvcHRpb25hbCAoYW5kIHVudXNlZCkgaXJxcw0KPiA+PiA+ICAg
-UENJOiBkZXNpZ253YXJlOiBtYWtlIE1TSSBpc3Igc2hhcmVkIGlycSBhd2FyZQ0KPiA+PiA+ICAg
-UENJOiBpbXg2OiBhZGQgc3VwcG9ydCBmb3IgTVNJDQo+ID4+DQo+ID4+IFdoYXQncyB0aGUgc3Rh
-dHVzIG9mIGFsbCB0aGVzZT8gIEkgd291bGQgbm9ybWFsbHkgYXBwbHkgcGF0Y2hlcyA0LTgNCj4g
-Pj4gb2YgdGhpcyBzZXJpZXMgdGhyb3VnaCBteSB0cmVlLCBnaXZlbiB0aGUgYXBwcm9wcmlhdGUg
-YWNrcywgYnV0IEkNCj4gPj4gaGF2ZW4ndCBzZWVuIHRob3NlIHlldC4gIEFuZCBJJ20gbm90IHN1
-cmUgd2hhdCBkZXBlbmRlbmNpZXMgdGhlcmUgYXJlDQo+ID4+IGJldHdlZW4gdGhlIG5vbi1QQ0kg
-cGF0Y2hlcyBhbmQgdGhlIFBDSSBvbmVzLg0KPiA+Pg0KPiA+IEl0J3MgYSBjb21wbGV0ZSBiaW5k
-aW5nIGNoYW5nZSwgc28gYXBwbHlpbmcgb25lIHBhcnQgd2l0aG91dCB0aGUgb3RoZXINCj4gPiBp
-cyBnb2luZyB0byBob3JyaWJseSBicmVhayB0aGluZ3MuDQo+ID4NCj4gPiBTbyBJIHdvdWxkIGF0
-IGxlYXN0IHdhbnQgdG8gc2VlIGFuIGFjayBmb3IgdGhlIGJpbmRpbmcgY2hhbmdlIG9uIHRoZQ0K
-PiA+IGkuTVggc2lkZSBmcm9tIFNoYXduIGFuZCBSaWNoYXJkLiBUaGlzIHdpbGwgbmVlZCBzb21l
-IGZvbGxvdyBvbg0KPiA+IHBhdGNoZXMsIGFzIHNvbWUgYm9hcmRzIGFkZGluZyBQQ0llIHVzaW5n
-IHRoZSBvbGQgYmluZGluZyBoYXZlIGNyb3BwZWQNCj4gPiB1cCBpbiBsaW51eC1uZXh0LCBidXQg
-SSBjYW4gZG8gdGhlIHBhdGNoZXMgb24gc2hvcnQgbm90aWNlIGlmIGV2ZXJ5b25lDQo+ID4gYWdy
-ZWVzIHRvIG1lcmdlIHRoaXMgcGF0Y2hzZXQuDQo+ID4NCj4gPiBUaGUgZGVzaWdud2FyZSBwYXJ0
-IGlzIHByZXR0eSBzaW1wbGUgYW5kIGRvZXNuJ3QgY2hhbmdlIGFueXRoaW5nIGZvcg0KPiA+IG90
-aGVyIHVzZXJzIHRoYW4gaS5NWC4gVGhvdWdoIEkgd291bGQgbGlrZSB0byBzZWUgYW4gYWNrIGZy
-b20gSmluZ29vDQo+ID4gZm9yIHRob3NlLg0KPiA+DQo+ID4gSSBoYXZlIHNvbWUgbW9yZSBzdHVm
-ZiBpbiB0aGUgcGlwZXMgcmVnYXJkaW5nIG11bHRpcGxlIE1TSSBpcnFzLCB0aGF0DQo+ID4gZGVw
-ZW5kIG9uIHRoaXMgc2VyaWVzIGFuZCBhbHNvIHRoZSBLZXlzdG9uZSBwZW9wbGUgYXJlIHdhaXRp
-bmcgZm9yDQo+ID4gdGhpcyB0byBiZSBhcHBsaWVkIGluIG9yZGVyIHRvIGNvbnNvbGlkYXRlIHRo
-ZSBjbG9jayBoYW5kbGluZyBvZiB0aGUNCj4gPiBkZXNpZ253YXJlIGNvcmUgZHJpdmVyLCBzbyBp
-dCB3b3VsZCBiZSBuaWNlIHRvIGdldCB0aGlzIG1vdmluZyBhZ2Fpbi4NCltSaWNoYXJkXSBIaSBM
-dWNhcywgdGhhbmtzLiBJJ20gb2sgZm9yIHRoaXMgcGF0Y2gtc2V0Lg0KQWNrZWQtYnk6IFJpY2hh
-cmQgWmh1IDxyNjUwMzdAZnJlZXNjYWxlLmNvbT4NCg0KPiANCj4gT0ssIGp1c3QgcG9rZSBtZSBh
-Z2FpbiB3aGVuIHlvdSdyZSByZWFkeSBmb3IgbWUgdG8gZG8gc29tZXRoaW5nIHdpdGggdGhlc2Uu
-DQo+IA0KPiBCam9ybg0KPiANCg0KDQpCZXN0IFJlZ2FyZHMNClJpY2hhcmQgWmh1DQoNCg==
+Hi Prabhakar,
+
+On 25/04/2014 03:31 =CE=BC=CE=BC, Prabhakar Lad wrote:
+> Hi Stratos,
+>=20
+> Thanks for the patch.
+>=20
+> On Tue, Apr 22, 2014 at 4:30 AM, Stratos Karafotis
+> <stratosk@semaphore.gr> wrote:
+>> The cpufreq core now supports the cpufreq_for_each_entry and
+>> cpufreq_for_each_valid_entry macros helpers for iteration over the
+>> cpufreq_frequency_table, so use them.
+>>
+>> It should have no functional changes.
+>>
+> This patch produces following build warning,
+>=20
+> drivers/cpufreq/freq_table.c: In function 'cpufreq_frequency_table_cp=
+uinfo':
+> drivers/cpufreq/freq_table.c:36:3: warning: format '%lu' expects
+> argument of type 'long unsigned int', but argument 2 has type 'int'
+> [-Wformat=3D]
+>    pr_debug("table entry %lu: %u kHz\n", pos - table, freq);
+
+Thanks for this finding.
+I will fix it and resend the patch.
+
+
+Stratos Karafotis
