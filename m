@@ -1,44 +1,149 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/5] iio: exynos_adc: use indio_dev->dev structure to
- handle child nodes
-Date: Fri, 25 Apr 2014 08:46:31 -0700
-Message-ID: <CAD=FV=V28_iDiNWeX6bXLzMW5kWygJz-YAExJkETJKgTDicHQg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/5] iio: exynos_adc: rearrange clock and regulator
+ enable/disable calls
+Date: Fri, 25 Apr 2014 09:06:51 -0700
+Message-ID: <CAD=FV=UOBcC92xxvtuQuzD-1zxT-hgGWJWajOUjeagHVBHYENw@mail.gmail.com>
 References: <1398420888-5506-1-git-send-email-ch.naveen@samsung.com>
-	<1398420888-5506-2-git-send-email-ch.naveen@samsung.com>
+	<1398420888-5506-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1398420888-5506-2-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:63192 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752637AbaDYQGw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Apr 2014 12:06:52 -0400
+Received: by mail-vc0-f169.google.com with SMTP id im17so5120344vcb.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Apr 2014 09:06:51 -0700 (PDT)
+In-Reply-To: <1398420888-5506-3-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, "cpgs ." <cpgs@samsung.com>, Grant Grundler <grundler@chromium.org>
 
 Naveen,
 
-Thanks for sending this.  Given that Jonathan Cameron was involved in
-the previous discussion, it probably would have been wise to include
-him on the CC list.
-
 On Fri, Apr 25, 2014 at 3:14 AM, Naveen Krishna Chatradhi
-<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+<ch.naveen@samsung.com> wrote:
+> From: Naveen Krishna Ch <ch.naveen@samsung.com>
 >
-> Using pdev->dev with device_for_each_child() would iterate over all
-> of the children of the platform device and delete them.
-> Thus, causing crashes during module unload.
+> This patch maintains the following order in
+> probe(), remove(), resume() and suspend() calls
 >
-> We should be using the indio_dev->dev structure for
-> registering/unregistering child nodes.
+> regulator enable, clk prepare enable
+> ...
+> clk disable unprepare, regulator disable
 >
-> Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> While at it,
+> 1. enable the regulator before the iio_device_register()
+> 2. handle the return values for enable/disable calls
+>
+> Change-Id: I764d9d60f72caa7ea6b0609db49a74115574f081
+> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
 > ---
-> This change was tested on top of
->    https://lkml.org/lkml/2014/4/21/481 from Doug.
+> This change fixes the comments given by Jonathan regarding the
+> order of clock and regulator enable/disable calls.
+> https://lkml.org/lkml/2014/4/23/644
 >
->  drivers/iio/adc/exynos_adc.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/iio/adc/exynos_adc.c |   34 ++++++++++++++++++++--------------
+>  1 file changed, 20 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index affa93f..a2b8b1a 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -316,6 +316,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>                 goto err_irq;
+>         }
+>
+> +       ret = regulator_enable(info->vdd);
+> +       if (ret)
+> +               goto err_irq;
+> +
+> +       ret = clk_prepare_enable(info->clk);
+> +       if (ret)
+> +               goto err_disable_reg;
+> +
+>         info->version = exynos_adc_get_version(pdev);
+>
+>         platform_set_drvdata(pdev, indio_dev);
+> @@ -334,13 +342,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>
+>         ret = iio_device_register(indio_dev);
+>         if (ret)
+> -               goto err_irq;
+> -
+> -       ret = regulator_enable(info->vdd);
+> -       if (ret)
+> -               goto err_iio_dev;
+> -
+> -       clk_prepare_enable(info->clk);
+> +               goto err_disable_clk;
+>
+>         exynos_adc_hw_init(info);
+>
+> @@ -355,10 +357,11 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>  err_of_populate:
+>         device_for_each_child(&indio_dev->dev, NULL,
+>                                 exynos_adc_remove_devices);
+> -       regulator_disable(info->vdd);
+> -       clk_disable_unprepare(info->clk);
+> -err_iio_dev:
+>         iio_device_unregister(indio_dev);
+> +err_disable_clk:
+> +       clk_disable_unprepare(info->clk);
+> +err_disable_reg:
+> +       regulator_disable(info->vdd);
+>  err_irq:
+>         free_irq(info->irq, info);
+>         return ret;
+> @@ -371,9 +374,10 @@ static int exynos_adc_remove(struct platform_device *pdev)
+>
+>         device_for_each_child(&indio_dev->dev, NULL,
+>                                 exynos_adc_remove_devices);
+> -       regulator_disable(info->vdd);
+>         clk_disable_unprepare(info->clk);
+> +       regulator_disable(info->vdd);
+>         writel(0, info->enable_reg);
+> +
 
-Reported-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+This function still looks wrong.  The order of things should generally
+match the error case of probe, which is the reverse of how things are
+initted.
+
+Specifically you shouldn't be doing "iio_device_unregister(indio_dev);" last.
+
+Technically it's also a very good idea to free the irq much earlier.
+...and in probe you should request it later.
+
+The request_irq should probably be right before the register function
+in probe and the free_irq should be right after unregister in remove.
+
+
+>         iio_device_unregister(indio_dev);
+>         free_irq(info->irq, info);
+>
+> @@ -398,8 +402,8 @@ static int exynos_adc_suspend(struct device *dev)
+>         }
+>
+>         clk_disable_unprepare(info->clk);
+> -       writel(0, info->enable_reg);
+>         regulator_disable(info->vdd);
+> +       writel(0, info->enable_reg);
+
+This change looks wrong to me.  I'd believe that the rule should
+always be that the regulator is enabled early and disabled late.
+
+
+>         return 0;
+>  }
+> @@ -410,12 +414,14 @@ static int exynos_adc_resume(struct device *dev)
+>         struct exynos_adc *info = iio_priv(indio_dev);
+>         int ret;
+>
+> +       writel(1, info->enable_reg);
+>         ret = regulator_enable(info->vdd);
+>         if (ret)
+>                 return ret;
+
+Same here.  Should enable the regulator first, I think.
