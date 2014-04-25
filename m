@@ -1,62 +1,75 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH v5 3/9] dt: exynos5250: Enable support for generic USB
- DRD phy
-Date: Fri, 25 Apr 2014 12:01:01 +0530
-Message-ID: <535A0125.9020207@linaro.org>
-References: <1398263451-18023-1-git-send-email-gautam.vivek@samsung.com> <1398263451-18023-4-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCHv2 1/4] ARM: dts: exynos4: add PMU syscon node
+Date: Fri, 25 Apr 2014 15:59:09 +0900
+Message-ID: <1398409152-14770-2-git-send-email-chanho61.park@samsung.com>
+References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:63191 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333AbaDYGbM (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:30229 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750844AbaDYG72 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 02:31:12 -0400
-Received: by mail-pb0-f42.google.com with SMTP id un15so2831829pbc.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 23:31:11 -0700 (PDT)
-In-Reply-To: <1398263451-18023-4-git-send-email-gautam.vivek@samsung.com>
+	Fri, 25 Apr 2014 02:59:28 -0400
+In-reply-to: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, robh+dt@kernel.org, olof@lixom.net, linux-arm-kernel@lists.infradead.org
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
 
-On 04/23/2014 08:00 PM, Vivek Gautam wrote:
-> Add device tree node for new usbdrd-phy driver, which
-> is based on generic phy framework.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |   10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 3742331..d4254c0 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -551,6 +551,16 @@
->  		};
->  	};
->  
-> +	usbdrd_phy: phy@12100000 {
-> +		compatible = "samsung,exynos5250-usbdrd-phy";
-> +		reg = <0x12100000 0x100>;
-> +		clocks = <&clock CLK_USB3>, <&clock CLK_FIN_PLL>;
-> +		clock-names = "phy", "ref";
-> +		samsung,pmu-syscon = <&pmu_system_controller>;
+This patch adds a PMU(Power Management Unit) syscon node. This
+should be required for USB Phy syscon regmap I/F.
 
-Replace samsung,pmu-syscon by samsung,syscon-phandle ?
+Cc: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+---
+ Documentation/devicetree/bindings/arm/samsung/pmu.txt | 2 ++
+ arch/arm/boot/dts/exynos4.dtsi                        | 5 +++++
+ arch/arm/boot/dts/exynos4x12.dtsi                     | 4 ++++
+ 3 files changed, 11 insertions(+)
 
-> +		samsung,pmu-offset = <0x704>;
-> +		#phy-cells = <1>;
-> +	};
-> +
->  	usb@12110000 {
->  		compatible = "samsung,exynos4210-ehci";
->  		reg = <0x12110000 0x100>;
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+index f1f1552..e2797d1 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+@@ -2,6 +2,8 @@ SAMSUNG Exynos SoC series PMU Registers
+ 
+ Properties:
+  - compatible : should contain two values. First value must be one from following list:
++		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
++		   - "samsung,exynos4x12-pmu" - for Exynos4212/4412 SoC,
+ 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+ 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+ 		second value must be always "syscon".
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 2f8bcd0..264066f 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -110,6 +110,11 @@
+ 		reg = <0x10010000 0x400>;
+ 	};
+ 
++	pmu_system_controller: system-controller@10020000 {
++		compatible = "samsung,exynos4210-pmu", "syscon";
++		reg = <0x10020000 0x4000>;
++	};
++
+ 	dsi_0: dsi@11C80000 {
+ 		compatible = "samsung,exynos4210-mipi-dsi";
+ 		reg = <0x11C80000 0x10000>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index c4a9306..7f767f7 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -119,6 +119,10 @@
+ 		interrupts = <0 72 0>;
+ 	};
+ 
++	pmu_system_controller: system-controller@10020000 {
++		compatible = "samsung,exynos4x12-pmu", "syscon";
++	};
++
+ 	g2d@10800000 {
+ 		compatible = "samsung,exynos4212-g2d";
+ 		reg = <0x10800000 0x1000>;
 -- 
-Tushar Behera
+1.8.3.2
