@@ -1,13 +1,14 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 01/10] ARM: EXYNOS: Make exynos machine_ops as static
-Date: Fri, 25 Apr 2014 23:05:41 +0200
-Message-ID: <535ACE25.5020503@gmail.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-2-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v2 02/10] ARM: EXYNOS: Cleanup "mach-exynos/common.h"
+ file
+Date: Fri, 25 Apr 2014 23:06:29 +0200
+Message-ID: <535ACE55.1010609@gmail.com>
+References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com> <1398429166-5539-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398429166-5539-2-git-send-email-pankaj.dubey@samsung.com>
+In-Reply-To: <1398429166-5539-3-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, s.nawrocki@samsung.com, b.zolnierkie@samsung.com
@@ -16,61 +17,30 @@ List-Id: linux-samsung-soc@vger.kernel.org
 Hi Pankaj,
 
 On 25.04.2014 14:32, Pankaj Dubey wrote:
-> As machine function ops are used only in this file let's make
-> them static.
+> Remove unused and unwanted declarations from "mach-exynos/common.h"
 >
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->   arch/arm/mach-exynos/exynos.c |    6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+>   arch/arm/mach-exynos/common.h |    6 ------
+>   1 file changed, 6 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index b32a907..2388ee4 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -198,7 +198,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->   	},
->   };
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 9ef3f83..31c5964 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -15,14 +15,8 @@
+>   #include <linux/reboot.h>
+>   #include <linux/of.h>
 >
-> -void exynos_restart(enum reboot_mode mode, const char *cmd)
-> +static void exynos_restart(enum reboot_mode mode, const char *cmd)
->   {
->   	struct device_node *np;
->   	u32 val = 0x1;
-> @@ -235,7 +235,7 @@ void __init exynos_cpufreq_init(void)
->   	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
->   }
->
-> -void __init exynos_init_late(void)
-> +static void __init exynos_init_late(void)
->   {
->   	if (of_machine_is_compatible("samsung,exynos5440"))
->   		/* to be supported later */
-> @@ -296,7 +296,7 @@ static void __init exynos_map_io(void)
->   		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
->   }
->
-> -void __init exynos_init_io(void)
-> +static void __init exynos_init_io(void)
->   {
->   	debug_ll_io_init();
->
->
+> -void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+> -
+> -struct map_desc;
+> -void exynos_init_io(void);
+> -void exynos_restart(enum reboot_mode mode, const char *cmd);
+>   void exynos_cpuidle_init(void);
+>   void exynos_cpufreq_init(void);
 
-This patch seems to be irrelevant to the rest of this series. Anyway, 
-the changes itself are fine, except that I can see more functions that 
-could be made static as well:
-  - exynos_cpuidle_init(),
-  - exynos_cpufreq_init().
-
-In fact, they both could be probably eliminated, as they are just 
-oneliners doing things that could be done in exynos_dt_machine_init() 
-directly.
-
-So, if you are doing this kind of cleanup, you could do this as well and 
-probably also replace platform_device + platform_device_register() with 
-platform_device_register_simple() for cpuidle, to reduce line count and 
-make it consistent with cpufreq.
+Why don't you remove these 2 as well?
 
 Best regards,
 Tomasz
