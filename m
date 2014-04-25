@@ -1,79 +1,83 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Remove vmmc-supply for mmc@12220000 on arndale-octa
- board
-Date: Fri, 25 Apr 2014 22:35:35 +0200
-Message-ID: <535AC717.40805@gmail.com>
-References: <1398456672-3936-1-git-send-email-javi.merino@arm.com> <535AC29E.8010905@gmail.com> <20140425203051.GD3027@e102654-lin.cambridge.arm.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] ARM: dts: Add syscon handle in pmu node for exynos5250
+Date: Fri, 25 Apr 2014 22:55:36 +0200
+Message-ID: <535ACBC8.5090703@gmail.com>
+References: <1396425778-4379-1-git-send-email-pankaj.dubey@samsung.com> <1398426857-5097-1-git-send-email-pankaj.dubey@samsung.com> <1398426857-5097-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:48312 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751613AbaDYUfi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 16:35:38 -0400
-Received: by mail-ee0-f49.google.com with SMTP id c41so3070810eek.22
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Apr 2014 13:35:37 -0700 (PDT)
-In-Reply-To: <20140425203051.GD3027@e102654-lin.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1398426857-5097-2-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chow.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yg1004.jang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javi Merino <javi.merino@arm.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
 
+Hi Pankaj,
 
-
-On 25.04.2014 22:30, Javi Merino wrote:
-> On Fri, Apr 25, 2014 at 09:16:30PM +0100, Tomasz Figa wrote:
->> Hi Javi,
->>
->> On 25.04.2014 22:11, Javi Merino wrote:
->>> d726ca2d3316 (ARM: dts: Add vmmc-supply to MMC on arndale-octa board)
->>> added the vmmc-supply to nodes mmc@12200000 and mmc@12220000 of the
->>> DT.  However, this makes the kernel fail to boot on the arndale-octa
->>> spews:
->>>
->>> [    5.060000] dwmmc_exynos 12200000.mmc: num-slots property not found, assuming 1 slot is available
->>> [    5.065000] platform 12200000.mmc: Driver dwmmc_exynos requests probe deferral
->>> [    5.075000] dwmmc_exynos 12220000.mmc: num-slots property not found, assuming 1 slot is available
->>> [    5.085000] platform 12220000.mmc: Driver dwmmc_exynos requests probe deferral
->>>
->>> And eventually hangs.  Without the vmmc-supply property in the
->>> mmc@12220000 node, the kernel boots again.
->>>
->>> Signed-off-by: Javi Merino <javi.merino@arm.com>
->>> ---
->>>
->>> Hi,
->>>
->>> Note that I don't know *why* removing the property works, all I know
->>> is that 3.15-rc2 fails to boot on my Arndale Octa unless I apply this
->>> patch.
->>
->> Are you sure you have the required PMIC driver enabled in your kernel
->> config?
+On 25.04.2014 13:54, Pankaj Dubey wrote:
+> Add "samsung,syscon-phandle" property pointing to PMU node
+> to access PMU register via PMU regmap handle.
 >
-> I configured the kernel using exynos_defconfig and that gives me:
+> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   arch/arm/boot/dts/exynos5250.dtsi |    1 +
+>   1 file changed, 1 insertion(+)
 >
-> # CONFIG_PMIC_ADP5520 is not set
-> # CONFIG_PMIC_DA903X is not set
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 3742331..52801af 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -173,6 +173,7 @@
+>   	pmu_system_controller: system-controller@10040000 {
+>   		compatible = "samsung,exynos5250-pmu", "syscon";
+>   		reg = <0x10040000 0x5000>;
+> +		samsung,syscon-phandle = <&pmu_system_controller>;
+>   	};
 >
-> Should I be using other defconfig for this board?  exynos_defconfig
-> used to work in 3.14.  Cheers,
+>   	watchdog@101D0000 {
+>
 
-Well, unfortunately exynos_defconfig is known to be far from being 
-reasonable. Right now it should be considered just as a base to 
-configure the kernel for Exynos SoCs. Most of board specific options 
-(and many of SoC-wide ones) need to be selected manually.
+This looks strange. A node that refers back to itself. If I understand 
+correctly, you are relying on the fact that if you don't use 
+platform_driver model for the PMU driver, it won't bind to this node and 
+instead the generic syscon driver will. I'm afraid this is incorrect, 
+because the PMU driver should normally use the driver model.
 
-Anyway, with the number of Exynos boards supported in mainline, I don't 
-think we will be ever going to enable all options for all the supported 
-boards by default in defconfig, especially considering the fact that we 
-will be moving to generic multi_v7_defconfig and likely dropping 
-exynos_defconfig completely.
+I see two possible options to solve this problem:
 
-As for now, I believe you should just make sure yourself that any 
-options relevant to your board are enabled.
+1) Instead, the PMU driver should bind to this node and become a syscon 
+provider. This will require a small change in the syscon API, which 
+would be reasonable anyway:
+
+  a) instead of using driver_find_device() and dev_get_drvdata() in 
+syscon_node_to_regmap(), a local list of syscon structs should be kept 
+in this driver and then the look-up would just iterate over this list, 
+that could contain external syscon implementations as well,
+
+  b) syscon_register() function should be provided to register an 
+external syscon provider from other drivers, like Exynos PMU driver.
+
+Another solution would be:
+
+2) Register a static platform device from Exynos PMU driver, with 
+.of_node set to PMU node and .name to "syscon" to instantiate the syscon 
+device and create a syscon provider, even though the PMU driver would be 
+bound to the node.
+
+The change mentioned in point 1.a) should be implemented regardless of 
+which solution is chosen, as iterating over all devices in the system 
+and relying on their driver_data is rather a poor practice. A local list 
+would be faster - all syscons to iterate over, instead of all devices in 
+the system, and more flexible - a single device could be a provider of 
+multiple resources.
+
+As for the solution for Exynos PMU itself, I tend to prefer 2), as it 
+wouldn't require additional functions exported from the syscon driver.
 
 Best regards,
 Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
