@@ -1,84 +1,66 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Fri, 25 Apr 2014 09:46:11 +0530
-Message-ID: <5359E18B.60600@linaro.org>
-References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org> <20140424133920.GA12304@sirena.org.uk>
+Subject: Re: [PATCHv4 3/7] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+Date: Fri, 25 Apr 2014 10:00:30 +0530
+Message-ID: <5359E4E6.90102@linaro.org>
+References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com> <1398388572-30239-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:44222 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767AbaDYEQR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 00:16:17 -0400
-Received: by mail-pd0-f175.google.com with SMTP id fp1so509356pdb.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 21:16:16 -0700 (PDT)
-In-Reply-To: <20140424133920.GA12304@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398388572-30239-4-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
 
-On 04/24/2014 07:09 PM, Mark Brown wrote:
-> On Wed, Apr 23, 2014 at 02:31:45PM +0530, Tushar Behera wrote:
+On 04/25/2014 06:46 AM, Chanwoo Choi wrote:
+> This patch fix the offset of CPU boot address and don't need to send smc call
+> of SMC_CMD_CPU1BOOT command for secondary CPU boot because Exynos3250 removes
+> WFE in secure mode.
 > 
->> +Required properties:
->> +- compatible : Can be one of the following,
->> +			"google,snow-audio-max98090" or
->> +			"google,snow-audio-max98095"
->> +- samsung,i2s-controller: The phandle of the Samsung I2S0 controller
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/firmware.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
-> This should be any I2S controller, not just I2S0?
-> 
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index aa01c42..386d01d 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -31,11 +31,17 @@ static int exynos_do_idle(void)
+>  static int exynos_cpu_boot(int cpu)
+>  {
+>  	/*
+> +	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
+> +	 * because Exynos3250 removes WFE in secure mode.
+> +	 */
+> +	if (soc_is_exynos3250())
+> +		return 0;
+> +	/*
+>  	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+>  	 * But, Exynos4212 has only one secondary CPU so second parameter
+>  	 * isn't used for informing secure firmware about CPU id.
+>  	 */
+> -	if (soc_is_exynos4212())
+> +	else if (soc_is_exynos4212())
 
-Yes, right. It can be any I2S controller. Just that, right now it is
-wired to I2S0.
+This changes is not required.
 
->> +- samsung,audio-codec: The phandle of the audio codec
-> 
-> This binding only has one I2S controller and CODEC.  However...
-> 
->> +static struct snd_soc_dai_link snow_dai[] = {
->> +	{ /* Playback DAI i/f */
->> +		.name = "Playback",
->> +		.stream_name = "Playback",
->> +		.codec_dai_name = "HiFi",
->> +		.dai_fmt = SND_SOC_DAIFMT_I2S |
->> +				SND_SOC_DAIFMT_NB_NF |
->> +				SND_SOC_DAIFMT_CBS_CFS,
->> +	}, { /* Capture DAI i/f */
->> +		.name = "Capture",
->> +		.stream_name = "Capture",
->> +		.codec_dai_name = "HiFi",
->> +		.dai_fmt = SND_SOC_DAIFMT_I2S |
->> +				SND_SOC_DAIFMT_NB_NF |
->> +				SND_SOC_DAIFMT_CBS_CFS,
->> +	},
->> +};
-> 
-> ...for some reason we have separate capture and playback DAI links
-
-That was lack of understanding from my side. I was of the impression
-that the back-end uses different DAI interfaces for aplay and arecord,
-which certainly is not the case. I will remove the 'Capture' dai and
-make 'Playback' dai as the primary DAI.
-
-> defined.  Why is that?  Also, why is the secondary I2S playback stream
-> not supported (this may be a reason to restrict to only the one I2S
-> interface)?
-
-AFAICS, I2S driver doesn't support secondary DAI with DT (dai type is
-always TYPE_PRI in case of DT). Hence I could not find a setup to test
-secondary dai with this board.
-
-> 
-> Please also use subject lines consistent with the subsystem - NO NEED TO
-> SHOUT.
+>  		cpu = 0;
+>  
+>  	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
+> @@ -46,7 +52,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>  {
+>  	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
+>  
+> -	if (!soc_is_exynos4212())
+> +	if (!soc_is_exynos4212() && !soc_is_exynos3250())
+>  		boot_reg += 4*cpu;
+>  
+>  	__raw_writel(boot_addr, boot_reg);
 > 
 
-Noted, will take care.
 
-Thanks.
 -- 
 Tushar Behera
