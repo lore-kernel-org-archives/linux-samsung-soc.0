@@ -1,103 +1,176 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
-Date: Sat, 26 Apr 2014 01:30:06 +0200
-Message-ID: <535AEFFE.7020900@gmail.com>
-References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org> <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com> <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com> <03b001cf5edc$ae42e770$0ac8b650$@samsung.com> <5358D46F.2050303@linaro.org> <5358E243.7010004@samsung.com> <5358EF70.7070809@linaro.org>
+Subject: Re: [PATCH v5] clk: Exynos5250: Add clocks for G3D
+Date: Sat, 26 Apr 2014 01:45:00 +0200
+Message-ID: <535AF37C.4030305@gmail.com>
+References: <1398350996-9644-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:51437 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbaDYXaJ (ORCPT
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:63067 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751307AbaDYXpD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 19:30:09 -0400
-Received: by mail-ee0-f45.google.com with SMTP id d17so3177070eek.32
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Apr 2014 16:30:08 -0700 (PDT)
-In-Reply-To: <5358EF70.7070809@linaro.org>
+	Fri, 25 Apr 2014 19:45:03 -0400
+Received: by mail-ee0-f50.google.com with SMTP id c13so3217399eek.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Apr 2014 16:45:02 -0700 (PDT)
+In-Reply-To: <1398350996-9644-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com
+To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
+Hi Arun,
 
-
-On 24.04.2014 13:03, Tushar Behera wrote:
-> On 04/24/2014 03:36 PM, Tomasz Figa wrote:
->> On 24.04.2014 11:07, Tushar Behera wrote:
->>> On 04/23/2014 03:43 PM, Kukjin Kim wrote:
->>>> Tushar Behera wrote:
->>>>>
->>>>> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
->>>>>> Hi Tushar
->>>>>>
->>>>>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
->>>>>> <tushar.behera@linaro.org> wrote:
->>>>>>> MAU powerdomain provides clocks for Audio sub-system block. This
->>>>>>> block
->>>>>>> comprises of the I2S audio controller, audio DMA blocks and Audio
->>>>>>> sub-system clock registers.
->>>>>>>
->>>>>>> Right now, there is no way to hook up power-domains with clock
->>>>> providers.
->>>>>>> During late boot when this power-domain gets disabled, we get
->>>>>>> following
->>>>>>> external abort.
->>>>
->>>> + Jonghwan Choi
->>>>
->>>> Well, this is not a perfect solution to support MAU power domain,
->>>> it's true it is a problem right now though.
->>>>
->>>> In other words, this is just temporal fix for the problem.
->>>>
->>>> How about accessing clock stuff for audio sub-system with handling
->>>> MAU power domain via generic IO power domain?
->>>>
->>>
->>> + Tomasz Figa
->>>
->>> Existing power domain driver exynos4_pm_init_power_domain is registered
->>> with an arch_initcall whereas the clk-exynos-audss driver is registered
->>> with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
->>> node, the binding with power-domain doesn't happen.
->>
->> I'd say core_initcall is way too early for clk-exynos-audss driver. It
->> should be at most subsys_initcall. As far as I can see, all users of
->> clocks provided by this driver (i.e. i2s) are probed at device_initcall
->> level anyway.
->>
+On 24.04.2014 16:49, Arun Kumar K wrote:
+> This patch adds the required clocks for ARM Mali IP
+> in Exynos5250.
 >
-> It is also used by ADMA node, which gets probed.
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+> This patch somehow got missed getting merged long time
+> back after Acks by Mike and Kukjin and review done by
+> Tomasz and Doug.
 
-If I'm looking correctly, ADMA is handled by pl330 driver which is 
-registered at device_initcall level and so it shouldn't make problems 
-with clk-exynos-audss driver being probed at subsys_initcall level.
+Sorry for this, I have obviously missed this patch. Feel free to ping me 
+if you don't see a reply from me for some time (a week or two). There 
+are large volumes of e-mails going through my mailbox and such small 
+single patches can easily get lost. ;)
 
+Anyway, since this patch seems to have changed quite a bit since last 
+version, please see my comments inline.
+
+> http://www.spinics.net/lists/linux-samsung-soc/msg21608.html
+> Resending it now after rebasing and testing on the latest kernel.
 >
->>>
->>> Alternately, if Tomasz's patches are applied [1], power-domain binding
->>> is successful. But because of the init order, clk-exynos-audss defers
->>> probe resulting in a kernel crash. Forcing clk-exynos-audss to register
->>> through arch_initcall() fixes this issue, but I am not sure if that is
->>> okay.
->>
->> If the driver crashes on deferred probe, then it's a bug and it should
->> be fixed.
->>
+> Changes from v4
+> - Rebased on latest kernel
+> - Added macros
+> Changes from v3
+> - Renamed some clocks as per Tomasz Figa's comments
+> Changes from v2
+> - Rebased on clk-next
+> Changes from v1
+> - Removed exporting of parent DIV clock for g3d
+>    as per Tomsz Figa's comment.
+> ---
+>   drivers/clk/samsung/clk-exynos5250.c   |   14 ++++++++++++++
+>   include/dt-bindings/clock/exynos5250.h |    2 ++
+>   2 files changed, 16 insertions(+)
 >
-> By the time clk-exynos-audss is getting called, mau_pd is already
-> disabled by power-domain driver. That is not getting enabled during
-> clk-exynos-audss probe. Am I missing something?
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index e7ee442..14a1d49 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -37,6 +37,7 @@
+>   #define VPLL_CON0		0x10140
+>   #define GPLL_CON0		0x10150
+>   #define SRC_TOP0		0x10210
+> +#define SRC_TOP1		0x10214
+>   #define SRC_TOP2		0x10218
+>   #define SRC_TOP3		0x1021c
+>   #define SRC_GSCL		0x10220
+> @@ -71,6 +72,7 @@
+>   #define GATE_IP_GSCL		0x10920
+>   #define GATE_IP_DISP1		0x10928
+>   #define GATE_IP_MFC		0x1092c
+> +#define GATE_IP_G3D		0x10930
+>   #define GATE_IP_GEN		0x10934
+>   #define GATE_IP_FSYS		0x10944
+>   #define GATE_IP_PERIC		0x10950
+> @@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[] __initdata = {
+>   	DIV_CPU0,
+>   	SRC_CORE1,
+>   	SRC_TOP0,
+> +	SRC_TOP1,
+>   	SRC_TOP2,
+>   	SRC_TOP3,
+>   	SRC_GSCL,
 
-Probably. The driver should enable runtime PM and call 
-pm_runtime_get_sync() to make sure that power is supplied to the device 
-it accesses.
+Shouldn't GATE_IP_G3D be added to the list as well?
 
-By the way, if defining MAU power domain in DT, then also all the 
-devices inside of this domain should be bound to it, including ADMA and 
-I2S, but I don't see neither of them having the "samsung,power-domain" 
-property.
+> @@ -189,10 +192,12 @@ PNAME(mout_vpllsrc_p)	= { "fin_pll", "sclk_hdmi27m" };
+>   PNAME(mout_vpll_p)	= { "mout_vpllsrc", "fout_vpll" };
+>   PNAME(mout_cpll_p)	= { "fin_pll", "fout_cpll" };
+>   PNAME(mout_epll_p)	= { "fin_pll", "fout_epll" };
+> +PNAME(mout_gpll_p)	= { "fin_pll", "fout_gpll" };
+>   PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
+>   PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
+>   PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
+>   PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
+> +PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
+>   PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
+>   PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
+>   PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
+> @@ -273,12 +278,16 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+>   	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+>   	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+>   	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+> +	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
+> +
+> +	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+>
+>   	MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
+>   	MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
+>   	MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
+>   	MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
+>   	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
+> +	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+>
+>   	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
+>   	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
+> @@ -326,6 +335,7 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+>
+>   	MUX(0, "mout_mpll_fout", mout_mpll_fout_p, PLL_DIV2_SEL, 4, 1),
+>   	MUX(0, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
+> +
+
+nit: Stray blank line.
+
+>   };
+>
+>   static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+> @@ -351,6 +361,8 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>   	DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+>   	DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
+>   	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+> +	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
+> +							24, 3),
+>
+>   	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
+>
+> @@ -615,6 +627,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+>   	GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
+>   	GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
+>   	GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
+> +	GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
+> +					CLK_SET_RATE_PARENT, 0),
+
+Shouldn't this be sorted properly? The GATE_IP_G3D register is between 
+GATE_IP_MFC and GATE_IP_GEN.
+
+>   };
+>
+>   static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
+> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
+> index 922f2dc..751915e 100644
+> --- a/include/dt-bindings/clock/exynos5250.h
+> +++ b/include/dt-bindings/clock/exynos5250.h
+> @@ -150,9 +150,11 @@
+>   #define CLK_G2D			345
+>   #define CLK_MDMA0		346
+>   #define CLK_SMMU_MDMA0		347
+> +#define CLK_G3D			348
+>
+>   /* mux clocks */
+>   #define CLK_MOUT_HDMI		1024
+> +#define CLK_MOUT_GPLL		1025
+>
+>   /* must be greater than maximal clock id */
+>   #define CLK_NR_CLKS		1025
+
+Since you have changed the maximum clock ID, by adding CLK_MOUT_GPLL, 
+you should also update CLK_NR_CLKS.
 
 Best regards,
 Tomasz
