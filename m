@@ -1,52 +1,88 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCHv2 0/4] Enable usbphy and hsotg for exynos4
-Date: Fri, 25 Apr 2014 11:03:27 +0200
-Message-ID: <535A24DF.2040201@samsung.com>
-References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 4/5] devfreq: exynos4: Use devm_devfreq_* function using device
+ resource management
+Date: Fri, 25 Apr 2014 18:08:13 +0900
+Message-ID: <1398416894-6782-5-git-send-email-cw00.choi@samsung.com>
+References: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:28801 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751877AbaDYJDg (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:37007 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752150AbaDYJIU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 05:03:36 -0400
-In-reply-to: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
+	Fri, 25 Apr 2014 05:08:20 -0400
+In-reply-to: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, devicetree@vger.kernel.org
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Cc: rafael.j.wysocki@intel.com, nm@ti.com, cw00.choi@samsung.com, jkosina@suse.cz, labbe.montjoie@gmail.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Chanho,
+This patch uses devm_devfreq_add_device()/devm_devfreq_register_opp_notifier()
+to control automatically the resource of devfreq.
 
-On 25.04.2014 08:59, Chanho Park wrote:
-> This patchset enables a exynos4 usbphy and hsotg DT node for exynos4. The usb
-> phy node uses generic exynos phy driver. The driver uses PMU syscon and SYSREG
-> syscon phandles.
-> 
-> Changes from v1: Applied Tomasz Figa's comments
->  - Document PMU syscon compatibles for exynos4210/4x12
->  - Use clock macro instead of raw clock number
->  - Correct phy name to "usb2-phy"
-> 
-> Chanho Park (4):
->   ARM: dts: exynos4: add PMU syscon node
->   ARM: dts: exynos4: add exynos_usbphy node
->   ARM: dts: exynos4: add hsotg device node
->   ARM: dts: exynos4412-trats2: enable usb nodes
-> 
->  .../devicetree/bindings/arm/samsung/pmu.txt        |  2 ++
->  arch/arm/boot/dts/exynos4.dtsi                     | 26 ++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4412-trats2.dts            | 10 +++++++++
->  arch/arm/boot/dts/exynos4x12.dtsi                  |  9 ++++++++
->  4 files changed, 47 insertions(+)
-> 
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ drivers/devfreq/exynos/exynos4_bus.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-For the whole series:
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
---
-Best regards,
-Tomasz
+diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+index d257f1f..bebb0a4 100644
+--- a/drivers/devfreq/exynos/exynos4_bus.c
++++ b/drivers/devfreq/exynos/exynos4_bus.c
+@@ -979,7 +979,7 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, data);
+ 
+-	data->devfreq = devfreq_add_device(dev, &exynos4_devfreq_profile,
++	data->devfreq = devm_devfreq_add_device(dev, &exynos4_devfreq_profile,
+ 					   "simple_ondemand", NULL);
+ 	if (IS_ERR(data->devfreq))
+ 		return PTR_ERR(data->devfreq);
+@@ -991,27 +991,20 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
+ 	busfreq_mon_reset(ppmu_data);
+ 
+ 	/* Register opp_notifier for Exynos4 busfreq */
+-	err = devfreq_register_opp_notifier(dev, data->devfreq);
++	err = devm_devfreq_register_opp_notifier(dev, data->devfreq);
+ 	if (err < 0) {
+ 		dev_err(dev, "Failed to register opp notifier\n");
+-		goto err_notifier_opp;
++		return err;
+ 	}
+ 
+ 	/* Register pm_notifier for Exynos4 busfreq */
+ 	err = register_pm_notifier(&data->pm_notifier);
+ 	if (err) {
+ 		dev_err(dev, "Failed to setup pm notifier\n");
+-		goto err_notifier_pm;
++		return err;
+ 	}
+ 
+ 	return 0;
+-
+-err_notifier_pm:
+-	devfreq_unregister_opp_notifier(dev, data->devfreq);
+-err_notifier_opp:
+-	devfreq_remove_device(data->devfreq);
+-
+-	return err;
+ }
+ 
+ static int exynos4_busfreq_remove(struct platform_device *pdev)
+@@ -1020,10 +1013,6 @@ static int exynos4_busfreq_remove(struct platform_device *pdev)
+ 
+ 	/* Unregister all of notifier chain */
+ 	unregister_pm_notifier(&data->pm_notifier);
+-	devfreq_unregister_opp_notifier(data->dev, data->devfreq);
+-
+-	/* Remove devfreq instance */
+-	devfreq_remove_device(data->devfreq);
+ 
+ 	return 0;
+ }
+-- 
+1.8.0
