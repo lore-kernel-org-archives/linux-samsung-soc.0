@@ -1,47 +1,75 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH] arm: exynos: add generic function to calculate cpu number
-Date: Fri, 25 Apr 2014 11:14:13 +0530
-Message-ID: <1398404653-14407-1-git-send-email-chander.kashyap@linaro.org>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v3 00/16] exynos5420: clock file cleanup
+Date: Fri, 25 Apr 2014 11:23:23 +0530
+Message-ID: <CAOD6ATq1FO_gKPU6jNWR_tBfoO5h4WECPp--pe8XZjWnJeMiOg@mail.gmail.com>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:38392 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751807AbaDYFob (ORCPT
+Received: from mail-yk0-f177.google.com ([209.85.160.177]:44002 "EHLO
+	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750781AbaDYFxo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 01:44:31 -0400
-Received: by mail-pb0-f52.google.com with SMTP id rq2so2784446pbb.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Apr 2014 22:44:30 -0700 (PDT)
+	Fri, 25 Apr 2014 01:53:44 -0400
+In-Reply-To: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-The address of cpu power registers in pmu is based on cpu number
-offsets. This function calculate the same. This is essentially
-required in case of multicluster SoC's e.g Exynos5420.
+On Thu, Apr 24, 2014 at 6:33 PM, Shaik Ameer Basha
+<shaik.ameer@samsung.com> wrote:
+> Many changes/fixes have been identified for clock file for exynos5420.
+> These include correct parents, bit fields, new clocks etc. Existing
+> files needs some correction in terms of names of the clock and
+> indentation. These issues are addressed in this patch series. It also
+> replaces the usage of enums with macro as clock ids.
+>
+> This patch series is rebased on,
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
+>
+> This patch is also dependent on the following patch.
+> ARM: dts: add dt node for sss module for exynos5250/5420
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
----
- arch/arm/mach-exynos/regs-pmu.h |    9 +++++++++
- 1 file changed, 9 insertions(+)
+Sorry, it depends on SSS clock patch. Not the dts one.
+clk: samsung exynos5250/5420: Add gate clock for SSS module
 
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 4f6a256..217da2e 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -313,4 +313,13 @@
- 
- #define EXYNOS5_OPTION_USE_RETENTION				(1 << 4)
- 
-+#include <asm/cputype.h>
-+#define MAX_CPUS_IN_CLUSTER	4
-+
-+static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
-+{
-+	return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
-+		 + MPIDR_AFFINITY_LEVEL(mpidr, 0));
-+}
-+
- #endif /* __ASM_ARCH_REGS_PMU_H */
--- 
-1.7.9.5
+>
+> Changes since v2:
+> -----------------
+> 1] Addressed review comments from Gerhard Sittig and Tomasz Figa.
+>
+> Changes since v1:
+> -----------------
+> 1] Addressed review comments from Tomasz Figa.
+>     http://www.spinics.net/lists/devicetree/msg16759.html
+>     http://www.spinics.net/lists/devicetree/msg16760.html
+>
+> Shaik Ameer Basha (16):
+>   clk: exynos5420: rename parent clocks
+>   clk: exynos5420: add clocks for ISP block
+>   clk: exynos5420: update clocks for GSCL and MSCL blocks
+>   clk: exynos5420: correct clock parents for mscl sysmmu
+>   clk: exynos5420: update clocks for G2D block
+>   clk: exynos5420: update clocks for DISP1 block
+>   clk: exynos5420: update clocks for PERIC block
+>   clk: exynos5420: update clocks for PERIS and GEN blocks
+>   clk: exynos5420: update clocks for WCORE block
+>   clk: exynos5420: update clocks for FSYS and FSYS2 blocks
+>   clk: exynos5420: correct sysmmu-mfc parent clocks
+>   clk: exynos5420: fix register offset for sclk_bpll
+>   clk: exynos5420: cleanup core and misc clocks
+>   clk: exynos5420: correct g3d parent clock
+>   clk: exynos5420: create clock ID for mout_sclk_vpll
+>   clk: exynos5420: add more registers to restore list
+>
+>  arch/arm/boot/dts/exynos5420.dtsi      |   14 +-
+>  drivers/clk/samsung/clk-exynos5420.c   |  808 ++++++++++++++++++++------------
+>  include/dt-bindings/clock/exynos5420.h |   33 +-
+>  3 files changed, 550 insertions(+), 305 deletions(-)
+>  mode change 100644 => 100755 drivers/clk/samsung/clk-exynos5420.c
+>  mode change 100644 => 100755 include/dt-bindings/clock/exynos5420.h
+>
+> --
+> 1.7.9.5
+>
