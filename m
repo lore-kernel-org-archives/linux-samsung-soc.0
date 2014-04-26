@@ -1,139 +1,115 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2 00/10] ARM: Exynos: PMU cleanup and refactoring for
- using DT
-Date: Sat, 26 Apr 2014 11:07:14 +0900
-Message-ID: <CAGcde9HNa0V+8it-=3xpJisDgWsb1YbC8-Twm5BGFtNJ+uEyDA@mail.gmail.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
- <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com> <535AE52B.4010104@gmail.com>
+From: Pankaj Dubey <dubepankaj1980@gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos4: add PMU syscon node
+Date: Sat, 26 Apr 2014 11:33:34 +0900
+Message-ID: <CAGcde9G1ynoOM9MqLbU05wzMGD=zC6NxqTY9EAOOFEa1Pr4fUg@mail.gmail.com>
+References: <1397479700-15864-1-git-send-email-chanho61.park@samsung.com>
+ <1397479700-15864-2-git-send-email-chanho61.park@samsung.com>
+ <535936A7.9050003@samsung.com> <CAGm_ybjhcAqX7biOvqLMgzHPQK=-EtaHtXpCtcJ1rcdRsxN_Og@mail.gmail.com>
+ <535AF52F.4090906@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:53646 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbaDZCHh convert rfc822-to-8bit (ORCPT
+Received: from mail-we0-f171.google.com ([74.125.82.171]:44800 "EHLO
+	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750755AbaDZCd4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Apr 2014 22:07:37 -0400
-In-Reply-To: <535AE52B.4010104@gmail.com>
+	Fri, 25 Apr 2014 22:33:56 -0400
+In-Reply-To: <535AF52F.4090906@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, Tomasz Figa <t.figa@samsung.com>, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, s.nawrocki@samsung.com, b.zolnierkie@samsung.com
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, k.debski@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
 Hi Tomasz,
 
-
-On Sat, Apr 26, 2014 at 7:43 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On Sat, Apr 26, 2014 at 8:52 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Vikas,
 >
-> Hi Pankaj,
 >
-> Just a small note - please refrain from sending next versions of series in reply to previous version. With threading applied, it gets hard to notice that a new version was posted, because the first message of the thread is always v1. Also it makes threads unnecessarily long.
+> On 25.04.2014 10:05, Vikas Sajjan wrote:
+>>
+>> Hi,
+>>
+>>
+>> On Thu, Apr 24, 2014 at 9:37 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>>>
+>>> Hi Chanho,
+>>>
+>>>
+>>> On 14.04.2014 14:48, Chanho Park wrote:
+>>>>
+>>>>
+>>>> This patch adds a PMU(Power Management Unit) syscon node. This
+>>>> should be required for USB Phy syscon regmap I/F.
+>>>>
+>>>> Cc: Tomasz Figa <t.figa@samsung.com>
+>>>> Cc: Kamil Debski <k.debski@samsung.com>
+>>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>>>> ---
+>>>>    arch/arm/boot/dts/exynos4.dtsi | 5 +++++
+>>>>    1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos4.dtsi
+>>>> b/arch/arm/boot/dts/exynos4.dtsi
+>>>> index 2f8bcd0..e565b86 100644
+>>>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>>>> @@ -110,6 +110,11 @@
+>>>>                  reg = <0x10010000 0x400>;
+>>>>          };
+>>>>
+>>>> +       pmu_reg: syscon@10020000 {
+>>>> +               compatible = "samsung,exynos4-pmureg", "syscon";
+>>>
+>>>
+>>
+>>   Assume a case where exynos PMU is made as platform driver [1] and we
+>> need use the compatible  "samsung,exynos4-pmureg" in the driver.
+>> But since syscon driver uses compatible "syscon" and once the syscon
+>> driver is probed, the  exynos PMU platform driver [1] will NEVER be
+>> probed.
+>> So my question is, can we have 2 compatible strings for a DT node, and
+>> both the compatible strings are used for probing purpose?
+>> Recently I faced this issue on exynos5250, where i was testing PMU
+>> driver [1] and I noticed that  PMU driver [1] was NEVER probed, if I
+>> enable syscon driver in menuconfig.
+>
+>
+> No, it is not possible to bind two drivers with different compatible strings
+> to the same node. Basically this is because only one platform driver can be
+> bound to particular platform device.
 >
 
-OK. I will take care in future.
+Yes, correct.
 
-
+> The rule is that the most specific compatible string (e.g. the first from
+> the left) that matches should be used, but I'm not sure if this is
+> implemented this way in Linux kernel, especially considering that a platform
+> driver usually probes when it is being registered. So we might have a race
+> here, which you can work around by making sure that your PMU driver is
+> always registered first (e.g. by lowering its initcall level).
 >
+
+I don't see it's using first compatible string from the left. I can
+see whichever driver registers platform driver first, it's probe is
+getting called. As in this particular case, PMU has two compatibility
+string as "samsung, exynosxxx-pmu", "syscon". But since "syscon"
+driver registers it's platform driver in postcore_initcall where as
+PMU platform driver [1], was registering as arch_initcall, only
+"syscon" probe got called.
+
+In my V2 patch for converting PMU as driver form, I dropped idea of
+converting into platform driver, because we can't remove "syscon" from
+binding as many other driver wants to access PMU register via regmap
+handle. By lowering it's initcall level may be I can make PMU probe
+gets called but then how other drivers will be able to access PMU
+regmap handles?
+
 > Best regards,
 > Tomasz
 >
 >
-> On 25.04.2014 14:32, Pankaj Dubey wrote:
->>
->> This patch series, does some minor cleanup and modifies Exynos PMU related
->> code for mapping and initialization of Exynos Power Management Unit (PMU)
->> base address from device tree. This is also preparation for moving PMU
->> related code out of machine folder and moving into a "drivers/mfd", so that
->> ARM64 based SoC can utilize common piece of code. These patches require change
->> in Exynos4210, Exynos4212 and Exynos4412 dtsi files, which has been posted
->> as separate patch series [2]
->>
->> These patches are created on top of Kukjin Kim's for-next (v3.15-rc1 tag)
->> branch.
->>
->> These patches depends on following two patch series:
->> 1) mfd: syscon: Support early initialization
->>     https://lkml.org/lkml/2014/4/8/239
->> 2) Add PMU node for Exynos SoCs
->>     http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29329.html
->>
->> We have tested these patches on SMDK5250 and Arndale (Exynos5250) boards for
->> System boot and PMU initialization and S2R.
->>
->> For testing on Arndale (Exynos5250) board:
->> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->>
->> Changes Since v1:
->>   - Rebased on latest for-next of Kukjin Kim's tree.
->>   - Added patch: "Make exynos machine_ops as static".
->>         For making more cleanup in "mach-exynos/common.h"
->>         as suggested by Tomasz Figa.
->>   - Addressed comments of Tomasz Figa for cleaning "mach-exynos/common.h".
->>   - Updated patch: Remove file path from comment section
->>         As suggested by Michel Simek, instead of updating file path
->>         lets remove them from each file under "mach-exynos".
->>         Even though Kukjin pointed out that there is similar patch pending from
->>         Sachin/Tushar but since I could not find I have included this here. If
->>         I have missed something please point to any existing such patch.
->>   - Updated patch: Add support for mapping PMU base address via DT
->>         - Removed __initdata from declaration of "exynos_pmu_base", as it caused
->>         kernel crash as pointed out by Vikas Sajjan.
->>         - Added support for Syscon initialization and getting PMU regmap handle
->>         as suggested by Sylwester. Since current implementation of early
->>         intialization [1] has limitation that "early_syscon_init" requires
->>         DT to be unflattened and system should be able to allocate memory,
->>         we can't use regmap handles for platsmp.c file as "smp_secondary_init"
->>         will be called before DT unflattening. So I have kept both method for
->>         accessing PMU base address. platsmp.c will use ioremmaped address where
->>         as rest other files can use regmap handle.
->>   - Added patch: Remove "linux/bug.h" from pmu.c.
->>   - Updated patch: Refactored code for PMU register mapping via DT
->>         - Modified to use regmap_read/write when using regmap handle.
->>   - Added patch: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
->>   - Added patch: Add device tree based initialization support for PMU.
->>         - Convert existing PMU implementation to be a device tree based
->>          before moving it to "drivers/mfd" folder. As suggested by Bartlomiej.
->>         - Dropped making a platform_driver for PMU, as currently PMU binding
->>         has two compatibility strings as "samsung, exynosxxx-pmu", "syscon",
->>         once we enable MFD_SYSCON config option, current "syscon" driver probe
->>         gets called and PMU probe never gets called. So modified PMU
->>         initialization code to scan DT and match against supported compatiblity
->>         string in driver code, and once we get matching node use that for
->>         accessing PMU regmap handle using "syscon_early_regmap_lookup_by_phandle".
->>         If there is any better solution please suggest.
->>
->> Pankaj Dubey (6):
->>    ARM: EXYNOS: Make exynos machine_ops as static
->>    ARM: EXYNOS: Cleanup "mach-exynos/common.h" file
->>    ARM: EXYNOS: Remove file path from comment section
->>    ARM: EXYNOS: Refactored code for using PMU address via DT
->>    ARM: EXYNOS: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
->>    ARM: EXYNOS: Add device tree based initialization support for PMU.
->>
->> Young-Gun Jang (4):
->>    ARM: EXYNOS: Move SYSREG definition into sys-reg specific file.
->>    ARM: EXYNOS: Remove regs-pmu.h header dependency from pm_domain
->>    ARM: EXYNOS: Add support for mapping PMU base address via DT
->>    ARM: EXYNOS: Remove "linux/bug.h" from pmu.c
->>
->>   arch/arm/mach-exynos/Kconfig               |    2 +
->>   arch/arm/mach-exynos/common.h              |   13 +-
->>   arch/arm/mach-exynos/cpuidle.c             |   37 +-
->>   arch/arm/mach-exynos/exynos.c              |  104 +++++-
->>   arch/arm/mach-exynos/headsmp.S             |    2 -
->>   arch/arm/mach-exynos/hotplug.c             |    7 +-
->>   arch/arm/mach-exynos/include/mach/map.h    |    3 -
->>   arch/arm/mach-exynos/include/mach/memory.h |    3 +-
->>   arch/arm/mach-exynos/platsmp.c             |   17 +-
->>   arch/arm/mach-exynos/pm.c                  |   61 ++--
->>   arch/arm/mach-exynos/pm_domains.c          |    2 +-
->>   arch/arm/mach-exynos/pmu.c                 |  191 ++++++++---
->>   arch/arm/mach-exynos/regs-pmu.h            |  512 ++++++++++++++--------------
->>   arch/arm/mach-exynos/regs-sys.h            |   22 ++
->>   14 files changed, 585 insertions(+), 391 deletions(-)
->>   create mode 100644 arch/arm/mach-exynos/regs-sys.h
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
