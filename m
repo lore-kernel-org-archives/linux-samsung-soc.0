@@ -1,66 +1,152 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/5 v2] iio: exynos_adc: use indio_dev->dev structure to handle
- child nodes
-Date: Sat, 26 Apr 2014 17:07:52 +0530
-Message-ID: <1398512276-4105-2-git-send-email-ch.naveen@samsung.com>
-References: <1398512276-4105-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1398512276-4105-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Sat, 26 Apr 2014 17:27:42 +0530
+Message-ID: <CAGm_ybjepoovODOoWBr0f=3m=fhCThSQMPUqwz_PskCw2MqnuA@mail.gmail.com>
+References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org>
+	<CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com>
+	<CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com>
+	<03b001cf5edc$ae42e770$0ac8b650$@samsung.com>
+	<5358D46F.2050303@linaro.org>
+	<5358E243.7010004@samsung.com>
+	<5358EF70.7070809@linaro.org>
+	<535AEFFE.7020900@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:53586 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751241AbaDZL5m (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 26 Apr 2014 07:57:42 -0400
+Received: by mail-ob0-f172.google.com with SMTP id wo20so5401262obc.17
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 26 Apr 2014 04:57:42 -0700 (PDT)
+In-Reply-To: <535AEFFE.7020900@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jhbird.choi@samsung.com
 
-From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Hi,
 
-Using pdev->dev with device_for_each_child() would iterate over all
-of the children of the platform device and delete them.
-Thus, causing crashes during module unload.
 
-We should be using the indio_dev->dev structure for
-registering/unregistering child nodes.
+On Sat, Apr 26, 2014 at 5:00 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>
+>
+> On 24.04.2014 13:03, Tushar Behera wrote:
+>>
+>> On 04/24/2014 03:36 PM, Tomasz Figa wrote:
+>>>
+>>> On 24.04.2014 11:07, Tushar Behera wrote:
+>>>>
+>>>> On 04/23/2014 03:43 PM, Kukjin Kim wrote:
+>>>>>
+>>>>> Tushar Behera wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>>>>>>>
+>>>>>>> Hi Tushar
+>>>>>>>
+>>>>>>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
+>>>>>>> <tushar.behera@linaro.org> wrote:
+>>>>>>>>
+>>>>>>>> MAU powerdomain provides clocks for Audio sub-system block. This
+>>>>>>>> block
+>>>>>>>> comprises of the I2S audio controller, audio DMA blocks and Audio
+>>>>>>>> sub-system clock registers.
+>>>>>>>>
+>>>>>>>> Right now, there is no way to hook up power-domains with clock
+>>>>>>
+>>>>>> providers.
+>>>>>>>>
+>>>>>>>> During late boot when this power-domain gets disabled, we get
+>>>>>>>> following
+>>>>>>>> external abort.
+>>>>>
+>>>>>
+>>>>> + Jonghwan Choi
+>>>>>
+>>>>> Well, this is not a perfect solution to support MAU power domain,
+>>>>> it's true it is a problem right now though.
+>>>>>
+>>>>> In other words, this is just temporal fix for the problem.
+>>>>>
+>>>>> How about accessing clock stuff for audio sub-system with handling
+>>>>> MAU power domain via generic IO power domain?
+>>>>>
+>>>>
+>>>> + Tomasz Figa
+>>>>
+>>>> Existing power domain driver exynos4_pm_init_power_domain is registered
+>>>> with an arch_initcall whereas the clk-exynos-audss driver is registered
+>>>> with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
+>>>> node, the binding with power-domain doesn't happen.
+>>>
+>>>
+>>> I'd say core_initcall is way too early for clk-exynos-audss driver. It
+>>> should be at most subsys_initcall. As far as I can see, all users of
+>>> clocks provided by this driver (i.e. i2s) are probed at device_initcall
+>>> level anyway.
+>>>
+>>
+>> It is also used by ADMA node, which gets probed.
+>
+>
+> If I'm looking correctly, ADMA is handled by pl330 driver which is
+> registered at device_initcall level and so it shouldn't make problems with
+> clk-exynos-audss driver being probed at subsys_initcall level.
+>
+>
+>>
+>>>>
+>>>> Alternately, if Tomasz's patches are applied [1], power-domain binding
+>>>> is successful. But because of the init order, clk-exynos-audss defers
+>>>> probe resulting in a kernel crash. Forcing clk-exynos-audss to register
+>>>> through arch_initcall() fixes this issue, but I am not sure if that is
+>>>> okay.
+>>>
+>>>
+>>> If the driver crashes on deferred probe, then it's a bug and it should
+>>> be fixed.
+>>>
+>>
+>> By the time clk-exynos-audss is getting called, mau_pd is already
+>> disabled by power-domain driver. That is not getting enabled during
+>> clk-exynos-audss probe. Am I missing something?
+>
+>
+> Probably. The driver should enable runtime PM and call pm_runtime_get_sync()
+> to make sure that power is supplied to the device it accesses.
+>
+> By the way, if defining MAU power domain in DT, then also all the devices
+> inside of this domain should be bound to it, including ADMA and I2S, but I
+> don't see neither of them having the "samsung,power-domain" property.
+>
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reported-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
-This change was tested on top of 
-   https://lkml.org/lkml/2014/4/21/481 from Doug.
+According to UM of 5420, MAU has to be power gated is specific order
+the SYS_PWR_CFG field of EXYNOS5_PAD_RETENTION_MAU_SYS_PWR_REG should
+be set to 0, before actually power gating the MAU block.
+I am NOT sure whether this is taken care in the mainline.
+As per the current implementation in pm_domain.c, the
+exynos_pd_power() just writes  __raw_writel(pwr, base);
+based on bool power_on passed.
+We dont have the provision in the generic power domain framework to
+have something like pre_power_off() or post_power_on(). Correct me if
+am wrong.
 
- drivers/iio/adc/exynos_adc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Even for power gating of ISP block a certain specific order needs to
+be followed.
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index d25b262..affa93f 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -344,7 +344,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 
- 	exynos_adc_hw_init(info);
- 
--	ret = of_platform_populate(np, exynos_adc_match, NULL, &pdev->dev);
-+	ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed adding child nodes\n");
- 		goto err_of_populate;
-@@ -353,7 +353,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_of_populate:
--	device_for_each_child(&pdev->dev, NULL,
-+	device_for_each_child(&indio_dev->dev, NULL,
- 				exynos_adc_remove_devices);
- 	regulator_disable(info->vdd);
- 	clk_disable_unprepare(info->clk);
-@@ -369,7 +369,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
- 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
- 	struct exynos_adc *info = iio_priv(indio_dev);
- 
--	device_for_each_child(&pdev->dev, NULL,
-+	device_for_each_child(&indio_dev->dev, NULL,
- 				exynos_adc_remove_devices);
- 	regulator_disable(info->vdd);
- 	clk_disable_unprepare(info->clk);
--- 
-1.7.9.5
+So I think there is a need ops like pre_power_off(), post_power_on()
+in generic power domain framework.
+
+let me know your opinion.
+
+> Best regards,
+> Tomasz
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
