@@ -1,8 +1,7 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 5/5 v2] iio: exynos_adc: do a reinit_completion before the
- conversion
-Date: Sat, 26 Apr 2014 17:07:56 +0530
-Message-ID: <1398512276-4105-6-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 4/5 v2] iio: exynos_adc: do a soft reset in case of timeout
+Date: Sat, 26 Apr 2014 17:07:55 +0530
+Message-ID: <1398512276-4105-5-git-send-email-ch.naveen@samsung.com>
 References: <1398512276-4105-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1398512276-4105-1-git-send-email-ch.naveen@samsung.com>
@@ -11,26 +10,91 @@ To: linux-iio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add reinit_completion() before the wait_for_completion_timeout in
-raw_read() call.
+Do a soft reset software if a timeout happens.
+This is applicable only for ADC_V2.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Reviewed-by: Doug Anderson <dianders@chromium.org>
 ---
- drivers/iio/adc/exynos_adc.c |    1 +
- 1 file changed, 1 insertion(+)
+This change is a part of the patch reviewed at https://lkml.org/lkml/2013/11/5/92
+
+ drivers/iio/adc/exynos_adc.c |   50 ++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 805c9f6..32290e6 100644
+index 4d2467a..805c9f6 100644
 --- a/drivers/iio/adc/exynos_adc.c
 +++ b/drivers/iio/adc/exynos_adc.c
-@@ -151,6 +151,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 		return -EINVAL;
+@@ -112,6 +112,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+ 	return (unsigned int)match->data;
+ }
  
- 	mutex_lock(&indio_dev->mlock);
-+	reinit_completion(&info->completion);
++static void exynos_adc_hw_init(struct exynos_adc *info)
++{
++	u32 con1, con2;
++
++	if (info->version == ADC_V2) {
++		con1 = ADC_V2_CON1_SOFT_RESET;
++		writel(con1, ADC_V2_CON1(info->regs));
++
++		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
++			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
++		writel(con2, ADC_V2_CON2(info->regs));
++
++		/* Enable interrupts */
++		writel(1, ADC_V2_INT_EN(info->regs));
++	} else {
++		/* set default prescaler values and Enable prescaler */
++		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
++
++		/* Enable 12-bit ADC resolution */
++		con1 |= ADC_V1_CON_RES;
++		writel(con1, ADC_V1_CON(info->regs));
++	}
++}
++
+ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 				struct iio_chan_spec const *chan,
+ 				int *val,
+@@ -149,6 +173,8 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 	timeout = wait_for_completion_timeout
+ 			(&info->completion, EXYNOS_ADC_TIMEOUT);
+ 	if (timeout == 0) {
++		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
++		exynos_adc_hw_init(info);
+ 		ret = -ETIMEDOUT;
+ 	} else {
+ 		*val = info->value;
+@@ -230,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
+ 	return 0;
+ }
  
- 	/* Select the channel to be used and Trigger conversion */
- 	if (info->version == ADC_V2) {
+-static void exynos_adc_hw_init(struct exynos_adc *info)
+-{
+-	u32 con1, con2;
+-
+-	if (info->version == ADC_V2) {
+-		con1 = ADC_V2_CON1_SOFT_RESET;
+-		writel(con1, ADC_V2_CON1(info->regs));
+-
+-		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+-			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+-		writel(con2, ADC_V2_CON2(info->regs));
+-
+-		/* Enable interrupts */
+-		writel(1, ADC_V2_INT_EN(info->regs));
+-	} else {
+-		/* set default prescaler values and Enable prescaler */
+-		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+-
+-		/* Enable 12-bit ADC resolution */
+-		con1 |= ADC_V1_CON_RES;
+-		writel(con1, ADC_V1_CON(info->regs));
+-	}
+-}
+-
+ static int exynos_adc_probe(struct platform_device *pdev)
+ {
+ 	struct exynos_adc *info = NULL;
 -- 
 1.7.9.5
