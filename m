@@ -1,95 +1,80 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCHv4 2/7] ARM: EXYNOS: Support secondary CPU boot of Exynos4212
-Date: Sat, 26 Apr 2014 19:49:13 +0900
-Message-ID: <0b3601cf613d$29ae93c0$7d0bbb40$@samsung.com>
-References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
- <1398388572-30239-3-git-send-email-cw00.choi@samsung.com>
- <535B00E5.4060903@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] ARM: dts: Add peach-pit board support
+Date: Sat, 26 Apr 2014 19:56:48 +0900
+Message-ID: <0b4001cf613e$38abbf00$aa033d00$@samsung.com>
+References: <1398313031-14848-1-git-send-email-arun.kk@samsung.com>
+ <CAD=FV=X8ZPrz=wHOzPXYXvO+FNWfDEJvENnDPoNTfw8uniEDXg@mail.gmail.com>
+ <CALt3h7-TmqtZRqdG=KxqeYdeWEKEbiyNaXAdQMoOb-aCLrD1_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <535B00E5.4060903-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:20711 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751552AbaDZK4t (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 26 Apr 2014 06:56:49 -0400
+In-reply-to: <CALt3h7-TmqtZRqdG=KxqeYdeWEKEbiyNaXAdQMoOb-aCLrD1_w@mail.gmail.com>
 Content-language: ko
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Chanwoo Choi' <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hyunhee.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sajjan.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arun Kumar K' <arunkk.samsung@gmail.com>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, 'Olof Johansson' <olofj@google.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Tushar Behera' <tushar.behera@linaro.org>
 
-Tomasz Figa wrote:
+Arun Kumar K wrote:
 > 
-> Hi,
+> Thanks Doug & Tushar for the Reviewed-by.
 > 
-Hi,
+> On Fri, Apr 25, 2014 at 12:27 AM, Doug Anderson <dianders@chromium.org>
+> wrote:
+> > Arun,
+> >
+> > On Wed, Apr 23, 2014 at 9:17 PM, Arun Kumar K <arun.kk@samsung.com>
+> wrote:
+> >> Adds the google peach-pit board dts file which uses
+> >> exynos5420 SoC.
+> >>
+> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> >> ---
+> >> Changes from v1
+> >> ---------------
+> >> - Addressed review comments from Doug, Sachin & Tushar
+> >> - Removed adc and lid-switch nodes
+> >> ---
+> >>  arch/arm/boot/dts/Makefile                 |    1 +
+> >>  arch/arm/boot/dts/exynos5420-peach-pit.dts |  182
+> ++++++++++++++++++++++++++++
+> >>  2 files changed, 183 insertions(+)
+> >> +       spi@12d30000 {
+> >> +               status = "okay";
+> >> +               samsung,spi-src-clk = <0>;
+> >> +               num-cs = <1>;
+> >> +
+> >> +               spidev@0 {
+> >> +                       compatible = "spidev";
+> >> +                       reg = <0>;
+> >> +                       spi-max-frequency = <50000000>;
+> >> +                       pinctrl-names = "default";
+> >> +                       pinctrl-0 = <&spi_flash_cs>;
+> >> +
+> >> +                       controller-data {
+> >> +                               cs-gpio = <&gpa2 5 0>;
+> >
+> > Technically this could be
+> >
+> > cs-gpio = <&gpa2 5 GPIO_ACTIVE_HIGH>;
+> >
+> > ...but I don't think that's a huge deal...
+> >
+> 
+> Kukjin, please let me know if I need to re-send this or can you take
+> care while applying?
+> 
+Arun, can you please re-spin with tag of reviewed-by?
 
-> On 25.04.2014 03:16, Chanwoo Choi wrote:
-> > From: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >
-> > This patch fix the offset of CPU boot address and change parameter of
-> smc call
-> > of SMC_CMD_CPU1BOOT command for Exynos4212.
-> >
-> > Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >   arch/arm/mach-exynos/firmware.c | 15 ++++++++++++++-
-> >   1 file changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-
-> exynos/firmware.c
-> > index 932129e..aa01c42 100644
-> > --- a/arch/arm/mach-exynos/firmware.c
-> > +++ b/arch/arm/mach-exynos/firmware.c
-> > @@ -18,6 +18,8 @@
-> >
-> >   #include <mach/map.h>
-> >
-> > +#include <plat/cpu.h>
-> > +
-> >   #include "smc.h"
-> >
-> >   static int exynos_do_idle(void)
-> > @@ -28,13 +30,24 @@ static int exynos_do_idle(void)
-> >
-> >   static int exynos_cpu_boot(int cpu)
-> >   {
-> > +	/*
-> > +	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
-> > +	 * But, Exynos4212 has only one secondary CPU so second parameter
-> > +	 * isn't used for informing secure firmware about CPU id.
-> > +	 */
-> > +	if (soc_is_exynos4212())
-> > +		cpu = 0;
-> > +
-> >   	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
-> >   	return 0;
-> >   }
-> >
-> >   static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
-> >   {
-> > -	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
-> > +	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
-> > +
-> > +	if (!soc_is_exynos4212())
-> > +		boot_reg += 4*cpu;
-> >
-> >   	__raw_writel(boot_addr, boot_reg);
-> >   	return 0;
-> >
-> 
-> This patch should be applied independently of Exynos3250 support.
-> Kukjin, what do you think?
-> 
-Yes, this should be separated. I will pick this into fixes.
-
-> Anyway,
-> 
-> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
 Thanks,
 Kukjin
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> > Reviewed-by: Doug Anderson <dianders@chromium.org>
