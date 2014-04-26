@@ -1,101 +1,82 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2 01/10] ARM: EXYNOS: Make exynos machine_ops as static
-Date: Sat, 26 Apr 2014 13:42:11 +0900
-Message-ID: <CAGcde9GJbHySUo=j1a-SYyRoNEyFrU6tjEE_AV6dLOEJfC-Sjw@mail.gmail.com>
-References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
- <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com>
- <1398429166-5539-2-git-send-email-pankaj.dubey@samsung.com> <535ACE25.5020503@gmail.com>
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH] ARM: dts: Remove vmmc-supply for mmc@12220000 on
+ arndale-octa board
+Date: Sat, 26 Apr 2014 09:13:40 +0100
+Message-ID: <20140425204135.GF3027@e102654-lin.cambridge.arm.com>
+References: <1398456672-3936-1-git-send-email-javi.merino@arm.com>
+ <535AC29E.8010905@gmail.com>
+ <20140425203051.GD3027@e102654-lin.cambridge.arm.com>
+ <535AC717.40805@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:38968 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750733AbaDZEmc (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:38424 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750733AbaDZINs convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Apr 2014 00:42:32 -0400
-In-Reply-To: <535ACE25.5020503@gmail.com>
+	Sat, 26 Apr 2014 04:13:48 -0400
+In-Reply-To: <535AC717.40805@gmail.com>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux@arm.linux.org.uk, b.zolnierkie@samsung.com, Tomasz Figa <t.figa@samsung.com>, Young-Gun Jang <yg1004.jang@samsung.com>, s.nawrocki@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
 
-HI Tomasz,
+On Fri, Apr 25, 2014 at 09:35:35PM +0100, Tomasz Figa wrote:
+> On 25.04.2014 22:30, Javi Merino wrote:
+> > On Fri, Apr 25, 2014 at 09:16:30PM +0100, Tomasz Figa wrote:
+> >> On 25.04.2014 22:11, Javi Merino wrote:
+> >>> d726ca2d3316 (ARM: dts: Add vmmc-supply to MMC on arndale-octa board)
+> >>> added the vmmc-supply to nodes mmc@12200000 and mmc@12220000 of the
+> >>> DT.  However, this makes the kernel fail to boot on the arndale-octa
+> >>> spews:
+> >>>
+> >>> [    5.060000] dwmmc_exynos 12200000.mmc: num-slots property not found, assuming 1 slot is available
+> >>> [    5.065000] platform 12200000.mmc: Driver dwmmc_exynos requests probe deferral
+> >>> [    5.075000] dwmmc_exynos 12220000.mmc: num-slots property not found, assuming 1 slot is available
+> >>> [    5.085000] platform 12220000.mmc: Driver dwmmc_exynos requests probe deferral
+> >>>
+> >>> And eventually hangs.  Without the vmmc-supply property in the
+> >>> mmc@12220000 node, the kernel boots again.
+> >>>
+> >>> Signed-off-by: Javi Merino <javi.merino@arm.com>
+> >>> ---
+> >>>
+> >>> Hi,
+> >>>
+> >>> Note that I don't know *why* removing the property works, all I know
+> >>> is that 3.15-rc2 fails to boot on my Arndale Octa unless I apply this
+> >>> patch.
+> >>
+> >> Are you sure you have the required PMIC driver enabled in your kernel
+> >> config?
+> >
+> > I configured the kernel using exynos_defconfig and that gives me:
+> >
+> > # CONFIG_PMIC_ADP5520 is not set
+> > # CONFIG_PMIC_DA903X is not set
+> >
+> > Should I be using other defconfig for this board?  exynos_defconfig
+> > used to work in 3.14.  Cheers,
+> 
+> Well, unfortunately exynos_defconfig is known to be far from being 
+> reasonable. Right now it should be considered just as a base to 
+> configure the kernel for Exynos SoCs. Most of board specific options 
+> (and many of SoC-wide ones) need to be selected manually.
+> 
+> Anyway, with the number of Exynos boards supported in mainline, I don't 
+> think we will be ever going to enable all options for all the supported 
+> boards by default in defconfig, especially considering the fact that we 
+> will be moving to generic multi_v7_defconfig and likely dropping 
+> exynos_defconfig completely.
+> 
+> As for now, I believe you should just make sure yourself that any 
+> options relevant to your board are enabled.
 
-Thanks for review and suggestions.
+Great.  And I assume that there isn't a list of those options in the
+web.  So how do I know what options are relevant to my board?  By
+sending emails to linux-samsung-soc whenever it fails to boot?
 
-On Sat, Apr 26, 2014 at 6:05 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Pankaj,
->
->
-> On 25.04.2014 14:32, Pankaj Dubey wrote:
->>
->> As machine function ops are used only in this file let's make
->> them static.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>   arch/arm/mach-exynos/exynos.c |    6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index b32a907..2388ee4 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -198,7 +198,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->>         },
->>   };
->>
->> -void exynos_restart(enum reboot_mode mode, const char *cmd)
->> +static void exynos_restart(enum reboot_mode mode, const char *cmd)
->>   {
->>         struct device_node *np;
->>         u32 val = 0x1;
->> @@ -235,7 +235,7 @@ void __init exynos_cpufreq_init(void)
->>         platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
->>   }
->>
->> -void __init exynos_init_late(void)
->> +static void __init exynos_init_late(void)
->>   {
->>         if (of_machine_is_compatible("samsung,exynos5440"))
->>                 /* to be supported later */
->> @@ -296,7 +296,7 @@ static void __init exynos_map_io(void)
->>                 iotable_init(exynos5250_iodesc,
->> ARRAY_SIZE(exynos5250_iodesc));
->>   }
->>
->> -void __init exynos_init_io(void)
->> +static void __init exynos_init_io(void)
->>   {
->>         debug_ll_io_init();
->>
->>
->
-> This patch seems to be irrelevant to the rest of this series. Anyway, the
-> changes itself are fine, except that I can see more functions that could be
-> made static as well:
->  - exynos_cpuidle_init(),
->  - exynos_cpufreq_init().
->
-> In fact, they both could be probably eliminated, as they are just oneliners
-> doing things that could be done in exynos_dt_machine_init() directly.
->
-> So, if you are doing this kind of cleanup, you could do this as well and
-> probably also replace platform_device + platform_device_register() with
-> platform_device_register_simple() for cpuidle, to reduce line count and make
-> it consistent with cpufreq.
->
-
-OK, I will take care of this.
-Also will separate these patches from PMU series.
-
-Thanks,
-Pankaj Dubey
-
-> Best regards,
-> Tomasz
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Cheers,
+Javi
