@@ -1,8 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v3 PATCH 07/16] drm/exynos: dsi: add TE handler to support
- command mode interface
-Date: Sun, 27 Apr 2014 10:50:03 +0900
-Message-ID: <1398563412-21781-8-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v3 PATCH v2 03/16] ARM: dts: sysreg: add exynos5 compatible to DT
+ bindings
+Date: Sun, 27 Apr 2014 10:49:59 +0900
+Message-ID: <1398563412-21781-4-git-send-email-yj44.cho@samsung.com>
 References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,51 +22,29 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To support command mode interface, the DSI host calls this handler
-to notify the panel tearing effect synchronization signal to the
-CRTC device manager to trigger to transfer video image.
+This patch adds relevant to exynos5 compatible for exynos5 SoCs.
+
+Changelog v2:
+- Changes title and description (commented by Sachin Kamat)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 956e5f3..4a918ec 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -23,6 +23,7 @@
- #include <video/mipi_display.h>
- #include <video/videomode.h>
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+index 0ab3251..fd71581 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+@@ -3,6 +3,7 @@ SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
+ Properties:
+  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
+    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
++   For Exynos5 SoC series it should be "samsung,exynos5-sysreg", "syscon";
+  - reg : offset and length of the register set.
  
-+#include "exynos_drm_crtc.h"
- #include "exynos_drm_drv.h"
- 
- /* returns true iff both arguments logically differs */
-@@ -1032,10 +1033,22 @@ static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
- 	return (ret < 0) ? ret : xfer.rx_done;
- }
- 
-+static int exynos_dsi_host_te_handler(struct mipi_dsi_host *host)
-+{
-+	struct exynos_dsi *dsi = host_to_dsi(host);
-+	struct drm_encoder *encoder = dsi->encoder;
-+
-+	if (!(dsi->state & DSIM_STATE_ENABLED))
-+		return -EPERM;
-+
-+	return exynos_drm_crtc_te_handler(encoder->crtc);
-+}
-+
- static const struct mipi_dsi_host_ops exynos_dsi_ops = {
- 	.attach = exynos_dsi_host_attach,
- 	.detach = exynos_dsi_host_detach,
- 	.transfer = exynos_dsi_host_transfer,
-+	.te_handler = exynos_dsi_host_te_handler,
- };
- 
- static int exynos_dsi_poweron(struct exynos_dsi *dsi)
+ Example:
 -- 
 1.7.9.5
