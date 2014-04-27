@@ -1,75 +1,113 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 0/2] Add generic cpu power control functions for exynos
-Date: Sat, 26 Apr 2014 21:37:01 +0530
-Message-ID: <CAM4voa=OrMHtB+Rza=5x74w8SuCg0VG8ZA_XLPzmDPU5cfEjyg@mail.gmail.com>
-References: <1398331919-28321-1-git-send-email-leela.krishna@linaro.org>
-	<5358DF50.9010106@linaro.org>
-	<CAM7CM0kCexA=JjGw4XqhRQ+xPEss60SPpqPgSXgxANcnVh7ZWA@mail.gmail.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: exynos4412: porting hdmiddc and hdmiphy node entries
+Date: Sun, 27 Apr 2014 02:33:14 +0200
+Message-ID: <535C504A.2090809@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAM7CM0kCexA=JjGw4XqhRQ+xPEss60SPpqPgSXgxANcnVh7ZWA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Leela Krishna Amudala <leela.krishna@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "nicolas.pitre" <nicolas.pitre@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: multipart/mixed;
+ boundary="------------040501030006090208000807"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.15.15]:50885 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752730AbaD0AdX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 26 Apr 2014 20:33:23 -0400
+Received: from [192.168.0.34] ([37.201.156.236]) by mail.gmx.com (mrgmx001)
+ with ESMTPSA (Nemesis) id 0MTjqS-1WVNKL2dv6-00QP2r for
+ <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2014 02:33:21 +0200
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Hi Leela,
+This is a multi-part message in MIME format.
+--------------040501030006090208000807
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 24, 2014 at 3:56 PM, Leela Krishna Amudala
-<leela.krishna@linaro.org> wrote:
-> Hi Abhilash,
->
-> If you are okay with this patchset you can rebase/merge it with your
-> mcpm patches.
+Hello,
 
-I have added these patches as part of my mcpm v3 patchset.
+I'm trying to get the HDMI port working on a Exynos4412 based board.
+Attached is a snippet of a dts. This config was supposed to "work" in
+the past.
 
-Thanks,
-Abhilash
->
-> Best Wishes,
-> Leela Krishna.
->
-> On Thu, Apr 24, 2014 at 3:24 PM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->> Hi Abhilash and Leela,
->>
->> FYI I think you are working on similar patches.
->>
->>
->> On 04/24/2014 11:31 AM, Leela Krishna Amudala wrote:
->>> This patchset adds the generic cpu power control functions for
->>>
->>> exynos based SoCs to power up/down and to know the status of the cp=
-u.
->>>
->>> Note: This series has been rebased on 3.15-rc1 and tested on
->>> Exynos based Origen(Cortex-A9) and Arndale-octa(Cortex A7,A15) boar=
-ds.
->>>
->>> Leela Krishna Amudala (2):
->>>    ARM: EXYNOS: Add generic cpu power control functions for all exy=
-nos
->>>      based SoCs
->>>    ARM: EXYNOS: use generic exynos cpu power control functions
->>>
->>>   arch/arm/mach-exynos/common.h   |    3 +++
->>>   arch/arm/mach-exynos/platsmp.c  |    9 +++------
->>>   arch/arm/mach-exynos/pm.c       |   36
->>> ++++++++++++++++++++++++++++++++++++
->>>   arch/arm/mach-exynos/regs-pmu.h |    6 ++++++
->>>   4 files changed, 48 insertions(+), 6 deletions(-)
->>>
->>
->>
->> --
->>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software =
-for ARM SoCs
->>
->> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
->> <http://twitter.com/#!/linaroorg> Twitter |
->> <http://www.linaro.org/linaro-blog/> Blog
->>
+However with 3.15-rc1 some things changed. samsung,exynos4210-hdmiddc
+and samsung,exynos4212-hdmiphy have no function anymore, the code that
+previously handled these compatible strings is gone.
+
+So, it looks like that without some patching, HDMI support is atm broken.
+
+I have applied these:
+http://www.spinics.net/lists/linux-samsung-soc/msg28161.html
+http://www.spinics.net/lists/linux-samsung-soc/msg28259.html
+
+With the first one I can drop a clock from the hdmi node. But then
+trouble starts.
+
+So, first of all I'm unsure what the 'hdmiddc' node should be converted
+to. Documentation (exynos_hdmi.txt) doesn't help here, since it just
+says "phandle to the hdmi ddc node". What kind of 'hdmi ddc node'? From
+the code it looks like that it should point to an i2c adapter now. So
+should it point to 'i2c_2' now?
+
+The second thing is 'phy', which should be a "phandle to the hdmi ddc
+node". Again, no idea what that node should be. Apparantly such nodes
+can't be created with current kernel code anyway, primary reason to
+apply the simply-phy patches.
+
+OK, so I have to put a simple-phys node in my dts now. Or, wait, do I
+just replace the hdmiphy node with a simple-phys node?
+
+Would look something like this:
+hdmiphy: simple-phys@38 {
+  compatible = "samsung,exynos4412-simple-phy";
+  reg = <0x38 0x10000>;
+  #phy-cells = <1>;
+};
+
+Somehow this doesn't look right. And indeed:
+https://patchwork.kernel.org/patch/4021121/
+
+At least for exynos5250 this node is not a child on an i2c adapter.
+
+And yes, I would still have to add 'phys' and 'phy-names' to the hdmi
+node. This looks wrong again. Why do I have to specify 'phys' when I
+already have 'phy' there? Isn't that redundant?
+
+Well, you see, lots of confusion here. I would appreciate any kind of
+help on how to proceed here.
+
+With best wishes,
+Tobias
+
+--------------040501030006090208000807
+Content-Type: text/plain; charset=UTF-8;
+ name="exynos-hdmi-dts.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="exynos-hdmi-dts.txt"
+
+aGRtaSB7Cgljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMi1oZG1pIjsKCXJlZyA9
+IDwweDEyRDAwMDAwIDB4MTAwMDAwPjsKCWludGVycnVwdHMgPSA8MCA5MiAwPjsKCWhwZC1n
+cGlvID0gPCZncHgzIDcgMD47CgoJY2xvY2tzID0gPCZjbG9jayAyNzE+LCA8JmNsb2NrIDEz
+Nj4sIDwmY2xvY2sgMTM5PiwKCQk8JmNsb2NrIDE3OD4sIDwmY2xvY2sgMzk2PjsKCWNsb2Nr
+LW5hbWVzID0gImhkbWkiLCAic2Nsa19oZG1pIiwgInNjbGtfcGl4ZWwiLAoJCSJzY2xrX2hk
+bWlwaHkiLCAibW91dF9oZG1pIjsKCglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwoJcGlu
+Y3RybC0wID0gPCZoZG1pX2hwZF9pcnE+OwoKCXNhbXN1bmcscG93ZXItZG9tYWluID0gPCZw
+ZF90dj47CgoJdmRkX29zYy1zdXBwbHkgPSA8JmxkbzEwX3JlZz47Cgl2ZGRfcGxsLXN1cHBs
+eSA9IDwmbGRvOF9yZWc+OwoJdmRkLXN1cHBseSA9IDwmbGRvOF9yZWc+OwoJaGRtaS1lbi1z
+dXBwbHkgPSA8JnJlZ19zeXN2ZGQ+OwoKCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJI3NpemUt
+Y2VsbHMgPSA8MT47CgoJcGh5LXBvd2VyLWNvbnRyb2wgewoJCXJlZyA9IDwweDEwMDIwNzAw
+IDB4MDQ+OwoJfTsKfTsKCmkyY18yOiBpMmNAMTM4ODAwMDAgewoJc3RhdHVzID0gIm9rYXki
+OwoJcGluY3RybC0wID0gPCZpMmMyX2J1cz47CglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQi
+OwoKCXNhbXN1bmcsaTJjLXNsYXZlLWFkZHIgPSA8MHgxMD47CglzYW1zdW5nLGkyYy1zZGEt
+ZGVsYXkgPSA8MTAwPjsKCXNhbXN1bmcsaTJjLW1heC1idXMtZnJlcSA9IDw0MDAwMDA+OwoK
+CWhkbWlkZGNANTAgewoJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLWhkbWlk
+ZGMiOwoJCXJlZyA9IDwweDUwPjsKCX07Cn07CgppMmNfODogaTJjQDEzOGUwMDAwIHsKCXN0
+YXR1cyA9ICJva2F5IjsKCglzYW1zdW5nLGkyYy1zbGF2ZS1hZGRyID0gPDB4MTA+OwoJc2Ft
+c3VuZyxpMmMtc2RhLWRlbGF5ID0gPDEwMD47CglzYW1zdW5nLGkyYy1tYXgtYnVzLWZyZXEg
+PSA8NDAwMDAwPjsKCgljb21wYXRpYmxlID0gInNhbXN1bmcsczNjMjQ0MC1oZG1pcGh5LWky
+YyI7CglyZWcgPSA8MHgxMzhFMDAwMCAweDEwMDA+OwoKCWludGVycnVwdHMgPSA8MCA5MyAw
+PjsKCgkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCSNzaXplLWNlbGxzID0gPDA+OwoKCWNsb2Nr
+cyA9IDwmY2xvY2sgMzI1PjsKCWNsb2NrLW5hbWVzID0gImkyYyI7CgoJaGRtaXBoeUAzOCB7
+CgkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTItaGRtaXBoeSI7CgkJcmVnID0g
+PDB4Mzg+OwoJfTsKfTsK
+--------------040501030006090208000807--
