@@ -1,113 +1,54 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: exynos4412: porting hdmiddc and hdmiphy node entries
-Date: Sun, 27 Apr 2014 02:33:14 +0200
-Message-ID: <535C504A.2090809@gmx.net>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [RFC v3 PATCH 02/16] drm/exynos: use wait_event_timeout() for safety
+ usage
+Date: Sun, 27 Apr 2014 10:49:58 +0900
+Message-ID: <1398563412-21781-3-git-send-email-yj44.cho@samsung.com>
+References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------040501030006090208000807"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.15]:50885 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752730AbaD0AdX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Apr 2014 20:33:23 -0400
-Received: from [192.168.0.34] ([37.201.156.236]) by mail.gmx.com (mrgmx001)
- with ESMTPSA (Nemesis) id 0MTjqS-1WVNKL2dv6-00QP2r for
- <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2014 02:33:21 +0200
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------040501030006090208000807
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+There could be the case that the page flip operation isn't finished correctly
+with some abnormal condition such as panel reset. So this patch replaces
+wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+infinitely.
 
-I'm trying to get the HDMI port working on a Exynos4412 based board.
-Attached is a snippet of a dts. This config was supposed to "work" in
-the past.
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-However with 3.15-rc1 some things changed. samsung,exynos4210-hdmiddc
-and samsung,exynos4212-hdmiphy have no function anymore, the code that
-previously handled these compatible strings is gone.
-
-So, it looks like that without some patching, HDMI support is atm broken.
-
-I have applied these:
-http://www.spinics.net/lists/linux-samsung-soc/msg28161.html
-http://www.spinics.net/lists/linux-samsung-soc/msg28259.html
-
-With the first one I can drop a clock from the hdmi node. But then
-trouble starts.
-
-So, first of all I'm unsure what the 'hdmiddc' node should be converted
-to. Documentation (exynos_hdmi.txt) doesn't help here, since it just
-says "phandle to the hdmi ddc node". What kind of 'hdmi ddc node'? From
-the code it looks like that it should point to an i2c adapter now. So
-should it point to 'i2c_2' now?
-
-The second thing is 'phy', which should be a "phandle to the hdmi ddc
-node". Again, no idea what that node should be. Apparantly such nodes
-can't be created with current kernel code anyway, primary reason to
-apply the simply-phy patches.
-
-OK, so I have to put a simple-phys node in my dts now. Or, wait, do I
-just replace the hdmiphy node with a simple-phys node?
-
-Would look something like this:
-hdmiphy: simple-phys@38 {
-  compatible = "samsung,exynos4412-simple-phy";
-  reg = <0x38 0x10000>;
-  #phy-cells = <1>;
-};
-
-Somehow this doesn't look right. And indeed:
-https://patchwork.kernel.org/patch/4021121/
-
-At least for exynos5250 this node is not a child on an i2c adapter.
-
-And yes, I would still have to add 'phys' and 'phy-names' to the hdmi
-node. This looks wrong again. Why do I have to specify 'phys' when I
-already have 'phy' there? Isn't that redundant?
-
-Well, you see, lots of confusion here. I would appreciate any kind of
-help on how to proceed here.
-
-With best wishes,
-Tobias
-
---------------040501030006090208000807
-Content-Type: text/plain; charset=UTF-8;
- name="exynos-hdmi-dts.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="exynos-hdmi-dts.txt"
-
-aGRtaSB7Cgljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMi1oZG1pIjsKCXJlZyA9
-IDwweDEyRDAwMDAwIDB4MTAwMDAwPjsKCWludGVycnVwdHMgPSA8MCA5MiAwPjsKCWhwZC1n
-cGlvID0gPCZncHgzIDcgMD47CgoJY2xvY2tzID0gPCZjbG9jayAyNzE+LCA8JmNsb2NrIDEz
-Nj4sIDwmY2xvY2sgMTM5PiwKCQk8JmNsb2NrIDE3OD4sIDwmY2xvY2sgMzk2PjsKCWNsb2Nr
-LW5hbWVzID0gImhkbWkiLCAic2Nsa19oZG1pIiwgInNjbGtfcGl4ZWwiLAoJCSJzY2xrX2hk
-bWlwaHkiLCAibW91dF9oZG1pIjsKCglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwoJcGlu
-Y3RybC0wID0gPCZoZG1pX2hwZF9pcnE+OwoKCXNhbXN1bmcscG93ZXItZG9tYWluID0gPCZw
-ZF90dj47CgoJdmRkX29zYy1zdXBwbHkgPSA8JmxkbzEwX3JlZz47Cgl2ZGRfcGxsLXN1cHBs
-eSA9IDwmbGRvOF9yZWc+OwoJdmRkLXN1cHBseSA9IDwmbGRvOF9yZWc+OwoJaGRtaS1lbi1z
-dXBwbHkgPSA8JnJlZ19zeXN2ZGQ+OwoKCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJI3NpemUt
-Y2VsbHMgPSA8MT47CgoJcGh5LXBvd2VyLWNvbnRyb2wgewoJCXJlZyA9IDwweDEwMDIwNzAw
-IDB4MDQ+OwoJfTsKfTsKCmkyY18yOiBpMmNAMTM4ODAwMDAgewoJc3RhdHVzID0gIm9rYXki
-OwoJcGluY3RybC0wID0gPCZpMmMyX2J1cz47CglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQi
-OwoKCXNhbXN1bmcsaTJjLXNsYXZlLWFkZHIgPSA8MHgxMD47CglzYW1zdW5nLGkyYy1zZGEt
-ZGVsYXkgPSA8MTAwPjsKCXNhbXN1bmcsaTJjLW1heC1idXMtZnJlcSA9IDw0MDAwMDA+OwoK
-CWhkbWlkZGNANTAgewoJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLWhkbWlk
-ZGMiOwoJCXJlZyA9IDwweDUwPjsKCX07Cn07CgppMmNfODogaTJjQDEzOGUwMDAwIHsKCXN0
-YXR1cyA9ICJva2F5IjsKCglzYW1zdW5nLGkyYy1zbGF2ZS1hZGRyID0gPDB4MTA+OwoJc2Ft
-c3VuZyxpMmMtc2RhLWRlbGF5ID0gPDEwMD47CglzYW1zdW5nLGkyYy1tYXgtYnVzLWZyZXEg
-PSA8NDAwMDAwPjsKCgljb21wYXRpYmxlID0gInNhbXN1bmcsczNjMjQ0MC1oZG1pcGh5LWky
-YyI7CglyZWcgPSA8MHgxMzhFMDAwMCAweDEwMDA+OwoKCWludGVycnVwdHMgPSA8MCA5MyAw
-PjsKCgkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCSNzaXplLWNlbGxzID0gPDA+OwoKCWNsb2Nr
-cyA9IDwmY2xvY2sgMzI1PjsKCWNsb2NrLW5hbWVzID0gImkyYyI7CgoJaGRtaXBoeUAzOCB7
-CgkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTItaGRtaXBoeSI7CgkJcmVnID0g
-PDB4Mzg+OwoJfTsKfTsK
---------------040501030006090208000807--
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index e930d4f..1419d11 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -69,8 +69,9 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 
+ 	if (mode > DRM_MODE_DPMS_ON) {
+ 		/* wait for the completion of page flip. */
+-		wait_event(exynos_crtc->pending_flip_queue,
+-				atomic_read(&exynos_crtc->pending_flip) == 0);
++		wait_event_timeout(exynos_crtc->pending_flip_queue,
++				!atomic_read(&exynos_crtc->pending_flip),
++				HZ/20);
+ 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+ 	}
+ 
+-- 
+1.7.9.5
