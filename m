@@ -1,7 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v3 PATCH 05/16] drm/panel: add CPU mode timings structure
-Date: Sun, 27 Apr 2014 10:50:01 +0900
-Message-ID: <1398563412-21781-6-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v3 PATCH v3 04/16] ARM: dts: samsung-fimd: add I80 specific
+ properties
+Date: Sun, 27 Apr 2014 10:50:00 +0900
+Message-ID: <1398563412-21781-5-git-send-email-yj44.cho@samsung.com>
 References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,44 +22,34 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To support MIPI DSI command mode interface, the display controller
-requires the CPU mode timings which is the panel specific data.
+In case of using CPU interface panel, the relevant registers should be set.
+So this patch adds relevant dt bindings.
+
+Changelog v2:
+- Changes "samsung,sysreg-phandle" to "samsung,sysreg"
+Changelog v3:
+- Moves CPU timings relevant properties to panel DT
+  (commented by Laurent Pinchart, Andrzej Hajda)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- include/drm/drm_panel.h |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index c2ab77a..67e6871 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -46,6 +46,24 @@ struct drm_panel {
- 	struct list_head list;
- };
+diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+index 2dad41b..6bf93e9 100644
+--- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+@@ -44,6 +44,8 @@ Optional Properties:
+ - display-timings: timing settings for FIMD, as described in document [1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
++- samsung,sysreg: handle to syscon used to control the system registers
++- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
  
-+/**
-+ * struct drm_panel_cpu_mode_timings - describe cpu mode timing settings
-+ * @cs_setup: clock cycles for the active period of address signal is enabled
-+ *	until chip select is enabled in CPU mode interface
-+ * @wr_setup: clock cycles for the active period of CS signal is enabled until
-+ *	write signal is enabled in CPU mode interface
-+ * @wr_actve: clock cycles for the active period of CS is enabled in CPU mode
-+ *	interface
-+ * @wr_hold: clock cycles for the active period of CS is disabled until write
-+ *	signal is disabled in CPU mode interface
-+ */
-+struct drm_panel_cpu_mode_timings {
-+	unsigned int cs_setup;
-+	unsigned int wr_setup;
-+	unsigned int wr_active;
-+	unsigned int wr_hold;
-+};
-+
- static inline int drm_panel_disable(struct drm_panel *panel)
- {
- 	if (panel && panel->funcs && panel->funcs->disable)
+ The device node can contain 'port' child nodes according to the bindings defined
+ in [2]. The following are properties specific to those nodes:
 -- 
 1.7.9.5
