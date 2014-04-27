@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v3 PATCH 14/16] ARM: dts: exynos5: add system register support
-Date: Sun, 27 Apr 2014 10:50:10 +0900
-Message-ID: <1398563412-21781-15-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v3 PATCH 16/16] ARM: dts: exynos5420: add dsi node
+Date: Sun, 27 Apr 2014 10:50:12 +0900
+Message-ID: <1398563412-21781-17-git-send-email-yj44.cho@samsung.com>
 References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,38 +21,50 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds sysreg device node, and sysreg property to fimd device node
-which is required to use I80 interface.
+This patch adds common part of dsi node.
+
+Changelog v2:
+- Uses clock macros instead of numbers (commented by Sachin Kamat)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 258dca4..f938bbb 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -88,12 +88,18 @@
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index f0184c7..f1030f5 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -17,6 +17,7 @@
+ #include "exynos5420-pinctrl.dtsi"
+ 
+ #include <dt-bindings/clk/exynos-audss-clk.h>
++#include <dt-bindings/clock/exynos5420.h>
+ 
+ / {
+ 	compatible = "samsung,exynos5420";
+@@ -422,6 +423,20 @@
+ 		#phy-cells = <1>;
  	};
  
-+	sys_reg: syscon@10050000 {
-+		compatible = "samsung,exynos5-sysreg", "syscon";
-+		reg = <0x10050000 0x500>;
++	dsi@14500000 {
++		compatible = "samsung,exynos5420-mipi-dsi";
++		reg = <0x14500000 0x10000>;
++		interrupts = <0 82 0>;
++		samsung,power-domain = <&disp_pd>;
++		phys = <&mipi_phy 1>;
++		phy-names = "dsim";
++		clocks = <&clock CLK_DSIM1>, <&clock CLK_SCLK_MIPI1>;
++		clock-names = "bus_clk", "pll_clk";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
 +	};
 +
  	fimd@14400000 {
- 		compatible = "samsung,exynos5250-fimd";
- 		interrupt-parent = <&combiner>;
- 		reg = <0x14400000 0x40000>;
- 		interrupt-names = "fifo", "vsync", "lcd_sys";
- 		interrupts = <18 4>, <18 5>, <18 6>;
-+		samsung,sysreg = <&sys_reg>;
- 		status = "disabled";
- 	};
- 
+ 		samsung,power-domain = <&disp_pd>;
+ 		clocks = <&clock 147>, <&clock 421>;
 -- 
 1.7.9.5
