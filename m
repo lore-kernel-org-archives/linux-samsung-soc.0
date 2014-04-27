@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v3 PATCH 16/16] ARM: dts: exynos5420: add dsi node
-Date: Sun, 27 Apr 2014 10:50:12 +0900
-Message-ID: <1398563412-21781-17-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v3 PATCH 05/16] drm/panel: add CPU mode timings structure
+Date: Sun, 27 Apr 2014 10:50:01 +0900
+Message-ID: <1398563412-21781-6-git-send-email-yj44.cho@samsung.com>
 References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,50 +21,44 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds common part of dsi node.
-
-Changelog v2:
-- Uses clock macros instead of numbers (commented by Sachin Kamat)
+To support MIPI DSI command mode interface, the display controller
+requires the CPU mode timings which is the panel specific data.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ include/drm/drm_panel.h |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index f0184c7..f1030f5 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -17,6 +17,7 @@
- #include "exynos5420-pinctrl.dtsi"
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index c2ab77a..67e6871 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -46,6 +46,24 @@ struct drm_panel {
+ 	struct list_head list;
+ };
  
- #include <dt-bindings/clk/exynos-audss-clk.h>
-+#include <dt-bindings/clock/exynos5420.h>
- 
- / {
- 	compatible = "samsung,exynos5420";
-@@ -422,6 +423,20 @@
- 		#phy-cells = <1>;
- 	};
- 
-+	dsi@14500000 {
-+		compatible = "samsung,exynos5420-mipi-dsi";
-+		reg = <0x14500000 0x10000>;
-+		interrupts = <0 82 0>;
-+		samsung,power-domain = <&disp_pd>;
-+		phys = <&mipi_phy 1>;
-+		phy-names = "dsim";
-+		clocks = <&clock CLK_DSIM1>, <&clock CLK_SCLK_MIPI1>;
-+		clock-names = "bus_clk", "pll_clk";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
++/**
++ * struct drm_panel_cpu_mode_timings - describe cpu mode timing settings
++ * @cs_setup: clock cycles for the active period of address signal is enabled
++ *	until chip select is enabled in CPU mode interface
++ * @wr_setup: clock cycles for the active period of CS signal is enabled until
++ *	write signal is enabled in CPU mode interface
++ * @wr_actve: clock cycles for the active period of CS is enabled in CPU mode
++ *	interface
++ * @wr_hold: clock cycles for the active period of CS is disabled until write
++ *	signal is disabled in CPU mode interface
++ */
++struct drm_panel_cpu_mode_timings {
++	unsigned int cs_setup;
++	unsigned int wr_setup;
++	unsigned int wr_active;
++	unsigned int wr_hold;
++};
 +
- 	fimd@14400000 {
- 		samsung,power-domain = <&disp_pd>;
- 		clocks = <&clock 147>, <&clock 421>;
+ static inline int drm_panel_disable(struct drm_panel *panel)
+ {
+ 	if (panel && panel->funcs && panel->funcs->disable)
 -- 
 1.7.9.5
