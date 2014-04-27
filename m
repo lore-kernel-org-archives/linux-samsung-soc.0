@@ -1,8 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v3 PATCH 02/16] drm/exynos: use wait_event_timeout() for safety
- usage
-Date: Sun, 27 Apr 2014 10:49:58 +0900
-Message-ID: <1398563412-21781-3-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v3 PATCH 07/16] drm/exynos: dsi: add TE handler to support
+ command mode interface
+Date: Sun, 27 Apr 2014 10:50:03 +0900
+Message-ID: <1398563412-21781-8-git-send-email-yj44.cho@samsung.com>
 References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,33 +22,51 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There could be the case that the page flip operation isn't finished correctly
-with some abnormal condition such as panel reset. So this patch replaces
-wait_event() with wait_event_timeout() to avoid waiting for page flip completion
-infinitely.
+To support command mode interface, the DSI host calls this handler
+to notify the panel tearing effect synchronization signal to the
+CRTC device manager to trigger to transfer video image.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index e930d4f..1419d11 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -69,8 +69,9 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 956e5f3..4a918ec 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -23,6 +23,7 @@
+ #include <video/mipi_display.h>
+ #include <video/videomode.h>
  
- 	if (mode > DRM_MODE_DPMS_ON) {
- 		/* wait for the completion of page flip. */
--		wait_event(exynos_crtc->pending_flip_queue,
--				atomic_read(&exynos_crtc->pending_flip) == 0);
-+		wait_event_timeout(exynos_crtc->pending_flip_queue,
-+				!atomic_read(&exynos_crtc->pending_flip),
-+				HZ/20);
- 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
- 	}
++#include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
  
+ /* returns true iff both arguments logically differs */
+@@ -1032,10 +1033,22 @@ static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
+ 	return (ret < 0) ? ret : xfer.rx_done;
+ }
+ 
++static int exynos_dsi_host_te_handler(struct mipi_dsi_host *host)
++{
++	struct exynos_dsi *dsi = host_to_dsi(host);
++	struct drm_encoder *encoder = dsi->encoder;
++
++	if (!(dsi->state & DSIM_STATE_ENABLED))
++		return -EPERM;
++
++	return exynos_drm_crtc_te_handler(encoder->crtc);
++}
++
+ static const struct mipi_dsi_host_ops exynos_dsi_ops = {
+ 	.attach = exynos_dsi_host_attach,
+ 	.detach = exynos_dsi_host_detach,
+ 	.transfer = exynos_dsi_host_transfer,
++	.te_handler = exynos_dsi_host_te_handler,
+ };
+ 
+ static int exynos_dsi_poweron(struct exynos_dsi *dsi)
 -- 
 1.7.9.5
