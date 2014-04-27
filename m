@@ -1,217 +1,239 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH v3 6/7] arm64: mm: Implement 4 levels of translation tables
-Date: Sun, 27 Apr 2014 12:37:35 +0900
-Message-ID: <000f01cf61ca$099017c0$1cb04740$@samsung.com>
-References: <000701cf5adc$1aa35350$4fe9f9f0$@samsung.com>
- <20140423160149.GA2895@linaro.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v2 06/10] ARM: EXYNOS: Add support for mapping PMU base
+ address via DT
+Date: Sun, 27 Apr 2014 16:29:42 +0900
+Message-ID: <535CB1E6.8070500@samsung.com>
+References: <1396425058-4012-1-git-send-email-pankaj.dubey@samsung.com>
+ <1398429166-5539-1-git-send-email-pankaj.dubey@samsung.com>
+ <1398429166-5539-7-git-send-email-pankaj.dubey@samsung.com>
+ <535AD70F.20608@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:22419 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751902AbaD0Dhl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Apr 2014 23:37:41 -0400
-In-reply-to: <20140423160149.GA2895@linaro.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <535AD70F.20608@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, s.nawrocki@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Steve Capper' <steve.capper@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-On Thursday, April 24, 2014 1:02 AM, Steve Capper wrote:
-> On Fri, Apr 18, 2014 at 04:59:20PM +0900, Jungseok Lee wrote:
+Hi Tomasz,
 
-[ ... ]
+Thanks for review.
 
-> > diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S index
-> > 0fd5650..f313a7a 100644
-> > --- a/arch/arm64/kernel/head.S
-> > +++ b/arch/arm64/kernel/head.S
-> > @@ -37,8 +37,8 @@
-> >
-> >  /*
-> >   * swapper_pg_dir is the virtual address of the initial page table.
-> > We place
-> > - * the page tables 3 * PAGE_SIZE below KERNEL_RAM_VADDR. The
-> > idmap_pg_dir has
-> > - * 2 pages and is placed below swapper_pg_dir.
-> > + * the page tables 4 * PAGE_SIZE below KERNEL_RAM_VADDR. The
-> > + idmap_pg_dir has
-> > + * 3 pages and is placed below swapper_pg_dir.
-> >   */
-> >  #define KERNEL_RAM_VADDR	(PAGE_OFFSET + TEXT_OFFSET)
-> >
-> > @@ -46,8 +46,8 @@
-> >  #error KERNEL_RAM_VADDR must start at 0xXXX80000  #endif
-> >
-> > -#define SWAPPER_DIR_SIZE	(3 * PAGE_SIZE)
-> > -#define IDMAP_DIR_SIZE		(2 * PAGE_SIZE)
-> > +#define SWAPPER_DIR_SIZE	(4 * PAGE_SIZE)
-> > +#define IDMAP_DIR_SIZE		(3 * PAGE_SIZE)
-> >
-> >  	.globl	swapper_pg_dir
-> >  	.equ	swapper_pg_dir, KERNEL_RAM_VADDR - SWAPPER_DIR_SIZE
-> > @@ -371,16 +371,29 @@ ENDPROC(__calc_phys_offset)
-> >
-> >  /*
-> >   * Macro to populate the PGD for the corresponding block entry in the
-> > next
-> > - * level (tbl) for the given virtual address.
-> > + * levels (tbl1 and tbl2) for the given virtual address.
-> >   *
-> > - * Preserves:	pgd, tbl, virt
-> > + * Preserves:	pgd, tbl1, tbl2, virt
-> 
-> tbl1 and tbl2 are *not* preserved for 4 level. tbl1 is bumped up one page to make space for the pud,
-> then fed into create_block_mapping later.
-> 
-> >   * Corrupts:	tmp1, tmp2
-> >   */
-> > -	.macro	create_pgd_entry, pgd, tbl, virt, tmp1, tmp2
-> > +	.macro	create_pgd_entry, pgd, tbl1, tbl2, virt, tmp1, tmp2
-> >  	lsr	\tmp1, \virt, #PGDIR_SHIFT
-> >  	and	\tmp1, \tmp1, #PTRS_PER_PGD - 1	// PGD index
-> > -	orr	\tmp2, \tbl, #3			// PGD entry table type
-> > +	orr	\tmp2, \tbl1, #3		// PGD entry table type
-> >  	str	\tmp2, [\pgd, \tmp1, lsl #3]
-> > +#ifdef CONFIG_ARM64_4_LEVELS
-> > +	ldr	\tbl2, =FIXADDR_TOP
-> > +	cmp	\tbl2, \virt
-> 
-> Do we need this extra logic? See my other comment below where the fixed mapping is placed down.
-> 
-> > +	add	\tbl2, \tbl1, #PAGE_SIZE
-> > +	b.ne	1f
-> > +	add	\tbl2, \tbl2, #PAGE_SIZE
-> > +1:
-> > +	lsr	\tmp1, \virt, #PUD_SHIFT
-> > +	and	\tmp1, \tmp1, #PTRS_PER_PUD - 1	// PUD index
-> > +	orr	\tmp2, \tbl2, #3		// PUD entry table type
-> > +	str	\tmp2, [\tbl1, \tmp1, lsl #3]
-> > +	mov	\tbl1, \tbl2
-> > +#endif
-> 
-> It may be easier to read to have a create_pud_entry macro too?
-> 
-> >  	.endm
-> >
-> >  /*
-> > @@ -444,7 +457,7 @@ __create_page_tables:
-> >  	add	x0, x25, #PAGE_SIZE		// section table address
-> >  	ldr	x3, =KERNEL_START
-> >  	add	x3, x3, x28			// __pa(KERNEL_START)
-> > -	create_pgd_entry x25, x0, x3, x5, x6
-> > +	create_pgd_entry x25, x0, x1, x3, x5, x6
-> >  	ldr	x6, =KERNEL_END
-> >  	mov	x5, x3				// __pa(KERNEL_START)
-> >  	add	x6, x6, x28			// __pa(KERNEL_END)
-> > @@ -455,7 +468,7 @@ __create_page_tables:
-> >  	 */
-> >  	add	x0, x26, #PAGE_SIZE		// section table address
-> >  	mov	x5, #PAGE_OFFSET
-> > -	create_pgd_entry x26, x0, x5, x3, x6
-> > +	create_pgd_entry x26, x0, x1, x5, x3, x6
-> >  	ldr	x6, =KERNEL_END
-> >  	mov	x3, x24				// phys offset
-> >  	create_block_map x0, x7, x3, x5, x6
-> > @@ -480,8 +493,11 @@ __create_page_tables:
-> >  	 * Create the pgd entry for the fixed mappings.
-> >  	 */
-> >  	ldr	x5, =FIXADDR_TOP		// Fixed mapping virtual address
-> > -	add	x0, x26, #2 * PAGE_SIZE		// section table address
-> > -	create_pgd_entry x26, x0, x5, x6, x7
-> > +	add	x0, x26, #PAGE_SIZE
-> > +#ifndef CONFIG_ARM64_4_LEVELS
-> > +	add	x0, x0, #PAGE_SIZE
-> > +#endif
-> 
-> This is overly complicated. For <4 levels we set x0 to be:
-> ttbr1 + 2*PAGE_SIZE. For 4-levels, we set x0 to be ttbr1 + PAGE_SIZE, then inside the create_pgd_entry
-> macro, we check the VA for FIXADDR_TOP then add another PAGE_SIZE. This is presumably done so the same
-> PUD is used for the swapper block map and the FIXADDR map.
+On 04/26/2014 06:43 AM, Tomasz Figa wrote:
+> Hi,
+>
+> On 25.04.2014 14:32, Pankaj Dubey wrote:
+>> From: Young-Gun Jang <yg1004.jang@samsung.com>
+>>
+>> Add support for mapping Samsung Power Management Unit (PMU) base address
+>> from device tree. Code will use existing samsung pmu binding information.
+>> This patch also adds two helper functions as "get_exynos_pmuregmap" and
+>> "get_exynos_pmuaddr".
+>> "get_exynos_pmuregmap" returns a regmap based PMU register handle where as
+>> "get_exynos_pmuaddr" returns ioremap virtual address.
+>>
+>> Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>   arch/arm/mach-exynos/Kconfig  |    2 ++
+>>   arch/arm/mach-exynos/common.h |    3 ++
+>>   arch/arm/mach-exynos/exynos.c |   78 +++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 83 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>> index fc8bf18..2f60c90 100644
+>> --- a/arch/arm/mach-exynos/Kconfig
+>> +++ b/arch/arm/mach-exynos/Kconfig
+>> @@ -26,6 +26,7 @@ config ARCH_EXYNOS4
+>>       select PINCTRL
+>>       select PM_GENERIC_DOMAINS if PM_RUNTIME
+>>       select S5P_DEV_MFC
+>> +    select MFD_SYSCON
+>>       help
+>>         Samsung EXYNOS4 SoCs based systems
+>>
+>> @@ -36,6 +37,7 @@ config ARCH_EXYNOS5
+>>       select HAVE_ARM_SCU if SMP
+>>       select HAVE_SMP
+>>       select PINCTRL
+>> +    select MFD_SYSCON
+>>       help
+>>         Samsung EXYNOS5 (Cortex-A15) SoC based systems
+>>
+>> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+>> index 31c5964..ecfd0fc 100644
+>> --- a/arch/arm/mach-exynos/common.h
+>> +++ b/arch/arm/mach-exynos/common.h
+>> @@ -57,4 +57,7 @@ struct exynos_pmu_conf {
+>>
+>>   extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+>>
+>> +extern struct regmap *get_exynos_pmuregmap(void);
+>> +extern void __iomem *get_exynos_pmuaddr(void);
+>
+> Do you really need these functions? Couldn't all the drivers using PMU simply 
+> call syscon_regmap_lookup_by_phandle() or of_iomap() directly?
 
-Is it too complicated to understand the logic?
+Well, currently "get_exynos_pmuregmap" is used in three location under
+mach-exynos as "exynos.c", "pm.c" and "hotplug.c" so just to avoid duplicate code
+in all these files I added "get_exynos_pmuregmap" as helper function in "exynos.c".
+So in my opinion it should be fine. What do you say?
 
-1) For <4 levels:
-PAGE_SIZE is added for FIXADDR map and x0 is passed to create pgd entry.
-2) For =4 levels:
-PAGE_SIZE is added in the create_pgd_entry macro since FIXADDR map info
-is needed to create pud entry.
+Regarding "get_exynos_pmuaddr", only user of this function is "platsmp.c" so I can
+move this function in platsmp.c and remove this helper. This will also solve the 
+other
+issue of early mapping as you raised below.
 
-However, I agree that the code should be revised if other people feel
-like it is a labyrinthine logic.
+>
+>> +
+>>   #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
+>> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+>> index d6f405f..68f60e1 100644
+>> --- a/arch/arm/mach-exynos/exynos.c
+>> +++ b/arch/arm/mach-exynos/exynos.c
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/of_platform.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm_domain.h>
+>> +#include <linux/mfd/syscon.h>
+>>
+>>   #include <asm/cacheflush.h>
+>>   #include <asm/hardware/cache-l2x0.h>
+>> @@ -36,6 +37,9 @@
+>>   #define L2_AUX_VAL 0x7C470001
+>>   #define L2_AUX_MASK 0xC200ffff
+>>
+>> +static struct regmap *exynos_pmu_regmap;
+>> +static void __iomem *exynos_pmu_base;
+>> +
+>>   static struct map_desc exynos4_iodesc[] __initdata = {
+>>       {
+>>           .virtual    = (unsigned long)S3C_VA_SYS,
+>> @@ -269,6 +273,46 @@ static int __init exynos_fdt_map_chipid(unsigned long 
+>> node, const char *uname,
+>>       return 1;
+>>   }
+>>
+>> +static const struct of_device_id exynos_dt_pmu_match[] = {
+>> +    { .compatible = "samsung,exynos4210-pmu" },
+>> +    { .compatible = "samsung,exynos4212-pmu" },
+>> +    { .compatible = "samsung,exynos4412-pmu" },
+>> +    { .compatible = "samsung,exynos5250-pmu" },
+>> +    {},
+>> +};
+>> +
+>> +static int __init exynos_fdt_map_pmu(unsigned long node,
+>> +        const char *uname, int depth, void *data)
+>> +{
+>> +    struct map_desc iodesc;
+>> +    __be32 *reg;
+>> +    unsigned long len;
+>> +    phys_addr_t phys_addr;
+>> +    const struct of_device_id *matches = exynos_dt_pmu_match;
+>> +
+>> +    for (; matches->compatible[0]; matches++) {
+>> +        if (!of_flat_dt_is_compatible(node, matches->compatible))
+>> +            continue;
+>> +        reg = of_get_flat_dt_prop(node, "reg", &len);
+>> +        if (reg == NULL || len != (sizeof(unsigned long) * 2))
+>> +            return 0;
+>> +
+>> +        phys_addr = be32_to_cpu(reg[0]);
+>> +        iodesc.pfn = __phys_to_pfn(phys_addr);
+>> +        iodesc.length = be32_to_cpu(reg[1]) - 1;
+>> +        iodesc.virtual = (unsigned long)S5P_VA_PMU;
+>> +        iodesc.type = MT_DEVICE;
+>> +        iotable_init(&iodesc, 1);
+>> +
+>> +        exynos_pmu_base = ioremap(phys_addr, be32_to_cpu(reg[1]));
+>> +        if (WARN_ON(!exynos_pmu_base))
+>> +            return -EFAULT;
+>> +        return 1;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>
+> Is such early mapping really needed? Couldn't the code using PMU be deferred 
+> to the stage that memory management is available and then of_iomap() used 
+> directly?
 
-> If you assume that the PUD always follows the PGD for 4-levels, then you can remove this #ifdef and
-> the conditional VA logic in set_pgd_entry. To make the logic simpler for <4 levels, you could call
-> create_pud_entry in the middle of create_pgd_entry, then put down the actual pgd after.
+OK, not really required, If I move mapping of PMU base address to platsmp.c.
+As "exynos_pmu_base" is only required in platsmp.c during "exynos_smp_prepare_cpus"
+function call, I can move mapping of PMU address in platsmp.c itself and there I 
+can use of_iomap.
 
-create_pud_entry should distinguish block map from FIXADDR map although
-PUD always follows the PGD in case of 4 levels. If we would like to avoid
-unnecessary #ifdef, the conditional logic should be introduced in create_
-pgd_entry macro.
+>
+>> +
+>>   /*
+>>    * exynos_map_io
+>>    *
+>> @@ -302,6 +346,7 @@ static void __init exynos_init_io(void)
+>>       debug_ll_io_init();
+>>
+>>       of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
+>> +    of_scan_flat_dt(exynos_fdt_map_pmu, NULL);
+>>
+>>       /* detect cpu id and rev. */
+>>       s5p_init_cpu(S5P_VA_CHIPID);
+>> @@ -336,6 +381,38 @@ static int __init exynos4_l2x0_cache_init(void)
+>>   }
+>>   early_initcall(exynos4_l2x0_cache_init);
+>>
+>> +
+>> +inline struct regmap *get_exynos_pmuregmap()
+>> +{
+>> +    return exynos_pmu_regmap;
+>> +}
+>> +
+>> +inline void __iomem *get_exynos_pmuaddr()
+>> +{
+>> +    return exynos_pmu_base;
+>> +}
+>
+> Hmm, non-static inline inside a C file? Probably should be either static 
+> inline or non-static non-inline. (Assuming that both are really needed, as I 
+> pointed in the comments above.)
 
-I cannot find the "best" way even though I've tried to figure it out.
-I would like to find out the most clear and self-descriptive expression.
+OK, will remove "get_exynos_pmuaddr" and make "get_exynos_pmuregmap" as 
+non-static non-inline.
 
-Could you give an idea on how to remove both conditional VA logic and #ifdef?
+>
+>> +
+>> +
+>> +void __init exynos_map_pmu(void)
+>> +{
+>> +    struct device_node *np = NULL;
+>> +
+>> +    early_syscon_init();
+>> +
+>> +    np = of_find_matching_node(NULL, exynos_dt_pmu_match);
+>> +
+>> +    if (!np) {
+>> +        pr_err("Failed to find PMU node\n");
+>> +        return;
+>> +    } else {
+>> +        exynos_pmu_regmap = syscon_early_regmap_lookup_by_phandle(np,
+>> +                "samsung,syscon-phandle");
+>
+> Do you need this regmap really here? I believe it should be the code using PMU 
+> registers which calls this function directly to retrieve a handle to the syscon.
+>
 
-> > +	create_pgd_entry x26, x0, x1, x5, x6, x7
-> >
-> 
-> So before this patch we have the following created by
-> __create_page_tables:
-> 
-> +========================+ <--- TEXT_OFFSET + PHYS_OFFSET
-> | FIXADDR (pmd or pte)   |
-> +------------------------+
-> | block map (pmd or pte) |
-> +------------------------+
-> | PGDs for swapper       |
-> +========================+ <--- TTBR1 swapper_pg_dir
-> | block map for idmap    |
-> +------------------------+
-> | PGDs for idmap         |
-> +------------------------+ <--- TTBR0 idmap_pg_dir
-> 
-> 
-> After the patch, for 4 levels activated we have:
-> +========================+ <--- TEXT_OFFSET + PHYS_OFFSET
-> | FIXADDR (ptes)         |
-> +------------------------+
-> | block map (ptes)       |
-> +------------------------+
-> | PUDs for swapper       |
-> +------------------------+
-> | PGDs for swapper       |
-> +========================+ <--- TTBR1 swapper_pg_dir
-> | block map for idmap    |
-> +------------------------+
-> | PUDs for idmap         |
-> +------------------------+
-> | PGDs for idmap         |
-> +------------------------+ <--- TTBR0 idmap_pg_dir
-> 
-> and without 4 levels activated we have:
-> +========================+ <--- TEXT_OFFSET + PHYS_OFFSET
-> | ZERO BYTES             |
-> +------------------------+
-> | FIXADDR (pmd or pte)   |
-> +------------------------+
-> | block map (pmd or pte) |
-> +------------------------+
-> | PGDs for swapper       |
-> +========================+ <--- TTBR1 swapper_pg_dir
-> | ZERO BYTES             |
-> +------------------------+
-> | block map for idmap    |
-> +------------------------+
-> | PGDs for idmap         |
-> +------------------------+ <--- TTBR0 idmap_pg_dir
+Yes, as "exynos_restart" is accessing one PMU register. So even though all callers
+(pm.c and hotplug.c) directly retrieve a regmap handle to PMU, we need regmap handle
+in this file also. So as I mentioned above just to avoid duplicate code in all 
+files we can
+retrieve regmap handle in "exynos.c" and using helper function other files can 
+use it.
 
-This is definitely helpful to understand head.S.
-It would be good to add these figures to Documentation or comments.
+> Best regards,
+> Tomasz
+>
 
-Best Regards
-Jungseok Lee
+
+-- 
+Best Regards,
+Pankaj Dubey
