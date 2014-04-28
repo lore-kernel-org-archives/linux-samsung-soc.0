@@ -1,179 +1,118 @@
-From: Steve Capper <steve.capper@linaro.org>
-Subject: Re: [PATCH v3 6/7] arm64: mm: Implement 4 levels of translation
- tables
-Date: Mon, 28 Apr 2014 14:23:39 +0100
-Message-ID: <20140428132338.GA26829@linaro.org>
-References: <000701cf5adc$1aa35350$4fe9f9f0$@samsung.com>
- <20140423160149.GA2895@linaro.org>
- <000f01cf61ca$099017c0$1cb04740$@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Mon, 28 Apr 2014 17:05:24 +0200
+Message-ID: <1852265.JnliZKqXKk@avalon>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:49766 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755123AbaD1NXr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 09:23:47 -0400
-Received: by mail-wg0-f45.google.com with SMTP id b13so315947wgh.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 06:23:46 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <000f01cf61ca$099017c0$1cb04740$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5355C4D7.7010109@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-On Sun, Apr 27, 2014 at 12:37:35PM +0900, Jungseok Lee wrote:
-> On Thursday, April 24, 2014 1:02 AM, Steve Capper wrote:
-> > On Fri, Apr 18, 2014 at 04:59:20PM +0900, Jungseok Lee wrote:
+Hi YoungJun,
 
-[ ... ]
-
+On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
+> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
+> > Hi YoungJun,
 > > 
-> > This is overly complicated. For <4 levels we set x0 to be:
-> > ttbr1 + 2*PAGE_SIZE. For 4-levels, we set x0 to be ttbr1 + PAGE_SIZE, then inside the create_pgd_entry
-> > macro, we check the VA for FIXADDR_TOP then add another PAGE_SIZE. This is presumably done so the same
-> > PUD is used for the swapper block map and the FIXADDR map.
-> 
-> Is it too complicated to understand the logic?
-> 
-> 1) For <4 levels:
-> PAGE_SIZE is added for FIXADDR map and x0 is passed to create pgd entry.
-> 2) For =4 levels:
-> PAGE_SIZE is added in the create_pgd_entry macro since FIXADDR map info
-> is needed to create pud entry.
-> 
-> However, I agree that the code should be revised if other people feel
-> like it is a labyrinthine logic.
-> 
-> > If you assume that the PUD always follows the PGD for 4-levels, then you can remove this #ifdef and
-> > the conditional VA logic in set_pgd_entry. To make the logic simpler for <4 levels, you could call
-> > create_pud_entry in the middle of create_pgd_entry, then put down the actual pgd after.
-> 
-> create_pud_entry should distinguish block map from FIXADDR map although
-> PUD always follows the PGD in case of 4 levels. If we would like to avoid
-> unnecessary #ifdef, the conditional logic should be introduced in create_
-> pgd_entry macro.
-> 
-> I cannot find the "best" way even though I've tried to figure it out.
-> I would like to find out the most clear and self-descriptive expression.
-> 
-> Could you give an idea on how to remove both conditional VA logic and #ifdef?
-
-
-Hello Jungseok,
-I had the following logic in my head:
-It compiles and runs on the model, but I've not tried it in anger.
-
-=========================================================================
-
-	.macro create_pud_entry, pgd, tbl, virt, pud, tmp1, tmp2
-#ifdef CONFIG_ARM64_4_LEVELS
-	add	\tbl, \tbl, #PAGE_SIZE		// bump tbl 1 page up.
-						// to make room for pud
-	add	\pud, \pgd, #PAGE_SIZE		// pgd points to pud which
-						// follows pgd
-	lsr	\tmp1, \virt, #PUD_SHIFT
-	and	\tmp1, \tmp1, #PTRS_PER_PUD - 1	// PUD index
-	orr	\tmp2, \tbl, #3			// PUD entry table type
-	str	\tmp2, [\pud, \tmp1, lsl #3]
-#else
-	mov	\pud, \tbl			// pgd points to section table
-						// directly for < 4 levels
-#endif
-	.endm
-
-/*
- * Macro to populate the PGD for the corresponding block entry in the next
- * level (tbl) for the given virtual address.
- *
- * Preserves:	pgd, virt
- * Corrupts:	tmp1, tmp2, tmp3
- * Returns:	tbl -> page where block mappings can be placed
- *	(changed to make room for pud with 4levels, preserved otherwise)
- */
-	.macro	create_pgd_entry, pgd, tbl, virt, tmp1, tmp2, tmp3
-	create_pud_entry \pgd, \tbl, \virt, \tmp3, \tmp1, \tmp2
-	lsr	\tmp1, \virt, #PGDIR_SHIFT
-	and	\tmp1, \tmp1, #PTRS_PER_PGD - 1	// PGD index
-	orr	\tmp2, \tmp3, #3		// PGD entry table type
-	str	\tmp2, [\pgd, \tmp1, lsl #3]
-	.endm
-
-=========================================================================
-
-[Note I've changed the extra argument to create_pgd_entry to be at the end
-to make it easier to diff callers]
-
-So essentially, we bump up tbl if we are running with 4 levels of page
-table. We put the pgd down after the pud, and this allows us to sneak a
-pud in after the pgd if we need to, otherwise it points to the target
-for the section mapping.
-
-Does this work for you? (I go cross-eyed with too much assembler, so
-could have easily missed something).
-
-> 
-> > > +	create_pgd_entry x26, x0, x1, x5, x6, x7
-> > >
+> > Thank you for the patch.
 > > 
-> > So before this patch we have the following created by
-> > __create_page_tables:
+> > On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+> >> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
+> >> driver.
+> >> 
+> >> Changelog v2:
+> >> - Declares delay, size properties in probe routine instead of DT
+> >> Changelog v3:
+> >> - Moves CPU timings relevant properties from FIMD DT
+> >> 
+> >>    (commented by Laurent Pinchart, Andrzej Hajda)
+> >> 
+> >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> >> Acked-by: Inki Dae <inki.dae@samsung.com>
+> >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >> ---
+> >> 
+> >>   drivers/gpu/drm/panel/Kconfig         |    7 +
+> >>   drivers/gpu/drm/panel/Makefile        |    1 +
+> >>   drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 ++++++++++++++++++++++++++
+> >>   3 files changed, 577 insertions(+)
+> >>   create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
 > > 
-> > +========================+ <--- TEXT_OFFSET + PHYS_OFFSET
-> > | FIXADDR (pmd or pte)   |
-> > +------------------------+
-> > | block map (pmd or pte) |
-> > +------------------------+
-> > | PGDs for swapper       |
-> > +========================+ <--- TTBR1 swapper_pg_dir
-> > | block map for idmap    |
-> > +------------------------+
-> > | PGDs for idmap         |
-> > +------------------------+ <--- TTBR0 idmap_pg_dir
+> > [snip]
 > > 
+> >> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+> >> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+> >> index 0000000..1282678
+> >> --- /dev/null
+> >> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+> >> @@ -0,0 +1,569 @@
 > > 
-> > After the patch, for 4 levels activated we have:
-> > +========================+ <--- TEXT_OFFSET + PHYS_OFFSET
-> > | FIXADDR (ptes)         |
-> > +------------------------+
-> > | block map (ptes)       |
-> > +------------------------+
-> > | PUDs for swapper       |
-> > +------------------------+
-> > | PGDs for swapper       |
-> > +========================+ <--- TTBR1 swapper_pg_dir
-> > | block map for idmap    |
-> > +------------------------+
-> > | PUDs for idmap         |
-> > +------------------------+
-> > | PGDs for idmap         |
-> > +------------------------+ <--- TTBR0 idmap_pg_dir
+> > [snip]
 > > 
-> > and without 4 levels activated we have:
-> > +========================+ <--- TEXT_OFFSET + PHYS_OFFSET
-> > | ZERO BYTES             |
-> > +------------------------+
-> > | FIXADDR (pmd or pte)   |
-> > +------------------------+
-> > | block map (pmd or pte) |
-> > +------------------------+
-> > | PGDs for swapper       |
-> > +========================+ <--- TTBR1 swapper_pg_dir
-> > | ZERO BYTES             |
-> > +------------------------+
-> > | block map for idmap    |
-> > +------------------------+
-> > | PGDs for idmap         |
-> > +------------------------+ <--- TTBR0 idmap_pg_dir
+> >> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+> >> +{
+> >> +	struct drm_connector *connector = panel->connector;
+> >> +	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
+> >> +	struct drm_display_mode *mode;
+> >> +
+> >> +	mode = drm_mode_create(connector->dev);
+> >> +	if (!mode) {
+> >> +		DRM_ERROR("failed to create a new display mode\n");
+> >> +		return 0;
+> >> +	}
+> >> +
+> >> +	drm_display_mode_from_videomode(&ctx->vm, mode);
+> >> +	mode->width_mm = ctx->width_mm;
+> >> +	mode->height_mm = ctx->height_mm;
+> >> +	connector->display_info.width_mm = mode->width_mm;
+> >> +	connector->display_info.height_mm = mode->height_mm;
+> >> +
+> >> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> >> +	mode->private = (void *)&ctx->cpu_timings;
+> > 
+> > Wouldn't it make sense to create a new get_interface_params (or similar)
+> > operation for drm_panel to query interface configuration parameters
+> > instead of shoving it in the mode private field ?
 > 
-> This is definitely helpful to understand head.S.
-> It would be good to add these figures to Documentation or comments.
+> You mean "new get_interface_params operation" is different from
+> get_modes() ?
+> 
+> Till now, struct drm_display_mode and most of mode relevant APIs are
+> only for video interface.
+> And CPU interface also needs video mode configurations.
+> 
+> I have a plan to implement the CPU interface relevant APIs like video
+> mode ones, but I think they should be used under current DRM mode APIs
+> like fill_modes, get_modes and so on.
+> So after that implementation, this private field will be replaced by
+> new ones.
+> 
+> Could you explain it in more detail?
 
-Please feel free to grab it if you want... :-).
-Otherwise, I can put a patch in for this, as I am working on some logic
-to remap the physical memory a PUD blocks for 4K granule.
+The idea is that the interface parameters (RD/WR signals timings in this case, 
+but this could also include MIPI DSI lane configuration or any other kind of 
+physical interface parameters) are distinct from the video modes.
 
-Cheers,
+Do you see a need to tie tie interface parameters with drm_display_mode ? Can 
+they be mode-specific ? In any case I'd like not to use the private field of 
+drm_display_mode. If we need to tie both information together then it should 
+be done in a standard way.
+
 -- 
-Steve
+Regards,
+
+Laurent Pinchart
