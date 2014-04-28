@@ -1,225 +1,91 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Mon, 28 Apr 2014 14:49:14 +0200
-Message-ID: <20140428124912.GL19455@ulmo>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<6544270.ddFBoY6LMm@wuerfel> <20140428111802.GI19455@ulmo>
-	<4780885.JaktFvJeC7@wuerfel>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
+Date: Mon, 28 Apr 2014 18:38:48 +0530
+Message-ID: <CAEC9eQNvWXnDhfsJJnd-T8sa4qD6jWsTpmr9tPKAC5UopED=jQ@mail.gmail.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
+	<CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
+	<CAEC9eQPiUdR_0gKVxmA8KhHD7z2AehRGOUU25e5zQz=PQyDqpA@mail.gmail.com>
+	<CAEC9eQPPoU3wWgzOi6DQP=Lxq8EC-AOpRJS20uTjwZa=vfY_Rw@mail.gmail.com>
+	<CAF6AEGuL3=bvBPGCDW5_db58ie23enY8VwNG7wCeQTn+JM4-Rw@mail.gmail.com>
+	<CAEC9eQPtBCtUtRsHsJ4u_58PX7_UrcVJRkL4XOoM9M1sT1eiCQ@mail.gmail.com>
+	<CAF6AEGspP6itAuioyQSQapvbG95MzFvJABg2UrgvNaX7hempsg@mail.gmail.com>
+	<CAEC9eQOtDtwswxBV_qCmm_23TYY74PuiYt=SS+Z=vPw0ZOFijg@mail.gmail.com>
+	<CAEC9eQPxsdtKZdFx91gkNbbrQM+Ch9TpguzPe55-YUFM0=zOVw@mail.gmail.com>
+	<CAEC9eQPvYQqU2Xem2sCYW0tM9+d68+4WLfC47G79NUXE4kzpMg@mail.gmail.com>
+	<CAKMK7uEOo=0hhgmqztVG+nZEXLrYvg4fWFmjrUUHj+tRPhfm7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1879648532245944921=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4780885.JaktFvJeC7@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:57031 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751656AbaD1NIt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Apr 2014 09:08:49 -0400
+Received: by mail-vc0-f176.google.com with SMTP id lc6so7867853vcb.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 06:08:48 -0700 (PDT)
+In-Reply-To: <CAKMK7uEOo=0hhgmqztVG+nZEXLrYvg4fWFmjrUUHj+tRPhfm7A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
+Daniel,
 
---===============1879648532245944921==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RD6GsZsdEJvsf78O"
-Content-Disposition: inline
+On Sun, Apr 27, 2014 at 6:25 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Fri, Apr 25, 2014 at 8:17 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>> We can call panel_enable/disable at the right point. Even the bridge chips
+>> expect the same. So, I am not ok with combining the bridge and panel and
+>> calling the fxn pointers from crtc_helpers.
+>> So, either we leave it the way it is in this patch (call drm_panel
+>> functions at right points) or
+>> we don't use drm_panel to control the panel sequence and instead use few DT
+>> properties and regulators, inside the bridge chip driver.
+>
+> That wasn't really suggested, but instead the idea was to provide a
+> default drm_bridge which wraps the drm_panel so that you could more
+> easily chain them up.
+What do you mean by "default" drm_bridge?
+I just want to clear few things. Let me explain what I have understood:
+What I understand is that Rob wants me to create a common
+structure which wraps up drm_panel and drm_bridge into a single structure:
+  struct drm_panel_bridge {
+    struct drm_bridge base;
+    struct drm_panel *panel;
+    struct drm_bridge *bridge; /* optional */  ==> Really not sure why
+this is needed!
+  };
 
+  static void drm_panel_bridge_enable(struct drm_bridge *bridge)
+  {
+    struct drm_panel_bridge *pb = to_panel_bridge(bridge);
+    if (pb->bridge)
+      pb->bridge->funcs->enable(pb->bridge);
+    pb->panel->funcs->enable(pb->panel);
+  }
 
---RD6GsZsdEJvsf78O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And now, the above function becomes a common function
+(also with an ordering issue btw panel and bridge).
+Where do we keep it? And, where do we call it from?
 
-On Mon, Apr 28, 2014 at 02:05:30PM +0200, Arnd Bergmann wrote:
-> On Monday 28 April 2014 13:18:03 Thierry Reding wrote:
-> > On Mon, Apr 28, 2014 at 12:56:03PM +0200, Arnd Bergmann wrote:
-> > > On Monday 28 April 2014 12:39:20 Thierry Reding wrote:
-> > > > And possibly with a iommu-names property to go along with that. The=
- idea
-> > > > being that a device can be a master on possibly multiple IOMMUs. Us=
-ing
-> > > > the above it would also be possible to have one device be multiple
-> > > > masters on the same IOMMU.
-> > >=20
-> > > Yes, that seems reasonable. Just one question: How would you represen=
-t a
-> > > device that has multiple masters, with at least one connected to an I=
-OMMU
-> > > and another one connected to memory directly, without going to the IO=
-MMU?
-> >=20
-> > Heh, I don't think I've ever thought about that use-case. I guess I was
-> > always assuming that in the absence of an IOMMU the device would simply
-> > access memory directly. From what I can tell that's how Tegra works at
-> > least. If the IOMMU is not enabled for a given client, that client will
-> > access physical memory untranslated.
-> >=20
-> > I suppose if that really must be represented then a global dummy IOMMU
-> > could be introduced to help with these cases.
->=20
-> It's actually not too uncommon: you can have e.g. the lower 2GB mapped
-> directly from the device address space into the host memory, but have
-> an iommu that translates accesses from some range in the upper 2GB of
-> the 32-bit address space into full 64-bit addresses.
->=20
-> This use case makes no sense if you use the IOMMU for isolation
-> or virtualization, but it gives better performance for lowmem access
-> when the only reason to have the IOMMU is to map highmem addresses.
+> Also I'm not really happy that the bridge callbacks have been added to
+> the drm helpers (I'd prefer if driver callbacks would bear that
+> responsibility). But you can always create your own drm_bridge
+> integration.
+Do you mean, the bridge calls should be moved out of common drm_helper
+functions and called from platform specific drivers instead?
 
-Thinking about this some more, isn't the non-IOMMU master something we
-can completely ignore in the DT? Or at least it shouldn't be handled by
-the IOMMU bindings because, well, it's not an IOMMU to begin with.
+> In any case your concern that drivers need to control
+> when certain callbacks are called is shared by everyone here afaics.
+> And I also don't see any issues with Rob's proposal in this regard.
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
 
-Perhaps it's something that should be described using dma-ranges?
+Please let me know if my understanding is correct and correct me if
+there is a misconception.
 
-> > > A lot of drivers probably only support one
-> > > master, so they can just set #iommu-cells=3D<0>, others might require
-> > > IDs that do not fit into one cell.
-> >=20
-> > You mean "#iommu-cells =3D <1>" for devices that only require one maste=
-r?
->=20
-> I meant an IOMMU device that acts as the slave for exactly one device,
-> even if that device has multiple master ports.
-
-Okay, makes sense. I guess depending on the nature of the IOMMU it might
-make sense not to expose it as an IOMMU at all. For example if it lives
-completely within the register space of its master device. In that case
-it could be directly programmed from the device's driver.
-
-> > There still has to be one cell to specify which master. Unless perhaps
-> > if they can be arbitrarily assigned. I guess even if there's a fixed
-> > mapping that applies to one SoC generation, it might be good to still
-> > employ a specifier and have the mapping in DT for flexibility.
->=20
-> let me clarify by example:
->=20
-> 	iommu@1 {
-> 		compatible =3D "some,simple-iommu";
-> 		reg =3D <1>;
-> 		#iommu-cells =3D <0>; /* supports only one master */
-> 	};
->=20
-> 	iommu@2 {
-> 		compatible =3D "some,other-iommu";
-> 		reg =3D <3>;
-> 		#iommu-cells =3D <1>; /* contains master ID */
-> 	};
->=20
-> 	iommu@3 {
-> 		compatible =3D "some,windowed-iommu";
-> 		reg =3D <2>;
-> 		#iommu-cells =3D <2>; /* contains dma-window */
-> 	};
->=20
-> 	device@4 {
-> 		compatible =3D "some,ethernet";
-> 		iommus =3D <&/iommu@1>;
-> 	};
->=20
-> 	device@5 {
-> 		compatible =3D "some,dmaengine";
-> 		iommus =3D <&/iommu@2 0x40000000 0x1000000>,
-> 			 <&/iommu@3 0x101>;
-> 	};
->=20
-> The device at address 4 has a one-one relationship with iommu@1, so there
-> is no need for any data. device@5 has two master ports. One is connected =
-to
-> an IOMMU that has a per-device aperture, device@5 can only issue transfers
-> to the 256MB area at 0x40000000, and the IOMMU will have to put entries f=
-or
-> this device into that address. The second master port is connected to
-> iommu@3, which uses a master ID that gets passed along with each transfer,
-> so that needs to be put into the IOTLBs.
-
-The above sounds reasonable to me with the exception of the DMA window
-specifier. Isn't that precisely the information that we currently
-describe using the dma-ranges property?
-
-> A variation would be to not use #iommu-cells at all, but provide a
-> #address-cells / #size-cells pair in the IOMMU, and have a translation
-> as we do for dma-ranges. This is probably most flexible.
-
-I'm not sure I follow. Wouldn't that require masters to be children of
-the IOMMU DT nodes for that to work out? Also how would that work for
-cases where more data than the address ranges (such as the master ID) is
-needed to operate the IOMMU?
-
-> One completely open question that I just noticed is how the kernel should
-> deal with the case of multiple IOMMUs attached to one master: the
-> data structures we have assume that we know exactly how to do DMA by
-> setting the per-device dma_map_ops (iommu or not, coherent or not),
-> and by setting a pointer to at most one IOMMU.
-
-Perhaps we need something more fine-grained than what we currently have.
-I can imagine that rather than having it all abstracted away and handled
-transparently (which undoubtedly has a lot of advantages), we need to
-expose a client API of sorts that drivers can use.
-
-I'm mostly brainstorming here and not thinking of any concrete use-case:
-
-	struct iommu_master *master =3D iommu_get(dev, "foo");
-
-	iommu_master_set_range(master, 0, SZ_256M);
-
-	pages =3D alloc_pages(...);
-
-	iova =3D iommu_master_map(master, pages);
-
-The above would essentially obtain a handle to the "foo" IOMMUs master,
-set the valid DMA range (hard-coded in the driver or obtained from a
-dma-ranges property), allocates some pages of memory and then maps them
-into the device's address space via the IOMMU.
-
-The reason why I think what we have isn't going to work is that it is
-assumed that either there is an IOMMU or there isn't. So memory gets
-either mapped through an IOMMU or it doesn't. Furthermore IOMMU usage is
-likely very use-case dependent and it's probably not easy to determine
-automatically which IOMMU is to be used for individual allocations.
-
-Allowing more fine-grained control of the IOMMU from drivers should
-increase the flexibility of users since they have more context to make
-the right decisions.
-
-But then again, I have only a very sketchy idea of what an IOMMU needs
-to be able to do, so maybe the above doesn't make sense at all.
-
-Thierry
-
---RD6GsZsdEJvsf78O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTXk5IAAoJEN0jrNd/PrOhezEP/3C7xzBZWcJrzPQ9qV6KAnRe
-DVxWfqnADwh6v4tgSU5QGGaKlRofh799/Du9RkSlbKMoONFOBAIR7NgnRBEHx4kk
-sh5EYPrF3FVD55ISVDuTMksM4d5onMR9zR4/y0W0mUWgpekLIjCRbFSaimbc6Xkq
-w2eQVUQftjtwCJKqnuMWlrbz51aMo+6PGK07NQzHzq7CUhr+jQiCjOTRXp7tO83q
-5EkuA9O4vFPLjfBV9QZaS+7HALNGB2GjnrvWV7ZpUZnhECIvYZuVrzd4w+27hE6j
-oELjQSz5zT9tWWg7nwKkVMKhXhNgAiQ2lB+Y0Od3CRSeYe99VPbuPmNXNhwzVw5L
-ICaMx2elWE6oE+8OCPLxRWIEzHoIPIWEBTZJm1NfoiMHVfRQSouUrl0/PLZofcIu
-gqf16cFwUC8P6dxQIvYUzZy4ZLfYtwnujRY0hLlFL+YxLJ2t9csKcLE2PYx6vfRl
-khms5FaPRjFli4sOqnKxMT9U4+b4CxBQ4ZV7gxSJmwx3gSEsebZwiNax38XFEtF1
-fJb56ZMLnPKi+7Hp3BSXrpA4j2ob0W1eJECMOL2+kr5Dv03x2APYFL20m46fG/q0
-VTqGWvvFSXJQA4J4rm1rdH7uEmWW6jnjeC1IfaAzebHk2UaecCpUuwiz9BRCVW0p
-NzkWGbVXOXIuzpZb871M
-=ULBi
------END PGP SIGNATURE-----
-
---RD6GsZsdEJvsf78O--
-
---===============1879648532245944921==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1879648532245944921==--
+Regards,
+Ajay Kumar
