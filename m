@@ -1,15 +1,17 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
- look-up
-Date: Mon, 28 Apr 2014 11:35:31 -0600
-Message-ID: <535E9163.3070305@wwwdotorg.org>
-References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>
- <1398271618-28932-2-git-send-email-t.figa@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [RESUBMIT RFC PATCH v2 3/3] drivers: mfd: Add support for Exynos
+ PMU driver
+Date: Mon, 28 Apr 2014 18:37:43 +0100
+Message-ID: <20140428173743.GA14853@arm.com>
+References: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
+ <1398687607-4554-4-git-send-email-pankaj.dubey@samsung.com>
+ <20140428122646.GF21279@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1398271618-28932-2-git-send-email-t.figa@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <20140428122646.GF21279@lee--X1>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,39 +21,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>, linux-pm@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <philipp.zabel@gmail.com>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, devicetree@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kumar
+To: Lee Jones <lee.jones@linaro.org>
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, b.zolnierkie@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/23/2014 10:46 AM, Tomasz Figa wrote:
-> This patch introduces generic code to perform power domain look-up using
-> device tree and automatically bind devices to their power domains.
-> Generic device tree binding is introduced to specify power domains of
-> devices in their device tree nodes.
+On Mon, Apr 28, 2014 at 01:26:46PM +0100, Lee Jones wrote:
+> > This patch moves Exynos PMU driver implementation from
+> > "arm/mach-exynos" to "drivers/mfd".
+> > This driver is mainly used for setting misc bits of register from PMU IP
+> > of Exynos SoC which will be required to configure before Suspend/Resume.
+> > Currently all these settings are done in "arch/arm/mach-exynos/pmu.c" but
+> > moving ahead for ARM64 based SoC support, there is a need of DT based
+> > implementation of PMU driver.
+> > This driver uses already existing DT binding information.
+> > 
+> > CC: Sangbeom Kim <sbkim73@samsung.com>
+> > CC: Samuel Ortiz <sameo@linux.intel.com>
+> > CC: Lee Jones <lee.jones@linaro.org>
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/Kconfig                           |    2 ++
+> >  arch/arm/mach-exynos/Makefile                          |    2 --
+> >  drivers/mfd/Kconfig                                    |    9 +++++++++
+> >  drivers/mfd/Makefile                                   |    1 +
+> >  arch/arm/mach-exynos/pmu.c => drivers/mfd/exynos-pmu.c |    0
+> >  5 files changed, 12 insertions(+), 2 deletions(-)
+> >  rename arch/arm/mach-exynos/pmu.c => drivers/mfd/exynos-pmu.c (100%)
 > 
-> Backwards compatibility with legacy Samsung-specific power domain
-> bindings is provided, but for now the new code is not compiled when
-> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
-> will change as soon as Exynos power domain code gets converted to use
-> the generic framework in further patch.
+> So I just took a look at the code as zero changes looks suspicious to
+> me. The driver can not simply be copied and pasted into the MFD
+> subsystem in its current state.
+> 
+> The fundamental question is; is this chip actually an MFD? What does
+> it do besides Power Management?
 
-> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+I looked at the code briefly as well and I don't think it matches the
+mfd idea. Maybe it could be merged together with
+arch/arm/mach-exynos/pm.c and moved to drivers/power/ or a more
+appropriate directory for platform_suspend_ops.
 
-> +==Power domain consumers==
-> +
-> +Required properties:
-> + - power-domain : A phandle and power domain specifier as defined by bindings
-> +                  of power controller specified by phandle.
-
-It seems quite likely that a single logical device could have components
-in multiple power domains. Consider an HDMI controller with different
-power domains for the HDMI core, CEC communication, DDC/I2C
-communication, and the I/O pads, with no clear separation between those
-two components of the module (no separate register spaces, but the
-bits/registers are interleaved all together).
-
-As such, I think that rather than a "power-domain" property, we need a
-pair of "power-domains", and "power-domain-names" properties, and
-preferably with mandatory usage of name-based lookups, rather than
-allowing a random mix of name-based and index-based lookups like we have
-with some existing resource bindings.
+-- 
+Catalin
