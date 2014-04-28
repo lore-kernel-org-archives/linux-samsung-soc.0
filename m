@@ -1,59 +1,118 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 5/7] ARM: dts: enable hdmi for exynos5250 based snow board
-Date: Mon, 28 Apr 2014 12:00:19 +0530
-Message-ID: <535DF57B.5030301@linaro.org>
-References: <1397993044-14564-1-git-send-email-rahul.sharma@samsung.com> <1397993044-14564-6-git-send-email-rahul.sharma@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v8 1/3] ARM: EXYNOS: initial board support for exynos5260 SoC
+Date: Mon, 28 Apr 2014 12:03:21 +0530
+Message-ID: <CAPdUM4McJD92rp77fkAho9oEDH8sv4LKm9y9Vfv1pbbRKT-vqw@mail.gmail.com>
+References: <1397620738-14431-1-git-send-email-rahul.sharma@samsung.com>
+	<1397620738-14431-2-git-send-email-rahul.sharma@samsung.com>
+	<534E3803.5010404@gmail.com>
+	<CAK9yfHztqGWhUJ=PNc7L-epu48PkEM6=v6JFDZ1n52NBeOUB8w@mail.gmail.com>
+	<534E3AE7.10907@gmail.com>
+	<00eb01cf5e7b$4eb9edf0$ec2dc9d0$@samsung.com>
+	<CAPdUM4O3imVNv3A3K1uEkfohc-r668SC6mVZQRCO8N+waxyb4w@mail.gmail.com>
+	<0b4101cf613e$eb2d87d0$c1889770$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:57901 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751573AbaD1Ga1 (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:63446 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751288AbaD1GdX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 02:30:27 -0400
-Received: by mail-pd0-f172.google.com with SMTP id w10so5350315pde.17
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2014 23:30:26 -0700 (PDT)
-In-Reply-To: <1397993044-14564-6-git-send-email-rahul.sharma@samsung.com>
+	Mon, 28 Apr 2014 02:33:23 -0400
+In-Reply-To: <0b4101cf613e$eb2d87d0$c1889770$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, sunil joshi <joshi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-On 04/20/2014 04:54 PM, Rahul Sharma wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
-> 
-> Enable support for HDMI for exynos5250 based Snow board.
-> 
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250-cros-common.dtsi |   13 ++++++++++++-
->  arch/arm/boot/dts/exynos5250-snow.dts         |    7 +++++++
->  2 files changed, 19 insertions(+), 1 deletion(-)
+Hi Tomasz,
 
-[ ... ]
+Please share your opinion.
 
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index 52ae335..586cd38 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -343,4 +343,11 @@
->  			pinctrl-0 = <&ptn3460_gpios>;
->  		};
->  	};
-> +
-> +	hdmi {
-> +		hdmi-en-supply = <&tps65090_fet7>;
+Regards,
+Rahul Sharma
 
-Looks like tps65090_fet7 is not defined yet or might be not mentioned as
-dependency.
-
-> +		vdd-supply = <&ldo8_reg>;
-> +		vdd_osc-supply = <&ldo10_reg>;
-> +		vdd_pll-supply = <&ldo8_reg>;
-> +	};
->  };
-> 
-
--- 
-Tushar Behera
+On 26 April 2014 16:31, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Rahul Sharma wrote:
+>>
+>> Hi Kukjin,
+>>
+> Hi,
+>
+>> Need this macro to enable build for clock driver.
+>>
+> I found it in your patch, "clk/exynos5260: add clock file for exynos5260".
+> For consistency, I'm fine on this, if Tomasz has no objection me to pick
+> this into samsung tree for the 5260 clock stuff
+> "drivers/clk/samsung/Makefile".
+>
+> Thanks,
+> Kukjin
+>
+>> Regards,
+>> Rahul Sharma.
+>>
+>>
+>> On 22 April 2014 15:36, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> > Tomasz Figa wrote:
+>> >>
+>> >> On 16.04.2014 10:08, Sachin Kamat wrote:
+>> >> > Hi Tomasz,
+>> >> >
+>> >> > On 16 April 2014 13:27, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> >> >> Hi Rahul,
+>> >> >>
+>> >> >>
+>> >> >> On 16.04.2014 05:58, Rahul Sharma wrote:
+>> >> >>>
+>> >> >>> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> >> >>>
+>> >> >>> This patch add basic arch side support for exynos5260 SoC.
+>> >> >>>
+>> >> >>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> >> >>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> >> >>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> >> >>> ---
+>> >> >>>    arch/arm/mach-exynos/Kconfig |    5 +++++
+>> >> >>>    1 file changed, 5 insertions(+)
+>> >> >>>
+>> >> >>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-
+>> >> exynos/Kconfig
+>> >> >>> index fc8bf18..bf4ed87 100644
+>> >> >>> --- a/arch/arm/mach-exynos/Kconfig
+>> >> >>> +++ b/arch/arm/mach-exynos/Kconfig
+>> >> >>> @@ -84,6 +84,11 @@ config SOC_EXYNOS5250
+>> >> >>>          help
+>> >> >>>            Enable EXYNOS5250 SoC support
+>> >> >>>
+>> >> >>> +config SOC_EXYNOS5260
+>> >> >>> +       bool "SAMSUNG EXYNOS5260"
+>> >> >>> +       default y
+>> >> >>> +       depends on ARCH_EXYNOS5
+>> >> >>> +
+>> >> >>>    config SOC_EXYNOS5420
+>> >> >>>          bool "SAMSUNG EXYNOS5420"
+>> >> >>>          default y
+>> >> >>>
+>> >> >>
+>> >> >> Is this patch necessary now? After Sachin's consolidation series
+>> there
+>> >> are
+>> >> >> no per SoC entries anymore.
+>> >> >
+>> >> > Kukjin still wanted individual SoCs to be selectable. Please refer
+>> [1].
+>> >> >
+>> >> > [1] http://www.spinics.net/lists/devicetree/msg27040.html
+>> >>
+>> >> I don't think any valid reason was presented there. Features in code
+>> >> should not be selected using #ifdef CONFIG_ anymore, so I don't really
+>> >> see any reason to not proceed with this consolidation. Olof, Arnd?
+>> >>
+>> > Hi,
+>> >
+>> > Yeah, in this case, nothing happened with adding SOC_EXYNOS5260. So I
+>> don't have any idea why this is required.
+>> >
+>> > - Kukjin
+>> >
+>
