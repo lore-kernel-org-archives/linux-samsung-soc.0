@@ -1,91 +1,149 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Mon, 28 Apr 2014 14:18:20 -0700
-Message-ID: <CAD=FV=UEwfNX+uf70OV4LB39s=mJyxTkC63g4iYrE7hcvyEdgw@mail.gmail.com>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
- <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
- <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
- <20140428091914.GK6264@lee--X1>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Mon, 28 Apr 2014 23:25:50 +0200
+Message-ID: <20140428212547.GA13897@mithrandir>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <5275422.8CoHT7g51N@avalon>
+ <5355C4D7.7010109@samsung.com>
+ <1852265.JnliZKqXKk@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140428091914.GK6264@lee--X1>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:44833 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752119AbaD1VZy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Apr 2014 17:25:54 -0400
+Content-Disposition: inline
+In-Reply-To: <1852265.JnliZKqXKk@avalon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: YoungJun Cho <yj44.cho@samsung.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 
-Lee,
 
-On Mon, Apr 28, 2014 at 2:19 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> [...]
->
->> >>> Need to wait for the ARM, DT and I2C guys to review, at which point
->> >>> I'll be happy to take in and supply a branch for them to pull from if
->> >>> required. If there are no _true_ dependencies and the MFD changes can
->> >>> be added independently without fear of build breakages, let me know
->> >>> and I'll apply them separately.
->> >>
->> >> I believe there aren't direct dependencies between the patches. So, the
->> >> MFD patches can be applied to the MFD tree and the DT patch applied to
->> >> the Tegra tree. I'm simply waiting for the MFD patches to be applied
->> >> before applying the DT patch so that I know the DT binding definition is
->> >> fully accepted before applying a patch that uses it.
->> >
->> > All of the MFD patches are safe to apply and in pretty much arbitrary
->> > order.  The strong dependencies in the chain are:
->> >
->> > * We need patch #5 (mfd: cros_ec: Sync to the latest
->> > cros_ec_commands.h from EC sources) before the i2c tunnel can compile.
->> >
->> > * As Stephen says, he shouldn't apply the device tree until we're
->> > confident that the bindings are right.  However there's no strong
->> > dependency otherwise.
->> >
->> > * Patches #1 #2 and #3 are simply reliability fixes.  Those could land
->> > at any point in time and will improve other users of cros_ec_spi (like
->> > the keyboard on tegra124-venice2).
->> >
->> > * Patch #4 can apply any time with no issues.  Without it large i2c
->> > tunnel transfers won't work, but that's not a terrible problem (all
->> > normal transfers are small).
->>
->> Patch #5 (latest ec commands) can also apply at any time with no
->> issues, but it's needed for patch #6 (the tunnel) to compile.
->>
->> All that being said, I'd request that you merge patches #1-#5 as soon
->> as you can and make sure you can provide a way that Wolfram can pull
->> them (or at least patch #5) into his i2c tree to keep them applying
->> when he is ready to land #6.
->
-> Very well. So if I can obtain Wolfram's Ack, I can apply the MFD
-> changes along with patch #6 and supply him with a branch.
+--17pEHd4RhPHOinZp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you explain the reason to wait for Wolfram's Ack before applying
-#1 - #5?  I would think:
+On Mon, Apr 28, 2014 at 05:05:24PM +0200, Laurent Pinchart wrote:
+> Hi YoungJun,
+>=20
+> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
+> > On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
+> > > Hi YoungJun,
+> > >=20
+> > > Thank you for the patch.
+> > >=20
+> > > On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+> > >> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
+> > >> driver.
+> > >>=20
+> > >> Changelog v2:
+> > >> - Declares delay, size properties in probe routine instead of DT
+> > >> Changelog v3:
+> > >> - Moves CPU timings relevant properties from FIMD DT
+> > >>=20
+> > >>    (commented by Laurent Pinchart, Andrzej Hajda)
+> > >>=20
+> > >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> > >> Acked-by: Inki Dae <inki.dae@samsung.com>
+> > >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > >> ---
+> > >>=20
+> > >>   drivers/gpu/drm/panel/Kconfig         |    7 +
+> > >>   drivers/gpu/drm/panel/Makefile        |    1 +
+> > >>   drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 +++++++++++++++++++++=
++++++
+> > >>   3 files changed, 577 insertions(+)
+> > >>   create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+> > >=20
+> > > [snip]
+> > >=20
+> > >> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+> > >> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+> > >> index 0000000..1282678
+> > >> --- /dev/null
+> > >> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+> > >> @@ -0,0 +1,569 @@
+> > >=20
+> > > [snip]
+> > >=20
+> > >> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+> > >> +{
+> > >> +	struct drm_connector *connector =3D panel->connector;
+> > >> +	struct s6e3fa0 *ctx =3D panel_to_s6e3fa0(panel);
+> > >> +	struct drm_display_mode *mode;
+> > >> +
+> > >> +	mode =3D drm_mode_create(connector->dev);
+> > >> +	if (!mode) {
+> > >> +		DRM_ERROR("failed to create a new display mode\n");
+> > >> +		return 0;
+> > >> +	}
+> > >> +
+> > >> +	drm_display_mode_from_videomode(&ctx->vm, mode);
+> > >> +	mode->width_mm =3D ctx->width_mm;
+> > >> +	mode->height_mm =3D ctx->height_mm;
+> > >> +	connector->display_info.width_mm =3D mode->width_mm;
+> > >> +	connector->display_info.height_mm =3D mode->height_mm;
+> > >> +
+> > >> +	mode->type =3D DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> > >> +	mode->private =3D (void *)&ctx->cpu_timings;
+> > >=20
+> > > Wouldn't it make sense to create a new get_interface_params (or simil=
+ar)
+> > > operation for drm_panel to query interface configuration parameters
+> > > instead of shoving it in the mode private field ?
+> >=20
+> > You mean "new get_interface_params operation" is different from
+> > get_modes() ?
+> >=20
+> > Till now, struct drm_display_mode and most of mode relevant APIs are
+> > only for video interface.
+> > And CPU interface also needs video mode configurations.
+> >=20
+> > I have a plan to implement the CPU interface relevant APIs like video
+> > mode ones, but I think they should be used under current DRM mode APIs
+> > like fill_modes, get_modes and so on.
+> > So after that implementation, this private field will be replaced by
+> > new ones.
+> >=20
+> > Could you explain it in more detail?
+>=20
+> The idea is that the interface parameters (RD/WR signals timings in this =
+case,=20
+> but this could also include MIPI DSI lane configuration or any other kind=
+ of=20
+> physical interface parameters) are distinct from the video modes.
 
-1. Create a topic branch.
-2. Apply patches 1-5 to the topic branch
-3. Merge the topic branch to your for-next branch
+We already have the lanes field in struct mipi_dsi_device. I think in
+general I'd prefer to not spread these parameters around too wildly. If
+this is a general requirement for DBI devices, perhaps what we need is
+struct mipi_dbi_device?
 
-When Wolfram wants to take patch #6, he can either:
-A. Pull your topic branch
-B. If it's been long enough, patches will already be in ToT and no extra work.
+Thierry
 
-If I understand correctly, using a topic branch and doing merges /
-pulls means that you can provide Wolfram with stable git hashes when
-he needs them and there will be no merge conflicts.
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature
 
-Patches #1 - #5 are bonafide bugfixes irrespective of the i2c tunnel.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
--Doug
+iQIcBAEBAgAGBQJTXsdbAAoJEN0jrNd/PrOhSN0P/RdX1dWnsCs++zZTdhJca0YS
+/gQ6WL8ecj6BY2QwkCTfmYc1NQJGrYRaOlUtBQmmAQAsVW6JkxAHKg+7bcU07ptR
+mcIjkQiNIGBJrCQgi2sM8N3nnSWqyJky4N2ZaPZpGdPxzAAx0CP4eCOgi/Yp8xR5
+pTqagAl2/nmDmTUSrab/YaGiI/lHDOJSUXY+Z8DMF0oLsARtexoYH0u5LjIj7jwn
+3e7WOsPW/MARz7OiR1n/M/+ENGS5J+xUm5BdC6ps34uzgMcK7mqwg4WiwI+buuhs
+NlMBfs9oeqEye4JvQQNhjJjNyL0CeofmPg6xqyy7dM/6Me0JddRSlRrnQdZvCYCS
+ZHyE2J/Pm+6nsfjhqn3zj6fN5OtrjGCfmCtYT5aXbeBdZWh3V937F+qSElpJ5gT6
+Xpsp9SM5VTHLpb2w8+i2csa2QoLXA7kae8lECaaYFFCTbPHpzUBwnaO/gqZ6W/Q1
+Sjp05X1gTFjUjMt4MGqBf+r+0lBLcK2dQwPpmjpQPFHMu37/MhA4tsBrJ29V8NET
+ZHu4ahBkZZvpxfKuzhl3kKnmhRmx+O9kAJND24RgK2IoJ4sBiOHeEy0NMbLdHn0N
+UEEk06QNL/i7j6IXFPRuK6bz0mzur96QovVP5ODdAnm1gfDnxOa44TROmnClmW+w
+rY/1J5kp2wesp67n4KSc
+=bkvk
+-----END PGP SIGNATURE-----
+
+--17pEHd4RhPHOinZp--
