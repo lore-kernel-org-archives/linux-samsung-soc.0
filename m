@@ -1,8 +1,7 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 14/16] ARM: l2c: convert exynos to generic l2c initialisation
- (and thereby fix it)
-Date: Mon, 28 Apr 2014 17:58:58 +0100
-Message-ID: <E1WeotO-0002QG-B6@rmk-PC.arm.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 00/16] Another 16 L2C patches
+Date: Mon, 28 Apr 2014 11:12:14 -0600
+Message-ID: <535E8BEE.1000100@wwwdotorg.org>
 References: <20140428165631.GM26756@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,44 +17,24 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Andrew Lunn <andrew@lunn.ch>, kernel@stlinux.com, Linus Walleij <linus.walleij@linaro.org>, Gregory Clement <gregory.clement@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, bcm-kernel-feedback-list@broadcom.com, Dinh Nguyen <dinguyen@altera.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Hauke Mehrtens <hauke@hauke-m.de>, Matt Porter <mporter@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-tegra@vger.kernel.org, Shawn Guo <shawn.guo@freescale.com>, Maxime Coquelin <maxime.coquelin@st.com>, Barry Song <baohua@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Christian Daudt <bcm@fixthebug.org>, Patrice Chotard <patrice.chotard@st.com>, Sascha
 List-Id: linux-samsung-soc@vger.kernel.org
 
-exynos was unconditionally calling the L2 cache initialisation from an
-early_initcall.  This breaks multiplatform kernels.  Thankfully,
-converting to generic l2c initialisation fixes this.
+On 04/28/2014 10:56 AM, Russell King - ARM Linux wrote:
+> So, in response to Matt Porter's complaint about breaking prima2, here's
+> another 16 patches which changes the way the L2 cache is initialised on
+> many platforms.  This series moves towards a situation where the generic
+> code initialises the L2 cache itself, with as little help as possible
+> from board specific code.
+> 
+> A number of platforms are left alone because they're more complex -
+> these should still eventually be converted.
+> 
+> At some point in the near future, I will see about sorting out their
+> ordering wrt the previous patch set.  For the time being, they apply
+> on top of the existing l2c changes.
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/mach-exynos/exynos.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index fbfc29df3299..a763c0862da9 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -316,12 +316,6 @@ static int __init exynos_core_init(void)
- }
- core_initcall(exynos_core_init);
- 
--static int __init exynos4_l2x0_cache_init(void)
--{
--	return l2x0_of_init(0x3c400001, 0xc20fffff);
--}
--early_initcall(exynos4_l2x0_cache_init);
--
- static void __init exynos_dt_machine_init(void)
- {
- 	struct device_node *i2c_np;
-@@ -387,6 +381,8 @@ static void __init exynos_reserve(void)
- DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-+	.l2c_aux_val	= 0x3c400001,
-+	.l2c_aux_mask	= 0xc20fffff,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.map_io		= exynos_init_io,
- 	.init_early	= exynos_firmware_init,
--- 
-1.8.3.1
+Are "the existing l2c changes" in next-20140428? If not, is there a git
+branch I can pull to test the whole thing, rather than tracking down and
+applying "the existing l2c changes" first?
