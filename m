@@ -1,63 +1,126 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] clk: exynos5420: Add clock IDs needed by GPU
-Date: Mon, 28 Apr 2014 15:50:44 +0530
-Message-ID: <1398680444-12400-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:59347 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755047AbaD1KUq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 06:20:46 -0400
-Received: by mail-pb0-f46.google.com with SMTP id ma3so1811283pbc.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 03:20:45 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/4] usb: ohci-exynos: Use struct device instead of
+ platform_device
+Date: Mon, 28 Apr 2014 19:30:03 +0900
+Message-ID: <001801cf62cc$d1286690$737933b0$%han@samsung.com>
+References: <1398677132-30600-1-git-send-email-gautam.vivek@samsung.com>
+ <1398677132-30600-2-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1398677132-30600-2-git-send-email-gautam.vivek@samsung.com>
+Content-language: ko
+Sender: linux-doc-owner@vger.kernel.org
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, 'Alan Stern' <stern@rowland.harvard.edu>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
-Adds IDs for the clocks needed by the ARM Mali GPU
-in exynos5420.
+On Monday, April 28, 2014 6:25 PM, Vivek Gautam wrote:
+> 
+> Change to use struct device instead of struct platform_device
+> for some static functions.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c   |    4 ++--
- include/dt-bindings/clock/exynos5420.h |    2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 60b2681..7a9e3b4 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -362,7 +362,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 	MUX(0, "mout_aclk66_psgen", aclk66_peric_p, SRC_TOP5, 4, 1),
- 	MUX(0, "mout_user_aclk333_g2d", user_aclk333_g2d_p, SRC_TOP5, 8, 1),
- 	MUX(0, "mout_user_aclk266_g2d", user_aclk266_g2d_p, SRC_TOP5, 12, 1),
--	MUX_A(0, "mout_user_aclk_g3d", user_aclk_g3d_p,
-+	MUX_A(CLK_MOUT_G3D, "mout_user_aclk_g3d", user_aclk_g3d_p,
- 			SRC_TOP5, 16, 1, "aclkg3d"),
- 	MUX(0, "mout_user_aclk300_jpeg", user_aclk300_jpeg_p,
- 			SRC_TOP5, 20, 1),
-@@ -372,7 +372,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 			SRC_TOP5, 28, 1),
- 
- 	MUX(0, "sclk_mpll", mpll_p, SRC_TOP6, 0, 1),
--	MUX(0, "sclk_vpll", vpll_p, SRC_TOP6, 4, 1),
-+	MUX(CLK_MOUT_VPLL, "sclk_vpll", vpll_p, SRC_TOP6, 4, 1),
- 	MUX(0, "sclk_spll", spll_p, SRC_TOP6, 8, 1),
- 	MUX(0, "sclk_ipll", ipll_p, SRC_TOP6, 12, 1),
- 	MUX(0, "sclk_rpll", rpll_p, SRC_TOP6, 16, 1),
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 5eefd88..54db8b3 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -178,6 +178,8 @@
- 
- /* mux clocks */
- #define CLK_MOUT_HDMI		640
-+#define CLK_MOUT_G3D		641
-+#define CLK_MOUT_VPLL		642
- 
- /* divider clocks */
- #define CLK_DOUT_PIXEL		768
--- 
-1.7.9.5
+Best regards,
+Jingoo Han
+
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> ---
+>  drivers/usb/host/ohci-exynos.c |   20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index 9cf80cb..05f00e3 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -39,18 +39,18 @@ struct exynos_ohci_hcd {
+>  	struct usb_otg *otg;
+>  };
+> 
+> -static void exynos_ohci_phy_enable(struct platform_device *pdev)
+> +static void exynos_ohci_phy_enable(struct device *dev)
+>  {
+> -	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+> +	struct usb_hcd *hcd = dev_get_drvdata(dev);
+>  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> 
+>  	if (exynos_ohci->phy)
+>  		usb_phy_init(exynos_ohci->phy);
+>  }
+> 
+> -static void exynos_ohci_phy_disable(struct platform_device *pdev)
+> +static void exynos_ohci_phy_disable(struct device *dev)
+>  {
+> -	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+> +	struct usb_hcd *hcd = dev_get_drvdata(dev);
+>  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> 
+>  	if (exynos_ohci->phy)
+> @@ -139,7 +139,7 @@ skip_phy:
+> 
+>  	platform_set_drvdata(pdev, hcd);
+> 
+> -	exynos_ohci_phy_enable(pdev);
+> +	exynos_ohci_phy_enable(&pdev->dev);
+> 
+>  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+>  	if (err) {
+> @@ -150,7 +150,7 @@ skip_phy:
+>  	return 0;
+> 
+>  fail_add_hcd:
+> -	exynos_ohci_phy_disable(pdev);
+> +	exynos_ohci_phy_disable(&pdev->dev);
+>  fail_io:
+>  	clk_disable_unprepare(exynos_ohci->clk);
+>  fail_clk:
+> @@ -168,7 +168,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+>  	if (exynos_ohci->otg)
+>  		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+> 
+> -	exynos_ohci_phy_disable(pdev);
+> +	exynos_ohci_phy_disable(&pdev->dev);
+> 
+>  	clk_disable_unprepare(exynos_ohci->clk);
+> 
+> @@ -190,7 +190,6 @@ static int exynos_ohci_suspend(struct device *dev)
+>  {
+>  	struct usb_hcd *hcd = dev_get_drvdata(dev);
+>  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> -	struct platform_device *pdev = to_platform_device(dev);
+>  	bool do_wakeup = device_may_wakeup(dev);
+>  	int rc = ohci_suspend(hcd, do_wakeup);
+> 
+> @@ -200,7 +199,7 @@ static int exynos_ohci_suspend(struct device *dev)
+>  	if (exynos_ohci->otg)
+>  		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+> 
+> -	exynos_ohci_phy_disable(pdev);
+> +	exynos_ohci_phy_disable(dev);
+> 
+>  	clk_disable_unprepare(exynos_ohci->clk);
+> 
+> @@ -211,14 +210,13 @@ static int exynos_ohci_resume(struct device *dev)
+>  {
+>  	struct usb_hcd *hcd			= dev_get_drvdata(dev);
+>  	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
+> -	struct platform_device *pdev		= to_platform_device(dev);
+> 
+>  	clk_prepare_enable(exynos_ohci->clk);
+> 
+>  	if (exynos_ohci->otg)
+>  		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+> 
+> -	exynos_ohci_phy_enable(pdev);
+> +	exynos_ohci_phy_enable(dev);
+> 
+>  	ohci_resume(hcd, false);
+> 
+> --
+> 1.7.10.4
+
