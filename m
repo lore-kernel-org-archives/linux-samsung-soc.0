@@ -1,21 +1,21 @@
 From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [RESUBMIT RFC PATCH v2 3/3] drivers: mfd: Add support for Exynos
  PMU driver
-Date: Mon, 28 Apr 2014 13:18:53 +0100
-Message-ID: <20140428121853.GE21279@lee--X1>
+Date: Mon, 28 Apr 2014 13:26:46 +0100
+Message-ID: <20140428122646.GF21279@lee--X1>
 References: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
  <1398687607-4554-4-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:51327 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755394AbaD1MS6 (ORCPT
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:62632 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755317AbaD1M0x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 08:18:58 -0400
-Received: by mail-wi0-f177.google.com with SMTP id cc10so5540431wib.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 05:18:57 -0700 (PDT)
+	Mon, 28 Apr 2014 08:26:53 -0400
+Received: by mail-wg0-f43.google.com with SMTP id x12so1775496wgg.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 05:26:51 -0700 (PDT)
 Content-Disposition: inline
 In-Reply-To: <1398687607-4554-4-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -50,8 +50,48 @@ me.
 >  rename arch/arm/mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c (100=
 %)
 
-[...]
+So I just took a look at the code as zero changes looks suspicious to
+me. The driver can not simply be copied and pasted into the MFD
+subsystem in its current state.
 
+The fundamental question is; is this chip actually an MFD? What does
+it do besides Power Management?
+
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kcon=
+fig
+> index 2f60c90..79559b4 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -27,6 +27,7 @@ config ARCH_EXYNOS4
+>  	select PM_GENERIC_DOMAINS if PM_RUNTIME
+>  	select S5P_DEV_MFC
+>  	select MFD_SYSCON
+> +	select MFD_EXYNOS_PMU
+>  	help
+>  	  Samsung EXYNOS4 SoCs based systems
+> =20
+> @@ -38,6 +39,7 @@ config ARCH_EXYNOS5
+>  	select HAVE_SMP
+>  	select PINCTRL
+>  	select MFD_SYSCON
+> +	select MFD_EXYNOS_PMU
+>  	help
+>  	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
+> =20
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Mak=
+efile
+> index a656dbe..19fdf17 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -18,8 +18,6 @@ obj-$(CONFIG_PM_SLEEP)		+=3D pm.o sleep.o
+>  obj-$(CONFIG_PM_GENERIC_DOMAINS) +=3D pm_domains.o
+>  obj-$(CONFIG_CPU_IDLE)		+=3D cpuidle.o
+> =20
+> -obj-$(CONFIG_ARCH_EXYNOS)	+=3D pmu.o
+> -
+>  obj-$(CONFIG_SMP)		+=3D platsmp.o headsmp.o
+> =20
+>  obj-$(CONFIG_HOTPLUG_CPU)	+=3D hotplug.o
 > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
 > index 3383412..fd48870 100644
 > --- a/drivers/mfd/Kconfig
@@ -71,8 +111,22 @@ d
 y
 > +	required during these operation state.
 > +
-
-The help should be indented. Take a look at the other entries.
+>  menu "Multimedia Capabilities Port drivers"
+>  	depends on ARCH_SA1100
+> =20
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 2851275..7c43d07 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -166,3 +166,4 @@ obj-$(CONFIG_MFD_RETU)		+=3D retu-mfd.o
+>  obj-$(CONFIG_MFD_AS3711)	+=3D as3711.o
+>  obj-$(CONFIG_MFD_AS3722)	+=3D as3722.o
+>  obj-$(CONFIG_MFD_STW481X)	+=3D stw481x.o
+> +obj-$(CONFIG_MFD_EXYNOS_PMU)	+=3D exynos-pmu.o
+> diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/mfd/exynos-pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos/pmu.c
+> rename to drivers/mfd/exynos-pmu.c
 
 --=20
 Lee Jones
