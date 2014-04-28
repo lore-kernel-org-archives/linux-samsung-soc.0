@@ -1,40 +1,59 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 3/6] rtc: s5m: Use shorter time of register update
-Date: Mon, 28 Apr 2014 13:13:52 +0100
-Message-ID: <20140428121352.GC21279@lee--X1>
-References: <1397827139-14589-1-git-send-email-k.kozlowski@samsung.com>
- <1397827139-14589-4-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [RESUBMIT RFC PATCH v2 2/3] ARM: EXYNOS: Move pmu specific
+ header files under "linux/mfd/samsung"
+Date: Mon, 28 Apr 2014 13:17:04 +0100
+Message-ID: <20140428121704.GD21279@lee--X1>
+References: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
+ <1398687607-4554-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:57038 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754408AbaD1MN7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 08:13:59 -0400
-Received: by mail-wi0-f175.google.com with SMTP id cc10so5562628wib.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 05:13:57 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1397827139-14589-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1398687607-4554-3-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, b.zolnierkie@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-> Set the time needed for updating alarm and time registers to 0.45 ms.
-> The default is 7.32 ms which is too long and leads to warnings when
-> setting alarm or time:
-> 	s5m-rtc: waiting for UDR update, reached max number of retries
+> Moving Exynos PMU specific header file into "include/linux/mfd/samsun=
+g"
+> thus updated affected files under "mach-exynos" to use new location o=
+f
+> these header files.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> CC: Sangbeom Kim <sbkim73@samsung.com>
+> CC: Samuel Ortiz <sameo@linux.intel.com>
+> CC: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->  drivers/rtc/rtc-s5m.c           |  7 +++++++
->  include/linux/mfd/samsung/rtc.h | 10 ++++++++++
+>  arch/arm/mach-exynos/cpuidle.c                                    | =
+   4 ++--
+>  arch/arm/mach-exynos/exynos.c                                     | =
+   2 +-
+>  arch/arm/mach-exynos/hotplug.c                                    | =
+   2 +-
+>  arch/arm/mach-exynos/platsmp.c                                    | =
+   2 +-
+>  arch/arm/mach-exynos/pm.c                                         | =
+   4 ++--
+>  arch/arm/mach-exynos/pmu.c                                        | =
+   5 ++---
+>  {arch/arm/mach-exynos =3D> include/linux/mfd/samsung}/exynos-pmu.h  =
+|    0
+>  .../regs-pmu.h =3D> include/linux/mfd/samsung/exynos-regs-pmu.h     =
+|    0
+>  8 files changed, 9 insertions(+), 10 deletions(-)
+>  rename {arch/arm/mach-exynos =3D> include/linux/mfd/samsung}/exynos-=
+pmu.h (100%)
+>  rename arch/arm/mach-exynos/regs-pmu.h =3D> include/linux/mfd/samsun=
+g/exynos-regs-pmu.h (100%)
 
-=46or the MFD changes:
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+Patch looks okay to me.
+
+With an Exynos Ack I'd like to take it through the MFD tree.
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
 --=20
 Lee Jones
