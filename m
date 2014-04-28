@@ -1,149 +1,189 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
-Date: Mon, 28 Apr 2014 23:25:50 +0200
-Message-ID: <20140428212547.GA13897@mithrandir>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <5275422.8CoHT7g51N@avalon>
- <5355C4D7.7010109@samsung.com>
- <1852265.JnliZKqXKk@avalon>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/5 v2] iio: exynos_adc: rearrange clk and regulator
+ enable/disable calls
+Date: Mon, 28 Apr 2014 15:18:36 -0700
+Message-ID: <CAD=FV=USUfOHfKR6MibwWpM5mBpYEOFkbYRA8ZMqd-s1v=3MTA@mail.gmail.com>
+References: <1398512276-4105-1-git-send-email-ch.naveen@samsung.com>
+	<1398512276-4105-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:44833 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752119AbaD1VZy (ORCPT
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:34487 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752088AbaD1WSh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 17:25:54 -0400
-Content-Disposition: inline
-In-Reply-To: <1852265.JnliZKqXKk@avalon>
+	Mon, 28 Apr 2014 18:18:37 -0400
+Received: by mail-vc0-f177.google.com with SMTP id if17so8890821vcb.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 15:18:36 -0700 (PDT)
+In-Reply-To: <1398512276-4105-3-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: YoungJun Cho <yj44.cho@samsung.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, "cpgs ." <cpgs@samsung.com>, Grant Grundler <grundler@chromium.org>, Jonathan Cameron <jic23@kernel.org>
 
+Naveen,
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, Apr 26, 2014 at 4:37 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> From: Naveen Krishna Ch <ch.naveen@samsung.com>
+>
+> This patch maintains the following order in
+> probe(), remove(), resume() and suspend() calls
+>
+> regulator enable, clk prepare enable
+> ...
+> clk disable unprepare, regulator disable
+>
+> While at it,
+> 1. enable the regulator before the iio_device_register()
+> 2. handle the return values for enable/disable calls
+>
+> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+> ---
+> Changes since v1:
+> corrected the register/unregister and enabling/disbaling sequences
+>
+>  drivers/iio/adc/exynos_adc.c |   63 +++++++++++++++++++++++-------------------
+>  1 file changed, 34 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index affa93f..0df8916 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -290,32 +290,30 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>
+>         init_completion(&info->completion);
+>
+> -       ret = request_irq(info->irq, exynos_adc_isr,
+> -                                       0, dev_name(&pdev->dev), info);
+> -       if (ret < 0) {
+> -               dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
+> -                                                       info->irq);
+> -               return ret;
+> -       }
+> -
+> -       writel(1, info->enable_reg);
+> -
+>         info->clk = devm_clk_get(&pdev->dev, "adc");
+>         if (IS_ERR(info->clk)) {
+>                 dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
+>                                                         PTR_ERR(info->clk));
+> -               ret = PTR_ERR(info->clk);
+> -               goto err_irq;
+> +               return PTR_ERR(info->clk);
+>         }
+>
+>         info->vdd = devm_regulator_get(&pdev->dev, "vdd");
+>         if (IS_ERR(info->vdd)) {
+>                 dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
+>                                                         PTR_ERR(info->vdd));
+> -               ret = PTR_ERR(info->vdd);
+> -               goto err_irq;
+> +               return PTR_ERR(info->vdd);
+>         }
+>
+> +       ret = regulator_enable(info->vdd);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = clk_prepare_enable(info->clk);
+> +       if (ret)
+> +               goto err_disable_reg;
+> +
+> +       writel(1, info->enable_reg);
+> +
+>         info->version = exynos_adc_get_version(pdev);
+>
+>         platform_set_drvdata(pdev, indio_dev);
+> @@ -332,16 +330,18 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>         else
+>                 indio_dev->num_channels = MAX_ADC_V2_CHANNELS;
+>
+> +       ret = request_irq(info->irq, exynos_adc_isr,
+> +                                       0, dev_name(&pdev->dev), info);
+> +       if (ret < 0) {
+> +               dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
+> +                                                       info->irq);
+> +               goto err_disable_clk;
+> +       }
+> +
+>         ret = iio_device_register(indio_dev);
+>         if (ret)
+>                 goto err_irq;
+>
+> -       ret = regulator_enable(info->vdd);
+> -       if (ret)
+> -               goto err_iio_dev;
+> -
+> -       clk_prepare_enable(info->clk);
+> -
+>         exynos_adc_hw_init(info);
+>
+>         ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
+> @@ -355,12 +355,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>  err_of_populate:
+>         device_for_each_child(&indio_dev->dev, NULL,
+>                                 exynos_adc_remove_devices);
+> -       regulator_disable(info->vdd);
+> -       clk_disable_unprepare(info->clk);
+> -err_iio_dev:
+>         iio_device_unregister(indio_dev);
+>  err_irq:
+>         free_irq(info->irq, info);
+> +err_disable_clk:
+> +       writel(0, info->enable_reg);
+> +       clk_disable_unprepare(info->clk);
+> +err_disable_reg:
+> +       regulator_disable(info->vdd);
+>         return ret;
+>  }
+>
+> @@ -371,11 +373,12 @@ static int exynos_adc_remove(struct platform_device *pdev)
+>
+>         device_for_each_child(&indio_dev->dev, NULL,
+>                                 exynos_adc_remove_devices);
+> -       regulator_disable(info->vdd);
+> -       clk_disable_unprepare(info->clk);
+> -       writel(0, info->enable_reg);
+>         iio_device_unregister(indio_dev);
+>         free_irq(info->irq, info);
+> +       writel(0, info->enable_reg);
+> +       clk_disable_unprepare(info->clk);
+> +       regulator_disable(info->vdd);
+> +
 
-On Mon, Apr 28, 2014 at 05:05:24PM +0200, Laurent Pinchart wrote:
-> Hi YoungJun,
->=20
-> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
-> > On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
-> > > Hi YoungJun,
-> > >=20
-> > > Thank you for the patch.
-> > >=20
-> > > On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
-> > >> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
-> > >> driver.
-> > >>=20
-> > >> Changelog v2:
-> > >> - Declares delay, size properties in probe routine instead of DT
-> > >> Changelog v3:
-> > >> - Moves CPU timings relevant properties from FIMD DT
-> > >>=20
-> > >>    (commented by Laurent Pinchart, Andrzej Hajda)
-> > >>=20
-> > >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> > >> Acked-by: Inki Dae <inki.dae@samsung.com>
-> > >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > >> ---
-> > >>=20
-> > >>   drivers/gpu/drm/panel/Kconfig         |    7 +
-> > >>   drivers/gpu/drm/panel/Makefile        |    1 +
-> > >>   drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 +++++++++++++++++++++=
-+++++
-> > >>   3 files changed, 577 insertions(+)
-> > >>   create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
-> > >=20
-> > > [snip]
-> > >=20
-> > >> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
-> > >> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
-> > >> index 0000000..1282678
-> > >> --- /dev/null
-> > >> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
-> > >> @@ -0,0 +1,569 @@
-> > >=20
-> > > [snip]
-> > >=20
-> > >> +static int s6e3fa0_get_modes(struct drm_panel *panel)
-> > >> +{
-> > >> +	struct drm_connector *connector =3D panel->connector;
-> > >> +	struct s6e3fa0 *ctx =3D panel_to_s6e3fa0(panel);
-> > >> +	struct drm_display_mode *mode;
-> > >> +
-> > >> +	mode =3D drm_mode_create(connector->dev);
-> > >> +	if (!mode) {
-> > >> +		DRM_ERROR("failed to create a new display mode\n");
-> > >> +		return 0;
-> > >> +	}
-> > >> +
-> > >> +	drm_display_mode_from_videomode(&ctx->vm, mode);
-> > >> +	mode->width_mm =3D ctx->width_mm;
-> > >> +	mode->height_mm =3D ctx->height_mm;
-> > >> +	connector->display_info.width_mm =3D mode->width_mm;
-> > >> +	connector->display_info.height_mm =3D mode->height_mm;
-> > >> +
-> > >> +	mode->type =3D DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-> > >> +	mode->private =3D (void *)&ctx->cpu_timings;
-> > >=20
-> > > Wouldn't it make sense to create a new get_interface_params (or simil=
-ar)
-> > > operation for drm_panel to query interface configuration parameters
-> > > instead of shoving it in the mode private field ?
-> >=20
-> > You mean "new get_interface_params operation" is different from
-> > get_modes() ?
-> >=20
-> > Till now, struct drm_display_mode and most of mode relevant APIs are
-> > only for video interface.
-> > And CPU interface also needs video mode configurations.
-> >=20
-> > I have a plan to implement the CPU interface relevant APIs like video
-> > mode ones, but I think they should be used under current DRM mode APIs
-> > like fill_modes, get_modes and so on.
-> > So after that implementation, this private field will be replaced by
-> > new ones.
-> >=20
-> > Could you explain it in more detail?
->=20
-> The idea is that the interface parameters (RD/WR signals timings in this =
-case,=20
-> but this could also include MIPI DSI lane configuration or any other kind=
- of=20
-> physical interface parameters) are distinct from the video modes.
+nit: one too many blank lines here
 
-We already have the lanes field in struct mipi_dsi_device. I think in
-general I'd prefer to not spread these parameters around too wildly. If
-this is a general requirement for DBI devices, perhaps what we need is
-struct mipi_dbi_device?
+>         return 0;
+>  }
+> @@ -397,8 +400,8 @@ static int exynos_adc_suspend(struct device *dev)
+>                 writel(con, ADC_V1_CON(info->regs));
+>         }
+>
+> -       clk_disable_unprepare(info->clk);
+>         writel(0, info->enable_reg);
+> +       clk_disable_unprepare(info->clk);
+>         regulator_disable(info->vdd);
+>
+>         return 0;
+> @@ -414,9 +417,11 @@ static int exynos_adc_resume(struct device *dev)
+>         if (ret)
+>                 return ret;
+>
+> -       writel(1, info->enable_reg);
+> -       clk_prepare_enable(info->clk);
+> +       ret = clk_prepare_enable(info->clk);
+> +       if (ret)
+> +               return ret;
+>
+> +       writel(1, info->enable_reg);
+>         exynos_adc_hw_init(info);
+>
+>         return 0;
+> --
+> 1.7.9.5
+>
 
-Thierry
+Other than nit, looks good to me.
 
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTXsdbAAoJEN0jrNd/PrOhSN0P/RdX1dWnsCs++zZTdhJca0YS
-/gQ6WL8ecj6BY2QwkCTfmYc1NQJGrYRaOlUtBQmmAQAsVW6JkxAHKg+7bcU07ptR
-mcIjkQiNIGBJrCQgi2sM8N3nnSWqyJky4N2ZaPZpGdPxzAAx0CP4eCOgi/Yp8xR5
-pTqagAl2/nmDmTUSrab/YaGiI/lHDOJSUXY+Z8DMF0oLsARtexoYH0u5LjIj7jwn
-3e7WOsPW/MARz7OiR1n/M/+ENGS5J+xUm5BdC6ps34uzgMcK7mqwg4WiwI+buuhs
-NlMBfs9oeqEye4JvQQNhjJjNyL0CeofmPg6xqyy7dM/6Me0JddRSlRrnQdZvCYCS
-ZHyE2J/Pm+6nsfjhqn3zj6fN5OtrjGCfmCtYT5aXbeBdZWh3V937F+qSElpJ5gT6
-Xpsp9SM5VTHLpb2w8+i2csa2QoLXA7kae8lECaaYFFCTbPHpzUBwnaO/gqZ6W/Q1
-Sjp05X1gTFjUjMt4MGqBf+r+0lBLcK2dQwPpmjpQPFHMu37/MhA4tsBrJ29V8NET
-ZHu4ahBkZZvpxfKuzhl3kKnmhRmx+O9kAJND24RgK2IoJ4sBiOHeEy0NMbLdHn0N
-UEEk06QNL/i7j6IXFPRuK6bz0mzur96QovVP5ODdAnm1gfDnxOa44TROmnClmW+w
-rY/1J5kp2wesp67n4KSc
-=bkvk
------END PGP SIGNATURE-----
-
---17pEHd4RhPHOinZp--
+Reviewed-by: Doug Anderson <dianders@chromium.org>
