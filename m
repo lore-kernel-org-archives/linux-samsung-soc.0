@@ -1,54 +1,50 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 1/2 v4] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
-Date: Mon, 28 Apr 2014 13:45:54 +0530
-Message-ID: <CAHfPSqDAUpJWO3Udnjxim-LRY_hjW4+W2j5eTm+Xuk_Np+jhFA@mail.gmail.com>
-References: <1385100726-32165-1-git-send-email-ch.naveen@samsung.com>
- <1391748171-12451-1-git-send-email-ch.naveen@samsung.com> <20140312191851.GB28891@katana>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Mon, 28 Apr 2014 10:34:41 +0200
+Message-ID: <26065037.GxQQuIURPg@wuerfel>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:50343 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752145AbaD1IQP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 04:16:15 -0400
-In-Reply-To: <20140312191851.GB28891@katana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1398584283-22846-1-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org
 
-Hello Wolfram,
+On Sunday 27 April 2014 13:07:32 Shaik Ameer Basha wrote:
+> The current exynos-iommu(System MMU) driver does not work autonomously
+> since it is lack of support for power management of peripheral blocks.
+> For example, MFC device driver must ensure that its System MMU is disabled
+> before MFC block is power-down not to invalidate IOTLB in the System MMU
+> when I/O memory mapping is changed. Because a System MMU resides in the
+> same H/W block, access to control registers of System MMU while the H/W
+> block is turned off must be prohibited.
+> 
+> This set of changes solves the above problem with setting each System MMUs
+> as the parent of the device which owns the System MMU to receive the
+> information when the device is turned off or turned on.
+> 
+> Another big change to the driver is the support for devicetree.
+> The bindings for System MMU is described in
+> Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
 
-On 13 March 2014 00:48, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Fri, Feb 07, 2014 at 10:12:51AM +0530, Naveen Krishna Chatradhi wrote:
->> This patch adds a new compatible and uses variant struct to support
->> HSI2C module on Exynos5260. Updates the Documentation dt bindings.
->> Also resets the module as an init sequence (Needed by Exynos5260).
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->
-> This patch has clearly not been tested :( Build failure!
-comma was missing, Not sure, how i missed it.
-Will fix it.
->
->> +struct exynos_hsi2c_variant {
->> +     unsigned int                fifo_depth;
->> +};
->
-> Why so many tabs? In general, I'd prefer one space.
->
->> -     exynos5_i2c_init(i2c);
->> +     exynos5_i2c_reset(i2c);
->
-> Is this a related change?
-Exynos5260 needs the HSI2C module to be reset during the init.
-As per Tomasz's comment on earlier version. We will reset the status
-during init for every SoC.
->
+Sorry I've been absent from the review so far. Most of the patches
+seem entirely reasonable to me, but I'm worried about the DT binding
+aspect. We are going to see more systems shipping with IOMMUs now,
+and we are seeing an increasing number of submissions for 64-bit
+systems. We really have to work out what the DT representation for
+IOMMUs should look like in general before adding another ad-hod
+implementation that is private to one driver.
 
-
-
--- 
-Shine bright,
-(: Nav :)
+	Arnd
