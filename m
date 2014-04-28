@@ -1,22 +1,22 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/4] usb: ohci-exynos: Use struct device instead of
+Subject: Re: [PATCH 2/4] usb: ehci-exynos: Use struct device instead of
  platform_device
-Date: Mon, 28 Apr 2014 19:30:03 +0900
-Message-ID: <001801cf62cc$d1286690$737933b0$%han@samsung.com>
+Date: Mon, 28 Apr 2014 19:30:34 +0900
+Message-ID: <001901cf62cc$e32a3bc0$a97eb340$%han@samsung.com>
 References: <1398677132-30600-1-git-send-email-gautam.vivek@samsung.com>
- <1398677132-30600-2-git-send-email-gautam.vivek@samsung.com>
+ <1398677132-30600-3-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1398677132-30600-2-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1398677132-30600-3-git-send-email-gautam.vivek@samsung.com>
 Content-language: ko
-Sender: linux-doc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, 'Alan Stern' <stern@rowland.harvard.edu>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, April 28, 2014 6:25 PM, Vivek Gautam wrote:
+On Monday, April 28, 2014 6:26 PM, Vivek Gautam wrote:
 > 
 > Change to use struct device instead of struct platform_device
 > for some static functions.
@@ -31,96 +31,32 @@ Jingoo Han
 
 > Cc: Alan Stern <stern@rowland.harvard.edu>
 > ---
->  drivers/usb/host/ohci-exynos.c |   20 +++++++++-----------
->  1 file changed, 9 insertions(+), 11 deletions(-)
+>  drivers/usb/host/ehci-exynos.c |    5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 9cf80cb..05f00e3 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -39,18 +39,18 @@ struct exynos_ohci_hcd {
->  	struct usb_otg *otg;
->  };
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index 7f425ac..4d763dc 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -50,9 +50,8 @@ struct exynos_ehci_hcd {
 > 
-> -static void exynos_ohci_phy_enable(struct platform_device *pdev)
-> +static void exynos_ohci_phy_enable(struct device *dev)
+>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+> 
+> -static void exynos_setup_vbus_gpio(struct platform_device *pdev)
+> +static void exynos_setup_vbus_gpio(struct device *dev)
 >  {
-> -	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-> +	struct usb_hcd *hcd = dev_get_drvdata(dev);
->  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> -	struct device *dev = &pdev->dev;
+>  	int err;
+>  	int gpio;
 > 
->  	if (exynos_ohci->phy)
->  		usb_phy_init(exynos_ohci->phy);
->  }
+> @@ -88,7 +87,7 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>  	if (err)
+>  		return err;
 > 
-> -static void exynos_ohci_phy_disable(struct platform_device *pdev)
-> +static void exynos_ohci_phy_disable(struct device *dev)
->  {
-> -	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-> +	struct usb_hcd *hcd = dev_get_drvdata(dev);
->  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> -	exynos_setup_vbus_gpio(pdev);
+> +	exynos_setup_vbus_gpio(&pdev->dev);
 > 
->  	if (exynos_ohci->phy)
-> @@ -139,7 +139,7 @@ skip_phy:
-> 
->  	platform_set_drvdata(pdev, hcd);
-> 
-> -	exynos_ohci_phy_enable(pdev);
-> +	exynos_ohci_phy_enable(&pdev->dev);
-> 
->  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
->  	if (err) {
-> @@ -150,7 +150,7 @@ skip_phy:
->  	return 0;
-> 
->  fail_add_hcd:
-> -	exynos_ohci_phy_disable(pdev);
-> +	exynos_ohci_phy_disable(&pdev->dev);
->  fail_io:
->  	clk_disable_unprepare(exynos_ohci->clk);
->  fail_clk:
-> @@ -168,7 +168,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
->  	if (exynos_ohci->otg)
->  		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> 
-> -	exynos_ohci_phy_disable(pdev);
-> +	exynos_ohci_phy_disable(&pdev->dev);
-> 
->  	clk_disable_unprepare(exynos_ohci->clk);
-> 
-> @@ -190,7 +190,6 @@ static int exynos_ohci_suspend(struct device *dev)
->  {
->  	struct usb_hcd *hcd = dev_get_drvdata(dev);
->  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
-> -	struct platform_device *pdev = to_platform_device(dev);
->  	bool do_wakeup = device_may_wakeup(dev);
->  	int rc = ohci_suspend(hcd, do_wakeup);
-> 
-> @@ -200,7 +199,7 @@ static int exynos_ohci_suspend(struct device *dev)
->  	if (exynos_ohci->otg)
->  		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> 
-> -	exynos_ohci_phy_disable(pdev);
-> +	exynos_ohci_phy_disable(dev);
-> 
->  	clk_disable_unprepare(exynos_ohci->clk);
-> 
-> @@ -211,14 +210,13 @@ static int exynos_ohci_resume(struct device *dev)
->  {
->  	struct usb_hcd *hcd			= dev_get_drvdata(dev);
->  	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
-> -	struct platform_device *pdev		= to_platform_device(dev);
-> 
->  	clk_prepare_enable(exynos_ohci->clk);
-> 
->  	if (exynos_ohci->otg)
->  		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> 
-> -	exynos_ohci_phy_enable(pdev);
-> +	exynos_ohci_phy_enable(dev);
-> 
->  	ohci_resume(hcd, false);
-> 
+>  	hcd = usb_create_hcd(&exynos_ehci_hc_driver,
+>  			     &pdev->dev, dev_name(&pdev->dev));
 > --
 > 1.7.10.4
-
