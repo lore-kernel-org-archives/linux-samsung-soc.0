@@ -1,189 +1,78 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/5 v2] iio: exynos_adc: rearrange clk and regulator
- enable/disable calls
-Date: Mon, 28 Apr 2014 15:18:36 -0700
-Message-ID: <CAD=FV=USUfOHfKR6MibwWpM5mBpYEOFkbYRA8ZMqd-s1v=3MTA@mail.gmail.com>
-References: <1398512276-4105-1-git-send-email-ch.naveen@samsung.com>
-	<1398512276-4105-3-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH v12 30/31] ARM: dts: add System MMU nodes of exynos5250
+Date: Mon, 28 Apr 2014 16:13:19 -0700
+Message-ID: <CAD=FV=UCpQRg9nWu5EfuzWmBpee9N3X6yCmtpRaNQxitfFZkMQ@mail.gmail.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<1398584283-22846-31-git-send-email-shaik.ameer@samsung.com>
+	<CAGm_ybhTEN9QxFBd1Su8NGP32KeYTF8d_Z8gXKo7cYpapZrA9w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f177.google.com ([209.85.220.177]:34487 "EHLO
-	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752088AbaD1WSh (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:55901 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751925AbaD1XNV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 18:18:37 -0400
-Received: by mail-vc0-f177.google.com with SMTP id if17so8890821vcb.22
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 15:18:36 -0700 (PDT)
-In-Reply-To: <1398512276-4105-3-git-send-email-ch.naveen@samsung.com>
+	Mon, 28 Apr 2014 19:13:21 -0400
+Received: by mail-vc0-f171.google.com with SMTP id lg15so9030871vcb.16
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 16:13:20 -0700 (PDT)
+In-Reply-To: <CAGm_ybhTEN9QxFBd1Su8NGP32KeYTF8d_Z8gXKo7cYpapZrA9w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, "cpgs ." <cpgs@samsung.com>, Grant Grundler <grundler@chromium.org>, Jonathan Cameron <jic23@kernel.org>
+To: Vikas Sajjan <sajjan.linux@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, iommu@lists.linux-foundation.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Grant Grundler <grundler@chromium.org>, joro@8bytes.org, supash.ramaswamy@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Varun.Sethi@freescale.com, a.motakis@virtualopensystems.com, pullip.cho@samsung.com, Tomasz Figa <t.figa@samsung.com>, RAHUL SHARMA <rahul.sharma@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Naveen,
+Vikas,
 
-On Sat, Apr 26, 2014 at 4:37 AM, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> From: Naveen Krishna Ch <ch.naveen@samsung.com>
->
-> This patch maintains the following order in
-> probe(), remove(), resume() and suspend() calls
->
-> regulator enable, clk prepare enable
-> ...
-> clk disable unprepare, regulator disable
->
-> While at it,
-> 1. enable the regulator before the iio_device_register()
-> 2. handle the return values for enable/disable calls
->
-> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> ---
-> Changes since v1:
-> corrected the register/unregister and enabling/disbaling sequences
->
->  drivers/iio/adc/exynos_adc.c |   63 +++++++++++++++++++++++-------------------
->  1 file changed, 34 insertions(+), 29 deletions(-)
->
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index affa93f..0df8916 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -290,32 +290,30 @@ static int exynos_adc_probe(struct platform_device *pdev)
->
->         init_completion(&info->completion);
->
-> -       ret = request_irq(info->irq, exynos_adc_isr,
-> -                                       0, dev_name(&pdev->dev), info);
-> -       if (ret < 0) {
-> -               dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-> -                                                       info->irq);
-> -               return ret;
-> -       }
-> -
-> -       writel(1, info->enable_reg);
-> -
->         info->clk = devm_clk_get(&pdev->dev, "adc");
->         if (IS_ERR(info->clk)) {
->                 dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
->                                                         PTR_ERR(info->clk));
-> -               ret = PTR_ERR(info->clk);
-> -               goto err_irq;
-> +               return PTR_ERR(info->clk);
->         }
->
->         info->vdd = devm_regulator_get(&pdev->dev, "vdd");
->         if (IS_ERR(info->vdd)) {
->                 dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
->                                                         PTR_ERR(info->vdd));
-> -               ret = PTR_ERR(info->vdd);
-> -               goto err_irq;
-> +               return PTR_ERR(info->vdd);
->         }
->
-> +       ret = regulator_enable(info->vdd);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = clk_prepare_enable(info->clk);
-> +       if (ret)
-> +               goto err_disable_reg;
-> +
-> +       writel(1, info->enable_reg);
-> +
->         info->version = exynos_adc_get_version(pdev);
->
->         platform_set_drvdata(pdev, indio_dev);
-> @@ -332,16 +330,18 @@ static int exynos_adc_probe(struct platform_device *pdev)
->         else
->                 indio_dev->num_channels = MAX_ADC_V2_CHANNELS;
->
-> +       ret = request_irq(info->irq, exynos_adc_isr,
-> +                                       0, dev_name(&pdev->dev), info);
-> +       if (ret < 0) {
-> +               dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-> +                                                       info->irq);
-> +               goto err_disable_clk;
-> +       }
-> +
->         ret = iio_device_register(indio_dev);
->         if (ret)
->                 goto err_irq;
->
-> -       ret = regulator_enable(info->vdd);
-> -       if (ret)
-> -               goto err_iio_dev;
-> -
-> -       clk_prepare_enable(info->clk);
-> -
->         exynos_adc_hw_init(info);
->
->         ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
-> @@ -355,12 +355,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  err_of_populate:
->         device_for_each_child(&indio_dev->dev, NULL,
->                                 exynos_adc_remove_devices);
-> -       regulator_disable(info->vdd);
-> -       clk_disable_unprepare(info->clk);
-> -err_iio_dev:
->         iio_device_unregister(indio_dev);
->  err_irq:
->         free_irq(info->irq, info);
-> +err_disable_clk:
-> +       writel(0, info->enable_reg);
-> +       clk_disable_unprepare(info->clk);
-> +err_disable_reg:
-> +       regulator_disable(info->vdd);
->         return ret;
->  }
->
-> @@ -371,11 +373,12 @@ static int exynos_adc_remove(struct platform_device *pdev)
->
->         device_for_each_child(&indio_dev->dev, NULL,
->                                 exynos_adc_remove_devices);
-> -       regulator_disable(info->vdd);
-> -       clk_disable_unprepare(info->clk);
-> -       writel(0, info->enable_reg);
->         iio_device_unregister(indio_dev);
->         free_irq(info->irq, info);
-> +       writel(0, info->enable_reg);
-> +       clk_disable_unprepare(info->clk);
-> +       regulator_disable(info->vdd);
-> +
 
-nit: one too many blank lines here
+On Sun, Apr 27, 2014 at 10:39 AM, Vikas Sajjan <sajjan.linux@gmail.com> wrote:
+> Hi shaik,
+>
+> +Doug, Abhilash,
+>
+> On Sun, Apr 27, 2014 at 1:08 PM, Shaik Ameer Basha
+> <shaik.ameer@samsung.com> wrote:
+>> From: Cho KyongHo <pullip.cho@samsung.com>
+>>
+>> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250.dtsi |  270 ++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 267 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 3742331..eebd397 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -82,6 +82,16 @@
+>>                 reg = <0x10044040 0x20>;
+>>         };
+>>
+>> +       pd_isp: isp-power-domain@0x10044020 {
+>> +               compatible = "samsung,exynos4210-pd";
+>> +               reg = <0x10044020 0x20>;
+>> +       };
+>> +
+>> +       pd_disp1: disp1-power-domain@0x100440A0 {
+>> +               compatible = "samsung,exynos4210-pd";
+>> +               reg = <0x100440A0 0x20>;
+>> +       };
+>> +
+>
+> As per subject "add System MMU nodes of exynos5250", it should only
+> add SysMMU node.
+> So, I think adding power domain nodes should go in a separate patch.
+>
+> Adding power domain nodes can break the system, if powering ON/OFF of
+> the given power domain is NOT taken care well.
+> I can see ISP is one such case. With this series I can see S2R breaks
+> [1] on 5250 chromebook with current mainline kernel (same applies for
+> arndale and smdk5250, but I have tested on these boards yet)
 
->         return 0;
->  }
-> @@ -397,8 +400,8 @@ static int exynos_adc_suspend(struct device *dev)
->                 writel(con, ADC_V1_CON(info->regs));
->         }
->
-> -       clk_disable_unprepare(info->clk);
->         writel(0, info->enable_reg);
-> +       clk_disable_unprepare(info->clk);
->         regulator_disable(info->vdd);
->
->         return 0;
-> @@ -414,9 +417,11 @@ static int exynos_adc_resume(struct device *dev)
->         if (ret)
->                 return ret;
->
-> -       writel(1, info->enable_reg);
-> -       clk_prepare_enable(info->clk);
-> +       ret = clk_prepare_enable(info->clk);
-> +       if (ret)
-> +               return ret;
->
-> +       writel(1, info->enable_reg);
->         exynos_adc_hw_init(info);
->
->         return 0;
-> --
-> 1.7.9.5
->
+Thanks for catching that!  Let's make sure not to break suspend/resume.
 
-Other than nit, looks good to me.
+Given that these power domains are actually used as the domains for
+some of the System MMU nodes I don't totally object to adding them in
+the same patch, but if they're breaking things then I agree that we
+could leave them out and add them in a later patch (once issues are
+sorted out).
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+-Doug
