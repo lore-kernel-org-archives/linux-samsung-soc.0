@@ -1,58 +1,56 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [RFC PATCH v2 3/3] drivers: mfd: Add support for Exynos PMU driver
-Date: Mon, 28 Apr 2014 21:08:21 +0900
-Message-ID: <535E44B5.7030202@samsung.com>
-References: <1396427085-4696-1-git-send-email-pankaj.dubey@samsung.com>
- <1398431131-5946-1-git-send-email-pankaj.dubey@samsung.com>
- <1398431131-5946-4-git-send-email-pankaj.dubey@samsung.com>
- <20140428112153.GT21279@lee--X1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND PATCH v3 3/5] mfd: tps65090: Stop caching most registers
+Date: Mon, 28 Apr 2014 12:57:45 +0100
+Message-ID: <20140428115745.GZ21279@lee--X1>
+References: <1398180298-2018-4-git-send-email-dianders@chromium.org>
+ <20140422190754.GF12304@sirena.org.uk>
+ <20140423105540.GJ21613@lee--X1>
+ <CAD=FV=V0uWMGTt68CST5i30Xf4pTNMt50-D7XeRmtSdfbPwwLQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15519 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752228AbaD1Lu0 (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:33656 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874AbaD1L5v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 07:50:26 -0400
-In-reply-to: <20140428112153.GT21279@lee--X1>
+	Mon, 28 Apr 2014 07:57:51 -0400
+Received: by mail-wg0-f52.google.com with SMTP id x12so739026wgg.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 04:57:50 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=V0uWMGTt68CST5i30Xf4pTNMt50-D7XeRmtSdfbPwwLQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, b.zolnierkie@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 04/28/2014 08:21 PM, Lee Jones wrote:
-> On Fri, 25 Apr 2014, Pankaj Dubey wrote:
->
->> This patch moves Exynos PMU driver implementation from
->> "arm/mach-exynos" to "drivers/mfd".
->> This driver is mainly used for setting misc bits of register from PMU IP
->> of Exynos SoC which will be required to configure before Suspend/Resume.
->> Currently all these settings are done in "arch/arm/mach-exynos/pmu.c" but
->> moving ahead for ARM64 based SoC support, there is a need of DT based
->> implementation of PMU driver.
->> This driver uses already existing DT binding information.
->>
->> CC: Sangbeom Kim <sbkim73@samsung.com>
->> CC: Samuel Ortiz <sameo@linux.intel.com>
->> CC: Lee Jones <lee.jones@linaro.org>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>   arch/arm/mach-exynos/Kconfig  |    2 +
->>   arch/arm/mach-exynos/Makefile |    2 -
->>   arch/arm/mach-exynos/pmu.c    |  521 -----------------------------------------
->>   drivers/mfd/Kconfig           |    9 +
->>   drivers/mfd/Makefile          |    1 +
->>   drivers/mfd/exynos-pmu.c      |  521 +++++++++++++++++++++++++++++++++++++++++
->>   6 files changed, 533 insertions(+), 523 deletions(-)
->>   delete mode 100644 arch/arm/mach-exynos/pmu.c
->>   create mode 100644 drivers/mfd/exynos-pmu.c
-> Same with this patch, `git format-patch -M`.
+> >> > Nearly all of the registers in tps65090 combine control bits and
+> >> > status bits.  Turn off caching of all registers except the selec=
+t few
+> >> > that can be cached.
+> >>
+> >> Lee, I don't mind if I apply this and send a pull request to you o=
+r I
+> >> pull a tag from you with this in - what's easiest for you?
+> >
+> > I'm happy to do it.
+> >
+> > Doug,
+> >   Can you send the patch-set again with all of the *-bys and ensure
+> >   I'm on TO or CC please?
+>=20
+> It looks as if you've already applied 1, 3, and 4.  I've sent up 2 an=
+d
+> 5 again with collected tags.
+>=20
+> https://patchwork.kernel.org/patch/4042761/
+> https://patchwork.kernel.org/patch/4042751/
 
-OK, I will resubmit this series.
+I think we have this sorted now. I sent a pull-request to Mark this
+morning.
 
-
-
--- 
-Best Regards,
-Pankaj Dubey
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
