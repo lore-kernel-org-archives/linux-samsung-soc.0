@@ -1,80 +1,97 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable HS-I2C
-Date: Mon, 28 Apr 2014 09:26:18 +0530
-Message-ID: <535DD162.1080404@linaro.org>
-References: <1393935776-22657-1-git-send-email-sachin.kamat@linaro.org> <5358C521.9060103@linaro.org> <0b5b01cf6140$afd3d390$0f7b7ab0$@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] usb: ohci-exynos: Add facility to use phy provided
+ by the generic phy framework
+Date: Mon, 28 Apr 2014 09:36:12 +0530
+Message-ID: <CAFp+6iG2s5Ddj2F2Xfy3fm9VyW7_G-+YDpeL3iVhur3gng7KvA@mail.gmail.com>
+References: <1398424683-20168-2-git-send-email-gautam.vivek@samsung.com>
+	<Pine.LNX.4.44L0.1404251031260.1140-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:61765 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751223AbaD1D4Y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Apr 2014 23:56:24 -0400
-Received: by mail-pb0-f53.google.com with SMTP id jt11so3602787pbb.40
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2014 20:56:23 -0700 (PDT)
-In-Reply-To: <0b5b01cf6140$afd3d390$0f7b7ab0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1404251031260.1140-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Sachin Kamat' <sachin.kamat@linaro.org>
 
-On 04/26/2014 04:44 PM, Kukjin Kim wrote:
-> Tushar Behera wrote:
+Hi,
+
+
+On Fri, Apr 25, 2014 at 8:06 PM, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org> wrote:
+> On Fri, 25 Apr 2014, Vivek Gautam wrote:
+>
+>> Add support to consume phy provided by Generic phy framework.
+>> Keeping the support for older usb-phy intact right now, in order
+>> to prevent any functionality break in absence of relevant
+>> device tree side change for ohci-exynos.
+>> Once we move to new phy in the device nodes for ohci, we can
+>> remove the support for older phys.
 >>
->> On 03/04/2014 05:52 PM, Sachin Kamat wrote:
->>> High speed I2C is used on Exynos5 based SoCs. Enable it.
->>>
->>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->>> ---
->>>  arch/arm/configs/exynos_defconfig |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/arm/configs/exynos_defconfig
->> b/arch/arm/configs/exynos_defconfig
->>> index 4ce7b70ea901..e07a227ec0db 100644
->>> --- a/arch/arm/configs/exynos_defconfig
->>> +++ b/arch/arm/configs/exynos_defconfig
->>> @@ -65,6 +65,7 @@ CONFIG_TCG_TIS_I2C_INFINEON=y
->>>  CONFIG_I2C=y
->>>  CONFIG_I2C_MUX=y
->>>  CONFIG_I2C_ARB_GPIO_CHALLENGE=y
->>> +CONFIG_I2C_EXYNOS5=y
->>>  CONFIG_I2C_S3C2410=y
->>>  CONFIG_DEBUG_GPIO=y
->>>  # CONFIG_HWMON is not set
->>>
->> Kukjin,
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+>
+>
+>> +static int exynos_ohci_phyg_on(struct phy *phy[])
+>> +{
+>> +     int i;
+>> +     int ret = 0;
+>> +
+>> +     for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+>> +             if (phy[i])
+>> +                     ret = phy_power_on(phy[i]);
+>> +     if (ret)
+>> +             for (i--; i >= 0; i--)
+>> +                     if (phy[i])
+>> +                             phy_power_off(phy[i]);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>> +static int exynos_ohci_phyg_off(struct phy *phy[])
+>> +{
+>> +     int i;
+>> +     int ret = 0;
+>> +
+>> +     for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+>> +             if (phy[i])
+>> +                     ret = phy_power_off(phy[i]);
+>> +
+>> +     return ret;
+>> +}
+>
+> You probably shouldn't break out of this loop if ret is nonzero; you
+> should continue to power off the remaining phys.
+
+ok, will remove the 'ret' check in for loop.
+
+>
+> I'd be inclined to put these two routines directly into
+> exynos_ohci_phy_enable() and exynos_ohci_phy_disable(), since they
+> aren't used anywhere else.
+
+Sure, will make these routines as a part of exynos_ohci_phy_enable()
+and exynos_ohci_phy_disable().
+
+>
+>> @@ -151,6 +253,7 @@ skip_phy:
 >>
->> Please consider picking this patch when you plan to update
->> exynos_defconfig. With this change on upstream kernel, we are able to
->> get Arndale_Octa board to boot and mount an MMC partition successfully.
->>
-> Oh, OK.
-> 
-> BTW, basically the boot should be fine with/without selecting
+>>  fail_add_hcd:
+>>       exynos_ohci_phy_disable(pdev);
+>> +     exynos_ohci_phyg_off(exynos_ohci->phy_g);
+>
+> Why did you add this line?  It doesn't do anything useful, because
+> exynos_ohci_phy_disable() already calls exynos_ohci_phyg_off().
 
-The boot is just fine. Just that, we can't use the MMC partition to
-mount rootfs.
+Ah ! my bad, will remove this.
 
-> I2C_EXYNOS5...or if the config is required always for arndale_octa board, it
-> should be enabled without any manual selecting. I think, it means this is
-> just temporal solution not right approach to fix the problem..
-> 
-
-I don't see any reason why HS-I2C support not be enabled by default on
-exynos_defconfig. On many boards,the regulators are connected HS-I2C bus
-and without this option enabled the regulators don't come by default.
-
-If you have any reason why this is not the right approach to fix the
-problem, please let us know.
-
-> I need to look at the codes...
-> 
-> Thanks,
-> Kukjin
-> 
 
 -- 
-Tushar Behera
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
