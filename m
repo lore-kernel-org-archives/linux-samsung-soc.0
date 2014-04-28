@@ -1,199 +1,102 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early BRESP
-Date: Mon, 28 Apr 2014 20:30:32 +0100
-Message-ID: <E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk>
-References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20140428192419.GV26756@n2100.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: linux-arm-kernel@lists.ifradead.org
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
+	Exynos System MMU
+Date: Mon, 28 Apr 2014 20:30:56 +0100
+Message-ID: <20140428193056.GD22135@arm.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<6544270.ddFBoY6LMm@wuerfel> <20140428111802.GI19455@ulmo>
+	<4780885.JaktFvJeC7@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4780885.JaktFvJeC7@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dave.martin-5wv7dgnIgG8@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since we now automatically enable early BRESP in core L2C-310 code when
-we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
-explicitly.  Instead, they should seek to preserve the value of bit 30
-in the auxiliary control register.
+Hi Arnd,
 
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/mach-berlin/berlin.c                            | 2 +-
- arch/arm/mach-exynos/exynos.c                            | 4 ++--
- arch/arm/mach-omap2/omap4-common.c                       | 3 +--
- arch/arm/mach-shmobile/board-armadillo800eva-reference.c | 4 ++--
- arch/arm/mach-shmobile/board-armadillo800eva.c           | 4 ++--
- arch/arm/mach-shmobile/board-kzm9g-reference.c           | 4 ++--
- arch/arm/mach-shmobile/board-kzm9g.c                     | 4 ++--
- arch/arm/mach-shmobile/setup-r8a7778.c                   | 4 ++--
- arch/arm/mach-shmobile/setup-r8a7779.c                   | 4 ++--
- arch/arm/mach-spear/spear13xx.c                          | 2 +-
- arch/arm/mach-tegra/tegra.c                              | 4 ++--
- 11 files changed, 19 insertions(+), 20 deletions(-)
+[and thanks Thierry for CCing me -- I have been tangled up with this before
+:)]
 
-diff --git a/arch/arm/mach-berlin/berlin.c b/arch/arm/mach-berlin/berlin.c
-index 025bcb5473eb..6709d2a6bec8 100644
---- a/arch/arm/mach-berlin/berlin.c
-+++ b/arch/arm/mach-berlin/berlin.c
-@@ -24,7 +24,7 @@ static void __init berlin_init_machine(void)
- 	 * with DT probing for L2CCs, berlin_init_machine can be removed.
- 	 * Note: 88DE3005 (Armada 1500-mini) uses pl310 l2cc
- 	 */
--	l2x0_of_init(0x70c00000, 0xfeffffff);
-+	l2x0_of_init(0x30c00000, 0xfeffffff);
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
- }
- 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index b32a907d021d..e6828fb46034 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -32,8 +32,8 @@
- #include "mfc.h"
- #include "regs-pmu.h"
- 
--#define L2_AUX_VAL 0x7C470001
--#define L2_AUX_MASK 0xC200ffff
-+#define L2_AUX_VAL 0x3c470001
-+#define L2_AUX_MASK 0xc200ffff
- 
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
-diff --git a/arch/arm/mach-omap2/omap4-common.c b/arch/arm/mach-omap2/omap4-common.c
-index dc9844a55443..9ce52548a484 100644
---- a/arch/arm/mach-omap2/omap4-common.c
-+++ b/arch/arm/mach-omap2/omap4-common.c
-@@ -220,8 +220,7 @@ static int __init omap_l2_cache_init(void)
- 		   L2C_AUX_CTRL_WAY_SIZE(3) |
- 		   L2C_AUX_CTRL_SHARED_OVERRIDE |
- 		   L310_AUX_CTRL_DATA_PREFETCH |
--		   L310_AUX_CTRL_INSTR_PREFETCH |
--		   L310_AUX_CTRL_EARLY_BRESP;
-+		   L310_AUX_CTRL_INSTR_PREFETCH;
- 
- 	outer_cache.write_sec = omap4_l2c310_write_sec;
- 	if (of_have_populated_dt())
-diff --git a/arch/arm/mach-shmobile/board-armadillo800eva-reference.c b/arch/arm/mach-shmobile/board-armadillo800eva-reference.c
-index 57d1a78367b6..34e7f3c17dd2 100644
---- a/arch/arm/mach-shmobile/board-armadillo800eva-reference.c
-+++ b/arch/arm/mach-shmobile/board-armadillo800eva-reference.c
-@@ -164,8 +164,8 @@ static void __init eva_init(void)
- 	r8a7740_meram_workaround();
- 
- #ifdef CONFIG_CACHE_L2X0
--	/* Early BRESP enable, Shared attribute override enable, 32K*8way */
--	l2x0_init(IOMEM(0xf0002000), 0x40440000, 0x82000fff);
-+	/* Shared attribute override enable, 32K*8way */
-+	l2x0_init(IOMEM(0xf0002000), 0x00440000, 0xc2000fff);
- #endif
- 
- 	r8a7740_add_standard_devices_dt();
-diff --git a/arch/arm/mach-shmobile/board-armadillo800eva.c b/arch/arm/mach-shmobile/board-armadillo800eva.c
-index 2858f380beae..7688990edd3a 100644
---- a/arch/arm/mach-shmobile/board-armadillo800eva.c
-+++ b/arch/arm/mach-shmobile/board-armadillo800eva.c
-@@ -1270,8 +1270,8 @@ static void __init eva_init(void)
- 
- 
- #ifdef CONFIG_CACHE_L2X0
--	/* Early BRESP enable, Shared attribute override enable, 32K*8way */
--	l2x0_init(IOMEM(0xf0002000), 0x40440000, 0x82000fff);
-+	/* Shared attribute override enable, 32K*8way */
-+	l2x0_init(IOMEM(0xf0002000), 0x00440000, 0xc2000fff);
- #endif
- 
- 	i2c_register_board_info(0, i2c0_devices, ARRAY_SIZE(i2c0_devices));
-diff --git a/arch/arm/mach-shmobile/board-kzm9g-reference.c b/arch/arm/mach-shmobile/board-kzm9g-reference.c
-index 598e32488410..85873f186d77 100644
---- a/arch/arm/mach-shmobile/board-kzm9g-reference.c
-+++ b/arch/arm/mach-shmobile/board-kzm9g-reference.c
-@@ -36,8 +36,8 @@ static void __init kzm_init(void)
- 	sh73a0_add_standard_devices_dt();
- 
- #ifdef CONFIG_CACHE_L2X0
--	/* Early BRESP enable, Shared attribute override enable, 64K*8way */
--	l2x0_init(IOMEM(0xf0100000), 0x40460000, 0x82000fff);
-+	/* Shared attribute override enable, 64K*8way */
-+	l2x0_init(IOMEM(0xf0100000), 0x00460000, 0xc2000fff);
- #endif
- }
- 
-diff --git a/arch/arm/mach-shmobile/board-kzm9g.c b/arch/arm/mach-shmobile/board-kzm9g.c
-index 03dc3ac84502..ea9bf39fdc10 100644
---- a/arch/arm/mach-shmobile/board-kzm9g.c
-+++ b/arch/arm/mach-shmobile/board-kzm9g.c
-@@ -876,8 +876,8 @@ static void __init kzm_init(void)
- 	gpio_request_one(223, GPIOF_IN, NULL); /* IRQ8 */
- 
- #ifdef CONFIG_CACHE_L2X0
--	/* Early BRESP enable, Shared attribute override enable, 64K*8way */
--	l2x0_init(IOMEM(0xf0100000), 0x40460000, 0x82000fff);
-+	/* Shared attribute override enable, 64K*8way */
-+	l2x0_init(IOMEM(0xf0100000), 0x00460000, 0xc2000fff);
- #endif
- 
- 	i2c_register_board_info(0, i2c0_devices, ARRAY_SIZE(i2c0_devices));
-diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
-index 6d694526e4ca..3a8e5316671e 100644
---- a/arch/arm/mach-shmobile/setup-r8a7778.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7778.c
-@@ -298,10 +298,10 @@ void __init r8a7778_add_dt_devices(void)
- 	void __iomem *base = ioremap_nocache(0xf0100000, 0x1000);
- 	if (base) {
- 		/*
--		 * Early BRESP enable, Shared attribute override enable, 64K*16way
-+		 * Shared attribute override enable, 64K*16way
- 		 * don't call iounmap(base)
- 		 */
--		l2x0_init(base, 0x40470000, 0x82000fff);
-+		l2x0_init(base, 0x00470000, 0xc2000fff);
- 	}
- #endif
- 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
-index 8e860b36997a..91c90bf0ae83 100644
---- a/arch/arm/mach-shmobile/setup-r8a7779.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7779.c
-@@ -700,8 +700,8 @@ static struct platform_device *r8a7779_standard_devices[] __initdata = {
- void __init r8a7779_add_standard_devices(void)
- {
- #ifdef CONFIG_CACHE_L2X0
--	/* Early BRESP enable, Shared attribute override enable, 64K*16way */
--	l2x0_init(IOMEM(0xf0100000), 0x40470000, 0x82000fff);
-+	/* Shared attribute override enable, 64K*16way */
-+	l2x0_init(IOMEM(0xf0100000), 0x00470000, 0xc2000fff);
- #endif
- 	r8a7779_pm_init();
- 
-diff --git a/arch/arm/mach-spear/spear13xx.c b/arch/arm/mach-spear/spear13xx.c
-index 92860fa01668..dcb300443b66 100644
---- a/arch/arm/mach-spear/spear13xx.c
-+++ b/arch/arm/mach-spear/spear13xx.c
-@@ -46,7 +46,7 @@ void __init spear13xx_l2x0_init(void)
- 	 */
- 	writel_relaxed(0x221, VA_L2CC_BASE + L310_TAG_LATENCY_CTRL);
- 	writel_relaxed(0x441, VA_L2CC_BASE + L310_DATA_LATENCY_CTRL);
--	l2x0_init(VA_L2CC_BASE, 0x70A60001, 0xfe00ffff);
-+	l2x0_init(VA_L2CC_BASE, 0x30a60001, 0xfe00ffff);
- }
- 
- /*
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 6191603379e1..ecbb5411a104 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -89,9 +89,9 @@ static void __init tegra_init_cache(void)
- 
- 	cache_type = readl(p + L2X0_CACHE_TYPE);
- 	aux_ctrl = (cache_type & 0x700) << (17-8);
--	aux_ctrl |= 0x7C400001;
-+	aux_ctrl |= 0x3c400001;
- 
--	ret = l2x0_of_init(aux_ctrl, 0x8200c3fe);
-+	ret = l2x0_of_init(aux_ctrl, 0xc200c3fe);
- 	if (!ret)
- 		l2x0_saved_regs_addr = virt_to_phys(&l2x0_saved_regs);
- #endif
--- 
-1.8.3.1
+On Mon, Apr 28, 2014 at 01:05:30PM +0100, Arnd Bergmann wrote:
+> On Monday 28 April 2014 13:18:03 Thierry Reding wrote:
+> > There still has to be one cell to specify which master. Unless perhaps
+> > if they can be arbitrarily assigned. I guess even if there's a fixed
+> > mapping that applies to one SoC generation, it might be good to still
+> > employ a specifier and have the mapping in DT for flexibility.
+> 
+> let me clarify by example:
+> 
+> 	iommu@1 {
+> 		compatible = "some,simple-iommu";
+> 		reg = <1>;
+> 		#iommu-cells = <0>; /* supports only one master */
+> 	};
+> 
+> 	iommu@2 {
+> 		compatible = "some,other-iommu";
+> 		reg = <3>;
+> 		#iommu-cells = <1>; /* contains master ID */
+> 	};
+> 
+> 	iommu@3 {
+> 		compatible = "some,windowed-iommu";
+> 		reg = <2>;
+> 		#iommu-cells = <2>; /* contains dma-window */
+> 	};
+> 
+> 	device@4 {
+> 		compatible = "some,ethernet";
+> 		iommus = <&/iommu@1>;
+> 	};
+> 
+> 	device@5 {
+> 		compatible = "some,dmaengine";
+> 		iommus = <&/iommu@2 0x40000000 0x1000000>,
+> 			 <&/iommu@3 0x101>;
+> 	};
+> 
+> The device at address 4 has a one-one relationship with iommu@1, so there
+> is no need for any data. device@5 has two master ports. One is connected to
+> an IOMMU that has a per-device aperture, device@5 can only issue transfers
+> to the 256MB area at 0x40000000, and the IOMMU will have to put entries for
+> this device into that address. The second master port is connected to
+> iommu@3, which uses a master ID that gets passed along with each transfer,
+> so that needs to be put into the IOTLBs.
 
+I think this is definitely going in the right direction, but it's not clear
+to me how the driver for device@5 knows how to configure the two ports.
+We're still lacking topology information (unless that's implicit in the
+ordering of the properties) to say how the mastering capabilities of the
+device are actually routed and configured.
+
+> A variation would be to not use #iommu-cells at all, but provide a
+> #address-cells / #size-cells pair in the IOMMU, and have a translation
+> as we do for dma-ranges. This is probably most flexible.
+
+That would also allow us to describe ranges of master IDs, which we need for
+things like PCI RCs on the ARM SMMU. Furthermore, basic transformations of
+these ranges could also be described like this, although I think Dave (CC'd)
+has some similar ideas in this area.
+
+> One completely open question that I just noticed is how the kernel should
+> deal with the case of multiple IOMMUs attached to one master: the
+> data structures we have assume that we know exactly how to do DMA by
+> setting the per-device dma_map_ops (iommu or not, coherent or not),
+> and by setting a pointer to at most one IOMMU.
+
+Agreed.
+
+Will
