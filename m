@@ -1,194 +1,165 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] ARM: dts: Add peach-pit board support
-Date: Mon, 28 Apr 2014 10:43:15 -0700
-Message-ID: <CAD=FV=Usv07WuEX42mXK=2iEN_QZPgO+FVUOvj4_+spdNiiDag@mail.gmail.com>
-References: <1398313031-14848-1-git-send-email-arun.kk@samsung.com>
-	<535B9944.8090503@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] [media] s5p-mfc: Add IOMMU support
+Date: Mon, 28 Apr 2014 20:10:01 +0200
+Message-ID: <2254307.lxG3Pzerbn@avalon>
+References: <1398164568-6048-1-git-send-email-arun.kk@samsung.com> <2748799.75z4m0MVI7@avalon> <CALt3h79VnDH17s51FQQUK7O_to7pA1-KU0HW8JY2WAqOP4rBRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:55893 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751891AbaD1TTb (ORCPT
+Received: from perceval.ideasonboard.com ([95.142.166.194]:35207 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932862AbaD1T0o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 15:19:31 -0400
-Received: by mail-vc0-f178.google.com with SMTP id hu19so8616352vcb.37
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 12:19:29 -0700 (PDT)
-In-Reply-To: <535B9944.8090503@gmail.com>
+	Mon, 28 Apr 2014 15:26:44 -0400
+In-Reply-To: <CALt3h79VnDH17s51FQQUK7O_to7pA1-KU0HW8JY2WAqOP4rBRA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, pullip.cho@samsung.com
 
-Tomasz and Arun,
+Hi Arun,
 
-On Sat, Apr 26, 2014 at 4:32 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Arun,
->
->
-> On 24.04.2014 06:17, Arun Kumar K wrote:
->>
->> Adds the google peach-pit board dts file which uses
->> exynos5420 SoC.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->> Changes from v1
->> ---------------
->> - Addressed review comments from Doug, Sachin & Tushar
->> - Removed adc and lid-switch nodes
->> ---
->>   arch/arm/boot/dts/Makefile                 |    1 +
->>   arch/arm/boot/dts/exynos5420-peach-pit.dts |  182
->> ++++++++++++++++++++++++++++
->>   2 files changed, 183 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 35c146f..3220e29 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->>         exynos5250-smdk5250.dtb \
->>         exynos5250-snow.dtb \
->>         exynos5420-arndale-octa.dtb \
->> +       exynos5420-peach-pit.dtb \
->>         exynos5420-smdk5420.dtb \
->>         exynos5440-sd5v1.dtb \
->>         exynos5440-ssdk5440.dtb
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> new file mode 100644
->> index 0000000..fbb0469
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -0,0 +1,182 @@
->> +/*
->> + * Google Peach Pit Rev 6+ board device tree source
->> + *
->> + * Copyright (c) 2014 Google, Inc
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +/dts-v1/;
->> +#include <dt-bindings/input/input.h>
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include "exynos5420.dtsi"
->> +
->> +/ {
->> +       model = "Google Peach Pit Rev 6+";
->> +
->> +       compatible = "google,pit-rev16",
->> +               "google,pit-rev15", "google,pit-rev14",
->> +               "google,pit-rev13", "google,pit-rev12",
->> +               "google,pit-rev11", "google,pit-rev10",
->> +               "google,pit-rev9", "google,pit-rev8",
->> +               "google,pit-rev7", "google,pit-rev6",
->> +               "google,pit", "google,peach","samsung,exynos5420",
->> +               "samsung,exynos5";
->
->
-> Do you really need so many compatible strings here? Furthermore, are all the
-> newer revisions really fully backwards compatible with older ones?
->
-> Also, do you have a way to check the revision in hardware, e.g. by some GPIO
-> pins? If so, I don't think there would be any need to revision number as a
-> part of compatible string.
+On Tuesday 22 April 2014 17:52:08 Arun Kumar K wrote:
+> On Tue, Apr 22, 2014 at 5:23 PM, Laurent Pinchart wrote:
+> > On Tuesday 22 April 2014 16:32:48 Arun Kumar K wrote:
+> >> The patch adds IOMMU support for MFC driver.
+> > 
+> > I've been working on an IOMMU driver lately, which led me to think about
+> > how drivers should be interfaced with IOMMUs. Runtime IOMMU handling is
+> > performed by the DMA mapping API, but in many cases (including Exynos
+> > platforms) the arm_iommu_create_mapping() and arm_iommu_attach_device()
+> > functions still need to be called explicitly by drivers, which doesn't
+> > seem a very good idea to me. Ideally IOMMU usage should be completely
+> > transparent for bus master drivers, without requiring any driver
+> > modification to use the IOMMU.
+> > 
+> > What would you think about improving the Exynos IOMMU driver to create the
+> > mapping and attach the device instead of having to modify all bus master
+> > drivers ? See the ipmmu_add_device() function in
+> > http://www.spinics.net/lists/linux-sh/msg30488.html for a possible
+> > implementation.
+> 
+> Yes that would be a better solution. But as far as I know, exynos platforms
+> has few more complications where multiple IOMMUs are present for single IP.
+> The exynos iommu work is still under progress and KyonHo Cho will have some
+> inputs / comments on this. This seems to me a valid usecase which can be
+> considered for exynos iommu also.
 
-You can send flames mostly my way for this one.
+Thank you. Just to be clear, I don't see a reason to delay this patch until 
+the Exynos IOMMU driver gets support for creating mappings and attaching 
+devices, but it would be nice to see that happen as a cleanup in the not too 
+distant future.
 
-Technically we could replace this with just "google,pit" for now.
-However if we ever actually ship a new / slightly different revision
-of pit we might need to introduce these all back in.
+> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> >> ---
+> >> This patch is tested on IOMMU support series [1] posted
+> >> by KyonHo Cho.
+> >> [1] https://lkml.org/lkml/2014/3/14/9
+> >> ---
+> >> 
+> >>  drivers/media/platform/s5p-mfc/s5p_mfc.c |   33
+> >>  +++++++++++++++++++++++++++
+> >>  1 file changed, 33 insertions(+)
+> >> 
+> >> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> >> b/drivers/media/platform/s5p-mfc/s5p_mfc.c index 89356ae..1f248ba 100644
+> >> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> >> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> >> @@ -32,11 +32,18 @@
+> >> 
+> >>  #include "s5p_mfc_opr.h"
+> >>  #include "s5p_mfc_cmd.h"
+> >>  #include "s5p_mfc_pm.h"
+> >> 
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +#include <asm/dma-iommu.h>
+> >> +#endif
+> >> 
+> >>  #define S5P_MFC_NAME         "s5p-mfc"
+> >>  #define S5P_MFC_DEC_NAME     "s5p-mfc-dec"
+> >>  #define S5P_MFC_ENC_NAME     "s5p-mfc-enc"
+> >> 
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +static struct dma_iommu_mapping *mapping;
+> >> +#endif
+> >> +
+> >> 
+> >>  int debug;
+> >>  module_param(debug, int, S_IRUGO | S_IWUSR);
+> >>  MODULE_PARM_DESC(debug, "Debug level - higher value produces more
+> >>  verbose
+> >> 
+> >> messages"); @@ -1013,6 +1020,23 @@ static void *mfc_get_drv_data(struct
+> >> platform_device *pdev);
+> >> 
+> >>  static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
+> >>  {
+> >> 
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +     struct device *mdev = &dev->plat_dev->dev;
+> >> +
+> >> +     mapping = arm_iommu_create_mapping(&platform_bus_type, 0x20000000,
+> >> +                     SZ_256M);
+> >> +     if (mapping == NULL) {
+> >> +             mfc_err("IOMMU mapping failed\n");
+> >> +             return -EFAULT;
+> >> +     }
+> >> +     mdev->dma_parms = devm_kzalloc(&dev->plat_dev->dev,
+> >> +                     sizeof(*mdev->dma_parms), GFP_KERNEL);
+> >> +     dma_set_max_seg_size(mdev, 0xffffffffu);
+> >> +     arm_iommu_attach_device(mdev, mapping);
+> >> +
+> >> +     dev->mem_dev_l = dev->mem_dev_r = mdev;
+> >> +     return 0;
+> >> +#else
+> >> 
+> >>       unsigned int mem_info[2] = { };
+> >>       
+> >>       dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
+> >> 
+> >> @@ -1049,6 +1073,7 @@ static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev
+> >> *dev) return -ENOMEM;
+> >> 
+> >>       }
+> >>       return 0;
+> >> 
+> >> +#endif
+> >> 
+> >>  }
+> >>  
+> >>  /* MFC probe function */
+> >> 
+> >> @@ -1228,6 +1253,10 @@ err_mem_init_ctx_1:
+> >>       vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+> >>  
+> >>  err_res:
+> >>       s5p_mfc_final_pm(dev);
+> >> 
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +     if (mapping)
+> >> +             arm_iommu_release_mapping(mapping);
+> >> +#endif
+> >> 
+> >>       pr_debug("%s-- with error\n", __func__);
+> >>       return ret;
+> >> 
+> >> @@ -1256,6 +1285,10 @@ static int s5p_mfc_remove(struct platform_device
+> >> *pdev) put_device(dev->mem_dev_r);
+> >> 
+> >>       }
+> >> 
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +     if (mapping)
+> >> +             arm_iommu_release_mapping(mapping);
+> >> +#endif
+> >> 
+> >>       s5p_mfc_final_pm(dev);
+> >>       return 0;
+> >>  
+> >>  }
 
-I can explain how / why we got to this point if you wish...
+-- 
+Regards,
 
-Basically:
-
-1. We'd like to support multiple revisions of hardware both during
-internal development and post ship.  Each unique spin of the board is
-assigned a different logical ID even if differences are pretty minor
-or they are probe-able.  Sometimes we find out much later that
-something that was supposed to be a minor change actually necessitates
-a device tree change.
-
-I believe we've only shipped "rev 13" pit boards.  However many people
-in-house at Google and Samsung have older revision boards (some even
-using as far back as rev 6), so it's very handy to support the old
-boards if it's not too difficult.
-
-Examples of types of changes that have happened:
-
-Between rev 8 and rev 9 we switched WiFi chips.  That's mostly
-probe-able.  There's a single GPIO difference in the powerup sequence
-but you could use a sequence that's compatible for both.  We've had a
-unified device tree here since one can work for both, but if we ever
-found an issue we could always split it.
-
-On rev 3, 4, and 5 (dts not submitted upstream) we found an issue
-where the SoC couldn't handle powering off the INT rail during
-suspend.
-
-On rev 3, 4, and 5 we had HDMI's power coming off a different FET.
-
-On rev 4 there was a problem reading the EDID on the panel, so we had
-to add special logic to handle this.
-
-On exynos5250-snow there are actually 3 different revisions released
-publicly.  Right now we only have one device tree but if we want to
-fully support audio / touchpad we need at least two.  If we want to
-enable thermistors on the original rev (optional, really) then we need
-a third device tree.
-
-
-2. As is relatively common, the firmware _doesn't_ ship a device tree.
- It picks among devices trees that are part of the kernel.
-
-
-3. We wanted to avoid hacks in the kernel like "if strcmp(compatible,
-"peach-pit") && revision > 6 && revision < 9".
-
-
-A reasonable solution to the above is to have separate device trees
-for separate revisions whenever they are different enough that they
-need it.  ...and for cases where they're not very different then use
-the same device tree.
-
-
-In the case of peach-pit, things got a little extreme.  For various
-reasons the project went through an awful lot of spins during
-development.  If you insist we can drop some of the revisions above.
-Specifically:
-
-* "revision 13" is the shipping revision.  You could remove 14, 15,
-and 16.  We tend to put a few extras in so that new revs will "just
-work".
-
-* I believe (80% certain) "revision 11" was never used.
-
----
-
-One other note: I mentioned that you could just use "peach-pit" for
-now but that you might need to reintroduce revisions later.  This is
-due to an unfortunate bug that was found in the firmware too late to
-change.
-
-Specifically the firmware will first look for "google,pit-rev#" across
-all of the kernel device trees.  If it finds it then we're great.  If
-it doesn't find it, then it will look for "google,pit" across all of
-the kernel device trees.  When it finds the first match it will pick
-that one.
-
-That means if you've got a kernel with two device trees:
-
-A: "google,pit-rev14", "google,pit"   # imaginary rev 14
-B: "google,pit" # older revs
-
-When an older rev13 device picks a device tree it might pick _either_
-the rev14 one or the other one.
-
--Doug
+Laurent Pinchart
