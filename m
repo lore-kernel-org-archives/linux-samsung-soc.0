@@ -1,56 +1,72 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH v3 3/5] mfd: tps65090: Stop caching most registers
-Date: Mon, 28 Apr 2014 12:57:45 +0100
-Message-ID: <20140428115745.GZ21279@lee--X1>
-References: <1398180298-2018-4-git-send-email-dianders@chromium.org>
- <20140422190754.GF12304@sirena.org.uk>
- <20140423105540.GJ21613@lee--X1>
- <CAD=FV=V0uWMGTt68CST5i30Xf4pTNMt50-D7XeRmtSdfbPwwLQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [RESUBMIT RFC PATCH v2 0/3] Add support for Exynos PMU driver
+Date: Mon, 28 Apr 2014 21:20:04 +0900
+Message-ID: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:33656 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874AbaD1L5v (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62158 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755421AbaD1MCS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 07:57:51 -0400
-Received: by mail-wg0-f52.google.com with SMTP id x12so739026wgg.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 04:57:50 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=V0uWMGTt68CST5i30Xf4pTNMt50-D7XeRmtSdfbPwwLQ@mail.gmail.com>
+	Mon, 28 Apr 2014 08:02:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, b.zolnierkie@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-> >> > Nearly all of the registers in tps65090 combine control bits and
-> >> > status bits.  Turn off caching of all registers except the selec=
-t few
-> >> > that can be cached.
-> >>
-> >> Lee, I don't mind if I apply this and send a pull request to you o=
-r I
-> >> pull a tag from you with this in - what's easiest for you?
-> >
-> > I'm happy to do it.
-> >
-> > Doug,
-> >   Can you send the patch-set again with all of the *-bys and ensure
-> >   I'm on TO or CC please?
->=20
-> It looks as if you've already applied 1, 3, and 4.  I've sent up 2 an=
-d
-> 5 again with collected tags.
->=20
-> https://patchwork.kernel.org/patch/4042761/
-> https://patchwork.kernel.org/patch/4042751/
+This patch series moves PMU implementation from "mach-exynos/pmu.c" to
+"drivers/mfd/exynos-pmu.c". Patch v1 was posted as RFC [1].
 
-I think we have this sorted now. I sent a pull-request to Mark this
-morning.
+In case of ARM32 we had machine folder such as "mach-exynos" but
+moving forward with ARM64 SoC support we can not have any more such
+machine folders, keeping that in mind we have planned to move PMU
+implementation out of machine folder, so that common piece of code
+can be reused.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+This patch series is based on kgene for-next and depends on following
+patch series
+ a) [PATCH v2 0/5] Add PMU node for Exynos SoCs
+	https://lkml.org/lkml/2014/4/25/216
+ b) [PATCH v2 00/10] ARM: Exynos: PMU cleanup and refactoring for using DT
+	https://lkml.org/lkml/2014/4/25/252
+
+
+1) [RFC PATCH 0/2] Add support for Exynos PMU driver
+	https://lkml.org/lkml/2014/4/2/69
+
+Changes since v1:
+ - Rebased on Kukjin Kim's for-next (3.15_rc1 tag)
+ - Added patch: Move PMU specific definitions from common.h
+ - Added patch: Move pmu specific header files under "linux/mfd/samsung"
+ - Removed patch: ARM: EXYNOS: remove arch specific PMU implementation
+	As suggested breaking down patches into smalled pieces for better review.
+	Also modified all changes in pmu.c under mach-exynos itself and then
+	prepared patches moving files from mach-exynos to "drivers/mfd"
+
+
+Pankaj Dubey (2):
+  ARM: EXYNOS: Move pmu specific header files under "linux/mfd/samsung"
+  drivers: mfd: Add support for Exynos PMU driver
+
+Younggun Jang (1):
+  ARM: EXYNOS: Move PMU specific definitions from common.h
+
+ arch/arm/mach-exynos/Kconfig                       |    2 ++
+ arch/arm/mach-exynos/Makefile                      |    2 --
+ arch/arm/mach-exynos/common.h                      |   17 -----------
+ arch/arm/mach-exynos/cpuidle.c                     |    3 +-
+ arch/arm/mach-exynos/exynos.c                      |    2 +-
+ arch/arm/mach-exynos/hotplug.c                     |    2 +-
+ arch/arm/mach-exynos/platsmp.c                     |    2 +-
+ arch/arm/mach-exynos/pm.c                          |    3 +-
+ drivers/mfd/Kconfig                                |    9 ++++++
+ drivers/mfd/Makefile                               |    1 +
+ .../mach-exynos/pmu.c => drivers/mfd/exynos-pmu.c  |    5 ++--
+ include/linux/mfd/samsung/exynos-pmu.h             |   31 ++++++++++++++++++++
+ .../linux/mfd/samsung/exynos-regs-pmu.h            |    0
+ 13 files changed, 52 insertions(+), 27 deletions(-)
+ rename arch/arm/mach-exynos/pmu.c => drivers/mfd/exynos-pmu.c (99%)
+ create mode 100644 include/linux/mfd/samsung/exynos-pmu.h
+ rename arch/arm/mach-exynos/regs-pmu.h => include/linux/mfd/samsung/exynos-regs-pmu.h (100%)
+
+-- 
+1.7.10.4
