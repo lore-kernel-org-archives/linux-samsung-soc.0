@@ -1,62 +1,86 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 2/4] usb: ehci-exynos: Use struct device instead of
- platform_device
-Date: Mon, 28 Apr 2014 19:30:34 +0900
-Message-ID: <001901cf62cc$e32a3bc0$a97eb340$%han@samsung.com>
-References: <1398677132-30600-1-git-send-email-gautam.vivek@samsung.com>
- <1398677132-30600-3-git-send-email-gautam.vivek@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH v12 18/31] iommu/exynos: allow having multiple System
+ MMUs for a master H/W
+Date: Mon, 28 Apr 2014 16:08:14 +0530
+Message-ID: <535E2F96.908@linaro.org>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com> <1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1398677132-30600-3-git-send-email-gautam.vivek@samsung.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, 'Alan Stern' <stern@rowland.harvard.edu>, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:45598 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754371AbaD1KiW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Apr 2014 06:38:22 -0400
+Received: by mail-pb0-f54.google.com with SMTP id rp16so2253520pbb.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 03:38:22 -0700 (PDT)
+In-Reply-To: <1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, prathyush.k@samsung.com, grundler@chromium.org, joro@8bytes.org, tomasz.figa@gmail.com, joshi@samsung.com, sachin.kamat@linaro.org, s.nawrocki@samsung.com, Varun.Sethi@freescale.com, a.motakis@virtualopensystems.com, pullip.cho@samsung.com, t.figa@samsung.com, rahul.sharma@samsung.com
 
-On Monday, April 28, 2014 6:26 PM, Vivek Gautam wrote:
+On 04/27/2014 01:07 PM, Shaik Ameer Basha wrote:
+> From: Cho KyongHo <pullip.cho@samsung.com>
 > 
-> Change to use struct device instead of struct platform_device
-> for some static functions.
+> Some master device descriptor like fimc-is which is an abstraction
+> of very complex H/W may have multiple System MMUs. For those devices,
+> the design of the link between System MMU and its master H/W is needed
+> to be reconsidered.
 > 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Jingoo Han <jg1.han@samsung.com>
+> A link structure, sysmmu_list_data is introduced that provides a link
+> to master H/W and that has a pointer to the device descriptor of a
+> System MMU. Given a device descriptor of a master H/W, it is possible
+> to traverse all System MMUs that must be controlled along with the
+> master H/W.
+> 
+> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Since you are posting the patches, you should also add your
+Signed-of-by.
 
-Best regards,
-Jingoo Han
-
-> Cc: Alan Stern <stern@rowland.harvard.edu>
 > ---
->  drivers/usb/host/ehci-exynos.c |    5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/iommu/exynos-iommu.c |  545 ++++++++++++++++++++++++++----------------
+>  1 file changed, 335 insertions(+), 210 deletions(-)
 > 
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index 7f425ac..4d763dc 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -50,9 +50,8 @@ struct exynos_ehci_hcd {
-> 
->  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
-> 
-> -static void exynos_setup_vbus_gpio(struct platform_device *pdev)
-> +static void exynos_setup_vbus_gpio(struct device *dev)
->  {
-> -	struct device *dev = &pdev->dev;
->  	int err;
->  	int gpio;
-> 
-> @@ -88,7 +87,7 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
-> 
-> -	exynos_setup_vbus_gpio(pdev);
-> +	exynos_setup_vbus_gpio(&pdev->dev);
-> 
->  	hcd = usb_create_hcd(&exynos_ehci_hc_driver,
->  			     &pdev->dev, dev_name(&pdev->dev));
-> --
-> 1.7.10.4
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index fefedec3..c2e6365 100755
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+
+[ ... ]
+
+>  static int sysmmu_pm_genpd_save_state(struct device *dev)
+> @@ -1215,7 +1349,7 @@ static int sysmmu_pm_genpd_save_state(struct device *dev)
+>  		ret = cb(dev);
+>  
+>  	if (ret == 0)
+> -		sysmmu_save_state(client->sysmmu);
+> +		sysmmu_save_state(dev);
+>  
+
+client is now unused, remove the variable.
+
+>  	return ret;
+>  }
+> @@ -1238,13 +1372,13 @@ static int sysmmu_pm_genpd_restore_state(struct device *dev)
+>  	if (!cb && dev->driver && dev->driver->pm)
+>  		cb = dev->driver->pm->runtime_resume;
+>  
+> -	sysmmu_restore_state(client->sysmmu);
+> +	sysmmu_restore_state(dev);
+>  
+>  	if (cb)
+>  		ret = cb(dev);
+>  
+>  	if (ret)
+> -		sysmmu_save_state(client->sysmmu);
+> +		sysmmu_restore_state(dev);
+>  
+
+client is now unused, remove the variable.
+
+
+-- 
+Tushar Behera
