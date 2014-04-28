@@ -1,205 +1,285 @@
 From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v5] clk: Exynos5250: Add clocks for G3D
-Date: Mon, 28 Apr 2014 09:40:17 +0530
-Message-ID: <CALt3h79OxHMzjis=Y38fM_Gp39c5sKyQrg8MrG-MFZSab3Omrg@mail.gmail.com>
-References: <1398350996-9644-1-git-send-email-arun.kk@samsung.com>
-	<535AF37C.4030305@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: Add peach-pit board support
+Date: Mon, 28 Apr 2014 09:52:59 +0530
+Message-ID: <CALt3h7_dZMv2zfpEmdGZYojZRnaXpCDzwVE4T1N0H6JuE7Q7Lw@mail.gmail.com>
+References: <1398313031-14848-1-git-send-email-arun.kk@samsung.com>
+	<535B9944.8090503@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:39996 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752454AbaD1EKS (ORCPT
+Received: from mail-ve0-f173.google.com ([209.85.128.173]:41890 "EHLO
+	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752290AbaD1EXA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 00:10:18 -0400
-Received: by mail-vc0-f181.google.com with SMTP id hy4so1475877vcb.40
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2014 21:10:17 -0700 (PDT)
-In-Reply-To: <535AF37C.4030305@gmail.com>
+	Mon, 28 Apr 2014 00:23:00 -0400
+In-Reply-To: <535B9944.8090503@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@google.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>
 
 Hi Tomasz,
-Thank you for the review.
-Will address your comments and post the updated patch soon.
+
+On Sat, Apr 26, 2014 at 5:02 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Arun,
+>
+>
+> On 24.04.2014 06:17, Arun Kumar K wrote:
+>>
+>> Adds the google peach-pit board dts file which uses
+>> exynos5420 SoC.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> ---
+>> Changes from v1
+>> ---------------
+>> - Addressed review comments from Doug, Sachin & Tushar
+>> - Removed adc and lid-switch nodes
+>> ---
+>>   arch/arm/boot/dts/Makefile                 |    1 +
+>>   arch/arm/boot/dts/exynos5420-peach-pit.dts |  182
+>> ++++++++++++++++++++++++++++
+>>   2 files changed, 183 insertions(+)
+>>   create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index 35c146f..3220e29 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>>         exynos5250-smdk5250.dtb \
+>>         exynos5250-snow.dtb \
+>>         exynos5420-arndale-octa.dtb \
+>> +       exynos5420-peach-pit.dtb \
+>>         exynos5420-smdk5420.dtb \
+>>         exynos5440-sd5v1.dtb \
+>>         exynos5440-ssdk5440.dtb
+>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> new file mode 100644
+>> index 0000000..fbb0469
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> @@ -0,0 +1,182 @@
+>> +/*
+>> + * Google Peach Pit Rev 6+ board device tree source
+>> + *
+>> + * Copyright (c) 2014 Google, Inc
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include <dt-bindings/input/input.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include "exynos5420.dtsi"
+>> +
+>> +/ {
+>> +       model = "Google Peach Pit Rev 6+";
+>> +
+>> +       compatible = "google,pit-rev16",
+>> +               "google,pit-rev15", "google,pit-rev14",
+>> +               "google,pit-rev13", "google,pit-rev12",
+>> +               "google,pit-rev11", "google,pit-rev10",
+>> +               "google,pit-rev9", "google,pit-rev8",
+>> +               "google,pit-rev7", "google,pit-rev6",
+>> +               "google,pit", "google,peach","samsung,exynos5420",
+>> +               "samsung,exynos5";
+>
+>
+> Do you really need so many compatible strings here? Furthermore, are all the
+> newer revisions really fully backwards compatible with older ones?
+>
+
+AFAIK, these multiple board revisions exist and are backwards compatible.
+
+> Also, do you have a way to check the revision in hardware, e.g. by some GPIO
+> pins? If so, I don't think there would be any need to revision number as a
+> part of compatible string.
+>
+
+I am not very sure about that.
+Doug, Can you give some clarity on this?
+
+>
+>> +
+>> +       memory {
+>> +               reg = <0x20000000 0x80000000>;
+>> +       };
+>> +
+>> +       fixed-rate-clocks {
+>> +               oscclk {
+>> +                       compatible = "samsung,exynos5420-oscclk";
+>> +                       clock-frequency = <24000000>;
+>> +               };
+>> +       };
+>> +
+>> +       pinctrl@13400000 {
+>
+>
+> Please convert this dts file into reference-based syntax. It has multiple
+> advantages over the legacy way of replicating full paths every time a node
+> needs to be updated.
+>
+
+Ok will change it to reference-based.
+
+> You can see other dts files for examples how this can be used, e.g.
+> s3c64*.dts* (for a quite simple setup), imx6*.dts* (for more complex
+> things), etc.
+>
+>
+>> +               tpm_irq: tpm-irq {
+>> +                       samsung,pins = "gpx1-0";
+>> +                       samsung,pin-function = <0>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               power_key_irq: power-key-irq {
+>> +                       samsung,pins = "gpx1-2";
+>> +                       samsung,pin-function = <0>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +       };
+>> +
+>> +       pinctrl@14010000 {
+>> +               spi_flash_cs: spi-flash-cs {
+>> +                       samsung,pins = "gpa2-5";
+>> +                       samsung,pin-function = <1>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <3>;
+>> +               };
+>> +
+>> +               backlight_pwm: backlight-pwm {
+>> +                       samsung,pins = "gpb2-0";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +       };
+>> +
+>> +       gpio-keys {
+>> +               compatible = "gpio-keys";
+>> +
+>> +               pinctrl-names = "default";
+>> +               pinctrl-0 = <&power_key_irq>;
+>> +
+>> +               power {
+>> +                       label = "Power";
+>> +                       gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
+>> +                       linux,code = <KEY_POWER>;
+>> +                       gpio-key,wakeup;
+>> +               };
+>> +       };
+>> +
+>> +       rtc@101E0000 {
+>> +               status = "okay";
+>> +       };
+>> +
+>> +       serial@12C30000 {
+>> +               status = "okay";
+>> +       };
+>> +
+>> +       mmc@12200000 {
+>> +               status = "okay";
+>> +               num-slots = <1>;
+>> +               broken-cd;
+>> +               caps2-mmc-hs200-1_8v;
+>> +               supports-highspeed;
+>> +               non-removable;
+>> +               card-detect-delay = <200>;
+>> +               clock-frequency = <400000000>;
+>> +               samsung,dw-mshc-ciu-div = <3>;
+>> +               samsung,dw-mshc-sdr-timing = <0 4>;
+>> +               samsung,dw-mshc-ddr-timing = <0 2>;
+>> +               pinctrl-names = "default";
+>> +               pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +
+>> +               slot@0 {
+>> +                       reg = <0>;
+>> +                       bus-width = <8>;
+>> +               };
+>> +       };
+>> +
+>> +       mmc@12220000 {
+>> +               status = "okay";
+>> +               num-slots = <1>;
+>> +               supports-highspeed;
+>> +               card-detect-delay = <200>;
+>> +               clock-frequency = <400000000>;
+>> +               samsung,dw-mshc-ciu-div = <3>;
+>> +               samsung,dw-mshc-sdr-timing = <2 3>;
+>> +               samsung,dw-mshc-ddr-timing = <1 2>;
+>> +               pinctrl-names = "default";
+>> +               pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>> +
+>> +               slot@0 {
+>> +                       reg = <0>;
+>> +                       bus-width = <4>;
+>> +               };
+>> +       };
+>> +
+>> +       i2c@12E10000 {
+>> +               status = "okay";
+>> +               clock-frequency = <400000>;
+>> +
+>> +               tpm@20 {
+>> +                       /* Unused irq; but still need to configure the
+>> pins */
+>> +                       pinctrl-names = "default";
+>> +                       pinctrl-0 = <&tpm_irq>;
+>
+>
+> nit: Please move the pinctrl properties below compatible and reg, as this is
+> more readable and consistent with other nodes.
+>
+
+Ok will do that.
+
+>
+>> +
+>> +                       compatible = "infineon,slb9645tt";
+>> +                       reg = <0x20>;
+>> +               };
+>> +       };
+>> +
+>> +       spi@12d30000 {
+>> +               status = "okay";
+>> +               samsung,spi-src-clk = <0>;
+>> +               num-cs = <1>;
+>> +
+>> +               spidev@0 {
+>> +                       compatible = "spidev";
+>> +                       reg = <0>;
+>> +                       spi-max-frequency = <50000000>;
+>> +                       pinctrl-names = "default";
+>> +                       pinctrl-0 = <&spi_flash_cs>;
+>> +
+>> +                       controller-data {
+>> +                               cs-gpio = <&gpa2 5 0>;
+>> +                               samsung,spi-feedback-delay = <2>;
+>> +                       };
+>
+>
+> Hmm, is this really a physical device? Shouldn't this have some kind of real
+> compatible string first? Also I'm not even sure if "spidev" is supposed to
+> be used like this, especially considering that this compatible string isn't
+> even documented in Documentation/devicetree/bindings. (Rob, Mark, Grant, any
+> opinions on this?)
+>
+
+Yes this is a flash memory sitting on the spi bus.
+All its operations are standard ones and handled by spidev.
+spidev still dont have an of_match_table and so its used like this.
+Please let me know about the right way of using this.
 
 Regards
 Arun
 
-On Sat, Apr 26, 2014 at 5:15 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Arun,
->
->
-> On 24.04.2014 16:49, Arun Kumar K wrote:
->>
->> This patch adds the required clocks for ARM Mali IP
->> in Exynos5250.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->> This patch somehow got missed getting merged long time
->> back after Acks by Mike and Kukjin and review done by
->> Tomasz and Doug.
->
->
-> Sorry for this, I have obviously missed this patch. Feel free to ping me if
-> you don't see a reply from me for some time (a week or two). There are large
-> volumes of e-mails going through my mailbox and such small single patches
-> can easily get lost. ;)
->
-> Anyway, since this patch seems to have changed quite a bit since last
-> version, please see my comments inline.
->
->
->> http://www.spinics.net/lists/linux-samsung-soc/msg21608.html
->> Resending it now after rebasing and testing on the latest kernel.
->>
->> Changes from v4
->> - Rebased on latest kernel
->> - Added macros
->> Changes from v3
->> - Renamed some clocks as per Tomasz Figa's comments
->> Changes from v2
->> - Rebased on clk-next
->> Changes from v1
->> - Removed exporting of parent DIV clock for g3d
->>    as per Tomsz Figa's comment.
->> ---
->>   drivers/clk/samsung/clk-exynos5250.c   |   14 ++++++++++++++
->>   include/dt-bindings/clock/exynos5250.h |    2 ++
->>   2 files changed, 16 insertions(+)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5250.c
->> b/drivers/clk/samsung/clk-exynos5250.c
->> index e7ee442..14a1d49 100644
->> --- a/drivers/clk/samsung/clk-exynos5250.c
->> +++ b/drivers/clk/samsung/clk-exynos5250.c
->> @@ -37,6 +37,7 @@
->>   #define VPLL_CON0             0x10140
->>   #define GPLL_CON0             0x10150
->>   #define SRC_TOP0              0x10210
->> +#define SRC_TOP1               0x10214
->>   #define SRC_TOP2              0x10218
->>   #define SRC_TOP3              0x1021c
->>   #define SRC_GSCL              0x10220
->> @@ -71,6 +72,7 @@
->>   #define GATE_IP_GSCL          0x10920
->>   #define GATE_IP_DISP1         0x10928
->>   #define GATE_IP_MFC           0x1092c
->> +#define GATE_IP_G3D            0x10930
->>   #define GATE_IP_GEN           0x10934
->>   #define GATE_IP_FSYS          0x10944
->>   #define GATE_IP_PERIC         0x10950
->> @@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[] __initdata
->> = {
->>         DIV_CPU0,
->>         SRC_CORE1,
->>         SRC_TOP0,
->> +       SRC_TOP1,
->>         SRC_TOP2,
->>         SRC_TOP3,
->>         SRC_GSCL,
->
->
-> Shouldn't GATE_IP_G3D be added to the list as well?
->
->
->> @@ -189,10 +192,12 @@ PNAME(mout_vpllsrc_p)     = { "fin_pll",
->> "sclk_hdmi27m" };
->>   PNAME(mout_vpll_p)    = { "mout_vpllsrc", "fout_vpll" };
->>   PNAME(mout_cpll_p)    = { "fin_pll", "fout_cpll" };
->>   PNAME(mout_epll_p)    = { "fin_pll", "fout_epll" };
->> +PNAME(mout_gpll_p)     = { "fin_pll", "fout_gpll" };
->>   PNAME(mout_mpll_user_p)       = { "fin_pll", "mout_mpll" };
->>   PNAME(mout_bpll_user_p)       = { "fin_pll", "mout_bpll" };
->>   PNAME(mout_aclk166_p) = { "mout_cpll", "mout_mpll_user" };
->>   PNAME(mout_aclk200_p) = { "mout_mpll_user", "mout_bpll_user" };
->> +PNAME(mout_aclk400_p)  = { "mout_aclk400_g3d_mid", "mout_gpll" };
->>   PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
->>   PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
->>   PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
->> @@ -273,12 +278,16 @@ static struct samsung_mux_clock
->> exynos5250_mux_clks[] __initdata = {
->>         MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
->>         MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
->>         MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->> +       MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
->> +
->> +       MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
->>
->>         MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
->>         MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
->>         MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
->>         MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
->>         MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
->> +       MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
->>
->>         MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4,
->> 1),
->>         MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8,
->> 1),
->> @@ -326,6 +335,7 @@ static struct samsung_mux_clock exynos5250_mux_clks[]
->> __initdata = {
->>
->>         MUX(0, "mout_mpll_fout", mout_mpll_fout_p, PLL_DIV2_SEL, 4, 1),
->>         MUX(0, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
->> +
->
->
-> nit: Stray blank line.
->
->
->>   };
->>
->>   static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->> @@ -351,6 +361,8 @@ static struct samsung_div_clock exynos5250_div_clks[]
->> __initdata = {
->>         DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
->>         DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
->>         DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->> +       DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
->> +                                                       24, 3),
->>
->>         DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
->>
->> @@ -615,6 +627,8 @@ static struct samsung_gate_clock
->> exynos5250_gate_clks[] __initdata = {
->>         GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
->>         GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
->>         GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
->> +       GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
->> +                                       CLK_SET_RATE_PARENT, 0),
->
->
-> Shouldn't this be sorted properly? The GATE_IP_G3D register is between
-> GATE_IP_MFC and GATE_IP_GEN.
->
->
->>   };
->>
->>   static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
->> diff --git a/include/dt-bindings/clock/exynos5250.h
->> b/include/dt-bindings/clock/exynos5250.h
->> index 922f2dc..751915e 100644
->> --- a/include/dt-bindings/clock/exynos5250.h
->> +++ b/include/dt-bindings/clock/exynos5250.h
->> @@ -150,9 +150,11 @@
->>   #define CLK_G2D                       345
->>   #define CLK_MDMA0             346
->>   #define CLK_SMMU_MDMA0                347
->> +#define CLK_G3D                        348
->>
->>   /* mux clocks */
->>   #define CLK_MOUT_HDMI         1024
->> +#define CLK_MOUT_GPLL          1025
->>
->>   /* must be greater than maximal clock id */
->>   #define CLK_NR_CLKS           1025
->
->
-> Since you have changed the maximum clock ID, by adding CLK_MOUT_GPLL, you
-> should also update CLK_NR_CLKS.
->
 > Best regards,
 > Tomasz
