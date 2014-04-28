@@ -1,135 +1,290 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Mon, 28 Apr 2014 12:39:20 +0200
-Message-ID: <20140428103919.GF19455@ulmo>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<1398584283-22846-12-git-send-email-shaik.ameer@samsung.com>
-	<4447051.OnJtcFSqFV@wuerfel>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0802941332163357946=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4447051.OnJtcFSqFV@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 3/7 v8] crypto:s5p-sss: Add support for SSS module on Exynos
+Date: Mon, 28 Apr 2014 16:14:55 +0530
+Message-ID: <1398681899-20782-4-git-send-email-ch.naveen@samsung.com>
+References: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:64391 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932084AbaD1KrC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Apr 2014 06:47:02 -0400
+In-reply-to: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, t.figa@samsung.com, davem@davemloft.net
 
+This patch adds new compatible and variant struct to support the SSS
+module on Exynos4 (Exynos4210), Exynos5 (Exynos5420 and Exynos5250)
+for which
+1. AES register are at an offset of 0x200 and
+2. hash interrupt is not available
 
---===============0802941332163357946==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OzxllxdKGCiKxUZM"
-Content-Disposition: inline
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+CC: David S. Miller <davem@davemloft.net>
+CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
+TO: <linux-crypto@vger.kernel.org>
+CC: <linux-samsung-soc@vger.kernel.org>
+---
+Changes since v7:
+Added Acked-by from Herbert Xu
+Change since v6:
+None
+Change since v5:
+1. Rewritten the interrupt definition in the documentation
+2. Added Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
+ .../devicetree/bindings/crypto/samsung-sss.txt     |   15 ++-
+ drivers/crypto/s5p-sss.c                           |  107 +++++++++++++++-----
+ 2 files changed, 95 insertions(+), 27 deletions(-)
 
---OzxllxdKGCiKxUZM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Apr 27, 2014 at 08:23:06PM +0200, Arnd Bergmann wrote:
-> On Sunday 27 April 2014 13:07:43 Shaik Ameer Basha wrote:
-> > +- mmu-masters: A phandle to device nodes representing the master for w=
-hich
-> > +               the System MMU can provide a translation. Any additiona=
-l values
-> > +              after the phandle will be ignored because a System MMU n=
-ever
-> > +              have two or more masters. "#stream-id-cells" specified i=
-n the
-> > +              master's node will be also ignored.
-> > +              If more than one phandle is specified, only the first ph=
-andle
-> > +              will be treated.
->=20
-> This seems completely backwards: Why would you list the masters for an IO=
-MMU
-> in the IOMMU node?
->=20
-> The master should have a standard property pointing to the IOMMU instead.
->=20
-> We don't have a generic binding for IOMMUs yet it seems, but the time is
-> overdue to make one.
->=20
-> Consider this NAKed until there is a generic binding for IOMMUs that all
-> relevant developers have agreed to.
-
-I'd like to take this opportunity and revive one of the hibernating
-patch sets that we have for Tegra. The last effort to get things merged
-was back in January I think. I haven't bothered to look up the reference
-since it's probably good to start from scratch anyway.
-
-The latest version of the binding that was under discussion back then I
-think looked something like this:
-
-	device@... {
-		iommus =3D <&iommu [spec]>[, <&other_iommu [other_spec]>...];
-	};
-
-And possibly with a iommu-names property to go along with that. The idea
-being that a device can be a master on possibly multiple IOMMUs. Using
-the above it would also be possible to have one device be multiple
-masters on the same IOMMU.
-
-On Tegra the specifier would be used to encode a memory controller's
-client ID. One discussion point back at the time was to encode the ID as
-a bitmask to allow more than a single master per entry. Another solution
-which I think is a little cleaner and more generic, would be to use one
-entry per master and use a single cell to encode the client ID. Devices
-with multiple clients to the same IOMMU could then use multiple entries
-referencing the same IOMMU.
-
-I've added Hiroshi Doyu on Cc since he knows the Tegra IOMMU best.
-Hiroshi, can you summarize exactly what the proposed bindings were. If
-my memory serves me well they were mostly along the lines of what Arnd
-proposes here, and perhaps they are something that can also be used for
-Exynos.
-
-Will Deacon (I think) had some comments on the earlier discussion as
-well, so I've added him on Cc for visibility. Sorry if I'm confusing you
-with someone else, Will. In that case perhaps you know who to include in
-the discussion from the ARM side.
-
-Also adding Stephen Warren for visibility.
-
-Thierry
-
---OzxllxdKGCiKxUZM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTXi/XAAoJEN0jrNd/PrOhC9kQAJhNUI7/j97xgFjGVeB2IPkl
-z1FZYXz4/0HagUOZ3sd2thCn3YhiGTggEYAEmXymyUIhaPXD9dzUMw2H9ZAab4CW
-ONWI1pPbv6QowSVlvsEC4bZCTt8wpamsLeuS7C0rjqaw4bkK8TQ15oDfD5Rfv27g
-KM2YiURjiKcEm7mkdpwa8hBgz5hvO7N5ulV2n1E52D7YGhA/e4IGQYzp/RkOj0s+
-byzfA9edGiZA0c7y19uR5+TrmRcaH5ERR1+fvOdl1jMw54rYdolkm857BrbFlKEN
-EO79HCcQaSFY71fR/EqPWO6M5ZJ2LLVNNIZw6hD8dBCiX8Nu8Z6obsnMEkzFNx48
-YBxHhZT2lngtIGVpEeoNJfn4V8E9q2/RnzxKN3lZh1P9eQ7uTWOUROaCgqKfETL0
-Nqd8bcvsOFtHwjI5/JCeUvP8e6DtrnIhDDur8x+29wVeiKyDNEQ4g2EOIxeDjqhy
-maRYRal2u643H6cFAnYnuZFdkJy5zrHG6ZwF/BoKwib+2mZKpveOP494ybgAF7h7
-DiqbwyviutAqZ2hfKjdzYZB9VkSSGV2M+dhOkfet4sEEhMq8gbAcwxP2i/fllDN5
-qjOQ8wG3rmu2GsncbOtF54oZCT2O5mP7MTGtFkgBUDwK605Hml0QRo6+GsU8qNhT
-2c+7sqiN3FnrwF8QpcYA
-=TPNI
------END PGP SIGNATURE-----
-
---OzxllxdKGCiKxUZM--
-
---===============0802941332163357946==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============0802941332163357946==--
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+index 3876f71..1702773 100644
+--- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
++++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+@@ -8,16 +8,25 @@ The SSS module in S5PV210 SoC supports the following:
+ -- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
+ -- PRNG: Pseudo Random Number Generator
+ 
++The SSS module in Exynos4 (Exynos4210) and
++Exynos5 (Exynos5420 and Exynos5250) SoCs
++supports the following also:
++-- ARCFOUR (ARC4)
++-- True Random Number Generator (TRNG)
++-- Secure Key Manager
++
+ Required properties:
+ 
+ - compatible : Should contain entries for this and backward compatible
+   SSS versions:
+   - "samsung,s5pv210-secss" for S5PV210 SoC.
++  - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
++		Exynos5260 and Exynos5420 SoCs.
+ - reg : Offset and length of the register set for the module
+ - interrupts : interrupt specifiers of SSS module interrupts, should contain
+-		two entries:
+-		- first : feed control interrupt,
+-		- second : hash interrupt.
++		following entries:
++		- first : feed control interrupt (required for all variants),
++		- second : hash interrupt (required only for samsung,s5pv210-secss).
+ 
+ - clocks : list of clock phandle and specifier pairs for all clocks  listed in
+ 		clock-names property.
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index c6aafe8..37e0598 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -106,7 +106,7 @@
+ #define SSS_REG_FCPKDMAO                0x005C
+ 
+ /* AES registers */
+-#define SSS_REG_AES_CONTROL             0x4000
++#define SSS_REG_AES_CONTROL		0x00
+ #define SSS_AES_BYTESWAP_DI             _BIT(11)
+ #define SSS_AES_BYTESWAP_DO             _BIT(10)
+ #define SSS_AES_BYTESWAP_IV             _BIT(9)
+@@ -122,21 +122,25 @@
+ #define SSS_AES_CHAIN_MODE_CTR          _SBF(1, 0x02)
+ #define SSS_AES_MODE_DECRYPT            _BIT(0)
+ 
+-#define SSS_REG_AES_STATUS              0x4004
++#define SSS_REG_AES_STATUS		0x04
+ #define SSS_AES_BUSY                    _BIT(2)
+ #define SSS_AES_INPUT_READY             _BIT(1)
+ #define SSS_AES_OUTPUT_READY            _BIT(0)
+ 
+-#define SSS_REG_AES_IN_DATA(s)          (0x4010 + (s << 2))
+-#define SSS_REG_AES_OUT_DATA(s)         (0x4020 + (s << 2))
+-#define SSS_REG_AES_IV_DATA(s)          (0x4030 + (s << 2))
+-#define SSS_REG_AES_CNT_DATA(s)         (0x4040 + (s << 2))
+-#define SSS_REG_AES_KEY_DATA(s)         (0x4080 + (s << 2))
++#define SSS_REG_AES_IN_DATA(s)		(0x10 + (s << 2))
++#define SSS_REG_AES_OUT_DATA(s)		(0x20 + (s << 2))
++#define SSS_REG_AES_IV_DATA(s)		(0x30 + (s << 2))
++#define SSS_REG_AES_CNT_DATA(s)		(0x40 + (s << 2))
++#define SSS_REG_AES_KEY_DATA(s)		(0x80 + (s << 2))
+ 
+ #define SSS_REG(dev, reg)               ((dev)->ioaddr + (SSS_REG_##reg))
+ #define SSS_READ(dev, reg)              __raw_readl(SSS_REG(dev, reg))
+ #define SSS_WRITE(dev, reg, val)        __raw_writel((val), SSS_REG(dev, reg))
+ 
++#define SSS_AES_REG(dev, reg)           ((dev)->aes_ioaddr + SSS_REG_##reg)
++#define SSS_AES_WRITE(dev, reg, val)    __raw_writel((val), \
++						SSS_AES_REG(dev, reg))
++
+ /* HW engine modes */
+ #define FLAGS_AES_DECRYPT               _BIT(0)
+ #define FLAGS_AES_MODE_MASK             _SBF(1, 0x03)
+@@ -146,6 +150,20 @@
+ #define AES_KEY_LEN         16
+ #define CRYPTO_QUEUE_LEN    1
+ 
++/**
++ * struct samsung_aes_variant - platform specific SSS driver data
++ * @has_hash_irq: true if SSS module uses hash interrupt, false otherwise
++ * @aes_offset: AES register offset from SSS module's base.
++ *
++ * Specifies platform specific configuration of SSS module.
++ * Note: A structure for driver specific platform data is used for future
++ * expansion of its usage.
++ */
++struct samsung_aes_variant {
++	bool			    has_hash_irq;
++	unsigned int		    aes_offset;
++};
++
+ struct s5p_aes_reqctx {
+ 	unsigned long mode;
+ };
+@@ -162,6 +180,7 @@ struct s5p_aes_dev {
+ 	struct device              *dev;
+ 	struct clk                 *clk;
+ 	void __iomem               *ioaddr;
++	void __iomem               *aes_ioaddr;
+ 	int                         irq_hash;
+ 	int                         irq_fc;
+ 
+@@ -174,16 +193,48 @@ struct s5p_aes_dev {
+ 	struct crypto_queue         queue;
+ 	bool                        busy;
+ 	spinlock_t                  lock;
++
++	struct samsung_aes_variant *variant;
+ };
+ 
+ static struct s5p_aes_dev *s5p_dev;
+ 
++static const struct samsung_aes_variant s5p_aes_data = {
++	.has_hash_irq	= true,
++	.aes_offset	= 0x4000,
++};
++
++static const struct samsung_aes_variant exynos_aes_data = {
++	.has_hash_irq	= false,
++	.aes_offset	= 0x200,
++};
++
+ static const struct of_device_id s5p_sss_dt_match[] = {
+-	{ .compatible = "samsung,s5pv210-secss" },
++	{
++		.compatible = "samsung,s5pv210-secss",
++		.data = &s5p_aes_data,
++	},
++	{
++		.compatible = "samsung,exynos4210-secss",
++		.data = &exynos_aes_data,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
+ 
++static inline struct samsung_aes_variant *find_s5p_sss_version
++				   (struct platform_device *pdev)
++{
++	if (IS_ENABLED(CONFIG_OF) && (pdev->dev.of_node)) {
++		const struct of_device_id *match;
++		match = of_match_node(s5p_sss_dt_match,
++					pdev->dev.of_node);
++		return (struct samsung_aes_variant *)match->data;
++	}
++	return (struct samsung_aes_variant *)
++			platform_get_device_id(pdev)->driver_data;
++}
++
+ static void s5p_set_dma_indata(struct s5p_aes_dev *dev, struct scatterlist *sg)
+ {
+ 	SSS_WRITE(dev, FCBRDMAS, sg_dma_address(sg));
+@@ -329,14 +380,14 @@ static void s5p_set_aes(struct s5p_aes_dev *dev,
+ {
+ 	void __iomem *keystart;
+ 
+-	memcpy(dev->ioaddr + SSS_REG_AES_IV_DATA(0), iv, 0x10);
++	memcpy(dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), iv, 0x10);
+ 
+ 	if (keylen == AES_KEYSIZE_256)
+-		keystart = dev->ioaddr + SSS_REG_AES_KEY_DATA(0);
++		keystart = dev->aes_ioaddr + SSS_REG_AES_KEY_DATA(0);
+ 	else if (keylen == AES_KEYSIZE_192)
+-		keystart = dev->ioaddr + SSS_REG_AES_KEY_DATA(2);
++		keystart = dev->aes_ioaddr + SSS_REG_AES_KEY_DATA(2);
+ 	else
+-		keystart = dev->ioaddr + SSS_REG_AES_KEY_DATA(4);
++		keystart = dev->aes_ioaddr + SSS_REG_AES_KEY_DATA(4);
+ 
+ 	memcpy(keystart, key, keylen);
+ }
+@@ -386,7 +437,7 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
+ 	if (err)
+ 		goto outdata_error;
+ 
+-	SSS_WRITE(dev, AES_CONTROL, aes_control);
++	SSS_AES_WRITE(dev, AES_CONTROL, aes_control);
+ 	s5p_set_aes(dev, dev->ctx->aes_key, req->info, dev->ctx->keylen);
+ 
+ 	s5p_set_dma_indata(dev,  req->src);
+@@ -571,6 +622,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	struct s5p_aes_dev *pdata;
+ 	struct device      *dev = &pdev->dev;
+ 	struct resource    *res;
++	struct samsung_aes_variant *variant;
+ 
+ 	if (s5p_dev)
+ 		return -EEXIST;
+@@ -584,6 +636,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pdata->ioaddr))
+ 		return PTR_ERR(pdata->ioaddr);
+ 
++	variant = find_s5p_sss_version(pdev);
++
+ 	pdata->clk = devm_clk_get(dev, "secss");
+ 	if (IS_ERR(pdata->clk)) {
+ 		dev_err(dev, "failed to find secss clock source\n");
+@@ -594,6 +648,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&pdata->lock);
+ 
++	pdata->aes_ioaddr = pdata->ioaddr + variant->aes_offset;
++
+ 	pdata->irq_fc = platform_get_irq(pdev, 0);
+ 	if (pdata->irq_fc < 0) {
+ 		err = pdata->irq_fc;
+@@ -607,19 +663,22 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 		goto err_irq;
+ 	}
+ 
+-	pdata->irq_hash = platform_get_irq(pdev, 1);
+-	if (pdata->irq_hash < 0) {
+-		err = pdata->irq_hash;
+-		dev_warn(dev, "hash interrupt is not available.\n");
+-		goto err_irq;
+-	}
+-	err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
+-			       IRQF_SHARED, pdev->name, pdev);
+-	if (err < 0) {
+-		dev_warn(dev, "hash interrupt is not available.\n");
+-		goto err_irq;
++	if (variant->has_hash_irq) {
++		pdata->irq_hash = platform_get_irq(pdev, 1);
++		if (pdata->irq_hash < 0) {
++			err = pdata->irq_hash;
++			dev_warn(dev, "hash interrupt is not available.\n");
++			goto err_irq;
++		}
++		err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
++				       IRQF_SHARED, pdev->name, pdev);
++		if (err < 0) {
++			dev_warn(dev, "hash interrupt is not available.\n");
++			goto err_irq;
++		}
+ 	}
+ 
++	pdata->variant = variant;
+ 	pdata->dev = dev;
+ 	platform_set_drvdata(pdev, pdata);
+ 	s5p_dev = pdata;
+-- 
+1.7.9.5
