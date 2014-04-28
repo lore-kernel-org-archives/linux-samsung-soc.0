@@ -1,88 +1,114 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 1/7 v8] crypto:s5p-sss: Use platform_get_irq() instead of
- _byname()
-Date: Mon, 28 Apr 2014 16:14:53 +0530
-Message-ID: <1398681899-20782-2-git-send-email-ch.naveen@samsung.com>
-References: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, herbert@gondor.apana.org.au, naveenkrishna.ch@gmail.com, cpgs@samsung.com, t.figa@samsung.com, davem@davemloft.net
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH] ARM: dts: Remove vmmc-supply for mmc@12220000 on
+ arndale-octa board
+Date: Mon, 28 Apr 2014 11:55:11 +0100
+Message-ID: <20140428105511.GA17293@e102654-lin.cambridge.arm.com>
+References: <1398456672-3936-1-git-send-email-javi.merino@arm.com>
+ <535AC29E.8010905@gmail.com>
+ <20140425203051.GD3027@e102654-lin.cambridge.arm.com>
+ <535AC717.40805@gmail.com>
+ <20140425204135.GF3027@e102654-lin.cambridge.arm.com>
+ <0b5c01cf6141$687f5ea0$397e1be0$@samsung.com>
+ <CAK9yfHz5bkyTUr3Y=q8msuY_ciAjv5=n7dtf7DhTwgDxntOMNQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:51265 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755317AbaD1KzQ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Apr 2014 06:55:16 -0400
+In-Reply-To: <CAK9yfHz5bkyTUr3Y=q8msuY_ciAjv5=n7dtf7DhTwgDxntOMNQ@mail.gmail.com>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
 
-This patch uses the platform_get_irq() instead of the
-platform_get_irq_byname(). Making feeder control interrupt
-as resource "0" and hash interrupt as "1".
+Hi Sachin,
 
-reasons for this change.
-1. Cannot find any Arch which is currently using this driver
-2. Samsung Exynos4 and 5 SoCs only use the feeder control interrupt
-3. Patches adding support for DT and H/W version are in pipeline
+On Mon, Apr 28, 2014 at 05:30:19AM +0100, Sachin Kamat wrote:
+> On 26 April 2014 16:49, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Javi Merino wrote:
+> >>
+> >> On Fri, Apr 25, 2014 at 09:35:35PM +0100, Tomasz Figa wrote:
+> >> > On 25.04.2014 22:30, Javi Merino wrote:
+> >> > > On Fri, Apr 25, 2014 at 09:16:30PM +0100, Tomasz Figa wrote:
+> >> > >> On 25.04.2014 22:11, Javi Merino wrote:
+> >> > >>> d726ca2d3316 (ARM: dts: Add vmmc-supply to MMC on arndale-octa board)
+> >> > >>> added the vmmc-supply to nodes mmc@12200000 and mmc@12220000 of the
+> >> > >>> DT.  However, this makes the kernel fail to boot on the arndale-octa
+> >> > >>> spews:
+> >> > >>>
+> >> > >>> [    5.060000] dwmmc_exynos 12200000.mmc: num-slots property not
+> >> found, assuming 1 slot is available
+> >> > >>> [    5.065000] platform 12200000.mmc: Driver dwmmc_exynos requests
+> >> probe deferral
+> >> > >>> [    5.075000] dwmmc_exynos 12220000.mmc: num-slots property not
+> >> found, assuming 1 slot is available
+> >> > >>> [    5.085000] platform 12220000.mmc: Driver dwmmc_exynos requests
+> >> probe deferral
+> >> > >>>
+> >> > >>> And eventually hangs.  Without the vmmc-supply property in the
+> >> > >>> mmc@12220000 node, the kernel boots again.
+> >> > >>>
+> >> > >>> Signed-off-by: Javi Merino <javi.merino@arm.com>
+> >> > >>> ---
+> >> > >>>
+> >> > >>> Hi,
+> >> > >>>
+> >> > >>> Note that I don't know *why* removing the property works, all I know
+> >> > >>> is that 3.15-rc2 fails to boot on my Arndale Octa unless I apply
+> >> this
+> >> > >>> patch.
+> >> > >>
+> >> > >> Are you sure you have the required PMIC driver enabled in your kernel
+> >> > >> config?
+> >> > >
+> >> > > I configured the kernel using exynos_defconfig and that gives me:
+> >> > >
+> >> > > # CONFIG_PMIC_ADP5520 is not set
+> >> > > # CONFIG_PMIC_DA903X is not set
+> >> > >
+> >> > > Should I be using other defconfig for this board?  exynos_defconfig
+> >> > > used to work in 3.14.  Cheers,
+> >> >
+> >> > Well, unfortunately exynos_defconfig is known to be far from being
+> >> > reasonable. Right now it should be considered just as a base to
+> >> > configure the kernel for Exynos SoCs. Most of board specific options
+> >> > (and many of SoC-wide ones) need to be selected manually.
+> >> >
+> >> > Anyway, with the number of Exynos boards supported in mainline, I don't
+> >> > think we will be ever going to enable all options for all the supported
+> >> > boards by default in defconfig, especially considering the fact that we
+> >> > will be moving to generic multi_v7_defconfig and likely dropping
+> >> > exynos_defconfig completely.
+> >
+> > Well, keeping exynos_defconfig would be helpful even if exynos multiplatform is available. Please see the case of omap2plus_defconfig?
+> >
+> >> >
+> >> > As for now, I believe you should just make sure yourself that any
+> >> > options relevant to your board are enabled.
+> >>
+> >> Great.  And I assume that there isn't a list of those options in the
+> >> web.  So how do I know what options are relevant to my board?  By
+> >> sending emails to linux-samsung-soc whenever it fails to boot?
+> >>
+> > I think, we need to enable all of regarding configs for each exynos boards so that exynos_defconfig can cover whenever.
+> 
+> You need the following patch to mount the MMC. Without this the regulator will
+> not be enabled which is required by MMC.
+> 
+> ARM: exynos_defconfig: Enable HS-I2C
+> http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27527
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-CC: David S. Miller <davem@davemloft.net>
-CC: Vladimir Zapolskiy <vzapolskiy@gmail.com>
-TO: <linux-crypto@vger.kernel.org>
-CC: <linux-samsung-soc@vger.kernel.org>
----
-Changes since v7:
-Added Acked-by from Herbert Xu
-Changes since v6:
-None
-Changes since v5:
-None
+Yes, that's the bit that I was missing.  With that patch 3.15-rc2
+boots on my Arndale Octa.
 
- drivers/crypto/s5p-sss.c |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+> Kukjin, can you please apply this patch?
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index be45762..2876fa3 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -587,29 +587,29 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&pdata->lock);
- 
--	pdata->irq_hash = platform_get_irq_byname(pdev, "hash");
--	if (pdata->irq_hash < 0) {
--		err = pdata->irq_hash;
--		dev_warn(dev, "hash interrupt is not available.\n");
-+	pdata->irq_fc = platform_get_irq(pdev, 0);
-+	if (pdata->irq_fc < 0) {
-+		err = pdata->irq_fc;
-+		dev_warn(dev, "feed control interrupt is not available.\n");
- 		goto err_irq;
- 	}
--	err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
-+	err = devm_request_irq(dev, pdata->irq_fc, s5p_aes_interrupt,
- 			       IRQF_SHARED, pdev->name, pdev);
- 	if (err < 0) {
--		dev_warn(dev, "hash interrupt is not available.\n");
-+		dev_warn(dev, "feed control interrupt is not available.\n");
- 		goto err_irq;
- 	}
- 
--	pdata->irq_fc = platform_get_irq_byname(pdev, "feed control");
--	if (pdata->irq_fc < 0) {
--		err = pdata->irq_fc;
--		dev_warn(dev, "feed control interrupt is not available.\n");
-+	pdata->irq_hash = platform_get_irq(pdev, 1);
-+	if (pdata->irq_hash < 0) {
-+		err = pdata->irq_hash;
-+		dev_warn(dev, "hash interrupt is not available.\n");
- 		goto err_irq;
- 	}
--	err = devm_request_irq(dev, pdata->irq_fc, s5p_aes_interrupt,
-+	err = devm_request_irq(dev, pdata->irq_hash, s5p_aes_interrupt,
- 			       IRQF_SHARED, pdev->name, pdev);
- 	if (err < 0) {
--		dev_warn(dev, "feed control interrupt is not available.\n");
-+		dev_warn(dev, "hash interrupt is not available.\n");
- 		goto err_irq;
- 	}
- 
--- 
-1.7.9.5
+You can add my Tested-by for Arndale Octa.
+
+Thanks!
+Javi
