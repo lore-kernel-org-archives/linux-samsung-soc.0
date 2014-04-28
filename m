@@ -1,114 +1,86 @@
-From: Javi Merino <javi.merino@arm.com>
-Subject: Re: [PATCH] ARM: dts: Remove vmmc-supply for mmc@12220000 on
- arndale-octa board
-Date: Mon, 28 Apr 2014 11:55:11 +0100
-Message-ID: <20140428105511.GA17293@e102654-lin.cambridge.arm.com>
-References: <1398456672-3936-1-git-send-email-javi.merino@arm.com>
- <535AC29E.8010905@gmail.com>
- <20140425203051.GD3027@e102654-lin.cambridge.arm.com>
- <535AC717.40805@gmail.com>
- <20140425204135.GF3027@e102654-lin.cambridge.arm.com>
- <0b5c01cf6141$687f5ea0$397e1be0$@samsung.com>
- <CAK9yfHz5bkyTUr3Y=q8msuY_ciAjv5=n7dtf7DhTwgDxntOMNQ@mail.gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
+	Exynos System MMU
+Date: Mon, 28 Apr 2014 12:56:03 +0200
+Message-ID: <6544270.ddFBoY6LMm@wuerfel>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<4447051.OnJtcFSqFV@wuerfel> <20140428103919.GF19455@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:51265 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755317AbaD1KzQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 06:55:16 -0400
-In-Reply-To: <CAK9yfHz5bkyTUr3Y=q8msuY_ciAjv5=n7dtf7DhTwgDxntOMNQ@mail.gmail.com>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140428103919.GF19455@ulmo>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
 
-Hi Sachin,
-
-On Mon, Apr 28, 2014 at 05:30:19AM +0100, Sachin Kamat wrote:
-> On 26 April 2014 16:49, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Javi Merino wrote:
-> >>
-> >> On Fri, Apr 25, 2014 at 09:35:35PM +0100, Tomasz Figa wrote:
-> >> > On 25.04.2014 22:30, Javi Merino wrote:
-> >> > > On Fri, Apr 25, 2014 at 09:16:30PM +0100, Tomasz Figa wrote:
-> >> > >> On 25.04.2014 22:11, Javi Merino wrote:
-> >> > >>> d726ca2d3316 (ARM: dts: Add vmmc-supply to MMC on arndale-octa board)
-> >> > >>> added the vmmc-supply to nodes mmc@12200000 and mmc@12220000 of the
-> >> > >>> DT.  However, this makes the kernel fail to boot on the arndale-octa
-> >> > >>> spews:
-> >> > >>>
-> >> > >>> [    5.060000] dwmmc_exynos 12200000.mmc: num-slots property not
-> >> found, assuming 1 slot is available
-> >> > >>> [    5.065000] platform 12200000.mmc: Driver dwmmc_exynos requests
-> >> probe deferral
-> >> > >>> [    5.075000] dwmmc_exynos 12220000.mmc: num-slots property not
-> >> found, assuming 1 slot is available
-> >> > >>> [    5.085000] platform 12220000.mmc: Driver dwmmc_exynos requests
-> >> probe deferral
-> >> > >>>
-> >> > >>> And eventually hangs.  Without the vmmc-supply property in the
-> >> > >>> mmc@12220000 node, the kernel boots again.
-> >> > >>>
-> >> > >>> Signed-off-by: Javi Merino <javi.merino@arm.com>
-> >> > >>> ---
-> >> > >>>
-> >> > >>> Hi,
-> >> > >>>
-> >> > >>> Note that I don't know *why* removing the property works, all I know
-> >> > >>> is that 3.15-rc2 fails to boot on my Arndale Octa unless I apply
-> >> this
-> >> > >>> patch.
-> >> > >>
-> >> > >> Are you sure you have the required PMIC driver enabled in your kernel
-> >> > >> config?
-> >> > >
-> >> > > I configured the kernel using exynos_defconfig and that gives me:
-> >> > >
-> >> > > # CONFIG_PMIC_ADP5520 is not set
-> >> > > # CONFIG_PMIC_DA903X is not set
-> >> > >
-> >> > > Should I be using other defconfig for this board?  exynos_defconfig
-> >> > > used to work in 3.14.  Cheers,
-> >> >
-> >> > Well, unfortunately exynos_defconfig is known to be far from being
-> >> > reasonable. Right now it should be considered just as a base to
-> >> > configure the kernel for Exynos SoCs. Most of board specific options
-> >> > (and many of SoC-wide ones) need to be selected manually.
-> >> >
-> >> > Anyway, with the number of Exynos boards supported in mainline, I don't
-> >> > think we will be ever going to enable all options for all the supported
-> >> > boards by default in defconfig, especially considering the fact that we
-> >> > will be moving to generic multi_v7_defconfig and likely dropping
-> >> > exynos_defconfig completely.
-> >
-> > Well, keeping exynos_defconfig would be helpful even if exynos multiplatform is available. Please see the case of omap2plus_defconfig?
-> >
-> >> >
-> >> > As for now, I believe you should just make sure yourself that any
-> >> > options relevant to your board are enabled.
-> >>
-> >> Great.  And I assume that there isn't a list of those options in the
-> >> web.  So how do I know what options are relevant to my board?  By
-> >> sending emails to linux-samsung-soc whenever it fails to boot?
-> >>
-> > I think, we need to enable all of regarding configs for each exynos boards so that exynos_defconfig can cover whenever.
+On Monday 28 April 2014 12:39:20 Thierry Reding wrote:
+> On Sun, Apr 27, 2014 at 08:23:06PM +0200, Arnd Bergmann wrote:
+> > On Sunday 27 April 2014 13:07:43 Shaik Ameer Basha wrote:
+> > > +- mmu-masters: A phandle to device nodes representing the master for which
+> > > +               the System MMU can provide a translation. Any additional values
+> > > +              after the phandle will be ignored because a System MMU never
+> > > +              have two or more masters. "#stream-id-cells" specified in the
+> > > +              master's node will be also ignored.
+> > > +              If more than one phandle is specified, only the first phandle
+> > > +              will be treated.
+> > 
+> > This seems completely backwards: Why would you list the masters for an IOMMU
+> > in the IOMMU node?
+> > 
+> > The master should have a standard property pointing to the IOMMU instead.
+> > 
+> > We don't have a generic binding for IOMMUs yet it seems, but the time is
+> > overdue to make one.
+> > 
+> > Consider this NAKed until there is a generic binding for IOMMUs that all
+> > relevant developers have agreed to.
 > 
-> You need the following patch to mount the MMC. Without this the regulator will
-> not be enabled which is required by MMC.
+> I'd like to take this opportunity and revive one of the hibernating
+> patch sets that we have for Tegra. The last effort to get things merged
+> was back in January I think. I haven't bothered to look up the reference
+> since it's probably good to start from scratch anyway.
 > 
-> ARM: exynos_defconfig: Enable HS-I2C
-> http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27527
+> The latest version of the binding that was under discussion back then I
+> think looked something like this:
+> 
+> 	device@... {
+> 		iommus = <&iommu [spec]>[, <&other_iommu [other_spec]>...];
+> 	};
+> 
+> And possibly with a iommu-names property to go along with that. The idea
+> being that a device can be a master on possibly multiple IOMMUs. Using
+> the above it would also be possible to have one device be multiple
+> masters on the same IOMMU.
 
-Yes, that's the bit that I was missing.  With that patch 3.15-rc2
-boots on my Arndale Octa.
+Yes, that seems reasonable. Just one question: How would you represent a
+device that has multiple masters, with at least one connected to an IOMMU
+and another one connected to memory directly, without going to the IOMMU?
 
-> Kukjin, can you please apply this patch?
+> On Tegra the specifier would be used to encode a memory controller's
+> client ID. One discussion point back at the time was to encode the ID as
+> a bitmask to allow more than a single master per entry. Another solution
+> which I think is a little cleaner and more generic, would be to use one
+> entry per master and use a single cell to encode the client ID. Devices
+> with multiple clients to the same IOMMU could then use multiple entries
+> referencing the same IOMMU.
 
-You can add my Tested-by for Arndale Octa.
+I'm not completely following here. Are you talking about the generic
+binding, or the part that is tegra specific for the specifier?
 
-Thanks!
-Javi
+My first impression is that the generic binding should just allow an
+arbitrary specifier with a variable #iommu-cells, and leave the format
+up to the IOMMU driver. A lot of drivers probably only support one
+master, so they can just set #iommu-cells=<0>, others might require
+IDs that do not fit into one cell.
+
+	Arnd
