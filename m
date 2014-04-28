@@ -1,265 +1,64 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v3 3/4] usb: ohci-exynos: Add facility to use phy provided by the generic phy framework
-Date: Mon, 28 Apr 2014 14:55:31 +0530
-Message-ID: <1398677132-30600-4-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 0/4] usb: ehci/ohci-exynos: Move to generic phy framework
+Date: Mon, 28 Apr 2014 15:02:09 +0530
+Message-ID: <CAFp+6iE67ikwj7QU4vwJ8RZKhQo5WFTFb297WiD_Ej3SZ2u+gQ@mail.gmail.com>
 References: <1398677132-30600-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398677132-30600-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1398677132-30600-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add support to consume phy provided by Generic phy framework.
-Keeping the support for older usb-phy intact right now, in order
-to prevent any functionality break in absence of relevant
-device tree side change for ohci-exynos.
-Once we move to new phy in the device nodes for ohci, we can
-remove the support for older phys.
+On Mon, Apr 28, 2014 at 2:55 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Based and tested on 'usb-next' branch of Greg's usb tree, with relevant
+> device tree patches[1]
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
----
- .../devicetree/bindings/usb/exynos-usb.txt         |   19 +++
- drivers/usb/host/ohci-exynos.c                     |  129 +++++++++++++++++---
- 2 files changed, 132 insertions(+), 16 deletions(-)
+[1] [PATCH v7 0/2] dts: Add usb2phy to Exynos 5250
+     http://www.spinics.net/lists/linux-usb/msg106427.html
 
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index d967ba1..03b7e43 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -38,6 +38,15 @@ Required properties:
-  - interrupts: interrupt number to the cpu.
-  - clocks: from common clock binding: handle to usb clock.
-  - clock-names: from common clock binding: Shall be "usbhost".
-+ - port: if in the SoC there are OHCI phys, they should be listed here.
-+   One phy per port. Each port should have its 'reg' entry.
-+	- reg: port number on OHCI controller, e.g
-+	       On Exynos5250, port 0 is USB2.0 otg phy
-+			      port 1 is HSIC phy0
-+			      port 2 is HSIC phy1
-+	- phys: from the *Generic PHY* bindings specifying phy used by port.
-+	- phy-names: from the *Generic PHY* bindings specifying name of phy
-+		     used by the port.
- 
- Example:
- 	usb@12120000 {
-@@ -47,6 +56,16 @@ Example:
- 
- 		clocks = <&clock 285>;
- 		clock-names = "usbhost";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+		    reg = <0>;
-+		    phys = <&usb2phy 1>;
-+		    phy-names = "host";
-+		    status = "disabled";
-+		};
-+
- 	};
- 
- DWC3
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 05f00e3..011ccde 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
-@@ -33,28 +34,122 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
- 
- #define to_exynos_ohci(hcd) (struct exynos_ohci_hcd *)(hcd_to_ohci(hcd)->priv)
- 
-+#define PHY_NUMBER 3
- struct exynos_ohci_hcd {
- 	struct clk *clk;
- 	struct usb_phy *phy;
- 	struct usb_otg *otg;
-+	struct phy *phy_g[PHY_NUMBER];
- };
- 
--static void exynos_ohci_phy_enable(struct device *dev)
-+static int exynos_ohci_get_phy(struct device *dev,
-+				struct exynos_ohci_hcd *exynos_ohci)
-+{
-+	struct device_node *child;
-+	struct phy *phy;
-+	int phy_number;
-+	int ret = 0;
-+
-+	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR(exynos_ohci->phy)) {
-+		ret = PTR_ERR(exynos_ohci->phy);
-+		/* This is the case when PHY config is disabled */
-+		if (ret == -ENXIO || ret == -ENODEV) {
-+			dev_dbg(dev, "Failed to get usb2 phy\n");
-+			exynos_ohci->phy = NULL;
-+			ret = 0;
-+		} else if (ret == -EPROBE_DEFER) {
-+			goto fail_phy;
-+		} else {
-+			dev_err(dev, "no usb2 phy configured\n");
-+			goto fail_phy;
-+		}
-+	} else {
-+		exynos_ohci->otg = exynos_ohci->phy->otg;
-+	}
-+
-+	/* Getting generic phy:
-+	 * We are keeping both types of phys as a part of transiting OHCI
-+	 * to generic phy framework, so that in absence of supporting dts
-+	 * changes the functionality doesn't break.
-+	 * Once we move the ohci dt nodes to use new generic phys,
-+	 * we can remove support for older PHY in this driver.
-+	 */
-+	for_each_available_child_of_node(dev->of_node, child) {
-+		ret = of_property_read_u32(child, "reg", &phy_number);
-+		if (ret) {
-+			dev_err(dev, "Failed to parse device tree\n");
-+			of_node_put(child);
-+			goto fail_phy;
-+		}
-+		if (phy_number >= PHY_NUMBER) {
-+			dev_err(dev, "Invalid number of PHYs\n");
-+			of_node_put(child);
-+			ret = -EINVAL;
-+			goto fail_phy;
-+		}
-+		phy = devm_of_phy_get(dev, child, 0);
-+		of_node_put(child);
-+		if (IS_ERR(phy)) {
-+			ret = PTR_ERR(phy);
-+			/* This is the case when PHY config is disabled */
-+			if (ret == -ENOSYS || ret == -ENODEV) {
-+				dev_dbg(dev, "Failed to get usb2 phy\n");
-+				phy = NULL;
-+				ret = 0;
-+			} else if (ret == -EPROBE_DEFER) {
-+				goto fail_phy;
-+			} else {
-+				dev_err(dev, "no usb2 phy configured\n");
-+				goto fail_phy;
-+			}
-+		}
-+		exynos_ohci->phy_g[phy_number] = phy;
-+	}
-+
-+fail_phy:
-+	return ret;
-+}
-+
-+static int exynos_ohci_phy_enable(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
-+	int i;
-+	int ret = 0;
- 
--	if (exynos_ohci->phy)
--		usb_phy_init(exynos_ohci->phy);
-+	if (exynos_ohci->phy) {
-+		ret = usb_phy_init(exynos_ohci->phy);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
-+		if (exynos_ohci->phy_g[i])
-+			ret = phy_power_on(exynos_ohci->phy_g[i]);
-+	if (ret)
-+		for (i--; i >= 0; i--)
-+			if (exynos_ohci->phy_g[i])
-+				phy_power_off(exynos_ohci->phy_g[i]);
-+
-+	return ret;
- }
- 
--static void exynos_ohci_phy_disable(struct device *dev)
-+static int exynos_ohci_phy_disable(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
-+	int i;
-+	int ret = 0;
- 
- 	if (exynos_ohci->phy)
- 		usb_phy_shutdown(exynos_ohci->phy);
-+
-+	for (i = 0; i < PHY_NUMBER; i++)
-+		if (exynos_ohci->phy_g[i])
-+			ret = phy_power_off(exynos_ohci->phy_g[i]);
-+
-+	return ret;
- }
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
-@@ -62,7 +157,6 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 	struct exynos_ohci_hcd *exynos_ohci;
- 	struct usb_hcd *hcd;
- 	struct resource *res;
--	struct usb_phy *phy;
- 	int irq;
- 	int err;
- 
-@@ -88,15 +182,9 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 					"samsung,exynos5440-ohci"))
- 		goto skip_phy;
- 
--	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(phy)) {
--		usb_put_hcd(hcd);
--		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
--		return -EPROBE_DEFER;
--	} else {
--		exynos_ohci->phy = phy;
--		exynos_ohci->otg = phy->otg;
--	}
-+	err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
-+	if (err)
-+		goto fail_clk;
- 
- skip_phy:
- 	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
-@@ -139,7 +227,11 @@ skip_phy:
- 
- 	platform_set_drvdata(pdev, hcd);
- 
--	exynos_ohci_phy_enable(&pdev->dev);
-+	err = exynos_ohci_phy_enable(&pdev->dev);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to enable USB phy\n");
-+		goto fail_io;
-+	}
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -210,13 +302,18 @@ static int exynos_ohci_resume(struct device *dev)
- {
- 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
-+	int ret;
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_enable(dev);
-+	ret = exynos_ohci_phy_enable(dev);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable USB phy\n");
-+		return ret;
-+	}
- 
- 	ohci_resume(hcd, false);
- 
+
+>
+> Changes from v2:
+>  - Added two patches in the series for some cleanup.
+>    usb: ohci-exynos: Use struct device instead of platform_device
+>    usb: ehci-exynos: Use struct device instead of platform_device
+>  - Addressed review comments.
+>    -- Moved exynos_ohci_phyg_on()/off routines inside
+>       exynos_ohci_phy_enable()/disable.
+>    -- Added functions exynos_ehci_phy_enable() and exynos_ehci_phy_disable()
+>       and moved exynos_ehci_phyg_on()/off routines respectively in them.
+>    -- Added necessary checks.
+>
+> Kamil Debski (1):
+>   usb: ehci-exynos: Change to use phy provided by the generic phy
+>     framework
+>
+> Vivek Gautam (3):
+>   usb: ohci-exynos: Use struct device instead of platform_device
+>   usb: ehci-exynos: Use struct device instead of platform_device
+>   usb: ohci-exynos: Add facility to use phy provided by the generic phy
+>     framework
+>
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   37 +++++
+>  drivers/usb/host/ehci-exynos.c                     |  148 +++++++++++++++++---
+>  drivers/usb/host/ohci-exynos.c                     |  141 ++++++++++++++++---
+>  3 files changed, 280 insertions(+), 46 deletions(-)
+>
+> --
+> 1.7.10.4
+>
+
+
+
 -- 
-1.7.10.4
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
