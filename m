@@ -1,50 +1,125 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv3 4/4] ARM: dts: exynos4412-trats2: enable usb nodes
-Date: Mon, 28 Apr 2014 11:28:45 +0900
-Message-ID: <1398652125-4216-5-git-send-email-chanho61.park@samsung.com>
-References: <1398652125-4216-1-git-send-email-chanho61.park@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Mon, 28 Apr 2014 09:11:44 +0530
+Message-ID: <535DCDF8.4000004@linaro.org>
+References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org> <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com> <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com> <03b001cf5edc$ae42e770$0ac8b650$@samsung.com> <5358D46F.2050303@linaro.org> <5358E243.7010004@samsung.com> <5358EF70.7070809@linaro.org> <535AEFFE.7020900@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52634 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753024AbaD1C3C (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:43500 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750935AbaD1Dlw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Apr 2014 22:29:02 -0400
-In-reply-to: <1398652125-4216-1-git-send-email-chanho61.park@samsung.com>
+	Sun, 27 Apr 2014 23:41:52 -0400
+Received: by mail-pa0-f47.google.com with SMTP id lj1so5289000pab.20
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Apr 2014 20:41:52 -0700 (PDT)
+In-Reply-To: <535AEFFE.7020900@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com
 
-This patch enables exynos_usbphy and hsotg device nodes.
+On 04/26/2014 05:00 AM, Tomasz Figa wrote:
+> 
+> 
+> On 24.04.2014 13:03, Tushar Behera wrote:
+>> On 04/24/2014 03:36 PM, Tomasz Figa wrote:
+>>> On 24.04.2014 11:07, Tushar Behera wrote:
+>>>> On 04/23/2014 03:43 PM, Kukjin Kim wrote:
+>>>>> Tushar Behera wrote:
+>>>>>>
+>>>>>> On 22 April 2014 13:08, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>>>>>>> Hi Tushar
+>>>>>>>
+>>>>>>> On Tue, Apr 22, 2014 at 11:09 AM, Tushar Behera
+>>>>>>> <tushar.behera@linaro.org> wrote:
+>>>>>>>> MAU powerdomain provides clocks for Audio sub-system block. This
+>>>>>>>> block
+>>>>>>>> comprises of the I2S audio controller, audio DMA blocks and Audio
+>>>>>>>> sub-system clock registers.
+>>>>>>>>
+>>>>>>>> Right now, there is no way to hook up power-domains with clock
+>>>>>> providers.
+>>>>>>>> During late boot when this power-domain gets disabled, we get
+>>>>>>>> following
+>>>>>>>> external abort.
+>>>>>
+>>>>> + Jonghwan Choi
+>>>>>
+>>>>> Well, this is not a perfect solution to support MAU power domain,
+>>>>> it's true it is a problem right now though.
+>>>>>
+>>>>> In other words, this is just temporal fix for the problem.
+>>>>>
+>>>>> How about accessing clock stuff for audio sub-system with handling
+>>>>> MAU power domain via generic IO power domain?
+>>>>>
+>>>>
+>>>> + Tomasz Figa
+>>>>
+>>>> Existing power domain driver exynos4_pm_init_power_domain is registered
+>>>> with an arch_initcall whereas the clk-exynos-audss driver is registered
+>>>> with core_initcall. Hence even if add mau_pd node to clk-exynos-audss
+>>>> node, the binding with power-domain doesn't happen.
+>>>
+>>> I'd say core_initcall is way too early for clk-exynos-audss driver. It
+>>> should be at most subsys_initcall. As far as I can see, all users of
+>>> clocks provided by this driver (i.e. i2s) are probed at device_initcall
+>>> level anyway.
+>>>
+>>
+>> It is also used by ADMA node, which gets probed.
+> 
+> If I'm looking correctly, ADMA is handled by pl330 driver which is
+> registered at device_initcall level and so it shouldn't make problems
+> with clk-exynos-audss driver being probed at subsys_initcall level.
+> 
 
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Right, AMDA is handled by pl330 driver which gets registered during
+device_initcall. But the clk_get for 'abp_clk' for devices on an AMBA
+bus gets called during amba_device_add() which gets called during
+arch_initcall. So if clk-exynos-audss driver is registered later, ADMA
+node doesn't get added to amba device list and hence doesn't get probed.
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 9583563..a16db6c 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -665,6 +665,16 @@
- 		};
- 	};
- 
-+	exynos-usbphy@125B0000 {
-+		status = "okay";
-+	};
-+
-+	hsotg@12480000 {
-+		vusb_d-supply = <&ldo15_reg>;
-+		vusb_a-supply = <&ldo12_reg>;
-+		status = "okay";
-+	};
-+
- 	thermistor-ap@0 {
- 		compatible = "ntc,ncp15wb473";
- 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
+>>
+>>>>
+>>>> Alternately, if Tomasz's patches are applied [1], power-domain binding
+>>>> is successful. But because of the init order, clk-exynos-audss defers
+>>>> probe resulting in a kernel crash. Forcing clk-exynos-audss to register
+>>>> through arch_initcall() fixes this issue, but I am not sure if that is
+>>>> okay.
+>>>
+>>> If the driver crashes on deferred probe, then it's a bug and it should
+>>> be fixed.
+>>>
+>>
+>> By the time clk-exynos-audss is getting called, mau_pd is already
+>> disabled by power-domain driver. That is not getting enabled during
+>> clk-exynos-audss probe. Am I missing something?
+> 
+> Probably. The driver should enable runtime PM and call
+> pm_runtime_get_sync() to make sure that power is supplied to the device
+> it accesses.
+
+Right, I was missing those calls in clk-exynos-audss driver. Adding
+pm_runtime_get_sync(), the kernel crash is gone. But the issue regarding
+ADMA node not getting probed still persists.
+
+> 
+> By the way, if defining MAU power domain in DT, then also all the
+> devices inside of this domain should be bound to it, including ADMA and
+> I2S, but I don't see neither of them having the "samsung,power-domain"
+> property.
+
+I had that in internal patch while testing.
+
+> 
+> Best regards,
+> Tomasz
+
+Having tried all these options, I still feel removing mau_pd node from
+device tree is the only option.
+
 -- 
-1.8.3.2
+Tushar Behera
