@@ -1,64 +1,146 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 0/4] usb: ehci/ohci-exynos: Move to generic phy framework
-Date: Mon, 28 Apr 2014 15:02:09 +0530
-Message-ID: <CAFp+6iE67ikwj7QU4vwJ8RZKhQo5WFTFb297WiD_Ej3SZ2u+gQ@mail.gmail.com>
-References: <1398677132-30600-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1398677132-30600-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v6] clk: Exynos5250: Add clocks for G3D
+Date: Mon, 28 Apr 2014 15:07:01 +0530
+Message-ID: <1398677821-11529-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:34479 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754482AbaD1JhH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Apr 2014 05:37:07 -0400
+Received: by mail-pa0-f53.google.com with SMTP id ld10so5585510pab.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 02:37:06 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
-On Mon, Apr 28, 2014 at 2:55 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Based and tested on 'usb-next' branch of Greg's usb tree, with relevant
-> device tree patches[1]
+This patch adds the required clocks for ARM Mali IP
+in Exynos5250.
 
-[1] [PATCH v7 0/2] dts: Add usb2phy to Exynos 5250
-     http://www.spinics.net/lists/linux-usb/msg106427.html
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+Changes from v5
+- Addressed comments from Tomasz Figa
+  http://www.spinics.net/lists/arm-kernel/msg326118.html
+Changes from v4
+- Rebased on latest kernel
+- Added macros
+Changes from v3
+- Renamed some clocks as per Tomasz Figa's comments
+Changes from v2
+- Rebased on clk-next
+Changes from v1
+- Removed exporting of parent DIV clock for g3d
+  as per Tomsz Figa's comment.
+---
+ drivers/clk/samsung/clk-exynos5250.c   |   15 ++++++++++++++-
+ include/dt-bindings/clock/exynos5250.h |    4 +++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-
->
-> Changes from v2:
->  - Added two patches in the series for some cleanup.
->    usb: ohci-exynos: Use struct device instead of platform_device
->    usb: ehci-exynos: Use struct device instead of platform_device
->  - Addressed review comments.
->    -- Moved exynos_ohci_phyg_on()/off routines inside
->       exynos_ohci_phy_enable()/disable.
->    -- Added functions exynos_ehci_phy_enable() and exynos_ehci_phy_disable()
->       and moved exynos_ehci_phyg_on()/off routines respectively in them.
->    -- Added necessary checks.
->
-> Kamil Debski (1):
->   usb: ehci-exynos: Change to use phy provided by the generic phy
->     framework
->
-> Vivek Gautam (3):
->   usb: ohci-exynos: Use struct device instead of platform_device
->   usb: ehci-exynos: Use struct device instead of platform_device
->   usb: ohci-exynos: Add facility to use phy provided by the generic phy
->     framework
->
->  .../devicetree/bindings/usb/exynos-usb.txt         |   37 +++++
->  drivers/usb/host/ehci-exynos.c                     |  148 +++++++++++++++++---
->  drivers/usb/host/ohci-exynos.c                     |  141 ++++++++++++++++---
->  3 files changed, 280 insertions(+), 46 deletions(-)
->
-> --
-> 1.7.10.4
->
-
-
-
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index e7ee442..df02526 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -37,6 +37,7 @@
+ #define VPLL_CON0		0x10140
+ #define GPLL_CON0		0x10150
+ #define SRC_TOP0		0x10210
++#define SRC_TOP1		0x10214
+ #define SRC_TOP2		0x10218
+ #define SRC_TOP3		0x1021c
+ #define SRC_GSCL		0x10220
+@@ -71,6 +72,7 @@
+ #define GATE_IP_GSCL		0x10920
+ #define GATE_IP_DISP1		0x10928
+ #define GATE_IP_MFC		0x1092c
++#define GATE_IP_G3D		0x10930
+ #define GATE_IP_GEN		0x10934
+ #define GATE_IP_FSYS		0x10944
+ #define GATE_IP_PERIC		0x10950
+@@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[] __initdata = {
+ 	DIV_CPU0,
+ 	SRC_CORE1,
+ 	SRC_TOP0,
++	SRC_TOP1,
+ 	SRC_TOP2,
+ 	SRC_TOP3,
+ 	SRC_GSCL,
+@@ -133,6 +136,7 @@ static unsigned long exynos5250_clk_regs[] __initdata = {
+ 	DIV_PERIC5,
+ 	GATE_IP_GSCL,
+ 	GATE_IP_MFC,
++	GATE_IP_G3D,
+ 	GATE_IP_GEN,
+ 	GATE_IP_FSYS,
+ 	GATE_IP_PERIC,
+@@ -189,10 +193,12 @@ PNAME(mout_vpllsrc_p)	= { "fin_pll", "sclk_hdmi27m" };
+ PNAME(mout_vpll_p)	= { "mout_vpllsrc", "fout_vpll" };
+ PNAME(mout_cpll_p)	= { "fin_pll", "fout_cpll" };
+ PNAME(mout_epll_p)	= { "fin_pll", "fout_epll" };
++PNAME(mout_gpll_p)	= { "fin_pll", "fout_gpll" };
+ PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
+ PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
+ PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
+ PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
++PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
+ PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
+ PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
+ PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
+@@ -273,12 +279,16 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+ 	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+ 	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+ 	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
++	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
++
++	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+ 
+ 	MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
+ 	MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
+ 	MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
+ 	MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
+ 	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
++	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+ 
+ 	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
+ 	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
+@@ -351,6 +361,8 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+ 	DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+ 	DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
+ 	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
++	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
++							24, 3),
+ 
+ 	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
+ 
+@@ -533,7 +545,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 		0),
+ 	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "mout_aclk333_sub", GATE_IP_MFC, 2, 0,
+ 		0),
+-
++	GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
++					CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ROTATOR, "rotator", "div_aclk266", GATE_IP_GEN, 1, 0, 0),
+ 	GATE(CLK_JPEG, "jpeg", "div_aclk166", GATE_IP_GEN, 2, 0, 0),
+ 	GATE(CLK_MDMA1, "mdma1", "div_aclk266", GATE_IP_GEN, 4, 0, 0),
+diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
+index 922f2dc..a3c6777 100644
+--- a/include/dt-bindings/clock/exynos5250.h
++++ b/include/dt-bindings/clock/exynos5250.h
+@@ -150,11 +150,13 @@
+ #define CLK_G2D			345
+ #define CLK_MDMA0		346
+ #define CLK_SMMU_MDMA0		347
++#define CLK_G3D			348
+ 
+ /* mux clocks */
+ #define CLK_MOUT_HDMI		1024
++#define CLK_MOUT_GPLL		1025
+ 
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		1025
++#define CLK_NR_CLKS		1026
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
