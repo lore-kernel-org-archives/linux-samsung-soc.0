@@ -1,112 +1,53 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 5/5] devfreq: exynos5: Use devm_devfreq_* function using
- device resource management
-Date: Tue, 29 Apr 2014 22:24:45 +0530
-Message-ID: <CAK9yfHyP63QaaBwc4vkkqU4g3+B2DpqeC_11E5+LevWXED0Qxg@mail.gmail.com>
-References: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
-	<1398416894-6782-6-git-send-email-cw00.choi@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v4 6/7] arm64: mm: Implement 4 levels of translation
+ tables
+Date: Tue, 29 Apr 2014 18:04:04 +0100
+Message-ID: <20140429170404.GA32121@localhost>
+References: <000601cf6367$cffab890$6ff029b0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1398416894-6782-6-git-send-email-cw00.choi@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, rafael.j.wysocki@intel.com, Nishanth Menon <nm@ti.com>, Jiri Kosina <jkosina@suse.cz>, labbe.montjoie@gmail.com, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Manish Badarkhe <badarkhe.manish@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <000601cf6367$cffab890$6ff029b0$@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "steve.capper@linaro.org" <steve.capper@linaro.org>, "sungjinn.chung@samsung.com" <sungjinn.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+On Tue, Apr 29, 2014 at 05:59:33AM +0100, Jungseok Lee wrote:
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index 0fd5650..03ec424 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -37,8 +37,9 @@
+> 
+>  /*
+>   * swapper_pg_dir is the virtual address of the initial page table. We place
+> - * the page tables 3 * PAGE_SIZE below KERNEL_RAM_VADDR. The idmap_pg_dir has
+> - * 2 pages and is placed below swapper_pg_dir.
+> + * the page tables 3 * PAGE_SIZE (2 or 3 levels) or 4 * PAGE_SIZE (4 levels)
+> + * below KERNEL_RAM_VADDR. The idmap_pg_dir has 2 pages (2 or 3 levels) or
+> + * 3 pages (4 levels) and is placed below swapper_pg_dir.
+>   */
+>  #define KERNEL_RAM_VADDR       (PAGE_OFFSET + TEXT_OFFSET)
+> 
+> @@ -46,8 +47,13 @@
+>  #error KERNEL_RAM_VADDR must start at 0xXXX80000
+>  #endif
+> 
+> +#ifdef CONFIG_ARM64_4_LEVELS
+> +#define SWAPPER_DIR_SIZE       (4 * PAGE_SIZE)
+> +#define IDMAP_DIR_SIZE         (3 * PAGE_SIZE)
+> +#else
+>  #define SWAPPER_DIR_SIZE       (3 * PAGE_SIZE)
+>  #define IDMAP_DIR_SIZE         (2 * PAGE_SIZE)
+> +#endif
 
-On 25 April 2014 14:38, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch uses devm_devfreq_add_device()/devm_devfreq_register_opp_notifier()
-> to control automatically the resource of devfreq.
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Sachin Kamat <sachin.kamat@linaro.org>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Manish Badarkhe <badarkhe.manish@gmail.com>
-> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> ---
->  drivers/devfreq/exynos/exynos5_bus.c | 23 ++++++++---------------
->  1 file changed, 8 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
-> index ab54a69..1f622f8 100644
-> --- a/drivers/devfreq/exynos/exynos5_bus.c
-> +++ b/drivers/devfreq/exynos/exynos5_bus.c
-> @@ -165,11 +165,6 @@ static int exynos5_int_get_dev_status(struct device *dev,
->  }
->  static void exynos5_int_exit(struct device *dev)
->  {
-> -       struct platform_device *pdev = container_of(dev, struct platform_device,
-> -                                                   dev);
-> -       struct busfreq_data_int *data = platform_get_drvdata(pdev);
-> -
-> -       devfreq_unregister_opp_notifier(dev, data->devfreq);
->  }
-
-Do you need an empty function?
-
->
->  static struct devfreq_dev_profile exynos5_devfreq_int_profile = {
-> @@ -343,30 +338,29 @@ static int exynos5_busfreq_int_probe(struct platform_device *pdev)
->
->         busfreq_mon_reset(ppmu_data);
->
-> -       data->devfreq = devfreq_add_device(dev, &exynos5_devfreq_int_profile,
-> +       data->devfreq = devm_devfreq_add_device(dev, &exynos5_devfreq_int_profile,
->                                            "simple_ondemand", NULL);
-> -
->         if (IS_ERR(data->devfreq)) {
->                 err = PTR_ERR(data->devfreq);
-
-No need of err.   return PTR_ERR(data->devfreq);
-
-> -               goto err_devfreq_add;
-> +               return err;
->         }
->
-> -       devfreq_register_opp_notifier(dev, data->devfreq);
-> +       err = devm_devfreq_register_opp_notifier(dev, data->devfreq);
-> +       if (err < 0) {
-> +               dev_err(dev, "Failed to register opp notifier\n");
-> +               return err;
-> +       }
->
->         err = register_pm_notifier(&data->pm_notifier);
->         if (err) {
->                 dev_err(dev, "Failed to setup pm notifier\n");
-> -               goto err_devfreq_add;
-> +               return err;
->         }
->
->         /* TODO: Add a new QOS class for int/mif bus */
->         pm_qos_add_request(&data->int_req, PM_QOS_NETWORK_THROUGHPUT, -1);
->
->         return 0;
-> -
-> -err_devfreq_add:
-> -       devfreq_remove_device(data->devfreq);
-> -       return err;
->  }
->
->  static int exynos5_busfreq_int_remove(struct platform_device *pdev)
-> @@ -375,7 +369,6 @@ static int exynos5_busfreq_int_remove(struct platform_device *pdev)
->
->         pm_qos_remove_request(&data->int_req);
->         unregister_pm_notifier(&data->pm_notifier);
-> -       devfreq_remove_device(data->devfreq);
->
->         return 0;
->  }
-> --
-> 1.8.0
->
-
-
+Mark Rutland was doing some clean-up of this code to no longer place
+swapper_pg_dir and idmap_pg_dir below the kernel image. I'm not sure
+whether the patches ended up on the list yet (not a problem for now,
+just a slight change for your patches).
 
 -- 
-With warm regards,
-Sachin
+Catalin
