@@ -1,56 +1,36 @@
 From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v4 2/7] arm64: Decouple page size from level of
- translation tables
-Date: Tue, 29 Apr 2014 15:40:52 +0100
-Message-ID: <20140429144052.GJ17007@arm.com>
-References: <000201cf6367$c8084440$5818ccc0$@samsung.com>
+Subject: Re: [PATCH v4 3/7] arm64: Introduce a kernel configuration option
+ for VA_BITS
+Date: Tue, 29 Apr 2014 15:45:06 +0100
+Message-ID: <20140429144506.GK17007@arm.com>
+References: <000301cf6367$ca12e150$5e38a3f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:34982 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757819AbaD2Opk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Apr 2014 10:45:40 -0400
 Content-Disposition: inline
-In-Reply-To: <000201cf6367$c8084440$5818ccc0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <000301cf6367$ca12e150$5e38a3f0$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Jungseok Lee <jays.lee@samsung.com>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "steve.capper@linaro.org" <steve.capper@linaro.org>, "sungjinn.chung@samsung.com" <sungjinn.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Jungseok,
-
-On Tue, Apr 29, 2014 at 05:59:20AM +0100, Jungseok Lee wrote:
-> +choice
-> +	prompt "Level of translation tables"
-> +	default ARM64_3_LEVELS if ARM64_4K_PAGES
-> +	default ARM64_2_LEVELS if ARM64_64K_PAGES
+On Tue, Apr 29, 2014 at 05:59:23AM +0100, Jungseok Lee wrote:
+> +config ARM64_VA_BITS
+> +	int "Virtual address space size"
+> +	range 39 39 if ARM64_4K_PAGES && ARM64_3_LEVELS
+> +	range 42 42 if ARM64_64K_PAGES && ARM64_2_LEVELS
 > +	help
-> +	  Allows level of translation tables.
-> +
-> +config ARM64_2_LEVELS
-> +	bool "2 level"
-> +	depends on ARM64_64K_PAGES
-> +	help
-> +	  This feature enables 2 levels of translation tables.
-> +
-> +config ARM64_3_LEVELS
-> +	bool "3 level"
-> +	depends on ARM64_4K_PAGES
-> +	help
-> +	  This feature enables 3 levels of translation tables.
-> +
-> +endchoice
+> +	  This feature is determined by a combination of page size and
+> +	  level of translation tables.
 
-As I mentioned previously
-(http://www.spinics.net/linux/lists/arm-kernel/msg319552.html), just
-expose options for the VA space bits rather than the number of levels.
-You can still keep the number of levels config options but not visible
-in menuconfig (though I think you could also hide them in some header
-and avoid config altogether). The VA bits config options can be:
-
-VA_BITS_39 if 4K (3 levels)
-VA_BITS_42 if 64K (2 levels)
-VA_BITS_47 if 16K (3 levels)
-VA_BITS_48 if 4K || 16K || 64K (4/4/3 levels depending on page size)
-
-That's more meaningful to people configuring the kernel.
+OK, so you are doing the VA bits selection already. But see my other
+email about setting only exposing this and hiding the number of levels
+(though number of levels can be mentioned in the help).
 
 -- 
 Catalin
