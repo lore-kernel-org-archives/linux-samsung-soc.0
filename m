@@ -1,36 +1,56 @@
 From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v4 3/7] arm64: Introduce a kernel configuration option
- for VA_BITS
-Date: Tue, 29 Apr 2014 15:45:06 +0100
-Message-ID: <20140429144506.GK17007@arm.com>
-References: <000301cf6367$ca12e150$5e38a3f0$@samsung.com>
+Subject: Re: [PATCH v4 4/7] arm64: Add a description on 48-bit address space
+ with 4KB pages
+Date: Tue, 29 Apr 2014 15:47:59 +0100
+Message-ID: <20140429144759.GL17007@arm.com>
+References: <000401cf6367$cc461500$64d23f00$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:34982 "EHLO
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:43810 "EHLO
 	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757819AbaD2Opk (ORCPT
+	by vger.kernel.org with ESMTP id S1750952AbaD2Ose (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 10:45:40 -0400
+	Tue, 29 Apr 2014 10:48:34 -0400
 Content-Disposition: inline
-In-Reply-To: <000301cf6367$ca12e150$5e38a3f0$@samsung.com>
+In-Reply-To: <000401cf6367$cc461500$64d23f00$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jungseok Lee <jays.lee@samsung.com>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "steve.capper@linaro.org" <steve.capper@linaro.org>, "sungjinn.chung@samsung.com" <sungjinn.chung@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>
 
-On Tue, Apr 29, 2014 at 05:59:23AM +0100, Jungseok Lee wrote:
-> +config ARM64_VA_BITS
-> +	int "Virtual address space size"
-> +	range 39 39 if ARM64_4K_PAGES && ARM64_3_LEVELS
-> +	range 42 42 if ARM64_64K_PAGES && ARM64_2_LEVELS
-> +	help
-> +	  This feature is determined by a combination of page size and
-> +	  level of translation tables.
+On Tue, Apr 29, 2014 at 05:59:27AM +0100, Jungseok Lee wrote:
+> --- a/Documentation/arm64/memory.txt
+> +++ b/Documentation/arm64/memory.txt
+> @@ -8,10 +8,11 @@ This document describes the virtual memory layout used by the AArch64
+>  Linux kernel. The architecture allows up to 4 levels of translation
+>  tables with a 4KB page size and up to 3 levels with a 64KB page size.
+>  
+> -AArch64 Linux uses 3 levels of translation tables with the 4KB page
+> -configuration, allowing 39-bit (512GB) virtual addresses for both user
+> -and kernel. With 64KB pages, only 2 levels of translation tables are
+> -used but the memory layout is the same.
+> +AArch64 Linux uses 3 levels and 4 levels of translation tables with
+> +the 4KB page configuration, allowing 39-bit (512GB) and 48-bit (256TB)
+> +virtual addresses, respectively, for both user and kernel. With 64KB
+> +pages, only 2 levels of translation tables are used but the memory layout
+> +is the same.
 
-OK, so you are doing the VA bits selection already. But see my other
-email about setting only exposing this and hiding the number of levels
-(though number of levels can be mentioned in the help).
+Any reason why we couldn't use 48-bit address space with 64K pages
+(implying 3 levels)?
+
+> -AArch64 Linux memory layout with 64KB pages:
+> +AArch64 Linux memory layout with 4KB pages + 4 levels:
+> +
+> +Start			End			Size		Use
+> +-----------------------------------------------------------------------
+> +0000000000000000	0000ffffffffffff	 256TB		user
+> +
+> +ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
+
+BTW, maybe as a separate patch we should change the "end" to be
+exclusive. It becomes harder to modify (I've been through this a few
+times already ;)) and even follow the changes.
 
 -- 
 Catalin
