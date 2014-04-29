@@ -1,58 +1,82 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCHv2 2/4] ARM: dts: exynos4: add exynos_usbphy node
-Date: Tue, 29 Apr 2014 14:53:24 +0530
-Message-ID: <CAK9yfHx-m0+znU+pt7emqNtop4Y4wKEOcCQBXmw2akusavtUzA@mail.gmail.com>
-References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
-	<1398409152-14770-3-git-send-email-chanho61.park@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESUBMIT RFC PATCH v2 3/3] drivers: mfd: Add support for Exynos
+ PMU driver
+Date: Tue, 29 Apr 2014 10:27:23 +0100
+Message-ID: <20140429092723.GG29462@lee--X1>
+References: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
+ <1398687607-4554-4-git-send-email-pankaj.dubey@samsung.com>
+ <20140428122646.GF21279@lee--X1>
+ <535F5AA7.2050001@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:58950 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757111AbaD2JXZ (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:43684 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752134AbaD2J1a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 05:23:25 -0400
-Received: by mail-oa0-f50.google.com with SMTP id i11so8611545oag.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 02:23:24 -0700 (PDT)
-In-Reply-To: <1398409152-14770-3-git-send-email-chanho61.park@samsung.com>
+	Tue, 29 Apr 2014 05:27:30 -0400
+Received: by mail-wi0-f171.google.com with SMTP id bs8so871380wib.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 02:27:29 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <535F5AA7.2050001@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <chanho61.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, b.zolnierkie@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Chanho,
+> >>This patch moves Exynos PMU driver implementation from
+> >>"arm/mach-exynos" to "drivers/mfd".
+> >>This driver is mainly used for setting misc bits of register from P=
+MU IP
+> >>of Exynos SoC which will be required to configure before Suspend/Re=
+sume.
+> >>Currently all these settings are done in "arch/arm/mach-exynos/pmu.=
+c" but
+> >>moving ahead for ARM64 based SoC support, there is a need of DT bas=
+ed
+> >>implementation of PMU driver.
+> >>This driver uses already existing DT binding information.
+> >>
+> >>CC: Sangbeom Kim <sbkim73@samsung.com>
+> >>CC: Samuel Ortiz <sameo@linux.intel.com>
+> >>CC: Lee Jones <lee.jones@linaro.org>
+> >>Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >>---
+> >>  arch/arm/mach-exynos/Kconfig                           |    2 ++
+> >>  arch/arm/mach-exynos/Makefile                          |    2 --
+> >>  drivers/mfd/Kconfig                                    |    9 +++=
+++++++
+> >>  drivers/mfd/Makefile                                   |    1 +
+> >>  arch/arm/mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c |    0
+> >>  5 files changed, 12 insertions(+), 2 deletions(-)
+> >>  rename arch/arm/mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c (=
+100%)
+> >So I just took a look at the code as zero changes looks suspicious t=
+o
+> >me. The driver can not simply be copied and pasted into the MFD
+> >subsystem in its current state.
+> >
+> >The fundamental question is; is this chip actually an MFD? What does
+> >it do besides Power Management?
+>=20
+> Exynos PMU chip controls different power states of Exynos, so mainly =
+it
+> does power management related stuff. Apart from this it has few regis=
+ters
+> which controls PHY of various IP blocks of Exynos such as USB, HDMI,
+> ADC etc. But these phy controlling register are currently being acces=
+sed
+> via "syscon" driver provided regmap APIs. For same the same reason
+> Exynos PMU has second compatibility string as "syscon".
 
-On 25 April 2014 12:29, Chanho Park <chanho61.park@samsung.com> wrote:
-> This patch enables a exynos_usbphy node for exynos4 SoCs.
-> A exynos4x12 usb phy node is almost same with 4210's one
-> except compatible string and pmu syscon.
->
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Kamil Debski <k.debski@samsung.com>
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi    | 10 ++++++++++
->  arch/arm/boot/dts/exynos4x12.dtsi |  5 +++++
->  2 files changed, 15 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 264066f..5f9b23b 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -278,6 +278,16 @@
->                 status = "disabled";
->         };
->
-> +       exynos_usbphy: exynos-usbphy@125B0000 {
-> +               compatible = "samsung,exynos4210-usb2-phy";
-> +               reg = <0x125B0000 0x100>;
-> +               samsung,pmureg-phandle = <&pmu_system_controller>;
-> +               clocks = <&clock CLK_USB_DEVICE>, <&clock CLK_XUSBXTI>;
-> +               clock-names = "phy", "ref";
-> +               status = "disabled";
+I suggest that this is not suitable for the MFD subsystem then.
 
-For readability it is better if status line is the last entry of the node.
+Try drivers/power.
 
----
-With warm regards,
-Sachin
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
