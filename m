@@ -1,42 +1,38 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 2/2] cpufreq: Remove exynos_sort_descend_freq_table in exynos5440-cpufreq.c
-Date: Tue, 29 Apr 2014 11:51:03 +0530
-Message-ID: <CAKohponkT9o4WVUo=fNmVq+kMjm68Z3hdFVMhe7+8qsKPPc2CQ@mail.gmail.com>
-References: <000701cf636b$3d1d13c0$b7573b40$@samsung.com>
-	<CAKohpo=ei0v69iQtjd6cjmfUCo-+sd1JzNc4RDza92nxaPoiVg@mail.gmail.com>
-	<CADGdYn7cA940sxPszP5TA5tMnXD_=QkH3U3Wedy2DoC++rwRkQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add PD entry to MFC codec on 5420
+Date: Tue, 29 Apr 2014 12:19:43 +0530
+Message-ID: <1398754183-30764-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:37854 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754901AbaD2GVE (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:62934 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755136AbaD2GvD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 02:21:04 -0400
-Received: by mail-oa0-f51.google.com with SMTP id l6so732489oag.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 23:21:03 -0700 (PDT)
-In-Reply-To: <CADGdYn7cA940sxPszP5TA5tMnXD_=QkH3U3Wedy2DoC++rwRkQ@mail.gmail.com>
+	Tue, 29 Apr 2014 02:51:03 -0400
+Received: by mail-pa0-f49.google.com with SMTP id kq14so736313pab.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 23:51:02 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Kachhap <amit.kachhap@gmail.com>
-Cc: Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:CPU FREQUENCY DRI..." <cpufreq@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-On 29 April 2014 11:44, Amit Kachhap <amit.kachhap@gmail.com> wrote:
-> In the frequency table dts file, the frequencies are arranged in
-> descending order which maps 1 to 1 with other frequency parameter to
-> be calculated and programmed in some registers.
-> But the OPP library works by generating the frequencies in ascending
-> order which breaks the above logic. Ideally i should expect frequency
-> values in same order as what is supplied.
-> So OPP library should not change the order or should take input flags
-> flags like,
-> dev_pm_opp_init_cpufreq_table(TABLE_ORDER_ASCEND|
-> TABLE_ORDER_DESCEND|TABLE_ORDER_ORIGINAL )
+PD entry was missing in MFC codec node.
 
-Looks a good idea :)
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
-This is what I wrote in another thread:
-
-What I would recommend is, use .driver_data field to hold what has to
-be written to hardware for any frequency. And then simply use
-driver_data instead of index.
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 6f662b5cc90d..2fd36b0a7568 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -131,6 +131,7 @@
+ 		interrupts = <0 96 0>;
+ 		clocks = <&clock CLK_MFC>;
+ 		clock-names = "mfc";
++		samsung,power-domain = <&mfc_pd>;
+ 	};
+ 
+ 	mmc_0: mmc@12200000 {
+-- 
+1.7.9.5
