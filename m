@@ -1,73 +1,112 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: RE: [PATCHv2 2/4] ARM: dts: exynos4: add exynos_usbphy node
-Date: Tue, 29 Apr 2014 19:21:10 +0900
-Message-ID: <012c01cf6394$bdb4dc10$391e9430$@samsung.com>
-References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
- <1398409152-14770-3-git-send-email-chanho61.park@samsung.com>
- <CAK9yfHx-m0+znU+pt7emqNtop4Y4wKEOcCQBXmw2akusavtUzA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16457 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757373AbaD2KVM convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 06:21:12 -0400
-In-reply-to: <CAK9yfHx-m0+znU+pt7emqNtop4Y4wKEOcCQBXmw2akusavtUzA@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Xia Kaixu <kaixu.xia@linaro.org>
+Subject: [PATCH 01/15] ASoC: CS42L51 and WM8962 codecs depend on INPUT
+Date: Tue, 29 Apr 2014 19:18:22 +0800
+Message-ID: <1398770316-19715-2-git-send-email-kaixu.xia@linaro.org>
+References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linaro-kernel@lists.linaro.org, arnd@arndb.de, kaixu.xia@linaro.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Timur Tabi <timur@tabi.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kamil Debski' <k.debski@samsung.com>, devicetree@vger.kernel.org
 
-Hi Sachin,
+From: Arnd Bergmann <arnd@arndb.de>
 
-> -----Original Message-----
-> From: Sachin Kamat [mailto:sachin.kamat@linaro.org]
-> Sent: Tuesday, April 29, 2014 6:23 PM
-> To: Chanho Park
-> Cc: Kukjin Kim; linux-samsung-soc; Tomasz Figa; Kamil Debski;
-> devicetree@vger.kernel.org
-> Subject: Re: [PATCHv2 2/4] ARM: dts: exynos4: add exynos_usbphy node
-> 
-> Hi Chanho,
-> 
-> On 25 April 2014 12:29, Chanho Park <chanho61.park@samsung.com> wrote:
-> > This patch enables a exynos_usbphy node for exynos4 SoCs.
-> > A exynos4x12 usb phy node is almost same with 4210's one
-> > except compatible string and pmu syscon.
-> >
-> > Cc: Tomasz Figa <t.figa@samsung.com>
-> > Cc: Kamil Debski <k.debski@samsung.com>
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos4.dtsi    | 10 ++++++++++
-> >  arch/arm/boot/dts/exynos4x12.dtsi |  5 +++++
-> >  2 files changed, 15 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4.dtsi
-> b/arch/arm/boot/dts/exynos4.dtsi
-> > index 264066f..5f9b23b 100644
-> > --- a/arch/arm/boot/dts/exynos4.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4.dtsi
-> > @@ -278,6 +278,16 @@
-> >                 status = "disabled";
-> >         };
-> >
-> > +       exynos_usbphy: exynos-usbphy@125B0000 {
-> > +               compatible = "samsung,exynos4210-usb2-phy";
-> > +               reg = <0x125B0000 0x100>;
-> > +               samsung,pmureg-phandle = <&pmu_system_controller>;
-> > +               clocks = <&clock CLK_USB_DEVICE>, <&clock CLK_XUSBXTI>;
-> > +               clock-names = "phy", "ref";
-> > +               status = "disabled";
-> 
-> For readability it is better if status line is the last entry of the
-> node.
+Building ARM randconfig got into a situation where CONFIG_INPUT
+is turned off and SND_SOC_ALL_CODECS is turned on, which failed
+for two codecs trying to use the input subsystem. Some other 
+drivers also select one of these codecs and consequently need an
+explicit dependency added. 
 
-Yes. It could be more readable it is in the last line. I'll update it in next patch.
-Thanks.
+Appending to the dependency list seems the easiest way out,
+since this is not a practical limitation. If anyone really
+needs to build these codecs for a kernel with no input support,
+a more sophisticated solution can be implemented.
 
-Best Regards,
-Chanho Park
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Xia Kaixu <kaixu.xia@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Timur Tabi <timur@tabi.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-input@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+---
+ sound/soc/codecs/Kconfig  |    8 ++++----
+ sound/soc/fsl/Kconfig     |    2 +-
+ sound/soc/samsung/Kconfig |    2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index f0e8401..d4260d3 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -40,7 +40,7 @@ config SND_SOC_ALL_CODECS
+ 	select SND_SOC_ALC5632 if I2C
+ 	select SND_SOC_CQ0093VC if MFD_DAVINCI_VOICECODEC
+ 	select SND_SOC_CS42L51 if I2C
+-	select SND_SOC_CS42L52 if I2C
++	select SND_SOC_CS42L52 if I2C && INPUT
+ 	select SND_SOC_CS42L73 if I2C
+ 	select SND_SOC_CS4270 if I2C
+ 	select SND_SOC_CS4271 if SND_SOC_I2C_AND_SPI
+@@ -127,7 +127,7 @@ config SND_SOC_ALL_CODECS
+ 	select SND_SOC_WM8955 if I2C
+ 	select SND_SOC_WM8960 if I2C
+ 	select SND_SOC_WM8961 if I2C
+-	select SND_SOC_WM8962 if I2C
++	select SND_SOC_WM8962 if I2C && INPUT
+ 	select SND_SOC_WM8971 if I2C
+ 	select SND_SOC_WM8974 if I2C
+ 	select SND_SOC_WM8978 if I2C
+@@ -282,7 +282,7 @@ config SND_SOC_CS42L51
+ 
+ config SND_SOC_CS42L52
+ 	tristate "Cirrus Logic CS42L52 CODEC"
+-	depends on I2C
++	depends on I2C && INPUT
+ 
+ config SND_SOC_CS42L73
+ 	tristate "Cirrus Logic CS42L73 CODEC"
+@@ -598,7 +598,7 @@ config SND_SOC_WM8961
+ 
+ config SND_SOC_WM8962
+ 	tristate "Wolfson Microelectronics WM8962 CODEC"
+-	depends on I2C
++	depends on I2C && INPUT
+ 
+ config SND_SOC_WM8971
+ 	tristate
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index 338a916..f4069d0 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -187,7 +187,7 @@ config SND_SOC_EUKREA_TLV320
+ 
+ config SND_SOC_IMX_WM8962
+ 	tristate "SoC Audio support for i.MX boards with wm8962"
+-	depends on OF && I2C
++	depends on OF && I2C && INPUT
+ 	select SND_SOC_WM8962
+ 	select SND_SOC_IMX_PCM_DMA
+ 	select SND_SOC_IMX_AUDMUX
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index f2e2891..14568be 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -204,7 +204,7 @@ config SND_SOC_SPEYSIDE
+ 
+ config SND_SOC_TOBERMORY
+ 	tristate "Audio support for Wolfson Tobermory"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && INPUT
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8962
+ 
+-- 
+1.7.9.5
