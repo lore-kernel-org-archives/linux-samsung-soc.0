@@ -1,100 +1,113 @@
-From: Xia Kaixu <kaixu.xia@linaro.org>
-Subject: [PATCH 13/15] ASoC: SND_S3C_DMA_LEGACY needs S3C24XX_DMA
-Date: Tue, 29 Apr 2014 19:18:34 +0800
-Message-ID: <1398770316-19715-14-git-send-email-kaixu.xia@linaro.org>
-References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linaro-kernel@lists.linaro.org, arnd@arndb.de, kaixu.xia@linaro.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V2 2/9] drm/panel: add pre_enable and post_disable routines
+Date: Tue, 29 Apr 2014 17:45:11 +0530
+Message-ID: <CAEC9eQO7MpgmgaM4sJnx_Gug2g6dX8T3Whzt8GhnJi70ek2ZDg@mail.gmail.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1398119958-32005-3-git-send-email-ajaykumar.rs@samsung.com>
+	<20140422081948.GA17275@ulmo>
+	<CAEC9eQO8Kahh2YVO4nCjk2m+TzJNJ_iSkVRLe0NM_yqL9uPNaw@mail.gmail.com>
+	<20140423072915.GV10722@phenom.ffwll.local>
+	<20140423074212.GF31226@ulmo>
+	<CAEC9eQNCvfUbaRL7DnNVF21QjwCX2E2sndHRDvLUE9EL1cVN4Q@mail.gmail.com>
+	<20140424183104.GB27443@ulmo>
+	<CAEC9eQNCnp5GzrG82OKf5LOo=VE1S-aKy5OVQTEAG53RX4QDnw@mail.gmail.com>
+	<CAEC9eQNaMgvpr73Nq2wz+MuvWBUCy=1gEUpsxHLHHqX_KPiLDg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:51300 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933447AbaD2MPM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Apr 2014 08:15:12 -0400
+Received: by mail-vc0-f177.google.com with SMTP id if11so127653vcb.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 05:15:11 -0700 (PDT)
+In-Reply-To: <CAEC9eQNaMgvpr73Nq2wz+MuvWBUCy=1gEUpsxHLHHqX_KPiLDg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+ping!
 
-SND_S3C_DMA_LEGACY can only be set on S3C24xx, which does not
-(yet) support the dmaengine framework, so samsung_dma_get_ops()
-fails to link if S3C24XX_DMA is disabled:
-
-sound/built-in.o: In function `dma_hw_params':
-:(.text+0x7f310): undefined reference to `s3c_dma_get_ops'
-sound/built-in.o: In function `s3c_ac97_trigger':
-:(.text+0x7f7f0): undefined reference to `s3c_dma_get_ops'
-sound/built-in.o: In function `s3c_ac97_mic_trigger':
-:(.text+0x7f884): undefined reference to `s3c_dma_get_ops'
-sound/built-in.o: In function `s3c2412_i2s_trigger':
-:(.text+0x80944): undefined reference to `s3c2410_dma_ctrl'
-
-This makes sure S3C24XX_DMA is always enabled when we need
-it, just like we do it for the same dependency in SND_S3C24XX_I2S,
-which has the same problem. Selecting "S3C2410_DMA" as we did
-before does not actually have the intended effect, since
-that one is only used on the s3c2410 and s3c2442 SoCs of the
-s3c24xx family, but not the others, so we can remove this
-from Kconfig.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Xia Kaixu <kaixu.xia@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org
----
- sound/soc/samsung/Kconfig |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 99cc196..7b610a8 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -1,7 +1,6 @@
- config SND_SOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
- 	depends on PLAT_SAMSUNG
--	select S3C2410_DMA if ARCH_S3C24XX
- 	select S3C64XX_PL080 if ARCH_S3C64XX
- 	select SND_S3C_DMA if !ARCH_S3C24XX
- 	select SND_S3C_DMA_LEGACY if ARCH_S3C24XX
-@@ -15,11 +14,11 @@ config SND_S3C_DMA
- 	tristate
- 
- config SND_S3C_DMA_LEGACY
-+	select S3C24XX_DMA
- 	tristate
- 
- config SND_S3C24XX_I2S
- 	tristate
--	select S3C24XX_DMA
- 
- config SND_S3C_I2SV2_SOC
- 	tristate
-@@ -27,7 +26,6 @@ config SND_S3C_I2SV2_SOC
- config SND_S3C2412_SOC_I2S
- 	tristate
- 	select SND_S3C_I2SV2_SOC
--	select S3C2410_DMA
- 
- config SND_SAMSUNG_PCM
- 	tristate
-@@ -83,7 +81,6 @@ config SND_SOC_SAMSUNG_SMDK_WM8994
- config SND_SOC_SAMSUNG_SMDK2443_WM9710
- 	tristate "SoC AC97 Audio support for SMDK2443 - WM9710"
- 	depends on SND_SOC_SAMSUNG && MACH_SMDK2443
--	select S3C2410_DMA
- 	select AC97_BUS
- 	select SND_SOC_AC97_CODEC
- 	select SND_SAMSUNG_AC97
-@@ -94,7 +91,6 @@ config SND_SOC_SAMSUNG_SMDK2443_WM9710
- config SND_SOC_SAMSUNG_LN2440SBC_ALC650
- 	tristate "SoC AC97 Audio support for LN2440SBC - ALC650"
- 	depends on SND_SOC_SAMSUNG && ARCH_S3C24XX
--	select S3C2410_DMA
- 	select AC97_BUS
- 	select SND_SOC_AC97_CODEC
- 	select SND_SAMSUNG_AC97
--- 
-1.7.9.5
+On Fri, Apr 25, 2014 at 11:46 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> On Fri, Apr 25, 2014 at 11:34 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>> On Friday, April 25, 2014, Thierry Reding <thierry.reding@gmail.com> wrote:
+>>>
+>>> On Thu, Apr 24, 2014 at 12:56:02AM +0530, Ajay kumar wrote:
+>>> > Thierry,
+>>> >
+>>> > On Wed, Apr 23, 2014 at 1:12 PM, Thierry Reding
+>>> > <thierry.reding@gmail.com> wrote:
+>>> > > On Wed, Apr 23, 2014 at 09:29:15AM +0200, Daniel Vetter wrote:
+>>> [...]
+>>> > >> Imo this makes sense, especially if we go through with the idea talked
+>>> > >> about yesterday of creating a drm_bridge to wrap-up a drm_panel with
+>>> > >> sufficient isolation between all components.
+>>> > >
+>>> > > I'm not at all comfortable with these. The names are totally confusing.
+>>> > > Next somebody will need to do something after the panel has been enabled
+>>> > > and we'll have to introduce .post_enable() and .pre_disable() functions.
+>>> > > And worse, what if somebody needs something to be done between
+>>> > > .pre_enable() and .enable()? .post_pre_enable()? Where does it end?
+>>> > >
+>>> > > According to the above description the only reason why we need this is
+>>> > > to avoid visible glitches when the panel is already on, but the video
+>>> > > stream hasn't started yet. If that's the only reason why we need this,
+>>> > > then perhaps adding a way for a panel to expose the associated backlight
+>>> > > would be better?
+>>> > Actually, we need not expose the entire backlight device.
+>>> > AFAIK, the glitch is caused when you enable BL_EN before
+>>> > there is valid video data. So, one way to mask off the glitch is to
+>>> > follow this sequence:
+>>> > -- power up the panel.
+>>> > -- start video data, (start PWM here or)
+>>> > -- (start PWM here), enable backlight
+>>>
+>>> That's very difficult to get right, isn't it? Even if you have fine-
+>>> grained control over what to enable you still need a way to determine
+>>> _when_ it's safe to enable the backlight. Typically I guess that would
+>>> be the duration of one frame (or perhaps 2, depending on when the panel
+>>> syncs to the video signal).
+>> We need not "determine", its already present in LVDS datasheet.
+>> The LVDS datasheet says at least 200ms delay is needed from "Valid
+>> data" to "BL on".
+>>
+>>> Perhaps it could even by sync'ed to the VBLANK?
+>> No. vblanks are related to crtc. And the bridge/panel driver should be
+>> independent of vblank.
+>>
+>>> > The problem is that the above scenario cannot be mapped to panel-simple driver.
+>>> > IMO, panel_simple should provide enable/disable controls both for LCD
+>>> > and backlight.
+>>> > something like panel_simple_lcd_enable/panel_simple_led_enable, and
+>>> > panel_simple_lcd_disable/panel_simple_led_disable.
+>>>
+>>> That's not what the simple panel driver can do. If we want this it needs
+>>> to be solved in a generic way for all panels since they all need to use
+>>> the drm_panel_*() functions to abstract away the details from drivers
+>>> that use the panels.
+>> Right. So only I have added pre_enable and post_disable callbacks.
+>> Using that name won't harm existing panel drivers and still addresses
+>> our requirement.
+>>
+>>
+>> Regards,
+>> Ajay
+>
+>
+> Thierry :
+> Are you really ok with the new callback names? like pre_enable and post_disable?
+> Adding those new callbacks really won't harm the existing panels anyhow.
+>
+> Daniel, Rob :
+> I think I have given sufficient amount of information as to why the concept of
+> drm_panel_bridge fails and why we cannot have callbacks for drm_panel
+> inside crtc helpers
+> or any other generic place.
+>
+> Please let me know your final opinion so that I can start reworking on
+> this series.
+>
+> Thanks and regards,
+> Ajay Kumar
