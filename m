@@ -1,94 +1,130 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
- Exynos System MMU
-Date: Tue, 29 Apr 2014 08:55:35 +0300
-Message-ID: <87eh0gd6i0.fsf@nvidia.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
- <1398584283-22846-12-git-send-email-shaik.ameer@samsung.com>
- <4447051.OnJtcFSqFV@wuerfel> <20140428103919.GF19455@ulmo>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Tue, 29 Apr 2014 15:02:40 +0900
+Message-ID: <535F4080.5070208@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
+ <1852265.JnliZKqXKk@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140428103919.GF19455@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "t.figa@samsung.com" <t.figa@samsung.com>, Will Deacon <will.deacon@arm.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "joshi@samsung.com" <joshi@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "Varun.Sethi@freescale.com" <Varun.Sethi@freescale.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "prathyush.k@samsung.com" <prathyush.k@samsung.com>, "sachin.kamat@linaro.org" <sachin.kamat@linaro.org>, "joro@8bytes.org" <joro@8bytes.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "grundler@chromium.org" <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "a.motakis@virtualopensystems.com" <a.motakis@virtualopensystems.com>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:21731 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752812AbaD2GCq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Apr 2014 02:02:46 -0400
+In-reply-to: <1852265.JnliZKqXKk@avalon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 
+Hi Laurent,
 
-Thierry Reding <thierry.reding@gmail.com> writes:
+Thank you for sharing your idea.
 
-> * PGP Signed by an unknown key
+On 04/29/2014 12:05 AM, Laurent Pinchart wrote:
+> Hi YoungJun,
 >
-> On Sun, Apr 27, 2014 at 08:23:06PM +0200, Arnd Bergmann wrote:
->> On Sunday 27 April 2014 13:07:43 Shaik Ameer Basha wrote:
->> > +- mmu-masters: A phandle to device nodes representing the master for which
->> > +               the System MMU can provide a translation. Any additional values
->> > +              after the phandle will be ignored because a System MMU never
->> > +              have two or more masters. "#stream-id-cells" specified in the
->> > +              master's node will be also ignored.
->> > +              If more than one phandle is specified, only the first phandle
->> > +              will be treated.
->> 
->> This seems completely backwards: Why would you list the masters for an IOMMU
->> in the IOMMU node?
->> 
->> The master should have a standard property pointing to the IOMMU instead.
->> 
->> We don't have a generic binding for IOMMUs yet it seems, but the time is
->> overdue to make one.
->> 
->> Consider this NAKed until there is a generic binding for IOMMUs that all
->> relevant developers have agreed to.
+> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
+>> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
+>>> Hi YoungJun,
+>>>
+>>> Thank you for the patch.
+>>>
+>>> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+>>>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
+>>>> driver.
+>>>>
+>>>> Changelog v2:
+>>>> - Declares delay, size properties in probe routine instead of DT
+>>>> Changelog v3:
+>>>> - Moves CPU timings relevant properties from FIMD DT
+>>>>
+>>>>     (commented by Laurent Pinchart, Andrzej Hajda)
+>>>>
+>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>>
+>>>>    drivers/gpu/drm/panel/Kconfig         |    7 +
+>>>>    drivers/gpu/drm/panel/Makefile        |    1 +
+>>>>    drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 ++++++++++++++++++++++++++
+>>>>    3 files changed, 577 insertions(+)
+>>>>    create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>
+>>> [snip]
+>>>
+>>>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+>>>> index 0000000..1282678
+>>>> --- /dev/null
+>>>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>> @@ -0,0 +1,569 @@
+>>>
+>>> [snip]
+>>>
+>>>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+>>>> +{
+>>>> +	struct drm_connector *connector = panel->connector;
+>>>> +	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
+>>>> +	struct drm_display_mode *mode;
+>>>> +
+>>>> +	mode = drm_mode_create(connector->dev);
+>>>> +	if (!mode) {
+>>>> +		DRM_ERROR("failed to create a new display mode\n");
+>>>> +		return 0;
+>>>> +	}
+>>>> +
+>>>> +	drm_display_mode_from_videomode(&ctx->vm, mode);
+>>>> +	mode->width_mm = ctx->width_mm;
+>>>> +	mode->height_mm = ctx->height_mm;
+>>>> +	connector->display_info.width_mm = mode->width_mm;
+>>>> +	connector->display_info.height_mm = mode->height_mm;
+>>>> +
+>>>> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+>>>> +	mode->private = (void *)&ctx->cpu_timings;
+>>>
+>>> Wouldn't it make sense to create a new get_interface_params (or similar)
+>>> operation for drm_panel to query interface configuration parameters
+>>> instead of shoving it in the mode private field ?
+>>
+>> You mean "new get_interface_params operation" is different from
+>> get_modes() ?
+>>
+>> Till now, struct drm_display_mode and most of mode relevant APIs are
+>> only for video interface.
+>> And CPU interface also needs video mode configurations.
+>>
+>> I have a plan to implement the CPU interface relevant APIs like video
+>> mode ones, but I think they should be used under current DRM mode APIs
+>> like fill_modes, get_modes and so on.
+>> So after that implementation, this private field will be replaced by
+>> new ones.
+>>
+>> Could you explain it in more detail?
 >
-> I'd like to take this opportunity and revive one of the hibernating
-> patch sets that we have for Tegra. The last effort to get things merged
-> was back in January I think. I haven't bothered to look up the reference
-> since it's probably good to start from scratch anyway.
->
-> The latest version of the binding that was under discussion back then I
-> think looked something like this:
->
-> 	device@... {
-> 		iommus = <&iommu [spec]>[, <&other_iommu [other_spec]>...];
-> 	};
->
-> And possibly with a iommu-names property to go along with that. The idea
-> being that a device can be a master on possibly multiple IOMMUs. Using
-> the above it would also be possible to have one device be multiple
-> masters on the same IOMMU.
->
-> On Tegra the specifier would be used to encode a memory controller's
-> client ID. One discussion point back at the time was to encode the ID as
-> a bitmask to allow more than a single master per entry. Another solution
-> which I think is a little cleaner and more generic, would be to use one
-> entry per master and use a single cell to encode the client ID. Devices
-> with multiple clients to the same IOMMU could then use multiple entries
-> referencing the same IOMMU.
->
-> I've added Hiroshi Doyu on Cc since he knows the Tegra IOMMU best.
-> Hiroshi, can you summarize exactly what the proposed bindings were. If
-> my memory serves me well they were mostly along the lines of what Arnd
-> proposes here, and perhaps they are something that can also be used for
-> Exynos.
+> The idea is that the interface parameters (RD/WR signals timings in this case,
+> but this could also include MIPI DSI lane configuration or any other kind of
+> physical interface parameters) are distinct from the video modes.
 
-You can find the detail from:
+Yes. The RD/WR signals timings are distinct from the video modes,
+but in my opinion, others are covered by video mode already.
 
-[PATCHv7 09/12] iommu/tegra: smmu: get swgroups from DT "iommus="
-  http://lists.linuxfoundation.org/pipermail/iommu/2013-December/007212.html
+>
+> Do you see a need to tie tie interface parameters with drm_display_mode ? Can
+> they be mode-specific ? In any case I'd like not to use the private field of
+> drm_display_mode. If we need to tie both information together then it should
+> be done in a standard way.
 
-You can specify any parameters which your iommu requires from a device,
-and a device(master) can have multiple IOMMUs.
+I think this cpu-mode-timings is in struct drm_display_mode
+(NOT by *private) and requires drm_display_mode_from_cpumode()
+because the drm_display_mode_from_videomode() covers only video mode.
 
- 	device@... {
- 		iommus = <&iommu [spec]>[, <&other_iommu [other_spec]>...];
- 	};
+I'll try implement it as soon as possible.
+
+Thank you,
+Best regards YJ.
+>
