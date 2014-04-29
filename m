@@ -1,95 +1,79 @@
-From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Tue, 29 Apr 2014 13:07:54 -0700
-Message-ID: <CANEJEGs6TXNzE8cWYgEKfFSsD2w5XiYvwSbhQ_+gtfzfs+6udA@mail.gmail.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<4780885.JaktFvJeC7@wuerfel> <20140428193056.GD22135@arm.com>
-	<5242619.ZKgCdLW1L4@wuerfel>
-	<20140429181601.GE3582@e103592.cambridge.arm.com>
+From: Mitchel Humpherys <mitchelh@codeaurora.org>
+Subject: Re: [PATCH v4 1/7] arm64: Use pr_* instead of printk
+Date: Tue, 29 Apr 2014 13:35:23 -0700
+Message-ID: <vnkwsioveuwk.fsf@mitchelh-linux.qualcomm.com>
+References: <000101cf6367$c4c219f0$4e464dd0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140429181601.GE3582-M5GwZQ6tE7x5pKCnmE3YQBJ8xKzm50AiAL8bYrjMMd8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:49842 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964940AbaD2UfS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Apr 2014 16:35:18 -0400
+In-Reply-To: <000101cf6367$c4c219f0$4e464dd0$@samsung.com> (Jungseok Lee's
+	message of "Tue, 29 Apr 2014 13:59:14 +0900")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, kgene.kim@samsung.com, steve.capper@linaro.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com
 
-On Tue, Apr 29, 2014 at 11:16 AM, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org> wrote:
-...
-> An IOMMU is really a specialised bridge
-
-Is a GART a bridge?
-
-IOMMUs can provide three basic functions:
-1) remap address space to reach phys mem ranges that the device is
-otherwise not capable of accessing (classic 32-bit DMA to reach 64-bit
-Phys address)
-
-2) implement scatter-gather (page level granularity) so the device
-doesn't have to
-
-3) provide some level of system protection against "rogue" DMA by
-forcing everything through a DMA mapping interface and faulting when
-encountering unmapped DMA transactions.
-
-
-I summarize IOMMUs as: "participate in the routing of MMIO
-transactions in the system fabric."
-In this sense, IOMMUs are sort of a bridge. Defining what kind of
-routing they can do (coalesce transactions? remapping MMIO domains?)
-and which address ranges they route would describe most of that
-functionality.
-
-This "remapping" of MMIO transaction is also usually asymmetric.
-Meaning routing of "downstream" transactions *might* be completely
-different than the routing + remapping of transactions heading
-upstream. DMA mappings services are designed to handle only the
-transactions generated (aka "mastered") by a downstream device.
-
-
->, so it may be cleaner to describe
-> an IOMMU using a real bus node in the DT, if we also define a way to make
-> master/slave linkages explicit where it matters.
-
-"where it matters" is a bit vague.  Is the goal to just enable DMA
-mapping services to "do the right thing" for a device that can
-generate DMA?
-
-
-> The problems of how to describe master/slave linkage, coherency between
-> masters, and how to describe sideband ID information present on the bus
-> are really interrelated.
+On Mon, Apr 28 2014 at 09:59:14 PM, Jungseok Lee <jays.lee@samsung.com> wrote:
+> This patch fixed the following checkpatch complaint as using pr_*
+> instead of printk.
 >
-> If we can come up with a consistent description for these things, it
-> should help us to describe IOMMUs, bus mastering peripherals, MSI
-> controllers and complex bridges in a more uniform way, without having to
-> reinvent so much for each binding.  That's my hope anyway.
+> WARNING: printk() should include KERN_ facility level
+>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> ---
+>  arch/arm64/kernel/traps.c |   14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index 7ffaddd..0484e81 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -65,7 +65,7 @@ static void dump_mem(const char *lvl, const char *str, unsigned long bottom,
+>  	fs = get_fs();
+>  	set_fs(KERNEL_DS);
+>  
+> -	printk("%s%s(0x%016lx to 0x%016lx)\n", lvl, str, bottom, top);
+> +	pr_emerg("%s%s(0x%016lx to 0x%016lx)\n", lvl, str, bottom, top);
 
-I don't know...these all deal with MMIO routing. The parts that are
-dynamic should be detectable by platform specific SW (in general).
-But where it's not (e.g. ISTR MSI transaction addressing is defined by
-Intel Arch), it needs to be described by _something_  and device tree
-seems to be a reasonable place to do that.
+Currently this printk is being called with lvl=KERN_EMERG or lvl="". In
+the case of lvl=KERN_EMERG leaving lvl in is redundant. In the case of
+lvl="" this is a behavioral change (printing to a different log
+level). Was this intended?
 
-> I've been hacking around some proposals on these areas which are a bit
-> different from the approach suggested here -- I'll try to summarise some
-> of it intelligibly and post something tomorrow so that we can discuss.
+>  
+>  	for (first = bottom & ~31; first < top; first += 32) {
+>  		unsigned long p;
+> @@ -83,7 +83,7 @@ static void dump_mem(const char *lvl, const char *str, unsigned long bottom,
+>  					sprintf(str + i * 9, " ????????");
+>  			}
+>  		}
+> -		printk("%s%04lx:%s\n", lvl, first & 0xffff, str);
+> +		pr_emerg("%s%04lx:%s\n", lvl, first & 0xffff, str);
 
-Are you planning on consolidating Documentation/devicetree/bindings/iommu/ ?
-Do you care about Documentation/Intel-IOMMU.txt?
+Ditto
 
-Lots of stuff in Documentation/ touch different parts of the MMIO routing uses.
+>  	}
+>  
+>  	set_fs(fs);
+> @@ -124,7 +124,7 @@ static void dump_instr(const char *lvl, struct pt_regs *regs)
+>  			break;
+>  		}
+>  	}
+> -	printk("%sCode: %s\n", lvl, str);
+> +	pr_emerg("%sCode: %s\n", lvl, str);
 
-hth,
-grant
+Ditto. Also called with with lvl=KERN_INFO.
+
+
+Mitch
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
