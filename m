@@ -1,58 +1,78 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RESEND PATCH v3 5/5] regulator: tps65090: Make FETs more
- reliable by adding retries
-Date: Tue, 29 Apr 2014 10:07:42 -0700
-Message-ID: <20140429170742.GE15125@sirena.org.uk>
-References: <1398268565-4789-3-git-send-email-dianders@chromium.org>
- <1398268565-4789-6-git-send-email-dianders@chromium.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/3] [media] s5p-mfc: Core support to add v8 decoder
+Date: Tue, 29 Apr 2014 22:45:30 +0530
+Message-ID: <CAK9yfHzB11kJbOcL-jHHo_P4D2nXtHuGRM_FT0mNuvV0SLywrQ@mail.gmail.com>
+References: <1398257864-12097-1-git-send-email-arun.kk@samsung.com>
+	<1398257864-12097-3-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49494 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932529AbaD2RIV (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:37791 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758281AbaD2RPb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 13:08:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1398268565-4789-6-git-send-email-dianders@chromium.org>
+	Tue, 29 Apr 2014 13:15:31 -0400
+Received: by mail-oa0-f54.google.com with SMTP id i7so588227oag.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 10:15:30 -0700 (PDT)
+In-Reply-To: <1398257864-12097-3-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, olof@lixom.net, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, lee.jones@linaro.org, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, lgirdwood@gmail.com, linux-kernel@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@chromium.org>, Kiran Avnd <avnd.kiran@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
 
+Hi Arun,
 
---gMR3gsNFwZpnI/Ts
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 23 April 2014 18:27, Arun Kumar K <arun.kk@samsung.com> wrote:
+> From: Kiran AVND <avnd.kiran@samsung.com>
+>
+> This patch adds variant data and core support for
+> V8 decoder. This patch also adds the register definition
+> file for new firmware version v8 for MFC.
+>
+> Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
+> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+<...>
+> +
+> +/* Returned value register for specific setting */
+> +#define S5P_FIMV_D_RET_PICTURE_TAG_TOP_V8      0xf674
+> +#define S5P_FIMV_D_RET_PICTURE_TAG_BOT_V8      0xf678
+> +#define S5P_FIMV_D_MVC_VIEW_ID_V8              0xf6d8
+> +
+> +/* SEI related information */
+> +#define S5P_FIMV_D_FRAME_PACK_SEI_AVAIL_V8     0xf6dc
+> +
+> +/* MFCv8 Context buffer sizes */
+> +#define MFC_CTX_BUF_SIZE_V8            (30 * SZ_1K)    /*  30KB */
 
-On Wed, Apr 23, 2014 at 08:56:05AM -0700, Doug Anderson wrote:
-> An issue was discovered with tps65090 where sometimes the FETs
-> wouldn't actually turn on when requested (they would report
-> overcurrent).  The most problematic FET was the one used for the LCD
+Please include header file for size macros.
 
-Applied, thanks.
+<...>
+>  };
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 48a14b5..f0e63f5 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -23,8 +23,7 @@
+>  #include <media/v4l2-ioctl.h>
+>  #include <media/videobuf2-core.h>
+>  #include "regs-mfc.h"
+> -#include "regs-mfc-v6.h"
+> -#include "regs-mfc-v7.h"
+> +#include "regs-mfc-v8.h"
+>
+>  /* Definitions related to MFC memory */
+>
+> @@ -705,5 +704,6 @@ void set_work_bit_irqsave(struct s5p_mfc_ctx *ctx);
+>  #define IS_TWOPORT(dev)                (dev->variant->port_num == 2 ? 1 : 0)
+>  #define IS_MFCV6_PLUS(dev)     (dev->variant->version >= 0x60 ? 1 : 0)
+>  #define IS_MFCV7(dev)          (dev->variant->version >= 0x70 ? 1 : 0)
 
---gMR3gsNFwZpnI/Ts
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Is MFC v8 superset of MFC v7?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+> +#define IS_MFCV8(dev)          (dev->variant->version >= 0x80 ? 1 : 0)
 
-iQIcBAEBAgAGBQJTX9xbAAoJELSic+t+oim9t5kP/10HC8UNSZEcnCzDi21HphdQ
-ZZD8p2OTDdvpmGY77KSeZeIVGASd9twrnBZQpx91Iw4z3SZpPfMmcmCnd38G8EYi
-cRJcGJKOK/GnX0WmPfzarz1yGK4lR1FJ2Q5ftacXle4nZre3mJtdUZy7kFbPwEuv
-yShOJvvp435MKv9GoJ1BNuCUCrEIPyLGqDbZOuAY5JcwIxbCPG5XJiAfWqHcFrsJ
-Lok3vN6F+rBeVUp7uqvzt5y80FPAmuW14tE9Ig9eIecabQEoAl2mfcTtToXfXIgJ
-NsphoeQFaARROFRUA36CbTuDZDpjQJm5PHkd1kwRjhZnZd35wbbJdov+erUo1BkT
-OSajHmo0EM1KbQSEhaLbwpA9jRKWJ9zSPl1a0kQg4buglle4UzuwNHu+y33S/ohC
-1yja43I91hekJenH8jXEhfsLuvso89+mq0ebpXJIl/KtHDIq5OF6wUUF8S5u6jI1
-ordSRBqNedVZhkg/QPzeQmk+yc8/U46lcXL3PBEiYGXYQ/F77diMK+n4nOkL+ct6
-8adQvTTd7FeV2Pi9zqrNgbqmf+RwE9JCIsO5hmb8DKbgnTl4x4N158WWWvFG5Xmb
-UiHYiwDx3lK42dbL8KVN3j0hyrWf1zofGKDP1uDZgWu+mCmyncS/3d6rOQgzAPpH
-wYlt/DqgA+1JqCkeIcz6
-=PNW9
------END PGP SIGNATURE-----
-
---gMR3gsNFwZpnI/Ts--
+-- 
+With warm regards,
+Sachin
