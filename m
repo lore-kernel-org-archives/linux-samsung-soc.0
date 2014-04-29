@@ -1,16 +1,25 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
-Date: Tue, 29 Apr 2014 21:45:53 +0900
-Message-ID: <535F9F01.90305@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
- <1852265.JnliZKqXKk@avalon> <535F4080.5070208@samsung.com>
- <535F6448.6000005@samsung.com>
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH V2 7/9] drm/bridge: ptn3460: add drm_panel controls
+Date: Tue, 29 Apr 2014 09:14:02 -0400
+Message-ID: <CAF6AEGsppN+4HO0XZNK0gWTtfpfY8LszNoFVL9z_6QxQ=ta1mQ@mail.gmail.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-8-git-send-email-ajaykumar.rs@samsung.com>
+ <CAF6AEGtEa6rBarSXEkmZrreEKGcwTOCWhhx-OT9JmAhBhAk_Zw@mail.gmail.com>
+ <CAEC9eQPiUdR_0gKVxmA8KhHD7z2AehRGOUU25e5zQz=PQyDqpA@mail.gmail.com>
+ <CAEC9eQPPoU3wWgzOi6DQP=Lxq8EC-AOpRJS20uTjwZa=vfY_Rw@mail.gmail.com>
+ <CAF6AEGuL3=bvBPGCDW5_db58ie23enY8VwNG7wCeQTn+JM4-Rw@mail.gmail.com>
+ <CAEC9eQPtBCtUtRsHsJ4u_58PX7_UrcVJRkL4XOoM9M1sT1eiCQ@mail.gmail.com>
+ <CAF6AEGspP6itAuioyQSQapvbG95MzFvJABg2UrgvNaX7hempsg@mail.gmail.com>
+ <CAEC9eQOtDtwswxBV_qCmm_23TYY74PuiYt=SS+Z=vPw0ZOFijg@mail.gmail.com>
+ <CAEC9eQPxsdtKZdFx91gkNbbrQM+Ch9TpguzPe55-YUFM0=zOVw@mail.gmail.com>
+ <CAEC9eQPvYQqU2Xem2sCYW0tM9+d68+4WLfC47G79NUXE4kzpMg@mail.gmail.com>
+ <CAKMK7uEOo=0hhgmqztVG+nZEXLrYvg4fWFmjrUUHj+tRPhfm7A@mail.gmail.com>
+ <CAEC9eQNvWXnDhfsJJnd-T8sa4qD6jWsTpmr9tPKAC5UopED=jQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <535F6448.6000005@samsung.com>
+In-Reply-To: <CAEC9eQNvWXnDhfsJJnd-T8sa4qD6jWsTpmr9tPKAC5UopED=jQ@mail.gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,181 +29,83 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, a.hajda@samsung.com, Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej, Laurent, Thierry.
-
-CCing Steffen Trumtrar,
-
-On 04/29/2014 05:35 PM, YoungJun Cho wrote:
-> On 04/29/2014 03:02 PM, YoungJun Cho wrote:
->> Hi Laurent,
->>
->> Thank you for sharing your idea.
->>
->> On 04/29/2014 12:05 AM, Laurent Pinchart wrote:
->>> Hi YoungJun,
->>>
->>> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
->>>> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
->>>>> Hi YoungJun,
->>>>>
->>>>> Thank you for the patch.
->>>>>
->>>>> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
->>>>>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
->>>>>> driver.
->>>>>>
->>>>>> Changelog v2:
->>>>>> - Declares delay, size properties in probe routine instead of DT
->>>>>> Changelog v3:
->>>>>> - Moves CPU timings relevant properties from FIMD DT
->>>>>>
->>>>>>     (commented by Laurent Pinchart, Andrzej Hajda)
->>>>>>
->>>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>>> ---
->>>>>>
->>>>>>    drivers/gpu/drm/panel/Kconfig         |    7 +
->>>>>>    drivers/gpu/drm/panel/Makefile        |    1 +
->>>>>>    drivers/gpu/drm/panel/panel-s6e3fa0.c |  569
->>>>>> ++++++++++++++++++++++++++
->>>>>>    3 files changed, 577 insertions(+)
->>>>>>    create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>>>
->>>>> [snip]
->>>>>
->>>>>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>>>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
->>>>>> index 0000000..1282678
->>>>>> --- /dev/null
->>>>>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>>>> @@ -0,0 +1,569 @@
->>>>>
->>>>> [snip]
->>>>>
->>>>>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
->>>>>> +{
->>>>>> +    struct drm_connector *connector = panel->connector;
->>>>>> +    struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
->>>>>> +    struct drm_display_mode *mode;
->>>>>> +
->>>>>> +    mode = drm_mode_create(connector->dev);
->>>>>> +    if (!mode) {
->>>>>> +        DRM_ERROR("failed to create a new display mode\n");
->>>>>> +        return 0;
->>>>>> +    }
->>>>>> +
->>>>>> +    drm_display_mode_from_videomode(&ctx->vm, mode);
->>>>>> +    mode->width_mm = ctx->width_mm;
->>>>>> +    mode->height_mm = ctx->height_mm;
->>>>>> +    connector->display_info.width_mm = mode->width_mm;
->>>>>> +    connector->display_info.height_mm = mode->height_mm;
->>>>>> +
->>>>>> +    mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
->>>>>> +    mode->private = (void *)&ctx->cpu_timings;
->>>>>
->>>>> Wouldn't it make sense to create a new get_interface_params (or
->>>>> similar)
->>>>> operation for drm_panel to query interface configuration parameters
->>>>> instead of shoving it in the mode private field ?
->>>>
->>>> You mean "new get_interface_params operation" is different from
->>>> get_modes() ?
->>>>
->>>> Till now, struct drm_display_mode and most of mode relevant APIs are
->>>> only for video interface.
->>>> And CPU interface also needs video mode configurations.
->>>>
->>>> I have a plan to implement the CPU interface relevant APIs like video
->>>> mode ones, but I think they should be used under current DRM mode APIs
->>>> like fill_modes, get_modes and so on.
->>>> So after that implementation, this private field will be replaced by
->>>> new ones.
->>>>
->>>> Could you explain it in more detail?
->>>
->>> The idea is that the interface parameters (RD/WR signals timings in
->>> this case,
->>> but this could also include MIPI DSI lane configuration or any other
->>> kind of
->>> physical interface parameters) are distinct from the video modes.
->>
->> Yes. The RD/WR signals timings are distinct from the video modes,
->> but in my opinion, others are covered by video mode already.
->>
->>>
->>> Do you see a need to tie tie interface parameters with
->>> drm_display_mode ? Can
->>> they be mode-specific ? In any case I'd like not to use the private
->>> field of
->>> drm_display_mode. If we need to tie both information together then it
->>> should
->>> be done in a standard way.
->>
->> I think this cpu-mode-timings is in struct drm_display_mode
->> (NOT by *private) and requires drm_display_mode_from_cpumode()
->> because the drm_display_mode_from_videomode() covers only video mode.
->>
->> I'll try implement it as soon as possible.
->>
+On Mon, Apr 28, 2014 at 9:08 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> Daniel,
 >
-> For your information, there are two modes in MIPI DSI specification,
-> which are video mode and command mode.
-> And CS, RD/WR timings are related with MIPI DBI specification,
-> VSYNC, HSYNC timings are related with MIPI DPI specification.
->
-> So I think all things relevant with command mode should be arranged
-> the name of command mode(NOT CPU mode, like video mode NOT RGB mode)
-> in MIPI DSI, and we don't need to consider MIPI DBI like we do MIPI DPI
-> for video mode.
->
-
-First, for MIPI command mode, hactive and vactive are only required.
-Sorry Andrzej for confusing reply.
-I have to modify exynos fimd pixel clock calculating function.
-
-Second, for generic MIPI command mode timing support, commandmode.c and
-of_commandmode.c are required in drivers/video.
-And the struct drm_panel_command_mode_timings should be moved into 
-commandmode.h as struct commandmode.
-
-And the last(this is important and I need your ideas), adds this command 
-mode timings into struct display_timing.
- From hierarchical aspects, display_timing(s) should contain command 
-mode timings too, but it only contains video mode timings.
-If I do it, current video mode relevant DTs will be broken.
-
-So IMHO it is required to rename of_*_display_timing() as 
-of_*_videomode_timing() and add of_*_commandmode_timing() into 
-of_display_timing.c.
-And should add command mode timings into DT like display-timings-command
-to distinguish it from display-timings(for videomode).
-
-What do you think about it?
-
-Thank you.
-Best regards YJ
-
-> Thank you.
-> Best regards YJ
->
->> Thank you,
->> Best regards YJ.
->>>
+> On Sun, Apr 27, 2014 at 6:25 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> On Fri, Apr 25, 2014 at 8:17 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>>> We can call panel_enable/disable at the right point. Even the bridge chips
+>>> expect the same. So, I am not ok with combining the bridge and panel and
+>>> calling the fxn pointers from crtc_helpers.
+>>> So, either we leave it the way it is in this patch (call drm_panel
+>>> functions at right points) or
+>>> we don't use drm_panel to control the panel sequence and instead use few DT
+>>> properties and regulators, inside the bridge chip driver.
 >>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
+>> That wasn't really suggested, but instead the idea was to provide a
+>> default drm_bridge which wraps the drm_panel so that you could more
+>> easily chain them up.
+> What do you mean by "default" drm_bridge?
+> I just want to clear few things. Let me explain what I have understood:
+> What I understand is that Rob wants me to create a common
+> structure which wraps up drm_panel and drm_bridge into a single structure:
+>   struct drm_panel_bridge {
+>     struct drm_bridge base;
+>     struct drm_panel *panel;
+>     struct drm_bridge *bridge; /* optional */  ==> Really not sure why
+> this is needed!
+>   };
 >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>   static void drm_panel_bridge_enable(struct drm_bridge *bridge)
+>   {
+>     struct drm_panel_bridge *pb = to_panel_bridge(bridge);
+>     if (pb->bridge)
+>       pb->bridge->funcs->enable(pb->bridge);
+>     pb->panel->funcs->enable(pb->panel);
+>   }
 >
+> And now, the above function becomes a common function
+> (also with an ordering issue btw panel and bridge).
+> Where do we keep it? And, where do we call it from?
+
+my proposal involves no change to crtc helpers.  The later variation
+(with composite_bridge so you could choose the order) would have a
+sequence along the lines of:
+
+crtc helpers:
++ bridge_funcs->enable(): -> composite_bridge_enable()
+   + cbridge->b1->funcs->enable(): -> ptn3460_bridge_enable()
+   + cbridge->b2->funcs->enable(): -> panel_bridge_enable();
+       + pbridge->panel->funcs->enable(): -> foo_panel_enable()
+
+or if the order needs to be swapped you can use ptn3460_bridge as b2
+and panel bridge as b1.
+
+BR,
+-R
+
+>> Also I'm not really happy that the bridge callbacks have been added to
+>> the drm helpers (I'd prefer if driver callbacks would bear that
+>> responsibility). But you can always create your own drm_bridge
+>> integration.
+> Do you mean, the bridge calls should be moved out of common drm_helper
+> functions and called from platform specific drivers instead?
+>
+>> In any case your concern that drivers need to control
+>> when certain callbacks are called is shared by everyone here afaics.
+>> And I also don't see any issues with Rob's proposal in this regard.
+>> -Daniel
+>> --
+>> Daniel Vetter
+>> Software Engineer, Intel Corporation
+>> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>
+> Please let me know if my understanding is correct and correct me if
+> there is a misconception.
+>
+> Regards,
+> Ajay Kumar
