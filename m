@@ -1,57 +1,68 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RESEND PATCH v3 2/5] charger: tps65090: Allow charger module to
- be used when no irq
-Date: Tue, 29 Apr 2014 09:39:46 -0700
-Message-ID: <CAD=FV=W=Ffye5wp0PhJ2uX4jhEQkTKA4VTT4LyX2ZdByfE4UaQ@mail.gmail.com>
-References: <1398268565-4789-3-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
+Date: Tue, 29 Apr 2014 09:51:20 -0700
+Message-ID: <CAD=FV=VXPDdSx8Dxng8miu=wcdnDJPAheSD8BMXq0WdjJeJEUw@mail.gmail.com>
+References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
+ <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
+ <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
+ <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
+ <20140428091914.GK6264@lee--X1>
+ <CAD=FV=UEwfNX+uf70OV4LB39s=mJyxTkC63g4iYrE7hcvyEdgw@mail.gmail.com>
+ <20140429082146.GE29462@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398268565-4789-3-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anton Vorontsov <anton@enomsg.org>
-Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140429082146.GE29462@lee--X1>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Anton,
+Lee,
 
-On Wed, Apr 23, 2014 at 8:56 AM, Doug Anderson <dianders@chromium.org> wrote:
-> On the ARM Chromebook tps65090 has two masters: the AP (the main
-> processor running linux) and the EC (the embedded controller).  The AP
-> is allowed to mess with FETs but the EC is in charge of charge control.
->
-> The tps65090 interupt line is routed to both the AP and the EC, which
-> can cause quite a headache.  Having two people adjusting masks and
-> acking interrupts is a recipe for disaster.
->
-> In the shipping kernel we had a hack to have the AP pay attention to
-> the IRQ but not to ack it.  It also wasn't supposed to configure the
-> IRQ in any way.  That hack allowed us to detect when the device was
-> charging without messing with the EC's state.
->
-> The current tps65090 infrastructure makes the above difficult, and it
-> was a bit of a hack to begin with.  Rather than uglify the driver to
-> support it, just extend the driver's existing notion of "no irq" to
-> the charger.  This makes the charger code poll every 2 seconds for AC
-> detect, which is sufficient.
->
-> For proper functioning, requires (mfd: tps65090: Don't tell child
-> devices we have an IRQ if we don't).  If we don't have that patch
-> we'll simply fail to probe on devices without an interrupt (just like
-> we did before this patch).
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v3: None
-> Changes in v2:
-> - Split noirq (polling mode) changes into MFD and charger
->
->  drivers/power/tps65090-charger.c | 76 +++++++++++++++++++++++++++++++---------
->  1 file changed, 59 insertions(+), 17 deletions(-)
+On Tue, Apr 29, 2014 at 1:21 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> I don't use TBs for MFD yet, as I've never seen the need.  The current
+> WoW is to only create extra branches when I have patch{es, sets} to
+> share.  If I start using a more TB focused methodology it will be
+> insinuated that the branches are stable - I like the fact that this is
+> _not_ the case.  Currently I am able to rebase, rework and reorder the
+> repo as and when I see fit, and do regularly. Except the IBs of course.
 
-All the rest of this series has been acked and applied.  Do you have
-time to review this patch?
+OK.
 
-Thanks!  :)
+>> Patches #1 - #5 are bonafide bugfixes irrespective of the i2c tunnel.
+>
+> I only want to create an IB if I know it's going to be used, else I'd
+> prefer the patches remain transient.  Why are you so keen to rush into
+> having these patches applied?  They _will_ make it into v3.15, whether
+> they are applied immediately or after a length of time (in the case
+> that Wolfram does not respond).
+
+No strong reason, and it's actually not even a huge deal if they make
+it to 3.15 or in 3.16.  Having outstanding patches simply increases
+the number of things that I need to keep track of / check up on.  If
+patches are good to go and reviewed I like to get them landed.
+
+Another reason I'd love to see patches landed sooner is that it will
+unblock me sending the next set of patches up.  I collected all of the
+most important patches in this series, but there are a bunch of other
+patches in our tree that would be nice to eventually send up.  At the
+moment I'm in a position where I can dedicate a reasonable amount of
+time to upstreaming.  It's likely that before long I will get sucked
+into tight deadlines and will have to squeeze upstreaming in among
+other priorities.
+
+I see a response from Wolfram now, so I'll spin a V2 in the next day
+or two with changes to the tunnel driver.  I'm at ELC so my hacking
+time may be limited.
 
 -Doug
