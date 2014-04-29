@@ -1,130 +1,59 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
-Date: Tue, 29 Apr 2014 15:02:40 +0900
-Message-ID: <535F4080.5070208@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
- <1852265.JnliZKqXKk@avalon>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH-RESEND] ARM: dts: Add arm-pmu node for exynos4412
+Date: Tue, 29 Apr 2014 11:37:45 +0530
+Message-ID: <535F41B1.70404@linaro.org>
+References: <1376044914-1759-1-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21731 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752812AbaD2GCq (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:33960 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755170AbaD2GHu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 02:02:46 -0400
-In-reply-to: <1852265.JnliZKqXKk@avalon>
+	Tue, 29 Apr 2014 02:07:50 -0400
+Received: by mail-pd0-f181.google.com with SMTP id y13so332631pdi.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Apr 2014 23:07:49 -0700 (PDT)
+In-Reply-To: <1376044914-1759-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Laurent,
+On 08/09/2013 04:11 PM, Chanho Park wrote:
+> The Exynos4412 has 4 cpus and each has a performance counter.
+> Thus, we should define 4 interrupts which are combined by irq-combiner for arm
+> pmu.
+> 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412.dtsi |    6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index e743e67..cfad655 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -35,6 +35,12 @@
+>  			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+>  	};
+>  
+> +	pmu {
+> +		compatible = "arm,cortex-a9-pmu";
+> +		interrupt-parent = <&combiner>;
+> +		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+> +	};
+> +
+>  	mct@10050000 {
+>  		compatible = "samsung,exynos4412-mct";
+>  		reg = <0x10050000 0x800>;
+> 
 
-Thank you for sharing your idea.
+Tested on Exynos4412 based Origen-Quad board. You would required to
+rebase it on latest code though.
 
-On 04/29/2014 12:05 AM, Laurent Pinchart wrote:
-> Hi YoungJun,
->
-> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
->> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
->>> Hi YoungJun,
->>>
->>> Thank you for the patch.
->>>
->>> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
->>>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
->>>> driver.
->>>>
->>>> Changelog v2:
->>>> - Declares delay, size properties in probe routine instead of DT
->>>> Changelog v3:
->>>> - Moves CPU timings relevant properties from FIMD DT
->>>>
->>>>     (commented by Laurent Pinchart, Andrzej Hajda)
->>>>
->>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>> ---
->>>>
->>>>    drivers/gpu/drm/panel/Kconfig         |    7 +
->>>>    drivers/gpu/drm/panel/Makefile        |    1 +
->>>>    drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 ++++++++++++++++++++++++++
->>>>    3 files changed, 577 insertions(+)
->>>>    create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>
->>> [snip]
->>>
->>>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
->>>> index 0000000..1282678
->>>> --- /dev/null
->>>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>> @@ -0,0 +1,569 @@
->>>
->>> [snip]
->>>
->>>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
->>>> +{
->>>> +	struct drm_connector *connector = panel->connector;
->>>> +	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
->>>> +	struct drm_display_mode *mode;
->>>> +
->>>> +	mode = drm_mode_create(connector->dev);
->>>> +	if (!mode) {
->>>> +		DRM_ERROR("failed to create a new display mode\n");
->>>> +		return 0;
->>>> +	}
->>>> +
->>>> +	drm_display_mode_from_videomode(&ctx->vm, mode);
->>>> +	mode->width_mm = ctx->width_mm;
->>>> +	mode->height_mm = ctx->height_mm;
->>>> +	connector->display_info.width_mm = mode->width_mm;
->>>> +	connector->display_info.height_mm = mode->height_mm;
->>>> +
->>>> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
->>>> +	mode->private = (void *)&ctx->cpu_timings;
->>>
->>> Wouldn't it make sense to create a new get_interface_params (or similar)
->>> operation for drm_panel to query interface configuration parameters
->>> instead of shoving it in the mode private field ?
->>
->> You mean "new get_interface_params operation" is different from
->> get_modes() ?
->>
->> Till now, struct drm_display_mode and most of mode relevant APIs are
->> only for video interface.
->> And CPU interface also needs video mode configurations.
->>
->> I have a plan to implement the CPU interface relevant APIs like video
->> mode ones, but I think they should be used under current DRM mode APIs
->> like fill_modes, get_modes and so on.
->> So after that implementation, this private field will be replaced by
->> new ones.
->>
->> Could you explain it in more detail?
->
-> The idea is that the interface parameters (RD/WR signals timings in this case,
-> but this could also include MIPI DSI lane configuration or any other kind of
-> physical interface parameters) are distinct from the video modes.
+Tested-by: Tushar Behera <tushar.behera@linaro.org>
 
-Yes. The RD/WR signals timings are distinct from the video modes,
-but in my opinion, others are covered by video mode already.
-
->
-> Do you see a need to tie tie interface parameters with drm_display_mode ? Can
-> they be mode-specific ? In any case I'd like not to use the private field of
-> drm_display_mode. If we need to tie both information together then it should
-> be done in a standard way.
-
-I think this cpu-mode-timings is in struct drm_display_mode
-(NOT by *private) and requires drm_display_mode_from_cpumode()
-because the drm_display_mode_from_videomode() covers only video mode.
-
-I'll try implement it as soon as possible.
-
-Thank you,
-Best regards YJ.
->
+-- 
+Tushar Behera
