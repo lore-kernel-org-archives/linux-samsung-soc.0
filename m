@@ -1,105 +1,66 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Tue, 29 Apr 2014 23:00:29 +0200
-Message-ID: <7044616.kdaKNu3Qet@wuerfel>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<20140429181601.GE3582@e103592.cambridge.arm.com>
-	<CANEJEGs6TXNzE8cWYgEKfFSsD2w5XiYvwSbhQ_+gtfzfs+6udA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Tue, 29 Apr 2014 15:29:15 -0700
+Message-ID: <20140429222915.GU15125@sirena.org.uk>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
+ <20140424133920.GA12304@sirena.org.uk>
+ <5359E18B.60600@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <CANEJEGs6TXNzE8cWYgEKfFSsD2w5XiYvwSbhQ_+gtfzfs+6udA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dXvu6+ixFx2ZffE8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51053 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756637AbaD2W3e (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Apr 2014 18:29:34 -0400
+Content-Disposition: inline
+In-Reply-To: <5359E18B.60600@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
 
-On Tuesday 29 April 2014 13:07:54 Grant Grundler wrote:
-> On Tue, Apr 29, 2014 at 11:16 AM, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org> wrote:
-> ...
-> > An IOMMU is really a specialised bridge
-> 
-> Is a GART a bridge?
-> 
-> IOMMUs can provide three basic functions:
-> 1) remap address space to reach phys mem ranges that the device is
-> otherwise not capable of accessing (classic 32-bit DMA to reach 64-bit
-> Phys address)
-> 
-> 2) implement scatter-gather (page level granularity) so the device
-> doesn't have to
-> 
-> 3) provide some level of system protection against "rogue" DMA by
-> forcing everything through a DMA mapping interface and faulting when
-> encountering unmapped DMA transactions.
 
-[ 4) provide isolation between multiple contexts, typically for purposes
-     of virtualization]
+--dXvu6+ixFx2ZffE8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> I summarize IOMMUs as: "participate in the routing of MMIO
-> transactions in the system fabric."
-> In this sense, IOMMUs are sort of a bridge. Defining what kind of
-> routing they can do (coalesce transactions? remapping MMIO domains?)
-> and which address ranges they route would describe most of that
-> functionality.
-> 
-> This "remapping" of MMIO transaction is also usually asymmetric.
-> Meaning routing of "downstream" transactions *might* be completely
-> different than the routing + remapping of transactions heading
-> upstream. DMA mappings services are designed to handle only the
-> transactions generated (aka "mastered") by a downstream device.
+On Fri, Apr 25, 2014 at 09:46:11AM +0530, Tushar Behera wrote:
+> On 04/24/2014 07:09 PM, Mark Brown wrote:
 
-For the purposes of the DT binding, we have a 'ranges' property
-that defines the downstream translation (CPU-to-MMIO) and a
-'dma-ranges' property for the opposite address translation
-(device-to-memory).
+> > defined.  Why is that?  Also, why is the secondary I2S playback stream
+> > not supported (this may be a reason to restrict to only the one I2S
+> > interface)?
 
-> >, so it may be cleaner to describe
-> > an IOMMU using a real bus node in the DT, if we also define a way to make
-> > master/slave linkages explicit where it matters.
-> 
-> "where it matters" is a bit vague.  Is the goal to just enable DMA
-> mapping services to "do the right thing" for a device that can
-> generate DMA?
+> AFAICS, I2S driver doesn't support secondary DAI with DT (dai type is
+> always TYPE_PRI in case of DT). Hence I could not find a setup to test
+> secondary dai with this board.
 
-Yes. It's very complicated unfortunately, because we have to be
-able to deal with arbitrary combinations of a lot of oddball cases
-that can show up in random SoCs:
+OK, that should be fixed at some point.  I will hopefully be able to
+look at this myself on the Arndale Octa though (or Chromebook or Arndale
+once XCLKOUT is implemented).
 
-- device can only do DMA to a limited address range
-- DMA is noncoherent and needs manual cache management
-- DMA address is at an offset from physical address
-- some devices have an IOMMU
-- some IOMMUs are shared between devices
-- some devices with IOMMU can have multiple simultaneous contexts
-- a device may access some memory directly and some other memory through IOMMU
-- a device may have DMA access to a bus that is invisible to the CPU
-- DMA on some device is only coherent if the IOMMU is enabled
-- DMA on some device is only coherent if the IOMMU is disabled
-- the IOVA range to an IOMMU is device dependent
+--dXvu6+ixFx2ZffE8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> > I've been hacking around some proposals on these areas which are a bit
-> > different from the approach suggested here -- I'll try to summarise some
-> > of it intelligibly and post something tomorrow so that we can discuss.
-> 
-> Are you planning on consolidating Documentation/devicetree/bindings/iommu/ ?
-> Do you care about Documentation/Intel-IOMMU.txt?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-I think we can ignore the Intel-IOMMU because that is specialized on PCI
-devices, which we don't normally represent in DT. It is also a special
-case because the Intel IOMMU is a single-instance device. If it's present
-and enabled, it will be used by every device. The case we do need to describe
-is when we don't know which IOMMU is used for which master, or how to
-configure it.
+iQIcBAEBAgAGBQJTYCe3AAoJELSic+t+oim9/nwP/1MmemJBQprVgaUGU/1sJ5V0
+xffa7Isk0NJTlgsP2doO1yjfuYUu4mCnkgxw/NR6AKVLgTJsu3PPC8tghdf7rTLQ
+FQiUOAqhPkjot2DGRXf+2H5TpVKFP/cRWFoBEe4Lvz+XKRYTOBg39OkfLadw4i8T
+w33BMwTCqOBsaUgs363z/ZLWcEXPMKGmxecI20Fepb4GUP2bv+/+Vj8uwZxPcrLE
+J/MTlffkc/m+9cWU729kKHIklrcrwcpez5CiUN9/KSN9TwfAHyP07cuvhfs1A1Ep
+33dPJwijghJeK4fXZ4mFxwzXQ+wINazC3njLRCnYGCD3M7RnpQiRX68ImuNCh4z0
+oYE4R4U2BCzC2EQOb45AJgkhEbaZYy5mmoZygADKy29Ext7CIs+HYsRlht74MznX
+OnBDmdBiAXRSyYqpnhBjL48zLjI85E9/tc2SmdKHDF+OBs96u9Fy+i519gyzwRwb
+zVvq9fsrjbnQP3cxovUKwiH02/5D0xQGacON4C5xJdzbDez5gaYcAMhwbAygiYDD
+x9cIpO4qXnlkLS7DBtAbEAuQww/cKQv+FBsSoF1TOyA2JFPw46AI+ANVtXeR5tPb
+GwZ4PuIsQtARAbOnd2mqwCxTFkJ46K6jl7Vh1UuDk/ZvjJgf4Wvh7EKZ/Lp3+1r6
+4AB+gPNuYWxk/8xMAy4m
+=zPmG
+-----END PGP SIGNATURE-----
 
-	Arnd
+--dXvu6+ixFx2ZffE8--
