@@ -1,73 +1,89 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [RESUBMIT RFC PATCH v2 3/3] drivers: mfd: Add support for Exynos
- PMU driver
-Date: Tue, 29 Apr 2014 17:05:01 +0900
-Message-ID: <535F5D2D.4000406@samsung.com>
-References: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
- <1398687607-4554-4-git-send-email-pankaj.dubey@samsung.com>
- <20140428122646.GF21279@lee--X1> <20140428173743.GA14853@arm.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH-RESEND] ARM: dts: Add arm-pmu node for exynos4412
+Date: Tue, 29 Apr 2014 13:33:59 +0530
+Message-ID: <535F5CEF.10504@linaro.org>
+References: <1376044914-1759-1-git-send-email-chanho61.park@samsung.com> <535F41B1.70404@linaro.org> <00f501cf6378$2efd6ee0$8cf84ca0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:35092 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751283AbaD2HrH (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:53420 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756034AbaD2IEF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 03:47:07 -0400
-In-reply-to: <20140428173743.GA14853@arm.com>
+	Tue, 29 Apr 2014 04:04:05 -0400
+Received: by mail-pb0-f51.google.com with SMTP id rq2so1905014pbb.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 01:04:03 -0700 (PDT)
+In-Reply-To: <00f501cf6378$2efd6ee0$8cf84ca0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Lee Jones <lee.jones@linaro.org>, kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, b.zolnierkie@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 04/29/2014 02:37 AM, Catalin Marinas wrote:
-> On Mon, Apr 28, 2014 at 01:26:46PM +0100, Lee Jones wrote:
->>> This patch moves Exynos PMU driver implementation from
->>> "arm/mach-exynos" to "drivers/mfd".
->>> This driver is mainly used for setting misc bits of register from PMU IP
->>> of Exynos SoC which will be required to configure before Suspend/Resume.
->>> Currently all these settings are done in "arch/arm/mach-exynos/pmu.c" but
->>> moving ahead for ARM64 based SoC support, there is a need of DT based
->>> implementation of PMU driver.
->>> This driver uses already existing DT binding information.
->>>
->>> CC: Sangbeom Kim <sbkim73@samsung.com>
->>> CC: Samuel Ortiz <sameo@linux.intel.com>
->>> CC: Lee Jones <lee.jones@linaro.org>
->>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->>> ---
->>>   arch/arm/mach-exynos/Kconfig                           |    2 ++
->>>   arch/arm/mach-exynos/Makefile                          |    2 --
->>>   drivers/mfd/Kconfig                                    |    9 +++++++++
->>>   drivers/mfd/Makefile                                   |    1 +
->>>   arch/arm/mach-exynos/pmu.c => drivers/mfd/exynos-pmu.c |    0
->>>   5 files changed, 12 insertions(+), 2 deletions(-)
->>>   rename arch/arm/mach-exynos/pmu.c => drivers/mfd/exynos-pmu.c (100%)
->> So I just took a look at the code as zero changes looks suspicious to
->> me. The driver can not simply be copied and pasted into the MFD
->> subsystem in its current state.
+On 04/29/2014 12:26 PM, Chanho Park wrote:
+> Hi Tushar,
+> 
+>> -----Original Message-----
+>> From: Tushar Behera [mailto:tushar.behera@linaro.org]
+>> Sent: Tuesday, April 29, 2014 3:08 PM
+>> To: Chanho Park; kgene.kim@samsung.com
+>> Cc: linux-samsung-soc@vger.kernel.org; thomas.abraham@linaro.org; linux-
+>> arm-kernel@lists.infradead.org; Kyungmin Park
+>> Subject: Re: [PATCH-RESEND] ARM: dts: Add arm-pmu node for exynos4412
 >>
->> The fundamental question is; is this chip actually an MFD? What does
->> it do besides Power Management?
-> I looked at the code briefly as well and I don't think it matches the
-> mfd idea. Maybe it could be merged together with
-> arch/arm/mach-exynos/pm.c and moved to drivers/power/ or a more
-> appropriate directory for platform_suspend_ops.
+>> On 08/09/2013 04:11 PM, Chanho Park wrote:
+>>> The Exynos4412 has 4 cpus and each has a performance counter.
+>>> Thus, we should define 4 interrupts which are combined by irq-combiner
+>> for arm
+>>> pmu.
+>>>
+>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>  arch/arm/boot/dts/exynos4412.dtsi |    6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4412.dtsi
+>> b/arch/arm/boot/dts/exynos4412.dtsi
+>>> index e743e67..cfad655 100644
+>>> --- a/arch/arm/boot/dts/exynos4412.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+>>> @@ -35,6 +35,12 @@
+>>>  			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+>>>  	};
+>>>
+>>> +	pmu {
+>>> +		compatible = "arm,cortex-a9-pmu";
+>>> +		interrupt-parent = <&combiner>;
+>>> +		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+>>> +	};
+>>> +
+>>>  	mct@10050000 {
+>>>  		compatible = "samsung,exynos4412-mct";
+>>>  		reg = <0x10050000 0x800>;
+>>>
+>>
+>> Tested on Exynos4412 based Origen-Quad board. You would required to
+>> rebase it on latest code though.
+>>
+>> Tested-by: Tushar Behera <tushar.behera@linaro.org>
+> 
+> You took old patch which I cannot remember now:) Actually, arm-pmu support
+> for exynos4412 was already merged in the latest code.[1]. I sent a clean-up
+> patch recently[2]. It could be more readable for exynos4412.
+> Thanks.
+> 
 
-Well I was also not quite sure about if "drivers/mfd" is proper place
-for Exynos PMU, so I posted this patch as RFC.
+I realized that a little late. I have replied to the new patch with my
+Tested-by.
 
-If it does not seems matching with "drivers/mfd" idea, will it be suitable
-for "drivers/power/" or should I go for something like "drivers/soc/samsung"?
+> [1] : https://lkml.org/lkml/2014/3/12/27
+> [2] : http://www.spinics.net/linux/lists/arm-kernel/msg325565.html
+> 
+> Best Regards,
+> Chanho Park
+> 
 
-Regarding your second point about merging this code with "mach-exynos/pm.c"
-We have plan for this but, I would like to get it done via a separate patch 
-series
-as "mach-exynos/pm.c" has a lot of dependencies and requires significant
-modifications. So this work can be treated as a first step towards that 
-direction.
 
 -- 
-Best Regards,
-Pankaj Dubey
+Tushar Behera
