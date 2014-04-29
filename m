@@ -1,132 +1,65 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
-Date: Tue, 29 Apr 2014 15:11:58 +0900
-Message-ID: <535F42AE.1070009@samsung.com>
-References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
- <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
- <1852265.JnliZKqXKk@avalon> <20140428212547.GA13897@mithrandir>
+From: Amit Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH 2/2] cpufreq: Remove exynos_sort_descend_freq_table in exynos5440-cpufreq.c
+Date: Tue, 29 Apr 2014 11:44:14 +0530
+Message-ID: <CADGdYn7cA940sxPszP5TA5tMnXD_=QkH3U3Wedy2DoC++rwRkQ@mail.gmail.com>
+References: <000701cf636b$3d1d13c0$b7573b40$@samsung.com>
+	<CAKohpo=ei0v69iQtjd6cjmfUCo-+sd1JzNc4RDza92nxaPoiVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140428212547.GA13897@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohpo=ei0v69iQtjd6cjmfUCo-+sd1JzNc4RDza92nxaPoiVg@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:CPU FREQUENCY DRI..." <cpufreq@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thierry,
-
-Thank you for the comments.
-
-On 04/29/2014 06:25 AM, Thierry Reding wrote:
-> On Mon, Apr 28, 2014 at 05:05:24PM +0200, Laurent Pinchart wrote:
->> Hi YoungJun,
->>
->> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
->>> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
->>>> Hi YoungJun,
->>>>
->>>> Thank you for the patch.
->>>>
->>>> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
->>>>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
->>>>> driver.
->>>>>
->>>>> Changelog v2:
->>>>> - Declares delay, size properties in probe routine instead of DT
->>>>> Changelog v3:
->>>>> - Moves CPU timings relevant properties from FIMD DT
->>>>>
->>>>>     (commented by Laurent Pinchart, Andrzej Hajda)
->>>>>
->>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>> ---
->>>>>
->>>>>    drivers/gpu/drm/panel/Kconfig         |    7 +
->>>>>    drivers/gpu/drm/panel/Makefile        |    1 +
->>>>>    drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 ++++++++++++++++++++++++++
->>>>>    3 files changed, 577 insertions(+)
->>>>>    create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>>
->>>> [snip]
->>>>
->>>>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
->>>>> index 0000000..1282678
->>>>> --- /dev/null
->>>>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
->>>>> @@ -0,0 +1,569 @@
->>>>
->>>> [snip]
->>>>
->>>>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
->>>>> +{
->>>>> +	struct drm_connector *connector = panel->connector;
->>>>> +	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
->>>>> +	struct drm_display_mode *mode;
->>>>> +
->>>>> +	mode = drm_mode_create(connector->dev);
->>>>> +	if (!mode) {
->>>>> +		DRM_ERROR("failed to create a new display mode\n");
->>>>> +		return 0;
->>>>> +	}
->>>>> +
->>>>> +	drm_display_mode_from_videomode(&ctx->vm, mode);
->>>>> +	mode->width_mm = ctx->width_mm;
->>>>> +	mode->height_mm = ctx->height_mm;
->>>>> +	connector->display_info.width_mm = mode->width_mm;
->>>>> +	connector->display_info.height_mm = mode->height_mm;
->>>>> +
->>>>> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
->>>>> +	mode->private = (void *)&ctx->cpu_timings;
->>>>
->>>> Wouldn't it make sense to create a new get_interface_params (or similar)
->>>> operation for drm_panel to query interface configuration parameters
->>>> instead of shoving it in the mode private field ?
->>>
->>> You mean "new get_interface_params operation" is different from
->>> get_modes() ?
->>>
->>> Till now, struct drm_display_mode and most of mode relevant APIs are
->>> only for video interface.
->>> And CPU interface also needs video mode configurations.
->>>
->>> I have a plan to implement the CPU interface relevant APIs like video
->>> mode ones, but I think they should be used under current DRM mode APIs
->>> like fill_modes, get_modes and so on.
->>> So after that implementation, this private field will be replaced by
->>> new ones.
->>>
->>> Could you explain it in more detail?
->>
->> The idea is that the interface parameters (RD/WR signals timings in this case,
->> but this could also include MIPI DSI lane configuration or any other kind of
->> physical interface parameters) are distinct from the video modes.
+On 4/29/14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 29 April 2014 10:54, Jonghwan Choi <jhbird.choi@samsung.com> wrote:
+>> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c
+>> -static void exynos_sort_descend_freq_table(void)
+>> -{
+>> -       struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
+>> -       int i = 0, index;
+>> -       unsigned int tmp_freq;
+>> -       /*
+>> -        * Exynos5440 clock controller state logic expects the cpufreq
+>> table
+>> to
+>> -        * be in descending order. But the OPP library constructs the
+>> table
+>> in
+>> -        * ascending order. So to make the table descending we just need
+>> to
+>> -        * swap the i element with the N - i element.
+>> -        */
 >
-> We already have the lanes field in struct mipi_dsi_device. I think in
-> general I'd prefer to not spread these parameters around too wildly. If
-> this is a general requirement for DBI devices, perhaps what we need is
-> struct mipi_dbi_device?
+> What I am more focused is on: Why do we need to worry about order at
+> all in the first place.
 >
+> Okay, above comment says something about it but I couldn't understand
+> what's the logic behind that. Why do we need same order as of clock
+> controller. Please point out relevant code pieces as well..
+>
+> @Amit: Your comments on this ?
 
-Even though it requires CPU mode relevant parameters,
-this is also mipi dsi interface.
+Hi Viresh/Jonghwan,
 
-So I think struct mipi_dsi_device is enough.
+In the frequency table dts file, the frequencies are arranged in
+descending order which maps 1 to 1 with other frequency parameter to
+be calculated and programmed in some registers.
+But the OPP library works by generating the frequencies in ascending
+order which breaks the above logic. Ideally i should expect frequency
+values in same order as what is supplied.
+So OPP library should not change the order or should take input flags
+flags like,
+dev_pm_opp_init_cpufreq_table(TABLE_ORDER_ASCEND|
+TABLE_ORDER_DESCEND|TABLE_ORDER_ORIGINAL )
 
-Thank you.
-Best regards YJ
-
-> Thierry
+Thanks,
+Amit Daniel
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 >
