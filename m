@@ -1,82 +1,73 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESUBMIT RFC PATCH v2 3/3] drivers: mfd: Add support for Exynos
- PMU driver
-Date: Tue, 29 Apr 2014 10:27:23 +0100
-Message-ID: <20140429092723.GG29462@lee--X1>
-References: <1398687607-4554-1-git-send-email-pankaj.dubey@samsung.com>
- <1398687607-4554-4-git-send-email-pankaj.dubey@samsung.com>
- <20140428122646.GF21279@lee--X1>
- <535F5AA7.2050001@samsung.com>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: RE: [PATCHv2 2/4] ARM: dts: exynos4: add exynos_usbphy node
+Date: Tue, 29 Apr 2014 19:21:10 +0900
+Message-ID: <012c01cf6394$bdb4dc10$391e9430$@samsung.com>
+References: <1398409152-14770-1-git-send-email-chanho61.park@samsung.com>
+ <1398409152-14770-3-git-send-email-chanho61.park@samsung.com>
+ <CAK9yfHx-m0+znU+pt7emqNtop4Y4wKEOcCQBXmw2akusavtUzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:43684 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752134AbaD2J1a (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16457 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757373AbaD2KVM convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 05:27:30 -0400
-Received: by mail-wi0-f171.google.com with SMTP id bs8so871380wib.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 02:27:29 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <535F5AA7.2050001@samsung.com>
+	Tue, 29 Apr 2014 06:21:12 -0400
+In-reply-to: <CAK9yfHx-m0+znU+pt7emqNtop4Y4wKEOcCQBXmw2akusavtUzA@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, b.zolnierkie@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kamil Debski' <k.debski@samsung.com>, devicetree@vger.kernel.org
 
-> >>This patch moves Exynos PMU driver implementation from
-> >>"arm/mach-exynos" to "drivers/mfd".
-> >>This driver is mainly used for setting misc bits of register from P=
-MU IP
-> >>of Exynos SoC which will be required to configure before Suspend/Re=
-sume.
-> >>Currently all these settings are done in "arch/arm/mach-exynos/pmu.=
-c" but
-> >>moving ahead for ARM64 based SoC support, there is a need of DT bas=
-ed
-> >>implementation of PMU driver.
-> >>This driver uses already existing DT binding information.
-> >>
-> >>CC: Sangbeom Kim <sbkim73@samsung.com>
-> >>CC: Samuel Ortiz <sameo@linux.intel.com>
-> >>CC: Lee Jones <lee.jones@linaro.org>
-> >>Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> >>---
-> >>  arch/arm/mach-exynos/Kconfig                           |    2 ++
-> >>  arch/arm/mach-exynos/Makefile                          |    2 --
-> >>  drivers/mfd/Kconfig                                    |    9 +++=
-++++++
-> >>  drivers/mfd/Makefile                                   |    1 +
-> >>  arch/arm/mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c |    0
-> >>  5 files changed, 12 insertions(+), 2 deletions(-)
-> >>  rename arch/arm/mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c (=
-100%)
-> >So I just took a look at the code as zero changes looks suspicious t=
-o
-> >me. The driver can not simply be copied and pasted into the MFD
-> >subsystem in its current state.
+Hi Sachin,
+
+> -----Original Message-----
+> From: Sachin Kamat [mailto:sachin.kamat@linaro.org]
+> Sent: Tuesday, April 29, 2014 6:23 PM
+> To: Chanho Park
+> Cc: Kukjin Kim; linux-samsung-soc; Tomasz Figa; Kamil Debski;
+> devicetree@vger.kernel.org
+> Subject: Re: [PATCHv2 2/4] ARM: dts: exynos4: add exynos_usbphy node
+> 
+> Hi Chanho,
+> 
+> On 25 April 2014 12:29, Chanho Park <chanho61.park@samsung.com> wrote:
+> > This patch enables a exynos_usbphy node for exynos4 SoCs.
+> > A exynos4x12 usb phy node is almost same with 4210's one
+> > except compatible string and pmu syscon.
 > >
-> >The fundamental question is; is this chip actually an MFD? What does
-> >it do besides Power Management?
->=20
-> Exynos PMU chip controls different power states of Exynos, so mainly =
-it
-> does power management related stuff. Apart from this it has few regis=
-ters
-> which controls PHY of various IP blocks of Exynos such as USB, HDMI,
-> ADC etc. But these phy controlling register are currently being acces=
-sed
-> via "syscon" driver provided regmap APIs. For same the same reason
-> Exynos PMU has second compatibility string as "syscon".
+> > Cc: Tomasz Figa <t.figa@samsung.com>
+> > Cc: Kamil Debski <k.debski@samsung.com>
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos4.dtsi    | 10 ++++++++++
+> >  arch/arm/boot/dts/exynos4x12.dtsi |  5 +++++
+> >  2 files changed, 15 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> b/arch/arm/boot/dts/exynos4.dtsi
+> > index 264066f..5f9b23b 100644
+> > --- a/arch/arm/boot/dts/exynos4.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4.dtsi
+> > @@ -278,6 +278,16 @@
+> >                 status = "disabled";
+> >         };
+> >
+> > +       exynos_usbphy: exynos-usbphy@125B0000 {
+> > +               compatible = "samsung,exynos4210-usb2-phy";
+> > +               reg = <0x125B0000 0x100>;
+> > +               samsung,pmureg-phandle = <&pmu_system_controller>;
+> > +               clocks = <&clock CLK_USB_DEVICE>, <&clock CLK_XUSBXTI>;
+> > +               clock-names = "phy", "ref";
+> > +               status = "disabled";
+> 
+> For readability it is better if status line is the last entry of the
+> node.
 
-I suggest that this is not suitable for the MFD subsystem then.
+Yes. It could be more readable it is in the last line. I'll update it in next patch.
+Thanks.
 
-Try drivers/power.
-
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Best Regards,
+Chanho Park
