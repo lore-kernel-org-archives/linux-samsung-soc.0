@@ -1,75 +1,158 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH v3 3/5] mfd: tps65090: Stop caching most registers
-Date: Tue, 29 Apr 2014 09:26:56 +0100
-Message-ID: <20140429082656.GF29462@lee--X1>
-References: <1398180298-2018-4-git-send-email-dianders@chromium.org>
- <20140422190754.GF12304@sirena.org.uk>
- <20140423105540.GJ21613@lee--X1>
- <CAD=FV=V0uWMGTt68CST5i30Xf4pTNMt50-D7XeRmtSdfbPwwLQ@mail.gmail.com>
- <20140428115745.GZ21279@lee--X1>
- <CAD=FV=X8++r4PYvy-p+YC37n9zkbCSoDZFSC7=WHe4mSF1X7PQ@mail.gmail.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Tue, 29 Apr 2014 17:35:20 +0900
+Message-ID: <535F6448.6000005@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
+ <1852265.JnliZKqXKk@avalon> <535F4080.5070208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:41484 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756669AbaD2I1C (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:61539 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932739AbaD2IfW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 04:27:02 -0400
-Received: by mail-we0-f176.google.com with SMTP id x48so7273214wes.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 01:27:01 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=X8++r4PYvy-p+YC37n9zkbCSoDZFSC7=WHe4mSF1X7PQ@mail.gmail.com>
+	Tue, 29 Apr 2014 04:35:22 -0400
+In-reply-to: <535F4080.5070208@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Anton Vorontsov <anton@enomsg.org>, Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, sachin.kamat@linaro.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 
-On Mon, 28 Apr 2014, Doug Anderson wrote:
+On 04/29/2014 03:02 PM, YoungJun Cho wrote:
+> Hi Laurent,
+>
+> Thank you for sharing your idea.
+>
+> On 04/29/2014 12:05 AM, Laurent Pinchart wrote:
+>> Hi YoungJun,
+>>
+>> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
+>>> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
+>>>> Hi YoungJun,
+>>>>
+>>>> Thank you for the patch.
+>>>>
+>>>> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+>>>>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
+>>>>> driver.
+>>>>>
+>>>>> Changelog v2:
+>>>>> - Declares delay, size properties in probe routine instead of DT
+>>>>> Changelog v3:
+>>>>> - Moves CPU timings relevant properties from FIMD DT
+>>>>>
+>>>>>     (commented by Laurent Pinchart, Andrzej Hajda)
+>>>>>
+>>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>> ---
+>>>>>
+>>>>>    drivers/gpu/drm/panel/Kconfig         |    7 +
+>>>>>    drivers/gpu/drm/panel/Makefile        |    1 +
+>>>>>    drivers/gpu/drm/panel/panel-s6e3fa0.c |  569
+>>>>> ++++++++++++++++++++++++++
+>>>>>    3 files changed, 577 insertions(+)
+>>>>>    create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>>
+>>>> [snip]
+>>>>
+>>>>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+>>>>> index 0000000..1282678
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>>> @@ -0,0 +1,569 @@
+>>>>
+>>>> [snip]
+>>>>
+>>>>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+>>>>> +{
+>>>>> +    struct drm_connector *connector = panel->connector;
+>>>>> +    struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
+>>>>> +    struct drm_display_mode *mode;
+>>>>> +
+>>>>> +    mode = drm_mode_create(connector->dev);
+>>>>> +    if (!mode) {
+>>>>> +        DRM_ERROR("failed to create a new display mode\n");
+>>>>> +        return 0;
+>>>>> +    }
+>>>>> +
+>>>>> +    drm_display_mode_from_videomode(&ctx->vm, mode);
+>>>>> +    mode->width_mm = ctx->width_mm;
+>>>>> +    mode->height_mm = ctx->height_mm;
+>>>>> +    connector->display_info.width_mm = mode->width_mm;
+>>>>> +    connector->display_info.height_mm = mode->height_mm;
+>>>>> +
+>>>>> +    mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+>>>>> +    mode->private = (void *)&ctx->cpu_timings;
+>>>>
+>>>> Wouldn't it make sense to create a new get_interface_params (or
+>>>> similar)
+>>>> operation for drm_panel to query interface configuration parameters
+>>>> instead of shoving it in the mode private field ?
+>>>
+>>> You mean "new get_interface_params operation" is different from
+>>> get_modes() ?
+>>>
+>>> Till now, struct drm_display_mode and most of mode relevant APIs are
+>>> only for video interface.
+>>> And CPU interface also needs video mode configurations.
+>>>
+>>> I have a plan to implement the CPU interface relevant APIs like video
+>>> mode ones, but I think they should be used under current DRM mode APIs
+>>> like fill_modes, get_modes and so on.
+>>> So after that implementation, this private field will be replaced by
+>>> new ones.
+>>>
+>>> Could you explain it in more detail?
+>>
+>> The idea is that the interface parameters (RD/WR signals timings in
+>> this case,
+>> but this could also include MIPI DSI lane configuration or any other
+>> kind of
+>> physical interface parameters) are distinct from the video modes.
+>
+> Yes. The RD/WR signals timings are distinct from the video modes,
+> but in my opinion, others are covered by video mode already.
+>
+>>
+>> Do you see a need to tie tie interface parameters with
+>> drm_display_mode ? Can
+>> they be mode-specific ? In any case I'd like not to use the private
+>> field of
+>> drm_display_mode. If we need to tie both information together then it
+>> should
+>> be done in a standard way.
+>
+> I think this cpu-mode-timings is in struct drm_display_mode
+> (NOT by *private) and requires drm_display_mode_from_cpumode()
+> because the drm_display_mode_from_videomode() covers only video mode.
+>
+> I'll try implement it as soon as possible.
+>
 
-> Lee,
->=20
-> On Mon, Apr 28, 2014 at 4:57 AM, Lee Jones <lee.jones@linaro.org> wro=
-te:
-> >> >> > Nearly all of the registers in tps65090 combine control bits =
-and
-> >> >> > status bits.  Turn off caching of all registers except the se=
-lect few
-> >> >> > that can be cached.
-> >> >>
-> >> >> Lee, I don't mind if I apply this and send a pull request to yo=
-u or I
-> >> >> pull a tag from you with this in - what's easiest for you?
-> >> >
-> >> > I'm happy to do it.
-> >> >
-> >> > Doug,
-> >> >   Can you send the patch-set again with all of the *-bys and ens=
-ure
-> >> >   I'm on TO or CC please?
-> >>
-> >> It looks as if you've already applied 1, 3, and 4.  I've sent up 2=
- and
-> >> 5 again with collected tags.
-> >>
-> >> https://patchwork.kernel.org/patch/4042761/
-> >> https://patchwork.kernel.org/patch/4042751/
-> >
-> > I think we have this sorted now. I sent a pull-request to Mark this
-> > morning.
->=20
-> Thanks!  I'll keep an eye on linux-next to make sure everything is
-> there.  It sounds like the charger patch
-> <https://patchwork.kernel.org/patch/4042751/> wasn't picked up by
-> anyone.  I'll see if I can find someone to take that.  Luckily that
-> can be applied independently of everything else (it just won't fix
-> everything till all the patches are together).
+For your information, there are two modes in MIPI DSI specification,
+which are video mode and command mode.
+And CS, RD/WR timings are related with MIPI DBI specification,
+VSYNC, HSYNC timings are related with MIPI DPI specification.
 
-You still need an Ack from Anton before I can apply that.
+So I think all things relevant with command mode should be arranged
+the name of command mode(NOT CPU mode, like video mode NOT RGB mode)
+in MIPI DSI, and we don't need to consider MIPI DBI like we do MIPI DPI 
+for video mode.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Thank you.
+Best regards YJ
+
+> Thank you,
+> Best regards YJ.
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
