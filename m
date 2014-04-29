@@ -1,220 +1,200 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] i2c: ChromeOS EC tunnel driver
-Date: Tue, 29 Apr 2014 14:33:28 +0200
-Message-ID: <20140429123328.GB3640@katana>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <1398185154-19404-7-git-send-email-dianders@chromium.org>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Tue, 29 Apr 2014 21:45:53 +0900
+Message-ID: <535F9F01.90305@samsung.com>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <5275422.8CoHT7g51N@avalon> <5355C4D7.7010109@samsung.com>
+ <1852265.JnliZKqXKk@avalon> <535F4080.5070208@samsung.com>
+ <535F6448.6000005@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1398185154-19404-7-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, shane.huang-5C7GfCeVMHo@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, kevin.strasser-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, andrew-g2DYL2Zd6BY@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <535F6448.6000005@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, a.hajda@samsung.com, Thierry Reding <thierry.reding@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Andrzej, Laurent, Thierry.
 
---tsOsTdHNUZQcU9Ye
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CCing Steffen Trumtrar,
 
-Hi,
+On 04/29/2014 05:35 PM, YoungJun Cho wrote:
+> On 04/29/2014 03:02 PM, YoungJun Cho wrote:
+>> Hi Laurent,
+>>
+>> Thank you for sharing your idea.
+>>
+>> On 04/29/2014 12:05 AM, Laurent Pinchart wrote:
+>>> Hi YoungJun,
+>>>
+>>> On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
+>>>> On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
+>>>>> Hi YoungJun,
+>>>>>
+>>>>> Thank you for the patch.
+>>>>>
+>>>>> On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+>>>>>> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel
+>>>>>> driver.
+>>>>>>
+>>>>>> Changelog v2:
+>>>>>> - Declares delay, size properties in probe routine instead of DT
+>>>>>> Changelog v3:
+>>>>>> - Moves CPU timings relevant properties from FIMD DT
+>>>>>>
+>>>>>>     (commented by Laurent Pinchart, Andrzej Hajda)
+>>>>>>
+>>>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>>> ---
+>>>>>>
+>>>>>>    drivers/gpu/drm/panel/Kconfig         |    7 +
+>>>>>>    drivers/gpu/drm/panel/Makefile        |    1 +
+>>>>>>    drivers/gpu/drm/panel/panel-s6e3fa0.c |  569
+>>>>>> ++++++++++++++++++++++++++
+>>>>>>    3 files changed, 577 insertions(+)
+>>>>>>    create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>>>> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+>>>>>> index 0000000..1282678
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+>>>>>> @@ -0,0 +1,569 @@
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+>>>>>> +{
+>>>>>> +    struct drm_connector *connector = panel->connector;
+>>>>>> +    struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
+>>>>>> +    struct drm_display_mode *mode;
+>>>>>> +
+>>>>>> +    mode = drm_mode_create(connector->dev);
+>>>>>> +    if (!mode) {
+>>>>>> +        DRM_ERROR("failed to create a new display mode\n");
+>>>>>> +        return 0;
+>>>>>> +    }
+>>>>>> +
+>>>>>> +    drm_display_mode_from_videomode(&ctx->vm, mode);
+>>>>>> +    mode->width_mm = ctx->width_mm;
+>>>>>> +    mode->height_mm = ctx->height_mm;
+>>>>>> +    connector->display_info.width_mm = mode->width_mm;
+>>>>>> +    connector->display_info.height_mm = mode->height_mm;
+>>>>>> +
+>>>>>> +    mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+>>>>>> +    mode->private = (void *)&ctx->cpu_timings;
+>>>>>
+>>>>> Wouldn't it make sense to create a new get_interface_params (or
+>>>>> similar)
+>>>>> operation for drm_panel to query interface configuration parameters
+>>>>> instead of shoving it in the mode private field ?
+>>>>
+>>>> You mean "new get_interface_params operation" is different from
+>>>> get_modes() ?
+>>>>
+>>>> Till now, struct drm_display_mode and most of mode relevant APIs are
+>>>> only for video interface.
+>>>> And CPU interface also needs video mode configurations.
+>>>>
+>>>> I have a plan to implement the CPU interface relevant APIs like video
+>>>> mode ones, but I think they should be used under current DRM mode APIs
+>>>> like fill_modes, get_modes and so on.
+>>>> So after that implementation, this private field will be replaced by
+>>>> new ones.
+>>>>
+>>>> Could you explain it in more detail?
+>>>
+>>> The idea is that the interface parameters (RD/WR signals timings in
+>>> this case,
+>>> but this could also include MIPI DSI lane configuration or any other
+>>> kind of
+>>> physical interface parameters) are distinct from the video modes.
+>>
+>> Yes. The RD/WR signals timings are distinct from the video modes,
+>> but in my opinion, others are covered by video mode already.
+>>
+>>>
+>>> Do you see a need to tie tie interface parameters with
+>>> drm_display_mode ? Can
+>>> they be mode-specific ? In any case I'd like not to use the private
+>>> field of
+>>> drm_display_mode. If we need to tie both information together then it
+>>> should
+>>> be done in a standard way.
+>>
+>> I think this cpu-mode-timings is in struct drm_display_mode
+>> (NOT by *private) and requires drm_display_mode_from_cpumode()
+>> because the drm_display_mode_from_videomode() covers only video mode.
+>>
+>> I'll try implement it as soon as possible.
+>>
+>
+> For your information, there are two modes in MIPI DSI specification,
+> which are video mode and command mode.
+> And CS, RD/WR timings are related with MIPI DBI specification,
+> VSYNC, HSYNC timings are related with MIPI DPI specification.
+>
+> So I think all things relevant with command mode should be arranged
+> the name of command mode(NOT CPU mode, like video mode NOT RGB mode)
+> in MIPI DSI, and we don't need to consider MIPI DBI like we do MIPI DPI
+> for video mode.
+>
 
-just a basic review to keep things rolling...
+First, for MIPI command mode, hactive and vactive are only required.
+Sorry Andrzej for confusing reply.
+I have to modify exynos fimd pixel clock calculating function.
 
-> On the original Samsung ARM Chromebook these devices were on an I2C
-> bus that was shared between the AP and the EC and arbitrated using
-> some extranal GPIOs (see i2c-arb-gpio-challenge).
->=20
-> The original arbitration scheme worked well enough but had some
-> downsides:
-> * It was nonstandard (not using standard I2C multimaster)
-> * It only worked if the EC-AP communication was I2C
-> * It was relatively hard to debug problems (hard to tell if i2c issues
->   were caused by the EC, the AP, or some device on the bus).
->=20
-> On the HP Chromebook 11 the design was changed to:
+Second, for generic MIPI command mode timing support, commandmode.c and
+of_commandmode.c are required in drivers/video.
+And the struct drm_panel_command_mode_timings should be moved into 
+commandmode.h as struct commandmode.
 
-This paragraph would be a nice update for the gpio-arbitration docs.
+And the last(this is important and I need your ideas), adds this command 
+mode timings into struct display_timing.
+ From hierarchical aspects, display_timing(s) should contain command 
+mode timings too, but it only contains video mode timings.
+If I do it, current video mode relevant DTs will be broken.
 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt=
- b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+So IMHO it is required to rename of_*_display_timing() as 
+of_*_videomode_timing() and add of_*_commandmode_timing() into 
+of_display_timing.c.
+And should add command mode timings into DT like display-timings-command
+to distinguish it from display-timings(for videomode).
 
-The bindings should independently be sent to the devicetree list.
+What do you think about it?
 
-> new file mode 100644
-> index 0000000..898f030
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> @@ -0,0 +1,39 @@
-> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> +On some ChromeOS board designs we've got a connection to the EC (embedded
-> +controller) but no direct connection to some devices on the other side of
-> +the EC (like a battery and PMIC).  To get access to those devices we need
-> +to tunnel our i2c commands through the EC.
-> +
-> +The node for this device should be under a cros-ec node like google,cros=
--ec-spi
-> +or google,cros-ec-i2c.
-> +
-> +
-> +Required properties:
-> +- compatible: google,cros-ec-i2c-tunnel
-> +- google,remote-bus: The EC bus we'd like to talk to.
-> +
-> +Optional child nodes:
-> +- One node per I2C device connected to the tunnelled I2C bus.
-> +
-> +
-> +Example:
-> +	cros-ec@0 {
-> +		compatible =3D "google,cros-ec-spi";
-> +
-> +		...
-> +
-> +		i2c-tunnel {
-> +			compatible =3D "google,cros-ec-i2c-tunnel";
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +
-> +			google,remote-bus =3D <0>;
-> +
-> +			battery: sbs-battery@b {
-> +				compatible =3D "sbs,sbs-battery";
-> +				reg =3D <0xb>;
-> +				sbs,poll-retry-count =3D <1>;
-> +			};
-> +		};
-> +	}
+Thank you.
+Best regards YJ
 
-Can the tunnel have n busses? How to represent them then? I think the
-remote-bus property should go in favor of proper sub-nodes? Wouldn't it
-also be more generic to have the tunnel node seperate and reference the
-tunnel-mechanism (spi here) as a phandle?
-
-> +/**
-> + * ec_i2c_construct_message - construct a message to go to the EC
-> + *
-> + * This function effectively stuffs the standard i2c_msg format of Linux=
- into
-> + * a format that the EC understands.
-> + *
-> + * @buf: The buffer to fill.  Can pass NULL to count how many bytes the =
-message
-> + *       would be.
-
-I wonder about this NULL thing. That means the size is calculated twice.
-Why not make two functions instead, one fir size calc, one for setting
-up?
-
-> +/**
-> + * ec_i2c_parse_response - Parse a response from the EC
-> + *
-> + * We'll take the EC's response and copy it back into msgs.
-> + *
-> + * @buf: The buffer to parse.  Can pass NULL to count how many bytes we =
-expect
-> + *	 the response to be. Otherwise we assume that the right number of
-> + *	 bytes are available.
-
-Ditto.
-
-> +	result =3D bus->ec->command_sendrecv(bus->ec, EC_CMD_I2C_PASSTHRU,
-> +					   request, request_len,
-> +					   response, response_len);
-
-This function pointer should be checked against NULL in probe, I
-think.
-
-> +static int ec_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	struct cros_ec_device *ec =3D dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev =3D &pdev->dev;
-> +	struct ec_i2c_device *bus =3D NULL;
-> +	u32 remote_bus;
-> +	int err;
-> +
-> +	dev_dbg(dev, "Probing\n");
-
-Drop. Device core has it already.
-
-> +
-> +	if (!np) {
-> +		dev_err(dev, "no device node\n");
-> +		return -ENOENT;
-> +	}
-
-Can this happen?
-
-> +
-> +	bus =3D devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
-> +	if (bus =3D=3D NULL) {
-> +		dev_err(dev, "cannot allocate bus device\n");
-
-No need for error strings when allocating.
-
-> +		return -ENOMEM;
-> +	}
-> +
-> +	dev_dbg(dev, "ChromeOS EC I2C tunnel adapter\n");
-
-Drop. Device core debug has it, too.
-
-> +
-> +	return err;
-> +}
-> +
-> +static int ec_i2c_remove(struct platform_device *dev)
-> +{
-> +	struct ec_i2c_device *bus =3D platform_get_drvdata(dev);
-> +
-> +	platform_set_drvdata(dev, NULL);
-
-Not needed.
-
-> +
-> +	i2c_del_adapter(&bus->adap);
-> +
-> +	return 0;
-> +}
-> +
-
-Regards,
-
-   Wolfram
-
-
---tsOsTdHNUZQcU9Ye
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTX5wXAAoJEBQN5MwUoCm2RfsP/R9ah2QOChdnLktr/oRSSeSa
-Gi0EZcMddutgVONwu57pR6O7LUIBS5B/7WscOgB6G+d8kmd1G+Fm6xDfMd0inP7x
-rVbiZ/m21q0keYwSo57hdMTKl0r1b+/WzZKpw3zhQR/eCkOJNFTjbUfUx/MGnZkm
-O23LHXphyW+4BXzsoto/n7WtYpKhnL1ZwhkdKzt9mybMdbTu1zh9o65JHizZjDjU
-I0Px9TMYAZNi2N+Y70f2G4OZmru5qja69tr2D6PmlfqzdPJ4MU9p/7HfWNHfTn8z
-Cv3CAJRL5iQKj8sDeaULeCWEmgJAu8j0uEScFu7KeTi00/7yaV8lQOFYUPkmJoS7
-EYFlA5E8AV8ia95OabvgzRmCvrTJZiaAgdmNigOGcQ6STBXS7ld3TC2SeRa+LayX
-62bdANvgX0RwUzAEeaNdL6hntthOsHlNHX7C2UXj4A9/Q9Uh34ZZbkYV/COeLPW3
-PmGQKygcnFlIlQSrdYS8J79L2qMQ/QqcSL3Ua/S8gcaI1nmgQIW8P4nT4767Z3R8
-YHQICvnyg7VRx1zMKq7TMXGkBX9iyle43syCtAHKPdqn0wiyS4uGPqxf0Epqcqus
-cySdmqzA9LfcH2wPo/gq6g68k0nVxaeGQ9OzEINIxYwtisW1gIB6cCJF7e/x4SDY
-4ixewa4etoHguvXgzZSO
-=EJ+A
------END PGP SIGNATURE-----
-
---tsOsTdHNUZQcU9Ye--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thank you.
+> Best regards YJ
+>
+>> Thank you,
+>> Best regards YJ.
+>>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
