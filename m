@@ -1,44 +1,37 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [RFC v3 PATCH 08/16] drm/exynos: fimd: support I80 interface
-Date: Tue, 29 Apr 2014 21:05:09 +0530
-Message-ID: <CAK9yfHwAqguttVZRD5BymBhS9LRpnCJoVp6JZm76XjVrkEDygQ@mail.gmail.com>
-References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
-	<1398563412-21781-9-git-send-email-yj44.cho@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early BRESP
+Date: Tue, 29 Apr 2014 10:17:01 -0600
+Message-ID: <535FD07D.5070801@wwwdotorg.org>
+References: <20140428192419.GV26756@n2100.arm.linux.org.uk> <E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk> <20140429000224.GA31083@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:53657 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751636AbaD2PfK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 11:35:10 -0400
-Received: by mail-oa0-f50.google.com with SMTP id i11so427847oag.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 08:35:10 -0700 (PDT)
-In-Reply-To: <1398563412-21781-9-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20140429000224.GA31083@verge.net.au>
+Sender: linux-sh-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.ifradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: Dave Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Hi YoungJun,
+On 04/28/2014 06:02 PM, Simon Horman wrote:
+> On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
+>> Since we now automatically enable early BRESP in core L2C-310 code when
+>> we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
+>> explicitly.  Instead, they should seek to preserve the value of bit 30
+>> in the auxiliary control register.
+>>
+>> Acked-by: Tony Lindgren <tony@atomide.com>
+>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> 
+> I would prefer if this patch was broken out into individual patches
+> for each board or SoC file and that they were then picked up
+> by their respective platform maintainers.
+> 
+> Likewise for patch 66/97. Although it is only for shmobile
+> I would prefer it broken out.
 
-On 27 April 2014 07:20, YoungJun Cho <yj44.cho@samsung.com> wrote:
-> To support MIPI DSI command mode interface, FIMD should do followings:
-> - Sets LCD block configuration for I80 interface.
-> - Uses "lcd_sys" as an IRQ resource and sets relevant IRQ configuration.
-> - Implements trigger feature which transfers image date if there is
->   page flip request, and implements TE handler to call trigger function.
-> - Sets CPU mode timings configuration.
-> - Sets ideal(pixel) clock is 2 times faster than the original one to
->   generate frame done IRQ prior to the next TE signal.
-
-<...>
-> +
-> +       reg = readl(timing_base + TRIGCON);
-> +       reg |= 1 << 0 | 1 << 1;
-
-What does this signify? Can't this be OR'd directly with 3?
-
--- 
-With warm regards,
-Sachin
+There are far too many dependencies in this series to break out the
+board file patches to be merged separately; it'd take either a whole
+bunch of kernel releases to merge it all that way, or a twisty maze of
+tiny topic branches cross-merged all over the place. Neither option is
+realistic.
