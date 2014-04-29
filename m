@@ -1,68 +1,112 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Tue, 29 Apr 2014 09:51:20 -0700
-Message-ID: <CAD=FV=VXPDdSx8Dxng8miu=wcdnDJPAheSD8BMXq0WdjJeJEUw@mail.gmail.com>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
- <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
- <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
- <20140428091914.GK6264@lee--X1>
- <CAD=FV=UEwfNX+uf70OV4LB39s=mJyxTkC63g4iYrE7hcvyEdgw@mail.gmail.com>
- <20140429082146.GE29462@lee--X1>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 5/5] devfreq: exynos5: Use devm_devfreq_* function using
+ device resource management
+Date: Tue, 29 Apr 2014 22:24:45 +0530
+Message-ID: <CAK9yfHyP63QaaBwc4vkkqU4g3+B2DpqeC_11E5+LevWXED0Qxg@mail.gmail.com>
+References: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
+	<1398416894-6782-6-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140429082146.GE29462@lee--X1>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1398416894-6782-6-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, rafael.j.wysocki@intel.com, Nishanth Menon <nm@ti.com>, Jiri Kosina <jkosina@suse.cz>, labbe.montjoie@gmail.com, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Manish Badarkhe <badarkhe.manish@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Lee,
+Hi Chanwoo,
 
-On Tue, Apr 29, 2014 at 1:21 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> I don't use TBs for MFD yet, as I've never seen the need.  The current
-> WoW is to only create extra branches when I have patch{es, sets} to
-> share.  If I start using a more TB focused methodology it will be
-> insinuated that the branches are stable - I like the fact that this is
-> _not_ the case.  Currently I am able to rebase, rework and reorder the
-> repo as and when I see fit, and do regularly. Except the IBs of course.
-
-OK.
-
->> Patches #1 - #5 are bonafide bugfixes irrespective of the i2c tunnel.
+On 25 April 2014 14:38, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch uses devm_devfreq_add_device()/devm_devfreq_register_opp_notifier()
+> to control automatically the resource of devfreq.
 >
-> I only want to create an IB if I know it's going to be used, else I'd
-> prefer the patches remain transient.  Why are you so keen to rush into
-> having these patches applied?  They _will_ make it into v3.15, whether
-> they are applied immediately or after a length of time (in the case
-> that Wolfram does not respond).
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Manish Badarkhe <badarkhe.manish@gmail.com>
+> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
+>  drivers/devfreq/exynos/exynos5_bus.c | 23 ++++++++---------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
+> index ab54a69..1f622f8 100644
+> --- a/drivers/devfreq/exynos/exynos5_bus.c
+> +++ b/drivers/devfreq/exynos/exynos5_bus.c
+> @@ -165,11 +165,6 @@ static int exynos5_int_get_dev_status(struct device *dev,
+>  }
+>  static void exynos5_int_exit(struct device *dev)
+>  {
+> -       struct platform_device *pdev = container_of(dev, struct platform_device,
+> -                                                   dev);
+> -       struct busfreq_data_int *data = platform_get_drvdata(pdev);
+> -
+> -       devfreq_unregister_opp_notifier(dev, data->devfreq);
+>  }
 
-No strong reason, and it's actually not even a huge deal if they make
-it to 3.15 or in 3.16.  Having outstanding patches simply increases
-the number of things that I need to keep track of / check up on.  If
-patches are good to go and reviewed I like to get them landed.
+Do you need an empty function?
 
-Another reason I'd love to see patches landed sooner is that it will
-unblock me sending the next set of patches up.  I collected all of the
-most important patches in this series, but there are a bunch of other
-patches in our tree that would be nice to eventually send up.  At the
-moment I'm in a position where I can dedicate a reasonable amount of
-time to upstreaming.  It's likely that before long I will get sucked
-into tight deadlines and will have to squeeze upstreaming in among
-other priorities.
+>
+>  static struct devfreq_dev_profile exynos5_devfreq_int_profile = {
+> @@ -343,30 +338,29 @@ static int exynos5_busfreq_int_probe(struct platform_device *pdev)
+>
+>         busfreq_mon_reset(ppmu_data);
+>
+> -       data->devfreq = devfreq_add_device(dev, &exynos5_devfreq_int_profile,
+> +       data->devfreq = devm_devfreq_add_device(dev, &exynos5_devfreq_int_profile,
+>                                            "simple_ondemand", NULL);
+> -
+>         if (IS_ERR(data->devfreq)) {
+>                 err = PTR_ERR(data->devfreq);
 
-I see a response from Wolfram now, so I'll spin a V2 in the next day
-or two with changes to the tunnel driver.  I'm at ELC so my hacking
-time may be limited.
+No need of err.   return PTR_ERR(data->devfreq);
 
--Doug
+> -               goto err_devfreq_add;
+> +               return err;
+>         }
+>
+> -       devfreq_register_opp_notifier(dev, data->devfreq);
+> +       err = devm_devfreq_register_opp_notifier(dev, data->devfreq);
+> +       if (err < 0) {
+> +               dev_err(dev, "Failed to register opp notifier\n");
+> +               return err;
+> +       }
+>
+>         err = register_pm_notifier(&data->pm_notifier);
+>         if (err) {
+>                 dev_err(dev, "Failed to setup pm notifier\n");
+> -               goto err_devfreq_add;
+> +               return err;
+>         }
+>
+>         /* TODO: Add a new QOS class for int/mif bus */
+>         pm_qos_add_request(&data->int_req, PM_QOS_NETWORK_THROUGHPUT, -1);
+>
+>         return 0;
+> -
+> -err_devfreq_add:
+> -       devfreq_remove_device(data->devfreq);
+> -       return err;
+>  }
+>
+>  static int exynos5_busfreq_int_remove(struct platform_device *pdev)
+> @@ -375,7 +369,6 @@ static int exynos5_busfreq_int_remove(struct platform_device *pdev)
+>
+>         pm_qos_remove_request(&data->int_req);
+>         unregister_pm_notifier(&data->pm_notifier);
+> -       devfreq_remove_device(data->devfreq);
+>
+>         return 0;
+>  }
+> --
+> 1.8.0
+>
+
+
+
+-- 
+With warm regards,
+Sachin
