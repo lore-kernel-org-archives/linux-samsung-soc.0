@@ -1,47 +1,72 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early
-	BRESP
-Date: Tue, 29 Apr 2014 01:21:41 +0100
-Message-ID: <20140429002140.GP27282@n2100.arm.linux.org.uk>
-References: <20140428192419.GV26756@n2100.arm.linux.org.uk> <E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk> <20140429000224.GA31083@verge.net.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv5] ARM: EXYNOS: Support secondary CPU boot of Exynos4212
+Date: Tue, 29 Apr 2014 10:37:42 +0900
+Message-ID: <1398735462-1938-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:56157 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932445AbaD2AWr (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33107 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754425AbaD2Bhx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Apr 2014 20:22:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20140429000224.GA31083@verge.net.au>
+	Mon, 28 Apr 2014 21:37:53 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
+To: kgene.kim@samsung.com, t.figa@samsung.com
+Cc: linux@arm.linux.org.uk, kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Apr 29, 2014 at 09:02:27AM +0900, Simon Horman wrote:
-> On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
-> > Since we now automatically enable early BRESP in core L2C-310 code when
-> > we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
-> > explicitly.  Instead, they should seek to preserve the value of bit 30
-> > in the auxiliary control register.
-> > 
-> > Acked-by: Tony Lindgren <tony@atomide.com>
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> 
-> I would prefer if this patch was broken out into individual patches
-> for each board or SoC file and that they were then picked up
-> by their respective platform maintainers.
-> 
-> Likewise for patch 66/97. Although it is only for shmobile
-> I would prefer it broken out.
+From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Oh fuck that.
+This patch fix the offset of CPU boot address and change parameter of smc call
+of SMC_CMD_CPU1BOOT command for Exynos4212.
 
-Okay, I'm dropping the whole patch set right now and forgetting the whole
-damned thing.  The L2 cache code can damned well stay as it is and remain
-an unmaintainable mess.
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+---
+Changes from v4:
+- Post only this patch separated from following patchset[1]
+[1] https://lkml.org/lkml/2014/4/24/873
 
+ arch/arm/mach-exynos/firmware.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 932129e..aa01c42 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -18,6 +18,8 @@
+ 
+ #include <mach/map.h>
+ 
++#include <plat/cpu.h>
++
+ #include "smc.h"
+ 
+ static int exynos_do_idle(void)
+@@ -28,13 +30,24 @@ static int exynos_do_idle(void)
+ 
+ static int exynos_cpu_boot(int cpu)
+ {
++	/*
++	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
++	 * But, Exynos4212 has only one secondary CPU so second parameter
++	 * isn't used for informing secure firmware about CPU id.
++	 */
++	if (soc_is_exynos4212())
++		cpu = 0;
++
+ 	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
+ 	return 0;
+ }
+ 
+ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ {
+-	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
++	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
++
++	if (!soc_is_exynos4212())
++		boot_reg += 4*cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
+ 	return 0;
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+1.8.0
