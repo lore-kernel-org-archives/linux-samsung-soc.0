@@ -1,92 +1,50 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v3 11/16] clk: exynos5420: correct sysmmu-mfc parent clocks
-Date: Wed, 30 Apr 2014 19:08:50 +0530
-Message-ID: <CAGOxZ53FSkV-ncYq2gJL7VKT4HJvvjTVRL98vS5VELWLhC7WYw@mail.gmail.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-12-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] drm/exynos: fix nested calls to lock mutex in drm resume
+Date: Wed, 30 Apr 2014 19:11:34 +0530
+Message-ID: <1398865294-6754-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f51.google.com ([209.85.213.51]:45579 "EHLO
-	mail-yh0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751435AbaD3Njb (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:36569 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757878AbaD3NnT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 09:39:31 -0400
-In-Reply-To: <1398344632-18623-12-git-send-email-shaik.ameer@samsung.com>
+	Wed, 30 Apr 2014 09:43:19 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4U00M8ZJG5EDD0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Apr 2014 22:43:18 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Ameer Basha Shaik <shaik.samsung@gmail.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Shaik,
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-On Thu, Apr 24, 2014 at 6:33 PM, Shaik Ameer Basha
-<shaik.ameer@samsung.com> wrote:
-> This patch corrects the wrong parent-child relationship
-> between sysmmu-mfc clocks.
->
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
-Hoping you have tested vedio playback with this patch, especially
-after across a suspend/resume cycles.
-This looks ok.
+While testing S2R on exynos board, system is hanging and
+rebooting due to nested mutex_lock calls in exynos drm
+resume callback. Changing the order of the calls is fixing
+the issue.
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+---
+Based on exynos-drm-next branch in Inki Dae's tree.
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/clk/samsung/clk-exynos5420.c |    9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index d8fe6d8..6daf739 100755
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -82,6 +82,7 @@
->  #define SCLK_DIV_ISP0          0x10580
->  #define SCLK_DIV_ISP1          0x10584
->  #define DIV2_RATIO0            0x10590
-> +#define DIV4_RATIO             0x105a0
->  #define GATE_BUS_TOP           0x10700
->  #define GATE_BUS_GEN           0x1073c
->  #define GATE_BUS_FSYS0         0x10740
-> @@ -176,6 +177,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->         SCLK_DIV_ISP0,
->         SCLK_DIV_ISP1,
->         DIV2_RATIO0,
-> +       DIV4_RATIO,
->         GATE_BUS_TOP,
->         GATE_BUS_GEN,
->         GATE_BUS_FSYS0,
-> @@ -636,6 +638,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->         DIV(0, "dout_spi1_pre", "dout_spi1", DIV_PERIC4, 16, 8),
->         DIV(0, "dout_spi2_pre", "dout_spi2", DIV_PERIC4, 24, 8),
->
-> +       /* Mfc Blk */
-> +       DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
-> +
->         /* GSCL Block */
->         DIV(0, "dout_gscl_blk_300", "mout_user_aclk300_gscl",
->                 DIV2_RATIO0, 4, 2),
-> @@ -873,8 +878,8 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->                         GATE_IP_DISP1, 8, 0, 0),
->
->         GATE(CLK_MFC, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
-> -       GATE(CLK_SMMU_MFCL, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
-> -       GATE(CLK_SMMU_MFCR, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
-> +       GATE(CLK_SMMU_MFCL, "smmu_mfcl", "dout_mfc_blk", GATE_IP_MFC, 1, 0, 0),
-> +       GATE(CLK_SMMU_MFCR, "smmu_mfcr", "dout_mfc_blk", GATE_IP_MFC, 2, 0, 0),
->
->         GATE(CLK_G3D, "g3d", "aclkg3d", GATE_IP_G3D, 9, 0, 0),
->
-> --
-> 1.7.9.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index bb7dfee..2bb6233 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -184,8 +184,8 @@ static int exynos_drm_resume(struct drm_device *dev)
+ 			connector->funcs->dpms(connector, connector->dpms);
+ 	}
+ 
+-	drm_helper_resume_force_mode(dev);
+ 	drm_modeset_unlock_all(dev);
++	drm_helper_resume_force_mode(dev);
+ 
+ 	return 0;
+ }
 -- 
-Regards,
-Alim
+1.7.9.5
