@@ -1,114 +1,85 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v3 01/12] ARM: EXYNOS: Make exynos machine_ops as static
-Date: Wed, 30 Apr 2014 16:35:36 +0900
-Message-ID: <5360A7C8.1080407@samsung.com>
-References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
- <1398835057-3860-2-git-send-email-pankaj.dubey@samsung.com>
- <CAK9yfHxfkegFzzJCz4nAkxrHT6FGT0OQ-5RkCdTA3ruo2kU8CA@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 4/7] ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250
+ based on Cortex-a7
+Date: Wed, 30 Apr 2014 17:00:50 +0900
+Message-ID: <5360ADB2.1080600@samsung.com>
+References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
+ <1398388572-30239-5-git-send-email-cw00.choi@samsung.com>
+ <535AFCDF.20503@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41602 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426AbaD3HRe convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:48941 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752140AbaD3IAw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 03:17:34 -0400
-In-reply-to: <CAK9yfHxfkegFzzJCz4nAkxrHT6FGT0OQ-5RkCdTA3ruo2kU8CA@mail.gmail.com>
+	Wed, 30 Apr 2014 04:00:52 -0400
+In-reply-to: <535AFCDF.20503@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>, VIKAS SAJJANC <vikas.sajjan@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, sajjan.linux@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, marc.zyngier@arm.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, olof@lixom.net, chanho61.park@samsung.com, sachin.kamat@linaro.org, linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org
 
-Hi Sachin,
+Hi Tomasz,
 
-On 04/30/2014 03:00 PM, Sachin Kamat wrote:
-> Hi Pankaj,
->
-> On 30 April 2014 10:47, Pankaj Dubey <pankaj.dubey@samsung.com> wrote=
-:
->> As machine function ops are used only in this file let's make
->> them static.
+On 04/26/2014 09:25 AM, Tomasz Figa wrote:
+> Hi Chanwoo,
+> 
+> On 25.04.2014 03:16, Chanwoo Choi wrote:
+>> This patch decide proper lowpower mode of either a15 or a9 according to own ID
+>> from Main ID register.
 >>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Marc Zynigier <marc.zyngier@arm.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> ---
->>   arch/arm/mach-exynos/exynos.c |    6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>   arch/arm/mach-exynos/hotplug.c | 19 ++++++++++++-------
+>>   1 file changed, 12 insertions(+), 7 deletions(-)
 >>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/ex=
-ynos.c
->> index 3d69e8d..06dcce5 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -198,7 +198,7 @@ static struct map_desc exynos5_iodesc[] __initda=
-ta =3D {
->>          },
->>   };
+>> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+>> index 5eead53..acf3119 100644
+>> --- a/arch/arm/mach-exynos/hotplug.c
+>> +++ b/arch/arm/mach-exynos/hotplug.c
+>> @@ -135,16 +135,21 @@ void __ref exynos_cpu_die(unsigned int cpu)
+>>       int primary_part = 0;
 >>
->> -void exynos_restart(enum reboot_mode mode, const char *cmd)
->> +static void exynos_restart(enum reboot_mode mode, const char *cmd)
->>   {
->>          struct device_node *np;
->>          u32 val =3D 0x1;
->> @@ -239,7 +239,7 @@ void __init exynos_cpufreq_init(void)
->>          platform_device_register_simple("exynos-cpufreq", -1, NULL,=
- 0);
->>   }
+>>       /*
+>> -     * we're ready for shutdown now, so do it.
+>> -     * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
+>> -     * number by reading the Main ID register and then perform the
+>> -     * appropriate sequence for entering low power.
+>> +     * Prepare the CPU for shutting down. The required sequence of
+>> +     * operations depends on core type. CPUID part number can be used to
+>> +     * determine the right way.
+>>        */
+>> -    asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
+>> -    if ((primary_part & 0xfff0) == 0xc0f0)
+>> +    primary_part = read_cpuid_part_number();
+>> +
+>> +    switch (primary_part) {
+>> +    case ARM_CPU_PART_CORTEX_A7:
+>> +    case ARM_CPU_PART_CORTEX_A15:
+>>           cpu_enter_lowpower_a15();
+>> -    else
+>> +        break;
+>> +    default:
+>>           cpu_enter_lowpower_a9();
+>> +        break;
+>> +    }
 >>
->> -void __init exynos_init_late(void)
->> +static void __init exynos_init_late(void)
->>   {
->>          if (of_machine_is_compatible("samsung,exynos5440"))
->>                  /* to be supported later */
->> @@ -300,7 +300,7 @@ static void __init exynos_map_io(void)
->>                  iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos52=
-50_iodesc));
->>   }
+>>       platform_do_lowpower(cpu, &spurious);
 >>
->> -void __init exynos_init_io(void)
->> +static void __init exynos_init_io(void)
->>   {
->>          debug_ll_io_init();
->
-> The declarations from common.h should also be removed in this patch t=
-o
-> avoid the below
-> build errors:
+>>
+> 
+> I have noticed Leela Krishna Amudala's patch [1] that removes this distinction completely and simply uses generic code. Could you check if this works on Exynos3250 as well? If yes, then this patch could be dropped and Leela's one would be enough.
+> 
+> [1] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29064.html
 
-Thanks. I will merge changes in common.h in this patch itself.
+OK, I tested this patch[1] to turn on secondary CPu on Exynos3250.
+I'll drop following patch on next posting(v5) by using Leela Krishna Amudala's patch [1].
+- ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
 
->
-> arch/arm/mach-exynos/exynos.c:198:13: error: static declaration of
-> =E2=80=98exynos_restart=E2=80=99 follows non-static declaration
->   static void exynos_restart(enum reboot_mode mode, const char *cmd)
->               ^
-> In file included from arch/arm/mach-exynos/exynos.c:31:0:
-> arch/arm/mach-exynos/common.h:22:6: note: previous declaration of
-> =E2=80=98exynos_restart=E2=80=99 was here
->   void exynos_restart(enum reboot_mode mode, const char *cmd);
->        ^
-> arch/arm/mach-exynos/exynos.c:235:20: error: static declaration of
-> =E2=80=98exynos_init_late=E2=80=99 follows non-static declaration
->   static void __init exynos_init_late(void)
->                      ^
-> In file included from arch/arm/mach-exynos/exynos.c:31:0:
-> arch/arm/mach-exynos/common.h:25:6: note: previous declaration of
-> =E2=80=98exynos_init_late=E2=80=99 was here
->   void exynos_init_late(void);
->        ^
-> arch/arm/mach-exynos/exynos.c:296:20: error: static declaration of
-> =E2=80=98exynos_init_io=E2=80=99 follows non-static declaration
->   static void __init exynos_init_io(void)
->                      ^
-> In file included from arch/arm/mach-exynos/exynos.c:31:0:
-> arch/arm/mach-exynos/common.h:21:6: note: previous declaration of
-> =E2=80=98exynos_init_io=E2=80=99 was here
->   void exynos_init_io(void);
->
->
-
-
---=20
 Best Regards,
-Pankaj Dubey
+Chanwoo Choi
