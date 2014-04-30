@@ -1,72 +1,197 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Wed, 30 Apr 2014 11:03:14 -0700
-Message-ID: <20140430180314.GA3245@sirena.org.uk>
-References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
- <20140424133920.GA12304@sirena.org.uk>
- <5359E18B.60600@linaro.org>
- <20140429222915.GU15125@sirena.org.uk>
- <5360E5E7.8090807@linaro.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [RFC v2 PATCH v3 10/14] drm/panel: add S6E3FA0 driver
+Date: Wed, 30 Apr 2014 20:20:44 +0200
+Message-ID: <1586154.6P7a6bVWs2@avalon>
+References: <1398083321-8668-1-git-send-email-yj44.cho@samsung.com>
+ <1852265.JnliZKqXKk@avalon> <20140428212547.GA13897@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53078 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752159AbaD3SDq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 14:03:46 -0400
-Content-Disposition: inline
-In-Reply-To: <5360E5E7.8090807@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1119757713=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140428212547.GA13897@mithrandir>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sachin.kamat@linaro.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, dri-devel@lists.freedesktop.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
 
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============1119757713==
+Content-Type: multipart/signed; boundary="nextPart2460409.hEu5xXmStR"; micalg="pgp-sha1"; protocol="application/pgp-signature"
 
-On Wed, Apr 30, 2014 at 05:30:39PM +0530, Tushar Behera wrote:
 
-> XCLKOUT mux register (0x10040a00) is not part of core clock SFR range,
-> rather it is part of pmu-system-controller node.
+--nextPart2460409.hEu5xXmStR
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-> One option would be to add a clock provider for XCLKOUT. That would
-> require me to extend current clock driver to get the
-> pmu-system-controller phandle which in turn is dependent on the patch to
-> early initialize syscon driver.[1]
+Hi Thierry,
 
-> Will it be okay to configure XCLKOUT in snow sound-card driver by taking
-> the phandle of pmu-system-controller from device tree? The
-> implementation is provided below.
+On Monday 28 April 2014 23:25:50 Thierry Reding wrote:
+> On Mon, Apr 28, 2014 at 05:05:24PM +0200, Laurent Pinchart wrote:
+> > On Tuesday 22 April 2014 10:24:39 YoungJun Cho wrote:
+> > > On 04/22/2014 08:00 AM, Laurent Pinchart wrote:
+> > > > Hi YoungJun,
+> > > >=20
+> > > > Thank you for the patch.
+> > > >=20
+> > > > On Monday 21 April 2014 21:28:37 YoungJun Cho wrote:
+> > > >> This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD=
+ Panel
+> > > >> driver.
+> > > >>=20
+> > > >> Changelog v2:
+> > > >> - Declares delay, size properties in probe routine instead of =
+DT
+> > > >> Changelog v3:
+> > > >> - Moves CPU timings relevant properties from FIMD DT
+> > > >>=20
+> > > >>    (commented by Laurent Pinchart, Andrzej Hajda)
+> > > >>=20
+> > > >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> > > >> Acked-by: Inki Dae <inki.dae@samsung.com>
+> > > >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > > >> ---
+> > > >>=20
+> > > >>   drivers/gpu/drm/panel/Kconfig         |    7 +
+> > > >>   drivers/gpu/drm/panel/Makefile        |    1 +
+> > > >>   drivers/gpu/drm/panel/panel-s6e3fa0.c |  569 +++++++++++++++=
++++++++
+> > > >>   3 files changed, 577 insertions(+)
+> > > >>   create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+> > > >=20
+> > > > [snip]
+> > > >=20
+> > > >> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c
+> > > >> b/drivers/gpu/drm/panel/panel-s6e3fa0.c new file mode 100644
+> > > >> index 0000000..1282678
+> > > >> --- /dev/null
+> > > >> +++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+> > > >> @@ -0,0 +1,569 @@
+> > > >=20
+> > > > [snip]
+> > > >=20
+> > > >> +static int s6e3fa0_get_modes(struct drm_panel *panel)
+> > > >> +{
+> > > >> +=09struct drm_connector *connector =3D panel->connector;
+> > > >> +=09struct s6e3fa0 *ctx =3D panel_to_s6e3fa0(panel);
+> > > >> +=09struct drm_display_mode *mode;
+> > > >> +
+> > > >> +=09mode =3D drm_mode_create(connector->dev);
+> > > >> +=09if (!mode) {
+> > > >> +=09=09DRM_ERROR("failed to create a new display mode\n");
+> > > >> +=09=09return 0;
+> > > >> +=09}
+> > > >> +
+> > > >> +=09drm_display_mode_from_videomode(&ctx->vm, mode);
+> > > >> +=09mode->width_mm =3D ctx->width_mm;
+> > > >> +=09mode->height_mm =3D ctx->height_mm;
+> > > >> +=09connector->display_info.width_mm =3D mode->width_mm;
+> > > >> +=09connector->display_info.height_mm =3D mode->height_mm;
+> > > >> +
+> > > >> +=09mode->type =3D DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFER=
+RED;
+> > > >> +=09mode->private =3D (void *)&ctx->cpu_timings;
+> > > >=20
+> > > > Wouldn't it make sense to create a new get_interface_params (or=
 
-I can't think of any reason why we'd not want to have this visible as a
-clock?  Ideally we don't want to have any ASoC specific clock APIs when
-we're done, the reason we do at the minute is that the clock API isn't
-available as standard.
+> > > > similar)
+> > > > operation for drm_panel to query interface configuration parame=
+ters
+> > > > instead of shoving it in the mode private field ?
+> > >=20
+> > > You mean "new get_interface_params operation" is different from
+> > > get_modes() ?
+> > >=20
+> > > Till now, struct drm_display_mode and most of mode relevant APIs =
+are
+> > > only for video interface.
+> > > And CPU interface also needs video mode configurations.
+> > >=20
+> > > I have a plan to implement the CPU interface relevant APIs like v=
+ideo
+> > > mode ones, but I think they should be used under current DRM mode=
+ APIs
+> > > like fill_modes, get_modes and so on.
+> > > So after that implementation, this private field will be replaced=
+ by
+> > > new ones.
+> > >=20
+> > > Could you explain it in more detail?
+> >=20
+> > The idea is that the interface parameters (RD/WR signals timings in=
+ this
+> > case, but this could also include MIPI DSI lane configuration or an=
+y
+> > other kind of physical interface parameters) are distinct from the =
+video
+> > modes.
+>=20
+> We already have the lanes field in struct mipi_dsi_device.
 
---SLDf9lqlvOQaIe6s
+Seems I've missed the addition of mipi_dsi_device to DRM.
+
+> I think in general I'd prefer to not spread these parameters around t=
+oo
+> wildly. If this is a general requirement for DBI devices, perhaps wha=
+t we
+> need is struct mipi_dbi_device?
+
+That could be done, but I'm not sure we should expose the nature of the=
+ panel=20
+device (i.e. "I'm a mipi_dsi_device") to the display controller. I woul=
+d be=20
+worried about using container_of() on panel->dev to get a mipi_dsi_devi=
+ce=20
+pointer, as we would then need a strict guarantee that the panel->dev p=
+ointer=20
+is embedded directly in a mipi_dsi_device. This might be doable for DSI=
+, but=20
+other kind of panels might be connected to different control busses (I'=
+m=20
+thinking about I2C and SPI in particular) and still need to expose vide=
+o=20
+interface parameters to the display controller driver.
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
+
+--nextPart2460409.hEu5xXmStR
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTYTrZAAoJELSic+t+oim9oUYP/2pJyGSWadsihsAISnlYXZw8
-XDUmpFDNf8XQCOn6RyiY3vZdeQtnVkmmuMCIoKYJrLdnddHu/yrN6KQ5nx8TQyME
-bpomOqs5cJ6BcIQ8AGIaDTqimGZ4kIP6I+H9t3MLOuET2mArmJNJnMcj/TRKAhYL
-/edSQNcx+vpJYJU3h3MYFYSqQTt6DRBb1IG0CzegJ5IfOdSCFhwr0wut/2m727rn
-GKwQyPmV7YySyodFF7WEhJweYchEdWPbK7vMGRCfwSH2TSvlGEilIvsgiNvMXZiX
-H5CWk1KFfMEUdcHz2VxfBXwq7CjvMWjdS4RQBx73JpOyjHOopr9CJgnVXqKakF1I
-o0Sq62i0HpQk+o/e3BNmUyDsmo99ZDRTVj6LnMDAkZZ5rSfO06qVIQMQ4tHnCplR
-dlhEyqWkbNwX2Hhd1kftfiwQm9alvao7KhoPmZ1eNF78JO8a+NrG/xV4GG+H9xBU
-Ajs537yybrZAnPEKo3uLB46MU3G7SF3Mza1a/IJSvDBYl3XbxHb5rGXViiEVlrb7
-9euCrxfRf5C2LABWHw697YVljXy4jU5I2Ld17NVWBYlR8GXWU7fJ3T/imoprZWKW
-l13YzgUEhQ6QU2JJ6eH4SjXMOWql4oVxD7EZuUdrmXfxE7mUiCyxJLU2BB2z/WgX
-zjdX73g/rxlN1qTn5uXx
-=2ALA
+iQEcBAABAgAGBQJTYT8BAAoJEIkPb2GL7hl1GsQH/jb8Dq1BnQuslLFzgere3nd1
+mumUmJ15/238b3RLsxV59a+7RU7AdE4/LIDS2hDGjpozi8qBePVYnkABPRX0qw63
+vY3ttwVEsheMNr6EVR1zN/269kzfM0POtxs01mkWxz4ftKuTMt3AibYviCV0lsp/
+HnAr/B98mXlNzQChwKDjRrwlN+heGSe0NdwaCT7sc95D7OSBHhSLR+GovBLD3JDc
+xVziOGXVqwabKLf2X9ZDxksewoVax6KHAbbkqYp09GvWaCYJK0eFrHtSwtSvM4+r
+tYD1rSwu/igd6koMLjcPIL+Scsk5uWlWHeLxxeWBOMX2drej+w08zVDQqCdUykA=
+=LGmB
 -----END PGP SIGNATURE-----
 
---SLDf9lqlvOQaIe6s--
+--nextPart2460409.hEu5xXmStR--
+
+
+--===============1119757713==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1119757713==--
