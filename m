@@ -1,73 +1,42 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 30 Apr 2014 10:32:56 +0200
-Message-ID: <5360B538.3020104@samsung.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
- <534506B1.4040908@samsung.com> <5345333D.4080505@saftware.de>
- <CAPdUM4OOaaP2byJa+MgksAaDtsffwqTYT-obfVEBsRxjy_vKrg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v3 05/12] ARM: EXYNOS: Remove file path from comment section
+Date: Wed, 30 Apr 2014 14:11:43 +0530
+Message-ID: <CAK9yfHy8kbNk6mVZy_ARiWZ8kLbn7r7R8vj+3ETCcGsASQZsCw@mail.gmail.com>
+References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
+	<1398835057-3860-6-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4OOaaP2byJa+MgksAaDtsffwqTYT-obfVEBsRxjy_vKrg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <r.sh.open@gmail.com>, Andreas Oberritter <obi@saftware.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Grant Likely <grant.likely@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:36131 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758062AbaD3Ilo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 04:41:44 -0400
+Received: by mail-oa0-f42.google.com with SMTP id i7so1602855oag.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2014 01:41:43 -0700 (PDT)
+In-Reply-To: <1398835057-3860-6-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>, VIKAS SAJJANC <vikas.sajjan@samsung.com>
 
-Hi Rahul,
-I will prepare we v3 version.
-Do you want me to add your patches for exynos5?50 to the patchset?
-Regards,
-Tomasz Stanislawski
+Hi Pankaj,
 
-On 04/30/2014 08:37 AM, Rahul Sharma wrote:
-> Hi Tomasz,
-> 
-> I have tested your patches for exynos5250 and 5420. Works fine. Are
-> you planning to post v3? If you want I can share hand with you for v3.
-> 
-> Regards,
-> Rahul Sharma
-> 
-> On 9 April 2014 17:17, Andreas Oberritter <obi@saftware.de> wrote:
->> Hello Andrzej,
->>
->> On 09.04.2014 10:37, Andrzej Hajda wrote:
->>>> +static int exynos_phy_probe(struct platform_device *pdev)
->>>> +{
->>>> +    const struct of_device_id *of_id = of_match_device(
->>>> +            of_match_ptr(exynos_phy_of_match), &pdev->dev);
->>>> +    const u32 *offsets = of_id->data;
->>>> +    int count;
->>>> +    struct device *dev = &pdev->dev;
->>>> +    struct phy **phys;
->>>> +    struct resource *res;
->>>> +    void __iomem *regs;
->>>> +    int i;
->>>> +    struct phy_provider *phy_provider;
->>>> +
->>>> +    /* count number of phys to create */
->>>> +    for (count = 0; offsets[count] != ~0; ++count)
->>>> +            ;
->>>
->>> count = ARRAY_SIZE(offsets) - 1;
->>
->> u32 *offsets is not an array.
->>
->> Regards,
->> Andreas
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+On 30 April 2014 10:47, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Many files under "arm/mach-exynos" are having file path in file
+> comment section which is invalid now.
+> So for better code maintainability let's remove them.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+
+The change is sensible. However Kukjin had refused to accept such patches
+when I had submitted patches doing such cleanup for all Samsung platform files.
+
+Anyway, FWIW
+Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+
+-- 
+With warm regards,
+Sachin
