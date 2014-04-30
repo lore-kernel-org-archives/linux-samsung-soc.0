@@ -1,78 +1,50 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 30 Apr 2014 14:13:25 +0530
-Message-ID: <CAPdUM4PU54u3x+VEC4dRbJ-HL73ruG+WJUZF9KTS6GcB0Sb8HA@mail.gmail.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
-	<1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
-	<534506B1.4040908@samsung.com>
-	<5345333D.4080505@saftware.de>
-	<CAPdUM4OOaaP2byJa+MgksAaDtsffwqTYT-obfVEBsRxjy_vKrg@mail.gmail.com>
-	<5360B538.3020104@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:59344 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755330AbaD3In1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 04:43:27 -0400
-In-Reply-To: <5360B538.3020104@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH 0/4] dts: Add usb2phy to Exynos 5250/5420
+Date: Wed, 30 Apr 2014 14:25:06 +0530
+Message-ID: <1398848110-6152-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, stern@rowland.harvard.edu, kishon@ti.com, k.debski@samsung.com, jg1.han@samsung.com, p.paneri@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Cc: Andreas Oberritter <obi@saftware.de>, Andrzej Hajda <a.hajda@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Sure (5250, 5420). I will wait for the same to update DT patches, if any.
+Next version for earlier patch-series:
+[PATCH v7 0/2] dts: Add usb2phy to Exynos 5250
 
-Regards,
-Rahul Sharma.
+Based on 'for-next' branch of Kgene's linux-samsung tree.
 
-On 30 April 2014 14:02, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
-> Hi Rahul,
-> I will prepare we v3 version.
-> Do you want me to add your patches for exynos5?50 to the patchset?
-> Regards,
-> Tomasz Stanislawski
->
-> On 04/30/2014 08:37 AM, Rahul Sharma wrote:
->> Hi Tomasz,
->>
->> I have tested your patches for exynos5250 and 5420. Works fine. Are
->> you planning to post v3? If you want I can share hand with you for v3.
->>
->> Regards,
->> Rahul Sharma
->>
->> On 9 April 2014 17:17, Andreas Oberritter <obi@saftware.de> wrote:
->>> Hello Andrzej,
->>>
->>> On 09.04.2014 10:37, Andrzej Hajda wrote:
->>>>> +static int exynos_phy_probe(struct platform_device *pdev)
->>>>> +{
->>>>> +    const struct of_device_id *of_id = of_match_device(
->>>>> +            of_match_ptr(exynos_phy_of_match), &pdev->dev);
->>>>> +    const u32 *offsets = of_id->data;
->>>>> +    int count;
->>>>> +    struct device *dev = &pdev->dev;
->>>>> +    struct phy **phys;
->>>>> +    struct resource *res;
->>>>> +    void __iomem *regs;
->>>>> +    int i;
->>>>> +    struct phy_provider *phy_provider;
->>>>> +
->>>>> +    /* count number of phys to create */
->>>>> +    for (count = 0; offsets[count] != ~0; ++count)
->>>>> +            ;
->>>>
->>>> count = ARRAY_SIZE(offsets) - 1;
->>>
->>> u32 *offsets is not an array.
->>>
->>> Regards,
->>> Andreas
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+Tested with driver side patches:
+[PATCH v2 1/4] usb: ohci-exynos: Use struct device instead of platform_device
+[PATCH v2 2/4] usb: ehci-exynos: Use struct device instead of platform_device
+[PATCH v4 1/2] usb: ohci-exynos: Add facility to use phy provided by the generic phy framework
+[PATCH v10 4/4] usb: ehci-exynos: Change to use phy provided by the generic phy framework
+
+
+Changes from v7 series:
+ - Added patches to enable usb 2.0 support on exynos5420;
+   which include dt nodes for usb2phy as well as ehci and ohci
+   controllers.
+
+Changes from v6:
+ - Splitted the patch into two:
+    adding syscon nodes to Exynos5250 and Exynos5420 in first;
+    and phy entry change in the second.
+ - Changed the name of phandle for usb2phy from 'usb2_phy_new'
+   to 'usb2_phy_gen' indicating generic phy.
+ - Using clock macros in dt entries.
+
+Kamil Debski (1):
+  ARM: dts: Add usb2phy to Exynos 5250
+
+Vivek Gautam (3):
+  ARM: dts: Add sysreg sytem controller node to exynos5250 and
+    exynos5420
+  ARM: dts: Add usb2phy support on exynos5420
+  ARM: dts: Add usb 2.0 support on exynos5420
+
+ arch/arm/boot/dts/exynos5250.dtsi |   31 +++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi |   49 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
+
+-- 
+1.7.10.4
