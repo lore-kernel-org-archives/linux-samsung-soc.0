@@ -1,85 +1,129 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv4 4/7] ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250
- based on Cortex-a7
-Date: Wed, 30 Apr 2014 17:00:50 +0900
-Message-ID: <5360ADB2.1080600@samsung.com>
-References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
- <1398388572-30239-5-git-send-email-cw00.choi@samsung.com>
- <535AFCDF.20503@gmail.com>
+Subject: Re: [PATCH V2] ARM: EXYNOS: cpu hotplug: use v7_exit_coherency_flush
+ macro for cache disabling
+Date: Wed, 30 Apr 2014 17:02:13 +0900
+Message-ID: <5360AE05.7020106@samsung.com>
+References: <1398232351-16280-1-git-send-email-leela.krishna@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48941 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752140AbaD3IAw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 04:00:52 -0400
-In-reply-to: <535AFCDF.20503@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1398232351-16280-1-git-send-email-leela.krishna@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Leela Krishna Amudala <leela.krishna@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, nicolas.pitre@linaro.org, kgene.kim@samsung.com, amit.kucheria@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, sajjan.linux@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, marc.zyngier@arm.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, olof@lixom.net, chanho61.park@samsung.com, sachin.kamat@linaro.org, linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org
 
-Hi Tomasz,
+Hi,
 
-On 04/26/2014 09:25 AM, Tomasz Figa wrote:
-> Hi Chanwoo,
+On 04/23/2014 02:52 PM, Leela Krishna Amudala wrote:
+> A common macro v7_exit_coherency_flush available which does the below tasks in
+> the seqeunce.
+> -clearing C bit
+> -clearing L1 cache
+> -exit SMP
+> -instruction and data synchronization
 > 
-> On 25.04.2014 03:16, Chanwoo Choi wrote:
->> This patch decide proper lowpower mode of either a15 or a9 according to own ID
->> from Main ID register.
->>
->> Cc: Arnd Bergmann <arnd@arndb.de>
->> Cc: Marc Zynigier <marc.zyngier@arm.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>   arch/arm/mach-exynos/hotplug.c | 19 ++++++++++++-------
->>   1 file changed, 12 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
->> index 5eead53..acf3119 100644
->> --- a/arch/arm/mach-exynos/hotplug.c
->> +++ b/arch/arm/mach-exynos/hotplug.c
->> @@ -135,16 +135,21 @@ void __ref exynos_cpu_die(unsigned int cpu)
->>       int primary_part = 0;
->>
->>       /*
->> -     * we're ready for shutdown now, so do it.
->> -     * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
->> -     * number by reading the Main ID register and then perform the
->> -     * appropriate sequence for entering low power.
->> +     * Prepare the CPU for shutting down. The required sequence of
->> +     * operations depends on core type. CPUID part number can be used to
->> +     * determine the right way.
->>        */
->> -    asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
->> -    if ((primary_part & 0xfff0) == 0xc0f0)
->> +    primary_part = read_cpuid_part_number();
->> +
->> +    switch (primary_part) {
->> +    case ARM_CPU_PART_CORTEX_A7:
->> +    case ARM_CPU_PART_CORTEX_A15:
->>           cpu_enter_lowpower_a15();
->> -    else
->> +        break;
->> +    default:
->>           cpu_enter_lowpower_a9();
->> +        break;
->> +    }
->>
->>       platform_do_lowpower(cpu, &spurious);
->>
->>
+> So removing the local functions which does the same thing and use the macro instead.
 > 
-> I have noticed Leela Krishna Amudala's patch [1] that removes this distinction completely and simply uses generic code. Could you check if this works on Exynos3250 as well? If yes, then this patch could be dropped and Leela's one would be enough.
+> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
+> Acked-by: Nicolas Pitre <nico@linaro.org>
+> ---
+> Changes since V1:
+> 	- removed unwanted primary_part variable in exynos_cpu_die()
+> 	- given more description in commit message
+> 	  suggested by Daniel Lezcano <daniel.lezcano@linaro.org>
 > 
-> [1] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29064.html
+>  arch/arm/mach-exynos/hotplug.c |   63 +---------------------------------------
+>  1 file changed, 1 insertion(+), 62 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+> index 5eead53..9ca692d 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -24,56 +24,6 @@
+>  #include "common.h"
+>  #include "regs-pmu.h"
+>  
+> -static inline void cpu_enter_lowpower_a9(void)
+> -{
+> -	unsigned int v;
+> -
+> -	asm volatile(
+> -	"	mcr	p15, 0, %1, c7, c5, 0\n"
+> -	"	mcr	p15, 0, %1, c7, c10, 4\n"
+> -	/*
+> -	 * Turn off coherency
+> -	 */
+> -	"	mrc	p15, 0, %0, c1, c0, 1\n"
+> -	"	bic	%0, %0, %3\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 1\n"
+> -	"	mrc	p15, 0, %0, c1, c0, 0\n"
+> -	"	bic	%0, %0, %2\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 0\n"
+> -	  : "=&r" (v)
+> -	  : "r" (0), "Ir" (CR_C), "Ir" (0x40)
+> -	  : "cc");
+> -}
+> -
+> -static inline void cpu_enter_lowpower_a15(void)
+> -{
+> -	unsigned int v;
+> -
+> -	asm volatile(
+> -	"	mrc	p15, 0, %0, c1, c0, 0\n"
+> -	"	bic	%0, %0, %1\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 0\n"
+> -	  : "=&r" (v)
+> -	  : "Ir" (CR_C)
+> -	  : "cc");
+> -
+> -	flush_cache_louis();
+> -
+> -	asm volatile(
+> -	/*
+> -	* Turn off coherency
+> -	*/
+> -	"	mrc	p15, 0, %0, c1, c0, 1\n"
+> -	"	bic	%0, %0, %1\n"
+> -	"	mcr	p15, 0, %0, c1, c0, 1\n"
+> -	: "=&r" (v)
+> -	: "Ir" (0x40)
+> -	: "cc");
+> -
+> -	isb();
+> -	dsb();
+> -}
+> -
+>  static inline void cpu_leave_lowpower(void)
+>  {
+>  	unsigned int v;
+> @@ -132,19 +82,8 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>  void __ref exynos_cpu_die(unsigned int cpu)
+>  {
+>  	int spurious = 0;
+> -	int primary_part = 0;
+>  
+> -	/*
+> -	 * we're ready for shutdown now, so do it.
+> -	 * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
+> -	 * number by reading the Main ID register and then perform the
+> -	 * appropriate sequence for entering low power.
+> -	 */
+> -	asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
+> -	if ((primary_part & 0xfff0) == 0xc0f0)
+> -		cpu_enter_lowpower_a15();
+> -	else
+> -		cpu_enter_lowpower_a9();
+> +	v7_exit_coherency_flush(louis);
+>  
+>  	platform_do_lowpower(cpu, &spurious);
+>  
+> 
 
-OK, I tested this patch[1] to turn on secondary CPu on Exynos3250.
-I'll drop following patch on next posting(v5) by using Leela Krishna Amudala's patch [1].
-- ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
+I tested this patch on Exynos3250 based on Cortex-A7 dual core.
 
-Best Regards,
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Thanks,
 Chanwoo Choi
