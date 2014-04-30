@@ -1,57 +1,86 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 3/4] ARM: dts: Add usb2phy support on exynos5420
-Date: Wed, 30 Apr 2014 16:07:50 +0530
-Message-ID: <CAFp+6iGDoMQO2-BMdOJjnjnb6_cO1VUTLX2MjRksHmPqYTEq9g@mail.gmail.com>
-References: <1398848110-6152-1-git-send-email-gautam.vivek@samsung.com>
-	<1398848110-6152-4-git-send-email-gautam.vivek@samsung.com>
-	<5360CF8A.5010809@gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Add sound node for Snow board
+Date: Wed, 30 Apr 2014 16:21:01 +0530
+Message-ID: <5360D595.6050408@linaro.org>
+References: <1398320219-23362-1-git-send-email-tushar.behera@linaro.org> <1398320219-23362-2-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5360CF8A.5010809@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Praveen Paneri <p.paneri@samsung.com>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:35200 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758355AbaD3KvO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 06:51:14 -0400
+Received: by mail-ie0-f175.google.com with SMTP id rl12so1729070iec.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2014 03:51:11 -0700 (PDT)
+In-Reply-To: <1398320219-23362-2-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, robh+dt@kernel.org
 
-Hi Arun,
+On 04/24/2014 11:46 AM, Tushar Behera wrote:
+> The audio codec on Snow board, MAX98095 is connected on I2C7 bus.
+> Also it requires the GPX1-7 line to be pulled up.
+> 
+> Updated Snow DTS file to incorporate above changes and added a
+> sound node to instantiate the I2S-based sound card.
+> 
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5250-snow.dts |   32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index 1bc9b50..f63df3c 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -196,6 +196,38 @@
+>  		};
+>  	};
+>  
+> +	regulators {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		max98095-en-regulator {
+> +			compatible = "regulator-fixed";
+> +			gpio = <&gpx1 7 0>;
+> +			enable-active-high;
+> +			regulator-boot-on;
+> +			regulator-always-on;
+> +		};
+> +	};
+> +
 
+Instead of relying on regulator framework, I will add a related
+pin-control entry and update sound node accordingly.
 
-On Wed, Apr 30, 2014 at 3:55 PM, Arun Kumar K <arunkk.samsung@gmail.com> wrote:
-> Hi Vivek,
->
-> On 04/30/14 14:25, Vivek Gautam wrote:
->> Add required device node for usb2phy to let enable USB 2.0
->> support.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5420.dtsi |   10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->> index cfa3755..16b860a 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -737,4 +737,14 @@
->>               clock-names = "secss";
->>               samsung,power-domain = <&g2d_pd>;
->>       };
->> +
->> +     phy@12130000 {
->
-> As we will be changing over to reference-based updation of nodes in the
-> board dts files, it would be good to add node reference also while
-> adding new nodes. Like : usb_phy: phy@12130000 {
-
-Sure, i will add node-references to phy as well as the usb nodes in
-the subsequent patch.
-
-[snip]
+> +	i2c@12CD0000 {
+> +		max98095: codec@11 {
+> +			compatible = "maxim,max98095";
+> +			reg = <0x11>;
+> +		};
+> +	};
+> +
+> +	i2s0: i2s@03830000 {
+> +		status = "okay";
+> +	};
+> +
+> +	sound {
+> +		compatible = "google,snow-audio-max98095";
+> +
+> +		samsung,i2s-controller = <&i2s0>;
+> +		samsung,audio-codec = <&max98095>;
+> +	};
+> +
+>  	usb@12110000 {
+>  		samsung,vbus-gpio = <&gpx1 1 0>;
+>  	};
+> 
 
 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Tushar Behera
