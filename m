@@ -1,66 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Tue, 29 Apr 2014 15:29:15 -0700
-Message-ID: <20140429222915.GU15125@sirena.org.uk>
-References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
- <20140424133920.GA12304@sirena.org.uk>
- <5359E18B.60600@linaro.org>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v3 PATCH 08/16] drm/exynos: fimd: support I80 interface
+Date: Wed, 30 Apr 2014 09:36:28 +0900
+Message-ID: <5360458C.6010500@samsung.com>
+References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
+ <1398563412-21781-9-git-send-email-yj44.cho@samsung.com>
+ <CAK9yfHwAqguttVZRD5BymBhS9LRpnCJoVp6JZm76XjVrkEDygQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dXvu6+ixFx2ZffE8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51053 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756637AbaD2W3e (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57316 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752171AbaD3Agd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 18:29:34 -0400
-Content-Disposition: inline
-In-Reply-To: <5359E18B.60600@linaro.org>
+	Tue, 29 Apr 2014 20:36:33 -0400
+In-reply-to: <CAK9yfHwAqguttVZRD5BymBhS9LRpnCJoVp6JZm76XjVrkEDygQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Dave Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+Hi Sachin,
 
---dXvu6+ixFx2ZffE8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for comment.
 
-On Fri, Apr 25, 2014 at 09:46:11AM +0530, Tushar Behera wrote:
-> On 04/24/2014 07:09 PM, Mark Brown wrote:
+I'll fix.
 
-> > defined.  Why is that?  Also, why is the secondary I2S playback stream
-> > not supported (this may be a reason to restrict to only the one I2S
-> > interface)?
+Thank you.
+Best regards YJ
 
-> AFAICS, I2S driver doesn't support secondary DAI with DT (dai type is
-> always TYPE_PRI in case of DT). Hence I could not find a setup to test
-> secondary dai with this board.
-
-OK, that should be fixed at some point.  I will hopefully be able to
-look at this myself on the Arndale Octa though (or Chromebook or Arndale
-once XCLKOUT is implemented).
-
---dXvu6+ixFx2ZffE8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTYCe3AAoJELSic+t+oim9/nwP/1MmemJBQprVgaUGU/1sJ5V0
-xffa7Isk0NJTlgsP2doO1yjfuYUu4mCnkgxw/NR6AKVLgTJsu3PPC8tghdf7rTLQ
-FQiUOAqhPkjot2DGRXf+2H5TpVKFP/cRWFoBEe4Lvz+XKRYTOBg39OkfLadw4i8T
-w33BMwTCqOBsaUgs363z/ZLWcEXPMKGmxecI20Fepb4GUP2bv+/+Vj8uwZxPcrLE
-J/MTlffkc/m+9cWU729kKHIklrcrwcpez5CiUN9/KSN9TwfAHyP07cuvhfs1A1Ep
-33dPJwijghJeK4fXZ4mFxwzXQ+wINazC3njLRCnYGCD3M7RnpQiRX68ImuNCh4z0
-oYE4R4U2BCzC2EQOb45AJgkhEbaZYy5mmoZygADKy29Ext7CIs+HYsRlht74MznX
-OnBDmdBiAXRSyYqpnhBjL48zLjI85E9/tc2SmdKHDF+OBs96u9Fy+i519gyzwRwb
-zVvq9fsrjbnQP3cxovUKwiH02/5D0xQGacON4C5xJdzbDez5gaYcAMhwbAygiYDD
-x9cIpO4qXnlkLS7DBtAbEAuQww/cKQv+FBsSoF1TOyA2JFPw46AI+ANVtXeR5tPb
-GwZ4PuIsQtARAbOnd2mqwCxTFkJ46K6jl7Vh1UuDk/ZvjJgf4Wvh7EKZ/Lp3+1r6
-4AB+gPNuYWxk/8xMAy4m
-=zPmG
------END PGP SIGNATURE-----
-
---dXvu6+ixFx2ZffE8--
+On 04/30/2014 12:35 AM, Sachin Kamat wrote:
+> Hi YoungJun,
+>
+> On 27 April 2014 07:20, YoungJun Cho <yj44.cho@samsung.com> wrote:
+>> To support MIPI DSI command mode interface, FIMD should do followings:
+>> - Sets LCD block configuration for I80 interface.
+>> - Uses "lcd_sys" as an IRQ resource and sets relevant IRQ configuration.
+>> - Implements trigger feature which transfers image date if there is
+>>    page flip request, and implements TE handler to call trigger function.
+>> - Sets CPU mode timings configuration.
+>> - Sets ideal(pixel) clock is 2 times faster than the original one to
+>>    generate frame done IRQ prior to the next TE signal.
+>
+> <...>
+>> +
+>> +       reg = readl(timing_base + TRIGCON);
+>> +       reg |= 1 << 0 | 1 << 1;
+>
+> What does this signify? Can't this be OR'd directly with 3?
+>
