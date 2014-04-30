@@ -1,15 +1,16 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/4] clk: propagate parent change up one level
-Date: Thu, 01 May 2014 00:19:09 +0200
-Message-ID: <536176DD.5020507@gmail.com>
-References: <1396623201-26000-1-git-send-email-t.stanislaws@samsung.com>
- <1396623201-26000-2-git-send-email-t.stanislaws@samsung.com>
- <5344198B.2030604@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [RFC PATCH 0/4] drivers/base: Generic framework for tracking
+ internal interfaces
+Date: Wed, 30 Apr 2014 23:28:39 +0100
+Message-ID: <20140430222839.GE26756@n2100.arm.linux.org.uk>
+References: <1398866574-27001-1-git-send-email-a.hajda@samsung.com>
+ <20140430154914.GA898@kroah.com> <53616E31.3050404@wp.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5344198B.2030604@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <53616E31.3050404@wp.pl>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -19,87 +20,37 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomasz Figa <t.figa@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, mturquette@linaro.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, rob.herring@calxeda.com, kishon@ti.com, a.hajda@samsung.com, kyungmin.park@samsung.com, sylvester.nawrocki@gmail.com
+To: Andrzej Hajda <andrzej.hajda@wp.pl>
+Cc: Tomasz Stansislawski <t.stanislaws@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Mike,
+On Wed, Apr 30, 2014 at 11:42:09PM +0200, Andrzej Hajda wrote:
+> The main problem with component framework is that componentization  
+> significantly changes every driver and changes it in a way which is not  
+> compatible with traditional drivers, so devices which are intended to  
+> work with different DRM masters are hard to componentize if some of DRMs  
+> are componentized and some not.
 
-On 08.04.2014 17:45, Tomasz Figa wrote:
-> Hi,
->
-> On 04.04.2014 16:53, Tomasz Stanislawski wrote:
->> This patch adds support for propagation of setup of clock's parent one
->> level
->> up.
->>
->> This feature is helpful when a driver changes topology of its clocks
->> using
->> clk_set_parent().  The problem occurs when on one platform/SoC
->> driver's clock
->> is located at MUX output but on the other platform/SoC there is a
->> gated proxy
->> clock between the MUX and driver's clock.  In such a case, driver's
->> code has to
->> be modified to use one clock for enabling and the other clock for
->> setup of a
->> parent.
->>
->> The code updates are avoided by propagating setup of a parent up one
->> level.
->>
->> Additionally, this patch adds CLK_SET_PARENT_PARENT (sorry for naming)
->> flag to
->> inform clk-core that clk_set_parent() should be propagated.
->>
->> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
->> ---
->>   drivers/clk/clk.c            |    6 ++++++
->>   include/linux/clk-provider.h |    1 +
->>   2 files changed, 7 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index dff0373..53bbfda 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1737,6 +1737,12 @@ int clk_set_parent(struct clk *clk, struct clk
->> *parent)
->>
->>       /* try finding the new parent index */
->>       if (parent) {
->> +        if ((clk->flags & CLK_SET_PARENT_PARENT)
->> +            && clk->num_parents == 1) {
->> +            ret = clk_set_parent(clk->parent, parent);
->> +            goto out;
->> +        }
->> +
->>           p_index = clk_fetch_parent_index(clk, parent);
->>           p_rate = parent->rate;
->>           if (p_index < 0) {
->> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
->> index 5119174..daa0b03 100644
->> --- a/include/linux/clk-provider.h
->> +++ b/include/linux/clk-provider.h
->> @@ -30,6 +30,7 @@
->>   #define CLK_GET_RATE_NOCACHE    BIT(6) /* do not use the cached clk
->> rate */
->>   #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate
->> change */
->>   #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk
->> accuracy */
->> +#define CLK_SET_PARENT_PARENT    BIT(9) /* propagate parent change up
->> one level */
->>
->>   struct clk_hw;
->>   struct dentry;
->>
->
-> This would be very useful, at least on Exynos platforms, with
-> mux-div-gate clock paths. PARENT_PARENT sounds a bit funny, though.
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Many of the problems which the component helpers are designed to solve
+are those where you need the drm_device structure (or snd_card, or whatever
+subsystem specific card/device representation structure) pre-created in
+order to initialise the components.
 
-Your opinion on this would be greatly appreciated.
+In the case of DRM, you can't initialise encoders or connectors without
+their drm_device structure pre-existing - because these components are
+attached to the drm_device.
 
-Best regards,
-Tomasz
+Your solution to that is to delay those calls, but the DRM subsystem is
+not designed to cope like that - it's designed such that when the
+connector or encoder initialisation functions are called, it is assumed
+that the driver is initialising its state. (I've raised this point before
+but you've just fobbed it off in the past.)
+
+Another issue here is that the order of initialisation matters greatly.
+Take CRTCs for example.  In DRM, the order of attachment of CRTCs defines
+their identity, changing the order changes their identity, and changes
+how they are bound to their respective connectors.
+
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
