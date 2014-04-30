@@ -1,59 +1,55 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH v4 6/7] arm64: mm: Implement 4 levels of translation tables
-Date: Wed, 30 Apr 2014 11:29:35 +0900
-Message-ID: <007b01cf641c$07357700$15a06500$@samsung.com>
-References: <000601cf6367$cffab890$6ff029b0$@samsung.com>
- <20140429170404.GA32121@localhost>
+From: Brian Austin <brian.austin@cirrus.com>
+Subject: Re: [PATCH 01/15] ASoC: CS42L51 and WM8962 codecs
+ depend on INPUT
+Date: Tue, 29 Apr 2014 21:31:30 -0500
+Message-ID: <alpine.DEB.2.02.1404292124270.31465@heelrod>
+References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
+ <1398770316-19715-2-git-send-email-kaixu.xia@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140429170404.GA32121@localhost>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Catalin Marinas' <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, 'Marc Zyngier' <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1398770316-19715-2-git-send-email-kaixu.xia@linaro.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Xia Kaixu <kaixu.xia@linaro.org>
+Cc: alsa-devel@alsa-project.org, linaro-kernel@lists.linaro.org, arnd@arndb.de, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Timur Tabi <timur@tabi.org>, linux-samsung-soc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben-linux@fluff.org>, linux-input@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@slimlogic.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, April 30, 2014 2:04 AM, Catalin Marinas wrote:
-> On Tue, Apr 29, 2014 at 05:59:33AM +0100, Jungseok Lee wrote:
-> > diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S index
-> > 0fd5650..03ec424 100644
-> > --- a/arch/arm64/kernel/head.S
-> > +++ b/arch/arm64/kernel/head.S
-> > @@ -37,8 +37,9 @@
-> >
-> >  /*
-> >   * swapper_pg_dir is the virtual address of the initial page table.
-> > We place
-> > - * the page tables 3 * PAGE_SIZE below KERNEL_RAM_VADDR. The
-> > idmap_pg_dir has
-> > - * 2 pages and is placed below swapper_pg_dir.
-> > + * the page tables 3 * PAGE_SIZE (2 or 3 levels) or 4 * PAGE_SIZE (4
-> > + levels)
-> > + * below KERNEL_RAM_VADDR. The idmap_pg_dir has 2 pages (2 or 3
-> > + levels) or
-> > + * 3 pages (4 levels) and is placed below swapper_pg_dir.
-> >   */
-> >  #define KERNEL_RAM_VADDR       (PAGE_OFFSET + TEXT_OFFSET)
-> >
-> > @@ -46,8 +47,13 @@
-> >  #error KERNEL_RAM_VADDR must start at 0xXXX80000  #endif
-> >
-> > +#ifdef CONFIG_ARM64_4_LEVELS
-> > +#define SWAPPER_DIR_SIZE       (4 * PAGE_SIZE)
-> > +#define IDMAP_DIR_SIZE         (3 * PAGE_SIZE)
-> > +#else
-> >  #define SWAPPER_DIR_SIZE       (3 * PAGE_SIZE)
-> >  #define IDMAP_DIR_SIZE         (2 * PAGE_SIZE)
-> > +#endif
-> 
-> Mark Rutland was doing some clean-up of this code to no longer place swapper_pg_dir and idmap_pg_dir
-> below the kernel image. I'm not sure whether the patches ended up on the list yet (not a problem for
-> now, just a slight change for your patches).
 
-I don't see those patches in the mailing list yet.
-I will keep it in mind. Thanks.
 
-Best Regards
-Jungseok Lee
+On Tue, 29 Apr 2014, Xia Kaixu wrote:
+
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Building ARM randconfig got into a situation where CONFIG_INPUT
+> is turned off and SND_SOC_ALL_CODECS is turned on, which failed
+> for two codecs trying to use the input subsystem. Some other
+> drivers also select one of these codecs and consequently need an
+> explicit dependency added.
+
+I assume you mean the CS42L52 instead of the L51. INPUT is used for a BEEP 
+Generator but when I disable CONFIG_INPUT I do not get an error. Is there 
+any information available on what the error is?
+
+
+>
+> Appending to the dependency list seems the easiest way out,
+> since this is not a practical limitation. If anyone really
+> needs to build these codecs for a kernel with no input support,
+> a more sophisticated solution can be implemented.
+>
+It shouldn't build the BEEP code without CONFIG_INPUT enabled as you can 
+use the CODEC without the BEEP enabled.
+
+I believe the WM8962 is done the same way.
+
+Thanks,
+Brian
