@@ -1,97 +1,65 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] ARM: dts: Add peach-pit board support
-Date: Wed, 30 Apr 2014 09:48:33 -0700
-Message-ID: <CAD=FV=VTdi8o+_t+6fY4DqRT_VZDMKeFo3UNxi1UD7HAyHYNCQ@mail.gmail.com>
-References: <1398313031-14848-1-git-send-email-arun.kk@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f170.google.com ([209.85.128.170]:51492 "EHLO
-	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933897AbaD3Qse (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 12:48:34 -0400
-Received: by mail-ve0-f170.google.com with SMTP id sa20so2535652veb.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2014 09:48:33 -0700 (PDT)
-In-Reply-To: <1398313031-14848-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v3 0/7] Add cros_ec changes for newer boards
+Date: Wed, 30 Apr 2014 10:44:03 -0700
+Message-ID: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
+Cc: abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, andrew-g2DYL2Zd6BY@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kevin.strasser-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, shane.huang-5C7GfCeVMHo@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, galak@codeaurora
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>, Tom Rini <trini@ti.com>
 
-Arun,
+This series adds the most critical cros_ec changes for newer boards
+using cros_ec.  Specifically:
+* Fixes timing/locking issues with the previously upstreamed (but
+  never used upstream) cros_ec_spi driver.
+* Updates the cros_ec header file to the latest version which allows
+  us to use newer EC features like i2c tunneling.
+* Adds an i2c tunnel driver to allow communication to the EC's i2c
+  devices.
 
-On Wed, Apr 23, 2014 at 9:17 PM, Arun Kumar K <arun.kk@samsung.com> wrote:
-> Adds the google peach-pit board dts file which uses
-> exynos5420 SoC.
->
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes from v1
-> ---------------
-> - Addressed review comments from Doug, Sachin & Tushar
-> - Removed adc and lid-switch nodes
-> ---
->  arch/arm/boot/dts/Makefile                 |    1 +
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |  182 ++++++++++++++++++++++++++++
->  2 files changed, 183 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 35c146f..3220e29 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->         exynos5250-smdk5250.dtb \
->         exynos5250-snow.dtb \
->         exynos5420-arndale-octa.dtb \
-> +       exynos5420-peach-pit.dtb \
->         exynos5420-smdk5420.dtb \
->         exynos5440-sd5v1.dtb \
->         exynos5440-ssdk5440.dtb
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> new file mode 100644
-> index 0000000..fbb0469
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -0,0 +1,182 @@
-> +/*
-> + * Google Peach Pit Rev 6+ board device tree source
-> + *
-> + * Copyright (c) 2014 Google, Inc
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/dts-v1/;
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include "exynos5420.dtsi"
-> +
-> +/ {
-> +       model = "Google Peach Pit Rev 6+";
-> +
-> +       compatible = "google,pit-rev16",
-> +               "google,pit-rev15", "google,pit-rev14",
-> +               "google,pit-rev13", "google,pit-rev12",
-> +               "google,pit-rev11", "google,pit-rev10",
-> +               "google,pit-rev9", "google,pit-rev8",
-> +               "google,pit-rev7", "google,pit-rev6",
-> +               "google,pit", "google,peach","samsung,exynos5420",
-> +               "samsung,exynos5";
-> +
-> +       memory {
-> +               reg = <0x20000000 0x80000000>;
-> +       };
+This _doesn't_ get the EC driver fully up to speed with what's in the
+current Chromium OS trees.  There are a whole slew of cleanup patches
+there, an addition of an LPC transport mode, and exports of functions
+to userspace.  Once these patches land and we have functionality we
+can continue to pick more cleanup patches.
 
-One other thing that came up at ELC: it might not be so wise to
-include actual values here.  We're expecting that the bootloader will
-probe memory and tell you whether you're on a 2GB board or a 4GB
-board.  IIRC the proper thing to do here is to use 0 for both, so:
+Changes in v3:
+- Separate out packet sizing from packet stuffing.
+- Get rid of useless dev_dbg.
+- Check command_sendrecv against NULL.
+- Don't check np against NULL.
+- Get rid of useless error on memory alloc fail.
+- Get rid of useless platform_set_drvdata(dev, NULL);
 
-reg = <0 0>;
+Changes in v2:
+- Update tunnel binding as per swarren
+- Removed i2c20 alias for i2c tunnel
 
--Doug
+Bill Richardson (1):
+  mfd: cros_ec: Sync to the latest cros_ec_commands.h from EC sources
+
+David Hendricks (1):
+  mfd: cros_ec: spi: calculate delay between transfers correctly
+
+Doug Anderson (5):
+  mfd: cros_ec: spi: Add mutex to cros_ec_spi
+  mfd: cros_ec: spi: Make the cros_ec_spi timeout more reliable
+  mfd: cros_ec: spi: Increase cros_ec_spi deadline from 5ms to 100ms
+  i2c: ChromeOS EC tunnel driver
+  ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+
+ .../devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt |   39 +
+ arch/arm/boot/dts/tegra124-venice2.dts             |   26 +
+ drivers/i2c/busses/Kconfig                         |    9 +
+ drivers/i2c/busses/Makefile                        |    1 +
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c            |  318 ++++++
+ drivers/mfd/cros_ec.c                              |    7 +-
+ drivers/mfd/cros_ec_spi.c                          |   67 +-
+ include/linux/mfd/cros_ec.h                        |    4 +-
+ include/linux/mfd/cros_ec_commands.h               | 1128 ++++++++++++++++++--
+ 9 files changed, 1507 insertions(+), 92 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+ create mode 100644 drivers/i2c/busses/i2c-cros-ec-tunnel.c
+
+-- 
+1.9.1.423.g4596e3a
