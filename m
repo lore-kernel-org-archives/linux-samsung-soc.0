@@ -1,52 +1,95 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early BRESP
-Date: Wed, 30 Apr 2014 15:13:15 +0900
-Message-ID: <20140430061315.GA5153@verge.net.au>
-References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
- <E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk>
- <20140429000224.GA31083@verge.net.au>
- <535FD07D.5070801@wwwdotorg.org>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: [PATCH 3/3] cpufreq: Pass third argument as function parameter is
+Date: Wed, 30 Apr 2014 15:28:36 +0900
+Message-ID: <000201cf643d$6ac0da00$40428e00$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41628 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750833AbaD3GNS (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:24049 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754204AbaD3G2i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 02:13:18 -0400
-Content-Disposition: inline
-In-Reply-To: <535FD07D.5070801@wwwdotorg.org>
+	Wed, 30 Apr 2014 02:28:38 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.ifradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
+To: "'open list:CPU FREQUENCY DRI...'" <cpufreq@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-On Tue, Apr 29, 2014 at 10:17:01AM -0600, Stephen Warren wrote:
-> On 04/28/2014 06:02 PM, Simon Horman wrote:
-> > On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
-> >> Since we now automatically enable early BRESP in core L2C-310 code when
-> >> we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
-> >> explicitly.  Instead, they should seek to preserve the value of bit 30
-> >> in the auxiliary control register.
-> >>
-> >> Acked-by: Tony Lindgren <tony@atomide.com>
-> >> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > 
-> > I would prefer if this patch was broken out into individual patches
-> > for each board or SoC file and that they were then picked up
-> > by their respective platform maintainers.
-> > 
-> > Likewise for patch 66/97. Although it is only for shmobile
-> > I would prefer it broken out.
-> 
-> There are far too many dependencies in this series to break out the
-> board file patches to be merged separately; it'd take either a whole
-> bunch of kernel releases to merge it all that way, or a twisty maze of
-> tiny topic branches cross-merged all over the place. Neither option is
-> realistic.
+In dev_pm_opp_init_cpufreq_table, flags parameter is added to
+indicate descending order. If flags is zero, it is a ascending
+order.
 
-Understood, that seems reasonable to me.
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ drivers/cpufreq/arm_big_little.c |    2 +-
+ drivers/cpufreq/cpufreq-cpu0.c   |    2 +-
+ drivers/cpufreq/imx6q-cpufreq.c  |    2 +-
+ drivers/cpufreq/omap-cpufreq.c   |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-For the shmobile portions this patch and 66/97.
-
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/drivers/cpufreq/arm_big_little.c
+b/drivers/cpufreq/arm_big_little.c
+index bad2ed3..851f53b 100644
+--- a/drivers/cpufreq/arm_big_little.c
++++ b/drivers/cpufreq/arm_big_little.c
+@@ -332,7 +332,7 @@ static int _get_cluster_clk_and_freq_table(struct device
+*cpu_dev)
+ 		goto out;
+ 	}
+ 
+-	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table[cluster]);
++	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table[cluster],
+0);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "%s: failed to init cpufreq table, cpu: %d,
+err: %d\n",
+ 				__func__, cpu_dev->id, ret);
+diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
+index 1bf6bba..2557860 100644
+--- a/drivers/cpufreq/cpufreq-cpu0.c
++++ b/drivers/cpufreq/cpufreq-cpu0.c
+@@ -158,7 +158,7 @@ static int cpu0_cpufreq_probe(struct platform_device
+*pdev)
+ 		goto out_put_node;
+ 	}
+ 
+-	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
++	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table, 0);
+ 	if (ret) {
+ 		pr_err("failed to init cpufreq table: %d\n", ret);
+ 		goto out_put_node;
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c
+b/drivers/cpufreq/imx6q-cpufreq.c
+index e27fca8..c2bf03f 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -212,7 +212,7 @@ static int imx6q_cpufreq_probe(struct platform_device
+*pdev)
+ 		}
+ 	}
+ 
+-	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
++	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table, 0);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
+ 		goto put_node;
+diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
+index 5f69c9a..afe9bf8 100644
+--- a/drivers/cpufreq/omap-cpufreq.c
++++ b/drivers/cpufreq/omap-cpufreq.c
+@@ -119,7 +119,7 @@ static int omap_cpu_init(struct cpufreq_policy *policy)
+ 		return PTR_ERR(policy->clk);
+ 
+ 	if (!freq_table) {
+-		result = dev_pm_opp_init_cpufreq_table(mpu_dev,
+&freq_table);
++		result = dev_pm_opp_init_cpufreq_table(mpu_dev, &freq_table,
+0);
+ 		if (result) {
+ 			dev_err(mpu_dev,
+ 				"%s: cpu%d: failed creating freq
+table[%d]\n",
+-- 
+1.7.10.4
