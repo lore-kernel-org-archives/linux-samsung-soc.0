@@ -1,50 +1,69 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH] drm/exynos: fix nested calls to lock mutex in drm resume
-Date: Wed, 30 Apr 2014 18:32:22 +0530
-Message-ID: <1398862942-6668-1-git-send-email-rahul.sharma@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v4 4/7] arm64: Add a description on 48-bit address space
+ with 4KB pages
+Date: Wed, 30 Apr 2014 14:12:24 +0100
+Message-ID: <20140430131224.GD31220@arm.com>
+References: <000401cf6367$cc461500$64d23f00$@samsung.com>
+ <20140429144759.GL17007@arm.com>
+ <008e01cf643f$3e67eff0$bb37cfd0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:45232 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757058AbaD3NF3 (ORCPT
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:33007 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S933552AbaD3NNA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 09:05:29 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N4U0086VHP4VK80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Apr 2014 22:05:28 +0900 (KST)
+	Wed, 30 Apr 2014 09:13:00 -0400
+Content-Disposition: inline
+In-Reply-To: <008e01cf643f$3e67eff0$bb37cfd0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Marc Zyngier <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, "steve.capper@linaro.org" <steve.capper@linaro.org>, "sungjinn.chung@samsung.com" <sungjinn.chung@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ilho215.lee@samsung.com" <ilho215.lee@samsung.com>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+On Wed, Apr 30, 2014 at 07:41:40AM +0100, Jungseok Lee wrote:
+> On Tuesday, April 29, 2014 11:48 PM, Catalin Marinas wrote:
+> > On Tue, Apr 29, 2014 at 05:59:27AM +0100, Jungseok Lee wrote:
+> > > --- a/Documentation/arm64/memory.txt
+> > > +++ b/Documentation/arm64/memory.txt
+> > > @@ -8,10 +8,11 @@ This document describes the virtual memory layout
+> > > used by the AArch64  Linux kernel. The architecture allows up to 4
+> > > levels of translation  tables with a 4KB page size and up to 3 levels with a 64KB page size.
+> > >
+> > > -AArch64 Linux uses 3 levels of translation tables with the 4KB page
+> > > -configuration, allowing 39-bit (512GB) virtual addresses for both
+> > > user -and kernel. With 64KB pages, only 2 levels of translation tables
+> > > are -used but the memory layout is the same.
+> > > +AArch64 Linux uses 3 levels and 4 levels of translation tables with
+> > > +the 4KB page configuration, allowing 39-bit (512GB) and 48-bit
+> > > +(256TB) virtual addresses, respectively, for both user and kernel.
+> > > +With 64KB pages, only 2 levels of translation tables are used but the
+> > > +memory layout is the same.
+> > 
+> > Any reason why we couldn't use 48-bit address space with 64K pages (implying 3 levels)?
+> 
+> No technical reason.
+> Since 64K+3levels is not implemented in this set, I didn't add it.
+> 
+> Should 64K+3levels be prepared in this patchset?
+> 
+> > > -AArch64 Linux memory layout with 64KB pages:
+> > > +AArch64 Linux memory layout with 4KB pages + 4 levels:
+> > > +
+> > > +Start			End			Size		Use
+> > > +-----------------------------------------------------------------------
+> > > +0000000000000000	0000ffffffffffff	 256TB		user
+> > > +
+> > > +ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
+> > 
+> > BTW, maybe as a separate patch we should change the "end" to be exclusive. It becomes harder to modify
+> > (I've been through this a few times already ;)) and even follow the changes.
+> 
+> Does "exclusive" mean that 0000ffffffffffff is changed to 0001000000000000?
+> Or Does it mean that "End" column is dropped?
 
-While testing S2R on exynos board, system is hanging and
-rebooting due to nested mutex_lock calls in exynos drm
-resume callback. Changing the order of the calls is fixing
-the issue.
+Not dropped but changed to 0001.... (the kernel already prints the
+memory layout in a similar way).
 
-Change-Id: I3f3ada8a413a414dca0bbac53cfc5fe3138af4d6
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index bb7dfee..2bb6233 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -184,8 +184,8 @@ static int exynos_drm_resume(struct drm_device *dev)
- 			connector->funcs->dpms(connector, connector->dpms);
- 	}
- 
--	drm_helper_resume_force_mode(dev);
- 	drm_modeset_unlock_all(dev);
-+	drm_helper_resume_force_mode(dev);
- 
- 	return 0;
- }
 -- 
-1.7.9.5
+Catalin
