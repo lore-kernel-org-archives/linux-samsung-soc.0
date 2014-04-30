@@ -1,137 +1,125 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v3 PATCH v2 10/16] drm/exynos: dsi: add driver data to
- support Exynos5420
-Date: Wed, 30 Apr 2014 09:36:51 +0900
-Message-ID: <536045A3.5020604@samsung.com>
-References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
- <1398563412-21781-11-git-send-email-yj44.cho@samsung.com>
- <CAK9yfHwY85FuMvTQo-HUKocyXkjjK9=5-oXVd9CL8hS7B5++=A@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 5/5] devfreq: exynos5: Use devm_devfreq_* function using
+ device resource management
+Date: Wed, 30 Apr 2014 09:58:40 +0900
+Message-ID: <53604AC0.6020306@samsung.com>
+References: <1398416894-6782-1-git-send-email-cw00.choi@samsung.com>
+ <1398416894-6782-6-git-send-email-cw00.choi@samsung.com>
+ <CAK9yfHyP63QaaBwc4vkkqU4g3+B2DpqeC_11E5+LevWXED0Qxg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAK9yfHwY85FuMvTQo-HUKocyXkjjK9=5-oXVd9CL8hS7B5++=A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:50685 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751716AbaD3A6n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Apr 2014 20:58:43 -0400
+In-reply-to: <CAK9yfHyP63QaaBwc4vkkqU4g3+B2DpqeC_11E5+LevWXED0Qxg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, rafael.j.wysocki@intel.com, Nishanth Menon <nm@ti.com>, Jiri Kosina <jkosina@suse.cz>, labbe.montjoie@gmail.com, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Manish Badarkhe <badarkhe.manish@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
 Hi Sachin,
 
-Thank you for comment.
-
-I'll fix.
-
-Thank you.
-Best regards YJ
-
-On 04/30/2014 12:26 AM, Sachin Kamat wrote:
-> On 27 April 2014 07:20, YoungJun Cho <yj44.cho@samsung.com> wrote:
->> The offset of register DSIM_PLLTMR_REG in Exynos5420 is different
->> from the one in Exynos4 SoC.
+On 04/30/2014 01:54 AM, Sachin Kamat wrote:
+> Hi Chanwoo,
+> 
+> On 25 April 2014 14:38, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patch uses devm_devfreq_add_device()/devm_devfreq_register_opp_notifier()
+>> to control automatically the resource of devfreq.
 >>
->> In case of Exynos5420 SoC, there is no frequency band bit in DSIM_PLLCTRL_REG,
->> and it uses DSIM_PHYCTRL_REG and DSIM_PHYTIMING*_REG instead.
->> So this patch adds driver data to distinguish it.
->>
->> Changelog v2:
->> - Moves exynos_dsi_enable_clocks() after exynos_dsi_reset()
->>    (commented by Andrzej Hajda)
->> - Splits D-PHY control setting routines from PLL setting one
->>    (commented by Andrzej Hajda)
->>
->> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> Cc: Manish Badarkhe <badarkhe.manish@gmail.com>
+>> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-samsung-soc@vger.kernel.org
 >> ---
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |  154 ++++++++++++++++++++++++++-----
->>   1 file changed, 132 insertions(+), 22 deletions(-)
+>>  drivers/devfreq/exynos/exynos5_bus.c | 23 ++++++++---------------
+>>  1 file changed, 8 insertions(+), 15 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index 4a918ec..c18dba3 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -17,6 +17,7 @@
+>> diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
+>> index ab54a69..1f622f8 100644
+>> --- a/drivers/devfreq/exynos/exynos5_bus.c
+>> +++ b/drivers/devfreq/exynos/exynos5_bus.c
+>> @@ -165,11 +165,6 @@ static int exynos5_int_get_dev_status(struct device *dev,
+>>  }
+>>  static void exynos5_int_exit(struct device *dev)
+>>  {
+>> -       struct platform_device *pdev = container_of(dev, struct platform_device,
+>> -                                                   dev);
+>> -       struct busfreq_data_int *data = platform_get_drvdata(pdev);
+>> -
+>> -       devfreq_unregister_opp_notifier(dev, data->devfreq);
+>>  }
+> 
+> Do you need an empty function?
+
+exynos5_init_exit() function would be removed because this function is not necessary.
+
+> 
 >>
->>   #include <linux/clk.h>
->>   #include <linux/irq.h>
->> +#include <linux/of_device.h>
->>   #include <linux/phy/phy.h>
->>   #include <linux/regulator/consumer.h>
+>>  static struct devfreq_dev_profile exynos5_devfreq_int_profile = {
+>> @@ -343,30 +338,29 @@ static int exynos5_busfreq_int_probe(struct platform_device *pdev)
 >>
->> @@ -54,9 +55,12 @@
+>>         busfreq_mon_reset(ppmu_data);
 >>
->>   /* FIFO memory AC characteristic register */
->>   #define DSIM_PLLCTRL_REG       0x4c    /* PLL control register */
->> -#define DSIM_PLLTMR_REG                0x50    /* PLL timer register */
->>   #define DSIM_PHYACCHR_REG      0x54    /* D-PHY AC characteristic register */
->>   #define DSIM_PHYACCHR1_REG     0x58    /* D-PHY AC characteristic register1 */
->> +#define DSIM_PHYCTRL_REG       0x5c
->> +#define DSIM_PHYTIMING_REG     0x64
->> +#define DSIM_PHYTIMING1_REG    0x68
->> +#define DSIM_PHYTIMING2_REG    0x6c
+>> -       data->devfreq = devfreq_add_device(dev, &exynos5_devfreq_int_profile,
+>> +       data->devfreq = devm_devfreq_add_device(dev, &exynos5_devfreq_int_profile,
+>>                                            "simple_ondemand", NULL);
+>> -
+>>         if (IS_ERR(data->devfreq)) {
+>>                 err = PTR_ERR(data->devfreq);
+> 
+> No need of err.   return PTR_ERR(data->devfreq);
+
+OK, I'll fix it.
+
+> 
+>> -               goto err_devfreq_add;
+>> +               return err;
+>>         }
 >>
->>   /* DSIM_STATUS */
->>   #define DSIM_STOP_STATE_DAT(x)         (((x) & 0xf) << 0)
->> @@ -200,6 +204,21 @@
->>   #define DSIM_PLL_M(x)                  ((x) << 4)
->>   #define DSIM_PLL_S(x)                  ((x) << 1)
+>> -       devfreq_register_opp_notifier(dev, data->devfreq);
+>> +       err = devm_devfreq_register_opp_notifier(dev, data->devfreq);
+>> +       if (err < 0) {
+>> +               dev_err(dev, "Failed to register opp notifier\n");
+>> +               return err;
+>> +       }
 >>
->> +/* DSIM_PHYTIMING */
->> +#define DSIM_PHYTIMING_LPX(x)          ((x) << 8)
->> +#define DSIM_PHYTIMING_HS_EXIT(x)      ((x) << 0)
->> +
->> +/* DSIM_PHYTIMING1 */
->> +#define DSIM_PHYTIMING1_CLK_PREPARE(x) ((x) << 24)
->> +#define DSIM_PHYTIMING1_CLK_ZERO(x)    ((x) << 16)
->> +#define DSIM_PHYTIMING1_CLK_POST(x)    ((x) << 8)
->> +#define DSIM_PHYTIMING1_CLK_TRAIL(x)   ((x) << 0)
->> +
->> +/* DSIM_PHYTIMING2 */
->> +#define DSIM_PHYTIMING2_HS_PREPARE(x)  ((x) << 16)
->> +#define DSIM_PHYTIMING2_HS_ZERO(x)     ((x) << 8)
->> +#define DSIM_PHYTIMING2_HS_TRAIL(x)    ((x) << 0)
->> +
->>   #define DSI_MAX_BUS_WIDTH              4
->>   #define DSI_NUM_VIRTUAL_CHANNELS       4
->>   #define DSI_TX_FIFO_SIZE               2048
->> @@ -233,6 +252,12 @@ struct exynos_dsi_transfer {
->>   #define DSIM_STATE_INITIALIZED         BIT(1)
->>   #define DSIM_STATE_CMD_LPM             BIT(2)
+>>         err = register_pm_notifier(&data->pm_notifier);
+>>         if (err) {
+>>                 dev_err(dev, "Failed to setup pm notifier\n");
+>> -               goto err_devfreq_add;
+>> +               return err;
+>>         }
 >>
->> +struct exynos_dsi_driver_data {
->
-> Shouldn't this be static?
->
->> +       unsigned int plltmr_reg;
->> +
->
-> nit: stray blank line
->
->> +       unsigned int has_freqband:1;
->> +};
->> +
->
-> <snip>
->
->> +static void exynos_dsi_set_phy_ctrl(struct exynos_dsi *dsi)
->> +{
->> +       struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
->> +       u32 reg;
->> +
->> +       if (driver_data->has_freqband)
->> +               return;
->> +
->> +       /* B D-PHY */
->> +       reg = 0x0af & 0x1ff;
->
-> Please use macros instead of magic numbers.
->
+>>         /* TODO: Add a new QOS class for int/mif bus */
+>>         pm_qos_add_request(&data->int_req, PM_QOS_NETWORK_THROUGHPUT, -1);
+>>
+>>         return 0;
+>> -
+>> -err_devfreq_add:
+>> -       devfreq_remove_device(data->devfreq);
+>> -       return err;
+>>  }
+>>
+>>  static int exynos5_busfreq_int_remove(struct platform_device *pdev)
+>> @@ -375,7 +369,6 @@ static int exynos5_busfreq_int_remove(struct platform_device *pdev)
+>>
+>>         pm_qos_remove_request(&data->int_req);
+>>         unregister_pm_notifier(&data->pm_notifier);
+>> -       devfreq_remove_device(data->devfreq);
+>>
+>>         return 0;
+>>  }
+>> --
+>> 1.8.0
+>>
+> 
+> 
+> 
