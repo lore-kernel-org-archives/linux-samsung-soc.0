@@ -1,204 +1,279 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v3 2/2] ARM: dts: Add peach-pit board support
-Date: Wed, 30 Apr 2014 16:38:58 +0530
-Message-ID: <1398856138-18837-3-git-send-email-arun.kk@samsung.com>
-References: <1398856138-18837-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:44737 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758427AbaD3LJj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 07:09:39 -0400
-In-Reply-To: <1398856138-18837-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 07/16] clk: exynos5420: update clocks for PERIC block
+Date: Wed, 30 Apr 2014 16:45:50 +0530
+Message-ID: <CAGOxZ50Qw3TAX4KBjHMnGT8FHoj=vxXJWHq7+cCdE6CJKdPO9Q@mail.gmail.com>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-8-git-send-email-shaik.ameer@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1398344632-18623-8-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ameer Basha Shaik <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, arunkk.samsung@gmail.com
 
-Adds the google peach-pit board dts file which uses
-exynos5420 SoC.
+HI shaik,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- arch/arm/boot/dts/Makefile                 |    1 +
- arch/arm/boot/dts/exynos5420-peach-pit.dts |  156 ++++++++++++++++++++++++++++
- 2 files changed, 157 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
+On Thu, Apr 24, 2014 at 6:33 PM, Shaik Ameer Basha
+<shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch includes,
+>     1] renaming of the HSI2C clocks
+>     2] renaming of spi clocks according to the datasheet
+>     3] fixes for child-parent relationships
+>     4] adding of more clocks related to PERIC block
+You are also fixing the gate clock, GATE_BUS_PERIC -> GATE_IP_PERIC
+Please add them in your commit message.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi      |   14 +++---
+>  drivers/clk/samsung/clk-exynos5420.c   |   73 ++++++++++++++++----------------
+>  include/dt-bindings/clock/exynos5420.h |   14 +++---
+>  3 files changed, 50 insertions(+), 51 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index c3a9a66..67ba2c5 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -549,7 +549,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c4_hs_bus>;
+> -               clocks = <&clock CLK_I2C4>;
+> +               clocks = <&clock CLK_USI0>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> @@ -562,7 +562,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c5_hs_bus>;
+> -               clocks = <&clock CLK_I2C5>;
+> +               clocks = <&clock CLK_USI1>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> @@ -575,7 +575,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c6_hs_bus>;
+> -               clocks = <&clock CLK_I2C6>;
+> +               clocks = <&clock CLK_USI2>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> @@ -588,7 +588,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c7_hs_bus>;
+> -               clocks = <&clock CLK_I2C7>;
+> +               clocks = <&clock CLK_USI3>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> @@ -601,7 +601,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c8_hs_bus>;
+> -               clocks = <&clock CLK_I2C8>;
+> +               clocks = <&clock CLK_USI4>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> @@ -614,7 +614,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c9_hs_bus>;
+> -               clocks = <&clock CLK_I2C9>;
+> +               clocks = <&clock CLK_USI5>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> @@ -627,7 +627,7 @@
+>                 #size-cells = <0>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&i2c10_hs_bus>;
+> -               clocks = <&clock CLK_I2C10>;
+> +               clocks = <&clock CLK_USI6>;
+>                 clock-names = "hsi2c";
+>                 status = "disabled";
+>         };
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index cd75661..b4cf4c1 100755
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -95,6 +95,7 @@
+>  #define GATE_IP_DISP1          0x10928
+>  #define GATE_IP_G3D            0x10930
+>  #define GATE_IP_GEN            0x10934
+> +#define GATE_IP_PERIC          0x10950
+>  #define GATE_IP_MSCL           0x10970
+>  #define GATE_TOP_SCLK_GSCL     0x10820
+>  #define GATE_TOP_SCLK_DISP1    0x10828
+> @@ -183,6 +184,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+>         GATE_IP_DISP1,
+>         GATE_IP_G3D,
+>         GATE_IP_GEN,
+> +       GATE_IP_PERIC,
+>         GATE_IP_MSCL,
+>         GATE_TOP_SCLK_GSCL,
+>         GATE_TOP_SCLK_DISP1,
+> @@ -588,9 +590,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>         DIV(0, "dout_audio2", "mout_audio2", DIV_PERIC3, 28, 4),
+>
+>         /* SPI Pre-Ratio */
+> -       DIV(0, "dout_pre_spi0", "dout_spi0", DIV_PERIC4, 8, 8),
+> -       DIV(0, "dout_pre_spi1", "dout_spi1", DIV_PERIC4, 16, 8),
+> -       DIV(0, "dout_pre_spi2", "dout_spi2", DIV_PERIC4, 24, 8),
+> +       DIV(0, "dout_spi0_pre", "dout_spi0", DIV_PERIC4, 8, 8),
+> +       DIV(0, "dout_spi1_pre", "dout_spi1", DIV_PERIC4, 16, 8),
+> +       DIV(0, "dout_spi2_pre", "dout_spi2", DIV_PERIC4, 24, 8),
+>
+>         /* GSCL Block */
+>         DIV(0, "dout_gscl_blk_300", "mout_user_aclk300_gscl",
+> @@ -641,8 +643,8 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>                         GATE_BUS_TOP, 9, CLK_IGNORE_UNUSED, 0),
+>         GATE(0, "aclk66_psgen", "mout_aclk66_psgen",
+>                         GATE_BUS_TOP, 10, CLK_IGNORE_UNUSED, 0),
+> -       GATE(0, "aclk66_peric", "mout_aclk66_peric",
+> -                       GATE_BUS_TOP, 11, 0, 0),
+> +       GATE(0, "aclk66_peric", "mout_user_aclk66_peric",
+> +               GATE_BUS_TOP, 11, CLK_IGNORE_UNUSED, 0),
+>         GATE(0, "aclk166", "mout_user_aclk166",
+>                         GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
+>         GATE(0, "aclk333", "mout_aclk333",
+> @@ -657,11 +659,11 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>                 GATE_TOP_SCLK_PERIC, 2, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_UART3, "sclk_uart3", "dout_uart3",
+>                 GATE_TOP_SCLK_PERIC, 3, CLK_SET_RATE_PARENT, 0),
+> -       GATE(CLK_SCLK_SPI0, "sclk_spi0", "dout_pre_spi0",
+> +       GATE(CLK_SCLK_SPI0, "sclk_spi0", "dout_spi0_pre",
+>                 GATE_TOP_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
+> -       GATE(CLK_SCLK_SPI1, "sclk_spi1", "dout_pre_spi1",
+> +       GATE(CLK_SCLK_SPI1, "sclk_spi1", "dout_spi1_pre",
+>                 GATE_TOP_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
+> -       GATE(CLK_SCLK_SPI2, "sclk_spi2", "dout_pre_spi2",
+> +       GATE(CLK_SCLK_SPI2, "sclk_spi2", "dout_spi2_pre",
+>                 GATE_TOP_SCLK_PERIC, 8, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPDIF, "sclk_spdif", "mout_spdif",
+>                 GATE_TOP_SCLK_PERIC, 9, CLK_SET_RATE_PARENT, 0),
+> @@ -732,42 +734,39 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>         GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_BUS_FSYS0, 28, 0, 0),
+>
+>         /* UART */
+> -       GATE(CLK_UART0, "uart0", "aclk66_peric", GATE_BUS_PERIC, 4, 0, 0),
+> -       GATE(CLK_UART1, "uart1", "aclk66_peric", GATE_BUS_PERIC, 5, 0, 0),
+> -       GATE_A(CLK_UART2, "uart2", "aclk66_peric",
+> -               GATE_BUS_PERIC, 6, CLK_IGNORE_UNUSED, 0, "uart2"),
+> -       GATE(CLK_UART3, "uart3", "aclk66_peric", GATE_BUS_PERIC, 7, 0, 0),
+> +       GATE(CLK_UART0, "uart0", "aclk66_peric", GATE_IP_PERIC, 0, 0, 0),
+> +       GATE(CLK_UART1, "uart1", "aclk66_peric", GATE_IP_PERIC, 1, 0, 0),
+> +       GATE(CLK_UART2, "uart2", "aclk66_peric", GATE_IP_PERIC, 2, 0, 0),
+> +       GATE(CLK_UART3, "uart3", "aclk66_peric", GATE_IP_PERIC, 3, 0, 0),
+>         /* I2C */
+> -       GATE(CLK_I2C0, "i2c0", "aclk66_peric", GATE_BUS_PERIC, 9, 0, 0),
+> -       GATE(CLK_I2C1, "i2c1", "aclk66_peric", GATE_BUS_PERIC, 10, 0, 0),
+> -       GATE(CLK_I2C2, "i2c2", "aclk66_peric", GATE_BUS_PERIC, 11, 0, 0),
+> -       GATE(CLK_I2C3, "i2c3", "aclk66_peric", GATE_BUS_PERIC, 12, 0, 0),
+> -       GATE(CLK_I2C4, "i2c4", "aclk66_peric", GATE_BUS_PERIC, 13, 0, 0),
+> -       GATE(CLK_I2C5, "i2c5", "aclk66_peric", GATE_BUS_PERIC, 14, 0, 0),
+> -       GATE(CLK_I2C6, "i2c6", "aclk66_peric", GATE_BUS_PERIC, 15, 0, 0),
+> -       GATE(CLK_I2C7, "i2c7", "aclk66_peric", GATE_BUS_PERIC, 16, 0, 0),
+> -       GATE(CLK_I2C_HDMI, "i2c_hdmi", "aclk66_peric", GATE_BUS_PERIC, 17, 0,
+> -               0),
+> -       GATE(CLK_TSADC, "tsadc", "aclk66_peric", GATE_BUS_PERIC, 18, 0, 0),
+> +       GATE(CLK_I2C0, "i2c0", "aclk66_peric", GATE_IP_PERIC, 6, 0, 0),
+> +       GATE(CLK_I2C1, "i2c1", "aclk66_peric", GATE_IP_PERIC, 7, 0, 0),
+> +       GATE(CLK_I2C2, "i2c2", "aclk66_peric", GATE_IP_PERIC, 8, 0, 0),
+> +       GATE(CLK_I2C3, "i2c3", "aclk66_peric", GATE_IP_PERIC, 9, 0, 0),
+> +       GATE(CLK_USI0, "usi0", "aclk66_peric", GATE_IP_PERIC, 10, 0, 0),
+> +       GATE(CLK_USI1, "usi1", "aclk66_peric", GATE_IP_PERIC, 11, 0, 0),
+> +       GATE(CLK_USI2, "usi2", "aclk66_peric", GATE_IP_PERIC, 12, 0, 0),
+> +       GATE(CLK_USI3, "usi3", "aclk66_peric", GATE_IP_PERIC, 13, 0, 0),
+> +       GATE(CLK_USI4, "usi4", "aclk66_peric", GATE_IP_PERIC, 28, 0, 0),
+> +       GATE(CLK_USI5, "usi5", "aclk66_peric", GATE_IP_PERIC, 30, 0, 0),
+> +       GATE(CLK_USI6, "usi6", "aclk66_peric", GATE_IP_PERIC, 31, 0, 0),
+> +       GATE(CLK_I2C_HDMI, "i2c_hdmi", "aclk66_peric", GATE_IP_PERIC, 14, 0, 0),
+> +       GATE(CLK_TSADC, "tsadc", "aclk66_peric", GATE_IP_PERIC, 15, 0, 0),
+>         /* SPI */
+> -       GATE(CLK_SPI0, "spi0", "aclk66_peric", GATE_BUS_PERIC, 19, 0, 0),
+> -       GATE(CLK_SPI1, "spi1", "aclk66_peric", GATE_BUS_PERIC, 20, 0, 0),
+> -       GATE(CLK_SPI2, "spi2", "aclk66_peric", GATE_BUS_PERIC, 21, 0, 0),
+> +       GATE(CLK_SPI0, "spi0", "aclk66_peric", GATE_IP_PERIC, 16, 0, 0),
+> +       GATE(CLK_SPI1, "spi1", "aclk66_peric", GATE_IP_PERIC, 17, 0, 0),
+> +       GATE(CLK_SPI2, "spi2", "aclk66_peric", GATE_IP_PERIC, 18, 0, 0),
+>         GATE(CLK_KEYIF, "keyif", "aclk66_peric", GATE_BUS_PERIC, 22, 0, 0),
+>         /* I2S */
+> -       GATE(CLK_I2S1, "i2s1", "aclk66_peric", GATE_BUS_PERIC, 23, 0, 0),
+> -       GATE(CLK_I2S2, "i2s2", "aclk66_peric", GATE_BUS_PERIC, 24, 0, 0),
+> +       GATE(CLK_I2S1, "i2s1", "aclk66_peric", GATE_IP_PERIC, 20, 0, 0),
+> +       GATE(CLK_I2S2, "i2s2", "aclk66_peric", GATE_IP_PERIC, 21, 0, 0),
+>         /* PCM */
+> -       GATE(CLK_PCM1, "pcm1", "aclk66_peric", GATE_BUS_PERIC, 25, 0, 0),
+> -       GATE(CLK_PCM2, "pcm2", "aclk66_peric", GATE_BUS_PERIC, 26, 0, 0),
+> +       GATE(CLK_PCM1, "pcm1", "aclk66_peric", GATE_IP_PERIC, 22, 0, 0),
+> +       GATE(CLK_PCM2, "pcm2", "aclk66_peric", GATE_IP_PERIC, 23, 0, 0),
+>         /* PWM */
+> -       GATE(CLK_PWM, "pwm", "aclk66_peric", GATE_BUS_PERIC, 27, 0, 0),
+> +       GATE(CLK_PWM, "pwm", "aclk66_peric", GATE_IP_PERIC, 24, 0, 0),
+>         /* SPDIF */
+> -       GATE(CLK_SPDIF, "spdif", "aclk66_peric", GATE_BUS_PERIC, 29, 0, 0),
+> -
+> -       GATE(CLK_I2C8, "i2c8", "aclk66_peric", GATE_BUS_PERIC1, 0, 0, 0),
+> -       GATE(CLK_I2C9, "i2c9", "aclk66_peric", GATE_BUS_PERIC1, 1, 0, 0),
+> -       GATE(CLK_I2C10, "i2c10", "aclk66_peric", GATE_BUS_PERIC1, 2, 0, 0),
+> +       GATE(CLK_SPDIF, "spdif", "aclk66_peric", GATE_IP_PERIC, 26, 0, 0),
+>
+>         GATE(CLK_CHIPID, "chipid", "aclk66_psgen",
+>                         GATE_BUS_PERIS0, 12, CLK_IGNORE_UNUSED, 0),
+> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+> index 228cc5c..ff2e5b6 100755
+> --- a/include/dt-bindings/clock/exynos5420.h
+> +++ b/include/dt-bindings/clock/exynos5420.h
+> @@ -69,10 +69,10 @@
+>  #define CLK_I2C1               262
+>  #define CLK_I2C2               263
+>  #define CLK_I2C3               264
+> -#define CLK_I2C4               265
+> -#define CLK_I2C5               266
+> -#define CLK_I2C6               267
+> -#define CLK_I2C7               268
+> +#define CLK_USI0               265
+> +#define CLK_USI1               266
+> +#define CLK_USI2               267
+> +#define CLK_USI3               268
+>  #define CLK_I2C_HDMI           269
+>  #define CLK_TSADC              270
+>  #define CLK_SPI0               271
+> @@ -85,9 +85,9 @@
+>  #define CLK_PCM2               278
+>  #define CLK_PWM                        279
+>  #define CLK_SPDIF              280
+> -#define CLK_I2C8               281
+> -#define CLK_I2C9               282
+> -#define CLK_I2C10              283
+> +#define CLK_USI4               281
+> +#define CLK_USI5               282
+> +#define CLK_USI6               283
+>  #define CLK_ACLK66_PSGEN       300
+>  #define CLK_CHIPID             301
+>  #define CLK_SYSREG             302
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 35c146f..3220e29 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos5250-smdk5250.dtb \
- 	exynos5250-snow.dtb \
- 	exynos5420-arndale-octa.dtb \
-+	exynos5420-peach-pit.dtb \
- 	exynos5420-smdk5420.dtb \
- 	exynos5440-sd5v1.dtb \
- 	exynos5440-ssdk5440.dtb
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-new file mode 100644
-index 0000000..03ef094
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -0,0 +1,156 @@
-+/*
-+ * Google Peach Pit Rev 6+ board device tree source
-+ *
-+ * Copyright (c) 2014 Google, Inc
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "exynos5420.dtsi"
-+
-+/ {
-+	model = "Google Peach Pit Rev 6+";
-+
-+	compatible = "google,pit-rev16",
-+		"google,pit-rev15", "google,pit-rev14",
-+		"google,pit-rev13", "google,pit-rev12",
-+		"google,pit-rev11", "google,pit-rev10",
-+		"google,pit-rev9", "google,pit-rev8",
-+		"google,pit-rev7", "google,pit-rev6",
-+		"google,pit", "google,peach","samsung,exynos5420",
-+		"samsung,exynos5";
-+
-+	memory {
-+		reg = <0x20000000 0x80000000>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&power_key_irq>;
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 1000000 0>;
-+		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
-+		default-brightness-level = <7>;
-+		pinctrl-0 = <&backlight_pwm>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&pinctrl_0 {
-+	tpm_irq: tpm-irq {
-+		samsung,pins = "gpx1-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	power_key_irq: power-key-irq {
-+		samsung,pins = "gpx1-2";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&pinctrl_3 {
-+	backlight_pwm: backlight-pwm {
-+		samsung,pins = "gpb2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&serial_3 {
-+	status = "okay";
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	num-slots = <1>;
-+	broken-cd;
-+	caps2-mmc-hs200-1_8v;
-+	supports-highspeed;
-+	non-removable;
-+	card-detect-delay = <200>;
-+	clock-frequency = <400000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+	slot@0 {
-+		reg = <0>;
-+		bus-width = <8>;
-+	};
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	num-slots = <1>;
-+	supports-highspeed;
-+	card-detect-delay = <200>;
-+	clock-frequency = <400000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <2 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+	slot@0 {
-+		reg = <0>;
-+		bus-width = <4>;
-+	};
-+};
-+
-+&hsi2c_9 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	tpm@20 {
-+		compatible = "infineon,slb9645tt";
-+		reg = <0x20>;
-+
-+		/* Unused irq; but still need to configure the pins */
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&tpm_irq>;
-+	};
-+};
-+
-+/*
-+ * Use longest HW watchdog in SoC (32 seconds) since the hardware
-+ * watchdog provides no debugging information (compared to soft/hard
-+ * lockup detectors) and so should be last resort.
-+ */
-+&watchdog {
-+	timeout-sec = <32>;
-+};
+
+
 -- 
-1.7.9.5
+Regards,
+Alim
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
