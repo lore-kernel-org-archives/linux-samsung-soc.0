@@ -1,56 +1,94 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 10/12] ARM: EXYNOS: Move "mach/map.h" inclusion from
- regs-pmu.h to platsmp.c
-Date: Wed, 30 Apr 2014 14:17:35 +0900
-Message-ID: <1398835057-3860-11-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v3 06/12] ARM: EXYNOS: Remove regs-pmu.h header dependency from
+ pm_domain
+Date: Wed, 30 Apr 2014 14:17:31 +0900
+Message-ID: <1398835057-3860-7-git-send-email-pankaj.dubey@samsung.com>
 References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63379 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755841AbaD3E7p (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 00:59:45 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, Pankaj Dubey <pankaj.dubey@samsung.com>, t.figa@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-As we have removed static mappings from "regs-pmu.h" it does not
-need map.h anymore. But "platsmp.c" needed this and till now it
-got included indirectly. So lets move header inclusion of
-"mach/map.h" from "regs-pmu.h" to "platsmp.c".
+From: Young-Gun Jang <yg1004.jang@samsung.com>
 
+Current "pm_domain.c" file uses "S5P_INT_LOCAL_PWR_EN" definition from
+"regs-pmu.h" and hence needs to include this header file. As there is
+no other user of "S5P_INT_LOCAL_PWR_EN" definition other than pm_domain,
+to remove "regs-pmu.h" header file dependency from "pm_domain.c"  it's
+better we define this definition in "pm_domain.c" file itself and thus it
+will help in removing header file inclusion from "pm_domain.c".
+Also removing "S5P_" prefix from macro.
+
+Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/platsmp.c  |    1 +
- arch/arm/mach-exynos/regs-pmu.h |    2 --
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/mach-exynos/pm_domains.c |    8 ++++----
+ arch/arm/mach-exynos/regs-pmu.h   |    1 -
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 375ea4e..8f3b866 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -27,6 +27,7 @@
- #include <asm/firmware.h>
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index fe6570e..e45d288 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -22,7 +22,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/sched.h>
  
- #include <plat/cpu.h>
-+#include <mach/map.h>
+-#include "regs-pmu.h"
++#define INT_LOCAL_PWR_EN	0x7
  
- #include "common.h"
- #include "regs-pmu.h"
+ /*
+  * Exynos specific wrapper around the generic power domain
+@@ -44,13 +44,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 	pd = container_of(domain, struct exynos_pm_domain, pd);
+ 	base = pd->base;
+ 
+-	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
++	pwr = power_on ? INT_LOCAL_PWR_EN : 0;
+ 	__raw_writel(pwr, base);
+ 
+ 	/* Wait max 1ms */
+ 	timeout = 10;
+ 
+-	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)	!= pwr) {
++	while ((__raw_readl(base + 0x4) & INT_LOCAL_PWR_EN)	!= pwr) {
+ 		if (!timeout) {
+ 			op = (power_on) ? "enable" : "disable";
+ 			pr_err("Power domain %s %s failed\n", domain->name, op);
+@@ -172,7 +172,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 
+ 		platform_set_drvdata(pdev, pd);
+ 
+-		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
++		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
+ 
+ 		pm_genpd_init(&pd->pd, NULL, !on);
+ 	}
 diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index a72b1bc..1d83c7e 100644
+index b68b5cc..fd8a19d 100644
 --- a/arch/arm/mach-exynos/regs-pmu.h
 +++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -12,8 +12,6 @@
- #ifndef __ASM_ARCH_REGS_PMU_H
- #define __ASM_ARCH_REGS_PMU_H __FILE__
+@@ -116,7 +116,6 @@
+ #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
  
--#include <mach/map.h>
--
- #define S5P_CENTRAL_SEQ_CONFIGURATION		0x0200
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
+-#define S5P_INT_LOCAL_PWR_EN			0x7
  
- #define S5P_CENTRAL_LOWPWR_CFG			(1 << 16)
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
 -- 
 1.7.10.4
