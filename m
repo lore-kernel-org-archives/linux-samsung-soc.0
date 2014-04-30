@@ -1,94 +1,118 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 06/12] ARM: EXYNOS: Remove regs-pmu.h header dependency from
- pm_domain
-Date: Wed, 30 Apr 2014 14:17:31 +0900
-Message-ID: <1398835057-3860-7-git-send-email-pankaj.dubey@samsung.com>
-References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, Pankaj Dubey <pankaj.dubey@samsung.com>, t.figa@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v2 1/4] usb: ohci-exynos: Use struct device instead of platform_device
+Date: Wed, 30 Apr 2014 10:49:49 +0530
+Message-ID: <1398835192-21634-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:57307 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754642AbaD3FUF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 01:20:05 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Alan Stern <stern@rowland.harvard.edu>
 
-From: Young-Gun Jang <yg1004.jang@samsung.com>
+Change to use struct device instead of struct platform_device
+for some static functions.
 
-Current "pm_domain.c" file uses "S5P_INT_LOCAL_PWR_EN" definition from
-"regs-pmu.h" and hence needs to include this header file. As there is
-no other user of "S5P_INT_LOCAL_PWR_EN" definition other than pm_domain,
-to remove "regs-pmu.h" header file dependency from "pm_domain.c"  it's
-better we define this definition in "pm_domain.c" file itself and thus it
-will help in removing header file inclusion from "pm_domain.c".
-Also removing "S5P_" prefix from macro.
-
-Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 ---
- arch/arm/mach-exynos/pm_domains.c |    8 ++++----
- arch/arm/mach-exynos/regs-pmu.h   |    1 -
- 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index fe6570e..e45d288 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -22,7 +22,7 @@
- #include <linux/of_platform.h>
- #include <linux/sched.h>
+Changes from v1:
+ - none
+
+ drivers/usb/host/ohci-exynos.c |   20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 9cf80cb..05f00e3 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -39,18 +39,18 @@ struct exynos_ohci_hcd {
+ 	struct usb_otg *otg;
+ };
  
--#include "regs-pmu.h"
-+#define INT_LOCAL_PWR_EN	0x7
+-static void exynos_ohci_phy_enable(struct platform_device *pdev)
++static void exynos_ohci_phy_enable(struct device *dev)
+ {
+-	struct usb_hcd *hcd = platform_get_drvdata(pdev);
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
  
- /*
-  * Exynos specific wrapper around the generic power domain
-@@ -44,13 +44,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
+ 	if (exynos_ohci->phy)
+ 		usb_phy_init(exynos_ohci->phy);
+ }
  
--	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
-+	pwr = power_on ? INT_LOCAL_PWR_EN : 0;
- 	__raw_writel(pwr, base);
+-static void exynos_ohci_phy_disable(struct platform_device *pdev)
++static void exynos_ohci_phy_disable(struct device *dev)
+ {
+-	struct usb_hcd *hcd = platform_get_drvdata(pdev);
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
  
- 	/* Wait max 1ms */
- 	timeout = 10;
+ 	if (exynos_ohci->phy)
+@@ -139,7 +139,7 @@ skip_phy:
  
--	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)	!= pwr) {
-+	while ((__raw_readl(base + 0x4) & INT_LOCAL_PWR_EN)	!= pwr) {
- 		if (!timeout) {
- 			op = (power_on) ? "enable" : "disable";
- 			pr_err("Power domain %s %s failed\n", domain->name, op);
-@@ -172,7 +172,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 	platform_set_drvdata(pdev, hcd);
  
- 		platform_set_drvdata(pdev, pd);
+-	exynos_ohci_phy_enable(pdev);
++	exynos_ohci_phy_enable(&pdev->dev);
  
--		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
-+		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
+ 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (err) {
+@@ -150,7 +150,7 @@ skip_phy:
+ 	return 0;
  
- 		pm_genpd_init(&pd->pd, NULL, !on);
- 	}
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index b68b5cc..fd8a19d 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -116,7 +116,6 @@
- #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
+ fail_add_hcd:
+-	exynos_ohci_phy_disable(pdev);
++	exynos_ohci_phy_disable(&pdev->dev);
+ fail_io:
+ 	clk_disable_unprepare(exynos_ohci->clk);
+ fail_clk:
+@@ -168,7 +168,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
  
- #define S5P_CORE_LOCAL_PWR_EN			0x3
--#define S5P_INT_LOCAL_PWR_EN			0x7
+-	exynos_ohci_phy_disable(pdev);
++	exynos_ohci_phy_disable(&pdev->dev);
  
- /* Only for EXYNOS4210 */
- #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
+ 	clk_disable_unprepare(exynos_ohci->clk);
+ 
+@@ -190,7 +190,6 @@ static int exynos_ohci_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+-	struct platform_device *pdev = to_platform_device(dev);
+ 	bool do_wakeup = device_may_wakeup(dev);
+ 	int rc = ohci_suspend(hcd, do_wakeup);
+ 
+@@ -200,7 +199,7 @@ static int exynos_ohci_suspend(struct device *dev)
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+ 
+-	exynos_ohci_phy_disable(pdev);
++	exynos_ohci_phy_disable(dev);
+ 
+ 	clk_disable_unprepare(exynos_ohci->clk);
+ 
+@@ -211,14 +210,13 @@ static int exynos_ohci_resume(struct device *dev)
+ {
+ 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
+-	struct platform_device *pdev		= to_platform_device(dev);
+ 
+ 	clk_prepare_enable(exynos_ohci->clk);
+ 
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+ 
+-	exynos_ohci_phy_enable(pdev);
++	exynos_ohci_phy_enable(dev);
+ 
+ 	ohci_resume(hcd, false);
+ 
 -- 
 1.7.10.4
