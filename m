@@ -1,58 +1,111 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 01/12] ARM: EXYNOS: Make exynos machine_ops as static
-Date: Wed, 30 Apr 2014 14:17:26 +0900
-Message-ID: <1398835057-3860-2-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v3 04/12] ARM: EXYNOS: Move SYSREG definition into sys-reg
+ specific file.
+Date: Wed, 30 Apr 2014 14:17:29 +0900
+Message-ID: <1398835057-3860-5-git-send-email-pankaj.dubey@samsung.com>
 References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63351 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751273AbaD3E7k (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47142 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751751AbaD3E7m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 00:59:40 -0400
+	Wed, 30 Apr 2014 00:59:42 -0400
 In-reply-to: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-As machine function ops are used only in this file let's make
-them static.
+From: Young-Gun Jang <yg1004.jang@samsung.com>
 
+While making PMU implementation to be device tree based, there are
+few register offsets related with SYSREG present in regs-pmu.h, so
+let's make a new header file "regs-sys.h" to keep all such SYSREG
+related register offsets and remove them from "regs-pmu.h"
+
+Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/exynos.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mach-exynos/exynos.c   |    1 +
+ arch/arm/mach-exynos/pm.c       |    1 +
+ arch/arm/mach-exynos/regs-pmu.h |    3 ---
+ arch/arm/mach-exynos/regs-sys.h |   22 ++++++++++++++++++++++
+ 4 files changed, 24 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/regs-sys.h
 
 diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 3d69e8d..06dcce5 100644
+index 9315bd8..a7b45db 100644
 --- a/arch/arm/mach-exynos/exynos.c
 +++ b/arch/arm/mach-exynos/exynos.c
-@@ -198,7 +198,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 	},
- };
+@@ -31,6 +31,7 @@
+ #include "common.h"
+ #include "mfc.h"
+ #include "regs-pmu.h"
++#include "regs-sys.h"
  
--void exynos_restart(enum reboot_mode mode, const char *cmd)
-+static void exynos_restart(enum reboot_mode mode, const char *cmd)
- {
- 	struct device_node *np;
- 	u32 val = 0x1;
-@@ -239,7 +239,7 @@ void __init exynos_cpufreq_init(void)
- 	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
- }
+ #define L2_AUX_VAL 0x7C470001
+ #define L2_AUX_MASK 0xC200ffff
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index b380d48..f445c49 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -36,6 +36,7 @@
  
--void __init exynos_init_late(void)
-+static void __init exynos_init_late(void)
- {
- 	if (of_machine_is_compatible("samsung,exynos5440"))
- 		/* to be supported later */
-@@ -300,7 +300,7 @@ static void __init exynos_map_io(void)
- 		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
- }
+ #include "common.h"
+ #include "regs-pmu.h"
++#include "regs-sys.h"
  
--void __init exynos_init_io(void)
-+static void __init exynos_init_io(void)
- {
- 	debug_ll_io_init();
+ /**
+  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 6c1d2db..b68b5cc 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -15,7 +15,6 @@
+ #include <mach/map.h>
  
+ #define S5P_PMUREG(x)				(S5P_VA_PMU + (x))
+-#define S5P_SYSREG(x)				(S3C_VA_SYS + (x))
+ 
+ #define S5P_CENTRAL_SEQ_CONFIGURATION		S5P_PMUREG(0x0200)
+ 
+@@ -178,8 +177,6 @@
+ 
+ /* For EXYNOS5 */
+ 
+-#define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
+-
+ #define EXYNOS5_AUTO_WDTRESET_DISABLE				S5P_PMUREG(0x0408)
+ #define EXYNOS5_MASK_WDTRESET_REQUEST				S5P_PMUREG(0x040C)
+ 
+diff --git a/arch/arm/mach-exynos/regs-sys.h b/arch/arm/mach-exynos/regs-sys.h
+new file mode 100644
+index 0000000..84332b0
+--- /dev/null
++++ b/arch/arm/mach-exynos/regs-sys.h
+@@ -0,0 +1,22 @@
++/*
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *             http://www.samsung.com
++ *
++ * EXYNOS - system register definition
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_REGS_SYS_H
++#define __ASM_ARCH_REGS_SYS_H __FILE__
++
++#include <mach/map.h>
++
++#define S5P_SYSREG(x)                          (S3C_VA_SYS + (x))
++
++/* For EXYNOS5 */
++#define EXYNOS5_SYS_I2C_CFG                    S5P_SYSREG(0x0234)
++
++#endif /* __ASM_ARCH_REGS_SYS_H */
 -- 
 1.7.10.4
