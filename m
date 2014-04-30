@@ -1,40 +1,58 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 3/8] ARM: dts: imx6: update pcie to bring in line with
- new binding
-Date: Wed, 30 Apr 2014 12:17:56 +0200
-Message-ID: <1398853076.4653.5.camel@weser.hi.pengutronix.de>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
-	 <1396025579-14344-4-git-send-email-l.stach@pengutronix.de>
-	 <20140430060208.GA16727@dragon>
+From: Arun Kumar K <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/4] ARM: dts: Add usb2phy support on exynos5420
+Date: Wed, 30 Apr 2014 15:55:14 +0530
+Message-ID: <5360CF8A.5010809@gmail.com>
+References: <1398848110-6152-1-git-send-email-gautam.vivek@samsung.com> <1398848110-6152-4-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:55587 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758570AbaD3KTI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 06:19:08 -0400
-In-Reply-To: <20140430060208.GA16727@dragon>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1398848110-6152-4-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sean Cross <xobs@kosagi.com>, Marek Vasut <marex@denx.de>, Richard Zhu <r65037@freescale.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jg1.han@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Tim Harvey <tharvey@gateworks.com>, kernel@pengutronix.de
 
-Am Mittwoch, den 30.04.2014, 14:02 +0800 schrieb Shawn Guo:
-> On Fri, Mar 28, 2014 at 05:52:54PM +0100, Lucas Stach wrote:
-> > The new bindings drops one clock, renames the others and
-> > drops the old interrupt mapping.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> 
-> It does not apply on my branch, and I had to apply it manually.  Please
-> check my imx/dt branch to see if I did it right.
-> 
-The diff as applied in your imx/dt looks good to me.
+Hi Vivek,
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+On 04/30/14 14:25, Vivek Gautam wrote:
+> Add required device node for usb2phy to let enable USB 2.0
+> support.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index cfa3755..16b860a 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -737,4 +737,14 @@
+>  		clock-names = "secss";
+>  		samsung,power-domain = <&g2d_pd>;
+>  	};
+> +
+> +	phy@12130000 {
+
+As we will be changing over to reference-based updation of nodes in the
+board dts files, it would be good to add node reference also while
+adding new nodes. Like : usb_phy: phy@12130000 {
+
+Regards
+Arun
+
+> +		compatible = "samsung,exynos5250-usb2-phy";
+> +		reg = <0x12130000 0x100>;
+> +		clocks = <&clock CLK_USBH20>, <&clock CLK_SCLK_USBPHY300>;
+> +		clock-names = "phy", "ref";
+> +		#phy-cells = <1>;
+> +		samsung,sysreg-phandle = <&sysreg_system_controller>;
+> +		samsung,pmureg-phandle = <&pmu_system_controller>;
+> +	};
+>  };
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
