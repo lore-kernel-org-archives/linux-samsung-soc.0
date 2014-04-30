@@ -1,111 +1,58 @@
-From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Wed, 30 Apr 2014 10:20:05 +0530
-Message-ID: <CAOD6ATrKumCcFFWFp7i7XLMssG23QV0FZ=3KqGCnnJt17Xmr1A@mail.gmail.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<26065037.GxQQuIURPg@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <26065037.GxQQuIURPg@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave.Martin-5wv7dgnIgG8@public.gmane.org, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v3 01/12] ARM: EXYNOS: Make exynos machine_ops as static
+Date: Wed, 30 Apr 2014 14:17:26 +0900
+Message-ID: <1398835057-3860-2-git-send-email-pankaj.dubey@samsung.com>
+References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:63351 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751273AbaD3E7k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 00:59:40 -0400
+In-reply-to: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On Mon, Apr 28, 2014 at 2:04 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Sunday 27 April 2014 13:07:32 Shaik Ameer Basha wrote:
->> The current exynos-iommu(System MMU) driver does not work autonomously
->> since it is lack of support for power management of peripheral blocks.
->> For example, MFC device driver must ensure that its System MMU is disabled
->> before MFC block is power-down not to invalidate IOTLB in the System MMU
->> when I/O memory mapping is changed. Because a System MMU resides in the
->> same H/W block, access to control registers of System MMU while the H/W
->> block is turned off must be prohibited.
->>
->> This set of changes solves the above problem with setting each System MMUs
->> as the parent of the device which owns the System MMU to receive the
->> information when the device is turned off or turned on.
->>
->> Another big change to the driver is the support for devicetree.
->> The bindings for System MMU is described in
->> Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
->
-> Sorry I've been absent from the review so far. Most of the patches
-> seem entirely reasonable to me, but I'm worried about the DT binding
-> aspect. We are going to see more systems shipping with IOMMUs now,
-> and we are seeing an increasing number of submissions for 64-bit
-> systems. We really have to work out what the DT representation for
-> IOMMUs should look like in general before adding another ad-hod
-> implementation that is private to one driver.
+As machine function ops are used only in this file let's make
+them static.
 
-Hi Arnd,
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-No issues. Its good that finally you are here :)
-
-I am going through the possibilities for new bindings that you
-mentioned in the other thread.
-    -- [PATCH v12 11/31] documentation: iommu: add binding document of
-Exynos System MMU
-
-Exynos IOMMU driver is pretty simple with only one exception, "some
-devices are using multiple IOMMUs".
-
->From starting (of this patch set), we were trying to fix three major issues.
-[1] How to control the probing order of required IOMMU(s) for a given
-device and a device itself.
-[2] Handling multiple IOMMUs for one device.
-[3] Generic DT bindings to link Device and IOMMUs.
-
-I have gone through the implementation of Tegra SMMU driver by "Hiroshi Doyu"
-    -- [PATCHv7 00/12] Unifying SMMU driver among Tegra SoCs
-[https://lkml.org/lkml/2013/12/12/74]
-
-For the first point [1],
-------------------------------
-Tegra implementation tries to fix this issue with these two patches
-    -- iommu/of: check if dependee iommu is ready or not
-[http://patchwork.ozlabs.org/patch/300560/]
-    -- driver/core: populate devices in order for IOMMUs
-[http://patchwork.ozlabs.org/patch/300558/]
-I can follow this driver if this approach is acceptable.
-
-For the second point [2]
-----------------------------------
-Currently we are handling this issue by providing same mapping for all
-IOMMUs linked to the same device.
-And current Exynos drivers doesn't have any special implementation to
-handle this case differently.
-
-I thought of understanding how Tegra SMMU driver is handling this case.
-Frankly speaking, I didn't understand how its done there.
-
-For the third point [3]
--------------------------------
-As Tegra SMMU driver is inline with the discussion in other thread, we
-can follow the same bindings, unless
-the discussion takes us in the other direction.
-
-"KyongHo Cho" is the author for this driver and hope he has more inputs.
-
-Regards,
-Shaik
-
-
-
->
->         Arnd
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 3d69e8d..06dcce5 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -198,7 +198,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 	},
+ };
+ 
+-void exynos_restart(enum reboot_mode mode, const char *cmd)
++static void exynos_restart(enum reboot_mode mode, const char *cmd)
+ {
+ 	struct device_node *np;
+ 	u32 val = 0x1;
+@@ -239,7 +239,7 @@ void __init exynos_cpufreq_init(void)
+ 	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+ }
+ 
+-void __init exynos_init_late(void)
++static void __init exynos_init_late(void)
+ {
+ 	if (of_machine_is_compatible("samsung,exynos5440"))
+ 		/* to be supported later */
+@@ -300,7 +300,7 @@ static void __init exynos_map_io(void)
+ 		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
+ }
+ 
+-void __init exynos_init_io(void)
++static void __init exynos_init_io(void)
+ {
+ 	debug_ll_io_init();
+ 
+-- 
+1.7.10.4
