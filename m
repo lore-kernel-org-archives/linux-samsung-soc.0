@@ -1,69 +1,79 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 04/15] ASoC: samsung-idma: avoid 64-bit division
-Date: Wed, 30 Apr 2014 09:20:47 +0530
-Message-ID: <53607317.4040206@linaro.org>
-References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org> <1398770316-19715-5-git-send-email-kaixu.xia@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH Resend] ARM: EXYNOS: Map SYSRAM address through DT
+Date: Wed, 30 Apr 2014 09:39:54 +0530
+Message-ID: <CAK9yfHxBh3x7coj1FtLOrYvRv9viN_1tS3irL5+inarwuHZWYw@mail.gmail.com>
+References: <1397649051-3288-1-git-send-email-sachin.kamat@linaro.org>
+	<5721231.s2ATyWsK21@wuerfel>
+	<1493367.CDjMd4ghZP@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:55192 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751387AbaD3Duy (ORCPT
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:36599 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750921AbaD3EJz convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Apr 2014 23:50:54 -0400
-Received: by mail-ig0-f174.google.com with SMTP id h18so7019764igc.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 20:50:54 -0700 (PDT)
-In-Reply-To: <1398770316-19715-5-git-send-email-kaixu.xia@linaro.org>
+	Wed, 30 Apr 2014 00:09:55 -0400
+Received: by mail-oa0-f52.google.com with SMTP id l6so1315382oag.25
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Apr 2014 21:09:54 -0700 (PDT)
+In-Reply-To: <1493367.CDjMd4ghZP@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Xia Kaixu <kaixu.xia@linaro.org>, linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, linaro-kernel@lists.linaro.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 04/29/2014 04:48 PM, Xia Kaixu wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> dma_addr_t may be 64 bit wide, which causes a build failure
-> when doing a division on it. Here it is safe to cast to an
-> u32 type, which avoids the problem.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Xia Kaixu <kaixu.xia@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Sangbeom Kim <sbkim73@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> ---
+Hi Heiko,
 
-Tested with ARM_LPAE enabled. Without this patch, getting following error.
+On 16 April 2014 22:55, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+> Hi,
+>
+> Am Mittwoch, 16. April 2014, 16:35:36 schrieb Arnd Bergmann:
+>> On Wednesday 16 April 2014 17:20:51 Sachin Kamat wrote:
+>> > Instead of hardcoding the SYSRAM details for each SoC,
+>> > pass this information through device tree (DT) and make
+>> > the code SoC agnostic.
+>> >
+>> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> > ---
+>> > Rebased on latest linux-next.
+>>
+>> Thanks for sending this again. I'd like Heiko to have a look
+>> and provide an Ack if he's happy with it.
+>>
+>> It seems similar to what he did with the SRAM for mach-rockchip,
+>> and if it is we should use the same binding that he introduced,
+>> which would be a minor variation of this.
+>
+> The sram binding is derived from the generic reserved-memory bindings=
+ to
+> enable the sram in general to be used generically through the sram dr=
+iver,
+> while still retaining some areas for special purposes, like the smp-t=
+rampoline
+> in my case.
+>
+> From my reading of platsmp.c, it looks like offset+0x4 starts the so =
+called
+> boot-registesr, which get the smp-start-address written to.
+>
+> So I guess it all depends on what is contained in the rest of the sys=
+ram. If
+> it is all covered with such special registers or other special uses, =
+the code
+> below is fine. But if the most of the area is just general purpose sr=
+am, a
+> solution like on rockchip might be nicer - i.e. handling the sysram v=
+ia the
+> sram driver and declaring a reserved section for the boot registers.
 
-sound/built-in.o: In function `iis_irq':
-sound/soc/samsung/idma.c:277: undefined reference to `__aeabi_uldivmod'
+Thanks for your inputs. In our case, we use sram for secondary boot
+addresses but could not find any other general purpose use.
 
-Tested-by: Tushar Behera <tushar.behera@linaro.org>
+> So, depending on the above:
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
 
->  sound/soc/samsung/idma.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/samsung/idma.c b/sound/soc/samsung/idma.c
-> index 3d5cf15..e9891b4 100644
-> --- a/sound/soc/samsung/idma.c
-> +++ b/sound/soc/samsung/idma.c
-> @@ -274,7 +274,7 @@ static irqreturn_t iis_irq(int irqno, void *dev_id)
->  
->  		addr = readl(idma.regs + I2SLVL0ADDR) - idma.lp_tx_addr;
->  		addr += prtd->periodsz;
-> -		addr %= (prtd->end - prtd->start);
-> +		addr %= (u32)(prtd->end - prtd->start);
->  		addr += idma.lp_tx_addr;
->  
->  		writel(addr, idma.regs + I2SLVL0ADDR);
-> 
+So I believe your ack applies to our case :). Thanks again.
 
-
--- 
-Tushar Behera
+--=20
+With warm regards,
+Sachin
