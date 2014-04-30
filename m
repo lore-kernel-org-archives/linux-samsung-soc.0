@@ -1,144 +1,73 @@
-From: Leela Krishna Amudala <leela.krishna@linaro.org>
-Subject: Re: [PATCH V2] ARM: EXYNOS: cpu hotplug: use v7_exit_coherency_flush
- macro for cache disabling
-Date: Wed, 30 Apr 2014 13:59:12 +0530
-Message-ID: <CAM7CM0mJHWEAaqJ=jMkKXjkxr+XzC+QstSkFzX_g52JvrLUDCA@mail.gmail.com>
-References: <1398232351-16280-1-git-send-email-leela.krishna@linaro.org> <5360AE05.7020106@samsung.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
+Date: Wed, 30 Apr 2014 10:32:56 +0200
+Message-ID: <5360B538.3020104@samsung.com>
+References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+ <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
+ <534506B1.4040908@samsung.com> <5345333D.4080505@saftware.de>
+ <CAPdUM4OOaaP2byJa+MgksAaDtsffwqTYT-obfVEBsRxjy_vKrg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:53070 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751330AbaD3I3d (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 04:29:33 -0400
-Received: by mail-wg0-f42.google.com with SMTP id k14so1318578wgh.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2014 01:29:32 -0700 (PDT)
-In-Reply-To: <5360AE05.7020106@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPdUM4OOaaP2byJa+MgksAaDtsffwqTYT-obfVEBsRxjy_vKrg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <r.sh.open@gmail.com>, Andreas Oberritter <obi@saftware.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Grant Likely <grant.likely@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-pm <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Kgene,
+Hi Rahul,
+I will prepare we v3 version.
+Do you want me to add your patches for exynos5?50 to the patchset?
+Regards,
+Tomasz Stanislawski
 
-Can you please pick this patch to your tree ?
-
-Best Wishes,
-Leela Krishna.
-
-On Wed, Apr 30, 2014 at 1:32 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> Hi,
->
-> On 04/23/2014 02:52 PM, Leela Krishna Amudala wrote:
->> A common macro v7_exit_coherency_flush available which does the below tasks in
->> the seqeunce.
->> -clearing C bit
->> -clearing L1 cache
->> -exit SMP
->> -instruction and data synchronization
+On 04/30/2014 08:37 AM, Rahul Sharma wrote:
+> Hi Tomasz,
+> 
+> I have tested your patches for exynos5250 and 5420. Works fine. Are
+> you planning to post v3? If you want I can share hand with you for v3.
+> 
+> Regards,
+> Rahul Sharma
+> 
+> On 9 April 2014 17:17, Andreas Oberritter <obi@saftware.de> wrote:
+>> Hello Andrzej,
 >>
->> So removing the local functions which does the same thing and use the macro instead.
+>> On 09.04.2014 10:37, Andrzej Hajda wrote:
+>>>> +static int exynos_phy_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +    const struct of_device_id *of_id = of_match_device(
+>>>> +            of_match_ptr(exynos_phy_of_match), &pdev->dev);
+>>>> +    const u32 *offsets = of_id->data;
+>>>> +    int count;
+>>>> +    struct device *dev = &pdev->dev;
+>>>> +    struct phy **phys;
+>>>> +    struct resource *res;
+>>>> +    void __iomem *regs;
+>>>> +    int i;
+>>>> +    struct phy_provider *phy_provider;
+>>>> +
+>>>> +    /* count number of phys to create */
+>>>> +    for (count = 0; offsets[count] != ~0; ++count)
+>>>> +            ;
+>>>
+>>> count = ARRAY_SIZE(offsets) - 1;
 >>
->> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
->> Acked-by: Nicolas Pitre <nico@linaro.org>
->> ---
->> Changes since V1:
->>       - removed unwanted primary_part variable in exynos_cpu_die()
->>       - given more description in commit message
->>         suggested by Daniel Lezcano <daniel.lezcano@linaro.org>
+>> u32 *offsets is not an array.
 >>
->>  arch/arm/mach-exynos/hotplug.c |   63 +---------------------------------------
->>  1 file changed, 1 insertion(+), 62 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
->> index 5eead53..9ca692d 100644
->> --- a/arch/arm/mach-exynos/hotplug.c
->> +++ b/arch/arm/mach-exynos/hotplug.c
->> @@ -24,56 +24,6 @@
->>  #include "common.h"
->>  #include "regs-pmu.h"
->>
->> -static inline void cpu_enter_lowpower_a9(void)
->> -{
->> -     unsigned int v;
->> -
->> -     asm volatile(
->> -     "       mcr     p15, 0, %1, c7, c5, 0\n"
->> -     "       mcr     p15, 0, %1, c7, c10, 4\n"
->> -     /*
->> -      * Turn off coherency
->> -      */
->> -     "       mrc     p15, 0, %0, c1, c0, 1\n"
->> -     "       bic     %0, %0, %3\n"
->> -     "       mcr     p15, 0, %0, c1, c0, 1\n"
->> -     "       mrc     p15, 0, %0, c1, c0, 0\n"
->> -     "       bic     %0, %0, %2\n"
->> -     "       mcr     p15, 0, %0, c1, c0, 0\n"
->> -       : "=&r" (v)
->> -       : "r" (0), "Ir" (CR_C), "Ir" (0x40)
->> -       : "cc");
->> -}
->> -
->> -static inline void cpu_enter_lowpower_a15(void)
->> -{
->> -     unsigned int v;
->> -
->> -     asm volatile(
->> -     "       mrc     p15, 0, %0, c1, c0, 0\n"
->> -     "       bic     %0, %0, %1\n"
->> -     "       mcr     p15, 0, %0, c1, c0, 0\n"
->> -       : "=&r" (v)
->> -       : "Ir" (CR_C)
->> -       : "cc");
->> -
->> -     flush_cache_louis();
->> -
->> -     asm volatile(
->> -     /*
->> -     * Turn off coherency
->> -     */
->> -     "       mrc     p15, 0, %0, c1, c0, 1\n"
->> -     "       bic     %0, %0, %1\n"
->> -     "       mcr     p15, 0, %0, c1, c0, 1\n"
->> -     : "=&r" (v)
->> -     : "Ir" (0x40)
->> -     : "cc");
->> -
->> -     isb();
->> -     dsb();
->> -}
->> -
->>  static inline void cpu_leave_lowpower(void)
->>  {
->>       unsigned int v;
->> @@ -132,19 +82,8 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
->>  void __ref exynos_cpu_die(unsigned int cpu)
->>  {
->>       int spurious = 0;
->> -     int primary_part = 0;
->>
->> -     /*
->> -      * we're ready for shutdown now, so do it.
->> -      * Exynos4 is A9 based while Exynos5 is A15; check the CPU part
->> -      * number by reading the Main ID register and then perform the
->> -      * appropriate sequence for entering low power.
->> -      */
->> -     asm("mrc p15, 0, %0, c0, c0, 0" : "=r"(primary_part) : : "cc");
->> -     if ((primary_part & 0xfff0) == 0xc0f0)
->> -             cpu_enter_lowpower_a15();
->> -     else
->> -             cpu_enter_lowpower_a9();
->> +     v7_exit_coherency_flush(louis);
->>
->>       platform_do_lowpower(cpu, &spurious);
->>
->>
->
-> I tested this patch on Exynos3250 based on Cortex-A7 dual core.
->
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-> Thanks,
-> Chanwoo Choi
->
+>> Regards,
+>> Andreas
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
