@@ -1,50 +1,50 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: exynos5250-snow: add ptn3460 node
-Date: Wed, 30 Apr 2014 18:33:02 +0530
-Message-ID: <CAEC9eQPrSiYt4b1LAWcRYBcozBSOmbs3zUO-zitFWsBm7py9ig@mail.gmail.com>
-References: <1397481367-12652-1-git-send-email-sachin.kamat@linaro.org>
-	<1397481367-12652-4-git-send-email-sachin.kamat@linaro.org>
-	<CAOesGMh3bpJtphTFz_3ZZXBPTi_RFXv24tKyTPWa=rHq3xkP8Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] drm/exynos: fix nested calls to lock mutex in drm resume
+Date: Wed, 30 Apr 2014 18:32:22 +0530
+Message-ID: <1398862942-6668-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f171.google.com ([209.85.128.171]:39784 "EHLO
-	mail-ve0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758761AbaD3NDE (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:45232 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757058AbaD3NF3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 09:03:04 -0400
-Received: by mail-ve0-f171.google.com with SMTP id jy13so2065506veb.16
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Apr 2014 06:03:03 -0700 (PDT)
-In-Reply-To: <CAOesGMh3bpJtphTFz_3ZZXBPTi_RFXv24tKyTPWa=rHq3xkP8Q@mail.gmail.com>
+	Wed, 30 Apr 2014 09:05:29 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4U0086VHP4VK80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Apr 2014 22:05:28 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, sunil joshi <joshi@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi,
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-On Tue, Apr 15, 2014 at 4:24 AM, Olof Johansson <olof@lixom.net> wrote:
-> Hi Sachin,
->
-> On Mon, Apr 14, 2014 at 6:16 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
->> From: Doug Anderson <dianders@chromium.org>
->>
->> Added nodes for ptn3460 driver to Snow board.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->
-> I'm curious, how are you testing this code on the upstream kernel
-> before you post the patches?
->
-> Especially since Doug was referring to some of these containing parts
-> that is needed for drivers that are not yet upstreamed.
+While testing S2R on exynos board, system is hanging and
+rebooting due to nested mutex_lock calls in exynos drm
+resume callback. Changing the order of the calls is fixing
+the issue.
 
-Its better to ignore this patch as of now, since discussion is still going
-on, at http://www.spinics.net/lists/dri-devel/msg58474.html
-I guess we will have few more DT bindings. Once it is finalized,
-I shall resend this again.
+Change-Id: I3f3ada8a413a414dca0bbac53cfc5fe3138af4d6
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Ajay Kumar
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index bb7dfee..2bb6233 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -184,8 +184,8 @@ static int exynos_drm_resume(struct drm_device *dev)
+ 			connector->funcs->dpms(connector, connector->dpms);
+ 	}
+ 
+-	drm_helper_resume_force_mode(dev);
+ 	drm_modeset_unlock_all(dev);
++	drm_helper_resume_force_mode(dev);
+ 
+ 	return 0;
+ }
+-- 
+1.7.9.5
