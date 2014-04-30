@@ -1,64 +1,67 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 30 Apr 2014 12:07:19 +0530
-Message-ID: <CAPdUM4OOaaP2byJa+MgksAaDtsffwqTYT-obfVEBsRxjy_vKrg@mail.gmail.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
- <534506B1.4040908@samsung.com> <5345333D.4080505@saftware.de>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: Re: [PATCH v4 4/7] arm64: Add a description on 48-bit address space
+ with 4KB pages
+Date: Wed, 30 Apr 2014 15:41:40 +0900
+Message-ID: <008e01cf643f$3e67eff0$bb37cfd0$@samsung.com>
+References: <000401cf6367$cc461500$64d23f00$@samsung.com>
+ <20140429144759.GL17007@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5345333D.4080505@saftware.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andreas Oberritter <obi@saftware.de>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Grant Likely <grant.likely@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:15404 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754021AbaD3Glo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 02:41:44 -0400
+In-reply-to: <20140429144759.GL17007@arm.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Catalin Marinas' <catalin.marinas@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, 'Marc Zyngier' <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-Hi Tomasz,
+On Tuesday, April 29, 2014 11:48 PM, Catalin Marinas wrote:
+> On Tue, Apr 29, 2014 at 05:59:27AM +0100, Jungseok Lee wrote:
+> > --- a/Documentation/arm64/memory.txt
+> > +++ b/Documentation/arm64/memory.txt
+> > @@ -8,10 +8,11 @@ This document describes the virtual memory layout
+> > used by the AArch64  Linux kernel. The architecture allows up to 4
+> > levels of translation  tables with a 4KB page size and up to 3 levels with a 64KB page size.
+> >
+> > -AArch64 Linux uses 3 levels of translation tables with the 4KB page
+> > -configuration, allowing 39-bit (512GB) virtual addresses for both
+> > user -and kernel. With 64KB pages, only 2 levels of translation tables
+> > are -used but the memory layout is the same.
+> > +AArch64 Linux uses 3 levels and 4 levels of translation tables with
+> > +the 4KB page configuration, allowing 39-bit (512GB) and 48-bit
+> > +(256TB) virtual addresses, respectively, for both user and kernel.
+> > +With 64KB pages, only 2 levels of translation tables are used but the
+> > +memory layout is the same.
+> 
+> Any reason why we couldn't use 48-bit address space with 64K pages (implying 3 levels)?
 
-I have tested your patches for exynos5250 and 5420. Works fine. Are
-you planning to post v3? If you want I can share hand with you for v3.
+No technical reason.
+Since 64K+3levels is not implemented in this set, I didn't add it.
 
-Regards,
-Rahul Sharma
+Should 64K+3levels be prepared in this patchset?
 
-On 9 April 2014 17:17, Andreas Oberritter <obi@saftware.de> wrote:
-> Hello Andrzej,
->
-> On 09.04.2014 10:37, Andrzej Hajda wrote:
->>> +static int exynos_phy_probe(struct platform_device *pdev)
->>> +{
->>> +    const struct of_device_id *of_id = of_match_device(
->>> +            of_match_ptr(exynos_phy_of_match), &pdev->dev);
->>> +    const u32 *offsets = of_id->data;
->>> +    int count;
->>> +    struct device *dev = &pdev->dev;
->>> +    struct phy **phys;
->>> +    struct resource *res;
->>> +    void __iomem *regs;
->>> +    int i;
->>> +    struct phy_provider *phy_provider;
->>> +
->>> +    /* count number of phys to create */
->>> +    for (count = 0; offsets[count] != ~0; ++count)
->>> +            ;
->>
->> count = ARRAY_SIZE(offsets) - 1;
->
-> u32 *offsets is not an array.
->
-> Regards,
-> Andreas
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > -AArch64 Linux memory layout with 64KB pages:
+> > +AArch64 Linux memory layout with 4KB pages + 4 levels:
+> > +
+> > +Start			End			Size		Use
+> > +-----------------------------------------------------------------------
+> > +0000000000000000	0000ffffffffffff	 256TB		user
+> > +
+> > +ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
+> 
+> BTW, maybe as a separate patch we should change the "end" to be exclusive. It becomes harder to modify
+> (I've been through this a few times already ;)) and even follow the changes.
+
+Does "exclusive" mean that 0000ffffffffffff is changed to 0001000000000000?
+Or Does it mean that "End" column is dropped?
+
+If you are okay, I will make it as a separate patch.
+
+Best Regards
+Jungseok Lee
