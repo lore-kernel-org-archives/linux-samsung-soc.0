@@ -1,81 +1,78 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH Resend] ARM: EXYNOS: Map SYSRAM address through DT
-Date: Wed, 30 Apr 2014 12:52:56 +0200
-Message-ID: <6892427.lZl848UvyJ@wuerfel>
-References: <1397649051-3288-1-git-send-email-sachin.kamat@linaro.org> <1493367.CDjMd4ghZP@phil> <CAK9yfHxBh3x7coj1FtLOrYvRv9viN_1tS3irL5+inarwuHZWYw@mail.gmail.com>
+From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Wed, 30 Apr 2014 16:27:10 +0530
+Message-ID: <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<26065037.GxQQuIURPg@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:64202 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756331AbaD3Kxf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 06:53:35 -0400
-In-Reply-To: <CAK9yfHxBh3x7coj1FtLOrYvRv9viN_1tS3irL5+inarwuHZWYw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <26065037.GxQQuIURPg@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "supash.ramaswamy" <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Wednesday 30 April 2014 09:39:54 Sachin Kamat wrote:
-> On 16 April 2014 22:55, Heiko St=FCbner <heiko@sntech.de> wrote:
-> > Am Mittwoch, 16. April 2014, 16:35:36 schrieb Arnd Bergmann:
-> >> On Wednesday 16 April 2014 17:20:51 Sachin Kamat wrote:
-> >> > Instead of hardcoding the SYSRAM details for each SoC,
-> >> > pass this information through device tree (DT) and make
-> >> > the code SoC agnostic.
-> >> >
-> >> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> > ---
-> >> > Rebased on latest linux-next.
-> >>
-> >> Thanks for sending this again. I'd like Heiko to have a look
-> >> and provide an Ack if he's happy with it.
-> >>
-> >> It seems similar to what he did with the SRAM for mach-rockchip,
-> >> and if it is we should use the same binding that he introduced,
-> >> which would be a minor variation of this.
-> >
-> > The sram binding is derived from the generic reserved-memory bindin=
-gs to
-> > enable the sram in general to be used generically through the sram =
-driver,
-> > while still retaining some areas for special purposes, like the smp=
--trampoline
-> > in my case.
-> >
-> > From my reading of platsmp.c, it looks like offset+0x4 starts the s=
-o called
-> > boot-registesr, which get the smp-start-address written to.
-> >
-> > So I guess it all depends on what is contained in the rest of the s=
-ysram. If
-> > it is all covered with such special registers or other special uses=
-, the code
-> > below is fine. But if the most of the area is just general purpose =
-sram, a
-> > solution like on rockchip might be nicer - i.e. handling the sysram=
- via the
-> > sram driver and declaring a reserved section for the boot registers=
-=2E
->=20
-> Thanks for your inputs. In our case, we use sram for secondary boot
-> addresses but could not find any other general purpose use.
->=20
-> > So, depending on the above:
-> > Acked-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> So I believe your ack applies to our case :). Thanks again.
+On Mon, Apr 28, 2014 at 2:04 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Sunday 27 April 2014 13:07:32 Shaik Ameer Basha wrote:
+>> The current exynos-iommu(System MMU) driver does not work autonomously
+>> since it is lack of support for power management of peripheral blocks.
+>> For example, MFC device driver must ensure that its System MMU is disabled
+>> before MFC block is power-down not to invalidate IOTLB in the System MMU
+>> when I/O memory mapping is changed. Because a System MMU resides in the
+>> same H/W block, access to control registers of System MMU while the H/W
+>> block is turned off must be prohibited.
+>>
+>> This set of changes solves the above problem with setting each System MMUs
+>> as the parent of the device which owns the System MMU to receive the
+>> information when the device is turned off or turned on.
+>>
+>> Another big change to the driver is the support for devicetree.
+>> The bindings for System MMU is described in
+>> Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+>
+> Sorry I've been absent from the review so far. Most of the patches
+> seem entirely reasonable to me, but I'm worried about the DT binding
+> aspect. We are going to see more systems shipping with IOMMUs now,
+> and we are seeing an increasing number of submissions for 64-bit
+> systems. We really have to work out what the DT representation for
+> IOMMUs should look like in general before adding another ad-hod
+> implementation that is private to one driver.
 
-My interpretation is the opposite. :)
 
-=46or what I can tell, you use only part of the SRAM for this, and the =
-rest
-could be used for something else, you just haven't had the need for it.
+I have one question.
 
-If this is the case, you really should be using Heiko's binding instead=
-,
-to make it future-proof in case some other use for the SRAM comes up.
+This series is going on for quite a long time and most of the patches here
+doesn't depend on dt bindings. As Exynos IOMMU h/w is introducing new versions
+very frequently, maintaining and reviewing all these patches again and
+again is quite a hard job.
 
-	Arnd
+If it is acceptable, I can post one more series with the subset of
+above patches,
+which doesn't depend on dt-bindings. As all the patches which doesn't depend on
+DT bindings are already tested,  I hope merging these subset of patches may help
+in reducing the rework and review effort every time.
+
+Once we finalize the generic DT bindings for the IOMMU devices, the driver
+can be updated with the proposed DT bindings in mind.
+
+Regards,
+Shaik
+
+
+>
+>         Arnd
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
