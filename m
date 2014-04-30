@@ -1,76 +1,38 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 1/5 v3] iio: exynos_adc: use indio_dev->dev structure to handle
- child nodes
-Date: Wed, 30 Apr 2014 14:56:51 +0530
-Message-ID: <1398850015-17761-2-git-send-email-ch.naveen@samsung.com>
-References: <1398850015-17761-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51874 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751983AbaD3J2s (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 05:28:48 -0400
-In-reply-to: <1398850015-17761-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/5 v3] iio: exynos_adc: fix minor nits in the driver
+Date: Wed, 30 Apr 2014 14:56:50 +0530
+Message-ID: <1398850015-17761-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, t.figa@samsung.com, Naveen Krishna Ch <ch.naveen@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, t.figa@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
+This patchset fixes the 
+1. bug causing a crash during module removal for exynos_adc.ko.
+-> The bug was seen by Doug, while trying to compile the whole IIO subsystem
+   as module @ https://lkml.org/lkml/2014/4/21/481 from Doug.
 
-Using pdev->dev with device_for_each_child() would iterate over all
-of the children of the platform device and delete them.
-Thus, causing crashes during module unload.
+2. rearrange the clock and regulator enable/disable calls during
+   probe, remove, suspend and resume calls
+-> Comments give by Jonathan @ https://lkml.org/lkml/2014/4/23/644
 
-We should be using the indio_dev->dev structure for
-registering/unregistering child nodes.
+3. reduces the timeout and uses wait_for_completion_timeout instead of the
+   interruptible varient.
+-> This change was under review @ https://lkml.org/lkml/2013/11/5/92
+   Final comments were given by Tomasz, to split and submit.
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-Reported-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Tested-by: Doug Anderson <dianders@chromium.org>
----
-Changes since v2:
-None
-Changes since v1:
-Adding Doug's tags
-v0:
-This change was tested on top of 
-   https://lkml.org/lkml/2014/4/21/481 from Doug.
+Naveen Krishna Ch (2):
+  iio: exynos_adc: use indio_dev->dev structure to handle child nodes
+  iio: exynos_adc: rearrange clk and regulator enable/disable calls
 
- drivers/iio/adc/exynos_adc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Naveen Krishna Chatradhi (3):
+  iio: exynos_adc: reduce timeout and use wait_for_completion_timeout
+  iio: exynos_adc: do a soft reset in case of timeout
+  iio: exynos_adc: do a reinit_completion before the conversion
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index d25b262..affa93f 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -344,7 +344,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 
- 	exynos_adc_hw_init(info);
- 
--	ret = of_platform_populate(np, exynos_adc_match, NULL, &pdev->dev);
-+	ret = of_platform_populate(np, exynos_adc_match, NULL, &indio_dev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed adding child nodes\n");
- 		goto err_of_populate;
-@@ -353,7 +353,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_of_populate:
--	device_for_each_child(&pdev->dev, NULL,
-+	device_for_each_child(&indio_dev->dev, NULL,
- 				exynos_adc_remove_devices);
- 	regulator_disable(info->vdd);
- 	clk_disable_unprepare(info->clk);
-@@ -369,7 +369,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
- 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
- 	struct exynos_adc *info = iio_priv(indio_dev);
- 
--	device_for_each_child(&pdev->dev, NULL,
-+	device_for_each_child(&indio_dev->dev, NULL,
- 				exynos_adc_remove_devices);
- 	regulator_disable(info->vdd);
- 	clk_disable_unprepare(info->clk);
+ drivers/iio/adc/exynos_adc.c |  137 +++++++++++++++++++++++-------------------
+ 1 file changed, 74 insertions(+), 63 deletions(-)
+
 -- 
 1.7.9.5
