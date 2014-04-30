@@ -1,64 +1,61 @@
 From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v3 12/16] clk: exynos5420: fix register offset for sclk_bpll
-Date: Wed, 30 Apr 2014 19:16:10 +0530
-Message-ID: <CAGOxZ51K6wcMueW3iNuZiidpuMyjZ6KVaFF-3LVnae7YCbgBWA@mail.gmail.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-13-git-send-email-shaik.ameer@samsung.com>
+Subject: Re: [PATCH v3 15/16] clk: exynos5420: create clock ID for mout_sclk_vpll
+Date: Wed, 30 Apr 2014 19:24:39 +0530
+Message-ID: <CAGOxZ50ZQ9NkwmBGv2M1wgHJyAnWtF8MA3QA6pen0teUHkuKog@mail.gmail.com>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-16-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f174.google.com ([209.85.160.174]:65110 "EHLO
-	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758917AbaD3Nqv (ORCPT
+Received: from mail-yh0-f53.google.com ([209.85.213.53]:53152 "EHLO
+	mail-yh0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759153AbaD3NzU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 09:46:51 -0400
-In-Reply-To: <1398344632-18623-13-git-send-email-shaik.ameer@samsung.com>
+	Wed, 30 Apr 2014 09:55:20 -0400
+In-Reply-To: <1398344632-18623-16-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Shaik Ameer Basha <shaik.ameer@samsung.com>
 Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Ameer Basha Shaik <shaik.samsung@gmail.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-Hi shaik,
+Hi Shaik
 
 On Thu, Apr 24, 2014 at 6:33 PM, Shaik Ameer Basha
 <shaik.ameer@samsung.com> wrote:
-> This patch fixes the wrong register offset for sclk_bpll clock.
+> This patch adds clock ID for mout_sclk_vpll clock
 >
 > Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 > ---
-Reviwed-by: Alim Akhtar <alim.akhtar@samsung.com>
->  drivers/clk/samsung/clk-exynos5420.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/clk/samsung/clk-exynos5420.c   |    2 +-
+>  include/dt-bindings/clock/exynos5420.h |    1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 >
 > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 6daf739..3afc112 100755
+> index 944ff20..33a48d2 100755
 > --- a/drivers/clk/samsung/clk-exynos5420.c
 > +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -111,7 +111,6 @@
->  #define TOP_SPARE2             0x10b08
->  #define BPLL_LOCK              0x20010
->  #define BPLL_CON0              0x20110
-> -#define SRC_CDREX              0x20200
->  #define KPLL_LOCK              0x28000
->  #define KPLL_CON0              0x28100
->  #define SRC_KFC                        0x28200
-> @@ -204,7 +203,6 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->         GATE_TOP_SCLK_FSYS,
->         GATE_TOP_SCLK_PERIC,
->         TOP_SPARE2,
-> -       SRC_CDREX,
->         SRC_KFC,
->         DIV_KFC0,
->  };
-> @@ -380,7 +378,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->         MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
->         MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+> @@ -437,7 +437,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>                         SRC_TOP5, 28, 1),
 >
-> -       MUX(0, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
-> +       MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
-Hmmm. Nice catch
+>         MUX(0, "mout_sclk_mpll", mout_mpll_p, SRC_TOP6, 0, 1),
+> -       MUX(0, "mout_sclk_vpll", mout_vpll_p, SRC_TOP6, 4, 1),
+> +       MUX(CLK_MOUT_VPLL, "mout_sclk_vpll", mout_vpll_p, SRC_TOP6, 4, 1),
+Any perticular reason for just this change??
+
+>         MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
+>         MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
+>         MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+> index b2410bc..7c80443 100755
+> --- a/include/dt-bindings/clock/exynos5420.h
+> +++ b/include/dt-bindings/clock/exynos5420.h
+> @@ -190,6 +190,7 @@
+>  #define CLK_MOUT_HDMI          640
+>  #define CLK_MOUT_MAUDIO0       642
+>  #define CLK_MOUT_G3D           643
+> +#define CLK_MOUT_VPLL          644
 >
->         MUX_A(0, "mout_aclk400_mscl", mout_group1_p,
->                         SRC_TOP0, 4, 2, "aclk400_mscl"),
+>  /* divider clocks */
+>  #define CLK_DOUT_PIXEL         768
 > --
 > 1.7.9.5
 >
