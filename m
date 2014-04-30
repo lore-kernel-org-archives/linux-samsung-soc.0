@@ -1,121 +1,100 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v3 09/16] clk: exynos5420: update clocks for WCORE block
-Date: Wed, 30 Apr 2014 17:15:08 +0530
-Message-ID: <CAGOxZ51cUq74B5pCEg6HRNxMbkTA20MqPBy2LtHzGiHog4U_Rg@mail.gmail.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-10-git-send-email-shaik.ameer@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Wed, 30 Apr 2014 17:30:39 +0530
+Message-ID: <5360E5E7.8090807@linaro.org>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org> <20140424133920.GA12304@sirena.org.uk> <5359E18B.60600@linaro.org> <20140429222915.GU15125@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f41.google.com ([209.85.213.41]:54768 "EHLO
-	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758707AbaD3Lpt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Apr 2014 07:45:49 -0400
-In-Reply-To: <1398344632-18623-10-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140429222915.GU15125@sirena.org.uk>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Ameer Basha Shaik <shaik.samsung@gmail.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Shaik,
+On 04/30/2014 03:59 AM, Mark Brown wrote:
+> On Fri, Apr 25, 2014 at 09:46:11AM +0530, Tushar Behera wrote:
+>> On 04/24/2014 07:09 PM, Mark Brown wrote:
+> 
+>>> defined.  Why is that?  Also, why is the secondary I2S playback stream
+>>> not supported (this may be a reason to restrict to only the one I2S
+>>> interface)?
+> 
+>> AFAICS, I2S driver doesn't support secondary DAI with DT (dai type is
+>> always TYPE_PRI in case of DT). Hence I could not find a setup to test
+>> secondary dai with this board.
+> 
+> OK, that should be fixed at some point.  I will hopefully be able to
+> look at this myself on the Arndale Octa though (or Chromebook or Arndale
+> once XCLKOUT is implemented).
+> 
 
-On Thu, Apr 24, 2014 at 6:33 PM, Shaik Ameer Basha
-<shaik.ameer@samsung.com> wrote:
-> This patch adds missing clocks from WCORE block.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+XCLKOUT mux register (0x10040a00) is not part of core clock SFR range,
+rather it is part of pmu-system-controller node.
 
->  drivers/clk/samsung/clk-exynos5420.c |   28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 6ad87d1..d9996dd 100755
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -89,6 +89,7 @@
->  #define GATE_BUS_PERIC1                0x10754
->  #define GATE_BUS_PERIS0                0x10760
->  #define GATE_BUS_PERIS1                0x10764
-> +#define GATE_BUS_NOC           0x10770
->  #define GATE_TOP_SCLK_ISP      0x10870
->  #define GATE_IP_GSCL0          0x10910
->  #define GATE_IP_GSCL1          0x10920
-> @@ -180,6 +181,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->         GATE_BUS_PERIC1,
->         GATE_BUS_PERIS0,
->         GATE_BUS_PERIS1,
-> +       GATE_BUS_NOC,
->         GATE_TOP_SCLK_ISP,
->         GATE_IP_GSCL0,
->         GATE_IP_GSCL1,
-> @@ -271,6 +273,13 @@ PNAME(mout_user_aclk200_fsys_p)    = {"fin_pll", "mout_sw_aclk200_fsys"};
->
->  PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2", "mout_sclk_spll"};
->  PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
-> +PNAME(mout_sw_aclk100_noc_p) = {"dout_aclk100_noc", "mout_sclk_spll"};
-> +PNAME(mout_user_aclk100_noc_p) = {"fin_pll", "mout_sw_aclk100_noc"};
-> +
-> +PNAME(mout_sw_aclk400_wcore_p) = {"dout_aclk400_wcore", "mout_sclk_spll"};
-> +PNAME(mout_aclk400_wcore_bpll_p) = {"mout_aclk400_wcore", "sclk_bpll"};
-> +PNAME(mout_user_aclk400_wcore_p) = {"fin_pll", "mout_sw_aclk400_wcore"};
-> +
->  PNAME(mout_sw_aclk400_isp_p) = {"dout_aclk400_isp", "mout_sclk_spll"};
->  PNAME(mout_user_aclk400_isp_p) = {"fin_pll", "mout_sw_aclk400_isp"};
->
-> @@ -486,6 +495,18 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->         MUX(0, "mout_spi0", mout_group2_p, SRC_PERIC1, 20, 3),
->         MUX(0, "mout_spi1", mout_group2_p, SRC_PERIC1, 24, 3),
->         MUX(0, "mout_spi2", mout_group2_p, SRC_PERIC1, 28, 3),
-> +       MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
-> +       MUX(0, "mout_sw_aclk100_noc", mout_sw_aclk100_noc_p,
-> +               SRC_TOP10, 20, 1),
-> +       MUX(0, "mout_user_aclk100_noc", mout_user_aclk100_noc_p,
-> +               SRC_TOP3, 20, 1),
-> +       MUX(0, "mout_aclk400_wcore", mout_group1_p, SRC_TOP0, 16, 2),
-> +       MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
-> +               TOP_SPARE2, 4, 1),
-> +       MUX(0, "mout_sw_aclk400_wcore", mout_sw_aclk400_wcore_p,
-> +               SRC_TOP10, 16, 1),
-> +       MUX(0, "mout_user_aclk400_wcore", mout_user_aclk400_wcore_p,
-> +               SRC_TOP3, 16, 1),
->         MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
->         MUX(0, "mout_sw_aclk400_isp", mout_sw_aclk400_isp_p,
->                 SRC_TOP10, 0, 1),
-> @@ -553,6 +574,10 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->         DIV(0, "dout_disp1_blk", "aclk200_disp1", DIV2_RATIO0, 16, 2),
->         DIV(0, "dout_aclk400_disp1", "mout_aclk400_disp1", DIV_TOP2, 4, 3),
->
-> +       DIV(0, "dout_aclk100_noc", "mout_aclk100_noc", DIV_TOP0, 20, 3),
-> +       DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
-> +               DIV_TOP0, 16, 3),
-> +
->         /* Audio Block */
->         DIV(0, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
->         DIV(0, "dout_maupcm0", "dout_maudio0", DIV_MAU, 24, 8),
-> @@ -867,6 +892,9 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->                         GATE_IP_MSCL, 10, 0, 0),
->         GATE(CLK_SMMU_MIXER, "smmu_mixer", "aclk200_disp1",
->                         GATE_IP_DISP1, 9, 0, 0),
-> +       /* aclk266 also gates other IPs in psgen. It should not be gated. */
-> +       GATE(0, "aclk266", "mout_user_aclk266",
-> +                       GATE_BUS_NOC, 22, CLK_IGNORE_UNUSED, 0),
->         GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
->                         GATE_BUS_TOP, 18, CLK_IGNORE_UNUSED, 0),
->         GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
-> --
-> 1.7.9.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+One option would be to add a clock provider for XCLKOUT. That would
+require me to extend current clock driver to get the
+pmu-system-controller phandle which in turn is dependent on the patch to
+early initialize syscon driver.[1]
 
+Will it be okay to configure XCLKOUT in snow sound-card driver by taking
+the phandle of pmu-system-controller from device tree? The
+implementation is provided below.
 
+[1] article.gmane.org/gmane.linux.kernel/1679446
+
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+index 0fa89a4..d7fe7a0 100644
+--- a/sound/soc/samsung/snow.c
++++ b/sound/soc/samsung/snow.c
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/mfd/syscon.h>
+
+ #include <sound/soc.h>
+
+@@ -22,6 +23,10 @@
+
+ #define FIN_PLL_RATE           24000000
+
++#define XCLKOUT_OFFSET                 0x0a00
++#define XCLKOUT_PARENT_MASK            0x1f00
++#define XCLKOUT_PARENT_XXTI            0x1000
++
+ static struct snd_soc_dai_link snow_dai[] = {
+        {
+                .name = "Primary",
+@@ -66,6 +71,7 @@ static int snow_probe(struct platform_device *pdev)
+ {
+        struct snd_soc_card *card = &snow_snd;
+        struct device_node *i2s_node, *codec_node;
++       struct regmap *pmureg;
+        int i, ret;
+
+        i2s_node = of_parse_phandle(pdev->dev.of_node,
+@@ -84,6 +90,19 @@ static int snow_probe(struct platform_device *pdev)
+                return -EINVAL;
+        }
+
++       /*
++        * On Snow board, SoC XCLKOUT line is connected to codec MCLK.
++        * One option would be to add another clock provider to configure
++        * XCLKOUT mux register. Else we can get pmu-syscon phandle from
++        * device tree and update the register here.
++        */
++       pmureg = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
++                       "samsung,pmu-syscon");
++       if (!IS_ERR(pmureg)) {
++               regmap_update_bits(pmureg, XCLKOUT_OFFSET,
++                               XCLKOUT_PARENT_MASK, XCLKOUT_PARENT_XXTI);
++       }
++
+        for (i = 0; i < ARRAY_SIZE(snow_dai); i++) {
+                snow_dai[i].codec_of_node = codec_node;
+                snow_dai[i].cpu_of_node = i2s_node;
 
 -- 
-Regards,
-Alim
+Tushar Behera
