@@ -1,52 +1,311 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v2 2/4] usb: ehci-exynos: Use struct device instead of platform_device
-Date: Wed, 30 Apr 2014 10:49:50 +0530
-Message-ID: <1398835192-21634-2-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v10 4/4] usb: ehci-exynos: Change to use phy provided by the generic phy framework
+Date: Wed, 30 Apr 2014 10:49:52 +0530
+Message-ID: <1398835192-21634-4-git-send-email-gautam.vivek@samsung.com>
 References: <1398835192-21634-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398835192-21634-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Alan Stern <stern@rowland.harvard.edu>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1398835192-21634-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change to use struct device instead of struct platform_device
-for some static functions.
+From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Add the phy provider, supplied by new Exynos-usb2phy using
+Generic phy framework.
+Keeping the support for older USB phy intact right now, in order
+to prevent any functionality break in absence of relevant
+device tree side change for ehci-exynos.
+Once we move to new phy in the device nodes for ehci, we can
+remove the support for older phys.
+
+Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+[gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: Addressed review comments from mailing list]
+[gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: Kept the code for old usb-phy, and just
+added support for new exynos5-usb2phy in generic phy framework]
+[gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: Edited the commit message]
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 ---
 
-Changes from v1:
- - none
+Changes from v9:
+ - Calling usb_phy_shutdown() when exynos_ehci_phy_enable() is failing.
+ - Made exynos_ehci_phy_disable() return void, since its return value
+   did not serve any purpose.
+ - Calling clk_disable_unprepare() in exynos_ehci_resume() when
+   exynos_ehci_phy_enable() is failed.
 
- drivers/usb/host/ehci-exynos.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/usb/exynos-usb.txt         |   18 +++
+ drivers/usb/host/ehci-exynos.c                     |  144 +++++++++++++++++---
+ 2 files changed, 142 insertions(+), 20 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+index a90c973..126a7a9 100644
+--- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
++++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+@@ -12,6 +12,15 @@ Required properties:
+  - interrupts: interrupt number to the cpu.
+  - clocks: from common clock binding: handle to usb clock.
+  - clock-names: from common clock binding: Shall be "usbhost".
++ - port: if in the SoC there are EHCI phys, they should be listed here.
++   One phy per port. Each port should have following entries:
++	- reg: port number on EHCI controller, e.g
++	       On Exynos5250, port 0 is USB2.0 otg phy
++			      port 1 is HSIC phy0
++			      port 2 is HSIC phy1
++	- phys: from the *Generic PHY* bindings; specifying phy used by port.
++	- phy-names: from the *Generic PHY* bindings; specifying name of phy
++		     used by the port.
+ 
+ Optional properties:
+  - samsung,vbus-gpio:  if present, specifies the GPIO that
+@@ -27,6 +36,15 @@ Example:
+ 
+ 		clocks = <&clock 285>;
+ 		clock-names = "usbhost";
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@0 {
++		    reg = <0>;
++		    phys = <&usb2phy 1>;
++		    phy-names = "host";
++		    status = "disabled";
++		};
+ 	};
+ 
+ OHCI
 diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 7f425ac..4d763dc 100644
+index 4d763dc..931cfc8 100644
 --- a/drivers/usb/host/ehci-exynos.c
 +++ b/drivers/usb/host/ehci-exynos.c
-@@ -50,9 +50,8 @@ struct exynos_ehci_hcd {
+@@ -19,6 +19,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
++#include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+@@ -42,14 +43,119 @@
+ static const char hcd_name[] = "ehci-exynos";
+ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+ 
++#define PHY_NUMBER 3
+ struct exynos_ehci_hcd {
+ 	struct clk *clk;
+ 	struct usb_phy *phy;
+ 	struct usb_otg *otg;
++	struct phy *phy_g[PHY_NUMBER];
+ };
  
  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
  
--static void exynos_setup_vbus_gpio(struct platform_device *pdev)
-+static void exynos_setup_vbus_gpio(struct device *dev)
++static int exynos_ehci_get_phy(struct device *dev,
++				struct exynos_ehci_hcd *exynos_ehci)
++{
++	struct device_node *child;
++	struct phy *phy;
++	int phy_number;
++	int ret = 0;
++
++	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	if (IS_ERR(exynos_ehci->phy)) {
++		ret = PTR_ERR(exynos_ehci->phy);
++		/* This is the case when PHY config is disabled */
++		if (ret == -ENXIO || ret == -ENODEV) {
++			dev_dbg(dev, "Failed to get usb2 phy\n");
++			exynos_ehci->phy = NULL;
++			ret = 0;
++		} else if (ret == -EPROBE_DEFER) {
++			goto fail_phy;
++		} else {
++			dev_err(dev, "no usb2 phy configured\n");
++			goto fail_phy;
++		}
++	} else {
++		exynos_ehci->otg = exynos_ehci->phy->otg;
++	}
++
++	for_each_available_child_of_node(dev->of_node, child) {
++		ret = of_property_read_u32(child, "reg", &phy_number);
++		if (ret) {
++			dev_err(dev, "Failed to parse device tree\n");
++			of_node_put(child);
++			goto fail_phy;
++		}
++		if (phy_number >= PHY_NUMBER) {
++			dev_err(dev, "Invalid number of PHYs\n");
++			of_node_put(child);
++			ret = -EINVAL;
++			goto fail_phy;
++		}
++		phy = devm_of_phy_get(dev, child, 0);
++		of_node_put(child);
++		if (IS_ERR(phy)) {
++			ret = PTR_ERR(phy);
++			/* This is the case when PHY config is disabled */
++			if (ret == -ENOSYS || ret == -ENODEV) {
++				dev_dbg(dev, "Failed to get usb2 phy\n");
++				phy = NULL;
++				ret = 0;
++			} else if (ret == -EPROBE_DEFER) {
++				goto fail_phy;
++			} else {
++				dev_err(dev, "no usb2 phy configured\n");
++				goto fail_phy;
++			}
++		}
++		exynos_ehci->phy_g[phy_number] = phy;
++	}
++
++fail_phy:
++	return ret;
++}
++
++static int exynos_ehci_phy_enable(struct device *dev)
++{
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
++	int i;
++	int ret = 0;
++
++	if (exynos_ehci->phy) {
++		ret = usb_phy_init(exynos_ehci->phy);
++		if (ret)
++			return ret;
++	}
++
++	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
++		if (exynos_ehci->phy_g[i])
++			ret = phy_power_on(exynos_ehci->phy_g[i]);
++	if (ret) {
++		for (i--; i >= 0; i--)
++			if (exynos_ehci->phy_g[i])
++				phy_power_off(exynos_ehci->phy_g[i]);
++		if (exynos_ehci->phy)
++			usb_phy_shutdown(exynos_ehci->phy);
++	}
++
++	return ret;
++}
++
++static void exynos_ehci_phy_disable(struct device *dev)
++{
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
++	int i;
++
++	if (exynos_ehci->phy)
++		usb_phy_shutdown(exynos_ehci->phy);
++
++	for (i = 0; i < PHY_NUMBER; i++)
++		if (exynos_ehci->phy_g[i])
++			phy_power_off(exynos_ehci->phy_g[i]);
++}
++
+ static void exynos_setup_vbus_gpio(struct device *dev)
  {
--	struct device *dev = &pdev->dev;
  	int err;
- 	int gpio;
+@@ -74,7 +180,6 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 	struct usb_hcd *hcd;
+ 	struct ehci_hcd *ehci;
+ 	struct resource *res;
+-	struct usb_phy *phy;
+ 	int irq;
+ 	int err;
  
-@@ -88,7 +87,7 @@ static int exynos_ehci_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
+@@ -101,15 +206,9 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 					"samsung,exynos5440-ehci"))
+ 		goto skip_phy;
  
--	exynos_setup_vbus_gpio(pdev);
-+	exynos_setup_vbus_gpio(&pdev->dev);
+-	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(phy)) {
+-		usb_put_hcd(hcd);
+-		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
+-		return -EPROBE_DEFER;
+-	} else {
+-		exynos_ehci->phy = phy;
+-		exynos_ehci->otg = phy->otg;
+-	}
++	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
++	if (err)
++		goto fail_clk;
  
- 	hcd = usb_create_hcd(&exynos_ehci_hc_driver,
- 			     &pdev->dev, dev_name(&pdev->dev));
+ skip_phy:
+ 
+@@ -151,8 +250,11 @@ skip_phy:
+ 	if (exynos_ehci->otg)
+ 		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+ 
+-	if (exynos_ehci->phy)
+-		usb_phy_init(exynos_ehci->phy);
++	err = exynos_ehci_phy_enable(&pdev->dev);
++	if (err) {
++		dev_err(&pdev->dev, "Failed to enable USB phy\n");
++		goto fail_io;
++	}
+ 
+ 	ehci = hcd_to_ehci(hcd);
+ 	ehci->caps = hcd->regs;
+@@ -172,8 +274,7 @@ skip_phy:
+ 	return 0;
+ 
+ fail_add_hcd:
+-	if (exynos_ehci->phy)
+-		usb_phy_shutdown(exynos_ehci->phy);
++	exynos_ehci_phy_disable(&pdev->dev);
+ fail_io:
+ 	clk_disable_unprepare(exynos_ehci->clk);
+ fail_clk:
+@@ -191,8 +292,7 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+ 	if (exynos_ehci->otg)
+ 		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+ 
+-	if (exynos_ehci->phy)
+-		usb_phy_shutdown(exynos_ehci->phy);
++	exynos_ehci_phy_disable(&pdev->dev);
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+ 
+@@ -217,8 +317,7 @@ static int exynos_ehci_suspend(struct device *dev)
+ 	if (exynos_ehci->otg)
+ 		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+ 
+-	if (exynos_ehci->phy)
+-		usb_phy_shutdown(exynos_ehci->phy);
++	exynos_ehci_phy_disable(dev);
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+ 
+@@ -229,14 +328,19 @@ static int exynos_ehci_resume(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
++	int ret;
+ 
+ 	clk_prepare_enable(exynos_ehci->clk);
+ 
+ 	if (exynos_ehci->otg)
+ 		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+ 
+-	if (exynos_ehci->phy)
+-		usb_phy_init(exynos_ehci->phy);
++	ret = exynos_ehci_phy_enable(dev);
++	if (ret) {
++		dev_err(dev, "Failed to enable USB phy\n");
++		clk_disable_unprepare(exynos_ehci->clk);
++		return ret;
++	}
+ 
+ 	/* DMA burst Enable */
+ 	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
 -- 
 1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
