@@ -1,114 +1,98 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH 2/3] [media] s5p-mfc: Core support to add v8 decoder
-Date: Wed, 30 Apr 2014 11:22:47 +0530
-Message-ID: <CALt3h7-5059eMOCw2th=r0Pm_vxN1nGTp7K_nH0oUnAdeghj5Q@mail.gmail.com>
-References: <1398257864-12097-1-git-send-email-arun.kk@samsung.com>
-	<1398257864-12097-3-git-send-email-arun.kk@samsung.com>
-	<CAK9yfHzB11kJbOcL-jHHo_P4D2nXtHuGRM_FT0mNuvV0SLywrQ@mail.gmail.com>
-	<53608DEB.1020608@gmail.com>
-	<CAK9yfHzFsSaWHFzWW--C_4vzaVRCbjeZ0+T6ZTAQn4NwP5oYYw@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v3 01/12] ARM: EXYNOS: Make exynos machine_ops as static
+Date: Wed, 30 Apr 2014 11:30:59 +0530
+Message-ID: <CAK9yfHxfkegFzzJCz4nAkxrHT6FGT0OQ-5RkCdTA3ruo2kU8CA@mail.gmail.com>
+References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
+	<1398835057-3860-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAK9yfHzFsSaWHFzWW--C_4vzaVRCbjeZ0+T6ZTAQn4NwP5oYYw@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-media <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@chromium.org>, Kiran Avnd <avnd.kiran@samsung.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398835057-3860-2-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, chow.kim@samsung.com, Young-Gun Jang <yg1004.jang@samsung.com>, VIKAS SAJJANC <vikas.sajjan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sachin,
+Hi Pankaj,
 
-On Wed, Apr 30, 2014 at 11:19 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Arun,
+On 30 April 2014 10:47, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> As machine function ops are used only in this file let's make
+> them static.
 >
-> On 30 April 2014 11:15, Arun Kumar K <arunkk.samsung@gmail.com> wrote:
->> Hi Sachin,
->>
->> Thank you for the review.
->>
->>
->> On 04/29/14 22:45, Sachin Kamat wrote:
->>>
->>> Hi Arun,
->>>
->>> On 23 April 2014 18:27, Arun Kumar K <arun.kk@samsung.com> wrote:
->>>>
->>>> From: Kiran AVND <avnd.kiran@samsung.com>
->>>>
->>>> This patch adds variant data and core support for
->>>> V8 decoder. This patch also adds the register definition
->>>> file for new firmware version v8 for MFC.
->>>>
->>>> Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
->>>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
->>>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->>>> ---
->>>
->>> <...>
->>>>
->>>> +
->>>> +/* Returned value register for specific setting */
->>>> +#define S5P_FIMV_D_RET_PICTURE_TAG_TOP_V8      0xf674
->>>> +#define S5P_FIMV_D_RET_PICTURE_TAG_BOT_V8      0xf678
->>>> +#define S5P_FIMV_D_MVC_VIEW_ID_V8              0xf6d8
->>>> +
->>>> +/* SEI related information */
->>>> +#define S5P_FIMV_D_FRAME_PACK_SEI_AVAIL_V8     0xf6dc
->>>> +
->>>> +/* MFCv8 Context buffer sizes */
->>>> +#define MFC_CTX_BUF_SIZE_V8            (30 * SZ_1K)    /*  30KB */
->>>
->>>
->>> Please include header file for size macros.
->>>
->>
->> The file linux/sizes.h is included in regs-mfc-v6.h which
->> inturn gets included in this file. Isnt that fine?
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> Direct inclusions are encouraged. Please add it in this file.
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exy=
+nos.c
+> index 3d69e8d..06dcce5 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -198,7 +198,7 @@ static struct map_desc exynos5_iodesc[] __initdat=
+a =3D {
+>         },
+>  };
 >
+> -void exynos_restart(enum reboot_mode mode, const char *cmd)
+> +static void exynos_restart(enum reboot_mode mode, const char *cmd)
+>  {
+>         struct device_node *np;
+>         u32 val =3D 0x1;
+> @@ -239,7 +239,7 @@ void __init exynos_cpufreq_init(void)
+>         platform_device_register_simple("exynos-cpufreq", -1, NULL, 0=
+);
+>  }
+>
+> -void __init exynos_init_late(void)
+> +static void __init exynos_init_late(void)
+>  {
+>         if (of_machine_is_compatible("samsung,exynos5440"))
+>                 /* to be supported later */
+> @@ -300,7 +300,7 @@ static void __init exynos_map_io(void)
+>                 iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250=
+_iodesc));
+>  }
+>
+> -void __init exynos_init_io(void)
+> +static void __init exynos_init_io(void)
+>  {
+>         debug_ll_io_init();
 
-Ok will add it.
 
->>
->>
->>> <...>
->>>>
->>>>   };
->>>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->>>> b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->>>> index 48a14b5..f0e63f5 100644
->>>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->>>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->>>> @@ -23,8 +23,7 @@
->>>>   #include <media/v4l2-ioctl.h>
->>>>   #include <media/videobuf2-core.h>
->>>>   #include "regs-mfc.h"
->>>> -#include "regs-mfc-v6.h"
->>>> -#include "regs-mfc-v7.h"
->>>> +#include "regs-mfc-v8.h"
->>>>
->>>>   /* Definitions related to MFC memory */
->>>>
->>>> @@ -705,5 +704,6 @@ void set_work_bit_irqsave(struct s5p_mfc_ctx *ctx);
->>>>   #define IS_TWOPORT(dev)                (dev->variant->port_num == 2 ? 1
->>>> : 0)
->>>>   #define IS_MFCV6_PLUS(dev)     (dev->variant->version >= 0x60 ? 1 : 0)
->>>>   #define IS_MFCV7(dev)          (dev->variant->version >= 0x70 ? 1 : 0)
->>>
->>>
->>> Is MFC v8 superset of MFC v7?
->>>
->>
->> Yes it is a superset.
->> So the last patch in this series renames IS_MFCV7 to IS_MFCV7_PLUS.
->
-> Shouldn't that be done first in that case?
->
+The declarations from common.h should also be removed in this patch to
+avoid the below
+build errors:
 
-Adding variants to access MFC registers patch actually removes lot of
-such IS_MFCV7 checks from opr_v6.c file. Thats why I put that patch as the
-last in the series to have minimal changes as possible.
+arch/arm/mach-exynos/exynos.c:198:13: error: static declaration of
+=E2=80=98exynos_restart=E2=80=99 follows non-static declaration
+ static void exynos_restart(enum reboot_mode mode, const char *cmd)
+             ^
+In file included from arch/arm/mach-exynos/exynos.c:31:0:
+arch/arm/mach-exynos/common.h:22:6: note: previous declaration of
+=E2=80=98exynos_restart=E2=80=99 was here
+ void exynos_restart(enum reboot_mode mode, const char *cmd);
+      ^
+arch/arm/mach-exynos/exynos.c:235:20: error: static declaration of
+=E2=80=98exynos_init_late=E2=80=99 follows non-static declaration
+ static void __init exynos_init_late(void)
+                    ^
+In file included from arch/arm/mach-exynos/exynos.c:31:0:
+arch/arm/mach-exynos/common.h:25:6: note: previous declaration of
+=E2=80=98exynos_init_late=E2=80=99 was here
+ void exynos_init_late(void);
+      ^
+arch/arm/mach-exynos/exynos.c:296:20: error: static declaration of
+=E2=80=98exynos_init_io=E2=80=99 follows non-static declaration
+ static void __init exynos_init_io(void)
+                    ^
+In file included from arch/arm/mach-exynos/exynos.c:31:0:
+arch/arm/mach-exynos/common.h:21:6: note: previous declaration of
+=E2=80=98exynos_init_io=E2=80=99 was here
+ void exynos_init_io(void);
 
-Regards
-Arun
+
+--=20
+With warm regards,
+Sachin
