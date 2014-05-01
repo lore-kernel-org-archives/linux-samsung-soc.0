@@ -1,46 +1,75 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 5/5 v3] iio: exynos_adc: do a reinit_completion before the conversion
-Date: Wed, 30 Apr 2014 16:23:27 -0700
-Message-ID: <CAD=FV=U-_0FWNHrqWp+rfmucKO5GQibCr8N09M8NVSb180ieBQ@mail.gmail.com>
-References: <1398850015-17761-1-git-send-email-ch.naveen@samsung.com>
-	<1398850015-17761-6-git-send-email-ch.naveen@samsung.com>
-	<536161F5.7090508@kernel.org>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: Re: [PATCH v4 4/7] arm64: Add a description on 48-bit address space
+ with 4KB pages
+Date: Thu, 01 May 2014 09:53:07 +0900
+Message-ID: <000001cf64d7$b78fe200$26afa600$@samsung.com>
+References: <000401cf6367$cc461500$64d23f00$@samsung.com>
+ <20140429144759.GL17007@arm.com> <008e01cf643f$3e67eff0$bb37cfd0$@samsung.com>
+ <20140430131224.GD31220@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <536161F5.7090508-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:16428 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750842AbaEAAxJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 20:53:09 -0400
+In-reply-to: <20140430131224.GD31220@arm.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Catalin Marinas' <catalin.marinas@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, 'Marc Zyngier' <Marc.Zyngier@arm.com>, 'Christoffer Dall' <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-Jonathan,
+On Wednesday, April 30, 2014 10:12 PM, Catalin Marinas wrote:
+> On Wed, Apr 30, 2014 at 07:41:40AM +0100, Jungseok Lee wrote:
+> > On Tuesday, April 29, 2014 11:48 PM, Catalin Marinas wrote:
+> > > On Tue, Apr 29, 2014 at 05:59:27AM +0100, Jungseok Lee wrote:
+> > > > --- a/Documentation/arm64/memory.txt
+> > > > +++ b/Documentation/arm64/memory.txt
+> > > > @@ -8,10 +8,11 @@ This document describes the virtual memory
+> > > > layout used by the AArch64  Linux kernel. The architecture allows
+> > > > up to 4 levels of translation  tables with a 4KB page size and up to 3 levels with a 64KB page
+> size.
+> > > >
+> > > > -AArch64 Linux uses 3 levels of translation tables with the 4KB
+> > > > page -configuration, allowing 39-bit (512GB) virtual addresses for
+> > > > both user -and kernel. With 64KB pages, only 2 levels of
+> > > > translation tables are -used but the memory layout is the same.
+> > > > +AArch64 Linux uses 3 levels and 4 levels of translation tables
+> > > > +with the 4KB page configuration, allowing 39-bit (512GB) and
+> > > > +48-bit
+> > > > +(256TB) virtual addresses, respectively, for both user and kernel.
+> > > > +With 64KB pages, only 2 levels of translation tables are used but
+> > > > +the memory layout is the same.
+> > >
+> > > Any reason why we couldn't use 48-bit address space with 64K pages (implying 3 levels)?
+> >
+> > No technical reason.
+> > Since 64K+3levels is not implemented in this set, I didn't add it.
+> >
+> > Should 64K+3levels be prepared in this patchset?
+> >
+> > > > -AArch64 Linux memory layout with 64KB pages:
+> > > > +AArch64 Linux memory layout with 4KB pages + 4 levels:
+> > > > +
+> > > > +Start			End			Size		Use
+> > > > +-----------------------------------------------------------------------
+> > > > +0000000000000000	0000ffffffffffff	 256TB		user
+> > > > +
+> > > > +ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
+> > >
+> > > BTW, maybe as a separate patch we should change the "end" to be
+> > > exclusive. It becomes harder to modify (I've been through this a few times already ;)) and even
+> follow the changes.
+> >
+> > Does "exclusive" mean that 0000ffffffffffff is changed to 0001000000000000?
+> > Or Does it mean that "End" column is dropped?
+> 
+> Not dropped but changed to 0001.... (the kernel already prints the memory layout in a similar way).
 
-On Wed, Apr 30, 2014 at 1:49 PM, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On 30/04/14 10:26, Naveen Krishna Chatradhi wrote:
->>
->> Add reinit_completion() before the wait_for_completion_timeout in
->> raw_read() call.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->
-> Applied to the togreg branch of iio.git
-> I wasn't sure if this one was technically a fix, but as it isn't
-> marked clearly as such it can go in during the next merge window.
-> I won't have pushed this out to a non rebasing branch until tomorrow
-> so if this fixes an observed issue then let me know and it might move
-> to the fixes-togreg branch.
+I see. I will make it as a separate patch.
 
-As far as I know this doesn't fix an observed issue.  I believe it was
-requested as part of a previous review and is finally reposted.  I
-believe it's just extra precautions to make sure that some old IRQ
-didn't accidentally complete us between the last transaction and this
-one.
-
-Old discussion is somewhere around here
-<https://patchwork.kernel.org/patch/2279591/>
-
-Thanks!
-
--Doug
+Best Regards
+Jungseok Lee
