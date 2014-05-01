@@ -1,58 +1,73 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Thu, 01 May 2014 16:12:24 +0200
-Message-ID: <5035945.xBiLK9bFYq@wuerfel>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<7044616.kdaKNu3Qet@wuerfel>
-	<20140501230214.ed53cd0fc977225f37b14e29@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Thu, 1 May 2014 07:15:10 -0700
+Message-ID: <20140501141510.GW3245@sirena.org.uk>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
+ <20140424133920.GA12304@sirena.org.uk>
+ <5359E18B.60600@linaro.org>
+ <20140429222915.GU15125@sirena.org.uk>
+ <5360E5E7.8090807@linaro.org>
+ <20140430180314.GA3245@sirena.org.uk>
+ <53623004.5010805@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140501230214.ed53cd0fc977225f37b14e29-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pEAjBjStGYT6H+Py"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53623004.5010805@linaro.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 01 May 2014 23:02:14 Cho KyongHo wrote:
-> > 
-> > - device can only do DMA to a limited address range
-> > - DMA is noncoherent and needs manual cache management
-> > - DMA address is at an offset from physical address
-> > - some devices have an IOMMU
-> > - some IOMMUs are shared between devices
-> > - some devices with IOMMU can have multiple simultaneous contexts
-> > - a device may access some memory directly and some other memory through IOMMU
-> 
-> Do we need to consider this case?
-> I don't think a device can have different contexts at the same time.
-> If there such device is in a system, its driver must handle it correctly
-> with different devices descriptors for the different contexts, for example.
-> I mean, if a device has two DMA ports that are in different contexts,
-> they can be treated as different devices which are handed by a driver.
-> 
-> I worry that abstracting everything we can think may make the problem harder.
 
-It's the default operation for some of the simpler IOMMUs, see
-arch/x86/kernel/amd_gart_64.c for instance. It's possible that AMD
-will have the same thing in their ARM64 SoCs, but I don't have
-specific information about that.
+--pEAjBjStGYT6H+Py
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It can probably be handled in the iommu_map_ops() as a generalization,
-at least if we only have to worry about checking whether a memory address
-is below the dma_mask in order to decide whether to use the IOMMU or not.
+On Thu, May 01, 2014 at 04:59:08PM +0530, Tushar Behera wrote:
 
-Or we can decide not to handle it at all, and always go through the IOMMU,
-which would be slightly slower but still functional.
+> Okay, I will extend the existing clock driver to support XCLKOUT.
 
-	Arnd
+It may make more sense to add another clock driver for this clock
+depending on how things are done, I don't know.
+
+> Of the many parents of XCLKOUT, we need to set XXTI clock as the parent.
+> Is it okay if we pass two clocks "mclk" (XCLKOUT) and "mclk_parent"
+> (XXTI) to sound-card driver via DT and do the necessary reparenting
+> during the sound-card driver probe call?
+
+No, that's not OK at all, it won't allow for configuration of the
+system.  This is what I was talking about when I was talking the clock
+framework extensions to allow the clock tree to be configured using DT,
+that would allow the settings to be put in DT.
+
+> Else, we can push that change to bootloader (to set the XCLKOUT mux
+> register) and only enable/disable the clock in sound-card driver.
+
+That's not going to work given that the existing bootloaders don't do
+this.
+
+--pEAjBjStGYT6H+Py
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTYlbrAAoJELSic+t+oim9Y74P/1KfbQJb0J7mDTfxDZSxbsE0
+nA1dchqcgQBYlwQvr1rXWXMzxfbP0hoDbA2YVvFpYo3EQ5miHRYHjLtG4mFhbPBz
+WQyzpPND940136jZQjPSESfELQdhNvDBORsaqKYRFUPAPK6D6E6dZc98njvXxgJZ
+lxf2FBjlnWTdbZTYyqnYXPf6SqwncL53zzQlawgLVR5j9F8wzrXlVuQ1asEQTfdk
+72rbTwJkBugu7dZNZaraPy+5+HzIR+u7vQ/QtAPL92WwPgHyZWCDyFktVIBWxz2A
+F2b1IVCp+owmHErLJq0RSDROCzq16z2SxmchHqu39sIgfyupDXUW+VFW6WamRHxe
+t0NlPpmkr2WW4oiovn5rrImxRfCoPEvYO/lEDgd60JWLLBBV9l1Rymz45ZH4dgLA
+A72WoCqr8fEOU8eHwaO62Z3W4yYzopA3OgzqcCUs7ITaPaDlNZkXoCBNTK8QxA/p
+2MdA1YrsQkrImbsvRuHhmevZPSc9csyWwI8WVnmampVYsoQJTUBzqN7GyXGjAIli
+tb13iBcfAyrMGhUeQd/FP7LGtMyAzvFuCPvjz4I06tt8cc+Epy4jUA8Ecy4QhLOG
+IazvBHSQ6JD99eYshyut2MHycoov8CuSMWC1W19DDjh3fyJo/lQ9mWzqufaFqMUD
+NhxdithZU8Tw0+Ywc2dw
+=YiEJ
+-----END PGP SIGNATURE-----
+
+--pEAjBjStGYT6H+Py--
