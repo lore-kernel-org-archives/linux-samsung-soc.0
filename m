@@ -1,232 +1,420 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: [PATCH v5 2/6] arm64: Introduce VA_BITS and translation level
- options
-Date: Thu, 1 May 2014 03:06:28 -0700
-Message-ID: <20140501100628.GB2848@lvm>
-References: <000201cf64e5$cd3366a0$679a33e0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <000201cf64e5$cd3366a0$679a33e0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
+Date: Thu,  1 May 2014 16:14:44 +0530
+Message-ID: <1398941085-10224-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:55637 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249AbaEAKq0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 May 2014 06:46:26 -0400
+Received: by mail-pd0-f171.google.com with SMTP id r10so3051774pdi.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 03:46:25 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, arnd@arndb.de, t.figa@samsung.com, kgene.kim@samsung.com, robh+dt@kernel.org, sachin.kamat@linaro.org, Heiko Stuebner <heiko@sntech.de>
 
-On Thu, May 01, 2014 at 11:33:56AM +0900, Jungseok Lee wrote:
-> This patch adds virtual address space size and a level of translation
-> tables to kernel configuration. It facilicates introduction of
-> different MMU options, such as 4KB + 4 levels, 16KB + 4 levels and
-> 64KB + 3 levels, easily.
-> 
-> The idea is based on the discussion with Catalin Marinas:
-> http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Steve Capper <steve.capper@linaro.org>
-> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
-> ---
->  arch/arm64/Kconfig                     |   45 +++++++++++++++++++++++++++++++-
->  arch/arm64/include/asm/memory.h        |    6 +----
->  arch/arm64/include/asm/page.h          |    2 +-
->  arch/arm64/include/asm/pgalloc.h       |    4 +--
->  arch/arm64/include/asm/pgtable-hwdef.h |    2 +-
->  arch/arm64/include/asm/pgtable.h       |    8 +++---
->  arch/arm64/include/asm/tlb.h           |    2 +-
->  7 files changed, 54 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index e759af5..b438540 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -144,14 +144,57 @@ endmenu
->  
->  menu "Kernel Features"
->  
-> +choice
-> +	prompt "Page size"
-> +	default ARM64_4K_PAGES
-> +	help
-> +	  Allows page size.
-> +
-> +config ARM64_4K_PAGES
-> +	bool "4KB"
-> +	help
-> +	  This feature enables 4KB pages support.
-> +
->  config ARM64_64K_PAGES
-> -	bool "Enable 64KB pages support"
-> +	bool "64KB"
->  	help
->  	  This feature enables 64KB pages support (4KB by default)
->  	  allowing only two levels of page tables and faster TLB
->  	  look-up. AArch32 emulation is not available when this feature
->  	  is enabled.
->  
-> +endchoice
-> +
-> +choice
-> +	prompt "Virtual address space size"
-> +	default ARM64_VA_BITS_39 if ARM64_4K_PAGES
-> +	default ARM64_VA_BITS_42 if ARM64_64K_PAGES
-> +	help
-> +	  Allows virtual address space size. A level of translation tables
+Instead of hardcoding the SYSRAM details for each SoC,
+pass this information through device tree (DT) and make
+the code SoC agnostic. Generic SRAM bindings are used
+for achieving this.
 
-What does "Allows virtual address space size" mean exactly?
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+This patch is based on linux next (next-20140501) on top of
+my Kconfig consolidation patch
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/28642
 
-s/A level/The level/
+Tested on 4210/4412 Origen, 5250/5420 Arndale and SMDK5420 boards.
+---
+ arch/arm/Kconfig                                |    1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |   17 ++++++
+ arch/arm/boot/dts/exynos4210.dtsi               |   18 +++++++
+ arch/arm/boot/dts/exynos4x12.dtsi               |   18 +++++++
+ arch/arm/boot/dts/exynos5250.dtsi               |   18 +++++++
+ arch/arm/boot/dts/exynos5420.dtsi               |   18 +++++++
+ arch/arm/mach-exynos/common.h                   |    1 +
+ arch/arm/mach-exynos/exynos.c                   |   64 -----------------------
+ arch/arm/mach-exynos/firmware.c                 |    5 +-
+ arch/arm/mach-exynos/include/mach/map.h         |    7 ---
+ arch/arm/mach-exynos/platsmp.c                  |   39 +++++++++++++-
+ 11 files changed, 133 insertions(+), 73 deletions(-)
 
-> +	  is determined by a combination of page size and virtual address
-> +	  space size.
-> +
-> +config ARM64_VA_BITS_39
-> +	bool "39-bit"
-> +	depends on ARM64_4K_PAGES
-> +
-> +config ARM64_VA_BITS_42
-> +	bool "42-bit"
-> +	depends on ARM64_64K_PAGES
-> +
-> +endchoice
-> +
-> +config ARM64_VA_BITS
-> +	int
-> +	default 39 if ARM64_VA_BITS_39
-> +	default 42 if ARM64_VA_BITS_42
-> +
-> +config ARM64_2_LEVELS
-> +	def_bool y if ARM64_64K_PAGES && ARM64_VA_BITS_42
-> +
-> +config ARM64_3_LEVELS
-> +	def_bool y if ARM64_4K_PAGES && ARM64_VA_BITS_39
-> +
->  config CPU_BIG_ENDIAN
->         bool "Build big-endian kernel"
->         help
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> index e94f945..f6e7480 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -41,11 +41,7 @@
->   * The module space lives between the addresses given by TASK_SIZE
->   * and PAGE_OFFSET - it must be within 128MB of the kernel text.
->   */
-> -#ifdef CONFIG_ARM64_64K_PAGES
-> -#define VA_BITS			(42)
-> -#else
-> -#define VA_BITS			(39)
-> -#endif
-> +#define VA_BITS			(CONFIG_ARM64_VA_BITS)
->  #define PAGE_OFFSET		(UL(0xffffffffffffffff) << (VA_BITS - 1))
->  #define MODULES_END		(PAGE_OFFSET)
->  #define MODULES_VADDR		(MODULES_END - SZ_64M)
-> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-> index 46bf666..268e53d 100644
-> --- a/arch/arm64/include/asm/page.h
-> +++ b/arch/arm64/include/asm/page.h
-> @@ -33,7 +33,7 @@
->  
->  #ifndef __ASSEMBLY__
->  
-> -#ifdef CONFIG_ARM64_64K_PAGES
-> +#ifdef CONFIG_ARM64_2_LEVELS
->  #include <asm/pgtable-2level-types.h>
->  #else
->  #include <asm/pgtable-3level-types.h>
-> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
-> index 9bea6e7..4829837 100644
-> --- a/arch/arm64/include/asm/pgalloc.h
-> +++ b/arch/arm64/include/asm/pgalloc.h
-> @@ -26,7 +26,7 @@
->  
->  #define check_pgt_cache()		do { } while (0)
->  
-> -#ifndef CONFIG_ARM64_64K_PAGES
-> +#ifndef CONFIG_ARM64_2_LEVELS
->  
->  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
->  {
-> @@ -44,7 +44,7 @@ static inline void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
->  	set_pud(pud, __pud(__pa(pmd) | PMD_TYPE_TABLE));
->  }
->  
-> -#endif	/* CONFIG_ARM64_64K_PAGES */
-> +#endif	/* CONFIG_ARM64_2_LEVELS */
->  
->  extern pgd_t *pgd_alloc(struct mm_struct *mm);
->  extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index 5fc8a66..9cd86c6 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -16,7 +16,7 @@
->  #ifndef __ASM_PGTABLE_HWDEF_H
->  #define __ASM_PGTABLE_HWDEF_H
->  
-> -#ifdef CONFIG_ARM64_64K_PAGES
-> +#ifdef CONFIG_ARM64_2_LEVELS
->  #include <asm/pgtable-2level-hwdef.h>
->  #else
->  #include <asm/pgtable-3level-hwdef.h>
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 90c811f..a64ce5e 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -47,7 +47,7 @@ extern void __pmd_error(const char *file, int line, unsigned long val);
->  extern void __pgd_error(const char *file, int line, unsigned long val);
->  
->  #define pte_ERROR(pte)		__pte_error(__FILE__, __LINE__, pte_val(pte))
-> -#ifndef CONFIG_ARM64_64K_PAGES
-> +#ifndef CONFIG_ARM64_2_LEVELS
->  #define pmd_ERROR(pmd)		__pmd_error(__FILE__, __LINE__, pmd_val(pmd))
->  #endif
->  #define pgd_ERROR(pgd)		__pgd_error(__FILE__, __LINE__, pgd_val(pgd))
-> @@ -320,7 +320,7 @@ static inline pte_t *pmd_page_vaddr(pmd_t pmd)
->   */
->  #define mk_pte(page,prot)	pfn_pte(page_to_pfn(page),prot)
->  
-> -#ifndef CONFIG_ARM64_64K_PAGES
-> +#ifndef CONFIG_ARM64_2_LEVELS
->  
->  #define pud_none(pud)		(!pud_val(pud))
->  #define pud_bad(pud)		(!(pud_val(pud) & 2))
-> @@ -342,7 +342,7 @@ static inline pmd_t *pud_page_vaddr(pud_t pud)
->  	return __va(pud_val(pud) & PHYS_MASK & (s32)PAGE_MASK);
->  }
->  
-> -#endif	/* CONFIG_ARM64_64K_PAGES */
-> +#endif	/* CONFIG_ARM64_2_LEVELS */
->  
->  /* to find an entry in a page-table-directory */
->  #define pgd_index(addr)		(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
-> @@ -353,7 +353,7 @@ static inline pmd_t *pud_page_vaddr(pud_t pud)
->  #define pgd_offset_k(addr)	pgd_offset(&init_mm, addr)
->  
->  /* Find an entry in the second-level page table.. */
-> -#ifndef CONFIG_ARM64_64K_PAGES
-> +#ifndef CONFIG_ARM64_2_LEVELS
->  #define pmd_index(addr)		(((addr) >> PMD_SHIFT) & (PTRS_PER_PMD - 1))
->  static inline pmd_t *pmd_offset(pud_t *pud, unsigned long addr)
->  {
-> diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-> index 80e2c08..bc19101 100644
-> --- a/arch/arm64/include/asm/tlb.h
-> +++ b/arch/arm64/include/asm/tlb.h
-> @@ -91,7 +91,7 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
->  	tlb_remove_page(tlb, pte);
->  }
->  
-> -#ifndef CONFIG_ARM64_64K_PAGES
-> +#ifndef CONFIG_ARM64_2_LEVELS
->  static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
->  				  unsigned long addr)
->  {
-> -- 
-> 1.7.10.4
-> 
-> 
-Otherwise looks good,
-
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a6aaaad19b1a..f66ea9453df9 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -855,6 +855,7 @@ config ARCH_EXYNOS
+ 	select S5P_DEV_MFC
+ 	select SAMSUNG_DMADEV
+ 	select SPARSE_IRQ
++	select SRAM
+ 	select USE_OF
+ 	help
+ 	  Support for SAMSUNG's EXYNOS SoCs (EXYNOS4/5)
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 63e34b24b04f..8d4de5c0d0c7 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -28,6 +28,23 @@
+ 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
+ 	};
+ 
++	sram@02020000 {
++		status = "disabled";
++	};
++
++	sram@02025000 {
++		compatible = "mmio-sram";
++		reg = <0x02025000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x02025000 0x1000>;
++
++		smp-sram@0 {
++			compatible = "samsung,exynos4210-sram";
++			reg = <0x0 0x1000>;
++		};
++	};
++
+ 	mct@10050000 {
+ 		compatible = "none";
+ 	};
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index cacf6140dd2f..d3d727b0c263 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -31,6 +31,24 @@
+ 		pinctrl2 = &pinctrl_2;
+ 	};
+ 
++	sram@02020000 {
++		compatible = "mmio-sram";
++		reg = <0x02020000 0x20000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x02020000 0x20000>;
++
++		smp-sram@0 {
++			compatible = "samsung,exynos4210-sram";
++			reg = <0x0 0x1000>;
++		};
++
++		smp-sram@1f000 {
++			compatible = "samsung,exynos4210-sram-ns";
++			reg = <0x1f000 0x1000>;
++		};
++	};
++
+ 	pd_lcd1: lcd1-power-domain@10023CA0 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10023CA0 0x20>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index c4a9306f8529..75fb3e7e3999 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -37,6 +37,24 @@
+ 		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+ 	};
+ 
++	sram@02020000 {
++		compatible = "mmio-sram";
++		reg = <0x02020000 0x40000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x02020000 0x40000>;
++
++		smp-sram@0 {
++			compatible = "samsung,exynos4210-sram";
++			reg = <0x0 0x1000>;
++		};
++
++		smp-sram@2f000 {
++			compatible = "samsung,exynos4210-sram-ns";
++			reg = <0x2f000 0x1000>;
++		};
++	};
++
+ 	pd_isp: isp-power-domain@10023CA0 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10023CA0 0x20>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 37423314a028..8d724d56a5c6 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -72,6 +72,24 @@
+ 		};
+ 	};
+ 
++	sram@02020000 {
++		compatible = "mmio-sram";
++		reg = <0x02020000 0x30000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x02020000 0x30000>;
++
++		smp-sram@0 {
++			compatible = "samsung,exynos4210-sram";
++			reg = <0x0 0x1000>;
++		};
++
++		smp-sram@2f000 {
++			compatible = "samsung,exynos4210-sram-ns";
++			reg = <0x2f000 0x1000>;
++		};
++	};
++
+ 	pd_gsc: gsc-power-domain@10044000 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044000 0x20>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index c3a9a66c5767..ff496adfabde 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -110,6 +110,24 @@
+ 		};
+ 	};
+ 
++	sram@02020000 {
++		compatible = "mmio-sram";
++		reg = <0x02020000 0x54000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x02020000 0x54000>;
++
++		smp-sram@0 {
++			compatible = "samsung,exynos4210-sram";
++			reg = <0x0 0x1000>;
++		};
++
++		smp-sram@53000 {
++			compatible = "samsung,exynos4210-sram-ns";
++			reg = <0x53000 0x1000>;
++		};
++	};
++
+ 	clock: clock-controller@10010000 {
+ 		compatible = "samsung,exynos5420-clock";
+ 		reg = <0x10010000 0x30000>;
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 9ef3f83efaff..47cbab0f008e 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -18,6 +18,7 @@
+ void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+ 
+ struct map_desc;
++extern void __iomem *sram_ns_base_addr;
+ void exynos_init_io(void);
+ void exynos_restart(enum reboot_mode mode, const char *cmd);
+ void exynos_cpuidle_init(void);
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 77293d39dfc9..556d148e6413 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -114,51 +114,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+ 	},
+ };
+ 
+-static struct map_desc exynos4_iodesc0[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM0),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos4_iodesc1[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM1),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos4210_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+-		.pfn		= __phys_to_pfn(EXYNOS4210_PA_SYSRAM_NS),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos4x12_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+-		.pfn		= __phys_to_pfn(EXYNOS4x12_PA_SYSRAM_NS),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static struct map_desc exynos5250_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+-		.pfn		= __phys_to_pfn(EXYNOS5250_PA_SYSRAM_NS),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+ static struct map_desc exynos5_iodesc[] __initdata = {
+ 	{
+ 		.virtual	= (unsigned long)S3C_VA_SYS,
+@@ -181,11 +136,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+-		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSRAM),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+ 		.virtual	= (unsigned long)S5P_VA_CMU,
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_CMU),
+ 		.length		= 144 * SZ_1K,
+@@ -280,20 +230,6 @@ static void __init exynos_map_io(void)
+ 
+ 	if (soc_is_exynos5())
+ 		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+-
+-	if (soc_is_exynos4210()) {
+-		if (samsung_rev() == EXYNOS4210_REV_0)
+-			iotable_init(exynos4_iodesc0,
+-						ARRAY_SIZE(exynos4_iodesc0));
+-		else
+-			iotable_init(exynos4_iodesc1,
+-						ARRAY_SIZE(exynos4_iodesc1));
+-		iotable_init(exynos4210_iodesc, ARRAY_SIZE(exynos4210_iodesc));
+-	}
+-	if (soc_is_exynos4212() || soc_is_exynos4412())
+-		iotable_init(exynos4x12_iodesc, ARRAY_SIZE(exynos4x12_iodesc));
+-	if (soc_is_exynos5250())
+-		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
+ }
+ 
+ void __init exynos_init_io(void)
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 932129ef26c6..455e7802e52e 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -18,6 +18,7 @@
+ 
+ #include <mach/map.h>
+ 
++#include "common.h"
+ #include "smc.h"
+ 
+ static int exynos_do_idle(void)
+@@ -34,7 +35,9 @@ static int exynos_cpu_boot(int cpu)
+ 
+ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ {
+-	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
++	void __iomem *boot_reg;
++
++	boot_reg = sram_ns_base_addr + 0x1c + 4*cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
+ 	return 0;
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 7b046b59d9ec..548269a60634 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -23,13 +23,6 @@
+ 
+ #include <plat/map-s5p.h>
+ 
+-#define EXYNOS4_PA_SYSRAM0		0x02025000
+-#define EXYNOS4_PA_SYSRAM1		0x02020000
+-#define EXYNOS5_PA_SYSRAM		0x02020000
+-#define EXYNOS4210_PA_SYSRAM_NS		0x0203F000
+-#define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
+-#define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
+-
+ #define EXYNOS_PA_CHIPID		0x10000000
+ 
+ #define EXYNOS4_PA_SYSCON		0x10010000
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 03e5e9f94705..4315b4821361 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -20,6 +20,7 @@
+ #include <linux/jiffies.h>
+ #include <linux/smp.h>
+ #include <linux/io.h>
++#include <linux/of_address.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/smp_plat.h>
+@@ -33,11 +34,41 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
++static void __iomem *sram_base_addr;
++void __iomem *sram_ns_base_addr;
++
++static int __init exynos_smp_prepare_sram(void)
++{
++	struct device_node *node;
++
++	node = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-sram");
++	if (!node)
++		return -ENODEV;
++
++	sram_base_addr = of_iomap(node, 0);
++	if (!sram_base_addr) {
++		pr_err("Secondary CPU boot address not found\n");
++		return -ENODEV;
++	}
++
++	node = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-sram-ns");
++	if (!node)
++		return -ENODEV;
++
++	sram_ns_base_addr = of_iomap(node, 0);
++	if (!sram_ns_base_addr) {
++		pr_err("Secondary CPU boot address not found\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
+ static inline void __iomem *cpu_boot_reg_base(void)
+ {
+ 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+ 		return S5P_INFORM5;
+-	return S5P_VA_SYSRAM;
++	return sram_base_addr;
+ }
+ 
+ static inline void __iomem *cpu_boot_reg(int cpu)
+@@ -91,6 +122,9 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	unsigned long timeout;
+ 	unsigned long phys_cpu = cpu_logical_map(cpu);
+ 
++	if (!cpu_boot_reg_base())
++		return -EINVAL;
++
+ 	/*
+ 	 * Set synchronisation state between this boot processor
+ 	 * and the secondary one
+@@ -205,6 +239,9 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+ 	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+ 		scu_enable(scu_base_addr());
+ 
++	if (exynos_smp_prepare_sram())
++		return;
++
+ 	/*
+ 	 * Write the address of secondary startup into the
+ 	 * system-wide flags register. The boot monitor waits
+-- 
+1.7.9.5
