@@ -1,63 +1,62 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 11/15] ASoC: WM0010 needs SPI
-Date: Thu, 1 May 2014 12:08:42 -0700
-Message-ID: <20140501190842.GZ3245@sirena.org.uk>
+Subject: Re: [PATCH 13/15] ASoC: SND_S3C_DMA_LEGACY needs S3C24XX_DMA
+Date: Thu, 1 May 2014 12:11:25 -0700
+Message-ID: <20140501191125.GB3245@sirena.org.uk>
 References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
- <1398770316-19715-12-git-send-email-kaixu.xia@linaro.org>
+ <1398770316-19715-14-git-send-email-kaixu.xia@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VGJtZYeI3LbW67dD"
+	protocol="application/pgp-signature"; boundary="DakDFP6XNsQXR34C"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54427 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54445 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750851AbaEATJO (ORCPT
+	with ESMTP id S1751865AbaEATLv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 15:09:14 -0400
+	Thu, 1 May 2014 15:11:51 -0400
 Content-Disposition: inline
-In-Reply-To: <1398770316-19715-12-git-send-email-kaixu.xia@linaro.org>
+In-Reply-To: <1398770316-19715-14-git-send-email-kaixu.xia@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Xia Kaixu <kaixu.xia@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd@arndb.de, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd@arndb.de, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
 
---VGJtZYeI3LbW67dD
+--DakDFP6XNsQXR34C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2014 at 07:18:32PM +0800, Xia Kaixu wrote:
+On Tue, Apr 29, 2014 at 07:18:34PM +0800, Xia Kaixu wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> SND_S3C_DMA_LEGACY can only be set on S3C24xx, which does not
+> (yet) support the dmaengine framework, so samsung_dma_get_ops()
+> fails to link if S3C24XX_DMA is disabled:
 
-> @@ -201,7 +201,7 @@ config SND_SOC_SPEYSIDE
->  	select SND_SAMSUNG_I2S
->  	select SND_SOC_WM8996
->  	select SND_SOC_WM9081
-> -	select SND_SOC_WM0010
-> +	select SND_SOC_WM0010 if SPI
->  	select SND_SOC_WM1250_EV1
+Why is the fix for this not to ensure that s3c24xx always enables the
+DMA controller - how likely is it that it would be sane to build a
+kernel without DMA after all?
 
-No, this is broken.  The driver won't work if all the components it uses
-don't load and the dependency for SPI isn't SPI, it's SPI_MASTER.
-
---VGJtZYeI3LbW67dD
+--DakDFP6XNsQXR34C
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTYpu3AAoJELSic+t+oim9KJ4P/3LmQ+4hfHyEpaoZ1c5NtgIJ
-2g3k6VLcChLiBKOKMh/Z4WRUZcF8PuQGkLj6hUHOwVIs6/j2FFJHjN5FMc6KGQ5s
-vvFx9e11SUWrufAzFZ2CuU1l2V0a0neGOpPKZlDUhOm7GM6ioUCbIAfyajHjKUp4
-0seIH0VQiJ7g2mhksVGdqYRF9yAZxoihxzWHCARwu9zx7Zc9LCaMooLrUYK1tZiP
-VU6YB/0hxrhmWBdXcrTlTZ5+GI4O/kRRwBGabcowWiO28NhJF8P9yKJ8tyqHze41
-Q4aQNMMX4Apb+nus489SvIYCu36KBCzrnSbhyP+wA86lj8xQ2GXtCh5mTxXKh3sm
-/zT6Xhh63sF7h2lTCSNCqUGtibPSi72zIuQD56wJXOcZSQ4PdgCDF+Q99r+UkJuo
-HHWPVX0YIBZ4KKZfaT7l7nMNekALMcuLMf2tqlrm94laQ6g2us+ilExL9tma5T/l
-gLyxRG11uwUU2rV/j87t2w7J3cHe0XdUxfj3GeqgtWR5wi24/jmGU/7Z2VSRiPDL
-vLSRL3M9UNTEobnCzHJRtCLXDagWUL6/WKdxYQY5wG2zRkW+CYgZL9RMlkhDqC20
-8VaeXLMtV47htm6HDen1O+Hs0g+d3xt+eGi+7Bj7+WtIaCAjtqoTxBPk1CbzUC4P
-g6xIbzyGVg16+lU4/Hfu
-=8FMB
+iQIcBAEBAgAGBQJTYpxZAAoJELSic+t+oim9upYQAIxwgpNQ9yiiLt/39B0RQESO
+76zs63flcoNeFOJ8b/OLl/CMb02QasSFCNV6NL8LxfmzO9yoDwnaJliZgcKw/JXA
+bu0D4P1kMUomwszaYbwXcxpeqL5pP8p6moAlNKgORi0uZDu3umK9UmQnKi2eWfoK
+lWSg85rir4X95tfCKlieBGUKJSAJ+N66+0QsCKLZb1RLhiV2SUCt4BzabJI2GEcv
+yu3i9hRvmUHez+XE4lBKLQkWpXYHwE0cGp1rHMl9/sVY/QaXjJU1Q9qtBkKiMaki
+VgigaUwtcZtWyYzEKBHhbCnXB+LKASUC8M3CEgRTda9Hbt2b1qh6555ak5l8P4D3
+Ydf0uIskm1CyZJd+up2ExPCw6mke3OEm5ehetuUNd2YUMwuOfBknTuv/b4axKpx1
+DRpa38Lw9w1aTJ2cGUdCAJhjZUSp+6nqk+FAcmLHqR6kzGQLrl+NHZ0cd8RaM3BD
+X4sDtGoAH+U4ER5o3ZhJNsxebecOmjpmcznp505IW21M68qN3m5PkocWW+FT2jRd
+z3N8csWg4k2FPsrdCJZ3yQVIkXOfgaN08skM5S92V+gm/+vjxiu/99mgyRRWbzCA
+nq68zsz3qdD+U7pbPSXJjM/h7dKn5jAoiFZoVWMbo5wfakXcvSj/wpSkq97SdxNh
+UmFx0P6B/E8kg5J5NScr
+=tBkC
 -----END PGP SIGNATURE-----
 
---VGJtZYeI3LbW67dD--
+--DakDFP6XNsQXR34C--
