@@ -1,178 +1,281 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 02/16] clk: exynos5420: add clocks for ISP block
-Date: Thu, 01 May 2014 23:33:22 +0200
-Message-ID: <5362BDA2.6060503@gmail.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-3-git-send-email-shaik.ameer@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 13/15] ASoC: SND_S3C_DMA_LEGACY needs S3C24XX_DMA
+Date: Fri, 02 May 2014 00:35:21 +0200
+Message-ID: <7071653.m3UbztQEJc@wuerfel>
+References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org> <1398770316-19715-14-git-send-email-kaixu.xia@linaro.org> <20140501191125.GB3245@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f52.google.com ([209.85.216.52]:43490 "EHLO
-	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752004AbaEAVdZ (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:53073 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751887AbaEAWgG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 17:33:25 -0400
-In-Reply-To: <1398344632-18623-3-git-send-email-shaik.ameer@samsung.com>
+	Thu, 1 May 2014 18:36:06 -0400
+In-Reply-To: <20140501191125.GB3245@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Xia Kaixu <kaixu.xia@linaro.org>, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-On 24.04.2014 15:03, Shaik Ameer Basha wrote:
-> This patch adds missing clocks for ISP block
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos5420.c |   80 ++++++++++++++++++++++++++++++++++
->   1 file changed, 80 insertions(+)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 389d4b1..972da5d 100755
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -57,6 +57,7 @@
->   #define SRC_FSYS		0x10244
->   #define SRC_PERIC0		0x10250
->   #define SRC_PERIC1		0x10254
-> +#define SRC_ISP			0x10270
->   #define SRC_TOP10		0x10280
->   #define SRC_TOP11		0x10284
->   #define SRC_TOP12		0x10288
-> @@ -77,12 +78,15 @@
->   #define DIV_PERIC2		0x10560
->   #define DIV_PERIC3		0x10564
->   #define DIV_PERIC4		0x10568
-> +#define SCLK_DIV_ISP0		0x10580
-> +#define SCLK_DIV_ISP1		0x10584
->   #define GATE_BUS_TOP		0x10700
->   #define GATE_BUS_FSYS0		0x10740
->   #define GATE_BUS_PERIC		0x10750
->   #define GATE_BUS_PERIC1		0x10754
->   #define GATE_BUS_PERIS0		0x10760
->   #define GATE_BUS_PERIS1		0x10764
-> +#define GATE_TOP_SCLK_ISP	0x10870
->   #define GATE_IP_GSCL0		0x10910
->   #define GATE_IP_GSCL1		0x10920
->   #define GATE_IP_MFC		0x1092c
-> @@ -145,6 +149,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->   	SRC_MASK_FSYS,
->   	SRC_MASK_PERIC0,
->   	SRC_MASK_PERIC1,
-> +	SRC_ISP,
->   	DIV_TOP0,
->   	DIV_TOP1,
->   	DIV_TOP2,
-> @@ -158,12 +163,15 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->   	DIV_PERIC2,
->   	DIV_PERIC3,
->   	DIV_PERIC4,
-> +	SCLK_DIV_ISP0,
-> +	SCLK_DIV_ISP1,
->   	GATE_BUS_TOP,
->   	GATE_BUS_FSYS0,
->   	GATE_BUS_PERIC,
->   	GATE_BUS_PERIC1,
->   	GATE_BUS_PERIS0,
->   	GATE_BUS_PERIS1,
-> +	GATE_TOP_SCLK_ISP,
->   	GATE_IP_GSCL0,
->   	GATE_IP_GSCL1,
->   	GATE_IP_MFC,
-> @@ -250,6 +258,15 @@ PNAME(mout_user_aclk200_fsys_p)	= {"fin_pll", "mout_sw_aclk200_fsys"};
->
->   PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2", "mout_sclk_spll"};
->   PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
-> +PNAME(mout_sw_aclk400_isp_p) = {"dout_aclk400_isp", "mout_sclk_spll"};
-> +PNAME(mout_user_aclk400_isp_p) = {"fin_pll", "mout_sw_aclk400_isp"};
-> +
-> +PNAME(mout_sw_aclk333_432_isp0_p) = {"dout_aclk333_432_isp0",
-> +					"mout_sclk_spll"};
-> +PNAME(mout_user_aclk333_432_isp0_p) = {"fin_pll", "mout_sw_aclk333_432_isp0"};
-> +
-> +PNAME(mout_sw_aclk333_432_isp_p) = {"dout_aclk333_432_isp", "mout_sclk_spll"};
-> +PNAME(mout_user_aclk333_432_isp_p) = {"fin_pll", "mout_sw_aclk333_432_isp"};
->
->   PNAME(mout_sw_aclk200_p) = {"dout_aclk200", "mout_sclk_spll"};
->   PNAME(mout_aclk200_disp1_p) = {"fin_pll", "mout_sw_aclk200"};
-> @@ -265,6 +282,7 @@ PNAME(mout_user_aclk166_p) = {"fin_pll", "mout_sw_aclk166"};
->
->   PNAME(mout_sw_aclk266_p) = {"dout_aclk266", "mout_sclk_spll"};
->   PNAME(mout_user_aclk266_p) = {"fin_pll", "mout_sw_aclk266"};
-> +PNAME(mout_user_aclk266_isp_p) = {"fin_pll", "mout_sw_aclk266"};
->
->   PNAME(mout_sw_aclk333_432_gscl_p) = {"dout_aclk333_432_gscl", "mout_sclk_spll"};
->   PNAME(mout_user_aclk333_432_gscl_p) = {"fin_pll", "mout_sw_aclk333_432_gscl"};
-> @@ -448,6 +466,31 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->   	MUX(0, "mout_spi0", mout_group2_p, SRC_PERIC1, 20, 3),
->   	MUX(0, "mout_spi1", mout_group2_p, SRC_PERIC1, 24, 3),
->   	MUX(0, "mout_spi2", mout_group2_p, SRC_PERIC1, 28, 3),
-> +	MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
-> +	MUX(0, "mout_sw_aclk400_isp", mout_sw_aclk400_isp_p,
-> +		SRC_TOP10, 0, 1),
-> +	MUX(0, "mout_user_aclk400_isp", mout_user_aclk400_isp_p,
-> +		SRC_TOP3, 0, 1),
-> +	MUX(0, "mout_aclk333_432_isp0", mout_group4_p, SRC_TOP1, 12, 2),
-> +	MUX(0, "mout_sw_aclk333_432_isp0", mout_sw_aclk333_432_isp0_p,
-> +		SRC_TOP11, 12, 1),
-> +	MUX(0, "mout_user_aclk333_432_isp0", mout_user_aclk333_432_isp0_p,
-> +		SRC_TOP4, 12, 1),
-> +	MUX(0, "mout_aclk333_432_isp", mout_group4_p,
-> +		SRC_TOP1, 4, 2),
-> +	MUX(0, "mout_sw_aclk333_432_isp", mout_sw_aclk333_432_isp_p,
-> +		SRC_TOP11, 4, 1),
-> +	MUX(0, "mout_user_aclk333_432_isp", mout_user_aclk333_432_isp_p,
-> +		SRC_TOP4, 4, 1),
-> +	MUX(0, "mout_user_aclk266_isp", mout_user_aclk266_isp_p,
-> +		SRC_TOP4, 16, 1),
-> +
-> +	/* ISP Block */
-> +	MUX(0, "mout_pwm_isp", mout_group2_p, SRC_ISP, 24, 3),
-> +	MUX(0, "mout_uart_isp", mout_group2_p, SRC_ISP, 20, 3),
-> +	MUX(0, "mout_spi0_isp", mout_group2_p, SRC_ISP, 12, 3),
-> +	MUX(0, "mout_spi1_isp", mout_group2_p, SRC_ISP, 16, 3),
-> +	MUX(0, "mout_isp_sensor", mout_group2_p, SRC_ISP, 28, 3),
->   };
->
->   static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
-> @@ -528,6 +571,22 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->   	DIV(0, "dout_pre_spi0", "dout_spi0", DIV_PERIC4, 8, 8),
->   	DIV(0, "dout_pre_spi1", "dout_spi1", DIV_PERIC4, 16, 8),
->   	DIV(0, "dout_pre_spi2", "dout_spi2", DIV_PERIC4, 24, 8),
-> +
-> +	/* ISP Block */
-> +	DIV(0, "dout_aclk400_isp", "mout_aclk400_isp", DIV_TOP0, 0, 3),
-> +	DIV(0, "dout_aclk333_432_isp0", "mout_aclk333_432_isp0",
-> +		DIV_TOP1, 16, 3),
-> +	DIV(0, "dout_aclk333_432_isp", "mout_aclk333_432_isp",
-> +		DIV_TOP1, 4, 3),
-> +	DIV(0, "dout_pwm_isp", "mout_pwm_isp", SCLK_DIV_ISP1, 28, 4),
-> +	DIV(0, "dout_uart_isp", "mout_uart_isp", SCLK_DIV_ISP1, 24, 4),
-> +	DIV(0, "dout_spi0_isp", "mout_spi0_isp", SCLK_DIV_ISP1, 16, 4),
-> +	DIV(0, "dout_spi1_isp", "mout_spi1_isp", SCLK_DIV_ISP1, 20, 4),
-> +	DIV(0, "dout_spi0_isp_pre", "dout_spi0_isp", SCLK_DIV_ISP1, 0, 8),
-> +	DIV(0, "dout_spi1_isp_pre", "dout_spi1_isp", SCLK_DIV_ISP1, 8, 8),
-> +	DIV(0, "dout_isp_sensor0", "mout_isp_sensor", SCLK_DIV_ISP0, 8, 8),
-> +	DIV(0, "dout_isp_sensor1", "mout_isp_sensor", SCLK_DIV_ISP0, 16, 8),
-> +	DIV(0, "dout_isp_sensor2", "mout_isp_sensor", SCLK_DIV_ISP0, 24, 8),
->   };
->
->   static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
-> @@ -759,6 +818,27 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->   		0),
->   	GATE(CLK_SMMU_MIXER, "smmu_mixer", "aclk200_disp1", GATE_IP_DISP1, 9, 0,
->   		0),
-> +	GATE(0, "aclk266_isp", "mout_user_aclk266_isp",
-> +			GATE_BUS_TOP, 13, 0, 0),
-> +	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
-> +			GATE_BUS_TOP, 16, 0, 0),
-> +	GATE(0, "aclk333_432_isp0",
-> +			"mout_user_aclk333_432_isp0", GATE_BUS_TOP, 5, 0, 0),
-> +	GATE(0, "aclk333_432_isp",
-> +			"mout_user_aclk333_432_isp", GATE_BUS_TOP, 8, 0, 0),
+On Thursday 01 May 2014 12:11:25 Mark Brown wrote:
+> On Tue, Apr 29, 2014 at 07:18:34PM +0800, Xia Kaixu wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > SND_S3C_DMA_LEGACY can only be set on S3C24xx, which does not
+> > (yet) support the dmaengine framework, so samsung_dma_get_ops()
+> > fails to link if S3C24XX_DMA is disabled:
+> 
+> Why is the fix for this not to ensure that s3c24xx always enables the
+> DMA controller - how likely is it that it would be sane to build a
+> kernel without DMA after all?
 
-What are these 4 gate clocks needed for? Do we really need this kind of 
-gating granularity? Isn't there a gate bit in one of GATE_IP_* registers?
+S3C24XX_DMA is only needed for ASoC and for s3cmci. The latter
+uses 'depends on S3C24XX_DMA'. arch/arm/configs/tct_hammer_defconfig
+is an example of a configuration that does not include DMA because
+it uses neither of the two drivers.
 
-Best regards,
-Tomasz
+On a related topic, I looked at the overall DMA situation for
+plat-samsung again now, and it looks much nicer now than it used to,
+with mach-s3c64xx fully migrated to dmaengine, so there might be an
+even better way to deal with this.
+
+>From all I can tell, sound/soc/samsung is the only remaining user
+of the plat/dma.h interfaces, and there is only one other  driver
+using the s3c24xx_dma interface directly, drivers/mmc/host/s3cmci.c.
+
+How about the patch below?
+8<-------
+ASoC: s3c24xx: use legacy DMA interface directly
+
+The samsung platform code has a wrapper around the legacy s3c24xx
+DMA API as an alternative to the dmaengine API. This is only used
+by the legacy s3c24xx sound support, which is never used in combination
+with the dmaengine API.
+
+We can simplify the ASoC code significantly, and thereby completely
+obsoleting arch/arm/plat-samsung/dma-ops.c,
+arch/arm/plat-samsung/s3c-dma-ops.c and
+arch/arm/plat-samsung/include/plat/dma-ops.h.
+
+This patch achieves this by open-coding the implementation of this
+wrapper, which ends up saving us more code than we have to add.
+s3c24xx does not support cyclic DMA, so anything referring to that
+gets deleted in the process.
+
+The plat-samsung dma wrapper code is now dead code and can be removed
+subsequently.
+
+Signed-off--by: Arnd Bergmann <arnd@arndb.de>
+---
+
+ sound/soc/samsung/ac97.c | 10 ++----
+ sound/soc/samsung/dma.c  | 79 +++++++++++++++---------------------------------
+ sound/soc/samsung/dma.h  |  2 --
+ 3 files changed, 27 insertions(+), 64 deletions(-)
+
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index 76b072b..28fe097 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -253,10 +253,7 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
+ 
+ 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
+ 
+-	if (!dma_data->ops)
+-		dma_data->ops = samsung_dma_get_ops();
+-
+-	dma_data->ops->started(dma_data->channel);
++	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
+ 
+ 	return 0;
+ }
+@@ -287,10 +284,7 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
+ 
+ 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
+ 
+-	if (!dma_data->ops)
+-		dma_data->ops = samsung_dma_get_ops();
+-
+-	dma_data->ops->started(dma_data->channel);
++	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
+ 
+ 	return 0;
+ }
+diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+index dc09b71..3c6e2f2 100644
+--- a/sound/soc/samsung/dma.c
++++ b/sound/soc/samsung/dma.c
+@@ -54,8 +54,6 @@ struct runtime_data {
+ 	struct s3c_dma_params *params;
+ };
+ 
+-static void audio_buffdone(void *data);
+-
+ /* dma_enqueue
+  *
+  * place a dma buffer onto the queue for the dma system
+@@ -66,7 +64,6 @@ static void dma_enqueue(struct snd_pcm_substream *substream)
+ 	struct runtime_data *prtd = substream->runtime->private_data;
+ 	dma_addr_t pos = prtd->dma_pos;
+ 	unsigned int limit;
+-	struct samsung_dma_prep dma_info;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+@@ -75,33 +72,11 @@ static void dma_enqueue(struct snd_pcm_substream *substream)
+ 	pr_debug("%s: loaded %d, limit %d\n",
+ 				__func__, prtd->dma_loaded, limit);
+ 
+-	dma_info.cap = (samsung_dma_has_circular() ? DMA_CYCLIC : DMA_SLAVE);
+-	dma_info.direction =
+-		(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
+-		? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM);
+-	dma_info.fp = audio_buffdone;
+-	dma_info.fp_param = substream;
+-	dma_info.period = prtd->dma_period;
+-	dma_info.len = prtd->dma_period*limit;
+-
+-	if (dma_info.cap == DMA_CYCLIC) {
+-		dma_info.buf = pos;
+-		prtd->params->ops->prepare(prtd->params->ch, &dma_info);
+-		prtd->dma_loaded += limit;
+-		return;
+-	}
+-
+ 	while (prtd->dma_loaded < limit) {
+ 		pr_debug("dma_loaded: %d\n", prtd->dma_loaded);
+ 
+-		if ((pos + dma_info.period) > prtd->dma_end) {
+-			dma_info.period  = prtd->dma_end - pos;
+-			pr_debug("%s: corrected dma len %ld\n",
+-					__func__, dma_info.period);
+-		}
+-
+-		dma_info.buf = pos;
+-		prtd->params->ops->prepare(prtd->params->ch, &dma_info);
++		s3c2410_dma_enqueue(prtd->params->channel, substream, pos,
++				    prtd->dma_period * limit);
+ 
+ 		prtd->dma_loaded++;
+ 		pos += prtd->dma_period;
+@@ -112,7 +87,8 @@ static void dma_enqueue(struct snd_pcm_substream *substream)
+ 	prtd->dma_pos = pos;
+ }
+ 
+-static void audio_buffdone(void *data)
++static void audio_buffdone(struct s3c2410_dma_chan *channel, void *data,
++		       int size, enum s3c2410_dma_buffresult res)
+ {
+ 	struct snd_pcm_substream *substream = data;
+ 	struct runtime_data *prtd = substream->runtime->private_data;
+@@ -128,10 +104,8 @@ static void audio_buffdone(void *data)
+ 			snd_pcm_period_elapsed(substream);
+ 
+ 		spin_lock(&prtd->lock);
+-		if (!samsung_dma_has_circular()) {
+-			prtd->dma_loaded--;
+-			dma_enqueue(substream);
+-		}
++		prtd->dma_loaded--;
++		dma_enqueue(substream);
+ 		spin_unlock(&prtd->lock);
+ 	}
+ }
+@@ -145,8 +119,7 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
+ 	unsigned long totbytes = params_buffer_bytes(params);
+ 	struct s3c_dma_params *dma =
+ 		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-	struct samsung_dma_req req;
+-	struct samsung_dma_config config;
++	enum dma_transfer_direction direction;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+@@ -164,24 +137,22 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
+ 		pr_debug("params %p, client %p, channel %d\n", prtd->params,
+ 			prtd->params->client, prtd->params->channel);
+ 
+-		prtd->params->ops = samsung_dma_get_ops();
+-
+-		req.cap = (samsung_dma_has_circular() ?
+-			DMA_CYCLIC : DMA_SLAVE);
+-		req.client = prtd->params->client;
+-		config.direction =
+-			(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
++		direction = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK
+ 			? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM);
+-		config.width = prtd->params->dma_size;
+-		config.fifo = prtd->params->dma_addr;
+-		prtd->params->ch = prtd->params->ops->request(
+-				prtd->params->channel, &req, rtd->cpu_dai->dev,
+-				prtd->params->ch_name);
+-		if (!prtd->params->ch) {
++
++		if (s3c2410_dma_request(prtd->params->channel,
++					(void*)prtd->params->client, NULL) < 0) {
+ 			pr_err("Failed to allocate DMA channel\n");
++			s3c2410_dma_free(prtd->params->channel,
++					 (void*)prtd->params->client);
+ 			return -ENXIO;
+ 		}
+-		prtd->params->ops->config(prtd->params->ch, &config);
++		s3c2410_dma_devconfig(prtd->params->channel, direction,
++				      prtd->params->dma_addr);
++		s3c2410_dma_config(prtd->params->channel,
++				   prtd->params->dma_size);
++		s3c2410_dma_set_buffdone_fn(prtd->params->channel,
++					    audio_buffdone);
+ 	}
+ 
+ 	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
+@@ -208,9 +179,9 @@ static int dma_hw_free(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_runtime_buffer(substream, NULL);
+ 
+ 	if (prtd->params) {
+-		prtd->params->ops->flush(prtd->params->ch);
+-		prtd->params->ops->release(prtd->params->ch,
+-					prtd->params->client);
++		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_FLUSH);
++		s3c2410_dma_free(prtd->params->channel,
++				 (void*)prtd->params->client);
+ 		prtd->params = NULL;
+ 	}
+ 
+@@ -230,7 +201,7 @@ static int dma_prepare(struct snd_pcm_substream *substream)
+ 		return 0;
+ 
+ 	/* flush the DMA channel */
+-	prtd->params->ops->flush(prtd->params->ch);
++	s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_FLUSH);
+ 
+ 	prtd->dma_loaded = 0;
+ 	prtd->dma_pos = prtd->dma_start;
+@@ -253,12 +224,12 @@ static int dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+ 		prtd->state |= ST_RUNNING;
+-		prtd->params->ops->trigger(prtd->params->ch);
++		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_START);
+ 		break;
+ 
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 		prtd->state &= ~ST_RUNNING;
+-		prtd->params->ops->stop(prtd->params->ch);
++		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_STOP);
+ 		break;
+ 
+ 	default:
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index ad7c0f0..c52fa86 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -23,8 +23,6 @@ struct s3c_dma_params {
+ 	int channel;				/* Channel ID */
+ 	dma_addr_t dma_addr;
+ 	int dma_size;			/* Size of the DMA transfer */
+-	unsigned ch;
+-	struct samsung_dma_ops *ops;
+ 	char *ch_name;
+ 	struct snd_dmaengine_dai_dma_data dma_data;
+ };
