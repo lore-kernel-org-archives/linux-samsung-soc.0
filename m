@@ -1,115 +1,67 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document
-	of Exynos System MMU
-Date: Thu, 01 May 2014 17:24:31 +0100
-Message-ID: <5362753F.4030904@arm.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<20140501143654.GB3732@e103592.cambridge.arm.com>
-	<53626434.8000807@arm.com> <4916028.thxt7fH2bg@wuerfel>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Thu, 1 May 2014 09:40:03 -0700
+Message-ID: <20140501164003.GC3245@sirena.org.uk>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
+ <20140424133920.GA12304@sirena.org.uk>
+ <5359E18B.60600@linaro.org>
+ <20140429222915.GU15125@sirena.org.uk>
+ <5360E5E7.8090807@linaro.org>
+ <20140430180314.GA3245@sirena.org.uk>
+ <53623004.5010805@linaro.org>
+ <20140501141510.GW3245@sirena.org.uk>
+ <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4916028.thxt7fH2bg@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel@lists.i
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mZSo2Zk6iB5ZAp9g"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54057 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750801AbaEAQk2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 May 2014 12:40:28 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tushar Behera <tushar.behera@linaro.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
 
-On 01/05/14 16:53, Arnd Bergmann wrote:
-> On Thursday 01 May 2014 16:11:48 Marc Zyngier wrote:
->> On 01/05/14 15:36, Dave Martin wrote:
->>> On Thu, May 01, 2014 at 02:29:50PM +0100, Arnd Bergmann wrote:
->>>> On Thursday 01 May 2014 12:15:35 Dave Martin wrote:
->>>>> On Tue, Apr 29, 2014 at 10:46:18PM +0200, Arnd Bergmann wrote:
->>>>>> I don't understand. An MSI controller is just an address that acts
->>>>>> as a DMA slave for a 4-byte inbound data packet. It has no way of
->>>>>> knowing who is sending data, other than by the address or the data
->>>>>> sent to it. Are you talking of something else?
->>>>>
->>>>> Oops, looks like there are a few points I failed to respond to here...
->>>>>
->>>>>
->>>>> I'm not an expert on PCI -- I'm prepared to believe it works that way.
->>>>>
->>>>> GICv3 can descriminate between different MSI senders based on ID
->>>>> signals on the bus.
->>>>
->>>> Any idea what this is good for? Do we have to use it? It probably doesn't
->>>> fit very well into the way Linux handles MSIs today.
->>>
->>> Marc may be better placed than me to comment on this in detail.
->>
->> As to "fitting Linux", it seems to match what Linux does fairly well
->> (see the kvm-arm64/gicv3 branch in my tree). Not saying that it does it
->> in a very simple way (far from it, actually), but it works.
-> 
-> ok.
-> 
->> As to "what it is good for" (and before someone bursts into an Edwin
->> Starr interpretation), it mostly has to do with isolation, and the fact
->> that you may want to let the whole MSI programming to a guest (and yet
->> ensure that the guest cannot generate interrupts that would be assigned
->> to other devices). This is done by sampling the requester-id at the ITS
->> level, and use this information to index a per-device interrupt
->> translation table (I could talk for hours about the concept and its
->> variations, mostly using expletives and possibly a hammer, but I think
->> it is the time for my pink pill).
-> 
-> So the idea is that you want to give the guest unfiltered access to the
-> PCI config space of an assigned device?
-> 
-> Is that safe?
-> 
-> If the config space access goes through the hypervisor (as I think we
-> always do today), there should be no isse.
 
-My natural tendency would be to filter everything, as we certainly don't
-want the device to be reconfigured in weird and fancy ways (my PCI-foo
-is a bit limited, so bear with me). But as usual, GICv3 is not PCI
-specific, and is designed to cater for weird and wonderful cases, PCI
-being only one possible implementation...
+--mZSo2Zk6iB5ZAp9g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On a non-PCI system, you definitely could assign a MSI-like capable
-device, and let the guest do its thing. I'm already seeing that kind of
-design.
+On Thu, May 01, 2014 at 08:54:14AM -0700, Doug Anderson wrote:
 
->>> However, I believe it's correct to say that because the GIC is not part
->>> of PCI, end-to-end MSI delivery inherently involves a non-PCI step from
->>> the PCI RC to the GIC itself.
->>>
->>> Thus this is likely to be a fundamental requirement for MSIs on ARM SoCs
->>> using GIC, if we want to have a hope of mapping MSIs to VMs efficiently.
->>
->> Indeed. GICv[34] is the ARM way of implementing MSI on SBSA compliant
->> systems (from level 1 onwards, if memory serves well). People are
->> actively building systems with this architecture, and relying on it to
->> provide VM isolation.
-> 
-> I don't mind it being there, but if we don't need it, we shouldn't
-> have to use that isolation feature and be able to just allow any
-> initiator to send an MSI.
+> This is exactly the thing (expected clock parenting) we agreed could
+> be put in the device tree I think.  ...but I don't know that anyone
+> proposed exactly how that would work.
 
-It is not that simple. You could design things around a global ITT,
-pointed to by all the possible devices in your system. But that table
-would be quite big (it has to contain the routing information for all
-the possible messages in your system, and must be physically
-contiguous). You still need to know the devices (requester-id,
-device-id, whatever), as there is no wildcard mechanism.
+There's patches been posted by (IIRC) Sylvester Nawrocki for this which
+I think Mike was basically happy with - I don't immediately see them in
+-next though, but I may be looking in the wrong place.
 
-Also, this approach pretty much kills hotplug (you cannot easily resize
-that table to add new interrupt entries). That's why I've opted for a
-more dynamic configuration, where each device gets its own ITT as it
-appears on the system.
+--mZSo2Zk6iB5ZAp9g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTYnjgAAoJELSic+t+oim9lBIQAJQUra6tu0BGp+zrd8wIkiY7
+0JgXRUwJq0QOrRupH/K4PxH/RULBBklp4gWH4oLQoawfXVbSExKSWgQLNV0/HY7C
+p0oVpo18BswlaoubtacrBBaVbckxw8mz7QDIpZQWbfp+FjItbjL20yW882+IsrwR
+jll0rO6o8JtJExJqJF6Gi+VjNaXJ9qDOIDxdaS8U4BPcHW5lSCsG4HclY9JcBBLB
+L1pIdZYzZhKEaXUnu2Y0f2fvOOrODXGUBlYxbOG34w3X5oQ2MqfirU5rtymRGAe6
+e/Kyp2IE39myv/z9T8XhR/mJtl+L+MKL36NFb42N8/z2cTGIePYM7ZwVgLjq9s92
+Uz6CsAm3Xb93QsRBRnRDTtuVCxySHpXfL9fTTLllx2YUfgyRTcbL+WrSm8LO7y6D
+JGQ1Rz4nRP3tH5grdGjWvsXTsZMXkPJJcfoAYhz5y4/iA0g8uaUTovd24Zf/u4aW
+NFa5EgrvSnWbPBzdBwGzNVSBjoC/evWwkWZCNiHty9MdixQjzGbw1Di+UGTDzthQ
+AlrSGXONcpAYPl4FhFs6kACvcT3/b2VBgH+tp7joJEOWq4ljPixdeeDfSNWsL095
+Hu/1q0M37an/yWuhBgApiq8GG+24+WH4BKbbxSExLkCKWMYbSe6uB/JCs43rpJyb
+nXdVVK770BWoTnap9xRy
+=w8r/
+-----END PGP SIGNATURE-----
+
+--mZSo2Zk6iB5ZAp9g--
