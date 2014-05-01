@@ -1,101 +1,61 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 4/5] regulator: tps65090: Allow setting the overcurrent
- wait time
-Date: Thu, 1 May 2014 11:17:58 -0700
-Message-ID: <CAOesGMiMiqk1mKcVF8SwePhUS-8cAmM3Ut3f+qRvjz27iw7CTA@mail.gmail.com>
-References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
-	<1397689950-1568-5-git-send-email-dianders@chromium.org>
-	<20140423115102.GO21613@lee--X1>
-	<CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 07/15] ASoC: UDA1380 needs I2C
+Date: Thu, 1 May 2014 10:59:58 -0700
+Message-ID: <20140501175958.GM3245@sirena.org.uk>
+References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
+ <1398770316-19715-8-git-send-email-kaixu.xia@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Anton Vorontsov <anton@enomsg.org>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qwymS7QpGZeA8tRa"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54243 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750806AbaEASol (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 May 2014 14:44:41 -0400
+Content-Disposition: inline
+In-Reply-To: <1398770316-19715-8-git-send-email-kaixu.xia@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Lee, Doug,
-
-I've bisected a boot failure on Tegra Dalmore (which has a tps65090)
-down to this patch. It started in -next 0501, so I guess Lee might
-have pushed some patches out now even though the commit date is a
-little while back?
-
-The commit is:
-
-commit 60e91b51b515b20f85697fcd397911fdb97bbdca
-Author:     Doug Anderson <dianders@chromium.org>
-AuthorDate: Wed Apr 16 16:12:28 2014 -0700
-Commit:     Lee Jones <lee.jones@linaro.org>
-CommitDate: Wed Apr 23 12:34:01 2014 +0100
-
-    regulator: tps65090: Allow setting the overcurrent wait time
-
-    The tps65090 regulator allows you to specify how long you want it to
-    wait before detecting an overcurrent condition.  Allow specifying that
-    through the device tree (or through platform data).
-
-    Signed-off-by: Doug Anderson <dianders@chromium.org>
-    Acked-by: Simon Glass <sjg@chromium.org>
-    Acked-by: Michael Spang <spang@chromium.org>
-    Acked-by: Sean Paul <seanpaul@chromium.org>
-    Acked-by: Mark Brown <broonie@kernel.org>
-    Signed-off-by: Lee Jones <lee.jones@linaro.org>
+To: Xia Kaixu <kaixu.xia@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd@arndb.de, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
-Panic is line 309:
+--qwymS7QpGZeA8tRa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-303         for (num = 0; num < TPS65090_REGULATOR_MAX; num++) {
-304                 tps_pdata = tps65090_pdata->reg_pdata[num];
-305
-306                 ri = &pmic[num];
-307                 ri->dev = &pdev->dev;
-308                 ri->desc = &tps65090_regulator_desc[num];
-309                 ri->overcurrent_wait_valid =
-tps_pdata->overcurrent_wait_valid;
-310                 ri->overcurrent_wait = tps_pdata->overcurrent_wait;
+On Tue, Apr 29, 2014 at 07:18:28PM +0800, Xia Kaixu wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The UDA1380 driver needs I2C to be enabled, so=20
+> SND_SOC_SAMSUNG_H1940_UDA1380 and=20
+> SND_SOC_SAMSUNG_RX1950_UDA1380 also=20
+> require this.
 
-so it looks like tps_pdata is NULL. Should likely be a check for it?
+Applied, thanks.
 
+--qwymS7QpGZeA8tRa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--Olof
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
+iQIcBAEBAgAGBQJTYoubAAoJELSic+t+oim9SKkP/i/mW3krmQuLRPbiLtWFQv7/
+S7fHSiJuHsocoXF0JGHYqb6lSdbPKMKOu2VqNWpRzDmMNIhGG+fg/rTif55SKqBU
+SjMkSwMo+y+1tpvVz3iFMYmeRBIns1TjUhp5NnkvvzZI5ZFnl9UxKDa4B7wAg1Uk
+kbkQEyGrSwHQ+ShJFYjhbsFks4zLCgerKZeeaocpsd2LueODQktXp3b70uK1q48h
+oVzRdwzuZ4vxkSwZ0z3CP9lrXI85RLlMBtUCgo+fqUiBNKGJ4fjJGKIoYX9gs1xM
+PTKDcccvTVupZhxELksc3VJus5kxh2sF/4UGoF5wuRh/Hco5DgDoAr3MpkcLLpKd
+Mz8Typog3lClUrHtc2baxYmT5SAbjvExb+Ayf8Bz/SL0fuqYtH9C9TDptu+qPyVY
+en3dFu8ojbtiMZDp1INUhCjFGov+DIlAAyZG4XBUws8hawGq9rmv0ycfzwbmur3I
+tqlI8HoZI5E1GvJOaTL5y47QO/TUWxHzEJTQv5rN9dD6+rTaW5Dy3KzD6zd2xbzN
+c5egL/dgRl0q0F/hhRqR9jlTF6yEjFnKJlSSJwkdRcEyZHLRiPB+OQczlaXI75L2
+E0XuaVLJcy/SUYZQpwkRbVSX3N4KWyk8asxA8HXTmDVm1fTNj3LhfDj3mmcunbpg
+aEZChTMJ9OKWIuaWC673
+=OOS1
+-----END PGP SIGNATURE-----
 
-
-On Wed, Apr 23, 2014 at 8:48 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Lee,
->
-> On Wed, Apr 23, 2014 at 4:51 AM, Lee Jones <lee.jones@linaro.org> wrote:
->>> The tps65090 regulator allows you to specify how long you want it to
->>> wait before detecting an overcurrent condition.  Allow specifying that
->>> through the device tree (or through platform data).
->>>
->>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>> Signed-off-by: Simon Glass <sjg@chromium.org>
->>> Signed-off-by: Michael Spang <spang@chromium.org>
->>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
->>> ---
->>> Changes in v3:
->>> - Fixed kernel-doc notation for return
->>>
->>> Changes in v2:
->>> - Separated the overcurrent and retries changes into two patches.
->>> - Now set overcurrent at probe time since it doesn't change.
->>>
->>>  .../devicetree/bindings/regulator/tps65090.txt     |  4 ++
->>>  drivers/regulator/tps65090-regulator.c             | 56 ++++++++++++++++++++++
->>>  include/linux/mfd/tps65090.h                       |  5 ++
->>>  3 files changed, 65 insertions(+)
->>
->> Applied, thanks.
->
-> Ummmm, Mark said that he had already applied this patch to his tree (I
-> mentioned it in my recent summary and you can see it in this thread
-> too).  I don't see it on git.kernel.org though
-> <https://git.kernel.org/cgit/linux/kernel/git/broonie/regulator.git/log/?h=for-next>
->
-> I'm worried this will cause a merge conflict if you both apply it.
->
-> -Doug
+--qwymS7QpGZeA8tRa--
