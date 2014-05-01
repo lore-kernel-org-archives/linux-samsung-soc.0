@@ -1,106 +1,179 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Add peach-pit board support
-Date: Thu, 1 May 2014 13:51:45 +0530
-Message-ID: <CALt3h788BN532_e8V1OrFFPfsabgXCmpiBnwfG7jbNQi9YkFZg@mail.gmail.com>
-References: <1398313031-14848-1-git-send-email-arun.kk@samsung.com>
-	<CAD=FV=VTdi8o+_t+6fY4DqRT_VZDMKeFo3UNxi1UD7HAyHYNCQ@mail.gmail.com>
+Subject: Re: [PATCH v6] clk: Exynos5250: Add clocks for G3D
+Date: Thu, 1 May 2014 14:01:44 +0530
+Message-ID: <CALt3h78XP+W2TA4F4EtHxtCO0Fm48pmQi1gbir8ScsKLjwUw9w@mail.gmail.com>
+References: <1398677821-11529-1-git-send-email-arun.kk@samsung.com>
+	<53617DD6.60507@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:37629 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752473AbaEAIVq (ORCPT
+Received: from mail-vc0-f170.google.com ([209.85.220.170]:37619 "EHLO
+	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752167AbaEAIbp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 04:21:46 -0400
-In-Reply-To: <CAD=FV=VTdi8o+_t+6fY4DqRT_VZDMKeFo3UNxi1UD7HAyHYNCQ@mail.gmail.com>
+	Thu, 1 May 2014 04:31:45 -0400
+Received: by mail-vc0-f170.google.com with SMTP id hr9so3664330vcb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 01:31:44 -0700 (PDT)
+In-Reply-To: <53617DD6.60507@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tom Rini <trini@ti.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Doug,
+Hi Tomasz,
 
-On Wed, Apr 30, 2014 at 10:18 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Arun,
->
-> On Wed, Apr 23, 2014 at 9:17 PM, Arun Kumar K <arun.kk@samsung.com> wrote:
->> Adds the google peach-pit board dts file which uses
->> exynos5420 SoC.
+On Thu, May 1, 2014 at 4:18 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 28.04.2014 11:37, Arun Kumar K wrote:
+>>
+>> This patch adds the required clocks for ARM Mali IP
+>> in Exynos5250.
 >>
 >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
 >> ---
+>> Changes from v5
+>> - Addressed comments from Tomasz Figa
+>>    http://www.spinics.net/lists/arm-kernel/msg326118.html
+>> Changes from v4
+>> - Rebased on latest kernel
+>> - Added macros
+>> Changes from v3
+>> - Renamed some clocks as per Tomasz Figa's comments
+>> Changes from v2
+>> - Rebased on clk-next
 >> Changes from v1
->> ---------------
->> - Addressed review comments from Doug, Sachin & Tushar
->> - Removed adc and lid-switch nodes
+>> - Removed exporting of parent DIV clock for g3d
+>>    as per Tomsz Figa's comment.
 >> ---
->>  arch/arm/boot/dts/Makefile                 |    1 +
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |  182 ++++++++++++++++++++++++++++
->>  2 files changed, 183 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>   drivers/clk/samsung/clk-exynos5250.c   |   15 ++++++++++++++-
+>>   include/dt-bindings/clock/exynos5250.h |    4 +++-
+>>   2 files changed, 17 insertions(+), 2 deletions(-)
 >>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 35c146f..3220e29 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->>         exynos5250-smdk5250.dtb \
->>         exynos5250-snow.dtb \
->>         exynos5420-arndale-octa.dtb \
->> +       exynos5420-peach-pit.dtb \
->>         exynos5420-smdk5420.dtb \
->>         exynos5440-sd5v1.dtb \
->>         exynos5440-ssdk5440.dtb
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> new file mode 100644
->> index 0000000..fbb0469
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -0,0 +1,182 @@
->> +/*
->> + * Google Peach Pit Rev 6+ board device tree source
->> + *
->> + * Copyright (c) 2014 Google, Inc
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
+>> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+>> b/drivers/clk/samsung/clk-exynos5250.c
+>> index e7ee442..df02526 100644
+>> --- a/drivers/clk/samsung/clk-exynos5250.c
+>> +++ b/drivers/clk/samsung/clk-exynos5250.c
+>> @@ -37,6 +37,7 @@
+>>   #define VPLL_CON0             0x10140
+>>   #define GPLL_CON0             0x10150
+>>   #define SRC_TOP0              0x10210
+>> +#define SRC_TOP1               0x10214
+>>   #define SRC_TOP2              0x10218
+>>   #define SRC_TOP3              0x1021c
+>>   #define SRC_GSCL              0x10220
+>> @@ -71,6 +72,7 @@
+>>   #define GATE_IP_GSCL          0x10920
+>>   #define GATE_IP_DISP1         0x10928
+>>   #define GATE_IP_MFC           0x1092c
+>> +#define GATE_IP_G3D            0x10930
+>>   #define GATE_IP_GEN           0x10934
+>>   #define GATE_IP_FSYS          0x10944
+>>   #define GATE_IP_PERIC         0x10950
+>> @@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[] __initdata
+>> = {
+>>         DIV_CPU0,
+>>         SRC_CORE1,
+>>         SRC_TOP0,
+>> +       SRC_TOP1,
+>>         SRC_TOP2,
+>>         SRC_TOP3,
+>>         SRC_GSCL,
+>> @@ -133,6 +136,7 @@ static unsigned long exynos5250_clk_regs[] __initdata
+>> = {
+>>         DIV_PERIC5,
+>>         GATE_IP_GSCL,
+>>         GATE_IP_MFC,
+>> +       GATE_IP_G3D,
+>>         GATE_IP_GEN,
+>>         GATE_IP_FSYS,
+>>         GATE_IP_PERIC,
+>> @@ -189,10 +193,12 @@ PNAME(mout_vpllsrc_p)     = { "fin_pll",
+>> "sclk_hdmi27m" };
+>>   PNAME(mout_vpll_p)    = { "mout_vpllsrc", "fout_vpll" };
+>>   PNAME(mout_cpll_p)    = { "fin_pll", "fout_cpll" };
+>>   PNAME(mout_epll_p)    = { "fin_pll", "fout_epll" };
+>> +PNAME(mout_gpll_p)     = { "fin_pll", "fout_gpll" };
+>>   PNAME(mout_mpll_user_p)       = { "fin_pll", "mout_mpll" };
+>>   PNAME(mout_bpll_user_p)       = { "fin_pll", "mout_bpll" };
+>>   PNAME(mout_aclk166_p) = { "mout_cpll", "mout_mpll_user" };
+>>   PNAME(mout_aclk200_p) = { "mout_mpll_user", "mout_bpll_user" };
+>> +PNAME(mout_aclk400_p)  = { "mout_aclk400_g3d_mid", "mout_gpll" };
+>>   PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
+>>   PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
+>>   PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
+>> @@ -273,12 +279,16 @@ static struct samsung_mux_clock
+>> exynos5250_mux_clks[] __initdata = {
+>>         MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+>>         MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+>>         MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+>> +       MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
 >> +
->> +/dts-v1/;
->> +#include <dt-bindings/input/input.h>
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include "exynos5420.dtsi"
->> +
->> +/ {
->> +       model = "Google Peach Pit Rev 6+";
->> +
->> +       compatible = "google,pit-rev16",
->> +               "google,pit-rev15", "google,pit-rev14",
->> +               "google,pit-rev13", "google,pit-rev12",
->> +               "google,pit-rev11", "google,pit-rev10",
->> +               "google,pit-rev9", "google,pit-rev8",
->> +               "google,pit-rev7", "google,pit-rev6",
->> +               "google,pit", "google,peach","samsung,exynos5420",
->> +               "samsung,exynos5";
->> +
->> +       memory {
->> +               reg = <0x20000000 0x80000000>;
->> +       };
+>> +       MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+>>
+>>         MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
+>>         MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
+>>         MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
+>>         MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
+>>         MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
+>> +       MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+>>
+>>         MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4,
+>> 1),
+>>         MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8,
+>> 1),
+>> @@ -351,6 +361,8 @@ static struct samsung_div_clock exynos5250_div_clks[]
+>> __initdata = {
+>>         DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+>>         DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
+>>         DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+>> +       DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
+>> +                                                       24, 3),
+>>
+>>         DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
+>>
+>> @@ -533,7 +545,8 @@ static struct samsung_gate_clock
+>> exynos5250_gate_clks[] __initdata = {
+>>                 0),
+>>         GATE(CLK_SMMU_MFCL, "smmu_mfcl", "mout_aclk333_sub", GATE_IP_MFC,
+>> 2, 0,
+>>                 0),
+>> -
+>> +       GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
+>> +                                       CLK_SET_RATE_PARENT, 0),
+>>         GATE(CLK_ROTATOR, "rotator", "div_aclk266", GATE_IP_GEN, 1, 0, 0),
+>>         GATE(CLK_JPEG, "jpeg", "div_aclk166", GATE_IP_GEN, 2, 0, 0),
+>>         GATE(CLK_MDMA1, "mdma1", "div_aclk266", GATE_IP_GEN, 4, 0, 0),
+>> diff --git a/include/dt-bindings/clock/exynos5250.h
+>> b/include/dt-bindings/clock/exynos5250.h
+>> index 922f2dc..a3c6777 100644
+>> --- a/include/dt-bindings/clock/exynos5250.h
+>> +++ b/include/dt-bindings/clock/exynos5250.h
+>> @@ -150,11 +150,13 @@
+>>   #define CLK_G2D                       345
+>>   #define CLK_MDMA0             346
+>>   #define CLK_SMMU_MDMA0                347
+>> +#define CLK_G3D                        348
+>>
+>>   /* mux clocks */
+>>   #define CLK_MOUT_HDMI         1024
+>> +#define CLK_MOUT_GPLL          1025
+>>
+>>   /* must be greater than maximal clock id */
+>> -#define CLK_NR_CLKS            1025
+>> +#define CLK_NR_CLKS            1026
+>>
+>>   #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
+>>
 >
-> One other thing that came up at ELC: it might not be so wise to
-> include actual values here.  We're expecting that the bootloader will
-> probe memory and tell you whether you're on a 2GB board or a 4GB
-> board.  IIRC the proper thing to do here is to use 0 for both, so:
->
-> reg = <0 0>;
+> Applied.
 >
 
-Ok I will make this change.
-With this change can I have your Reviewed-by on the v3 patchset?
+Thanks. Can you have a look at this patch too -
+https://patchwork.kernel.org/patch/4076161/
+It is for the same purpose (for Mali GPU) in 5420 SoC.
 
 Regards
 Arun
 
-> -Doug
+> Best regards,
+> Tomasz
