@@ -1,99 +1,315 @@
-From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Thu, 1 May 2014 09:42:24 -0700
-Message-ID: <CANEJEGtS8VHgT=W54QT-849Nz9n+uURj6LFM-sie0cX6=zn37A@mail.gmail.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<6607258.MzzLbm2Afe@wuerfel>
-	<20140501111527.GA3732@e103592.cambridge.arm.com>
-	<36874558.Vf2LgdL3qf@wuerfel>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 3/4] usb: ohci-exynos: Add facility to use phy provided
+ by the generic phy framework
+Date: Thu, 01 May 2014 19:16:04 +0200
+Message-ID: <53628154.4080101@gmail.com>
+References: <1398835192-21634-1-git-send-email-gautam.vivek@samsung.com> <1398835192-21634-3-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <36874558.Vf2LgdL3qf@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWMP3drIcvDWNA@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1398835192-21634-3-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 1, 2014 at 6:29 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-...
->> GICv3 can descriminate between different MSI senders based on ID
->> signals on the bus.
+Hi Vivek,
+
+Please see my comments inline.
+
+On 30.04.2014 07:19, Vivek Gautam wrote:
+> Add support to consume phy provided by Generic phy framework.
+> Keeping the support for older usb-phy intact right now, in order
+> to prevent any functionality break in absence of relevant
+> device tree side change for ohci-exynos.
+> Once we move to new phy in the device nodes for ohci, we can
+> remove the support for older phys.
 >
-> Any idea what this is good for? Do we have to use it? It probably doesn't
-> fit very well into the way Linux handles MSIs today.
-
-I can see this being used for diagnosing failures - e.g. hung system
-would leave tracks if an interrupt was or was not provided by the
-device. I can't think of a reason why Linux MSI code would need to
-support this though.
-
-...
->> We are likely to get non-PCI MSIs in future SoC systems too, and there
->> are no standards governing how such systems should look.
-
-Why look to the future when one can look in the past? :)
-
-PA-RISC was designed in the 1980s to use "MSI" to generate all CPU
-interrupts. This is as simple as it gets.
-
-The concept is identical to MSI: MMIO routeable address with a payload
-to indicate interrupt source (or map that source to some "vector
-table".) Look at arch/parisc/kernel/smp.c:ipi_send() for an example
-(note "p->hpa" is "processor->host physical address").
-
-Current and  future products do the same things but add more
-"features" that make this more complicated. But the basic transaction
-will be identical and it needs to be routed like any other MMIO
-transaction by any bridge (including IOMMUs).
-
-> I wouldn't call that MSI though -- using the same term in the code
-> can be rather confusing. There are existing SoCs that use message
-> based interrupt notification. We are probably better off modeling
-> those are regular irqchips in Linux and DT, given that they may
-> not be bound by the same constraints as PCI MSI.
-
-PCI device is one "source" for MSI and PCI defines how to initialize
-an MSI source.  The target is not PCI (or not even Intel). Intel
-defines how MSI works on their chipsets/CPUs. Other can still do it
-differently.
-
-I'm perfectly ok with using "MSI" to refer to any "in band interrupt message".
-
->> Who knows?  A management component of the GPU that is under exclusive
->> control of the host or hypervisor might be wired up to bypass the IOMMU
->> completely.
-
-Does the linux kernel need to know about a device/component that it
-can't control?
-Either linux kernel shouldn't be told about it OR should ignore this
-device/component.
-
->> Partly, yes.  The concept embodied by "dma-ranges" is correct, but the
->> topological relationship is not: the assumption that a master device
->> always masters onto its parent node doesn't work for non-tree-like
->> topologies.
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> ---
 >
-> In almost all cases it will fit. When it doesn't, we can work around it by
-> defining virtual address spaces the way that the PCI binding does. The only
-> major exception that we know we have to handle is IOMMUs.
+> Changes from v3:
+>   - Calling usb_phy_shutdown() when exynos_ohci_phy_enable() is failing.
+>   - Made exynos_ohci_phy_disable() return void, since its return value
+>     did not serve any purpose.
+>   - Calling clk_disable_unprepare() in exynos_ohci_resume() when
+>     exynos_ohci_phy_enable() is failed.
+>
+>   .../devicetree/bindings/usb/exynos-usb.txt         |   19 +++
+>   drivers/usb/host/ohci-exynos.c                     |  128 +++++++++++++++++---
+>   2 files changed, 132 insertions(+), 15 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> index d967ba1..a90c973 100644
+> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> @@ -38,6 +38,15 @@ Required properties:
+>    - interrupts: interrupt number to the cpu.
+>    - clocks: from common clock binding: handle to usb clock.
+>    - clock-names: from common clock binding: Shall be "usbhost".
+> + - port: if in the SoC there are OHCI phys, they should be listed here.
+> +   One phy per port. Each port should have following entries:
+> +	- reg: port number on OHCI controller, e.g
+> +	       On Exynos5250, port 0 is USB2.0 otg phy
+> +			      port 1 is HSIC phy0
+> +			      port 2 is HSIC phy1
+> +	- phys: from the *Generic PHY* bindings, specifying phy used by port.
+> +	- phy-names: from the *Generic PHY* bindings, specifying name of phy
+> +		     used by the port.
 
-MMIO routing (and thus dma-ranges) is a "graph" (very comparable to
-network routing). Some simple (e.g. PCI) implementations look like a
-tree - but that's not the general case.
+I think you don't need this property for this binding, as the PHYs are 
+being requested by indices (in fact only index 0 is used).
 
-DMA cares about more than routing though - cache coherency and
-performance (BW and latency) matter too.
+>
+>   Example:
+>   	usb@12120000 {
+> @@ -47,6 +56,16 @@ Example:
+>
+>   		clocks = <&clock 285>;
+>   		clock-names = "usbhost";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		port@0 {
+> +		    reg = <0>;
+> +		    phys = <&usb2phy 1>;
+> +		    phy-names = "host";
 
-cheers,
-grant
+Ditto.
+
+> +		    status = "disabled";
+> +		};
+> +
+>   	};
+>
+>   DWC3
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index 05f00e3..f90bf9a 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+>   #include <linux/usb/phy.h>
+>   #include <linux/usb/samsung_usb_phy.h>
+>   #include <linux/usb.h>
+> @@ -33,28 +34,122 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+>
+>   #define to_exynos_ohci(hcd) (struct exynos_ohci_hcd *)(hcd_to_ohci(hcd)->priv)
+>
+> +#define PHY_NUMBER 3
+
+nit: A blank line would be nice here to separate from the struct below.
+
+By the way, doesn't the number of PHY ports depend on platform? Of 
+course right now the driver supports only Exynos >= 4210 SoCs with the 
+generic PHY interface, so it might be changed in further patches.
+
+>   struct exynos_ohci_hcd {
+>   	struct clk *clk;
+>   	struct usb_phy *phy;
+>   	struct usb_otg *otg;
+> +	struct phy *phy_g[PHY_NUMBER];
+>   };
+>
+> -static void exynos_ohci_phy_enable(struct device *dev)
+> +static int exynos_ohci_get_phy(struct device *dev,
+> +				struct exynos_ohci_hcd *exynos_ohci)
+> +{
+> +	struct device_node *child;
+> +	struct phy *phy;
+> +	int phy_number;
+> +	int ret = 0;
+> +
+> +	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> +	if (IS_ERR(exynos_ohci->phy)) {
+> +		ret = PTR_ERR(exynos_ohci->phy);
+> +		/* This is the case when PHY config is disabled */
+> +		if (ret == -ENXIO || ret == -ENODEV) {
+> +			dev_dbg(dev, "Failed to get usb2 phy\n");
+> +			exynos_ohci->phy = NULL;
+
+I think you should keep this an ERR_PTR() and just use IS_ERR() check 
+further in the driver instead of checking for NULL.
+
+> +			ret = 0;
+
+Do you need to set ret to 0 here? The code for getting generic PHYs will 
+either leave it unchanged when there are no port nodes defined or 
+overwrite it with value returned by of_property_read_u32(). In the first 
+case, an error code should be returned, not zero, as the driver was 
+unable to get any PHY.
+
+> +		} else if (ret == -EPROBE_DEFER) {
+
+I think you could merge this case with the else clause below, as most 
+driver do. Moreover, since the only thing done after the fail_phy label 
+is returning the error code, you could just immediately return from 
+here. So the whole block of code would end up like this:
+
+	if (IS_ERR(exynos_ohci->phy)) {
+		ret = PTR_ERR(exynos_ohci->phy);
+		if (ret != -ENXIO && ret != -ENODEV) {
+			dev_err(dev, "no usb2 phy configured\n");
+			return ret;
+		}
+		dev_dbg(dev, "Failed to get usb2 phy\n");
+		exynos_ohci->phy = NULL;
+	} else {
+		exynos_ohci->otg = exynos_ohci->phy->otg;
+	}
+
+> +			goto fail_phy;
+> +		} else {
+> +			dev_err(dev, "no usb2 phy configured\n");
+> +			goto fail_phy;
+> +		}
+> +	} else {
+> +		exynos_ohci->otg = exynos_ohci->phy->otg;
+> +	}
+> +
+> +	/* Getting generic phy:
+
+CodingStyle: Multi-line comments should begin and end with a single 
+empty line:
+
+	/*
+	 * Getting generic phy:
+	 * ...
+	 */
+
+also nit: s/phy/PHY/
+
+> +	 * We are keeping both types of phys as a part of transiting OHCI
+> +	 * to generic phy framework, so that in absence of supporting dts
+> +	 * changes the functionality doesn't break.
+> +	 * Once we move the ohci dt nodes to use new generic phys,
+> +	 * we can remove support for older PHY in this driver.
+
+Well, this is not entirely true. The problem here is not caused by 
+existing DTS files, but rather a chance that there are existing devices 
+using DTB files built from them. So to remove the support for old 
+bindings, we need to make sure that such devices have their DTBs updated 
+to ones built from new DTS.
+
+> +	 */
+> +	for_each_available_child_of_node(dev->of_node, child) {
+> +		ret = of_property_read_u32(child, "reg", &phy_number);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to parse device tree\n");
+> +			of_node_put(child);
+> +			goto fail_phy;
+
+Why not just return ret here?
+
+> +		}
+
+nit: Blank line here would be nice.
+
+> +		if (phy_number >= PHY_NUMBER) {
+> +			dev_err(dev, "Invalid number of PHYs\n");
+> +			of_node_put(child);
+> +			ret = -EINVAL;
+> +			goto fail_phy;
+
+What about just return -EINVAL;
+
+> +		}
+
+nit: Here too.
+
+> +		phy = devm_of_phy_get(dev, child, 0);
+> +		of_node_put(child);
+> +		if (IS_ERR(phy)) {
+> +			ret = PTR_ERR(phy);
+> +			/* This is the case when PHY config is disabled */
+> +			if (ret == -ENOSYS || ret == -ENODEV) {
+> +				dev_dbg(dev, "Failed to get usb2 phy\n");
+> +				phy = NCould you lULL;
+> +				ret = 0;
+> +			} else if (ret == -EPROBE_DEFER) {
+> +				goto fail_phy;
+> +			} else {
+> +				dev_err(dev, "no usb2 phy configured\n");
+> +				goto fail_phy;
+> +			}
+> +		}
+
+Similar comments to this block apply as for the block getting legacy USB 
+PHY.
+
+> +		exynos_ohci->phy_g[phy_number] = phy;
+> +	}
+> +
+> +fail_phy:
+> +	return ret;
+> +}
+> +
+> +static int exynos_ohci_phy_enable(struct device *dev)
+>   {
+>   	struct usb_hcd *hcd = dev_get_drvdata(dev);
+>   	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> +	int i;
+> +	int ret = 0;
+>
+> -	if (exynos_ohci->phy)
+> -		usb_phy_init(exynos_ohci->phy);
+> +	if (exynos_ohci->phy) {
+
+!IS_ERR() should be used to check for validity.
+
+> +		ret = usb_phy_init(exynos_ohci->phy);
+> +		if (ret)
+> +			return ret;
+
+IMHO a simple return usb_phy_init(...) could be used here, if we are 
+using the legacy PHY interface.
+
+> +	}
+> +
+> +	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+> +		if (exynos_ohci->phy_g[i])
+
+!IS_ERR(). Just make sure that the array is initialized with an 
+ERR_PTR() with some error code, (-ENODEV) probably
+
+> +			ret = phy_power_on(exynos_ohci->phy_g[i]);
+> +	if (ret) {
+> +		for (i--; i >= 0; i--)
+> +			if (exynos_ohci->phy_g[i])
+
+Ditto.
+
+> +				phy_power_off(exynos_ohci->phy_g[i]);
+> +		if (exynos_ohci->phy)
+> +			usb_phy_shutdown(exynos_ohci->phy);
+
+I don't think handling of legacy PHY is needed here. I don't think we 
+can have both legacy and generic PHY used at the same time.
+
+> +	}
+> +
+> +	return ret;
+>   }
+>
+>   static void exynos_ohci_phy_disable(struct device *dev)
+>   {
+>   	struct usb_hcd *hcd = dev_get_drvdata(dev);
+>   	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+> +	int i;
+>
+>   	if (exynos_ohci->phy)
+>   		usb_phy_shutdown(exynos_ohci->phy);
+> +
+> +	for (i = 0; i < PHY_NUMBER; i++)
+> +		if (exynos_ohci->phy_g[i])
+
+!IS_ERR()
+
+Best regards,
+Tomasz
