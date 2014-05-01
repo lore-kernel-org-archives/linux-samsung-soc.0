@@ -1,90 +1,63 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Thu, 01 May 2014 17:53:44 +0200
-Message-ID: <4916028.thxt7fH2bg@wuerfel>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<20140501143654.GB3732@e103592.cambridge.arm.com>
-	<53626434.8000807@arm.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Thu, 1 May 2014 08:54:14 -0700
+Message-ID: <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
+	<20140424133920.GA12304@sirena.org.uk>
+	<5359E18B.60600@linaro.org>
+	<20140429222915.GU15125@sirena.org.uk>
+	<5360E5E7.8090807@linaro.org>
+	<20140430180314.GA3245@sirena.org.uk>
+	<53623004.5010805@linaro.org>
+	<20140501141510.GW3245@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <53626434.8000807-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: "supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, linux-arm-kern
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f181.google.com ([209.85.220.181]:35233 "EHLO
+	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755521AbaEAPyQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 May 2014 11:54:16 -0400
+Received: by mail-vc0-f181.google.com with SMTP id hy4so4062473vcb.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 08:54:14 -0700 (PDT)
+In-Reply-To: <20140501141510.GW3245@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Tushar Behera <tushar.behera@linaro.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
 
-On Thursday 01 May 2014 16:11:48 Marc Zyngier wrote:
-> On 01/05/14 15:36, Dave Martin wrote:
-> > On Thu, May 01, 2014 at 02:29:50PM +0100, Arnd Bergmann wrote:
-> >> On Thursday 01 May 2014 12:15:35 Dave Martin wrote:
-> >>> On Tue, Apr 29, 2014 at 10:46:18PM +0200, Arnd Bergmann wrote:
-> >>>> I don't understand. An MSI controller is just an address that acts
-> >>>> as a DMA slave for a 4-byte inbound data packet. It has no way of
-> >>>> knowing who is sending data, other than by the address or the data
-> >>>> sent to it. Are you talking of something else?
-> >>>
-> >>> Oops, looks like there are a few points I failed to respond to here...
-> >>>
-> >>>
-> >>> I'm not an expert on PCI -- I'm prepared to believe it works that way.
-> >>>
-> >>> GICv3 can descriminate between different MSI senders based on ID
-> >>> signals on the bus.
-> >>
-> >> Any idea what this is good for? Do we have to use it? It probably doesn't
-> >> fit very well into the way Linux handles MSIs today.
-> > 
-> > Marc may be better placed than me to comment on this in detail.
-> 
-> As to "fitting Linux", it seems to match what Linux does fairly well
-> (see the kvm-arm64/gicv3 branch in my tree). Not saying that it does it
-> in a very simple way (far from it, actually), but it works.
+Hi,
 
-ok.
+On Thu, May 1, 2014 at 7:15 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, May 01, 2014 at 04:59:08PM +0530, Tushar Behera wrote:
+>
+>> Okay, I will extend the existing clock driver to support XCLKOUT.
+>
+> It may make more sense to add another clock driver for this clock
+> depending on how things are done, I don't know.
+>
+>> Of the many parents of XCLKOUT, we need to set XXTI clock as the parent.
+>> Is it okay if we pass two clocks "mclk" (XCLKOUT) and "mclk_parent"
+>> (XXTI) to sound-card driver via DT and do the necessary reparenting
+>> during the sound-card driver probe call?
+>
+> No, that's not OK at all, it won't allow for configuration of the
+> system.  This is what I was talking about when I was talking the clock
+> framework extensions to allow the clock tree to be configured using DT,
+> that would allow the settings to be put in DT.
+>
+>> Else, we can push that change to bootloader (to set the XCLKOUT mux
+>> register) and only enable/disable the clock in sound-card driver.
+>
+> That's not going to work given that the existing bootloaders don't do
+> this.
 
-> As to "what it is good for" (and before someone bursts into an Edwin
-> Starr interpretation), it mostly has to do with isolation, and the fact
-> that you may want to let the whole MSI programming to a guest (and yet
-> ensure that the guest cannot generate interrupts that would be assigned
-> to other devices). This is done by sampling the requester-id at the ITS
-> level, and use this information to index a per-device interrupt
-> translation table (I could talk for hours about the concept and its
-> variations, mostly using expletives and possibly a hammer, but I think
-> it is the time for my pink pill).
+This is exactly the thing (expected clock parenting) we agreed could
+be put in the device tree I think.  ...but I don't know that anyone
+proposed exactly how that would work.
 
-So the idea is that you want to give the guest unfiltered access to the
-PCI config space of an assigned device?
+NOTE: in existing ChromeOS this type of thing is done a tiny amount in
+<https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.8/arch/arm/mach-exynos/mach-exynos5-dt.c>.
+ See apply_clock_muxing().
 
-Is that safe?
-
-If the config space access goes through the hypervisor (as I think we
-always do today), there should be no isse.
-
-> > However, I believe it's correct to say that because the GIC is not part
-> > of PCI, end-to-end MSI delivery inherently involves a non-PCI step from
-> > the PCI RC to the GIC itself.
-> > 
-> > Thus this is likely to be a fundamental requirement for MSIs on ARM SoCs
-> > using GIC, if we want to have a hope of mapping MSIs to VMs efficiently.
-> 
-> Indeed. GICv[34] is the ARM way of implementing MSI on SBSA compliant
-> systems (from level 1 onwards, if memory serves well). People are
-> actively building systems with this architecture, and relying on it to
-> provide VM isolation.
-
-I don't mind it being there, but if we don't need it, we shouldn't
-have to use that isolation feature and be able to just allow any
-initiator to send an MSI.
-
-	Arnd
+-Doug
