@@ -1,83 +1,101 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 2/2] ARM: dts: Add peach-pit board support
-Date: Thu, 1 May 2014 10:45:31 -0700
-Message-ID: <CAD=FV=Wj4tZ=rJX96Z67qvyj0kRgfgo++SUQc+MxoCuS_SM1Vg@mail.gmail.com>
-References: <1398856138-18837-1-git-send-email-arun.kk@samsung.com>
-	<1398856138-18837-3-git-send-email-arun.kk@samsung.com>
-	<CAD=FV=UmWZapMZgpwdonr-JOE7BB8ELn5DQCFWos_sC1v-eLzw@mail.gmail.com>
-	<536284CC.80603@gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v3 4/5] regulator: tps65090: Allow setting the overcurrent
+ wait time
+Date: Thu, 1 May 2014 11:17:58 -0700
+Message-ID: <CAOesGMiMiqk1mKcVF8SwePhUS-8cAmM3Ut3f+qRvjz27iw7CTA@mail.gmail.com>
+References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+	<1397689950-1568-5-git-send-email-dianders@chromium.org>
+	<20140423115102.GO21613@lee--X1>
+	<CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:43523 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbaEARpc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 13:45:32 -0400
-Received: by mail-vc0-f171.google.com with SMTP id ld13so4239042vcb.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 10:45:31 -0700 (PDT)
-In-Reply-To: <536284CC.80603@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Anton Vorontsov <anton@enomsg.org>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>, Tom Rini <trini@ti.com>
 
-Tomasz,
+Lee, Doug,
 
-On Thu, May 1, 2014 at 10:30 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 01.05.2014 17:40, Doug Anderson wrote:
->>
->> Arun,
->>
->> On Wed, Apr 30, 2014 at 4:08 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
+I've bisected a boot failure on Tegra Dalmore (which has a tps65090)
+down to this patch. It started in -next 0501, so I guess Lee might
+have pushed some patches out now even though the commit date is a
+little while back?
+
+The commit is:
+
+commit 60e91b51b515b20f85697fcd397911fdb97bbdca
+Author:     Doug Anderson <dianders@chromium.org>
+AuthorDate: Wed Apr 16 16:12:28 2014 -0700
+Commit:     Lee Jones <lee.jones@linaro.org>
+CommitDate: Wed Apr 23 12:34:01 2014 +0100
+
+    regulator: tps65090: Allow setting the overcurrent wait time
+
+    The tps65090 regulator allows you to specify how long you want it to
+    wait before detecting an overcurrent condition.  Allow specifying that
+    through the device tree (or through platform data).
+
+    Signed-off-by: Doug Anderson <dianders@chromium.org>
+    Acked-by: Simon Glass <sjg@chromium.org>
+    Acked-by: Michael Spang <spang@chromium.org>
+    Acked-by: Sean Paul <seanpaul@chromium.org>
+    Acked-by: Mark Brown <broonie@kernel.org>
+    Signed-off-by: Lee Jones <lee.jones@linaro.org>
+
+
+Panic is line 309:
+
+303         for (num = 0; num < TPS65090_REGULATOR_MAX; num++) {
+304                 tps_pdata = tps65090_pdata->reg_pdata[num];
+305
+306                 ri = &pmic[num];
+307                 ri->dev = &pdev->dev;
+308                 ri->desc = &tps65090_regulator_desc[num];
+309                 ri->overcurrent_wait_valid =
+tps_pdata->overcurrent_wait_valid;
+310                 ri->overcurrent_wait = tps_pdata->overcurrent_wait;
+
+so it looks like tps_pdata is NULL. Should likely be a check for it?
+
+
+-Olof
+
+
+
+On Wed, Apr 23, 2014 at 8:48 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Lee,
+>
+> On Wed, Apr 23, 2014 at 4:51 AM, Lee Jones <lee.jones@linaro.org> wrote:
+>>> The tps65090 regulator allows you to specify how long you want it to
+>>> wait before detecting an overcurrent condition.  Allow specifying that
+>>> through the device tree (or through platform data).
 >>>
->>> +       memory {
->>> +               reg = <0x20000000 0x80000000>;
+>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>> Signed-off-by: Simon Glass <sjg@chromium.org>
+>>> Signed-off-by: Michael Spang <spang@chromium.org>
+>>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>>> ---
+>>> Changes in v3:
+>>> - Fixed kernel-doc notation for return
+>>>
+>>> Changes in v2:
+>>> - Separated the overcurrent and retries changes into two patches.
+>>> - Now set overcurrent at probe time since it doesn't change.
+>>>
+>>>  .../devicetree/bindings/regulator/tps65090.txt     |  4 ++
+>>>  drivers/regulator/tps65090-regulator.c             | 56 ++++++++++++++++++++++
+>>>  include/linux/mfd/tps65090.h                       |  5 ++
+>>>  3 files changed, 65 insertions(+)
 >>
->>
->> As mentioned in the other thread, I think this should be 0 0
+>> Applied, thanks.
 >
+> Ummmm, Mark said that he had already applied this patch to his tree (I
+> mentioned it in my recent summary and you can see it in this thread
+> too).  I don't see it on git.kernel.org though
+> <https://git.kernel.org/cgit/linux/kernel/git/broonie/regulator.git/log/?h=for-next>
 >
-> I guess it may depend on your boards, but DT might contain safe default
-> configuration that would work on all variants, so if you have for example 1
-> GiB and 2 GiB variants, 1 GiB configuration here should be fine to get the
-> board running even without a bootloader that could inject remaining data.
-
-That was part of the debate yesterday, I thought.  Tom Rini (U-Boot
-guy) said that right now U-Boot clobbers the memory node _always_ and
-fills it in with whatever it detects.  He wasn't sure this was a good
-idea.  Someone said they thought that it wasn't a good idea, but
-someone could request U-Boot keep clobbering things by doing <0 0>
-
-Tom: did I summarize that correctly?
-
-
->>> +&pinctrl_0 {
->>> +       tpm_irq: tpm-irq {
->>> +               samsung,pins = "gpx1-0";
->>> +               samsung,pin-function = <0>;
->>> +               samsung,pin-pud = <0>;
->>
->>
->> Is there any way to use the #defines PIN_PULL_NONE here?
+> I'm worried this will cause a merge conflict if you both apply it.
 >
->
-> I wonder if we already have this kind of #define defined. Keep in mind that
-> this value is specific for Exynos SoCs, so we would need to define it in
-> Exynos-specific header, like include/dt-bindings/pinctrl/exynos.h.
-
-I dunno.  I'd actually love to see function 0/1 defined (input /
-output) too.  ...and drive strengths (since 0, 1, 2, 3 don't map
-nicely to x1, x2, x3, x4).
-
-I requested PIN_PULL_NONE though, since I saw it being used.
-
-...oh, but it's a #define in a .dtsi.  Hrm.
-
-arch/arm/boot/dts/s3c64xx-pinctrl.dtsi:#define PIN_PULL_NONE    0
-
-I guess I'd say that it would be nice to do this properly for exynos,
-but we could do it in a later patch.
-
-
--Doug
+> -Doug
