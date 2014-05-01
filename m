@@ -1,61 +1,60 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 07/15] ASoC: UDA1380 needs I2C
-Date: Thu, 1 May 2014 10:59:58 -0700
-Message-ID: <20140501175958.GM3245@sirena.org.uk>
-References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
- <1398770316-19715-8-git-send-email-kaixu.xia@linaro.org>
+Subject: Re: [PATCH v3 4/5] regulator: tps65090: Allow setting the
+ overcurrent wait time
+Date: Thu, 1 May 2014 11:49:41 -0700
+Message-ID: <20140501184941.GV3245@sirena.org.uk>
+References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
+ <1397689950-1568-5-git-send-email-dianders@chromium.org>
+ <20140423115102.GO21613@lee--X1>
+ <CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
+ <CAOesGMiMiqk1mKcVF8SwePhUS-8cAmM3Ut3f+qRvjz27iw7CTA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qwymS7QpGZeA8tRa"
+	protocol="application/pgp-signature"; boundary="1c4XeR3HBwmMPD2z"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54243 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54360 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750806AbaEASol (ORCPT
+	with ESMTP id S1751881AbaEASuX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 14:44:41 -0400
+	Thu, 1 May 2014 14:50:23 -0400
 Content-Disposition: inline
-In-Reply-To: <1398770316-19715-8-git-send-email-kaixu.xia@linaro.org>
+In-Reply-To: <CAOesGMiMiqk1mKcVF8SwePhUS-8cAmM3Ut3f+qRvjz27iw7CTA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Xia Kaixu <kaixu.xia@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd@arndb.de, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>, Anton Vorontsov <anton@enomsg.org>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdot>
 
 
---qwymS7QpGZeA8tRa
+--1c4XeR3HBwmMPD2z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2014 at 07:18:28PM +0800, Xia Kaixu wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The UDA1380 driver needs I2C to be enabled, so=20
-> SND_SOC_SAMSUNG_H1940_UDA1380 and=20
-> SND_SOC_SAMSUNG_RX1950_UDA1380 also=20
-> require this.
+On Thu, May 01, 2014 at 11:17:58AM -0700, Olof Johansson wrote:
 
-Applied, thanks.
+> so it looks like tps_pdata is NULL. Should likely be a check for it?
 
---qwymS7QpGZeA8tRa
+Yes, just about to post a fix.
+
+--1c4XeR3HBwmMPD2z
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTYoubAAoJELSic+t+oim9SKkP/i/mW3krmQuLRPbiLtWFQv7/
-S7fHSiJuHsocoXF0JGHYqb6lSdbPKMKOu2VqNWpRzDmMNIhGG+fg/rTif55SKqBU
-SjMkSwMo+y+1tpvVz3iFMYmeRBIns1TjUhp5NnkvvzZI5ZFnl9UxKDa4B7wAg1Uk
-kbkQEyGrSwHQ+ShJFYjhbsFks4zLCgerKZeeaocpsd2LueODQktXp3b70uK1q48h
-oVzRdwzuZ4vxkSwZ0z3CP9lrXI85RLlMBtUCgo+fqUiBNKGJ4fjJGKIoYX9gs1xM
-PTKDcccvTVupZhxELksc3VJus5kxh2sF/4UGoF5wuRh/Hco5DgDoAr3MpkcLLpKd
-Mz8Typog3lClUrHtc2baxYmT5SAbjvExb+Ayf8Bz/SL0fuqYtH9C9TDptu+qPyVY
-en3dFu8ojbtiMZDp1INUhCjFGov+DIlAAyZG4XBUws8hawGq9rmv0ycfzwbmur3I
-tqlI8HoZI5E1GvJOaTL5y47QO/TUWxHzEJTQv5rN9dD6+rTaW5Dy3KzD6zd2xbzN
-c5egL/dgRl0q0F/hhRqR9jlTF6yEjFnKJlSSJwkdRcEyZHLRiPB+OQczlaXI75L2
-E0XuaVLJcy/SUYZQpwkRbVSX3N4KWyk8asxA8HXTmDVm1fTNj3LhfDj3mmcunbpg
-aEZChTMJ9OKWIuaWC673
-=OOS1
+iQIcBAEBAgAGBQJTYpc+AAoJELSic+t+oim9tvEP/2SdEta4yW18xpsPeiM2ojoD
+bGPS7a3dmSTyl2Chw9qz34wKfgwTkes0utnyEhYV/7eANkfUowFTwpKWgYnENGwY
+jXdrS49N9Hp+ra7S2Ugk65woWYZYVqVhH5KyoSU4tJZNNn7NdxYr9RVuOzZzIfUW
+gs+tw2S3f5tD18Zu8cuqnDzq4iVYYzsShNfHwVAyrawMfva9iKLeUA4nHlGX4G28
+qL77d7j6kdOR/BHA5r4wkbbSj/7piNbgqI0vgD7icW9ttGWyLaCie1XFlq0UK3De
+URIyfY4RUvIwSAO3pxr+gGF/Yg7ROkbhC5urbDTlO0mNOHpYum5FiDYmmp/5tve4
+efPxwfHZfnEBChO0wuoiOHlekuvE6vB4XRXpdDFmgkXJPn9bk89SLL5MryCPt+XA
+UIaRllv87TdRyzdzDhYjM40Ha1D1n1krlta2pGChCt/nL/tzFjWASx3Koa4ONKpB
+OYe0KBWmzqLSqVMd3BNVTYd++PEstqZ12I78Pcapi2e2yWQ5xz8Q6wgdG6W+Ormj
+vTf26pK+YkeS0nzZVckLvfVXQSdOe8jJ87O420pYZh/YIkLSCJxPvOyE4hYWqi98
+qqZv48Sd3ADxaqn/GD5dLo20M9F/VtpWBHp97+vDC5cjbedp/8ET9OLNFlu6+WZE
+XwM0c8SKw3ww0M/6bJTt
+=KJbg
 -----END PGP SIGNATURE-----
 
---qwymS7QpGZeA8tRa--
+--1c4XeR3HBwmMPD2z--
