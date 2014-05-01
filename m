@@ -1,45 +1,145 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC PATCH 0/4] drivers/base: Generic framework for tracking
- internal interfaces
-Date: Thu, 1 May 2014 10:11:02 +0100
-Message-ID: <20140501091102.GF26756@n2100.arm.linux.org.uk>
-References: <1398866574-27001-1-git-send-email-a.hajda@samsung.com>
- <20140430154914.GA898@kroah.com> <53616E31.3050404@wp.pl>
- <20140430222839.GE26756@n2100.arm.linux.org.uk> <5361F1F3.7070005@wp.pl>
+From: Christoffer Dall <christoffer.dall@linaro.org>
+Subject: Re: [PATCH v5 3/6] arm64: Add a description on 48-bit address space
+ with 4KB pages
+Date: Thu, 1 May 2014 03:06:12 -0700
+Message-ID: <20140501100612.GA2848@lvm>
+References: <000301cf64e5$d27f9a20$777ece60$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5361F1F3.7070005@wp.pl>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <andrzej.hajda@wp.pl>
-Cc: Tomasz Stansislawski <t.stanislaws@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <000301cf64e5$d27f9a20$777ece60$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 01, 2014 at 09:04:19AM +0200, Andrzej Hajda wrote:
-> 2. You replace calls of component_add and component_del with calls
-> to interface_tracker_ifup(dev, INTERFACE_TRACKER_TYPE_COMPONENT,  
-> &specific_component_ops),
-> or interface_tracker_ifdown.
-> Thats all for components.
+On Thu, May 01, 2014 at 11:34:05AM +0900, Jungseok Lee wrote:
+> This patch adds memory layout and translation lookup information
+> about 48-bit address space with 4K pages. The description is based
+> on 4 levels of translation tables.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Steve Capper <steve.capper@linaro.org>
+> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> ---
+>  Documentation/arm64/memory.txt |   59 ++++++++++++++++++++++++++++++++++------
+>  1 file changed, 51 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/arm64/memory.txt b/Documentation/arm64/memory.txt
+> index d50fa61..8142709 100644
+> --- a/Documentation/arm64/memory.txt
+> +++ b/Documentation/arm64/memory.txt
+> @@ -8,10 +8,11 @@ This document describes the virtual memory layout used by the AArch64
+>  Linux kernel. The architecture allows up to 4 levels of translation
+>  tables with a 4KB page size and up to 3 levels with a 64KB page size.
+>  
+> -AArch64 Linux uses 3 levels of translation tables with the 4KB page
+> -configuration, allowing 39-bit (512GB) virtual addresses for both user
+> -and kernel. With 64KB pages, only 2 levels of translation tables are
+> -used but the memory layout is the same.
+> +AArch64 Linux uses 3 levels and 4 levels of translation tables with
 
-How does the master get to decide which components are for it?  As
-I see it, all masters see all components of a particular "type".
-What if you have a system with two masters each of which are bound
-to a set of unique components but some of the components are of a
-the same type?
+uses either 3 or 4 levels of translation?
 
-How does the master know what "type" to use?
+> +the 4KB page configuration, allowing 39-bit (512GB) and 48-bit (256TB)
+> +virtual addresses, respectively, for both user and kernel. With 64KB
+> +pages, only 2 levels of translation tables are used but the memory layout
+> +is the same.
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+Perhaps it's worth clarifying that with 64KB and 2 levels of translation
+tables we are limited to a 42-bit address space here.
+
+>  
+>  User addresses have bits 63:39 set to 0 while the kernel addresses have
+>  the same bits set to 1. TTBRx selection is given by bit 63 of the
+> @@ -21,7 +22,7 @@ The swapper_pgd_dir address is written to TTBR1 and never written to
+>  TTBR0.
+>  
+>  
+> -AArch64 Linux memory layout with 4KB pages:
+> +AArch64 Linux memory layout with 4KB pages + 3 levels:
+>  
+>  Start			End			Size		Use
+>  -----------------------------------------------------------------------
+> @@ -48,7 +49,34 @@ ffffffbffc000000	ffffffbfffffffff	  64MB		modules
+>  ffffffc000000000	ffffffffffffffff	 256GB		kernel logical memory map
+>  
+>  
+> -AArch64 Linux memory layout with 64KB pages:
+> +AArch64 Linux memory layout with 4KB pages + 4 levels:
+> +
+> +Start			End			Size		Use
+> +-----------------------------------------------------------------------
+> +0000000000000000	0000ffffffffffff	 256TB		user
+> +
+> +ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
+> +
+> +ffff7bffffff0000	ffff7bffffffffff	  64KB		[guard page]
+> +
+> +ffff7c0000000000	ffff7dffffffffff	   2TB		vmemmap
+> +
+> +ffff7e0000000000	ffff7ffffbbfffff	  ~2TB		[guard, future vmmemap]
+
+hmm, I may be completely confused, but if VMALLOC_END is defined to be 
+(PAGE_OFFSET - UL(0x400000000) - SZ_64K), how can we squeeze ~4TB into a 16 GB hole?
+
+> +
+> +ffff7ffffa000000	ffff7ffffaffffff	  16MB		PCI I/O space
+> +
+> +ffff7ffffb000000	ffff7ffffbbfffff	  12MB		[guard]
+> +
+> +ffff7ffffbc00000	ffff7ffffbdfffff	   2MB		earlyprintk device
+
+shouldn't this be "fixed mappings" now?
+
+> +
+> +ffff7ffffbe00000	ffff7ffffbffffff	   2MB		[guard]
+> +
+> +ffff7ffffc000000	ffff7fffffffffff	  64MB		modules
+> +
+> +ffff800000000000	ffffffffffffffff	 128TB		kernel logical memory map
+> +
+> +
+> +AArch64 Linux memory layout with 64KB pages + 2 levels:
+>  
+>  Start			End			Size		Use
+>  -----------------------------------------------------------------------
+> @@ -75,7 +103,7 @@ fffffdfffc000000	fffffdffffffffff	  64MB		modules
+>  fffffe0000000000	ffffffffffffffff	   2TB		kernel logical memory map
+>  
+>  
+> -Translation table lookup with 4KB pages:
+> +Translation table lookup with 4KB pages + 3 levels:
+>  
+>  +--------+--------+--------+--------+--------+--------+--------+--------+
+>  |63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
+> @@ -90,7 +118,22 @@ Translation table lookup with 4KB pages:
+>   +-------------------------------------------------> [63] TTBR0/1
+>  
+>  
+> -Translation table lookup with 64KB pages:
+> +Translation table lookup with 4KB pages + 4 levels:
+> +
+> ++--------+--------+--------+--------+--------+--------+--------+--------+
+> +|63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
+> ++--------+--------+--------+--------+--------+--------+--------+--------+
+> + |                 |         |         |         |         |
+> + |                 |         |         |         |         v
+> + |                 |         |         |         |   [11:0]  in-page offset
+> + |                 |         |         |         +-> [20:12] L3 index
+> + |                 |         |         +-----------> [29:21] L2 index
+> + |                 |         +---------------------> [38:30] L1 index
+> + |                 +-------------------------------> [47:39] L0 index
+> + +-------------------------------------------------> [63] TTBR0/1
+> +
+> +
+> +Translation table lookup with 64KB pages + 2 levels:
+>  
+>  +--------+--------+--------+--------+--------+--------+--------+--------+
+>  |63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|
+> -- 
+> 1.7.10.4
+> 
+> 
