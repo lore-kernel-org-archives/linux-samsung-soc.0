@@ -1,43 +1,38 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 4/5] regulator: tps65090: Allow setting the overcurrent
- wait time
-Date: Thu, 1 May 2014 11:52:28 -0700
-Message-ID: <CAD=FV=W3qxMqM+cu-gEKkL4kNB-Jvo6-0tdt=L2madA8RLbfkw@mail.gmail.com>
-References: <1397689950-1568-1-git-send-email-dianders@chromium.org>
-	<1397689950-1568-5-git-send-email-dianders@chromium.org>
-	<20140423115102.GO21613@lee--X1>
-	<CAD=FV=WN4hVibiK_8+mpNfO7UQnd35ZT9EXA9fuw-mnBzzb1cA@mail.gmail.com>
-	<CAOesGMiMiqk1mKcVF8SwePhUS-8cAmM3Ut3f+qRvjz27iw7CTA@mail.gmail.com>
-	<20140501184941.GV3245@sirena.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
+Date: Thu, 01 May 2014 13:05:39 -0600
+Message-ID: <53629B03.6090408@wwwdotorg.org>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org> <1398879850-9111-7-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:61162 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbaEASw3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 14:52:29 -0400
-Received: by mail-ve0-f174.google.com with SMTP id oz11so4248555veb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 11:52:28 -0700 (PDT)
-In-Reply-To: <20140501184941.GV3245@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398879850-9111-7-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, lee.jones@linaro.org, wsa@the-dreams.de
+Cc: swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Anton Vorontsov <anton@enomsg.org>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
 
-Mark,
+On 04/30/2014 11:44 AM, Doug Anderson wrote:
+> On ARM Chromebooks we have a few devices that are accessed by both the
+> AP (the main "Application Processor") and the EC (the Embedded
+> Controller).  These are:
+> * The battery (sbs-battery).
+> * The power management unit tps65090.
+...
+> On the Samsung ARM Chromebook 2 the scheme is changed yet again, now:
+> * The AP/EC comms are now using SPI for faster speeds.
+> * The EC's i2c bus is exposed to the AP through a full i2c tunnel.
+> 
+> The upstream "tegra124-venice2" uses the same scheme as the Samsung
+> ARM Chromebook 2, though it has a different set of components on the
+> other side of the bus.
+> 
+> This driver supports the scheme used by the Samsung ARM Chromebook 2.
+> Future patches to this driver could add support for the battery tunnel
+> on the HP Chromebook 11 (and perhaps could even be used to access
+> tps65090 on the HP Chromebook 11 instead of using a special driver,
+> but I haven't researched that enough).
 
-On Thu, May 1, 2014 at 11:49 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Thu, May 01, 2014 at 11:17:58AM -0700, Olof Johansson wrote:
->
->> so it looks like tps_pdata is NULL. Should likely be a check for it?
->
-> Yes, just about to post a fix.
-
-Doh, was working on it at the same time.
-
-https://patchwork.kernel.org/patch/4099981/
-
-Sorry for the bug.  :(  Thanks for the report!
-
--Doug
+The binding looks reasonable to me, so that part,
+Acked-by: Stephen Warren <swarren@nvidia.com>
