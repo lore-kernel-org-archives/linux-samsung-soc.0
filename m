@@ -1,63 +1,178 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Thu, 1 May 2014 08:54:14 -0700
-Message-ID: <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com>
-References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org>
-	<20140424133920.GA12304@sirena.org.uk>
-	<5359E18B.60600@linaro.org>
-	<20140429222915.GU15125@sirena.org.uk>
-	<5360E5E7.8090807@linaro.org>
-	<20140430180314.GA3245@sirena.org.uk>
-	<53623004.5010805@linaro.org>
-	<20140501141510.GW3245@sirena.org.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v6] clk: Exynos5250: Add clocks for G3D
+Date: Thu, 01 May 2014 18:07:08 +0200
+Message-ID: <5362712C.3070803@gmail.com>
+References: <1398677821-11529-1-git-send-email-arun.kk@samsung.com> <53617DD6.60507@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:35233 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755521AbaEAPyQ (ORCPT
+Received: from mail-qg0-f43.google.com ([209.85.192.43]:62238 "EHLO
+	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750839AbaEAQHK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 11:54:16 -0400
-Received: by mail-vc0-f181.google.com with SMTP id hy4so4062473vcb.26
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 08:54:14 -0700 (PDT)
-In-Reply-To: <20140501141510.GW3245@sirena.org.uk>
+	Thu, 1 May 2014 12:07:10 -0400
+Received: by mail-qg0-f43.google.com with SMTP id a108so3535614qge.30
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 09:07:09 -0700 (PDT)
+In-Reply-To: <53617DD6.60507@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tushar Behera <tushar.behera@linaro.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
+To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
-Hi,
+Hi Arun,
 
-On Thu, May 1, 2014 at 7:15 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Thu, May 01, 2014 at 04:59:08PM +0530, Tushar Behera wrote:
+On 01.05.2014 00:48, Tomasz Figa wrote:
+> On 28.04.2014 11:37, Arun Kumar K wrote:
+>> This patch adds the required clocks for ARM Mali IP
+>> in Exynos5250.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>> Changes from v5
+>> - Addressed comments from Tomasz Figa
+>>    http://www.spinics.net/lists/arm-kernel/msg326118.html
+>> Changes from v4
+>> - Rebased on latest kernel
+>> - Added macros
+>> Changes from v3
+>> - Renamed some clocks as per Tomasz Figa's comments
+>> Changes from v2
+>> - Rebased on clk-next
+>> Changes from v1
+>> - Removed exporting of parent DIV clock for g3d
+>>    as per Tomsz Figa's comment.
+>> ---
+>>   drivers/clk/samsung/clk-exynos5250.c   |   15 ++++++++++++++-
+>>   include/dt-bindings/clock/exynos5250.h |    4 +++-
+>>   2 files changed, 17 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+>> b/drivers/clk/samsung/clk-exynos5250.c
+>> index e7ee442..df02526 100644
+>> --- a/drivers/clk/samsung/clk-exynos5250.c
+>> +++ b/drivers/clk/samsung/clk-exynos5250.c
+>> @@ -37,6 +37,7 @@
+>>   #define VPLL_CON0        0x10140
+>>   #define GPLL_CON0        0x10150
+>>   #define SRC_TOP0        0x10210
+>> +#define SRC_TOP1        0x10214
+>>   #define SRC_TOP2        0x10218
+>>   #define SRC_TOP3        0x1021c
+>>   #define SRC_GSCL        0x10220
+>> @@ -71,6 +72,7 @@
+>>   #define GATE_IP_GSCL        0x10920
+>>   #define GATE_IP_DISP1        0x10928
+>>   #define GATE_IP_MFC        0x1092c
+>> +#define GATE_IP_G3D        0x10930
+>>   #define GATE_IP_GEN        0x10934
+>>   #define GATE_IP_FSYS        0x10944
+>>   #define GATE_IP_PERIC        0x10950
+>> @@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[]
+>> __initdata = {
+>>       DIV_CPU0,
+>>       SRC_CORE1,
+>>       SRC_TOP0,
+>> +    SRC_TOP1,
+>>       SRC_TOP2,
+>>       SRC_TOP3,
+>>       SRC_GSCL,
+>> @@ -133,6 +136,7 @@ static unsigned long exynos5250_clk_regs[]
+>> __initdata = {
+>>       DIV_PERIC5,
+>>       GATE_IP_GSCL,
+>>       GATE_IP_MFC,
+>> +    GATE_IP_G3D,
+>>       GATE_IP_GEN,
+>>       GATE_IP_FSYS,
+>>       GATE_IP_PERIC,
+>> @@ -189,10 +193,12 @@ PNAME(mout_vpllsrc_p)    = { "fin_pll",
+>> "sclk_hdmi27m" };
+>>   PNAME(mout_vpll_p)    = { "mout_vpllsrc", "fout_vpll" };
+>>   PNAME(mout_cpll_p)    = { "fin_pll", "fout_cpll" };
+>>   PNAME(mout_epll_p)    = { "fin_pll", "fout_epll" };
+>> +PNAME(mout_gpll_p)    = { "fin_pll", "fout_gpll" };
+>>   PNAME(mout_mpll_user_p)    = { "fin_pll", "mout_mpll" };
+>>   PNAME(mout_bpll_user_p)    = { "fin_pll", "mout_bpll" };
+>>   PNAME(mout_aclk166_p)    = { "mout_cpll", "mout_mpll_user" };
+>>   PNAME(mout_aclk200_p)    = { "mout_mpll_user", "mout_bpll_user" };
+>> +PNAME(mout_aclk400_p)    = { "mout_aclk400_g3d_mid", "mout_gpll" };
+>>   PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
+>>   PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
+>>   PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
+>> @@ -273,12 +279,16 @@ static struct samsung_mux_clock
+>> exynos5250_mux_clks[] __initdata = {
+>>       MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+>>       MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+>>       MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+>> +    MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
+>> +
+>> +    MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+>>
+>>       MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
+>>       MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
+>>       MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
+>>       MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
+>>       MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
+>> +    MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+>>
+>>       MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3,
+>> 4, 1),
+>>       MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8,
+>> 1),
+>> @@ -351,6 +361,8 @@ static struct samsung_div_clock
+>> exynos5250_div_clks[] __initdata = {
+>>       DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+>>       DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
+>>       DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+>> +    DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
+>> +                            24, 3),
+>>
+>>       DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
+>>
+>> @@ -533,7 +545,8 @@ static struct samsung_gate_clock
+>> exynos5250_gate_clks[] __initdata = {
+>>           0),
+>>       GATE(CLK_SMMU_MFCL, "smmu_mfcl", "mout_aclk333_sub",
+>> GATE_IP_MFC, 2, 0,
+>>           0),
+>> -
+>> +    GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
+>> +                    CLK_SET_RATE_PARENT, 0),
+>>       GATE(CLK_ROTATOR, "rotator", "div_aclk266", GATE_IP_GEN, 1, 0, 0),
+>>       GATE(CLK_JPEG, "jpeg", "div_aclk166", GATE_IP_GEN, 2, 0, 0),
+>>       GATE(CLK_MDMA1, "mdma1", "div_aclk266", GATE_IP_GEN, 4, 0, 0),
+>> diff --git a/include/dt-bindings/clock/exynos5250.h
+>> b/include/dt-bindings/clock/exynos5250.h
+>> index 922f2dc..a3c6777 100644
+>> --- a/include/dt-bindings/clock/exynos5250.h
+>> +++ b/include/dt-bindings/clock/exynos5250.h
+>> @@ -150,11 +150,13 @@
+>>   #define CLK_G2D            345
+>>   #define CLK_MDMA0        346
+>>   #define CLK_SMMU_MDMA0        347
+>> +#define CLK_G3D            348
+>>
+>>   /* mux clocks */
+>>   #define CLK_MOUT_HDMI        1024
+>> +#define CLK_MOUT_GPLL        1025
+>>
+>>   /* must be greater than maximal clock id */
+>> -#define CLK_NR_CLKS        1025
+>> +#define CLK_NR_CLKS        1026
+>>
+>>   #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
+>>
 >
->> Okay, I will extend the existing clock driver to support XCLKOUT.
->
-> It may make more sense to add another clock driver for this clock
-> depending on how things are done, I don't know.
->
->> Of the many parents of XCLKOUT, we need to set XXTI clock as the parent.
->> Is it okay if we pass two clocks "mclk" (XCLKOUT) and "mclk_parent"
->> (XXTI) to sound-card driver via DT and do the necessary reparenting
->> during the sound-card driver probe call?
->
-> No, that's not OK at all, it won't allow for configuration of the
-> system.  This is what I was talking about when I was talking the clock
-> framework extensions to allow the clock tree to be configured using DT,
-> that would allow the settings to be put in DT.
->
->> Else, we can push that change to bootloader (to set the XCLKOUT mux
->> register) and only enable/disable the clock in sound-card driver.
->
-> That's not going to work given that the existing bootloaders don't do
-> this.
+> Applied.
 
-This is exactly the thing (expected clock parenting) we agreed could
-be put in the device tree I think.  ...but I don't know that anyone
-proposed exactly how that would work.
+Uhm, actually not applied, as we seem to have a numbering clash with 
+previous patch adding gate clock for SSS block
+(clk: samsung exynos5250/5420: Add gate clock for SSS module).
 
-NOTE: in existing ChromeOS this type of thing is done a tiny amount in
-<https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.8/arch/arm/mach-exynos/mach-exynos5-dt.c>.
- See apply_clock_muxing().
+I can change this to 349 when applying, but you would need to make sure 
+that you reflect this in your internal trees and rebuild your DTBs. Is 
+it fine for you?
 
--Doug
+Best regards,
+Tomasz
