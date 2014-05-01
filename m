@@ -1,62 +1,61 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 01/15] ASoC: CS42L51 and WM8962 codecs
- depend on INPUT
-Date: Wed, 30 Apr 2014 20:27:56 -0700
-Message-ID: <20140501032756.GM3245@sirena.org.uk>
+Subject: Re: [PATCH 03/15] ASoC: SMDK_WM8580_PCM needs REGMAP_I2C
+Date: Wed, 30 Apr 2014 20:30:57 -0700
+Message-ID: <20140501033057.GO3245@sirena.org.uk>
 References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
- <1398770316-19715-2-git-send-email-kaixu.xia@linaro.org>
- <alpine.DEB.2.02.1404292124270.31465@heelrod>
- <20140501013103.GK3245@sirena.org.uk>
- <13D36045-EE68-418B-983B-2704C52391E3@cirrus.com>
- <08914164-8CE6-4170-BC21-9E2840FFA05E@cirrus.com>
+ <1398770316-19715-4-git-send-email-kaixu.xia@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EOHJn1TVIJfeVXv2"
-Return-path: <linux-input-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="keoAwTxaagou87Dg"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53502 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750848AbaEADbU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Apr 2014 23:31:20 -0400
 Content-Disposition: inline
-In-Reply-To: <08914164-8CE6-4170-BC21-9E2840FFA05E@cirrus.com>
-Sender: linux-input-owner@vger.kernel.org
-To: "Austin, Brian" <Brian.Austin@cirrus.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "arnd@arndb.de" <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Timur Tabi <timur@tabi.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben-linux@fluff.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lrg@slimlogic.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Xia Kaixu <kaixu.xia@linaro.org>
+In-Reply-To: <1398770316-19715-4-git-send-email-kaixu.xia@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Xia Kaixu <kaixu.xia@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd@arndb.de, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
 
---EOHJn1TVIJfeVXv2
-Content-Type: text/plain; charset=utf-8
+--keoAwTxaagou87Dg
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 01, 2014 at 02:16:27AM +0000, Austin, Brian wrote:
+On Tue, Apr 29, 2014 at 07:18:24PM +0800, Xia Kaixu wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> This adds a missing dependency for SND_SOC_SMDK_WM8580_PCM to
+> require REGMAP_I2C to be enabled, avoiding possible build
+> erorrs.
 
-> Apparently not.
-> I would like to come up with a better solution than making INPUT a requir=
-ement. I just need some time.
-> In the meantime I suppose it=E2=80=99s OK to apply it?=20
+Applied, thanks.  As well as the Cc list thing please try to use subject
+lines matching the style for the subsystem.
 
-Yeah.  Realistically it's probably not going to ever be a practical
-problem - the number of systems with audio but no input is likely to be
-very close to zero.
-
---EOHJn1TVIJfeVXv2
+--keoAwTxaagou87Dg
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTYb8yAAoJELSic+t+oim9f6MP/0lgFQcPPeuzNIDEPL1BV1wH
-yI7YE0wzwqx/X+uCgqopEwByqSHyXpeLH0T88IgGO1bNQEjacGuBmV8jZTokLoHx
-rFPrKtePOpLHB1dMvcUJw4AasTi7USBns56E63vAaRZhH60XCHkuTOMcOSmhK2Z6
-C3uFqZqCher8bNyDMex+ugWaYQHtGQrTfTxkB6fyHhzdPv4d/jhjFWnXgiteeHR7
-v0F1X9plvowRnabfjoLIKy48L5kShkNiLWCE7F1lD8OEGibhBWMjjBVpjimpXZxX
-Sdg5pPIhABW+DF+Bo3t0hEOUifHnyUY8ZKnwAU99JPL3+5jrC6d/KI02cncjGMnb
-CiOrQY0b8KbfsZLUlpwsVMwaGDGYWdWhXhr3DLq3bCHXjIjG6rTadJAWIJFUW9SM
-Ew6wgUasMhNo7U88oh4HwN3CQYsoY6lR/YfjLwgYZiCcFEbxZq8k4D9r0n7QviHD
-vH8s79eJrr6gtJDQpPmDxicAxjhDTaollEUawm4n0RWA1TSTQ+aQBdD8QPPXv0kJ
-apn4opVPV/vsw4mPNEJhCFlNvHH5pCB+NOL4IyEj2qG4IHdbWP2vmSj4oDVJLJ+c
-zJ3WSlJBWZ50NWx/PuJc1x/R3lSXWoWcdkT+JubJHBBbAhDR241WQSkxiDVgYkhv
-NO7BHqugh08U6VyEknKn
-=pzrv
+iQIcBAEBAgAGBQJTYb/uAAoJELSic+t+oim93dQP/jaG+r4u8Om/bXfJh4Aom1xl
+DsW8KK7WeeyQcUs+iE17kNI6StMMmaSYwtwaleSC140ajC0w5wMdUl72w5bGdQGr
+KvXcGpfczZbVa7MdghnHGoLJWyndhKuKhoDSnpUnl4hLR77DwoVDjAr1dLgbdjhu
+4nyMr09gYUOtUTbdKCYPjIhcYuMcgS/NBTzMOFIZOxJA3Xc2gEGsPkTE5WJ9LSN2
+lUPgxrMiWIhEaosbzMg7ldX+cdOUtNzd8sT7djv0dnlZ8CKSaPHJgFcSwl4jbfEf
+5seJLwoO5sg8zAMIuM8YHp3LhYpUhaedZZC+siz69RjhHvbRveleL4gbSzttEwE4
+8ambjdU9+mkZon0kG5dD6RQjfEOg1uCtsFcr/+ADHS9uktCeNWAk3MCr3qIKSXK5
+8Akowpq/Hhq70frkOgIyRpsd1oCIc/vJ3TC5X60gx9WKDUkUj+Jj6RgqyGPd4sqF
+L5othwdqRlOrYk+JzLjziBm2uds3KjKcNLuVipIxv99KJelw4Mu8II6vwfMs0SMK
+1SRfR0o+72tqqoXDB5t+H0OWFQiadz+z6VudQHCdiYssfVnCKdS63HnzgjWCCwyU
+RfI4hedpXeWwcLy+lJTo5l13eYu6pj6i7BXx6ewrQo1IdXGc2UhxkviGBWG+SiSY
+HtS9hYYNnIvtJXj6f6Ze
+=RfTx
 -----END PGP SIGNATURE-----
 
---EOHJn1TVIJfeVXv2--
+--keoAwTxaagou87Dg--
