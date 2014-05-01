@@ -1,55 +1,83 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document
-	of Exynos System MMU
-Date: Thu, 01 May 2014 11:41:37 -0600
-Message-ID: <53628751.9000609@wwwdotorg.org>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<20140429181601.GE3582@e103592.cambridge.arm.com>
-	<CANEJEGs6TXNzE8cWYgEKfFSsD2w5XiYvwSbhQ_+gtfzfs+6udA@mail.gmail.com>
-	<7044616.kdaKNu3Qet@wuerfel>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v3 2/2] ARM: dts: Add peach-pit board support
+Date: Thu, 1 May 2014 10:45:31 -0700
+Message-ID: <CAD=FV=Wj4tZ=rJX96Z67qvyj0kRgfgo++SUQc+MxoCuS_SM1Vg@mail.gmail.com>
+References: <1398856138-18837-1-git-send-email-arun.kk@samsung.com>
+	<1398856138-18837-3-git-send-email-arun.kk@samsung.com>
+	<CAD=FV=UmWZapMZgpwdonr-JOE7BB8ELn5DQCFWos_sC1v-eLzw@mail.gmail.com>
+	<536284CC.80603@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <7044616.kdaKNu3Qet@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <rahul.sha>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:43523 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbaEARpc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 May 2014 13:45:32 -0400
+Received: by mail-vc0-f171.google.com with SMTP id ld13so4239042vcb.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 10:45:31 -0700 (PDT)
+In-Reply-To: <536284CC.80603@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>, Tom Rini <trini@ti.com>
 
-On 04/29/2014 03:00 PM, Arnd Bergmann wrote:
-...
-> Yes. It's very complicated unfortunately, because we have to be
-> able to deal with arbitrary combinations of a lot of oddball cases
-> that can show up in random SoCs:
-...
-> - a device may have DMA access to a bus that is invisible to the CPU
+Tomasz,
 
-The issue is slightly more general than that. It's more that the bus
-structure "seen" by a device is simply /different/ than that seen by the
-CPU. I don't think it's a requirement that there be CPU-invisible buses
-for that to be true.
+On Thu, May 1, 2014 at 10:30 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 01.05.2014 17:40, Doug Anderson wrote:
+>>
+>> Arun,
+>>
+>> On Wed, Apr 30, 2014 at 4:08 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
+>>>
+>>> +       memory {
+>>> +               reg = <0x20000000 0x80000000>;
+>>
+>>
+>> As mentioned in the other thread, I think this should be 0 0
+>
+>
+> I guess it may depend on your boards, but DT might contain safe default
+> configuration that would work on all variants, so if you have for example 1
+> GiB and 2 GiB variants, 1 GiB configuration here should be fine to get the
+> board running even without a bootloader that could inject remaining data.
 
-For example, I could conceive of a HW setup like:
+That was part of the debate yesterday, I thought.  Tom Rini (U-Boot
+guy) said that right now U-Boot clobbers the memory node _always_ and
+fills it in with whatever it detects.  He wasn't sure this was a good
+idea.  Someone said they thought that it wasn't a good idea, but
+someone could request U-Boot keep clobbering things by doing <0 0>
 
-primary CPU bus ----------------------> other devices
-   |    \_________________      /
-   |                      \    |
-   v                      v    ^
-device registers ----> some secondary bus
-                          |
-                          v
-                       memory
+Tom: did I summarize that correctly?
 
-Here, all the buses are visible to the CPU, yet the path that
-transactions take between the buses is simply different to the CPU. More
-complex situations than the above, while still maintaining that
-description, are certainly possible.
+
+>>> +&pinctrl_0 {
+>>> +       tpm_irq: tpm-irq {
+>>> +               samsung,pins = "gpx1-0";
+>>> +               samsung,pin-function = <0>;
+>>> +               samsung,pin-pud = <0>;
+>>
+>>
+>> Is there any way to use the #defines PIN_PULL_NONE here?
+>
+>
+> I wonder if we already have this kind of #define defined. Keep in mind that
+> this value is specific for Exynos SoCs, so we would need to define it in
+> Exynos-specific header, like include/dt-bindings/pinctrl/exynos.h.
+
+I dunno.  I'd actually love to see function 0/1 defined (input /
+output) too.  ...and drive strengths (since 0, 1, 2, 3 don't map
+nicely to x1, x2, x3, x4).
+
+I requested PIN_PULL_NONE though, since I saw it being used.
+
+...oh, but it's a #define in a .dtsi.  Hrm.
+
+arch/arm/boot/dts/s3c64xx-pinctrl.dtsi:#define PIN_PULL_NONE    0
+
+I guess I'd say that it would be nice to do this properly for exynos,
+but we could do it in a later patch.
+
+
+-Doug
