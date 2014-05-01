@@ -1,93 +1,38 @@
-From: Andrzej Hajda <andrzej.hajda@wp.pl>
-Subject: Re: [RFC PATCH 0/4] drivers/base: Generic framework for tracking
- internal interfaces
-Date: Thu, 01 May 2014 09:04:19 +0200
-Message-ID: <5361F1F3.7070005@wp.pl>
-References: <1398866574-27001-1-git-send-email-a.hajda@samsung.com> <20140430154914.GA898@kroah.com> <53616E31.3050404@wp.pl> <20140430222839.GE26756@n2100.arm.linux.org.uk>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH v3 01/16] clk: exynos5420: rename parent clocks
+Date: Thu, 01 May 2014 12:45:56 +0530
+Message-ID: <5361F4AC.2060106@linaro.org>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <1398344632-18623-2-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140430222839.GE26756@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Tomasz Stansislawski <t.stanislaws@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:59913 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752106AbaEAHQE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 May 2014 03:16:04 -0400
+Received: by mail-ie0-f175.google.com with SMTP id rl12so3150663iec.34
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 00:16:02 -0700 (PDT)
+In-Reply-To: <1398344632-18623-2-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Russell King - ARM Linux wrote, On 01.05.2014 00:28:
-> On Wed, Apr 30, 2014 at 11:42:09PM +0200, Andrzej Hajda wrote:
->> The main problem with component framework is that componentization
->> significantly changes every driver and changes it in a way which is not
->> compatible with traditional drivers, so devices which are intended to
->> work with different DRM masters are hard to componentize if some of DRMs
->> are componentized and some not.
-> Many of the problems which the component helpers are designed to solve
-> are those where you need the drm_device structure (or snd_card, or whatever
-> subsystem specific card/device representation structure) pre-created in
-> order to initialise the components.
->
-> In the case of DRM, you can't initialise encoders or connectors without
-> their drm_device structure pre-existing - because these components are
-> attached to the drm_device.
->
-> Your solution to that is to delay those calls, but the DRM subsystem is
-> not designed to cope like that - it's designed such that when the
-> connector or encoder initialisation functions are called, it is assumed
-> that the driver is initialising its state. (I've raised this point before
-> but you've just fobbed it off in the past.)
->
-> Another issue here is that the order of initialisation matters greatly.
-> Take CRTCs for example.  In DRM, the order of attachment of CRTCs defines
-> their identity, changing the order changes their identity, and changes
-> how they are bound to their respective connectors.
->
-The two problems you show here are not a real problems in this framework:
-1. making real device initialization during drm initialization - 
-decision is left
-to driver developer what should be done in probe, what should be done in
-'bind', I guess this is also true for components, at least the framework 
-allows it.
-2. initialization order - if you put initialization into components 
-'bind' function,
-master can choose any order of calls to 'bind'.
+On 04/24/2014 06:33 PM, Shaik Ameer Basha wrote:
+> This patch modifies the defined parent clock names as per the
+> exynos5420 datasheet.
+> 
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c |  359 ++++++++++++++++++----------------
+>  1 file changed, 187 insertions(+), 172 deletions(-)
+>  mode change 100644 => 100755 drivers/clk/samsung/clk-exynos5420.c
+> 
 
-Anyway you can implement the same behaviour as components with
-interface_tracker. Just simple proof of concept, how to convert 
-componentized
-drivers to interface_tracker:
-Components:
-1. you can reuse component_ops
-2. You replace calls of component_add and component_del with calls
-to interface_tracker_ifup(dev, INTERFACE_TRACKER_TYPE_COMPONENT, 
-&specific_component_ops),
-or interface_tracker_ifdown.
-Thats all for components.
+File mode should not be changed.
 
-Master:
-1. you register callback for tracking all components.
-2. in the callback you check if all components are up, if yes you do the
-same as in component framework initialization, to simplify it
-helper function can be added.
-
-I guess it should work the same way, if there is interest in it I can 
-develop the
-helper next week, I hope.
-
-What is the benefit of interface_tracker:
-1. interface_tracker is more generic - it can track not only components.
-2. you put component initialization code into helper function - sounds 
-like mid-layer removal,
-developer can choose different helper if it suits better.
-
-So from component point of view interface_tracker can be treated as kind 
-of extensions
-of the component framework.
-
-I hope I have answerer all your concerns.
-
-I have holidays till Sunday and I am not sure if I will be able to 
-answer next emails before
-Monday.
-
-Regards
-Andrzej
+-- 
+Tushar Behera
