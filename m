@@ -1,74 +1,115 @@
-From: Jon Loeliger <loeliger-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early BRESP
-Date: Thu, 1 May 2014 11:18:45 -0500
-Message-ID: <CAJgR-BiGjp9G=E7SzgidyVLTjpQ3ETFTFwxDapVc28PyokGa=g@mail.gmail.com>
-References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
-	<E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk>
-	<20140429000224.GA31083@verge.net.au>
-	<20140429002140.GP27282@n2100.arm.linux.org.uk>
-	<20140501151236.078E3C409DA@trevor.secretlab.ca>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document
+	of Exynos System MMU
+Date: Thu, 01 May 2014 17:24:31 +0100
+Message-ID: <5362753F.4030904@arm.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<20140501143654.GB3732@e103592.cambridge.arm.com>
+	<53626434.8000807@arm.com> <4916028.thxt7fH2bg@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140501151236.078E3C409DA-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Shiraz Hashim <shiraz.hashim-qxv4g6HH51o@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4916028.thxt7fH2bg@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel@lists.i
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Russell,
-
-I emphatically second Grant's opinion here:
-This is a good patch series and is a much-needed improvement.
-
-I am in the middle of a board-port for an A9 system, and this
-series will greatly simplify things for me *despite* the fact that
-I will need to convert to the new write_sec() form of L2C control
-on PSCI-enabled non-secure platforms.
-
-To reiterate Grant's request, please re-consider applying
-this L2C patch series!
-
-Thank you,
-jdl
-
-
-On Thu, May 1, 2014 at 10:12 AM, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
-> On Tue, 29 Apr 2014 01:21:41 +0100, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
->> On Tue, Apr 29, 2014 at 09:02:27AM +0900, Simon Horman wrote:
->> > On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
->> > > Since we now automatically enable early BRESP in core L2C-310 code when
->> > > we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
->> > > explicitly.  Instead, they should seek to preserve the value of bit 30
->> > > in the auxiliary control register.
->> > >
->> > > Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
->> > > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
->> >
->> > I would prefer if this patch was broken out into individual patches
->> > for each board or SoC file and that they were then picked up
->> > by their respective platform maintainers.
->> >
->> > Likewise for patch 66/97. Although it is only for shmobile
->> > I would prefer it broken out.
+On 01/05/14 16:53, Arnd Bergmann wrote:
+> On Thursday 01 May 2014 16:11:48 Marc Zyngier wrote:
+>> On 01/05/14 15:36, Dave Martin wrote:
+>>> On Thu, May 01, 2014 at 02:29:50PM +0100, Arnd Bergmann wrote:
+>>>> On Thursday 01 May 2014 12:15:35 Dave Martin wrote:
+>>>>> On Tue, Apr 29, 2014 at 10:46:18PM +0200, Arnd Bergmann wrote:
+>>>>>> I don't understand. An MSI controller is just an address that acts
+>>>>>> as a DMA slave for a 4-byte inbound data packet. It has no way of
+>>>>>> knowing who is sending data, other than by the address or the data
+>>>>>> sent to it. Are you talking of something else?
+>>>>>
+>>>>> Oops, looks like there are a few points I failed to respond to here...
+>>>>>
+>>>>>
+>>>>> I'm not an expert on PCI -- I'm prepared to believe it works that way.
+>>>>>
+>>>>> GICv3 can descriminate between different MSI senders based on ID
+>>>>> signals on the bus.
+>>>>
+>>>> Any idea what this is good for? Do we have to use it? It probably doesn't
+>>>> fit very well into the way Linux handles MSIs today.
+>>>
+>>> Marc may be better placed than me to comment on this in detail.
 >>
->> Oh fuck that.
+>> As to "fitting Linux", it seems to match what Linux does fairly well
+>> (see the kvm-arm64/gicv3 branch in my tree). Not saying that it does it
+>> in a very simple way (far from it, actually), but it works.
+> 
+> ok.
+> 
+>> As to "what it is good for" (and before someone bursts into an Edwin
+>> Starr interpretation), it mostly has to do with isolation, and the fact
+>> that you may want to let the whole MSI programming to a guest (and yet
+>> ensure that the guest cannot generate interrupts that would be assigned
+>> to other devices). This is done by sampling the requester-id at the ITS
+>> level, and use this information to index a per-device interrupt
+>> translation table (I could talk for hours about the concept and its
+>> variations, mostly using expletives and possibly a hammer, but I think
+>> it is the time for my pink pill).
+> 
+> So the idea is that you want to give the guest unfiltered access to the
+> PCI config space of an assigned device?
+> 
+> Is that safe?
+> 
+> If the config space access goes through the hypervisor (as I think we
+> always do today), there should be no isse.
+
+My natural tendency would be to filter everything, as we certainly don't
+want the device to be reconfigured in weird and fancy ways (my PCI-foo
+is a bit limited, so bear with me). But as usual, GICv3 is not PCI
+specific, and is designed to cater for weird and wonderful cases, PCI
+being only one possible implementation...
+
+On a non-PCI system, you definitely could assign a MSI-like capable
+device, and let the guest do its thing. I'm already seeing that kind of
+design.
+
+>>> However, I believe it's correct to say that because the GIC is not part
+>>> of PCI, end-to-end MSI delivery inherently involves a non-PCI step from
+>>> the PCI RC to the GIC itself.
+>>>
+>>> Thus this is likely to be a fundamental requirement for MSIs on ARM SoCs
+>>> using GIC, if we want to have a hope of mapping MSIs to VMs efficiently.
 >>
->> Okay, I'm dropping the whole patch set right now and forgetting the whole
->> damned thing.  The L2 cache code can damned well stay as it is and remain
->> an unmaintainable mess.
->
-> FWIW, there are an awful lot of people, myself included, who do care
-> that you've done this work. It is 100% okay for you to say "no" to
-> requests to split things up because of the complexity of the series.
->
-> I really hope you're reconsider and not give up on this series.
->
-> g.
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> Indeed. GICv[34] is the ARM way of implementing MSI on SBSA compliant
+>> systems (from level 1 onwards, if memory serves well). People are
+>> actively building systems with this architecture, and relying on it to
+>> provide VM isolation.
+> 
+> I don't mind it being there, but if we don't need it, we shouldn't
+> have to use that isolation feature and be able to just allow any
+> initiator to send an MSI.
+
+It is not that simple. You could design things around a global ITT,
+pointed to by all the possible devices in your system. But that table
+would be quite big (it has to contain the routing information for all
+the possible messages in your system, and must be physically
+contiguous). You still need to know the devices (requester-id,
+device-id, whatever), as there is no wildcard mechanism.
+
+Also, this approach pretty much kills hotplug (you cannot easily resize
+that table to add new interrupt entries). That's why I've opted for a
+more dynamic configuration, where each device gets its own ITT as it
+appears on the system.
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
