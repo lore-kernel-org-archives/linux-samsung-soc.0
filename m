@@ -1,178 +1,74 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v6] clk: Exynos5250: Add clocks for G3D
-Date: Thu, 01 May 2014 18:07:08 +0200
-Message-ID: <5362712C.3070803@gmail.com>
-References: <1398677821-11529-1-git-send-email-arun.kk@samsung.com> <53617DD6.60507@gmail.com>
+From: Jon Loeliger <loeliger-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early BRESP
+Date: Thu, 1 May 2014 11:18:45 -0500
+Message-ID: <CAJgR-BiGjp9G=E7SzgidyVLTjpQ3ETFTFwxDapVc28PyokGa=g@mail.gmail.com>
+References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
+	<E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk>
+	<20140429000224.GA31083@verge.net.au>
+	<20140429002140.GP27282@n2100.arm.linux.org.uk>
+	<20140501151236.078E3C409DA@trevor.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f43.google.com ([209.85.192.43]:62238 "EHLO
-	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750839AbaEAQHK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 12:07:10 -0400
-Received: by mail-qg0-f43.google.com with SMTP id a108so3535614qge.30
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 09:07:09 -0700 (PDT)
-In-Reply-To: <53617DD6.60507@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140501151236.078E3C409DA-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Shiraz Hashim <shiraz.hashim-qxv4g6HH51o@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
-Hi Arun,
+Hi Russell,
 
-On 01.05.2014 00:48, Tomasz Figa wrote:
-> On 28.04.2014 11:37, Arun Kumar K wrote:
->> This patch adds the required clocks for ARM Mali IP
->> in Exynos5250.
+I emphatically second Grant's opinion here:
+This is a good patch series and is a much-needed improvement.
+
+I am in the middle of a board-port for an A9 system, and this
+series will greatly simplify things for me *despite* the fact that
+I will need to convert to the new write_sec() form of L2C control
+on PSCI-enabled non-secure platforms.
+
+To reiterate Grant's request, please re-consider applying
+this L2C patch series!
+
+Thank you,
+jdl
+
+
+On Thu, May 1, 2014 at 10:12 AM, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
+> On Tue, 29 Apr 2014 01:21:41 +0100, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>> On Tue, Apr 29, 2014 at 09:02:27AM +0900, Simon Horman wrote:
+>> > On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
+>> > > Since we now automatically enable early BRESP in core L2C-310 code when
+>> > > we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
+>> > > explicitly.  Instead, they should seek to preserve the value of bit 30
+>> > > in the auxiliary control register.
+>> > >
+>> > > Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+>> > > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+>> >
+>> > I would prefer if this patch was broken out into individual patches
+>> > for each board or SoC file and that they were then picked up
+>> > by their respective platform maintainers.
+>> >
+>> > Likewise for patch 66/97. Although it is only for shmobile
+>> > I would prefer it broken out.
 >>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->> Changes from v5
->> - Addressed comments from Tomasz Figa
->>    http://www.spinics.net/lists/arm-kernel/msg326118.html
->> Changes from v4
->> - Rebased on latest kernel
->> - Added macros
->> Changes from v3
->> - Renamed some clocks as per Tomasz Figa's comments
->> Changes from v2
->> - Rebased on clk-next
->> Changes from v1
->> - Removed exporting of parent DIV clock for g3d
->>    as per Tomsz Figa's comment.
->> ---
->>   drivers/clk/samsung/clk-exynos5250.c   |   15 ++++++++++++++-
->>   include/dt-bindings/clock/exynos5250.h |    4 +++-
->>   2 files changed, 17 insertions(+), 2 deletions(-)
+>> Oh fuck that.
 >>
->> diff --git a/drivers/clk/samsung/clk-exynos5250.c
->> b/drivers/clk/samsung/clk-exynos5250.c
->> index e7ee442..df02526 100644
->> --- a/drivers/clk/samsung/clk-exynos5250.c
->> +++ b/drivers/clk/samsung/clk-exynos5250.c
->> @@ -37,6 +37,7 @@
->>   #define VPLL_CON0        0x10140
->>   #define GPLL_CON0        0x10150
->>   #define SRC_TOP0        0x10210
->> +#define SRC_TOP1        0x10214
->>   #define SRC_TOP2        0x10218
->>   #define SRC_TOP3        0x1021c
->>   #define SRC_GSCL        0x10220
->> @@ -71,6 +72,7 @@
->>   #define GATE_IP_GSCL        0x10920
->>   #define GATE_IP_DISP1        0x10928
->>   #define GATE_IP_MFC        0x1092c
->> +#define GATE_IP_G3D        0x10930
->>   #define GATE_IP_GEN        0x10934
->>   #define GATE_IP_FSYS        0x10944
->>   #define GATE_IP_PERIC        0x10950
->> @@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[]
->> __initdata = {
->>       DIV_CPU0,
->>       SRC_CORE1,
->>       SRC_TOP0,
->> +    SRC_TOP1,
->>       SRC_TOP2,
->>       SRC_TOP3,
->>       SRC_GSCL,
->> @@ -133,6 +136,7 @@ static unsigned long exynos5250_clk_regs[]
->> __initdata = {
->>       DIV_PERIC5,
->>       GATE_IP_GSCL,
->>       GATE_IP_MFC,
->> +    GATE_IP_G3D,
->>       GATE_IP_GEN,
->>       GATE_IP_FSYS,
->>       GATE_IP_PERIC,
->> @@ -189,10 +193,12 @@ PNAME(mout_vpllsrc_p)    = { "fin_pll",
->> "sclk_hdmi27m" };
->>   PNAME(mout_vpll_p)    = { "mout_vpllsrc", "fout_vpll" };
->>   PNAME(mout_cpll_p)    = { "fin_pll", "fout_cpll" };
->>   PNAME(mout_epll_p)    = { "fin_pll", "fout_epll" };
->> +PNAME(mout_gpll_p)    = { "fin_pll", "fout_gpll" };
->>   PNAME(mout_mpll_user_p)    = { "fin_pll", "mout_mpll" };
->>   PNAME(mout_bpll_user_p)    = { "fin_pll", "mout_bpll" };
->>   PNAME(mout_aclk166_p)    = { "mout_cpll", "mout_mpll_user" };
->>   PNAME(mout_aclk200_p)    = { "mout_mpll_user", "mout_bpll_user" };
->> +PNAME(mout_aclk400_p)    = { "mout_aclk400_g3d_mid", "mout_gpll" };
->>   PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
->>   PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
->>   PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
->> @@ -273,12 +279,16 @@ static struct samsung_mux_clock
->> exynos5250_mux_clks[] __initdata = {
->>       MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
->>       MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
->>       MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->> +    MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
->> +
->> +    MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
->>
->>       MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
->>       MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
->>       MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
->>       MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
->>       MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
->> +    MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
->>
->>       MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3,
->> 4, 1),
->>       MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8,
->> 1),
->> @@ -351,6 +361,8 @@ static struct samsung_div_clock
->> exynos5250_div_clks[] __initdata = {
->>       DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
->>       DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
->>       DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->> +    DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
->> +                            24, 3),
->>
->>       DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
->>
->> @@ -533,7 +545,8 @@ static struct samsung_gate_clock
->> exynos5250_gate_clks[] __initdata = {
->>           0),
->>       GATE(CLK_SMMU_MFCL, "smmu_mfcl", "mout_aclk333_sub",
->> GATE_IP_MFC, 2, 0,
->>           0),
->> -
->> +    GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
->> +                    CLK_SET_RATE_PARENT, 0),
->>       GATE(CLK_ROTATOR, "rotator", "div_aclk266", GATE_IP_GEN, 1, 0, 0),
->>       GATE(CLK_JPEG, "jpeg", "div_aclk166", GATE_IP_GEN, 2, 0, 0),
->>       GATE(CLK_MDMA1, "mdma1", "div_aclk266", GATE_IP_GEN, 4, 0, 0),
->> diff --git a/include/dt-bindings/clock/exynos5250.h
->> b/include/dt-bindings/clock/exynos5250.h
->> index 922f2dc..a3c6777 100644
->> --- a/include/dt-bindings/clock/exynos5250.h
->> +++ b/include/dt-bindings/clock/exynos5250.h
->> @@ -150,11 +150,13 @@
->>   #define CLK_G2D            345
->>   #define CLK_MDMA0        346
->>   #define CLK_SMMU_MDMA0        347
->> +#define CLK_G3D            348
->>
->>   /* mux clocks */
->>   #define CLK_MOUT_HDMI        1024
->> +#define CLK_MOUT_GPLL        1025
->>
->>   /* must be greater than maximal clock id */
->> -#define CLK_NR_CLKS        1025
->> +#define CLK_NR_CLKS        1026
->>
->>   #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
->>
+>> Okay, I'm dropping the whole patch set right now and forgetting the whole
+>> damned thing.  The L2 cache code can damned well stay as it is and remain
+>> an unmaintainable mess.
 >
-> Applied.
-
-Uhm, actually not applied, as we seem to have a numbering clash with 
-previous patch adding gate clock for SSS block
-(clk: samsung exynos5250/5420: Add gate clock for SSS module).
-
-I can change this to 349 when applying, but you would need to make sure 
-that you reflect this in your internal trees and rebuild your DTBs. Is 
-it fine for you?
-
-Best regards,
-Tomasz
+> FWIW, there are an awful lot of people, myself included, who do care
+> that you've done this work. It is 100% okay for you to say "no" to
+> requests to split things up because of the complexity of the series.
+>
+> I really hope you're reconsider and not give up on this series.
+>
+> g.
+>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
