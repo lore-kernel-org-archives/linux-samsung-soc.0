@@ -1,194 +1,64 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: Add peach-pi board support
-Date: Fri,  2 May 2014 18:33:41 +0530
-Message-ID: <1399035821-25096-4-git-send-email-arun.kk@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 0/3] Add Exynos5800 support
+Date: Fri, 02 May 2014 22:14:38 +0900
+Message-ID: <53639A3E.6090508@samsung.com>
 References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:51102 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751827AbaEBNEC (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:51342 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751901AbaEBNPD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 09:04:02 -0400
+	Fri, 2 May 2014 09:15:03 -0400
 In-Reply-To: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, arunkk.samsung@gmail.com
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, arunkk.samsung@gmail.com
 
-Adds support for google peach-pi board having the
-Exynos5800 SoC.
+On 05/02/14 22:03, Arun Kumar K wrote:
+> Exynos5800 is a derivative of Exynos5420 with higher
+> clock speeds and most other IP blocks remaining the same
+> except for a few.
+> Due to the similarities with 5420, following is done to
+> achieve maximum code re-use:
+> - Use the same 5420 clock file with few changes for adding
+>    extra 5800 clocks.
+> - Include the 5420 dtsi into 5800 and override required
+>    properties.
+>
+> This series is dependent on the following patches
+> 1) Adding node labels for Exynos5420
+>     https://patchwork.kernel.org/patch/4092701/
+> 2) Adding pwm nodes for backlight
+>     https://patchwork.kernel.org/patch/4101881/
+>
+> Alim Akhtar (1):
+>    clk: exynos5420: Add 5800 specific clocks
+>
+> Arun Kumar K (2):
+>    ARM: dts: Add Exynos5800 dt file
+>    ARM: dts: Add peach-pi board support
+>
+>   .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
+>   arch/arm/boot/dts/Makefile                         |    3 +-
+>   arch/arm/boot/dts/exynos5800-peach-pi.dts          |  144 +++++++++++++++
+>   arch/arm/boot/dts/exynos5800.dtsi                  |   24 +++
+>   drivers/clk/samsung/clk-exynos5420.c               |  192 +++++++++++++++-----
+>   include/dt-bindings/clock/exynos5420.h             |    1 +
+>   6 files changed, 320 insertions(+), 47 deletions(-)
+>   create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+>   create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
+>
+Hi all,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- arch/arm/boot/dts/Makefile                |    3 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts |  144 +++++++++++++++++++++++++++++
- 2 files changed, 146 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+Just note that some changes of C and Kconfig in mach-exynos are missed 
+in this series as per my suggestion because I'm working on consolidate 
+it for exynos stuff.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 35c146f..efe1573 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -76,7 +76,8 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-smdk5420.dtb \
- 	exynos5440-sd5v1.dtb \
--	exynos5440-ssdk5440.dtb
-+	exynos5440-ssdk5440.dtb \
-+	exynos5800-peach-pi.dtb
- dtb-$(CONFIG_ARCH_HI3xxx) += hi3620-hi4511.dtb
- dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
- 	ecx-2000.dtb
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-new file mode 100644
-index 0000000..e0f8633
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -0,0 +1,144 @@
-+/*
-+ * Google Peach Pi Rev 10+ board device tree source
-+ *
-+ * Copyright (c) 2014 Google, Inc
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "exynos5800.dtsi"
-+
-+/ {
-+	model = "Google Peach Pi Rev 10+";
-+
-+	compatible = "google,pi-rev16",
-+		"google,pi-rev15", "google,pi-rev14",
-+		"google,pi-rev13", "google,pi-rev12",
-+		"google,pi-rev11", "google,pi-rev10",
-+		"google,pi", "google,peach", "samsung,exynos5800",
-+		"samsung,exynos5";
-+
-+	memory {
-+		reg = <0 0>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&power_key_irq>;
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 1000000 0>;
-+		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
-+		default-brightness-level = <7>;
-+		pinctrl-0 = <&pwm0_out>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&pinctrl_0 {
-+	tpm_irq: tpm-irq {
-+		samsung,pins = "gpx1-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	power_key_irq: power-key-irq {
-+		samsung,pins = "gpx1-2";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&serial_3 {
-+	status = "okay";
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	num-slots = <1>;
-+	broken-cd;
-+	caps2-mmc-hs200-1_8v;
-+	supports-highspeed;
-+	non-removable;
-+	card-detect-delay = <200>;
-+	clock-frequency = <400000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+	slot@0 {
-+		reg = <0>;
-+		bus-width = <8>;
-+	};
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	num-slots = <1>;
-+	supports-highspeed;
-+	card-detect-delay = <200>;
-+	clock-frequency = <400000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <2 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+	slot@0 {
-+		reg = <0>;
-+		bus-width = <4>;
-+	};
-+};
-+
-+&hsi2c_9 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	tpm@20 {
-+		compatible = "infineon,slb9645tt";
-+		reg = <0x20>;
-+		/* Unused irq; but still need to configure the pins */
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&tpm_irq>;
-+	};
-+};
-+
-+/*
-+ * Use longest HW watchdog in SoC (32 seconds) since the hardware
-+ * watchdog provides no debugging information (compared to soft/hard
-+ * lockup detectors) and so should be last resort.
-+ */
-+&watchdog {
-+	timeout-sec = <32>;
-+};
--- 
-1.7.9.5
+So please just review dt and clock stuff.
+
+Thanks,
+Kukjin
