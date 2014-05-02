@@ -1,88 +1,80 @@
 From: Beomho Seo <beomho.seo@samsung.com>
-Subject: [PATCH v2 2/3] ARM: dts: add cm36651 light/proximity sensor node
-Date: Fri, 02 May 2014 15:37:55 +0900
-Message-ID: <53633D43.5050506@samsung.com>
+Subject: [PATCH v2 3/3] ARM: dts: fixed gpio key node for exynos4412
+Date: Fri, 02 May 2014 15:38:03 +0900
+Message-ID: <53633D4B.9070500@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59618 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752120AbaEBGh4 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:56866 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752127AbaEBGiE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 02:37:56 -0400
+	Fri, 2 May 2014 02:38:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Exynos4412-trats2 board have light/proximity sensor.
-This patch add cm36651 light/ proximity sensor node for exynos4412.
-cm36651 is required properties as below.
-- Use i2c-gpio for cm36651 sensor.
-- Use fixed regulator for the IR LED.
-  It is a part of the cm36651 for proximity detection.
-- cm36651 is i2c device driver so need to use i2c-gpio driver.
+This patch fixed gpio key device node.
+First, fix incorrect gpio property.
+And then, add ok-key node where locate bottom center.
+I have tested on exynos4412-trats2 board.
 
 Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 ---
 Changes in v2:
-- Compatible is changed according to device tree binding document and driver.
+- None.
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts |   22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 1279a8a..d599215 100644
+index d599215..41305e2 100644
 --- a/arch/arm/boot/dts/exynos4412-trats2.dts
 +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -21,6 +21,7 @@
+@@ -87,18 +87,18 @@
+ 		compatible = "gpio-keys";
 
- 	aliases {
- 		i2c8 = &i2c_ak8975;
-+		i2c9 = &i2c_cm36651;
- 	};
-
- 	memory {
-@@ -71,6 +72,14 @@
- 			enable-active-high;
+ 		key-down {
+-			interrupt-parent = <&gpj1>;
+-			interrupts = <2 0>;
+-			gpios = <&gpj1 2 1>;
++			interrupt-parent = <&gpx3>;
++			interrupts = <3 0>;
++			gpios = <&gpx3 3 1>;
+ 			linux,code = <114>;
+ 			label = "volume down";
+ 			debounce-interval = <10>;
  		};
 
-+		ps_als_reg: voltage-regulator-2 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "LED_A_3.0V";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			gpio = <&gpj0 5 0>;
-+			enable-active-high;
-+		};
- 		/* More to come */
- 	};
-
-@@ -500,6 +509,23 @@
- 		};
- 	};
-
-+	i2c_cm36651: i2c-gpio-2 {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpf0 0 0>, <&gpf0 1 0>;
-+		i2c-gpio,delay-us = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "okay";
-+
-+		cm36651@18 {
-+			compatible = "capella,cm36651";
-+			reg = <0x18>;
-+			interrupt-parent = <&gpx0>;
+ 		key-up {
+-			interrupt-parent = <&gpj1>;
+-			interrupts = <1 0>;
+-			gpios = <&gpj1 1 1>;
++			interrupt-parent = <&gpx2>;
 +			interrupts = <2 0>;
-+			vled-supply = <&ps_als_reg>;
-+		};
-+	};
++			gpios = <&gpx2 2 1>;
+ 			linux,code = <115>;
+ 			label = "volume up";
+ 			debounce-interval = <10>;
+@@ -113,6 +113,16 @@
+ 			debounce-interval = <10>;
+ 			gpio-key,wakeup;
+ 		};
 +
- 	spi_1: spi@13930000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi1_bus>;
++		key-ok {
++			interrupt-parent = <&gpx0>;
++			interrupts = <1 0>;
++			gpios = <&gpx0 1 1>;
++			linux,code = <139>;
++			label = "ok";
++			debounce-inteval = <10>;
++			gpio-key,wakeup;
++		};
+ 	};
+
+ 	adc: adc@126C0000 {
 -- 
 1.7.9.5
