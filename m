@@ -1,144 +1,40 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/5] ARM: S5PV210: Remove camera support from mach-goni.c
-Date: Fri, 02 May 2014 15:07:28 +0900
-Message-ID: <081001cf65cc$cbef8700$63ce9500$@samsung.com>
-References: <1397583272-28295-1-git-send-email-s.nawrocki@samsung.com>
- <1397583272-28295-2-git-send-email-s.nawrocki@samsung.com>
+From: Beomho Seo <beomho.seo@samsung.com>
+Subject: [PATCH v2 0/3] ARM: dts: add device data for exynos4412-trats2
+Date: Fri, 02 May 2014 15:37:38 +0900
+Message-ID: <53633D32.8000809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1397583272-28295-2-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
-Sender: linux-media-owner@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-media@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:8853 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751501AbaEBGhl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 May 2014 02:37:41 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Sylwester Nawrocki wrote:
-> 
-> S5PV210 is going to get DT support, so we can remove the camera
-> bits from the only board using camera on S5PV210. This allows to
-> clean the exynos4-is driver by dropping code for non-dt platforms.
-> This patch can be dropped if a patch removing the whole board
-> file is applied first.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+This patchset add some device node for exynos4412-trats2.
+It is based on v3.15-next/dt-samsung-2 branch.
 
-Hi Sylwester,
+exynos4412-trats2.dts
+- Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-kasei,ak8975".
+- Add cm36651 light/proximity sensor device node.
+- Change gpio-key device node. fix incorrect gpio property, and then add "ok-key" node.
 
-Cleanup is always welcome ;-)
+Changes in v2:
+- Change ak8975 magnetic sensor compatible according to binding document.
+- Change cm36651 light/proximity sensor compatible according to binding document and driver.
 
-I think, when this series is ready for mainline, this will be handled in
-media tree. So,
+Beomho Seo (3):
+  ARM: dts: fix incorrect compatible for exynos4412
+  ARM: dts: add cm36651 light/proximity sensor node
+  ARM: dts: fixed gpio key node for exynos4412
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+ arch/arm/boot/dts/exynos4412-trats2.dts |   50 ++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 7 deletions(-)
 
-Thanks,
-Kukjin
-
-> ---
->  arch/arm/mach-s5pv210/mach-goni.c |   51
----------------------------------
-> ----
->  1 file changed, 51 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-
-> s5pv210/mach-goni.c
-> index b41a38a..6c719ec 100644
-> --- a/arch/arm/mach-s5pv210/mach-goni.c
-> +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -49,11 +49,6 @@
->  #include <plat/clock.h>
->  #include <plat/samsung-time.h>
->  #include <plat/mfc.h>
-> -#include <plat/camport.h>
-> -
-> -#include <media/v4l2-mediabus.h>
-> -#include <media/s5p_fimc.h>
-> -#include <media/noon010pc30.h>
-> 
->  #include "common.h"
-> 
-> @@ -285,14 +280,6 @@ static void __init goni_tsp_init(void)
->  /* USB OTG */
->  static struct s3c_hsotg_plat goni_hsotg_pdata;
-> 
-> -static void goni_camera_init(void)
-> -{
-> -	s5pv210_fimc_setup_gpio(S5P_CAMPORT_A);
-> -
-> -	/* Set max driver strength on CAM_A_CLKOUT pin. */
-> -	s5p_gpio_set_drvstr(S5PV210_GPE1(3), S5P_GPIO_DRVSTR_LV4);
-> -}
-> -
->  /* MAX8998 regulators */
->  #if defined(CONFIG_REGULATOR_MAX8998) ||
-> defined(CONFIG_REGULATOR_MAX8998_MODULE)
-> 
-> @@ -825,34 +812,6 @@ static void goni_setup_sdhci(void)
->  	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
->  };
-> 
-> -static struct noon010pc30_platform_data noon010pc30_pldata = {
-> -	.clk_rate	= 16000000UL,
-> -	.gpio_nreset	= S5PV210_GPB(2), /* CAM_CIF_NRST */
-> -	.gpio_nstby	= S5PV210_GPB(0), /* CAM_CIF_NSTBY */
-> -};
-> -
-> -static struct i2c_board_info noon010pc30_board_info = {
-> -	I2C_BOARD_INFO("NOON010PC30", 0x60 >> 1),
-> -	.platform_data = &noon010pc30_pldata,
-> -};
-> -
-> -static struct fimc_source_info goni_camera_sensors[] = {
-> -	{
-> -		.mux_id		= 0,
-> -		.flags		= V4L2_MBUS_PCLK_SAMPLE_FALLING |
-> -				  V4L2_MBUS_VSYNC_ACTIVE_LOW,
-> -		.fimc_bus_type	= FIMC_BUS_TYPE_ITU_601,
-> -		.board_info	= &noon010pc30_board_info,
-> -		.i2c_bus_num	= 0,
-> -		.clk_frequency	= 16000000UL,
-> -	},
-> -};
-> -
-> -static struct s5p_platform_fimc goni_fimc_md_platdata __initdata = {
-> -	.source_info	= goni_camera_sensors,
-> -	.num_clients	= ARRAY_SIZE(goni_camera_sensors),
-> -};
-> -
->  /* Audio device */
->  static struct platform_device goni_device_audio = {
->  	.name = "smdk-audio",
-> @@ -874,10 +833,6 @@ static struct platform_device *goni_devices[]
-> __initdata = {
->  	&s5p_device_mixer,
->  	&s5p_device_sdo,
->  	&s3c_device_i2c0,
-> -	&s5p_device_fimc0,
-> -	&s5p_device_fimc1,
-> -	&s5p_device_fimc2,
-> -	&s5p_device_fimc_md,
->  	&s3c_device_hsmmc0,
->  	&s3c_device_hsmmc1,
->  	&s3c_device_hsmmc2,
-> @@ -946,14 +901,8 @@ static void __init goni_machine_init(void)
->  	/* FB */
->  	s3c_fb_set_platdata(&goni_lcd_pdata);
-> 
-> -	/* FIMC */
-> -	s3c_set_platdata(&goni_fimc_md_platdata,
-> sizeof(goni_fimc_md_platdata),
-> -			 &s5p_device_fimc_md);
-> -
->  	s3c_hsotg_set_platdata(&goni_hsotg_pdata);
-> 
-> -	goni_camera_init();
-> -
->  	/* SPI */
->  	spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_info));
-> 
-> --
-> 1.7.9.5
+-- 
+1.7.9.5
