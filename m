@@ -1,86 +1,73 @@
-From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Fri, 2 May 2014 12:41:01 +0100
-Message-ID: <20140502114054.GA3805@e103592.cambridge.arm.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<20140429181601.GE3582@e103592.cambridge.arm.com>
-	<CANEJEGs6TXNzE8cWYgEKfFSsD2w5XiYvwSbhQ_+gtfzfs+6udA@mail.gmail.com>
-	<7044616.kdaKNu3Qet@wuerfel> <53628751.9000609@wwwdotorg.org>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [RFC PATCH] PM / OPP: move cpufreq specific OPP functions out of
+ generic OPP library
+Date: Fri, 2 May 2014 07:15:58 -0500
+Message-ID: <CAGo_u6oT6nK0-Sj8yp9C2r8FkQ8SXF8LvhbHxDjAoGs+Pd=szA@mail.gmail.com>
+References: <1398992810-14957-1-git-send-email-nm@ti.com>
+	<CAKohpokEuZ69HnnKE89maXk=21cgAMjEYjEvEcaoBpg4bLRsGg@mail.gmail.com>
+	<CAGo_u6ohKZh+zKWSzGbvT+AKgnhSjzX7v9isqpd2pc-Cpmxocg@mail.gmail.com>
+	<CAKohponv-p20=www51rW13RSG6=ACgDrRDfL9Xd26ePgjkpWfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53628751.9000609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:48423 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751987AbaEBMQA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 May 2014 08:16:00 -0400
+In-Reply-To: <CAKohponv-p20=www51rW13RSG6=ACgDrRDfL9Xd26ePgjkpWfA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, May 01, 2014 at 06:41:37PM +0100, Stephen Warren wrote:
-> On 04/29/2014 03:00 PM, Arnd Bergmann wrote:
-> ...
-> > Yes. It's very complicated unfortunately, because we have to be
-> > able to deal with arbitrary combinations of a lot of oddball cases
-> > that can show up in random SoCs:
-> ...
-> > - a device may have DMA access to a bus that is invisible to the CPU
-> 
-> The issue is slightly more general than that. It's more that the bus
-> structure "seen" by a device is simply /different/ than that seen by the
-> CPU. I don't think it's a requirement that there be CPU-invisible buses
-> for that to be true.
-> 
-> For example, I could conceive of a HW setup like:
-> 
-> primary CPU bus ----------------------> other devices
->    |    \_________________      /
->    |                      \    |
->    v                      v    ^
-> device registers ----> some secondary bus
->                           |
->                           v
->                        memory
-> 
-> Here, all the buses are visible to the CPU, yet the path that
-> transactions take between the buses is simply different to the CPU. More
-> complex situations than the above, while still maintaining that
-> description, are certainly possible.
-> 
+On Fri, May 2, 2014 at 12:22 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 2 May 2014 10:48, Nishanth Menon <nm@ti.com> wrote:
+>> On Thu, May 1, 2014 at 11:30 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>>>> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
+>>>> new file mode 100644
+>>>> index 0000000..2602ff8
+>>>> --- /dev/null
+>>>> +++ b/drivers/cpufreq/cpufreq_opp.c
+>>>> @@ -0,0 +1,102 @@
+>>>> +/*
+>>>> + * Generic OPP Interface for CPUFREQ drivers
+>>>> + *
+>>>> + * Copyright (C) 2009-2014 Texas Instruments Incorporated.
+>>>> + *     Nishanth Menon
+>>>> + *     Romit Dasgupta
+>>>> + *     Kevin Hilman
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or modify
+>>>> + * it under the terms of the GNU General Public License version 2 as
+>>>> + * published by the Free Software Foundation.
+>>>> + */
+>>>
+>>> I hope you have just copy pasted routines to this file, and haven't done
+>>> even the most minor modification in those, as its hard to review it.
+>>
+>> there is code replacement ofcourse ->
+>> * the logic of walking down the list holding a mutex has been replaced
+>> with rcu locks,
+>> * instead of reading internal data structure and generating the list,
+>> use the existing search API that does exactly the same.
+>> * Documentation update for the same.
+>
+> Hmm, actually if I would have written this patch, then probably I would
+> have done the same thing, but looking from the reviewers perspective,
+> it would be much more easy if we can separate things into patches.
+>
+> So, maybe do these changes first in opp.c only and then finally a
+> patch that just moves things around.
+>
+>> Both are needed if you have to move the code out. functionally, both
+>> are equivalent
+>
+> That's an assumption and we never know when we might have screwed
+> the code :) .. And so more careful review of those parts is required :)
 
-I tend to think in terms of links rather than buses.  A link is
-effectively a 1:1 point-to-point bus that passes all transactions with
-no modification.
+True. Will do the same as suggested for the formal series. Thanks for
+your feedback and review.
 
-So, although "some secondary bus" is visible to the CPUs, crucially the
-link "some secondary bus" to "other devices" is not visible -- in the
-sense that transactions issued by the CPUs never flow down that link.
-Thus, if the link actually has remappings associated with it, then
-devices mastering onto "some secondary bus" will observe those mappings
-but the CPUs won't.  That's precisely what we need to know about when
-configuring DMA buffers.
-
-"invisible bus" situations are therefore a subset of "invisible link"
-situations, and it is the latter which are the source of the complexity.
-
-However, if the extra link(s) don't have any special characteristics, it
-may be software-transparent with no need for description, because we
-can pretend for logical purposes that there is a single bus in that case.
-Effectively that what we've relied on for simpler systems up to now.
-
-I'm assming in your example that the direct link between "primary CPU
-bus" and "other devices" is always used by preference, instead of CPUs'
-transactions toward "other devices" being sent to "some secondary bus"
-first.
-
-Cheers
----Dave
+Regards,
+Nishanth Menon
