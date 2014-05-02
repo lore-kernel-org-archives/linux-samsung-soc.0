@@ -1,50 +1,59 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH 0/3] Add Exynos5800 support
-Date: Fri,  2 May 2014 18:33:38 +0530
-Message-ID: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH 2/3] ARM: dts: Add Exynos5800 dt file
+Date: Fri,  2 May 2014 18:33:40 +0530
+Message-ID: <1399035821-25096-3-git-send-email-arun.kk@samsung.com>
+References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:54020 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751827AbaEBNDu (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:45869 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751827AbaEBND5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 09:03:50 -0400
+	Fri, 2 May 2014 09:03:57 -0400
+In-Reply-To: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, arunkk.samsung@gmail.com
 
-Exynos5800 is a derivative of Exynos5420 with higher
-clock speeds and most other IP blocks remaining the same
-except for a few.
-Due to the similarities with 5420, following is done to
-achieve maximum code re-use:
-- Use the same 5420 clock file with few changes for adding
-  extra 5800 clocks.
-- Include the 5420 dtsi into 5800 and override required
-  properties.
+Most of the nodes of exynos5420 remains same for exynos5800.
+So the exynos5420.dtsi is included in exynos5800 and the changed
+node properties will be overriden.
 
-This series is dependent on the following patches
-1) Adding node labels for Exynos5420
-   https://patchwork.kernel.org/patch/4092701/
-2) Adding pwm nodes for backlight
-   https://patchwork.kernel.org/patch/4101881/
-
-Alim Akhtar (1):
-  clk: exynos5420: Add 5800 specific clocks
-
-Arun Kumar K (2):
-  ARM: dts: Add Exynos5800 dt file
-  ARM: dts: Add peach-pi board support
-
- .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
- arch/arm/boot/dts/Makefile                         |    3 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts          |  144 +++++++++++++++
- arch/arm/boot/dts/exynos5800.dtsi                  |   24 +++
- drivers/clk/samsung/clk-exynos5420.c               |  192 +++++++++++++++-----
- include/dt-bindings/clock/exynos5420.h             |    1 +
- 6 files changed, 320 insertions(+), 47 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+ arch/arm/boot/dts/exynos5800.dtsi |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
  create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
 
+diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+new file mode 100644
+index 0000000..6979fc7
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5800.dtsi
+@@ -0,0 +1,24 @@
++/*
++ * SAMSUNG EXYNOS5800 SoC device tree source
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
++ * EXYNOS5800 based board files can include this file and provide
++ * values for board specfic bindings.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "exynos5420.dtsi"
++
++/ {
++	compatible = "samsung,exynos5800", "samsung,exynos5";
++};
++
++&clock {
++	compatible = "samsung,exynos5800-clock";
++};
 -- 
 1.7.9.5
