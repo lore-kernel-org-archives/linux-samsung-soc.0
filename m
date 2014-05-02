@@ -1,80 +1,39 @@
-From: Beomho Seo <beomho.seo@samsung.com>
-Subject: [PATCH v2 3/3] ARM: dts: fixed gpio key node for exynos4412
-Date: Fri, 02 May 2014 15:38:03 +0900
-Message-ID: <53633D4B.9070500@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] ARM: exynos: register sched_clock callback
+Date: Fri, 02 May 2014 10:30:18 +0200
+Message-ID: <5363579A.7040803@linaro.org>
+References: <1398331286-2020-1-git-send-email-vincent.guittot@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56866 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752127AbaEBGiE (ORCPT
+Received: from mail-we0-f173.google.com ([74.125.82.173]:49779 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813AbaEBIaR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 02:38:04 -0400
+	Fri, 2 May 2014 04:30:17 -0400
+Received: by mail-we0-f173.google.com with SMTP id w61so4181693wes.18
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 May 2014 01:30:15 -0700 (PDT)
+In-Reply-To: <1398331286-2020-1-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: tglx@linutronix.de
 
-This patch fixed gpio key device node.
-First, fix incorrect gpio property.
-And then, add ok-key node where locate bottom center.
-I have tested on exynos4412-trats2 board.
+On 04/24/2014 11:21 AM, Vincent Guittot wrote:
+> Use the clocksource mct-frc for sched_clock
+>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
----
-Changes in v2:
-- None.
----
- arch/arm/boot/dts/exynos4412-trats2.dts |   22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index d599215..41305e2 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -87,18 +87,18 @@
- 		compatible = "gpio-keys";
+[ ... ]
 
- 		key-down {
--			interrupt-parent = <&gpj1>;
--			interrupts = <2 0>;
--			gpios = <&gpj1 2 1>;
-+			interrupt-parent = <&gpx3>;
-+			interrupts = <3 0>;
-+			gpios = <&gpx3 3 1>;
- 			linux,code = <114>;
- 			label = "volume down";
- 			debounce-interval = <10>;
- 		};
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
- 		key-up {
--			interrupt-parent = <&gpj1>;
--			interrupts = <1 0>;
--			gpios = <&gpj1 1 1>;
-+			interrupt-parent = <&gpx2>;
-+			interrupts = <2 0>;
-+			gpios = <&gpx2 2 1>;
- 			linux,code = <115>;
- 			label = "volume up";
- 			debounce-interval = <10>;
-@@ -113,6 +113,16 @@
- 			debounce-interval = <10>;
- 			gpio-key,wakeup;
- 		};
-+
-+		key-ok {
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <1 0>;
-+			gpios = <&gpx0 1 1>;
-+			linux,code = <139>;
-+			label = "ok";
-+			debounce-inteval = <10>;
-+			gpio-key,wakeup;
-+		};
- 	};
-
- 	adc: adc@126C0000 {
--- 
-1.7.9.5
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
