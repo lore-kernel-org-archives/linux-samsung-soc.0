@@ -1,84 +1,35 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [RFC PATCH] PM / OPP: move cpufreq specific OPP functions out of
- generic OPP library
-Date: Fri, 2 May 2014 10:00:17 +0530
-Message-ID: <CAKohpokEuZ69HnnKE89maXk=21cgAMjEYjEvEcaoBpg4bLRsGg@mail.gmail.com>
-References: <1398992810-14957-1-git-send-email-nm@ti.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Fri, 02 May 2014 10:26:08 +0530
+Message-ID: <53632568.5020200@linaro.org>
+References: <1398243705-31151-1-git-send-email-tushar.behera@linaro.org> <20140424133920.GA12304@sirena.org.uk> <5359E18B.60600@linaro.org> <20140429222915.GU15125@sirena.org.uk> <5360E5E7.8090807@linaro.org> <20140430180314.GA3245@sirena.org.uk> <53623004.5010805@linaro.org> <20140501141510.GW3245@sirena.org.uk> <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com> <20140501164003.GC3245@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1398992810-14957-1-git-send-email-nm@ti.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140501164003.GC3245@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2 May 2014 06:36, Nishanth Menon <nm@ti.com> wrote:
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 1fbe11f..281ccfb 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -17,6 +17,11 @@ config CPU_FREQ
->
->  if CPU_FREQ
->
-> +config CPU_FREQ_PM_OPP
-> +       bool
-> +       depends on PM_OPP
-> +       default y
-> +
+On 05/01/2014 10:10 PM, Mark Brown wrote:
+> On Thu, May 01, 2014 at 08:54:14AM -0700, Doug Anderson wrote:
+> 
+>> This is exactly the thing (expected clock parenting) we agreed could
+>> be put in the device tree I think.  ...but I don't know that anyone
+>> proposed exactly how that would work.
+> 
+> There's patches been posted by (IIRC) Sylvester Nawrocki for this which
+> I think Mike was basically happy with - I don't immediately see them in
+> -next though, but I may be looking in the wrong place.
+> 
 
-Don't need this
+Right, there are some patches from Sylwester regarding this. I dont'
+think the patches are accepted yet as Rob has some reservations against
+the clock parents.
 
->  config CPU_FREQ_GOV_COMMON
->         bool
->
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 0dbb963..16eea68 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -1,5 +1,7 @@
->  # CPUfreq core
->  obj-$(CONFIG_CPU_FREQ)                 += cpufreq.o freq_table.o
-> +obj-$(CONFIG_CPU_FREQ_PM_OPP)          += cpufreq_opp.o
+https://lkml.org/lkml/2014/4/9/173
 
-Just use: obj-$(CONFIG_PM_OPP)
-
-> +
->  # CPUfreq stats
->  obj-$(CONFIG_CPU_FREQ_STAT)             += cpufreq_stats.o
->
-
-> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
-> new file mode 100644
-> index 0000000..2602ff8
-> --- /dev/null
-> +++ b/drivers/cpufreq/cpufreq_opp.c
-> @@ -0,0 +1,102 @@
-> +/*
-> + * Generic OPP Interface for CPUFREQ drivers
-> + *
-> + * Copyright (C) 2009-2014 Texas Instruments Incorporated.
-> + *     Nishanth Menon
-> + *     Romit Dasgupta
-> + *     Kevin Hilman
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-
-I hope you have just copy pasted routines to this file, and haven't done
-even the most minor modification in those, as its hard to review it.
-
-> +#include <linux/slab.h>
-
-Sure? That's it, nothing else required to compile this file independently?
-As a rule include all the files directly which might be required for compilation
-of this file and don't expect them to be included by some other header
-files indirectly.
-
-> diff --git a/drivers/cpufreq/cpufreq_opp.h b/drivers/cpufreq/cpufreq_opp.h
-
-Two problems, driver may lie in arch/ as well, though we don't recommend
-them, secondly move these in cpufreq.h, don't need a header here for sure.
+-- 
+Tushar Behera
