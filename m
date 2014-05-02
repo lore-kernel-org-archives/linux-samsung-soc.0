@@ -1,51 +1,55 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: dts: fix incorrect compatible for exynos4412
-Date: Fri, 02 May 2014 20:06:50 +0200
-Message-ID: <5363DEBA.6080804@gmail.com>
-References: <53633D38.9000108@samsung.com>
+Subject: Re: [PATCHv4 0/4] Enable usbphy and hsotg for exynos4
+Date: Fri, 02 May 2014 20:21:02 +0200
+Message-ID: <5363E20E.9010802@gmail.com>
+References: <1399004769-31033-1-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f43.google.com ([209.85.216.43]:55577 "EHLO
-	mail-qa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752541AbaEBSGw (ORCPT
+Received: from mail-qa0-f48.google.com ([209.85.216.48]:37793 "EHLO
+	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752193AbaEBSVE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 14:06:52 -0400
-In-Reply-To: <53633D38.9000108@samsung.com>
+	Fri, 2 May 2014 14:21:04 -0400
+In-Reply-To: <1399004769-31033-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Beomho Seo <beomho.seo@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, t.figa@samsung.com, k.debski@samsung.com
 
-On 02.05.2014 08:37, Beomho Seo wrote:
-> This patch fixed incorrect compatible for ak8975 magnetic sensor.
-> ak8975 magnetic sensor use compatible "ak8975" or "asahi-kasei,ak8975"
-> In this patch, use "asahi-kasei,ak8975" according to dt bindings document.
+Hi Chanho,
+
+On 02.05.2014 06:26, Chanho Park wrote:
+> This patchset enables a exynos4 usbphy and hsotg DT node for exynos4. The usb
+> phy node uses generic exynos phy driver. The driver uses PMU syscon and SYSREG
+> syscon phandles.
 >
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> ---
-> Changes in v2:
-> - Compatible is changed according to device tree binding document.
-> ---
->   arch/arm/boot/dts/exynos4412-trats2.dts |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Change from v3:
+>   - Place a status field at the end of the nodes for readability
 >
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index 3228506..1279a8a 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -494,7 +494,7 @@
->   		status = "okay";
+> Change from v2:
+>   - Split 4x12 compatibles to 4212 and 4412
 >
->   		ak8975@0c {
-> -			compatible = "ak,ak8975";
-> +			compatible = "asahi-kasei,ak8975";
->   			reg = <0x0c>;
->   			gpios = <&gpj0 7 0>;
->   		};
+> Changes from v1: Applied Tomasz Figa's comments
+>   - Document PMU syscon compatibles for exynos4210/4x12
+>   - Use clock macro instead of raw clock number
+>   - Correct phy name to "usb2-phy"
 >
+> Chanho Park (4):
+>    ARM: dts: exynos4: add PMU syscon node
+>    ARM: dts: exynos4: add exynos_usbphy node
+>    ARM: dts: exynos4: add hsotg device node
+>    ARM: dts: exynos4412-trats2: enable usb nodes
+>
+>   .../devicetree/bindings/arm/samsung/pmu.txt        |  3 +++
+>   arch/arm/boot/dts/exynos4.dtsi                     | 26 ++++++++++++++++++++++
+>   arch/arm/boot/dts/exynos4412-trats2.dts            | 10 +++++++++
+>   arch/arm/boot/dts/exynos4x12.dtsi                  |  9 ++++++++
+>   4 files changed, 48 insertions(+)
+>
+
+Looks good. Feel free to add
 
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
