@@ -1,50 +1,44 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv4 4/4] ARM: dts: exynos4412-trats2: enable usb nodes
-Date: Fri, 02 May 2014 13:26:09 +0900
-Message-ID: <1399004769-31033-5-git-send-email-chanho61.park@samsung.com>
-References: <1399004769-31033-1-git-send-email-chanho61.park@samsung.com>
+From: Beomho Seo <beomho.seo@samsung.com>
+Subject: Re: [RESEND PATCH 0/3] ARM: dts: add device data for exynos4412-trats2
+Date: Fri, 02 May 2014 13:29:10 +0900
+Message-ID: <53631F16.7010708@samsung.com>
+References: <53327CE3.8030800@samsung.com> <5359C2B9.5040003@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45054 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858AbaEBE0W (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34630 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751554AbaEBE3x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 00:26:22 -0400
-In-reply-to: <1399004769-31033-1-git-send-email-chanho61.park@samsung.com>
+	Fri, 2 May 2014 00:29:53 -0400
+In-reply-to: <5359C2B9.5040003@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, t.figa@samsung.com, k.debski@samsung.com, Chanho Park <chanho61.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-This patch enables exynos_usbphy and hsotg device nodes.
+Hi all,
 
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Didn't have Any other comment for this patch set?
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 9583563..a16db6c 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -665,6 +665,16 @@
- 		};
- 	};
- 
-+	exynos-usbphy@125B0000 {
-+		status = "okay";
-+	};
-+
-+	hsotg@12480000 {
-+		vusb_d-supply = <&ldo15_reg>;
-+		vusb_a-supply = <&ldo12_reg>;
-+		status = "okay";
-+	};
-+
- 	thermistor-ap@0 {
- 		compatible = "ntc,ncp15wb473";
- 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
--- 
-1.8.3.2
+On 04/25/2014 11:04 AM, Beomho Seo wrote:
+> This patchset add some device node for exynos4412-trats2.
+> It is based on v3.15-next/dt-samsung-2 branch.
+> 
+> exynos4412-trats2.dts
+> - Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-kasei,ak8975".
+> - Add cm36651 light/proximity sensor device node.
+> - Change gpio-key device node. fix incorrect gpio property, and then add "ok-key" node.
+> 
+> Beomho Seo (3):
+>   ARM: dts: fix incorrect compatible for exynos4412
+>   ARM: dts: add cm36651 light/proximity sensor node
+>   ARM: dts: fixed gpio key node for exynos4412
+> 
+>  arch/arm/boot/dts/exynos4412-trats2.dts |   50 ++++++++++++++++++++++++++-----
+>  1 file changed, 43 insertions(+), 7 deletions(-)
+> 
+
+Thanks
+Beomho Seo
