@@ -1,79 +1,61 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [RFC PATCH] PM / OPP: move cpufreq specific OPP functions out of
- generic OPP library
-Date: Fri, 2 May 2014 10:52:59 +0530
-Message-ID: <CAKohponv-p20=www51rW13RSG6=ACgDrRDfL9Xd26ePgjkpWfA@mail.gmail.com>
-References: <1398992810-14957-1-git-send-email-nm@ti.com>
-	<CAKohpokEuZ69HnnKE89maXk=21cgAMjEYjEvEcaoBpg4bLRsGg@mail.gmail.com>
-	<CAGo_u6ohKZh+zKWSzGbvT+AKgnhSjzX7v9isqpd2pc-Cpmxocg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [RESEND PATCH 0/3] ARM: dts: add device data for exynos4412-trats2
+Date: Fri, 02 May 2014 14:29:00 +0900
+Message-ID: <04ea01cf65c7$6bfd8db0$43f8a910$@samsung.com>
+References: <53327CE3.8030800@samsung.com> <5359C2B9.5040003@samsung.com>
+ <53631F16.7010708@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAGo_u6ohKZh+zKWSzGbvT+AKgnhSjzX7v9isqpd2pc-Cpmxocg@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47249 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750912AbaEBF3C convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 May 2014 01:29:02 -0400
+In-reply-to: <53631F16.7010708@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Beomho Seo' <beomho.seo@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'Myungjoo Ham' <myungjoo.ham@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>
 
-On 2 May 2014 10:48, Nishanth Menon <nm@ti.com> wrote:
-> On Thu, May 1, 2014 at 11:30 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
->>> new file mode 100644
->>> index 0000000..2602ff8
->>> --- /dev/null
->>> +++ b/drivers/cpufreq/cpufreq_opp.c
->>> @@ -0,0 +1,102 @@
->>> +/*
->>> + * Generic OPP Interface for CPUFREQ drivers
->>> + *
->>> + * Copyright (C) 2009-2014 Texas Instruments Incorporated.
->>> + *     Nishanth Menon
->>> + *     Romit Dasgupta
->>> + *     Kevin Hilman
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + */
->>
->> I hope you have just copy pasted routines to this file, and haven't done
->> even the most minor modification in those, as its hard to review it.
->
-> there is code replacement ofcourse ->
-> * the logic of walking down the list holding a mutex has been replaced
-> with rcu locks,
-> * instead of reading internal data structure and generating the list,
-> use the existing search API that does exactly the same.
-> * Documentation update for the same.
+Beomho Seo wrote:
+> 
+> Hi all,
+> 
+> Didn't have Any other comment for this patch set?
+> 
+> On 04/25/2014 11:04 AM, Beomho Seo wrote:
+> > This patchset add some device node for exynos4412-trats2.
+> > It is based on v3.15-next/dt-samsung-2 branch.
+> >
+> > exynos4412-trats2.dts
+> > - Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-
+> kasei,ak8975".
+> > - Add cm36651 light/proximity sensor device node.
+> > - Change gpio-key device node. fix incorrect gpio property, and then add
+> "ok-key" node.
+> >
+> > Beomho Seo (3):
+> >   ARM: dts: fix incorrect compatible for exynos4412
+> >   ARM: dts: add cm36651 light/proximity sensor node
+> >   ARM: dts: fixed gpio key node for exynos4412
+> >
+> >  arch/arm/boot/dts/exynos4412-trats2.dts |   50
+> ++++++++++++++++++++++++++-----
+> >  1 file changed, 43 insertions(+), 7 deletions(-)
+> >
+> 
+I have no objection on this series but need to get ack from dt guys.
 
-Hmm, actually if I would have written this patch, then probably I would
-have done the same thing, but looking from the reviewers perspective,
-it would be much more easy if we can separate things into patches.
+BTW, shouldn't it include vendor name in compatible?...
 
-So, maybe do these changes first in opp.c only and then finally a
-patch that just moves things around.
+And according to dt bindings(iio/magnetometer/ak8975.txt), it should be:
 
-> Both are needed if you have to move the code out. functionally, both
-> are equivalent
+"compatible = "asahi-kasei,ak8975";"
 
-That's an assumption and we never know when we might have screwed
-the code :) .. And so more careful review of those parts is required :)
+even though "ak8975" also included in the driver "drivers/iio/magnetometer/ak8975.c"...
 
->>> diff --git a/drivers/cpufreq/cpufreq_opp.h b/drivers/cpufreq/cpufreq_opp.h
->>
->> Two problems, driver may lie in arch/ as well, though we don't recommend
->> them, secondly move these in cpufreq.h, don't need a header here for sure.
->
-> There are none at the moment. ideally, we'd like to discourage folks
-
-Yes, we do. :)
-
-> putting cpufreq drivers in arch/ given the amount of effort you have
-> undertaken in bringing them all here. but I have personally no strong
-> objection to getting rid of the private header and using the generic
-> cpufreq header.
->
-> Otherwise, I assume you are ok with this approach and will post a
-> formal patch by monday.
-
-Yep.
+Thanks,
+Kukjin
