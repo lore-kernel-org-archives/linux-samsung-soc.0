@@ -1,84 +1,181 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5420
-Date: Fri, 02 May 2014 19:32:45 +0200
-Message-ID: <5363D6BD.6070001@gmail.com>
-References: <1399034937-24683-1-git-send-email-arun.kk@samsung.com> <CAD=FV=V30qfsRfFZ7LXnF9VmMo5dGJx6FfOaKwGrLtS5_r7PGQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] usb: ohci-exynos: Add facility to use phy provided
+ by the generic phy framework
+Date: Fri, 02 May 2014 19:39:01 +0200
+Message-ID: <5363D835.7010804@gmail.com>
+References: <1399034855-9686-1-git-send-email-gautam.vivek@samsung.com> <1399034855-9686-4-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:55959 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752933AbaEBRcq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 13:32:46 -0400
-In-Reply-To: <CAD=FV=V30qfsRfFZ7LXnF9VmMo5dGJx6FfOaKwGrLtS5_r7PGQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1399034855-9686-4-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
 
-Hi,
+Hi Vivek,
 
-On 02.05.2014 17:44, Doug Anderson wrote:
-> Arun,
+This looks much better, but there still are some issues. Please see my 
+comments inline.
+
+On 02.05.2014 14:47, Vivek Gautam wrote:
+> Add support to consume phy provided by Generic phy framework.
+> Keeping the support for older usb-phy intact right now, in order
+> to prevent any functionality break in absence of relevant
+> device tree side change for ohci-exynos.
+> Once we move to new phy in the device nodes for ohci, we can
+> remove the support for older phys.
 >
-> On Fri, May 2, 2014 at 5:48 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
->> Adds the PWM nodes to 5420 pinctrl dtsi file.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos5420-pinctrl.dtsi |   28 ++++++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> index e62c8eb..ba686e4 100644
->> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> @@ -624,6 +624,34 @@
->>                          samsung,pin-drv = <0>;
->>                  };
->>
->> +               pwm0_out: pwm0-out {
->> +                       samsung,pins = "gpb2-0";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               pwm1_out: pwm1-out {
->> +                       samsung,pins = "gpb2-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               pwm2_out: pwm2-out {
->> +                       samsung,pins = "gpb2-2";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               pwm3_out: pwm3-out {
->> +                       samsung,pins = "gpb2-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->>                  i2c7_hs_bus: i2c7-hs-bus {
->>                          samsung,pins = "gpb2-2", "gpb2-3";
->>                          samsung,pin-function = <3>;
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> ---
 >
-> Possibly pwm3-out belongs below this one (since the start pin is
-> "larger" than the start pin of i2c7-hs-bus).  Tomasz probably has a
-> definite opinion on this.
+> Changes from v4:
+>   - Removed 'phy-names' property from the bindings since we don't need it.
+>   - Restructured exynos_ohci_get_phy() function to handle error codes as
+>     well as return relevant error codes effectively.
+>   - Added IS_ERR() check for PHYs in exynos_ohci_phy_enable()/disable().
+>
+> Changes from v3:
+>   - Calling usb_phy_shutdown() when exynos_ohci_phy_enable() is failing.
+>   - Made exynos_ohci_phy_disable() return void, since its return value
+>     did not serve any purpose.
+>   - Calling clk_disable_unprepare() in exynos_ohci_resume() when
+>     exynos_ohci_phy_enable() is failed.
+>
+>   .../devicetree/bindings/usb/exynos-usb.txt         |   16 +++
+>   drivers/usb/host/ohci-exynos.c                     |  120 +++++++++++++++++---
+>   2 files changed, 120 insertions(+), 16 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> index d967ba1..49a9c6f 100644
+> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> @@ -38,6 +38,13 @@ Required properties:
+>    - interrupts: interrupt number to the cpu.
+>    - clocks: from common clock binding: handle to usb clock.
+>    - clock-names: from common clock binding: Shall be "usbhost".
+> + - port: if in the SoC there are OHCI phys, they should be listed here.
+> +   One phy per port. Each port should have following entries:
+> +	- reg: port number on OHCI controller, e.g
+> +	       On Exynos5250, port 0 is USB2.0 otg phy
+> +			      port 1 is HSIC phy0
+> +			      port 2 is HSIC phy1
+> +	- phys: from the *Generic PHY* bindings, specifying phy used by port.
+>
+>   Example:
+>   	usb@12120000 {
+> @@ -47,6 +54,15 @@ Example:
+>
+>   		clocks = <&clock 285>;
+>   		clock-names = "usbhost";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		port@0 {
+> +		    reg = <0>;
+> +		    phys = <&usb2phy 1>;
+> +		    status = "disabled";
+> +		};
+> +
+>   	};
+>
+>   DWC3
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index 05f00e3..e66d391 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+>   #include <linux/usb/phy.h>
+>   #include <linux/usb/samsung_usb_phy.h>
+>   #include <linux/usb.h>
+> @@ -33,28 +34,112 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+>
+>   #define to_exynos_ohci(hcd) (struct exynos_ohci_hcd *)(hcd_to_ohci(hcd)->priv)
+>
+> +#define PHY_NUMBER 3
+> +
+>   struct exynos_ohci_hcd {
+>   	struct clk *clk;
+>   	struct usb_phy *phy;
+>   	struct usb_otg *otg;
+> +	struct phy *phy_g[PHY_NUMBER];
+>   };
+>
+> -static void exynos_ohci_phy_enable(struct device *dev)
+> +static int exynos_ohci_get_phy(struct device *dev,
+> +				struct exynos_ohci_hcd *exynos_ohci)
+> +{
+> +	struct device_node *child;
+> +	struct phy *phy;
+> +	int phy_number;
+> +	int ret = 0;
+> +
+> +	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> +	if (IS_ERR(exynos_ohci->phy)) {
+> +		ret = PTR_ERR(exynos_ohci->phy);
+> +		if (ret != -ENXIO && ret != -ENODEV) {
+> +			dev_err(dev, "no usb2 phy configured\n");
+> +			return ret;
+> +		}
+> +		dev_dbg(dev, "Failed to get usb2 phy\n");
+> +		exynos_ohci->phy = ERR_PTR(-ENODEV);
 
-Well, I'm not opposed to keeping it as is. Having all the pwm nodes 
-together might be even more readable.
+Here you already have exynos_ohci->phy set to an ERR_PTR() value, which 
+was returned by devm_usb_get_phy(). There is no need to overwrite it.
 
-So feel free to add my Reviewed-by tag.
+> +	} else {
+> +		exynos_ohci->otg = exynos_ohci->phy->otg;
+> +	}
+> +
+> +	/*
+> +	 * Getting generic phy:
+> +	 * We are keeping both types of phys as a part of transiting OHCI
+> +	 * to generic phy framework, so as to maintain backward compatibilty
+> +	 * with old DTB.
+> +	 * If there are existing devices using DTB files built from them,
+> +	 * to remove the support for old bindings in this driver,
+> +	 * we need to make sure that such devices have their DTBs
+> +	 * updated to ones built from new DTS.
+> +	 */
+> +	for_each_available_child_of_node(dev->of_node, child) {
+> +		ret = of_property_read_u32(child, "reg", &phy_number);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to parse device tree\n");
+> +			of_node_put(child);
+> +			return ret;
+> +		}
+> +
+> +		if (phy_number >= PHY_NUMBER) {
+> +			dev_err(dev, "Invalid number of PHYs\n");
+> +			of_node_put(child);
+> +			return -EINVAL;
+> +		}
+> +
+> +		phy = devm_of_phy_get(dev, child, 0);
+> +		of_node_put(child);
+> +		if (IS_ERR(phy)) {
+> +			ret = PTR_ERR(phy);
+> +			if (ret != -ENXIO && ret != -ENODEV) {
+
+Shouldn't this be -ENOSYS instead of -ENXIO? At least this is the error 
+code I can see in the stubs provided in include/linux/phy/phy.h.
+
+> +				dev_err(dev, "no usb2 phy configured\n");
+> +				return ret;
+> +			}
+> +			dev_dbg(dev, "Failed to get usb2 phy\n");
+> +			phy = ERR_PTR(-ENODEV);
+
+phy is already an ERR_PTR() here, as returned by devm_of_phy_get().
+
+I guess the same comments apply to patch 4/4.
 
 Best regards,
 Tomasz
