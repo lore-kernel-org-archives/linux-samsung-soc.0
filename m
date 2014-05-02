@@ -1,115 +1,118 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH v5 3/6] arm64: Add a description on 48-bit address space
- with 4KB pages
-Date: Fri, 02 May 2014 11:13:03 +0900
-Message-ID: <000101cf65ac$0ce4b850$26ae28f0$@samsung.com>
-References: <000301cf64e5$d27f9a20$777ece60$@samsung.com>
- <20140501100612.GA2848@lvm>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
+Date: Fri, 02 May 2014 11:25:26 +0900
+Message-ID: <045301cf65ad$c95badd0$5c130970$@samsung.com>
+References: <1398941085-10224-1-git-send-email-sachin.kamat@linaro.org>
+ <11106990.1tS5A7pf5r@diego>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16933 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750795AbaEBCNH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:27459 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750795AbaEBCZh convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 22:13:07 -0400
-In-reply-to: <20140501100612.GA2848@lvm>
+	Thu, 1 May 2014 22:25:37 -0400
+In-reply-to: <11106990.1tS5A7pf5r@diego>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Christoffer Dall' <christoffer.dall@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, arnd@arndb.de, t.figa@samsung.com, robh+dt@kernel.org, a.hajda@samsung.com
 
-On Thursday, May 01, 2014 7:06 PM, Christoffer Dall wrote:
-> On Thu, May 01, 2014 at 11:34:05AM +0900, Jungseok Lee wrote:
-> > This patch adds memory layout and translation lookup information about
-> > 48-bit address space with 4K pages. The description is based on 4
-> > levels of translation tables.
+Heiko St=FCbner wrote:
+>=20
+> Hi Sachin,
+>=20
+> Am Donnerstag, 1. Mai 2014, 16:14:44 schrieb Sachin Kamat:
+> > Instead of hardcoding the SYSRAM details for each SoC,
+> > pass this information through device tree (DT) and make
+> > the code SoC agnostic. Generic SRAM bindings are used
+> > for achieving this.
 > >
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Steve Capper <steve.capper@linaro.org>
-> > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> > Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> > Cc: Heiko Stuebner <heiko@sntech.de>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+>=20
+> very cool :-).
+>=20
+> I've found one little thing I do not understand, which I describe bel=
+ow.
+> Otherwise
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>=20
 > > ---
-> >  Documentation/arm64/memory.txt |   59 ++++++++++++++++++++++++++++++++++------
-> >  1 file changed, 51 insertions(+), 8 deletions(-)
+> > This patch is based on linux next (next-20140501) on top of
+> > my Kconfig consolidation patch
+> > http://comments.gmane.org/gmane.linux.kernel.samsung-soc/28642
 > >
-> > diff --git a/Documentation/arm64/memory.txt
-> > b/Documentation/arm64/memory.txt index d50fa61..8142709 100644
-> > --- a/Documentation/arm64/memory.txt
-> > +++ b/Documentation/arm64/memory.txt
-> > @@ -8,10 +8,11 @@ This document describes the virtual memory layout
-> > used by the AArch64  Linux kernel. The architecture allows up to 4
-> > levels of translation  tables with a 4KB page size and up to 3 levels with a 64KB page size.
+> > Tested on 4210/4412 Origen, 5250/5420 Arndale and SMDK5420 boards.
+> > ---
+> >  arch/arm/Kconfig                                |    1 +
+> >  arch/arm/boot/dts/exynos4210-universal_c210.dts |   17 ++++++
+> >  arch/arm/boot/dts/exynos4210.dtsi               |   18 +++++++
+> >  arch/arm/boot/dts/exynos4x12.dtsi               |   18 +++++++
+> >  arch/arm/boot/dts/exynos5250.dtsi               |   18 +++++++
+> >  arch/arm/boot/dts/exynos5420.dtsi               |   18 +++++++
+> >  arch/arm/mach-exynos/common.h                   |    1 +
+> >  arch/arm/mach-exynos/exynos.c                   |   64
+> > ----------------------- arch/arm/mach-exynos/firmware.c
+|
+> >  5 +-
+> >  arch/arm/mach-exynos/include/mach/map.h         |    7 ---
+> >  arch/arm/mach-exynos/platsmp.c                  |   39 +++++++++++=
+++-
+> >  11 files changed, 133 insertions(+), 73 deletions(-)
 > >
-> > -AArch64 Linux uses 3 levels of translation tables with the 4KB page
-> > -configuration, allowing 39-bit (512GB) virtual addresses for both
-> > user -and kernel. With 64KB pages, only 2 levels of translation tables
-> > are -used but the memory layout is the same.
-> > +AArch64 Linux uses 3 levels and 4 levels of translation tables with
-> 
-> uses either 3 or 4 levels of translation?
-
-Yes, you are right. I will fix it.
-
-> > +the 4KB page configuration, allowing 39-bit (512GB) and 48-bit
-> > +(256TB) virtual addresses, respectively, for both user and kernel.
-> > +With 64KB pages, only 2 levels of translation tables are used but the
-> > +memory layout is the same.
-> 
-> Perhaps it's worth clarifying that with 64KB and 2 levels of translation tables we are limited to a
-> 42-bit address space here.
-
-Okay, I will add it.
-
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index a6aaaad19b1a..f66ea9453df9 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -855,6 +855,7 @@ config ARCH_EXYNOS
+> >  	select S5P_DEV_MFC
+> >  	select SAMSUNG_DMADEV
+> >  	select SPARSE_IRQ
+> > +	select SRAM
+> >  	select USE_OF
+> >  	help
+> >  	  Support for SAMSUNG's EXYNOS SoCs (EXYNOS4/5)
+> > diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> > b/arch/arm/boot/dts/exynos4210-universal_c210.dts index
+> > 63e34b24b04f..8d4de5c0d0c7 100644
+> > --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> > +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> > @@ -28,6 +28,23 @@
+> >  		bootargs =3D "console=3DttySAC2,115200N8 root=3D/dev/mmcblk0p5 r=
+w
+> rootwait
+> > earlyprintk panic=3D5 maxcpus=3D1"; };
 > >
-> >  User addresses have bits 63:39 set to 0 while the kernel addresses
-> > have  the same bits set to 1. TTBRx selection is given by bit 63 of
-> > the @@ -21,7 +22,7 @@ The swapper_pgd_dir address is written to TTBR1
-> > and never written to  TTBR0.
-> >
-> >
-> > -AArch64 Linux memory layout with 4KB pages:
-> > +AArch64 Linux memory layout with 4KB pages + 3 levels:
-> >
-> >  Start			End			Size		Use
-> >  -----------------------------------------------------------------------
-> > @@ -48,7 +49,34 @@ ffffffbffc000000	ffffffbfffffffff	  64MB		modules
-> >  ffffffc000000000	ffffffffffffffff	 256GB		kernel logical memory map
-> >
-> >
-> > -AArch64 Linux memory layout with 64KB pages:
-> > +AArch64 Linux memory layout with 4KB pages + 4 levels:
+> > +	sram@02020000 {
+> > +		status =3D "disabled";
+> > +	};
 > > +
-> > +Start			End			Size		Use
-> > +-----------------------------------------------------------------------
-> > +0000000000000000	0000ffffffffffff	 256TB		user
+> > +	sram@02025000 {
+> > +		compatible =3D "mmio-sram";
+> > +		reg =3D <0x02025000 0x1000>;
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <1>;
+> > +		ranges =3D <0 0x02025000 0x1000>;
 > > +
-> > +ffff000000000000	ffff7bfffffeffff	~124TB		vmalloc
-> > +
-> > +ffff7bffffff0000	ffff7bffffffffff	  64KB		[guard page]
-> > +
-> > +ffff7c0000000000	ffff7dffffffffff	   2TB		vmemmap
-> > +
-> > +ffff7e0000000000	ffff7ffffbbfffff	  ~2TB		[guard, future vmmemap]
-> 
-> hmm, I may be completely confused, but if VMALLOC_END is defined to be (PAGE_OFFSET - UL(0x400000000)
-> - SZ_64K), how can we squeeze ~4TB into a 16 GB hole?
+> > +		smp-sram@0 {
+> > +			compatible =3D "samsung,exynos4210-sram";
+> > +			reg =3D <0x0 0x1000>;
+> > +		};
+> > +	};
+>=20
+> exynos_smp_prepare_sram returns -ENODEV if it can't find
+> samsung,exynos4210-sram-ns, so are you sure your universal_c210 will =
+run
+> without it? I didn't dig to deep into this, so it can also simply be
+> something
+> I overlooked :-)
+>=20
+Hi Andrzej and Tomasz,
 
-In the 5th patch, VMALLOC_END is changed to (PAGE_OFFSET - UL(0x40000000000)
-- SZ_64K) when 4 level is set.
+Can you please check above?
 
-> > +
-> > +ffff7ffffa000000	ffff7ffffaffffff	  16MB		PCI I/O space
-> > +
-> > +ffff7ffffb000000	ffff7ffffbbfffff	  12MB		[guard]
-> > +
-> > +ffff7ffffbc00000	ffff7ffffbdfffff	   2MB		earlyprintk device
-> 
-> shouldn't this be "fixed mappings" now?
-
-Thanks!! I will fix it.
-
-Best Regards
-Jungseok Lee
+- Kukjin
