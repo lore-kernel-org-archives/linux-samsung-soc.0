@@ -1,97 +1,66 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH 13/15] ASoC: SND_S3C_DMA_LEGACY needs S3C24XX_DMA
-Date: Fri, 2 May 2014 10:24:52 -0700
-Message-ID: <20140502172452.GT3245@sirena.org.uk>
+Date: Fri, 2 May 2014 10:26:43 -0700
+Message-ID: <20140502172643.GU3245@sirena.org.uk>
 References: <1398770316-19715-1-git-send-email-kaixu.xia@linaro.org>
- <1398770316-19715-14-git-send-email-kaixu.xia@linaro.org>
  <20140501191125.GB3245@sirena.org.uk>
  <7071653.m3UbztQEJc@wuerfel>
+ <11471248.qyIXLf6t3H@diego>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OengS9RFvveIvu9C"
+	protocol="application/pgp-signature"; boundary="bnn9++8MR180IneI"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55389 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55400 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751795AbaEBRZ2 (ORCPT
+	with ESMTP id S1752639AbaEBR1G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 13:25:28 -0400
+	Fri, 2 May 2014 13:27:06 -0400
 Content-Disposition: inline
-In-Reply-To: <7071653.m3UbztQEJc@wuerfel>
+In-Reply-To: <11471248.qyIXLf6t3H@diego>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Xia Kaixu <kaixu.xia@linaro.org>, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Xia Kaixu <kaixu.xia@linaro.org>, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, Liam Girdwood <lgirdwood@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
 
---OengS9RFvveIvu9C
-Content-Type: text/plain; charset=us-ascii
+--bnn9++8MR180IneI
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 02, 2014 at 12:35:21AM +0200, Arnd Bergmann wrote:
-> On Thursday 01 May 2014 12:11:25 Mark Brown wrote:
+On Fri, May 02, 2014 at 12:25:58PM +0200, Heiko St=FCbner wrote:
 
-> > Why is the fix for this not to ensure that s3c24xx always enables the
-> > DMA controller - how likely is it that it would be sane to build a
-> > kernel without DMA after all?
+> Mark already removed support for the legacy API from the s3c64xx spi driv=
+er=20
+> (used by s3c2416 and s3c2443), so I guess to way forward would be to "sim=
+ply"=20
+> convert asoc and s3cmci to dmaengine and get rid of it altogether.
 
-> S3C24XX_DMA is only needed for ASoC and for s3cmci. The latter
-> uses 'depends on S3C24XX_DMA'. arch/arm/configs/tct_hammer_defconfig
-> is an example of a configuration that does not include DMA because
-> it uses neither of the two drivers.
+ASoC is already totally capable of using dmaengine on Samsung platforms,
+we're just wating for the architecture to be converted.  I know there's
+a dmaengine driver present but it needs to actually be used on the
+platforms, there should be no blocker on that from the ASoC side.
 
-I'm having a hard time caring about that, the arch code can always do an
-"if whatever".  If that board is what I think it actually does have
-audio on it, either the defconfig was never updated or the driver wasn't
-merged into mainline.
-
-> How about the patch below?
-
-I guess (modulo the issues below).  Killing the wrapper and making the
-existing selection of DMA support actually select DMA support does avoid
-the redundancy.
-
-> diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-> index 76b072b..28fe097 100644
-> --- a/sound/soc/samsung/ac97.c
-> +++ b/sound/soc/samsung/ac97.c
-> @@ -253,10 +253,7 @@ static int s3c_ac97_trigger(struct snd_pcm_substream=
- *substream, int cmd,
-> =20
->  	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> =20
-> -	if (!dma_data->ops)
-> -		dma_data->ops =3D samsung_dma_get_ops();
-> -
-> -	dma_data->ops->started(dma_data->channel);
-> +	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
-> =20
->  	return 0;
->  }
-
-This code is broken in general - at least s3c64xx has AC'97.  That's
-broken anyway though.
-
---OengS9RFvveIvu9C
+--bnn9++8MR180IneI
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTY9ThAAoJELSic+t+oim9pqMP/2O2y/GBdIp74O5SYmgEQK5A
-g/p2DCmZ7eiiKEYe7NkCqUcVpYR27kX6Agz5w3pj3XcwMFkW4CM8KAiVvcGNVsXN
-42p+fkvI4BGwitFStKH6IgUZG5du9l7VbCEgS9oerfDjBPYi382JKQH2hHgLBAiF
-0hm8UeW/GU/b67BYmke9UZQyiAsAfB556wgalv83DIyvdtz8WXYAUcS3cWqm41+b
-lLxBmQNnX+bItyv72HK5b4YblUmr6apL79FlMgwnzDQGyH9FlFlIHayD+eeyt86D
-yJKZlo/R6Atb3mkEB8GoLLO/a0x1C3R+ElFabNIDXUsG25aOWJOP2d8oVYG5sjsf
-1A6Suf4e5tskM3yHaELGrp7JVJPe+NcqQi2ujLjq6LWTBswi592jkIRvEOaGFIoU
-IJl1DG9Ly71uPtwPWvL8EeJVwgnmch+ErZxZyAqlVTcGFSMrL5TzVqdv5Ta/rs5e
-kgbcgLVWmHi3GwJFXmWtwRJPdwDEY6TUfOcvP+N1ZqM2Ms7uzvG8PCAUKQ5zC8m1
-iYdh20MLcft4sbzheVt1/0GO/Q/SYKIdB78HmsyNuxo+bunl9XoQjf4Z7dPQyPz/
-xEeiZrLiMR/nh8lBAOXhRQGoM1/hNzDHaK3aV9Tf9a/O43ryVWlP/qxArIhpx4SQ
-HV54XgRXTY5qRh3dK68F
-=axzQ
+iQIcBAEBAgAGBQJTY9VQAAoJELSic+t+oim9PuIP/RbmzG8yh1yWeQYAGCkxDpJr
+wRx6IlegY+5ZZFDBznQmfpPosypvfI6Gs9E3OBa5ajIHpT8jyKI1L8cYNSLvSBP+
+t3ctBnldg3GBcvzRDHCevmQbzcGVwiG5Uj59BtIlSDg682EpPEA5cnaiv4YBXMi0
+xmyFdMMHPfJq7F9l/AiVqs8HikRnd11hItPVvY1m5amW6kB0h618Cwy6KoODWmaB
+F3nXgz2T9UiPVJ1KI+T7SJ7fAWhD7GiglHgpNcnpNDgXE6BiM6AuinK2oPn4Vjgp
+8r4JLeCO/7SWc9nGeSi16nq2X7LIZXip1r2VXqqOdfBMmHvc651hmTV7ChqIuGv6
+IJLGtpbNGr7mgaq5OWXKPja2AUouQy6E7BI1l0pGcVakFSRajZtSR8vrbXFkwfjp
+QXUopE9hF/A8iyyKUhahIssW8JzLstyNnlH9uepgltxBMO8KOStaGkYZeUVAsKpt
+7gbe/HfFT98aLEXwVw1zZ9UUYOqKICci2teODHbpodZvEkB+G/hHC9LJVYK225ii
+N3E40eg7ers6f9l5xV5BOt0MYX6E5MEinNeW0vypLrPxaK5Mw5Y4v0QpxHFWIQtt
+NrfISrofliHr1MZOdTtYXNYj5hy9npki6VLFl7lnjUpQ8xkeMVdGEc/yEFLUKm9l
+8/sUfXm5Bl/wU3ChA6Y8
+=GVvP
 -----END PGP SIGNATURE-----
 
---OengS9RFvveIvu9C--
+--bnn9++8MR180IneI--
