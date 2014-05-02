@@ -1,73 +1,62 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [RFC PATCH] PM / OPP: move cpufreq specific OPP functions out of
- generic OPP library
-Date: Fri, 2 May 2014 07:15:58 -0500
-Message-ID: <CAGo_u6oT6nK0-Sj8yp9C2r8FkQ8SXF8LvhbHxDjAoGs+Pd=szA@mail.gmail.com>
-References: <1398992810-14957-1-git-send-email-nm@ti.com>
-	<CAKohpokEuZ69HnnKE89maXk=21cgAMjEYjEvEcaoBpg4bLRsGg@mail.gmail.com>
-	<CAGo_u6ohKZh+zKWSzGbvT+AKgnhSjzX7v9isqpd2pc-Cpmxocg@mail.gmail.com>
-	<CAKohponv-p20=www51rW13RSG6=ACgDrRDfL9Xd26ePgjkpWfA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:48423 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751987AbaEBMQA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 08:16:00 -0400
-In-Reply-To: <CAKohponv-p20=www51rW13RSG6=ACgDrRDfL9Xd26ePgjkpWfA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v5 0/4] usb: ehci/ohci-exynos: Move to generic phy framework
+Date: Fri,  2 May 2014 18:17:31 +0530
+Message-ID: <1399034855-9686-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, May 2, 2014 at 12:22 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 2 May 2014 10:48, Nishanth Menon <nm@ti.com> wrote:
->> On Thu, May 1, 2014 at 11:30 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>>> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
->>>> new file mode 100644
->>>> index 0000000..2602ff8
->>>> --- /dev/null
->>>> +++ b/drivers/cpufreq/cpufreq_opp.c
->>>> @@ -0,0 +1,102 @@
->>>> +/*
->>>> + * Generic OPP Interface for CPUFREQ drivers
->>>> + *
->>>> + * Copyright (C) 2009-2014 Texas Instruments Incorporated.
->>>> + *     Nishanth Menon
->>>> + *     Romit Dasgupta
->>>> + *     Kevin Hilman
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>> + */
->>>
->>> I hope you have just copy pasted routines to this file, and haven't done
->>> even the most minor modification in those, as its hard to review it.
->>
->> there is code replacement ofcourse ->
->> * the logic of walking down the list holding a mutex has been replaced
->> with rcu locks,
->> * instead of reading internal data structure and generating the list,
->> use the existing search API that does exactly the same.
->> * Documentation update for the same.
->
-> Hmm, actually if I would have written this patch, then probably I would
-> have done the same thing, but looking from the reviewers perspective,
-> it would be much more easy if we can separate things into patches.
->
-> So, maybe do these changes first in opp.c only and then finally a
-> patch that just moves things around.
->
->> Both are needed if you have to move the code out. functionally, both
->> are equivalent
->
-> That's an assumption and we never know when we might have screwed
-> the code :) .. And so more careful review of those parts is required :)
+Based and tested on 'usb-next' branch of Greg's usb tree, with relevant
+device tree patches[1]
 
-True. Will do the same as suggested for the formal series. Thanks for
-your feedback and review.
+Hi Alan,
+ I have included your Acked-by in all the four patches, but there has been
+ some amount of restructuring as suggested by Tomasz Figa.
+ Please let me know if you have some comments on this patch-series.
 
-Regards,
-Nishanth Menon
+Changes from v4:
+ - Addressed review comments for restructuring exynos_ohci_get_phy()
+   and exynos_ehci_get_phy(); and thereby adding proper checks in
+   exynos_ohci_phy_enable()/disable() as well as exynos_ehci_phy_enable()/
+   disable().
+
+Changes from v3:
+ - Calling usb_phy_shutdown() when exynos_o/ehci_phy_enable() is failing.
+ - Made exynos_o/ehci_phy_disable() return void, since its return value
+   did not serve any purpose.
+ - Calling clk_disable_unprepare() in exynos_o/ehci_resume() when
+   exynos_o/ehci_phy_enable() is failed.
+
+Changes from v2:
+ - Added two patches in the series for some cleanup.
+   usb: ohci-exynos: Use struct device instead of platform_device
+   usb: ehci-exynos: Use struct device instead of platform_device
+ - Addressed review comments.
+   -- Moved exynos_ohci_phyg_on()/off routines inside
+      exynos_ohci_phy_enable()/disable.
+   -- Added functions exynos_ehci_phy_enable() and exynos_ehci_phy_disable()
+      and moved exynos_ehci_phyg_on()/off routines respectively in them.
+   -- Added necessary checks.
+
+[1]: [PATCH 0/4] dts: Add usb2phy to Exynos 5250/5420
+     https://lkml.org/lkml/2014/4/30/119
+
+Kamil Debski (1):
+  usb: ehci-exynos: Change to use phy provided by the generic phy
+    framework
+
+Vivek Gautam (3):
+  usb: ohci-exynos: Use struct device instead of platform_device
+  usb: ehci-exynos: Use struct device instead of platform_device
+  usb: ohci-exynos: Add facility to use phy provided by the generic phy
+    framework
+
+ .../devicetree/bindings/usb/exynos-usb.txt         |   31 +++++
+ drivers/usb/host/ehci-exynos.c                     |  136 ++++++++++++++++----
+ drivers/usb/host/ohci-exynos.c                     |  134 +++++++++++++++----
+ 3 files changed, 254 insertions(+), 47 deletions(-)
+
+-- 
+1.7.10.4
