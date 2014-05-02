@@ -1,74 +1,71 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Fri, 2 May 2014 09:56:43 -0700
-Message-ID: <20140502165643.GQ3245@sirena.org.uk>
-References: <20140424133920.GA12304@sirena.org.uk>
- <5359E18B.60600@linaro.org>
- <20140429222915.GU15125@sirena.org.uk>
- <5360E5E7.8090807@linaro.org>
- <20140430180314.GA3245@sirena.org.uk>
- <53623004.5010805@linaro.org>
- <20140501141510.GW3245@sirena.org.uk>
- <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com>
- <20140501164003.GC3245@sirena.org.uk>
- <53632568.5020200@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Add Exynos5800 dt file
+Date: Fri, 02 May 2014 19:03:24 +0200
+Message-ID: <5363CFDC.4060109@gmail.com>
+References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com> <1399035821-25096-3-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="huW973Vpf/9rkSey"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55341 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752401AbaEBQ5A (ORCPT
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:55066 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753118AbaEBRD1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 12:57:00 -0400
-Content-Disposition: inline
-In-Reply-To: <53632568.5020200@linaro.org>
+	Fri, 2 May 2014 13:03:27 -0400
+In-Reply-To: <1399035821-25096-3-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
+To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, arunkk.samsung@gmail.com
 
+Hi Arun,
 
---huW973Vpf/9rkSey
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 02.05.2014 15:03, Arun Kumar K wrote:
+> Most of the nodes of exynos5420 remains same for exynos5800.
+> So the exynos5420.dtsi is included in exynos5800 and the changed
+> node properties will be overriden.
+>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos5800.dtsi |   24 ++++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
+>
+> diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+> new file mode 100644
+> index 0000000..6979fc7
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5800.dtsi
+> @@ -0,0 +1,24 @@
+> +/*
+> + * SAMSUNG EXYNOS5800 SoC device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * SAMSUNG EXYNOS5800 SoC device nodes are listed in this file.
+> + * EXYNOS5800 based board files can include this file and provide
+> + * values for board specfic bindings.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include "exynos5420.dtsi"
+> +
+> +/ {
+> +	compatible = "samsung,exynos5800", "samsung,exynos5";
+> +};
+> +
+> +&clock {
+> +	compatible = "samsung,exynos5800-clock";
+> +};
+>
 
-On Fri, May 02, 2014 at 10:26:08AM +0530, Tushar Behera wrote:
-> On 05/01/2014 10:10 PM, Mark Brown wrote:
+Looks good.
 
-> > There's patches been posted by (IIRC) Sylvester Nawrocki for this which
-> > I think Mike was basically happy with - I don't immediately see them in
-> > -next though, but I may be looking in the wrong place.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-> Right, there are some patches from Sylwester regarding this. I dont'
-> think the patches are accepted yet as Rob has some reservations against
-> the clock parents.
-
-> https://lkml.org/lkml/2014/4/9/173
-
-Well, OK - that's the bit to fix.  Speaking to Mike the other day he
-said there was also another competing implementation of this.
-
---huW973Vpf/9rkSey
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTY85IAAoJELSic+t+oim9P54P/Rbsqm/AfMtIN4H7pGvOO8hx
-AMthNugbHtxV2QHrdGWE0dPuigHhKv1M1oyFuBQbn/hQNJmdYCKA4iYM07pCNctT
-pBksXo0UwA66SghLZiH4XF4XN278Xonj9zvjnza2+v0l5tGESORbUNWgr54Bkg7a
-UBx3wh/bB9t2ZCfYvmx74yWW3JMQoqNdMrdASJ9uJW1/Xdb1p82R1WVtHmy2iFmJ
-25udDZRMMqHX1RqkpGvuZX2uVAyYkZ4igROJAJMeyrg78xqjt4nwQoa/6JdaGPlZ
-4tlVSt06h2ohCFAX+A35lLRfJ4JXQKPK+dGGmJOCvs3N/6gin7Jn277G72/UBBVx
-h1Xqt+LkCTHDyhAdDYS+BVWLcU5cp8LodL4qV1iJ8Y6Em2zudaqtqN+MI1kWtqxh
-dgpNMOlvBs8rTTBgvDLrEaiDtiXg/xylRSv933QsANmaw7zKzegYHwMMp5vTftMh
-dHSaMxuF7zvACzxswjKJ6oNZd8u+NORknXQVskC+GCV47JKfz6MYmQfr5ezuJ3XJ
-nATMWehVsDMQ7eRBoSY9G1v1AbNKeKSOhMa1Xct+nqEWn+bB2hLZC4PrDGvF+ttg
-22dTqGJMIp1UmgzoOdV1Nv1zy7UPosXxEdN3oT3g30Z788+hn0zExePnYqgaHJRd
-VxNCb9ErXfA15dlp7i/w
-=HMhI
------END PGP SIGNATURE-----
-
---huW973Vpf/9rkSey--
+Best regards,
+Tomasz
