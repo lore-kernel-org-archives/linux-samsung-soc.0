@@ -1,44 +1,84 @@
-From: Beomho Seo <beomho.seo@samsung.com>
-Subject: Re: [RESEND PATCH 0/3] ARM: dts: add device data for exynos4412-trats2
-Date: Fri, 02 May 2014 13:29:10 +0900
-Message-ID: <53631F16.7010708@samsung.com>
-References: <53327CE3.8030800@samsung.com> <5359C2B9.5040003@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [RFC PATCH] PM / OPP: move cpufreq specific OPP functions out of
+ generic OPP library
+Date: Fri, 2 May 2014 10:00:17 +0530
+Message-ID: <CAKohpokEuZ69HnnKE89maXk=21cgAMjEYjEvEcaoBpg4bLRsGg@mail.gmail.com>
+References: <1398992810-14957-1-git-send-email-nm@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34630 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751554AbaEBE3x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 00:29:53 -0400
-In-reply-to: <5359C2B9.5040003@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1398992810-14957-1-git-send-email-nm@ti.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi all,
+On 2 May 2014 06:36, Nishanth Menon <nm@ti.com> wrote:
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 1fbe11f..281ccfb 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -17,6 +17,11 @@ config CPU_FREQ
+>
+>  if CPU_FREQ
+>
+> +config CPU_FREQ_PM_OPP
+> +       bool
+> +       depends on PM_OPP
+> +       default y
+> +
 
-Didn't have Any other comment for this patch set?
+Don't need this
 
-On 04/25/2014 11:04 AM, Beomho Seo wrote:
-> This patchset add some device node for exynos4412-trats2.
-> It is based on v3.15-next/dt-samsung-2 branch.
-> 
-> exynos4412-trats2.dts
-> - Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-kasei,ak8975".
-> - Add cm36651 light/proximity sensor device node.
-> - Change gpio-key device node. fix incorrect gpio property, and then add "ok-key" node.
-> 
-> Beomho Seo (3):
->   ARM: dts: fix incorrect compatible for exynos4412
->   ARM: dts: add cm36651 light/proximity sensor node
->   ARM: dts: fixed gpio key node for exynos4412
-> 
->  arch/arm/boot/dts/exynos4412-trats2.dts |   50 ++++++++++++++++++++++++++-----
->  1 file changed, 43 insertions(+), 7 deletions(-)
-> 
+>  config CPU_FREQ_GOV_COMMON
+>         bool
+>
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 0dbb963..16eea68 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -1,5 +1,7 @@
+>  # CPUfreq core
+>  obj-$(CONFIG_CPU_FREQ)                 += cpufreq.o freq_table.o
+> +obj-$(CONFIG_CPU_FREQ_PM_OPP)          += cpufreq_opp.o
 
-Thanks
-Beomho Seo
+Just use: obj-$(CONFIG_PM_OPP)
+
+> +
+>  # CPUfreq stats
+>  obj-$(CONFIG_CPU_FREQ_STAT)             += cpufreq_stats.o
+>
+
+> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
+> new file mode 100644
+> index 0000000..2602ff8
+> --- /dev/null
+> +++ b/drivers/cpufreq/cpufreq_opp.c
+> @@ -0,0 +1,102 @@
+> +/*
+> + * Generic OPP Interface for CPUFREQ drivers
+> + *
+> + * Copyright (C) 2009-2014 Texas Instruments Incorporated.
+> + *     Nishanth Menon
+> + *     Romit Dasgupta
+> + *     Kevin Hilman
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+
+I hope you have just copy pasted routines to this file, and haven't done
+even the most minor modification in those, as its hard to review it.
+
+> +#include <linux/slab.h>
+
+Sure? That's it, nothing else required to compile this file independently?
+As a rule include all the files directly which might be required for compilation
+of this file and don't expect them to be included by some other header
+files indirectly.
+
+> diff --git a/drivers/cpufreq/cpufreq_opp.h b/drivers/cpufreq/cpufreq_opp.h
+
+Two problems, driver may lie in arch/ as well, though we don't recommend
+them, secondly move these in cpufreq.h, don't need a header here for sure.
