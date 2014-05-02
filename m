@@ -1,115 +1,63 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v3 1/4] usb: ohci-exynos: Use struct device instead of platform_device
-Date: Fri,  2 May 2014 18:17:32 +0530
-Message-ID: <1399034855-9686-2-git-send-email-gautam.vivek@samsung.com>
-References: <1399034855-9686-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1399034855-9686-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5420
+Date: Fri,  2 May 2014 18:18:57 +0530
+Message-ID: <1399034937-24683-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:59303 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752383AbaEBMtK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 May 2014 08:49:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, arunkk.samsung@gmail.com
 
-Change to use struct device instead of struct platform_device
-for some static functions.
+Adds the PWM nodes to 5420 pinctrl dtsi file.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Changes from v2:
- - none
-
- drivers/usb/host/ohci-exynos.c |   20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 9cf80cb..05f00e3 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -39,18 +39,18 @@ struct exynos_ohci_hcd {
- 	struct usb_otg *otg;
- };
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index e62c8eb..ba686e4 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -624,6 +624,34 @@
+ 			samsung,pin-drv = <0>;
+ 		};
  
--static void exynos_ohci_phy_enable(struct platform_device *pdev)
-+static void exynos_ohci_phy_enable(struct device *dev)
- {
--	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-+	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 
- 	if (exynos_ohci->phy)
- 		usb_phy_init(exynos_ohci->phy);
- }
- 
--static void exynos_ohci_phy_disable(struct platform_device *pdev)
-+static void exynos_ohci_phy_disable(struct device *dev)
- {
--	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-+	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 
- 	if (exynos_ohci->phy)
-@@ -139,7 +139,7 @@ skip_phy:
- 
- 	platform_set_drvdata(pdev, hcd);
- 
--	exynos_ohci_phy_enable(pdev);
-+	exynos_ohci_phy_enable(&pdev->dev);
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -150,7 +150,7 @@ skip_phy:
- 	return 0;
- 
- fail_add_hcd:
--	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phy_disable(&pdev->dev);
- fail_io:
- 	clk_disable_unprepare(exynos_ohci->clk);
- fail_clk:
-@@ -168,7 +168,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phy_disable(&pdev->dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -190,7 +190,6 @@ static int exynos_ohci_suspend(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
--	struct platform_device *pdev = to_platform_device(dev);
- 	bool do_wakeup = device_may_wakeup(dev);
- 	int rc = ohci_suspend(hcd, do_wakeup);
- 
-@@ -200,7 +199,7 @@ static int exynos_ohci_suspend(struct device *dev)
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phy_disable(dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -211,14 +210,13 @@ static int exynos_ohci_resume(struct device *dev)
- {
- 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
--	struct platform_device *pdev		= to_platform_device(dev);
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_enable(pdev);
-+	exynos_ohci_phy_enable(dev);
- 
- 	ohci_resume(hcd, false);
- 
++		pwm0_out: pwm0-out {
++			samsung,pins = "gpb2-0";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		pwm1_out: pwm1-out {
++			samsung,pins = "gpb2-1";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		pwm2_out: pwm2-out {
++			samsung,pins = "gpb2-2";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		pwm3_out: pwm3-out {
++			samsung,pins = "gpb2-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
+ 		i2c7_hs_bus: i2c7-hs-bus {
+ 			samsung,pins = "gpb2-2", "gpb2-3";
+ 			samsung,pin-function = <3>;
 -- 
-1.7.10.4
+1.7.9.5
