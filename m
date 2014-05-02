@@ -1,63 +1,50 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5420
-Date: Fri,  2 May 2014 18:18:57 +0530
-Message-ID: <1399034937-24683-1-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH 0/3] Add Exynos5800 support
+Date: Fri,  2 May 2014 18:33:38 +0530
+Message-ID: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:59303 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752383AbaEBMtK (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:54020 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751827AbaEBNDu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 08:49:10 -0400
+	Fri, 2 May 2014 09:03:50 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, arunkk.samsung@gmail.com
+Cc: kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, arunkk.samsung@gmail.com
 
-Adds the PWM nodes to 5420 pinctrl dtsi file.
+Exynos5800 is a derivative of Exynos5420 with higher
+clock speeds and most other IP blocks remaining the same
+except for a few.
+Due to the similarities with 5420, following is done to
+achieve maximum code re-use:
+- Use the same 5420 clock file with few changes for adding
+  extra 5800 clocks.
+- Include the 5420 dtsi into 5800 and override required
+  properties.
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+This series is dependent on the following patches
+1) Adding node labels for Exynos5420
+   https://patchwork.kernel.org/patch/4092701/
+2) Adding pwm nodes for backlight
+   https://patchwork.kernel.org/patch/4101881/
 
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index e62c8eb..ba686e4 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -624,6 +624,34 @@
- 			samsung,pin-drv = <0>;
- 		};
- 
-+		pwm0_out: pwm0-out {
-+			samsung,pins = "gpb2-0";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
-+		pwm1_out: pwm1-out {
-+			samsung,pins = "gpb2-1";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
-+		pwm2_out: pwm2-out {
-+			samsung,pins = "gpb2-2";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
-+		pwm3_out: pwm3-out {
-+			samsung,pins = "gpb2-3";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
- 		i2c7_hs_bus: i2c7-hs-bus {
- 			samsung,pins = "gpb2-2", "gpb2-3";
- 			samsung,pin-function = <3>;
+Alim Akhtar (1):
+  clk: exynos5420: Add 5800 specific clocks
+
+Arun Kumar K (2):
+  ARM: dts: Add Exynos5800 dt file
+  ARM: dts: Add peach-pi board support
+
+ .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
+ arch/arm/boot/dts/Makefile                         |    3 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  144 +++++++++++++++
+ arch/arm/boot/dts/exynos5800.dtsi                  |   24 +++
+ drivers/clk/samsung/clk-exynos5420.c               |  192 +++++++++++++++-----
+ include/dt-bindings/clock/exynos5420.h             |    1 +
+ 6 files changed, 320 insertions(+), 47 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+ create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
+
 -- 
 1.7.9.5
