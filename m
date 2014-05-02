@@ -1,192 +1,96 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH v6] clk: Exynos5250: Add clocks for G3D
-Date: Fri, 2 May 2014 09:27:14 +0530
-Message-ID: <CALt3h79N63-bPCoRpXyam7DjiUjAZjM7GZApDHaT-3EjD0Q1cg@mail.gmail.com>
-References: <1398677821-11529-1-git-send-email-arun.kk@samsung.com>
-	<53617DD6.60507@gmail.com>
-	<5362712C.3070803@gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: dts: Add node references to 5420
+Date: Fri, 02 May 2014 09:46:14 +0530
+Message-ID: <53631C0E.2040808@gmail.com>
+References: <1398856138-18837-1-git-send-email-arun.kk@samsung.com> <1398856138-18837-2-git-send-email-arun.kk@samsung.com> <53628386.4090108@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f176.google.com ([209.85.128.176]:58103 "EHLO
-	mail-ve0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751208AbaEBD5P (ORCPT
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:34541 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750699AbaEBEQV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 May 2014 23:57:15 -0400
-Received: by mail-ve0-f176.google.com with SMTP id jz11so1216111veb.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 May 2014 20:57:14 -0700 (PDT)
-In-Reply-To: <5362712C.3070803@gmail.com>
+	Fri, 2 May 2014 00:16:21 -0400
+In-Reply-To: <53628386.4090108@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, olofj@google.com, t.figa@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org
 
 Hi Tomasz,
 
-On Thu, May 1, 2014 at 9:37 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Arun,
->
->
-> On 01.05.2014 00:48, Tomasz Figa wrote:
->>
->> On 28.04.2014 11:37, Arun Kumar K wrote:
->>>
->>> This patch adds the required clocks for ARM Mali IP
->>> in Exynos5250.
->>>
->>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->>> ---
->>> Changes from v5
->>> - Addressed comments from Tomasz Figa
->>>    http://www.spinics.net/lists/arm-kernel/msg326118.html
->>> Changes from v4
->>> - Rebased on latest kernel
->>> - Added macros
->>> Changes from v3
->>> - Renamed some clocks as per Tomasz Figa's comments
->>> Changes from v2
->>> - Rebased on clk-next
->>> Changes from v1
->>> - Removed exporting of parent DIV clock for g3d
->>>    as per Tomsz Figa's comment.
->>> ---
->>>   drivers/clk/samsung/clk-exynos5250.c   |   15 ++++++++++++++-
->>>   include/dt-bindings/clock/exynos5250.h |    4 +++-
->>>   2 files changed, 17 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5250.c
->>> b/drivers/clk/samsung/clk-exynos5250.c
->>> index e7ee442..df02526 100644
->>> --- a/drivers/clk/samsung/clk-exynos5250.c
->>> +++ b/drivers/clk/samsung/clk-exynos5250.c
->>> @@ -37,6 +37,7 @@
->>>   #define VPLL_CON0        0x10140
->>>   #define GPLL_CON0        0x10150
->>>   #define SRC_TOP0        0x10210
->>> +#define SRC_TOP1        0x10214
->>>   #define SRC_TOP2        0x10218
->>>   #define SRC_TOP3        0x1021c
->>>   #define SRC_GSCL        0x10220
->>> @@ -71,6 +72,7 @@
->>>   #define GATE_IP_GSCL        0x10920
->>>   #define GATE_IP_DISP1        0x10928
->>>   #define GATE_IP_MFC        0x1092c
->>> +#define GATE_IP_G3D        0x10930
->>>   #define GATE_IP_GEN        0x10934
->>>   #define GATE_IP_FSYS        0x10944
->>>   #define GATE_IP_PERIC        0x10950
->>> @@ -100,6 +102,7 @@ static unsigned long exynos5250_clk_regs[]
->>> __initdata = {
->>>       DIV_CPU0,
->>>       SRC_CORE1,
->>>       SRC_TOP0,
->>> +    SRC_TOP1,
->>>       SRC_TOP2,
->>>       SRC_TOP3,
->>>       SRC_GSCL,
->>> @@ -133,6 +136,7 @@ static unsigned long exynos5250_clk_regs[]
->>> __initdata = {
->>>       DIV_PERIC5,
->>>       GATE_IP_GSCL,
->>>       GATE_IP_MFC,
->>> +    GATE_IP_G3D,
->>>       GATE_IP_GEN,
->>>       GATE_IP_FSYS,
->>>       GATE_IP_PERIC,
->>> @@ -189,10 +193,12 @@ PNAME(mout_vpllsrc_p)    = { "fin_pll",
->>> "sclk_hdmi27m" };
->>>   PNAME(mout_vpll_p)    = { "mout_vpllsrc", "fout_vpll" };
->>>   PNAME(mout_cpll_p)    = { "fin_pll", "fout_cpll" };
->>>   PNAME(mout_epll_p)    = { "fin_pll", "fout_epll" };
->>> +PNAME(mout_gpll_p)    = { "fin_pll", "fout_gpll" };
->>>   PNAME(mout_mpll_user_p)    = { "fin_pll", "mout_mpll" };
->>>   PNAME(mout_bpll_user_p)    = { "fin_pll", "mout_bpll" };
->>>   PNAME(mout_aclk166_p)    = { "mout_cpll", "mout_mpll_user" };
->>>   PNAME(mout_aclk200_p)    = { "mout_mpll_user", "mout_bpll_user" };
->>> +PNAME(mout_aclk400_p)    = { "mout_aclk400_g3d_mid", "mout_gpll" };
->>>   PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
->>>   PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
->>>   PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
->>> @@ -273,12 +279,16 @@ static struct samsung_mux_clock
->>> exynos5250_mux_clks[] __initdata = {
->>>       MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
->>>       MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
->>>       MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->>> +    MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
->>> +
->>> +    MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
->>>
->>>       MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
->>>       MUX(0, "mout_epll", mout_epll_p, SRC_TOP2, 12, 1),
->>>       MUX(0, "mout_vpll", mout_vpll_p, SRC_TOP2, 16, 1),
->>>       MUX(0, "mout_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
->>>       MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
->>> +    MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
->>>
->>>       MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3,
->>> 4, 1),
->>>       MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8,
->>> 1),
->>> @@ -351,6 +361,8 @@ static struct samsung_div_clock
->>> exynos5250_div_clks[] __initdata = {
->>>       DIV(0, "div_aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
->>>       DIV(0, "div_aclk266", "mout_mpll_user", DIV_TOP0, 16, 3),
->>>       DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->>> +    DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
->>> +                            24, 3),
->>>
->>>       DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
->>>
->>> @@ -533,7 +545,8 @@ static struct samsung_gate_clock
->>> exynos5250_gate_clks[] __initdata = {
->>>           0),
->>>       GATE(CLK_SMMU_MFCL, "smmu_mfcl", "mout_aclk333_sub",
->>> GATE_IP_MFC, 2, 0,
->>>           0),
->>> -
->>> +    GATE(CLK_G3D, "g3d", "div_aclk400_g3d", GATE_IP_G3D, 0,
->>> +                    CLK_SET_RATE_PARENT, 0),
->>>       GATE(CLK_ROTATOR, "rotator", "div_aclk266", GATE_IP_GEN, 1, 0, 0),
->>>       GATE(CLK_JPEG, "jpeg", "div_aclk166", GATE_IP_GEN, 2, 0, 0),
->>>       GATE(CLK_MDMA1, "mdma1", "div_aclk266", GATE_IP_GEN, 4, 0, 0),
->>> diff --git a/include/dt-bindings/clock/exynos5250.h
->>> b/include/dt-bindings/clock/exynos5250.h
->>> index 922f2dc..a3c6777 100644
->>> --- a/include/dt-bindings/clock/exynos5250.h
->>> +++ b/include/dt-bindings/clock/exynos5250.h
->>> @@ -150,11 +150,13 @@
->>>   #define CLK_G2D            345
->>>   #define CLK_MDMA0        346
->>>   #define CLK_SMMU_MDMA0        347
->>> +#define CLK_G3D            348
->>>
->>>   /* mux clocks */
->>>   #define CLK_MOUT_HDMI        1024
->>> +#define CLK_MOUT_GPLL        1025
->>>
->>>   /* must be greater than maximal clock id */
->>> -#define CLK_NR_CLKS        1025
->>> +#define CLK_NR_CLKS        1026
->>>
->>>   #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
->>>
->>
->> Applied.
->
->
-> Uhm, actually not applied, as we seem to have a numbering clash with
-> previous patch adding gate clock for SSS block
-> (clk: samsung exynos5250/5420: Add gate clock for SSS module).
->
-> I can change this to 349 when applying, but you would need to make sure that
-> you reflect this in your internal trees and rebuild your DTBs. Is it fine
-> for you?
->
-
-Yes it is fine with me. You can change the number to 349.
+Will make these changes.
 
 Thanks & Regards
 Arun
 
+On 05/01/14 22:55, Tomasz Figa wrote:
+> Hi Arun,
+> 
+> Looks mostly fine, just some minor nits to improve readability.
+> 
+> On 30.04.2014 13:08, Arun Kumar K wrote:
+>> Adding references to nodes which do not have it yet
+>> in exynos5420.dtsi. This is done so as to use reference
+>> based node updation in board files.
+> 
+> To stick to correct terminology, the handle that lets you reference a 
+> node is called "label", so this patch adds labels to nodes that don't 
+> have them yet.
+> 
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5420.dtsi |   26 +++++++++++++-------------
+>>   1 file changed, 13 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index c3a9a66..2058276 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -125,7 +125,7 @@
+>>   		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
+>>   	};
+>>
+>> -	codec@11000000 {
+>> +	codec: codec@11000000 {
+> 
+> IMHO "mfc" would be a more convenient label.
+> 
+>>   		compatible = "samsung,mfc-v7";
+>>   		reg = <0x11000000 0x10000>;
+>>   		interrupts = <0 96 0>;
+>> @@ -169,7 +169,7 @@
+>>   		status = "disabled";
+>>   	};
+>>
+>> -	mct@101C0000 {
+>> +	mct: mct@101C0000 {
+>>   		compatible = "samsung,exynos4210-mct";
+>>   		reg = <0x101C0000 0x800>;
+>>   		interrupt-controller;
+>> @@ -270,7 +270,7 @@
+>>   		interrupts = <0 47 0>;
+>>   	};
+>>
+>> -	rtc@101E0000 {
+>> +	rtc: rtc@101E0000 {
+>>   		clocks = <&clock CLK_RTC>;
+>>   		clock-names = "rtc";
+>>   		status = "disabled";
+>> @@ -430,22 +430,22 @@
+>>   		status = "disabled";
+>>   	};
+>>
+>> -	serial@12C00000 {
+>> +	serial_0: serial@12C00000 {
+> 
+> To match with our hardware naming conventions, uart0 would probably be a 
+> better label. Similarly for remaining serial ports.
+> 
+> With those fixed, feel free to add my Reviewed-by tag.
+> 
 > Best regards,
 > Tomasz
+> 
