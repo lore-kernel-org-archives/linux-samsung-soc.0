@@ -1,64 +1,86 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: [PATCH v5 2/6] arm64: Introduce VA_BITS and translation level
- options
-Date: Fri, 2 May 2014 04:16:48 -0700
-Message-ID: <20140502111648.GA3002@lvm>
-References: <000201cf64e5$cd3366a0$679a33e0$@samsung.com>
- <20140501100628.GB2848@lvm>
- <000a01cf65a9$d3cbf030$7b63d090$@samsung.com>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
+	Exynos System MMU
+Date: Fri, 2 May 2014 12:41:01 +0100
+Message-ID: <20140502114054.GA3805@e103592.cambridge.arm.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<20140429181601.GE3582@e103592.cambridge.arm.com>
+	<CANEJEGs6TXNzE8cWYgEKfFSsD2w5XiYvwSbhQ_+gtfzfs+6udA@mail.gmail.com>
+	<7044616.kdaKNu3Qet@wuerfel> <53628751.9000609@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:48423 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751909AbaEBLQw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 07:16:52 -0400
-Received: by mail-lb0-f178.google.com with SMTP id 10so2895620lbg.23
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 May 2014 04:16:50 -0700 (PDT)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <000a01cf65a9$d3cbf030$7b63d090$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <53628751.9000609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-On Fri, May 02, 2014 at 10:57:09AM +0900, Jungseok Lee wrote:
-> On Thursday, May 01, 2014 7:06 PM, Christoffer Dall wrote:
-> > On Thu, May 01, 2014 at 11:33:56AM +0900, Jungseok Lee wrote:
+On Thu, May 01, 2014 at 06:41:37PM +0100, Stephen Warren wrote:
+> On 04/29/2014 03:00 PM, Arnd Bergmann wrote:
+> ...
+> > Yes. It's very complicated unfortunately, because we have to be
+> > able to deal with arbitrary combinations of a lot of oddball cases
+> > that can show up in random SoCs:
+> ...
+> > - a device may have DMA access to a bus that is invisible to the CPU
+> 
+> The issue is slightly more general than that. It's more that the bus
+> structure "seen" by a device is simply /different/ than that seen by the
+> CPU. I don't think it's a requirement that there be CPU-invisible buses
+> for that to be true.
+> 
+> For example, I could conceive of a HW setup like:
+> 
+> primary CPU bus ----------------------> other devices
+>    |    \_________________      /
+>    |                      \    |
+>    v                      v    ^
+> device registers ----> some secondary bus
+>                           |
+>                           v
+>                        memory
+> 
+> Here, all the buses are visible to the CPU, yet the path that
+> transactions take between the buses is simply different to the CPU. More
+> complex situations than the above, while still maintaining that
+> description, are certainly possible.
+> 
 
-[...]
+I tend to think in terms of links rather than buses.  A link is
+effectively a 1:1 point-to-point bus that passes all transactions with
+no modification.
 
-> > > +
-> > > +choice
-> > > +	prompt "Virtual address space size"
-> > > +	default ARM64_VA_BITS_39 if ARM64_4K_PAGES
-> > > +	default ARM64_VA_BITS_42 if ARM64_64K_PAGES
-> > > +	help
-> > > +	  Allows virtual address space size. A level of translation tables
-> > 
-> > What does "Allows virtual address space size" mean exactly?
-> 
-> It means that VA space size can be chosen. For example, there are
-> two VA size options, 39-bit and 48-bit, with 4KB pages. If 39-bit
-> VA space is not enough, 48-bit can be selected instead. The 5th patch
-> adds a 48-bit option to this choice blocks.
-> 
-> If 16KB pages are supported with both 47-bit and 48-bit VA size,
-> people could configure it in menuconfig.
-> 
-> In this context, I've written it down like page size.
-> 
-> I think Catalin's comment would be helpful.
-> http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
-> 
-I didn't have problems understanding the concept, I was questioning the
-language.  The way it is written now it suggests having a virtual
-address space size, as opposed to not having a size at all, which
-doesn't make sense.
+So, although "some secondary bus" is visible to the CPUs, crucially the
+link "some secondary bus" to "other devices" is not visible -- in the
+sense that transactions issued by the CPUs never flow down that link.
+Thus, if the link actually has remappings associated with it, then
+devices mastering onto "some secondary bus" will observe those mappings
+but the CPUs won't.  That's precisely what we need to know about when
+configuring DMA buffers.
 
-I think you want to say something along the lines of "Allows choosing a
-virtual address space size", or "Allows choosing one of multiple
-possible virtual address space sizes".
+"invisible bus" situations are therefore a subset of "invisible link"
+situations, and it is the latter which are the source of the complexity.
 
--Christoffer
+However, if the extra link(s) don't have any special characteristics, it
+may be software-transparent with no need for description, because we
+can pretend for logical purposes that there is a single bus in that case.
+Effectively that what we've relied on for simpler systems up to now.
+
+I'm assming in your example that the direct link between "primary CPU
+bus" and "other devices" is always used by preference, instead of CPUs'
+transactions toward "other devices" being sent to "some secondary bus"
+first.
+
+Cheers
+---Dave
