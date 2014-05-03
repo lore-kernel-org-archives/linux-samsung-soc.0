@@ -1,150 +1,143 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v3 00/12] ARM: Exynos: PMU cleanup and refactoring for
- using DT
-Date: Sat, 03 May 2014 10:52:20 +0900
-Message-ID: <53644BD4.4060200@samsung.com>
-References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
+Date: Sat, 03 May 2014 04:00:59 +0200
+Message-ID: <53644DDB.7050503@gmail.com>
+References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>	<5363D176.80601@gmail.com> <CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:58342 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751388AbaECCBB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 May 2014 22:01:01 -0400
+In-Reply-To: <CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>
 
-Hi,
+Hi Doug,
 
-Gentle ping.
-
-Tomasz, Kukjin will you please have a look on this series.
-
-
-Thanks,
-Pankaj Dubey
-
-On 04/30/2014 02:17 PM, Pankaj Dubey wrote:
-> This patch series, does some minor cleanup of exynos machine files.
-> It also modifies Exynos Power Management Unit (PMU) related code for
-> converting it into a platform_driver.
-> This is also preparation for moving PMU related code out of machine
-> folder into a either "drivers/mfd", or "drivers/power" or some other
-> suitable place so that ARM64 based SoC can utilize common piece of code.
-> These patches require change in Exynos SoC dtsi files, which has been
-> posted as separate patch series [2]
+On 02.05.2014 20:31, Doug Anderson wrote:
+> Tomasz,
 >
-> These patches are created on top of Kukjin Kim's for-next (v3.15-rc1 tag)
-> branch and on top of Daniel Lezcano's Exynos cpuidle refactor patches [3].
+> On Fri, May 2, 2014 at 10:10 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Arun,
+>>
+>>
+>> On 02.05.2014 15:03, Arun Kumar K wrote:
+>>>
+>>> Adds support for google peach-pi board having the
+>>> Exynos5800 SoC.
+>>>
+>>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>> ---
+>>>    arch/arm/boot/dts/Makefile                |    3 +-
+>>>    arch/arm/boot/dts/exynos5800-peach-pi.dts |  144
+>>> +++++++++++++++++++++++++++++
+>>>    2 files changed, 146 insertions(+), 1 deletion(-)
+>>>    create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>>
+>>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>>> index 35c146f..efe1573 100644
+>>> --- a/arch/arm/boot/dts/Makefile
+>>> +++ b/arch/arm/boot/dts/Makefile
+>>> @@ -76,7 +76,8 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>>>          exynos5420-arndale-octa.dtb \
+>>>          exynos5420-smdk5420.dtb \
+>>>          exynos5440-sd5v1.dtb \
+>>> -       exynos5440-ssdk5440.dtb
+>>> +       exynos5440-ssdk5440.dtb \
+>>> +       exynos5800-peach-pi.dtb
+>>>    dtb-$(CONFIG_ARCH_HI3xxx) += hi3620-hi4511.dtb
+>>>    dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
+>>>          ecx-2000.dtb
+>>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> new file mode 100644
+>>> index 0000000..e0f8633
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>>> @@ -0,0 +1,144 @@
+>>> +/*
+>>> + * Google Peach Pi Rev 10+ board device tree source
+>>> + *
+>>> + * Copyright (c) 2014 Google, Inc
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License version 2 as
+>>> + * published by the Free Software Foundation.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +#include <dt-bindings/input/input.h>
+>>> +#include <dt-bindings/gpio/gpio.h>
+>>> +#include "exynos5800.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "Google Peach Pi Rev 10+";
+>>> +
+>>> +       compatible = "google,pi-rev16",
+>>> +               "google,pi-rev15", "google,pi-rev14",
+>>> +               "google,pi-rev13", "google,pi-rev12",
+>>> +               "google,pi-rev11", "google,pi-rev10",
+>>> +               "google,pi", "google,peach", "samsung,exynos5800",
+>>> +               "samsung,exynos5";
+>>
+>>
+>> I can see this board using the "google,peach" compatible string, which is
+>> the same as one listed for peach-pit board. Since they are based on
+>> different SoCs, are they really compatible?
 >
-> These patches depends on following three patch series:
-> [1] mfd: syscon: Support early initialization
->      https://lkml.org/lkml/2014/4/8/239
-> [2] Add PMU node for Exynos SoCs
->      http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29329.html
-> [3] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29085
+> I'd like to see "google,peach" continue to be here but won't fight too
+> strongly if it's rejected.  The pit and pi boards are incredibly
+> similar to each other.  They have a 380 point difference in their
+> processor and a few minor peripheral differences, but not a lot else.
 >
-> We have tested these patches on SMDK5250 board for System boot and
-> Arndale (Exynos5250) board for System boot and PMU initialization and S2R.
+> I could totally imagine some code somewhere wanting to know if this
+> board is compatible with "google,peach" just like you can imagine code
+> somewhere wanting to know if this is compatible with
+> "samsung,exynos5".
 >
-> For testing on Arndale (Exynos5250) board:
-> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->
-> Changes Since v2:
->   - Rebased on top of Daniel Lezcano's Exynos cpuidle refactor patches.
->   - Removed exynos_cpuidle_init and exynos_cpufreq_init code as suggested
->     by Tomasz Figa.
->   - Removed early mapping of PMU base address from exynos.c and removed
->     "get_exynos_pmuaddr" function. Instead of this added code in platsmp.c
->     to get PMU base address using of_iomap as suggested by Tomasz Figa.
->   - Converted PMU implementation into platform_driver by using static
->     platform_device method.
->
-> Changes Since v1:
->   - Rebased on latest for-next of Kukjin Kim's tree.
->   - Added patch: "Make exynos machine_ops as static".
-> 	For making more cleanup in "mach-exynos/common.h"
-> 	as suggested by Tomasz Figa.
->   - Addressed comments of Tomasz Figa for cleaning "mach-exynos/common.h".
->   - Updated patch: Remove file path from comment section
-> 	As suggested by Michel Simek, instead of updating file path
-> 	lets remove them from each file under "mach-exynos".
-> 	Even though Kukjin pointed out that there is similar patch pending from
-> 	Sachin/Tushar but since I could not find I have included this here. If
-> 	I have missed something please point to any existing such patch.
->   - Updated patch: Add support for mapping PMU base address via DT
-> 	- Removed __initdata from declaration of "exynos_pmu_base", as it caused
-> 	kernel crash as pointed out by Vikas Sajjan.
-> 	- Added support for Syscon initialization and getting PMU regmap handle
-> 	as suggested by Sylwester. Since current implementation of early
-> 	intialization [1] has limitation that "early_syscon_init" requires
-> 	DT to be unflattened and system should be able to allocate memory,
-> 	we can't use regmap handles for platsmp.c file as "smp_secondary_init"
-> 	will be called before DT unflattening. So I have kept both method for
-> 	accessing PMU base address. platsmp.c will use ioremmaped address where
-> 	as rest other files can use regmap handle.
->   - Added patch: Remove "linux/bug.h" from pmu.c.
->   - Updated patch: Refactored code for PMU register mapping via DT
-> 	- Modified to use regmap_read/write when using regmap handle.
->   - Added patch: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
->   - Added patch: Add device tree based initialization support for PMU.
-> 	- Convert existing PMU implementation to be a device tree based
-> 	 before moving it to "drivers/mfd" folder. As suggested by Bartlomiej.
-> 	- Dropped making a platform_driver for PMU, as currently PMU binding
-> 	has two compatibility strings as "samsung, exynosxxx-pmu", "syscon",
-> 	once we	enable MFD_SYSCON config option, current "syscon" driver probe
-> 	gets called and PMU probe never gets called. So modified PMU
-> 	initialization code to scan DT and match against supported compatiblity
-> 	string in driver code, and once we get matching node use that for
-> 	accessing PMU regmap handle using "syscon_early_regmap_lookup_by_phandle".
-> 	If there is any better solution please suggest.
->
-> Pankaj Dubey (8):
->    ARM: EXYNOS: Make exynos machine_ops as static
->    ARM: EXYNOS: Move cpufreq and cpuidle device registration to
->      init_machine
->    ARM: EXYNOS: Cleanup "mach-exynos/common.h" file
->    ARM: EXYNOS: Remove file path from comment section
->    ARM: EXYNOS: Remove "linux/bug.h" from pmu.c
->    ARM: EXYNOS: Refactored code for using PMU address via DT
->    ARM: EXYNOS: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
->    ARM: EXYNOS: Add platform driver support for Exynos PMU.
->
-> Young-Gun Jang (4):
->    ARM: EXYNOS: Move SYSREG definition into sys-reg specific file.
->    ARM: EXYNOS: Remove regs-pmu.h header dependency from pm_domain
->    ARM: EXYNOS: Add support for mapping PMU base address via DT
->    ARM: EXYNOS: Move PMU specific definitions from common.h
->
->   arch/arm/mach-exynos/Kconfig                 |    2 +
->   arch/arm/mach-exynos/common.h                |   28 +-
->   arch/arm/mach-exynos/exynos-pmu.h            |   31 ++
->   arch/arm/mach-exynos/exynos.c                |   84 +++--
->   arch/arm/mach-exynos/headsmp.S               |    2 -
->   arch/arm/mach-exynos/hotplug.c               |    7 +-
->   arch/arm/mach-exynos/include/mach/map.h      |    3 -
->   arch/arm/mach-exynos/include/mach/memory.h   |    3 +-
->   arch/arm/mach-exynos/platsmp.c               |   42 ++-
->   arch/arm/mach-exynos/pm.c                    |   79 ++--
->   arch/arm/mach-exynos/pm_domains.c            |    8 +-
->   arch/arm/mach-exynos/pmu.c                   |  285 +++++++++++---
->   arch/arm/mach-exynos/regs-pmu.h              |  512 +++++++++++++-------------
->   arch/arm/mach-exynos/regs-sys.h              |   22 ++
->   arch/arm/plat-samsung/include/plat/map-s5p.h |    1 -
->   15 files changed, 680 insertions(+), 429 deletions(-)
->   create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
->   create mode 100644 arch/arm/mach-exynos/regs-sys.h
+> Potentially you could swap the order of "google,peach" and
+> "samsung,exynos5800" though...
 >
 
+Well, if you can use the device tree of peach-pit board and boot 
+peach-pi and vice-versa and it won't cause any hardware failures then I 
+guess it's fine to keep this string.
 
--- 
-Best Regards,
-Pankaj Dubey
+Not sure about the order, though, as both "google,peach" and 
+"samsung,exynos5800" strings can't really be strictly ordered. IMHO 
+current order is the closest to ideal, as particular family of similar 
+boards is supposedly less generic than all boards based on particular SoC.
+
+>
+>>> +
+>>> +       memory {
+>>> +               reg = <0 0>;
+>>
+>> I don't think this is a good idea, because this is basically rendering this
+>> dts file useless, unless used with a bootloader that can actually inject
+>> correct values. I believe that some generic setup could be provided in the
+>> dts, so you could at least get the board running.
+>
+> I won't say that I care a whole lot, but I think that was what was
+> agreed upon the other day.  Specifically Tom Rini of U-Boot was
+> worried about the fact that U-Boot will read the memory node and
+> totally clobber it.  He thought there might be cases where someone
+> might _purposely_ not want U-Boot to do that.
+>
+> ...I would wonder what alternate bootloader you're imagining will
+> actually run on this board and not do this?
+
+People should have the freedom to choose anything they want. We have 
+also barebox and coreboot with ARM and even Exynos5 support (in 
+coreboot), but people might want to use something completely exotic as 
+well and the device tree should let them do so.
+
+Best regards,
+Tomasz
