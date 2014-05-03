@@ -1,89 +1,35 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/3] clk: exynos5420: Add 5800 specific clocks
-Date: Sat, 03 May 2014 04:12:15 +0200
-Message-ID: <5364507F.90400@gmail.com>
-References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>	<1399035821-25096-2-git-send-email-arun.kk@samsung.com>	<4431329.kolHX05ZMV@wuerfel> <CAD=FV=XThT8Ep1HUvzMEzv2cYNDkUKxdyV_WnbHdM07ppYHM9w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] ARM: Exynos: PMU cleanup and refactoring for
+ using DT
+Date: Sat, 03 May 2014 04:14:22 +0200
+Message-ID: <536450FE.2050300@gmail.com>
+References: <1398835057-3860-1-git-send-email-pankaj.dubey@samsung.com> <53644BD4.4060200@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:50317 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751640AbaECCMQ (ORCPT
+Received: from mail-qc0-f182.google.com ([209.85.216.182]:55102 "EHLO
+	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751901AbaECCOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 May 2014 22:12:16 -0400
-In-Reply-To: <CAD=FV=XThT8Ep1HUvzMEzv2cYNDkUKxdyV_WnbHdM07ppYHM9w@mail.gmail.com>
+	Fri, 2 May 2014 22:14:24 -0400
+In-Reply-To: <53644BD4.4060200@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>, Andrew Bresticker <abrestic@chromium.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com
 
-On 02.05.2014 21:35, Doug Anderson wrote:
-> Arnd,
->
-> On Fri, May 2, 2014 at 11:52 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Friday 02 May 2014 18:33:39 Arun Kumar K wrote:
->>> From: Alim Akhtar <alim.akhtar@samsung.com>
->>>
->>> Exynos5800 clock structure is mostly similar to 5420 with only
->>> a small delta changes. So the 5420 clock file is re-used for
->>> 5800 also. The common clocks for both are seggreagated and few
->>> clocks which are different for both are separately initialized.
->>>
->>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->>
->> This isn't about your specific patch, but every time I see a new
->> exynos variant get supported, it comes with a clock driver patch
->> that is at least as big as all the other patches combined.
->>
->> New variants come out all the time now, and we are starting to
->> accumulate huge amounts of clock definitions both in the source
->> and the binary. I think we should try to come up with a better
->> way to represent the clocks. I don't think any other SoC
->> family is nearly as bad as Exynos, either because they have
->> much fewer models, or because they abstract their clocks more
->> and put all the tables into DT.
->>
->> I'm definitely not saying no to the exynos5800 addition for this,
->> but I'm starting to get a little annoyed, and I think it would be
->> good to come up with a new clock binding before we see 64-bit
->> Exynos variants.
->
-> One thing to note: your suggestion will almost certainly not be
-> conducive to get stable device trees.  IMHO there's pretty much a zero
-> chance that you could properly describe all of the exynos clocks in
-> the first, second, third, or twentieth attempt.  That means that if
-> anyone ever took it in their head to actually ship a device tree that
-> wasn't bundled with the kernel that it would probably be wrong.
->
-> Declaring just "I have exynos5800 clocks" means that you're not
-> relying on the device tree.
->
->
-> The clocks are pretty table-based as-is, and I think that's about the
-> best you're going to get.
+Hi Pankaj,
 
-+1 and similarly to pinctrl stuff. Both full-DT and table-based 
-approaches were being discussed long time ago when moving Exynos to DT 
-and generic frameworks and the conclusion was clearly in favor of the 
-latter.
-
-Moreover, I don't think we should really be concerned about this, 
-because we already have far less changes (not counting device tree 
-sources) needed to support a SoC than we had before, in board file 
-times. Not even saying that new SoCs are not being added that often.
-
+On 03.05.2014 03:52, Pankaj Dubey wrote:
+> Hi,
 >
+> Gentle ping.
 >
-> NOTE: one could argue that possibly the 5420 and 5800 are different
-> enough that they ought to have separate tables.  I don't feel like I'm
-> in enough of an ownership position to make that tradeoff either way,
-> though.
+> Tomasz, Kukjin will you please have a look on this series.
 
-I don't have the datasheets, but looking at the changes needed, they 
-don't seem to be more different than Exynos4210 and Exynos4x12. The 
-approach taken looks fine for me.
+Sure. I have added this series to my queue and should be able to find 
+some time to review it after the weekend.
 
 Best regards,
 Tomasz
