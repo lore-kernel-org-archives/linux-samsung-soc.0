@@ -1,92 +1,103 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH 1/3] clk: exynos5420: Add 5800 specific clocks
-Date: Sat, 3 May 2014 17:42:25 +0530
-Message-ID: <CALt3h7_sLG6hYOQnYO6KtBoKEPNbx1RU-QxRST3wm6Dy4Ju0Rg@mail.gmail.com>
-References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
-	<1399035821-25096-2-git-send-email-arun.kk@samsung.com>
-	<CAL1qeaHTuQ1Br=WLt0xd5a-rA0MjzKez0esgKYTpKs9Y8Gnsxw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/4] Introducing Exynos ChipId driver
+Date: Sat, 03 May 2014 17:02:37 +0200
+Message-ID: <13946837.RfnRDPQdge@wuerfel>
+References: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f172.google.com ([209.85.128.172]:37695 "EHLO
-	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751050AbaECMM0 (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:56394 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751404AbaECPDQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 May 2014 08:12:26 -0400
-In-Reply-To: <CAL1qeaHTuQ1Br=WLt0xd5a-rA0MjzKez0esgKYTpKs9Y8Gnsxw@mail.gmail.com>
+	Sat, 3 May 2014 11:03:16 -0400
+In-Reply-To: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Bresticker <abrestic@google.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk
 
-Hi Andrew,
+On Saturday 03 May 2014 15:11:36 Pankaj Dubey wrote:
+> This patch series attempts to get rid of soc_is_exynosXXXX macros
+> and eventually with the help of this series we can probably get
+> rid of CONFIG_SOC_EXYNOSXXXX in near future.
+> Each Exynos SoC has ChipID block which can give information about
+> SoC's product Id and revision number. Currently we have single
+> DT binding information for this as "samsung,exynos4210-chipid".
+> But Exynos4 and Exynos5 SoC series have one small difference in
+> chip Id, with resepect to product id bit-masks. So it means we
+> should have separate compatible string for these different series
+> of SoCs. So I have created new binding information for handling
+> this difference. Also currently I can think of putting this driver
+> code under "drivers/misc/" but suggestions are welcome.
+> Also current form of driver is missing platfrom driver and needs
+> init function to be called from machine file (either exynos.c or
+> platsmp.c). I hope lot of suggestions and comments to improve this
+> further.
+> 
+> This patch series is based on Kukjin Kim's for-next (3.14_rc1 tag)
+> and prepared on top of following patch series and it's dependent
+> patch series.
 
-On Fri, May 2, 2014 at 11:21 PM, Andrew Bresticker <abrestic@google.com> wrote:
-> Hi Arun,
->
-> On Fri, May 2, 2014 at 6:03 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
->> From: Alim Akhtar <alim.akhtar@samsung.com>
->>
->> Exynos5800 clock structure is mostly similar to 5420 with only
->> a small delta changes. So the 5420 clock file is re-used for
->> 5800 also. The common clocks for both are seggreagated and few
->> clocks which are different for both are separately initialized.
->
-> As Tomasz mentioned, this will certainly conflict with Shaik and
-> Rahul's 5420 clock cleanup series.  That series adds/fixes the MAU,
-> WCORE, and ISP blocks which also have differences from 5420 to 5800.
->
+I think putting it into drivers/soc would be most appropriate.
+We already have a few drivers lined up that we want in there,
+although the directory currently doesn't exist.
 
-Yes I will rebase on that series. I dropped many of the changes
-in 5800 as it doesnt have the common terminating GATES as of now.
-If rebased on Shaik/Rahul cleanup series, I can put all of them
-back again.
+However, I would ask that you use the infrastructure provided by
+drivers/base/soc.c when you add this driver, to also make the
+information available to user space using a standard API.
 
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->>  .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
->>  drivers/clk/samsung/clk-exynos5420.c               |  192 +++++++++++++++-----
->>  include/dt-bindings/clock/exynos5420.h             |    1 +
->>  3 files changed, 150 insertions(+), 46 deletions(-)
->>
+Ideally this should be done by slightly restructuring the DT
+source to make all on-chip devices appear below the soc node.
+We'd have to think a bit about how to best do this while
+preserving compatibility with existing dts files.
 
-[snip]
+Regarding patch 4, this is not what I meant when I asked for
+removing the soc_is_exynos* macros. You basically do a 1:1 replacement
+using a different interface, but you still have code that does
+things differently based on a global identification.
+The only user left in device drivers is now the cpufreq driver,
+which is going to be replaced anyway, so that is ok. Having
+a global variable that is accessible to random device drivers
+is probably not a good idea though, it will just lead to
+bad coding in drivers again.
 
->> +struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
->> +       MUX(0, "mout_aclk400_mscl", mout_group3_5800_p, SRC_TOP0, 4, 3),
->> +
->> +       MUX(0, "mout_aclk333_432_gscl", mout_group6_5800_p, SRC_TOP1, 0, 2),
->> +       MUX(0, "mout_aclk266", mout_group5_5800_p, SRC_TOP1, 20, 2),
->> +       MUX(0, "mout_aclk333", mout_group1_5800_p, SRC_TOP1, 28, 2),
->> +
->> +       MUX(0, "mout_aclk333_g2d", mout_group5_5800_p, SRC_TOP2, 8, 2),
->> +       MUX(0, "mout_aclk266_g2d", mout_group5_5800_p, SRC_TOP2, 12, 2),
->> +       MUX(0, "mout_aclk300_jpeg", mout_group5_5800_p, SRC_TOP2, 20, 2),
->> +       MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
->> +       MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
->> +
->> +       MUX(0, "sclk_bpll", bpll_p, SRC_TOP7, 24, 1),
->> +       MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
->> +
->> +       MUX(0, "mout_user_aclk432_scaler", mout_group9_5800_p,
->> +                                                       SRC_TOP9, 28, 1),
->>
->> +       MUX(0, "mout_sw_aclk432_scaler", mout_group8_5800_p,
->> +                                                       SRC_TOP13, 28, 1),
->
-> The aclk432_scaler tree is incomplete - you're missing
-> mout_aclk432_scaler and dout_aclk432_scaler.  The rest of the CAM
-> block (aclk432_cam, aclkfl1_550_cam, and aclk550_cam) is also missing,
-> though I suppose that could go in a later patch.
->
+To give an example of how I think it should really be restructured,
+let's look at one function:
 
-The CAM gates you mentioned are omitted as I found that there
-are some issues caused by it during S2R sequences and I have
-to leave it as CLK_IGNORE_UNUSED for proper functionality.
+static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
+        { 76, BIT(1) }, /* RTC alarm */
+        { 77, BIT(2) }, /* RTC tick */
+        { /* sentinel */ },
+};
 
-[snip]
+static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+        { 75, BIT(1) }, /* RTC alarm */
+        { 76, BIT(2) }, /* RTC tick */
+        { /* sentinel */ },
+};
 
-Regards
-Arun
+static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+{
+        const struct exynos_wkup_irq *wkup_irq;
+
+        if (soc_is_exynos5250())
+                wkup_irq = exynos5250_wkup_irq;
+        else
+                wkup_irq = exynos4_wkup_irq;
+
+	...
+}
+
+There are multiple problems with this code:
+
+- As mentioned, you depend on a specific SoC identification for
+  something that could be done completely generic.
+- The knowledge about what is a wakeup source or not doesn't
+  really belong here. We don't have a DT binding for wakeups
+  as far as I'm aware of, but this should probably be handled
+  locally in the RTC device node, possibly in the node that
+  contains the S5P_WAKEUP_MASK register.
+
+	Arnd
