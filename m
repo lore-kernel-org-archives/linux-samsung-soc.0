@@ -1,79 +1,66 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 0/6] Further cleanup and enable multiplat build
-Date: Sun, 4 May 2014 21:05:21 +0530
-Message-ID: <CAK9yfHxu+9Lh47ULOb7PWy=JJZqjU3jB9wteJsLvnhDDr=_PQw@mail.gmail.com>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
-	<534E8AF9.4050206@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: Fix SPI interrupt numbers for Exynos5420
+Date: Sun, 4 May 2014 21:06:25 +0530
+Message-ID: <CAK9yfHwJW+oSDonnJTiFMgT6F+1A9-h4z1x_uye3hAc3qPS=Sw@mail.gmail.com>
+References: <1397134692-22149-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:40302 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751071AbaEDPfV (ORCPT
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:43758 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751071AbaEDPgZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 May 2014 11:35:21 -0400
-Received: by mail-ob0-f181.google.com with SMTP id wm4so588173obc.40
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 May 2014 08:35:21 -0700 (PDT)
-In-Reply-To: <534E8AF9.4050206@samsung.com>
+	Sun, 4 May 2014 11:36:25 -0400
+Received: by mail-ob0-f170.google.com with SMTP id uy5so1639220obc.29
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 May 2014 08:36:25 -0700 (PDT)
+In-Reply-To: <1397134692-22149-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 16 April 2014 19:21, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Sachin,
+On 10 April 2014 18:28, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Updated as per the user manual.
 >
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> On 15.04.2014 11:28, Sachin Kamat wrote:
->>
->> This series is based on latest linux-next and depends on the
->> following patch:
->> ARM: EXYNOS: Consolidate Kconfig entries
->> http://article.gmane.org/gmane.linux.kernel.samsung-soc/28642
->>
->> Changes since v2:
->> Replaced patch 2, "ARM: EXYNOS: Staticize exynos_subsys"
->> with "ARM: EXYNOS: Remove exynos_subsys registration" as that
->> code is no more used.
->>
->> Tested on Exynos4210, 4412, 5250 and 5420 based boards.
->>
->> Arnd Bergmann (1):
->>    ARM: EXYNOS: Enable multi-platform build support
->>
->> Sachin Kamat (5):
->>    ARM: EXYNOS: Remove duplicate lines in Makefile
->>    ARM: EXYNOS: Remove exynos_subsys registration
->>    ARM: EXYNOS: Migrate Exynos specific macros from plat to mach
->>    ARM: EXYNOS: Remove unnecessary inclusion of cpu.h
->>    ARM: multi_v7_defconfig: Enable Exynos platform
->>
->>   arch/arm/Kconfig                         |   27 ++---------
->>   arch/arm/configs/exynos_defconfig        |    2 +-
->>   arch/arm/configs/multi_v7_defconfig      |   10 +++++
->>   arch/arm/mach-exynos/Kconfig             |   27 +++++++++++
->>   arch/arm/mach-exynos/Makefile            |    9 ++--
->>   arch/arm/mach-exynos/common.h            |   72
->> ++++++++++++++++++++++++++++++
->>   arch/arm/mach-exynos/cpuidle.c           |    1 -
->>   arch/arm/mach-exynos/exynos.c            |   13 ------
->>   arch/arm/mach-exynos/hotplug.c           |    2 -
->>   arch/arm/mach-exynos/platsmp.c           |    2 -
->>   arch/arm/mach-exynos/pm.c                |    1 -
->>   arch/arm/mach-exynos/pmu.c               |    2 -
->>   arch/arm/plat-samsung/Makefile           |    3 ++
->>   arch/arm/plat-samsung/include/plat/cpu.h |   61
->> -------------------------
->>   14 files changed, 119 insertions(+), 113 deletions(-)
->>
->
-> For the whole series:
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index c3a9a66c5767..6f662b5cc90d 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -385,7 +385,7 @@
+>         spi_0: spi@12d20000 {
+>                 compatible = "samsung,exynos4210-spi";
+>                 reg = <0x12d20000 0x100>;
+> -               interrupts = <0 66 0>;
+> +               interrupts = <0 68 0>;
+>                 dmas = <&pdma0 5
+>                         &pdma0 4>;
+>                 dma-names = "tx", "rx";
+> @@ -401,7 +401,7 @@
+>         spi_1: spi@12d30000 {
+>                 compatible = "samsung,exynos4210-spi";
+>                 reg = <0x12d30000 0x100>;
+> -               interrupts = <0 67 0>;
+> +               interrupts = <0 69 0>;
+>                 dmas = <&pdma1 5
+>                         &pdma1 4>;
+>                 dma-names = "tx", "rx";
+> @@ -417,7 +417,7 @@
+>         spi_2: spi@12d40000 {
+>                 compatible = "samsung,exynos4210-spi";
+>                 reg = <0x12d40000 0x100>;
+> -               interrupts = <0 68 0>;
+> +               interrupts = <0 70 0>;
+>                 dmas = <&pdma0 7
+>                         &pdma0 6>;
+>                 dma-names = "tx", "rx";
+> --
 
-Kukjin,
-
-Can you please apply the first 4 patches in this series for now?
+Ping Kukjin. This is also a fix patch and should go in rc.
 
 -- 
 With warm regards,
