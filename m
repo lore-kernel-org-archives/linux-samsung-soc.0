@@ -1,49 +1,57 @@
-From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 00/16] exynos5420: clock file cleanup
-Date: Mon, 5 May 2014 10:10:36 +0530
-Message-ID: <CAOD6ATqerMT4rrX7iv0ikHtqgZeVrzEoyxMmc_YmwG7fgbvgTQ@mail.gmail.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <5362BC8A.6020609@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5362BC8A.6020609-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/7] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with secure
+ firmware enabled
+Date: Mon, 05 May 2014 12:57:12 +0200
+Message-ID: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:36381 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752028AbaEEK6j (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 06:58:39 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 
-Hi Tomasz,
+Hi,
 
-On Fri, May 2, 2014 at 2:58 AM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
->>
->> Many changes/fixes have been identified for clock file for exynos5420.
->> These include correct parents, bit fields, new clocks etc. Existing
->> files needs some correction in terms of names of the clock and
->> indentation. These issues are addressed in this patch series. It also
->> replaces the usage of enums with macro as clock ids.
->>
->> This patch series is rebased on,
->> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
->>
->> This patch is also dependent on the following patch.
->> ARM: dts: add dt node for sss module for exynos5250/5420
->
->
-> Also a general comment to all the patches. Please assign clock IDs for all
-> the clocks being added. In general, all the defined clocks should have clock
-> IDs defined to let them be accessed from Device Tree, for example in case of
-> DT clock initialization that is being worked on right now.
+This patch series fixes support for AFTR idle mode on boards with
+secure firmware enabled (it also includes fix for register setup on
+EXYNOS4x12 SoCs).  It has been tested on Trats2 target but should
+also work on (EXYNOS4412 based) Insignal Origen board.
 
-Ok. Will take care of this in next series.
+This patchset depends on "[PATCH V5 00/20] ARM: exynos: cpuidle:
+Move the driver to drivers/cpuidle" patch series from Daniel Lezcano
+("http://www.spinics.net/lists/linux-samsung-soc/msg28494.html").
 
-Regards,
-Shaik
-
->
-> Best regards,
-> Tomasz
+Best regards,
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+  ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+  ARM: EXYNOS: PM: use c15resume firmware method if secure firmware is
+    enabled
+  ARM: EXYNOS: PM: fix register setup on EXYNOS4x12 for AFTR mode code
+  ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
+
+Kyungmin Park (1):
+  arm: firmware: Check firmware is running or not
+
+Tomasz Figa (1):
+  ARM: EXYNOS: add support for firmware-assisted c15resume
+
+ arch/arm/common/firmware.c       |  5 +++++
+ arch/arm/include/asm/firmware.h  | 14 +++++++++++++-
+ arch/arm/mach-exynos/firmware.c  | 18 ++++++++++++++++--
+ arch/arm/mach-exynos/pm.c        | 40 ++++++++++++++++++++++++++++++++--------
+ drivers/cpuidle/cpuidle-exynos.c |  7 ++++++-
+ 5 files changed, 72 insertions(+), 12 deletions(-)
+
+-- 
+1.8.2.3
