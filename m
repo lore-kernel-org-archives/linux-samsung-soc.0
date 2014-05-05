@@ -1,63 +1,67 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [Patch v3 1/5] driver: cpuidle-big-little: add of_device_id structure
-Date: Mon,  5 May 2014 13:57:20 +0530
-Message-ID: <1399278444-8312-2-git-send-email-chander.kashyap@linaro.org>
-References: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
- <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:44304 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754999AbaEEI1n (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 04:27:43 -0400
-Received: by mail-ie0-f178.google.com with SMTP id lx4so7476746iec.23
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 May 2014 01:27:42 -0700 (PDT)
-In-Reply-To: <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 2/7] ARM: EXYNOS: add support for firmware-assisted c15resume
+Date: Mon, 05 May 2014 12:57:14 +0200
+Message-ID: <1399287439-31376-3-git-send-email-b.zolnierkie@samsung.com>
+References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
 
-This driver will be used by many big.Little Soc's. As of now it does
-string matching of hardcoded compatible string to init the driver. This
-comparison list will keep on growing with addition of new SoC's.
-Hence add of_device_id structure to collect the compatible strings of
-SoC's using this driver.
+From: Tomasz Figa <t.figa@samsung.com>
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+This change is a preparation for adding secure firmware support to
+EXYNOS cpuidle driver.
+
+This patch shouldn't cause any functionality changes.
+
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+[bzolnier: splitted out from bigger patch]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/cpuidle/cpuidle-big_little.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/firmware.h | 4 ++++
+ arch/arm/mach-exynos/firmware.c | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index b45fc62..4cd02bd 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -163,14 +163,23 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int cpu_id)
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index c72ec47..70883c7 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -41,6 +41,10 @@ struct firmware_ops {
+ 	 * Initializes L2 cache
+ 	 */
+ 	int (*l2x0_init)(void);
++	/*
++	 * Restores coprocessor 15 registers
++	 */
++	int (*c15resume)(u32 *regs);
+ };
+ 
+ /* Global pointer for current firmware_ops structure, can't be NULL. */
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 932129e..581c7bf 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -40,10 +40,18 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
  	return 0;
  }
  
-+static const struct of_device_id compatible_machine_match[] = {
-+	{ .compatible = "arm,vexpress,v2p-ca15_a7" },
-+	{},
-+};
++static int exynos_c15resume(u32 *regs)
++{
++	exynos_smc(SMC_CMD_C15RESUME, regs[0], regs[1], 0);
 +
- static int __init bl_idle_init(void)
- {
- 	int ret;
-+	struct device_node *root = of_find_node_by_path("/");
++	return 0;
++}
 +
-+	if (!root)
-+		return -ENODEV;
+ static const struct firmware_ops exynos_firmware_ops = {
+ 	.do_idle		= exynos_do_idle,
+ 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+ 	.cpu_boot		= exynos_cpu_boot,
++	.c15resume	= exynos_c15resume,
+ };
  
- 	/*
- 	 * Initialize the driver just for a compliant set of machines
- 	 */
--	if (!of_machine_is_compatible("arm,vexpress,v2p-ca15_a7"))
-+	if (!of_match_node(compatible_machine_match, root))
- 		return -ENODEV;
- 	/*
- 	 * For now the differentiation between little and big cores
+ void __init exynos_firmware_init(void)
 -- 
-1.7.9.5
+1.8.2.3
