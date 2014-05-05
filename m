@@ -1,200 +1,58 @@
-From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 02/16] clk: exynos5420: add clocks for ISP block
-Date: Mon, 5 May 2014 09:26:05 +0530
-Message-ID: <CAOD6ATpj-hJSn9ER6DD4wcKisWZpDwGrsjFgvKVz_+2XO6CgQg@mail.gmail.com>
-References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
- <1398344632-18623-3-git-send-email-shaik.ameer@samsung.com>
- <5362B822.2090902@gmail.com> <5362BBC7.1080405@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5362BBC7.1080405-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 2/4] usb: ehci-exynos: Use struct device instead of platform_device
+Date: Mon,  5 May 2014 10:34:25 +0530
+Message-ID: <1399266265-31839-1-git-send-email-gautam.vivek@samsung.com>
+References: <1399034855-9686-3-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399034855-9686-3-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
+Change to use struct device instead of struct platform_device
+for some static functions.
 
-Thanks for the review comments.
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
 
-On Fri, May 2, 2014 at 2:55 AM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 01.05.2014 23:09, Tomasz Figa wrote:
->>
->> Hi Shaik,
->>
->> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
->>>
->>> This patch adds missing clocks for ISP block
->>>
->>> Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>   drivers/clk/samsung/clk-exynos5420.c |   80
->>> ++++++++++++++++++++++++++++++++++
->>>   1 file changed, 80 insertions(+)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5420.c
->>> b/drivers/clk/samsung/clk-exynos5420.c
->>> index 389d4b1..972da5d 100755
->>> --- a/drivers/clk/samsung/clk-exynos5420.c
->>> +++ b/drivers/clk/samsung/clk-exynos5420.c
->>> @@ -57,6 +57,7 @@
->>>   #define SRC_FSYS        0x10244
->>>   #define SRC_PERIC0        0x10250
->>>   #define SRC_PERIC1        0x10254
->>> +#define SRC_ISP            0x10270
->>>   #define SRC_TOP10        0x10280
->>>   #define SRC_TOP11        0x10284
->>>   #define SRC_TOP12        0x10288
->>> @@ -77,12 +78,15 @@
->>>   #define DIV_PERIC2        0x10560
->>>   #define DIV_PERIC3        0x10564
->>>   #define DIV_PERIC4        0x10568
->>> +#define SCLK_DIV_ISP0        0x10580
->>> +#define SCLK_DIV_ISP1        0x10584
->>>   #define GATE_BUS_TOP        0x10700
->>>   #define GATE_BUS_FSYS0        0x10740
->>>   #define GATE_BUS_PERIC        0x10750
->>>   #define GATE_BUS_PERIC1        0x10754
->>>   #define GATE_BUS_PERIS0        0x10760
->>>   #define GATE_BUS_PERIS1        0x10764
->>> +#define GATE_TOP_SCLK_ISP    0x10870
->>>   #define GATE_IP_GSCL0        0x10910
->>>   #define GATE_IP_GSCL1        0x10920
->>>   #define GATE_IP_MFC        0x1092c
->>> @@ -145,6 +149,7 @@ static unsigned long exynos5420_clk_regs[]
->>> __initdata = {
->>>       SRC_MASK_FSYS,
->>>       SRC_MASK_PERIC0,
->>>       SRC_MASK_PERIC1,
->>> +    SRC_ISP,
->>>       DIV_TOP0,
->>>       DIV_TOP1,
->>>       DIV_TOP2,
->>> @@ -158,12 +163,15 @@ static unsigned long exynos5420_clk_regs[]
->>> __initdata = {
->>>       DIV_PERIC2,
->>>       DIV_PERIC3,
->>>       DIV_PERIC4,
->>> +    SCLK_DIV_ISP0,
->>> +    SCLK_DIV_ISP1,
->>>       GATE_BUS_TOP,
->>>       GATE_BUS_FSYS0,
->>>       GATE_BUS_PERIC,
->>>       GATE_BUS_PERIC1,
->>>       GATE_BUS_PERIS0,
->>>       GATE_BUS_PERIS1,
->>> +    GATE_TOP_SCLK_ISP,
->>>       GATE_IP_GSCL0,
->>>       GATE_IP_GSCL1,
->>>       GATE_IP_MFC,
->>> @@ -250,6 +258,15 @@ PNAME(mout_user_aclk200_fsys_p)    = {"fin_pll",
->>> "mout_sw_aclk200_fsys"};
->>>
->>>   PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2",
->>> "mout_sclk_spll"};
->>>   PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll",
->>> "mout_sw_aclk200_fsys2"};
->>> +PNAME(mout_sw_aclk400_isp_p) = {"dout_aclk400_isp", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk400_isp_p) = {"fin_pll", "mout_sw_aclk400_isp"};
->>> +
->>> +PNAME(mout_sw_aclk333_432_isp0_p) = {"dout_aclk333_432_isp0",
->>> +                    "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk333_432_isp0_p) = {"fin_pll",
->>> "mout_sw_aclk333_432_isp0"};
->>> +
->>> +PNAME(mout_sw_aclk333_432_isp_p) = {"dout_aclk333_432_isp",
->>> "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk333_432_isp_p) = {"fin_pll",
->>> "mout_sw_aclk333_432_isp"};
->>>
->>>   PNAME(mout_sw_aclk200_p) = {"dout_aclk200", "mout_sclk_spll"};
->>>   PNAME(mout_aclk200_disp1_p) = {"fin_pll", "mout_sw_aclk200"};
->>> @@ -265,6 +282,7 @@ PNAME(mout_user_aclk166_p) = {"fin_pll",
->>> "mout_sw_aclk166"};
->>>
->>>   PNAME(mout_sw_aclk266_p) = {"dout_aclk266", "mout_sclk_spll"};
->>>   PNAME(mout_user_aclk266_p) = {"fin_pll", "mout_sw_aclk266"};
->>> +PNAME(mout_user_aclk266_isp_p) = {"fin_pll", "mout_sw_aclk266"};
->>>
->>>   PNAME(mout_sw_aclk333_432_gscl_p) = {"dout_aclk333_432_gscl",
->>> "mout_sclk_spll"};
->>>   PNAME(mout_user_aclk333_432_gscl_p) = {"fin_pll",
->>> "mout_sw_aclk333_432_gscl"};
->>> @@ -448,6 +466,31 @@ static struct samsung_mux_clock
->>> exynos5420_mux_clks[] __initdata = {
->>>       MUX(0, "mout_spi0", mout_group2_p, SRC_PERIC1, 20, 3),
->>>       MUX(0, "mout_spi1", mout_group2_p, SRC_PERIC1, 24, 3),
->>>       MUX(0, "mout_spi2", mout_group2_p, SRC_PERIC1, 28, 3),
->>> +    MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
->>> +    MUX(0, "mout_sw_aclk400_isp", mout_sw_aclk400_isp_p,
->>> +        SRC_TOP10, 0, 1),
->>> +    MUX(0, "mout_user_aclk400_isp", mout_user_aclk400_isp_p,
->>> +        SRC_TOP3, 0, 1),
->>> +    MUX(0, "mout_aclk333_432_isp0", mout_group4_p, SRC_TOP1, 12, 2),
->>> +    MUX(0, "mout_sw_aclk333_432_isp0", mout_sw_aclk333_432_isp0_p,
->>> +        SRC_TOP11, 12, 1),
->>> +    MUX(0, "mout_user_aclk333_432_isp0", mout_user_aclk333_432_isp0_p,
->>> +        SRC_TOP4, 12, 1),
->>> +    MUX(0, "mout_aclk333_432_isp", mout_group4_p,
->>> +        SRC_TOP1, 4, 2),
->>> +    MUX(0, "mout_sw_aclk333_432_isp", mout_sw_aclk333_432_isp_p,
->>> +        SRC_TOP11, 4, 1),
->>> +    MUX(0, "mout_user_aclk333_432_isp", mout_user_aclk333_432_isp_p,
->>> +        SRC_TOP4, 4, 1),
->>> +    MUX(0, "mout_user_aclk266_isp", mout_user_aclk266_isp_p,
->>> +        SRC_TOP4, 16, 1),
->>> +
->>> +    /* ISP Block */
->>> +    MUX(0, "mout_pwm_isp", mout_group2_p, SRC_ISP, 24, 3),
->>> +    MUX(0, "mout_uart_isp", mout_group2_p, SRC_ISP, 20, 3),
->>> +    MUX(0, "mout_spi0_isp", mout_group2_p, SRC_ISP, 12, 3),
->>> +    MUX(0, "mout_spi1_isp", mout_group2_p, SRC_ISP, 16, 3),
->>> +    MUX(0, "mout_isp_sensor", mout_group2_p, SRC_ISP, 28, 3),
->>>   };
->>>
->>>   static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->>> @@ -528,6 +571,22 @@ static struct samsung_div_clock
->>> exynos5420_div_clks[] __initdata = {
->>>       DIV(0, "dout_pre_spi0", "dout_spi0", DIV_PERIC4, 8, 8),
->>>       DIV(0, "dout_pre_spi1", "dout_spi1", DIV_PERIC4, 16, 8),
->>>       DIV(0, "dout_pre_spi2", "dout_spi2", DIV_PERIC4, 24, 8),
->>> +
->>> +    /* ISP Block */
->>> +    DIV(0, "dout_aclk400_isp", "mout_aclk400_isp", DIV_TOP0, 0, 3),
->>> +    DIV(0, "dout_aclk333_432_isp0", "mout_aclk333_432_isp0",
->>> +        DIV_TOP1, 16, 3),
->>> +    DIV(0, "dout_aclk333_432_isp", "mout_aclk333_432_isp",
->>> +        DIV_TOP1, 4, 3),
->>> +    DIV(0, "dout_pwm_isp", "mout_pwm_isp", SCLK_DIV_ISP1, 28, 4),
->>> +    DIV(0, "dout_uart_isp", "mout_uart_isp", SCLK_DIV_ISP1, 24, 4),
->>> +    DIV(0, "dout_spi0_isp", "mout_spi0_isp", SCLK_DIV_ISP1, 16, 4),
->>> +    DIV(0, "dout_spi1_isp", "mout_spi1_isp", SCLK_DIV_ISP1, 20, 4),
->>> +    DIV(0, "dout_spi0_isp_pre", "dout_spi0_isp", SCLK_DIV_ISP1, 0, 8),
->>> +    DIV(0, "dout_spi1_isp_pre", "dout_spi1_isp", SCLK_DIV_ISP1, 8, 8),
->>
->>
->> I think we should have the SET_RATE_PARENT flag set here so that both
->> dividers can be configured together when clk_set_rate() is being called
->> on the _pre clock.
->
->
-> Actually the same is also true for all the SCLK gate clocks that have
-> dividers as their parents, so that a driver can just take a reference to the
-> gate clock and control rate of the clock without references to particular
-> dividers.
+Changes since v1:
+ - none
 
-Ok. Will take care in next series.
+ drivers/usb/host/ehci-exynos.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Regards,
-Shaik Ameer Basha
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index 7f425ac..4d763dc 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -50,9 +50,8 @@ struct exynos_ehci_hcd {
+ 
+ #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+ 
+-static void exynos_setup_vbus_gpio(struct platform_device *pdev)
++static void exynos_setup_vbus_gpio(struct device *dev)
+ {
+-	struct device *dev = &pdev->dev;
+ 	int err;
+ 	int gpio;
+ 
+@@ -88,7 +87,7 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
+-	exynos_setup_vbus_gpio(pdev);
++	exynos_setup_vbus_gpio(&pdev->dev);
+ 
+ 	hcd = usb_create_hcd(&exynos_ehci_hc_driver,
+ 			     &pdev->dev, dev_name(&pdev->dev));
+-- 
+1.7.10.4
 
->
-> Best regards,
-> Tomasz
->
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
