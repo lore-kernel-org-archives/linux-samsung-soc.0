@@ -1,31 +1,49 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/2] PM / OPP: Remove cpufreq wrapper dependency on
- internal data organization
-Date: Mon, 5 May 2014 20:10:00 +0530
-Message-ID: <CAKohponPGO511A--_sh5LYM6txgv5LTEy+n4RpshC8WH1CyEgw@mail.gmail.com>
-References: <1399296830-13056-1-git-send-email-nm@ti.com>
-	<1399296830-13056-2-git-send-email-nm@ti.com>
-	<CAKohpomeP3Ftx8mH=x0Hj7HEpw6A9X8O8JEFqvrJbkZYDqDS6Q@mail.gmail.com>
-	<CAGo_u6pcEKDiAqvJW66_p7M7D0noFj6o9Rw5_d8Af3NMBhHA=g@mail.gmail.com>
+From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 00/16] exynos5420: clock file cleanup
+Date: Mon, 5 May 2014 10:10:36 +0530
+Message-ID: <CAOD6ATqerMT4rrX7iv0ikHtqgZeVrzEoyxMmc_YmwG7fgbvgTQ@mail.gmail.com>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com> <5362BC8A.6020609@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CAGo_u6pcEKDiAqvJW66_p7M7D0noFj6o9Rw5_d8Af3NMBhHA=g@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5362BC8A.6020609-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 5 May 2014 19:55, Nishanth Menon <nm@ti.com> wrote:
-> On Mon, May 5, 2014 at 9:23 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+Hi Tomasz,
+
+On Fri, May 2, 2014 at 2:58 AM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
 >>
+>> Many changes/fixes have been identified for clock file for exynos5420.
+>> These include correct parents, bit fields, new clocks etc. Existing
+>> files needs some correction in terms of names of the clock and
+>> indentation. These issues are addressed in this patch series. It also
+>> replaces the usage of enums with macro as clock ids.
 >>
->> What if opp is being added for some reason at the same time?
->> I hope we can surely see some awkward results, maybe some
->> NULL pointers invocations as well..
+>> This patch series is rebased on,
+>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
+>>
+>> This patch is also dependent on the following patch.
+>> ARM: dts: add dt node for sss module for exynos5250/5420
 >
-> we wont - rcu operations ensure that.
+>
+> Also a general comment to all the patches. Please assign clock IDs for all
+> the clocks being added. In general, all the defined clocks should have clock
+> IDs defined to let them be accessed from Device Tree, for example in case of
+> DT clock initialization that is being worked on right now.
 
-Stupid !!
+Ok. Will take care of this in next series.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Regards,
+Shaik
+
+>
+> Best regards,
+> Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
