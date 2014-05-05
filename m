@@ -1,38 +1,52 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] ARM: dts: Add peach-pit board support
-Date: Mon, 5 May 2014 08:11:16 -0700
-Message-ID: <CAD=FV=VH_WMQ+bENDDHB1OEPs9WOTVz7MLqYS6b=43vP5KgPkA@mail.gmail.com>
-References: <1399281933-31064-1-git-send-email-arun.kk@samsung.com>
-	<1399281933-31064-3-git-send-email-arun.kk@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 3/4] misc: exynos-chipid: Add Exynos Chipid driver support
+Date: Mon, 05 May 2014 18:28:49 +0900
+Message-ID: <536759D1.4000001@samsung.com>
+References: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399097500-4052-4-git-send-email-pankaj.dubey@samsung.com>
+ <1399276631.15737.1.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399281933-31064-3-git-send-email-arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arun Kumar <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1399276631.15737.1.camel@AMDC1943>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, Arnd Bergmann <arnd@arndb.de>, t.figa@samsung.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Arun,
+On 05/05/2014 04:57 PM, Krzysztof Kozlowski wrote:
+> On sob, 2014-05-03 at 15:11 +0900, Pankaj Dubey wrote:
+>> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+>> index 7eb4b69..48c8fb5 100644
+>> --- a/drivers/misc/Makefile
+>> +++ b/drivers/misc/Makefile
+>> @@ -55,3 +55,4 @@ obj-$(CONFIG_SRAM)		+= sram.o
+>>   obj-y				+= mic/
+>>   obj-$(CONFIG_GENWQE)		+= genwqe/
+>>   obj-$(CONFIG_ECHO)		+= echo/
+>> +obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+>> diff --git a/drivers/misc/exynos-chipid.c b/drivers/misc/exynos-chipid.c
+>> new file mode 100644
+>> index 0000000..eb23339
+>> --- /dev/null
+>> +++ b/drivers/misc/exynos-chipid.c
+>> @@ -0,0 +1,83 @@
+>> +/*
+>> + * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
+>> + *	      http://www.samsung.com/
+> I wonder why this is copyrighted in the future (2015)?
 
-On Mon, May 5, 2014 at 2:25 AM, Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Adds the google peach-pit board dts file which uses
-> exynos5420 SoC.
+Thanks for pointing out, will correct it in next version.
+
 >
-> Signed-off-by: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
->  arch/arm/boot/dts/Makefile                 |    1 +
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |  147 ++++++++++++++++++++++++++++
->  2 files changed, 148 insertions(+)
+> Best regards,
+> Krzysztof
+>
+>
+>
 
-Note that this has an implicit dependency upon
-<https://patchwork.kernel.org/patch/4101881/> (ARM: dts: Add pwmX_out
-pinctrl nodes to Exynos5420).  Once that has landed then I think we're
-good to go.
 
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Best Regards,
+Pankaj Dubey
