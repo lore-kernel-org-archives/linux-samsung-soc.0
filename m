@@ -1,271 +1,287 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v6 3/4] usb: ohci-exynos: Add facility to use phy provided by the generic phy framework
-Date: Mon,  5 May 2014 10:32:57 +0530
-Message-ID: <1399266177-31765-1-git-send-email-gautam.vivek@samsung.com>
-References: <5363D835.7010804@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5363D835.7010804@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v3 01/16] clk: exynos5420: rename parent clocks
+Date: Mon, 5 May 2014 11:23:50 +0530
+Message-ID: <CAOD6ATrXVXhaKFH4eyCd4P0a_+t8xAkauRsfo0fHMWd+9-4Sqw@mail.gmail.com>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
+ <1398344632-18623-2-git-send-email-shaik.ameer@samsung.com>
+ <536286CE.2070609@gmail.com> <CAOD6AToZY=aTFZyODkvcNKinws7YGoXPMUFQw7jZsmM7jGymEA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f41.google.com ([209.85.213.41]:48004 "EHLO
+	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754499AbaEEFyL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 01:54:11 -0400
+In-Reply-To: <CAOD6AToZY=aTFZyODkvcNKinws7YGoXPMUFQw7jZsmM7jGymEA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Add support to consume phy provided by Generic phy framework.
-Keeping the support for older usb-phy intact right now, in order
-to prevent any functionality break in absence of relevant
-device tree side change for ohci-exynos.
-Once we move to new phy in the device nodes for ohci, we can
-remove the support for older phys.
+On Mon, May 5, 2014 at 10:58 AM, Shaik Ameer Basha
+<shaik.samsung@gmail.com> wrote:
+> Hi Tomasz,
+>
+>
+> On Thu, May 1, 2014 at 11:09 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Shaik,
+>>
+>> Thanks for splitting the series into reasonably-sized patches. It's much
+>> more convenient to review them now.
+>>
+>>
+>> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
+>>>
+>>> This patch modifies the defined parent clock names as per the
+>>> exynos5420 datasheet.
+>>>
+>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>>> ---
+>>>   drivers/clk/samsung/clk-exynos5420.c |  359
+>>> ++++++++++++++++++----------------
+>>>   1 file changed, 187 insertions(+), 172 deletions(-)
+>>>   mode change 100644 => 100755 drivers/clk/samsung/clk-exynos5420.c
+>>>
+>>> diff --git a/drivers/clk/samsung/clk-exynos5420.c
+>>> b/drivers/clk/samsung/clk-exynos5420.c
+>>> old mode 100644
+>>> new mode 100755
+>>> index 35311e1..389d4b1
+>>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>>> @@ -217,85 +217,92 @@ static void exynos5420_clk_sleep_init(void) {}
+>>>   #endif
+>>>
+>>>   /* list of all parent clocks */
+>>> -PNAME(mspll_cpu_p)     = { "sclk_cpll", "sclk_dpll",
+>>> -                               "sclk_mpll", "sclk_spll" };
+>>> -PNAME(cpu_p)           = { "mout_apll" , "mout_mspll_cpu" };
+>>> -PNAME(kfc_p)           = { "mout_kpll" , "mout_mspll_kfc" };
+>>> -PNAME(apll_p)          = { "fin_pll", "fout_apll", };
+>>> -PNAME(bpll_p)          = { "fin_pll", "fout_bpll", };
+>>> -PNAME(cpll_p)          = { "fin_pll", "fout_cpll", };
+>>> -PNAME(dpll_p)          = { "fin_pll", "fout_dpll", };
+>>> -PNAME(epll_p)          = { "fin_pll", "fout_epll", };
+>>> -PNAME(ipll_p)          = { "fin_pll", "fout_ipll", };
+>>> -PNAME(kpll_p)          = { "fin_pll", "fout_kpll", };
+>>> -PNAME(mpll_p)          = { "fin_pll", "fout_mpll", };
+>>> -PNAME(rpll_p)          = { "fin_pll", "fout_rpll", };
+>>> -PNAME(spll_p)          = { "fin_pll", "fout_spll", };
+>>> -PNAME(vpll_p)          = { "fin_pll", "fout_vpll", };
+>>> -
+>>> -PNAME(group1_p)                = { "sclk_cpll", "sclk_dpll", "sclk_mpll"
+>>> };
+>>> -PNAME(group2_p)                = { "fin_pll", "sclk_cpll", "sclk_dpll",
+>>> "sclk_mpll",
+>>> -                         "sclk_spll", "sclk_ipll", "sclk_epll",
+>>> "sclk_rpll" };
+>>> -PNAME(group3_p)                = { "sclk_rpll", "sclk_spll" };
+>>> -PNAME(group4_p)                = { "sclk_ipll", "sclk_dpll", "sclk_mpll"
+>>> };
+>>> -PNAME(group5_p)                = { "sclk_vpll", "sclk_dpll" };
+>>> -
+>>> -PNAME(sw_aclk66_p)     = { "dout_aclk66", "sclk_spll" };
+>>> -PNAME(aclk66_peric_p)  = { "fin_pll", "mout_sw_aclk66" };
+>>> -
+>>> -PNAME(sw_aclk200_fsys_p) = { "dout_aclk200_fsys", "sclk_spll"};
+>>> -PNAME(user_aclk200_fsys_p)     = { "fin_pll", "mout_sw_aclk200_fsys" };
+>>> -
+>>> -PNAME(sw_aclk200_fsys2_p) = { "dout_aclk200_fsys2", "sclk_spll"};
+>>> -PNAME(user_aclk200_fsys2_p)    = { "fin_pll", "mout_sw_aclk200_fsys2" };
+>>> -
+>>> -PNAME(sw_aclk200_p) = { "dout_aclk200", "sclk_spll"};
+>>> -PNAME(aclk200_disp1_p) = { "fin_pll", "mout_sw_aclk200" };
+>>> -
+>>> -PNAME(sw_aclk400_mscl_p) = { "dout_aclk400_mscl", "sclk_spll"};
+>>> -PNAME(user_aclk400_mscl_p)     = { "fin_pll", "mout_sw_aclk400_mscl" };
+>>> -
+>>> -PNAME(sw_aclk333_p) = { "dout_aclk333", "sclk_spll"};
+>>> -PNAME(user_aclk333_p)  = { "fin_pll", "mout_sw_aclk333" };
+>>> -
+>>> -PNAME(sw_aclk166_p) = { "dout_aclk166", "sclk_spll"};
+>>> -PNAME(user_aclk166_p)  = { "fin_pll", "mout_sw_aclk166" };
+>>> -
+>>> -PNAME(sw_aclk266_p) = { "dout_aclk266", "sclk_spll"};
+>>> -PNAME(user_aclk266_p)  = { "fin_pll", "mout_sw_aclk266" };
+>>> -
+>>> -PNAME(sw_aclk333_432_gscl_p) = { "dout_aclk333_432_gscl", "sclk_spll"};
+>>> -PNAME(user_aclk333_432_gscl_p) = { "fin_pll", "mout_sw_aclk333_432_gscl"
+>>> };
+>>> -
+>>> -PNAME(sw_aclk300_gscl_p) = { "dout_aclk300_gscl", "sclk_spll"};
+>>> -PNAME(user_aclk300_gscl_p)     = { "fin_pll", "mout_sw_aclk300_gscl" };
+>>> -
+>>> -PNAME(sw_aclk300_disp1_p) = { "dout_aclk300_disp1", "sclk_spll"};
+>>> -PNAME(user_aclk300_disp1_p)    = { "fin_pll", "mout_sw_aclk300_disp1" };
+>>> -
+>>> -PNAME(sw_aclk300_jpeg_p) = { "dout_aclk300_jpeg", "sclk_spll"};
+>>> -PNAME(user_aclk300_jpeg_p)     = { "fin_pll", "mout_sw_aclk300_jpeg" };
+>>> -
+>>> -PNAME(sw_aclk_g3d_p) = { "dout_aclk_g3d", "sclk_spll"};
+>>> -PNAME(user_aclk_g3d_p) = { "fin_pll", "mout_sw_aclk_g3d" };
+>>> -
+>>> -PNAME(sw_aclk266_g2d_p) = { "dout_aclk266_g2d", "sclk_spll"};
+>>> -PNAME(user_aclk266_g2d_p)      = { "fin_pll", "mout_sw_aclk266_g2d" };
+>>> -
+>>> -PNAME(sw_aclk333_g2d_p) = { "dout_aclk333_g2d", "sclk_spll"};
+>>> -PNAME(user_aclk333_g2d_p)      = { "fin_pll", "mout_sw_aclk333_g2d" };
+>>> -
+>>> -PNAME(audio0_p)        = { "fin_pll", "cdclk0", "sclk_dpll", "sclk_mpll",
+>>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>>> -PNAME(audio1_p)        = { "fin_pll", "cdclk1", "sclk_dpll", "sclk_mpll",
+>>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>>> -PNAME(audio2_p)        = { "fin_pll", "cdclk2", "sclk_dpll", "sclk_mpll",
+>>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>>> -PNAME(spdif_p) = { "fin_pll", "dout_audio0", "dout_audio1",
+>>> "dout_audio2",
+>>> -                 "spdif_extclk", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>>> -PNAME(hdmi_p)  = { "dout_hdmi_pixel", "sclk_hdmiphy" };
+>>> -PNAME(maudio0_p)       = { "fin_pll", "maudio_clk", "sclk_dpll",
+>>> "sclk_mpll",
+>>> -                         "sclk_spll", "sclk_ipll", "sclk_epll",
+>>> "sclk_rpll" };
+>>> +PNAME(mout_mspll_cpu_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
+>>> +                               "mout_sclk_mpll", "mout_sclk_spll"};
+>>> +PNAME(mout_cpu_p) = {"mout_apll" , "mout_mspll_cpu"};
+>>> +PNAME(mout_kfc_p) = {"mout_kpll" , "mout_mspll_kfc"};
+>>> +PNAME(mout_apll_p) = {"fin_pll", "fout_apll"};
+>>> +PNAME(mout_bpll_p) = {"fin_pll", "fout_bpll"};
+>>> +PNAME(mout_cpll_p) = {"fin_pll", "fout_cpll"};
+>>> +PNAME(mout_dpll_p) = {"fin_pll", "fout_dpll"};
+>>> +PNAME(mout_epll_p) = {"fin_pll", "fout_epll"};
+>>> +PNAME(mout_ipll_p) = {"fin_pll", "fout_ipll"};
+>>> +PNAME(mout_kpll_p) = {"fin_pll", "fout_kpll"};
+>>> +PNAME(mout_mpll_p) = {"fin_pll", "fout_mpll"};
+>>> +PNAME(mout_rpll_p) = {"fin_pll", "fout_rpll"};
+>>> +PNAME(mout_spll_p) = {"fin_pll", "fout_spll"};
+>>> +PNAME(mout_vpll_p) = {"fin_pll", "fout_vpll"};
+>>> +
+>>> +PNAME(mout_group1_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
+>>> +                                       "mout_sclk_mpll"};
+>>> +PNAME(mout_group2_p) = {"fin_pll", "mout_sclk_cpll",
+>>> +                       "mout_sclk_dpll", "mout_sclk_mpll",
+>>> "mout_sclk_spll",
+>>> +                       "mout_sclk_ipll", "mout_sclk_epll",
+>>> "mout_sclk_rpll"};
+>>> +PNAME(mout_group3_p) = {"mout_sclk_rpll", "mout_sclk_spll"};
+>>> +PNAME(mout_group4_p) = {"mout_sclk_ipll", "mout_sclk_dpll",
+>>> "mout_sclk_mpll"};
+>>> +PNAME(mout_group5_p) = {"mout_sclk_vpll", "mout_sclk_dpll"};
+>>> +
+>>> +PNAME(mout_sw_aclk66_p)        = {"dout_aclk66", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk66_peric_p) = {"fin_pll", "mout_sw_aclk66"};
+>>> +
+>>> +PNAME(mout_sw_aclk200_fsys_p) = {"dout_aclk200_fsys", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk200_fsys_p)        = {"fin_pll",
+>>> "mout_sw_aclk200_fsys"};
+>>> +
+>>> +PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2",
+>>> "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
+>>> +
+>>> +PNAME(mout_sw_aclk200_p) = {"dout_aclk200", "mout_sclk_spll"};
+>>> +PNAME(mout_aclk200_disp1_p) = {"fin_pll", "mout_sw_aclk200"};
+>>> +
+>>> +PNAME(mout_sw_aclk400_mscl_p) = {"dout_aclk400_mscl", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk400_mscl_p)        = {"fin_pll",
+>>> "mout_sw_aclk400_mscl"};
+>>> +
+>>> +PNAME(mout_sw_aclk333_p) = {"dout_aclk333", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk333_p) = {"fin_pll", "mout_sw_aclk333"};
+>>> +
+>>> +PNAME(mout_sw_aclk166_p) = {"dout_aclk166", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk166_p) = {"fin_pll", "mout_sw_aclk166"};
+>>> +
+>>> +PNAME(mout_sw_aclk266_p) = {"dout_aclk266", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk266_p) = {"fin_pll", "mout_sw_aclk266"};
+>>> +
+>>> +PNAME(mout_sw_aclk333_432_gscl_p) = {"dout_aclk333_432_gscl",
+>>> "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk333_432_gscl_p) = {"fin_pll",
+>>> "mout_sw_aclk333_432_gscl"};
+>>> +
+>>> +PNAME(mout_sw_aclk300_gscl_p) = {"dout_aclk300_gscl", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk300_gscl_p)        = {"fin_pll",
+>>> "mout_sw_aclk300_gscl"};
+>>> +
+>>> +PNAME(mout_sw_aclk300_disp1_p) = {"dout_aclk300_disp1",
+>>> "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk300_disp1_p) = {"fin_pll", "mout_sw_aclk300_disp1"};
+>>> +
+>>> +PNAME(mout_sw_aclk300_jpeg_p) = {"dout_aclk300_jpeg", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk300_jpeg_p) = {"fin_pll", "mout_sw_aclk300_jpeg"};
+>>> +
+>>> +PNAME(mout_sw_aclk_g3d_p) = {"dout_aclk_g3d", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk_g3d_p) = {"fin_pll", "mout_sw_aclk_g3d"};
+>>> +
+>>> +PNAME(mout_sw_aclk266_g2d_p) = {"dout_aclk266_g2d", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk266_g2d_p) = {"fin_pll", "mout_sw_aclk266_g2d"};
+>>> +
+>>> +PNAME(mout_sw_aclk333_g2d_p) = {"dout_aclk333_g2d", "mout_sclk_spll"};
+>>> +PNAME(mout_user_aclk333_g2d_p) = {"fin_pll", "mout_sw_aclk333_g2d"};
+>>> +
+>>> +PNAME(mout_audio0_p) = {"fin_pll", "cdclk0", "mout_sclk_dpll",
+>>> +                       "mout_sclk_mpll", "mout_sclk_spll",
+>>> "mout_sclk_ipll",
+>>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>>> +PNAME(mout_audio1_p) = {"fin_pll", "cdclk1", "mout_sclk_dpll",
+>>> +                       "mout_sclk_mpll", "mout_sclk_spll",
+>>> "mout_sclk_ipll",
+>>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>>> +PNAME(mout_audio2_p) = {"fin_pll", "cdclk2", "mout_sclk_dpll",
+>>> +                       "mout_sclk_mpll", "mout_sclk_spll",
+>>> "mout_sclk_ipll",
+>>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>>> +PNAME(mout_spdif_p) = {"fin_pll", "dout_audio0", "dout_audio1",
+>>> +                       "dout_audio2", "spdif_extclk", "mout_sclk_ipll",
+>>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>>> +PNAME(mout_hdmi_p) = {"dout_hdmi_pixel", "sclk_hdmiphy"};
+>>> +PNAME(mout_maudio0_p) = {"fin_pll", "maudio_clk", "mout_sclk_dpll",
+>>> +                        "mout_sclk_mpll", "mout_sclk_spll",
+>>> "mout_sclk_ipll",
+>>> +                        "mout_sclk_epll", "mout_sclk_rpll"};
+>>>
+>>>   /* fixed rate clocks generated outside the soc */
+>>>   static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[]
+>>> __initdata = {
+>>> @@ -316,123 +323,131 @@ static struct samsung_fixed_factor_clock
+>>> exynos5420_fixed_factor_clks[] __initda
+>>>   };
+>>>
+>>>   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>>> -       MUX(0, "mout_mspll_kfc", mspll_cpu_p, SRC_TOP7, 8, 2),
+>>> -       MUX(0, "mout_mspll_cpu", mspll_cpu_p, SRC_TOP7, 12, 2),
+>>> -       MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
+>>> -       MUX(0, "mout_cpu", cpu_p, SRC_CPU, 16, 1),
+>>> -       MUX(0, "mout_kpll", kpll_p, SRC_KFC, 0, 1),
+>>> -       MUX(0, "mout_cpu_kfc", kfc_p, SRC_KFC, 16, 1),
+>>> +       MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
+>>> +       MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+>>> +       MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+>>> +       MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+>>> +       MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+>>> +       MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+>>
+>>
+>> It looks like a lot of changes done in this patch is not actually clock
+>> renaming, but rather renaming of parent arrays. Do you really need to rename
+>> them? I don't think we need this at least in cases that are just adding
+>> "mout_" prefix to variable names, as it's obvious that parent arrays are
+>> relevant only to mux clocks.
+>
+> Agreed. But I am trying to follow the naming conventions from
+> exynos5420 and 5620.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
----
+sorry. Its exynos5260
 
-Changes from v5:
- - Removed setting phy explicitly to error pointer.
- - Changed error check to '-ENOSYS' instead of '-ENXIO' in failure case of
-   devm_of_phy_get().
-
-Changes from v4:
- - Removed 'phy-names' property from the bindings since we don't need it.
- - Restructured exynos_ohci_get_phy() function to handle error codes as
-   well as return relevant error codes effectively.
- - Added IS_ERR() check for PHYs in exynos_ohci_phy_enable()/disable().
-
-Changes from v3:
- - Calling usb_phy_shutdown() when exynos_ohci_phy_enable() is failing.
- - Made exynos_ohci_phy_disable() return void, since its return value
-   did not serve any purpose.
- - Calling clk_disable_unprepare() in exynos_ohci_resume() when
-   exynos_ohci_phy_enable() is failed.
-
- .../devicetree/bindings/usb/exynos-usb.txt         |   16 +++
- drivers/usb/host/ohci-exynos.c                     |  118 +++++++++++++++++---
- 2 files changed, 118 insertions(+), 16 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index d967ba1..49a9c6f 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -38,6 +38,13 @@ Required properties:
-  - interrupts: interrupt number to the cpu.
-  - clocks: from common clock binding: handle to usb clock.
-  - clock-names: from common clock binding: Shall be "usbhost".
-+ - port: if in the SoC there are OHCI phys, they should be listed here.
-+   One phy per port. Each port should have following entries:
-+	- reg: port number on OHCI controller, e.g
-+	       On Exynos5250, port 0 is USB2.0 otg phy
-+			      port 1 is HSIC phy0
-+			      port 2 is HSIC phy1
-+	- phys: from the *Generic PHY* bindings, specifying phy used by port.
- 
- Example:
- 	usb@12120000 {
-@@ -47,6 +54,15 @@ Example:
- 
- 		clocks = <&clock 285>;
- 		clock-names = "usbhost";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+		    reg = <0>;
-+		    phys = <&usb2phy 1>;
-+		    status = "disabled";
-+		};
-+
- 	};
- 
- DWC3
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 05f00e3..32f2ff1 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
-@@ -33,28 +34,110 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
- 
- #define to_exynos_ohci(hcd) (struct exynos_ohci_hcd *)(hcd_to_ohci(hcd)->priv)
- 
-+#define PHY_NUMBER 3
-+
- struct exynos_ohci_hcd {
- 	struct clk *clk;
- 	struct usb_phy *phy;
- 	struct usb_otg *otg;
-+	struct phy *phy_g[PHY_NUMBER];
- };
- 
--static void exynos_ohci_phy_enable(struct device *dev)
-+static int exynos_ohci_get_phy(struct device *dev,
-+				struct exynos_ohci_hcd *exynos_ohci)
-+{
-+	struct device_node *child;
-+	struct phy *phy;
-+	int phy_number;
-+	int ret = 0;
-+
-+	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR(exynos_ohci->phy)) {
-+		ret = PTR_ERR(exynos_ohci->phy);
-+		if (ret != -ENXIO && ret != -ENODEV) {
-+			dev_err(dev, "no usb2 phy configured\n");
-+			return ret;
-+		}
-+		dev_dbg(dev, "Failed to get usb2 phy\n");
-+	} else {
-+		exynos_ohci->otg = exynos_ohci->phy->otg;
-+	}
-+
-+	/*
-+	 * Getting generic phy:
-+	 * We are keeping both types of phys as a part of transiting OHCI
-+	 * to generic phy framework, so as to maintain backward compatibilty
-+	 * with old DTB.
-+	 * If there are existing devices using DTB files built from them,
-+	 * to remove the support for old bindings in this driver,
-+	 * we need to make sure that such devices have their DTBs
-+	 * updated to ones built from new DTS.
-+	 */
-+	for_each_available_child_of_node(dev->of_node, child) {
-+		ret = of_property_read_u32(child, "reg", &phy_number);
-+		if (ret) {
-+			dev_err(dev, "Failed to parse device tree\n");
-+			of_node_put(child);
-+			return ret;
-+		}
-+
-+		if (phy_number >= PHY_NUMBER) {
-+			dev_err(dev, "Invalid number of PHYs\n");
-+			of_node_put(child);
-+			return -EINVAL;
-+		}
-+
-+		phy = devm_of_phy_get(dev, child, 0);
-+		of_node_put(child);
-+		if (IS_ERR(phy)) {
-+			ret = PTR_ERR(phy);
-+			if (ret != -ENOSYS && ret != -ENODEV) {
-+				dev_err(dev, "no usb2 phy configured\n");
-+				return ret;
-+			}
-+			dev_dbg(dev, "Failed to get usb2 phy\n");
-+		}
-+		exynos_ohci->phy_g[phy_number] = phy;
-+	}
-+
-+	return ret;
-+}
-+
-+static int exynos_ohci_phy_enable(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
-+	int i;
-+	int ret = 0;
-+
-+	if (!IS_ERR(exynos_ohci->phy))
-+		return usb_phy_init(exynos_ohci->phy);
- 
--	if (exynos_ohci->phy)
--		usb_phy_init(exynos_ohci->phy);
-+	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
-+		if (!IS_ERR(exynos_ohci->phy_g[i]))
-+			ret = phy_power_on(exynos_ohci->phy_g[i]);
-+	if (ret)
-+		for (i--; i >= 0; i--)
-+			if (!IS_ERR(exynos_ohci->phy_g[i]))
-+				phy_power_off(exynos_ohci->phy_g[i]);
-+
-+	return ret;
- }
- 
- static void exynos_ohci_phy_disable(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
-+	int i;
- 
--	if (exynos_ohci->phy)
-+	if (!IS_ERR(exynos_ohci->phy)) {
- 		usb_phy_shutdown(exynos_ohci->phy);
-+		return;
-+	}
-+
-+	for (i = 0; i < PHY_NUMBER; i++)
-+		if (!IS_ERR(exynos_ohci->phy_g[i]))
-+			phy_power_off(exynos_ohci->phy_g[i]);
- }
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
-@@ -62,7 +145,6 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 	struct exynos_ohci_hcd *exynos_ohci;
- 	struct usb_hcd *hcd;
- 	struct resource *res;
--	struct usb_phy *phy;
- 	int irq;
- 	int err;
- 
-@@ -88,15 +170,9 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 					"samsung,exynos5440-ohci"))
- 		goto skip_phy;
- 
--	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(phy)) {
--		usb_put_hcd(hcd);
--		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
--		return -EPROBE_DEFER;
--	} else {
--		exynos_ohci->phy = phy;
--		exynos_ohci->otg = phy->otg;
--	}
-+	err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
-+	if (err)
-+		goto fail_clk;
- 
- skip_phy:
- 	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
-@@ -139,7 +215,11 @@ skip_phy:
- 
- 	platform_set_drvdata(pdev, hcd);
- 
--	exynos_ohci_phy_enable(&pdev->dev);
-+	err = exynos_ohci_phy_enable(&pdev->dev);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to enable USB phy\n");
-+		goto fail_io;
-+	}
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -210,13 +290,19 @@ static int exynos_ohci_resume(struct device *dev)
- {
- 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
-+	int ret;
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_enable(dev);
-+	ret = exynos_ohci_phy_enable(dev);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable USB phy\n");
-+		clk_disable_unprepare(exynos_ohci->clk);
-+		return ret;
-+	}
- 
- 	ohci_resume(hcd, false);
- 
--- 
-1.7.10.4
+> I will keep the renaming part and change the subject and commit
+> message as per your comments.
+>
+> Regards,
+> Shaik Ameer Basha
+>
+>>
+>> Best regards,
+>> Tomasz
