@@ -1,67 +1,52 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 1/7] arm: firmware: Check firmware is running or not
-Date: Mon, 05 May 2014 12:57:13 +0200
-Message-ID: <1399287439-31376-2-git-send-email-b.zolnierkie@samsung.com>
-References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58092 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753389AbaEEK6u (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 06:58:50 -0400
-In-reply-to: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 2/5] ARM: EXYNOS: use generic exynos cpu power control functions
+Date: Mon,  5 May 2014 21:56:58 +0530
+Message-ID: <1399307221-8659-3-git-send-email-a.kesavan@samsung.com>
+References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399307221-8659-1-git-send-email-a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Dave.Martin-5wv7dgnIgG8@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inderpal.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+From: Leela Krishna Amudala <leela.krishna-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-To support multi-platform, it needs to know it's running under secure
-OS or not.  Sometimes it needs to access physical address by SMC calls.
+Use generic exynos cpu power control functions to power up/down
+and to know the status of the cpu.
 
-e.g.,
-        if (firmware_run()) {
-                addr = physical address;
-        } else {
-                addr = virtual address;
-        }
-
-        call_firmware_ops(read_address, addr, &value);
-
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Leela Krishna Amudala <leela.krishna-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/common/firmware.c      | 5 +++++
- arch/arm/include/asm/firmware.h | 3 +++
- 2 files changed, 8 insertions(+)
+ arch/arm/mach-exynos/platsmp.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/common/firmware.c b/arch/arm/common/firmware.c
-index 27ddccb..e9d9ee5 100644
---- a/arch/arm/common/firmware.c
-+++ b/arch/arm/common/firmware.c
-@@ -16,3 +16,8 @@
- static const struct firmware_ops default_firmware_ops;
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 0aac032..d442a66 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -130,15 +130,12 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 */
+ 	write_pen_release(phys_cpu);
  
- const struct firmware_ops *firmware_ops = &default_firmware_ops;
-+
-+int firmware_run(void)
-+{
-+	return firmware_ops != &default_firmware_ops;
-+}
-diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
-index 2c9f10d..c72ec47 100644
---- a/arch/arm/include/asm/firmware.h
-+++ b/arch/arm/include/asm/firmware.h
-@@ -46,6 +46,9 @@ struct firmware_ops {
- /* Global pointer for current firmware_ops structure, can't be NULL. */
- extern const struct firmware_ops *firmware_ops;
+-	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+-		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-			     S5P_ARM_CORE1_CONFIGURATION);
+-
++	if (!exynos_cpu_power_state(cpu)) {
++		exynos_cpu_powerup(cpu);
+ 		timeout = 10;
  
-+/* Check firmware is running */
-+extern int firmware_run(void);
-+
- /*
-  * call_firmware_op(op, ...)
-  *
+ 		/* wait max 10 ms until cpu1 is on */
+-		while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+-			& S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
++		while (exynos_cpu_power_state(cpu) != S5P_CORE_LOCAL_PWR_EN) {
+ 			if (timeout-- == 0)
+ 				break;
+ 
 -- 
-1.8.2.3
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
