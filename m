@@ -1,120 +1,150 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 08/10] thermal: exynos: cache non_hw_trigger_levels in pdata
-Date: Mon, 05 May 2014 13:15:37 +0200
-Message-ID: <1399288539-1793-9-git-send-email-b.zolnierkie@samsung.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/4] Introducing Exynos ChipId driver
+Date: Mon, 05 May 2014 16:58:14 +0200
+Message-ID: <4239261.HFHm7SU1iH@wuerfel>
+References: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com> <13946837.RfnRDPQdge@wuerfel> <536758AB.2060503@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <536758AB.2060503@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Cache number of non-hardware trigger levels in a new pdata field
-(non_hw_trigger_levels) and convert code in exynos_tmu_initialize()
-accordingly.
+On Monday 05 May 2014 18:23:55 Pankaj Dubey wrote:
+> On 05/04/2014 12:02 AM, Arnd Bergmann wrote:
+> > Ideally this should be done by slightly restructuring the DT
+> > source to make all on-chip devices appear below the soc node.
+> 
+> Currently I can't see soc nodes in exynos4 and exynos5 DT files.
+> So isn't it should be a separate patch first to modify all exynos4
+> exynos5 DT files to move all devices under soc node?
+> In that case existing chipid node will be also moved under soc node.
 
-There should be no functional changes caused by this patch.
+Yes, that would be good. In fact the soc node could be identical
+to the chipid node, effectively moving everything under chipid.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c      | 16 +++-------------
- drivers/thermal/samsung/exynos_tmu.h      |  2 ++
- drivers/thermal/samsung/exynos_tmu_data.c |  3 +++
- 3 files changed, 8 insertions(+), 13 deletions(-)
+> > We'd have to think a bit about how to best do this while
+> > preserving compatibility with existing dts files.
+> 
+> Is it necessary in this case?
+> As I have mentioned there is difference in bit-mask among exynos4
+> and exynos5's chipid. So is this reason not sufficient to keep separate
+> compatible for both?
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 20379eb..a8d9524 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -90,7 +90,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	const struct exynos_tmu_registers *reg = pdata->registers;
- 	unsigned int status, trim_info = 0, con;
- 	unsigned int rising_threshold = 0, falling_threshold = 0;
--	int ret = 0, threshold_code, i, trigger_levs = 0;
-+	int ret = 0, threshold_code, i;
- 
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
-@@ -134,29 +134,19 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	    data->temp_error > pdata->max_efuse_value)
- 		data->temp_error = pdata->efuse_value & EXYNOS_TMU_TEMP_MASK;
- 
--	for (i = 0; i < pdata->max_trigger_level; i++) {
--		if (!pdata->trigger_levels[i])
--			continue;
--
--		/* Count trigger levels except the HW trip*/
--		if (!(pdata->trigger_type[i] == HW_TRIP))
--			trigger_levs++;
--	}
--
- 	if (data->soc == SOC_ARCH_EXYNOS4210) {
- 		/* Write temperature code for threshold */
- 		threshold_code = temp_to_code(data, pdata->threshold);
- 		writeb(threshold_code,
- 			data->base + reg->threshold_temp);
--		for (i = 0; i < trigger_levs; i++)
-+		for (i = 0; i < pdata->non_hw_trigger_levels; i++)
- 			writeb(pdata->trigger_levels[i], data->base +
- 			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
- 
- 		writel(reg->inten_rise_mask, data->base + reg->tmu_intclear);
- 	} else {
- 		/* Write temperature code for rising and falling threshold */
--		for (i = 0;
--		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
-+		for (i = 0; i < pdata->non_hw_trigger_levels; i++) {
- 			threshold_code = temp_to_code(data,
- 						pdata->trigger_levels[i]);
- 			rising_threshold |= threshold_code << 8 * i;
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 186e39e..4845171 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -183,6 +183,7 @@ struct exynos_tmu_registers {
-  *	1 = enable trigger_level[] interrupt,
-  *	0 = disable trigger_level[] interrupt
-  * @max_trigger_level: max trigger level supported by the TMU
-+ * @non_hw_trigger_levels: number of defined non-hardware trigger levels
-  * @gain: gain of amplifier in the positive-TC generator block
-  *	0 <= gain <= 15
-  * @reference_voltage: reference voltage of amplifier
-@@ -213,6 +214,7 @@ struct exynos_tmu_platform_data {
- 	enum trigger_type trigger_type[MAX_TRIP_COUNT];
- 	bool trigger_enable[MAX_TRIP_COUNT];
- 	u8 max_trigger_level;
-+	u8 non_hw_trigger_levels;
- 	u8 gain;
- 	u8 reference_voltage;
- 	u8 noise_cancel_mode;
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index c32d186..ef7f186 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -62,6 +62,7 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
- 		.trigger_type[1] = THROTTLE_ACTIVE,
- 		.trigger_type[2] = SW_TRIP,
- 		.max_trigger_level = 4,
-+		.non_hw_trigger_levels = 3,
- 		.gain = 15,
- 		.reference_voltage = 7,
- 		.min_efuse_value = 40,
-@@ -135,6 +136,7 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 	.trigger_type[2] = SW_TRIP, \
- 	.trigger_type[3] = HW_TRIP, \
- 	.max_trigger_level = 4, \
-+	.non_hw_trigger_levels = 3, \
- 	.gain = 8, \
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
-@@ -225,6 +227,7 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
- 	.trigger_type[0] = SW_TRIP, \
- 	.trigger_type[4] = HW_TRIP, \
- 	.max_trigger_level = 5, \
-+	.non_hw_trigger_levels = 1, \
- 	.gain = 5, \
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
--- 
-1.8.2.3
+Having two "compatible" values for exynos4 and exynos5 is not a problem,
+and it absolutely makes sense to have more specific values in there
+as well:
+
+compatible = "samsung,exynos4210-chipid", "samsung,exynos4-chipid";
+
+> Also even if we get some way to preserve existing compatibility, I afraid
+> in chipid driver that implementation will not look good, at least I am not
+> able to think of any good way. Any suggestions?
+
+The compatibility I mean is to ensure everything keeps working if
+the node is not present.
+
+> > Regarding patch 4, this is not what I meant when I asked for
+> > removing the soc_is_exynos* macros. You basically do a 1:1 replacement
+> > using a different interface, but you still have code that does
+> > things differently based on a global identification.
+> I agree with what you are trying to say. But if you see recently we had some
+> patches (cpu_idle.c: [2], pmu.c: [3])  to remove usage of such macros from
+> exynos machine files. So only leftover files using these macros are exynos.c
+> platsmp.c and pm.c.
+> 
+> For exynos.c I have tried to remove soc_is_exynos4/exynos5 by matching with
+> compatible string in patch 1 of this series. Please let me know if that is OK?
+
+I've taken a closer look at that file now. My preferred solution
+would be to go back to having two machine descriptors as it
+was before Sachin Kamat's "ARM: EXYNOS: Consolidate exynos4 and
+exynos5 machine files", but keep it all in one file and consolidated
+as much as possible, e.g.
+
+static void __init exynos_dt_machine_init(void)
+{
+       exynos_cpuidle_init();
+       exynos_cpufreq_init();
+
+       of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+}
+
+static void __init exynos5_dt_machine_init(void)
+{
+       /*
+        * Exynos5's legacy i2c controller and new high speed i2c
+        * controller have muxed interrupt sources. By default the
+        * interrupts for 4-channel HS-I2C controller are enabled.
+        * If node for first four channels of legacy i2c controller
+        * are available then re-configure the interrupts via the
+        * system register.
+        */
+       struct device_node *i2c_np;
+       const char *i2c_compat = "samsung,s3c2440-i2c";
+       unsigned int tmp;
+       int id;
+
+       for_each_compatible_node(i2c_np, NULL, i2c_compat) {
+              if (of_device_is_available(i2c_np)) {
+                        id = of_alias_get_id(i2c_np, "i2c");
+                        if (id < 4) {
+                                  tmp = readl(EXYNOS5_SYS_I2C_CFG);
+                                  writel(tmp & ~(0x1 << id),  EXYNOS5_SYS_I2C_CFG);
+                        }
+               }
+       }
+
+       exynos_dt_machine_init();
+}
+
+This way you can avoid having another check of the compatible node.
+In the long run, all of the this code should go away: The cpuidle
+and cpufreq drivers should become normal platform drivers that
+get probed when the devices are present (just like it's required
+for arm64 anyway), and the EXYNOS5_SYS_I2C_CFG register should
+get set up by an appropriate driver, e.g. the i2c driver through
+syscon, or a pinmux driver that changes the mux between the
+sources based on DT information, whatever fits best.
+
+Similarly for exynos_map_io(), with the sysram out of the picture,
+it can be 
+
+void __init exynos4_init_io(void)
+{
+        debug_ll_io_init();
+	iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+}
+
+void __init exynos5_init_io(void)
+{
+        debug_ll_io_init();
+	iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos4_iodesc));
+}
+
+but in the long run, it would be nicer to completely eliminate
+exynos4_iodesc and exynos5_iodesc as well, and remove the init_io
+functions. Note that debug_ll_io_init() is already called when
+you have a NULL .map_io callback.
+
+> Also for platsmp.c and pm.c I can think of following approaches
+> 1: Keep these macros till we get generic solution?
+> 2: Allow chipid driver to expose APIs to check SoC id and SoC revisions 
+> till we get
+> generic solution. So that at least we can remove #ifdef  based macros
+> as soc_is_exynosXYZ.
+> 3: Use of "of_flat_dt_is_compatible" or similar APIs in these machine files 
+> till we get
+> generic solution. For some cases where we want to know SoC revision let us
+> map chipid register and get revision there itself.
+> 
+> Please let me know what approach you think will be good?
+
+I think 1 or 2 would be better than 3. Between those two, I'm undecided,
+but I think either way the SoC specific values would be better kept in the
+mach-samsung directory than in plat/cpu.h or linux/exynos-chipid.h.
+
+	Arnd
