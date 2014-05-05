@@ -1,94 +1,38 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 02/10] thermal: exynos: remove unused defines
-Date: Mon, 05 May 2014 13:15:31 +0200
-Message-ID: <1399288539-1793-3-git-send-email-b.zolnierkie@samsung.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v4 2/2] ARM: dts: Add peach-pit board support
+Date: Mon, 5 May 2014 08:11:16 -0700
+Message-ID: <CAD=FV=VH_WMQ+bENDDHB1OEPs9WOTVz7MLqYS6b=43vP5KgPkA@mail.gmail.com>
+References: <1399281933-31064-1-git-send-email-arun.kk@samsung.com>
+	<1399281933-31064-3-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399281933-31064-3-git-send-email-arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arun Kumar <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There should be no functional changes caused by this patch.
+Arun,
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu_data.h | 27 +--------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+On Mon, May 5, 2014 at 2:25 AM, Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Adds the google peach-pit board dts file which uses
+> exynos5420 SoC.
+>
+> Signed-off-by: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/Makefile                 |    1 +
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |  147 ++++++++++++++++++++++++++++
+>  2 files changed, 148 insertions(+)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-index 06c4345..d4eeddb 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.h
-+++ b/drivers/thermal/samsung/exynos_tmu_data.h
-@@ -42,20 +42,8 @@
- /* Exynos4210 specific registers */
- #define EXYNOS4210_TMU_REG_THRESHOLD_TEMP	0x44
- #define EXYNOS4210_TMU_REG_TRIG_LEVEL0	0x50
--#define EXYNOS4210_TMU_REG_TRIG_LEVEL1	0x54
--#define EXYNOS4210_TMU_REG_TRIG_LEVEL2	0x58
--#define EXYNOS4210_TMU_REG_TRIG_LEVEL3	0x5C
--#define EXYNOS4210_TMU_REG_PAST_TEMP0	0x60
--#define EXYNOS4210_TMU_REG_PAST_TEMP1	0x64
--#define EXYNOS4210_TMU_REG_PAST_TEMP2	0x68
--#define EXYNOS4210_TMU_REG_PAST_TEMP3	0x6C
--
--#define EXYNOS4210_TMU_TRIG_LEVEL0_MASK	0x1
--#define EXYNOS4210_TMU_TRIG_LEVEL1_MASK	0x10
--#define EXYNOS4210_TMU_TRIG_LEVEL2_MASK	0x100
--#define EXYNOS4210_TMU_TRIG_LEVEL3_MASK	0x1000
-+
- #define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
--#define EXYNOS4210_TMU_INTCLEAR_VAL	0x1111
- 
- /* Exynos5250 and Exynos4412 specific registers */
- #define EXYNOS_TMU_TRIMINFO_CON	0x14
-@@ -69,8 +57,6 @@
- #define EXYNOS_TMU_RISE_INT_SHIFT	0
- #define EXYNOS_TMU_FALL_INT_MASK	0x111
- #define EXYNOS_TMU_FALL_INT_SHIFT	12
--#define EXYNOS_TMU_CLEAR_RISE_INT	0x111
--#define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
- #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
- #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
- #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
-@@ -82,8 +68,6 @@
- #define EXYNOS_TMU_INTEN_RISE2_SHIFT	8
- #define EXYNOS_TMU_INTEN_RISE3_SHIFT	12
- #define EXYNOS_TMU_INTEN_FALL0_SHIFT	16
--#define EXYNOS_TMU_INTEN_FALL1_SHIFT	20
--#define EXYNOS_TMU_INTEN_FALL2_SHIFT	24
- 
- #define EXYNOS_EMUL_TIME	0x57F0
- #define EXYNOS_EMUL_TIME_MASK	0xffff
-@@ -107,13 +91,11 @@
- #define EXYNOS5440_TMU_S0_7_TH0			0x110
- #define EXYNOS5440_TMU_S0_7_TH1			0x130
- #define EXYNOS5440_TMU_S0_7_TH2			0x150
--#define EXYNOS5440_TMU_S0_7_EVTEN		0x1F0
- #define EXYNOS5440_TMU_S0_7_IRQEN		0x210
- #define EXYNOS5440_TMU_S0_7_IRQ			0x230
- /* exynos5440 common registers */
- #define EXYNOS5440_TMU_IRQ_STATUS		0x000
- #define EXYNOS5440_TMU_PMIN			0x004
--#define EXYNOS5440_TMU_TEMP			0x008
- 
- #define EXYNOS5440_TMU_RISE_INT_MASK		0xf
- #define EXYNOS5440_TMU_RISE_INT_SHIFT		0
-@@ -124,13 +106,6 @@
- #define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
- #define EXYNOS5440_TMU_INTEN_RISE3_SHIFT	3
- #define EXYNOS5440_TMU_INTEN_FALL0_SHIFT	4
--#define EXYNOS5440_TMU_INTEN_FALL1_SHIFT	5
--#define EXYNOS5440_TMU_INTEN_FALL2_SHIFT	6
--#define EXYNOS5440_TMU_INTEN_FALL3_SHIFT	7
--#define EXYNOS5440_TMU_TH_RISE0_SHIFT		0
--#define EXYNOS5440_TMU_TH_RISE1_SHIFT		8
--#define EXYNOS5440_TMU_TH_RISE2_SHIFT		16
--#define EXYNOS5440_TMU_TH_RISE3_SHIFT		24
- #define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
- #define EXYNOS5440_EFUSE_SWAP_OFFSET		8
- 
--- 
-1.8.2.3
+Note that this has an implicit dependency upon
+<https://patchwork.kernel.org/patch/4101881/> (ARM: dts: Add pwmX_out
+pinctrl nodes to Exynos5420).  Once that has landed then I think we're
+good to go.
 
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
