@@ -1,141 +1,137 @@
-From: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 1/2] ARM: dts: Add node labels to 5420
-Date: Mon,  5 May 2014 14:55:31 +0530
-Message-ID: <1399281933-31064-2-git-send-email-arun.kk@samsung.com>
-References: <1399281933-31064-1-git-send-email-arun.kk@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399281933-31064-1-git-send-email-arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC v3 PATCH v6 11/16] ARM: dts: s6e3fa0: add DT bindings
+Date: Mon, 05 May 2014 12:35:17 +0200
+Message-ID: <53676965.4020800@samsung.com>
+References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
+ <1398563412-21781-12-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53833 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756187AbaEEKfW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 06:35:22 -0400
+In-reply-to: <1398563412-21781-12-git-send-email-yj44.cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 
-Adding labels to nodes which do not have it yet
-in exynos5420.dtsi. This is done so as to use reference
-based node updation in board files.
+On 04/27/2014 03:50 AM, YoungJun Cho wrote:
+> This patch adds DT bindings for s6e3fa0 panel.
+> The bindings describes panel resources, display timings and cpu mode timings.
+> 
+> Changelog v2:
+> - Adds unit address (commented by Sachin Kamat)
+> Changelog v3:
+> - Removes optional delay, size properties (commented by Laurent Pinchart)
+> - Adds OLED detection, TE gpio properties
+> Changelog v4:
+> - Moves CPU timings relevant properties from FIMD DT
+>   (commeted by Laurent Pinchart, Andrzej Hajda)
+> Changelog v5:
+> - Fixes gpio property names (commented by Andrzej Hajda)
+> Changelog v6:
+> - Renames CPU timings to CPU mode timings
+> - Modifies CPU mode timings internal properties relevant things
+>   (commeted by Laurent Pinchart, Andrzej Hajda)
+> 
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   68 ++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> new file mode 100644
+> index 0000000..9f06645
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+> @@ -0,0 +1,68 @@
+> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+> +
+> +Required properties:
+> +  - compatible: "samsung,s6e3fa0"
+> +  - reg: the virtual channel number of a DSI peripheral
+> +  - vdd3-supply: core voltage supply
+> +  - vci-supply: voltage supply for analog circuits
+> +  - reset-gpios: a GPIO spec for the reset pin
+> +  - det-gpios: a GPIO spec for the OLED detection pin
+> +  - te-gpios: a GPIO spec for the TE pin
+> +  - display-timings: timings for the connected panel as described by [1]
 
-Signed-off-by: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- arch/arm/boot/dts/exynos5420.dtsi |   26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+This still bothers me, it forces users to provide bunch of fake
+properties (four porches, two syncs and clock-frequency) just because we
+need to pass somehow pixel width and height. And do we really need pixel
+dimension to be passed via DT? I guess it could be:
+- hardcoded into the driver,
+- derived from the panel id,
+- maybe read from the panel, this is the best option I guess but I am
+not sure if panel provides an API for this.
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c3a9a66..0d1dea8 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -125,7 +125,7 @@
- 		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
- 	};
- 
--	codec@11000000 {
-+	mfc: codec@11000000 {
- 		compatible = "samsung,mfc-v7";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
-@@ -169,7 +169,7 @@
- 		status = "disabled";
- 	};
- 
--	mct@101C0000 {
-+	mct: mct@101C0000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x101C0000 0x800>;
- 		interrupt-controller;
-@@ -270,7 +270,7 @@
- 		interrupts = <0 47 0>;
- 	};
- 
--	rtc@101E0000 {
-+	rtc: rtc@101E0000 {
- 		clocks = <&clock CLK_RTC>;
- 		clock-names = "rtc";
- 		status = "disabled";
-@@ -430,22 +430,22 @@
- 		status = "disabled";
- 	};
- 
--	serial@12C00000 {
-+	uart_0: serial@12C00000 {
- 		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
--	serial@12C10000 {
-+	uart_1: serial@12C10000 {
- 		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
--	serial@12C20000 {
-+	uart_2: serial@12C20000 {
- 		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
--	serial@12C30000 {
-+	uart_3: serial@12C30000 {
- 		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
-@@ -465,14 +465,14 @@
- 		#phy-cells = <0>;
- 	};
- 
--	dp-controller@145B0000 {
-+	dp: dp-controller@145B0000 {
- 		clocks = <&clock CLK_DP1>;
- 		clock-names = "dp";
- 		phys = <&dp_phy>;
- 		phy-names = "dp";
- 	};
- 
--	fimd@14400000 {
-+	fimd: fimd@14400000 {
- 		samsung,power-domain = <&disp_pd>;
- 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
- 		clock-names = "sclk_fimd", "fimd";
-@@ -632,7 +632,7 @@
- 		status = "disabled";
- 	};
- 
--	hdmi@14530000 {
-+	hdmi: hdmi@14530000 {
- 		compatible = "samsung,exynos4212-hdmi";
- 		reg = <0x14530000 0x70000>;
- 		interrupts = <0 95 0>;
-@@ -644,7 +644,7 @@
- 		status = "disabled";
- 	};
- 
--	mixer@14450000 {
-+	mixer: mixer@14450000 {
- 		compatible = "samsung,exynos5420-mixer";
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
-@@ -715,7 +715,7 @@
- 		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
- 	};
- 
--        watchdog@101D0000 {
-+        watchdog: watchdog@101D0000 {
- 		compatible = "samsung,exynos5420-wdt";
- 		reg = <0x101D0000 0x100>;
- 		interrupts = <0 42 0>;
-@@ -724,7 +724,7 @@
- 		samsung,syscon-phandle = <&pmu_system_controller>;
-         };
- 
--	sss@10830000 {
-+	sss: sss@10830000 {
- 		compatible = "samsung,exynos4210-secss";
- 		reg = <0x10830000 0x10000>;
- 		interrupts = <0 112 0>;
--- 
-1.7.9.5
+Regards
+Andrzej
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> +  - cpu-mode-timings: CPU interface timings for the connected panel,
+> +      and it contains following properties.
+> +        Required properties:
+> +          - wr-active: clock cycles for the active period of CS enable in CPU
+> +              interface.
+> +        Optional properties:
+> +          - cs-setup: clock cycles for the active period of address signal
+> +              enable until chip select is enable in CPU interface.
+> +              If not specified, the default value(0) will be used.
+> +          - wr-setup: clock cycles for the active period of CS signal enable
+> +              until write signal is enable in CPU interface.
+> +              If not specified, the default value(0) will be used.
+> +          - wr-hold: clock cycles for the active period of CS disable until
+> +              write signal is disable in CPU interface.
+> +              If not specified, the default value(0) will be used.
+> +
+> +Optional properties:
+> +
+> +The device node can contain one 'port' child node with one child 'endpoint'
+> +node, according to the bindings defined in [2]. This node should describe
+> +panel's video bus.
+> +
+> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +Example:
+> +
+> +	panel@0 {
+> +		compatible = "samsung,s6e3fa0";
+> +		reg = <0>;
+> +		vdd3-supply = <&vcclcd_reg>;
+> +		vci-supply = <&vlcd_reg>;
+> +		reset-gpios = <&gpy7 4 0>;
+> +		det-gpios = <&gpg0 6 0>;
+> +		te-gpios = <&gpd1 7 0>;
+> +
+> +		display-timings {
+> +			timing0: timing-0 {
+> +				clock-frequency = <0>;
+> +				hactive = <1080>;
+> +				vactive = <1920>;
+> +				hfront-porch = <2>;
+> +				hback-porch = <2>;
+> +				hsync-len = <1>;
+> +				vfront-porch = <1>;
+> +				vback-porch = <4>;
+> +				vsync-len = <1>;
+> +			};
+> +		};
+> +
+> +		cpu-mode-timings {
+> +			cs-setup = <0>;
+> +			wr-setup = <0>;
+> +			wr-active = <1>;
+> +			wr-hold = <0>;
+> +		};
+> +	};
+> 
