@@ -1,113 +1,72 @@
-From: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v5 0/5] MCPM backend for Exynos5420
-Date: Mon,  5 May 2014 21:56:56 +0530
-Message-ID: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Dave.Martin-5wv7dgnIgG8@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inderpal.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4/7] ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by
+ static inlines
+Date: Mon, 05 May 2014 12:57:16 +0200
+Message-ID: <1399287439-31376-5-git-send-email-b.zolnierkie@samsung.com>
+References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is v5 of the series adding MCPM backend support for SMP secondary boot
-and core switching on Samsung's Exynos5420. The patches are based on the mcpm
-support added for Exynos5420 in the Chromium kernel repository here:
-https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.8
+Replace EXYNOS_BOOT_VECTOR_ADDR and EXYNOS_BOOT_VECTOR_FLAG macros
+by exynos_boot_vector_addr() and exynos_boot_vector_flag() static
+inlines.
 
-This patchset depends on:
-- [v2,1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
-(https://patchwork.kernel.org/patch/4101091/)
+This patch shouldn't cause any functionality changes.
 
-The patches have been prepared on linux-next(20140502) and tested on SMDK5420
-EVT1 using the "/dev/b.L_switcher" user interface. Secondary core boot-up has
-also been tested on an Exynos5420-based chromebook.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/pm.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-Changes since v4:
-Addressed the following comments from Nicolas Pitre:
-	- Fixed the location of L2 prefetching disable code.
-	- Fixed the location of the "TODO" comment.
-	- Fixed a possible race in mcpm cluster state check in
-	  exynos_power_up().
-	
-Changes since v3:
-	- Rebased on top of the latest SYSRAM DT patchset from Sachin Kamat.
-
-Addressed the following comments from Lorenzo Pieralisi and Nicolas Pitre:
-	- Dropped the patch "arm: exynos: Add /dev/bL_status user interface on
-	  Exynos5420".
-	- Fixed the header ordering and removed unnecessary header inclusions.
-	- Made the code symmetric in exynos_cluster_power_control().
-	- Fixed the error path in exynos_power_up.
-	- Got rid of "cnt" variable used for last man checking.
-	- Removed stale comments.
-	- Replaced "soc_is" with "of_find_compatible_node" check for exynos5420.
-	- Added L2 prefetching disable code needed during A15 power down.
-
-Changes since v2:
-Addressed the following comments from Nicolas Pitre and Daniel Lezcano:
-	- Added generic common (cluster) configuration functions to pm.c
-	  which may be used by other subsystems.
-	- Removed unused "cpumask" variable in mcpm code.
-	- Re-worked exynos_power_down_finish() referencing the tc2_pm code.
-	- Removed the status checks in core and cluster power functions. We
-	  just set the power control bit and do not check the previous state
-	  anymore.
-	- Removed incorrect jiffies timeout usage in path where IRQs are
-	  disabled.
-
-Changes since v1:
-Addressed the following comments from Dave Martin and Nicolas Pitre:
-	- Fixed help text for EXYNOS5420_MCPM symbol.
-	- Removed mcpm-exynos-setup.S file and added similar code from tc2_pm.c.
-	- Changed the spinlock name from "bl_lock" to "exynos_mcpm_lock".
-	- Removed snoop enable/disable calls due to possible cpuidle issue and
-	  not having numbers proving a significant power savings. Dropped the
-	  "drivers/bus: arm-cci: Add common control interface for ACE ports"
-	  patch from v1 as it was no longer needed.
-	- Created a macro for exynos-specific v7_exit_coherency_flush which
-	  handles an erratum. This was done to prevent duplication of code.
-	- Removed "outer_flush_all" call.
-	- Removed redundant dsb in power_down function.
-	- Removed unnecessary initialization of global variables to zero.
-	- Split the /dev/bL_status debug interface into another patch.
-	- Fixed error handling in exynos_mcpm_init().
-	- Called mcpm_smp_set_ops directly from exynos_mcpm_init().
-	- Added a TODO for supporting cluster down on exynos5420.
-
-NOTE:
-- Have added Leela Krishna's generic cpu power control function series
-  as part of this patchset.
-- Only the patch "arm: exynos: Add MCPM call-back functions" has changed
-  from v3.
-- I have tested with and without the erratum 799270 workaround and both
-  work fine. I have kept the erratum fix for the time being.
-
-Abhilash Kesavan (2):
-  arm: exynos: Add generic cluster power control functions
-  arm: exynos: Add MCPM call-back functions
-
-Andrew Bresticker (1):
-  ARM: dts: exynos5420: add CCI node
-
-Leela Krishna Amudala (2):
-  ARM: EXYNOS: Add generic cpu power control functions for all exynos
-    based SoCs
-  ARM: EXYNOS: use generic exynos cpu power control functions
-
- arch/arm/boot/dts/exynos5420.dtsi  |   27 +++
- arch/arm/mach-exynos/Kconfig       |    8 +
- arch/arm/mach-exynos/Makefile      |    2 +
- arch/arm/mach-exynos/common.h      |    6 +
- arch/arm/mach-exynos/mcpm-exynos.c |  344 ++++++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/platsmp.c     |    9 +-
- arch/arm/mach-exynos/pm.c          |   66 +++++++
- arch/arm/mach-exynos/regs-pmu.h    |   15 ++
- 8 files changed, 471 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/mach-exynos/mcpm-exynos.c
-
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index b380d48..1679c51 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -101,12 +101,23 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+ 	return -ENOENT;
+ }
+ 
+-#define EXYNOS_BOOT_VECTOR_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+-			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+-			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
+-#define EXYNOS_BOOT_VECTOR_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+-			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+-			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
++static inline void __iomem *exynos_boot_vector_addr(void)
++{
++	if (samsung_rev() == EXYNOS4210_REV_1_1)
++		return S5P_INFORM7;
++	else if (samsung_rev() == EXYNOS4210_REV_1_0)
++		return S5P_VA_SYSRAM + 0x24;
++	return S5P_INFORM0;
++}
++
++static inline void __iomem *exynos_boot_vector_flag(void)
++{
++	if (samsung_rev() == EXYNOS4210_REV_1_1)
++		return S5P_INFORM6;
++	else if (samsung_rev() == EXYNOS4210_REV_1_0)
++		return S5P_VA_SYSRAM + 0x20;
++	return S5P_INFORM1;
++}
+ 
+ #define S5P_CHECK_AFTR  0xFCBA0D10
+ #define S5P_CHECK_SLEEP 0x00000BAD
+@@ -119,8 +130,9 @@ static void exynos_set_wakeupmask(long mask)
+ 
+ static void exynos_cpu_set_boot_vector(long flags)
+ {
+-	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
+-	__raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
++	__raw_writel(virt_to_phys(exynos_cpu_resume),
++		     exynos_boot_vector_addr());
++	__raw_writel(flags, exynos_boot_vector_flag());
+ }
+ 
+ void exynos_enter_aftr(void)
 -- 
-1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.8.2.3
