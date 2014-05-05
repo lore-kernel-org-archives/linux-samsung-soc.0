@@ -1,55 +1,75 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 00/10] thermal: exynos: various cleanups
-Date: Mon, 05 May 2014 13:15:29 +0200
-Message-ID: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+From: Tom Rini <trini@ti.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
+Date: Mon, 5 May 2014 14:18:09 -0400
+Message-ID: <5367D5E1.9070709@ti.com>
+References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>	<5363D176.80601@gmail.com>	<CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>	<53644DDB.7050503@gmail.com> <CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54738 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753404AbaEELQX (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:43970 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750713AbaEESSS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 07:16:23 -0400
+	Mon, 5 May 2014 14:18:18 -0400
+In-Reply-To: <CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>
 
-Hi,
+On 05/05/2014 11:17 AM, Doug Anderson wrote:
+> On Fri, May 2, 2014 at 7:00 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Well, if you can use the device tree of peach-pit board and boot peach-pi
+>> and vice-versa and it won't cause any hardware failures then I guess it's
+>> fine to keep this string.
+> 
+> I believe you can actually make it a good portion of the way through
+> boot, though a bunch of things (including graphics) won't work.  I
+> general I don't think it's all that different from "exynos5".
+> 
+> 
+>>>> I don't think this is a good idea, because this is basically rendering
+>>>> this
+>>>> dts file useless, unless used with a bootloader that can actually inject
+>>>> correct values. I believe that some generic setup could be provided in
+>>>> the
+>>>> dts, so you could at least get the board running.
+>>>
+>>>
+>>> I won't say that I care a whole lot, but I think that was what was
+>>> agreed upon the other day.  Specifically Tom Rini of U-Boot was
+>>> worried about the fact that U-Boot will read the memory node and
+>>> totally clobber it.  He thought there might be cases where someone
+>>> might _purposely_ not want U-Boot to do that.
+>>>
+>>> ...I would wonder what alternate bootloader you're imagining will
+>>> actually run on this board and not do this?
+>>
+>>
+>> People should have the freedom to choose anything they want. We have also
+>> barebox and coreboot with ARM and even Exynos5 support (in coreboot), but
+>> people might want to use something completely exotic as well and the device
+>> tree should let them do so.
+> 
+> Fair enough.  Unless Tom cares about this enough to throw his opinion
+> in here, I guess our answer is that the memory node should have a sane
+> default and we'll expect the bootloader to put something better in if
+> it can properly probe memory.
+> 
+> In this case I guess it would be 2GB.
 
-This patch series contains various cleanups for EXYNOS thermal
-driver.  Overall it decreases driver's LOC by 13%.  It is based
-on next-20140428 kernel.  It should not cause any functionality
-changes.
+So, a memory node that says a size of 0 is a valid and long standing
+(see PowerPC folks) way of saying "please fill in my memory node value
+for me" due to any number of reasons for not knowing before hand how
+much memory there is.  Any boot loader which cannot fill in the memory
+node is going to have problems with the various boards (PowerPC, ARM and
+other) which say "my memory size is 0, I want this fixed up at run time".
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (10):
-  thermal: exynos: remove unused struct exynos_tmu_registers entries
-  thermal: exynos: remove unused defines
-  thermal: exynos: remove dead code for HW_MODE calibration
-  thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
-    calibration
-  thermal: exynos: remove redundant pdata checks from
-    exynos_tmu_initialize()
-  thermal: exynos: remove redundant threshold_code checks from
-    exynos_tmu_initialize()
-  thermal: exynos: simplify temp_to_code() and code_to_temp()
-  thermal: exynos: cache non_hw_trigger_levels in pdata
-  thermal: exynos: remove redundant pdata checks from
-    exynos_tmu_control()
-  thermal: exynos: remove identical values from exynos*_tmu_registers
-    structures
-
- drivers/thermal/samsung/exynos_thermal_common.h |   1 -
- drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
- drivers/thermal/samsung/exynos_tmu.h            |  86 +----------
- drivers/thermal/samsung/exynos_tmu_data.c       |  40 +-----
- drivers/thermal/samsung/exynos_tmu_data.h       |  32 +----
- 5 files changed, 37 insertions(+), 303 deletions(-)
+The problem I was raising at the ELC BoF is that today we can't just
+stop overwriting values in the non-zero case as many boards lie about
+their memory size, in non-zero ways, but no one noticed as they only
+tested with U-Boot which was performing the fixup.
 
 -- 
-1.8.2.3
+Tom
