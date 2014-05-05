@@ -1,46 +1,51 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [Patch v3 4/5] exynos: cpuidle: do not allow cpuidle registration for Exynos5420
-Date: Mon,  5 May 2014 13:57:23 +0530
-Message-ID: <1399278444-8312-5-git-send-email-chander.kashyap@linaro.org>
-References: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
- <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: Bare metal Code to test Big Little on Arndale Octa (5420)
+Date: Mon, 5 May 2014 09:42:40 +0530
+Message-ID: <CAP245DVf1-QhVaaTQ_PtcqQMNpWh8RirJtSPmQc9BR1=xO=fMg@mail.gmail.com>
+References: <0DC06F23-1FB7-48D0-9341-8CE94A49060E@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:43580 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755135AbaEEI1z (ORCPT
+Received: from mail-ve0-f179.google.com ([209.85.128.179]:62568 "EHLO
+	mail-ve0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751341AbaEEEMk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 04:27:55 -0400
-Received: by mail-ie0-f176.google.com with SMTP id rd18so7504234iec.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 May 2014 01:27:55 -0700 (PDT)
-In-Reply-To: <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
+	Mon, 5 May 2014 00:12:40 -0400
+Received: by mail-ve0-f179.google.com with SMTP id oy12so5071584veb.38
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 May 2014 21:12:40 -0700 (PDT)
+In-Reply-To: <0DC06F23-1FB7-48D0-9341-8CE94A49060E@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
+To: armdev <armdev.ftm@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>
 
-Exynos5420 is big.Little Soc. It uses cpuidle-big-litle generic cpuidle driver.
-Hence do not allow exynos cpuidle driver registration for Exynos5420.
+Hi,
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- arch/arm/mach-exynos/cpuidle.c |    3 +++
- 1 file changed, 3 insertions(+)
+No public code has been released to boot all 8 cores on the 5420. You
+can only see the A15s.
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index c57cae0..242f75d 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -219,6 +219,9 @@ static int exynos_cpuidle_probe(struct platform_device *pdev)
- 	int cpu_id, ret;
- 	struct cpuidle_device *device;
- 
-+	if (soc_is_exynos5420())
-+		return -ENODEV;
-+
- 	if (soc_is_exynos5250())
- 		exynos5_core_down_clk();
- 
--- 
-1.7.9.5
+You could however, if you are interested, get IKS[1] working by
+integrating the MCPM patches posted by Samsung and the IKS patches
+that are already in mainline.
+
+Regards,
+Amit
+[1] http://lwn.net/Articles/481055/
+
+On Mon, Apr 28, 2014 at 11:21 AM, armdev <armdev.ftm@gmail.com> wrote:
+> Hi,
+>
+> We are trying a write a bare metal test code for Switching tasks from A15 Core to A7 core.
+> As of now we have this article to start with https://lwn.net/Articles/481055/.
+>
+> Can the list help us in
+> a) Where (file/directory ) in Linux kernel code that does the switching code (arch specific) for 5420 ?
+> b) Any test cases for big little on 5420 ?
+>
+>
+> -Regards
+> armdev team
+> _______________________________________________
+> linaro-kernel mailing list
+> linaro-kernel@lists.linaro.org
+> http://lists.linaro.org/mailman/listinfo/linaro-kernel
