@@ -1,61 +1,91 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] arm: exynos: add generic function to calculate cpu number
-Date: Mon, 5 May 2014 09:37:51 +0530
-Message-ID: <CANuQgHGtTFcP1baipTwTTPw_t3JV42nn-Kh4n72_9VRZ8ZwaPA@mail.gmail.com>
-References: <1398404653-14407-1-git-send-email-chander.kashyap@linaro.org>
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [RFC V2 1/3] drm: implement chaining of drm bridges
+Date: Tue, 06 May 2014 01:22:26 +0530
+Message-ID: <1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:55355 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750838AbaEEEHw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 00:07:52 -0400
-Received: by mail-ob0-f172.google.com with SMTP id wp18so204439obc.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 May 2014 21:07:51 -0700 (PDT)
-In-Reply-To: <1398404653-14407-1-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: joshi@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
 
-On 25 April 2014 11:14, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> The address of cpu power registers in pmu is based on cpu number
-> offsets. This function calculate the same. This is essentially
-> required in case of multicluster SoC's e.g Exynos5420.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-> ---
->  arch/arm/mach-exynos/regs-pmu.h |    9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-> index 4f6a256..217da2e 100644
-> --- a/arch/arm/mach-exynos/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/regs-pmu.h
-> @@ -313,4 +313,13 @@
->
->  #define EXYNOS5_OPTION_USE_RETENTION                           (1 << 4)
->
-> +#include <asm/cputype.h>
-> +#define MAX_CPUS_IN_CLUSTER    4
-> +
-> +static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
-> +{
-> +       return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
-> +                + MPIDR_AFFINITY_LEVEL(mpidr, 0));
-> +}
-> +
->  #endif /* __ASM_ARCH_REGS_PMU_H */
-> --
-> 1.7.9.5
->
+As of now, we can have only one bridge hanging off the encoder.
+With this patch, we allow multiple bridges to hang onto the same encoder
+with the use of a simple next_bridge ptr.
 
-Kukjin, Can you please have a look.
+The drm core calls bridge->funcs for the first bridge which
+is attached to it, and its upto the individual bridge drivers
+to call bridge->funcs for the next bridge in the chain.
 
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/gpu/drm/drm_crtc.c | 13 ++++++++++++-
+ include/drm/drm_crtc.h     |  2 ++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index d8b7099..fe9905f 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -918,8 +918,10 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
+  * Zero on success, error code on failure.
+  */
+ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+-		const struct drm_bridge_funcs *funcs)
++			struct drm_encoder *encoder,
++			const struct drm_bridge_funcs *funcs)
+ {
++	struct drm_bridge *temp;
+ 	int ret;
+ 
+ 	drm_modeset_lock_all(dev);
+@@ -931,6 +933,15 @@ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+ 	bridge->dev = dev;
+ 	bridge->funcs = funcs;
+ 
++	if (encoder->bridge) {
++		temp = encoder->bridge;
++		while (temp->next_bridge)
++			temp = temp->next_bridge;
++
++		temp->next_bridge = bridge;
++	} else
++		encoder->bridge = bridge;
++
+ 	list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
+ 	dev->mode_config.num_bridge++;
+ 
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index e55fccb..bb6ed88 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -619,6 +619,7 @@ struct drm_bridge_funcs {
+ struct drm_bridge {
+ 	struct drm_device *dev;
+ 	struct list_head head;
++	struct drm_bridge *next_bridge;
+ 
+ 	struct drm_mode_object base;
+ 
+@@ -862,6 +863,7 @@ extern void drm_connector_cleanup(struct drm_connector *connector);
+ extern void drm_connector_unplug_all(struct drm_device *dev);
+ 
+ extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
++			   struct drm_encoder *encoder,
+ 			   const struct drm_bridge_funcs *funcs);
+ extern void drm_bridge_cleanup(struct drm_bridge *bridge);
+ 
 -- 
-with warm regards,
-Chander Kashyap
+1.8.1.2
