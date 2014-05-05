@@ -1,39 +1,73 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 0/4] Introducing Exynos ChipId driver
-Date: Mon, 05 May 2014 17:01:53 +0200
-Message-ID: <5374218.SlGnAKNqhD@wuerfel>
-References: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com> <536758AB.2060503@samsung.com> <4239261.HFHm7SU1iH@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4239261.HFHm7SU1iH@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 05/10] thermal: exynos: remove redundant pdata checks from
+ exynos_tmu_initialize()
+Date: Mon, 05 May 2014 13:15:34 +0200
+Message-ID: <1399288539-1793-6-git-send-email-b.zolnierkie@samsung.com>
+References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47374 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932144AbaEELSx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 07:18:53 -0400
+In-reply-to: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-On Monday 05 May 2014 16:58:14 Arnd Bergmann wrote:
-> > Also for platsmp.c and pm.c I can think of following approaches
-> > 1: Keep these macros till we get generic solution?
-> > 2: Allow chipid driver to expose APIs to check SoC id and SoC revisions 
-> > till we get
-> > generic solution. So that at least we can remove #ifdef  based macros
-> > as soc_is_exynosXYZ.
-> > 3: Use of "of_flat_dt_is_compatible" or similar APIs in these machine files 
-> > till we get
-> > generic solution. For some cases where we want to know SoC revision let us
-> > map chipid register and get revision there itself.
-> > 
-> > Please let me know what approach you think will be good?
-> 
-> I think 1 or 2 would be better than 3. Between those two, I'm undecided,
-> but I think either way the SoC specific values would be better kept in the
-> mach-samsung directory than in plat/cpu.h or linux/exynos-chipid.h.
+Remove runtime checks for pdata sanity from exynos_tmu_initialize().
+The current values hardcoded in pdata will never trigger the checks
+and for the new code potential mistakes should be caught during
+development/review phases.
 
-Actually, a good compromise for now would be to add the chipid driver
-to mach-exynos instead of drivers/bus. This way you can keep the uses
-of the ID local to the exynos platform code until it's no longer needed.
-Then it can get moved out to drivers/soc to be shared with arm64.
+There should be no functional changes caused by this patch.
 
-	Arnd
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/thermal/samsung/exynos_thermal_common.h |  1 -
+ drivers/thermal/samsung/exynos_tmu.c            | 13 -------------
+ 2 files changed, 14 deletions(-)
+
+diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
+index 3eb2ed9..cd44719 100644
+--- a/drivers/thermal/samsung/exynos_thermal_common.h
++++ b/drivers/thermal/samsung/exynos_thermal_common.h
+@@ -27,7 +27,6 @@
+ #define SENSOR_NAME_LEN	16
+ #define MAX_TRIP_COUNT	8
+ #define MAX_COOLING_DEVICE 4
+-#define MAX_THRESHOLD_LEVS 5
+ 
+ #define ACTIVE_INTERVAL 500
+ #define IDLE_INTERVAL 10000
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 903566f..789d745 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -158,23 +158,10 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 	    data->temp_error > pdata->max_efuse_value)
+ 		data->temp_error = pdata->efuse_value & EXYNOS_TMU_TEMP_MASK;
+ 
+-	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
+-		dev_err(&pdev->dev, "Invalid max trigger level\n");
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+ 	for (i = 0; i < pdata->max_trigger_level; i++) {
+ 		if (!pdata->trigger_levels[i])
+ 			continue;
+ 
+-		if ((pdata->trigger_type[i] == HW_TRIP) &&
+-		(!pdata->trigger_levels[pdata->max_trigger_level - 1])) {
+-			dev_err(&pdev->dev, "Invalid hw trigger level\n");
+-			ret = -EINVAL;
+-			goto out;
+-		}
+-
+ 		/* Count trigger levels except the HW trip*/
+ 		if (!(pdata->trigger_type[i] == HW_TRIP))
+ 			trigger_levs++;
+-- 
+1.8.2.3
