@@ -1,54 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: EXYNOS: Fix compilation warning
-Date: Mon,  5 May 2014 14:56:48 +0530
-Message-ID: <1399282008-9738-1-git-send-email-sachin.kamat@linaro.org>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: exynos4412: porting hdmiddc and hdmiphy node entries
+Date: Mon, 05 May 2014 22:55:53 +0200
+Message-ID: <5367FAD9.9080705@gmx.net>
+References: <535C504A.2090809@gmx.net> <53675932.30306@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:50576 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755586AbaEEJ2W (ORCPT
+Received: from mout.gmx.net ([212.227.15.18]:55188 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755604AbaEEUz7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 05:28:22 -0400
-Received: by mail-pa0-f43.google.com with SMTP id bj1so1876809pad.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 May 2014 02:28:21 -0700 (PDT)
+	Mon, 5 May 2014 16:55:59 -0400
+In-Reply-To: <53675932.30306@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, Rob Herring <robh@kernel.org>
+To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-of_get_flat_dt_prop return type is now const.
-=46ixes the following compilation warning introduced by commit 9d0c4dfe=
-dd96
-("of/fdt: update of_get_flat_dt_prop in prep for libfdt")
+Hello Tomasz,
 
-arch/arm/mach-exynos/exynos.c:259:6: warning:
-assignment discards =E2=80=98const=E2=80=99 qualifier from pointer targ=
-et type [enabled by default]
+thanks a lot for the support!
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Rob Herring <robh@kernel.org>
----
-Based on linux-next (20140505)
----
- arch/arm/mach-exynos/exynos.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The meaning of hdmiphy is ambiguous.
+> In exynos4 spec there are _TWO_ components named HDMIPHY.
+> The first one is a PLL that generates a clock for HDMI subsystem.
+> This PLL is controlled by I2C.
+> 
+> You can find an example of its bindings at:
+> http://lists.freedesktop.org/archives/dri-devel/2013-October/047687.html
+OK, that looks exactly like the bindings I currently have in the dts.
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exyno=
-s.c
-index 77293d39dfc9..f356c67a1fa9 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -249,7 +249,7 @@ static int __init exynos_fdt_map_chipid(unsigned lo=
-ng node, const char *uname,
- 					int depth, void *data)
- {
- 	struct map_desc iodesc;
--	__be32 *reg;
-+	const __be32 *reg;
- 	int len;
-=20
- 	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid") &&
---=20
-1.7.9.5
+
+> The second one is HDMI's physical interface located in PMU unit.
+> 
+> The exynos-simple-phy is dedicated to controller the former (component of PMU).
+> 
+> The 'phy' attribute in DT refers to the PLL.
+> There is a debate if 'phy' should refer to I2C device itself or
+> rather to I2C bus. Currently it refers to driverless instance
+> of I2C device.
+By 'driverless' you mean that the node isn't probed by any specific
+driver code / the 'compatible' string isn't used anywhere in the kernel
+(like it's currently the situation?)
+
+
+>> Somehow this doesn't look right. And indeed:
+>> https://patchwork.kernel.org/patch/4021121/
+>>
+>> At least for exynos5250 this node is not a child on an i2c adapter.
+> 
+> This is a completely different HDMIPHY.
+I'm not sure I understand. Different from the PPL and the PMU HDMIPHY?
+
+
+>> And yes, I would still have to add 'phys' and 'phy-names' to the hdmi
+>> node. This looks wrong again. Why do I have to specify 'phys' when I
+>> already have 'phy' there? Isn't that redundant?
+> 
+> 'phys' and 'phy-names' refers to PHY interfaces delivered by phy-core.
+> The attribute named 'phy' refers to I2C device used to controller HDMI's PLL.
+> The naming convention is very misleading.
+Hmm, indeed this is very confusing. So with the move to
+exynos-simple-phy, I guess I need these entries as well, am I correct?
+
+
+>> Well, you see, lots of confusion here. I would appreciate any kind of
+>> help on how to proceed here.
+> 
+> The documentation for HDMI's bindings should be fixed.
+Well, I can agree with that :)
+
+
+With best wishes,
+Tobias
