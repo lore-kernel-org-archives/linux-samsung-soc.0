@@ -1,77 +1,280 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCH 0/2] Add support for sii9234 chip
-Date: Mon, 05 May 2014 16:15:03 +0200
-Message-ID: <53679CE7.3070202@samsung.com>
-References: <1397216910-15904-1-git-send-email-t.stanislaws@samsung.com>
- <20140503231726.GA20212@kroah.com>
+From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 01/16] clk: exynos5420: rename parent clocks
+Date: Mon, 5 May 2014 10:58:02 +0530
+Message-ID: <CAOD6AToZY=aTFZyODkvcNKinws7YGoXPMUFQw7jZsmM7jGymEA@mail.gmail.com>
+References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
+ <1398344632-18623-2-git-send-email-shaik.ameer@samsung.com> <536286CE.2070609@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140503231726.GA20212@kroah.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, linux-doc@vger.kernel.org, rdunlap@infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, robh+dt@kernel.org, ben-linux@fluff.org, grant.likely@linaro.org, kgene.kim@samsung.com, m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <536286CE.2070609-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/04/2014 01:17 AM, Greg KH wrote:
-> On Fri, Apr 11, 2014 at 01:48:28PM +0200, Tomasz Stanislawski wrote:
->> Hi everyone,
->> This patchset adds support for sii9234 HD Mobile Link Bridge.  The chip is used
->> to convert HDMI signal into MHL.  The driver enables HDMI output on Trats and
->> Trats2 boards.
->>
->> The code is based on the driver [1] developed by:
->>        Adam Hampson <ahampson@sta.samsung.com>
->>        Erik Gilling <konkers@android.com>
->> with additional contributions from:
->>        Shankar Bandal <shankar.b@samsung.com>
->>        Dharam Kumar <dharam.kr@samsung.com>
->>
->> The drivers architecture was greatly simplified and transformed into a form
->> accepted (hopefully) by opensource community.  The main differences from
->> original code are:
->> * using single I2C client instead of 4 subclients
->> * remove all logic non-related to establishing HDMI link
->> * simplify error handling
->> * rewrite state machine in interrupt handler
->> * wakeup and discovery triggered by an extcon event
->> * integrate with Device Tree
->>
->> For now, the driver is added to drivers/misc/ directory because it has neigher
->> userspace nor kernel interface.  The chip is capable of receiving and
->> processing CEC events, so the driver may export an input device in /dev/ in the
->> future.  However CEC could be also handled by HDMI driver.
->>
->> I kindly ask for suggestions about the best location for this driver.
-> 
-> It really is an extcon driver, so why not put it in drivers/extcon?  And
-> that might solve any build issues you have if you don't select extcon in
-> your .config file and try to build this code :)
-> 
-> thanks,
+Hi Tomasz,
 
-Hi Greg,
-Thank you for your comments.
 
-As I understand, drivers/extcon contains only extcon providers.
-This driver is an extcon client, so mentioned location may not be adequate.
+On Thu, May 1, 2014 at 11:09 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Shaik,
+>
+> Thanks for splitting the series into reasonably-sized patches. It's much
+> more convenient to review them now.
+>
+>
+> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
+>>
+>> This patch modifies the defined parent clock names as per the
+>> exynos5420 datasheet.
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   drivers/clk/samsung/clk-exynos5420.c |  359
+>> ++++++++++++++++++----------------
+>>   1 file changed, 187 insertions(+), 172 deletions(-)
+>>   mode change 100644 => 100755 drivers/clk/samsung/clk-exynos5420.c
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5420.c
+>> b/drivers/clk/samsung/clk-exynos5420.c
+>> old mode 100644
+>> new mode 100755
+>> index 35311e1..389d4b1
+>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>> @@ -217,85 +217,92 @@ static void exynos5420_clk_sleep_init(void) {}
+>>   #endif
+>>
+>>   /* list of all parent clocks */
+>> -PNAME(mspll_cpu_p)     = { "sclk_cpll", "sclk_dpll",
+>> -                               "sclk_mpll", "sclk_spll" };
+>> -PNAME(cpu_p)           = { "mout_apll" , "mout_mspll_cpu" };
+>> -PNAME(kfc_p)           = { "mout_kpll" , "mout_mspll_kfc" };
+>> -PNAME(apll_p)          = { "fin_pll", "fout_apll", };
+>> -PNAME(bpll_p)          = { "fin_pll", "fout_bpll", };
+>> -PNAME(cpll_p)          = { "fin_pll", "fout_cpll", };
+>> -PNAME(dpll_p)          = { "fin_pll", "fout_dpll", };
+>> -PNAME(epll_p)          = { "fin_pll", "fout_epll", };
+>> -PNAME(ipll_p)          = { "fin_pll", "fout_ipll", };
+>> -PNAME(kpll_p)          = { "fin_pll", "fout_kpll", };
+>> -PNAME(mpll_p)          = { "fin_pll", "fout_mpll", };
+>> -PNAME(rpll_p)          = { "fin_pll", "fout_rpll", };
+>> -PNAME(spll_p)          = { "fin_pll", "fout_spll", };
+>> -PNAME(vpll_p)          = { "fin_pll", "fout_vpll", };
+>> -
+>> -PNAME(group1_p)                = { "sclk_cpll", "sclk_dpll", "sclk_mpll"
+>> };
+>> -PNAME(group2_p)                = { "fin_pll", "sclk_cpll", "sclk_dpll",
+>> "sclk_mpll",
+>> -                         "sclk_spll", "sclk_ipll", "sclk_epll",
+>> "sclk_rpll" };
+>> -PNAME(group3_p)                = { "sclk_rpll", "sclk_spll" };
+>> -PNAME(group4_p)                = { "sclk_ipll", "sclk_dpll", "sclk_mpll"
+>> };
+>> -PNAME(group5_p)                = { "sclk_vpll", "sclk_dpll" };
+>> -
+>> -PNAME(sw_aclk66_p)     = { "dout_aclk66", "sclk_spll" };
+>> -PNAME(aclk66_peric_p)  = { "fin_pll", "mout_sw_aclk66" };
+>> -
+>> -PNAME(sw_aclk200_fsys_p) = { "dout_aclk200_fsys", "sclk_spll"};
+>> -PNAME(user_aclk200_fsys_p)     = { "fin_pll", "mout_sw_aclk200_fsys" };
+>> -
+>> -PNAME(sw_aclk200_fsys2_p) = { "dout_aclk200_fsys2", "sclk_spll"};
+>> -PNAME(user_aclk200_fsys2_p)    = { "fin_pll", "mout_sw_aclk200_fsys2" };
+>> -
+>> -PNAME(sw_aclk200_p) = { "dout_aclk200", "sclk_spll"};
+>> -PNAME(aclk200_disp1_p) = { "fin_pll", "mout_sw_aclk200" };
+>> -
+>> -PNAME(sw_aclk400_mscl_p) = { "dout_aclk400_mscl", "sclk_spll"};
+>> -PNAME(user_aclk400_mscl_p)     = { "fin_pll", "mout_sw_aclk400_mscl" };
+>> -
+>> -PNAME(sw_aclk333_p) = { "dout_aclk333", "sclk_spll"};
+>> -PNAME(user_aclk333_p)  = { "fin_pll", "mout_sw_aclk333" };
+>> -
+>> -PNAME(sw_aclk166_p) = { "dout_aclk166", "sclk_spll"};
+>> -PNAME(user_aclk166_p)  = { "fin_pll", "mout_sw_aclk166" };
+>> -
+>> -PNAME(sw_aclk266_p) = { "dout_aclk266", "sclk_spll"};
+>> -PNAME(user_aclk266_p)  = { "fin_pll", "mout_sw_aclk266" };
+>> -
+>> -PNAME(sw_aclk333_432_gscl_p) = { "dout_aclk333_432_gscl", "sclk_spll"};
+>> -PNAME(user_aclk333_432_gscl_p) = { "fin_pll", "mout_sw_aclk333_432_gscl"
+>> };
+>> -
+>> -PNAME(sw_aclk300_gscl_p) = { "dout_aclk300_gscl", "sclk_spll"};
+>> -PNAME(user_aclk300_gscl_p)     = { "fin_pll", "mout_sw_aclk300_gscl" };
+>> -
+>> -PNAME(sw_aclk300_disp1_p) = { "dout_aclk300_disp1", "sclk_spll"};
+>> -PNAME(user_aclk300_disp1_p)    = { "fin_pll", "mout_sw_aclk300_disp1" };
+>> -
+>> -PNAME(sw_aclk300_jpeg_p) = { "dout_aclk300_jpeg", "sclk_spll"};
+>> -PNAME(user_aclk300_jpeg_p)     = { "fin_pll", "mout_sw_aclk300_jpeg" };
+>> -
+>> -PNAME(sw_aclk_g3d_p) = { "dout_aclk_g3d", "sclk_spll"};
+>> -PNAME(user_aclk_g3d_p) = { "fin_pll", "mout_sw_aclk_g3d" };
+>> -
+>> -PNAME(sw_aclk266_g2d_p) = { "dout_aclk266_g2d", "sclk_spll"};
+>> -PNAME(user_aclk266_g2d_p)      = { "fin_pll", "mout_sw_aclk266_g2d" };
+>> -
+>> -PNAME(sw_aclk333_g2d_p) = { "dout_aclk333_g2d", "sclk_spll"};
+>> -PNAME(user_aclk333_g2d_p)      = { "fin_pll", "mout_sw_aclk333_g2d" };
+>> -
+>> -PNAME(audio0_p)        = { "fin_pll", "cdclk0", "sclk_dpll", "sclk_mpll",
+>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>> -PNAME(audio1_p)        = { "fin_pll", "cdclk1", "sclk_dpll", "sclk_mpll",
+>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>> -PNAME(audio2_p)        = { "fin_pll", "cdclk2", "sclk_dpll", "sclk_mpll",
+>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>> -PNAME(spdif_p) = { "fin_pll", "dout_audio0", "dout_audio1",
+>> "dout_audio2",
+>> -                 "spdif_extclk", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+>> -PNAME(hdmi_p)  = { "dout_hdmi_pixel", "sclk_hdmiphy" };
+>> -PNAME(maudio0_p)       = { "fin_pll", "maudio_clk", "sclk_dpll",
+>> "sclk_mpll",
+>> -                         "sclk_spll", "sclk_ipll", "sclk_epll",
+>> "sclk_rpll" };
+>> +PNAME(mout_mspll_cpu_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
+>> +                               "mout_sclk_mpll", "mout_sclk_spll"};
+>> +PNAME(mout_cpu_p) = {"mout_apll" , "mout_mspll_cpu"};
+>> +PNAME(mout_kfc_p) = {"mout_kpll" , "mout_mspll_kfc"};
+>> +PNAME(mout_apll_p) = {"fin_pll", "fout_apll"};
+>> +PNAME(mout_bpll_p) = {"fin_pll", "fout_bpll"};
+>> +PNAME(mout_cpll_p) = {"fin_pll", "fout_cpll"};
+>> +PNAME(mout_dpll_p) = {"fin_pll", "fout_dpll"};
+>> +PNAME(mout_epll_p) = {"fin_pll", "fout_epll"};
+>> +PNAME(mout_ipll_p) = {"fin_pll", "fout_ipll"};
+>> +PNAME(mout_kpll_p) = {"fin_pll", "fout_kpll"};
+>> +PNAME(mout_mpll_p) = {"fin_pll", "fout_mpll"};
+>> +PNAME(mout_rpll_p) = {"fin_pll", "fout_rpll"};
+>> +PNAME(mout_spll_p) = {"fin_pll", "fout_spll"};
+>> +PNAME(mout_vpll_p) = {"fin_pll", "fout_vpll"};
+>> +
+>> +PNAME(mout_group1_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
+>> +                                       "mout_sclk_mpll"};
+>> +PNAME(mout_group2_p) = {"fin_pll", "mout_sclk_cpll",
+>> +                       "mout_sclk_dpll", "mout_sclk_mpll",
+>> "mout_sclk_spll",
+>> +                       "mout_sclk_ipll", "mout_sclk_epll",
+>> "mout_sclk_rpll"};
+>> +PNAME(mout_group3_p) = {"mout_sclk_rpll", "mout_sclk_spll"};
+>> +PNAME(mout_group4_p) = {"mout_sclk_ipll", "mout_sclk_dpll",
+>> "mout_sclk_mpll"};
+>> +PNAME(mout_group5_p) = {"mout_sclk_vpll", "mout_sclk_dpll"};
+>> +
+>> +PNAME(mout_sw_aclk66_p)        = {"dout_aclk66", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk66_peric_p) = {"fin_pll", "mout_sw_aclk66"};
+>> +
+>> +PNAME(mout_sw_aclk200_fsys_p) = {"dout_aclk200_fsys", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk200_fsys_p)        = {"fin_pll",
+>> "mout_sw_aclk200_fsys"};
+>> +
+>> +PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2",
+>> "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
+>> +
+>> +PNAME(mout_sw_aclk200_p) = {"dout_aclk200", "mout_sclk_spll"};
+>> +PNAME(mout_aclk200_disp1_p) = {"fin_pll", "mout_sw_aclk200"};
+>> +
+>> +PNAME(mout_sw_aclk400_mscl_p) = {"dout_aclk400_mscl", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk400_mscl_p)        = {"fin_pll",
+>> "mout_sw_aclk400_mscl"};
+>> +
+>> +PNAME(mout_sw_aclk333_p) = {"dout_aclk333", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk333_p) = {"fin_pll", "mout_sw_aclk333"};
+>> +
+>> +PNAME(mout_sw_aclk166_p) = {"dout_aclk166", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk166_p) = {"fin_pll", "mout_sw_aclk166"};
+>> +
+>> +PNAME(mout_sw_aclk266_p) = {"dout_aclk266", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk266_p) = {"fin_pll", "mout_sw_aclk266"};
+>> +
+>> +PNAME(mout_sw_aclk333_432_gscl_p) = {"dout_aclk333_432_gscl",
+>> "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk333_432_gscl_p) = {"fin_pll",
+>> "mout_sw_aclk333_432_gscl"};
+>> +
+>> +PNAME(mout_sw_aclk300_gscl_p) = {"dout_aclk300_gscl", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk300_gscl_p)        = {"fin_pll",
+>> "mout_sw_aclk300_gscl"};
+>> +
+>> +PNAME(mout_sw_aclk300_disp1_p) = {"dout_aclk300_disp1",
+>> "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk300_disp1_p) = {"fin_pll", "mout_sw_aclk300_disp1"};
+>> +
+>> +PNAME(mout_sw_aclk300_jpeg_p) = {"dout_aclk300_jpeg", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk300_jpeg_p) = {"fin_pll", "mout_sw_aclk300_jpeg"};
+>> +
+>> +PNAME(mout_sw_aclk_g3d_p) = {"dout_aclk_g3d", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk_g3d_p) = {"fin_pll", "mout_sw_aclk_g3d"};
+>> +
+>> +PNAME(mout_sw_aclk266_g2d_p) = {"dout_aclk266_g2d", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk266_g2d_p) = {"fin_pll", "mout_sw_aclk266_g2d"};
+>> +
+>> +PNAME(mout_sw_aclk333_g2d_p) = {"dout_aclk333_g2d", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk333_g2d_p) = {"fin_pll", "mout_sw_aclk333_g2d"};
+>> +
+>> +PNAME(mout_audio0_p) = {"fin_pll", "cdclk0", "mout_sclk_dpll",
+>> +                       "mout_sclk_mpll", "mout_sclk_spll",
+>> "mout_sclk_ipll",
+>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>> +PNAME(mout_audio1_p) = {"fin_pll", "cdclk1", "mout_sclk_dpll",
+>> +                       "mout_sclk_mpll", "mout_sclk_spll",
+>> "mout_sclk_ipll",
+>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>> +PNAME(mout_audio2_p) = {"fin_pll", "cdclk2", "mout_sclk_dpll",
+>> +                       "mout_sclk_mpll", "mout_sclk_spll",
+>> "mout_sclk_ipll",
+>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>> +PNAME(mout_spdif_p) = {"fin_pll", "dout_audio0", "dout_audio1",
+>> +                       "dout_audio2", "spdif_extclk", "mout_sclk_ipll",
+>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
+>> +PNAME(mout_hdmi_p) = {"dout_hdmi_pixel", "sclk_hdmiphy"};
+>> +PNAME(mout_maudio0_p) = {"fin_pll", "maudio_clk", "mout_sclk_dpll",
+>> +                        "mout_sclk_mpll", "mout_sclk_spll",
+>> "mout_sclk_ipll",
+>> +                        "mout_sclk_epll", "mout_sclk_rpll"};
+>>
+>>   /* fixed rate clocks generated outside the soc */
+>>   static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[]
+>> __initdata = {
+>> @@ -316,123 +323,131 @@ static struct samsung_fixed_factor_clock
+>> exynos5420_fixed_factor_clks[] __initda
+>>   };
+>>
+>>   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>> -       MUX(0, "mout_mspll_kfc", mspll_cpu_p, SRC_TOP7, 8, 2),
+>> -       MUX(0, "mout_mspll_cpu", mspll_cpu_p, SRC_TOP7, 12, 2),
+>> -       MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
+>> -       MUX(0, "mout_cpu", cpu_p, SRC_CPU, 16, 1),
+>> -       MUX(0, "mout_kpll", kpll_p, SRC_KFC, 0, 1),
+>> -       MUX(0, "mout_cpu_kfc", kfc_p, SRC_KFC, 16, 1),
+>> +       MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
+>> +       MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+>> +       MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+>> +       MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+>> +       MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+>> +       MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+>
+>
+> It looks like a lot of changes done in this patch is not actually clock
+> renaming, but rather renaming of parent arrays. Do you really need to rename
+> them? I don't think we need this at least in cases that are just adding
+> "mout_" prefix to variable names, as it's obvious that parent arrays are
+> relevant only to mux clocks.
 
-I am surprised that there are no comments about this driver.
-Sii9234 chip is present on many exynos based boards/phones
-and HDMI subsystem will not work without this code.
+Agreed. But I am trying to follow the naming conventions from
+exynos5420 and 5620.
+I will keep the renaming part and change the subject and commit
+message as per your comments.
 
 Regards,
-Tomasz Stanislawski
+Shaik Ameer Basha
 
-> 
-> greg k-h
-> 
+>
+> Best regards,
+> Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
