@@ -1,63 +1,79 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
-Date: Mon, 5 May 2014 08:17:05 -0700
-Message-ID: <CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
-References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
-	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>
-	<5363D176.80601@gmail.com>
-	<CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>
-	<53644DDB.7050503@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53644DDB.7050503-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arun Kumar <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tom Rini <trini-l0cyMroinI0@public.gmane.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [Patch v3 5/5] mcpm: exynos: populate suspend and powered_up callbacks
+Date: Mon,  5 May 2014 13:57:24 +0530
+Message-ID: <1399278444-8312-6-git-send-email-chander.kashyap@linaro.org>
+References: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+ <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 2, 2014 at 7:00 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Well, if you can use the device tree of peach-pit board and boot peach-pi
-> and vice-versa and it won't cause any hardware failures then I guess it's
-> fine to keep this string.
+In order to support cpuidle through mcpm, suspend and powered-up
+callbacks are required in mcpm platform code.
+Hence populate the same callbacks.
 
-I believe you can actually make it a good portion of the way through
-boot, though a bunch of things (including graphics) won't work.  I
-general I don't think it's all that different from "exynos5".
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+---
+Changes in v3:
+	1. Removed coherance enablement after suspend failure.
+	2. Use generic function to poweron cpu.
+changes in v2:
+	1. Fixed typo: enynos_pmu_cpunr to exynos_pmu_cpunr
+ arch/arm/mach-exynos/mcpm-exynos.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-
->>> I don't think this is a good idea, because this is basically rendering
->>> this
->>> dts file useless, unless used with a bootloader that can actually inject
->>> correct values. I believe that some generic setup could be provided in
->>> the
->>> dts, so you could at least get the board running.
->>
->>
->> I won't say that I care a whole lot, but I think that was what was
->> agreed upon the other day.  Specifically Tom Rini of U-Boot was
->> worried about the fact that U-Boot will read the memory node and
->> totally clobber it.  He thought there might be cases where someone
->> might _purposely_ not want U-Boot to do that.
->>
->> ...I would wonder what alternate bootloader you're imagining will
->> actually run on this board and not do this?
->
->
-> People should have the freedom to choose anything they want. We have also
-> barebox and coreboot with ARM and even Exynos5 support (in coreboot), but
-> people might want to use something completely exotic as well and the device
-> tree should let them do so.
-
-Fair enough.  Unless Tom cares about this enough to throw his opinion
-in here, I guess our answer is that the memory node should have a sane
-default and we'll expect the bootloader to put something better in if
-it can properly probe memory.
-
-In this case I guess it would be 2GB.
-
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index d0f7461..6d4a907 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -256,10 +256,44 @@ static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
+ 	return -ETIMEDOUT; /* timeout */
+ }
+ 
++void exynos_powered_up(void)
++{
++	unsigned int mpidr, cpu, cluster;
++
++	mpidr = read_cpuid_mpidr();
++	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
++	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
++
++	arch_spin_lock(&exynos_mcpm_lock);
++	if (cpu_use_count[cpu][cluster] == 0)
++		cpu_use_count[cpu][cluster] = 1;
++	arch_spin_unlock(&exynos_mcpm_lock);
++}
++
++static void exynos_suspend(u64 residency)
++{
++	unsigned int mpidr, cpunr;
++
++	mpidr = read_cpuid_mpidr();
++	cpunr = exynos_pmu_cpunr(mpidr);
++
++	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 0x1c);
++
++	exynos_power_down();
++
++	/*
++	 * Execution reaches here only if cpu did not power down.
++	 * Hence roll back the changes done in exynos_power_down function.
++	*/
++	exynos_cpu_powerup(cpunr);
++}
++
+ static const struct mcpm_platform_ops exynos_power_ops = {
+ 	.power_up		= exynos_power_up,
+ 	.power_down		= exynos_power_down,
+ 	.power_down_finish	= exynos_power_down_finish,
++	.suspend		= exynos_suspend,
++	.powered_up		= exynos_powered_up,
+ };
+ 
+ static void __init exynos_mcpm_usage_count_init(void)
+-- 
+1.7.9.5
