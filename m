@@ -1,40 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/4] misc: exynos-chipid: Add Exynos Chipid driver support
-Date: Mon, 05 May 2014 09:57:11 +0200
-Message-ID: <1399276631.15737.1.camel@AMDC1943>
-References: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com>
- <1399097500-4052-4-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1399097500-4052-4-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, Arnd Bergmann <arnd@arndb.de>, t.figa@samsung.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [Patch v4 1/5] driver: cpuidle-big-little: add of_device_id structure
+Date: Mon,  5 May 2014 14:57:16 +0530
+Message-ID: <1399282040-8995-2-git-send-email-chander.kashyap@linaro.org>
+References: <1399278444-8312-3-git-send-email-chander.kashyap@linaro.org>
+ <1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:58455 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755756AbaEEJ1k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 05:27:40 -0400
+Received: by mail-pa0-f49.google.com with SMTP id lj1so3692506pab.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 May 2014 02:27:39 -0700 (PDT)
+In-Reply-To: <1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
 
-On sob, 2014-05-03 at 15:11 +0900, Pankaj Dubey wrote:
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index 7eb4b69..48c8fb5 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -55,3 +55,4 @@ obj-$(CONFIG_SRAM)		+= sram.o
->  obj-y				+= mic/
->  obj-$(CONFIG_GENWQE)		+= genwqe/
->  obj-$(CONFIG_ECHO)		+= echo/
-> +obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
-> diff --git a/drivers/misc/exynos-chipid.c b/drivers/misc/exynos-chipid.c
-> new file mode 100644
-> index 0000000..eb23339
-> --- /dev/null
-> +++ b/drivers/misc/exynos-chipid.c
-> @@ -0,0 +1,83 @@
-> +/*
-> + * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
-> + *	      http://www.samsung.com/
+This driver will be used by many big.Little Soc's. As of now it does
+string matching of hardcoded compatible string to init the driver. This
+comparison list will keep on growing with addition of new SoC's.
+Hence add of_device_id structure to collect the compatible strings of
+SoC's using this driver.
 
-I wonder why this is copyrighted in the future (2015)?
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+---
+ drivers/cpuidle/cpuidle-big_little.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+index b45fc62..4cd02bd 100644
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -163,14 +163,23 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int cpu_id)
+ 	return 0;
+ }
+ 
++static const struct of_device_id compatible_machine_match[] = {
++	{ .compatible = "arm,vexpress,v2p-ca15_a7" },
++	{},
++};
++
+ static int __init bl_idle_init(void)
+ {
+ 	int ret;
++	struct device_node *root = of_find_node_by_path("/");
++
++	if (!root)
++		return -ENODEV;
+ 
+ 	/*
+ 	 * Initialize the driver just for a compliant set of machines
+ 	 */
+-	if (!of_machine_is_compatible("arm,vexpress,v2p-ca15_a7"))
++	if (!of_match_node(compatible_machine_match, root))
+ 		return -ENODEV;
+ 	/*
+ 	 * For now the differentiation between little and big cores
+-- 
+1.7.9.5
