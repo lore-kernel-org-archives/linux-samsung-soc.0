@@ -1,287 +1,221 @@
 From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v3 01/16] clk: exynos5420: rename parent clocks
-Date: Mon, 5 May 2014 11:23:50 +0530
-Message-ID: <CAOD6ATrXVXhaKFH4eyCd4P0a_+t8xAkauRsfo0fHMWd+9-4Sqw@mail.gmail.com>
+Subject: Re: [PATCH v3 02/16] clk: exynos5420: add clocks for ISP block
+Date: Mon, 5 May 2014 09:44:45 +0530
+Message-ID: <CAOD6ATpE-3ZH-zZv3Ba=R4mqi+QGVKPKbEw+rS9psP9S3NkOhA@mail.gmail.com>
 References: <1398344632-18623-1-git-send-email-shaik.ameer@samsung.com>
- <1398344632-18623-2-git-send-email-shaik.ameer@samsung.com>
- <536286CE.2070609@gmail.com> <CAOD6AToZY=aTFZyODkvcNKinws7YGoXPMUFQw7jZsmM7jGymEA@mail.gmail.com>
+ <1398344632-18623-3-git-send-email-shaik.ameer@samsung.com> <5362BDA2.6060503@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f41.google.com ([209.85.213.41]:48004 "EHLO
-	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754499AbaEEFyL (ORCPT
+Received: from mail-yh0-f46.google.com ([209.85.213.46]:47063 "EHLO
+	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750918AbaEEEPG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 01:54:11 -0400
-In-Reply-To: <CAOD6AToZY=aTFZyODkvcNKinws7YGoXPMUFQw7jZsmM7jGymEA@mail.gmail.com>
+	Mon, 5 May 2014 00:15:06 -0400
+In-Reply-To: <5362BDA2.6060503@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Mon, May 5, 2014 at 10:58 AM, Shaik Ameer Basha
-<shaik.samsung@gmail.com> wrote:
-> Hi Tomasz,
->
->
-> On Thu, May 1, 2014 at 11:09 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Shaik,
->>
->> Thanks for splitting the series into reasonably-sized patches. It's much
->> more convenient to review them now.
->>
->>
->> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
->>>
->>> This patch modifies the defined parent clock names as per the
->>> exynos5420 datasheet.
->>>
->>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>> ---
->>>   drivers/clk/samsung/clk-exynos5420.c |  359
->>> ++++++++++++++++++----------------
->>>   1 file changed, 187 insertions(+), 172 deletions(-)
->>>   mode change 100644 => 100755 drivers/clk/samsung/clk-exynos5420.c
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5420.c
->>> b/drivers/clk/samsung/clk-exynos5420.c
->>> old mode 100644
->>> new mode 100755
->>> index 35311e1..389d4b1
->>> --- a/drivers/clk/samsung/clk-exynos5420.c
->>> +++ b/drivers/clk/samsung/clk-exynos5420.c
->>> @@ -217,85 +217,92 @@ static void exynos5420_clk_sleep_init(void) {}
->>>   #endif
->>>
->>>   /* list of all parent clocks */
->>> -PNAME(mspll_cpu_p)     = { "sclk_cpll", "sclk_dpll",
->>> -                               "sclk_mpll", "sclk_spll" };
->>> -PNAME(cpu_p)           = { "mout_apll" , "mout_mspll_cpu" };
->>> -PNAME(kfc_p)           = { "mout_kpll" , "mout_mspll_kfc" };
->>> -PNAME(apll_p)          = { "fin_pll", "fout_apll", };
->>> -PNAME(bpll_p)          = { "fin_pll", "fout_bpll", };
->>> -PNAME(cpll_p)          = { "fin_pll", "fout_cpll", };
->>> -PNAME(dpll_p)          = { "fin_pll", "fout_dpll", };
->>> -PNAME(epll_p)          = { "fin_pll", "fout_epll", };
->>> -PNAME(ipll_p)          = { "fin_pll", "fout_ipll", };
->>> -PNAME(kpll_p)          = { "fin_pll", "fout_kpll", };
->>> -PNAME(mpll_p)          = { "fin_pll", "fout_mpll", };
->>> -PNAME(rpll_p)          = { "fin_pll", "fout_rpll", };
->>> -PNAME(spll_p)          = { "fin_pll", "fout_spll", };
->>> -PNAME(vpll_p)          = { "fin_pll", "fout_vpll", };
->>> -
->>> -PNAME(group1_p)                = { "sclk_cpll", "sclk_dpll", "sclk_mpll"
->>> };
->>> -PNAME(group2_p)                = { "fin_pll", "sclk_cpll", "sclk_dpll",
->>> "sclk_mpll",
->>> -                         "sclk_spll", "sclk_ipll", "sclk_epll",
->>> "sclk_rpll" };
->>> -PNAME(group3_p)                = { "sclk_rpll", "sclk_spll" };
->>> -PNAME(group4_p)                = { "sclk_ipll", "sclk_dpll", "sclk_mpll"
->>> };
->>> -PNAME(group5_p)                = { "sclk_vpll", "sclk_dpll" };
->>> -
->>> -PNAME(sw_aclk66_p)     = { "dout_aclk66", "sclk_spll" };
->>> -PNAME(aclk66_peric_p)  = { "fin_pll", "mout_sw_aclk66" };
->>> -
->>> -PNAME(sw_aclk200_fsys_p) = { "dout_aclk200_fsys", "sclk_spll"};
->>> -PNAME(user_aclk200_fsys_p)     = { "fin_pll", "mout_sw_aclk200_fsys" };
->>> -
->>> -PNAME(sw_aclk200_fsys2_p) = { "dout_aclk200_fsys2", "sclk_spll"};
->>> -PNAME(user_aclk200_fsys2_p)    = { "fin_pll", "mout_sw_aclk200_fsys2" };
->>> -
->>> -PNAME(sw_aclk200_p) = { "dout_aclk200", "sclk_spll"};
->>> -PNAME(aclk200_disp1_p) = { "fin_pll", "mout_sw_aclk200" };
->>> -
->>> -PNAME(sw_aclk400_mscl_p) = { "dout_aclk400_mscl", "sclk_spll"};
->>> -PNAME(user_aclk400_mscl_p)     = { "fin_pll", "mout_sw_aclk400_mscl" };
->>> -
->>> -PNAME(sw_aclk333_p) = { "dout_aclk333", "sclk_spll"};
->>> -PNAME(user_aclk333_p)  = { "fin_pll", "mout_sw_aclk333" };
->>> -
->>> -PNAME(sw_aclk166_p) = { "dout_aclk166", "sclk_spll"};
->>> -PNAME(user_aclk166_p)  = { "fin_pll", "mout_sw_aclk166" };
->>> -
->>> -PNAME(sw_aclk266_p) = { "dout_aclk266", "sclk_spll"};
->>> -PNAME(user_aclk266_p)  = { "fin_pll", "mout_sw_aclk266" };
->>> -
->>> -PNAME(sw_aclk333_432_gscl_p) = { "dout_aclk333_432_gscl", "sclk_spll"};
->>> -PNAME(user_aclk333_432_gscl_p) = { "fin_pll", "mout_sw_aclk333_432_gscl"
->>> };
->>> -
->>> -PNAME(sw_aclk300_gscl_p) = { "dout_aclk300_gscl", "sclk_spll"};
->>> -PNAME(user_aclk300_gscl_p)     = { "fin_pll", "mout_sw_aclk300_gscl" };
->>> -
->>> -PNAME(sw_aclk300_disp1_p) = { "dout_aclk300_disp1", "sclk_spll"};
->>> -PNAME(user_aclk300_disp1_p)    = { "fin_pll", "mout_sw_aclk300_disp1" };
->>> -
->>> -PNAME(sw_aclk300_jpeg_p) = { "dout_aclk300_jpeg", "sclk_spll"};
->>> -PNAME(user_aclk300_jpeg_p)     = { "fin_pll", "mout_sw_aclk300_jpeg" };
->>> -
->>> -PNAME(sw_aclk_g3d_p) = { "dout_aclk_g3d", "sclk_spll"};
->>> -PNAME(user_aclk_g3d_p) = { "fin_pll", "mout_sw_aclk_g3d" };
->>> -
->>> -PNAME(sw_aclk266_g2d_p) = { "dout_aclk266_g2d", "sclk_spll"};
->>> -PNAME(user_aclk266_g2d_p)      = { "fin_pll", "mout_sw_aclk266_g2d" };
->>> -
->>> -PNAME(sw_aclk333_g2d_p) = { "dout_aclk333_g2d", "sclk_spll"};
->>> -PNAME(user_aclk333_g2d_p)      = { "fin_pll", "mout_sw_aclk333_g2d" };
->>> -
->>> -PNAME(audio0_p)        = { "fin_pll", "cdclk0", "sclk_dpll", "sclk_mpll",
->>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
->>> -PNAME(audio1_p)        = { "fin_pll", "cdclk1", "sclk_dpll", "sclk_mpll",
->>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
->>> -PNAME(audio2_p)        = { "fin_pll", "cdclk2", "sclk_dpll", "sclk_mpll",
->>> -                 "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
->>> -PNAME(spdif_p) = { "fin_pll", "dout_audio0", "dout_audio1",
->>> "dout_audio2",
->>> -                 "spdif_extclk", "sclk_ipll", "sclk_epll", "sclk_rpll" };
->>> -PNAME(hdmi_p)  = { "dout_hdmi_pixel", "sclk_hdmiphy" };
->>> -PNAME(maudio0_p)       = { "fin_pll", "maudio_clk", "sclk_dpll",
->>> "sclk_mpll",
->>> -                         "sclk_spll", "sclk_ipll", "sclk_epll",
->>> "sclk_rpll" };
->>> +PNAME(mout_mspll_cpu_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
->>> +                               "mout_sclk_mpll", "mout_sclk_spll"};
->>> +PNAME(mout_cpu_p) = {"mout_apll" , "mout_mspll_cpu"};
->>> +PNAME(mout_kfc_p) = {"mout_kpll" , "mout_mspll_kfc"};
->>> +PNAME(mout_apll_p) = {"fin_pll", "fout_apll"};
->>> +PNAME(mout_bpll_p) = {"fin_pll", "fout_bpll"};
->>> +PNAME(mout_cpll_p) = {"fin_pll", "fout_cpll"};
->>> +PNAME(mout_dpll_p) = {"fin_pll", "fout_dpll"};
->>> +PNAME(mout_epll_p) = {"fin_pll", "fout_epll"};
->>> +PNAME(mout_ipll_p) = {"fin_pll", "fout_ipll"};
->>> +PNAME(mout_kpll_p) = {"fin_pll", "fout_kpll"};
->>> +PNAME(mout_mpll_p) = {"fin_pll", "fout_mpll"};
->>> +PNAME(mout_rpll_p) = {"fin_pll", "fout_rpll"};
->>> +PNAME(mout_spll_p) = {"fin_pll", "fout_spll"};
->>> +PNAME(mout_vpll_p) = {"fin_pll", "fout_vpll"};
->>> +
->>> +PNAME(mout_group1_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
->>> +                                       "mout_sclk_mpll"};
->>> +PNAME(mout_group2_p) = {"fin_pll", "mout_sclk_cpll",
->>> +                       "mout_sclk_dpll", "mout_sclk_mpll",
->>> "mout_sclk_spll",
->>> +                       "mout_sclk_ipll", "mout_sclk_epll",
->>> "mout_sclk_rpll"};
->>> +PNAME(mout_group3_p) = {"mout_sclk_rpll", "mout_sclk_spll"};
->>> +PNAME(mout_group4_p) = {"mout_sclk_ipll", "mout_sclk_dpll",
->>> "mout_sclk_mpll"};
->>> +PNAME(mout_group5_p) = {"mout_sclk_vpll", "mout_sclk_dpll"};
->>> +
->>> +PNAME(mout_sw_aclk66_p)        = {"dout_aclk66", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk66_peric_p) = {"fin_pll", "mout_sw_aclk66"};
->>> +
->>> +PNAME(mout_sw_aclk200_fsys_p) = {"dout_aclk200_fsys", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk200_fsys_p)        = {"fin_pll",
->>> "mout_sw_aclk200_fsys"};
->>> +
->>> +PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2",
->>> "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
->>> +
->>> +PNAME(mout_sw_aclk200_p) = {"dout_aclk200", "mout_sclk_spll"};
->>> +PNAME(mout_aclk200_disp1_p) = {"fin_pll", "mout_sw_aclk200"};
->>> +
->>> +PNAME(mout_sw_aclk400_mscl_p) = {"dout_aclk400_mscl", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk400_mscl_p)        = {"fin_pll",
->>> "mout_sw_aclk400_mscl"};
->>> +
->>> +PNAME(mout_sw_aclk333_p) = {"dout_aclk333", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk333_p) = {"fin_pll", "mout_sw_aclk333"};
->>> +
->>> +PNAME(mout_sw_aclk166_p) = {"dout_aclk166", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk166_p) = {"fin_pll", "mout_sw_aclk166"};
->>> +
->>> +PNAME(mout_sw_aclk266_p) = {"dout_aclk266", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk266_p) = {"fin_pll", "mout_sw_aclk266"};
->>> +
->>> +PNAME(mout_sw_aclk333_432_gscl_p) = {"dout_aclk333_432_gscl",
->>> "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk333_432_gscl_p) = {"fin_pll",
->>> "mout_sw_aclk333_432_gscl"};
->>> +
->>> +PNAME(mout_sw_aclk300_gscl_p) = {"dout_aclk300_gscl", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk300_gscl_p)        = {"fin_pll",
->>> "mout_sw_aclk300_gscl"};
->>> +
->>> +PNAME(mout_sw_aclk300_disp1_p) = {"dout_aclk300_disp1",
->>> "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk300_disp1_p) = {"fin_pll", "mout_sw_aclk300_disp1"};
->>> +
->>> +PNAME(mout_sw_aclk300_jpeg_p) = {"dout_aclk300_jpeg", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk300_jpeg_p) = {"fin_pll", "mout_sw_aclk300_jpeg"};
->>> +
->>> +PNAME(mout_sw_aclk_g3d_p) = {"dout_aclk_g3d", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk_g3d_p) = {"fin_pll", "mout_sw_aclk_g3d"};
->>> +
->>> +PNAME(mout_sw_aclk266_g2d_p) = {"dout_aclk266_g2d", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk266_g2d_p) = {"fin_pll", "mout_sw_aclk266_g2d"};
->>> +
->>> +PNAME(mout_sw_aclk333_g2d_p) = {"dout_aclk333_g2d", "mout_sclk_spll"};
->>> +PNAME(mout_user_aclk333_g2d_p) = {"fin_pll", "mout_sw_aclk333_g2d"};
->>> +
->>> +PNAME(mout_audio0_p) = {"fin_pll", "cdclk0", "mout_sclk_dpll",
->>> +                       "mout_sclk_mpll", "mout_sclk_spll",
->>> "mout_sclk_ipll",
->>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
->>> +PNAME(mout_audio1_p) = {"fin_pll", "cdclk1", "mout_sclk_dpll",
->>> +                       "mout_sclk_mpll", "mout_sclk_spll",
->>> "mout_sclk_ipll",
->>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
->>> +PNAME(mout_audio2_p) = {"fin_pll", "cdclk2", "mout_sclk_dpll",
->>> +                       "mout_sclk_mpll", "mout_sclk_spll",
->>> "mout_sclk_ipll",
->>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
->>> +PNAME(mout_spdif_p) = {"fin_pll", "dout_audio0", "dout_audio1",
->>> +                       "dout_audio2", "spdif_extclk", "mout_sclk_ipll",
->>> +                       "mout_sclk_epll", "mout_sclk_rpll"};
->>> +PNAME(mout_hdmi_p) = {"dout_hdmi_pixel", "sclk_hdmiphy"};
->>> +PNAME(mout_maudio0_p) = {"fin_pll", "maudio_clk", "mout_sclk_dpll",
->>> +                        "mout_sclk_mpll", "mout_sclk_spll",
->>> "mout_sclk_ipll",
->>> +                        "mout_sclk_epll", "mout_sclk_rpll"};
->>>
->>>   /* fixed rate clocks generated outside the soc */
->>>   static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[]
->>> __initdata = {
->>> @@ -316,123 +323,131 @@ static struct samsung_fixed_factor_clock
->>> exynos5420_fixed_factor_clks[] __initda
->>>   };
->>>
->>>   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->>> -       MUX(0, "mout_mspll_kfc", mspll_cpu_p, SRC_TOP7, 8, 2),
->>> -       MUX(0, "mout_mspll_cpu", mspll_cpu_p, SRC_TOP7, 12, 2),
->>> -       MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
->>> -       MUX(0, "mout_cpu", cpu_p, SRC_CPU, 16, 1),
->>> -       MUX(0, "mout_kpll", kpll_p, SRC_KFC, 0, 1),
->>> -       MUX(0, "mout_cpu_kfc", kfc_p, SRC_KFC, 16, 1),
->>> +       MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
->>> +       MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
->>> +       MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
->>> +       MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
->>> +       MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
->>> +       MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
->>
->>
->> It looks like a lot of changes done in this patch is not actually clock
->> renaming, but rather renaming of parent arrays. Do you really need to rename
->> them? I don't think we need this at least in cases that are just adding
->> "mout_" prefix to variable names, as it's obvious that parent arrays are
->> relevant only to mux clocks.
->
-> Agreed. But I am trying to follow the naming conventions from
-> exynos5420 and 5620.
+Hi Tomasz,
 
-sorry. Its exynos5260
 
-> I will keep the renaming part and change the subject and commit
-> message as per your comments.
->
-> Regards,
-> Shaik Ameer Basha
->
+On Fri, May 2, 2014 at 3:03 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 24.04.2014 15:03, Shaik Ameer Basha wrote:
 >>
->> Best regards,
->> Tomasz
+>> This patch adds missing clocks for ISP block
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos5420.c |   80
+>> ++++++++++++++++++++++++++++++++++
+>>   1 file changed, 80 insertions(+)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5420.c
+>> b/drivers/clk/samsung/clk-exynos5420.c
+>> index 389d4b1..972da5d 100755
+>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>> @@ -57,6 +57,7 @@
+>>   #define SRC_FSYS              0x10244
+>>   #define SRC_PERIC0            0x10250
+>>   #define SRC_PERIC1            0x10254
+>> +#define SRC_ISP                        0x10270
+>>   #define SRC_TOP10             0x10280
+>>   #define SRC_TOP11             0x10284
+>>   #define SRC_TOP12             0x10288
+>> @@ -77,12 +78,15 @@
+>>   #define DIV_PERIC2            0x10560
+>>   #define DIV_PERIC3            0x10564
+>>   #define DIV_PERIC4            0x10568
+>> +#define SCLK_DIV_ISP0          0x10580
+>> +#define SCLK_DIV_ISP1          0x10584
+>>   #define GATE_BUS_TOP          0x10700
+>>   #define GATE_BUS_FSYS0                0x10740
+>>   #define GATE_BUS_PERIC                0x10750
+>>   #define GATE_BUS_PERIC1               0x10754
+>>   #define GATE_BUS_PERIS0               0x10760
+>>   #define GATE_BUS_PERIS1               0x10764
+>> +#define GATE_TOP_SCLK_ISP      0x10870
+>>   #define GATE_IP_GSCL0         0x10910
+>>   #define GATE_IP_GSCL1         0x10920
+>>   #define GATE_IP_MFC           0x1092c
+>> @@ -145,6 +149,7 @@ static unsigned long exynos5420_clk_regs[] __initdata
+>> = {
+>>         SRC_MASK_FSYS,
+>>         SRC_MASK_PERIC0,
+>>         SRC_MASK_PERIC1,
+>> +       SRC_ISP,
+>>         DIV_TOP0,
+>>         DIV_TOP1,
+>>         DIV_TOP2,
+>> @@ -158,12 +163,15 @@ static unsigned long exynos5420_clk_regs[]
+>> __initdata = {
+>>         DIV_PERIC2,
+>>         DIV_PERIC3,
+>>         DIV_PERIC4,
+>> +       SCLK_DIV_ISP0,
+>> +       SCLK_DIV_ISP1,
+>>         GATE_BUS_TOP,
+>>         GATE_BUS_FSYS0,
+>>         GATE_BUS_PERIC,
+>>         GATE_BUS_PERIC1,
+>>         GATE_BUS_PERIS0,
+>>         GATE_BUS_PERIS1,
+>> +       GATE_TOP_SCLK_ISP,
+>>         GATE_IP_GSCL0,
+>>         GATE_IP_GSCL1,
+>>         GATE_IP_MFC,
+>> @@ -250,6 +258,15 @@ PNAME(mout_user_aclk200_fsys_p)    = {"fin_pll",
+>> "mout_sw_aclk200_fsys"};
+>>
+>>   PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2",
+>> "mout_sclk_spll"};
+>>   PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
+>> +PNAME(mout_sw_aclk400_isp_p) = {"dout_aclk400_isp", "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk400_isp_p) = {"fin_pll", "mout_sw_aclk400_isp"};
+>> +
+>> +PNAME(mout_sw_aclk333_432_isp0_p) = {"dout_aclk333_432_isp0",
+>> +                                       "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk333_432_isp0_p) = {"fin_pll",
+>> "mout_sw_aclk333_432_isp0"};
+>> +
+>> +PNAME(mout_sw_aclk333_432_isp_p) = {"dout_aclk333_432_isp",
+>> "mout_sclk_spll"};
+>> +PNAME(mout_user_aclk333_432_isp_p) = {"fin_pll",
+>> "mout_sw_aclk333_432_isp"};
+>>
+>>   PNAME(mout_sw_aclk200_p) = {"dout_aclk200", "mout_sclk_spll"};
+>>   PNAME(mout_aclk200_disp1_p) = {"fin_pll", "mout_sw_aclk200"};
+>> @@ -265,6 +282,7 @@ PNAME(mout_user_aclk166_p) = {"fin_pll",
+>> "mout_sw_aclk166"};
+>>
+>>   PNAME(mout_sw_aclk266_p) = {"dout_aclk266", "mout_sclk_spll"};
+>>   PNAME(mout_user_aclk266_p) = {"fin_pll", "mout_sw_aclk266"};
+>> +PNAME(mout_user_aclk266_isp_p) = {"fin_pll", "mout_sw_aclk266"};
+>>
+>>   PNAME(mout_sw_aclk333_432_gscl_p) = {"dout_aclk333_432_gscl",
+>> "mout_sclk_spll"};
+>>   PNAME(mout_user_aclk333_432_gscl_p) = {"fin_pll",
+>> "mout_sw_aclk333_432_gscl"};
+>> @@ -448,6 +466,31 @@ static struct samsung_mux_clock exynos5420_mux_clks[]
+>> __initdata = {
+>>         MUX(0, "mout_spi0", mout_group2_p, SRC_PERIC1, 20, 3),
+>>         MUX(0, "mout_spi1", mout_group2_p, SRC_PERIC1, 24, 3),
+>>         MUX(0, "mout_spi2", mout_group2_p, SRC_PERIC1, 28, 3),
+>> +       MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
+>> +       MUX(0, "mout_sw_aclk400_isp", mout_sw_aclk400_isp_p,
+>> +               SRC_TOP10, 0, 1),
+>> +       MUX(0, "mout_user_aclk400_isp", mout_user_aclk400_isp_p,
+>> +               SRC_TOP3, 0, 1),
+>> +       MUX(0, "mout_aclk333_432_isp0", mout_group4_p, SRC_TOP1, 12, 2),
+>> +       MUX(0, "mout_sw_aclk333_432_isp0", mout_sw_aclk333_432_isp0_p,
+>> +               SRC_TOP11, 12, 1),
+>> +       MUX(0, "mout_user_aclk333_432_isp0", mout_user_aclk333_432_isp0_p,
+>> +               SRC_TOP4, 12, 1),
+>> +       MUX(0, "mout_aclk333_432_isp", mout_group4_p,
+>> +               SRC_TOP1, 4, 2),
+>> +       MUX(0, "mout_sw_aclk333_432_isp", mout_sw_aclk333_432_isp_p,
+>> +               SRC_TOP11, 4, 1),
+>> +       MUX(0, "mout_user_aclk333_432_isp", mout_user_aclk333_432_isp_p,
+>> +               SRC_TOP4, 4, 1),
+>> +       MUX(0, "mout_user_aclk266_isp", mout_user_aclk266_isp_p,
+>> +               SRC_TOP4, 16, 1),
+>> +
+>> +       /* ISP Block */
+>> +       MUX(0, "mout_pwm_isp", mout_group2_p, SRC_ISP, 24, 3),
+>> +       MUX(0, "mout_uart_isp", mout_group2_p, SRC_ISP, 20, 3),
+>> +       MUX(0, "mout_spi0_isp", mout_group2_p, SRC_ISP, 12, 3),
+>> +       MUX(0, "mout_spi1_isp", mout_group2_p, SRC_ISP, 16, 3),
+>> +       MUX(0, "mout_isp_sensor", mout_group2_p, SRC_ISP, 28, 3),
+>>   };
+>>
+>>   static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>> @@ -528,6 +571,22 @@ static struct samsung_div_clock exynos5420_div_clks[]
+>> __initdata = {
+>>         DIV(0, "dout_pre_spi0", "dout_spi0", DIV_PERIC4, 8, 8),
+>>         DIV(0, "dout_pre_spi1", "dout_spi1", DIV_PERIC4, 16, 8),
+>>         DIV(0, "dout_pre_spi2", "dout_spi2", DIV_PERIC4, 24, 8),
+>> +
+>> +       /* ISP Block */
+>> +       DIV(0, "dout_aclk400_isp", "mout_aclk400_isp", DIV_TOP0, 0, 3),
+>> +       DIV(0, "dout_aclk333_432_isp0", "mout_aclk333_432_isp0",
+>> +               DIV_TOP1, 16, 3),
+>> +       DIV(0, "dout_aclk333_432_isp", "mout_aclk333_432_isp",
+>> +               DIV_TOP1, 4, 3),
+>> +       DIV(0, "dout_pwm_isp", "mout_pwm_isp", SCLK_DIV_ISP1, 28, 4),
+>> +       DIV(0, "dout_uart_isp", "mout_uart_isp", SCLK_DIV_ISP1, 24, 4),
+>> +       DIV(0, "dout_spi0_isp", "mout_spi0_isp", SCLK_DIV_ISP1, 16, 4),
+>> +       DIV(0, "dout_spi1_isp", "mout_spi1_isp", SCLK_DIV_ISP1, 20, 4),
+>> +       DIV(0, "dout_spi0_isp_pre", "dout_spi0_isp", SCLK_DIV_ISP1, 0, 8),
+>> +       DIV(0, "dout_spi1_isp_pre", "dout_spi1_isp", SCLK_DIV_ISP1, 8, 8),
+>> +       DIV(0, "dout_isp_sensor0", "mout_isp_sensor", SCLK_DIV_ISP0, 8,
+>> 8),
+>> +       DIV(0, "dout_isp_sensor1", "mout_isp_sensor", SCLK_DIV_ISP0, 16,
+>> 8),
+>> +       DIV(0, "dout_isp_sensor2", "mout_isp_sensor", SCLK_DIV_ISP0, 24,
+>> 8),
+>>   };
+>>
+>>   static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>> @@ -759,6 +818,27 @@ static struct samsung_gate_clock
+>> exynos5420_gate_clks[] __initdata = {
+>>                 0),
+>>         GATE(CLK_SMMU_MIXER, "smmu_mixer", "aclk200_disp1", GATE_IP_DISP1,
+>> 9, 0,
+>>                 0),
+>> +       GATE(0, "aclk266_isp", "mout_user_aclk266_isp",
+>> +                       GATE_BUS_TOP, 13, 0, 0),
+>> +       GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
+>> +                       GATE_BUS_TOP, 16, 0, 0),
+>> +       GATE(0, "aclk333_432_isp0",
+>> +                       "mout_user_aclk333_432_isp0", GATE_BUS_TOP, 5, 0,
+>> 0),
+>> +       GATE(0, "aclk333_432_isp",
+>> +                       "mout_user_aclk333_432_isp", GATE_BUS_TOP, 8, 0,
+>> 0),
+>
+>
+> What are these 4 gate clocks needed for? Do we really need this kind of
+
+These are the clocks coming out of CMU_TOP and provided to the ISP block.
+These clocks are provided to IPs like ISP, DRC, SCALERC, SCALERP,
+Coreted-A5, FD etc.,
+
+Actually there are gates specific to each IP after the above four gates.
+CMU_TOP ---> Above Four Gates  ---> Gates specific to ISP IPs ---> ISP IPs
+
+Above four gates will not be used directly by any driver.
+
+> gating granularity? Isn't there a gate bit in one of GATE_IP_* registers?
+
+Yes, these clocks doesn't have gate bits in any of GATE_IP_* registers.
+
+Regards,
+Shaik Ameer Basha
+
+>
+> Best regards,
+> Tomasz
