@@ -1,108 +1,79 @@
-From: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v5 1/5] ARM: EXYNOS: Add generic cpu power control functions for all exynos based SoCs
-Date: Mon,  5 May 2014 21:56:57 +0530
-Message-ID: <1399307221-8659-2-git-send-email-a.kesavan@samsung.com>
-References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399307221-8659-1-git-send-email-a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Dave.Martin-5wv7dgnIgG8@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inderpal.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [RESEND PATCH v3 2/5] charger: tps65090: Allow charger module to
+ be used when no irq
+Date: Mon, 5 May 2014 09:51:28 -0700
+Message-ID: <CAOesGMi+jH7xEzVxRX5qEoVycdtJ=FXOJRp1xut+65d4X8YFYA@mail.gmail.com>
+References: <1398268565-4789-3-git-send-email-dianders@chromium.org>
+	<CAD=FV=W=Ffye5wp0PhJ2uX4jhEQkTKA4VTT4LyX2ZdByfE4UaQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:43163 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754513AbaEEQvk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 12:51:40 -0400
+Received: by mail-qc0-f169.google.com with SMTP id e16so5577047qcx.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 May 2014 09:51:40 -0700 (PDT)
+In-Reply-To: <CAD=FV=W=Ffye5wp0PhJ2uX4jhEQkTKA4VTT4LyX2ZdByfE4UaQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Leela Krishna Amudala <leela.krishna-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+On Tue, Apr 29, 2014 at 9:39 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Anton,
+>
+> On Wed, Apr 23, 2014 at 8:56 AM, Doug Anderson <dianders@chromium.org> wrote:
+>> On the ARM Chromebook tps65090 has two masters: the AP (the main
+>> processor running linux) and the EC (the embedded controller).  The AP
+>> is allowed to mess with FETs but the EC is in charge of charge control.
+>>
+>> The tps65090 interupt line is routed to both the AP and the EC, which
+>> can cause quite a headache.  Having two people adjusting masks and
+>> acking interrupts is a recipe for disaster.
+>>
+>> In the shipping kernel we had a hack to have the AP pay attention to
+>> the IRQ but not to ack it.  It also wasn't supposed to configure the
+>> IRQ in any way.  That hack allowed us to detect when the device was
+>> charging without messing with the EC's state.
+>>
+>> The current tps65090 infrastructure makes the above difficult, and it
+>> was a bit of a hack to begin with.  Rather than uglify the driver to
+>> support it, just extend the driver's existing notion of "no irq" to
+>> the charger.  This makes the charger code poll every 2 seconds for AC
+>> detect, which is sufficient.
+>>
+>> For proper functioning, requires (mfd: tps65090: Don't tell child
+>> devices we have an IRQ if we don't).  If we don't have that patch
+>> we'll simply fail to probe on devices without an interrupt (just like
+>> we did before this patch).
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> ---
+>> Changes in v3: None
+>> Changes in v2:
+>> - Split noirq (polling mode) changes into MFD and charger
+>>
+>>  drivers/power/tps65090-charger.c | 76 +++++++++++++++++++++++++++++++---------
+>>  1 file changed, 59 insertions(+), 17 deletions(-)
+>
+> All the rest of this series has been acked and applied.  Do you have
+> time to review this patch?
+>
+> Thanks!  :)
 
-Add generic cpu power control functions for exynos based SoCS
-for cpu power up/down and to know the cpu status.
+FWIW, I've seen very little email traffic from Anton this year, he
+might have limited time for maintainership at the moment. Usually what
+we do in these cases is that we give the maintainer as much time as
+possible, but eventually if there's no action, and the patches look
+reasonable, we apply them with the maintainer on Cc: line in the
+signed-offs. Or we send them to/through akpm, which tends to be the
+catch-all for high-latency maintainers, etc.
 
-Signed-off-by: Leela Krishna Amudala <leela.krishna-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- arch/arm/mach-exynos/common.h   |    3 +++
- arch/arm/mach-exynos/pm.c       |   36 ++++++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/regs-pmu.h |    6 ++++++
- 3 files changed, 45 insertions(+)
+Since this patch isn't holding anything up, let's give Anton as much
+time as possible to review, and revisit in ~2 weeks (so it has time to
+land somewhere in time for the merge window).
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 47cbab0..a7dbb5f 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -63,5 +63,8 @@ struct exynos_pmu_conf {
- };
- 
- extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
-+extern void exynos_cpu_powerdown(int cpu);
-+extern void exynos_cpu_powerup(int cpu);
-+extern int  exynos_cpu_power_state(int cpu);
- 
- #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 15af0ce..6651028 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -100,6 +100,42 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- 	return -ENOENT;
- }
- 
-+/**
-+ * exynos_cpu_powerdown : power down the specified cpu
-+ * @cpu : the cpu to power down
-+ *
-+ * Power downs the specified cpu. The sequence must be finished by a
-+ * call to cpu_do_idle()
-+ *
-+ */
-+void exynos_cpu_powerdown(int cpu)
-+{
-+	__raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+}
-+
-+/**
-+ * exynos_cpu_powerup : power up the specified cpu
-+ * @cpu : the cpu to power up
-+ *
-+ * Power up the specified cpu
-+ */
-+void exynos_cpu_powerup(int cpu)
-+{
-+	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
-+		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+}
-+
-+/**
-+ * exynos_cpu_power_state : returns the power state of the cpu
-+ * @cpu : the cpu to retrieve the power state from
-+ *
-+ */
-+int exynos_cpu_power_state(int cpu)
-+{
-+	return (__raw_readl(EXYNOS_ARM_CORE_STATUS(cpu)) &
-+			S5P_CORE_LOCAL_PWR_EN);
-+}
-+
- /* For Cortex-A9 Diagnostic and Power control register */
- static unsigned int save_arm_register[2];
- 
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 4f6a256..0bdfcbc 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -121,6 +121,12 @@
- 
- #define S5P_CHECK_SLEEP				0x00000BAD
- 
-+#define EXYNOS_ARM_CORE0_CONFIGURATION		S5P_PMUREG(0x2000)
-+#define EXYNOS_ARM_CORE_CONFIGURATION(_nr)	\
-+			(EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
-+#define EXYNOS_ARM_CORE_STATUS(_nr)		\
-+			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
-+
- /* Only for EXYNOS4210 */
- #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
- #define S5P_CMU_RESET_LCD1_LOWPWR	S5P_PMUREG(0x1174)
--- 
-1.7.9.5
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Olof
