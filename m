@@ -1,37 +1,76 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 2/2] PM / OPP: Move cpufreq specific OPP functions out of
- generic OPP library
-Date: Mon, 5 May 2014 20:05:44 +0530
-Message-ID: <CAKohpom0nq_v0wzaLtU4NxRxJwLgrUB1K8+9QtkanibeznEi4g@mail.gmail.com>
-References: <1399296830-13056-1-git-send-email-nm@ti.com>
-	<1399296830-13056-3-git-send-email-nm@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1399296830-13056-3-git-send-email-nm@ti.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: Enable USB 3503 hub on exynos5250-snow
+Date: Mon,  5 May 2014 18:00:55 +0530
+Message-ID: <1399293056-17143-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:33851 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932128AbaEEMbG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 08:31:06 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arunkk.samsung@gmail.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-On 5 May 2014 19:03, Nishanth Menon <nm@ti.com> wrote:
-> CPUFreq specific helper functions for OPP (Operating Performance Points)
-> now use generic OPP functions that allow CPUFreq to be be moved back
-> into CPUFreq framework. This allows for independent modifications
-> or future enhancements as needed isolated to just CPUFreq framework
-> alone.
->
-> Here, we just move relevant code and documentation to make this part of
-> CPUFreq infrastructure.
->
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Kevin Hilman <khilman@deeprootsystems.com>
-> Cc: cpufreq@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+The exynos5250-snow has a SMSC USB3503 connected in
+hardware only mode like a PHY. Enable support for it,
+and add necessary 'reset-gpio' for it.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This is in correspondance to similar patch by Mark Brown
+7c1b0ec ARM: dts: Enable USB hub on Arndale
+
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
+
+Based on 'for-next' branch of kgene's linux-samsung tree.
+
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
+ arch/arm/boot/dts/exynos5250-snow.dts     |   14 ++++++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+index 9a49e68..bd8c8f1 100644
+--- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+@@ -706,6 +706,13 @@
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
++
++		usb_hub_reset: usb-hub-reset {
++			samsung,pins = "gpe1-0";
++			samsung,pin-function = <1>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
+ 	};
+ 
+ 	pinctrl@10d10000 {
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 1ce1088..2e48f27 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -200,6 +200,20 @@
+ 		samsung,vbus-gpio = <&gpx1 1 0>;
+ 	};
+ 
++	usb_hub_bus {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		// SMSC USB3503 connected in hardware only mode as a PHY
++		usb_hub {
++			compatible = "smsc,usb3503a";
++			reset-gpios = <&gpe1 0 1>;
++			pinctrl-0 = <&usb_hub_reset>;
++			pinctrl-names = "default";
++		};
++	};
++
+ 	fixed-rate-clocks {
+ 		xxti {
+ 			compatible = "samsung,clock-xxti";
+-- 
+1.7.10.4
