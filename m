@@ -1,71 +1,271 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Add MFC memory banks to Exynos5420 boards
-Date: Sun, 4 May 2014 21:08:57 +0530
-Message-ID: <CAK9yfHy6Ms4c0vDiWs4Dy3acfVViQJpPFNyPGBmmwhAGo4VJKw@mail.gmail.com>
-References: <1395036689-31382-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:60997 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751071AbaEDPi6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 May 2014 11:38:58 -0400
-Received: by mail-ob0-f176.google.com with SMTP id wp4so7335616obc.21
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 May 2014 08:38:57 -0700 (PDT)
-In-Reply-To: <1395036689-31382-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v6 3/4] usb: ohci-exynos: Add facility to use phy provided by the generic phy framework
+Date: Mon,  5 May 2014 10:32:57 +0530
+Message-ID: <1399266177-31765-1-git-send-email-gautam.vivek@samsung.com>
+References: <5363D835.7010804@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5363D835.7010804@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 17 March 2014 11:41, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Add MFC memory banks to Exynos5420 based SMDK and Arndale-octa boards.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    5 +++++
->  arch/arm/boot/dts/exynos5420-smdk5420.dts     |    5 +++++
->  2 files changed, 10 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> index f509e8fc290f..051bde7c3665 100644
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> @@ -37,6 +37,11 @@
->                 status = "okay";
->         };
->
-> +       codec@11000000 {
-> +               samsung,mfc-r = <0x43000000 0x800000>;
-> +               samsung,mfc-l = <0x51000000 0x800000>;
-> +       };
-> +
->         mmc@12200000 {
->                 status = "okay";
->                 broken-cd;
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index ae1ee0470fca..6a9b4553d802 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -68,6 +68,11 @@
->                 status = "okay";
->         };
->
-> +       codec@11000000 {
-> +               samsung,mfc-r = <0x43000000 0x800000>;
-> +               samsung,mfc-l = <0x51000000 0x800000>;
-> +       };
-> +
->         mmc@12200000 {
->                 status = "okay";
->                 broken-cd;
-> --
-> 1.7.9.5
->
- Ping Kukjin.
+Add support to consume phy provided by Generic phy framework.
+Keeping the support for older usb-phy intact right now, in order
+to prevent any functionality break in absence of relevant
+device tree side change for ohci-exynos.
+Once we move to new phy in the device nodes for ohci, we can
+remove the support for older phys.
 
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+---
 
+Changes from v5:
+ - Removed setting phy explicitly to error pointer.
+ - Changed error check to '-ENOSYS' instead of '-ENXIO' in failure case of
+   devm_of_phy_get().
+
+Changes from v4:
+ - Removed 'phy-names' property from the bindings since we don't need it.
+ - Restructured exynos_ohci_get_phy() function to handle error codes as
+   well as return relevant error codes effectively.
+ - Added IS_ERR() check for PHYs in exynos_ohci_phy_enable()/disable().
+
+Changes from v3:
+ - Calling usb_phy_shutdown() when exynos_ohci_phy_enable() is failing.
+ - Made exynos_ohci_phy_disable() return void, since its return value
+   did not serve any purpose.
+ - Calling clk_disable_unprepare() in exynos_ohci_resume() when
+   exynos_ohci_phy_enable() is failed.
+
+ .../devicetree/bindings/usb/exynos-usb.txt         |   16 +++
+ drivers/usb/host/ohci-exynos.c                     |  118 +++++++++++++++++---
+ 2 files changed, 118 insertions(+), 16 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+index d967ba1..49a9c6f 100644
+--- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
++++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+@@ -38,6 +38,13 @@ Required properties:
+  - interrupts: interrupt number to the cpu.
+  - clocks: from common clock binding: handle to usb clock.
+  - clock-names: from common clock binding: Shall be "usbhost".
++ - port: if in the SoC there are OHCI phys, they should be listed here.
++   One phy per port. Each port should have following entries:
++	- reg: port number on OHCI controller, e.g
++	       On Exynos5250, port 0 is USB2.0 otg phy
++			      port 1 is HSIC phy0
++			      port 2 is HSIC phy1
++	- phys: from the *Generic PHY* bindings, specifying phy used by port.
+ 
+ Example:
+ 	usb@12120000 {
+@@ -47,6 +54,15 @@ Example:
+ 
+ 		clocks = <&clock 285>;
+ 		clock-names = "usbhost";
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@0 {
++		    reg = <0>;
++		    phys = <&usb2phy 1>;
++		    status = "disabled";
++		};
++
+ 	};
+ 
+ DWC3
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 05f00e3..32f2ff1 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -18,6 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/phy/phy.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+ #include <linux/usb.h>
+@@ -33,28 +34,110 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+ 
+ #define to_exynos_ohci(hcd) (struct exynos_ohci_hcd *)(hcd_to_ohci(hcd)->priv)
+ 
++#define PHY_NUMBER 3
++
+ struct exynos_ohci_hcd {
+ 	struct clk *clk;
+ 	struct usb_phy *phy;
+ 	struct usb_otg *otg;
++	struct phy *phy_g[PHY_NUMBER];
+ };
+ 
+-static void exynos_ohci_phy_enable(struct device *dev)
++static int exynos_ohci_get_phy(struct device *dev,
++				struct exynos_ohci_hcd *exynos_ohci)
++{
++	struct device_node *child;
++	struct phy *phy;
++	int phy_number;
++	int ret = 0;
++
++	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	if (IS_ERR(exynos_ohci->phy)) {
++		ret = PTR_ERR(exynos_ohci->phy);
++		if (ret != -ENXIO && ret != -ENODEV) {
++			dev_err(dev, "no usb2 phy configured\n");
++			return ret;
++		}
++		dev_dbg(dev, "Failed to get usb2 phy\n");
++	} else {
++		exynos_ohci->otg = exynos_ohci->phy->otg;
++	}
++
++	/*
++	 * Getting generic phy:
++	 * We are keeping both types of phys as a part of transiting OHCI
++	 * to generic phy framework, so as to maintain backward compatibilty
++	 * with old DTB.
++	 * If there are existing devices using DTB files built from them,
++	 * to remove the support for old bindings in this driver,
++	 * we need to make sure that such devices have their DTBs
++	 * updated to ones built from new DTS.
++	 */
++	for_each_available_child_of_node(dev->of_node, child) {
++		ret = of_property_read_u32(child, "reg", &phy_number);
++		if (ret) {
++			dev_err(dev, "Failed to parse device tree\n");
++			of_node_put(child);
++			return ret;
++		}
++
++		if (phy_number >= PHY_NUMBER) {
++			dev_err(dev, "Invalid number of PHYs\n");
++			of_node_put(child);
++			return -EINVAL;
++		}
++
++		phy = devm_of_phy_get(dev, child, 0);
++		of_node_put(child);
++		if (IS_ERR(phy)) {
++			ret = PTR_ERR(phy);
++			if (ret != -ENOSYS && ret != -ENODEV) {
++				dev_err(dev, "no usb2 phy configured\n");
++				return ret;
++			}
++			dev_dbg(dev, "Failed to get usb2 phy\n");
++		}
++		exynos_ohci->phy_g[phy_number] = phy;
++	}
++
++	return ret;
++}
++
++static int exynos_ohci_phy_enable(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
++	int i;
++	int ret = 0;
++
++	if (!IS_ERR(exynos_ohci->phy))
++		return usb_phy_init(exynos_ohci->phy);
+ 
+-	if (exynos_ohci->phy)
+-		usb_phy_init(exynos_ohci->phy);
++	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
++		if (!IS_ERR(exynos_ohci->phy_g[i]))
++			ret = phy_power_on(exynos_ohci->phy_g[i]);
++	if (ret)
++		for (i--; i >= 0; i--)
++			if (!IS_ERR(exynos_ohci->phy_g[i]))
++				phy_power_off(exynos_ohci->phy_g[i]);
++
++	return ret;
+ }
+ 
+ static void exynos_ohci_phy_disable(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
++	int i;
+ 
+-	if (exynos_ohci->phy)
++	if (!IS_ERR(exynos_ohci->phy)) {
+ 		usb_phy_shutdown(exynos_ohci->phy);
++		return;
++	}
++
++	for (i = 0; i < PHY_NUMBER; i++)
++		if (!IS_ERR(exynos_ohci->phy_g[i]))
++			phy_power_off(exynos_ohci->phy_g[i]);
+ }
+ 
+ static int exynos_ohci_probe(struct platform_device *pdev)
+@@ -62,7 +145,6 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+ 	struct exynos_ohci_hcd *exynos_ohci;
+ 	struct usb_hcd *hcd;
+ 	struct resource *res;
+-	struct usb_phy *phy;
+ 	int irq;
+ 	int err;
+ 
+@@ -88,15 +170,9 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+ 					"samsung,exynos5440-ohci"))
+ 		goto skip_phy;
+ 
+-	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(phy)) {
+-		usb_put_hcd(hcd);
+-		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
+-		return -EPROBE_DEFER;
+-	} else {
+-		exynos_ohci->phy = phy;
+-		exynos_ohci->otg = phy->otg;
+-	}
++	err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
++	if (err)
++		goto fail_clk;
+ 
+ skip_phy:
+ 	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
+@@ -139,7 +215,11 @@ skip_phy:
+ 
+ 	platform_set_drvdata(pdev, hcd);
+ 
+-	exynos_ohci_phy_enable(&pdev->dev);
++	err = exynos_ohci_phy_enable(&pdev->dev);
++	if (err) {
++		dev_err(&pdev->dev, "Failed to enable USB phy\n");
++		goto fail_io;
++	}
+ 
+ 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (err) {
+@@ -210,13 +290,19 @@ static int exynos_ohci_resume(struct device *dev)
+ {
+ 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
+ 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
++	int ret;
+ 
+ 	clk_prepare_enable(exynos_ohci->clk);
+ 
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+ 
+-	exynos_ohci_phy_enable(dev);
++	ret = exynos_ohci_phy_enable(dev);
++	if (ret) {
++		dev_err(dev, "Failed to enable USB phy\n");
++		clk_disable_unprepare(exynos_ohci->clk);
++		return ret;
++	}
+ 
+ 	ohci_resume(hcd, false);
+ 
 -- 
-With warm regards,
-Sachin
+1.7.10.4
