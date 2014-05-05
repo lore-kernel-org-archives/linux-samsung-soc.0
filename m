@@ -1,81 +1,44 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/2] ARM: dts: Enable USB 3503 hub on exynos5420-peach-pit
-Date: Mon,  5 May 2014 18:00:56 +0530
-Message-ID: <1399293056-17143-2-git-send-email-gautam.vivek@samsung.com>
-References: <1399293056-17143-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399293056-17143-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [PATCH v3 0/5] add cpuidle support for Exynos5420
+Date: Mon,  5 May 2014 13:57:19 +0530
+Message-ID: <1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
+References: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The exynos5420-peach-pit has a SMSC USB3503 connected in
-hardware only mode like a PHY. Enable support for it,
-and add necessary 'reset-gpio' for it.
+Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
 
-This is in correspondance to similar patch by Mark Brown
-7c1b0ec ARM: dts: Enable USB hub on Arndale
+This patchset adds cpuidle support for Exynos5420 SoC based on
+generic big.little cpuidle driver.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
+Tested on SMDK5420.
 
-Based on 'for-next' branch of kgene's linux-samsung tree with
-following patch:
-[PATCH v4 2/2] ARM: dts: Add peach-pit board support
-http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg29950.html
+This patch set depends on:
+	1. [PATCH 0/5] MCPM backend for Exynos5420
+	   http://www.spinics.net/lists/arm-kernel/msg327923.html
 
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   14 ++++++++++++++
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
- 2 files changed, 21 insertions(+)
+	2. [PATCH] arm: exynos: add generic function to calculate cpu number
+	   http://www.spinics.net/lists/linux-samsung-soc/msg29446.html
+	   http://www.spinics.net/lists/arm-kernel/msg324024.html
+		
+Changelog is in respective patches.
+Chander Kashyap (5):
+  driver: cpuidle-big-little: add of_device_id structure
+  cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-little
+    driver
+  driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
+  exynos: cpuidle: do not allow cpuidle registration for Exynos5420
+  mcpm: exynos: populate suspend and powered_up callbacks
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index fae33dd..24c1e87 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -58,6 +58,20 @@
- 		pinctrl-0 = <&pwm0_out>;
- 		pinctrl-names = "default";
- 	};
-+
-+	usb_hub_bus {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		// SMSC USB3503 connected in hardware only mode as a PHY
-+		usb_hub {
-+			compatible = "smsc,usb3503a";
-+			reset-gpios = <&gpx2 4 1>;
-+			pinctrl-0 = <&usb_hub_reset>;
-+			pinctrl-names = "default";
-+		};
-+	};
- };
- 
- &pinctrl_0 {
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index e62c8eb..8add143 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -66,6 +66,13 @@
- 			samsung,pin-pud = <0>;
- 			samsung,pin-drv = <0>;
- 		};
-+
-+		usb_hub_reset: usb-hub-reset {
-+			samsung,pins = "gpx2-4";
-+			samsung,pin-function = <1>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
- 	};
- 
- 	pinctrl@13410000 {
+ arch/arm/mach-exynos/cpuidle.c       |    3 +++
+ arch/arm/mach-exynos/mcpm-exynos.c   |   34 ++++++++++++++++++++++++++++++++++
+ drivers/cpuidle/Kconfig.arm          |    2 +-
+ drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
+ 4 files changed, 49 insertions(+), 2 deletions(-)
+
 -- 
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
