@@ -1,135 +1,107 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 1/2] v4l: Add resolution change event.
-Date: Mon, 05 May 2014 12:14:03 +0200
-Message-ID: <5367646B.30808@xs4all.nl>
-References: <1398072362-24962-1-git-send-email-arun.kk@samsung.com>	<1398072362-24962-2-git-send-email-arun.kk@samsung.com>	<53566601.2080801@xs4all.nl>	<5360EEC5.5050903@gmail.com>	<536109BA.7010307@xs4all.nl> <CALt3h78R47nns9RQXDq6QsNmgti_L+PVNB8EHWSrcEHvBgN0LQ@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC PATCH 0/4] drivers/base: Generic framework for tracking
+ internal interfaces
+Date: Mon, 05 May 2014 09:38:42 +0200
+Message-ID: <53674002.1030507@samsung.com>
+References: <1398866574-27001-1-git-send-email-a.hajda@samsung.com>
+ <20140430154914.GA898@kroah.com> <53616E31.3050404@wp.pl>
+ <20140430222839.GE26756@n2100.arm.linux.org.uk> <5361F1F3.7070005@wp.pl>
+ <20140501091102.GF26756@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr2.xs4all.nl ([194.109.24.22]:3458 "EHLO
-	smtp-vbr2.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755749AbaEEKOZ (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43355 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754635AbaEEHip (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 06:14:25 -0400
-In-Reply-To: <CALt3h78R47nns9RQXDq6QsNmgti_L+PVNB8EHWSrcEHvBgN0LQ@mail.gmail.com>
+	Mon, 5 May 2014 03:38:45 -0400
+In-reply-to: <20140501091102.GF26756@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pawel Osciak <posciak@chromium.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Andrzej Hajda <andrzej.hajda@wp.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Tomasz Stansislawski <t.stanislaws@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On 05/05/2014 11:50 AM, Arun Kumar K wrote:
-> Hi Hans,
-> 
-> On Wed, Apr 30, 2014 at 8:03 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 04/30/2014 12:38 PM, Arun Kumar K wrote:
->>> Hi Hans,
->>>
->>>
->>> On 04/22/14 18:22, Hans Verkuil wrote:
->>>> On 04/21/2014 11:26 AM, Arun Kumar K wrote:
->>>>> From: Pawel Osciak <posciak@chromium.org>
->>>>>
->>>>> This event indicates that the decoder has reached a point in the stream,
->>>>> at which the resolution changes. The userspace is expected to provide a new
->>>>> set of CAPTURE buffers for the new format before decoding can continue.
->>>>> The event can also be used for more generic events involving resolution
->>>>> or format changes at runtime for all kinds of video devices.
->>>>>
->>>>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
->>>>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->>>>> ---
->>>>>  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |   16 ++++++++++++++++
->>>>>  include/uapi/linux/videodev2.h                     |    6 ++++++
->>>>>  2 files changed, 22 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
->>>>> index 5c70b61..0aec831 100644
->>>>> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
->>>>> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
->>>>> @@ -155,6 +155,22 @@
->>>>>         </entry>
->>>>>       </row>
->>>>>       <row>
->>>>> +       <entry><constant>V4L2_EVENT_SOURCE_CHANGE</constant></entry>
->>>>> +       <entry>5</entry>
->>>>> +       <entry>
->>>>> +         <para>This event is triggered when a resolution or format change
->>>>> +          is detected during runtime by the video device. It can be a
->>>>> +          runtime resolution change triggered by a video decoder or the
->>>>> +          format change happening on an HDMI connector. Application may
->>>>> +          need to reinitialize buffers before proceeding further.</para>
->>>>> +
->>>>> +              <para>This event has a &v4l2-event-source-change; associated
->>>>> +         with it. This has significance only for v4l2 subdevs where the
->>>>> +         <structfield>pad_num</structfield> field will be updated with
->>>>> +         the pad number on which the event is triggered.</para>
->>>>> +       </entry>
->>>>> +     </row>
->>>>> +     <row>
->>>>>         <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
->>>>>         <entry>0x08000000</entry>
->>>>>         <entry>Base event number for driver-private events.</entry>
->>>>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->>>>> index 6ae7bbe..12e0614 100644
->>>>> --- a/include/uapi/linux/videodev2.h
->>>>> +++ b/include/uapi/linux/videodev2.h
->>>>> @@ -1733,6 +1733,7 @@ struct v4l2_streamparm {
->>>>>  #define V4L2_EVENT_EOS                             2
->>>>>  #define V4L2_EVENT_CTRL                            3
->>>>>  #define V4L2_EVENT_FRAME_SYNC                      4
->>>>> +#define V4L2_EVENT_SOURCE_CHANGE           5
->>>>>  #define V4L2_EVENT_PRIVATE_START           0x08000000
->>>>>
->>>>>  /* Payload for V4L2_EVENT_VSYNC */
->>>>> @@ -1764,12 +1765,17 @@ struct v4l2_event_frame_sync {
->>>>>     __u32 frame_sequence;
->>>>>  };
->>>>>
->>>>> +struct v4l2_event_source_change {
->>>>> +   __u32 pad_num;
->>>>> +};
->>>>> +
->>>>>  struct v4l2_event {
->>>>>     __u32                           type;
->>>>>     union {
->>>>>             struct v4l2_event_vsync         vsync;
->>>>>             struct v4l2_event_ctrl          ctrl;
->>>>>             struct v4l2_event_frame_sync    frame_sync;
->>>>> +           struct v4l2_event_source_change source_change;
->>>>>             __u8                            data[64];
->>>>>     } u;
->>>>>     __u32                           pending;
->>>>>
->>>>
->>>> This needs to be done differently. The problem is that you really have multiple
->>>> events that you want to subscribe to: one for each pad (or input: see the way
->>>> VIDIOC_G/S_EDID maps pad to an input or output index when used with a video node,
->>>> we have to support that for this event as well).
->>>>
->>>> What you want to do is similar to what is done for control events: there you can
->>>> subscribe for a specific control and get notified when that control changes.
->>>>
->>>> The way that works in the event code is that the 'id' field in the v4l2_event
->>>> struct contains that control ID, or, in this case, the pad/input/output index.
->>>>
->>>
->>> As I am new to v4l2-events itself, I might have some noob questions.
->>> I understood filling pad index into id field. But for video nodes,
->>> the application is supposed to put v4l2_buf_type in the id field?
->>
->> No, a capture video node can have multiple inputs (those are enumerated with
->> VIDIOC_ENUMINPUTS), and each input can generate a SOURCE_CHANGE event, even if it
->> is not the currently active input. Hence the need of setting id to the input
->> index. v4l2_buf_type makes no sense here.
->>
-> 
-> Ok. But in a simple m2m device like mfc, the userspace has to subscribe to
-> the event say on the CAPTURE plane where buffers has to be re-allocated on
-> resolution change. So in such a case, what should be put in id field?
+On 05/01/2014 11:11 AM, Russell King - ARM Linux wrote:
+> On Thu, May 01, 2014 at 09:04:19AM +0200, Andrzej Hajda wrote:
+>> 2. You replace calls of component_add and component_del with calls
+>> to interface_tracker_ifup(dev, INTERFACE_TRACKER_TYPE_COMPONENT,  
+>> &specific_component_ops),
+>> or interface_tracker_ifdown.
+>> Thats all for components.
+> How does the master get to decide which components are for it?
 
-M2M devices will only have one input and one output, so the ID will be 0.
+This is not a part of the framework. The master can construct
+the list of its components anyhow. Some examples:
+1. List of device tree video interface port nodes pointed by
+master's remote-endpoint phandles.
+2. List of device nodes pointed by supernode phandles.
+3. Nodes pointed by other phandles in master's node.
+4. Devices compatible with the list of drivers.
 
-Regards,
+This is for create list of objects. As interface type it should
+use the types of interface it expects at given nodes and is able to handle.
 
-	Hans
+Small issue:
+If the master creates list of devices and for particular interface
+type expects DT node as the object, translation is easy: dev->of_node.
+But if the situation is reverse kernel does not provide generic helper
+for translating of_node to device, however kernel have everything to
+provide such function if necessary.
+Other solution is to use only DT nodes for object identification,
+it will narrow the framework usage to DT architectures, but seems to be
+more flexible anyway - we can have more than one interface of given type per
+device, we can distinguish them by port node.
+
+>   As
+> I see it, all masters see all components of a particular "type".
+> What if you have a system with two masters each of which are bound
+> to a set of unique components but some of the components are of a
+> the same type?
+
+The master receives notifications only about interfaces he has
+registered callback for. For example:
+interface_tracker_register(node, INTERFACE_TRACKER_TYPE_DRM_PANEL, cb);
+
+means that 'cb' callback will be called only if panel identifed by node
+is up or down.
+If the driver expect that at the 'node' there could be also component it
+can also
+listen for components:
+interface_tracker_register(node, INTERFACE_TRACKER_TYPE_COMPONENT, cb);
+
+Now 'cb' will be called if component or panel appears/disappears at node
+'node'.
+
+so callback function can look like:
+
+void cb_func(struct interface_tracker_block *itb, const void *object,
+unsigned long type, bool on,
+                      void *data)
+{
+    struct priv_struct *priv = container_of(itb, struct priv_struct, itb);
+    switch(type) {
+    case INTERFACE_TRACKER_TYPE_DRM_PANEL:
+        handle_drm_panel(priv, data, on);
+        break;
+    case INTERFACE_TRACKER_TYPE_DRM_COMPONENT:
+        handle_drm_component(priv, data, object, on);
+        break;
+    }
+}
+
+where handlers can look like:
+
+void handle_drm_panel(struct priv_struct *priv, struct drm_panel *panel,
+bool on);
+void handle_drm_component(struct priv_struct *priv, struct component_ops
+*ops, struct device *dev, bool on);
+
+>
+> How does the master know what "type" to use?
+>
+
+It should use type which it expects at the given node.
+
+Regards
+Andrzej
