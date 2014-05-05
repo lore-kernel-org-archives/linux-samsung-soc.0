@@ -1,75 +1,83 @@
-From: Tom Rini <trini@ti.com>
-Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
-Date: Mon, 5 May 2014 14:18:09 -0400
-Message-ID: <5367D5E1.9070709@ti.com>
-References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>	<5363D176.80601@gmail.com>	<CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>	<53644DDB.7050503@gmail.com> <CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [Patch v3 2/5] cpuidle: config: Add ARCH_EXYNOS entry to select
+ cpuidle-big-little driver
+Date: Mon, 5 May 2014 14:39:19 +0530
+Message-ID: <CANuQgHE50Ogqaf7jJsfy6Wx40oCsUBSXz=877BaXdXswQ7e8tw@mail.gmail.com>
+References: <1398245154-18771-1-git-send-email-chander.kashyap@linaro.org>
+	<1399278444-8312-1-git-send-email-chander.kashyap@linaro.org>
+	<1399278444-8312-3-git-send-email-chander.kashyap@linaro.org>
+	<536752FD.3040704@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:43970 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750713AbaEESSS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 14:18:18 -0400
-In-Reply-To: <CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <536752FD.3040704@suse.de>
+Sender: linux-pm-owner@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>
 
-On 05/05/2014 11:17 AM, Doug Anderson wrote:
-> On Fri, May 2, 2014 at 7:00 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Well, if you can use the device tree of peach-pit board and boot peach-pi
->> and vice-versa and it won't cause any hardware failures then I guess it's
->> fine to keep this string.
-> 
-> I believe you can actually make it a good portion of the way through
-> boot, though a bunch of things (including graphics) won't work.  I
-> general I don't think it's all that different from "exynos5".
-> 
-> 
->>>> I don't think this is a good idea, because this is basically rendering
->>>> this
->>>> dts file useless, unless used with a bootloader that can actually inject
->>>> correct values. I believe that some generic setup could be provided in
->>>> the
->>>> dts, so you could at least get the board running.
->>>
->>>
->>> I won't say that I care a whole lot, but I think that was what was
->>> agreed upon the other day.  Specifically Tom Rini of U-Boot was
->>> worried about the fact that U-Boot will read the memory node and
->>> totally clobber it.  He thought there might be cases where someone
->>> might _purposely_ not want U-Boot to do that.
->>>
->>> ...I would wonder what alternate bootloader you're imagining will
->>> actually run on this board and not do this?
+Hi Andreas,
+
+On 5 May 2014 14:29, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
+> Hi,
+>
+> Am 05.05.2014 10:27, schrieb Chander Kashyap:
+>> Exynos5420 is a big-little SoC from Samsung. It has 4 A15 and 4 A7 c=
+ores.
+>> In order to use generic cpuidle-big-little driver, this patch adds E=
+xynos5420
+>> specific check to initialize generic cpuidle driver.
 >>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>> Changes in v3: None
+>> Changes in v2:
+>>       1. Changed config macro from SOC_EXYNOS5420 to SOC_EXYNOS5420
+>
+> This is probably a copy&pasto? Anyway, the commit message needs an
+> update since no Exynos5420 specific check is done below afaics. That
+> went into 3/5.
+
+Oops that's write,
+Copy paste mistake, and commit message change is required. I will fix i=
+t .
+
+Thanks
+
+
+>
+> Cheers,
+> Andreas
+>
+>>  drivers/cpuidle/Kconfig.arm |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> People should have the freedom to choose anything they want. We have also
->> barebox and coreboot with ARM and even Exynos5 support (in coreboot), but
->> people might want to use something completely exotic as well and the device
->> tree should let them do so.
-> 
-> Fair enough.  Unless Tom cares about this enough to throw his opinion
-> in here, I guess our answer is that the memory node should have a sane
-> default and we'll expect the bootloader to put something better in if
-> it can properly probe memory.
-> 
-> In this case I guess it would be 2GB.
+>> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.a=
+rm
+>> index 97ccc31..d9596e7 100644
+>> --- a/drivers/cpuidle/Kconfig.arm
+>> +++ b/drivers/cpuidle/Kconfig.arm
+>> @@ -4,7 +4,7 @@
+>>
+>>  config ARM_BIG_LITTLE_CPUIDLE
+>>       bool "Support for ARM big.LITTLE processors"
+>> -     depends on ARCH_VEXPRESS_TC2_PM
+>> +     depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+>>       select ARM_CPU_SUSPEND
+>>       select CPU_IDLE_MULTIPLE_DRIVERS
+>>       help
+>>
+>
+>
+> --
+> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=
+=C3=BCrnberg
 
-So, a memory node that says a size of 0 is a valid and long standing
-(see PowerPC folks) way of saying "please fill in my memory node value
-for me" due to any number of reasons for not knowing before hand how
-much memory there is.  Any boot loader which cannot fill in the memory
-node is going to have problems with the various boards (PowerPC, ARM and
-other) which say "my memory size is 0, I want this fixed up at run time".
 
-The problem I was raising at the ELC BoF is that today we can't just
-stop overwriting values in the non-zero case as many boards lie about
-their memory size, in non-zero ways, but no one noticed as they only
-tested with U-Boot which was performing the fixup.
 
--- 
-Tom
+--=20
+with warm regards,
+Chander Kashyap
