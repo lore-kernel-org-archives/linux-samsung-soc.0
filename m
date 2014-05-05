@@ -1,75 +1,80 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: exynos4412: porting hdmiddc and hdmiphy node entries
-Date: Mon, 05 May 2014 22:55:53 +0200
-Message-ID: <5367FAD9.9080705@gmx.net>
-References: <535C504A.2090809@gmx.net> <53675932.30306@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:55188 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755604AbaEEUz7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 16:55:59 -0400
-In-Reply-To: <53675932.30306@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 3/7] ARM: EXYNOS: add AFTR mode support to firmware do_idle
+ method
+Date: Mon, 05 May 2014 12:57:15 +0200
+Message-ID: <1399287439-31376-4-git-send-email-b.zolnierkie@samsung.com>
+References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hello Tomasz,
+On some platforms (i.e. EXYNOS ones) more than one idle mode is
+available and we need to distinguish them in firmware do_idle method.
 
-thanks a lot for the support!
+Add mode parameter to do_idle firmware method and AFTR mode support
+to EXYNOS do_idle implementation.
 
-> The meaning of hdmiphy is ambiguous.
-> In exynos4 spec there are _TWO_ components named HDMIPHY.
-> The first one is a PLL that generates a clock for HDMI subsystem.
-> This PLL is controlled by I2C.
-> 
-> You can find an example of its bindings at:
-> http://lists.freedesktop.org/archives/dri-devel/2013-October/047687.html
-OK, that looks exactly like the bindings I currently have in the dts.
+This change is a preparation for adding secure firmware support to
+EXYNOS cpuidle driver.
 
+This patch shouldn't cause any functionality changes (please note
+that do_idle firmware method is unused currently).
 
-> The second one is HDMI's physical interface located in PMU unit.
-> 
-> The exynos-simple-phy is dedicated to controller the former (component of PMU).
-> 
-> The 'phy' attribute in DT refers to the PLL.
-> There is a debate if 'phy' should refer to I2C device itself or
-> rather to I2C bus. Currently it refers to driverless instance
-> of I2C device.
-By 'driverless' you mean that the node isn't probed by any specific
-driver code / the 'compatible' string isn't used anywhere in the kernel
-(like it's currently the situation?)
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/include/asm/firmware.h |  7 ++++++-
+ arch/arm/mach-exynos/firmware.c | 10 ++++++++--
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-
->> Somehow this doesn't look right. And indeed:
->> https://patchwork.kernel.org/patch/4021121/
->>
->> At least for exynos5250 this node is not a child on an i2c adapter.
-> 
-> This is a completely different HDMIPHY.
-I'm not sure I understand. Different from the PPL and the PMU HDMIPHY?
-
-
->> And yes, I would still have to add 'phys' and 'phy-names' to the hdmi
->> node. This looks wrong again. Why do I have to specify 'phys' when I
->> already have 'phy' there? Isn't that redundant?
-> 
-> 'phys' and 'phy-names' refers to PHY interfaces delivered by phy-core.
-> The attribute named 'phy' refers to I2C device used to controller HDMI's PLL.
-> The naming convention is very misleading.
-Hmm, indeed this is very confusing. So with the move to
-exynos-simple-phy, I guess I need these entries as well, am I correct?
-
-
->> Well, you see, lots of confusion here. I would appreciate any kind of
->> help on how to proceed here.
-> 
-> The documentation for HDMI's bindings should be fixed.
-Well, I can agree with that :)
-
-
-With best wishes,
-Tobias
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index 70883c7..63989c3 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -28,7 +28,7 @@ struct firmware_ops {
+ 	/*
+ 	 * Enters CPU idle mode
+ 	 */
+-	int (*do_idle)(void);
++	int (*do_idle)(int mode);
+ 	/*
+ 	 * Sets boot address of specified physical CPU
+ 	 */
+@@ -47,6 +47,11 @@ struct firmware_ops {
+ 	int (*c15resume)(u32 *regs);
+ };
+ 
++enum {
++	FW_DO_IDLE_NORMAL,
++	FW_DO_IDLE_AFTR,
++};
++
+ /* Global pointer for current firmware_ops structure, can't be NULL. */
+ extern const struct firmware_ops *firmware_ops;
+ 
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 581c7bf..71fe169 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -20,9 +20,15 @@
+ 
+ #include "smc.h"
+ 
+-static int exynos_do_idle(void)
++static int exynos_do_idle(int mode)
+ {
+-	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
++	switch (mode) {
++	case FW_DO_IDLE_AFTR:
++		exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
++		break;
++	case FW_DO_IDLE_NORMAL:
++		exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
++	}
+ 	return 0;
+ }
+ 
+-- 
+1.8.2.3
