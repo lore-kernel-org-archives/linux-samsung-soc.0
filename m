@@ -1,79 +1,63 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 06/10] thermal: exynos: remove redundant threshold_code checks
- from exynos_tmu_initialize()
-Date: Mon, 05 May 2014 13:15:35 +0200
-Message-ID: <1399288539-1793-7-git-send-email-b.zolnierkie@samsung.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59632 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932144AbaEELTK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 07:19:10 -0400
-In-reply-to: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
+Date: Mon, 5 May 2014 08:17:05 -0700
+Message-ID: <CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
+References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
+	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>
+	<5363D176.80601@gmail.com>
+	<CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>
+	<53644DDB.7050503@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53644DDB.7050503-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arun Kumar <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tom Rini <trini-l0cyMroinI0@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-Remove runtime checks for negative return values of temp_to_code()
-from exynos_tmu_initialize().  The current level temperature data
-hardcoded in pdata will never cause a negative temp_to_code()
-return values and for the new code potential mistakes should be
-caught during development/review phases.
+On Fri, May 2, 2014 at 7:00 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Well, if you can use the device tree of peach-pit board and boot peach-pi
+> and vice-versa and it won't cause any hardware failures then I guess it's
+> fine to keep this string.
 
-Theres should be no functional changes caused by this patch.
+I believe you can actually make it a good portion of the way through
+boot, though a bunch of things (including graphics) won't work.  I
+general I don't think it's all that different from "exynos5".
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 789d745..a415829 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -170,10 +170,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	if (data->soc == SOC_ARCH_EXYNOS4210) {
- 		/* Write temperature code for threshold */
- 		threshold_code = temp_to_code(data, pdata->threshold);
--		if (threshold_code < 0) {
--			ret = threshold_code;
--			goto out;
--		}
- 		writeb(threshold_code,
- 			data->base + reg->threshold_temp);
- 		for (i = 0; i < trigger_levs; i++)
-@@ -187,18 +183,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
- 			threshold_code = temp_to_code(data,
- 						pdata->trigger_levels[i]);
--			if (threshold_code < 0) {
--				ret = threshold_code;
--				goto out;
--			}
- 			rising_threshold |= threshold_code << 8 * i;
- 			if (pdata->threshold_falling) {
- 				threshold_code = temp_to_code(data,
- 						pdata->trigger_levels[i] -
- 						pdata->threshold_falling);
--				if (threshold_code > 0)
--					falling_threshold |=
--						threshold_code << 8 * i;
-+				falling_threshold |= threshold_code << 8 * i;
- 			}
- 		}
- 
-@@ -217,10 +207,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 				(pdata->trigger_type[i] == HW_TRIP)) {
- 			threshold_code = temp_to_code(data,
- 						pdata->trigger_levels[i]);
--			if (threshold_code < 0) {
--				ret = threshold_code;
--				goto out;
--			}
- 			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
- 				/* 1-4 level to be assigned in th0 reg */
- 				rising_threshold |= threshold_code << 8 * i;
--- 
-1.8.2.3
+>>> I don't think this is a good idea, because this is basically rendering
+>>> this
+>>> dts file useless, unless used with a bootloader that can actually inject
+>>> correct values. I believe that some generic setup could be provided in
+>>> the
+>>> dts, so you could at least get the board running.
+>>
+>>
+>> I won't say that I care a whole lot, but I think that was what was
+>> agreed upon the other day.  Specifically Tom Rini of U-Boot was
+>> worried about the fact that U-Boot will read the memory node and
+>> totally clobber it.  He thought there might be cases where someone
+>> might _purposely_ not want U-Boot to do that.
+>>
+>> ...I would wonder what alternate bootloader you're imagining will
+>> actually run on this board and not do this?
+>
+>
+> People should have the freedom to choose anything they want. We have also
+> barebox and coreboot with ARM and even Exynos5 support (in coreboot), but
+> people might want to use something completely exotic as well and the device
+> tree should let them do so.
+
+Fair enough.  Unless Tom cares about this enough to throw his opinion
+in here, I guess our answer is that the memory node should have a sane
+default and we'll expect the bootloader to put something better in if
+it can properly probe memory.
+
+In this case I guess it would be 2GB.
+
+-Doug
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
