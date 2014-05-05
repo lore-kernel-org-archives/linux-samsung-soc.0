@@ -1,95 +1,108 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 07/10] thermal: exynos: simplify temp_to_code() and
- code_to_temp()
-Date: Mon, 05 May 2014 13:15:36 +0200
-Message-ID: <1399288539-1793-8-git-send-email-b.zolnierkie@samsung.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+Date: Tue, 06 May 2014 01:22:28 +0530
+Message-ID: <1399319548-16567-4-git-send-email-ajaykumar.rs@samsung.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: joshi@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Remove dead temp check from temp_to_code() (this function users
-  in exynos_tmu_initialize() always pass correct temperatures and
-  exynos_tmu_set_emulation() returns early for EXYNOS4210 because
-  TMU_SUPPORT_EMULATION flag is not set on this SoC).
+modify the driver to call the bridge->funcs of the next bridge
+in the chain.
+We assume that the bridge sitting next to ptn3460 is a bridge-panel.
 
-* Move temp_code check from code_to_temp() to exynos_tmu_read()
-  (code_to_temp() only user).
-
-There should be no functional changes caused by this patch.
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 38 +++++++++++-------------------------
- 1 file changed, 11 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/bridge/ptn3460.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index a415829..20379eb 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -71,19 +71,7 @@ struct exynos_tmu_data {
-  */
- static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index b171901..969869a 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -126,6 +126,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+ 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+ 	}
+ 
++	if (bridge->next_bridge)
++		bridge->next_bridge->funcs->pre_enable(bridge->next_bridge);
+ 	/*
+ 	 * There's a bug in the PTN chip where it falsely asserts hotplug before
+ 	 * it is fully functional. We're forced to wait for the maximum start up
+@@ -142,6 +144,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+ 
+ static void ptn3460_enable(struct drm_bridge *bridge)
  {
--	struct exynos_tmu_platform_data *pdata = data->pdata;
--	int temp_code;
--
--	if (data->soc == SOC_ARCH_EXYNOS4210)
--		/* temp should range between 25 and 125 */
--		if (temp < 25 || temp > 125) {
--			temp_code = -EINVAL;
--			goto out;
--		}
--
--	temp_code = temp + data->temp_error - pdata->first_point_trim;
--out:
--	return temp_code;
-+	return temp + data->temp_error - data->pdata->first_point_trim;
++	if (bridge->next_bridge)
++		bridge->next_bridge->funcs->enable(bridge->next_bridge);
  }
  
- /*
-@@ -92,19 +80,7 @@ out:
-  */
- static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
- {
--	struct exynos_tmu_platform_data *pdata = data->pdata;
--	int temp;
--
--	if (data->soc == SOC_ARCH_EXYNOS4210)
--		/* temp_code should range between 75 and 175 */
--		if (temp_code < 75 || temp_code > 175) {
--			temp = -ENODATA;
--			goto out;
--		}
--
--	temp = temp_code - data->temp_error + pdata->first_point_trim;
--out:
--	return temp;
-+	return temp_code - data->temp_error + data->pdata->first_point_trim;
- }
+ static void ptn3460_disable(struct drm_bridge *bridge)
+@@ -153,6 +157,11 @@ static void ptn3460_disable(struct drm_bridge *bridge)
  
- static int exynos_tmu_initialize(struct platform_device *pdev)
-@@ -297,8 +273,16 @@ static int exynos_tmu_read(struct exynos_tmu_data *data)
- 	clk_enable(data->clk);
+ 	ptn_bridge->enabled = false;
  
- 	temp_code = readb(data->base + reg->tmu_cur_temp);
--	temp = code_to_temp(data, temp_code);
- 
-+	if (data->soc == SOC_ARCH_EXYNOS4210)
-+		/* temp_code should range between 75 and 175 */
-+		if (temp_code < 75 || temp_code > 175) {
-+			temp = -ENODATA;
-+			goto out;
-+		}
++	if (bridge->next_bridge) {
++		bridge->next_bridge->funcs->disable(bridge->next_bridge);
++		bridge->next_bridge->funcs->post_disable(bridge->next_bridge);
++	}
 +
-+	temp = code_to_temp(data, temp_code);
-+out:
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
+ 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+ 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
  
+@@ -197,7 +206,10 @@ int ptn3460_get_modes(struct drm_connector *connector)
+ 		return drm_add_edid_modes(connector, ptn_bridge->edid);
+ 
+ 	power_off = !ptn_bridge->enabled;
+-	ptn3460_pre_enable(ptn_bridge->bridge);
++	if (power_off) {
++		ptn3460_pre_enable(ptn_bridge->bridge);
++		ptn3460_enable(ptn_bridge->bridge);
++	}
+ 
+ 	edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
+ 	if (!edid) {
+@@ -219,8 +231,10 @@ int ptn3460_get_modes(struct drm_connector *connector)
+ 	num_modes = drm_add_edid_modes(connector, ptn_bridge->edid);
+ 
+ out:
+-	if (power_off)
++	if (power_off) {
+ 		ptn3460_disable(ptn_bridge->bridge);
++		ptn3460_post_disable(ptn_bridge->bridge);
++	}
+ 
+ 	return num_modes;
+ }
+@@ -318,14 +332,13 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+ 		goto err;
+ 	}
+ 
+-	ret = drm_bridge_init(dev, bridge, &ptn3460_bridge_funcs);
++	ret = drm_bridge_init(dev, bridge, encoder, &ptn3460_bridge_funcs);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to initialize bridge with drm\n");
+ 		goto err;
+ 	}
+ 
+ 	bridge->driver_private = ptn_bridge;
+-	encoder->bridge = bridge;
+ 
+ 	ret = drm_connector_init(dev, &ptn_bridge->connector,
+ 			&ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
 -- 
-1.8.2.3
-
+1.8.1.2
