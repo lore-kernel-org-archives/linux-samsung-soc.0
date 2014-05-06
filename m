@@ -1,89 +1,47 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
- look-up
-Date: Tue, 06 May 2014 19:15:21 +0200
-Message-ID: <536918A9.6050502@gmail.com>
-References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>	<1398271618-28932-2-git-send-email-t.figa@samsung.com>	<535E9163.3070305@wwwdotorg.org>
- <CAPDyKFoGOcScsaGWkw9bVh=gpGTApRK48AczaMiSmLah+YOSXQ@mail.gmail.com>
- <53690D21.8080807@wwwdotorg.org>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Tue, 06 May 2014 20:08:47 +0200
+Message-ID: <5369252F.4070402@gmail.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com> <26065037.GxQQuIURPg@wuerfel> <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com> <20140506175904.GB12376@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <53690D21.8080807@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vg
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140506175904.GB12376-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "supash.ramaswamy" <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 06.05.2014 18:26, Stephen Warren wrote:
-> On 05/06/2014 02:22 AM, Ulf Hansson wrote:
->> On 28 April 2014 19:35, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>> On 04/23/2014 10:46 AM, Tomasz Figa wrote:
->>>> This patch introduces generic code to perform power domain look-up using
->>>> device tree and automatically bind devices to their power domains.
->>>> Generic device tree binding is introduced to specify power domains of
->>>> devices in their device tree nodes.
->>>>
->>>> Backwards compatibility with legacy Samsung-specific power domain
->>>> bindings is provided, but for now the new code is not compiled when
->>>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
->>>> will change as soon as Exynos power domain code gets converted to use
->>>> the generic framework in further patch.
->>>
->>>> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
->>>
->>>> +==Power domain consumers==
->>>> +
->>>> +Required properties:
->>>> + - power-domain : A phandle and power domain specifier as defined by bindings
->>>> +                  of power controller specified by phandle.
->>>
->>> It seems quite likely that a single logical device could have components
->>> in multiple power domains. Consider an HDMI controller with different
->>> power domains for the HDMI core, CEC communication, DDC/I2C
->>> communication, and the I/O pads, with no clear separation between those
->>> two components of the module (no separate register spaces, but the
->>> bits/registers are interleaved all together).
->>>
->>> As such, I think that rather than a "power-domain" property, we need a
->>> pair of "power-domains", and "power-domain-names" properties, and
->>> preferably with mandatory usage of name-based lookups, rather than
->>> allowing a random mix of name-based and index-based lookups like we have
->>> with some existing resource bindings.
+On 06.05.2014 19:59, Joerg Roedel wrote:
+> On Wed, Apr 30, 2014 at 04:27:10PM +0530, Shaik Ameer Basha wrote:
+>> This series is going on for quite a long time and most of the patches here
+>> doesn't depend on dt bindings. As Exynos IOMMU h/w is introducing new versions
+>> very frequently, maintaining and reviewing all these patches again and
+>> again is quite a hard job.
 >>
->> Each struct device have only one dev_pm_domain pointer, thus a device
->> are not able to reside in more than one power domain.
+>> If it is acceptable, I can post one more series with the subset of
+>> above patches,
+>> which doesn't depend on dt-bindings. As all the patches which doesn't depend on
+>> DT bindings are already tested,  I hope merging these subset of patches may help
+>> in reducing the rework and review effort every time.
 >>
->> Therefore I doubt this will be very useful, unless I missed your point. :-)
+>> Once we finalize the generic DT bindings for the IOMMU devices, the driver
+>> can be updated with the proposed DT bindings in mind.
 >
-> A struct device is a Linux-internal concept. DT is supposed to represent
-> the HW in an OS-agnostic fashion, not according to the limitations of
-> any one OS's driver model.
->
-> It's certainly true that a single logical HW module (represented by a
-> single DT node) can have parts in multiple power domains.
->
+> Sounds reasonable to me if the patch subset is self-contained. When
+> Arnd is OK with that and no one else has objections I can take the
+> dt-independend parts.
 
-AFAIK a single DT node is supposed to represent a single _physical_ HW 
-module. It all depends on description granularity, though. A physical 
-chip (or IP block) might be further divided into multiple blocks, so I 
-can imagine some of them being in different power domains than another. 
-Still, based on the fact that in Linux we never needed to specify 
-multiple power domains for a device, is this really a real use case?
++1.
 
-Anyway, the binding is defined in a way that lets you simply turn the 
-single phandle+specifier into a list of them, if such need ever shows up.
+I would also suggest dropping patch 18/31, for the reasons I mentioned 
+in my reply to it.
 
 Best regards,
 Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
