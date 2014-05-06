@@ -1,108 +1,111 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [RFC V2 1/3] drm: implement chaining of drm bridges
-Date: Wed, 7 May 2014 01:15:20 +0530
-Message-ID: <CAEC9eQMj3yo_U63bHAxgB+biyFKMTk0GF1mkNz2xVkV6NAYfZA@mail.gmail.com>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
-	<CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 2/6] ARM: EXYNOS: Move SYS_I2C_CFG register save/restore
+ to i2c driver
+Date: Tue, 06 May 2014 21:04:09 +0200
+Message-ID: <53693229.3080705@gmail.com>
+References: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399366282-4191-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:34911 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753608AbaEFTpV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 15:45:21 -0400
-Received: by mail-vc0-f178.google.com with SMTP id hu19so1661494vcb.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 12:45:20 -0700 (PDT)
-In-Reply-To: <CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1399366282-4191-3-git-send-email-pankaj.dubey@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, arnd@arndb.de, Wolfram Sang <wsa@the-dreams.de>, t.figa@samsung.com, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, InKi Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Sean,
+Hi Pankaj,
 
-
-On Tue, May 6, 2014 at 9:25 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> On Mon, May 5, 2014 at 12:52 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
->> As of now, we can have only one bridge hanging off the encoder.
->> With this patch, we allow multiple bridges to hang onto the same encoder
->> with the use of a simple next_bridge ptr.
->>
->> The drm core calls bridge->funcs for the first bridge which
->> is attached to it, and its upto the individual bridge drivers
->> to call bridge->funcs for the next bridge in the chain.
->>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> ---
->>  drivers/gpu/drm/drm_crtc.c | 13 ++++++++++++-
->>  include/drm/drm_crtc.h     |  2 ++
->>  2 files changed, 14 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
->> index d8b7099..fe9905f 100644
->> --- a/drivers/gpu/drm/drm_crtc.c
->> +++ b/drivers/gpu/drm/drm_crtc.c
->> @@ -918,8 +918,10 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
->>   * Zero on success, error code on failure.
->>   */
->>  int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
->> -               const struct drm_bridge_funcs *funcs)
->> +                       struct drm_encoder *encoder,
->> +                       const struct drm_bridge_funcs *funcs)
+On 06.05.2014 10:51, Pankaj Dubey wrote:
+> Let's move SYS_I2C_CFG register save/restore during s2r into i2c driver.
+> This will help in removing static iodesc based mapping from exynos.c.
+> Also will help in removing SoC specific checks in pm.c making it
+> more independent of such macros.
 >
+> CC: Wolfram Sang <wsa@the-dreams.de>
+> CC: Russell King <linux@arm.linux.org.uk>
+> CC: linux-i2c@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>   arch/arm/mach-exynos/exynos.c           |   12 +-----------
+>   arch/arm/mach-exynos/include/mach/map.h |    3 ---
+>   arch/arm/mach-exynos/pm.c               |   10 ----------
+>   arch/arm/mach-exynos/regs-sys.h         |   22 ----------------------
+>   drivers/i2c/busses/i2c-s3c2410.c        |    8 ++++++++
+>   5 files changed, 9 insertions(+), 46 deletions(-)
+>   delete mode 100644 arch/arm/mach-exynos/regs-sys.h
+
+[snip]
+
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index 0420150..2095a01 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -133,6 +133,7 @@ struct s3c24xx_i2c {
+>   	struct notifier_block	freq_transition;
+>   #endif
+>   	struct regmap		*sysreg;
+> +	unsigned int		syc_cfg;
+
+I suspect this is a typo, as the name syc_cfg looks a bit strange. 
+Shouldn't it be sys_i2c_cfg?
+
+>   };
 >
-> IMO, we should let whoever is spawning the bridges chain them
-> together, instead of passing encoder in init().
-For this, we have to modify drm_bridge_init to return a bridge pointer and
-then, as Rob is suggesting, we can have some helper functions to update
-next_bridge ptr to form a bridge chain, and these functions can be called from
-the corresponding encoder implementation.
+>   static struct platform_device_id s3c24xx_driver_ids[] = {
+> @@ -1293,6 +1294,9 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+>   	struct platform_device *pdev = to_platform_device(dev);
+>   	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+>
+> +	if (i2c->sysreg)
 
-Ajay
+IS_ERR() should be used.
 
->>  {
->> +       struct drm_bridge *temp;
->>         int ret;
->>
->>         drm_modeset_lock_all(dev);
->> @@ -931,6 +933,15 @@ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
->>         bridge->dev = dev;
->>         bridge->funcs = funcs;
->>
->> +       if (encoder->bridge) {
->> +               temp = encoder->bridge;
->> +               while (temp->next_bridge)
->> +                       temp = temp->next_bridge;
->> +
->> +               temp->next_bridge = bridge;
->> +       } else
->> +               encoder->bridge = bridge;
->> +
->>         list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
->>         dev->mode_config.num_bridge++;
->>
->> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
->> index e55fccb..bb6ed88 100644
->> --- a/include/drm/drm_crtc.h
->> +++ b/include/drm/drm_crtc.h
->> @@ -619,6 +619,7 @@ struct drm_bridge_funcs {
->>  struct drm_bridge {
->>         struct drm_device *dev;
->>         struct list_head head;
->> +       struct drm_bridge *next_bridge;
->>
->>         struct drm_mode_object base;
->>
->> @@ -862,6 +863,7 @@ extern void drm_connector_cleanup(struct drm_connector *connector);
->>  extern void drm_connector_unplug_all(struct drm_device *dev);
->>
->>  extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
->> +                          struct drm_encoder *encoder,
->>                            const struct drm_bridge_funcs *funcs);
->>  extern void drm_bridge_cleanup(struct drm_bridge *bridge);
->>
->> --
->> 1.8.1.2
->>
+> +		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->syc_cfg);
+
+Aha, so this is where the reference to the regmap gets used outside the 
+probe. I'd say that changes to the i2c driver from this patch should be 
+squashed with previous patch and this patch should contain only arch 
+changes to remove old code.
+
+However, I wonder if this is really the right approach to this, as now 
+you have save and restore duplicated for every instance of s3c24xx-i2c 
+IP block. If there are no bits other than interrupt mux selectors in 
+this registers then I guess this is fine (I can't look it up in the 
+documentation at the moment), but otherwise you can end-up with multiple 
+paths doing read-modify-write to this register in parallel possibly with 
+different values.
+
+Needless to say, this isn't very elegant, but I'm not opposed too much, 
+as I can't really think of anything better right now.
+
+> +
+>   	i2c->suspended = 1;
+>
+>   	return 0;
+> @@ -1304,6 +1308,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
+>   	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+>
+>   	i2c->suspended = 0;
+> +
+> +	if (i2c->sysreg)
+> +		regmap_write(i2c->sysreg, i2c->syc_cfg, EXYNOS5_SYS_I2C_CFG);
+> +
+
+I'd say this should be happening before setting i2c->suspended to 0 to 
+account for possible i2c transfers being requested in parallel. Also see 
+patch [1].
+
+[1] https://lkml.org/lkml/2014/4/11/632
+
+Best regards,
+Tomasz
