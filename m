@@ -1,100 +1,71 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 0/6] Introducing Exynos ChipId driver
-Date: Tue, 06 May 2014 17:51:16 +0900
-Message-ID: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
+From: Steve Capper <steve.capper@linaro.org>
+Subject: Re: [PATCH v5 5/6] arm64: mm: Implement 4 levels of translation
+ tables
+Date: Tue, 6 May 2014 13:01:32 +0100
+Message-ID: <20140506120131.GA26776@linaro.org>
+References: <000501cf64e5$d92ae870$8b80b950$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, t.figa@samsung.com, kgene.kim@samsung.com, arnd@arndb.de
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:62792 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751570AbaEFMBj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 May 2014 08:01:39 -0400
+Received: by mail-wg0-f41.google.com with SMTP id z12so3620201wgg.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 05:01:38 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <000501cf64e5$d92ae870$8b80b950$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-This patch series attempts to get rid of soc_is_exynosXXXX macros
-and eventually with the help of this series we can probably get
-rid of CONFIG_SOC_EXYNOSXXXX in near future.
-Each Exynos SoC has ChipID block which can give information about
-SoC's product Id and revision number. Currently we have single
-DT binding information for this as "samsung,exynos4210-chipid".
-But Exynos4 and Exynos5 SoC series have one small difference in
-chip Id, with resepect to product id bit-masks. So it means we
-should have separate compatible string for these different series
-of SoCs. So I have added second compatible string for handling
-this difference. 
+On Thu, May 01, 2014 at 11:34:16AM +0900, Jungseok Lee wrote:
+> This patch implements 4 levels of translation tables since 3 levels
+> of page tables with 4KB pages cannot support 40-bit physical address
+> space described in [1] due to the following issue.
+> 
+> It is a restriction that kernel logical memory map with 4KB + 3 levels
+> (0xffffffc000000000-0xffffffffffffffff) cannot cover RAM region from
+> 544GB to 1024GB in [1]. Specifically, ARM64 kernel fails to create
+> mapping for this region in map_mem function since __phys_to_virt for
+> this region reaches to address overflow.
+> 
+> If SoC design follows the document, [1], over 32GB RAM would be placed
+> from 544GB. Even 64GB system is supposed to use the region from 544GB
+> to 576GB for only 32GB RAM. Naturally, it would reach to enable 4 levels
+> of page tables to avoid hacking __virt_to_phys and __phys_to_virt.
+> 
+> However, it is recommended 4 levels of page table should be only enabled
+> if memory map is too sparse or there is about 512GB RAM.
+> 
 
-This patch series is based on Kukjin Kim's for-next (3.14_rc1 tag)
-and prepared on top of following patch series and it's dependent
-patch series.
+Hi Jungseok,
+One comment below:
 
-[1]: Map SYSRAM through generic SRAM bindings.
-	http://www.spinics.net/lists/arm-kernel/msg327677.html
-[2]: Exynos PMU cleanup and refactoring.
-	https://lkml.org/lkml/2014/4/30/44
-[3]: Introduce drivers/soc and add QCOM GSBI driver.
-	https://lkml.org/lkml/2014/4/24/520
+[ ... ]
 
-Changes since v1:
- - Added patch to move i2c interrupt re-configuration code from exynos.c
-   to i2c driver, as suggested by Arnd.
- - After above patch only user of SYS_I2C_CFG register is pm.c so moving
-   save/restore of this register also into i2c driver.
- - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
-   soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
- - Changed location of chipid driver to "drivers/soc".
- - Added drivers/base/soc.c provided infrastructure to make SoC specific 
-   information avaible to user space via sysfs entry, as suggested by Arnd.
+> diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
+> index bc19101..086112b 100644
+> --- a/arch/arm64/include/asm/tlb.h
+> +++ b/arch/arm64/include/asm/tlb.h
+> @@ -100,6 +100,15 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_ARM64_4_LEVELS
+> +static inline void __pud_free_tlb(struct mmu_gather *tlb, pmd_t *pudp,
+> +				  unsigned long addr)
 
-Pankaj Dubey (6):
-  i2c: s3c2410: Moving I2C interrupt re-configuration code into i2c
-    driver
-  ARM: EXYNOS: Move SYS_I2C_CFG register save/restore to i2c driver
-  ARM: EXYNOS: remove soc_is_exynos4/5 from exynos.c
-  ARM:  EXYNOS: remove unused header inclusion from hotplug.c
-  soc: samsung: exynos-chipid: Add Exynos Chipid driver support
-  ARM: EXYNOS: Refactoring to remove soc_is_exynosXXXX macros from
-    exynos
+The second parameter needs to be a pointer to pud_t ?
+(this fires up a warning with STRICT_MM_TYPECHECKS).
 
- .../bindings/arm/samsung/exynos-chipid.txt         |   21 +++
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
- arch/arm/Kconfig                                   |    1 +
- arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
- arch/arm/boot/dts/exynos5.dtsi                     |    7 +-
- arch/arm/boot/dts/exynos5250.dtsi                  |    4 +
- arch/arm/boot/dts/exynos5420.dtsi                  |    4 +
- arch/arm/mach-exynos/exynos.c                      |  119 ++++----------
- arch/arm/mach-exynos/hotplug.c                     |    2 -
- arch/arm/mach-exynos/include/mach/map.h            |    3 -
- arch/arm/mach-exynos/platsmp.c                     |   10 +-
- arch/arm/mach-exynos/pm.c                          |   36 ++---
- arch/arm/mach-exynos/regs-sys.h                    |   22 ---
- arch/arm/plat-samsung/include/plat/cpu.h           |   60 -------
- drivers/clk/samsung/clk-exynos4.c                  |    2 +-
- drivers/cpufreq/exynos-cpufreq.c                   |    9 +-
- drivers/cpufreq/exynos-cpufreq.h                   |    1 -
- drivers/cpufreq/exynos4x12-cpufreq.c               |    5 +-
- drivers/i2c/busses/i2c-s3c2410.c                   |   35 +++++
- drivers/soc/Kconfig                                |    1 +
- drivers/soc/Makefile                               |    1 +
- drivers/soc/samsung/Kconfig                        |   10 ++
- drivers/soc/samsung/Makefile                       |    1 +
- drivers/soc/samsung/exynos-chipid.c                |  166 ++++++++++++++++++++
- include/linux/exynos-soc.h                         |   46 ++++++
- 25 files changed, 359 insertions(+), 210 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
- delete mode 100644 arch/arm/mach-exynos/regs-sys.h
- create mode 100644 drivers/soc/samsung/Kconfig
- create mode 100644 drivers/soc/samsung/Makefile
- create mode 100644 drivers/soc/samsung/exynos-chipid.c
- create mode 100644 include/linux/exynos-soc.h
+With that and Christoffer's feedback about expanding the comments on
+create_pud_entry addressed:
 
+Reviewed-by: Steve Capper <steve.capper@linaro.org>
+
+Cheers,
 -- 
-1.7.10.4
+Steve
