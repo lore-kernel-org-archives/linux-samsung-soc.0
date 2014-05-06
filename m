@@ -1,106 +1,146 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [RFC V2 1/3] drm: implement chaining of drm bridges
-Date: Tue, 6 May 2014 08:55:56 -0700
-Message-ID: <CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com> <1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 3/6] ARM: EXYNOS: remove soc_is_exynos4/5 from exynos.c
+Date: Tue, 06 May 2014 17:51:19 +0900
+Message-ID: <1399366282-4191-4-git-send-email-pankaj.dubey@samsung.com>
+References: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:60308 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756629AbaEFP4U (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 11:56:20 -0400
-Received: by mail-ig0-f173.google.com with SMTP id hn18so6422535igb.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 08:56:19 -0700 (PDT)
-Received: from mail-ie0-f172.google.com (mail-ie0-f172.google.com [209.85.223.172])
-        by mx.google.com with ESMTPSA id e6sm13655408igq.6.2014.05.06.08.56.17
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-        Tue, 06 May 2014 08:56:17 -0700 (PDT)
-Received: by mail-ie0-f172.google.com with SMTP id as1so10070438iec.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 08:56:16 -0700 (PDT)
-In-Reply-To: <1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, arnd@arndb.de, Pankaj Dubey <pankaj.dubey@samsung.com>, t.figa@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, InKi Dae <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Mon, May 5, 2014 at 12:52 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> As of now, we can have only one bridge hanging off the encoder.
-> With this patch, we allow multiple bridges to hang onto the same encoder
-> with the use of a simple next_bridge ptr.
->
-> The drm core calls bridge->funcs for the first bridge which
-> is attached to it, and its upto the individual bridge drivers
-> to call bridge->funcs for the next bridge in the chain.
->
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  drivers/gpu/drm/drm_crtc.c | 13 ++++++++++++-
->  include/drm/drm_crtc.h     |  2 ++
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-> index d8b7099..fe9905f 100644
-> --- a/drivers/gpu/drm/drm_crtc.c
-> +++ b/drivers/gpu/drm/drm_crtc.c
-> @@ -918,8 +918,10 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
->   * Zero on success, error code on failure.
->   */
->  int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
-> -               const struct drm_bridge_funcs *funcs)
-> +                       struct drm_encoder *encoder,
-> +                       const struct drm_bridge_funcs *funcs)
+This patch removes usage of soc_is_exynos4/5 from exynos.c.
+For this we need to separate machine descriptors for exynos4
+and exynos5. While doing this patch does some consolidation also.
 
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c            |   52 +++++++++++++++++++-----------
+ arch/arm/plat-samsung/include/plat/cpu.h |    3 --
+ 2 files changed, 33 insertions(+), 22 deletions(-)
 
-IMO, we should let whoever is spawning the bridges chain them
-together, instead of passing encoder in init().
-
-Sean
-
-
->  {
-> +       struct drm_bridge *temp;
->         int ret;
->
->         drm_modeset_lock_all(dev);
-> @@ -931,6 +933,15 @@ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
->         bridge->dev = dev;
->         bridge->funcs = funcs;
->
-> +       if (encoder->bridge) {
-> +               temp = encoder->bridge;
-> +               while (temp->next_bridge)
-> +                       temp = temp->next_bridge;
-> +
-> +               temp->next_bridge = bridge;
-> +       } else
-> +               encoder->bridge = bridge;
-> +
->         list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
->         dev->mode_config.num_bridge++;
->
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index e55fccb..bb6ed88 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -619,6 +619,7 @@ struct drm_bridge_funcs {
->  struct drm_bridge {
->         struct drm_device *dev;
->         struct list_head head;
-> +       struct drm_bridge *next_bridge;
->
->         struct drm_mode_object base;
->
-> @@ -862,6 +863,7 @@ extern void drm_connector_cleanup(struct drm_connector *connector);
->  extern void drm_connector_unplug_all(struct drm_device *dev);
->
->  extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
-> +                          struct drm_encoder *encoder,
->                            const struct drm_bridge_funcs *funcs);
->  extern void drm_bridge_cleanup(struct drm_bridge *bridge);
->
-> --
-> 1.8.1.2
->
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 09063ee..9902e52 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -202,20 +202,6 @@ static const struct of_device_id exynos_dt_pmu_match[] = {
+ 	{},
+ };
+ 
+-/*
+- * exynos_map_io
+- *
+- * register the standard cpu IO areas
+- */
+-static void __init exynos_map_io(void)
+-{
+-	if (soc_is_exynos4())
+-		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+-
+-	if (soc_is_exynos5())
+-		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+-}
+-
+ static void __init exynos_init_io(void)
+ {
+ 	debug_ll_io_init();
+@@ -224,8 +210,18 @@ static void __init exynos_init_io(void)
+ 
+ 	/* detect cpu id and rev. */
+ 	s5p_init_cpu(S5P_VA_CHIPID);
++}
++
++static void __init exynos5_init_io(void)
++{
++	exynos_init_io();
++	iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
++}
+ 
+-	exynos_map_io();
++static void __init exynos4_init_io(void)
++{
++	exynos_init_io();
++	iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+ }
+ 
+ struct bus_type exynos_subsys = {
+@@ -293,11 +289,15 @@ static void __init exynos_dt_machine_init(void)
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+-static char const *exynos_dt_compat[] __initconst = {
++static char const *exynos4_dt_compat[] __initconst = {
+ 	"samsung,exynos4",
+ 	"samsung,exynos4210",
+ 	"samsung,exynos4212",
+ 	"samsung,exynos4412",
++	NULL
++};
++
++static char const *exynos5_dt_compat[] __initconst = {
+ 	"samsung,exynos5",
+ 	"samsung,exynos5250",
+ 	"samsung,exynos5420",
+@@ -321,15 +321,29 @@ static void __init exynos_reserve(void)
+ #endif
+ }
+ 
+-DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
++DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
++	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
++	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
++	.smp		= smp_ops(exynos_smp_ops),
++	.map_io		= exynos5_init_io,
++	.init_early	= exynos_firmware_init,
++	.init_machine	= exynos_dt_machine_init,
++	.init_late	= exynos_init_late,
++	.dt_compat	= exynos5_dt_compat,
++	.restart	= exynos_restart,
++	.reserve	= exynos_reserve,
++MACHINE_END
++
++
++DT_MACHINE_START(EXYNOS4_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+ 	.smp		= smp_ops(exynos_smp_ops),
+-	.map_io		= exynos_init_io,
++	.map_io		= exynos4_init_io,
+ 	.init_early	= exynos_firmware_init,
+ 	.init_machine	= exynos_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.dt_compat	= exynos_dt_compat,
++	.dt_compat	= exynos4_dt_compat,
+ 	.restart	= exynos_restart,
+ 	.reserve	= exynos_reserve,
+ MACHINE_END
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 5992b8d..18a9a00 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -166,9 +166,6 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ # define soc_is_exynos5440()	0
+ #endif
+ 
+-#define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
+-			  soc_is_exynos4412())
+-#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
+ 
+ #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
+ 
+-- 
+1.7.10.4
