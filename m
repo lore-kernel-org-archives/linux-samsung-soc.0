@@ -1,32 +1,38 @@
-From: Ajay kumar <ajaynumb@gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
 Subject: Re: [RFC V2 1/3] drm: implement chaining of drm bridges
-Date: Wed, 7 May 2014 01:21:12 +0530
-Message-ID: <CAEC9eQO2u8e2OHyFaPZh2Zh5ZKxQAfW3Bmtqe+mAUEH591-ZHg@mail.gmail.com>
+Date: Tue, 6 May 2014 13:03:08 -0700
+Message-ID: <CAOw6vbJqJ9RQ3eAWLvNuxD0AJD5YoQikChxNKhEeL-pTBm_W8Q@mail.gmail.com>
 References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
-	<CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com>
-	<CAF6AEGt-8ku0y+qhQvg8FRi_Jk1kKxhZ-an4wmycVTB5Zu-T3Q@mail.gmail.com>
+ <1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
+ <CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com> <CAEC9eQMj3yo_U63bHAxgB+biyFKMTk0GF1mkNz2xVkV6NAYfZA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f179.google.com ([209.85.128.179]:42278 "EHLO
-	mail-ve0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753974AbaEFTvN (ORCPT
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:59821 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750982AbaEFUDc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 15:51:13 -0400
-Received: by mail-ve0-f179.google.com with SMTP id oy12so8421970veb.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 12:51:12 -0700 (PDT)
-In-Reply-To: <CAF6AEGt-8ku0y+qhQvg8FRi_Jk1kKxhZ-an4wmycVTB5Zu-T3Q@mail.gmail.com>
+	Tue, 6 May 2014 16:03:32 -0400
+Received: by mail-ie0-f182.google.com with SMTP id tp5so10356182ieb.41
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 13:03:31 -0700 (PDT)
+Received: from mail-ig0-f170.google.com (mail-ig0-f170.google.com [209.85.213.170])
+        by mx.google.com with ESMTPSA id vu3sm41874704igc.6.2014.05.06.13.03.29
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Tue, 06 May 2014 13:03:29 -0700 (PDT)
+Received: by mail-ig0-f170.google.com with SMTP id r10so6255019igi.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 13:03:29 -0700 (PDT)
+In-Reply-To: <CAEC9eQMj3yo_U63bHAxgB+biyFKMTk0GF1mkNz2xVkV6NAYfZA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <seanpaul@chromium.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, InKi Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Rob,
-
-
-On Tue, May 6, 2014 at 9:42 PM, Rob Clark <robdclark@gmail.com> wrote:
-> On Tue, May 6, 2014 at 11:55 AM, Sean Paul <seanpaul@chromium.org> wrote:
+On Tue, May 6, 2014 at 12:45 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> Sean,
+>
+>
+> On Tue, May 6, 2014 at 9:25 PM, Sean Paul <seanpaul@chromium.org> wrote:
 >> On Mon, May 5, 2014 at 12:52 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
 >>> As of now, we can have only one bridge hanging off the encoder.
 >>> With this patch, we allow multiple bridges to hang onto the same encoder
@@ -57,26 +63,22 @@ On Tue, May 6, 2014 at 9:42 PM, Rob Clark <robdclark@gmail.com> wrote:
 >>
 >> IMO, we should let whoever is spawning the bridges chain them
 >> together, instead of passing encoder in init().
->
-> that plus, might be a good time to start adding some static-inline
-> helper fxns for fxn ptr calls like we have for drm_panel..  not a big
-> deal, but I guess it would be a good time to do it now before we start
-> adding chained bridge calls in all the bridges.
+> For this, we have to modify drm_bridge_init to return a bridge pointer
 
-Right, I will try to add a few:
--- to update next_bridge ptr and form a chain.
--- to call pre_enable, enable, disable and post_disable for the next
-bridge in the list.
+Sorry, I don't follow this. You are passing in the bridge pointer, so
+presumably you already have it.
 
-Ajay
+Sean
 
+
+
+> and
+> then, as Rob is suggesting, we can have some helper functions to update
+> next_bridge ptr to form a bridge chain, and these functions can be called from
+> the corresponding encoder implementation.
 >
-> BR,
-> -R
+> Ajay
 >
->> Sean
->>
->>
 >>>  {
 >>> +       struct drm_bridge *temp;
 >>>         int ret;
