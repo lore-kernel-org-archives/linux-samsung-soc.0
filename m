@@ -1,71 +1,74 @@
-From: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 11/15] clk: exynos5420: correct sysmmu-mfc parent clocks
-Date: Tue, 06 May 2014 21:56:46 +0530
-Message-ID: <1399393610-23394-12-git-send-email-shaik.ameer@samsung.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 01/15] clk: exynos5420: Rename mux parent arrays
+Date: Tue, 06 May 2014 20:01:11 +0200
+Message-ID: <53692367.30907@gmail.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com> <1399393610-23394-2-git-send-email-shaik.ameer@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:59404 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751679AbaEFSBY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 May 2014 14:01:24 -0400
+In-Reply-To: <1399393610-23394-2-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-This patch corrects the wrong parent-child relationship
-between sysmmu-mfc clocks.
+Shaik,
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/clk/samsung/clk-exynos5420.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+On 06.05.2014 18:26, Shaik Ameer Basha wrote:
+> This patch renames the mux parent arrays as per the naming
+> convension followed by the other exynos specific clock drivers.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>   drivers/clk/samsung/clk-exynos5420.c |  359 ++++++++++++++++++----------------
+>   1 file changed, 186 insertions(+), 173 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 7a9e3b4..831670d 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 6d88ae2..1449aee 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -82,6 +82,7 @@
- #define SCLK_DIV_ISP0		0x10580
- #define SCLK_DIV_ISP1		0x10584
- #define DIV2_RATIO0		0x10590
-+#define DIV4_RATIO		0x105a0
- #define GATE_BUS_TOP		0x10700
- #define GATE_BUS_GEN		0x1073c
- #define GATE_BUS_FSYS0		0x10740
-@@ -176,6 +177,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
- 	SCLK_DIV_ISP0,
- 	SCLK_DIV_ISP1,
- 	DIV2_RATIO0,
-+	DIV4_RATIO,
- 	GATE_BUS_TOP,
- 	GATE_BUS_GEN,
- 	GATE_BUS_FSYS0,
-@@ -626,6 +628,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
- 	DIV(0, "dout_spi1", "mout_spi1", DIV_PERIC1, 24, 4),
- 	DIV(0, "dout_spi2", "mout_spi2", DIV_PERIC1, 28, 4),
- 
-+	/* Mfc Block */
-+	DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
-+
- 	/* PCM */
- 	DIV(0, "dout_pcm1", "dout_audio1", DIV_PERIC2, 16, 8),
- 	DIV(0, "dout_pcm2", "dout_audio2", DIV_PERIC2, 24, 8),
-@@ -946,8 +951,10 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
- 
- 	GATE(CLK_MFC, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
--	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
--	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
-+	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "dout_mfc_blk",
-+			GATE_IP_MFC, 1, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "dout_mfc_blk",
-+			GATE_IP_MFC, 2, CLK_SET_RATE_PARENT, 0),
- 
- 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
- };
--- 
-1.7.9.5
+[snip]
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+> -	MUX(0, "mout_mspll_kfc", mspll_cpu_p, SRC_TOP7, 8, 2),
+> -	MUX(0, "mout_mspll_cpu", mspll_cpu_p, SRC_TOP7, 12, 2),
+> -	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
+> -	MUX(0, "mout_cpu", cpu_p, SRC_CPU, 16, 1),
+> -	MUX(0, "mout_kpll", kpll_p, SRC_KFC, 0, 1),
+> -	MUX(0, "mout_cpu_kfc", kfc_p, SRC_KFC, 16, 1),
+> +	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
+> +	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+> +	MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+> +	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+> +	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+> +	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+
+Here the clock name is also changed, but I'll just fix the commit 
+message when applying, assuming that this change doesn't break anything.
+
+>
+> -	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
+> +	MUX(0, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
+
+[snip]
+
+>   static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>   	DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
+>   	DIV(0, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
+>   	DIV(0, "armclk2", "div_arm", DIV_CPU0, 28, 3),
+> -	DIV(0, "div_kfc", "mout_cpu_kfc", DIV_KFC0, 0, 3),
+> +	DIV(0, "div_kfc", "mout_kfc", DIV_KFC0, 0, 3),
+
+Same here.
+
+Best regards,
+Tomasz
