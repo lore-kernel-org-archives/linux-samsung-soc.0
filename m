@@ -1,43 +1,114 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [Patch v4 3/5] driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
-Date: Mon,  5 May 2014 14:57:18 +0530
-Message-ID: <1399282040-8995-4-git-send-email-chander.kashyap@linaro.org>
-References: <1399278444-8312-3-git-send-email-chander.kashyap@linaro.org>
- <1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: [RFC V2 1/3] drm: implement chaining of drm bridges
+Date: Tue, 6 May 2014 12:12:13 -0400
+Message-ID: <CAF6AEGt-8ku0y+qhQvg8FRi_Jk1kKxhZ-an4wmycVTB5Zu-T3Q@mail.gmail.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1399319548-16567-2-git-send-email-ajaykumar.rs@samsung.com>
+ <CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOw6vbJYF=L_CyxA0MZ9kVE-G5LosDR5duhtZyuHYMA9Eb_-0A@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add "samsung,exynos5420" compatible string to initialize generic
-big-little cpuidle driver for Exynos5420.
+On Tue, May 6, 2014 at 11:55 AM, Sean Paul <seanpaul@chromium.org> wrote:
+> On Mon, May 5, 2014 at 12:52 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+>> As of now, we can have only one bridge hanging off the encoder.
+>> With this patch, we allow multiple bridges to hang onto the same encoder
+>> with the use of a simple next_bridge ptr.
+>>
+>> The drm core calls bridge->funcs for the first bridge which
+>> is attached to it, and its upto the individual bridge drivers
+>> to call bridge->funcs for the next bridge in the chain.
+>>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>>  drivers/gpu/drm/drm_crtc.c | 13 ++++++++++++-
+>>  include/drm/drm_crtc.h     |  2 ++
+>>  2 files changed, 14 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+>> index d8b7099..fe9905f 100644
+>> --- a/drivers/gpu/drm/drm_crtc.c
+>> +++ b/drivers/gpu/drm/drm_crtc.c
+>> @@ -918,8 +918,10 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
+>>   * Zero on success, error code on failure.
+>>   */
+>>  int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+>> -               const struct drm_bridge_funcs *funcs)
+>> +                       struct drm_encoder *encoder,
+>> +                       const struct drm_bridge_funcs *funcs)
+>
+>
+> IMO, we should let whoever is spawning the bridges chain them
+> together, instead of passing encoder in init().
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-Changes in v4: None
-Changes in v3:
-	1. Add compatible string to of_device_id table insted comparing directoly
-Changes in v2: none
+that plus, might be a good time to start adding some static-inline
+helper fxns for fxn ptr calls like we have for drm_panel..  not a big
+deal, but I guess it would be a good time to do it now before we start
+adding chained bridge calls in all the bridges.
 
- drivers/cpuidle/cpuidle-big_little.c |    1 +
- 1 file changed, 1 insertion(+)
+but yeah, in general this is what I had in mind
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index 4cd02bd..344d79fa 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -165,6 +165,7 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int cpu_id)
- 
- static const struct of_device_id compatible_machine_match[] = {
- 	{ .compatible = "arm,vexpress,v2p-ca15_a7" },
-+	{ .compatible = "samsung,exynos5420" },
- 	{},
- };
- 
--- 
-1.7.9.5
+BR,
+-R
 
+> Sean
+>
+>
+>>  {
+>> +       struct drm_bridge *temp;
+>>         int ret;
+>>
+>>         drm_modeset_lock_all(dev);
+>> @@ -931,6 +933,15 @@ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+>>         bridge->dev = dev;
+>>         bridge->funcs = funcs;
+>>
+>> +       if (encoder->bridge) {
+>> +               temp = encoder->bridge;
+>> +               while (temp->next_bridge)
+>> +                       temp = temp->next_bridge;
+>> +
+>> +               temp->next_bridge = bridge;
+>> +       } else
+>> +               encoder->bridge = bridge;
+>> +
+>>         list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
+>>         dev->mode_config.num_bridge++;
+>>
+>> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+>> index e55fccb..bb6ed88 100644
+>> --- a/include/drm/drm_crtc.h
+>> +++ b/include/drm/drm_crtc.h
+>> @@ -619,6 +619,7 @@ struct drm_bridge_funcs {
+>>  struct drm_bridge {
+>>         struct drm_device *dev;
+>>         struct list_head head;
+>> +       struct drm_bridge *next_bridge;
+>>
+>>         struct drm_mode_object base;
+>>
+>> @@ -862,6 +863,7 @@ extern void drm_connector_cleanup(struct drm_connector *connector);
+>>  extern void drm_connector_unplug_all(struct drm_device *dev);
+>>
+>>  extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+>> +                          struct drm_encoder *encoder,
+>>                            const struct drm_bridge_funcs *funcs);
+>>  extern void drm_bridge_cleanup(struct drm_bridge *bridge);
+>>
+>> --
+>> 1.8.1.2
+>>
