@@ -1,66 +1,57 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 1/9] ARM: S3C24XX: cpufreq-utils: don't write raw values
- to MPLLCON when using ccf
-Date: Tue, 06 May 2014 17:07:49 +0200
-Message-ID: <5368FAC5.4010801@gmail.com>
-References: <2104342.rkElQpXtvM@phil> <535825AB.8060802@cogentembedded.com> <535828D7.3080301@gmail.com> <1538030.0aVnFA3MgQ@phil> <0e4501cf68e3$8f6612d0$ae323870$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:45149 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751921AbaEFPIA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 11:08:00 -0400
-Received: by mail-ee0-f42.google.com with SMTP id d49so2474234eek.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 08:07:59 -0700 (PDT)
-In-Reply-To: <0e4501cf68e3$8f6612d0$ae323870$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 12/15] clk: exynos5420: fix register offset for sclk_bpll
+Date: Tue, 06 May 2014 21:56:47 +0530
+Message-ID: <1399393610-23394-13-git-send-email-shaik.ameer@samsung.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?=27Heiko_St=FCbn?= =?ISO-8859-1?Q?er=27?= <heiko@sntech.de>
-Cc: 'Sergei Shtylyov' <sergei.shtylyov@cogentembedded.com>, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+This patch fixes the wrong register offset for sclk_bpll clock.
 
-On 06.05.2014 06:27, Kukjin Kim wrote:
-> Heiko St=FCbner wrote:
->>
->
-> [...]
->
->>> Anyway, Heiko, thanks for working on this. I'll try to review rest =
-of
->>> the series soon. (I'm attending the ELC next week, though, so I'm n=
-ot
->>> sure if I find some time then, though.)
->>
-> Yeah, this series is really good to us.
->
->> Just as a reminder, there isn't this much to still review, as you
->> Acked/Reviewed most of the series in v1 and only this patch as well =
-as 2
->> and 5
->> still need a review/ack - and the only changes are fixes for your
->> comments ;-)
->>
-> I think so. Since I will apply this series in this week, if any big
-> comments, please let us know.
->
-> Heiko, thanks for the v2.1 as well.
+Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/clk/samsung/clk-exynos5420.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Just found time to look through this series and it looks fine. So if no=
-t=20
-applied yet, feel free to add
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 1449aee..ba7273a 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -111,7 +111,6 @@
+ #define TOP_SPARE2		0x10b08
+ #define BPLL_LOCK		0x20010
+ #define BPLL_CON0		0x20110
+-#define SRC_CDREX		0x20200
+ #define KPLL_LOCK		0x28000
+ #define KPLL_CON0		0x28100
+ #define SRC_KFC			0x28200
+@@ -204,7 +203,6 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+ 	GATE_TOP_SCLK_FSYS,
+ 	GATE_TOP_SCLK_PERIC,
+ 	TOP_SPARE2,
+-	SRC_CDREX,
+ 	SRC_KFC,
+ 	DIV_KFC0,
+ };
+@@ -380,7 +378,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+ 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+ 
+-	MUX(0, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
++	MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
+ 
+ 	MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
+ 	MUX_A(0, "mout_aclk400_mscl", mout_group1_p,
+-- 
+1.7.9.5
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
-
-to clk: patches.
-
-Also we still need to ping DT maintainers, as they should ask patch 4/9=
-=20
-before it is merged.
-
-Best regards,
-Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
