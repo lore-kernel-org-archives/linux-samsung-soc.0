@@ -1,83 +1,74 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 05/15] clk: exynos5420: update clocks for G2D and G3D
- blocks
-Date: Tue, 06 May 2014 18:50:13 +0200
-Message-ID: <536912C5.7060500@gmail.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
- <1399393610-23394-6-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1399393610-23394-6-git-send-email-shaik.ameer@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, shaik.samsung@gmail.com, t.figa@samsung.com, joshi@samsung.com, alim.akhtar@samsung.com, r.sh.open@gmail.com, mturquette@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2 2/2] Documentation: DT: Exynos: Bind SRAM though DT
+Date: Tue,  6 May 2014 13:40:24 +0530
+Message-ID: <1399363824-23543-2-git-send-email-sachin.kamat@linaro.org>
+References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399363824-23543-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Shaik,
+Add SRAM binding documentation.
 
-On 06.05.2014 18:26, Shaik Ameer Basha wrote:
-> This patch adds missing clocks of G2D block. It also removes
-> the aclkg3d alias from G3D block clocks.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos5420.c   |   17 ++++++++++++++---
->   include/dt-bindings/clock/exynos5420.h |    2 ++
->   2 files changed, 16 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 320f72d..5bc4798 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -27,6 +27,7 @@
->   #define DIV_CPU1		0x504
->   #define GATE_BUS_CPU		0x700
->   #define GATE_SCLK_CPU		0x800
-> +#define GATE_IP_G2D		0x8800
->   #define CPLL_LOCK		0x10020
->   #define DPLL_LOCK		0x10030
->   #define EPLL_LOCK		0x10040
-> @@ -402,8 +403,8 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->   			8, 1),
->   	MUX(0, "mout_user_aclk266_g2d", mout_user_aclk266_g2d_p, SRC_TOP5,
->   			12, 1),
-> -	MUX_A(CLK_MOUT_G3D, "mout_user_aclk_g3d", mout_user_aclk_g3d_p,
-> -			SRC_TOP5, 16, 1, "aclkg3d"),
-> +	MUX(CLK_MOUT_G3D, "mout_user_aclk_g3d", mout_user_aclk_g3d_p,
-> +			SRC_TOP5, 16, 1),
->   	MUX(0, "mout_user_aclk300_jpeg", mout_user_aclk300_jpeg_p,
->   			SRC_TOP5, 20, 1),
->   	MUX(0, "mout_user_aclk300_disp1", mout_user_aclk300_disp1_p,
-> @@ -830,6 +831,16 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->   	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "aclk300_disp1", GATE_IP_DISP1, 8, 0,
->   		0),
->
-> +	/* G2D */
-> +	GATE(CLK_MDMA0, "mdma0", "aclk266_g2d",
-> +			GATE_IP_G2D, 1, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_G2D, "g2d", "aclk333_g2d",
-> +			GATE_IP_G2D, 3, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_SMMU_MDMA0, "smmu_mdma0", "aclk266_g2d",
-> +			GATE_IP_G2D, 5, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d",
-> +			GATE_IP_G2D, 7, CLK_IGNORE_UNUSED, 0),
+Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+---
+No changes since v1.
+---
+ .../devicetree/bindings/arm/exynos/smp-sram.txt    |   38 ++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
 
-Why they all have CLK_IGNORE_UNUSED flag set? This isn't very good from 
-power management point of view.
+diff --git a/Documentation/devicetree/bindings/arm/exynos/smp-sram.txt b/Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
+new file mode 100644
+index 000000000000..c9ff2f58f9b6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
+@@ -0,0 +1,38 @@
++Samsung Exynos SRAM for SMP bringup:
++------------------------------------
++
++Samsung SMP-capable Exynos SoCs use part of the SRAM for the bringup
++of the secondary cores. Once the core gets powered up it executes the
++code that is residing at some specific location of the SRAM.
++
++Therefore reserved section sub-nodes have to be added to the mmio-sram
++declaration. These nodes are of two types depending upon secure or
++non-secure execution environment.
++
++Required sub-node properties:
++- compatible : depending upon boot mode, should be
++		"samsung,exynos4210-sram" : for Secure SYSRAM
++		"samsung,exynos4210-sram-ns" : for Non-secure SYSRAM
++
++The rest of the properties should follow the generic mmio-sram discription
++found in ../../misc/sram.txt
++
++Example:
++
++	sram@02020000 {
++		compatible = "mmio-sram";
++		reg = <0x02020000 0x54000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x02020000 0x54000>;
++
++		smp-sram@0 {
++			compatible = "samsung,exynos4210-sram";
++			reg = <0x0 0x1000>;
++		};
++
++		smp-sram@53000 {
++			compatible = "samsung,exynos4210-sram-ns";
++			reg = <0x53000 0x1000>;
++		};
++	};
+-- 
+1.7.9.5
 
-Sorry for commenting on this only in this version of the series, but I 
-was a bit short of time before. I'll try to review this one thoroughly.
-
-Best regards,
-Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
