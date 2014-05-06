@@ -1,71 +1,67 @@
-From: Steve Capper <steve.capper@linaro.org>
-Subject: Re: [PATCH v5 5/6] arm64: mm: Implement 4 levels of translation
- tables
-Date: Tue, 6 May 2014 13:01:32 +0100
-Message-ID: <20140506120131.GA26776@linaro.org>
-References: <000501cf64e5$d92ae870$8b80b950$@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
+ look-up
+Date: Tue, 6 May 2014 10:22:42 +0200
+Message-ID: <CAPDyKFoGOcScsaGWkw9bVh=gpGTApRK48AczaMiSmLah+YOSXQ@mail.gmail.com>
+References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>
+ <1398271618-28932-2-git-send-email-t.figa@samsung.com>
+ <535E9163.3070305@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:62792 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751570AbaEFMBj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 08:01:39 -0400
-Received: by mail-wg0-f41.google.com with SMTP id z12so3620201wgg.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 05:01:38 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <000501cf64e5$d92ae870$8b80b950$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <535E9163.3070305@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J. Wysocki
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-On Thu, May 01, 2014 at 11:34:16AM +0900, Jungseok Lee wrote:
-> This patch implements 4 levels of translation tables since 3 levels
-> of page tables with 4KB pages cannot support 40-bit physical address
-> space described in [1] due to the following issue.
-> 
-> It is a restriction that kernel logical memory map with 4KB + 3 levels
-> (0xffffffc000000000-0xffffffffffffffff) cannot cover RAM region from
-> 544GB to 1024GB in [1]. Specifically, ARM64 kernel fails to create
-> mapping for this region in map_mem function since __phys_to_virt for
-> this region reaches to address overflow.
-> 
-> If SoC design follows the document, [1], over 32GB RAM would be placed
-> from 544GB. Even 64GB system is supposed to use the region from 544GB
-> to 576GB for only 32GB RAM. Naturally, it would reach to enable 4 levels
-> of page tables to avoid hacking __virt_to_phys and __phys_to_virt.
-> 
-> However, it is recommended 4 levels of page table should be only enabled
-> if memory map is too sparse or there is about 512GB RAM.
-> 
+On 28 April 2014 19:35, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 04/23/2014 10:46 AM, Tomasz Figa wrote:
+>> This patch introduces generic code to perform power domain look-up using
+>> device tree and automatically bind devices to their power domains.
+>> Generic device tree binding is introduced to specify power domains of
+>> devices in their device tree nodes.
+>>
+>> Backwards compatibility with legacy Samsung-specific power domain
+>> bindings is provided, but for now the new code is not compiled when
+>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
+>> will change as soon as Exynos power domain code gets converted to use
+>> the generic framework in further patch.
+>
+>> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+>
+>> +==Power domain consumers==
+>> +
+>> +Required properties:
+>> + - power-domain : A phandle and power domain specifier as defined by bindings
+>> +                  of power controller specified by phandle.
+>
+> It seems quite likely that a single logical device could have components
+> in multiple power domains. Consider an HDMI controller with different
+> power domains for the HDMI core, CEC communication, DDC/I2C
+> communication, and the I/O pads, with no clear separation between those
+> two components of the module (no separate register spaces, but the
+> bits/registers are interleaved all together).
+>
+> As such, I think that rather than a "power-domain" property, we need a
+> pair of "power-domains", and "power-domain-names" properties, and
+> preferably with mandatory usage of name-based lookups, rather than
+> allowing a random mix of name-based and index-based lookups like we have
+> with some existing resource bindings.
 
-Hi Jungseok,
-One comment below:
+Each struct device have only one dev_pm_domain pointer, thus a device
+are not able to reside in more than one power domain.
 
-[ ... ]
+Therefore I doubt this will be very useful, unless I missed your point. :-)
 
-> diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-> index bc19101..086112b 100644
-> --- a/arch/arm64/include/asm/tlb.h
-> +++ b/arch/arm64/include/asm/tlb.h
-> @@ -100,6 +100,15 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
->  }
->  #endif
->  
-> +#ifdef CONFIG_ARM64_4_LEVELS
-> +static inline void __pud_free_tlb(struct mmu_gather *tlb, pmd_t *pudp,
-> +				  unsigned long addr)
-
-The second parameter needs to be a pointer to pud_t ?
-(this fires up a warning with STRICT_MM_TYPECHECKS).
-
-With that and Christoffer's feedback about expanding the comments on
-create_pud_entry addressed:
-
-Reviewed-by: Steve Capper <steve.capper@linaro.org>
-
-Cheers,
--- 
-Steve
+Kind regards
+Ulf Hansson
