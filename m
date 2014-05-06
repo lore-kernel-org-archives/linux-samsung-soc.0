@@ -1,55 +1,91 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 1/9] ARM: S3C24XX: cpufreq-utils: don't write raw values
- to MPLLCON when using ccf
-Date: Tue, 06 May 2014 13:27:58 +0900
-Message-ID: <0e4501cf68e3$8f6612d0$ae323870$@samsung.com>
-References: <2104342.rkElQpXtvM@phil> <535825AB.8060802@cogentembedded.com>
- <535828D7.3080301@gmail.com> <1538030.0aVnFA3MgQ@phil>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v4 05/15] clk: exynos5420: update clocks for G2D and G3D blocks
+Date: Tue, 06 May 2014 21:56:40 +0530
+Message-ID: <1399393610-23394-6-git-send-email-shaik.ameer@samsung.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46858 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751143AbaEFE2B convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:32369 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbaEFQ2L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 00:28:01 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5400DZRXQNKQ50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 May 2014 13:27:59 +0900 (KST)
-In-reply-to: <1538030.0aVnFA3MgQ@phil>
-Content-language: ko
+	Tue, 6 May 2014 12:28:11 -0400
+In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: 'Sergei Shtylyov' <sergei.shtylyov@cogentembedded.com>, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Heiko St=FCbner wrote:
->=20
+This patch adds missing clocks of G2D block. It also removes
+the aclkg3d alias from G3D block clocks.
 
-[...]
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c   |   17 ++++++++++++++---
+ include/dt-bindings/clock/exynos5420.h |    2 ++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-> > Anyway, Heiko, thanks for working on this. I'll try to review rest =
-of
-> > the series soon. (I'm attending the ELC next week, though, so I'm n=
-ot
-> > sure if I find some time then, though.)
->=20
-Yeah, this series is really good to us.
-
-> Just as a reminder, there isn't this much to still review, as you
-> Acked/Reviewed most of the series in v1 and only this patch as well a=
-s 2
-> and 5
-> still need a review/ack - and the only changes are fixes for your
-> comments ;-)
->=20
-I think so. Since I will apply this series in this week, if any big
-comments, please let us know.
-
-Heiko, thanks for the v2.1 as well.
-
-- Kukjin
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 320f72d..5bc4798 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -27,6 +27,7 @@
+ #define DIV_CPU1		0x504
+ #define GATE_BUS_CPU		0x700
+ #define GATE_SCLK_CPU		0x800
++#define GATE_IP_G2D		0x8800
+ #define CPLL_LOCK		0x10020
+ #define DPLL_LOCK		0x10030
+ #define EPLL_LOCK		0x10040
+@@ -402,8 +403,8 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 			8, 1),
+ 	MUX(0, "mout_user_aclk266_g2d", mout_user_aclk266_g2d_p, SRC_TOP5,
+ 			12, 1),
+-	MUX_A(CLK_MOUT_G3D, "mout_user_aclk_g3d", mout_user_aclk_g3d_p,
+-			SRC_TOP5, 16, 1, "aclkg3d"),
++	MUX(CLK_MOUT_G3D, "mout_user_aclk_g3d", mout_user_aclk_g3d_p,
++			SRC_TOP5, 16, 1),
+ 	MUX(0, "mout_user_aclk300_jpeg", mout_user_aclk300_jpeg_p,
+ 			SRC_TOP5, 20, 1),
+ 	MUX(0, "mout_user_aclk300_disp1", mout_user_aclk300_disp1_p,
+@@ -830,6 +831,16 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+ 	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "aclk300_disp1", GATE_IP_DISP1, 8, 0,
+ 		0),
+ 
++	/* G2D */
++	GATE(CLK_MDMA0, "mdma0", "aclk266_g2d",
++			GATE_IP_G2D, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_G2D, "g2d", "aclk333_g2d",
++			GATE_IP_G2D, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_MDMA0, "smmu_mdma0", "aclk266_g2d",
++			GATE_IP_G2D, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d",
++			GATE_IP_G2D, 7, CLK_IGNORE_UNUSED, 0),
++
+ 	/* ISP */
+ 	GATE(CLK_SCLK_UART_ISP, "sclk_uart_isp", "dout_uart_isp",
+ 			GATE_TOP_SCLK_ISP, 0, CLK_SET_RATE_PARENT, 0),
+@@ -850,7 +861,7 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+ 	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
+ 	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
+ 
+-	GATE(CLK_G3D, "g3d", "aclkg3d", GATE_IP_G3D, 9, 0, 0),
++	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
+ 
+ 	GATE(CLK_ROTATOR, "rotator", "aclk266", GATE_IP_GEN, 1, 0, 0),
+ 	GATE(CLK_JPEG, "jpeg", "aclk300_jpeg", GATE_IP_GEN, 2, 0, 0),
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 6e22fdd..bf85418 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -177,6 +177,8 @@
+ #define CLK_ACLK_G3D		500
+ #define CLK_G3D			501
+ #define CLK_SMMU_MIXER		502
++#define CLK_SMMU_G2D		503
++#define CLK_SMMU_MDMA0		504
+ #define CLK_SCLK_UART_ISP	510
+ #define CLK_SCLK_SPI0_ISP	511
+ #define CLK_SCLK_SPI1_ISP	512
+-- 
+1.7.9.5
