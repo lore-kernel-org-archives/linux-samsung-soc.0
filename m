@@ -1,363 +1,72 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
-Date: Tue, 6 May 2014 23:39:30 +0530
-Message-ID: <CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
-References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
-	<53691187.80101@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
+ look-up
+Date: Tue, 6 May 2014 19:52:47 +0200
+Message-ID: <CAPDyKFqtW1pV3xv1E8fhtPS99eVezGJqKq_JM4Mrq2ewJyTpog@mail.gmail.com>
+References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>
+ <1398271618-28932-2-git-send-email-t.figa@samsung.com>
+ <CAPDyKFpvtRpgg-Ohv2Yi--_5mnp3ghpj7_4xyM7SjJvYCFzS6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:38537 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753688AbaEFSJb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 14:09:31 -0400
-Received: by mail-oa0-f43.google.com with SMTP id l6so3281997oag.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 11:09:30 -0700 (PDT)
-In-Reply-To: <53691187.80101@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAPDyKFpvtRpgg-Ohv2Yi--_5mnp3ghpj7_4xyM7SjJvYCFzS6Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J. Wyso
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 
-Hi Tomasz,
+On 24 April 2014 11:40, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 23 April 2014 18:46, Tomasz Figa <t.figa@samsung.com> wrote:
+>> This patch introduces generic code to perform power domain look-up using
+>> device tree and automatically bind devices to their power domains.
+>> Generic device tree binding is introduced to specify power domains of
+>> devices in their device tree nodes.
+>>
+>> Backwards compatibility with legacy Samsung-specific power domain
+>> bindings is provided, but for now the new code is not compiled when
+>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
+>> will change as soon as Exynos power domain code gets converted to use
+>> the generic framework in further patch.
+>>
+>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>> Reviewed-by: Mark Brown <broonie@linaro.org>
+>> Reviewed-by: Kevin Hilman <khilman@linaro.org>
+>> Reviewed-by: Philipp Zabel <philipp.zabel@gmail.com>
+>> [on i.MX6 GK802]
+>> Tested-by: Philipp Zabel <philipp.zabel@gmail.com>
 
-On 6 May 2014 22:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Sachin,
->
-> Thanks for addressing the comments. I need to verify few things on Universal
-> C210 board first, before I could give my Reviewed-by tag or further
-> comments.
->
-> I also have some general comments that I missed before, due to limited time
-> for review. Please see inline.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thanks for your review.
+I also implemented some test-support for genpd for a ux500 SOC as well
+- tested passed successfully. :-)
 
->
->
-> On 06.05.2014 10:10, Sachin Kamat wrote:
->>
->> Instead of hardcoding the SYSRAM details for each SoC,
->> pass this information through device tree (DT) and make
->> the code SoC agnostic. Generic SRAM bindings are used
->> for achieving this.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Acked-by: Arnd Bergmann <arnd@arndb.de>
->> Acked-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->> Changes since v1:
->> * Addressed Tomasz Figa's comments
->> - Fixed sram node for universal_c210
->> - Check the node status before mapping the address
->>
->> This patch is based on linux next (next-20140501) on top of
->> my Kconfig consolidation patch
->> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/28642
->
->
-> [snip]
->
->
->> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> b/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> index 63e34b24b04f..9813b068cfd8 100644
->> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> @@ -28,6 +28,30 @@
->>                 bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5
->> rw rootwait earlyprintk panic=5 maxcpus=1";
->>         };
->>
->> +       sram@02020000 {
->> +               status = "disabled";
->> +               smp-sram@0 {
->> +                       status = "disabled";
->> +               };
+[snip]
+
 >> +
->> +               smp-sram@1f000 {
->> +                       status = "disabled";
->> +               };
->> +       };
->> +
->> +       sram@02025000 {
->> +               compatible = "mmio-sram";
->> +               reg = <0x02025000 0x1000>;
->> +               #address-cells = <1>;
->> +               #size-cells = <1>;
->> +               ranges = <0 0x02025000 0x1000>;
->> +
->> +               smp-sram@0 {
->> +                       compatible = "samsung,exynos4210-sram";
->> +                       reg = <0x0 0x1000>;
->> +               };
->> +       };
+>> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
 >
+> I remember we discussed this earlier, but I don't think we should add
+> another Kconfig for this. CONFIG_OF should be enough.
 >
-> I wonder if this really should be defined like this. 0x2025000 really looks
-> just like an offset from the normal SRAM address. This is the thing I need
-> to check in documentation and by experiment when I'll return back to work
-> tomorrow, but maybe it could be possible to normally use the sram@02020000
-> and just disable smp-sram@0 and smp-sram@1f000, replacing them with
-> smp-sram@5000 on Universal C210.
+> I realize that we need to handle "Samsung-specific bindings", to not
+> break the Exynos pm domain. Maybe adding the parsing of them into the
+> generic power domain in the same patch as when we switch Exynos to the
+> new API would do the trick?
 
-I do not have any info about universal C210 board and need your inputs
-for the same :)
+I realized that there already exists CONFIG_PM_GENERIC_DOMAINS_SLEEP
+and CONFIG_PM_GENERIC_DOMAINS_RUNTIME, which serves similar purpose as
+CONFIG_PM_GENERIC_DOMAINS_OF would.
 
->
->
->> +
->>         mct@10050000 {
->>                 compatible = "none";
->>         };
->
->
-> [snip]
->
->
->> diff --git a/arch/arm/mach-exynos/firmware.c
->> b/arch/arm/mach-exynos/firmware.c
->> index 932129ef26c6..7d583cb73850 100644
->> --- a/arch/arm/mach-exynos/firmware.c
->> +++ b/arch/arm/mach-exynos/firmware.c
->> @@ -18,6 +18,7 @@
->>
->>   #include <mach/map.h>
->>
->> +#include "common.h"
->>   #include "smc.h"
->>
->>   static int exynos_do_idle(void)
->> @@ -34,7 +35,12 @@ static int exynos_cpu_boot(int cpu)
->>
->>   static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->>   {
->> -       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
->> +       void __iomem *boot_reg;
->> +
->> +       if (!sram_ns_base_addr)
->> +               return 0;
->
->
-> Shouldn't this return an error instead? I'm not sure which one would be
-> appropriate, though, probably one of -ENODEV, -ENXIO or -EFAULT.
+So, let's ignore my previous comment and move on.
 
-IIRC, returning error here causes the system to hang and even primary
-cpu does not boot.
-Since any error or absence of sram nodes should atleast boot the
-primary CPU, I thought
-this is better.
-
->
->
->> +
->> +       boot_reg = sram_ns_base_addr + 0x1c + 4*cpu;
->>
->>         __raw_writel(boot_addr, boot_reg);
->>         return 0;
->> diff --git a/arch/arm/mach-exynos/include/mach/map.h
->> b/arch/arm/mach-exynos/include/mach/map.h
->> index 7b046b59d9ec..548269a60634 100644
->> --- a/arch/arm/mach-exynos/include/mach/map.h
->> +++ b/arch/arm/mach-exynos/include/mach/map.h
->> @@ -23,13 +23,6 @@
->>
->>   #include <plat/map-s5p.h>
->>
->> -#define EXYNOS4_PA_SYSRAM0             0x02025000
->> -#define EXYNOS4_PA_SYSRAM1             0x02020000
->> -#define EXYNOS5_PA_SYSRAM              0x02020000
->> -#define EXYNOS4210_PA_SYSRAM_NS                0x0203F000
->> -#define EXYNOS4x12_PA_SYSRAM_NS                0x0204F000
->> -#define EXYNOS5250_PA_SYSRAM_NS                0x0204F000
->> -
->>   #define EXYNOS_PA_CHIPID              0x10000000
->>
->>   #define EXYNOS4_PA_SYSCON             0x10010000
->> diff --git a/arch/arm/mach-exynos/platsmp.c
->> b/arch/arm/mach-exynos/platsmp.c
->> index 03e5e9f94705..ccbcdd7b8a86 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -20,6 +20,7 @@
->>   #include <linux/jiffies.h>
->>   #include <linux/smp.h>
->>   #include <linux/io.h>
->> +#include <linux/of_address.h>
->>
->>   #include <asm/cacheflush.h>
->>   #include <asm/smp_plat.h>
->> @@ -33,11 +34,35 @@
->>
->>   extern void exynos4_secondary_startup(void);
->>
->> +static void __iomem *sram_base_addr;
->> +void __iomem *sram_ns_base_addr;
->
->
-> This is probably just a matter of preference, but I'd make this static and
-> provide a getter function, like exynos_get_sram_ns_base();
->
-> Also this address seems to be used by the firmware code exclusively. If we
-> want to make the firmware code more self-contained, maybe the mapping of
-> firmware-specific SRAM region could be handled there, instead? This would
-> also eliminate the need for having an exported variable or getter function.
-> What do you think?
-
-I thought of the same. However 2 reasons prevented me from implementing this.
-
-1. Code duplication
-2. This code should be executed only once. I put it in exynos_firmware_init.
-However it gave a crash while doing of_iomap. So moved it back to the current
-location.
-
->
->
->> +
->> +static void __init exynos_smp_prepare_sram(void)
->> +{
->> +       struct device_node *node;
->> +
->> +       for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
->> +               if (of_device_is_available(node)) {
->> +                       sram_base_addr = of_iomap(node, 0);
->> +                       if (!sram_base_addr)
->> +                               pr_err("Secondary CPU boot address not
->> found\n");
->
->
-> I don't think this is an error at this stage. Some platforms might not have
-> either of these SRAM reserved regions (such as those using INFORM registers
-> instead). Instead, the base address should be checked whenever it is needed
-> and errors should be handled then, like in exynos_set_cpu_boot_addr().
-
-Yes. This is more from an information perspective. Probably pr_warn or
-pr_info would
-be better?
-
->
->> +               }
->> +       }
->
->
-> Also we don't need to look further in DT after we find a matching node
-> already. So combining both comments the resulting code would be:
->
-> for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
->         if (!of_device_is_available(node))
->                 continue;
->         sram_base_addr = of_iomap(node, 0);
->         break;
->
-> }
-
-OK.
-
->
->> +
->> +       for_each_compatible_node(node, NULL, "samsung,exynos4210-sram-ns")
->> {
->> +               if (of_device_is_available(node)) {
->> +                       sram_ns_base_addr = of_iomap(node, 0);
->> +                       if (!sram_ns_base_addr)
->> +                               pr_err("Secondary CPU boot address not
->> found\n");
->> +               }
->> +       }
->
->
-> Same comments here.
-
-OK.
-
->
->
->> +}
->> +
->>   static inline void __iomem *cpu_boot_reg_base(void)
->>   {
->>         if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
->>                 return S5P_INFORM5;
->> -       return S5P_VA_SYSRAM;
->> +       return sram_base_addr;
->>   }
->>
->>   static inline void __iomem *cpu_boot_reg(int cpu)
->> @@ -147,7 +172,8 @@ static int exynos_boot_secondary(unsigned int cpu,
->> struct task_struct *idle)
->>                  * and fall back to boot register if it fails.
->>                  */
->>                 if (call_firmware_op(set_cpu_boot_addr, phys_cpu,
->> boot_addr))
->> -                       __raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
->> +                       if (cpu_boot_reg_base())
->> +                               __raw_writel(boot_addr,
->> cpu_boot_reg(phys_cpu));
->
->
-> I'd rework this for proper error handling, e.g.
->
->         int ret;
->
->         /* ... */
->
->         ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
->         if (ret && ret != -ENOSYS)
->                 goto fail;
->         if (ret == -ENOSYS) {
->                 /* Fall back to firmware-less way. */
->                 void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
->
->                 if (IS_ERR(boot_reg)) {
->                         ret = PTR_ERR(boot_reg);
->                         goto fail;
->                 }
->         }
->
->         /* ... */
->
-> fail:
->         /* Clean-up after error */
->
-> Of course, cpu_boot_reg() will need to be converted to follow the ERR_PTR()
-> model, but IMHO proper error handling is a good reason to do so.
-
-How about handling this separately outside this patch?
-
->
->
->>
->>                 call_firmware_op(cpu_boot, phys_cpu);
->>
->> @@ -205,6 +231,8 @@ static void __init exynos_smp_prepare_cpus(unsigned
->> int max_cpus)
->>         if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->>                 scu_enable(scu_base_addr());
->>
->> +       exynos_smp_prepare_sram();
->> +
->>         /*
->>          * Write the address of secondary startup into the
->>          * system-wide flags register. The boot monitor waits
->> @@ -222,7 +250,8 @@ static void __init exynos_smp_prepare_cpus(unsigned
->> int max_cpus)
->>                 boot_addr = virt_to_phys(exynos4_secondary_startup);
->>
->>                 if (call_firmware_op(set_cpu_boot_addr, phys_cpu,
->> boot_addr))
->> -                       __raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
->> +                       if (cpu_boot_reg_base())
->> +                               __raw_writel(boot_addr,
->> cpu_boot_reg(phys_cpu));
->
->
-> I wonder if setting the addresses at this stage is really needed. IMHO doing
-> it once in exynos_boot_secondary() should be enough. But this is probably a
-> material for further patch.
-
-Sure.
-
--- 
-With warm regards,
-Sachin
+Kind regards
+Ulf Hansson
