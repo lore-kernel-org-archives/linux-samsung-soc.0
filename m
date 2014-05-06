@@ -1,159 +1,181 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Tue, 06 May 2014 16:27:02 +0200
-Message-ID: <5368F136.6070804@samsung.com>
-References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 08/15] clk: exynos5420: update clocks for PERIS and
+ GEN blocks
+Date: Tue, 06 May 2014 19:36:14 +0200
+Message-ID: <53691D8E.8080102@gmail.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
+ <1399393610-23394-9-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, t.figa@samsung.com, k.debski@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1399393610-23394-9-git-send-email-shaik.ameer@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, shaik.samsung@gmail.com, t.figa@samsung.com, joshi@samsung.com, alim.akhtar@samsung.com, r.sh.open@gmail.com, mturquette@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 28/04/14 08:17, Vivek Gautam wrote:
-> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
-> The new driver uses the generic PHY framework and will interact
-> with DWC3 controller present on Exynos5 series of SoCs.
-> Thereby, removing old phy-samsung-usb3 driver and related code
-> used untill now which was based on usb/phy framework.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Shaik,
+
+On 06.05.2014 18:26, Shaik Ameer Basha wrote:
+> This patch fixes some parent-child relationships according
+> to the latest datasheet and adds more clocks related to
+> PERIS and GEN blocks.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
-> 
-> Changes from v6:
->  - Addressed review comments:
->    -- Sorted config entries in Kconfig and Makefile
->    -- Made #define to_usbdrd_phy(inst) to a static inline routine.
->    -- Restructured exynos5_rate_to_clk() as suggested.
->    -- Amended 'val' field for regmap_update_bits() in the routine
->       exynos5_usbdrd_phy_isol().
->    -- Removed sentinel entry from exynos5_usbdrd_phy_cfg[] struct.
->    -- Removed check for 'match' entry in probe().
-> 
->  .../devicetree/bindings/phy/samsung-phy.txt        |   40 ++
->  drivers/phy/Kconfig                                |   11 +
->  drivers/phy/Makefile                               |    1 +
->  drivers/phy/phy-exynos5-usbdrd.c                   |  627 ++++++++++++++++++++
->  4 files changed, 679 insertions(+)
->  create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index b422e38..51efe4c 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -114,3 +114,43 @@ Example:
->  		compatible = "samsung,exynos-sataphy-i2c";
->  		reg = <0x38>;
->  	};
+>   drivers/clk/samsung/clk-exynos5420.c   |   81 ++++++++++++++++++++------------
+>   include/dt-bindings/clock/exynos5420.h |    5 ++
+>   2 files changed, 55 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index c86ecbb..af13e6c 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -83,6 +83,7 @@
+>   #define SCLK_DIV_ISP1		0x10584
+>   #define DIV2_RATIO0		0x10590
+>   #define GATE_BUS_TOP		0x10700
+> +#define GATE_BUS_GEN		0x1073c
+>   #define GATE_BUS_FSYS0		0x10740
+>   #define GATE_BUS_PERIC		0x10750
+>   #define GATE_BUS_PERIC1		0x10754
+> @@ -96,6 +97,7 @@
+>   #define GATE_IP_G3D		0x10930
+>   #define GATE_IP_GEN		0x10934
+>   #define GATE_IP_PERIC		0x10950
+> +#define GATE_IP_PERIS		0x10960
+>   #define GATE_IP_MSCL		0x10970
+>   #define GATE_TOP_SCLK_GSCL	0x10820
+>   #define GATE_TOP_SCLK_DISP1	0x10828
+> @@ -172,6 +174,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+>   	SCLK_DIV_ISP1,
+>   	DIV2_RATIO0,
+>   	GATE_BUS_TOP,
+> +	GATE_BUS_GEN,
+>   	GATE_BUS_FSYS0,
+>   	GATE_BUS_PERIC,
+>   	GATE_BUS_PERIC1,
+> @@ -185,6 +188,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+>   	GATE_IP_G3D,
+>   	GATE_IP_GEN,
+>   	GATE_IP_PERIC,
+> +	GATE_IP_PERIS,
+>   	GATE_IP_MSCL,
+>   	GATE_TOP_SCLK_GSCL,
+>   	GATE_TOP_SCLK_DISP1,
+> @@ -608,6 +612,10 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>   	/* MSCL Block */
+>   	DIV(0, "dout_mscl_blk", "aclk400_mscl", DIV2_RATIO0, 28, 2),
+>
+> +	/* PSGEN */
+> +	DIV(0, "dout_gen_blk", "mout_user_aclk266", DIV2_RATIO0, 8, 1),
+> +	DIV(0, "dout_jpg_blk", "aclk166", DIV2_RATIO0, 20, 1),
 > +
-> +Samsung Exynos5 SoC series USB DRD PHY controller
-> +--------------------------------------------------
+>   	/* ISP Block */
+>   	DIV(0, "dout_isp_sensor0", "mout_isp_sensor", SCLK_DIV_ISP0, 8, 8),
+>   	DIV(0, "dout_isp_sensor1", "mout_isp_sensor", SCLK_DIV_ISP0, 16, 8),
+> @@ -623,10 +631,6 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>   };
+>
+>   static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+> -	/* TODO: Re-verify the CG bits for all the gate clocks */
+> -	GATE_A(CLK_MCT, "pclk_st", "aclk66_psgen", GATE_BUS_PERIS1, 2, 0, 0,
+> -		"mct"),
+> -
+>   	GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
+>   			GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
+>   	GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
+> @@ -776,28 +780,51 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>
+>   	GATE(CLK_KEYIF, "keyif", "aclk66_peric", GATE_BUS_PERIC, 22, 0, 0),
+>
+> +	/* PERIS Block */
+>   	GATE(CLK_CHIPID, "chipid", "aclk66_psgen",
+> -			GATE_BUS_PERIS0, 12, CLK_IGNORE_UNUSED, 0),
+> +			GATE_IP_PERIS, 0, CLK_IGNORE_UNUSED, 0),
+>   	GATE(CLK_SYSREG, "sysreg", "aclk66_psgen",
+> -			GATE_BUS_PERIS0, 13, CLK_IGNORE_UNUSED, 0),
+> -	GATE(CLK_TZPC0, "tzpc0", "aclk66_psgen", GATE_BUS_PERIS0, 18, 0, 0),
+> -	GATE(CLK_TZPC1, "tzpc1", "aclk66_psgen", GATE_BUS_PERIS0, 19, 0, 0),
+> -	GATE(CLK_TZPC2, "tzpc2", "aclk66_psgen", GATE_BUS_PERIS0, 20, 0, 0),
+> -	GATE(CLK_TZPC3, "tzpc3", "aclk66_psgen", GATE_BUS_PERIS0, 21, 0, 0),
+> -	GATE(CLK_TZPC4, "tzpc4", "aclk66_psgen", GATE_BUS_PERIS0, 22, 0, 0),
+> -	GATE(CLK_TZPC5, "tzpc5", "aclk66_psgen", GATE_BUS_PERIS0, 23, 0, 0),
+> -	GATE(CLK_TZPC6, "tzpc6", "aclk66_psgen", GATE_BUS_PERIS0, 24, 0, 0),
+> -	GATE(CLK_TZPC7, "tzpc7", "aclk66_psgen", GATE_BUS_PERIS0, 25, 0, 0),
+> -	GATE(CLK_TZPC8, "tzpc8", "aclk66_psgen", GATE_BUS_PERIS0, 26, 0, 0),
+> -	GATE(CLK_TZPC9, "tzpc9", "aclk66_psgen", GATE_BUS_PERIS0, 27, 0, 0),
+> -
+> -	GATE(CLK_HDMI_CEC, "hdmi_cec", "aclk66_psgen", GATE_BUS_PERIS1, 0, 0,
+> -		0),
+> +			GATE_IP_PERIS, 1, CLK_IGNORE_UNUSED, 0),
+> +	GATE(CLK_TZPC0, "tzpc0", "aclk66_psgen", GATE_IP_PERIS, 6, 0, 0),
+> +	GATE(CLK_TZPC1, "tzpc1", "aclk66_psgen", GATE_IP_PERIS, 7, 0, 0),
+> +	GATE(CLK_TZPC2, "tzpc2", "aclk66_psgen", GATE_IP_PERIS, 8, 0, 0),
+> +	GATE(CLK_TZPC3, "tzpc3", "aclk66_psgen", GATE_IP_PERIS, 9, 0, 0),
+> +	GATE(CLK_TZPC4, "tzpc4", "aclk66_psgen", GATE_IP_PERIS, 10, 0, 0),
+> +	GATE(CLK_TZPC5, "tzpc5", "aclk66_psgen", GATE_IP_PERIS, 11, 0, 0),
+> +	GATE(CLK_TZPC6, "tzpc6", "aclk66_psgen", GATE_IP_PERIS, 12, 0, 0),
+> +	GATE(CLK_TZPC7, "tzpc7", "aclk66_psgen", GATE_IP_PERIS, 13, 0, 0),
+> +	GATE(CLK_TZPC8, "tzpc8", "aclk66_psgen", GATE_IP_PERIS, 14, 0, 0),
+> +	GATE(CLK_TZPC9, "tzpc9", "aclk66_psgen", GATE_IP_PERIS, 15, 0, 0),
+> +	GATE(CLK_HDMI_CEC, "hdmi_cec", "aclk66_psgen", GATE_IP_PERIS, 16, 0, 0),
+> +	GATE(CLK_MCT, "mct", "aclk66_psgen", GATE_IP_PERIS, 18, 0, 0),
+> +	GATE(CLK_WDT, "wdt", "aclk66_psgen", GATE_IP_PERIS, 19, 0, 0),
+> +	GATE(CLK_RTC, "rtc", "aclk66_psgen", GATE_IP_PERIS, 20, 0, 0),
+> +	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_IP_PERIS, 21, 0, 0),
+> +	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_IP_PERIS, 22, 0, 0),
 > +
-> +Required properties:
-> +- compatible : Should be set to one of the following supported values:
-> +	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
-> +	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
-> +- reg : Register offset and length of USB DRD PHY register set;
-> +- clocks: Clock IDs array as required by the controller
-> +- clock-names: names of clocks correseponding to IDs in the clock property;
-> +	       Required clocks:
-> +	- phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
-> +	       used for register access.
-> +	- ref: PHY's reference clock (usually crystal clock), used for
-> +	       PHY operations, associated by phy name. It is used to
-> +	       determine bit values for clock settings register.
-> +	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
-> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
-> +		      control pmu registers for power isolation.
-> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
-> +		      base.
+>   	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
 
-It doesn't seem right to have register offset encoded in the device tree
-like this. I think it'd be more appropriate to associate such an offset
-with the compatible string's value in the driver.
+What about this one?
 
-Also it might be sensible to create a new header file in include/linux/mfd/
-syscon/ for Exynos5 SoCs and put any required PMU offset definitions there. 
-Instead having them scattered and possibly duplicated in various drivers.
+> -	GATE(CLK_WDT, "wdt", "aclk66_psgen", GATE_BUS_PERIS1, 3, 0, 0),
+> -	GATE(CLK_RTC, "rtc", "aclk66_psgen", GATE_BUS_PERIS1, 4, 0, 0),
+> -	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_BUS_PERIS1, 5, 0, 0),
+> -	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_BUS_PERIS1, 6, 0, 0),
+> +
+> +	/* GATE_IP_PERIS doesn't list TZPC10,11 */
+> +	GATE(CLK_TZPC10, "tzpc10", "aclk66_psgen", GATE_BUS_GEN, 30, 0, 0),
+> +	GATE(CLK_TZPC11, "tzpc11", "aclk66_psgen", GATE_BUS_GEN, 31, 0, 0),
 
-> +- #phy-cells : from the generic PHY bindings, must be 1;
-> +
-> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
-> +compatible PHYs, the second cell in the PHY specifier identifies the
-> +PHY id, which is interpreted as follows:
-> +  0 - UTMI+ type phy,
-> +  1 - PIPE3 type phy,
-> +
-> +Example:
-> +	usb3_phy: usbphy@12100000 {
-> +		compatible = "samsung,exynos5250-usbdrd-phy";
-> +		reg = <0x12100000 0x100>;
-> +		clocks = <&clock 286>, <&clock 1>;
-> +		clock-names = "phy", "ref";
-> +		samsung,pmu-syscon = <&pmu_system_controller>;
-> +		samsung,pmu-offset = <0x704>;
-> +		#phy-cells = <1>;
-> +	};
-[...]
-> +struct usbdrd_phy_config {
+Hmm, this patch is essentially adding these two clocks, as they were not 
+present before. Maybe this is just an error in the documentation and 
+there are just 10 TZPC blocks?
 
-Isn't name of this data structure too generic ? 
-Perhaps rename it to exynos_usbdrd_phy_config ?
+> +
+> +	/* GEN Block */
+> +	GATE(CLK_ROTATOR, "rotator", "mout_user_aclk266", GATE_IP_GEN, 1, 0, 0),
+> +	GATE(CLK_JPEG, "jpeg", "aclk300_jpeg", GATE_IP_GEN, 2, 0, 0),
+> +	GATE(CLK_JPEG2, "jpeg2", "aclk300_jpeg", GATE_IP_GEN, 3, 0, 0),
+> +	GATE(CLK_MDMA1, "mdma1", "mout_user_aclk266", GATE_IP_GEN, 4, 0, 0),
+> +	GATE(CLK_TOP_RTC, "top_rtc", "aclk66_psgen", GATE_IP_GEN, 5, 0, 0),
+> +	GATE(CLK_SMMU_ROTATOR, "smmu_rotator", "dout_gen_blk",
+> +			GATE_IP_GEN, 6, CLK_SET_RATE_PARENT, 0),
+> +	GATE(CLK_SMMU_JPEG, "smmu_jpeg", "dout_jpg_blk",
+> +			GATE_IP_GEN, 7, CLK_SET_RATE_PARENT, 0),
+> +	GATE(CLK_SMMU_MDMA1, "smmu_mdma1", "dout_gen_blk",
+> +			GATE_IP_GEN, 9, CLK_SET_RATE_PARENT, 0),
 
-> +	u32 id;
-> +	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
-> +	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
-> +	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
-> +};
-> +
-> +struct exynos5_usbdrd_phy_drvdata {
-> +	const struct usbdrd_phy_config *phy_cfg;
-> +};
-> +
-[...]
-> +const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
-> +	.phy_cfg		= exynos5_usbdrd_phy_cfg,
-> +};
-> +
-> +const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
-> +	.phy_cfg		= exynos5_usbdrd_phy_cfg,
-> +};
-> +
-> +static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
-> +	{
-> +		.compatible = "samsung,exynos5250-usbdrd-phy",
-> +		.data = &exynos5250_usbdrd_phy
-> +	}, {
-> +		.compatible = "samsung,exynos5420-usbdrd-phy",
-> +		.data = &exynos5420_usbdrd_phy
-> +	},
-> +	{ },
-> +};
-> +
-> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
-> +{
-[...]
-> +	reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +						   "samsung,pmu-syscon");
-> +	if (IS_ERR(reg_pmu)) {
-> +		dev_err(dev, "Failed to map PMU register (via syscon)\n");
+Why CLK_SET_RATE_PARENT (for all 3 clocks above)?
 
-nit: Maybe change it to: "Failed to lookup PMU regmap\n" ?
-
-> +		return PTR_ERR(reg_pmu);
-> +	}
 > +
-> +	ret = of_property_read_u32(node, "samsung,pmu-offset", &pmu_offset);
-> +	if (ret) {
-> +		dev_err(dev, "Missing pmu-offset for phy isolation\n");
-> +		return ret;
-> +	}
+> +	/* GATE_IP_GEN doesn't list gates for smmu_jpeg2 and mc */
+> +	GATE(CLK_SMMU_JPEG2, "smmu_jpeg2", "dout_jpg_blk",
+> +			GATE_BUS_GEN, 28, CLK_SET_RATE_PARENT, 0),
 
-Otherwise the patch looks good.
+Ditto.
 
---
-Thanks,
-Sylwester
+Best regards,
+Tomasz
