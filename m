@@ -1,45 +1,109 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: exynos4: Update camera nodes for Trats2 board
-Date: Tue, 06 May 2014 11:20:19 +0900
-Message-ID: <07c701cf68d1$b9e59c40$2db0d4c0$@samsung.com>
-References: <1397226348-29907-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v4 13/15] clk: exynos5420: update clocks for MAU Block
+Date: Tue, 06 May 2014 21:56:48 +0530
+Message-ID: <1399393610-23394-14-git-send-email-shaik.ameer@samsung.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57280 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933711AbaEFCUV (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:17947 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751656AbaEFQ20 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 22:20:21 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5400134RTWWX80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 May 2014 11:20:20 +0900 (KST)
-In-reply-to: <1397226348-29907-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
+	Tue, 6 May 2014 12:28:26 -0400
+In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Sylwester Nawrocki wrote:
-> 
-> Remove unused /camera/clock-controller node and add required clock
-> properties to the camera node. This is required for a clock provider
-> that will be referenced by image sensor devices.
-> Also add required clock related changes to s5k6a3 device node and
-> afvdd regulator supply.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi          |    6 ++----
->  arch/arm/boot/dts/exynos4412-trats2.dts |    5 +++--
->  2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-Applied, thanks.
+This patch adds the missing MAU block specific clocks.
 
-- Kukjin
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c   |   14 +++++++++++++-
+ include/dt-bindings/clock/exynos5420.h |    2 ++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index ba7273a..e0e749d 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -62,7 +62,9 @@
+ #define SRC_TOP11		0x10284
+ #define SRC_TOP12		0x10288
+ #define SRC_MASK_TOP2		0x10308
++#define SRC_MASK_TOP7		0x1031c
+ #define SRC_MASK_DISP10		0x1032c
++#define SRC_MASK_MAU		0x10334
+ #define SRC_MASK_FSYS		0x10340
+ #define SRC_MASK_PERIC0		0x10350
+ #define SRC_MASK_PERIC1		0x10354
+@@ -155,6 +157,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+ 	SRC_TOP11,
+ 	SRC_TOP12,
+ 	SRC_MASK_TOP2,
++	SRC_MASK_TOP7,
+ 	SRC_MASK_DISP10,
+ 	SRC_MASK_FSYS,
+ 	SRC_MASK_PERIC0,
+@@ -351,6 +354,8 @@ PNAME(mout_hdmi_p) = {"dout_hdmi_pixel", "sclk_hdmiphy"};
+ PNAME(mout_maudio0_p) = {"fin_pll", "maudio_clk", "mout_sclk_dpll",
+ 			 "mout_sclk_mpll", "mout_sclk_spll", "mout_sclk_ipll",
+ 			 "mout_sclk_epll", "mout_sclk_rpll"};
++PNAME(mout_mau_epll_clk_p) = {"mout_sclk_epll", "mout_sclk_dpll",
++				"mout_sclk_mpll", "mout_sclk_spll"};
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[] __initdata = {
+@@ -373,6 +378,9 @@ static struct samsung_fixed_factor_clock exynos5420_fixed_factor_clks[] __initda
+ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
+ 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
++	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p,
++			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
++
+ 	MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ 	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+@@ -520,7 +528,8 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 			TOP_SPARE2, 8, 1, CLK_SET_RATE_PARENT, 0),
+ 
+ 	/* MAU Block */
+-	MUX(0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3),
++	MUX_F(CLK_MOUT_MAUDIO0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3,
++						CLK_SET_RATE_PARENT, 0),
+ 
+ 	/* FSYS Block */
+ 	MUX(0, "mout_usbd301", mout_group2_p, SRC_FSYS, 4, 3),
+@@ -713,6 +722,9 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+ 	GATE(CLK_ACLK300_DISP1, "aclk300_disp1", "mout_user_aclk300_disp1",
+ 			SRC_MASK_TOP2, 24, CLK_IGNORE_UNUSED, 0),
+ 
++	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
++			SRC_MASK_TOP7, 20, CLK_IGNORE_UNUSED, 0),
++
+ 	/* sclk */
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "dout_uart0",
+ 		GATE_TOP_SCLK_PERIC, 0, CLK_SET_RATE_PARENT, 0),
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index f5459c1..4831267 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -58,6 +58,7 @@
+ #define CLK_SCLK_GSCL_WA	156
+ #define CLK_SCLK_GSCL_WB	157
+ #define CLK_SCLK_HDMIPHY	158
++#define CLK_MAU_EPLL		159
+ 
+ /* gate clocks */
+ #define CLK_ACLK66_PERIC	256
+@@ -197,6 +198,7 @@
+ #define CLK_MOUT_HDMI		640
+ #define CLK_MOUT_G3D		641
+ #define CLK_MOUT_VPLL		642
++#define CLK_MOUT_MAUDIO0	643
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+-- 
+1.7.9.5
