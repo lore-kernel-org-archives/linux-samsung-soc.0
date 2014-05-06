@@ -1,70 +1,40 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 0/4] Introducing Exynos ChipId driver
-Date: Mon, 5 May 2014 10:34:02 -0500
-Message-ID: <CAL_JsqJXE4uXKA6XU1=3zFjdcEXHyUat2dL6wDKiZBx8S-p+Xg@mail.gmail.com>
-References: <1399097500-4052-1-git-send-email-pankaj.dubey@samsung.com>
-	<13946837.RfnRDPQdge@wuerfel>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [ATTN] Re: [PATCH v2 4/9] dt-bindings: add documentation for s3c2410
+ clock controller
+Date: Tue, 06 May 2014 17:19:02 +0200
+Message-ID: <5368FD66.9090400@gmail.com>
+References: <2104342.rkElQpXtvM@phil> <2506219.ti6q3JWVMf@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f169.google.com ([209.85.128.169]:50808 "EHLO
-	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753880AbaEEPeD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 11:34:03 -0400
-In-Reply-To: <13946837.RfnRDPQdge@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2506219.ti6q3JWVMf@phil>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Pankaj Dubey <pankaj.dubey@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Sat, May 3, 2014 at 10:02 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 03 May 2014 15:11:36 Pankaj Dubey wrote:
->> This patch series attempts to get rid of soc_is_exynosXXXX macros
->> and eventually with the help of this series we can probably get
->> rid of CONFIG_SOC_EXYNOSXXXX in near future.
->> Each Exynos SoC has ChipID block which can give information about
->> SoC's product Id and revision number. Currently we have single
->> DT binding information for this as "samsung,exynos4210-chipid".
->> But Exynos4 and Exynos5 SoC series have one small difference in
->> chip Id, with resepect to product id bit-masks. So it means we
->> should have separate compatible string for these different series
->> of SoCs. So I have created new binding information for handling
->> this difference. Also currently I can think of putting this driver
->> code under "drivers/misc/" but suggestions are welcome.
->> Also current form of driver is missing platfrom driver and needs
->> init function to be called from machine file (either exynos.c or
->> platsmp.c). I hope lot of suggestions and comments to improve this
->> further.
->>
->> This patch series is based on Kukjin Kim's for-next (3.14_rc1 tag)
->> and prepared on top of following patch series and it's dependent
->> patch series.
+Rob, Pawel, Mark, Ian, Kumar,
+
+On 23.04.2014 21:36, Heiko St=FCbner wrote:
+> Describe the clock controller of s3c2410, s3c2440 and s3c2442.
 >
-> I think putting it into drivers/soc would be most appropriate.
-> We already have a few drivers lined up that we want in there,
-> although the directory currently doesn't exist.
->
-> However, I would ask that you use the infrastructure provided by
-> drivers/base/soc.c when you add this driver, to also make the
-> information available to user space using a standard API.
+> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+> Acked-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   .../bindings/clock/samsung,s3c2410-clock.txt       | 50 +++++++++++=
++++++++++++
+>   1 file changed, 50 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/samsung,=
+s3c2410-clock.txt
 
-Agreed.
+Might we ask you to take a look, please?
 
-> Ideally this should be done by slightly restructuring the DT
-> source to make all on-chip devices appear below the soc node.
-> We'd have to think a bit about how to best do this while
-> preserving compatibility with existing dts files.
-
-I don't agree. How is a block with chip ID info the parent of all the
-other devices?
-
-In doing some work to move default of_platform_populate out of
-platforms, I noticed that most platforms using the soc device are
-making it the parent of platform devices. I think this is either wrong
-or all platforms should have a default soc device. It makes little
-sense for some platforms to have a devices under a soc sysfs directory
-while others do not. Or the location changes when a platform latter
-adds the soc device.
-
-Rob
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
