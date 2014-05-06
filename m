@@ -1,67 +1,89 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v12 18/31] iommu/exynos: allow having multiple System
- MMUs for a master H/W
-Date: Tue, 06 May 2014 20:05:14 +0200
-Message-ID: <5369245A.1060001@gmail.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com> <1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
+Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
+ look-up
+Date: Tue, 06 May 2014 19:15:21 +0200
+Message-ID: <536918A9.6050502@gmail.com>
+References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>	<1398271618-28932-2-git-send-email-t.figa@samsung.com>	<535E9163.3070305@wwwdotorg.org>
+ <CAPDyKFoGOcScsaGWkw9bVh=gpGTApRK48AczaMiSmLah+YOSXQ@mail.gmail.com>
+ <53690D21.8080807@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:61993 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368AbaEFSFb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 14:05:31 -0400
-In-Reply-To: <1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <53690D21.8080807@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vg
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, pullip.cho@samsung.com, a.motakis@virtualopensystems.com, grundler@chromium.org, joro@8bytes.org, prathyush.k@samsung.com, rahul.sharma@samsung.com, sachin.kamat@linaro.org, supash.ramaswamy@linaro.org, Varun.Sethi@freescale.com, s.nawrocki@samsung.com, t.figa@samsung.com, joshi@samsung.com
 
-On 27.04.2014 09:37, Shaik Ameer Basha wrote:
-> From: Cho KyongHo <pullip.cho@samsung.com>
->
-> Some master device descriptor like fimc-is which is an abstraction
-> of very complex H/W may have multiple System MMUs. For those devices,
-> the design of the link between System MMU and its master H/W is needed
-> to be reconsidered.
->
-> A link structure, sysmmu_list_data is introduced that provides a link
-> to master H/W and that has a pointer to the device descriptor of a
-> System MMU. Given a device descriptor of a master H/W, it is possible
-> to traverse all System MMUs that must be controlled along with the
-> master H/W.
->
-> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
-> ---
->   drivers/iommu/exynos-iommu.c |  545 ++++++++++++++++++++++++++----------------
->   1 file changed, 335 insertions(+), 210 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index fefedec3..c2e6365 100755
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -117,6 +117,10 @@
->   #define REG_PB1_EADDR		0x058
->
->   #define has_sysmmu(dev)		(dev->archdata.iommu != NULL)
-> +#define for_each_sysmmu_list(dev, list_data)				\
-> +	list_for_each_entry(list_data,					\
-> +		&((struct exynos_iommu_owner *)dev->archdata.iommu)->mmu_list, \
-> +		entry)
 
-Sorry, NAK.
 
-Please don't add this kind of complexity and business logic to low level 
-code. We want the configuration functions to be simple, easy to read, 
-maintain and extend.
+On 06.05.2014 18:26, Stephen Warren wrote:
+> On 05/06/2014 02:22 AM, Ulf Hansson wrote:
+>> On 28 April 2014 19:35, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>> On 04/23/2014 10:46 AM, Tomasz Figa wrote:
+>>>> This patch introduces generic code to perform power domain look-up using
+>>>> device tree and automatically bind devices to their power domains.
+>>>> Generic device tree binding is introduced to specify power domains of
+>>>> devices in their device tree nodes.
+>>>>
+>>>> Backwards compatibility with legacy Samsung-specific power domain
+>>>> bindings is provided, but for now the new code is not compiled when
+>>>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
+>>>> will change as soon as Exynos power domain code gets converted to use
+>>>> the generic framework in further patch.
+>>>
+>>>> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+>>>
+>>>> +==Power domain consumers==
+>>>> +
+>>>> +Required properties:
+>>>> + - power-domain : A phandle and power domain specifier as defined by bindings
+>>>> +                  of power controller specified by phandle.
+>>>
+>>> It seems quite likely that a single logical device could have components
+>>> in multiple power domains. Consider an HDMI controller with different
+>>> power domains for the HDMI core, CEC communication, DDC/I2C
+>>> communication, and the I/O pads, with no clear separation between those
+>>> two components of the module (no separate register spaces, but the
+>>> bits/registers are interleaved all together).
+>>>
+>>> As such, I think that rather than a "power-domain" property, we need a
+>>> pair of "power-domains", and "power-domain-names" properties, and
+>>> preferably with mandatory usage of name-based lookups, rather than
+>>> allowing a random mix of name-based and index-based lookups like we have
+>>> with some existing resource bindings.
+>>
+>> Each struct device have only one dev_pm_domain pointer, thus a device
+>> are not able to reside in more than one power domain.
+>>
+>> Therefore I doubt this will be very useful, unless I missed your point. :-)
+>
+> A struct device is a Linux-internal concept. DT is supposed to represent
+> the HW in an OS-agnostic fashion, not according to the limitations of
+> any one OS's driver model.
+>
+> It's certainly true that a single logical HW module (represented by a
+> single DT node) can have parts in multiple power domains.
+>
 
-The proper way to do it is to let the IOMMUs be grouped together on 
-IOMMU subsystem level, so that each IOMMU consumer driver would see just 
-one IOMMU, but then IOMMU driver callbacks would handle just particular 
-instances of the IOMMU IP blocks, without any loops, lists and other 
-crazy code...
+AFAIK a single DT node is supposed to represent a single _physical_ HW 
+module. It all depends on description granularity, though. A physical 
+chip (or IP block) might be further divided into multiple blocks, so I 
+can imagine some of them being in different power domains than another. 
+Still, based on the fact that in Linux we never needed to specify 
+multiple power domains for a device, is this really a real use case?
+
+Anyway, the binding is defined in a way that lets you simply turn the 
+single phandle+specifier into a list of them, if such need ever shows up.
 
 Best regards,
 Tomasz
