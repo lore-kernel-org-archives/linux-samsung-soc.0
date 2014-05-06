@@ -1,104 +1,47 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 10/15] clk: exynos5420: update clocks for FSYS and
- FSYS2 blocks
-Date: Tue, 06 May 2014 19:43:25 +0200
-Message-ID: <53691F3D.8050104@gmail.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
- <1399393610-23394-11-git-send-email-shaik.ameer@samsung.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Tue, 6 May 2014 19:59:05 +0200
+Message-ID: <20140506175904.GB12376@8bytes.org>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+ <26065037.GxQQuIURPg@wuerfel>
+ <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1399393610-23394-11-git-send-email-shaik.ameer@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, shaik.samsung@gmail.com, t.figa@samsung.com, joshi@samsung.com, alim.akhtar@samsung.com, r.sh.open@gmail.com, mturquette@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8bytes.org ([85.214.48.195]:33001 "EHLO mail.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751694AbaEFR7M (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 May 2014 13:59:12 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by mail.8bytes.org (Postfix) with SMTP id DD5F712B291
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 May 2014 19:59:10 +0200 (CEST)
+Content-Disposition: inline
+In-Reply-To: <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Grant Grundler <grundler@chromium.org>, "supash.ramaswamy" <supash.ramaswamy@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, Cho KyongHo <pullip.cho@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Shaik,
+On Wed, Apr 30, 2014 at 04:27:10PM +0530, Shaik Ameer Basha wrote:
+> This series is going on for quite a long time and most of the patches here
+> doesn't depend on dt bindings. As Exynos IOMMU h/w is introducing new versions
+> very frequently, maintaining and reviewing all these patches again and
+> again is quite a hard job.
+> 
+> If it is acceptable, I can post one more series with the subset of
+> above patches,
+> which doesn't depend on dt-bindings. As all the patches which doesn't depend on
+> DT bindings are already tested,  I hope merging these subset of patches may help
+> in reducing the rework and review effort every time.
+> 
+> Once we finalize the generic DT bindings for the IOMMU devices, the driver
+> can be updated with the proposed DT bindings in mind.
 
-On 06.05.2014 18:26, Shaik Ameer Basha wrote:
-> This patch adds more clocks from FSYS and FSYS2 blocks
-> and uses GATE_IP_* registers for gating IPs.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos5420.c |   41 ++++++++++++++++++++++------------
->   1 file changed, 27 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index f0460b4..6d88ae2 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
+Sounds reasonable to me if the patch subset is self-contained. When
+Arnd is OK with that and no one else has objections I can take the
+dt-independend parts.
 
-[snip]
 
-> @@ -736,12 +749,9 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->   	GATE(CLK_SCLK_USBPHY300, "sclk_usbphy300", "dout_usbphy300",
->   		GATE_TOP_SCLK_FSYS, 8, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_USBD300, "sclk_usbd300", "dout_usbd300",
-> -		GATE_TOP_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
-> +		GATE_TOP_SCLK_FSYS, 9, CLK_IGNORE_UNUSED, 0),
-
-Why CLK_IGNORE_UNUSED? Also CLK_SET_RATE_PARENT seems quite right for 
-this clock.
-
->   	GATE(CLK_SCLK_USBD301, "sclk_usbd301", "dout_usbd301",
-> -		GATE_TOP_SCLK_FSYS, 10, CLK_SET_RATE_PARENT, 0),
-> -
-> -	GATE(CLK_SCLK_USBD301, "sclk_unipro", "dout_unipro",
-> -		SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
-> +		GATE_TOP_SCLK_FSYS, 10, CLK_IGNORE_UNUSED, 0),
-
-Same here.
-
->
->   	/* Display */
->   	GATE(CLK_SCLK_FIMD1, "sclk_fimd1", "dout_fimd1",
-> @@ -760,20 +770,23 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->   		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
->   		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
-> -	/* FSYS */
-> +
-> +	/* FSYS Block */
->   	GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
->   	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
->   	GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
->   	GATE(CLK_UFS, "ufs", "aclk200_fsys2", GATE_BUS_FSYS0, 3, 0, 0),
-> -	GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_BUS_FSYS0, 5, 0, 0),
-> -	GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_BUS_FSYS0, 12, 0, 0),
-> -	GATE(CLK_MMC1, "mmc1", "aclk200_fsys2", GATE_BUS_FSYS0, 13, 0, 0),
-> -	GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_BUS_FSYS0, 14, 0, 0),
-> +	GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_IP_FSYS, 9, 0, 0),
-> +	GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
-> +	GATE(CLK_MMC1, "mmc1", "aclk200_fsys2", GATE_IP_FSYS, 13, 0, 0),
-> +	GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
->   	GATE(CLK_SROMC, "sromc", "aclk200_fsys2",
-> -			GATE_BUS_FSYS0, 19, CLK_IGNORE_UNUSED, 0),
-> -	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_BUS_FSYS0, 20, 0, 0),
-> -	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_BUS_FSYS0, 21, 0, 0),
-> -	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_BUS_FSYS0, 28, 0, 0),
-> +			GATE_IP_FSYS, 17, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-> +	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
-> +	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
-> +	GATE(CLK_SCLK_UNIPRO, "sclk_unipro", "dout_unipro",
-> +			GATE_IP_FSYS, 23, CLK_SET_RATE_PARENT, 0),
-
-Gating an SCLK through an GATE_IP_* register looks a bit unusual. The 
-original entry for this clock had SRC_MASK_FSYS register used. Also 
-there is the GATE_TOP_SCLK_FSYS register, are you sure that there is no 
-bit for this clock there?
-
-Best regards,
-Tomasz
+	Joerg
