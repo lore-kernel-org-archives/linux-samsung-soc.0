@@ -1,169 +1,67 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: [PATCH v5 4/6] arm64: Add 4 levels of page tables definition
- with 4KB pages
-Date: Tue, 6 May 2014 03:48:33 -0700
-Message-ID: <20140506104833.GA3066@lvm>
-References: <000401cf64e5$d6c18990$84449cb0$@samsung.com>
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v4 04/15] clk: exynos5420: fix parent clocks for mscl sysmmu
+Date: Tue, 06 May 2014 21:56:39 +0530
+Message-ID: <1399393610-23394-5-git-send-email-shaik.ameer@samsung.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <000401cf64e5$d6c18990$84449cb0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, shaik.samsung@gmail.com, t.figa@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, alim.akhtar@samsung.com, r.sh.open@gmail.com, mturquette@linaro.org, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 01, 2014 at 11:34:12AM +0900, Jungseok Lee wrote:
-> This patch adds hardware definition and types for 4 levels of
-> translation tables with 4KB pages.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Steve Capper <steve.capper@linaro.org>
-> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
-> ---
->  arch/arm64/include/asm/pgtable-4level-hwdef.h |   50 +++++++++++++++++
->  arch/arm64/include/asm/pgtable-4level-types.h |   71 +++++++++++++++++++++++++
->  2 files changed, 121 insertions(+)
->  create mode 100644 arch/arm64/include/asm/pgtable-4level-hwdef.h
->  create mode 100644 arch/arm64/include/asm/pgtable-4level-types.h
-> 
-> diff --git a/arch/arm64/include/asm/pgtable-4level-hwdef.h b/arch/arm64/include/asm/pgtable-4level-hwdef.h
-> new file mode 100644
-> index 0000000..0ec84e2
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/pgtable-4level-hwdef.h
-> @@ -0,0 +1,50 @@
-> +/*
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +#ifndef __ASM_PGTABLE_4LEVEL_HWDEF_H
-> +#define __ASM_PGTABLE_4LEVEL_HWDEF_H
-> +
-> +#define PTRS_PER_PTE		512
-> +#define PTRS_PER_PMD		512
-> +#define PTRS_PER_PUD		512
-> +#define PTRS_PER_PGD		512
-> +
-> +/*
-> + * PGDIR_SHIFT determines the size a top-level page table entry can map.
-> + */
-> +#define PGDIR_SHIFT		39
-> +#define PGDIR_SIZE		(_AC(1, UL) << PGDIR_SHIFT)
-> +#define PGDIR_MASK		(~(PGDIR_SIZE-1))
-> +
-> +/*
-> + * PUD_SHIFT determines the size the second level page table entry can map.
-> + */
-> +#define PUD_SHIFT		30
-> +#define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
-> +#define PUD_MASK		(~(PUD_SIZE-1))
-> +
-> +/*
-> + * PMD_SHIFT determines the size the third level page table entry can map.
-> + */
-> +#define PMD_SHIFT		21
-> +#define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
-> +#define PMD_MASK		(~(PMD_SIZE-1))
-> +
-> +/*
-> + * section address mask and size definitions.
-> + */
-> +#define SECTION_SHIFT		21
-> +#define SECTION_SIZE		(_AC(1, UL) << SECTION_SHIFT)
-> +#define SECTION_MASK		(~(SECTION_SIZE-1))
-> +
-> +#endif
-> diff --git a/arch/arm64/include/asm/pgtable-4level-types.h b/arch/arm64/include/asm/pgtable-4level-types.h
-> new file mode 100644
-> index 0000000..7ad8dd2
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/pgtable-4level-types.h
-> @@ -0,0 +1,71 @@
-> +/*
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +#ifndef __ASM_PGTABLE_4LEVEL_TYPES_H
-> +#define __ASM_PGTABLE_4LEVEL_TYPES_H
-> +
-> +#include <asm/types.h>
-> +
-> +typedef u64 pteval_t;
-> +typedef u64 pmdval_t;
-> +typedef u64 pudval_t;
-> +typedef u64 pgdval_t;
-> +
-> +#undef STRICT_MM_TYPECHECKS
-> +
-> +#ifdef STRICT_MM_TYPECHECKS
-> +
-> +/*
-> + * These are used to make use of C type-checking..
-> + */
-> +typedef struct { pteval_t pte; } pte_t;
-> +typedef struct { pmdval_t pmd; } pmd_t;
-> +typedef struct { pudval_t pud; } pud_t;
-> +typedef struct { pgdval_t pgd; } pgd_t;
-> +typedef struct { pteval_t pgprot; } pgprot_t;
-> +
-> +#define pte_val(x)	((x).pte)
-> +#define pmd_val(x)	((x).pmd)
-> +#define pud_val(x)	((x).pud)
-> +#define pgd_val(x)	((x).pgd)
-> +#define pgprot_val(x)	((x).pgprot)
-> +
-> +#define __pte(x)	((pte_t) { (x) } )
-> +#define __pmd(x)	((pmd_t) { (x) } )
-> +#define __pud(x)	((pud_t) { (x) } )
-> +#define __pgd(x)	((pgd_t) { (x) } )
-> +#define __pgprot(x)	((pgprot_t) { (x) } )
-> +
-> +#else	/* !STRICT_MM_TYPECHECKS */
-> +
-> +typedef pteval_t pte_t;
-> +typedef pmdval_t pmd_t;
-> +typedef pudval_t pud_t;
-> +typedef pgdval_t pgd_t;
-> +typedef pteval_t pgprot_t;
-> +
-> +#define pte_val(x)	(x)
-> +#define pmd_val(x)	(x)
-> +#define pud_val(x)	(x)
-> +#define pgd_val(x)	(x)
-> +#define pgprot_val(x)	(x)
-> +
-> +#define __pte(x)	(x)
-> +#define __pmd(x)	(x)
-> +#define __pud(x)	(x)
-> +#define __pgd(x)	(x)
-> +#define __pgprot(x)	(x)
-> +
-> +#endif /* STRICT_MM_TYPECHECKS */
-> +
-> +#endif /* __ASM_PGTABLE_4LEVEL_TYPES_H */
-> -- 
-> 1.7.10.4
-> 
-> 
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+This patch fixes the parent clocks for mscl sysmmu.
+
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 328be6a..320f72d 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -582,6 +582,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+ 			DIV2_RATIO0, 4, 2),
+ 	DIV(0, "dout_gscl_blk_333", "aclk333_432_gscl", DIV2_RATIO0, 6, 2),
+ 
++	/* MSCL Block */
++	DIV(0, "dout_mscl_blk", "aclk400_mscl", DIV2_RATIO0, 28, 2),
++
+ 	/* ISP Block */
+ 	DIV(0, "dout_isp_sensor0", "mout_isp_sensor", SCLK_DIV_ISP0, 8, 8),
+ 	DIV(0, "dout_isp_sensor1", "mout_isp_sensor", SCLK_DIV_ISP0, 16, 8),
+@@ -812,12 +815,12 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+ 	GATE(CLK_MSCL0, "mscl0", "aclk400_mscl", GATE_IP_MSCL, 0, 0, 0),
+ 	GATE(CLK_MSCL1, "mscl1", "aclk400_mscl", GATE_IP_MSCL, 1, 0, 0),
+ 	GATE(CLK_MSCL2, "mscl2", "aclk400_mscl", GATE_IP_MSCL, 2, 0, 0),
+-	GATE(CLK_SMMU_MSCL0, "smmu_mscl0", "aclk400_mscl",
+-			GATE_IP_MSCL, 8, 0, 0),
+-	GATE(CLK_SMMU_MSCL1, "smmu_mscl1", "aclk400_mscl",
+-			GATE_IP_MSCL, 9, 0, 0),
+-	GATE(CLK_SMMU_MSCL2, "smmu_mscl2", "aclk400_mscl",
+-			GATE_IP_MSCL, 10, 0, 0),
++	GATE(CLK_SMMU_MSCL0, "smmu_mscl0", "dout_mscl_blk",
++			GATE_IP_MSCL, 8, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SMMU_MSCL1, "smmu_mscl1", "dout_mscl_blk",
++			GATE_IP_MSCL, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SMMU_MSCL2, "smmu_mscl2", "dout_mscl_blk",
++			GATE_IP_MSCL, 10, CLK_SET_RATE_PARENT, 0),
+ 
+ 	GATE(CLK_FIMD1, "fimd1", "aclk300_disp1", GATE_IP_DISP1, 0, 0, 0),
+ 	GATE(CLK_DSIM1, "dsim1", "aclk200_disp1", GATE_IP_DISP1, 3, 0, 0),
+-- 
+1.7.9.5
