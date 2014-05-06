@@ -1,114 +1,96 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v4 09/15] clk: exynos5420: clk: exynos5420: update clocks for
- WCORE block
-Date: Tue, 06 May 2014 21:56:44 +0530
-Message-ID: <1399393610-23394-10-git-send-email-shaik.ameer@samsung.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25158 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751520AbaEFQ2S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 12:28:18 -0400
-In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v2 0/4] ARM: S3C24XX: cleanup debug macro/earlyprintk
+Date: Tue, 06 May 2014 10:44:01 +0200
+Message-ID: <2586347.kOddnpvo1Z@diego>
+References: <1856986.kkQFKFg1L2@phil>
+ <0cc401cf68e1$eb87f580$c297e080$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <0cc401cf68e1$eb87f580$c297e080$@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, arm@kernel.org
+Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-This patch adds missing clocks from WCORE block.
+Am Dienstag, 6. Mai 2014, 13:16:14 schrieb Kukjin Kim:
+> Heiko St=FCbner wrote:
+> > This series tries to simplify the s3c24xx debug macro, removing
+> > dependencies
+> > on mach/ includes, static mappings and finally moving it into
+> > include/debug.
+> =
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> I think, it's good way :)
+> =
+
+> > The one slightly invasive change is the need for the developer to select
+> > the uart type by himself, which gets rid of the debug macro trying to
+> > determine the uart type itself.
+> > =
+
+> > But as usage of the debug-uart is not the common case - especially in a
+> > multiplatform scenario - I didn't worry to much.
+> =
+
+> Yeah, I also don't want s3c24xx to support multiplatform in near future.
+> =
+
+> > Based on 3.15-rc1 and tested on a S3C2442 Openmoko Freerunner (GTA02)
+> > =
+
+> > changes since v1:
+> > - do not introduce a secondary choice option, instead implement the
+> > =
+
+> >   s3c2410 debug uarts as separate options
+> > =
+
+> > Heiko Stuebner (4):
+> >   ARM: compressed/head.S: remove s3c24xx special case
+> >   ARM: S3C24XX: trim down debug uart handling
+> >   ARM: S3C24XX: use generic DEBUG_UART_PHY/_VIRT in debug macro
+> >   ARM: S3C24XX: move debug-macro.S into the common space
+> >  =
+
+> >  arch/arm/Kconfig.debug                           |  54 +++++++++++-
+> >  arch/arm/boot/compressed/head.S                  |   5 --
+> >  arch/arm/include/debug/s3c24xx.S                 |  46 +++++++++++
+> >  arch/arm/mach-s3c24xx/Kconfig                    |  28 -------
+> >  arch/arm/mach-s3c24xx/include/mach/debug-macro.S | 101 ---------------=
 ---
- drivers/clk/samsung/clk-exynos5420.c |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> > =
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index af13e6c..f0460b4 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -89,6 +89,7 @@
- #define GATE_BUS_PERIC1		0x10754
- #define GATE_BUS_PERIS0		0x10760
- #define GATE_BUS_PERIS1		0x10764
-+#define GATE_BUS_NOC		0x10770
- #define GATE_TOP_SCLK_ISP	0x10870
- #define GATE_IP_GSCL0		0x10910
- #define GATE_IP_GSCL1		0x10920
-@@ -180,6 +181,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
- 	GATE_BUS_PERIC1,
- 	GATE_BUS_PERIS0,
- 	GATE_BUS_PERIS1,
-+	GATE_BUS_NOC,
- 	GATE_TOP_SCLK_ISP,
- 	GATE_IP_GSCL0,
- 	GATE_IP_GSCL1,
-@@ -271,6 +273,13 @@ PNAME(mout_user_aclk200_fsys_p)	= {"fin_pll", "mout_sw_aclk200_fsys"};
- 
- PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2", "mout_sclk_spll"};
- PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
-+PNAME(mout_sw_aclk100_noc_p) = {"dout_aclk100_noc", "mout_sclk_spll"};
-+PNAME(mout_user_aclk100_noc_p) = {"fin_pll", "mout_sw_aclk100_noc"};
-+
-+PNAME(mout_sw_aclk400_wcore_p) = {"dout_aclk400_wcore", "mout_sclk_spll"};
-+PNAME(mout_aclk400_wcore_bpll_p) = {"mout_aclk400_wcore", "sclk_bpll"};
-+PNAME(mout_user_aclk400_wcore_p) = {"fin_pll", "mout_sw_aclk400_wcore"};
-+
- PNAME(mout_sw_aclk400_isp_p) = {"dout_aclk400_isp", "mout_sclk_spll"};
- PNAME(mout_user_aclk400_isp_p) = {"fin_pll", "mout_sw_aclk400_isp"};
- 
-@@ -370,6 +379,8 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 			SRC_TOP0, 4, 2, "aclk400_mscl"),
- 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
- 	MUX(0, "mout_aclk200_fsys2", mout_group1_p, SRC_TOP0, 12, 2),
-+	MUX(0, "mout_aclk400_wcore", mout_group1_p, SRC_TOP0, 16, 2),
-+	MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
- 	MUX(0, "mout_aclk200_fsys", mout_group1_p, SRC_TOP0, 28, 2),
- 
- 	MUX(0, "mout_aclk333_432_gscl", mout_group4_p, SRC_TOP1, 0, 2),
-@@ -397,6 +408,10 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 			SRC_TOP3, 8, 1),
- 	MUX(0, "mout_user_aclk200_fsys2", mout_user_aclk200_fsys2_p,
- 			SRC_TOP3, 12, 1),
-+	MUX(0, "mout_user_aclk400_wcore", mout_user_aclk400_wcore_p,
-+			SRC_TOP3, 16, 1),
-+	MUX(0, "mout_user_aclk100_noc", mout_user_aclk100_noc_p,
-+			SRC_TOP3, 20, 1),
- 	MUX(0, "mout_user_aclk200_fsys", mout_user_aclk200_fsys_p,
- 			SRC_TOP3, 28, 1),
- 
-@@ -447,6 +462,10 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 	MUX(0, "mout_sw_aclk200", mout_sw_aclk200_p, SRC_TOP10, 8, 1),
- 	MUX(0, "mout_sw_aclk200_fsys2", mout_sw_aclk200_fsys2_p,
- 			SRC_TOP10, 12, 1),
-+	MUX(0, "mout_sw_aclk400_wcore", mout_sw_aclk400_wcore_p,
-+			SRC_TOP10, 16, 1),
-+	MUX(0, "mout_sw_aclk100_noc", mout_sw_aclk100_noc_p,
-+			SRC_TOP10, 20, 1),
- 	MUX(0, "mout_sw_aclk200_fsys", mout_sw_aclk200_fsys_p,
- 			SRC_TOP10, 28, 1),
- 
-@@ -483,6 +502,9 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_HDMI, "mout_hdmi", mout_hdmi_p, SRC_DISP10, 28, 1),
- 	MUX_F(0, "mout_fimd1_opt", mout_group2_p,
- 			SRC_DISP10, 8, 3, CLK_SET_RATE_PARENT, 0),
-+
-+	MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
-+			TOP_SPARE2, 4, 1),
- 	MUX_F(0, "mout_fimd1_final", mout_fimd1_final_p,
- 			TOP_SPARE2, 8, 1, CLK_SET_RATE_PARENT, 0),
- 
-@@ -530,6 +552,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
- 	DIV(0, "dout_aclk400_mscl", "mout_aclk400_mscl", DIV_TOP0, 4, 3),
- 	DIV(0, "dout_aclk200", "mout_aclk200", DIV_TOP0, 8, 3),
- 	DIV(0, "dout_aclk200_fsys2", "mout_aclk200_fsys2", DIV_TOP0, 12, 3),
-+	DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
-+			DIV_TOP0, 16, 3),
-+	DIV(0, "dout_aclk100_noc", "mout_aclk100_noc", DIV_TOP0, 20, 3),
- 	DIV(0, "dout_pclk200_fsys", "mout_pclk200_fsys", DIV_TOP0, 24, 3),
- 	DIV(0, "dout_aclk200_fsys", "mout_aclk200_fsys", DIV_TOP0, 28, 3),
- 
--- 
-1.7.9.5
+> > -----
+> > =
+
+> >  5 files changed, 98 insertions(+), 136 deletions(-)
+> >  create mode 100644 arch/arm/include/debug/s3c24xx.S
+> >  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/debug-macro.S
+> > =
+
+> > --
+> > 1.9.0
+> =
+
+> Basically I'm OK on this series but need to get review from Russell?
+
+Russell pointed out a bad decision on my part in v1, so I guess he is aware=
+ of =
+
+this series :-) . I've also added arm@kernel.org now, so they can complain,=
+ if =
+
+anything is done wrong [should've probably done that from the beginning].
+
+
+Heiko
