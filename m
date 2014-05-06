@@ -1,140 +1,99 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
- look-up
-Date: Tue, 06 May 2014 19:59:10 +0200
-Message-ID: <536922EE.6080000@gmail.com>
-References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>	<1398271618-28932-2-git-send-email-t.figa@samsung.com>	<535E9163.3070305@wwwdotorg.org>
- <CAPDyKFoGOcScsaGWkw9bVh=gpGTApRK48AczaMiSmLah+YOSXQ@mail.gmail.com>
- <53690D21.8080807@wwwdotorg.org> <536918A9.6050502@gmail.com>
- <53691AE4.10206@wwwdotorg.org>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 13/15] clk: exynos5420: update clocks for MAU Block
+Date: Tue, 06 May 2014 19:47:04 +0200
+Message-ID: <53692018.9020707@gmail.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com> <1399393610-23394-14-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <53691AE4.10206@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vg
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399393610-23394-14-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06.05.2014 19:24, Stephen Warren wrote:
-> On 05/06/2014 11:15 AM, Tomasz Figa wrote:
->>
->>
->> On 06.05.2014 18:26, Stephen Warren wrote:
->>> On 05/06/2014 02:22 AM, Ulf Hansson wrote:
->>>> On 28 April 2014 19:35, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>>>> On 04/23/2014 10:46 AM, Tomasz Figa wrote:
->>>>>> This patch introduces generic code to perform power domain look-up
->>>>>> using
->>>>>> device tree and automatically bind devices to their power domains.
->>>>>> Generic device tree binding is introduced to specify power domains of
->>>>>> devices in their device tree nodes.
->>>>>>
->>>>>> Backwards compatibility with legacy Samsung-specific power domain
->>>>>> bindings is provided, but for now the new code is not compiled when
->>>>>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code.
->>>>>> This
->>>>>> will change as soon as Exynos power domain code gets converted to use
->>>>>> the generic framework in further patch.
->>>>>
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/power/power_domain.txt
->>>>>> b/Documentation/devicetree/bindings/power/power_domain.txt
->>>>>
->>>>>> +==Power domain consumers==
->>>>>> +
->>>>>> +Required properties:
->>>>>> + - power-domain : A phandle and power domain specifier as defined
->>>>>> by bindings
->>>>>> +                  of power controller specified by phandle.
->>>>>
->>>>> It seems quite likely that a single logical device could have
->>>>> components
->>>>> in multiple power domains. Consider an HDMI controller with different
->>>>> power domains for the HDMI core, CEC communication, DDC/I2C
->>>>> communication, and the I/O pads, with no clear separation between those
->>>>> two components of the module (no separate register spaces, but the
->>>>> bits/registers are interleaved all together).
->>>>>
->>>>> As such, I think that rather than a "power-domain" property, we need a
->>>>> pair of "power-domains", and "power-domain-names" properties, and
->>>>> preferably with mandatory usage of name-based lookups, rather than
->>>>> allowing a random mix of name-based and index-based lookups like we
->>>>> have
->>>>> with some existing resource bindings.
->>>>
->>>> Each struct device have only one dev_pm_domain pointer, thus a device
->>>> are not able to reside in more than one power domain.
->>>>
->>>> Therefore I doubt this will be very useful, unless I missed your
->>>> point. :-)
->>>
->>> A struct device is a Linux-internal concept. DT is supposed to represent
->>> the HW in an OS-agnostic fashion, not according to the limitations of
->>> any one OS's driver model.
->>>
->>> It's certainly true that a single logical HW module (represented by a
->>> single DT node) can have parts in multiple power domains.
->>
->> AFAIK a single DT node is supposed to represent a single _physical_ HW
->> module. It all depends on description granularity, though. A physical
->> chip (or IP block) might be further divided into multiple blocks, so I
->> can imagine some of them being in different power domains than another.
->
-> Physical-vs-logical probably means different things to different people.
-> What I mean is that DT should represent the HW modules at the
-> granularity that the HW documentation or designers describe the HW.
->
->> Still, based on the fact that in Linux we never needed to specify
->> multiple power domains for a device, is this really a real use case?
->
-> a) Linux has absolutely nothing to do with this. Again, DT is purely a
-> HW description that should not be influenced by OS limitations.
->
-> b) Linux does have to deal with this. HW exists which uses multiple
-> power domains per DT device node.
->
-> The fact that Linux forces the driver internals to create a separate
-> struct device for each part of the actual device that's in a different
-> power domain should not force us into representing the HW incorrectly in DT.
->
->> Anyway, the binding is defined in a way that lets you simply turn the
->> single phandle+specifier into a list of them, if such need ever shows up.
->
-> In my opinion, for all new resource bindings, we need to *exclusively*
-> support named-based lookup. That's the only way to ensure a simple
-> forward-compatible path to extensible DT bindings in the face of
-> multiple instances of a certain type of resource, where some are
-> optional. If resource lookups start out by index, and then later
-> (missing information when the DT binding was written, extending the DT
-> binding to a new HW revision/model) we find we need to add more
-> instances of that resource, some of which are optional, then anything
-> but purely name-based lookup makes the situation very complex.
->
-> We should solve this by simply using named-based lookup from the start
-> in all cases. That's my point here. Hence, we need to addm and enforce
-> usage of, a power-domain-names property.
+Shaik,
 
-Majority of use cases will need just a single power domain. Until a real 
-user of multiple power domains shows up along with a developer willing 
-to extend Linux PM code to account for this, I'd keep this as is.
+On 06.05.2014 18:26, Shaik Ameer Basha wrote:
+> This patch adds the missing MAU block specific clocks.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   drivers/clk/samsung/clk-exynos5420.c   |   14 +++++++++++++-
+>   include/dt-bindings/clock/exynos5420.h |    2 ++
+>   2 files changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index ba7273a..e0e749d 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -62,7 +62,9 @@
+>   #define SRC_TOP11		0x10284
+>   #define SRC_TOP12		0x10288
+>   #define SRC_MASK_TOP2		0x10308
+> +#define SRC_MASK_TOP7		0x1031c
+>   #define SRC_MASK_DISP10		0x1032c
+> +#define SRC_MASK_MAU		0x10334
+>   #define SRC_MASK_FSYS		0x10340
+>   #define SRC_MASK_PERIC0		0x10350
+>   #define SRC_MASK_PERIC1		0x10354
+> @@ -155,6 +157,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+>   	SRC_TOP11,
+>   	SRC_TOP12,
+>   	SRC_MASK_TOP2,
+> +	SRC_MASK_TOP7,
+>   	SRC_MASK_DISP10,
+>   	SRC_MASK_FSYS,
+>   	SRC_MASK_PERIC0,
+> @@ -351,6 +354,8 @@ PNAME(mout_hdmi_p) = {"dout_hdmi_pixel", "sclk_hdmiphy"};
+>   PNAME(mout_maudio0_p) = {"fin_pll", "maudio_clk", "mout_sclk_dpll",
+>   			 "mout_sclk_mpll", "mout_sclk_spll", "mout_sclk_ipll",
+>   			 "mout_sclk_epll", "mout_sclk_rpll"};
+> +PNAME(mout_mau_epll_clk_p) = {"mout_sclk_epll", "mout_sclk_dpll",
+> +				"mout_sclk_mpll", "mout_sclk_spll"};
+>
+>   /* fixed rate clocks generated outside the soc */
+>   static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[] __initdata = {
+> @@ -373,6 +378,9 @@ static struct samsung_fixed_factor_clock exynos5420_fixed_factor_clks[] __initda
+>   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>   	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
+>   	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+> +	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p,
+> +			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
 
-The one thing to make the binding more future-proof would be probably 
-changing name of the property to "power-domains" for consistency with 
-other bindings using *-names.
+Again, the CLK_SET_RATE_PARENT doesn't seem to be correct here.
 
-For now, the Linux power domain implementation would simply use the 
-first available entry in "power-domains" property, but it could be 
-extended in future with code to perform name-based look-up.
+> +
+>   	MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+>   	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+>   	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+> @@ -520,7 +528,8 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>   			TOP_SPARE2, 8, 1, CLK_SET_RATE_PARENT, 0),
+>
+>   	/* MAU Block */
+> -	MUX(0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3),
+> +	MUX_F(CLK_MOUT_MAUDIO0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3,
+> +						CLK_SET_RATE_PARENT, 0),
+
+Ditto.
+
+>
+>   	/* FSYS Block */
+>   	MUX(0, "mout_usbd301", mout_group2_p, SRC_FSYS, 4, 3),
+> @@ -713,6 +722,9 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>   	GATE(CLK_ACLK300_DISP1, "aclk300_disp1", "mout_user_aclk300_disp1",
+>   			SRC_MASK_TOP2, 24, CLK_IGNORE_UNUSED, 0),
+>
+> +	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+> +			SRC_MASK_TOP7, 20, CLK_IGNORE_UNUSED, 0),
+
+What is the reason for CLK_IGNORE_UNUSED flag here?
 
 Best regards,
 Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
