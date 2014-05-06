@@ -1,47 +1,60 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Tue, 6 May 2014 19:59:05 +0200
-Message-ID: <20140506175904.GB12376@8bytes.org>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
- <26065037.GxQQuIURPg@wuerfel>
- <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 14/15] clk: exynos5420: add misc clocks
+Date: Tue, 06 May 2014 19:49:25 +0200
+Message-ID: <536920A5.1090502@gmail.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com> <1399393610-23394-15-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([85.214.48.195]:33001 "EHLO mail.8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751694AbaEFR7M (ORCPT
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:62326 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751111AbaEFRth (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 13:59:12 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by mail.8bytes.org (Postfix) with SMTP id DD5F712B291
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 May 2014 19:59:10 +0200 (CEST)
-Content-Disposition: inline
-In-Reply-To: <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com>
+	Tue, 6 May 2014 13:49:37 -0400
+In-Reply-To: <1399393610-23394-15-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Grant Grundler <grundler@chromium.org>, "supash.ramaswamy" <supash.ramaswamy@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Varun Sethi <Varun.Sethi@freescale.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, Cho KyongHo <pullip.cho@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Wed, Apr 30, 2014 at 04:27:10PM +0530, Shaik Ameer Basha wrote:
-> This series is going on for quite a long time and most of the patches here
-> doesn't depend on dt bindings. As Exynos IOMMU h/w is introducing new versions
-> very frequently, maintaining and reviewing all these patches again and
-> again is quite a hard job.
-> 
-> If it is acceptable, I can post one more series with the subset of
-> above patches,
-> which doesn't depend on dt-bindings. As all the patches which doesn't depend on
-> DT bindings are already tested,  I hope merging these subset of patches may help
-> in reducing the rework and review effort every time.
-> 
-> Once we finalize the generic DT bindings for the IOMMU devices, the driver
-> can be updated with the proposed DT bindings in mind.
+Shaik,
 
-Sounds reasonable to me if the patch subset is self-contained. When
-Arnd is OK with that and no one else has objections I can take the
-dt-independend parts.
+On 06.05.2014 18:26, Shaik Ameer Basha wrote:
+> This patch adds some missing miscellaneous clocks specific
+> to exynos5420.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> ---
+>   drivers/clk/samsung/clk-exynos5420.c   |   14 +++++++++++---
+>   include/dt-bindings/clock/exynos5420.h |    2 ++
+>   2 files changed, 13 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index e0e749d..e69e820 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -273,7 +273,8 @@ PNAME(mout_group5_p) = {"mout_sclk_vpll", "mout_sclk_dpll"};
+>
+>   PNAME(mout_fimd1_final_p) = {"mout_fimd1", "mout_fimd1_opt"};
+>   PNAME(mout_sw_aclk66_p)	= {"dout_aclk66", "mout_sclk_spll"};
+> -PNAME(mout_user_aclk66_peric_p)	= { "fin_pll", "mout_sw_aclk66" };
+> +PNAME(mout_user_aclk66_peric_p)	= { "fin_pll", "mout_sw_aclk66"};
+> +PNAME(mout_user_pclk66_gpio_p) = {"mout_sw_aclk66", "ffactor_sw_aclk66"};
+>
+>   PNAME(mout_sw_aclk200_fsys_p) = {"dout_aclk200_fsys", "mout_sclk_spll"};
+>   PNAME(mout_sw_pclk200_fsys_p) = {"dout_pclk200_fsys", "mout_sclk_spll"};
+> @@ -372,10 +373,13 @@ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_clks[] __initdata =
+>   };
+>
+>   static struct samsung_fixed_factor_clock exynos5420_fixed_factor_clks[] __initdata = {
+> -	FFACTOR(0, "sclk_hsic_12m", "fin_pll", 1, 2, 0),
+> +	FFACTOR(0, "ffactor_hsic_12m", "fin_pll", 1, 2, 0),
+> +	FFACTOR(0, "ffactor_sw_aclk66", "mout_sw_aclk66", 1, 2, 0),
 
+Is the "ffactor_" prefix also present in the datasheet? If not, it 
+should be removed from clock names as well.
 
-	Joerg
+Best regards,
+Tomasz
