@@ -1,121 +1,126 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 1/4] usb: ohci-exynos: Use struct device instead of platform_device
-Date: Mon,  5 May 2014 10:33:42 +0530
-Message-ID: <1399266222-31802-1-git-send-email-gautam.vivek@samsung.com>
-References: <1399034855-9686-2-git-send-email-gautam.vivek@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399034855-9686-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+Date: Tue, 6 May 2014 08:54:48 -0700
+Message-ID: <CAOw6vbJH7bh7OcN8wN6YTbXrYutYqMPyf3SL63fx6ay9dL8eVQ@mail.gmail.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1399319548-16567-4-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1399319548-16567-4-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change to use struct device instead of struct platform_device
-for some static functions.
+On Mon, May 5, 2014 at 12:52 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> modify the driver to call the bridge->funcs of the next bridge
+> in the chain.
+> We assume that the bridge sitting next to ptn3460 is a bridge-panel.
+>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  drivers/gpu/drm/bridge/ptn3460.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+> index b171901..969869a 100644
+> --- a/drivers/gpu/drm/bridge/ptn3460.c
+> +++ b/drivers/gpu/drm/bridge/ptn3460.c
+> @@ -126,6 +126,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+>                 gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+>         }
+>
+> +       if (bridge->next_bridge)
+> +               bridge->next_bridge->funcs->pre_enable(bridge->next_bridge);
+>         /*
+>          * There's a bug in the PTN chip where it falsely asserts hotplug before
+>          * it is fully functional. We're forced to wait for the maximum start up
+> @@ -142,6 +144,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+>
+>  static void ptn3460_enable(struct drm_bridge *bridge)
+>  {
+> +       if (bridge->next_bridge)
+> +               bridge->next_bridge->funcs->enable(bridge->next_bridge);
+>  }
+>
+>  static void ptn3460_disable(struct drm_bridge *bridge)
+> @@ -153,6 +157,11 @@ static void ptn3460_disable(struct drm_bridge *bridge)
+>
+>         ptn_bridge->enabled = false;
+>
+> +       if (bridge->next_bridge) {
+> +               bridge->next_bridge->funcs->disable(bridge->next_bridge);
+> +               bridge->next_bridge->funcs->post_disable(bridge->next_bridge);
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
+Shouldn't post_disable be called from ptn_3460_post_disable, instead of here?
 
-Changes since v1:
- - none
+> +       }
+> +
+>         if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+>                 gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+>
+> @@ -197,7 +206,10 @@ int ptn3460_get_modes(struct drm_connector *connector)
+>                 return drm_add_edid_modes(connector, ptn_bridge->edid);
+>
+>         power_off = !ptn_bridge->enabled;
+> -       ptn3460_pre_enable(ptn_bridge->bridge);
+> +       if (power_off) {
+> +               ptn3460_pre_enable(ptn_bridge->bridge);
+> +               ptn3460_enable(ptn_bridge->bridge);
 
- drivers/usb/host/ohci-exynos.c |   20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+In this case, I don't think we need to power on the entire bridge
+chain since we're just reading the edid from the bridge chip itself.
+So I think I'd prefer to break out the power_on/power_off code from
+the bridge chain such that we can just power up the bridge chip, check
+the edid and then turn it off.
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 9cf80cb..05f00e3 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -39,18 +39,18 @@ struct exynos_ohci_hcd {
- 	struct usb_otg *otg;
- };
- 
--static void exynos_ohci_phy_enable(struct platform_device *pdev)
-+static void exynos_ohci_phy_enable(struct device *dev)
- {
--	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-+	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 
- 	if (exynos_ohci->phy)
- 		usb_phy_init(exynos_ohci->phy);
- }
- 
--static void exynos_ohci_phy_disable(struct platform_device *pdev)
-+static void exynos_ohci_phy_disable(struct device *dev)
- {
--	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-+	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 
- 	if (exynos_ohci->phy)
-@@ -139,7 +139,7 @@ skip_phy:
- 
- 	platform_set_drvdata(pdev, hcd);
- 
--	exynos_ohci_phy_enable(pdev);
-+	exynos_ohci_phy_enable(&pdev->dev);
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -150,7 +150,7 @@ skip_phy:
- 	return 0;
- 
- fail_add_hcd:
--	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phy_disable(&pdev->dev);
- fail_io:
- 	clk_disable_unprepare(exynos_ohci->clk);
- fail_clk:
-@@ -168,7 +168,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phy_disable(&pdev->dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -190,7 +190,6 @@ static int exynos_ohci_suspend(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
--	struct platform_device *pdev = to_platform_device(dev);
- 	bool do_wakeup = device_may_wakeup(dev);
- 	int rc = ohci_suspend(hcd, do_wakeup);
- 
-@@ -200,7 +199,7 @@ static int exynos_ohci_suspend(struct device *dev)
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_disable(pdev);
-+	exynos_ohci_phy_disable(dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -211,14 +210,13 @@ static int exynos_ohci_resume(struct device *dev)
- {
- 	struct usb_hcd *hcd			= dev_get_drvdata(dev);
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
--	struct platform_device *pdev		= to_platform_device(dev);
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
- 
--	exynos_ohci_phy_enable(pdev);
-+	exynos_ohci_phy_enable(dev);
- 
- 	ohci_resume(hcd, false);
- 
--- 
-1.7.10.4
+In other bridges, where we're actually reading the edid from a
+downstream source, this decision might be different.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+> +       }
+>
+>         edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
+>         if (!edid) {
+> @@ -219,8 +231,10 @@ int ptn3460_get_modes(struct drm_connector *connector)
+>         num_modes = drm_add_edid_modes(connector, ptn_bridge->edid);
+>
+>  out:
+> -       if (power_off)
+> +       if (power_off) {
+>                 ptn3460_disable(ptn_bridge->bridge);
+> +               ptn3460_post_disable(ptn_bridge->bridge);
+> +       }
+>
+>         return num_modes;
+>  }
+> @@ -318,14 +332,13 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+>                 goto err;
+>         }
+>
+> -       ret = drm_bridge_init(dev, bridge, &ptn3460_bridge_funcs);
+> +       ret = drm_bridge_init(dev, bridge, encoder, &ptn3460_bridge_funcs);
+>         if (ret) {
+>                 DRM_ERROR("Failed to initialize bridge with drm\n");
+>                 goto err;
+>         }
+>
+>         bridge->driver_private = ptn_bridge;
+> -       encoder->bridge = bridge;
+>
+>         ret = drm_connector_init(dev, &ptn_bridge->connector,
+>                         &ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
+> --
+> 1.8.1.2
+>
