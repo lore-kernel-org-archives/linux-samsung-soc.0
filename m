@@ -1,67 +1,99 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 2/7] ARM: EXYNOS: add support for firmware-assisted c15resume
-Date: Mon, 05 May 2014 12:57:14 +0200
-Message-ID: <1399287439-31376-3-git-send-email-b.zolnierkie@samsung.com>
-References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] arm: dts: exynos4: add missing pinctrls for I2C controllers
+Date: Tue, 06 May 2014 11:35:38 +0900
+Message-ID: <099a01cf68d3$de1044b0$9a30ce10$@samsung.com>
+References: <534E7A3F.7050406@samsung.com> <534E7F1A.8080502@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47447 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933630AbaEFCfo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 May 2014 22:35:44 -0400
+In-reply-to: <534E7F1A.8080502@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, 'Tomasz Stanislawski' <t.stanislaws@samsung.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, =?UTF-8?B?J+uwleqyveuvvCc=?= <kyungmin.park@samsung.com>
 
-From: Tomasz Figa <t.figa@samsung.com>
+Tomasz Figa wrote:
+> 
+> Hi Tomasz,
+> 
+> On 16.04.2014 14:40, Tomasz Stanislawski wrote:
+> > This patch adds missing pinctrls for I2C controllers 2-7.
+> >
+> > Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> > ---
+> >   arch/arm/boot/dts/exynos4.dtsi |   12 ++++++++++++
+> >   1 file changed, 12 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> b/arch/arm/boot/dts/exynos4.dtsi
+> > index 0401f4d..288aa81 100644
+> > --- a/arch/arm/boot/dts/exynos4.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4.dtsi
+> > @@ -357,6 +357,8 @@
+> >   		interrupts = <0 60 0>;
+> >   		clocks = <&clock CLK_I2C2>;
+> >   		clock-names = "i2c";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&i2c2_bus>;
+> >   		status = "disabled";
+> >   	};
+> >
+> > @@ -368,6 +370,8 @@
+> >   		interrupts = <0 61 0>;
+> >   		clocks = <&clock CLK_I2C3>;
+> >   		clock-names = "i2c";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&i2c3_bus>;
+> >   		status = "disabled";
+> >   	};
+> >
+> > @@ -379,6 +383,8 @@
+> >   		interrupts = <0 62 0>;
+> >   		clocks = <&clock CLK_I2C4>;
+> >   		clock-names = "i2c";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&i2c4_bus>;
+> >   		status = "disabled";
+> >   	};
+> >
+> > @@ -390,6 +396,8 @@
+> >   		interrupts = <0 63 0>;
+> >   		clocks = <&clock CLK_I2C5>;
+> >   		clock-names = "i2c";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&i2c5_bus>;
+> >   		status = "disabled";
+> >   	};
+> >
+> > @@ -401,6 +409,8 @@
+> >   		interrupts = <0 64 0>;
+> >   		clocks = <&clock CLK_I2C6>;
+> >   		clock-names = "i2c";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&i2c6_bus>;
+> >   		status = "disabled";
+> >   	};
+> >
+> > @@ -412,6 +422,8 @@
+> >   		interrupts = <0 65 0>;
+> >   		clocks = <&clock CLK_I2C7>;
+> >   		clock-names = "i2c";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&i2c7_bus>;
+> >   		status = "disabled";
+> >   	};
+> >
+> >
+> 
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> 
+Applied, thanks.
 
-This change is a preparation for adding secure firmware support to
-EXYNOS cpuidle driver.
-
-This patch shouldn't cause any functionality changes.
-
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-[bzolnier: splitted out from bigger patch]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/include/asm/firmware.h | 4 ++++
- arch/arm/mach-exynos/firmware.c | 8 ++++++++
- 2 files changed, 12 insertions(+)
-
-diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
-index c72ec47..70883c7 100644
---- a/arch/arm/include/asm/firmware.h
-+++ b/arch/arm/include/asm/firmware.h
-@@ -41,6 +41,10 @@ struct firmware_ops {
- 	 * Initializes L2 cache
- 	 */
- 	int (*l2x0_init)(void);
-+	/*
-+	 * Restores coprocessor 15 registers
-+	 */
-+	int (*c15resume)(u32 *regs);
- };
- 
- /* Global pointer for current firmware_ops structure, can't be NULL. */
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index 932129e..581c7bf 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -40,10 +40,18 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
- 	return 0;
- }
- 
-+static int exynos_c15resume(u32 *regs)
-+{
-+	exynos_smc(SMC_CMD_C15RESUME, regs[0], regs[1], 0);
-+
-+	return 0;
-+}
-+
- static const struct firmware_ops exynos_firmware_ops = {
- 	.do_idle		= exynos_do_idle,
- 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
- 	.cpu_boot		= exynos_cpu_boot,
-+	.c15resume	= exynos_c15resume,
- };
- 
- void __init exynos_firmware_init(void)
--- 
-1.8.2.3
+- Kukjin
