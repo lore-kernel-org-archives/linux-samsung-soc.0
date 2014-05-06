@@ -1,72 +1,78 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
- look-up
-Date: Tue, 6 May 2014 19:52:47 +0200
-Message-ID: <CAPDyKFqtW1pV3xv1E8fhtPS99eVezGJqKq_JM4Mrq2ewJyTpog@mail.gmail.com>
-References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>
- <1398271618-28932-2-git-send-email-t.figa@samsung.com>
- <CAPDyKFpvtRpgg-Ohv2Yi--_5mnp3ghpj7_4xyM7SjJvYCFzS6Q@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 11/15] clk: exynos5420: correct sysmmu-mfc parent clocks
+Date: Tue, 06 May 2014 19:44:57 +0200
+Message-ID: <53691F99.5060406@gmail.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com> <1399393610-23394-12-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAPDyKFpvtRpgg-Ohv2Yi--_5mnp3ghpj7_4xyM7SjJvYCFzS6Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J. Wyso
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:44454 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750829AbaEFRpJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 May 2014 13:45:09 -0400
+In-Reply-To: <1399393610-23394-12-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com
 
-On 24 April 2014 11:40, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 23 April 2014 18:46, Tomasz Figa <t.figa@samsung.com> wrote:
->> This patch introduces generic code to perform power domain look-up using
->> device tree and automatically bind devices to their power domains.
->> Generic device tree binding is introduced to specify power domains of
->> devices in their device tree nodes.
->>
->> Backwards compatibility with legacy Samsung-specific power domain
->> bindings is provided, but for now the new code is not compiled when
->> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code. This
->> will change as soon as Exynos power domain code gets converted to use
->> the generic framework in further patch.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->> Reviewed-by: Mark Brown <broonie@linaro.org>
->> Reviewed-by: Kevin Hilman <khilman@linaro.org>
->> Reviewed-by: Philipp Zabel <philipp.zabel@gmail.com>
->> [on i.MX6 GK802]
->> Tested-by: Philipp Zabel <philipp.zabel@gmail.com>
+Shaik,
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-I also implemented some test-support for genpd for a ux500 SOC as well
-- tested passed successfully. :-)
-
-[snip]
-
->> +
->> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+On 06.05.2014 18:26, Shaik Ameer Basha wrote:
+> This patch corrects the wrong parent-child relationship
+> between sysmmu-mfc clocks.
 >
-> I remember we discussed this earlier, but I don't think we should add
-> another Kconfig for this. CONFIG_OF should be enough.
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>   drivers/clk/samsung/clk-exynos5420.c |   11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
 >
-> I realize that we need to handle "Samsung-specific bindings", to not
-> break the Exynos pm domain. Maybe adding the parsing of them into the
-> generic power domain in the same patch as when we switch Exynos to the
-> new API would do the trick?
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 6d88ae2..1449aee 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -82,6 +82,7 @@
+>   #define SCLK_DIV_ISP0		0x10580
+>   #define SCLK_DIV_ISP1		0x10584
+>   #define DIV2_RATIO0		0x10590
+> +#define DIV4_RATIO		0x105a0
+>   #define GATE_BUS_TOP		0x10700
+>   #define GATE_BUS_GEN		0x1073c
+>   #define GATE_BUS_FSYS0		0x10740
+> @@ -176,6 +177,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+>   	SCLK_DIV_ISP0,
+>   	SCLK_DIV_ISP1,
+>   	DIV2_RATIO0,
+> +	DIV4_RATIO,
+>   	GATE_BUS_TOP,
+>   	GATE_BUS_GEN,
+>   	GATE_BUS_FSYS0,
+> @@ -626,6 +628,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>   	DIV(0, "dout_spi1", "mout_spi1", DIV_PERIC1, 24, 4),
+>   	DIV(0, "dout_spi2", "mout_spi2", DIV_PERIC1, 28, 4),
+>
+> +	/* Mfc Block */
+> +	DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
+> +
+>   	/* PCM */
+>   	DIV(0, "dout_pcm1", "dout_audio1", DIV_PERIC2, 16, 8),
+>   	DIV(0, "dout_pcm2", "dout_audio2", DIV_PERIC2, 24, 8),
+> @@ -946,8 +951,10 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>   			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
+>
+>   	GATE(CLK_MFC, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
+> -	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
+> -	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
+> +	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "dout_mfc_blk",
+> +			GATE_IP_MFC, 1, CLK_SET_RATE_PARENT, 0),
+> +	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "dout_mfc_blk",
+> +			GATE_IP_MFC, 2, CLK_SET_RATE_PARENT, 0),
 
-I realized that there already exists CONFIG_PM_GENERIC_DOMAINS_SLEEP
-and CONFIG_PM_GENERIC_DOMAINS_RUNTIME, which serves similar purpose as
-CONFIG_PM_GENERIC_DOMAINS_OF would.
+As I mentioned in my comments to previous patches, I don't think this is 
+a valid usage of the CLK_SET_RATE_PARENT flag.
 
-So, let's ignore my previous comment and move on.
-
-Kind regards
-Ulf Hansson
+Best regards,
+Tomasz
