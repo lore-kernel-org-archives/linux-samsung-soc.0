@@ -1,44 +1,55 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: Add rear camera nodes for Exynos4412 Trats2 board
-Date: Tue, 06 May 2014 11:19:40 +0900
-Message-ID: <07ba01cf68d1$a2d47580$e87d6080$@samsung.com>
-References: <1397226303-29844-1-git-send-email-s.nawrocki@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [RESEND PATCH v3 2/5] charger: tps65090: Allow charger module to
+ be used when no irq
+Date: Tue, 6 May 2014 09:33:23 -0700
+Message-ID: <CAD=FV=VYOXRq_mVjqcqu3FxE5D0ZG=nSu6s_5VENfZ+42B4WFQ@mail.gmail.com>
+References: <1398268565-4789-3-git-send-email-dianders@chromium.org>
+	<CAD=FV=W=Ffye5wp0PhJ2uX4jhEQkTKA4VTT4LyX2ZdByfE4UaQ@mail.gmail.com>
+	<CAOesGMi+jH7xEzVxRX5qEoVycdtJ=FXOJRp1xut+65d4X8YFYA@mail.gmail.com>
+	<20140506051133.GA30179@teo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45214 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933711AbaEFCTm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 May 2014 22:19:42 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N54006H5RSTNCA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 May 2014 11:19:41 +0900 (KST)
-In-reply-to: <1397226303-29844-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140506051133.GA30179@teo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Vorontsov <anton@enomsg.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Sachin Kamat <sachin.kamat@linaro.org>, AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, David Woodhouse <dwmw2@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Andrzej Hajda' <a.hajda@samsung.com>
 
-Sylwester Nawrocki wrote:
-> 
-> This patch enables the rear facing camera (s5c73m3) on TRATS2 board
-> by adding the I2C0 bus controller, s5c73m3 sensor, MIPI CSI-2 receiver
-> and the sensor's voltage regulator supply nodes.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412-trats2.dts |   72
-> +++++++++++++++++++++++++++++--
->  1 file changed, 69 insertions(+), 3 deletions(-)
-> 
-Applied, thanks.
+Anton,
 
-- Kukjin
+On Mon, May 5, 2014 at 10:11 PM, Anton Vorontsov <anton@enomsg.org> wrote:
+> On Mon, May 05, 2014 at 09:51:28AM -0700, Olof Johansson wrote:
+>> > All the rest of this series has been acked and applied.  Do you have
+>> > time to review this patch?
+>> >
+>> > Thanks!  :)
+>>
+>> FWIW, I've seen very little email traffic from Anton this year, he
+>> might have limited time for maintainership at the moment.
+>
+> Yup.
+>
+> commit 573189354b7c97cd2256b87cf083ee435584594e
+> Author: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+> Date:   Tue Jan 21 03:33:09 2014 +0400
+>
+>     MAINTAINERS: Pick up power supply maintainership
+>
+>     Anton stated that he would have to abandon power supply maintainership
+>     due to the lack of time. By agreement with him and David, pick up power
+>     supply tree.
+>
+>     Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+>     Acked-by: Anton Vorontsov <anton@enomsg.org>
+
+Doh, thanks for the pointer.
+
+
+Dmitry: you were CCed on the patch.  Do you still have it in your
+email somewhere?  I'm happy to repost it with you in the "To" line if
+it's helpful.
+
+Thanks!  :)
+
+-Doug
