@@ -1,15 +1,14 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 08/15] clk: exynos5420: update clocks for PERIS and
- GEN blocks
-Date: Tue, 06 May 2014 19:36:14 +0200
-Message-ID: <53691D8E.8080102@gmail.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
- <1399393610-23394-9-git-send-email-shaik.ameer@samsung.com>
+Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM
+ bindings
+Date: Tue, 06 May 2014 18:44:55 +0200
+Message-ID: <53691187.80101@gmail.com>
+References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1399393610-23394-9-git-send-email-shaik.ameer@samsung.com>
+In-Reply-To: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,163 +18,272 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, shaik.samsung@gmail.com, t.figa@samsung.com, joshi@samsung.com, alim.akhtar@samsung.com, r.sh.open@gmail.com, mturquette@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, heiko@sntech.de, arnd@arndb.de, t.figa@samsung.com, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Shaik,
+Hi Sachin,
 
-On 06.05.2014 18:26, Shaik Ameer Basha wrote:
-> This patch fixes some parent-child relationships according
-> to the latest datasheet and adds more clocks related to
-> PERIS and GEN blocks.
+Thanks for addressing the comments. I need to verify few things on 
+Universal C210 board first, before I could give my Reviewed-by tag or 
+further comments.
+
+I also have some general comments that I missed before, due to limited 
+time for review. Please see inline.
+
+On 06.05.2014 10:10, Sachin Kamat wrote:
+> Instead of hardcoding the SYSRAM details for each SoC,
+> pass this information through device tree (DT) and make
+> the code SoC agnostic. Generic SRAM bindings are used
+> for achieving this.
 >
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->   drivers/clk/samsung/clk-exynos5420.c   |   81 ++++++++++++++++++++------------
->   include/dt-bindings/clock/exynos5420.h |    5 ++
->   2 files changed, 55 insertions(+), 31 deletions(-)
+> Changes since v1:
+> * Addressed Tomasz Figa's comments
+> - Fixed sram node for universal_c210
+> - Check the node status before mapping the address
 >
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index c86ecbb..af13e6c 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -83,6 +83,7 @@
->   #define SCLK_DIV_ISP1		0x10584
->   #define DIV2_RATIO0		0x10590
->   #define GATE_BUS_TOP		0x10700
-> +#define GATE_BUS_GEN		0x1073c
->   #define GATE_BUS_FSYS0		0x10740
->   #define GATE_BUS_PERIC		0x10750
->   #define GATE_BUS_PERIC1		0x10754
-> @@ -96,6 +97,7 @@
->   #define GATE_IP_G3D		0x10930
->   #define GATE_IP_GEN		0x10934
->   #define GATE_IP_PERIC		0x10950
-> +#define GATE_IP_PERIS		0x10960
->   #define GATE_IP_MSCL		0x10970
->   #define GATE_TOP_SCLK_GSCL	0x10820
->   #define GATE_TOP_SCLK_DISP1	0x10828
-> @@ -172,6 +174,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->   	SCLK_DIV_ISP1,
->   	DIV2_RATIO0,
->   	GATE_BUS_TOP,
-> +	GATE_BUS_GEN,
->   	GATE_BUS_FSYS0,
->   	GATE_BUS_PERIC,
->   	GATE_BUS_PERIC1,
-> @@ -185,6 +188,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
->   	GATE_IP_G3D,
->   	GATE_IP_GEN,
->   	GATE_IP_PERIC,
-> +	GATE_IP_PERIS,
->   	GATE_IP_MSCL,
->   	GATE_TOP_SCLK_GSCL,
->   	GATE_TOP_SCLK_DISP1,
-> @@ -608,6 +612,10 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->   	/* MSCL Block */
->   	DIV(0, "dout_mscl_blk", "aclk400_mscl", DIV2_RATIO0, 28, 2),
+> This patch is based on linux next (next-20140501) on top of
+> my Kconfig consolidation patch
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/28642
+
+[snip]
+
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> index 63e34b24b04f..9813b068cfd8 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -28,6 +28,30 @@
+>   		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
+>   	};
 >
-> +	/* PSGEN */
-> +	DIV(0, "dout_gen_blk", "mout_user_aclk266", DIV2_RATIO0, 8, 1),
-> +	DIV(0, "dout_jpg_blk", "aclk166", DIV2_RATIO0, 20, 1),
+> +	sram@02020000 {
+> +		status = "disabled";
+> +		smp-sram@0 {
+> +			status = "disabled";
+> +		};
 > +
->   	/* ISP Block */
->   	DIV(0, "dout_isp_sensor0", "mout_isp_sensor", SCLK_DIV_ISP0, 8, 8),
->   	DIV(0, "dout_isp_sensor1", "mout_isp_sensor", SCLK_DIV_ISP0, 16, 8),
-> @@ -623,10 +631,6 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->   };
+> +		smp-sram@1f000 {
+> +			status = "disabled";
+> +		};
+> +	};
+> +
+> +	sram@02025000 {
+> +		compatible = "mmio-sram";
+> +		reg = <0x02025000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0x02025000 0x1000>;
+> +
+> +		smp-sram@0 {
+> +			compatible = "samsung,exynos4210-sram";
+> +			reg = <0x0 0x1000>;
+> +		};
+> +	};
+
+I wonder if this really should be defined like this. 0x2025000 really 
+looks just like an offset from the normal SRAM address. This is the 
+thing I need to check in documentation and by experiment when I'll 
+return back to work tomorrow, but maybe it could be possible to normally 
+use the sram@02020000 and just disable smp-sram@0 and smp-sram@1f000, 
+replacing them with smp-sram@5000 on Universal C210.
+
+> +
+>   	mct@10050000 {
+>   		compatible = "none";
+>   	};
+
+[snip]
+
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index 932129ef26c6..7d583cb73850 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -18,6 +18,7 @@
 >
->   static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
-> -	/* TODO: Re-verify the CG bits for all the gate clocks */
-> -	GATE_A(CLK_MCT, "pclk_st", "aclk66_psgen", GATE_BUS_PERIS1, 2, 0, 0,
-> -		"mct"),
+>   #include <mach/map.h>
+>
+> +#include "common.h"
+>   #include "smc.h"
+>
+>   static int exynos_do_idle(void)
+> @@ -34,7 +35,12 @@ static int exynos_cpu_boot(int cpu)
+>
+>   static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>   {
+> -	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
+> +	void __iomem *boot_reg;
+> +
+> +	if (!sram_ns_base_addr)
+> +		return 0;
+
+Shouldn't this return an error instead? I'm not sure which one would be 
+appropriate, though, probably one of -ENODEV, -ENXIO or -EFAULT.
+
+> +
+> +	boot_reg = sram_ns_base_addr + 0x1c + 4*cpu;
+>
+>   	__raw_writel(boot_addr, boot_reg);
+>   	return 0;
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index 7b046b59d9ec..548269a60634 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -23,13 +23,6 @@
+>
+>   #include <plat/map-s5p.h>
+>
+> -#define EXYNOS4_PA_SYSRAM0		0x02025000
+> -#define EXYNOS4_PA_SYSRAM1		0x02020000
+> -#define EXYNOS5_PA_SYSRAM		0x02020000
+> -#define EXYNOS4210_PA_SYSRAM_NS		0x0203F000
+> -#define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
+> -#define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
 > -
->   	GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
->   			GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
->   	GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
-> @@ -776,28 +780,51 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>   #define EXYNOS_PA_CHIPID		0x10000000
 >
->   	GATE(CLK_KEYIF, "keyif", "aclk66_peric", GATE_BUS_PERIC, 22, 0, 0),
+>   #define EXYNOS4_PA_SYSCON		0x10010000
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 03e5e9f94705..ccbcdd7b8a86 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/jiffies.h>
+>   #include <linux/smp.h>
+>   #include <linux/io.h>
+> +#include <linux/of_address.h>
 >
-> +	/* PERIS Block */
->   	GATE(CLK_CHIPID, "chipid", "aclk66_psgen",
-> -			GATE_BUS_PERIS0, 12, CLK_IGNORE_UNUSED, 0),
-> +			GATE_IP_PERIS, 0, CLK_IGNORE_UNUSED, 0),
->   	GATE(CLK_SYSREG, "sysreg", "aclk66_psgen",
-> -			GATE_BUS_PERIS0, 13, CLK_IGNORE_UNUSED, 0),
-> -	GATE(CLK_TZPC0, "tzpc0", "aclk66_psgen", GATE_BUS_PERIS0, 18, 0, 0),
-> -	GATE(CLK_TZPC1, "tzpc1", "aclk66_psgen", GATE_BUS_PERIS0, 19, 0, 0),
-> -	GATE(CLK_TZPC2, "tzpc2", "aclk66_psgen", GATE_BUS_PERIS0, 20, 0, 0),
-> -	GATE(CLK_TZPC3, "tzpc3", "aclk66_psgen", GATE_BUS_PERIS0, 21, 0, 0),
-> -	GATE(CLK_TZPC4, "tzpc4", "aclk66_psgen", GATE_BUS_PERIS0, 22, 0, 0),
-> -	GATE(CLK_TZPC5, "tzpc5", "aclk66_psgen", GATE_BUS_PERIS0, 23, 0, 0),
-> -	GATE(CLK_TZPC6, "tzpc6", "aclk66_psgen", GATE_BUS_PERIS0, 24, 0, 0),
-> -	GATE(CLK_TZPC7, "tzpc7", "aclk66_psgen", GATE_BUS_PERIS0, 25, 0, 0),
-> -	GATE(CLK_TZPC8, "tzpc8", "aclk66_psgen", GATE_BUS_PERIS0, 26, 0, 0),
-> -	GATE(CLK_TZPC9, "tzpc9", "aclk66_psgen", GATE_BUS_PERIS0, 27, 0, 0),
-> -
-> -	GATE(CLK_HDMI_CEC, "hdmi_cec", "aclk66_psgen", GATE_BUS_PERIS1, 0, 0,
-> -		0),
-> +			GATE_IP_PERIS, 1, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_TZPC0, "tzpc0", "aclk66_psgen", GATE_IP_PERIS, 6, 0, 0),
-> +	GATE(CLK_TZPC1, "tzpc1", "aclk66_psgen", GATE_IP_PERIS, 7, 0, 0),
-> +	GATE(CLK_TZPC2, "tzpc2", "aclk66_psgen", GATE_IP_PERIS, 8, 0, 0),
-> +	GATE(CLK_TZPC3, "tzpc3", "aclk66_psgen", GATE_IP_PERIS, 9, 0, 0),
-> +	GATE(CLK_TZPC4, "tzpc4", "aclk66_psgen", GATE_IP_PERIS, 10, 0, 0),
-> +	GATE(CLK_TZPC5, "tzpc5", "aclk66_psgen", GATE_IP_PERIS, 11, 0, 0),
-> +	GATE(CLK_TZPC6, "tzpc6", "aclk66_psgen", GATE_IP_PERIS, 12, 0, 0),
-> +	GATE(CLK_TZPC7, "tzpc7", "aclk66_psgen", GATE_IP_PERIS, 13, 0, 0),
-> +	GATE(CLK_TZPC8, "tzpc8", "aclk66_psgen", GATE_IP_PERIS, 14, 0, 0),
-> +	GATE(CLK_TZPC9, "tzpc9", "aclk66_psgen", GATE_IP_PERIS, 15, 0, 0),
-> +	GATE(CLK_HDMI_CEC, "hdmi_cec", "aclk66_psgen", GATE_IP_PERIS, 16, 0, 0),
-> +	GATE(CLK_MCT, "mct", "aclk66_psgen", GATE_IP_PERIS, 18, 0, 0),
-> +	GATE(CLK_WDT, "wdt", "aclk66_psgen", GATE_IP_PERIS, 19, 0, 0),
-> +	GATE(CLK_RTC, "rtc", "aclk66_psgen", GATE_IP_PERIS, 20, 0, 0),
-> +	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_IP_PERIS, 21, 0, 0),
-> +	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_IP_PERIS, 22, 0, 0),
-> +
->   	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
+>   #include <asm/cacheflush.h>
+>   #include <asm/smp_plat.h>
+> @@ -33,11 +34,35 @@
+>
+>   extern void exynos4_secondary_startup(void);
+>
+> +static void __iomem *sram_base_addr;
+> +void __iomem *sram_ns_base_addr;
 
-What about this one?
+This is probably just a matter of preference, but I'd make this static 
+and provide a getter function, like exynos_get_sram_ns_base();
 
-> -	GATE(CLK_WDT, "wdt", "aclk66_psgen", GATE_BUS_PERIS1, 3, 0, 0),
-> -	GATE(CLK_RTC, "rtc", "aclk66_psgen", GATE_BUS_PERIS1, 4, 0, 0),
-> -	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_BUS_PERIS1, 5, 0, 0),
-> -	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_BUS_PERIS1, 6, 0, 0),
-> +
-> +	/* GATE_IP_PERIS doesn't list TZPC10,11 */
-> +	GATE(CLK_TZPC10, "tzpc10", "aclk66_psgen", GATE_BUS_GEN, 30, 0, 0),
-> +	GATE(CLK_TZPC11, "tzpc11", "aclk66_psgen", GATE_BUS_GEN, 31, 0, 0),
-
-Hmm, this patch is essentially adding these two clocks, as they were not 
-present before. Maybe this is just an error in the documentation and 
-there are just 10 TZPC blocks?
+Also this address seems to be used by the firmware code exclusively. If 
+we want to make the firmware code more self-contained, maybe the mapping 
+of firmware-specific SRAM region could be handled there, instead? This 
+would also eliminate the need for having an exported variable or getter 
+function. What do you think?
 
 > +
-> +	/* GEN Block */
-> +	GATE(CLK_ROTATOR, "rotator", "mout_user_aclk266", GATE_IP_GEN, 1, 0, 0),
-> +	GATE(CLK_JPEG, "jpeg", "aclk300_jpeg", GATE_IP_GEN, 2, 0, 0),
-> +	GATE(CLK_JPEG2, "jpeg2", "aclk300_jpeg", GATE_IP_GEN, 3, 0, 0),
-> +	GATE(CLK_MDMA1, "mdma1", "mout_user_aclk266", GATE_IP_GEN, 4, 0, 0),
-> +	GATE(CLK_TOP_RTC, "top_rtc", "aclk66_psgen", GATE_IP_GEN, 5, 0, 0),
-> +	GATE(CLK_SMMU_ROTATOR, "smmu_rotator", "dout_gen_blk",
-> +			GATE_IP_GEN, 6, CLK_SET_RATE_PARENT, 0),
-> +	GATE(CLK_SMMU_JPEG, "smmu_jpeg", "dout_jpg_blk",
-> +			GATE_IP_GEN, 7, CLK_SET_RATE_PARENT, 0),
-> +	GATE(CLK_SMMU_MDMA1, "smmu_mdma1", "dout_gen_blk",
-> +			GATE_IP_GEN, 9, CLK_SET_RATE_PARENT, 0),
+> +static void __init exynos_smp_prepare_sram(void)
+> +{
+> +	struct device_node *node;
+> +
+> +	for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
+> +		if (of_device_is_available(node)) {
+> +			sram_base_addr = of_iomap(node, 0);
+> +			if (!sram_base_addr)
+> +				pr_err("Secondary CPU boot address not found\n");
 
-Why CLK_SET_RATE_PARENT (for all 3 clocks above)?
+I don't think this is an error at this stage. Some platforms might not 
+have either of these SRAM reserved regions (such as those using INFORM 
+registers instead). Instead, the base address should be checked whenever 
+it is needed and errors should be handled then, like in 
+exynos_set_cpu_boot_addr().
+
+> +		}
+> +	}
+
+Also we don't need to look further in DT after we find a matching node 
+already. So combining both comments the resulting code would be:
+
+for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
+	if (!of_device_is_available(node))
+		continue;
+	sram_base_addr = of_iomap(node, 0);
+	break;
+}
 
 > +
-> +	/* GATE_IP_GEN doesn't list gates for smmu_jpeg2 and mc */
-> +	GATE(CLK_SMMU_JPEG2, "smmu_jpeg2", "dout_jpg_blk",
-> +			GATE_BUS_GEN, 28, CLK_SET_RATE_PARENT, 0),
+> +	for_each_compatible_node(node, NULL, "samsung,exynos4210-sram-ns") {
+> +		if (of_device_is_available(node)) {
+> +			sram_ns_base_addr = of_iomap(node, 0);
+> +			if (!sram_ns_base_addr)
+> +				pr_err("Secondary CPU boot address not found\n");
+> +		}
+> +	}
 
-Ditto.
+Same comments here.
+
+> +}
+> +
+>   static inline void __iomem *cpu_boot_reg_base(void)
+>   {
+>   	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+>   		return S5P_INFORM5;
+> -	return S5P_VA_SYSRAM;
+> +	return sram_base_addr;
+>   }
+>
+>   static inline void __iomem *cpu_boot_reg(int cpu)
+> @@ -147,7 +172,8 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>   		 * and fall back to boot register if it fails.
+>   		 */
+>   		if (call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr))
+> -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+> +			if (cpu_boot_reg_base())
+> +				__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+
+I'd rework this for proper error handling, e.g.
+
+	int ret;
+
+	/* ... */
+
+	ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
+	if (ret && ret != -ENOSYS)
+		goto fail;
+	if (ret == -ENOSYS) {
+		/* Fall back to firmware-less way. */
+		void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
+
+		if (IS_ERR(boot_reg)) {
+			ret = PTR_ERR(boot_reg);
+			goto fail;
+		}
+	}
+
+	/* ... */
+
+fail:
+	/* Clean-up after error */
+
+Of course, cpu_boot_reg() will need to be converted to follow the 
+ERR_PTR() model, but IMHO proper error handling is a good reason to do so.
+
+>
+>   		call_firmware_op(cpu_boot, phys_cpu);
+>
+> @@ -205,6 +231,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>   	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>   		scu_enable(scu_base_addr());
+>
+> +	exynos_smp_prepare_sram();
+> +
+>   	/*
+>   	 * Write the address of secondary startup into the
+>   	 * system-wide flags register. The boot monitor waits
+> @@ -222,7 +250,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>   		boot_addr = virt_to_phys(exynos4_secondary_startup);
+>
+>   		if (call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr))
+> -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+> +			if (cpu_boot_reg_base())
+> +				__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+
+I wonder if setting the addresses at this stage is really needed. IMHO 
+doing it once in exynos_boot_secondary() should be enough. But this is 
+probably a material for further patch.
 
 Best regards,
 Tomasz
