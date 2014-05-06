@@ -1,56 +1,67 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C24XX: remove SAMSUNG_CLOCK remnants after ccf
- conversion
-Date: Tue, 06 May 2014 13:30:45 +0900
-Message-ID: <0e4f01cf68e3$f2a63f00$d7f2bd00$@samsung.com>
-References: <1615843.xdRuLnoxgD@phil>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v12 18/31] iommu/exynos: allow having multiple System
+ MMUs for a master H/W
+Date: Tue, 06 May 2014 20:05:14 +0200
+Message-ID: <5369245A.1060001@gmail.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com> <1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1615843.xdRuLnoxgD@phil>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:61993 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751368AbaEFSFb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 May 2014 14:05:31 -0400
+In-Reply-To: <1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, pullip.cho@samsung.com, a.motakis@virtualopensystems.com, grundler@chromium.org, joro@8bytes.org, prathyush.k@samsung.com, rahul.sharma@samsung.com, sachin.kamat@linaro.org, supash.ramaswamy@linaro.org, Varun.Sethi@freescale.com, s.nawrocki@samsung.com, t.figa@samsung.com, joshi@samsung.com
 
-Heiko St=FCbner wrote:
-> =
-
-> This finally removes all remaining SAMSUNG_CLOCK conditional code
-> from s3c24xx architectures.
-> =
-
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On 27.04.2014 09:37, Shaik Ameer Basha wrote:
+> From: Cho KyongHo <pullip.cho@samsung.com>
+>
+> Some master device descriptor like fimc-is which is an abstraction
+> of very complex H/W may have multiple System MMUs. For those devices,
+> the design of the link between System MMU and its master H/W is needed
+> to be reconsidered.
+>
+> A link structure, sysmmu_list_data is introduced that provides a link
+> to master H/W and that has a pointer to the device descriptor of a
+> System MMU. Given a device descriptor of a master H/W, it is possible
+> to traverse all System MMUs that must be controlled along with the
+> master H/W.
+>
+> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
 > ---
-> This is of course meant to go on top of the s3c2410 ccf conversion
-> =
+>   drivers/iommu/exynos-iommu.c |  545 ++++++++++++++++++++++++++----------------
+>   1 file changed, 335 insertions(+), 210 deletions(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index fefedec3..c2e6365 100755
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -117,6 +117,10 @@
+>   #define REG_PB1_EADDR		0x058
+>
+>   #define has_sysmmu(dev)		(dev->archdata.iommu != NULL)
+> +#define for_each_sysmmu_list(dev, list_data)				\
+> +	list_for_each_entry(list_data,					\
+> +		&((struct exynos_iommu_owner *)dev->archdata.iommu)->mmu_list, \
+> +		entry)
 
->  arch/arm/mach-s3c24xx/Kconfig         |  5 -----
->  arch/arm/mach-s3c24xx/common.c        | 17 -----------------
->  arch/arm/mach-s3c24xx/cpufreq-utils.c |  6 ------
->  arch/arm/mach-s3c24xx/mach-anubis.c   | 27 ---------------------------
->  arch/arm/mach-s3c24xx/mach-bast.c     | 27 ---------------------------
->  arch/arm/mach-s3c24xx/mach-osiris.c   | 27 ---------------------------
->  arch/arm/mach-s3c24xx/mach-rx1950.c   | 14 --------------
->  arch/arm/mach-s3c24xx/mach-vr1000.c   | 27 ---------------------------
->  arch/arm/mach-s3c24xx/pm.c            | 12 ------------
->  9 files changed, 162 deletions(-)
-> =
+Sorry, NAK.
 
-At last, we're supporting common clock framework for s3c24xx.
+Please don't add this kind of complexity and business logic to low level 
+code. We want the configuration functions to be simple, easy to read, 
+maintain and extend.
 
-Heiko, very thanks for your effort.
+The proper way to do it is to let the IOMMUs be grouped together on 
+IOMMU subsystem level, so that each IOMMU consumer driver would see just 
+one IOMMU, but then IOMMU driver callbacks would handle just particular 
+instances of the IOMMU IP blocks, without any loops, lists and other 
+crazy code...
 
-Will apply with your previous s3c24xx ccf series.
-
-- Kukjin
+Best regards,
+Tomasz
