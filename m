@@ -1,47 +1,100 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Tue, 06 May 2014 20:08:47 +0200
-Message-ID: <5369252F.4070402@gmail.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com> <26065037.GxQQuIURPg@wuerfel> <CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com> <20140506175904.GB12376@8bytes.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 0/6] Introducing Exynos ChipId driver
+Date: Tue, 06 May 2014 17:51:16 +0900
+Message-ID: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140506175904.GB12376-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "supash.ramaswamy" <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, t.figa@samsung.com, kgene.kim@samsung.com, arnd@arndb.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06.05.2014 19:59, Joerg Roedel wrote:
-> On Wed, Apr 30, 2014 at 04:27:10PM +0530, Shaik Ameer Basha wrote:
->> This series is going on for quite a long time and most of the patches here
->> doesn't depend on dt bindings. As Exynos IOMMU h/w is introducing new versions
->> very frequently, maintaining and reviewing all these patches again and
->> again is quite a hard job.
->>
->> If it is acceptable, I can post one more series with the subset of
->> above patches,
->> which doesn't depend on dt-bindings. As all the patches which doesn't depend on
->> DT bindings are already tested,  I hope merging these subset of patches may help
->> in reducing the rework and review effort every time.
->>
->> Once we finalize the generic DT bindings for the IOMMU devices, the driver
->> can be updated with the proposed DT bindings in mind.
->
-> Sounds reasonable to me if the patch subset is self-contained. When
-> Arnd is OK with that and no one else has objections I can take the
-> dt-independend parts.
+This patch series attempts to get rid of soc_is_exynosXXXX macros
+and eventually with the help of this series we can probably get
+rid of CONFIG_SOC_EXYNOSXXXX in near future.
+Each Exynos SoC has ChipID block which can give information about
+SoC's product Id and revision number. Currently we have single
+DT binding information for this as "samsung,exynos4210-chipid".
+But Exynos4 and Exynos5 SoC series have one small difference in
+chip Id, with resepect to product id bit-masks. So it means we
+should have separate compatible string for these different series
+of SoCs. So I have added second compatible string for handling
+this difference. 
 
-+1.
+This patch series is based on Kukjin Kim's for-next (3.14_rc1 tag)
+and prepared on top of following patch series and it's dependent
+patch series.
 
-I would also suggest dropping patch 18/31, for the reasons I mentioned 
-in my reply to it.
+[1]: Map SYSRAM through generic SRAM bindings.
+	http://www.spinics.net/lists/arm-kernel/msg327677.html
+[2]: Exynos PMU cleanup and refactoring.
+	https://lkml.org/lkml/2014/4/30/44
+[3]: Introduce drivers/soc and add QCOM GSBI driver.
+	https://lkml.org/lkml/2014/4/24/520
 
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes since v1:
+ - Added patch to move i2c interrupt re-configuration code from exynos.c
+   to i2c driver, as suggested by Arnd.
+ - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+   save/restore of this register also into i2c driver.
+ - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+   soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+ - Changed location of chipid driver to "drivers/soc".
+ - Added drivers/base/soc.c provided infrastructure to make SoC specific 
+   information avaible to user space via sysfs entry, as suggested by Arnd.
+
+Pankaj Dubey (6):
+  i2c: s3c2410: Moving I2C interrupt re-configuration code into i2c
+    driver
+  ARM: EXYNOS: Move SYS_I2C_CFG register save/restore to i2c driver
+  ARM: EXYNOS: remove soc_is_exynos4/5 from exynos.c
+  ARM:  EXYNOS: remove unused header inclusion from hotplug.c
+  soc: samsung: exynos-chipid: Add Exynos Chipid driver support
+  ARM: EXYNOS: Refactoring to remove soc_is_exynosXXXX macros from
+    exynos
+
+ .../bindings/arm/samsung/exynos-chipid.txt         |   21 +++
+ .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
+ arch/arm/Kconfig                                   |    1 +
+ arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
+ arch/arm/boot/dts/exynos5.dtsi                     |    7 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |    4 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |    4 +
+ arch/arm/mach-exynos/exynos.c                      |  119 ++++----------
+ arch/arm/mach-exynos/hotplug.c                     |    2 -
+ arch/arm/mach-exynos/include/mach/map.h            |    3 -
+ arch/arm/mach-exynos/platsmp.c                     |   10 +-
+ arch/arm/mach-exynos/pm.c                          |   36 ++---
+ arch/arm/mach-exynos/regs-sys.h                    |   22 ---
+ arch/arm/plat-samsung/include/plat/cpu.h           |   60 -------
+ drivers/clk/samsung/clk-exynos4.c                  |    2 +-
+ drivers/cpufreq/exynos-cpufreq.c                   |    9 +-
+ drivers/cpufreq/exynos-cpufreq.h                   |    1 -
+ drivers/cpufreq/exynos4x12-cpufreq.c               |    5 +-
+ drivers/i2c/busses/i2c-s3c2410.c                   |   35 +++++
+ drivers/soc/Kconfig                                |    1 +
+ drivers/soc/Makefile                               |    1 +
+ drivers/soc/samsung/Kconfig                        |   10 ++
+ drivers/soc/samsung/Makefile                       |    1 +
+ drivers/soc/samsung/exynos-chipid.c                |  166 ++++++++++++++++++++
+ include/linux/exynos-soc.h                         |   46 ++++++
+ 25 files changed, 359 insertions(+), 210 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
+ delete mode 100644 arch/arm/mach-exynos/regs-sys.h
+ create mode 100644 drivers/soc/samsung/Kconfig
+ create mode 100644 drivers/soc/samsung/Makefile
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+ create mode 100644 include/linux/exynos-soc.h
+
+-- 
+1.7.10.4
