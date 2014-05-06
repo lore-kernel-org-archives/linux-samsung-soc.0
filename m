@@ -1,123 +1,98 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 1/3] base: power: Add generic OF-based power domain
- look-up
-Date: Tue, 06 May 2014 11:24:52 -0600
-Message-ID: <53691AE4.10206@wwwdotorg.org>
-References: <1398271618-28932-1-git-send-email-t.figa@samsung.com>	<1398271618-28932-2-git-send-email-t.figa@samsung.com>	<535E9163.3070305@wwwdotorg.org>
- <CAPDyKFoGOcScsaGWkw9bVh=gpGTApRK48AczaMiSmLah+YOSXQ@mail.gmail.com>
- <53690D21.8080807@wwwdotorg.org> <536918A9.6050502@gmail.com>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5420
+Date: Tue, 06 May 2014 09:29:04 +0900
+Message-ID: <060d01cf68c2$31598c10$940ca430$@samsung.com>
+References: <1399034937-24683-1-git-send-email-arun.kk@samsung.com>
+ <CAD=FV=V30qfsRfFZ7LXnF9VmMo5dGJx6FfOaKwGrLtS5_r7PGQ@mail.gmail.com>
+ <5363D6BD.6070001@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <536918A9.6050502@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <philipp.zabel@gmail.com>, Len Brown <len.brown@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Pavel Machek <pavel@ucw.cz>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vg
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <5363D6BD.6070001-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-language: ko
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Doug Anderson' <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Arun Kumar K' <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'linux-samsung-soc' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Arun Kumar' <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/06/2014 11:15 AM, Tomasz Figa wrote:
+Tomasz Figa wrote:
 > 
+> Hi,
 > 
-> On 06.05.2014 18:26, Stephen Warren wrote:
->> On 05/06/2014 02:22 AM, Ulf Hansson wrote:
->>> On 28 April 2014 19:35, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>>> On 04/23/2014 10:46 AM, Tomasz Figa wrote:
->>>>> This patch introduces generic code to perform power domain look-up
->>>>> using
->>>>> device tree and automatically bind devices to their power domains.
->>>>> Generic device tree binding is introduced to specify power domains of
->>>>> devices in their device tree nodes.
->>>>>
->>>>> Backwards compatibility with legacy Samsung-specific power domain
->>>>> bindings is provided, but for now the new code is not compiled when
->>>>> CONFIG_ARCH_EXYNOS is selected to avoid collision with legacy code.
->>>>> This
->>>>> will change as soon as Exynos power domain code gets converted to use
->>>>> the generic framework in further patch.
->>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/power/power_domain.txt
->>>>> b/Documentation/devicetree/bindings/power/power_domain.txt
->>>>
->>>>> +==Power domain consumers==
->>>>> +
->>>>> +Required properties:
->>>>> + - power-domain : A phandle and power domain specifier as defined
->>>>> by bindings
->>>>> +                  of power controller specified by phandle.
->>>>
->>>> It seems quite likely that a single logical device could have
->>>> components
->>>> in multiple power domains. Consider an HDMI controller with different
->>>> power domains for the HDMI core, CEC communication, DDC/I2C
->>>> communication, and the I/O pads, with no clear separation between those
->>>> two components of the module (no separate register spaces, but the
->>>> bits/registers are interleaved all together).
->>>>
->>>> As such, I think that rather than a "power-domain" property, we need a
->>>> pair of "power-domains", and "power-domain-names" properties, and
->>>> preferably with mandatory usage of name-based lookups, rather than
->>>> allowing a random mix of name-based and index-based lookups like we
->>>> have
->>>> with some existing resource bindings.
->>>
->>> Each struct device have only one dev_pm_domain pointer, thus a device
->>> are not able to reside in more than one power domain.
->>>
->>> Therefore I doubt this will be very useful, unless I missed your
->>> point. :-)
->>
->> A struct device is a Linux-internal concept. DT is supposed to represent
->> the HW in an OS-agnostic fashion, not according to the limitations of
->> any one OS's driver model.
->>
->> It's certainly true that a single logical HW module (represented by a
->> single DT node) can have parts in multiple power domains.
+Hi,
+
+> On 02.05.2014 17:44, Doug Anderson wrote:
+> > Arun,
+> >
+> > On Fri, May 2, 2014 at 5:48 AM, Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> >> Adds the PWM nodes to 5420 pinctrl dtsi file.
+> >>
+> >> Signed-off-by: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >> ---
+> >>   arch/arm/boot/dts/exynos5420-pinctrl.dtsi |   28
+> ++++++++++++++++++++++++++++
+> >>   1 file changed, 28 insertions(+)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> >> index e62c8eb..ba686e4 100644
+> >> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> >> @@ -624,6 +624,34 @@
+> >>                          samsung,pin-drv = <0>;
+> >>                  };
+> >>
+> >> +               pwm0_out: pwm0-out {
+> >> +                       samsung,pins = "gpb2-0";
+> >> +                       samsung,pin-function = <2>;
+> >> +                       samsung,pin-pud = <0>;
+> >> +                       samsung,pin-drv = <0>;
+> >> +               };
+> >> +
+> >> +               pwm1_out: pwm1-out {
+> >> +                       samsung,pins = "gpb2-1";
+> >> +                       samsung,pin-function = <2>;
+> >> +                       samsung,pin-pud = <0>;
+> >> +                       samsung,pin-drv = <0>;
+> >> +               };
+> >> +
+> >> +               pwm2_out: pwm2-out {
+> >> +                       samsung,pins = "gpb2-2";
+> >> +                       samsung,pin-function = <2>;
+> >> +                       samsung,pin-pud = <0>;
+> >> +                       samsung,pin-drv = <0>;
+> >> +               };
+> >> +
+> >> +               pwm3_out: pwm3-out {
+> >> +                       samsung,pins = "gpb2-3";
+> >> +                       samsung,pin-function = <2>;
+> >> +                       samsung,pin-pud = <0>;
+> >> +                       samsung,pin-drv = <0>;
+> >> +               };
+> >> +
+> >>                  i2c7_hs_bus: i2c7-hs-bus {
+> >>                          samsung,pins = "gpb2-2", "gpb2-3";
+> >>                          samsung,pin-function = <3>;
+> >
+> > Possibly pwm3-out belongs below this one (since the start pin is
+> > "larger" than the start pin of i2c7-hs-bus).  Tomasz probably has a
+> > definite opinion on this.
 > 
-> AFAIK a single DT node is supposed to represent a single _physical_ HW
-> module. It all depends on description granularity, though. A physical
-> chip (or IP block) might be further divided into multiple blocks, so I
-> can imagine some of them being in different power domains than another.
+> Well, I'm not opposed to keeping it as is. Having all the pwm nodes
+> together might be even more readable.
+> 
++1 ;-)
 
-Physical-vs-logical probably means different things to different people.
-What I mean is that DT should represent the HW modules at the
-granularity that the HW documentation or designers describe the HW.
+> So feel free to add my Reviewed-by tag.
+> 
+Thanks for you two guys' review.
 
-> Still, based on the fact that in Linux we never needed to specify
-> multiple power domains for a device, is this really a real use case?
+Applied, thanks.
 
-a) Linux has absolutely nothing to do with this. Again, DT is purely a
-HW description that should not be influenced by OS limitations.
+- Kukjin
 
-b) Linux does have to deal with this. HW exists which uses multiple
-power domains per DT device node.
-
-The fact that Linux forces the driver internals to create a separate
-struct device for each part of the actual device that's in a different
-power domain should not force us into representing the HW incorrectly in DT.
-
-> Anyway, the binding is defined in a way that lets you simply turn the
-> single phandle+specifier into a list of them, if such need ever shows up.
-
-In my opinion, for all new resource bindings, we need to *exclusively*
-support named-based lookup. That's the only way to ensure a simple
-forward-compatible path to extensible DT bindings in the face of
-multiple instances of a certain type of resource, where some are
-optional. If resource lookups start out by index, and then later
-(missing information when the DT binding was written, extending the DT
-binding to a new HW revision/model) we find we need to add more
-instances of that resource, some of which are optional, then anything
-but purely name-based lookup makes the situation very complex.
-
-We should solve this by simply using named-based lookup from the start
-in all cases. That's my point here. Hence, we need to addm and enforce
-usage of, a power-domain-names property.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
