@@ -1,14 +1,15 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2 0/4] ARM: S3C24XX: cleanup debug macro/earlyprintk
-Date: Tue, 06 May 2014 10:44:01 +0200
-Message-ID: <2586347.kOddnpvo1Z@diego>
-References: <1856986.kkQFKFg1L2@phil>
- <0cc401cf68e1$eb87f580$c297e080$@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: S3C24XX: remove SAMSUNG_CLOCK remnants after ccf
+ conversion
+Date: Tue, 06 May 2014 13:30:45 +0900
+Message-ID: <0e4f01cf68e3$f2a63f00$d7f2bd00$@samsung.com>
+References: <1615843.xdRuLnoxgD@phil>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <0cc401cf68e1$eb87f580$c297e080$@samsung.com>
+In-reply-to: <1615843.xdRuLnoxgD@phil>
+Content-language: ko
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,79 +19,38 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>, arm@kernel.org
-Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
+Cc: t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Dienstag, 6. Mai 2014, 13:16:14 schrieb Kukjin Kim:
-> Heiko St=FCbner wrote:
-> > This series tries to simplify the s3c24xx debug macro, removing
-> > dependencies
-> > on mach/ includes, static mappings and finally moving it into
-> > include/debug.
+Heiko St=FCbner wrote:
 > =
 
-> I think, it's good way :)
+> This finally removes all remaining SAMSUNG_CLOCK conditional code
+> from s3c24xx architectures.
 > =
 
-> > The one slightly invasive change is the need for the developer to select
-> > the uart type by himself, which gets rid of the debug macro trying to
-> > determine the uart type itself.
-> > =
-
-> > But as usage of the debug-uart is not the common case - especially in a
-> > multiplatform scenario - I didn't worry to much.
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> This is of course meant to go on top of the s3c2410 ccf conversion
 > =
 
-> Yeah, I also don't want s3c24xx to support multiplatform in near future.
+>  arch/arm/mach-s3c24xx/Kconfig         |  5 -----
+>  arch/arm/mach-s3c24xx/common.c        | 17 -----------------
+>  arch/arm/mach-s3c24xx/cpufreq-utils.c |  6 ------
+>  arch/arm/mach-s3c24xx/mach-anubis.c   | 27 ---------------------------
+>  arch/arm/mach-s3c24xx/mach-bast.c     | 27 ---------------------------
+>  arch/arm/mach-s3c24xx/mach-osiris.c   | 27 ---------------------------
+>  arch/arm/mach-s3c24xx/mach-rx1950.c   | 14 --------------
+>  arch/arm/mach-s3c24xx/mach-vr1000.c   | 27 ---------------------------
+>  arch/arm/mach-s3c24xx/pm.c            | 12 ------------
+>  9 files changed, 162 deletions(-)
 > =
 
-> > Based on 3.15-rc1 and tested on a S3C2442 Openmoko Freerunner (GTA02)
-> > =
+At last, we're supporting common clock framework for s3c24xx.
 
-> > changes since v1:
-> > - do not introduce a secondary choice option, instead implement the
-> > =
+Heiko, very thanks for your effort.
 
-> >   s3c2410 debug uarts as separate options
-> > =
+Will apply with your previous s3c24xx ccf series.
 
-> > Heiko Stuebner (4):
-> >   ARM: compressed/head.S: remove s3c24xx special case
-> >   ARM: S3C24XX: trim down debug uart handling
-> >   ARM: S3C24XX: use generic DEBUG_UART_PHY/_VIRT in debug macro
-> >   ARM: S3C24XX: move debug-macro.S into the common space
-> >  =
-
-> >  arch/arm/Kconfig.debug                           |  54 +++++++++++-
-> >  arch/arm/boot/compressed/head.S                  |   5 --
-> >  arch/arm/include/debug/s3c24xx.S                 |  46 +++++++++++
-> >  arch/arm/mach-s3c24xx/Kconfig                    |  28 -------
-> >  arch/arm/mach-s3c24xx/include/mach/debug-macro.S | 101 ---------------=
----
-> > =
-
-> > -----
-> > =
-
-> >  5 files changed, 98 insertions(+), 136 deletions(-)
-> >  create mode 100644 arch/arm/include/debug/s3c24xx.S
-> >  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/debug-macro.S
-> > =
-
-> > --
-> > 1.9.0
-> =
-
-> Basically I'm OK on this series but need to get review from Russell?
-
-Russell pointed out a bad decision on my part in v1, so I guess he is aware=
- of =
-
-this series :-) . I've also added arm@kernel.org now, so they can complain,=
- if =
-
-anything is done wrong [should've probably done that from the beginning].
-
-
-Heiko
+- Kukjin
