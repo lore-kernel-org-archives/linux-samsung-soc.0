@@ -1,74 +1,114 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 01/15] clk: exynos5420: Rename mux parent arrays
-Date: Tue, 06 May 2014 20:01:11 +0200
-Message-ID: <53692367.30907@gmail.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com> <1399393610-23394-2-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v4 09/15] clk: exynos5420: clk: exynos5420: update clocks for
+ WCORE block
+Date: Tue, 06 May 2014 21:56:44 +0530
+Message-ID: <1399393610-23394-10-git-send-email-shaik.ameer@samsung.com>
+References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:59404 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751679AbaEFSBY (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25158 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751520AbaEFQ2S (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 14:01:24 -0400
-In-Reply-To: <1399393610-23394-2-git-send-email-shaik.ameer@samsung.com>
+	Tue, 6 May 2014 12:28:18 -0400
+In-reply-to: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, t.figa@samsung.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Shaik,
+This patch adds missing clocks from WCORE block.
 
-On 06.05.2014 18:26, Shaik Ameer Basha wrote:
-> This patch renames the mux parent arrays as per the naming
-> convension followed by the other exynos specific clock drivers.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos5420.c |  359 ++++++++++++++++++----------------
->   1 file changed, 186 insertions(+), 173 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 7a9e3b4..831670d 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-[snip]
-
->   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
-> -	MUX(0, "mout_mspll_kfc", mspll_cpu_p, SRC_TOP7, 8, 2),
-> -	MUX(0, "mout_mspll_cpu", mspll_cpu_p, SRC_TOP7, 12, 2),
-> -	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
-> -	MUX(0, "mout_cpu", cpu_p, SRC_CPU, 16, 1),
-> -	MUX(0, "mout_kpll", kpll_p, SRC_KFC, 0, 1),
-> -	MUX(0, "mout_cpu_kfc", kfc_p, SRC_KFC, 16, 1),
-> +	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
-> +	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
-> +	MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
-> +	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
-> +	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
-> +	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
-
-Here the clock name is also changed, but I'll just fix the commit 
-message when applying, assuming that this change doesn't break anything.
-
->
-> -	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
-> +	MUX(0, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
-
-[snip]
-
->   static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->   	DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
->   	DIV(0, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
->   	DIV(0, "armclk2", "div_arm", DIV_CPU0, 28, 3),
-> -	DIV(0, "div_kfc", "mout_cpu_kfc", DIV_KFC0, 0, 3),
-> +	DIV(0, "div_kfc", "mout_kfc", DIV_KFC0, 0, 3),
-
-Same here.
-
-Best regards,
-Tomasz
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index af13e6c..f0460b4 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -89,6 +89,7 @@
+ #define GATE_BUS_PERIC1		0x10754
+ #define GATE_BUS_PERIS0		0x10760
+ #define GATE_BUS_PERIS1		0x10764
++#define GATE_BUS_NOC		0x10770
+ #define GATE_TOP_SCLK_ISP	0x10870
+ #define GATE_IP_GSCL0		0x10910
+ #define GATE_IP_GSCL1		0x10920
+@@ -180,6 +181,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+ 	GATE_BUS_PERIC1,
+ 	GATE_BUS_PERIS0,
+ 	GATE_BUS_PERIS1,
++	GATE_BUS_NOC,
+ 	GATE_TOP_SCLK_ISP,
+ 	GATE_IP_GSCL0,
+ 	GATE_IP_GSCL1,
+@@ -271,6 +273,13 @@ PNAME(mout_user_aclk200_fsys_p)	= {"fin_pll", "mout_sw_aclk200_fsys"};
+ 
+ PNAME(mout_sw_aclk200_fsys2_p) = {"dout_aclk200_fsys2", "mout_sclk_spll"};
+ PNAME(mout_user_aclk200_fsys2_p) = {"fin_pll", "mout_sw_aclk200_fsys2"};
++PNAME(mout_sw_aclk100_noc_p) = {"dout_aclk100_noc", "mout_sclk_spll"};
++PNAME(mout_user_aclk100_noc_p) = {"fin_pll", "mout_sw_aclk100_noc"};
++
++PNAME(mout_sw_aclk400_wcore_p) = {"dout_aclk400_wcore", "mout_sclk_spll"};
++PNAME(mout_aclk400_wcore_bpll_p) = {"mout_aclk400_wcore", "sclk_bpll"};
++PNAME(mout_user_aclk400_wcore_p) = {"fin_pll", "mout_sw_aclk400_wcore"};
++
+ PNAME(mout_sw_aclk400_isp_p) = {"dout_aclk400_isp", "mout_sclk_spll"};
+ PNAME(mout_user_aclk400_isp_p) = {"fin_pll", "mout_sw_aclk400_isp"};
+ 
+@@ -370,6 +379,8 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 			SRC_TOP0, 4, 2, "aclk400_mscl"),
+ 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+ 	MUX(0, "mout_aclk200_fsys2", mout_group1_p, SRC_TOP0, 12, 2),
++	MUX(0, "mout_aclk400_wcore", mout_group1_p, SRC_TOP0, 16, 2),
++	MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
+ 	MUX(0, "mout_aclk200_fsys", mout_group1_p, SRC_TOP0, 28, 2),
+ 
+ 	MUX(0, "mout_aclk333_432_gscl", mout_group4_p, SRC_TOP1, 0, 2),
+@@ -397,6 +408,10 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 			SRC_TOP3, 8, 1),
+ 	MUX(0, "mout_user_aclk200_fsys2", mout_user_aclk200_fsys2_p,
+ 			SRC_TOP3, 12, 1),
++	MUX(0, "mout_user_aclk400_wcore", mout_user_aclk400_wcore_p,
++			SRC_TOP3, 16, 1),
++	MUX(0, "mout_user_aclk100_noc", mout_user_aclk100_noc_p,
++			SRC_TOP3, 20, 1),
+ 	MUX(0, "mout_user_aclk200_fsys", mout_user_aclk200_fsys_p,
+ 			SRC_TOP3, 28, 1),
+ 
+@@ -447,6 +462,10 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 	MUX(0, "mout_sw_aclk200", mout_sw_aclk200_p, SRC_TOP10, 8, 1),
+ 	MUX(0, "mout_sw_aclk200_fsys2", mout_sw_aclk200_fsys2_p,
+ 			SRC_TOP10, 12, 1),
++	MUX(0, "mout_sw_aclk400_wcore", mout_sw_aclk400_wcore_p,
++			SRC_TOP10, 16, 1),
++	MUX(0, "mout_sw_aclk100_noc", mout_sw_aclk100_noc_p,
++			SRC_TOP10, 20, 1),
+ 	MUX(0, "mout_sw_aclk200_fsys", mout_sw_aclk200_fsys_p,
+ 			SRC_TOP10, 28, 1),
+ 
+@@ -483,6 +502,9 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 	MUX(CLK_MOUT_HDMI, "mout_hdmi", mout_hdmi_p, SRC_DISP10, 28, 1),
+ 	MUX_F(0, "mout_fimd1_opt", mout_group2_p,
+ 			SRC_DISP10, 8, 3, CLK_SET_RATE_PARENT, 0),
++
++	MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
++			TOP_SPARE2, 4, 1),
+ 	MUX_F(0, "mout_fimd1_final", mout_fimd1_final_p,
+ 			TOP_SPARE2, 8, 1, CLK_SET_RATE_PARENT, 0),
+ 
+@@ -530,6 +552,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+ 	DIV(0, "dout_aclk400_mscl", "mout_aclk400_mscl", DIV_TOP0, 4, 3),
+ 	DIV(0, "dout_aclk200", "mout_aclk200", DIV_TOP0, 8, 3),
+ 	DIV(0, "dout_aclk200_fsys2", "mout_aclk200_fsys2", DIV_TOP0, 12, 3),
++	DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
++			DIV_TOP0, 16, 3),
++	DIV(0, "dout_aclk100_noc", "mout_aclk100_noc", DIV_TOP0, 20, 3),
+ 	DIV(0, "dout_pclk200_fsys", "mout_pclk200_fsys", DIV_TOP0, 24, 3),
+ 	DIV(0, "dout_aclk200_fsys", "mout_aclk200_fsys", DIV_TOP0, 28, 3),
+ 
+-- 
+1.7.9.5
