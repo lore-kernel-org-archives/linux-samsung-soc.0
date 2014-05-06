@@ -1,111 +1,152 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 2/6] ARM: EXYNOS: Move SYS_I2C_CFG register save/restore
- to i2c driver
-Date: Tue, 06 May 2014 21:04:09 +0200
-Message-ID: <53693229.3080705@gmail.com>
-References: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
- <1399366282-4191-3-git-send-email-pankaj.dubey@samsung.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+Date: Tue, 6 May 2014 13:05:25 -0700
+Message-ID: <CAOw6vb+J8t3v81xH5yHJtRsQDT0dVW2Aho3HMz6esNYQmxRJRA@mail.gmail.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1399319548-16567-4-git-send-email-ajaykumar.rs@samsung.com>
+ <CAOw6vbJH7bh7OcN8wN6YTbXrYutYqMPyf3SL63fx6ay9dL8eVQ@mail.gmail.com>
+ <CAEC9eQPLzjbvAnK2oO0q5TtqqetGVNCXM6mk50-Hcxfiu5LeoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1399366282-4191-3-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, arnd@arndb.de, Wolfram Sang <wsa@the-dreams.de>, t.figa@samsung.com, linux-i2c@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQPLzjbvAnK2oO0q5TtqqetGVNCXM6mk50-Hcxfiu5LeoA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pankaj,
-
-On 06.05.2014 10:51, Pankaj Dubey wrote:
-> Let's move SYS_I2C_CFG register save/restore during s2r into i2c driver.
-> This will help in removing static iodesc based mapping from exynos.c.
-> Also will help in removing SoC specific checks in pm.c making it
-> more independent of such macros.
+On Tue, May 6, 2014 at 1:03 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> Sean,
 >
-> CC: Wolfram Sang <wsa@the-dreams.de>
-> CC: Russell King <linux@arm.linux.org.uk>
-> CC: linux-i2c@vger.kernel.org
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->   arch/arm/mach-exynos/exynos.c           |   12 +-----------
->   arch/arm/mach-exynos/include/mach/map.h |    3 ---
->   arch/arm/mach-exynos/pm.c               |   10 ----------
->   arch/arm/mach-exynos/regs-sys.h         |   22 ----------------------
->   drivers/i2c/busses/i2c-s3c2410.c        |    8 ++++++++
->   5 files changed, 9 insertions(+), 46 deletions(-)
->   delete mode 100644 arch/arm/mach-exynos/regs-sys.h
-
-[snip]
-
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 0420150..2095a01 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -133,6 +133,7 @@ struct s3c24xx_i2c {
->   	struct notifier_block	freq_transition;
->   #endif
->   	struct regmap		*sysreg;
-> +	unsigned int		syc_cfg;
-
-I suspect this is a typo, as the name syc_cfg looks a bit strange. 
-Shouldn't it be sys_i2c_cfg?
-
->   };
 >
->   static struct platform_device_id s3c24xx_driver_ids[] = {
-> @@ -1293,6 +1294,9 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
->   	struct platform_device *pdev = to_platform_device(dev);
->   	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> On Tue, May 6, 2014 at 9:24 PM, Sean Paul <seanpaul@chromium.org> wrote:
+>> On Mon, May 5, 2014 at 12:52 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+>>> modify the driver to call the bridge->funcs of the next bridge
+>>> in the chain.
+>>> We assume that the bridge sitting next to ptn3460 is a bridge-panel.
+>>>
+>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>> ---
+>>>  drivers/gpu/drm/bridge/ptn3460.c | 21 +++++++++++++++++----
+>>>  1 file changed, 17 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+>>> index b171901..969869a 100644
+>>> --- a/drivers/gpu/drm/bridge/ptn3460.c
+>>> +++ b/drivers/gpu/drm/bridge/ptn3460.c
+>>> @@ -126,6 +126,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+>>>                 gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+>>>         }
+>>>
+>>> +       if (bridge->next_bridge)
+>>> +               bridge->next_bridge->funcs->pre_enable(bridge->next_bridge);
+>>>         /*
+>>>          * There's a bug in the PTN chip where it falsely asserts hotplug before
+>>>          * it is fully functional. We're forced to wait for the maximum start up
+>>> @@ -142,6 +144,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+>>>
+>>>  static void ptn3460_enable(struct drm_bridge *bridge)
+>>>  {
+>>> +       if (bridge->next_bridge)
+>>> +               bridge->next_bridge->funcs->enable(bridge->next_bridge);
+>>>  }
+>>>
+>>>  static void ptn3460_disable(struct drm_bridge *bridge)
+>>> @@ -153,6 +157,11 @@ static void ptn3460_disable(struct drm_bridge *bridge)
+>>>
+>>>         ptn_bridge->enabled = false;
+>>>
+>>> +       if (bridge->next_bridge) {
+>>> +               bridge->next_bridge->funcs->disable(bridge->next_bridge);
+>>> +               bridge->next_bridge->funcs->post_disable(bridge->next_bridge);
+>>
+>> Shouldn't post_disable be called from ptn_3460_post_disable, instead of here?
+> Umm, right. But no point in delaying ->post_disable of the panel(which
+> switches off power to LCD) since
+> backlight would be already down in ->disable call itself. So, I
+> thought of calling post_disable here itself.
 >
-> +	if (i2c->sysreg)
+>>> +       }
+>>> +
+>>>         if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+>>>                 gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+>>>
+>>> @@ -197,7 +206,10 @@ int ptn3460_get_modes(struct drm_connector *connector)
+>>>                 return drm_add_edid_modes(connector, ptn_bridge->edid);
+>>>
+>>>         power_off = !ptn_bridge->enabled;
+>>> -       ptn3460_pre_enable(ptn_bridge->bridge);
+>>> +       if (power_off) {
+>>> +               ptn3460_pre_enable(ptn_bridge->bridge);
+>>> +               ptn3460_enable(ptn_bridge->bridge);
+>>
+>> In this case, I don't think we need to power on the entire bridge
+>> chain since we're just reading the edid from the bridge chip itself.
+>> So I think I'd prefer to break out the power_on/power_off code from
+>> the bridge chain such that we can just power up the bridge chip, check
+>> the edid and then turn it off.
+> Those extra calls were added to make sure that regulator_enable/disable would
+> be in sync for the panel. Check the other patch [2/3].
 
-IS_ERR() should be used.
+Sure, but we don't need the panel to read the edid. This bridge in
+particular provides the edid itself, so in this case, we should leave
+the panel off.
 
-> +		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->syc_cfg);
+Sean
 
-Aha, so this is where the reference to the regmap gets used outside the 
-probe. I'd say that changes to the i2c driver from this patch should be 
-squashed with previous patch and this patch should contain only arch 
-changes to remove old code.
 
-However, I wonder if this is really the right approach to this, as now 
-you have save and restore duplicated for every instance of s3c24xx-i2c 
-IP block. If there are no bits other than interrupt mux selectors in 
-this registers then I guess this is fine (I can't look it up in the 
-documentation at the moment), but otherwise you can end-up with multiple 
-paths doing read-modify-write to this register in parallel possibly with 
-different values.
-
-Needless to say, this isn't very elegant, but I'm not opposed too much, 
-as I can't really think of anything better right now.
-
-> +
->   	i2c->suspended = 1;
+> Another way of doing this is to just check if the bridge is off  and
+> switch it on by
+> explicitly setting up the gpios here, instead of just calling
+> ptn3460_pre_enable.
 >
->   	return 0;
-> @@ -1304,6 +1308,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
->   	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
->
->   	i2c->suspended = 0;
-> +
-> +	if (i2c->sysreg)
-> +		regmap_write(i2c->sysreg, i2c->syc_cfg, EXYNOS5_SYS_I2C_CFG);
-> +
-
-I'd say this should be happening before setting i2c->suspended to 0 to 
-account for possible i2c transfers being requested in parallel. Also see 
-patch [1].
-
-[1] https://lkml.org/lkml/2014/4/11/632
-
-Best regards,
-Tomasz
+> Ajay
+>> In other bridges, where we're actually reading the edid from a
+>> downstream source, this decision might be different.
+>>
+>>
+>>
+>>> +       }
+>>>
+>>>         edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
+>>>         if (!edid) {
+>>> @@ -219,8 +231,10 @@ int ptn3460_get_modes(struct drm_connector *connector)
+>>>         num_modes = drm_add_edid_modes(connector, ptn_bridge->edid);
+>>>
+>>>  out:
+>>> -       if (power_off)
+>>> +       if (power_off) {
+>>>                 ptn3460_disable(ptn_bridge->bridge);
+>>> +               ptn3460_post_disable(ptn_bridge->bridge);
+>>> +       }
+>>>
+>>>         return num_modes;
+>>>  }
+>>> @@ -318,14 +332,13 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+>>>                 goto err;
+>>>         }
+>>>
+>>> -       ret = drm_bridge_init(dev, bridge, &ptn3460_bridge_funcs);
+>>> +       ret = drm_bridge_init(dev, bridge, encoder, &ptn3460_bridge_funcs);
+>>>         if (ret) {
+>>>                 DRM_ERROR("Failed to initialize bridge with drm\n");
+>>>                 goto err;
+>>>         }
+>>>
+>>>         bridge->driver_private = ptn_bridge;
+>>> -       encoder->bridge = bridge;
+>>>
+>>>         ret = drm_connector_init(dev, &ptn_bridge->connector,
+>>>                         &ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
+>>> --
+>>> 1.8.1.2
+>>>
