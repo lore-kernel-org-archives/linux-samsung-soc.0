@@ -1,8 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v4 PATCH v2 06/18] ARM: dts: sysreg: add exynos5 compatible to DT
- bindings
-Date: Wed, 07 May 2014 16:46:27 +0900
-Message-ID: <1399448799-8057-7-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v4 PATCH v2 18/18] ARM: dts: exynos5420: add dsi node
+Date: Wed, 07 May 2014 16:46:39 +0900
+Message-ID: <1399448799-8057-19-git-send-email-yj44.cho@samsung.com>
 References: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,29 +21,50 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds relevant to exynos5 compatible for exynos5 SoCs.
+This patch adds common part of dsi node.
 
 Changelog v2:
-- Changes title and description (commented by Sachin Kamat)
+- Uses clock macros instead of numbers (commented by Sachin Kamat)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/exynos5420.dtsi |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-index 0ab3251..fd71581 100644
---- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-@@ -3,6 +3,7 @@ SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
- Properties:
-  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
-    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
-+   For Exynos5 SoC series it should be "samsung,exynos5-sysreg", "syscon";
-  - reg : offset and length of the register set.
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index f0184c7..f1030f5 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -17,6 +17,7 @@
+ #include "exynos5420-pinctrl.dtsi"
  
- Example:
+ #include <dt-bindings/clk/exynos-audss-clk.h>
++#include <dt-bindings/clock/exynos5420.h>
+ 
+ / {
+ 	compatible = "samsung,exynos5420";
+@@ -422,6 +423,20 @@
+ 		#phy-cells = <1>;
+ 	};
+ 
++	dsi@14500000 {
++		compatible = "samsung,exynos5420-mipi-dsi";
++		reg = <0x14500000 0x10000>;
++		interrupts = <0 82 0>;
++		samsung,power-domain = <&disp_pd>;
++		phys = <&mipi_phy 1>;
++		phy-names = "dsim";
++		clocks = <&clock CLK_DSIM1>, <&clock CLK_SCLK_MIPI1>;
++		clock-names = "bus_clk", "pll_clk";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
+ 	fimd@14400000 {
+ 		samsung,power-domain = <&disp_pd>;
+ 		clocks = <&clock 147>, <&clock 421>;
 -- 
 1.7.9.5
