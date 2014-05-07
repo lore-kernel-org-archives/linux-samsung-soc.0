@@ -1,174 +1,159 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC v3 PATCH v6 11/16] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 07 May 2014 18:00:47 +0200
-Message-ID: <2334444.2bsAoZqCED@avalon>
-References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
- <53676965.4020800@samsung.com> <536986EA.2050103@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM
+ bindings
+Date: Wed, 07 May 2014 19:03:27 +0200
+Message-ID: <536A675F.9040204@samsung.com>
+References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
+ <53691187.80101@gmail.com>
+ <CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <536986EA.2050103@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:61017 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750880AbaEGRDc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 May 2014 13:03:32 -0400
+In-reply-to: <CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
 
-On Wednesday 07 May 2014 10:05:46 YoungJun Cho wrote:
-> Hi Andrzej
+On 06.05.2014 20:09, Sachin Kamat wrote:
+[snip]
+> On 6 May 2014 22:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+[snip]
+>> On 06.05.2014 10:10, Sachin Kamat wrote:
+[snip]
+>>> diff --git a/arch/arm/mach-exynos/platsmp.c
+>>> b/arch/arm/mach-exynos/platsmp.c
+>>> index 03e5e9f94705..ccbcdd7b8a86 100644
+>>> --- a/arch/arm/mach-exynos/platsmp.c
+>>> +++ b/arch/arm/mach-exynos/platsmp.c
+>>> @@ -20,6 +20,7 @@
+>>>   #include <linux/jiffies.h>
+>>>   #include <linux/smp.h>
+>>>   #include <linux/io.h>
+>>> +#include <linux/of_address.h>
+>>>
+>>>   #include <asm/cacheflush.h>
+>>>   #include <asm/smp_plat.h>
+>>> @@ -33,11 +34,35 @@
+>>>
+>>>   extern void exynos4_secondary_startup(void);
+>>>
+>>> +static void __iomem *sram_base_addr;
+>>> +void __iomem *sram_ns_base_addr;
+>>
+>>
+>> This is probably just a matter of preference, but I'd make this static and
+>> provide a getter function, like exynos_get_sram_ns_base();
+>>
+>> Also this address seems to be used by the firmware code exclusively. If we
+>> want to make the firmware code more self-contained, maybe the mapping of
+>> firmware-specific SRAM region could be handled there, instead? This would
+>> also eliminate the need for having an exported variable or getter function.
+>> What do you think?
 > 
-> Thank you for comments.
+> I thought of the same. However 2 reasons prevented me from implementing this.
 > 
-> On 05/05/2014 07:35 PM, Andrzej Hajda wrote:
-> > On 04/27/2014 03:50 AM, YoungJun Cho wrote:
-> >> This patch adds DT bindings for s6e3fa0 panel.
-> >> The bindings describes panel resources, display timings and cpu mode
-> >> timings.
-> >> 
-> >> Changelog v2:
-> >> - Adds unit address (commented by Sachin Kamat)
-> >> Changelog v3:
-> >> - Removes optional delay, size properties (commented by Laurent Pinchart)
-> >> - Adds OLED detection, TE gpio properties
-> >> Changelog v4:
-> >> - Moves CPU timings relevant properties from FIMD DT
-> >> 
-> >>    (commeted by Laurent Pinchart, Andrzej Hajda)
-> >> 
-> >> Changelog v5:
-> >> - Fixes gpio property names (commented by Andrzej Hajda)
-> >> Changelog v6:
-> >> - Renames CPU timings to CPU mode timings
-> >> - Modifies CPU mode timings internal properties relevant things
-> >> 
-> >>    (commeted by Laurent Pinchart, Andrzej Hajda)
-> >> 
-> >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> >> Acked-by: Inki Dae <inki.dae@samsung.com>
-> >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> ---
-> >> 
-> >>   .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   68
-> >>   ++++++++++++++++++++ 1 file changed, 68 insertions(+)
-> >>   create mode 100644
-> >>   Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt>> 
-> >> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> >> b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt new file
-> >> mode 100644
-> >> index 0000000..9f06645
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> >> @@ -0,0 +1,68 @@
-> >> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-> >> +
-> >> +Required properties:
-> >> +  - compatible: "samsung,s6e3fa0"
-> >> +  - reg: the virtual channel number of a DSI peripheral
-> >> +  - vdd3-supply: core voltage supply
-> >> +  - vci-supply: voltage supply for analog circuits
-> >> +  - reset-gpios: a GPIO spec for the reset pin
-> >> +  - det-gpios: a GPIO spec for the OLED detection pin
-> >> +  - te-gpios: a GPIO spec for the TE pin
-> >> +  - display-timings: timings for the connected panel as described by [1]
-> > 
-> > This still bothers me, it forces users to provide bunch of fake
-> > properties (four porches, two syncs and clock-frequency) just because we
-> > need to pass somehow pixel width and height. And do we really need pixel
-> > dimension to be passed via DT? I guess it could be:
-> > - hardcoded into the driver,
-> > - derived from the panel id,
-> > - maybe read from the panel, this is the best option I guess but I am
-> > not sure if panel provides an API for this.
+> 1. Code duplication
+> 2. This code should be executed only once. I put it in exynos_firmware_init.
+> However it gave a crash while doing of_iomap. So moved it back to the current
+> location.
+>
+
+Right, exynos_firmware_init() is called too early, before ioremap() is
+available, so there is no good place to put this in firmware code. So,
+let's keep this as is for now and eventually move it to firmware if
+needed and/or a proper method of initialization is available.
+
+>>
+>>
+>>> +
+>>> +static void __init exynos_smp_prepare_sram(void)
+>>> +{
+>>> +       struct device_node *node;
+>>> +
+>>> +       for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
+>>> +               if (of_device_is_available(node)) {
+>>> +                       sram_base_addr = of_iomap(node, 0);
+>>> +                       if (!sram_base_addr)
+>>> +                               pr_err("Secondary CPU boot address not
+>>> found\n");
+>>
+>>
+>> I don't think this is an error at this stage. Some platforms might not have
+>> either of these SRAM reserved regions (such as those using INFORM registers
+>> instead). Instead, the base address should be checked whenever it is needed
+>> and errors should be handled then, like in exynos_set_cpu_boot_addr().
 > 
-> I have been trying to only use cpu-mode-timings without display-timings
-> for next RFC v4.
+> Yes. This is more from an information perspective. Probably pr_warn or
+> pr_info would
+> be better?
 > 
-> As you mentioned, the only required things in display-timings are
-> clock-frequency, hactive and vactive.
-> I put them into cpu-mode-timings, but strictly speaking,
-> cpu-mode-timings is not related with display timing, it is data
-> transmission mode switch timing.
-> And there is no interface for this in drm (display) mode yet.
-> So I'm not sure what is the generic method to treat them.
 
-If the sync-related properties are not used, they should not be specified. I 
-don't really like bundling the timing-related properties with the bus timings 
-though, I would rather make the sync-related properties optional in the 
-display timing node.
+IMHO this shouldn't produce any messages at this stage. Just whenever
+either of addresses is actually needed and is not initialized a message
+should be printed.
 
-However, I'm pretty sure that your panel does have horizontal and vertical 
-blanking, and that information is needed in the display timings to compute the 
-frame rate accurately. The porch and sync length properties might not be 
-needed individually, but their total value is required.
+>>> +}
+>>> +
+>>>   static inline void __iomem *cpu_boot_reg_base(void)
+>>>   {
+>>>         if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+>>>                 return S5P_INFORM5;
+>>> -       return S5P_VA_SYSRAM;
+>>> +       return sram_base_addr;
+>>>   }
+>>>
+>>>   static inline void __iomem *cpu_boot_reg(int cpu)
+>>> @@ -147,7 +172,8 @@ static int exynos_boot_secondary(unsigned int cpu,
+>>> struct task_struct *idle)
+>>>                  * and fall back to boot register if it fails.
+>>>                  */
+>>>                 if (call_firmware_op(set_cpu_boot_addr, phys_cpu,
+>>> boot_addr))
+>>> -                       __raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+>>> +                       if (cpu_boot_reg_base())
+>>> +                               __raw_writel(boot_addr,
+>>> cpu_boot_reg(phys_cpu));
+>>
+>>
+>> I'd rework this for proper error handling, e.g.
+>>
+>>         int ret;
+>>
+>>         /* ... */
+>>
+>>         ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
+>>         if (ret && ret != -ENOSYS)
+>>                 goto fail;
+>>         if (ret == -ENOSYS) {
+>>                 /* Fall back to firmware-less way. */
+>>                 void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
+>>
+>>                 if (IS_ERR(boot_reg)) {
+>>                         ret = PTR_ERR(boot_reg);
+>>                         goto fail;
+>>                 }
+>>         }
+>>
+>>         /* ... */
+>>
+>> fail:
+>>         /* Clean-up after error */
+>>
+>> Of course, cpu_boot_reg() will need to be converted to follow the ERR_PTR()
+>> model, but IMHO proper error handling is a good reason to do so.
+> 
+> How about handling this separately outside this patch?
+> 
 
-> >> +  - cpu-mode-timings: CPU interface timings for the connected panel,
-> >> +      and it contains following properties.
-> >> +        Required properties:
-> >> +          - wr-active: clock cycles for the active period of CS enable
-> >> in CPU +              interface.
-> >> +        Optional properties:
-> >> +          - cs-setup: clock cycles for the active period of address
-> >> signal
-> >> +              enable until chip select is enable in CPU interface.
-> >> +              If not specified, the default value(0) will be used.
-> >> +          - wr-setup: clock cycles for the active period of CS signal
-> >> enable +              until write signal is enable in CPU interface.
-> >> +              If not specified, the default value(0) will be used.
-> >> +          - wr-hold: clock cycles for the active period of CS disable
-> >> until +              write signal is disable in CPU interface.
-> >> +              If not specified, the default value(0) will be used.
-> >> +
-> >> +Optional properties:
-> >> +
-> >> +The device node can contain one 'port' child node with one child
-> >> 'endpoint' +node, according to the bindings defined in [2]. This node
-> >> should describe +panel's video bus.
-> >> +
-> >> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
-> >> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> >> +
-> >> +Example:
-> >> +
-> >> +	panel@0 {
-> >> +		compatible = "samsung,s6e3fa0";
-> >> +		reg = <0>;
-> >> +		vdd3-supply = <&vcclcd_reg>;
-> >> +		vci-supply = <&vlcd_reg>;
-> >> +		reset-gpios = <&gpy7 4 0>;
-> >> +		det-gpios = <&gpg0 6 0>;
-> >> +		te-gpios = <&gpd1 7 0>;
-> >> +
-> >> +		display-timings {
-> >> +			timing0: timing-0 {
-> >> +				clock-frequency = <0>;
-> >> +				hactive = <1080>;
-> >> +				vactive = <1920>;
-> >> +				hfront-porch = <2>;
-> >> +				hback-porch = <2>;
-> >> +				hsync-len = <1>;
-> >> +				vfront-porch = <1>;
-> >> +				vback-porch = <4>;
-> >> +				vsync-len = <1>;
-> >> +			};
-> >> +		};
-> >> +
-> >> +		cpu-mode-timings {
-> >> +			cs-setup = <0>;
-> >> +			wr-setup = <0>;
-> >> +			wr-active = <1>;
-> >> +			wr-hold = <0>;
-> >> +		};
-> >> +	};
+This patch is already changing surroundings of this code, so I'd say it
+should do it the right way from the start.
 
--- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Tomasz
