@@ -1,163 +1,61 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v3 PATCH v6 11/16] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 07 May 2014 10:05:46 +0900
-Message-ID: <536986EA.2050103@samsung.com>
-References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
- <1398563412-21781-12-git-send-email-yj44.cho@samsung.com>
- <53676965.4020800@samsung.com>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: Re: [PATCH v5 2/6] arm64: Introduce VA_BITS and translation level
+ options
+Date: Wed, 07 May 2014 12:59:12 +0900
+Message-ID: <001b01cf69a8$b49e5010$1ddaf030$@samsung.com>
+References: <000201cf64e5$cd3366a0$679a33e0$@samsung.com>
+ <20140501100628.GB2848@lvm> <000a01cf65a9$d3cbf030$7b63d090$@samsung.com>
+ <20140502111648.GA3002@lvm>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53676965.4020800@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140502111648.GA3002@lvm>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Christoffer Dall' <christoffer.dall@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej
+On Friday, May 02, 2014 8:17 PM, Christoffer Dall wrote:
+> On Fri, May 02, 2014 at 10:57:09AM +0900, Jungseok Lee wrote:
+> > On Thursday, May 01, 2014 7:06 PM, Christoffer Dall wrote:
+> > > On Thu, May 01, 2014 at 11:33:56AM +0900, Jungseok Lee wrote:
+> 
+> [...]
+> 
+> > > > +
+> > > > +choice
+> > > > +	prompt "Virtual address space size"
+> > > > +	default ARM64_VA_BITS_39 if ARM64_4K_PAGES
+> > > > +	default ARM64_VA_BITS_42 if ARM64_64K_PAGES
+> > > > +	help
+> > > > +	  Allows virtual address space size. A level of translation
+> > > > +tables
+> > >
+> > > What does "Allows virtual address space size" mean exactly?
+> >
+> > It means that VA space size can be chosen. For example, there are two
+> > VA size options, 39-bit and 48-bit, with 4KB pages. If 39-bit VA space
+> > is not enough, 48-bit can be selected instead. The 5th patch adds a
+> > 48-bit option to this choice blocks.
+> >
+> > If 16KB pages are supported with both 47-bit and 48-bit VA size,
+> > people could configure it in menuconfig.
+> >
+> > In this context, I've written it down like page size.
+> >
+> > I think Catalin's comment would be helpful.
+> > http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
+> >
+> I didn't have problems understanding the concept, I was questioning the language.  The way it is
+> written now it suggests having a virtual address space size, as opposed to not having a size at all,
+> which doesn't make sense.
+> 
+> I think you want to say something along the lines of "Allows choosing a virtual address space size",
+> or "Allows choosing one of multiple possible virtual address space sizes".
 
-Thank you for comments.
+Ahh... I see. I will revise the sentence clearly.
+Thanks!
 
-On 05/05/2014 07:35 PM, Andrzej Hajda wrote:
-> On 04/27/2014 03:50 AM, YoungJun Cho wrote:
->> This patch adds DT bindings for s6e3fa0 panel.
->> The bindings describes panel resources, display timings and cpu mode timings.
->>
->> Changelog v2:
->> - Adds unit address (commented by Sachin Kamat)
->> Changelog v3:
->> - Removes optional delay, size properties (commented by Laurent Pinchart)
->> - Adds OLED detection, TE gpio properties
->> Changelog v4:
->> - Moves CPU timings relevant properties from FIMD DT
->>    (commeted by Laurent Pinchart, Andrzej Hajda)
->> Changelog v5:
->> - Fixes gpio property names (commented by Andrzej Hajda)
->> Changelog v6:
->> - Renames CPU timings to CPU mode timings
->> - Modifies CPU mode timings internal properties relevant things
->>    (commeted by Laurent Pinchart, Andrzej Hajda)
->>
->> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>   .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   68 ++++++++++++++++++++
->>   1 file changed, 68 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
->>
->> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
->> new file mode 100644
->> index 0000000..9f06645
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
->> @@ -0,0 +1,68 @@
->> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
->> +
->> +Required properties:
->> +  - compatible: "samsung,s6e3fa0"
->> +  - reg: the virtual channel number of a DSI peripheral
->> +  - vdd3-supply: core voltage supply
->> +  - vci-supply: voltage supply for analog circuits
->> +  - reset-gpios: a GPIO spec for the reset pin
->> +  - det-gpios: a GPIO spec for the OLED detection pin
->> +  - te-gpios: a GPIO spec for the TE pin
->> +  - display-timings: timings for the connected panel as described by [1]
->
-> This still bothers me, it forces users to provide bunch of fake
-> properties (four porches, two syncs and clock-frequency) just because we
-> need to pass somehow pixel width and height. And do we really need pixel
-> dimension to be passed via DT? I guess it could be:
-> - hardcoded into the driver,
-> - derived from the panel id,
-> - maybe read from the panel, this is the best option I guess but I am
-> not sure if panel provides an API for this.
->
-
-I have been trying to only use cpu-mode-timings without display-timings 
-for next RFC v4.
-
-As you mentioned, the only required things in display-timings are 
-clock-frequency, hactive and vactive.
-I put them into cpu-mode-timings, but strictly speaking, 
-cpu-mode-timings is not related with display timing, it is data 
-transmission mode switch timing.
-And there is no interface for this in drm (display) mode yet.
-So I'm not sure what is the generic method to treat them.
-
-Thank you.
-Best regards YJ
-
-> Regards
-> Andrzej
->
->
->> +  - cpu-mode-timings: CPU interface timings for the connected panel,
->> +      and it contains following properties.
->> +        Required properties:
->> +          - wr-active: clock cycles for the active period of CS enable in CPU
->> +              interface.
->> +        Optional properties:
->> +          - cs-setup: clock cycles for the active period of address signal
->> +              enable until chip select is enable in CPU interface.
->> +              If not specified, the default value(0) will be used.
->> +          - wr-setup: clock cycles for the active period of CS signal enable
->> +              until write signal is enable in CPU interface.
->> +              If not specified, the default value(0) will be used.
->> +          - wr-hold: clock cycles for the active period of CS disable until
->> +              write signal is disable in CPU interface.
->> +              If not specified, the default value(0) will be used.
->> +
->> +Optional properties:
->> +
->> +The device node can contain one 'port' child node with one child 'endpoint'
->> +node, according to the bindings defined in [2]. This node should describe
->> +panel's video bus.
->> +
->> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
->> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
->> +
->> +Example:
->> +
->> +	panel@0 {
->> +		compatible = "samsung,s6e3fa0";
->> +		reg = <0>;
->> +		vdd3-supply = <&vcclcd_reg>;
->> +		vci-supply = <&vlcd_reg>;
->> +		reset-gpios = <&gpy7 4 0>;
->> +		det-gpios = <&gpg0 6 0>;
->> +		te-gpios = <&gpd1 7 0>;
->> +
->> +		display-timings {
->> +			timing0: timing-0 {
->> +				clock-frequency = <0>;
->> +				hactive = <1080>;
->> +				vactive = <1920>;
->> +				hfront-porch = <2>;
->> +				hback-porch = <2>;
->> +				hsync-len = <1>;
->> +				vfront-porch = <1>;
->> +				vback-porch = <4>;
->> +				vsync-len = <1>;
->> +			};
->> +		};
->> +
->> +		cpu-mode-timings {
->> +			cs-setup = <0>;
->> +			wr-setup = <0>;
->> +			wr-active = <1>;
->> +			wr-hold = <0>;
->> +		};
->> +	};
->>
->
->
+- Jungseok Lee
