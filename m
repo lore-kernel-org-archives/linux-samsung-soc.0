@@ -1,113 +1,55 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: [PATCH] net: sxgbe: Added condition for non fix_burst mode
-Date: Wed, 07 May 2014 17:14:01 +0900
-Message-ID: <008c01cf69cc$4dcc8e50$e965aaf0$%an@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
+Date: Wed, 7 May 2014 16:08:53 +0530
+Message-ID: <CAPdUM4N+2VXpiFSiWW9gKfbte1zkpDbCOSF+KvEo4T1KLqqwjw@mail.gmail.com>
+References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+ <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
+ <534506B1.4040908@samsung.com>
+ <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
+ <53451A60.4050803@samsung.com> <53675D72.70103@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:9489 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754176AbaEGIOG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 04:14:06 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53675D72.70103@ti.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: netdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davem@davemloft.net, ks.giri@samsung.com, vipul.pandya@samsung.com
 
+On 5 May 2014 15:14, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> Hi,
+>
+> On Wednesday 09 April 2014 03:31 PM, Sylwester Nawrocki wrote:
+>> Hi,
+>>
+>> On 09/04/14 11:12, Rahul Sharma wrote:
+>>> Idea looks good. How about keeping compatible which is independent
+>>> of SoC, something like "samsung,exynos-simple-phy" and provide Reg
+>>> and Bit through phy provider node. This way we can avoid SoC specific
+>>> hardcoding in phy driver and don't need to look into dt bindings for
+>>> each new SoC.
+>>
+>> I believe it is a not recommended approach.
+>
+> Why not? We should try to avoid hard coding in the driver code. Moreover by
+> avoiding hardcoding we can make it a generic driver for single bit PHYs.
+>
 
-This patch adds the condition for non fixed burst mode
-and separates into two conditions depending on pbl value.
++1.
 
-Signed-off-by: Byungho An <bh74.an@samsung.com>
----
- drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c  |   32 ++++++++++++++++++++---
- drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h  |    2 +-
- drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c |    3 ++-
- 3 files changed, 32 insertions(+), 5 deletions(-)
+@Tomasz, any plans to consider this approach for simple phy driver?
 
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-index bb9b5b8..49240c9 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-@@ -45,7 +45,8 @@ static int sxgbe_dma_init(void __iomem *ioaddr, int fix_burst, int burst_map)
- 
- static void sxgbe_dma_channel_init(void __iomem *ioaddr, int cha_num,
- 				   int fix_burst, int pbl, dma_addr_t dma_tx,
--				   dma_addr_t dma_rx, int t_rsize, int r_rsize)
-+				   dma_addr_t dma_rx, int t_rsize, int r_rsize,
-+				   int buf_size)
- {
- 	u32 reg_val;
- 	dma_addr_t dma_addr;
-@@ -57,12 +58,37 @@ static void sxgbe_dma_channel_init(void __iomem *ioaddr, int cha_num,
- 		writel(reg_val, ioaddr + SXGBE_DMA_CHA_CTL_REG(cha_num));
- 		/* program the TX pbl */
- 		reg_val = readl(ioaddr + SXGBE_DMA_CHA_TXCTL_REG(cha_num));
--		reg_val |= (pbl << SXGBE_DMA_TXPBL_LSHIFT);
-+		reg_val |= pbl << SXGBE_DMA_TXPBL_LSHIFT;
- 		writel(reg_val, ioaddr + SXGBE_DMA_CHA_TXCTL_REG(cha_num));
- 		/* program the RX pbl */
- 		reg_val = readl(ioaddr + SXGBE_DMA_CHA_RXCTL_REG(cha_num));
--		reg_val |= (pbl << SXGBE_DMA_RXPBL_LSHIFT);
-+		reg_val |= pbl << SXGBE_DMA_RXPBL_LSHIFT;
- 		writel(reg_val, ioaddr + SXGBE_DMA_CHA_RXCTL_REG(cha_num));
-+	} else {
-+		if (pbl > 32) {
-+			/* program the pblx8  */
-+			reg_val |= SXGBE_DMA_PBL_X8MODE;
-+			writel(reg_val, ioaddr + SXGBE_DMA_CHA_CTL_REG(cha_num));
-+			/* program the TX pbl */
-+			reg_val = readl(ioaddr + SXGBE_DMA_CHA_TXCTL_REG(cha_num));
-+			reg_val |= (pbl >> 3) << SXGBE_DMA_TXPBL_LSHIFT;
-+			writel(reg_val, ioaddr + SXGBE_DMA_CHA_TXCTL_REG(cha_num));
-+			/* program the RX pbl */
-+			reg_val = readl(ioaddr + SXGBE_DMA_CHA_RXCTL_REG(cha_num));
-+			reg_val |= (pbl >> 3) << SXGBE_DMA_RXPBL_LSHIFT |
-+				   buf_size << SXGBE_DMA_BLENMAP_LSHIFT;
-+			writel(reg_val, ioaddr + SXGBE_DMA_CHA_RXCTL_REG(cha_num));
-+		} else {
-+			/* program the TX pbl */
-+			reg_val = readl(ioaddr + SXGBE_DMA_CHA_TXCTL_REG(cha_num));
-+			reg_val |= pbl << SXGBE_DMA_TXPBL_LSHIFT;
-+			writel(reg_val, ioaddr + SXGBE_DMA_CHA_TXCTL_REG(cha_num));
-+			/* program the RX pbl */
-+			reg_val = readl(ioaddr + SXGBE_DMA_CHA_RXCTL_REG(cha_num));
-+			reg_val |= pbl << SXGBE_DMA_RXPBL_LSHIFT |
-+				   buf_size << SXGBE_DMA_BLENMAP_LSHIFT;
-+			writel(reg_val, ioaddr + SXGBE_DMA_CHA_RXCTL_REG(cha_num));
-+		}
- 	}
- 
- 	/* program desc registers */
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
-index 1607b54..843fa9b 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
-@@ -25,7 +25,7 @@ struct sxgbe_dma_ops {
- 	int (*init)(void __iomem *ioaddr, int fix_burst, int burst_map);
- 	void (*cha_init)(void __iomem *ioaddr, int cha_num, int fix_burst,
- 			 int pbl, dma_addr_t dma_tx, dma_addr_t dma_rx,
--			 int t_rzie, int r_rsize);
-+			 int t_rzie, int r_rsize, int buf_size);
- 	void (*enable_dma_transmission)(void __iomem *ioaddr, int dma_cnum);
- 	void (*enable_dma_irq)(void __iomem *ioaddr, int dma_cnum);
- 	void (*disable_dma_irq)(void __iomem *ioaddr, int dma_cnum);
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-index 82a9a98..93bf151 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-@@ -944,7 +944,8 @@ static int sxgbe_init_dma_engine(struct sxgbe_priv_data *priv)
- 					fixed_burst, pbl,
- 					(priv->txq[queue_num])->dma_tx_phy,
- 					(priv->rxq[queue_num])->dma_rx_phy,
--					priv->dma_tx_size, priv->dma_rx_size);
-+					priv->dma_tx_size, priv->dma_rx_size,
-+					priv->dma_buf_sz);
- 
- 	return priv->hw->dma->init(priv->ioaddr, fixed_burst, burst_map);
- }
--- 
-1.7.10.4
+Regards,
+Rahul Sharma.
+
+> Cheers
+> Kishon
