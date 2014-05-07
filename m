@@ -1,16 +1,15 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [RFC v3 PATCH v2 10/16] drm/exynos: dsi: add driver data to
- support Exynos5420
-Date: Wed, 07 May 2014 09:48:25 +0900
-Message-ID: <536982D9.2040309@samsung.com>
+Subject: Re: [RFC v3 PATCH v6 11/16] ARM: dts: s6e3fa0: add DT bindings
+Date: Wed, 07 May 2014 10:05:46 +0900
+Message-ID: <536986EA.2050103@samsung.com>
 References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
- <1398563412-21781-11-git-send-email-yj44.cho@samsung.com>
- <536775A9.3010005@samsung.com>
+ <1398563412-21781-12-git-send-email-yj44.cho@samsung.com>
+ <53676965.4020800@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <536775A9.3010005@samsung.com>
+In-reply-to: <53676965.4020800@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -24,140 +23,76 @@ To: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freed
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
+Hi Andrzej
 
 Thank you for comments.
 
-On 05/05/2014 08:27 PM, Andrzej Hajda wrote:
+On 05/05/2014 07:35 PM, Andrzej Hajda wrote:
 > On 04/27/2014 03:50 AM, YoungJun Cho wrote:
->> The offset of register DSIM_PLLTMR_REG in Exynos5420 is different
->> from the one in Exynos4 SoC.
->>
->> In case of Exynos5420 SoC, there is no frequency band bit in DSIM_PLLCTRL_REG,
->> and it uses DSIM_PHYCTRL_REG and DSIM_PHYTIMING*_REG instead.
->> So this patch adds driver data to distinguish it.
+>> This patch adds DT bindings for s6e3fa0 panel.
+>> The bindings describes panel resources, display timings and cpu mode timings.
 >>
 >> Changelog v2:
->> - Moves exynos_dsi_enable_clocks() after exynos_dsi_reset()
->>    (commented by Andrzej Hajda)
->> - Splits D-PHY control setting routines from PLL setting one
->>    (commented by Andrzej Hajda)
+>> - Adds unit address (commented by Sachin Kamat)
+>> Changelog v3:
+>> - Removes optional delay, size properties (commented by Laurent Pinchart)
+>> - Adds OLED detection, TE gpio properties
+>> Changelog v4:
+>> - Moves CPU timings relevant properties from FIMD DT
+>>    (commeted by Laurent Pinchart, Andrzej Hajda)
+>> Changelog v5:
+>> - Fixes gpio property names (commented by Andrzej Hajda)
+>> Changelog v6:
+>> - Renames CPU timings to CPU mode timings
+>> - Modifies CPU mode timings internal properties relevant things
+>>    (commeted by Laurent Pinchart, Andrzej Hajda)
 >>
 >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 >> Acked-by: Inki Dae <inki.dae@samsung.com>
 >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> ---
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c |  154 ++++++++++++++++++++++++++-----
->>   1 file changed, 132 insertions(+), 22 deletions(-)
+>>   .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   68 ++++++++++++++++++++
+>>   1 file changed, 68 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index 4a918ec..c18dba3 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -17,6 +17,7 @@
->>
->>   #include <linux/clk.h>
->>   #include <linux/irq.h>
->> +#include <linux/of_device.h>
->>   #include <linux/phy/phy.h>
->>   #include <linux/regulator/consumer.h>
->>
->> @@ -54,9 +55,12 @@
->>
->>   /* FIFO memory AC characteristic register */
->>   #define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
->> -#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
->>   #define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
->>   #define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
->> +#define DSIM_PHYCTRL_REG	0x5c
->> +#define DSIM_PHYTIMING_REG	0x64
->> +#define DSIM_PHYTIMING1_REG	0x68
->> +#define DSIM_PHYTIMING2_REG	0x6c
->>
->>   /* DSIM_STATUS */
->>   #define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
->> @@ -200,6 +204,21 @@
->>   #define DSIM_PLL_M(x)			((x) << 4)
->>   #define DSIM_PLL_S(x)			((x) << 1)
->>
->> +/* DSIM_PHYTIMING */
->> +#define DSIM_PHYTIMING_LPX(x)		((x) << 8)
->> +#define DSIM_PHYTIMING_HS_EXIT(x)	((x) << 0)
+>> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>> new file mode 100644
+>> index 0000000..9f06645
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>> @@ -0,0 +1,68 @@
+>> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
 >> +
->> +/* DSIM_PHYTIMING1 */
->> +#define DSIM_PHYTIMING1_CLK_PREPARE(x)	((x) << 24)
->> +#define DSIM_PHYTIMING1_CLK_ZERO(x)	((x) << 16)
->> +#define DSIM_PHYTIMING1_CLK_POST(x)	((x) << 8)
->> +#define DSIM_PHYTIMING1_CLK_TRAIL(x)	((x) << 0)
->> +
->> +/* DSIM_PHYTIMING2 */
->> +#define DSIM_PHYTIMING2_HS_PREPARE(x)	((x) << 16)
->> +#define DSIM_PHYTIMING2_HS_ZERO(x)	((x) << 8)
->> +#define DSIM_PHYTIMING2_HS_TRAIL(x)	((x) << 0)
->> +
->>   #define DSI_MAX_BUS_WIDTH		4
->>   #define DSI_NUM_VIRTUAL_CHANNELS	4
->>   #define DSI_TX_FIFO_SIZE		2048
->> @@ -233,6 +252,12 @@ struct exynos_dsi_transfer {
->>   #define DSIM_STATE_INITIALIZED		BIT(1)
->>   #define DSIM_STATE_CMD_LPM		BIT(2)
->>
->> +struct exynos_dsi_driver_data {
->> +	unsigned int plltmr_reg;
->> +
->> +	unsigned int has_freqband:1;
->> +};
->> +
->>   struct exynos_dsi {
->>   	struct mipi_dsi_host dsi_host;
->>   	struct drm_connector connector;
->> @@ -262,11 +287,39 @@ struct exynos_dsi {
->>
->>   	spinlock_t transfer_lock; /* protects transfer_list */
->>   	struct list_head transfer_list;
->> +
->> +	struct exynos_dsi_driver_data *driver_data;
->>   };
->>
->>   #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
->>   #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
->>
->> +static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
->> +	.plltmr_reg = 0x50,
->> +	.has_freqband = 1,
->> +};
->> +
->> +static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
->> +	.plltmr_reg = 0x58,
->> +};
->> +
->> +static struct of_device_id exynos_dsi_of_match[] = {
->> +	{ .compatible = "samsung,exynos4210-mipi-dsi",
->> +	  .data = &exynos4_dsi_driver_data },
->> +	{ .compatible = "samsung,exynos5420-mipi-dsi",
->> +	  .data = &exynos5_dsi_driver_data },
->> +	{ }
->> +};
+>> +Required properties:
+>> +  - compatible: "samsung,s6e3fa0"
+>> +  - reg: the virtual channel number of a DSI peripheral
+>> +  - vdd3-supply: core voltage supply
+>> +  - vci-supply: voltage supply for analog circuits
+>> +  - reset-gpios: a GPIO spec for the reset pin
+>> +  - det-gpios: a GPIO spec for the OLED detection pin
+>> +  - te-gpios: a GPIO spec for the TE pin
+>> +  - display-timings: timings for the connected panel as described by [1]
 >
-> I raise again issue of compatible string.
-> Since exynos5410 DSIM contains DSIM_VERSION register, it is better
-> to use this register instead of compatible string to distinguish
-> device versions. So as a compatible we should use the first exynos
-> chipset containing this field. AFAIK it is exynos5410.
-> So the only thing you should do is to change compatible string from
-> samsung,exynos5420-mipi-dsi to samsung,exynos5410-mipi-dsi.
->
->>
->> I posted RFC v3 without this try.
->>
->> Because there is no exynos5410 relevant DTS yet,
->> and making exynos5410 DTS is out of scope for this RFC.
->
->
-> It is irrelevant.
+> This still bothers me, it forces users to provide bunch of fake
+> properties (four porches, two syncs and clock-frequency) just because we
+> need to pass somehow pixel width and height. And do we really need pixel
+> dimension to be passed via DT? I guess it could be:
+> - hardcoded into the driver,
+> - derived from the panel id,
+> - maybe read from the panel, this is the best option I guess but I am
+> not sure if panel provides an API for this.
 >
 
-Ok, I'll fix it.
+I have been trying to only use cpu-mode-timings without display-timings 
+for next RFC v4.
+
+As you mentioned, the only required things in display-timings are 
+clock-frequency, hactive and vactive.
+I put them into cpu-mode-timings, but strictly speaking, 
+cpu-mode-timings is not related with display timing, it is data 
+transmission mode switch timing.
+And there is no interface for this in drm (display) mode yet.
+So I'm not sure what is the generic method to treat them.
 
 Thank you.
 Best regards YJ
@@ -166,168 +101,63 @@ Best regards YJ
 > Andrzej
 >
 >
+>> +  - cpu-mode-timings: CPU interface timings for the connected panel,
+>> +      and it contains following properties.
+>> +        Required properties:
+>> +          - wr-active: clock cycles for the active period of CS enable in CPU
+>> +              interface.
+>> +        Optional properties:
+>> +          - cs-setup: clock cycles for the active period of address signal
+>> +              enable until chip select is enable in CPU interface.
+>> +              If not specified, the default value(0) will be used.
+>> +          - wr-setup: clock cycles for the active period of CS signal enable
+>> +              until write signal is enable in CPU interface.
+>> +              If not specified, the default value(0) will be used.
+>> +          - wr-hold: clock cycles for the active period of CS disable until
+>> +              write signal is disable in CPU interface.
+>> +              If not specified, the default value(0) will be used.
 >> +
->> +static inline struct exynos_dsi_driver_data *exynos_dsi_get_driver_data(
->> +						struct platform_device *pdev)
->> +{
->> +	const struct of_device_id *of_id =
->> +			of_match_device(exynos_dsi_of_match, &pdev->dev);
+>> +Optional properties:
 >> +
->> +	return (struct exynos_dsi_driver_data *)of_id->data;
->> +}
+>> +The device node can contain one 'port' child node with one child 'endpoint'
+>> +node, according to the bindings defined in [2]. This node should describe
+>> +panel's video bus.
 >> +
->>   static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
->>   {
->>   	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
->> @@ -340,14 +393,9 @@ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
->>   static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
->>   					unsigned long freq)
->>   {
->> -	static const unsigned long freq_bands[] = {
->> -		100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
->> -		270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
->> -		510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
->> -		770 * MHZ, 870 * MHZ, 950 * MHZ,
->> -	};
->> +	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
->>   	unsigned long fin, fout;
->> -	int timeout, band;
->> +	int timeout;
->>   	u8 p, s;
->>   	u16 m;
->>   	u32 reg;
->> @@ -368,18 +416,30 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
->>   			"failed to find PLL PMS for requested frequency\n");
->>   		return -EFAULT;
->>   	}
->> +	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
->>
->> -	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
->> -		if (fout < freq_bands[band])
->> -			break;
->> +	writel(500, dsi->reg_base + driver_data->plltmr_reg);
+>> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+>> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
 >> +
->> +	reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
+>> +Example:
 >> +
->> +	if (driver_data->has_freqband) {
->> +		static const unsigned long freq_bands[] = {
->> +			100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
->> +			270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
->> +			510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
->> +			770 * MHZ, 870 * MHZ, 950 * MHZ,
+>> +	panel@0 {
+>> +		compatible = "samsung,s6e3fa0";
+>> +		reg = <0>;
+>> +		vdd3-supply = <&vcclcd_reg>;
+>> +		vci-supply = <&vlcd_reg>;
+>> +		reset-gpios = <&gpy7 4 0>;
+>> +		det-gpios = <&gpg0 6 0>;
+>> +		te-gpios = <&gpd1 7 0>;
+>> +
+>> +		display-timings {
+>> +			timing0: timing-0 {
+>> +				clock-frequency = <0>;
+>> +				hactive = <1080>;
+>> +				vactive = <1920>;
+>> +				hfront-porch = <2>;
+>> +				hback-porch = <2>;
+>> +				hsync-len = <1>;
+>> +				vfront-porch = <1>;
+>> +				vback-porch = <4>;
+>> +				vsync-len = <1>;
+>> +			};
 >> +		};
->> +		int band;
 >> +
->> +		for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
->> +			if (fout < freq_bands[band])
->> +				break;
->>
->> -	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d), band %d\n", fout,
->> -		p, m, s, band);
->> +		dev_dbg(dsi->dev, "band %d\n", band);
->>
->> -	writel(500, dsi->reg_base + DSIM_PLLTMR_REG);
->> +		reg |= DSIM_FREQ_BAND(band);
->> +	}
->>
->> -	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
->> -			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
->>   	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
->>
->>   	timeout = 1000;
->> @@ -433,6 +493,59 @@ static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
->>   	return 0;
->>   }
->>
->> +static void exynos_dsi_set_phy_ctrl(struct exynos_dsi *dsi)
->> +{
->> +	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
->> +	u32 reg;
->> +
->> +	if (driver_data->has_freqband)
->> +		return;
->> +
->> +	/* B D-PHY */
->> +	reg = 0x0af & 0x1ff;
->> +	writel(reg, dsi->reg_base + DSIM_PHYCTRL_REG);
->> +
->> +	/*
->> +	 * T LPX: Transmitted length of any Low-Power state period
->> +	 * T HS-EXIT: Time that the transmitter drives LP-11 following a HS
->> +	 *	burst
->> +	 */
->> +	reg = DSIM_PHYTIMING_LPX(0x06) | DSIM_PHYTIMING_HS_EXIT(0x0b);
->> +	writel(reg, dsi->reg_base + DSIM_PHYTIMING_REG);
->> +
->> +	/*
->> +	 * T CLK-PREPARE: Time that the transmitter drives the Clock Lane LP-00
->> +	 *	Line state immediately before the HS-0 Line state starting the
->> +	 *	HS transmission
->> +	 * T CLK-ZERO: Time that the transmitter drives the HS-0 state prior to
->> +	 *	transmitting the Clock.
->> +	 * T CLK_POST: Time that the transmitter continues to send HS clock
->> +	 *	after the last associated Data Lane has transitioned to LP Mode
->> +	 *	Interval is defined as the period from the end of T HS-TRAIL to
->> +	 *	the beginning of T CLK-TRAIL
->> +	 * T CLK-TRAIL: Time that the transmitter drives the HS-0 state after
->> +	 *	the last payload clock bit of a HS transmission burst
->> +	 */
->> +	reg = DSIM_PHYTIMING1_CLK_PREPARE(0x07) |
->> +			DSIM_PHYTIMING1_CLK_ZERO(0x27) |
->> +			DSIM_PHYTIMING1_CLK_POST(0x0d) |
->> +			DSIM_PHYTIMING1_CLK_TRAIL(0x08);
->> +	writel(reg, dsi->reg_base + DSIM_PHYTIMING1_REG);
->> +
->> +	/*
->> +	 * T HS-PREPARE: Time that the transmitter drives the Data Lane LP-00
->> +	 *	Line state immediately before the HS-0 Line state starting the
->> +	 *	HS transmission
->> +	 * T HS-ZERO: Time that the transmitter drives the HS-0 state prior to
->> +	 *	transmitting the Sync sequence.
->> +	 * T HS-TRAIL: Time that the transmitter drives the flipped differential
->> +	 *	state after last payload data bit of a HS transmission burst
->> +	 */
->> +	reg = DSIM_PHYTIMING2_HS_PREPARE(0x09) | DSIM_PHYTIMING2_HS_ZERO(0x0d) |
->> +			DSIM_PHYTIMING2_HS_TRAIL(0x0b);
->> +	writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
->> +}
->> +
->>   static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
->>   {
->>   	u32 reg;
->> @@ -947,10 +1060,11 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
->>
->>   static int exynos_dsi_init(struct exynos_dsi *dsi)
->>   {
->> -	exynos_dsi_enable_clock(dsi);
->>   	exynos_dsi_reset(dsi);
->>   	enable_irq(dsi->irq);
->> +	exynos_dsi_enable_clock(dsi);
->>   	exynos_dsi_wait_for_reset(dsi);
->> +	exynos_dsi_set_phy_ctrl(dsi);
->>   	exynos_dsi_init_link(dsi);
->>
->>   	return 0;
->> @@ -1412,6 +1526,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
->>   	dsi->dsi_host.dev = &pdev->dev;
->>
->>   	dsi->dev = &pdev->dev;
->> +	dsi->driver_data = exynos_dsi_get_driver_data(pdev);
->>
->>   	ret = exynos_dsi_parse_dt(dsi);
->>   	if (ret)
->> @@ -1516,11 +1631,6 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
->>   	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
->>   };
->>
->> -static struct of_device_id exynos_dsi_of_match[] = {
->> -	{ .compatible = "samsung,exynos4210-mipi-dsi" },
->> -	{ }
->> -};
->> -
->>   struct platform_driver dsi_driver = {
->>   	.probe = exynos_dsi_probe,
->>   	.remove = exynos_dsi_remove,
+>> +		cpu-mode-timings {
+>> +			cs-setup = <0>;
+>> +			wr-setup = <0>;
+>> +			wr-active = <1>;
+>> +			wr-hold = <0>;
+>> +		};
+>> +	};
 >>
 >
 >
