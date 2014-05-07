@@ -1,132 +1,61 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2 2/6] ARM: EXYNOS: Move SYS_I2C_CFG register save/restore
- to i2c driver
-Date: Wed, 07 May 2014 09:42:25 +0900
-Message-ID: <53698171.9070501@samsung.com>
-References: <1399366282-4191-1-git-send-email-pankaj.dubey@samsung.com>
- <1399366282-4191-3-git-send-email-pankaj.dubey@samsung.com>
- <53693229.3080705@gmail.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v12 00/31] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Wed, 07 May 2014 09:44:53 +0900
+Message-ID: <20140507094453.28f0429152e5b59a5dda9fd8@samsung.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<26065037.GxQQuIURPg@wuerfel>
+	<CAOD6ATqZ5UwRwSKiPDQLrgmX=UUrJVE7ybM_RhXz_CEUjM3W7w@mail.gmail.com>
+	<20140506175904.GB12376@8bytes.org> <5369252F.4070402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:65174 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751832AbaEGAYL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 May 2014 20:24:11 -0400
-In-reply-to: <53693229.3080705@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <5369252F.4070402-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "supash.ramaswamy" <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, arnd@arndb.de, Wolfram Sang <wsa@the-dreams.de>, t.figa@samsung.com, linux-i2c@vger.kernel.org
 
-On 05/07/2014 04:04 AM, Tomasz Figa wrote:
-> Hi Pankaj,
->
-> On 06.05.2014 10:51, Pankaj Dubey wrote:
->> Let's move SYS_I2C_CFG register save/restore during s2r into i2c driver.
->> This will help in removing static iodesc based mapping from exynos.c.
->> Also will help in removing SoC specific checks in pm.c making it
->> more independent of such macros.
->>
->> CC: Wolfram Sang <wsa@the-dreams.de>
->> CC: Russell King <linux@arm.linux.org.uk>
->> CC: linux-i2c@vger.kernel.org
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>   arch/arm/mach-exynos/exynos.c           |   12 +-----------
->>   arch/arm/mach-exynos/include/mach/map.h |    3 ---
->>   arch/arm/mach-exynos/pm.c               |   10 ----------
->>   arch/arm/mach-exynos/regs-sys.h         |   22 ----------------------
->>   drivers/i2c/busses/i2c-s3c2410.c        |    8 ++++++++
->>   5 files changed, 9 insertions(+), 46 deletions(-)
->>   delete mode 100644 arch/arm/mach-exynos/regs-sys.h
->
-> [snip]
->
->> diff --git a/drivers/i2c/busses/i2c-s3c2410.c 
->> b/drivers/i2c/busses/i2c-s3c2410.c
->> index 0420150..2095a01 100644
->> --- a/drivers/i2c/busses/i2c-s3c2410.c
->> +++ b/drivers/i2c/busses/i2c-s3c2410.c
->> @@ -133,6 +133,7 @@ struct s3c24xx_i2c {
->>       struct notifier_block    freq_transition;
->>   #endif
->>       struct regmap        *sysreg;
->> +    unsigned int        syc_cfg;
->
-> I suspect this is a typo, as the name syc_cfg looks a bit strange. 
-> Shouldn't it be sys_i2c_cfg?
-Oops. Will correct it in next version.
->
->>   };
->>
->>   static struct platform_device_id s3c24xx_driver_ids[] = {
->> @@ -1293,6 +1294,9 @@ static int s3c24xx_i2c_suspend_noirq(struct device 
->> *dev)
->>       struct platform_device *pdev = to_platform_device(dev);
->>       struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
->>
->> +    if (i2c->sysreg)
->
-> IS_ERR() should be used.
->
->> +        regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->syc_cfg);
->
-> Aha, so this is where the reference to the regmap gets used outside the 
-> probe. I'd say that changes to the i2c driver from this patch should be 
-> squashed with previous patch and this patch should contain only arch 
-> changes to remove old code.
+On Tue, 06 May 2014 20:08:47 +0200, Tomasz Figa wrote:
+> On 06.05.2014 19:59, Joerg Roedel wrote:
+> > On Wed, Apr 30, 2014 at 04:27:10PM +0530, Shaik Ameer Basha wrote:
+> >> This series is going on for quite a long time and most of the patches here
+> >> doesn't depend on dt bindings. As Exynos IOMMU h/w is introducing new versions
+> >> very frequently, maintaining and reviewing all these patches again and
+> >> again is quite a hard job.
+> >>
+> >> If it is acceptable, I can post one more series with the subset of
+> >> above patches,
+> >> which doesn't depend on dt-bindings. As all the patches which doesn't depend on
+> >> DT bindings are already tested,  I hope merging these subset of patches may help
+> >> in reducing the rework and review effort every time.
+> >>
+> >> Once we finalize the generic DT bindings for the IOMMU devices, the driver
+> >> can be updated with the proposed DT bindings in mind.
+> >
+> > Sounds reasonable to me if the patch subset is self-contained. When
+> > Arnd is OK with that and no one else has objections I can take the
+> > dt-independend parts.
+> 
+> +1.
+> 
+> I would also suggest dropping patch 18/31, for the reasons I mentioned 
+> in my reply to it.
+> 
 
-OK, in next version I will update accordingly.
+Great.
 
->
-> However, I wonder if this is really the right approach to this, as now 
-> you have save and restore duplicated for every instance of s3c24xx-i2c IP 
-> block. If there are no bits other than interrupt mux selectors in this 
-> registers then I guess this is fine (I can't look it up in the 
-> documentation at the moment), but otherwise you can end-up with multiple 
-> paths doing read-modify-write to this register in parallel possibly with 
-> different values.
+We will prepare the next patch series that are independent upon DT bindings soon.
 
-SYS_I2C_CFG for exynos5250 has only bits for mux selectors for i2c.
+Thank you.
 
->
-> Needless to say, this isn't very elegant, but I'm not opposed too much, 
-> as I can't really think of anything better right now.
->
->> +
->>       i2c->suspended = 1;
->>
->>       return 0;
->> @@ -1304,6 +1308,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
->>       struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
->>
->>       i2c->suspended = 0;
->> +
->> +    if (i2c->sysreg)
->> +        regmap_write(i2c->sysreg, i2c->syc_cfg, EXYNOS5_SYS_I2C_CFG);
->> +
->
-> I'd say this should be happening before setting i2c->suspended to 0 to 
-> account for possible i2c transfers being requested in parallel. Also see 
-> patch [1].
->
-> [1] https://lkml.org/lkml/2014/4/11/632
-
-OK, will move this before i2c->suspended = 0.
-
-If possible please review other patches also in this series so that I can 
-update
-whole series with addressing all review comments.
-
->
-> Best regards,
-> Tomasz
->
-
-
--- 
-Best Regards,
-Pankaj Dubey
+KyongHo
