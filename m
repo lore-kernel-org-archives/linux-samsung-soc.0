@@ -1,18 +1,19 @@
 From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v4 01/15] clk: exynos5420: Rename mux parent arrays
-Date: Wed, 7 May 2014 17:31:35 +0530
-Message-ID: <CAOD6ATqEyVWBAAFt+GsGCb=8v0pqKfvwQ4ikjd9SW2Y6irW+Tw@mail.gmail.com>
+Subject: Re: [PATCH v4 10/15] clk: exynos5420: update clocks for FSYS and
+ FSYS2 blocks
+Date: Wed, 7 May 2014 17:44:03 +0530
+Message-ID: <CAOD6ATq+KO5i6BLzfL2+qY3eJ6Yvsjmsn_WO-o9NOjDdG8ip4Q@mail.gmail.com>
 References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
- <1399393610-23394-2-git-send-email-shaik.ameer@samsung.com> <53692367.30907@gmail.com>
+ <1399393610-23394-11-git-send-email-shaik.ameer@samsung.com> <53691F3D.8050104@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f49.google.com ([209.85.213.49]:39184 "EHLO
-	mail-yh0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755610AbaEGMB4 (ORCPT
+Received: from mail-yk0-f178.google.com ([209.85.160.178]:35977 "EHLO
+	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750933AbaEGMOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 08:01:56 -0400
-In-Reply-To: <53692367.30907@gmail.com>
+	Wed, 7 May 2014 08:14:24 -0400
+In-Reply-To: <53691F3D.8050104@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
@@ -20,28 +21,26 @@ Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsun
 
 Hi Tomasz,
 
-Thanks for the review.
 
-On Tue, May 6, 2014 at 11:31 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On Tue, May 6, 2014 at 11:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 > Shaik,
 >
 >
 > On 06.05.2014 18:26, Shaik Ameer Basha wrote:
 >>
->> This patch renames the mux parent arrays as per the naming
->> convension followed by the other exynos specific clock drivers.
+>> This patch adds more clocks from FSYS and FSYS2 blocks
+>> and uses GATE_IP_* registers for gating IPs.
 >>
 >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 >> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 >> ---
->>   drivers/clk/samsung/clk-exynos5420.c |  359
->> ++++++++++++++++++----------------
->>   1 file changed, 186 insertions(+), 173 deletions(-)
+>>   drivers/clk/samsung/clk-exynos5420.c |   41
+>> ++++++++++++++++++++++------------
+>>   1 file changed, 27 insertions(+), 14 deletions(-)
 >>
 >> diff --git a/drivers/clk/samsung/clk-exynos5420.c
 >> b/drivers/clk/samsung/clk-exynos5420.c
->> index 7a9e3b4..831670d 100644
+>> index f0460b4..6d88ae2 100644
 >> --- a/drivers/clk/samsung/clk-exynos5420.c
 >> +++ b/drivers/clk/samsung/clk-exynos5420.c
 >
@@ -49,48 +48,91 @@ On Tue, May 6, 2014 at 11:31 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 > [snip]
 >
 >
->>   static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->> -       MUX(0, "mout_mspll_kfc", mspll_cpu_p, SRC_TOP7, 8, 2),
->> -       MUX(0, "mout_mspll_cpu", mspll_cpu_p, SRC_TOP7, 12, 2),
->> -       MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
->> -       MUX(0, "mout_cpu", cpu_p, SRC_CPU, 16, 1),
->> -       MUX(0, "mout_kpll", kpll_p, SRC_KFC, 0, 1),
->> -       MUX(0, "mout_cpu_kfc", kfc_p, SRC_KFC, 16, 1),
->> +       MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
->> +       MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
->> +       MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
->> +       MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
->> +       MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
->> +       MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+>> @@ -736,12 +749,9 @@ static struct samsung_gate_clock
+>> exynos5420_gate_clks[] __initdata = {
+>>         GATE(CLK_SCLK_USBPHY300, "sclk_usbphy300", "dout_usbphy300",
+>>                 GATE_TOP_SCLK_FSYS, 8, CLK_SET_RATE_PARENT, 0),
+>>         GATE(CLK_SCLK_USBD300, "sclk_usbd300", "dout_usbd300",
+>> -               GATE_TOP_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
+>> +               GATE_TOP_SCLK_FSYS, 9, CLK_IGNORE_UNUSED, 0),
 >
 >
-> Here the clock name is also changed, but I'll just fix the commit message
-> when applying, assuming that this change doesn't break anything.
+> Why CLK_IGNORE_UNUSED? Also CLK_SET_RATE_PARENT seems quite right for this
+> clock.
 
-Ok. anyways I will try to update the commit message in the next series.
+Sorry, that was a hack for some internal USB testing. Some how it got
+merged with this series.
+I will revert it to CLK_SET_RATE_PARENT.
 
-Regards,
-Shaik
+>
+>
+>>         GATE(CLK_SCLK_USBD301, "sclk_usbd301", "dout_usbd301",
+>> -               GATE_TOP_SCLK_FSYS, 10, CLK_SET_RATE_PARENT, 0),
+>> -
+>> -       GATE(CLK_SCLK_USBD301, "sclk_unipro", "dout_unipro",
+>> -               SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
+>> +               GATE_TOP_SCLK_FSYS, 10, CLK_IGNORE_UNUSED, 0),
+>
+>
+> Same here.
+
+Same here :)
 
 >
 >
 >>
->> -       MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
->> +       MUX(0, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
+>>         /* Display */
+>>         GATE(CLK_SCLK_FIMD1, "sclk_fimd1", "dout_fimd1",
+>> @@ -760,20 +770,23 @@ static struct samsung_gate_clock
+>> exynos5420_gate_clks[] __initdata = {
+>>                 GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+>>         GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+>>                 GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+>> -       /* FSYS */
+>> +
+>> +       /* FSYS Block */
+>>         GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
+>>         GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
+>>         GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
+>>         GATE(CLK_UFS, "ufs", "aclk200_fsys2", GATE_BUS_FSYS0, 3, 0, 0),
+>> -       GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_BUS_FSYS0, 5, 0, 0),
+>> -       GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_BUS_FSYS0, 12, 0, 0),
+>> -       GATE(CLK_MMC1, "mmc1", "aclk200_fsys2", GATE_BUS_FSYS0, 13, 0, 0),
+>> -       GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_BUS_FSYS0, 14, 0, 0),
+>> +       GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_IP_FSYS, 9, 0, 0),
+>> +       GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
+>> +       GATE(CLK_MMC1, "mmc1", "aclk200_fsys2", GATE_IP_FSYS, 13, 0, 0),
+>> +       GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
+>>         GATE(CLK_SROMC, "sromc", "aclk200_fsys2",
+>> -                       GATE_BUS_FSYS0, 19, CLK_IGNORE_UNUSED, 0),
+>> -       GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_BUS_FSYS0, 20, 0,
+>> 0),
+>> -       GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_BUS_FSYS0, 21,
+>> 0, 0),
+>> -       GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_BUS_FSYS0, 28,
+>> 0, 0),
+>> +                       GATE_IP_FSYS, 17, CLK_IGNORE_UNUSED, 0),
+>> +       GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0,
+>> 0),
+>> +       GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0,
+>> 0),
+>> +       GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0,
+>> 0),
+>> +       GATE(CLK_SCLK_UNIPRO, "sclk_unipro", "dout_unipro",
+>> +                       GATE_IP_FSYS, 23, CLK_SET_RATE_PARENT, 0),
 >
 >
-> [snip]
->
->
->>   static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->>         DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
->>         DIV(0, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
->>         DIV(0, "armclk2", "div_arm", DIV_CPU0, 28, 3),
->> -       DIV(0, "div_kfc", "mout_cpu_kfc", DIV_KFC0, 0, 3),
->> +       DIV(0, "div_kfc", "mout_kfc", DIV_KFC0, 0, 3),
->
->
-> Same here.
+> Gating an SCLK through an GATE_IP_* register looks a bit unusual. The
+> original entry for this clock had SRC_MASK_FSYS register used. Also there is
+> the GATE_TOP_SCLK_FSYS register, are you sure that there is no bit for this
+> clock there?
+
+Thanks for catching this. SRC_MASK_FSYS is the right offset for this clock.
+I will update this in next series.
+
+Regards,
+Shaik
+
 >
 > Best regards,
 > Tomasz
