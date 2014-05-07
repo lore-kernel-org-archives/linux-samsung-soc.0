@@ -1,61 +1,80 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH v5 2/6] arm64: Introduce VA_BITS and translation level
- options
-Date: Wed, 07 May 2014 12:59:12 +0900
-Message-ID: <001b01cf69a8$b49e5010$1ddaf030$@samsung.com>
-References: <000201cf64e5$cd3366a0$679a33e0$@samsung.com>
- <20140501100628.GB2848@lvm> <000a01cf65a9$d3cbf030$7b63d090$@samsung.com>
- <20140502111648.GA3002@lvm>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
+Date: Wed, 7 May 2014 09:35:20 +0530
+Message-ID: <CAK9yfHwXC1rc71-GiP3JxF2hpQGkA-GVv-1=MT9+GsA+Vq3o4w@mail.gmail.com>
+References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
+	<53691187.80101@gmail.com>
+	<CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140502111648.GA3002@lvm>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Christoffer Dall' <christoffer.dall@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:32814 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750900AbaEGEFV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 May 2014 00:05:21 -0400
+Received: by mail-ob0-f176.google.com with SMTP id wo20so512796obc.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 21:05:20 -0700 (PDT)
+In-Reply-To: <CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 
-On Friday, May 02, 2014 8:17 PM, Christoffer Dall wrote:
-> On Fri, May 02, 2014 at 10:57:09AM +0900, Jungseok Lee wrote:
-> > On Thursday, May 01, 2014 7:06 PM, Christoffer Dall wrote:
-> > > On Thu, May 01, 2014 at 11:33:56AM +0900, Jungseok Lee wrote:
-> 
-> [...]
-> 
-> > > > +
-> > > > +choice
-> > > > +	prompt "Virtual address space size"
-> > > > +	default ARM64_VA_BITS_39 if ARM64_4K_PAGES
-> > > > +	default ARM64_VA_BITS_42 if ARM64_64K_PAGES
-> > > > +	help
-> > > > +	  Allows virtual address space size. A level of translation
-> > > > +tables
-> > >
-> > > What does "Allows virtual address space size" mean exactly?
-> >
-> > It means that VA space size can be chosen. For example, there are two
-> > VA size options, 39-bit and 48-bit, with 4KB pages. If 39-bit VA space
-> > is not enough, 48-bit can be selected instead. The 5th patch adds a
-> > 48-bit option to this choice blocks.
-> >
-> > If 16KB pages are supported with both 47-bit and 48-bit VA size,
-> > people could configure it in menuconfig.
-> >
-> > In this context, I've written it down like page size.
-> >
-> > I think Catalin's comment would be helpful.
-> > http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
-> >
-> I didn't have problems understanding the concept, I was questioning the language.  The way it is
-> written now it suggests having a virtual address space size, as opposed to not having a size at all,
-> which doesn't make sense.
-> 
-> I think you want to say something along the lines of "Allows choosing a virtual address space size",
-> or "Allows choosing one of multiple possible virtual address space sizes".
+Hi Tomasz,
 
-Ahh... I see. I will revise the sentence clearly.
-Thanks!
+On 6 May 2014 23:39, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Tomasz,
+>
+> On 6 May 2014 22:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Sachin,
+>>
+>> Thanks for addressing the comments. I need to verify few things on Universal
+>> C210 board first, before I could give my Reviewed-by tag or further
+>> comments.
+>>
+>> I also have some general comments that I missed before, due to limited time
+>> for review. Please see inline.
+>
+> Thanks for your review.
+>
+>>
+>>
+>> On 06.05.2014 10:10, Sachin Kamat wrote:
+>>>
+>>> Instead of hardcoding the SYSRAM details for each SoC,
+>>> pass this information through device tree (DT) and make
+>>> the code SoC agnostic. Generic SRAM bindings are used
+>>> for achieving this.
+>>>
+>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>>> ---
+[snip]
 
-- Jungseok Lee
+>>>
+>>>   static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>>>   {
+>>> -       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
+>>> +       void __iomem *boot_reg;
+>>> +
+>>> +       if (!sram_ns_base_addr)
+>>> +               return 0;
+>>
+>>
+>> Shouldn't this return an error instead? I'm not sure which one would be
+>> appropriate, though, probably one of -ENODEV, -ENXIO or -EFAULT.
+>
+> IIRC, returning error here causes the system to hang and even primary
+> cpu does not boot.
+> Since any error or absence of sram nodes should atleast boot the
+> primary CPU, I thought
+> this is better.
+
+Small correction. The above explanation was for the absence of the check.
+Sorry about the confusion. Will add -ENODEV here.
+
+-- 
+With warm regards,
+Sachin
