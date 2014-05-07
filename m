@@ -1,15 +1,19 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
-Date: Wed, 7 May 2014 22:14:16 +0800
-Message-ID: <CAGS+omAbuzRpNDvB6eTw67Dcv3WMdWF3yz+bU5p3j5JRourOyw@mail.gmail.com>
-References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
- <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
- <5369C13C.3080506@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
+Date: Wed, 7 May 2014 19:49:10 +0530
+Message-ID: <CAPdUM4M6uk2KN_L487_cRkOqbgJrhhMRx9zpczA6-3LzSM3FSg@mail.gmail.com>
+References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
+ <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
+ <534506B1.4040908@samsung.com>
+ <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
+ <53451A60.4050803@samsung.com> <53675D72.70103@ti.com>
+ <CAPdUM4N+2VXpiFSiWW9gKfbte1zkpDbCOSF+KvEo4T1KLqqwjw@mail.gmail.com>
+ <536A36F5.5080303@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5369C13C.3080506@samsung.com>
+In-Reply-To: <536A36F5.5080303@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -19,60 +23,76 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBNYXkgNywgMjAxNCBhdCAxOjE0IFBNLCBTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2lt
-QHNhbXN1bmcuY29tPiB3cm90ZToKPiBIaSBEYW5pZWwsCj4KPiBPbiAyMDE064WEIDA17JuUIDA1
-7J28IDAwOjI2LCBEYW5pZWwgS3VydHogd3JvdGU6Cj4+IE1peGVyIGhhcmR3YXJlIHN1cHBvcnRz
-IG9mZnNldHRpbmcgZG1hIGZyb20gc3RhcnQgb2Ygc291cmNlIGJ1ZmZlciB1c2luZwo+PiB0aGUg
-TVhSX0dSUF9TWFkgcmVnaXN0ZXIuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBLdXJ0eiA8
-ZGprdXJ0ekBjaHJvbWl1bS5vcmc+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfbWl4ZXIuYyB8IDggKysrLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlv
-bnMoKyksIDUgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYwo+PiBpbmRleCA0NzVlYjQ5Li40MGNmMzliIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX21peGVyLmMKPj4gQEAgLTUyOSwxMyArNTI5LDExIEBAIHN0YXRpYyB2b2lkIG1p
-eGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQo+Pgo+
-PiAgICAgICBkc3RfeF9vZmZzZXQgPSB3aW5fZGF0YS0+Y3J0Y194Owo+PiAgICAgICBkc3RfeV9v
-ZmZzZXQgPSB3aW5fZGF0YS0+Y3J0Y195Owo+PiArICAgICBzcmNfeF9vZmZzZXQgPSB3aW5fZGF0
-YS0+ZmJfeDsKPj4gKyAgICAgc3JjX3lfb2Zmc2V0ID0gd2luX2RhdGEtPmZiX3k7Cj4+Cj4+ICAg
-ICAgIC8qIGNvbnZlcnRpbmcgZG1hIGFkZHJlc3MgYmFzZSBhbmQgc291cmNlIG9mZnNldCAqLwo+
-PiAtICAgICBkbWFfYWRkciA9IHdpbl9kYXRhLT5kbWFfYWRkcgo+PiAtICAgICAgICAgICAgICsg
-KHdpbl9kYXRhLT5mYl94ICogd2luX2RhdGEtPmJwcCA+PiAzKQo+PiAtICAgICAgICAgICAgICsg
-KHdpbl9kYXRhLT5mYl95ICogd2luX2RhdGEtPmZiX3dpZHRoICogd2luX2RhdGEtPmJwcCA+PiAz
-KTsKPj4gLSAgICAgc3JjX3hfb2Zmc2V0ID0gMDsKPj4gLSAgICAgc3JjX3lfb2Zmc2V0ID0gMDsK
-Pj4gKyAgICAgZG1hX2FkZHIgPSB3aW5fZGF0YS0+ZG1hX2FkZHI7Cj4KPiBCYXNpY2FsbHksIHlv
-dSBhcmUgcmlnaHQgYW5kIHNvdXJjZSBvZmZzZXQgcmVnaXN0ZXIgY2FuIGJlIHVzZWQuIEJ1dAo+
-IGJlY2F1c2Ugb2YgbGltaXRhdGlvbiBvZiByZXNvbHV0aW9uIGZvciBtaXhlciB1cCB0byAxOTIw
-eDEwODAsIEkKPiBjb25zaWRlcmVkIG1vZGlmaWVkIHNvcnVjZSBkbWEgYWRkcmVzcyB0byBzZXQg
-b25lIGZyYW1lIGJ1ZmZlciwgd2hpY2ggaXMKPiBiaWdnZXIgdGhhbiAxOTIweDEwODAsIG9uIHRv
-IGJvdGggZmltZCBhbmQgaGRtaS4KCkhpIFNldW5nLVdvbywKCkkgZG8gbm90IHNlZSB3aHkgdGhl
-IG1heGltdW0gTUlYRVIgcmVzb2x1dGlvbiBtYXR0ZXJzIGZvciBjaG9vc2luZwpiZXR3ZWVuIG9m
-ZnNldHRpbmcgQkFTRSBvciB1c2luZyBTWFkuCgpMZXQncyBzYXkgeW91IGhhdmUgb25lIGJpZyAx
-OTIweDE5MDggZnJhbWVidWZmZXIsIHdpdGggYSBzcGFuIG9mIDE5MjAsCnN0YXJ0aW5nIGF0IGRt
-YV9hZGRyICh0aGVyZSBpcyBubyBleHRyYSBwYWRkaW5nIGF0IHRoZSBlbmQgb2YgdGhlCmxpbmUp
-LgpMZXQncyBzYXkgeW91IHdhbnRlZCB0aGUgbWl4ZXIgdG8gc2NhbiBvdXQgMTkyMHgxMDgwIHBp
-eGVscyBzdGFydGluZwpmcm9tICgwLCA4MDApIGluIHRoZSBmcmFtZWJ1ZmZlciwgYW5kIHN0YXJ0
-IGRyYXdpbmcgdGhlbSBhdCAoMCwwKSBvbgp0aGUgc2NyZWVuLgoKV2hhdCB3ZSBjdXJyZW50bHkg
-ZG8gaXM6CiAgQkFTRSA9IGRtYV9hZGRyICsgKDgwMCAqIDEwODAgKiA0KQogIFNQQU4gPSAxOTIw
-CiAgU1hZID0gU1goMCkgfCBTWSgwKQogIFdIID0gVygxOTIwKSB8IEgoMTA4MCkKICBEWFkgPSBE
-WCgwKSB8IERZKDApCgpJIGFtIHByb3Bvc2luZyB3ZSBkbzoKICBCQVNFID0gZG1hX2FkZHIKICBT
-UEFOID0gMTkyMAogIFNYWSA9IFNYKDApIHwgU1koODAwKQogIFdIID0gVygxOTIwKSB8IEgoMTA4
-MCkKICBEWFkgPSBEWCgwKSB8IERZKDApCgpJbiBib3RoIGNhc2VzLCB0aGUgbWl4ZXIgcmVzb2x1
-dGlvbiBpcyAxOTIweDEwODAuCgpNeSBtb3RpdmF0aW9uIGZvciB3YW50aW5nIHRvIHByb2dyYW0g
-YW4gdW4tbW9kaWZpZWQgZG1hX2FkZHIgaW50byBCQVNFCmlzIHNvIHdlIGNhbiB0aGVuIGp1c3Qg
-Y2hlY2sgQkFTRV9TIHRvIGRldGVybWluZSBmcm9tIHdoaWNoIGJ1ZmZlciB0aGUKbWl4ZXIgaXMg
-YWN0aXZlbHkgYmVpbmcgc2Nhbm5lZCBvdXQgd2l0aG91dCB3b3JyeWluZyBhYm91dCB0aGUgc291
-cmNlCm9mZnNldCwgc2luY2UgdGhlIHNvdXJjZSBvZmZzZXQgY2FuIGNoYW5nZSBmb3IgYSBnaXZl
-biBmcmFtZWJ1ZmZlcgooZm9yIGV4YW1wbGUsIHdoZW4gZG9pbmcgcGFubmluZywgb3IgaWYgYW4g
-b3ZlcmxheSBpcyB1c2VkIGZvciBhIEhXCmN1cnNvcikuCgpCZXN0IFJlZ2FyZHMsCi1EYW5pZWwK
-Cj4KPiBSZWdhcmRzLAo+IC0gU2V1bmctV29vIEtpbQo+Cj4+Cj4+ICAgICAgIGlmICh3aW5fZGF0
-YS0+c2Nhbl9mbGFncyAmIERSTV9NT0RFX0ZMQUdfSU5URVJMQUNFKQo+PiAgICAgICAgICAgICAg
-IGN0eC0+aW50ZXJsYWNlID0gdHJ1ZTsKPj4KPgo+IC0tCj4gU2V1bmctV29vIEtpbQo+IFNhbXN1
-bmcgU29mdHdhcmUgUiZEIENlbnRlcgo+IC0tCj4KX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+On 7 May 2014 19:06, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
+> On 05/07/2014 12:38 PM, Rahul Sharma wrote:
+>> On 5 May 2014 15:14, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>> Hi,
+>>>
+>>> On Wednesday 09 April 2014 03:31 PM, Sylwester Nawrocki wrote:
+>>>> Hi,
+>>>>
+>>>> On 09/04/14 11:12, Rahul Sharma wrote:
+>>>>> Idea looks good. How about keeping compatible which is independent
+>>>>> of SoC, something like "samsung,exynos-simple-phy" and provide Reg
+>>>>> and Bit through phy provider node. This way we can avoid SoC specific
+>>>>> hardcoding in phy driver and don't need to look into dt bindings for
+>>>>> each new SoC.
+>>>>
+>>>> I believe it is a not recommended approach.
+>>>
+>>> Why not? We should try to avoid hard coding in the driver code. Moreover by
+>>> avoiding hardcoding we can make it a generic driver for single bit PHYs.
+>>>
+>>
+>> +1.
+>>
+>> @Tomasz, any plans to consider this approach for simple phy driver?
+>>
+>> Regards,
+>> Rahul Sharma.
+>>
+>
+> Hi Rahul,
+> Initially, I wanted to make a very generic driver and to add bit and
+> register (or its offset) attribute to the PHY node.
+> However, there was a very strong opposition from DT maintainers
+> to adding any bit related configuration to DT.
+> The current solution was designed to be a trade-off between
+> being generic and being accepted :).
+>
+
+Thanks Tomasz,
+Ok got it. lets discuss it again and conclude it.
+
+@Kishon, DT-folks,
+
+The original RFC patch from Tomasz (at https://lkml.org/lkml/2013/10/21/313)
+added simple phy driver as "Generic-simple-phy" with these properties:
+
++ of_property_read_u32(dev->of_node, "mask", &sphy->mask);
++ of_property_read_u32(dev->of_node, "on-value", &sphy->on_value);
++ of_property_read_u32(dev->of_node, "off-value", &sphy->off_value);
+
+Shall we consider the same solution again for generic simple phy
+driver which just expose on/off control through register bit.
+
+Regards,
+Rahul Sharma
+
+> Regards,
+> Tomasz Stanislawski
+>
+>
+>
+>>> Cheers
+>>> Kishon
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
