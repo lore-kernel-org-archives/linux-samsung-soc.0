@@ -1,93 +1,171 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 14/15] clk: exynos5420: add misc clocks
-Date: Wed, 07 May 2014 19:16:43 +0200
-Message-ID: <536A6A7B.2000609@samsung.com>
-References: <1399393610-23394-1-git-send-email-shaik.ameer@samsung.com>
- <1399393610-23394-15-git-send-email-shaik.ameer@samsung.com>
- <536920A5.1090502@gmail.com>
- <CAOD6ATo2AL8AFDbhRK8FSNVE+XYGai2Z7D-S-bxtA70h7RLvzQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
+Date: Wed, 7 May 2014 23:56:19 +0530
+Message-ID: <CAK9yfHwH_nwjKjOa3ea3RYK8VEgVbo1ax9xOwvSB8zhoksDHog@mail.gmail.com>
+References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
+	<53691187.80101@gmail.com>
+	<CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
+	<536A675F.9040204@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54602 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750900AbaEGRQs (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:48745 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752251AbaEGS0T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 13:16:48 -0400
-In-reply-to: <CAOD6ATo2AL8AFDbhRK8FSNVE+XYGai2Z7D-S-bxtA70h7RLvzQ@mail.gmail.com>
+	Wed, 7 May 2014 14:26:19 -0400
+Received: by mail-oa0-f54.google.com with SMTP id j17so1725413oag.41
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2014 11:26:19 -0700 (PDT)
+In-Reply-To: <536A675F.9040204@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, alim.akhtar@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 
-On 07.05.2014 14:00, Shaik Ameer Basha wrote:
-> Hi Tomasz,
-> 
-> On Tue, May 6, 2014 at 11:19 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Shaik,
->>
->>
->> On 06.05.2014 18:26, Shaik Ameer Basha wrote:
->>>
->>> This patch adds some missing miscellaneous clocks specific
->>> to exynos5420.
->>>
->>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>> ---
->>>   drivers/clk/samsung/clk-exynos5420.c   |   14 +++++++++++---
->>>   include/dt-bindings/clock/exynos5420.h |    2 ++
->>>   2 files changed, 13 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5420.c
->>> b/drivers/clk/samsung/clk-exynos5420.c
->>> index e0e749d..e69e820 100644
->>> --- a/drivers/clk/samsung/clk-exynos5420.c
->>> +++ b/drivers/clk/samsung/clk-exynos5420.c
->>> @@ -273,7 +273,8 @@ PNAME(mout_group5_p) = {"mout_sclk_vpll",
->>> "mout_sclk_dpll"};
->>>
->>>   PNAME(mout_fimd1_final_p) = {"mout_fimd1", "mout_fimd1_opt"};
->>>   PNAME(mout_sw_aclk66_p)       = {"dout_aclk66", "mout_sclk_spll"};
->>> -PNAME(mout_user_aclk66_peric_p)        = { "fin_pll", "mout_sw_aclk66" };
->>> +PNAME(mout_user_aclk66_peric_p)        = { "fin_pll", "mout_sw_aclk66"};
->>> +PNAME(mout_user_pclk66_gpio_p) = {"mout_sw_aclk66", "ffactor_sw_aclk66"};
->>>
->>>   PNAME(mout_sw_aclk200_fsys_p) = {"dout_aclk200_fsys", "mout_sclk_spll"};
->>>   PNAME(mout_sw_pclk200_fsys_p) = {"dout_pclk200_fsys", "mout_sclk_spll"};
->>> @@ -372,10 +373,13 @@ static struct samsung_fixed_rate_clock
->>> exynos5420_fixed_rate_clks[] __initdata =
->>>   };
->>>
->>>   static struct samsung_fixed_factor_clock exynos5420_fixed_factor_clks[]
->>> __initdata = {
->>> -       FFACTOR(0, "sclk_hsic_12m", "fin_pll", 1, 2, 0),
->>> +       FFACTOR(0, "ffactor_hsic_12m", "fin_pll", 1, 2, 0),
->>> +       FFACTOR(0, "ffactor_sw_aclk66", "mout_sw_aclk66", 1, 2, 0),
->>
->>
->> Is the "ffactor_" prefix also present in the datasheet? If not, it should be
->> removed from clock names as well.
-> 
-> Its not there in manual.
-> As we are differentiating muxes and dividers with "mout" and "dout"
-> this prefix is added
-> to differentiate fixed factor clocks.
-> 
-> shall I keep it or not?
+Hi Tomasz,
 
-mout and div prefixes are also used in documentation, at least in case
-of previous Exynos SoCs. In case of Exynos5420 I can see CLKDIV_ prefix
-used for dividers, so after stripping the CLK part which is simply
-redundant, we are left with div_ prefix as in Exynos4 - not sure why in
-Exynos5420 driver dout_ prefix was used, I must have missed that in
-review, but I simply didn't have any the documentation for this chip at
-that time.
+On 7 May 2014 22:33, Tomasz Figa <t.figa@samsung.com> wrote:
+> On 06.05.2014 20:09, Sachin Kamat wrote:
+> [snip]
+>> On 6 May 2014 22:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> [snip]
+>>> On 06.05.2014 10:10, Sachin Kamat wrote:
+> [snip]
+>>>> diff --git a/arch/arm/mach-exynos/platsmp.c
+>>>> b/arch/arm/mach-exynos/platsmp.c
+>>>> index 03e5e9f94705..ccbcdd7b8a86 100644
+>>>> --- a/arch/arm/mach-exynos/platsmp.c
+>>>> +++ b/arch/arm/mach-exynos/platsmp.c
+>>>> @@ -20,6 +20,7 @@
+>>>>   #include <linux/jiffies.h>
+>>>>   #include <linux/smp.h>
+>>>>   #include <linux/io.h>
+>>>> +#include <linux/of_address.h>
+>>>>
+>>>>   #include <asm/cacheflush.h>
+>>>>   #include <asm/smp_plat.h>
+>>>> @@ -33,11 +34,35 @@
+>>>>
+>>>>   extern void exynos4_secondary_startup(void);
+>>>>
+>>>> +static void __iomem *sram_base_addr;
+>>>> +void __iomem *sram_ns_base_addr;
+>>>
+>>>
+>>> This is probably just a matter of preference, but I'd make this static and
+>>> provide a getter function, like exynos_get_sram_ns_base();
+>>>
+>>> Also this address seems to be used by the firmware code exclusively. If we
+>>> want to make the firmware code more self-contained, maybe the mapping of
+>>> firmware-specific SRAM region could be handled there, instead? This would
+>>> also eliminate the need for having an exported variable or getter function.
+>>> What do you think?
+>>
+>> I thought of the same. However 2 reasons prevented me from implementing this.
+>>
+>> 1. Code duplication
+>> 2. This code should be executed only once. I put it in exynos_firmware_init.
+>> However it gave a crash while doing of_iomap. So moved it back to the current
+>> location.
+>>
+>
+> Right, exynos_firmware_init() is called too early, before ioremap() is
+> available, so there is no good place to put this in firmware code. So,
+> let's keep this as is for now and eventually move it to firmware if
+> needed and/or a proper method of initialization is available.
 
-I don't see those hsic_12m and sw_aclk66 clocks in my version of the
-datasheet (probably an old version) so I can't say what would be the
-proper names for both, but I wouldn't add ffactor_ there.
+OK.
 
-Best regards,
-Tomasz
+>
+>>>
+>>>
+>>>> +
+>>>> +static void __init exynos_smp_prepare_sram(void)
+>>>> +{
+>>>> +       struct device_node *node;
+>>>> +
+>>>> +       for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
+>>>> +               if (of_device_is_available(node)) {
+>>>> +                       sram_base_addr = of_iomap(node, 0);
+>>>> +                       if (!sram_base_addr)
+>>>> +                               pr_err("Secondary CPU boot address not
+>>>> found\n");
+>>>
+>>>
+>>> I don't think this is an error at this stage. Some platforms might not have
+>>> either of these SRAM reserved regions (such as those using INFORM registers
+>>> instead). Instead, the base address should be checked whenever it is needed
+>>> and errors should be handled then, like in exynos_set_cpu_boot_addr().
+>>
+>> Yes. This is more from an information perspective. Probably pr_warn or
+>> pr_info would
+>> be better?
+>>
+>
+> IMHO this shouldn't produce any messages at this stage. Just whenever
+> either of addresses is actually needed and is not initialized a message
+> should be printed.
+
+OK.
+
+>>>> +}
+>>>> +
+>>>>   static inline void __iomem *cpu_boot_reg_base(void)
+>>>>   {
+>>>>         if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+>>>>                 return S5P_INFORM5;
+>>>> -       return S5P_VA_SYSRAM;
+>>>> +       return sram_base_addr;
+>>>>   }
+>>>>
+>>>>   static inline void __iomem *cpu_boot_reg(int cpu)
+>>>> @@ -147,7 +172,8 @@ static int exynos_boot_secondary(unsigned int cpu,
+>>>> struct task_struct *idle)
+>>>>                  * and fall back to boot register if it fails.
+>>>>                  */
+>>>>                 if (call_firmware_op(set_cpu_boot_addr, phys_cpu,
+>>>> boot_addr))
+>>>> -                       __raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+>>>> +                       if (cpu_boot_reg_base())
+>>>> +                               __raw_writel(boot_addr,
+>>>> cpu_boot_reg(phys_cpu));
+>>>
+>>>
+>>> I'd rework this for proper error handling, e.g.
+>>>
+>>>         int ret;
+>>>
+>>>         /* ... */
+>>>
+>>>         ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
+>>>         if (ret && ret != -ENOSYS)
+>>>                 goto fail;
+>>>         if (ret == -ENOSYS) {
+>>>                 /* Fall back to firmware-less way. */
+>>>                 void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
+>>>
+>>>                 if (IS_ERR(boot_reg)) {
+>>>                         ret = PTR_ERR(boot_reg);
+>>>                         goto fail;
+>>>                 }
+>>>         }
+>>>
+>>>         /* ... */
+>>>
+>>> fail:
+>>>         /* Clean-up after error */
+>>>
+>>> Of course, cpu_boot_reg() will need to be converted to follow the ERR_PTR()
+>>> model, but IMHO proper error handling is a good reason to do so.
+>>
+>> How about handling this separately outside this patch?
+>>
+>
+> This patch is already changing surroundings of this code, so I'd say it
+> should do it the right way from the start.
+
+Yes, I have incorporated it in my patch. Will send the same tomorrow.
+
+-- 
+With warm regards,
+Sachin
