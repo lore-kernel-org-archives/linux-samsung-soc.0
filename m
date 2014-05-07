@@ -1,56 +1,52 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v4 PATCH v3 07/18] ARM: dts: samsung-fimd: add I80 specific
- properties
-Date: Wed, 07 May 2014 16:46:28 +0900
-Message-ID: <1399448799-8057-8-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v4 PATCH 01/18] drm/exynos: dsi: move the EoT packets
+ configuration point
+Date: Wed, 07 May 2014 16:46:22 +0900
+Message-ID: <1399448799-8057-2-git-send-email-yj44.cho@samsung.com>
 References: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:42549 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751134AbaEGHqp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 May 2014 03:46:45 -0400
 In-reply-to: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, laurent.pinchart@ideasonboard.com, s.trumtrar@pengutronix.de
 
-In case of using MIPI command mode interface panel,
-the relevant registers should be set.
-So this patch adds relevant DT bindings.
-
-Changelog v2:
-- Changes "samsung,sysreg-phandle" to "samsung,sysreg"
-Changelog v3:
-- Moves CPU timings relevant properties to panel DT
-  (commented by Laurent Pinchart, Andrzej Hajda)
+This configuration could be used in MIPI DSI command mode also.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-index 2dad41b..6bf93e9 100644
---- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-+++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-@@ -44,6 +44,8 @@ Optional Properties:
- - display-timings: timing settings for FIMD, as described in document [1].
- 		Can be used in case timings cannot be provided otherwise
- 		or to override timings provided by the panel.
-+- samsung,sysreg: handle to syscon used to control the system registers
-+- vidout-i80-ldi: boolean to support i80 interface instead of rgb one
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index eb73e3b..956e5f3 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -472,8 +472,6 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
  
- The device node can contain 'port' child nodes according to the bindings defined
- in [2]. The following are properties specific to those nodes:
+ 		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
+ 			reg |= DSIM_MFLUSH_VS;
+-		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
+-			reg |= DSIM_EOT_DISABLE;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+ 			reg |= DSIM_SYNC_INFORM;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+@@ -490,6 +488,9 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ 			reg |= DSIM_HSA_MODE;
+ 	}
+ 
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
++		reg |= DSIM_EOT_DISABLE;
++
+ 	switch (dsi->format) {
+ 	case MIPI_DSI_FMT_RGB888:
+ 		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
 -- 
 1.7.9.5
