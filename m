@@ -1,55 +1,330 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
-Date: Wed, 07 May 2014 14:14:36 +0900
-Message-ID: <5369C13C.3080506@samsung.com>
-References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
- <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
-Reply-To: sw0312.kim@samsung.com
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: Re: [PATCH v5 6/6] arm64: KVM: Implement 4 levels of translation
+ tables for HYP and stage2
+Date: Wed, 07 May 2014 14:54:02 +0900
+Message-ID: <001f01cf69b8$bf6bb680$3e432380$@samsung.com>
+References: <000601cf64e5$dadfc460$909f4d20$@samsung.com>
+ <20140506104925.GC3066@lvm>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="euc-kr"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, marcheu@chromium.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:52946 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750795AbaEGFyF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 May 2014 01:54:05 -0400
+In-reply-to: <20140506104925.GC3066@lvm>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Christoffer Dall' <christoffer.dall@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-SGkgRGFuaWVsLAoKT24gMjAxNLPiIDA1v/kgMDXAzyAwMDoyNiwgRGFuaWVsIEt1cnR6IHdyb3Rl
-Ogo+IE1peGVyIGhhcmR3YXJlIHN1cHBvcnRzIG9mZnNldHRpbmcgZG1hIGZyb20gc3RhcnQgb2Yg
-c291cmNlIGJ1ZmZlciB1c2luZwo+IHRoZSBNWFJfR1JQX1NYWSByZWdpc3Rlci4KPiAKPiBTaWdu
-ZWQtb2ZmLWJ5OiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgo+IC0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgOCArKystLS0tLQo+ICAxIGZp
-bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IDQ3NWViNDkuLjQwY2YzOWIgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtNTI5LDEzICs1MjksMTEg
-QEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpj
-dHgsIGludCB3aW4pCj4gIAo+ICAJZHN0X3hfb2Zmc2V0ID0gd2luX2RhdGEtPmNydGNfeDsKPiAg
-CWRzdF95X29mZnNldCA9IHdpbl9kYXRhLT5jcnRjX3k7Cj4gKwlzcmNfeF9vZmZzZXQgPSB3aW5f
-ZGF0YS0+ZmJfeDsKPiArCXNyY195X29mZnNldCA9IHdpbl9kYXRhLT5mYl95Owo+ICAKPiAgCS8q
-IGNvbnZlcnRpbmcgZG1hIGFkZHJlc3MgYmFzZSBhbmQgc291cmNlIG9mZnNldCAqLwo+IC0JZG1h
-X2FkZHIgPSB3aW5fZGF0YS0+ZG1hX2FkZHIKPiAtCQkrICh3aW5fZGF0YS0+ZmJfeCAqIHdpbl9k
-YXRhLT5icHAgPj4gMykKPiAtCQkrICh3aW5fZGF0YS0+ZmJfeSAqIHdpbl9kYXRhLT5mYl93aWR0
-aCAqIHdpbl9kYXRhLT5icHAgPj4gMyk7Cj4gLQlzcmNfeF9vZmZzZXQgPSAwOwo+IC0Jc3JjX3lf
-b2Zmc2V0ID0gMDsKPiArCWRtYV9hZGRyID0gd2luX2RhdGEtPmRtYV9hZGRyOwoKQmFzaWNhbGx5
-LCB5b3UgYXJlIHJpZ2h0IGFuZCBzb3VyY2Ugb2Zmc2V0IHJlZ2lzdGVyIGNhbiBiZSB1c2VkLiBC
-dXQKYmVjYXVzZSBvZiBsaW1pdGF0aW9uIG9mIHJlc29sdXRpb24gZm9yIG1peGVyIHVwIHRvIDE5
-MjB4MTA4MCwgSQpjb25zaWRlcmVkIG1vZGlmaWVkIHNvcnVjZSBkbWEgYWRkcmVzcyB0byBzZXQg
-b25lIGZyYW1lIGJ1ZmZlciwgd2hpY2ggaXMKYmlnZ2VyIHRoYW4gMTkyMHgxMDgwLCBvbiB0byBi
-b3RoIGZpbWQgYW5kIGhkbWkuCgpSZWdhcmRzLAotIFNldW5nLVdvbyBLaW0KCj4gIAo+ICAJaWYg
-KHdpbl9kYXRhLT5zY2FuX2ZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpCj4gIAkJY3R4
-LT5pbnRlcmxhY2UgPSB0cnVlOwo+IAoKLS0gClNldW5nLVdvbyBLaW0KU2Ftc3VuZyBTb2Z0d2Fy
-ZSBSJkQgQ2VudGVyCi0tCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+On Tuesday, May 06, 2014 7:49 PM, Christoffer Dall wrote:
+> On Thu, May 01, 2014 at 11:34:19AM +0900, Jungseok Lee wrote:
+> > This patch adds 4 levels of translation tables implementation for both
+> > HYP and stage2.
+> >
+> > Both symmetric and asymmetric configurations for page size and
+> > translation levels are are validated on Fast Models:
+> >
+> >  1) 4KB  + 3 levels guest on 4KB  + 3 levels host
+> >
+> >  2) 4KB  + 4 levels guest on 4KB  + 3 levels host
+> >
+> >  3) 64KB + 2 levels guest on 4KB  + 3 levels host
+> >
+> >  4) 4KB  + 3 levels guest on 4KB  + 4 levels host
+> >
+> >  5) 4KB  + 4 levels guest on 4KB  + 4 levels host
+> >
+> >  6) 64KB + 2 levels guest on 4KB  + 4 levels host
+> >
+> >  7) 4KB  + 3 levels guest on 64KB + 2 levels host
+> >
+> >  8) 4KB  + 4 levels guest on 64KB + 2 levels host
+> >
+> >  9) 64KB + 2 levels guest on 64KB + 2 levels host
+> >
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Cc: Christoffer Dall <christoffer.dall@linaro.org>
+> > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> > Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> > ---
+> >  arch/arm/include/asm/kvm_mmu.h   |   10 +++++
+> >  arch/arm/kvm/mmu.c               |   88 +++++++++++++++++++++++++++++++++-----
+> >  arch/arm64/include/asm/kvm_arm.h |   34 ++++++++++++---
+> >  arch/arm64/include/asm/kvm_mmu.h |   12 ++++++
+> >  4 files changed, 127 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/arch/arm/include/asm/kvm_mmu.h
+> > b/arch/arm/include/asm/kvm_mmu.h index 5c7aa3c..31eaaa6 100644
+> > --- a/arch/arm/include/asm/kvm_mmu.h
+> > +++ b/arch/arm/include/asm/kvm_mmu.h
+> > @@ -37,6 +37,11 @@
+> >   */
+> >  #define TRAMPOLINE_VA		UL(CONFIG_VECTORS_BASE)
+> >
+> > +/*
+> > + * MMU_CACHE_MIN_PAGES is the number of stage2 page table translation levels.
+> > + */
+> > +#define MMU_CACHE_MIN_PAGES	2
+> > +
+> 
+> I would prefer this was KVM_MMU_CACHE_MIN_PAGES
+
+Okay, I will change it.
+
+> >  #ifndef __ASSEMBLY__
+> >
+> >  #include <asm/cacheflush.h>
+> > @@ -94,6 +99,11 @@ static inline void kvm_clean_pgd(pgd_t *pgd)
+> >  	clean_dcache_area(pgd, PTRS_PER_S2_PGD * sizeof(pgd_t));  }
+> >
+> > +static inline void kvm_clean_pmd(pmd_t *pmd) {
+> > +	clean_dcache_area(pmd, PTRS_PER_PMD * sizeof(pmd_t)); }
+> > +
+> >  static inline void kvm_clean_pmd_entry(pmd_t *pmd)  {
+> >  	clean_pmd_entry(pmd);
+> > diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c index
+> > 80bb1e6..3ffbdfb 100644
+> > --- a/arch/arm/kvm/mmu.c
+> > +++ b/arch/arm/kvm/mmu.c
+> > @@ -388,13 +388,44 @@ static int create_hyp_pmd_mappings(pud_t *pud, unsigned long start,
+> >  	return 0;
+> >  }
+> >
+> > +static int create_hyp_pud_mappings(pgd_t *pgd, unsigned long start,
+> > +				   unsigned long end, unsigned long pfn,
+> > +				   pgprot_t prot)
+> > +{
+> > +	pud_t *pud;
+> > +	pmd_t *pmd;
+> > +	unsigned long addr, next;
+> > +
+> > +	addr = start;
+> > +	do {
+> > +		pud = pud_offset(pgd, addr);
+> > +
+> > +		if (pud_none_or_clear_bad(pud)) {
+> > +			pmd = pmd_alloc_one(NULL, addr);
+> > +			if (!pmd) {
+> > +				kvm_err("Cannot allocate Hyp pmd\n");
+> > +				return -ENOMEM;
+> > +			}
+> > +			pud_populate(NULL, pud, pmd);
+> > +			get_page(virt_to_page(pud));
+> > +			kvm_flush_dcache_to_poc(pud, sizeof(*pud));
+> > +		}
+> > +
+> > +		next = pud_addr_end(addr, end);
+> > +
+> > +		create_hyp_pmd_mappings(pud, addr, next, pfn, prot);
+> > +		pfn += (next - addr) >> PAGE_SHIFT;
+> > +	} while (addr = next, addr != end);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int __create_hyp_mappings(pgd_t *pgdp,
+> >  				 unsigned long start, unsigned long end,
+> >  				 unsigned long pfn, pgprot_t prot)  {
+> >  	pgd_t *pgd;
+> >  	pud_t *pud;
+> > -	pmd_t *pmd;
+> >  	unsigned long addr, next;
+> >  	int err = 0;
+> >
+> > @@ -403,22 +434,23 @@ static int __create_hyp_mappings(pgd_t *pgdp,
+> >  	end = PAGE_ALIGN(end);
+> >  	do {
+> >  		pgd = pgdp + pgd_index(addr);
+> > -		pud = pud_offset(pgd, addr);
+> >
+> > -		if (pud_none_or_clear_bad(pud)) {
+> > -			pmd = pmd_alloc_one(NULL, addr);
+> > -			if (!pmd) {
+> > -				kvm_err("Cannot allocate Hyp pmd\n");
+> > +		if (pgd_none(*pgd)) {
+> > +			pud = pud_alloc_one(NULL, addr);
+> > +			if (!pud) {
+> > +				kvm_err("Cannot allocate Hyp pud\n");
+> >  				err = -ENOMEM;
+> >  				goto out;
+> >  			}
+> > -			pud_populate(NULL, pud, pmd);
+> > -			get_page(virt_to_page(pud));
+> > -			kvm_flush_dcache_to_poc(pud, sizeof(*pud));
+> > +			pgd_populate(NULL, pgd, pud);
+> > +			get_page(virt_to_page(pgd));
+> > +			kvm_flush_dcache_to_poc(pgd, sizeof(*pgd));
+> >  		}
+> >
+> >  		next = pgd_addr_end(addr, end);
+> > -		err = create_hyp_pmd_mappings(pud, addr, next, pfn, prot);
+> > +
+> > +		err = create_hyp_pud_mappings(pgd, addr, next, pfn, prot);
+> > +
+> 
+> super nit: this whitespacing looks weird
+
+Okay, I will fix it.
+
+> >  		if (err)
+> >  			goto out;
+> >  		pfn += (next - addr) >> PAGE_SHIFT; @@ -563,6 +595,24 @@ void
+> > kvm_free_stage2_pgd(struct kvm *kvm)
+> >  	kvm->arch.pgd = NULL;
+> >  }
+> >
+> > +static pud_t *stage2_get_pud(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+> > +			     phys_addr_t addr)
+> > +{
+> > +	pgd_t *pgd;
+> > +	pud_t *pud;
+> > +
+> > +	pgd = kvm->arch.pgd + pgd_index(addr);
+> > +	if (pgd_none(*pgd)) {
+> > +		if (!cache)
+> > +			return NULL;
+> > +		pud = mmu_memory_cache_alloc(cache);
+> > +		pgd_populate(NULL, pgd, pud);
+> > +		get_page(virt_to_page(pgd));
+> > +	}
+> > +
+> > +	return pud_offset(pgd, addr);
+> > +}
+> > +
+> >  static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+> >  			     phys_addr_t addr)
+> >  {
+> > @@ -614,9 +664,24 @@ static int stage2_set_pmd_huge(struct kvm *kvm,
+> > struct kvm_mmu_memory_cache  static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache
+> *cache,
+> >  			  phys_addr_t addr, const pte_t *new_pte, bool iomap)  {
+> > +	pud_t *pud;
+> >  	pmd_t *pmd;
+> >  	pte_t *pte, old_pte;
+> >
+> > +	/* Create stage-2 page table mapping - Level 0 */
+> > +	pud = stage2_get_pud(kvm, cache, addr);
+> > +	if (!pud)
+> > +		return 0;
+> > +
+> > +	if (pud_none(*pud)) {
+> > +		if (!cache)
+> > +			return 0;
+> > +		pmd = mmu_memory_cache_alloc(cache);
+> > +		kvm_clean_pmd(pmd);
+> > +		pud_populate(NULL, pud, pmd);
+> > +		get_page(virt_to_page(pud));
+> > +	}
+> > +
+> 
+> Now we are doing this work twice, here and in stage2_get_pmd.  Can you not simply call stage2_get_pmd()
+> from stage2_get_pud() and get rid of this code?
+
+You're right. I will fix it.
+
+> >  	/* Create stage-2 page table mapping - Level 1 */
+> >  	pmd = stage2_get_pmd(kvm, cache, addr);
+> >  	if (!pmd) {
+> > @@ -675,7 +740,8 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
+> >  	for (addr = guest_ipa; addr < end; addr += PAGE_SIZE) {
+> >  		pte_t pte = pfn_pte(pfn, PAGE_S2_DEVICE);
+> >
+> > -		ret = mmu_topup_memory_cache(&cache, 2, 2);
+> > +		ret = mmu_topup_memory_cache(&cache, MMU_CACHE_MIN_PAGES,
+> > +					     MMU_CACHE_MIN_PAGES);
+> >  		if (ret)
+> >  			goto out;
+> >  		spin_lock(&kvm->mmu_lock);
+> > diff --git a/arch/arm64/include/asm/kvm_arm.h
+> > b/arch/arm64/include/asm/kvm_arm.h
+> > index 3d69030..29c9c25 100644
+> > --- a/arch/arm64/include/asm/kvm_arm.h
+> > +++ b/arch/arm64/include/asm/kvm_arm.h
+> > @@ -117,9 +117,10 @@
+> >  #define VTCR_EL2_IRGN0_MASK	(3 << 8)
+> >  #define VTCR_EL2_IRGN0_WBWA	(1 << 8)
+> >  #define VTCR_EL2_SL0_MASK	(3 << 6)
+> > +#define VTCR_EL2_SL0_LVL0	(2 << 6)
+> >  #define VTCR_EL2_SL0_LVL1	(1 << 6)
+> >  #define VTCR_EL2_T0SZ_MASK	0x3f
+> > -#define VTCR_EL2_T0SZ_40B	24
+> > +#define VTCR_EL2_T0SZ(bits)	(64 - (bits))
+> >
+> >  #ifdef CONFIG_ARM64_64K_PAGES
+> >  /*
+> > @@ -129,11 +130,14 @@
+> >   * 64kB pages (TG0 = 1)
+> >   * 2 level page tables (SL = 1)
+> >   */
+> > +#define VTTBR_OUTPUT_BITS	40
+> 
+> This is confusing, because the PS field is populated at runtime in arch/arm64/kvm/hyp-init.S and
+> depends on the PARange field in ID_AA64MMFR0_EL1.
+
+VTTBR_OUTPUT_BITS is not used to set PS field in VCTR_EL2.
+
+> So the existing code actually looks wrong to me in that we will generate a Stage-2 translation fault
+> for all IPAs > 2^40 on systems with >40 bits physical address space.  (Which will also be the case
+> after this patch).
+
+I agree. This part should be changed based on ID_AA64MMFR0_EL1.
+
+> >  #define VTCR_EL2_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SH0_INNER | \
+> >  				 VTCR_EL2_ORGN0_WBWA | VTCR_EL2_IRGN0_WBWA | \
+> > -				 VTCR_EL2_SL0_LVL1 | VTCR_EL2_T0SZ_40B)
+> > -#define VTTBR_X		(38 - VTCR_EL2_T0SZ_40B)
+> > +				 VTCR_EL2_SL0_LVL1 | \
+> > +				 VTCR_EL2_T0SZ(VTTBR_OUTPUT_BITS))
+> > +#define VTTBR_X		(38 - VTCR_EL2_T0SZ(VTTBR_OUTPUT_BITS))
+> 
+> I spent hours trying to remember how to make sense of these hard-coded numbers, and failed.
+
+Hmm.... Since VTTBR_X is used to calculate SHIFT value.
+In other words, 38 might come from a combination of PA size and page size.
+Am I right?
+
+> Now when you're adding yet another one, please add an explanation on how to decode the VTTBR_X and why
+> it all adds up as it should.
+
+Okay, I will add an explanation on it.
+
+> >  #else
+> > +#ifndef CONFIG_ARM64_4_LEVELS
+> >  /*
+> >   * Stage2 translation configuration:
+> >   * 40bits output (PS = 2)
+> > @@ -141,14 +145,32 @@
+> >   * 4kB pages (TG0 = 0)
+> >   * 3 level page tables (SL = 1)
+> >   */
+> > +#define VTTBR_OUTPUT_BITS	40
+> >  #define VTCR_EL2_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SH0_INNER | \
+> >  				 VTCR_EL2_ORGN0_WBWA | VTCR_EL2_IRGN0_WBWA | \
+> > -				 VTCR_EL2_SL0_LVL1 | VTCR_EL2_T0SZ_40B)
+> > -#define VTTBR_X		(37 - VTCR_EL2_T0SZ_40B)
+> > +				 VTCR_EL2_SL0_LVL1 | \
+> > +				 VTCR_EL2_T0SZ(VTTBR_OUTPUT_BITS))
+> > +#define VTTBR_X		(37 - VTCR_EL2_T0SZ(VTTBR_OUTPUT_BITS))
+> > +#else
+> > +/*
+> > + * Stage2 translation configuration:
+> > + * 40bits output (PS = 2)
+> > + * 48bits input  (T0SZ = 16)
+> > + * 4kB pages (TG0 = 0)
+> > + * 4 level page tables (SL = 2)
+> > + */
+> > +#define VTTBR_OUTPUT_BITS	48
+> 
+> You're defining output bits to 48, but your comment says 40 bits output, and 48 bits input here.
+
+I will fix it.
+BTW, I think that the comment should have been dropped in the commit,
+87366d8cf7b3f6dc34633938aa8766e5a390ce33, since, as you mentioned,
+PS is supposed to be determined in runtime.
+
+- Jungseok Lee
