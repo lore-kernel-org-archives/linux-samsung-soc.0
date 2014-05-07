@@ -1,75 +1,121 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: enable pwm backlight on exynos5250-snow
-Date: Wed, 07 May 2014 22:50:10 +0200
-Message-ID: <536A9C82.6090704@gmail.com>
-References: <1399467371-12242-1-git-send-email-ajaykumar.rs@samsung.com>	<536A98E7.9030007@gmail.com> <CAEC9eQPeGSw0xEdmq2GkVVhC7cTGSEvkM_CHRxTw__aFrvzvbw@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: Add atmel trackpad node to 5250 cros
+Date: Wed, 7 May 2014 14:14:44 -0700
+Message-ID: <CAD=FV=WMq+X_EvOoa9wTJgRqS6C9K_8M1Bz88hhHpKga-M1dBA@mail.gmail.com>
+References: <1397457325-5054-1-git-send-email-arun.kk@samsung.com>
+	<53594277.50401@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:43503 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751009AbaEGUuV (ORCPT
+Received: from mail-ve0-f182.google.com ([209.85.128.182]:53792 "EHLO
+	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751913AbaEGVOq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 16:50:21 -0400
-Received: by mail-ee0-f43.google.com with SMTP id d17so1109359eek.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2014 13:50:19 -0700 (PDT)
-In-Reply-To: <CAEC9eQPeGSw0xEdmq2GkVVhC7cTGSEvkM_CHRxTw__aFrvzvbw@mail.gmail.com>
+	Wed, 7 May 2014 17:14:46 -0400
+Received: by mail-ve0-f182.google.com with SMTP id sa20so2073224veb.41
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2014 14:14:45 -0700 (PDT)
+In-Reply-To: <53594277.50401@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olof@lixom.net>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>, Benson Leung <bleung@chromium.org>
 
-On 07.05.2014 22:47, Ajay kumar wrote:
-> Tomasz,
+Tomasz,
+
+On Thu, Apr 24, 2014 at 9:57 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Arun,
 >
-> On Thu, May 8, 2014 at 2:04 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Ajay,
+>
+> On 14.04.2014 08:35, Arun Kumar K wrote:
 >>
+>> The newer versions of exynos5250 based Snow boards have
+>> atmel trackpad. Updating relevant nodes for the same.
 >>
->> On 07.05.2014 14:56, Ajay Kumar wrote:
->>>
->>> Add PWM backlight node for exynos5250 and enable the same on exynos5250
->>> based snow board.
->>>
->>> Signed-off-by: Olof Johansson <olof@lixom.net>
->>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->>> ---
->>>    arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
->>>    arch/arm/boot/dts/exynos5250-snow.dts     |    5 +++++
->>>    arch/arm/boot/dts/exynos5250.dtsi         |   10 ++++++++++
->>>    3 files changed, 22 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> index 9a49e68..2a4680c 100644
->>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> @@ -351,6 +351,13 @@
->>>                          samsung,pin-drv = <0>;
->>>                  };
->>>
->>> +               backlight_pwm: backlight-pwm {
->>> +                       samsung,pins = "gpb2-0";
->>> +                       samsung,pin-function = <2>;
->>> +                       samsung,pin-pud = <0>;
->>> +                       samsung,pin-drv = <0>;
->>> +               };
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5250-cros-common.dtsi |   24
+>> ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
 >>
+>> diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> index 2c1560d..658f086 100644
+>> --- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> @@ -28,6 +28,13 @@
+>>                         samsung,pin-pud = <0>;
+>>                 };
 >>
->> This looks like a generic PWM output function, not specific to backlight in
->> any way.
+>> +               trackpad_irq: trackpad-irq {
+>> +                       samsung,pins = "gpx1-2";
+>> +                       samsung,pin-function = <0>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>>                 max77686_irq: max77686-irq {
+>>                         samsung,pins = "gpx3-2";
+>>                         samsung,pin-function = <0>;
+>> @@ -191,6 +198,9 @@
+>>                 samsung,i2c-sda-delay = <100>;
+>>                 samsung,i2c-max-bus-freq = <378000>;
 >>
->> Please see patch [1] adding PWM output pin groups for Exynos5420 for
->> reference.
->>
->> [1]
->> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29869.html
-> Right! I just referred to the manual again, and it actually reads TOUT_0.
-> So, I should be probably renaming this as "pwm0_out" like in the other patch?
+>> +               pinctrl-names = "default";
+>> +               pinctrl-0 = <&i2c1_bus &trackpad_irq>;
+>
+>
+> Please add &trackpad_irq to trackpad node instead. Pinctrl properties of i2c
+> node should contain only i2c-related pins.
 
-Yes, please. You should also add remaining ones, while at it. Basically 
-same patch as [1] but for Exynos5250.
+This was a workaround for a limitation of the i2c subsystem which need
+to be fixed before atmel support can land upstream.
 
-Best regards,
-Tomasz
+The problem is that there are two sources for the trackpad on this
+hardware.  They are pin compatible, so some boards may have one
+trackpad and other (mostly newer) boards may have the other.
+
+The i2c bus is probable, so the theory is that you can just specify
+both of trackpads and one will fail to be found.  The problem (at
+least on 3.8) was that the pinctrl subsystem held onto the pins.  :(
+
+
+I just tried now to see if I could reproduce this on ToT.  ...and it
+turns out that the atmel_mxt_ts doesn't support device tree upstream.
+Right at the top of mxt_probe I see:
+
+if (!pdata)
+  return -EINVAL;
+
+I actually find a patch (from you!) that adds some device tree support
+at <https://patchwork.kernel.org/patch/2393631/>.  ...though
+interestingly enough our current tree somehow gets by without
+specifying all of those properties.  +Benson may be able to give more
+details?
+
+
+Until atmel device tree support lands, though, I think this patch is stalled.
+
+>> +                       reg = <0x25>;
+>> +                       compatible = "atmel,atmel_mxt_tp";
+>> +                       interrupts = <2 0>;
+>> +                       interrupt-parent = <&gpx1>;
+>> +                       wakeup-source;
+>> +               };
+>
+>
+> Hmm, why are there 3 different nodes here? Could you explain what one by one
+> for what hardware they are?
+
+cyapa: the Cypress trackpad that shipped with original exynos5250-snow
+
+atmel: some newer exynos5250-snow ship with this
+
+atmel-bootloader: appears to be a hack to get around the fact that you
+can only specify one i2c address through the device tree.  I'm told
+that sometimes this device shows up at a different address.  On x86
+machines with this they use "i2c_new_probed_device" which allows you
+to pass in a list of addresses, it seems.  I'm not sure how this
+should really translate to the device tree.
+
+
+-Doug
