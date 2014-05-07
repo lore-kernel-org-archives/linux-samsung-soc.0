@@ -1,84 +1,81 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv5] ARM: EXYNOS: Support secondary CPU boot of Exynos4212
-Date: Wed, 07 May 2014 13:37:34 +0900
-Message-ID: <5369B88E.9030901@samsung.com>
-References: <1398735462-1938-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V2 1/2] ARM: dts: Add sound node for Snow board
+Date: Wed,  7 May 2014 10:22:27 +0530
+Message-ID: <1399438348-10819-2-git-send-email-tushar.behera@linaro.org>
+References: <1399438348-10819-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11140 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751772AbaEGEiU (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:43758 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751681AbaEGEyH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 00:38:20 -0400
-In-reply-to: <1398735462-1938-1-git-send-email-cw00.choi@samsung.com>
+	Wed, 7 May 2014 00:54:07 -0400
+Received: by mail-pa0-f48.google.com with SMTP id rd3so581407pab.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 21:54:07 -0700 (PDT)
+In-Reply-To: <1399438348-10819-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux@arm.linux.org.uk, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, robh+dt@kernel.org
 
-Dear Kukjin,
+The audio codec on Snow board, MAX98095 is connected on I2C7 bus.
+Also it requires the GPX1-7 line to be pulled up.
 
-Could you please pick this patch?
+Updated Snow DTS file to incorporate above changes and added a
+sound node to instantiate the I2S-based sound card.
 
-Best Regards,
-Chanwoo Choi
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+Changes for V2:
+1. GPX1-7 gpio is now configured through pincontrol, earlier
+it was configured through a fixed-regualtor.
 
-On 04/29/2014 10:37 AM, Chanwoo Choi wrote:
-> From: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> This patch fix the offset of CPU boot address and change parameter of smc call
-> of SMC_CMD_CPU1BOOT command for Exynos4212.
-> 
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> ---
-> Changes from v4:
-> - Post only this patch separated from following patchset[1]
-> [1] https://lkml.org/lkml/2014/4/24/873
-> 
->  arch/arm/mach-exynos/firmware.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index 932129e..aa01c42 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -18,6 +18,8 @@
->  
->  #include <mach/map.h>
->  
-> +#include <plat/cpu.h>
-> +
->  #include "smc.h"
->  
->  static int exynos_do_idle(void)
-> @@ -28,13 +30,24 @@ static int exynos_do_idle(void)
->  
->  static int exynos_cpu_boot(int cpu)
->  {
-> +	/*
-> +	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
-> +	 * But, Exynos4212 has only one secondary CPU so second parameter
-> +	 * isn't used for informing secure firmware about CPU id.
-> +	 */
-> +	if (soc_is_exynos4212())
-> +		cpu = 0;
-> +
->  	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
->  	return 0;
->  }
->  
->  static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->  {
-> -	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
-> +	void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
-> +
-> +	if (!soc_is_exynos4212())
-> +		boot_reg += 4*cpu;
->  
->  	__raw_writel(boot_addr, boot_reg);
->  	return 0;
-> 
+ arch/arm/boot/dts/exynos5250-snow.dts |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 1ce1088..809af33 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -37,6 +37,13 @@
+ 		sd3_bus4: sd3-bus-width4 {
+ 			samsung,pin-drv = <0>;
+ 		};
++
++		max98095_en: max98095-en {
++			samsung,pins = "gpx1-7";
++			samsung,pin-function = <0>;
++			samsung,pin-pud = <3>;
++			samsung,pin-drv = <0>;
++		};
+ 	};
+ 
+ 	gpio-keys {
+@@ -196,6 +203,26 @@
+ 		};
+ 	};
+ 
++	i2c@12CD0000 {
++		max98095: codec@11 {
++			compatible = "maxim,max98095";
++			reg = <0x11>;
++			pinctrl-0 = <&max98095_en>;
++			pinctrl-names = "default";
++		};
++	};
++
++	i2s0: i2s@03830000 {
++		status = "okay";
++	};
++
++	sound {
++		compatible = "google,snow-audio-max98095";
++
++		samsung,i2s-controller = <&i2s0>;
++		samsung,audio-codec = <&max98095>;
++	};
++
+ 	usb@12110000 {
+ 		samsung,vbus-gpio = <&gpx1 1 0>;
+ 	};
+-- 
+1.7.9.5
