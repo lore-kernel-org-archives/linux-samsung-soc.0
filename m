@@ -1,643 +1,295 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v4 PATCH v5 14/18] drm/panel: add S6E3FA0 driver
-Date: Wed, 07 May 2014 16:46:35 +0900
-Message-ID: <1399448799-8057-15-git-send-email-yj44.cho@samsung.com>
+From: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC v4 PATCH v3 12/18] drm/exynos: dsi: add driver data to support
+ Exynos5420
+Date: Wed, 07 May 2014 16:46:33 +0900
+Message-ID: <1399448799-8057-13-git-send-email-yj44.cho@samsung.com>
 References: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58647 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752877AbaEGHq6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 03:46:58 -0400
-In-reply-to: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1399448799-8057-1-git-send-email-yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: airlied-cv59FeDIM0c@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, laurent.pinchart@ideasonboard.com, s.trumtrar@pengutronix.de
 
-This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel driver.
+The offset of register DSIM_PLLTMR_REG in Exynos5420 is different
+from the one in Exynos4 SoC.
+
+In case of Exynos5420 SoC, there is no frequency band bit in DSIM_PLLCTRL_REG,
+and it uses DSIM_PHYCTRL_REG and DSIM_PHYTIMING*_REG instead.
+So this patch adds driver data to distinguish it.
 
 Changelog v2:
-- Declares delay, size properties in probe routine instead of DT
-Changelog v3:
-- Moves CPU mode timings relevant properties from FIMD DT
-  (commented by Laurent Pinchart, Andrzej Hajda)
-Changelog v4:
-- Enhances readability, vddm readi failure case and removes duplicated power off
+- Moves exynos_dsi_enable_clocks() after exynos_dsi_reset()
   (commented by Andrzej Hajda)
-Changelog v5:
-- Uses command mode helper functions instead of videomode one
+- Splits D-PHY control setting routines from PLL setting one
+  (commented by Andrzej Hajda)
+Changelog v3:
+- Uses macro for DSIM_PHYCTRL register (commented by Sachin)
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/panel/Kconfig         |    7 +
- drivers/gpu/drm/panel/Makefile        |    1 +
- drivers/gpu/drm/panel/panel-s6e3fa0.c |  570 +++++++++++++++++++++++++++++++++
- 3 files changed, 578 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |  157 ++++++++++++++++++++++++++-----
+ 1 file changed, 135 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 4ec874d..fa51237 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -30,4 +30,11 @@ config DRM_PANEL_S6E8AA0
- 	select DRM_MIPI_DSI
- 	select VIDEOMODE_HELPERS
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 4a918ec..50eb8ac 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -17,6 +17,7 @@
  
-+config DRM_PANEL_S6E3FA0
-+	tristate "S6E3FA0 DSI command mode panel"
-+	depends on DRM && DRM_PANEL
-+	depends on OF
-+	select DRM_MIPI_DSI
-+	select CMDMODE_HELPERS
+ #include <linux/clk.h>
+ #include <linux/irq.h>
++#include <linux/of_device.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regulator/consumer.h>
+ 
+@@ -54,9 +55,12 @@
+ 
+ /* FIFO memory AC characteristic register */
+ #define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
+-#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
+ #define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
+ #define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
++#define DSIM_PHYCTRL_REG	0x5c
++#define DSIM_PHYTIMING_REG	0x64
++#define DSIM_PHYTIMING1_REG	0x68
++#define DSIM_PHYTIMING2_REG	0x6c
+ 
+ /* DSIM_STATUS */
+ #define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
+@@ -200,6 +204,24 @@
+ #define DSIM_PLL_M(x)			((x) << 4)
+ #define DSIM_PLL_S(x)			((x) << 1)
+ 
++/* DSIM_PHYCTRL */
++#define DSIM_PHYCTRL_ULPS_EXIT(x)	(((x) & 0x1ff) << 0)
 +
- endmenu
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 8b92921..85c6738 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
- obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
- obj-$(CONFIG_DRM_PANEL_S6E8AA0) += panel-s6e8aa0.o
-+obj-$(CONFIG_DRM_PANEL_S6E3FA0) += panel-s6e3fa0.o
-diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c b/drivers/gpu/drm/panel/panel-s6e3fa0.c
-new file mode 100644
-index 0000000..a3b2d7e
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
-@@ -0,0 +1,570 @@
-+/*
-+ * MIPI-DSI based s6e3fa0 AMOLED LCD 5.7 inch panel driver.
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd
-+ *
-+ * YoungJun Cho <yj44.cho@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++/* DSIM_PHYTIMING */
++#define DSIM_PHYTIMING_LPX(x)		((x) << 8)
++#define DSIM_PHYTIMING_HS_EXIT(x)	((x) << 0)
 +
-+#include <drm/drmP.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_panel.h>
++/* DSIM_PHYTIMING1 */
++#define DSIM_PHYTIMING1_CLK_PREPARE(x)	((x) << 24)
++#define DSIM_PHYTIMING1_CLK_ZERO(x)	((x) << 16)
++#define DSIM_PHYTIMING1_CLK_POST(x)	((x) << 8)
++#define DSIM_PHYTIMING1_CLK_TRAIL(x)	((x) << 0)
 +
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
++/* DSIM_PHYTIMING2 */
++#define DSIM_PHYTIMING2_HS_PREPARE(x)	((x) << 16)
++#define DSIM_PHYTIMING2_HS_ZERO(x)	((x) << 8)
++#define DSIM_PHYTIMING2_HS_TRAIL(x)	((x) << 0)
 +
-+#include <video/mipi_display.h>
-+#include <video/of_cmdmode.h>
-+#include <video/cmdmode.h>
+ #define DSI_MAX_BUS_WIDTH		4
+ #define DSI_NUM_VIRTUAL_CHANNELS	4
+ #define DSI_TX_FIFO_SIZE		2048
+@@ -233,6 +255,12 @@ struct exynos_dsi_transfer {
+ #define DSIM_STATE_INITIALIZED		BIT(1)
+ #define DSIM_STATE_CMD_LPM		BIT(2)
+ 
++struct exynos_dsi_driver_data {
++	unsigned int plltmr_reg;
 +
-+/* Manufacturer Command Set */
-+#define MCS_GLOBAL_PARAMETER	0xb0
-+#define MCS_AID			0xb2
-+#define MCS_ELVSSOPT		0xb6
-+#define MCS_TEMPERATURE_SET	0xb8
-+#define MCS_PENTILE_CTRL	0xc0
-+#define MCS_GAMMA_MODE		0xca
-+#define MCS_VDDM		0xd7
-+#define MCS_ALS			0xe3
-+#define MCS_ERR_FG		0xed
-+#define MCS_KEY_LEV1		0xf0
-+#define MCS_PANEL_UPDATE	0xf7
-+#define MCS_KEY_LEV2		0xfc
-+#define MCS_RE			0xfe
-+#define MCS_TOUT2_HSYNC		0xff
-+
-+/* Content Adaptive Brightness Control */
-+#define DCS_WRITE_CABC		0x55
-+
-+#define MTP_ID_LEN		3
-+#define GAMMA_LEVEL_NUM		30
-+
-+#define DEFAULT_VDDM_VAL	0x15
-+
-+struct s6e3fa0 {
-+	struct device				*dev;
-+	struct drm_panel			panel;
-+
-+	struct regulator_bulk_data		supplies[2];
-+	struct gpio_desc			*reset_gpio;
-+	struct gpio_desc			*det_gpio;
-+	struct gpio_desc			*te_gpio;
-+	struct cmdmode				cm;
-+
-+	unsigned int				power_on_delay;
-+	unsigned int				reset_delay;
-+	unsigned int				init_delay;
-+	unsigned int				width_mm;
-+	unsigned int				height_mm;
-+
-+	unsigned char				id;
-+	unsigned char				vddm;
-+	unsigned int				brightness;
++	unsigned int has_freqband:1;
 +};
 +
-+#define panel_to_s6e3fa0(p) container_of(p, struct s6e3fa0, panel)
+ struct exynos_dsi {
+ 	struct mipi_dsi_host dsi_host;
+ 	struct drm_connector connector;
+@@ -262,11 +290,39 @@ struct exynos_dsi {
+ 
+ 	spinlock_t transfer_lock; /* protects transfer_list */
+ 	struct list_head transfer_list;
 +
-+/* VDD Memory Lookup Table contains paires of {ReadValue, WriteValue} */
-+static const unsigned char s6e3fa0_vddm_lut[][2] = {
-+	{0x00, 0x0d}, {0x01, 0x0d}, {0x02, 0x0e}, {0x03, 0x0f}, {0x04, 0x10},
-+	{0x05, 0x11}, {0x06, 0x12}, {0x07, 0x13}, {0x08, 0x14}, {0x09, 0x15},
-+	{0x0a, 0x16}, {0x0b, 0x17}, {0x0c, 0x18}, {0x0d, 0x19}, {0x0e, 0x1a},
-+	{0x0f, 0x1b}, {0x10, 0x1c}, {0x11, 0x1d}, {0x12, 0x1e}, {0x13, 0x1f},
-+	{0x14, 0x20}, {0x15, 0x21}, {0x16, 0x22}, {0x17, 0x23}, {0x18, 0x24},
-+	{0x19, 0x25}, {0x1a, 0x26}, {0x1b, 0x27}, {0x1c, 0x28}, {0x1d, 0x29},
-+	{0x1e, 0x2a}, {0x1f, 0x2b}, {0x20, 0x2c}, {0x21, 0x2d}, {0x22, 0x2e},
-+	{0x23, 0x2f}, {0x24, 0x30}, {0x25, 0x31}, {0x26, 0x32}, {0x27, 0x33},
-+	{0x28, 0x34}, {0x29, 0x35}, {0x2a, 0x36}, {0x2b, 0x37}, {0x2c, 0x38},
-+	{0x2d, 0x39}, {0x2e, 0x3a}, {0x2f, 0x3b}, {0x30, 0x3c}, {0x31, 0x3d},
-+	{0x32, 0x3e}, {0x33, 0x3f}, {0x34, 0x3f}, {0x35, 0x3f}, {0x36, 0x3f},
-+	{0x37, 0x3f}, {0x38, 0x3f}, {0x39, 0x3f}, {0x3a, 0x3f}, {0x3b, 0x3f},
-+	{0x3c, 0x3f}, {0x3d, 0x3f}, {0x3e, 0x3f}, {0x3f, 0x3f}, {0x40, 0x0c},
-+	{0x41, 0x0b}, {0x42, 0x0a}, {0x43, 0x09}, {0x44, 0x08}, {0x45, 0x07},
-+	{0x46, 0x06}, {0x47, 0x05}, {0x48, 0x04}, {0x49, 0x03}, {0x4a, 0x02},
-+	{0x4b, 0x01}, {0x4c, 0x40}, {0x4d, 0x41}, {0x4e, 0x42}, {0x4f, 0x43},
-+	{0x50, 0x44}, {0x51, 0x45}, {0x52, 0x46}, {0x53, 0x47}, {0x54, 0x48},
-+	{0x55, 0x49}, {0x56, 0x4a}, {0x57, 0x4b}, {0x58, 0x4c}, {0x59, 0x4d},
-+	{0x5a, 0x4e}, {0x5b, 0x4f}, {0x5c, 0x50}, {0x5d, 0x51}, {0x5e, 0x52},
-+	{0x5f, 0x53}, {0x60, 0x54}, {0x61, 0x55}, {0x62, 0x56}, {0x63, 0x57},
-+	{0x64, 0x58}, {0x65, 0x59}, {0x66, 0x5a}, {0x67, 0x5b}, {0x68, 0x5c},
-+	{0x69, 0x5d}, {0x6a, 0x5e}, {0x6b, 0x5f}, {0x6c, 0x60}, {0x6d, 0x61},
-+	{0x6e, 0x62}, {0x6f, 0x63}, {0x70, 0x64}, {0x71, 0x65}, {0x72, 0x66},
-+	{0x73, 0x67}, {0x74, 0x68}, {0x75, 0x69}, {0x76, 0x6a}, {0x77, 0x6b},
-+	{0x78, 0x6c}, {0x79, 0x6d}, {0x7a, 0x6e}, {0x7b, 0x6f}, {0x7c, 0x70},
-+	{0x7d, 0x71}, {0x7e, 0x72}, {0x7f, 0x73},
++	struct exynos_dsi_driver_data *driver_data;
+ };
+ 
+ #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+ #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+ 
++static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
++	.plltmr_reg = 0x50,
++	.has_freqband = 1,
 +};
 +
-+static int s6e3fa0_dcs_read(struct s6e3fa0 *ctx, unsigned char cmd,
-+							void *data, size_t len)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+
-+	return mipi_dsi_dcs_read(dsi, dsi->channel, cmd, data, len);
-+}
-+
-+static void s6e3fa0_dcs_write(struct s6e3fa0 *ctx, const void *data, size_t len)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+
-+	mipi_dsi_dcs_write(dsi, dsi->channel, data, len);
-+}
-+
-+#define s6e3fa0_dcs_write_seq(ctx, seq...)				\
-+do {									\
-+	const unsigned char d[] = { seq };				\
-+	BUILD_BUG_ON_MSG(ARRAY_SIZE(d) > 64, "too big seq for stack");	\
-+	s6e3fa0_dcs_write(ctx, d, ARRAY_SIZE(d));			\
-+} while (0)
-+
-+#define s6e3fa0_dcs_write_seq_static(ctx, seq...)			\
-+do {									\
-+	static const unsigned char d[] = { seq };			\
-+	s6e3fa0_dcs_write(ctx, d, ARRAY_SIZE(d));			\
-+} while (0)
-+
-+static void s6e3fa0_apply_level_1_key(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_KEY_LEV1, 0x5a, 0x5a);
-+}
-+
-+static void s6e3fa0_apply_level_2_key(struct s6e3fa0 *ctx, bool on)
-+{
-+	if (on)
-+		s6e3fa0_dcs_write_seq_static(ctx, MCS_KEY_LEV2, 0x5a, 0x5a);
-+	else
-+		s6e3fa0_dcs_write_seq_static(ctx, MCS_KEY_LEV2, 0xa5, 0xa5);
-+}
-+
-+static void s6e3fa0_set_maximum_return_packet_size(struct s6e3fa0 *ctx,
-+							unsigned int size)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
-+
-+	if (ops && ops->transfer) {
-+		unsigned char buf[] = {size, 0};
-+		struct mipi_dsi_msg msg = {
-+			.channel = dsi->channel,
-+			.type = MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE,
-+			.tx_len = sizeof(buf),
-+			.tx_buf = buf
-+		};
-+
-+		ops->transfer(dsi->host, &msg);
-+	}
-+}
-+
-+static void s6e3fa0_read_mtp_id(struct s6e3fa0 *ctx)
-+{
-+	unsigned char id[MTP_ID_LEN];
-+	int ret;
-+
-+	s6e3fa0_set_maximum_return_packet_size(ctx, MTP_ID_LEN);
-+	ret = s6e3fa0_dcs_read(ctx, MIPI_DCS_GET_DISPLAY_ID, id, MTP_ID_LEN);
-+	if (ret < MTP_ID_LEN || id[0] == 0x00) {
-+		dev_err(ctx->dev, "failed to read id\n");
-+		return;
-+	}
-+
-+	dev_info(ctx->dev, "ID: 0x%02x, 0x%02x, 0x%02x\n", id[0], id[1], id[2]);
-+
-+	ctx->id = id[2];
-+}
-+
-+static void s6e3fa0_read_vddm(struct s6e3fa0 *ctx)
-+{
-+	unsigned char vddm;
-+	int ret;
-+
-+	s6e3fa0_apply_level_2_key(ctx, true);
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_GLOBAL_PARAMETER, 0x16);
-+	s6e3fa0_set_maximum_return_packet_size(ctx, 1);
-+	ret = s6e3fa0_dcs_read(ctx, MCS_VDDM, &vddm, 1);
-+	s6e3fa0_apply_level_2_key(ctx, false);
-+
-+	if (ret < 1 || vddm > 0x7f) {
-+		dev_err(ctx->dev, "failed to read vddm, use default val.\n");
-+		vddm = DEFAULT_VDDM_VAL;
-+	}
-+
-+	ctx->vddm = s6e3fa0_vddm_lut[vddm][1];
-+}
-+
-+static void s6e3fa0_set_pentile_control(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_PENTILE_CTRL, 0x00, 0x02, 0x03,
-+					0x32, 0x03, 0x44, 0x44, 0xc0, 0x00,
-+					0x1c, 0x20, 0xe8);
-+}
-+
-+static void s6e3fa0_write_ambient_light_sensor(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_ALS, 0xff, 0xff, 0xff, 0xff);
-+}
-+
-+static void s6e3fa0_set_readability_enhancement(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_RE, 0x00, 0x03,
-+					MCS_GLOBAL_PARAMETER, 0x2b,
-+					MCS_RE, 0xe4);
-+}
-+
-+static void s6e3fa0_set_common_control(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_set_pentile_control(ctx);
-+	s6e3fa0_write_ambient_light_sensor(ctx);
-+	s6e3fa0_set_readability_enhancement(ctx);
-+}
-+
-+static void s6e3fa0_set_gamma(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_GAMMA_MODE, 0x01, 0x00, 0x01,
-+					0x00, 0x01, 0x00, 0x80, 0x80, 0x80,
-+					0x80, 0x80, 0x00, 0x80, 0x80, 0x80,
-+					0x80, 0x80, 0x00, 0x80, 0x80, 0x80,
-+					0x80, 0x80, 0x00, 0x80, 0x80, 0x80,
-+					0x80, 0x80, 0x00, 0x00, 0x00);
-+}
-+
-+static void s6e3fa0_set_amoled_impulse_driving(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_AID, 0x00, 0x06, 0x00, 0x06);
-+}
-+
-+static void s6e3fa0_set_elvss(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_ELVSSOPT, 0x88, 0x0a);
-+}
-+
-+static void s6e3fa0_update_panel(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_PANEL_UPDATE, 0x03);
-+}
-+
-+static void s6e3fa0_write_automatic_current_limit(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, DCS_WRITE_CABC, 0x02);
-+}
-+
-+static void s6e3fa0_set_brightness_control(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_set_gamma(ctx);
-+	s6e3fa0_set_amoled_impulse_driving(ctx);
-+	s6e3fa0_set_elvss(ctx);
-+	s6e3fa0_update_panel(ctx);
-+	s6e3fa0_write_automatic_current_limit(ctx);
-+}
-+
-+static void s6e3fa0_set_temperature(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MCS_GLOBAL_PARAMETER, 0x05,
-+					MCS_TEMPERATURE_SET, 0x19);
-+}
-+
-+static void s6e3fa0_set_elvss_control(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_set_temperature(ctx);
-+	s6e3fa0_set_elvss(ctx);
-+}
-+
-+static void s6e3fa0_set_te_on(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_TEAR_ON, 0x00);
-+}
-+
-+static void s6e3fa0_set_etc_and_write_vddm(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_apply_level_2_key(ctx, true);
-+	s6e3fa0_dcs_write_seq(ctx, MCS_ERR_FG, 0x0c, 0x04,
-+				MCS_TOUT2_HSYNC, 0x01,
-+				MCS_GLOBAL_PARAMETER, 0x16,
-+				MCS_VDDM, ctx->vddm);
-+	s6e3fa0_apply_level_2_key(ctx, false);
-+}
-+
-+static void s6e3fa0_set_etc_condition(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_set_te_on(ctx);
-+	s6e3fa0_set_etc_and_write_vddm(ctx);
-+}
-+
-+static void s6e3fa0_panel_init(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_set_common_control(ctx);
-+	s6e3fa0_set_brightness_control(ctx);
-+	s6e3fa0_set_elvss_control(ctx);
-+	s6e3fa0_set_etc_condition(ctx);
-+
-+	msleep(ctx->init_delay);
-+}
-+
-+static int s6e3fa0_power_off(struct s6e3fa0 *ctx)
-+{
-+	gpiod_set_value(ctx->reset_gpio, 0);
-+
-+	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+}
-+
-+static int s6e3fa0_power_on(struct s6e3fa0 *ctx)
-+{
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret)
-+		return ret;
-+
-+	msleep(ctx->power_on_delay);
-+
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+	gpiod_set_value(ctx->reset_gpio, 0);
-+	usleep_range(1000, 2000);
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+
-+	msleep(ctx->reset_delay);
-+
-+	return 0;
-+}
-+
-+static void s6e3fa0_set_sequence(struct s6e3fa0 *ctx)
-+{
-+	s6e3fa0_apply_level_1_key(ctx);
-+	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
-+	msleep(20);
-+
-+	s6e3fa0_read_mtp_id(ctx);
-+	s6e3fa0_read_vddm(ctx);
-+
-+	s6e3fa0_panel_init(ctx);
-+
-+	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
-+}
-+
-+static int s6e3fa0_disable(struct drm_panel *panel)
-+{
-+	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
-+
-+	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
-+	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_OFF);
-+	msleep(35);
-+
-+	return s6e3fa0_power_off(ctx);
-+}
-+
-+static int s6e3fa0_enable(struct drm_panel *panel)
-+{
-+	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
-+	int ret;
-+
-+	ret = s6e3fa0_power_on(ctx);
-+	if (ret)
-+		return ret;
-+
-+	s6e3fa0_set_sequence(ctx);
-+
-+	return ret;
-+}
-+
-+static int s6e3fa0_get_modes(struct drm_panel *panel)
-+{
-+	struct drm_connector *connector = panel->connector;
-+	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_create(connector->dev);
-+	if (!mode) {
-+		DRM_ERROR("failed to create a new display mode\n");
-+		return 0;
-+	}
-+
-+	drm_display_mode_from_cmdmode(&ctx->cm, mode);
-+	mode->width_mm = ctx->width_mm;
-+	mode->height_mm = ctx->height_mm;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs s6e3fa0_drm_funcs = {
-+	.disable	= s6e3fa0_disable,
-+	.enable		= s6e3fa0_enable,
-+	.get_modes	= s6e3fa0_get_modes,
++static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
++	.plltmr_reg = 0x58,
 +};
 +
-+static int s6e3fa0_parse_dt(struct s6e3fa0 *ctx)
-+{
-+	struct device *dev = ctx->dev;
-+	int ret;
-+
-+	ret = of_get_cmdmode(dev->of_node, &ctx->cm, 0);
-+	if (ret) {
-+		dev_err(dev, "failed to get command mode: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+irqreturn_t s6e3fa0_det_interrupt(int irq, void *dev_id)
-+{
-+	/* TODO */
-+	return IRQ_HANDLED;
-+}
-+
-+irqreturn_t s6e3fa0_te_interrupt(int irq, void *dev_id)
-+{
-+	struct s6e3fa0 *ctx = dev_id;
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	struct mipi_dsi_host *host = dsi->host;
-+	const struct mipi_dsi_host_ops *ops = host->ops;
-+
-+	if (ops && ops->te_handler)
-+		ops->te_handler(host);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int s6e3fa0_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct s6e3fa0 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(struct s6e3fa0), GFP_KERNEL);
-+	if (!ctx) {
-+		dev_err(dev, "failed to allocate s6e3fa0 structure.\n");
-+		return -ENOMEM;
-+	}
-+
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ctx->dev = dev;
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+
-+	ret = s6e3fa0_parse_dt(ctx);
-+	if (ret)
-+		return ret;
-+
-+	ctx->supplies[0].supply = "vdd3";
-+	ctx->supplies[1].supply = "vci";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
-+					ctx->supplies);
-+	if (ret) {
-+		dev_err(dev, "failed to get regulators: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset");
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		dev_err(dev, "failed to get reset gpio: %ld\n",
-+						PTR_ERR(ctx->reset_gpio));
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+	ret = gpiod_direction_output(ctx->reset_gpio, 1);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to configure reset gpio: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->det_gpio = devm_gpiod_get(dev, "det");
-+	if (IS_ERR(ctx->det_gpio)) {
-+		dev_err(dev, "failed to get det gpio: %ld\n",
-+						PTR_ERR(ctx->det_gpio));
-+		return PTR_ERR(ctx->det_gpio);
-+	}
-+	ret = gpiod_direction_input(ctx->det_gpio);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to configure det gpio: %d\n", ret);
-+		return ret;
-+	}
-+	ret = devm_request_irq(dev, gpiod_to_irq(ctx->det_gpio),
-+						s6e3fa0_det_interrupt,
-+						IRQF_TRIGGER_FALLING,
-+						"oled-det", ctx);
-+	if (ret) {
-+		dev_err(dev, "failed to request det irq: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->te_gpio = devm_gpiod_get(dev, "te");
-+	if (IS_ERR(ctx->te_gpio)) {
-+		dev_err(dev, "failed to get te gpio: %ld\n",
-+						PTR_ERR(ctx->te_gpio));
-+		return PTR_ERR(ctx->te_gpio);
-+	}
-+	ret = gpiod_direction_input(ctx->te_gpio);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to configure te gpio: %d\n", ret);
-+		return ret;
-+	}
-+	ret = devm_request_irq(dev, gpiod_to_irq(ctx->te_gpio),
-+						s6e3fa0_te_interrupt,
-+						IRQF_TRIGGER_RISING,
-+						"TE", ctx);
-+	if (ret) {
-+		dev_err(dev, "failed to request det irq: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->power_on_delay = 10;
-+	ctx->reset_delay = 5;
-+	ctx->init_delay = 120;
-+	ctx->width_mm = 71;
-+	ctx->height_mm = 126;
-+
-+	ctx->brightness = GAMMA_LEVEL_NUM - 1;
-+
-+	drm_panel_init(&ctx->panel);
-+	ctx->panel.dev = dev;
-+	ctx->panel.funcs = &s6e3fa0_drm_funcs;
-+
-+	ret = drm_panel_add(&ctx->panel);
-+	if (ret)
-+		return ret;
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret)
-+		drm_panel_remove(&ctx->panel);
-+
-+	return ret;
-+}
-+
-+static int s6e3fa0_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct s6e3fa0 *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	mipi_dsi_detach(dsi);
-+	drm_panel_remove(&ctx->panel);
-+
-+	return 0;
-+}
-+
-+static struct of_device_id s6e3fa0_of_match[] = {
-+	{ .compatible = "samsung,s6e3fa0" },
++static struct of_device_id exynos_dsi_of_match[] = {
++	{ .compatible = "samsung,exynos4210-mipi-dsi",
++	  .data = &exynos4_dsi_driver_data },
++	{ .compatible = "samsung,exynos5420-mipi-dsi",
++	  .data = &exynos5_dsi_driver_data },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(of, s6e3fa0_of_match);
 +
-+static struct mipi_dsi_driver s6e3fa0_driver = {
-+	.probe = s6e3fa0_probe,
-+	.remove = s6e3fa0_remove,
-+	.driver = {
-+		.name = "panel_s6e3fa0",
-+		.owner = THIS_MODULE,
-+		.of_match_table = s6e3fa0_of_match,
-+	},
-+};
-+module_mipi_dsi_driver(s6e3fa0_driver);
++static inline struct exynos_dsi_driver_data *exynos_dsi_get_driver_data(
++						struct platform_device *pdev)
++{
++	const struct of_device_id *of_id =
++			of_match_device(exynos_dsi_of_match, &pdev->dev);
 +
-+MODULE_AUTHOR("YoungJun Cho <yj44.cho@samsung.com>");
-+MODULE_DESCRIPTION("MIPI-DSI based s6e3fa0 AMOLED LCD Panel Driver");
-+MODULE_LICENSE("GPL v2");
++	return (struct exynos_dsi_driver_data *)of_id->data;
++}
++
+ static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
+ {
+ 	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
+@@ -340,14 +396,9 @@ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
+ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+ 					unsigned long freq)
+ {
+-	static const unsigned long freq_bands[] = {
+-		100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
+-		270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
+-		510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
+-		770 * MHZ, 870 * MHZ, 950 * MHZ,
+-	};
++	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	unsigned long fin, fout;
+-	int timeout, band;
++	int timeout;
+ 	u8 p, s;
+ 	u16 m;
+ 	u32 reg;
+@@ -368,18 +419,30 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+ 			"failed to find PLL PMS for requested frequency\n");
+ 		return -EFAULT;
+ 	}
++	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
+ 
+-	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
+-		if (fout < freq_bands[band])
+-			break;
++	writel(500, dsi->reg_base + driver_data->plltmr_reg);
++
++	reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
++
++	if (driver_data->has_freqband) {
++		static const unsigned long freq_bands[] = {
++			100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
++			270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
++			510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
++			770 * MHZ, 870 * MHZ, 950 * MHZ,
++		};
++		int band;
++
++		for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
++			if (fout < freq_bands[band])
++				break;
+ 
+-	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d), band %d\n", fout,
+-		p, m, s, band);
++		dev_dbg(dsi->dev, "band %d\n", band);
+ 
+-	writel(500, dsi->reg_base + DSIM_PLLTMR_REG);
++		reg |= DSIM_FREQ_BAND(band);
++	}
+ 
+-	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
+-			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
+ 	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
+ 
+ 	timeout = 1000;
+@@ -433,6 +496,59 @@ static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
+ 	return 0;
+ }
+ 
++static void exynos_dsi_set_phy_ctrl(struct exynos_dsi *dsi)
++{
++	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	u32 reg;
++
++	if (driver_data->has_freqband)
++		return;
++
++	/* B D-PHY: D-PHY Master & Slave Analog Block control */
++	reg = DSIM_PHYCTRL_ULPS_EXIT(0x0af);
++	writel(reg, dsi->reg_base + DSIM_PHYCTRL_REG);
++
++	/*
++	 * T LPX: Transmitted length of any Low-Power state period
++	 * T HS-EXIT: Time that the transmitter drives LP-11 following a HS
++	 *	burst
++	 */
++	reg = DSIM_PHYTIMING_LPX(0x06) | DSIM_PHYTIMING_HS_EXIT(0x0b);
++	writel(reg, dsi->reg_base + DSIM_PHYTIMING_REG);
++
++	/*
++	 * T CLK-PREPARE: Time that the transmitter drives the Clock Lane LP-00
++	 *	Line state immediately before the HS-0 Line state starting the
++	 *	HS transmission
++	 * T CLK-ZERO: Time that the transmitter drives the HS-0 state prior to
++	 *	transmitting the Clock.
++	 * T CLK_POST: Time that the transmitter continues to send HS clock
++	 *	after the last associated Data Lane has transitioned to LP Mode
++	 *	Interval is defined as the period from the end of T HS-TRAIL to
++	 *	the beginning of T CLK-TRAIL
++	 * T CLK-TRAIL: Time that the transmitter drives the HS-0 state after
++	 *	the last payload clock bit of a HS transmission burst
++	 */
++	reg = DSIM_PHYTIMING1_CLK_PREPARE(0x07) |
++			DSIM_PHYTIMING1_CLK_ZERO(0x27) |
++			DSIM_PHYTIMING1_CLK_POST(0x0d) |
++			DSIM_PHYTIMING1_CLK_TRAIL(0x08);
++	writel(reg, dsi->reg_base + DSIM_PHYTIMING1_REG);
++
++	/*
++	 * T HS-PREPARE: Time that the transmitter drives the Data Lane LP-00
++	 *	Line state immediately before the HS-0 Line state starting the
++	 *	HS transmission
++	 * T HS-ZERO: Time that the transmitter drives the HS-0 state prior to
++	 *	transmitting the Sync sequence.
++	 * T HS-TRAIL: Time that the transmitter drives the flipped differential
++	 *	state after last payload data bit of a HS transmission burst
++	 */
++	reg = DSIM_PHYTIMING2_HS_PREPARE(0x09) | DSIM_PHYTIMING2_HS_ZERO(0x0d) |
++			DSIM_PHYTIMING2_HS_TRAIL(0x0b);
++	writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
++}
++
+ static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
+ {
+ 	u32 reg;
+@@ -947,10 +1063,11 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
+ 
+ static int exynos_dsi_init(struct exynos_dsi *dsi)
+ {
+-	exynos_dsi_enable_clock(dsi);
+ 	exynos_dsi_reset(dsi);
+ 	enable_irq(dsi->irq);
++	exynos_dsi_enable_clock(dsi);
+ 	exynos_dsi_wait_for_reset(dsi);
++	exynos_dsi_set_phy_ctrl(dsi);
+ 	exynos_dsi_init_link(dsi);
+ 
+ 	return 0;
+@@ -1412,6 +1529,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	dsi->dsi_host.dev = &pdev->dev;
+ 
+ 	dsi->dev = &pdev->dev;
++	dsi->driver_data = exynos_dsi_get_driver_data(pdev);
+ 
+ 	ret = exynos_dsi_parse_dt(dsi);
+ 	if (ret)
+@@ -1516,11 +1634,6 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
+ };
+ 
+-static struct of_device_id exynos_dsi_of_match[] = {
+-	{ .compatible = "samsung,exynos4210-mipi-dsi" },
+-	{ }
+-};
+-
+ struct platform_driver dsi_driver = {
+ 	.probe = exynos_dsi_probe,
+ 	.remove = exynos_dsi_remove,
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
