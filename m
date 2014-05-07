@@ -1,7 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v4 PATCH 15/18] ARM: dts: exynos4: add system register node
-Date: Wed, 07 May 2014 16:46:36 +0900
-Message-ID: <1399448799-8057-16-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v4 PATCH v2 06/18] ARM: dts: sysreg: add exynos5 compatible to DT
+ bindings
+Date: Wed, 07 May 2014 16:46:27 +0900
+Message-ID: <1399448799-8057-7-git-send-email-yj44.cho@samsung.com>
 References: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,27 +22,29 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds sysreg property to fimd device node which is required
-to use I80 interface.
+This patch adds relevant to exynos5 compatible for exynos5 SoCs.
+
+Changelog v2:
+- Changes title and description (commented by Sachin Kamat)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi |    1 +
+ .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 3d14cdb..a10aa50 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -528,6 +528,7 @@
- 		clocks = <&clock 140>, <&clock 283>;
- 		clock-names = "sclk_fimd", "fimd";
- 		samsung,power-domain = <&pd_lcd0>;
-+		samsung,sysreg = <&sys_reg>;
- 		status = "disabled";
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+index 0ab3251..fd71581 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+@@ -3,6 +3,7 @@ SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
+ Properties:
+  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
+    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
++   For Exynos5 SoC series it should be "samsung,exynos5-sysreg", "syscon";
+  - reg : offset and length of the register set.
+ 
+ Example:
 -- 
 1.7.9.5
