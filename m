@@ -1,80 +1,270 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
-Date: Wed, 7 May 2014 09:35:20 +0530
-Message-ID: <CAK9yfHwXC1rc71-GiP3JxF2hpQGkA-GVv-1=MT9+GsA+Vq3o4w@mail.gmail.com>
-References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
-	<53691187.80101@gmail.com>
-	<CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: Re: [PATCH v5 5/6] arm64: mm: Implement 4 levels of translation tables
+Date: Wed, 07 May 2014 13:22:50 +0900
+Message-ID: <001c01cf69ac$01be8bf0$053ba3d0$@samsung.com>
+References: <000501cf64e5$d92ae870$8b80b950$@samsung.com>
+ <20140506104907.GB3066@lvm>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:32814 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750900AbaEGEFV (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:33336 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751444AbaEGEW4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 00:05:21 -0400
-Received: by mail-ob0-f176.google.com with SMTP id wo20so512796obc.21
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 21:05:20 -0700 (PDT)
-In-Reply-To: <CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
+	Wed, 7 May 2014 00:22:56 -0400
+In-reply-to: <20140506104907.GB3066@lvm>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+To: 'Christoffer Dall' <christoffer.dall@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-Hi Tomasz,
+On Tuesday, May 06, 2014 7:49 PM, Christoffer Dall wrote:
+> On Thu, May 01, 2014 at 11:34:16AM +0900, Jungseok Lee wrote:
+> > This patch implements 4 levels of translation tables since 3 levels of
+> > page tables with 4KB pages cannot support 40-bit physical address
+> > space described in [1] due to the following issue.
+> >
+> > It is a restriction that kernel logical memory map with 4KB + 3 levels
+> > (0xffffffc000000000-0xffffffffffffffff) cannot cover RAM region from
+> > 544GB to 1024GB in [1]. Specifically, ARM64 kernel fails to create
+> > mapping for this region in map_mem function since __phys_to_virt for
+> > this region reaches to address overflow.
+> >
+> > If SoC design follows the document, [1], over 32GB RAM would be placed
+> > from 544GB. Even 64GB system is supposed to use the region from 544GB
+> > to 576GB for only 32GB RAM. Naturally, it would reach to enable 4
+> > levels of page tables to avoid hacking __virt_to_phys and __phys_to_virt.
+> >
+> > However, it is recommended 4 levels of page table should be only
+> > enabled if memory map is too sparse or there is about 512GB RAM.
+> 
+> Who recommends this then?  This paragraph just confuses me.
 
-On 6 May 2014 23:39, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Tomasz,
->
-> On 6 May 2014 22:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Sachin,
->>
->> Thanks for addressing the comments. I need to verify few things on Universal
->> C210 board first, before I could give my Reviewed-by tag or further
->> comments.
->>
->> I also have some general comments that I missed before, due to limited time
->> for review. Please see inline.
->
-> Thanks for your review.
->
->>
->>
->> On 06.05.2014 10:10, Sachin Kamat wrote:
->>>
->>> Instead of hardcoding the SYSRAM details for each SoC,
->>> pass this information through device tree (DT) and make
->>> the code SoC agnostic. Generic SRAM bindings are used
->>> for achieving this.
->>>
->>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->>> Acked-by: Arnd Bergmann <arnd@arndb.de>
->>> Acked-by: Heiko Stuebner <heiko@sntech.de>
->>> ---
-[snip]
+It is a paraphrase of Catalin's comment:
+"I agree, we should only enable 4-levels of page table if we have close
+to 512GB of RAM or the range is too sparse but I would actually push
+back on the hardware guys to keep it tighter."
 
->>>
->>>   static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->>>   {
->>> -       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
->>> +       void __iomem *boot_reg;
->>> +
->>> +       if (!sram_ns_base_addr)
->>> +               return 0;
->>
->>
->> Shouldn't this return an error instead? I'm not sure which one would be
->> appropriate, though, probably one of -ENODEV, -ENXIO or -EFAULT.
->
-> IIRC, returning error here causes the system to hang and even primary
-> cpu does not boot.
-> Since any error or absence of sram nodes should atleast boot the
-> primary CPU, I thought
-> this is better.
+The above message comes from the discussion on 4 levels.
+http://www.spinics.net/linux/lists/arm-kernel/msg319055.html
 
-Small correction. The above explanation was for the absence of the check.
-Sorry about the confusion. Will add -ENODEV here.
+> >
+> > References
+> > ----------
+> > [1]: Principles of ARM Memory Maps, White Paper, Issue C
+> >
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Steve Capper <steve.capper@linaro.org>
+> > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> > Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> > ---
+> >  arch/arm64/Kconfig                     |    8 ++++++
+> >  arch/arm64/include/asm/memblock.h      |    6 +++++
+> >  arch/arm64/include/asm/page.h          |    4 ++-
+> >  arch/arm64/include/asm/pgalloc.h       |   20 ++++++++++++++
+> >  arch/arm64/include/asm/pgtable-hwdef.h |    6 +++--
+> >  arch/arm64/include/asm/pgtable.h       |   45 +++++++++++++++++++++++++++++++
+> >  arch/arm64/include/asm/tlb.h           |    9 +++++++
+> >  arch/arm64/kernel/head.S               |   46 +++++++++++++++++++++++++-------
+> >  arch/arm64/kernel/traps.c              |    5 ++++
+> >  arch/arm64/mm/fault.c                  |    1 +
+> >  arch/arm64/mm/mmu.c                    |   16 ++++++++---
+> >  11 files changed, 150 insertions(+), 16 deletions(-)
+> >
 
--- 
-With warm regards,
-Sachin
+[ ... ]
+
+> > diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S index
+> > 0fd5650..03ec424 100644
+> > --- a/arch/arm64/kernel/head.S
+> > +++ b/arch/arm64/kernel/head.S
+> > @@ -37,8 +37,9 @@
+> >
+> >  /*
+> >   * swapper_pg_dir is the virtual address of the initial page table.
+> > We place
+> > - * the page tables 3 * PAGE_SIZE below KERNEL_RAM_VADDR. The
+> > idmap_pg_dir has
+> > - * 2 pages and is placed below swapper_pg_dir.
+> > + * the page tables 3 * PAGE_SIZE (2 or 3 levels) or 4 * PAGE_SIZE (4
+> > + levels)
+> > + * below KERNEL_RAM_VADDR. The idmap_pg_dir has 2 pages (2 or 3
+> > + levels) or
+> > + * 3 pages (4 levels) and is placed below swapper_pg_dir.
+> >   */
+> >  #define KERNEL_RAM_VADDR	(PAGE_OFFSET + TEXT_OFFSET)
+> >
+> > @@ -46,8 +47,13 @@
+> >  #error KERNEL_RAM_VADDR must start at 0xXXX80000  #endif
+> >
+> > +#ifdef CONFIG_ARM64_4_LEVELS
+> > +#define SWAPPER_DIR_SIZE	(4 * PAGE_SIZE)
+> > +#define IDMAP_DIR_SIZE		(3 * PAGE_SIZE)
+> > +#else
+> >  #define SWAPPER_DIR_SIZE	(3 * PAGE_SIZE)
+> >  #define IDMAP_DIR_SIZE		(2 * PAGE_SIZE)
+> > +#endif
+> >
+> >  	.globl	swapper_pg_dir
+> >  	.equ	swapper_pg_dir, KERNEL_RAM_VADDR - SWAPPER_DIR_SIZE
+> > @@ -370,16 +376,38 @@ ENDPROC(__calc_phys_offset)
+> >  	.quad	PAGE_OFFSET
+> >
+> >  /*
+> > + * Macro to populate the PUD for the corresponding block entry in the
+> > + next
+> > + * level (tbl) for the given virtual address in case of 4levels.
+> > + */
+> 
+> With the relatively high number of parameters to this macro, I feel it would be helpful to state in
+> the comment that this actually modifies \tbl and returns a value in \pud.
+
+Okay, I will add it.
+
+> > +	.macro	create_pud_entry, pgd, tbl, virt, pud, tmp1, tmp2
+> > +#ifdef CONFIG_ARM64_4_LEVELS
+> > +	add	\tbl, \tbl, #PAGE_SIZE		// bump tbl 1 page up.
+> > +						// to make room for pud
+> > +	add	\pud, \pgd, #PAGE_SIZE		// pgd points to pud which
+> > +						// follows pgd
+> > +	lsr	\tmp1, \virt, #PUD_SHIFT
+> > +	and	\tmp1, \tmp1, #PTRS_PER_PUD - 1	// PUD index
+> > +	orr	\tmp2, \tbl, #3			// PUD entry table type
+> > +	str	\tmp2, [\pud, \tmp1, lsl #3]
+> > +#else
+> > +	mov	\pud, \tbl
+> > +#endif
+> > +	.endm
+> > +
+> > +/*
+> >   * Macro to populate the PGD for the corresponding block entry in the next
+> >   * level (tbl) for the given virtual address.
+> 
+> Then this should be changed to be: "populate the PGD (and possibly PUD)"
+
+Okay. I will revise it.
+
+> >   *
+> > - * Preserves:	pgd, tbl, virt
+> > - * Corrupts:	tmp1, tmp2
+> > + * Preserves:	pgd, virt
+> > + * Corrupts:	tmp1, tmp2, tmp3
+> > + * Returns:	tbl -> page where block mappings can be placed
+> > + *	(changed to make room for pud with 4levels, preserved otherwise)
+> >   */
+> > -	.macro	create_pgd_entry, pgd, tbl, virt, tmp1, tmp2
+> > +	.macro	create_pgd_entry, pgd, tbl, virt, tmp1, tmp2, tmp3
+> > +	create_pud_entry \pgd, \tbl, \virt, \tmp3, \tmp1, \tmp2
+> >  	lsr	\tmp1, \virt, #PGDIR_SHIFT
+> >  	and	\tmp1, \tmp1, #PTRS_PER_PGD - 1	// PGD index
+> > -	orr	\tmp2, \tbl, #3			// PGD entry table type
+> > +	orr	\tmp2, \tmp3, #3		// PGD entry table type
+> >  	str	\tmp2, [\pgd, \tmp1, lsl #3]
+> >  	.endm
+> >
+> > @@ -444,7 +472,7 @@ __create_page_tables:
+> >  	add	x0, x25, #PAGE_SIZE		// section table address
+> >  	ldr	x3, =KERNEL_START
+> >  	add	x3, x3, x28			// __pa(KERNEL_START)
+> > -	create_pgd_entry x25, x0, x3, x5, x6
+> > +	create_pgd_entry x25, x0, x3, x1, x5, x6
+> >  	ldr	x6, =KERNEL_END
+> >  	mov	x5, x3				// __pa(KERNEL_START)
+> >  	add	x6, x6, x28			// __pa(KERNEL_END)
+> > @@ -455,7 +483,7 @@ __create_page_tables:
+> >  	 */
+> >  	add	x0, x26, #PAGE_SIZE		// section table address
+> >  	mov	x5, #PAGE_OFFSET
+> > -	create_pgd_entry x26, x0, x5, x3, x6
+> > +	create_pgd_entry x26, x0, x5, x1, x3, x6
+> >  	ldr	x6, =KERNEL_END
+> >  	mov	x3, x24				// phys offset
+> >  	create_block_map x0, x7, x3, x5, x6
+> > @@ -481,7 +509,7 @@ __create_page_tables:
+> >  	 */
+> >  	ldr	x5, =FIXADDR_TOP		// Fixed mapping virtual address
+> >  	add	x0, x26, #2 * PAGE_SIZE		// section table address
+> > -	create_pgd_entry x26, x0, x5, x6, x7
+> > +	create_pgd_entry x26, x0, x5, x1, x6, x7
+> >
+> >  	/*
+> >  	 * Since the page tables have been populated with non-cacheable diff
+> > --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c index
+> > 268ce96..237757d 100644
+> > --- a/arch/arm64/kernel/traps.c
+> > +++ b/arch/arm64/kernel/traps.c
+> > @@ -336,6 +336,11 @@ void __pmd_error(const char *file, int line, unsigned long val)
+> >  	pr_crit("%s:%d: bad pmd %016lx.\n", file, line, val);  }
+> >
+> > +void __pud_error(const char *file, int line, unsigned long val) {
+> > +	pr_crit("%s:%d: bad pud %016lx.\n", file, line, val); }
+> > +
+> >  void __pgd_error(const char *file, int line, unsigned long val)  {
+> >  	pr_crit("%s:%d: bad pgd %016lx.\n", file, line, val); diff --git
+> > a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c index c23751b..ed4a343
+> > 100644
+> > --- a/arch/arm64/mm/fault.c
+> > +++ b/arch/arm64/mm/fault.c
+> > @@ -61,6 +61,7 @@ void show_pte(struct mm_struct *mm, unsigned long addr)
+> >  			break;
+> >
+> >  		pud = pud_offset(pgd, addr);
+> > +		printk(", *pud=%016llx", pud_val(*pud));
+> >  		if (pud_none(*pud) || pud_bad(*pud))
+> >  			break;
+> >
+> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c index
+> > 6b7e895..4d29332 100644
+> > --- a/arch/arm64/mm/mmu.c
+> > +++ b/arch/arm64/mm/mmu.c
+> > @@ -32,6 +32,7 @@
+> >  #include <asm/setup.h>
+> >  #include <asm/sizes.h>
+> >  #include <asm/tlb.h>
+> > +#include <asm/memblock.h>
+> >  #include <asm/mmu_context.h>
+> >
+> >  #include "mm.h"
+> > @@ -222,9 +223,15 @@ static void __init alloc_init_pmd(pud_t *pud,
+> > unsigned long addr,  static void __init alloc_init_pud(pgd_t *pgd, unsigned long addr,
+> >  				  unsigned long end, unsigned long phys)  {
+> > -	pud_t *pud = pud_offset(pgd, addr);
+> > +	pud_t *pud;
+> >  	unsigned long next;
+> >
+> > +	if (pgd_none(*pgd) || pgd_bad(*pgd)) {
+> > +		pud = early_alloc(PTRS_PER_PUD * sizeof(pud_t));
+> > +		pgd_populate(&init_mm, pgd, pud);
+> > +	}
+> > +
+> > +	pud = pud_offset(pgd, addr);
+> >  	do {
+> >  		next = pud_addr_end(addr, end);
+> >  		alloc_init_pmd(pud, addr, next, phys); @@ -271,10 +278,11 @@ static
+> > void __init map_mem(void)
+> >  	 * memory addressable from the initial direct kernel mapping.
+> >  	 *
+> >  	 * The initial direct kernel mapping, located at swapper_pg_dir,
+> > -	 * gives us PGDIR_SIZE memory starting from PHYS_OFFSET (which must be
+> > -	 * aligned to 2MB as per Documentation/arm64/booting.txt).
+> > +	 * gives us PGDIR_SIZE (2 and 3 levels) or PUD_SIZE (4 levels) memory
+> > +	 * starting from PHYS_OFFSET (which must be aligned to 2MB as per
+> > +	 * Documentation/arm64/booting.txt).
+> >  	 */
+> > -	limit = PHYS_OFFSET + PGDIR_SIZE;
+> > +	limit = PHYS_OFFSET + MEMBLOCK_INITIAL_LIMIT;
+> >  	memblock_set_current_limit(limit);
+> >
+> >  	/* map all the memory banks */
+> > --
+> > 1.7.10.4
+> >
+> >
+> 
+> Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+
+Thanks for comment and review!
+
+- Jungseok Lee
