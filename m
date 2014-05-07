@@ -1,8 +1,7 @@
 From: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [RFC v4 PATCH v3 12/18] drm/exynos: dsi: add driver data to support
- Exynos5420
-Date: Wed, 07 May 2014 16:46:33 +0900
-Message-ID: <1399448799-8057-13-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v4 PATCH v3 10/18] drm/exynos: fimd: support I80 interface
+Date: Wed, 07 May 2014 16:46:31 +0900
+Message-ID: <1399448799-8057-11-git-send-email-yj44.cho@samsung.com>
 References: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1399448799-8057-1-git-send-email-yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -11,281 +10,495 @@ To: airlied-cv59FeDIM0c@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QI
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The offset of register DSIM_PLLTMR_REG in Exynos5420 is different
-from the one in Exynos4 SoC.
-
-In case of Exynos5420 SoC, there is no frequency band bit in DSIM_PLLCTRL_REG,
-and it uses DSIM_PHYCTRL_REG and DSIM_PHYTIMING*_REG instead.
-So this patch adds driver data to distinguish it.
+To support MIPI DSI command mode interface, FIMD should do followings:
+- Sets LCD block configuration for I80 interface.
+- Uses "lcd_sys" as an IRQ resource and sets relevant IRQ configuration.
+- Implements trigger feature which transfers image date if there is
+  page flip request, and implements TE handler to call trigger function.
+- Sets command mode timings configuration.
+- Sets ideal(pixel) clock is 2 times faster than the original one to
+  generate frame done IRQ prior to the next TE signal.
 
 Changelog v2:
-- Moves exynos_dsi_enable_clocks() after exynos_dsi_reset()
-  (commented by Andrzej Hajda)
-- Splits D-PHY control setting routines from PLL setting one
-  (commented by Andrzej Hajda)
+- Uses macros for TRIGCON register for readability (commented by Sachin)
 Changelog v3:
-- Uses macro for DSIM_PHYCTRL register (commented by Sachin)
+- Removes using mode->private routine
 
 Signed-off-by: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c |  157 ++++++++++++++++++++++++++-----
- 1 file changed, 135 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/exynos/Kconfig           |    1 +
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |  277 +++++++++++++++++++++++++-----
+ include/video/samsung_fimd.h             |    3 +-
+ 3 files changed, 237 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 4a918ec..50eb8ac 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -17,6 +17,7 @@
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 5bf5bca..f4d34f0 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -28,6 +28,7 @@ config DRM_EXYNOS_FIMD
+ 	bool "Exynos DRM FIMD"
+ 	depends on DRM_EXYNOS && !FB_S3C && !ARCH_MULTIPLATFORM
+ 	select FB_MODE_HELPERS
++	select MFD_SYSCON
+ 	help
+ 	  Choose this option if you want to use Exynos FIMD for DRM.
  
- #include <linux/clk.h>
- #include <linux/irq.h>
-+#include <linux/of_device.h>
- #include <linux/phy/phy.h>
- #include <linux/regulator/consumer.h>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 40fd6cc..50098e5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -19,11 +19,14 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
  
-@@ -54,9 +55,12 @@
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
+ #include <video/samsung_fimd.h>
+ #include <drm/exynos_drm.h>
++#include <drm/drm_panel.h>
  
- /* FIFO memory AC characteristic register */
- #define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
--#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
- #define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
- #define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
-+#define DSIM_PHYCTRL_REG	0x5c
-+#define DSIM_PHYTIMING_REG	0x64
-+#define DSIM_PHYTIMING1_REG	0x68
-+#define DSIM_PHYTIMING2_REG	0x6c
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fbdev.h"
+@@ -59,6 +62,24 @@
+ /* color key value register for hardware window 1 ~ 4. */
+ #define WKEYCON1_BASE(x)		((WKEYCON1 + 0x140) + ((x - 1) * 8))
  
- /* DSIM_STATUS */
- #define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
-@@ -200,6 +204,24 @@
- #define DSIM_PLL_M(x)			((x) << 4)
- #define DSIM_PLL_S(x)			((x) << 1)
++/* i80 / RGB trigger control register */
++#define TRIGCON				0x1A4
++#define TRGMODE_I80_RGB_ENABLE_I80	(1 << 0)
++#define SWTRGCMD_I80_RGB_ENABLE		(1 << 1)
++
++/* display mode change control register except exynos4 */
++#define VIDOUT_CON			0x000
++#define VIDOUT_CON_F_I80_LDI0		(0x2 << 8)
++
++/* i80 interface control for main LDI register */
++#define I80IFCONFAx(x)			(0x1B0 + (x) * 4)
++#define I80IFCONFBx(x)			(0x1B8 + (x) * 4)
++#define LCD_CS_SETUP(x)			((x) << 16)
++#define LCD_WR_SETUP(x)			((x) << 12)
++#define LCD_WR_ACT(x)			((x) << 8)
++#define LCD_WR_HOLD(x)			((x) << 4)
++#define I80IFEN_ENABLE			(1 << 0)
++
+ /* FIMD has totally five hardware windows. */
+ #define WINDOWS_NR	5
  
-+/* DSIM_PHYCTRL */
-+#define DSIM_PHYCTRL_ULPS_EXIT(x)	(((x) & 0x1ff) << 0)
-+
-+/* DSIM_PHYTIMING */
-+#define DSIM_PHYTIMING_LPX(x)		((x) << 8)
-+#define DSIM_PHYTIMING_HS_EXIT(x)	((x) << 0)
-+
-+/* DSIM_PHYTIMING1 */
-+#define DSIM_PHYTIMING1_CLK_PREPARE(x)	((x) << 24)
-+#define DSIM_PHYTIMING1_CLK_ZERO(x)	((x) << 16)
-+#define DSIM_PHYTIMING1_CLK_POST(x)	((x) << 8)
-+#define DSIM_PHYTIMING1_CLK_TRAIL(x)	((x) << 0)
-+
-+/* DSIM_PHYTIMING2 */
-+#define DSIM_PHYTIMING2_HS_PREPARE(x)	((x) << 16)
-+#define DSIM_PHYTIMING2_HS_ZERO(x)	((x) << 8)
-+#define DSIM_PHYTIMING2_HS_TRAIL(x)	((x) << 0)
-+
- #define DSI_MAX_BUS_WIDTH		4
- #define DSI_NUM_VIRTUAL_CHANNELS	4
- #define DSI_TX_FIFO_SIZE		2048
-@@ -233,6 +255,12 @@ struct exynos_dsi_transfer {
- #define DSIM_STATE_INITIALIZED		BIT(1)
- #define DSIM_STATE_CMD_LPM		BIT(2)
+@@ -66,10 +87,14 @@
  
-+struct exynos_dsi_driver_data {
-+	unsigned int plltmr_reg;
-+
-+	unsigned int has_freqband:1;
-+};
-+
- struct exynos_dsi {
- 	struct mipi_dsi_host dsi_host;
- 	struct drm_connector connector;
-@@ -262,11 +290,39 @@ struct exynos_dsi {
+ struct fimd_driver_data {
+ 	unsigned int timing_base;
++	unsigned int lcdblk_off;
++	unsigned int lcdblk_vt_shift;
++	unsigned int lcdblk_bypass_shift;
  
- 	spinlock_t transfer_lock; /* protects transfer_list */
- 	struct list_head transfer_list;
-+
-+	struct exynos_dsi_driver_data *driver_data;
+ 	unsigned int has_shadowcon:1;
+ 	unsigned int has_clksel:1;
+ 	unsigned int has_limited_fmt:1;
++	unsigned int has_vidoutcon:1;
  };
  
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
- #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+@@ -80,12 +105,19 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
  
-+static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
-+	.plltmr_reg = 0x50,
-+	.has_freqband = 1,
-+};
-+
-+static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
-+	.plltmr_reg = 0x58,
-+};
-+
-+static struct of_device_id exynos_dsi_of_match[] = {
-+	{ .compatible = "samsung,exynos4210-mipi-dsi",
-+	  .data = &exynos4_dsi_driver_data },
-+	{ .compatible = "samsung,exynos5420-mipi-dsi",
-+	  .data = &exynos5_dsi_driver_data },
-+	{ }
-+};
-+
-+static inline struct exynos_dsi_driver_data *exynos_dsi_get_driver_data(
-+						struct platform_device *pdev)
-+{
-+	const struct of_device_id *of_id =
-+			of_match_device(exynos_dsi_of_match, &pdev->dev);
-+
-+	return (struct exynos_dsi_driver_data *)of_id->data;
-+}
-+
- static void exynos_dsi_wait_for_reset(struct exynos_dsi *dsi)
- {
- 	if (wait_for_completion_timeout(&dsi->completed, msecs_to_jiffies(300)))
-@@ -340,14 +396,9 @@ static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
- static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
- 					unsigned long freq)
- {
--	static const unsigned long freq_bands[] = {
--		100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
--		270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
--		510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
--		770 * MHZ, 870 * MHZ, 950 * MHZ,
--	};
-+	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
- 	unsigned long fin, fout;
--	int timeout, band;
-+	int timeout;
- 	u8 p, s;
- 	u16 m;
- 	u32 reg;
-@@ -368,18 +419,30 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
- 			"failed to find PLL PMS for requested frequency\n");
- 		return -EFAULT;
- 	}
-+	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
+ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ 	.timing_base = 0x0,
++	.lcdblk_off = 0x210,
++	.lcdblk_vt_shift = 10,
++	.lcdblk_bypass_shift = 1,
+ 	.has_shadowcon = 1,
+ };
  
--	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
--		if (fout < freq_bands[band])
--			break;
-+	writel(500, dsi->reg_base + driver_data->plltmr_reg);
-+
-+	reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
-+
-+	if (driver_data->has_freqband) {
-+		static const unsigned long freq_bands[] = {
-+			100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
-+			270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
-+			510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
-+			770 * MHZ, 870 * MHZ, 950 * MHZ,
-+		};
-+		int band;
-+
-+		for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
-+			if (fout < freq_bands[band])
-+				break;
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.timing_base = 0x20000,
++	.lcdblk_off = 0x214,
++	.lcdblk_vt_shift = 24,
++	.lcdblk_bypass_shift = 15,
+ 	.has_shadowcon = 1,
++	.has_vidoutcon = 1,
+ };
  
--	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d), band %d\n", fout,
--		p, m, s, band);
-+		dev_dbg(dsi->dev, "band %d\n", band);
+ struct fimd_win_data {
+@@ -110,15 +142,23 @@ struct fimd_context {
+ 	struct clk			*bus_clk;
+ 	struct clk			*lcd_clk;
+ 	void __iomem			*regs;
++	struct regmap			*sysreg;
+ 	struct drm_display_mode		mode;
+ 	struct fimd_win_data		win_data[WINDOWS_NR];
+ 	unsigned int			default_win;
+ 	unsigned long			irq_flags;
++	u32				vidcon0;
+ 	u32				vidcon1;
++	u32				vidout_con;
++	u32				i80ifcon;
++	bool				i80_if;
+ 	bool				suspended;
+ 	int				pipe;
+ 	wait_queue_head_t		wait_vsync_queue;
+ 	atomic_t			wait_vsync_event;
++	atomic_t			win_updated;
++	atomic_t			triggering;
++	spinlock_t			win_updated_lock;
  
--	writel(500, dsi->reg_base + DSIM_PLLTMR_REG);
-+		reg |= DSIM_FREQ_BAND(band);
+ 	struct exynos_drm_panel_info panel;
+ 	struct fimd_driver_data *driver_data;
+@@ -190,6 +230,14 @@ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
+ 	unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
+ 	u32 clkdiv;
+ 
++	if (ctx->i80_if) {
++		/*
++		 * The frame done interrupt should be occurred prior to the
++		 * next TE signal.
++		 */
++		ideal_clk *= 2;
 +	}
++
+ 	/* Find the clock divider value that gets us closest to ideal_clk */
+ 	clkdiv = DIV_ROUND_UP(clk_get_rate(ctx->lcd_clk), ideal_clk);
  
--	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
--			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
- 	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
+@@ -212,17 +260,23 @@ static void fimd_mode_set(struct exynos_drm_manager *mgr,
+ 	struct fimd_context *ctx = mgr->ctx;
  
- 	timeout = 1000;
-@@ -433,6 +496,59 @@ static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
- 	return 0;
+ 	drm_mode_copy(&ctx->mode, in_mode);
++
++	if (ctx->i80_if) {
++		ctx->i80ifcon = LCD_CS_SETUP(in_mode->cs_setup);
++		ctx->i80ifcon |= LCD_WR_SETUP(in_mode->wr_setup);
++		ctx->i80ifcon |= LCD_WR_ACT(in_mode->wr_active);
++		ctx->i80ifcon |= LCD_WR_HOLD(in_mode->wr_hold);
++	}
  }
  
-+static void exynos_dsi_set_phy_ctrl(struct exynos_dsi *dsi)
+ static void fimd_commit(struct exynos_drm_manager *mgr)
+ {
+ 	struct fimd_context *ctx = mgr->ctx;
+ 	struct drm_display_mode *mode = &ctx->mode;
+-	struct fimd_driver_data *driver_data;
+-	u32 val, clkdiv, vidcon1;
+-	int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
++	struct fimd_driver_data *driver_data = ctx->driver_data;
++	void *timing_base = ctx->regs + driver_data->timing_base;
++	u32 val, clkdiv;
+ 
+-	driver_data = ctx->driver_data;
+ 	if (ctx->suspended)
+ 		return;
+ 
+@@ -230,33 +284,65 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	if (mode->htotal == 0 || mode->vtotal == 0)
+ 		return;
+ 
+-	/* setup polarity values */
+-	vidcon1 = ctx->vidcon1;
+-	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+-		vidcon1 |= VIDCON1_INV_VSYNC;
+-	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+-		vidcon1 |= VIDCON1_INV_HSYNC;
+-	writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
+-
+-	/* setup vertical timing values. */
+-	vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+-	vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
+-	vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
+-
+-	val = VIDTCON0_VBPD(vbpd - 1) |
+-		VIDTCON0_VFPD(vfpd - 1) |
+-		VIDTCON0_VSPW(vsync_len - 1);
+-	writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
+-
+-	/* setup horizontal timing values.  */
+-	hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+-	hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
+-	hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+-
+-	val = VIDTCON1_HBPD(hbpd - 1) |
+-		VIDTCON1_HFPD(hfpd - 1) |
+-		VIDTCON1_HSPW(hsync_len - 1);
+-	writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
++	if (ctx->i80_if) {
++		val = ctx->i80ifcon | I80IFEN_ENABLE;
++		writel(val, timing_base + I80IFCONFAx(0));
++
++		/* disable auto frame rate */
++		writel(0, timing_base + I80IFCONFBx(0));
++
++		if (ctx->vidout_con)
++			writel(ctx->vidout_con, timing_base + VIDOUT_CON);
++
++		/* set video type selection to i80 interface */
++		if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
++					driver_data->lcdblk_off,
++					0x3 << driver_data->lcdblk_vt_shift,
++					0x1 << driver_data->lcdblk_vt_shift)) {
++			DRM_ERROR("Failed to update sysreg for i80 i/f.\n");
++			return;
++		}
++	} else {
++		int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
++		u32 vidcon1;
++
++		/* setup polarity values */
++		vidcon1 = ctx->vidcon1;
++		if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++			vidcon1 |= VIDCON1_INV_VSYNC;
++		if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++			vidcon1 |= VIDCON1_INV_HSYNC;
++		writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
++
++		/* setup vertical timing values. */
++		vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
++		vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
++		vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
++
++		val = VIDTCON0_VBPD(vbpd - 1) |
++			VIDTCON0_VFPD(vfpd - 1) |
++			VIDTCON0_VSPW(vsync_len - 1);
++		writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
++
++		/* setup horizontal timing values.  */
++		hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
++		hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
++		hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
++
++		val = VIDTCON1_HBPD(hbpd - 1) |
++			VIDTCON1_HFPD(hfpd - 1) |
++			VIDTCON1_HSPW(hsync_len - 1);
++		writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
++	}
++
++	/* set bypass selection */
++	if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
++				driver_data->lcdblk_off,
++				0x1 << driver_data->lcdblk_bypass_shift,
++				0x1 << driver_data->lcdblk_bypass_shift)) {
++		DRM_ERROR("Failed to update sysreg for bypass setting.\n");
++		return;
++	}
+ 
+ 	/* setup horizontal and vertical display size. */
+ 	val = VIDTCON2_LINEVAL(mode->vdisplay - 1) |
+@@ -613,6 +699,14 @@ static void fimd_win_commit(struct exynos_drm_manager *mgr, int zpos)
+ 	}
+ 
+ 	win_data->enabled = true;
++
++	if (ctx->i80_if) {
++		unsigned long flags;
++
++		spin_lock_irqsave(&ctx->win_updated_lock, flags);
++		atomic_set(&ctx->win_updated, 1);
++		spin_unlock_irqrestore(&ctx->win_updated_lock, flags);
++	}
+ }
+ 
+ static void fimd_win_disable(struct exynos_drm_manager *mgr, int zpos)
+@@ -802,6 +896,68 @@ static void fimd_dpms(struct exynos_drm_manager *mgr, int mode)
+ 	}
+ }
+ 
++static void fimd_trigger(struct device *dev)
 +{
-+	struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
++	struct exynos_drm_manager *mgr = get_fimd_manager(dev);
++	struct fimd_context *ctx = mgr->ctx;
++	struct fimd_driver_data *driver_data = ctx->driver_data;
++	void *timing_base = ctx->regs + driver_data->timing_base;
 +	u32 reg;
 +
-+	if (driver_data->has_freqband)
-+		return;
++	atomic_set(&ctx->triggering, 1);
 +
-+	/* B D-PHY: D-PHY Master & Slave Analog Block control */
-+	reg = DSIM_PHYCTRL_ULPS_EXIT(0x0af);
-+	writel(reg, dsi->reg_base + DSIM_PHYCTRL_REG);
++	reg = readl(ctx->regs + VIDINTCON0);
++	reg |= (VIDINTCON0_INT_ENABLE | VIDINTCON0_INT_I80IFDONE |
++						VIDINTCON0_INT_SYSMAINCON);
++	writel(reg, ctx->regs + VIDINTCON0);
 +
-+	/*
-+	 * T LPX: Transmitted length of any Low-Power state period
-+	 * T HS-EXIT: Time that the transmitter drives LP-11 following a HS
-+	 *	burst
-+	 */
-+	reg = DSIM_PHYTIMING_LPX(0x06) | DSIM_PHYTIMING_HS_EXIT(0x0b);
-+	writel(reg, dsi->reg_base + DSIM_PHYTIMING_REG);
-+
-+	/*
-+	 * T CLK-PREPARE: Time that the transmitter drives the Clock Lane LP-00
-+	 *	Line state immediately before the HS-0 Line state starting the
-+	 *	HS transmission
-+	 * T CLK-ZERO: Time that the transmitter drives the HS-0 state prior to
-+	 *	transmitting the Clock.
-+	 * T CLK_POST: Time that the transmitter continues to send HS clock
-+	 *	after the last associated Data Lane has transitioned to LP Mode
-+	 *	Interval is defined as the period from the end of T HS-TRAIL to
-+	 *	the beginning of T CLK-TRAIL
-+	 * T CLK-TRAIL: Time that the transmitter drives the HS-0 state after
-+	 *	the last payload clock bit of a HS transmission burst
-+	 */
-+	reg = DSIM_PHYTIMING1_CLK_PREPARE(0x07) |
-+			DSIM_PHYTIMING1_CLK_ZERO(0x27) |
-+			DSIM_PHYTIMING1_CLK_POST(0x0d) |
-+			DSIM_PHYTIMING1_CLK_TRAIL(0x08);
-+	writel(reg, dsi->reg_base + DSIM_PHYTIMING1_REG);
-+
-+	/*
-+	 * T HS-PREPARE: Time that the transmitter drives the Data Lane LP-00
-+	 *	Line state immediately before the HS-0 Line state starting the
-+	 *	HS transmission
-+	 * T HS-ZERO: Time that the transmitter drives the HS-0 state prior to
-+	 *	transmitting the Sync sequence.
-+	 * T HS-TRAIL: Time that the transmitter drives the flipped differential
-+	 *	state after last payload data bit of a HS transmission burst
-+	 */
-+	reg = DSIM_PHYTIMING2_HS_PREPARE(0x09) | DSIM_PHYTIMING2_HS_ZERO(0x0d) |
-+			DSIM_PHYTIMING2_HS_TRAIL(0x0b);
-+	writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
++	reg = readl(timing_base + TRIGCON);
++	reg |= (TRGMODE_I80_RGB_ENABLE_I80 | SWTRGCMD_I80_RGB_ENABLE);
++	writel(reg, timing_base + TRIGCON);
 +}
 +
- static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
- {
- 	u32 reg;
-@@ -947,10 +1063,11 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
- 
- static int exynos_dsi_init(struct exynos_dsi *dsi)
- {
--	exynos_dsi_enable_clock(dsi);
- 	exynos_dsi_reset(dsi);
- 	enable_irq(dsi->irq);
-+	exynos_dsi_enable_clock(dsi);
- 	exynos_dsi_wait_for_reset(dsi);
-+	exynos_dsi_set_phy_ctrl(dsi);
- 	exynos_dsi_init_link(dsi);
- 
- 	return 0;
-@@ -1412,6 +1529,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	dsi->dsi_host.dev = &pdev->dev;
- 
- 	dsi->dev = &pdev->dev;
-+	dsi->driver_data = exynos_dsi_get_driver_data(pdev);
- 
- 	ret = exynos_dsi_parse_dt(dsi);
- 	if (ret)
-@@ -1516,11 +1634,6 @@ static const struct dev_pm_ops exynos_dsi_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
++static int fimd_te_handler(struct exynos_drm_manager *mgr)
++{
++	struct fimd_context *ctx = mgr->ctx;
++	unsigned long flags;
++
++	/* check the crtc is detached already from encoder */
++	if (ctx->pipe < 0 || !ctx->drm_dev)
++		return -EINVAL;
++
++	 /*
++	 * Skips to trigger if in triggering state, because multiple triggering
++	 * requests can cause panel reset.
++	 */
++	if (atomic_read(&ctx->triggering))
++		return 0;
++
++	spin_lock_irqsave(&ctx->win_updated_lock, flags);
++
++	/*
++	 * If there is a page flip request, triggers and handles the page flip
++	 * event so that current fb can be updated into panel GRAM.
++	 */
++	if (atomic_read(&ctx->win_updated)) {
++		atomic_set(&ctx->win_updated, 0);
++
++		fimd_trigger(ctx->dev);
++	}
++
++	spin_unlock_irqrestore(&ctx->win_updated_lock, flags);
++
++	/* wake up vsync event queue */
++	if (atomic_read(&ctx->wait_vsync_event)) {
++		atomic_set(&ctx->wait_vsync_event, 0);
++		wake_up(&ctx->wait_vsync_queue);
++
++		if (!atomic_read(&ctx->triggering))
++			drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++	}
++
++	return 0;
++}
++
+ static struct exynos_drm_manager_ops fimd_manager_ops = {
+ 	.initialize = fimd_mgr_initialize,
+ 	.remove = fimd_mgr_remove,
+@@ -815,6 +971,7 @@ static struct exynos_drm_manager_ops fimd_manager_ops = {
+ 	.win_mode_set = fimd_win_mode_set,
+ 	.win_commit = fimd_win_commit,
+ 	.win_disable = fimd_win_disable,
++	.te_handler = fimd_te_handler,
  };
  
--static struct of_device_id exynos_dsi_of_match[] = {
--	{ .compatible = "samsung,exynos4210-mipi-dsi" },
--	{ }
--};
--
- struct platform_driver dsi_driver = {
- 	.probe = exynos_dsi_probe,
- 	.remove = exynos_dsi_remove,
+ static struct exynos_drm_manager fimd_manager = {
+@@ -825,26 +982,40 @@ static struct exynos_drm_manager fimd_manager = {
+ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+ {
+ 	struct fimd_context *ctx = (struct fimd_context *)dev_id;
+-	u32 val;
++	u32 val, clear_bit;
+ 
+ 	val = readl(ctx->regs + VIDINTCON1);
+ 
+-	if (val & VIDINTCON1_INT_FRAME)
+-		/* VSYNC interrupt */
+-		writel(VIDINTCON1_INT_FRAME, ctx->regs + VIDINTCON1);
++	clear_bit = ctx->i80_if ? VIDINTCON1_INT_I80 : VIDINTCON1_INT_FRAME;
++	if (val & clear_bit)
++		writel(clear_bit, ctx->regs + VIDINTCON1);
+ 
+ 	/* check the crtc is detached already from encoder */
+ 	if (ctx->pipe < 0 || !ctx->drm_dev)
+ 		goto out;
+ 
+-	drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+-	exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++	if (ctx->i80_if) {
++		/* unset i80 frame done interrupt */
++		val = readl(ctx->regs + VIDINTCON0);
++		val &= ~(VIDINTCON0_INT_I80IFDONE | VIDINTCON0_INT_SYSMAINCON);
++		writel(val, ctx->regs + VIDINTCON0);
+ 
+-	/* set wait vsync event to zero and wake up queue. */
+-	if (atomic_read(&ctx->wait_vsync_event)) {
+-		atomic_set(&ctx->wait_vsync_event, 0);
+-		wake_up(&ctx->wait_vsync_queue);
++		/* exit triggering mode */
++		atomic_set(&ctx->triggering, 0);
++
++		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++	} else {
++		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++
++		/* set wait vsync event to zero and wake up queue. */
++		if (atomic_read(&ctx->wait_vsync_event)) {
++			atomic_set(&ctx->wait_vsync_event, 0);
++			wake_up(&ctx->wait_vsync_queue);
++		}
+ 	}
++
+ out:
+ 	return IRQ_HANDLED;
+ }
+@@ -866,12 +1037,32 @@ static int fimd_probe(struct platform_device *pdev)
+ 
+ 	ctx->dev = dev;
+ 	ctx->suspended = true;
++	ctx->driver_data = drm_fimd_get_driver_data(pdev);
+ 
+ 	if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
+ 		ctx->vidcon1 |= VIDCON1_INV_VDEN;
+ 	if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
+ 		ctx->vidcon1 |= VIDCON1_INV_VCLK;
+ 
++	if (of_property_read_bool(dev->of_node, "vidout-i80-ldi")) {
++		ctx->i80_if = true;
++
++		if (ctx->driver_data->has_vidoutcon)
++			ctx->vidout_con |= VIDOUT_CON_F_I80_LDI0;
++		else
++			ctx->vidcon0 |= VIDCON0_VIDOUT_I80_LDI0;
++		ctx->vidcon0 |= VIDCON0_DSI_EN;
++
++		spin_lock_init(&ctx->win_updated_lock);
++	}
++
++	ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
++							"samsung,sysreg");
++	if (IS_ERR(ctx->sysreg)) {
++		dev_warn(dev, "failed to get system register.\n");
++		ctx->sysreg = NULL;
++	}
++
+ 	ctx->bus_clk = devm_clk_get(dev, "fimd");
+ 	if (IS_ERR(ctx->bus_clk)) {
+ 		dev_err(dev, "failed to get bus clock\n");
+@@ -890,7 +1081,8 @@ static int fimd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ctx->regs))
+ 		return PTR_ERR(ctx->regs);
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
++	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
++					ctx->i80_if ? "lcd_sys" : "vsync");
+ 	if (!res) {
+ 		dev_err(dev, "irq request failed.\n");
+ 		return -ENXIO;
+@@ -903,7 +1095,6 @@ static int fimd_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ctx->driver_data = drm_fimd_get_driver_data(pdev);
+ 	init_waitqueue_head(&ctx->wait_vsync_queue);
+ 	atomic_set(&ctx->wait_vsync_event, 0);
+ 
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index b039320..eaad58b 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -19,6 +19,7 @@
+ /* VIDCON0 */
+ 
+ #define VIDCON0					0x00
++#define VIDCON0_DSI_EN				(1 << 30)
+ #define VIDCON0_INTERLACE			(1 << 29)
+ #define VIDCON0_VIDOUT_MASK			(0x7 << 26)
+ #define VIDCON0_VIDOUT_SHIFT			26
+@@ -355,7 +356,7 @@
+ #define VIDINTCON0_INT_ENABLE			(1 << 0)
+ 
+ #define VIDINTCON1				0x134
+-#define VIDINTCON1_INT_I180			(1 << 2)
++#define VIDINTCON1_INT_I80			(1 << 2)
+ #define VIDINTCON1_INT_FRAME			(1 << 1)
+ #define VIDINTCON1_INT_FIFO			(1 << 0)
+ 
 -- 
 1.7.9.5
 
