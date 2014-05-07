@@ -1,171 +1,128 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
-Date: Wed, 7 May 2014 23:56:19 +0530
-Message-ID: <CAK9yfHwH_nwjKjOa3ea3RYK8VEgVbo1ax9xOwvSB8zhoksDHog@mail.gmail.com>
-References: <1399363824-23543-1-git-send-email-sachin.kamat@linaro.org>
-	<53691187.80101@gmail.com>
-	<CAK9yfHz6PVT2C-TZkFHqtdj4rT-R8w+aU=jTTnLMF5k4JOXGxg@mail.gmail.com>
-	<536A675F.9040204@samsung.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] net: sxgbe: Added tail point update
+Date: Wed, 7 May 2014 12:09:07 -0700
+Message-ID: <CAGVrzcaic-rrbRg2CpvzpyTpt0iRtX9=QE8WLpR3Eep=8w5czQ@mail.gmail.com>
+References: <008b01cf69cc$4d304e50$e790eaf0$%an@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:48745 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752251AbaEGS0T (ORCPT
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:54637 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751879AbaEGTJs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 14:26:19 -0400
-Received: by mail-oa0-f54.google.com with SMTP id j17so1725413oag.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2014 11:26:19 -0700 (PDT)
-In-Reply-To: <536A675F.9040204@samsung.com>
+	Wed, 7 May 2014 15:09:48 -0400
+In-Reply-To: <008b01cf69cc$4d304e50$e790eaf0$%an@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+To: Byungho An <bh74.an@samsung.com>
+Cc: netdev <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, David Miller <davem@davemloft.net>, "ks.giri" <ks.giri@samsung.com>, "vipul.pandya" <vipul.pandya@samsung.com>
 
-Hi Tomasz,
-
-On 7 May 2014 22:33, Tomasz Figa <t.figa@samsung.com> wrote:
-> On 06.05.2014 20:09, Sachin Kamat wrote:
-> [snip]
->> On 6 May 2014 22:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> [snip]
->>> On 06.05.2014 10:10, Sachin Kamat wrote:
-> [snip]
->>>> diff --git a/arch/arm/mach-exynos/platsmp.c
->>>> b/arch/arm/mach-exynos/platsmp.c
->>>> index 03e5e9f94705..ccbcdd7b8a86 100644
->>>> --- a/arch/arm/mach-exynos/platsmp.c
->>>> +++ b/arch/arm/mach-exynos/platsmp.c
->>>> @@ -20,6 +20,7 @@
->>>>   #include <linux/jiffies.h>
->>>>   #include <linux/smp.h>
->>>>   #include <linux/io.h>
->>>> +#include <linux/of_address.h>
->>>>
->>>>   #include <asm/cacheflush.h>
->>>>   #include <asm/smp_plat.h>
->>>> @@ -33,11 +34,35 @@
->>>>
->>>>   extern void exynos4_secondary_startup(void);
->>>>
->>>> +static void __iomem *sram_base_addr;
->>>> +void __iomem *sram_ns_base_addr;
->>>
->>>
->>> This is probably just a matter of preference, but I'd make this static and
->>> provide a getter function, like exynos_get_sram_ns_base();
->>>
->>> Also this address seems to be used by the firmware code exclusively. If we
->>> want to make the firmware code more self-contained, maybe the mapping of
->>> firmware-specific SRAM region could be handled there, instead? This would
->>> also eliminate the need for having an exported variable or getter function.
->>> What do you think?
->>
->> I thought of the same. However 2 reasons prevented me from implementing this.
->>
->> 1. Code duplication
->> 2. This code should be executed only once. I put it in exynos_firmware_init.
->> However it gave a crash while doing of_iomap. So moved it back to the current
->> location.
->>
+2014-05-07 1:14 GMT-07:00 Byungho An <bh74.an@samsung.com>:
 >
-> Right, exynos_firmware_init() is called too early, before ioremap() is
-> available, so there is no good place to put this in firmware code. So,
-> let's keep this as is for now and eventually move it to firmware if
-> needed and/or a proper method of initialization is available.
-
-OK.
-
+> This patch adds tail point update function for rx path
+> after rx_refill function. It indicates tail point for rx dma.
 >
->>>
->>>
->>>> +
->>>> +static void __init exynos_smp_prepare_sram(void)
->>>> +{
->>>> +       struct device_node *node;
->>>> +
->>>> +       for_each_compatible_node(node, NULL, "samsung,exynos4210-sram") {
->>>> +               if (of_device_is_available(node)) {
->>>> +                       sram_base_addr = of_iomap(node, 0);
->>>> +                       if (!sram_base_addr)
->>>> +                               pr_err("Secondary CPU boot address not
->>>> found\n");
->>>
->>>
->>> I don't think this is an error at this stage. Some platforms might not have
->>> either of these SRAM reserved regions (such as those using INFORM registers
->>> instead). Instead, the base address should be checked whenever it is needed
->>> and errors should be handled then, like in exynos_set_cpu_boot_addr().
->>
->> Yes. This is more from an information perspective. Probably pr_warn or
->> pr_info would
->> be better?
->>
+> Signed-off-by: Byungho An <bh74.an@samsung.com>
+> ---
+>  drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c  |   14 +++++++++++++-
+>  drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h  |    4 ++++
+>  drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c |    5 +++++
+>  3 files changed, 22 insertions(+), 1 deletion(-)
 >
-> IMHO this shouldn't produce any messages at this stage. Just whenever
-> either of addresses is actually needed and is not initialized a message
-> should be printed.
-
-OK.
-
->>>> +}
->>>> +
->>>>   static inline void __iomem *cpu_boot_reg_base(void)
->>>>   {
->>>>         if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
->>>>                 return S5P_INFORM5;
->>>> -       return S5P_VA_SYSRAM;
->>>> +       return sram_base_addr;
->>>>   }
->>>>
->>>>   static inline void __iomem *cpu_boot_reg(int cpu)
->>>> @@ -147,7 +172,8 @@ static int exynos_boot_secondary(unsigned int cpu,
->>>> struct task_struct *idle)
->>>>                  * and fall back to boot register if it fails.
->>>>                  */
->>>>                 if (call_firmware_op(set_cpu_boot_addr, phys_cpu,
->>>> boot_addr))
->>>> -                       __raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
->>>> +                       if (cpu_boot_reg_base())
->>>> +                               __raw_writel(boot_addr,
->>>> cpu_boot_reg(phys_cpu));
->>>
->>>
->>> I'd rework this for proper error handling, e.g.
->>>
->>>         int ret;
->>>
->>>         /* ... */
->>>
->>>         ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
->>>         if (ret && ret != -ENOSYS)
->>>                 goto fail;
->>>         if (ret == -ENOSYS) {
->>>                 /* Fall back to firmware-less way. */
->>>                 void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
->>>
->>>                 if (IS_ERR(boot_reg)) {
->>>                         ret = PTR_ERR(boot_reg);
->>>                         goto fail;
->>>                 }
->>>         }
->>>
->>>         /* ... */
->>>
->>> fail:
->>>         /* Clean-up after error */
->>>
->>> Of course, cpu_boot_reg() will need to be converted to follow the ERR_PTR()
->>> model, but IMHO proper error handling is a good reason to do so.
->>
->> How about handling this separately outside this patch?
->>
+> diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
+> index 49240c9..249b0e0 100644
+> --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
+> +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
+> @@ -112,7 +112,7 @@ static void sxgbe_dma_channel_init(void __iomem *ioaddr, int cha_num,
 >
-> This patch is already changing surroundings of this code, so I'd say it
-> should do it the right way from the start.
+>         dma_addr = dma_rx + ((r_rsize - 1) * SXGBE_DESC_SIZE_BYTES);
+>         writel(lower_32_bits(dma_addr),
+> -              ioaddr + SXGBE_DMA_CHA_RXDESC_LADD_REG(cha_num));
+> +              ioaddr + SXGBE_DMA_CHA_RXDESC_TAILPTR_REG(cha_num));
+>         /* program the ring sizes */
+>         writel(t_rsize - 1, ioaddr + SXGBE_DMA_CHA_TXDESC_RINGLEN_REG(cha_num));
+>         writel(r_rsize - 1, ioaddr + SXGBE_DMA_CHA_RXDESC_RINGLEN_REG(cha_num));
+> @@ -370,6 +370,17 @@ static void sxgbe_enable_tso(void __iomem *ioaddr, u8 chan_num)
+>         writel(ctrl, ioaddr + SXGBE_DMA_CHA_TXCTL_REG(chan_num));
+>  }
+>
+> +static void sxgbe_dma_update_rxdesc_tail_ptr(void __iomem *ioaddr, u8 chan_num,
+> +                                             dma_addr_t dma_rx_phy, int cur_rx,
+> +                                             int rxsize)
 
-Yes, I have incorporated it in my patch. Will send the same tomorrow.
+I think that at some point you should revisit your abstraction, all
+the patches that I see do take a void __iomem * argument as the first
+function argument, you should probably use your driver private context
+here. The day you support a different version of the hardware, there
+might be other differences that need to be taken care of.
+
+> +{
+> +       u32 reg_val;
+> +
+> +       reg_val = (dma_rx_phy & 0xFFFFFFFF) + ((cur_rx % rxsize) *
+> +                                              SXGBE_DESC_SIZE_BYTES);
+> +       writel(reg_val, ioaddr + SXGBE_DMA_CHA_RXDESC_TAILPTR_REG(chan_num));
+> +}
+> +
+>  static const struct sxgbe_dma_ops sxgbe_dma_ops = {
+>         .init                           = sxgbe_dma_init,
+>         .cha_init                       = sxgbe_dma_channel_init,
+> @@ -386,6 +397,7 @@ static const struct sxgbe_dma_ops sxgbe_dma_ops = {
+>         .rx_dma_int_status              = sxgbe_rx_dma_int_status,
+>         .rx_watchdog                    = sxgbe_dma_rx_watchdog,
+>         .enable_tso                     = sxgbe_enable_tso,
+> +       .update_rxdesc_tail_ptr         = sxgbe_dma_update_rxdesc_tail_ptr,
+>  };
+>
+>  const struct sxgbe_dma_ops *sxgbe_get_dma_ops(void)
+> diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
+> index 843fa9b..a06e01e 100644
+> --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
+> +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
+> @@ -43,6 +43,10 @@ struct sxgbe_dma_ops {
+>         void (*rx_watchdog)(void __iomem *ioaddr, u32 riwt);
+>         /* Enable TSO for each DMA channel */
+>         void (*enable_tso)(void __iomem *ioaddr, u8 chan_num);
+> +       void (*update_rxdesc_tail_ptr)(void __iomem *ioaddr, u8 chan_num,
+> +                                      dma_addr_t dma_rx, int r_rentry,
+> +                                      int r_rsize);
+> +
+>  };
+>
+>  const struct sxgbe_dma_ops *sxgbe_get_dma_ops(void);
+> diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+> index 93bf151..7dc3449 100644
+> --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+> +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+> @@ -1521,6 +1521,7 @@ static int sxgbe_rx(struct sxgbe_priv_data *priv, int limit)
+>                 skb_put(skb, frame_len);
+>
+>                 skb->ip_summed = checksum;
+> +               skb->protocol = eth_type_trans(skb, priv->dev);
+>                 if (checksum == CHECKSUM_NONE)
+>                         netif_receive_skb(skb);
+>                 else
+> @@ -1530,6 +1531,10 @@ static int sxgbe_rx(struct sxgbe_priv_data *priv, int limit)
+>         }
+>
+>         sxgbe_rx_refill(priv);
+> +       priv->hw->dma->update_rxdesc_tail_ptr(priv->ioaddr, qnum,
+> +                                             priv->rxq[qnum]->dma_rx_phy,
+> +                                             priv->rxq[qnum]->cur_rx,
+> +                                             priv->dma_rx_size);
+>
+>         return count;
+>  }
+> --
+> 1.7.10.4
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-With warm regards,
-Sachin
+Florian
