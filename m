@@ -1,90 +1,55 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH V2 2/2] ARM: dts: Add sound node for Peach-pit board
-Date: Wed,  7 May 2014 10:22:28 +0530
-Message-ID: <1399438348-10819-3-git-send-email-tushar.behera@linaro.org>
-References: <1399438348-10819-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:41314 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750905AbaEGFIb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 01:08:31 -0400
-Received: by mail-pa0-f43.google.com with SMTP id hz1so596429pad.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 May 2014 22:08:30 -0700 (PDT)
-In-Reply-To: <1399438348-10819-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
+Date: Wed, 07 May 2014 14:14:36 +0900
+Message-ID: <5369C13C.3080506@samsung.com>
+References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
+ <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
+Reply-To: sw0312.kim@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="euc-kr"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, marcheu@chromium.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, robh+dt@kernel.org
 
-The audio setup on Peach-pit board is similar to Snow board, hence the
-sound-card driver used on Snow board can be reused on Peach-pit board.
-
-Peach-pit board uses MAX98090 audio codec.
-
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-Changes for V2:
-1. Rebased on now-accepted exynos5420-peach-pit.dts file
-
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   31 ++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index fae33dd..9902183 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -58,9 +58,23 @@
- 		pinctrl-0 = <&pwm0_out>;
- 		pinctrl-names = "default";
- 	};
-+
-+	sound {
-+		compatible = "google,snow-audio-max98090";
-+
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,audio-codec = <&max98090>;
-+	};
- };
- 
- &pinctrl_0 {
-+	max98090_irq: max98090-irq {
-+		samsung,pins = "gpx0-2";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	tpm_irq: tpm-irq {
- 		samsung,pins = "gpx1-0";
- 		samsung,pin-function = <0>;
-@@ -123,6 +137,19 @@
- 	};
- };
- 
-+&hsi2c_7 {
-+	status = "okay";
-+
-+	max98090: codec@10 {
-+		compatible = "maxim,max98090";
-+		reg = <0x10>;
-+		interrupts = <2 0>;
-+		interrupt-parent = <&gpx0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max98090_irq>;
-+	};
-+};
-+
- &hsi2c_9 {
- 	status = "okay";
- 	clock-frequency = <400000>;
-@@ -145,3 +172,7 @@
- &watchdog {
- 	timeout-sec = <32>;
- };
-+
-+&i2s0 {
-+	status = "okay";
-+};
--- 
-1.7.9.5
+SGkgRGFuaWVsLAoKT24gMjAxNLPiIDA1v/kgMDXAzyAwMDoyNiwgRGFuaWVsIEt1cnR6IHdyb3Rl
+Ogo+IE1peGVyIGhhcmR3YXJlIHN1cHBvcnRzIG9mZnNldHRpbmcgZG1hIGZyb20gc3RhcnQgb2Yg
+c291cmNlIGJ1ZmZlciB1c2luZwo+IHRoZSBNWFJfR1JQX1NYWSByZWdpc3Rlci4KPiAKPiBTaWdu
+ZWQtb2ZmLWJ5OiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgo+IC0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgOCArKystLS0tLQo+ICAxIGZp
+bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IDQ3NWViNDkuLjQwY2YzOWIgMTAwNjQ0
+Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtNTI5LDEzICs1MjksMTEg
+QEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpj
+dHgsIGludCB3aW4pCj4gIAo+ICAJZHN0X3hfb2Zmc2V0ID0gd2luX2RhdGEtPmNydGNfeDsKPiAg
+CWRzdF95X29mZnNldCA9IHdpbl9kYXRhLT5jcnRjX3k7Cj4gKwlzcmNfeF9vZmZzZXQgPSB3aW5f
+ZGF0YS0+ZmJfeDsKPiArCXNyY195X29mZnNldCA9IHdpbl9kYXRhLT5mYl95Owo+ICAKPiAgCS8q
+IGNvbnZlcnRpbmcgZG1hIGFkZHJlc3MgYmFzZSBhbmQgc291cmNlIG9mZnNldCAqLwo+IC0JZG1h
+X2FkZHIgPSB3aW5fZGF0YS0+ZG1hX2FkZHIKPiAtCQkrICh3aW5fZGF0YS0+ZmJfeCAqIHdpbl9k
+YXRhLT5icHAgPj4gMykKPiAtCQkrICh3aW5fZGF0YS0+ZmJfeSAqIHdpbl9kYXRhLT5mYl93aWR0
+aCAqIHdpbl9kYXRhLT5icHAgPj4gMyk7Cj4gLQlzcmNfeF9vZmZzZXQgPSAwOwo+IC0Jc3JjX3lf
+b2Zmc2V0ID0gMDsKPiArCWRtYV9hZGRyID0gd2luX2RhdGEtPmRtYV9hZGRyOwoKQmFzaWNhbGx5
+LCB5b3UgYXJlIHJpZ2h0IGFuZCBzb3VyY2Ugb2Zmc2V0IHJlZ2lzdGVyIGNhbiBiZSB1c2VkLiBC
+dXQKYmVjYXVzZSBvZiBsaW1pdGF0aW9uIG9mIHJlc29sdXRpb24gZm9yIG1peGVyIHVwIHRvIDE5
+MjB4MTA4MCwgSQpjb25zaWRlcmVkIG1vZGlmaWVkIHNvcnVjZSBkbWEgYWRkcmVzcyB0byBzZXQg
+b25lIGZyYW1lIGJ1ZmZlciwgd2hpY2ggaXMKYmlnZ2VyIHRoYW4gMTkyMHgxMDgwLCBvbiB0byBi
+b3RoIGZpbWQgYW5kIGhkbWkuCgpSZWdhcmRzLAotIFNldW5nLVdvbyBLaW0KCj4gIAo+ICAJaWYg
+KHdpbl9kYXRhLT5zY2FuX2ZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpCj4gIAkJY3R4
+LT5pbnRlcmxhY2UgPSB0cnVlOwo+IAoKLS0gClNldW5nLVdvbyBLaW0KU2Ftc3VuZyBTb2Z0d2Fy
+ZSBSJkQgQ2VudGVyCi0tCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
