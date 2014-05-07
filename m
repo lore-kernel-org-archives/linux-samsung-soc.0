@@ -1,87 +1,88 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH] ARM: dts: enable pwm backlight on exynos5250-snow
-Date: Wed, 07 May 2014 18:26:11 +0530
-Message-ID: <1399467371-12242-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH 3/5] ARM: dts: enable dp-controller for exynos5250 based
+ snow board
+Date: Wed, 7 May 2014 19:06:45 +0530
+Message-ID: <CAPdUM4PLdY+qQF3zs2CYF9SP8E2W4sDESD6jYD9uF+WwhVX3pg@mail.gmail.com>
+References: <1397994525-18537-1-git-send-email-rahul.sharma@samsung.com>
+	<1397994525-18537-4-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42608 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932243AbaEGM53 (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:40009 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933452AbaEGNgr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 08:57:29 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5700EK4FZQKXA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 May 2014 21:57:26 +0900 (KST)
+	Wed, 7 May 2014 09:36:47 -0400
+In-Reply-To: <1397994525-18537-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ajaynumb@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>, Olof Johansson <olof@lixom.net>
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-Add PWM backlight node for exynos5250 and enable the same on exynos5250
-based snow board.
+Hi Kukjin,
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
- arch/arm/boot/dts/exynos5250-snow.dts     |    5 +++++
- arch/arm/boot/dts/exynos5250.dtsi         |   10 ++++++++++
- 3 files changed, 22 insertions(+)
+The only dependency for this patch is new property "samsung,hpd-gpio" which
+is acked by Jingoo Han, Maintainer, exynos DP at
+http://oascentral.opensubscriber.com/message/dri-devel@lists.freedesktop.org/17150750.html.
 
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index 9a49e68..2a4680c 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -351,6 +351,13 @@
- 			samsung,pin-drv = <0>;
- 		};
- 
-+		backlight_pwm: backlight-pwm {
-+			samsung,pins = "gpb2-0";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
-+
- 		i2c7_bus: i2c7-bus {
- 			samsung,pins = "gpb2-2", "gpb2-3";
- 			samsung,pin-function = <3>;
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1ce1088..9fcd3e8 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -206,4 +206,9 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	backlight {
-+		status = "okay";
-+	};
-+
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 3742331..89a9955 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -593,6 +593,16 @@
- 		clock-names = "timers";
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 1000000 0>;
-+		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
-+		default-brightness-level = <7>;
-+		pinctrl-0 = <&backlight_pwm>;
-+		pinctrl-names = "default";
-+		status = "disabled";
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--- 
-1.7.9.5
+All remaining properties are as per existing DT bindings.
+
+@Jingoo, I want to request you to review the dp-controller nodes for
+exynos5420 and 5250.
+
+Please consider it for merge.
+
+Regards,
+Rahul Sharma.
+
+On 20 April 2014 17:18, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>
+> Ennable dp-controller for snow board.
+>
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-snow.dts |   27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index 09f363d..60cc2a8 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -344,6 +344,33 @@
+>                 };
+>         };
+>
+> +       dp-controller@145B0000 {
+> +               status = "okay";
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&dp_hpd>;
+> +               samsung,color-space = <0>;
+> +               samsung,dynamic-range = <0>;
+> +               samsung,ycbcr-coeff = <0>;
+> +               samsung,color-depth = <1>;
+> +               samsung,link-rate = <0x0a>;
+> +               samsung,lane-count = <2>;
+> +               samsung,hpd-gpio = <&gpx0 7 0>;
+> +               display-timings {
+> +                       native-mode = <&timing1>;
+> +                       timing1: timing@1 {
+> +                               clock-frequency = <70589280>;
+> +                               hactive = <1366>;
+> +                               vactive = <768>;
+> +                               hfront-porch = <40>;
+> +                               hback-porch = <40>;
+> +                               hsync-len = <32>;
+> +                               vback-porch = <10>;
+> +                               vfront-porch = <12>;
+> +                               vsync-len = <6>;
+> +                       };
+> +               };
+> +       };
+> +
+>         fimd@14400000 {
+>                 status = "okay";
+>                 samsung,invert-vclk;
+> --
+> 1.7.9.5
+>
