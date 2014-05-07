@@ -1,7 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [RFC v4 PATCH 16/18] ARM: dts: exynos5: add system register support
-Date: Wed, 07 May 2014 16:46:37 +0900
-Message-ID: <1399448799-8057-17-git-send-email-yj44.cho@samsung.com>
+Subject: [RFC v4 PATCH v2 11/18] ARM: dts: exynos_dsim: add exynos5420
+ compatible to DT bindings
+Date: Wed, 07 May 2014 16:46:32 +0900
+Message-ID: <1399448799-8057-12-git-send-email-yj44.cho@samsung.com>
 References: <1399448799-8057-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,38 +22,32 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds sysreg device node, and sysreg property to fimd device node
-which is required to use I80 interface.
+This patch adds relevant to exynos5420 compatible for exynos5420 SoC support.
+
+Changelog v2:
+- Changes title, description and fixes typo (commented by Sachin Kamat)
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/video/exynos_dsim.txt      |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 258dca4..f938bbb 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -88,12 +88,18 @@
- 		status = "disabled";
- 	};
+diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+index 33b5730..29bf3b2 100644
+--- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+@@ -1,7 +1,9 @@
+ Exynos MIPI DSI Master
  
-+	sys_reg: syscon@10050000 {
-+		compatible = "samsung,exynos5-sysreg", "syscon";
-+		reg = <0x10050000 0x500>;
-+	};
-+
- 	fimd@14400000 {
- 		compatible = "samsung,exynos5250-fimd";
- 		interrupt-parent = <&combiner>;
- 		reg = <0x14400000 0x40000>;
- 		interrupt-names = "fifo", "vsync", "lcd_sys";
- 		interrupts = <18 4>, <18 5>, <18 6>;
-+		samsung,sysreg = <&sys_reg>;
- 		status = "disabled";
- 	};
- 
+ Required properties:
+-  - compatible: "samsung,exynos4210-mipi-dsi"
++  - compatible: value should be one of the following
++			"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
++			"samsung,exynos5420-mipi-dsi" /* for Exynos5420 SoCs */
+   - reg: physical base address and length of the registers set for the device
+   - interrupts: should contain DSI interrupt
+   - clocks: list of clock specifiers, must contain an entry for each required
 -- 
 1.7.9.5
