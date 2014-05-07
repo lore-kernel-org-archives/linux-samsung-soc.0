@@ -1,55 +1,75 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 7 May 2014 16:08:53 +0530
-Message-ID: <CAPdUM4N+2VXpiFSiWW9gKfbte1zkpDbCOSF+KvEo4T1KLqqwjw@mail.gmail.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
- <534506B1.4040908@samsung.com>
- <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
- <53451A60.4050803@samsung.com> <53675D72.70103@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53675D72.70103@ti.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: [PATCH] drm/exynos: use 4WORD dma burst length for small fbs
+Date: Wed, 07 May 2014 16:55:22 +0530
+Message-ID: <1399461922-27131-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:32897 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755316AbaEGL03 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 May 2014 07:26:29 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5700F82BS3V750@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 May 2014 20:26:27 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>, Prathyush K <prathyush.k@samsung.com>
 
-On 5 May 2014 15:14, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> Hi,
->
-> On Wednesday 09 April 2014 03:31 PM, Sylwester Nawrocki wrote:
->> Hi,
->>
->> On 09/04/14 11:12, Rahul Sharma wrote:
->>> Idea looks good. How about keeping compatible which is independent
->>> of SoC, something like "samsung,exynos-simple-phy" and provide Reg
->>> and Bit through phy provider node. This way we can avoid SoC specific
->>> hardcoding in phy driver and don't need to look into dt bindings for
->>> each new SoC.
->>
->> I believe it is a not recommended approach.
->
-> Why not? We should try to avoid hard coding in the driver code. Moreover by
-> avoiding hardcoding we can make it a generic driver for single bit PHYs.
->
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-+1.
+In case of exynos, setting dma-burst to 16Word causes permanent
+tearing for very small buffers, e.g. cursor buffer. Burst Mode
+switching, which is based on overlay size is not recommended as
+overlay size varies a lot towards the end of the screen. This
+causes unstable DMA which results into tearing again.
 
-@Tomasz, any plans to consider this approach for simple phy driver?
+Rendering small buffers with lower burst size doesn't
+cause any noticable performance overhead. 128 pixel width is
+selected based on mulitple experiments with exynos5 SoCs.
 
-Regards,
-Rahul Sharma.
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+---
+Based on Inki Dae's exynos-drm-next branch.
 
-> Cheers
-> Kishon
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 40fd6cc..ef56077 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -38,6 +38,7 @@
+  */
+ 
+ #define FIMD_DEFAULT_FRAMERATE 60
++#define MIN_FB_WIDTH_FOR_16WORD_BURST 128
+ 
+ /* position control register for hardware window 0, 2 ~ 4.*/
+ #define VIDOSD_A(win)		(VIDOSD_BASE + 0x00 + (win) * 16)
+@@ -446,6 +447,19 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win)
+ 
+ 	DRM_DEBUG_KMS("bpp = %d\n", win_data->bpp);
+ 
++	/*
++	 * In case of exynos, setting dma-burst to 16Word causes permanent
++	 * tearing for very small buffers, e.g. cursor buffer. Burst Mode
++	 * switching which is based on overlay size is not recommended as
++	 * overlay size varies alot towards the end of the screen and rapid
++	 * movement causes unstable DMA which results into iommu crash/tear.
++	 */
++
++	if (win_data->fb_width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
++		val &= ~WINCONx_BURSTLEN_MASK;
++		val |= WINCONx_BURSTLEN_4WORD;
++	}
++
+ 	writel(val, ctx->regs + WINCON(win));
+ }
+ 
+-- 
+1.7.9.5
