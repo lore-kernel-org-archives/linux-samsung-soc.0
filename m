@@ -1,43 +1,75 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: Update scratch buffer size for VP8 encoder
-Date: Wed,  7 May 2014 17:04:13 +0530
-Message-ID: <1399462453-21966-1-git-send-email-arun.kk@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] drm/exynos: allocate non-contigous buffers when iommu is
+ enabled
+Date: Wed, 07 May 2014 17:21:29 +0530
+Message-ID: <1399463489-6925-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:38057 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932368AbaEGLeS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:18054 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932181AbaEGLwa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 07:34:18 -0400
+	Wed, 7 May 2014 07:52:30 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5700BSQCZGBH60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 May 2014 20:52:28 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Kiran AVND <avnd.kiran@samsung.com>
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Scratch buffer size updated for vp8 encoding as per
-the latest v7 firmware. As the new macro increases the
-scratch buffer size, it is backward compatible with the older
-firmware too.
+Allow to allocate non-contigous buffers when iommu is enabled.
+Currently, it tries to allocates contigous buffer which consistently
+fail for large buffers and then fall back to non contigous. Apart
+from being slow, this implementation is also very noisy and fills
+the screen with alloc fail logs.
 
-Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Change-Id: I523e95aa308122ed2edc55e065ae6eb8be996541
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/regs-mfc-v7.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_gem.c |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-index 82c96fa..1a5c6fd 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-@@ -54,6 +54,7 @@
- 			(SZ_1M + ((w) * 144) + (8192 * (h)) + 49216)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 5d88924..7136945 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -624,22 +624,20 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+ 	args->pitch = args->width * ((args->bpp + 7) / 8);
+ 	args->size = args->pitch * args->height;
  
- #define S5P_FIMV_SCRATCH_BUF_SIZE_VP8_ENC_V7(w, h) \
--			(((w) * 48) + (((w) + 1) / 2 * 128) + 144 + 8192)
-+			(((w) * 48) + 8192 + ((((w) + 1) / 2) * 128) + 144 + \
-+			((((((w) * 16) * ((h) * 16)) * 3) / 2) * 4))
+-	exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG |
+-						EXYNOS_BO_WC, args->size);
+-	/*
+-	 * If physically contiguous memory allocation fails and if IOMMU is
+-	 * supported then try to get buffer from non physically contiguous
+-	 * memory area.
+-	 */
+-	if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
+-		dev_warn(dev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
++	if (is_drm_iommu_supported(dev)) {
++		exynos_gem_obj = exynos_drm_gem_create(dev,
++			EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
++			args->size);
++	} else {
+ 		exynos_gem_obj = exynos_drm_gem_create(dev,
+-					EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
+-					args->size);
++			EXYNOS_BO_CONTIG | EXYNOS_BO_WC,
++			args->size);
+ 	}
  
- #endif /*_REGS_MFC_V7_H*/
+-	if (IS_ERR(exynos_gem_obj))
++	if (IS_ERR(exynos_gem_obj)) {
++		dev_warn(dev->dev, "FB allocation failed.\n");
+ 		return PTR_ERR(exynos_gem_obj);
++	}
+ 
+ 	ret = exynos_drm_gem_handle_create(&exynos_gem_obj->base, file_priv,
+ 			&args->handle);
 -- 
 1.7.9.5
