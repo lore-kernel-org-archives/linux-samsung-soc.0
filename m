@@ -1,66 +1,215 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v5 15/15] clk: exynos5420: add more registers to restore list
-Date: Thu, 08 May 2014 16:58:04 +0530
-Message-ID: <1399548484-20626-16-git-send-email-shaik.ameer@samsung.com>
-References: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
+Date: Thu, 08 May 2014 20:38:20 +0900
+Message-ID: <536B6CAC.1040805@samsung.com>
+References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
+ <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
+ <5369C13C.3080506@samsung.com>
+ <CAGS+omAbuzRpNDvB6eTw67Dcv3WMdWF3yz+bU5p3j5JRourOyw@mail.gmail.com>
+ <536B0900.10204@samsung.com>
+ <CAGS+omB8iO2ioLcQEtxsww9kA4Yc8-8YaAkWwTy2ssLOqQvLZg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:28097 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753261AbaEHLax (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:17550 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753248AbaEHLiW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 07:30:53 -0400
-In-reply-to: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
+	Thu, 8 May 2014 07:38:22 -0400
+In-reply-to: <CAGS+omB8iO2ioLcQEtxsww9kA4Yc8-8YaAkWwTy2ssLOqQvLZg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <marcheu@chromium.org>
 
-This patch adds more register offsets to the list for
-preserving their values during S2R.
+Hi Daniel,
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 2014=EB=85=84 05=EC=9B=94 08=EC=9D=BC 18:21, Daniel Kurtz wrote:
+> On Thu, May 8, 2014 at 12:33 PM, Seung-Woo Kim <sw0312.kim@samsung.co=
+m> wrote:
+>>
+>> Hello Daniel,
+>>
+>> On 2014=EB=85=84 05=EC=9B=94 07=EC=9D=BC 23:14, Daniel Kurtz wrote:
+>>> On Wed, May 7, 2014 at 1:14 PM, Seung-Woo Kim <sw0312.kim@samsung.c=
+om> wrote:
+>>>> Hi Daniel,
+>>>>
+>>>> On 2014=EB=85=84 05=EC=9B=94 05=EC=9D=BC 00:26, Daniel Kurtz wrote=
+:
+>>>>> Mixer hardware supports offsetting dma from start of source buffe=
+r using
+>>>>> the MXR_GRP_SXY register.
+>>>>>
+>>>>> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+>>>>> ---
+>>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 8 +++-----
+>>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/=
+drm/exynos/exynos_mixer.c
+>>>>> index 475eb49..40cf39b 100644
+>>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>>>>> @@ -529,13 +529,11 @@ static void mixer_graph_buffer(struct mixer=
+_context *ctx, int win)
+>>>>>
+>>>>>       dst_x_offset =3D win_data->crtc_x;
+>>>>>       dst_y_offset =3D win_data->crtc_y;
+>>>>> +     src_x_offset =3D win_data->fb_x;
+>>>>> +     src_y_offset =3D win_data->fb_y;
+>>>>>
+>>>>>       /* converting dma address base and source offset */
+>>>>> -     dma_addr =3D win_data->dma_addr
+>>>>> -             + (win_data->fb_x * win_data->bpp >> 3)
+>>>>> -             + (win_data->fb_y * win_data->fb_width * win_data->=
+bpp >> 3);
+>>>>> -     src_x_offset =3D 0;
+>>>>> -     src_y_offset =3D 0;
+>>>>> +     dma_addr =3D win_data->dma_addr;
+>>>>
+>>>> Basically, you are right and source offset register can be used. B=
+ut
+>>>> because of limitation of resolution for mixer up to 1920x1080, I
+>>>> considered modified soruce dma address to set one frame buffer, wh=
+ich is
+>>>> bigger than 1920x1080, on to both fimd and hdmi.
+>>>
+>>> Hi Seung-Woo,
+>>>
+>>> I do not see why the maximum MIXER resolution matters for choosing
+>>> between offsetting BASE or using SXY.
+>>>
+>>> Let's say you have one big 1920x1908 framebuffer, with a span of 19=
+20,
+>>> starting at dma_addr (there is no extra padding at the end of the
+>>> line).
+>>> Let's say you wanted the mixer to scan out 1920x1080 pixels startin=
+g
+>>> from (0, 800) in the framebuffer, and start drawing them at (0,0) o=
+n
+>>> the screen.
+>>>
+>>> What we currently do is:
+>>>   BASE =3D dma_addr + (800 * 1080 * 4)
+>>>   SPAN =3D 1920
+>>>   SXY =3D SX(0) | SY(0)
+>>>   WH =3D W(1920) | H(1080)
+>>>   DXY =3D DX(0) | DY(0)
+>>>
+>>> I am proposing we do:
+>>>   BASE =3D dma_addr
+>>>   SPAN =3D 1920
+>>>   SXY =3D SX(0) | SY(800)
+>>>   WH =3D W(1920) | H(1080)
+>>>   DXY =3D DX(0) | DY(0)
+>>>
+>>> In both cases, the mixer resolution is 1920x1080.
+>>
+>> In my test to show each half of big one framebuffer (3840 x 1080) to
+>> FIMD from 0 to 1079 and MIXER from 1080 to 3839 with exynos4210 and
+>> exynos4412, it was failed to show proper hdmi display. Also it is sa=
+me
+>> for framebuffer (1920 x 2160). AFAIK, it is mainly because mixer dma=
+ has
+>> limitation of dma memory size.
+>=20
+>=20
+> That is unfortunate, but thank you for your explanation.
+>=20
+> Is this limitation exynos4 specific, or does it also apply for the
+> exynos5 mixer?
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index dd9e98d..4014e86 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -27,6 +27,7 @@
- #define DIV_CPU1		0x504
- #define GATE_BUS_CPU		0x700
- #define GATE_SCLK_CPU		0x800
-+#define CLKOUT_CMU_CPU		0xa00
- #define GATE_IP_G2D		0x8800
- #define CPLL_LOCK		0x10020
- #define DPLL_LOCK		0x10030
-@@ -39,7 +40,11 @@
- #define CPLL_CON0		0x10120
- #define DPLL_CON0		0x10128
- #define EPLL_CON0		0x10130
-+#define EPLL_CON1		0x10134
-+#define EPLL_CON2		0x10138
- #define RPLL_CON0		0x10140
-+#define RPLL_CON1		0x10144
-+#define RPLL_CON2		0x10148
- #define IPLL_CON0		0x10150
- #define SPLL_CON0		0x10160
- #define VPLL_CON0		0x10170
-@@ -140,6 +145,13 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
- 	DIV_CPU1,
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
-+	CLKOUT_CMU_CPU,
-+	EPLL_CON0,
-+	EPLL_CON1,
-+	EPLL_CON2,
-+	RPLL_CON0,
-+	RPLL_CON1,
-+	RPLL_CON2,
- 	SRC_TOP0,
- 	SRC_TOP1,
- 	SRC_TOP2,
--- 
-1.7.9.5
+It seems that exynos5260/5420 mixers also have same limitation: SX/Y
+fields is 11 bits.
+
+> Was the limitation perhaps the number of bits in the SXY register
+> fields (< 11) on those devices?
+> For 5250/5420 these fields are 11 bits, and I don't see any
+> restrictions about "dma memory size" in the documentation that I have=
+=2E
+>=20
+
+So I guess that the reason Mixer controller was operated incorrectly is
+that SX/Y fields exceed maximum value (2047) by itself when he
+calculates DMA address to access the memory region: the value of SX/Y
+fields would be increased by Mixer controller internally until reaching
+width or height, and in turn the value would exceed 2047.
+
+So I think it'd better to use existing codes because this patch isn't
+tested so not safe. You can add more comments enough to existing codes
+if needed.
+
+In addition, it seems that Exynos5422/5430 has no such limitation but
+they are much different from old ones so we would need new drivers for =
+them.
+
+Thanks,
+Inki Dae
+
+> Thanks,
+> -Dan
+>=20
+>> In this case, I set register as like:
+>>   BASE =3D dma_addr /* 3840 x 1080 x 4 */
+>>   SPAN =3D 3840
+>>   SXY =3D SX(1920) | SY(0)
+>>   WH =3D W(1920) | H(1080)
+>>   DXY =3D DX(0) | DY(0)
+>> or:
+>>   BASE =3D dma_addr /* 1920 x 2160 x 4 */
+>>   SPAN =3D 1920
+>>   SXY =3D SX(0) | SY(1080)
+>>   WH =3D W(1920) | H(1080)
+>>   DXY =3D DX(0) | DY(0)
+>> but these two setting did not show hdmi display as I expected. So I =
+used
+>> modified dma address.
+>>
+>>>
+>>> My motivation for wanting to program an un-modified dma_addr into B=
+ASE
+>>> is so we can then just check BASE_S to determine from which buffer =
+the
+>>> mixer is actively being scanned out without worrying about the sour=
+ce
+>>> offset, since the source offset can change for a given framebuffer
+>>> (for example, when doing panning, or if an overlay is used for a HW
+>>> cursor).
+>>
+>> Actually, this patch is exactly same with my first implementation, s=
+o I
+>> completely understand your motivation. Anyway, I was focus on extend=
+ed
+>> displays with one buffer, so I wrote modified dma base address.
+>>
+>> Thanks and Regards,
+>> - Seung-Woo Kim
+>>
+>>>
+>>> Best Regards,
+>>> -Daniel
+>>>
+>>>>
+>>>> Regards,
+>>>> - Seung-Woo Kim
+>>>>
+>>>>>
+>>>>>       if (win_data->scan_flags & DRM_MODE_FLAG_INTERLACE)
+>>>>>               ctx->interlace =3D true;
+>>>>>
+>>>>
+>>>> --
+>>>> Seung-Woo Kim
+>>>> Samsung Software R&D Center
+>>>> --
+>>>>
+>>>
+>>
+>> --
+>> Seung-Woo Kim
+>> Samsung Software R&D Center
+>> --
+>>
+>=20
