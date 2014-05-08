@@ -1,78 +1,107 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] clk: exynos5420: Add clock IDs needed by GPU
-Date: Thu, 08 May 2014 19:32:52 +0200
-Message-ID: <536BBFC4.2030103@samsung.com>
-References: <1398680444-12400-1-git-send-email-arun.kk@samsung.com>
+Subject: Re: [PATCH v5 00/15] exynos5420: clock file cleanup
+Date: Thu, 08 May 2014 19:34:03 +0200
+Message-ID: <536BC00B.5070502@samsung.com>
+References: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
+ <536B7084.7010002@samsung.com>
+ <CAOD6ATqRW2d9Kr8JWM=UG54MM4ufjqLN9kKZLt+jRohEFqXf3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35623 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753127AbaEHRcz (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:35374 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753127AbaEHReJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 13:32:55 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5900GE8NEJK250@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 18:32:43 +0100 (BST)
-In-reply-to: <1398680444-12400-1-git-send-email-arun.kk@samsung.com>
+	Thu, 8 May 2014 13:34:09 -0400
+In-reply-to: <CAOD6ATqRW2d9Kr8JWM=UG54MM4ufjqLN9kKZLt+jRohEFqXf3Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, arunkk.samsung@gmail.com
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, alim.akhtar@samsung.com
 
-Hi Arun,
+On 08.05.2014 16:35, Shaik Ameer Basha wrote:
+> Hi Tomasz,
+> 
+> On Thu, May 8, 2014 at 5:24 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Shaik,
+>>
+>> On 08.05.2014 13:27, Shaik Ameer Basha wrote:
+>>> Many changes/fixes have been identified for clock file for exynos5420.
+>>> These include correct parents, bit fields, new clocks etc. Existing
+>>> files needs some correction in terms of names of the clock and
+>>> indentation. These issues are addressed in this patch series.
+>>>
+>>> This patch series is rebased on,
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git:3.15-rc4
+>>>
+>>> This patch is also dependent on the following patch.
+>>> clk: exynos5420: Add clock IDs needed by GPU
+>>>     -- http://www.spinics.net/lists/arm-kernel/msg326461.html
+>>>
+>>> This patch series is tested on Exynos5420 based peach-pit board.
+>>>     -- [PATCH v4 0/2] Add peach-pit board support
+>>>
+>>> Clock Summary before and after applying this patch series:
+>>> ----------------------------------------------------------
+>>> http://slexy.org/view/s2KMWxI3wv
+>>>
+>>> As per Tomasz Figa's sugession, one more patch will be sent on
+>>> top of this patch series to remove the unnecessary clocks
+>>> related to GATE_BUS_* offsets.
+>>>
+>>> Changes since v4:
+>>> -----------------
+>>> Addressed review comments from Tomasz Figa related to
+>>> CLK_SET_RATE_PARENT and CLK_IGNORE_UNUSED.
+>>>
+>>> Changes since v3:
+>>> -----------------
+>>> Addressed review comments from Tomasz Figa and Alim Akhtar
+>>> Some of the changes includes,
+>>> 1] Adding clock IDs for all the added gate clocks.
+>>> 2] Followed bit ordering while defining new clocks.
+>>> 3] Adding SET_RATE_PARENT flag for all the clocks having
+>>>    dividers as parents.
+>>>
+>>> Changes since v2:
+>>> -----------------
+>>> 1] Addressed review comments from Gerhard Sittig and Tomasz Figa.
+>>>
+>>> Changes since v1:
+>>> -----------------
+>>> 1] Addressed review comments from Tomasz Figa.
+>>>     http://www.spinics.net/lists/devicetree/msg16759.html
+>>>     http://www.spinics.net/lists/devicetree/msg16760.html
+>>>
+>>> Shaik Ameer Basha (15):
+>>>   clk: exynos5420: Rename mux parent arrays
+>>>   clk: exynos5420: add clocks for ISP block
+>>>   clk: exynos5420: update clocks for GSCL and MSCL blocks
+>>>   clk: exynos5420: fix parent clocks for mscl sysmmu
+>>>   clk: exynos5420: update clocks for G2D and G3D blocks
+>>>   clk: exynos5420: update clocks for DISP1 block
+>>>   clk: exynos5420: update clocks for PERIC block
+>>>   clk: exynos5420: update clocks for PERIS and GEN blocks
+>>>   clk: exynos5420: update clocks for WCORE block
+>>>   clk: exynos5420: update clocks for FSYS and FSYS2 blocks
+>>>   clk: exynos5420: correct sysmmu-mfc parent clocks
+>>>   clk: exynos5420: fix register offset for sclk_bpll
+>>>   clk: exynos5420: update clocks for MAU Block
+>>>   clk: exynos5420: add misc clocks
+>>>   clk: exynos5420: add more registers to restore list
+>>>
+>>>  arch/arm/boot/dts/exynos5420.dtsi      |   14 +-
+>>>  drivers/clk/samsung/clk-exynos5420.c   |  853 ++++++++++++++++++++------------
+>>>  include/dt-bindings/clock/exynos5420.h |   37 +-
+>>>  3 files changed, 576 insertions(+), 328 deletions(-)
+>>>
+>>
+>> Looks good. Will apply.
+> 
+> Thanks.
 
-On 28.04.2014 12:20, Arun Kumar K wrote:
-> Adds IDs for the clocks needed by the ARM Mali GPU
-> in exynos5420.
-> 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c   |    4 ++--
->  include/dt-bindings/clock/exynos5420.h |    2 ++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 60b2681..7a9e3b4 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -362,7 +362,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->  	MUX(0, "mout_aclk66_psgen", aclk66_peric_p, SRC_TOP5, 4, 1),
->  	MUX(0, "mout_user_aclk333_g2d", user_aclk333_g2d_p, SRC_TOP5, 8, 1),
->  	MUX(0, "mout_user_aclk266_g2d", user_aclk266_g2d_p, SRC_TOP5, 12, 1),
-> -	MUX_A(0, "mout_user_aclk_g3d", user_aclk_g3d_p,
-> +	MUX_A(CLK_MOUT_G3D, "mout_user_aclk_g3d", user_aclk_g3d_p,
->  			SRC_TOP5, 16, 1, "aclkg3d"),
->  	MUX(0, "mout_user_aclk300_jpeg", user_aclk300_jpeg_p,
->  			SRC_TOP5, 20, 1),
-> @@ -372,7 +372,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->  			SRC_TOP5, 28, 1),
->  
->  	MUX(0, "sclk_mpll", mpll_p, SRC_TOP6, 0, 1),
-> -	MUX(0, "sclk_vpll", vpll_p, SRC_TOP6, 4, 1),
-> +	MUX(CLK_MOUT_VPLL, "sclk_vpll", vpll_p, SRC_TOP6, 4, 1),
->  	MUX(0, "sclk_spll", spll_p, SRC_TOP6, 8, 1),
->  	MUX(0, "sclk_ipll", ipll_p, SRC_TOP6, 12, 1),
->  	MUX(0, "sclk_rpll", rpll_p, SRC_TOP6, 16, 1),
-> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-> index 5eefd88..54db8b3 100644
-> --- a/include/dt-bindings/clock/exynos5420.h
-> +++ b/include/dt-bindings/clock/exynos5420.h
-> @@ -178,6 +178,8 @@
->  
->  /* mux clocks */
->  #define CLK_MOUT_HDMI		640
-> +#define CLK_MOUT_G3D		641
-> +#define CLK_MOUT_VPLL		642
->  
->  /* divider clocks */
->  #define CLK_DOUT_PIXEL		768
-> 
-
-Applied to samsung-clk/samsung-next.
+Applied (with some minor changes) to samsung-clk/samsung-next.
 
 Best regards,
 Tomasz
