@@ -1,74 +1,68 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: RE: [PATCH] net: sxgbe: Added tail point update
-Date: Thu, 08 May 2014 10:20:12 +0900
-Message-ID: <002f01cf6a5b$a92e3660$fb8aa320$%an@samsung.com>
-References: <008b01cf69cc$4d304e50$e790eaf0$%an@samsung.com>
- <CAGVrzcaic-rrbRg2CpvzpyTpt0iRtX9=QE8WLpR3Eep=8w5czQ@mail.gmail.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH 5/7] ARM: dts: enable hdmi for exynos5250 based snow board
+Date: Thu, 8 May 2014 08:54:45 +0530
+Message-ID: <CAPdUM4MX-ZmqQaEhEJYJG7tjw7uMqaBWWuFQFa0sJoHYR8pQRQ@mail.gmail.com>
+References: <1397993044-14564-1-git-send-email-rahul.sharma@samsung.com>
+	<1397993044-14564-6-git-send-email-rahul.sharma@samsung.com>
+	<535DF57B.5030301@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <netdev-owner@vger.kernel.org>
-In-reply-to: <CAGVrzcaic-rrbRg2CpvzpyTpt0iRtX9=QE8WLpR3Eep=8w5czQ@mail.gmail.com>
-Content-language: ko
-Sender: netdev-owner@vger.kernel.org
-To: 'Florian Fainelli' <f.fainelli@gmail.com>
-Cc: 'netdev' <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'David Miller' <davem@davemloft.net>, "'ks.giri'" <ks.giri@samsung.com>, "'vipul.pandya'" <vipul.pandya@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:55221 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751766AbaEHDYq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 May 2014 23:24:46 -0400
+In-Reply-To: <535DF57B.5030301@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
+Thanks Tushar,
 
-Florian Fainelli wrote: 
-> 2014-05-07 1:14 GMT-07:00 Byungho An <bh74.an@samsung.com>:
-> >
-> > This patch adds tail point update function for rx path
-> > after rx_refill function. It indicates tail point for rx dma.
-> >
-> > Signed-off-by: Byungho An <bh74.an@samsung.com>
-> > ---
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c  |   14 +++++++++++++-
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h  |    4 ++++
-> >  drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c |    5 +++++
-> >  3 files changed, 22 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-> b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-> > index 49240c9..249b0e0 100644
-> > --- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-> > +++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
-> > @@ -112,7 +112,7 @@ static void sxgbe_dma_channel_init(void __iomem
-> *ioaddr, int cha_num,
-> >
-> >         dma_addr = dma_rx + ((r_rsize - 1) * SXGBE_DESC_SIZE_BYTES);
-> >         writel(lower_32_bits(dma_addr),
-> > -              ioaddr + SXGBE_DMA_CHA_RXDESC_LADD_REG(cha_num));
-> > +              ioaddr + SXGBE_DMA_CHA_RXDESC_TAILPTR_REG(cha_num));
-> >         /* program the ring sizes */
-> >         writel(t_rsize - 1, ioaddr +
-> SXGBE_DMA_CHA_TXDESC_RINGLEN_REG(cha_num));
-> >         writel(r_rsize - 1, ioaddr +
-> SXGBE_DMA_CHA_RXDESC_RINGLEN_REG(cha_num));
-> > @@ -370,6 +370,17 @@ static void sxgbe_enable_tso(void __iomem *ioaddr,
-> u8 chan_num)
-> >         writel(ctrl, ioaddr + SXGBE_DMA_CHA_TXCTL_REG(chan_num));
-> >  }
-> >
-> > +static void sxgbe_dma_update_rxdesc_tail_ptr(void __iomem *ioaddr, u8
-> chan_num,
-> > +                                             dma_addr_t dma_rx_phy, int cur_rx,
-> > +                                             int rxsize)
-> 
-> I think that at some point you should revisit your abstraction, all
-> the patches that I see do take a void __iomem * argument as the first
-> function argument, you should probably use your driver private context
-> here. The day you support a different version of the hardware, there
-> might be other differences that need to be taken care of.
-> 
-I agree with you, it would be more robust for different version of the hardware and make simple function argument.
-But most functions of this driver deal with read/write register using ioaddr.
-As of now I think it is enough but I'll consider it later.
+On 28 April 2014 12:00, Tushar Behera <tushar.behera@linaro.org> wrote:
+> On 04/20/2014 04:54 PM, Rahul Sharma wrote:
+>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>
+>> Enable support for HDMI for exynos5250 based Snow board.
+>>
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-cros-common.dtsi |   13 ++++++++++++-
+>>  arch/arm/boot/dts/exynos5250-snow.dts         |    7 +++++++
+>>  2 files changed, 19 insertions(+), 1 deletion(-)
+>
+> [ ... ]
+>
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index 52ae335..586cd38 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -343,4 +343,11 @@
+>>                       pinctrl-0 = <&ptn3460_gpios>;
+>>               };
+>>       };
+>> +
+>> +     hdmi {
+>> +             hdmi-en-supply = <&tps65090_fet7>;
+>
+> Looks like tps65090_fet7 is not defined yet or might be not mentioned as
+> dependency.
+>
 
-[snip]
+I should have mentioned one more dependency on Sachin's patches for
+snow DTS.( https://patches.linaro.org/28325/ ). Sorry for confusion.
 
-> 
-> 
+Regards,
+Rahul Sharma.
+
+>> +             vdd-supply = <&ldo8_reg>;
+>> +             vdd_osc-supply = <&ldo10_reg>;
+>> +             vdd_pll-supply = <&ldo8_reg>;
+>> +     };
+>>  };
+>>
+>
 > --
-> Florian
+> Tushar Behera
