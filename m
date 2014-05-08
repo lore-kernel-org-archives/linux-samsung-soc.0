@@ -1,70 +1,99 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v3 2/2] [media] s5p-mfc: Add support for resolution change event
-Date: Thu,  8 May 2014 17:19:16 +0530
-Message-ID: <1399549756-3743-3-git-send-email-arun.kk@samsung.com>
-References: <1399549756-3743-1-git-send-email-arun.kk@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: enable pwm backlight on exynos5250-snow
+Date: Thu, 08 May 2014 13:52:58 +0200
+Message-ID: <536B701A.40209@samsung.com>
+References: <1399467371-12242-1-git-send-email-ajaykumar.rs@samsung.com>
+ <536A98E7.9030007@gmail.com>
+ <CAEC9eQPeGSw0xEdmq2GkVVhC7cTGSEvkM_CHRxTw__aFrvzvbw@mail.gmail.com>
+ <536A9C82.6090704@gmail.com>
+ <CAEC9eQMxjCSwkvcSmbH7hWp9L+TmCbAZV8074zyAqQ__gLnSZw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:32898 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753270AbaEHLtf (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:20438 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753261AbaEHLxE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 07:49:35 -0400
-In-Reply-To: <1399549756-3743-1-git-send-email-arun.kk@samsung.com>
+	Thu, 8 May 2014 07:53:04 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N59005J97O875A0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 12:52:56 +0100 (BST)
+In-reply-to: <CAEC9eQMxjCSwkvcSmbH7hWp9L+TmCbAZV8074zyAqQ__gLnSZw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, posciak@chromium.org, arunkk.samsung@gmail.com
+To: Ajay kumar <ajaynumb@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olof@lixom.net>
 
-From: Pawel Osciak <posciak@chromium.org>
+On 08.05.2014 11:54, Ajay kumar wrote:
+> Tomasz,
+> 
+> On Thu, May 8, 2014 at 2:20 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> On 07.05.2014 22:47, Ajay kumar wrote:
+>>>
+>>> Tomasz,
+>>>
+>>> On Thu, May 8, 2014 at 2:04 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>>>
+>>>> Hi Ajay,
+>>>>
+>>>>
+>>>> On 07.05.2014 14:56, Ajay Kumar wrote:
+>>>>>
+>>>>>
+>>>>> Add PWM backlight node for exynos5250 and enable the same on exynos5250
+>>>>> based snow board.
+>>>>>
+>>>>> Signed-off-by: Olof Johansson <olof@lixom.net>
+>>>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>>>> ---
+>>>>>    arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
+>>>>>    arch/arm/boot/dts/exynos5250-snow.dts     |    5 +++++
+>>>>>    arch/arm/boot/dts/exynos5250.dtsi         |   10 ++++++++++
+>>>>>    3 files changed, 22 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> index 9a49e68..2a4680c 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> @@ -351,6 +351,13 @@
+>>>>>                          samsung,pin-drv = <0>;
+>>>>>                  };
+>>>>>
+>>>>> +               backlight_pwm: backlight-pwm {
+>>>>> +                       samsung,pins = "gpb2-0";
+>>>>> +                       samsung,pin-function = <2>;
+>>>>> +                       samsung,pin-pud = <0>;
+>>>>> +                       samsung,pin-drv = <0>;
+>>>>> +               };
+>>>>
+>>>>
+>>>>
+>>>> This looks like a generic PWM output function, not specific to backlight
+>>>> in
+>>>> any way.
+>>>>
+>>>> Please see patch [1] adding PWM output pin groups for Exynos5420 for
+>>>> reference.
+>>>>
+>>>> [1]
+>>>>
+>>>> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29869.html
+>>>
+>>> Right! I just referred to the manual again, and it actually reads TOUT_0.
+>>> So, I should be probably renaming this as "pwm0_out" like in the other
+>>> patch?
+>>
+>>
+>> Yes, please. You should also add remaining ones, while at it. Basically same
+>> patch as [1] but for Exynos5250.
+> 
+> Sent "[PATCH 1/2] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5250"
 
-When a resolution change point is reached, queue an event to signal the
-userspace that a new set of buffers is required before decoding can
-continue.
+Thanks.
 
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c     |    7 +++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c |    2 ++
- 2 files changed, 9 insertions(+)
-
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 07c3d5e..c25a2b0 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -320,6 +320,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx *ctx,
- 	struct s5p_mfc_buf *src_buf;
- 	unsigned long flags;
- 	unsigned int res_change;
-+	struct v4l2_event ev;
- 
- 	dst_frame_status = s5p_mfc_hw_call(dev->mfc_ops, get_dspl_status, dev)
- 				& S5P_FIMV_DEC_STATUS_DECODING_STATUS_MASK;
-@@ -351,6 +352,12 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx *ctx,
- 		if (ctx->state == MFCINST_RES_CHANGE_FLUSH) {
- 			s5p_mfc_handle_frame_all_extracted(ctx);
- 			ctx->state = MFCINST_RES_CHANGE_END;
-+
-+			memset(&ev, 0, sizeof(struct v4l2_event));
-+			ev.type = V4L2_EVENT_SOURCE_CHANGE;
-+			ev.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION;
-+			v4l2_event_queue_fh(&ctx->fh, &ev);
-+
- 			goto leave_handle_frame;
- 		} else {
- 			s5p_mfc_handle_frame_all_extracted(ctx);
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-index 4f94491..b383829 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-@@ -855,6 +855,8 @@ static int vidioc_subscribe_event(struct v4l2_fh *fh,
- 	switch (sub->type) {
- 	case V4L2_EVENT_EOS:
- 		return v4l2_event_subscribe(fh, sub, 2, NULL);
-+	case V4L2_EVENT_SOURCE_CHANGE:
-+		return v4l2_src_change_event_subscribe(fh, sub);
- 	default:
- 		return -EINVAL;
- 	}
--- 
-1.7.9.5
+Best regards,
+Tomasz
