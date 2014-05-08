@@ -1,91 +1,98 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH] ARM: dts: enable pwm backlight on exynos5250-snow
-Date: Thu, 8 May 2014 15:24:04 +0530
-Message-ID: <CAEC9eQMxjCSwkvcSmbH7hWp9L+TmCbAZV8074zyAqQ__gLnSZw@mail.gmail.com>
-References: <1399467371-12242-1-git-send-email-ajaykumar.rs@samsung.com>
-	<536A98E7.9030007@gmail.com>
-	<CAEC9eQPeGSw0xEdmq2GkVVhC7cTGSEvkM_CHRxTw__aFrvzvbw@mail.gmail.com>
-	<536A9C82.6090704@gmail.com>
+Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
+Date: Thu, 8 May 2014 15:56:22 +0530
+Message-ID: <CAEC9eQM=Y=2MEffpANVQKrzv+dyemBDtR7sfGUjJCfw8ZQM55A@mail.gmail.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+	<536B26FC.507@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f180.google.com ([209.85.220.180]:48367 "EHLO
-	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753897AbaEHJyF (ORCPT
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:33476 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752813AbaEHK0X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 05:54:05 -0400
-Received: by mail-vc0-f180.google.com with SMTP id hy4so2084255vcb.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 02:54:04 -0700 (PDT)
-In-Reply-To: <536A9C82.6090704@gmail.com>
+	Thu, 8 May 2014 06:26:23 -0400
+Received: by mail-ve0-f178.google.com with SMTP id sa20so2944742veb.23
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 03:26:23 -0700 (PDT)
+In-Reply-To: <536B26FC.507@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olof@lixom.net>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, airlied@redhat.com
 
-Tomasz,
+Hi Andrej,
 
-On Thu, May 8, 2014 at 2:20 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 07.05.2014 22:47, Ajay kumar wrote:
+On Thu, May 8, 2014 at 12:11 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
+>> This patchset is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 >>
->> Tomasz,
+>> I have just put up Rob's and Sean's idea of chaining up the bridges
+>> in code, and have implemented basic panel controls as a chained bridge.
+>> This works well with ptn3460 bridge chip on exynos5250-snow board.
 >>
->> On Thu, May 8, 2014 at 2:04 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>
->>> Hi Ajay,
->>>
->>>
->>> On 07.05.2014 14:56, Ajay Kumar wrote:
->>>>
->>>>
->>>> Add PWM backlight node for exynos5250 and enable the same on exynos5250
->>>> based snow board.
->>>>
->>>> Signed-off-by: Olof Johansson <olof@lixom.net>
->>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->>>> ---
->>>>    arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
->>>>    arch/arm/boot/dts/exynos5250-snow.dts     |    5 +++++
->>>>    arch/arm/boot/dts/exynos5250.dtsi         |   10 ++++++++++
->>>>    3 files changed, 22 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>>> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>>> index 9a49e68..2a4680c 100644
->>>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>>> @@ -351,6 +351,13 @@
->>>>                          samsung,pin-drv = <0>;
->>>>                  };
->>>>
->>>> +               backlight_pwm: backlight-pwm {
->>>> +                       samsung,pins = "gpb2-0";
->>>> +                       samsung,pin-function = <2>;
->>>> +                       samsung,pin-pud = <0>;
->>>> +                       samsung,pin-drv = <0>;
->>>> +               };
->>>
->>>
->>>
->>> This looks like a generic PWM output function, not specific to backlight
->>> in
->>> any way.
->>>
->>> Please see patch [1] adding PWM output pin groups for Exynos5420 for
->>> reference.
->>>
->>> [1]
->>>
->>> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29869.html
->>
->> Right! I just referred to the manual again, and it actually reads TOUT_0.
->> So, I should be probably renaming this as "pwm0_out" like in the other
->> patch?
+>> Still need to make use of standard list calls and figure out proper way
+>> of deleting the bridge chain. So, this is just a rough version.
+>
+> As I understand this patchset tries to solve two things:
+> 1. Implement panel as drm_bridge, to ease support for hardware chains:
+> Crtc -> Encoder -> Bridge -> Panel
+> 2. Add support to drm_bridge chaining, to allow software chains:
+> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
+>
+> It is done using Russian doll schema, ops from the bridge calls the same
+> ops from the next bridge and the next bridge ops can do the same.
+>
+> This schema means that all the bridges including the last one are seen
+> from the drm core point of view as a one big drm_bridge. Additionally in
+> this particular case, the first bridge (ptn3460) implements connector
+> so it is hard to guess what is the location of the 2nd bridge in video
+> stream chain, sometimes it is after the connector, sometimes before.
+> All this is quite confusing.
+>
+> But if you look at the bridge from upstream video interface point of
+> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on its
+> video input side acts as a panel. On the output side it expects a panel,
+> lvds panel in this case.
+>
+> So why not implement ptn3460 bridge as drm_panel which internally uses
+> another drm_panel. With this approach everything fits much better.
+> You do not need those (pre|post)_(enable|disable) calls, you do not need
+> to implement connector in the bridge and you have a driver following
+> linux driver model. And no single bit changed in drm core.
+This discussion should have ideally happened when Sean added bridge
+into drm-core!
+And, we do need (pre|post)_(enable|disable) calls for bridges, but the drm_panel
+framework supports only enable/disable.
+
+> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2].
+> It was not accepted as Inki preferred drm_bridge but as I see the
+> problems with drm_bridges I have decide to attract attention to much
+> more cleaner solution.
+> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
+> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
+>
+> Regards
+> Andrzej
 >
 >
-> Yes, please. You should also add remaining ones, while at it. Basically same
-> patch as [1] but for Exynos5250.
-
-Sent "[PATCH 1/2] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5250"
-
-
-Ajay
+>>
+>> Ajay Kumar (3):
+>>   [RFC V2 1/3] drm: implement chaining of drm bridges
+>>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
+>>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+>>
+>>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
+>>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
+>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
+>>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 +++++++++++++++++++++
+>>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
+>>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
+>>  include/drm/bridge/bridge_panel.h                  |  37 ++++
+>>  include/drm/drm_crtc.h                             |   2 +
+>>  8 files changed, 360 insertions(+), 5 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+>>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
+>>  create mode 100644 include/drm/bridge/bridge_panel.h
+>>
+>
