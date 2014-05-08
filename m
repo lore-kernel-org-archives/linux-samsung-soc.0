@@ -1,61 +1,44 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 2/2] phy: exynos: fix SATA phy license typo
-Date: Thu, 08 May 2014 20:46:10 +0200
-Message-ID: <1399574770.4085.7.camel@x220>
-References: <1399560433-1402630-1-git-send-email-arnd@arndb.de>
-	 <1399560433-1402630-4-git-send-email-arnd@arndb.de>
+From: Bjorn Andersson <bjorn@kryo.se>
+Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
+Date: Thu, 8 May 2014 14:55:14 -0700
+Message-ID: <CAJAp7Og6Bqnbq5b=Ki5vLaVkvSXxqsKaFaxCoqbX+fRkgouh=A@mail.gmail.com>
+References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
+	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>
+	<5363D176.80601@gmail.com>
+	<CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>
+	<53644DDB.7050503@gmail.com>
+	<CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
+	<5367D5E1.9070709@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews02.kpnxchange.com ([213.75.39.5]:62862 "EHLO
-	cpsmtpb-ews02.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753705AbaEHSqN (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:58484 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755814AbaEHVzP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 14:46:13 -0400
-In-Reply-To: <1399560433-1402630-4-git-send-email-arnd@arndb.de>
+	Thu, 8 May 2014 17:55:15 -0400
+Received: by mail-oa0-f54.google.com with SMTP id j17so3880104oag.41
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 14:55:14 -0700 (PDT)
+In-Reply-To: <5367D5E1.9070709@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Tom Rini <trini@ti.com>
+Cc: Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>
 
-On Thu, 2014-05-08 at 16:46 +0200, Arnd Bergmann wrote:
-> If the license string doesn't match exactly, the module refuses
-> to load.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> ---
->  drivers/phy/phy-exynos5250-sata.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/phy-exynos5250-sata.c b/drivers/phy/phy-exynos5250-sata.c
-> index c9361b7..0568945 100644
-> --- a/drivers/phy/phy-exynos5250-sata.c
-> +++ b/drivers/phy/phy-exynos5250-sata.c
-> @@ -246,6 +246,6 @@ static struct platform_driver exynos_sata_phy_driver = {
->  module_platform_driver(exynos_sata_phy_driver);
->  
->  MODULE_DESCRIPTION("Samsung SerDes PHY driver");
-> -MODULE_LICENSE("GPL V2");
-> +MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Girish K S <ks.giri@samsung.com>");
->  MODULE_AUTHOR("Yuvaraj C D <yuvaraj.cd@samsung.com>");
+On Mon, May 5, 2014 at 11:18 AM, Tom Rini <trini@ti.com> wrote:
+[...]
+> The problem I was raising at the ELC BoF is that today we can't just
+> stop overwriting values in the non-zero case as many boards lie about
+> their memory size, in non-zero ways, but no one noticed as they only
+> tested with U-Boot which was performing the fixup.
 
-A bit of grepping the tree showed me
-    Documentation/blackfin/gptimers-example.c:83:MODULE_LICENSE("BSD");
-    drivers/dma/dma-jz4740.c:617:MODULE_LICENSE("GPLv2");
-    drivers/input/misc/sirfsoc-onkey.c:216:MODULE_LICENSE("GPLv2");
-    drivers/pci/host/pci-mvebu.c:1042:MODULE_LICENSE("GPLv2");
-    drivers/pci/host/pci-tegra.c:1719:MODULE_LICENSE("GPLv2");
-    drivers/power/reset/restart-poweroff.c:65:MODULE_LICENSE("GPLv2");
+So, should we conclude are we stuck being bug-compatible forever?
 
-It seems these need to be changed too. But, except for dma-jz4740.c,
-these are all files that can't be built as (part of) a module. Which
-explains why no one noticed. Maybe I'll submit some trivial patches, in
-a few days, to clean this up.
+I was hoping to add this logic to the kernel by [1], but of course
+this won't fly
+based on the argument you highlighted (as was pointed out by Uwe).
 
+[1] https://lkml.org/lkml/2014/5/7/28
 
-Paul Bolle
+Regards,
+Bjorn
