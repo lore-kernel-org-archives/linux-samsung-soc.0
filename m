@@ -1,76 +1,101 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v3 2/2] Documentation: DT: Exynos: Bind SRAM though DT
-Date: Thu,  8 May 2014 09:46:32 +0530
-Message-ID: <1399522592-23618-2-git-send-email-sachin.kamat@linaro.org>
-References: <1399522592-23618-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:62308 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaEHES2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 00:18:28 -0400
-Received: by mail-pa0-f53.google.com with SMTP id kp14so2129732pab.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2014 21:18:27 -0700 (PDT)
-In-Reply-To: <1399522592-23618-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
+Date: Thu, 08 May 2014 13:33:04 +0900
+Message-ID: <536B0900.10204@samsung.com>
+References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
+ <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
+ <5369C13C.3080506@samsung.com>
+ <CAGS+omAbuzRpNDvB6eTw67Dcv3WMdWF3yz+bU5p3j5JRourOyw@mail.gmail.com>
+Reply-To: sw0312.kim@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAGS+omAbuzRpNDvB6eTw67Dcv3WMdWF3yz+bU5p3j5JRourOyw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <marcheu@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, heiko@sntech.de, arnd@arndb.de, t.figa@samsung.com, kgene.kim@samsung.com, sachin.kamat@linaro.org, robh+dt@kernel.org
 
-Add SRAM binding documentation.
-
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-No changes since v1.
----
- .../devicetree/bindings/arm/exynos/smp-sram.txt    |   38 ++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/exynos/smp-sram.txt b/Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
-new file mode 100644
-index 000000000000..c9ff2f58f9b6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
-@@ -0,0 +1,38 @@
-+Samsung Exynos SRAM for SMP bringup:
-+------------------------------------
-+
-+Samsung SMP-capable Exynos SoCs use part of the SRAM for the bringup
-+of the secondary cores. Once the core gets powered up it executes the
-+code that is residing at some specific location of the SRAM.
-+
-+Therefore reserved section sub-nodes have to be added to the mmio-sram
-+declaration. These nodes are of two types depending upon secure or
-+non-secure execution environment.
-+
-+Required sub-node properties:
-+- compatible : depending upon boot mode, should be
-+		"samsung,exynos4210-sram" : for Secure SYSRAM
-+		"samsung,exynos4210-sram-ns" : for Non-secure SYSRAM
-+
-+The rest of the properties should follow the generic mmio-sram discription
-+found in ../../misc/sram.txt
-+
-+Example:
-+
-+	sram@02020000 {
-+		compatible = "mmio-sram";
-+		reg = <0x02020000 0x54000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x02020000 0x54000>;
-+
-+		smp-sram@0 {
-+			compatible = "samsung,exynos4210-sram";
-+			reg = <0x0 0x1000>;
-+		};
-+
-+		smp-sram@53000 {
-+			compatible = "samsung,exynos4210-sram-ns";
-+			reg = <0x53000 0x1000>;
-+		};
-+	};
--- 
-1.7.9.5
+SGVsbG8gRGFuaWVsLAoKT24gMjAxNOuFhCAwNeyblCAwN+ydvCAyMzoxNCwgRGFuaWVsIEt1cnR6
+IHdyb3RlOgo+IE9uIFdlZCwgTWF5IDcsIDIwMTQgYXQgMToxNCBQTSwgU2V1bmctV29vIEtpbSA8
+c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+IEhpIERhbmllbCwKPj4KPj4gT24gMjAx
+NOuFhCAwNeyblCAwNeydvCAwMDoyNiwgRGFuaWVsIEt1cnR6IHdyb3RlOgo+Pj4gTWl4ZXIgaGFy
+ZHdhcmUgc3VwcG9ydHMgb2Zmc2V0dGluZyBkbWEgZnJvbSBzdGFydCBvZiBzb3VyY2UgYnVmZmVy
+IHVzaW5nCj4+PiB0aGUgTVhSX0dSUF9TWFkgcmVnaXN0ZXIuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1i
+eTogRGFuaWVsIEt1cnR6IDxkamt1cnR6QGNocm9taXVtLm9yZz4KPj4+IC0tLQo+Pj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCA4ICsrKy0tLS0tCj4+PiAgMSBmaWxl
+IGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPj4+Cj4+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+IGluZGV4IDQ3NWViNDkuLjQwY2YzOWIgMTAw
+NjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+PiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+PiBAQCAtNTI5LDEz
+ICs1MjksMTEgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9j
+b250ZXh0ICpjdHgsIGludCB3aW4pCj4+Pgo+Pj4gICAgICAgZHN0X3hfb2Zmc2V0ID0gd2luX2Rh
+dGEtPmNydGNfeDsKPj4+ICAgICAgIGRzdF95X29mZnNldCA9IHdpbl9kYXRhLT5jcnRjX3k7Cj4+
+PiArICAgICBzcmNfeF9vZmZzZXQgPSB3aW5fZGF0YS0+ZmJfeDsKPj4+ICsgICAgIHNyY195X29m
+ZnNldCA9IHdpbl9kYXRhLT5mYl95Owo+Pj4KPj4+ICAgICAgIC8qIGNvbnZlcnRpbmcgZG1hIGFk
+ZHJlc3MgYmFzZSBhbmQgc291cmNlIG9mZnNldCAqLwo+Pj4gLSAgICAgZG1hX2FkZHIgPSB3aW5f
+ZGF0YS0+ZG1hX2FkZHIKPj4+IC0gICAgICAgICAgICAgKyAod2luX2RhdGEtPmZiX3ggKiB3aW5f
+ZGF0YS0+YnBwID4+IDMpCj4+PiAtICAgICAgICAgICAgICsgKHdpbl9kYXRhLT5mYl95ICogd2lu
+X2RhdGEtPmZiX3dpZHRoICogd2luX2RhdGEtPmJwcCA+PiAzKTsKPj4+IC0gICAgIHNyY194X29m
+ZnNldCA9IDA7Cj4+PiAtICAgICBzcmNfeV9vZmZzZXQgPSAwOwo+Pj4gKyAgICAgZG1hX2FkZHIg
+PSB3aW5fZGF0YS0+ZG1hX2FkZHI7Cj4+Cj4+IEJhc2ljYWxseSwgeW91IGFyZSByaWdodCBhbmQg
+c291cmNlIG9mZnNldCByZWdpc3RlciBjYW4gYmUgdXNlZC4gQnV0Cj4+IGJlY2F1c2Ugb2YgbGlt
+aXRhdGlvbiBvZiByZXNvbHV0aW9uIGZvciBtaXhlciB1cCB0byAxOTIweDEwODAsIEkKPj4gY29u
+c2lkZXJlZCBtb2RpZmllZCBzb3J1Y2UgZG1hIGFkZHJlc3MgdG8gc2V0IG9uZSBmcmFtZSBidWZm
+ZXIsIHdoaWNoIGlzCj4+IGJpZ2dlciB0aGFuIDE5MjB4MTA4MCwgb24gdG8gYm90aCBmaW1kIGFu
+ZCBoZG1pLgo+IAo+IEhpIFNldW5nLVdvbywKPiAKPiBJIGRvIG5vdCBzZWUgd2h5IHRoZSBtYXhp
+bXVtIE1JWEVSIHJlc29sdXRpb24gbWF0dGVycyBmb3IgY2hvb3NpbmcKPiBiZXR3ZWVuIG9mZnNl
+dHRpbmcgQkFTRSBvciB1c2luZyBTWFkuCj4gCj4gTGV0J3Mgc2F5IHlvdSBoYXZlIG9uZSBiaWcg
+MTkyMHgxOTA4IGZyYW1lYnVmZmVyLCB3aXRoIGEgc3BhbiBvZiAxOTIwLAo+IHN0YXJ0aW5nIGF0
+IGRtYV9hZGRyICh0aGVyZSBpcyBubyBleHRyYSBwYWRkaW5nIGF0IHRoZSBlbmQgb2YgdGhlCj4g
+bGluZSkuCj4gTGV0J3Mgc2F5IHlvdSB3YW50ZWQgdGhlIG1peGVyIHRvIHNjYW4gb3V0IDE5MjB4
+MTA4MCBwaXhlbHMgc3RhcnRpbmcKPiBmcm9tICgwLCA4MDApIGluIHRoZSBmcmFtZWJ1ZmZlciwg
+YW5kIHN0YXJ0IGRyYXdpbmcgdGhlbSBhdCAoMCwwKSBvbgo+IHRoZSBzY3JlZW4uCj4gCj4gV2hh
+dCB3ZSBjdXJyZW50bHkgZG8gaXM6Cj4gICBCQVNFID0gZG1hX2FkZHIgKyAoODAwICogMTA4MCAq
+IDQpCj4gICBTUEFOID0gMTkyMAo+ICAgU1hZID0gU1goMCkgfCBTWSgwKQo+ICAgV0ggPSBXKDE5
+MjApIHwgSCgxMDgwKQo+ICAgRFhZID0gRFgoMCkgfCBEWSgwKQo+IAo+IEkgYW0gcHJvcG9zaW5n
+IHdlIGRvOgo+ICAgQkFTRSA9IGRtYV9hZGRyCj4gICBTUEFOID0gMTkyMAo+ICAgU1hZID0gU1go
+MCkgfCBTWSg4MDApCj4gICBXSCA9IFcoMTkyMCkgfCBIKDEwODApCj4gICBEWFkgPSBEWCgwKSB8
+IERZKDApCj4gCj4gSW4gYm90aCBjYXNlcywgdGhlIG1peGVyIHJlc29sdXRpb24gaXMgMTkyMHgx
+MDgwLgoKSW4gbXkgdGVzdCB0byBzaG93IGVhY2ggaGFsZiBvZiBiaWcgb25lIGZyYW1lYnVmZmVy
+ICgzODQwIHggMTA4MCkgdG8KRklNRCBmcm9tIDAgdG8gMTA3OSBhbmQgTUlYRVIgZnJvbSAxMDgw
+IHRvIDM4Mzkgd2l0aCBleHlub3M0MjEwIGFuZApleHlub3M0NDEyLCBpdCB3YXMgZmFpbGVkIHRv
+IHNob3cgcHJvcGVyIGhkbWkgZGlzcGxheS4gQWxzbyBpdCBpcyBzYW1lCmZvciBmcmFtZWJ1ZmZl
+ciAoMTkyMCB4IDIxNjApLiBBRkFJSywgaXQgaXMgbWFpbmx5IGJlY2F1c2UgbWl4ZXIgZG1hIGhh
+cwpsaW1pdGF0aW9uIG9mIGRtYSBtZW1vcnkgc2l6ZS4KCkluIHRoaXMgY2FzZSwgSSBzZXQgcmVn
+aXN0ZXIgYXMgbGlrZToKICBCQVNFID0gZG1hX2FkZHIgLyogMzg0MCB4IDEwODAgeCA0ICovCiAg
+U1BBTiA9IDM4NDAKICBTWFkgPSBTWCgxOTIwKSB8IFNZKDApCiAgV0ggPSBXKDE5MjApIHwgSCgx
+MDgwKQogIERYWSA9IERYKDApIHwgRFkoMCkKb3I6CiAgQkFTRSA9IGRtYV9hZGRyIC8qIDE5MjAg
+eCAyMTYwIHggNCAqLwogIFNQQU4gPSAxOTIwCiAgU1hZID0gU1goMCkgfCBTWSgxMDgwKQogIFdI
+ID0gVygxOTIwKSB8IEgoMTA4MCkKICBEWFkgPSBEWCgwKSB8IERZKDApCmJ1dCB0aGVzZSB0d28g
+c2V0dGluZyBkaWQgbm90IHNob3cgaGRtaSBkaXNwbGF5IGFzIEkgZXhwZWN0ZWQuIFNvIEkgdXNl
+ZAptb2RpZmllZCBkbWEgYWRkcmVzcy4KCj4gCj4gTXkgbW90aXZhdGlvbiBmb3Igd2FudGluZyB0
+byBwcm9ncmFtIGFuIHVuLW1vZGlmaWVkIGRtYV9hZGRyIGludG8gQkFTRQo+IGlzIHNvIHdlIGNh
+biB0aGVuIGp1c3QgY2hlY2sgQkFTRV9TIHRvIGRldGVybWluZSBmcm9tIHdoaWNoIGJ1ZmZlciB0
+aGUKPiBtaXhlciBpcyBhY3RpdmVseSBiZWluZyBzY2FubmVkIG91dCB3aXRob3V0IHdvcnJ5aW5n
+IGFib3V0IHRoZSBzb3VyY2UKPiBvZmZzZXQsIHNpbmNlIHRoZSBzb3VyY2Ugb2Zmc2V0IGNhbiBj
+aGFuZ2UgZm9yIGEgZ2l2ZW4gZnJhbWVidWZmZXIKPiAoZm9yIGV4YW1wbGUsIHdoZW4gZG9pbmcg
+cGFubmluZywgb3IgaWYgYW4gb3ZlcmxheSBpcyB1c2VkIGZvciBhIEhXCj4gY3Vyc29yKS4KCkFj
+dHVhbGx5LCB0aGlzIHBhdGNoIGlzIGV4YWN0bHkgc2FtZSB3aXRoIG15IGZpcnN0IGltcGxlbWVu
+dGF0aW9uLCBzbyBJCmNvbXBsZXRlbHkgdW5kZXJzdGFuZCB5b3VyIG1vdGl2YXRpb24uIEFueXdh
+eSwgSSB3YXMgZm9jdXMgb24gZXh0ZW5kZWQKZGlzcGxheXMgd2l0aCBvbmUgYnVmZmVyLCBzbyBJ
+IHdyb3RlIG1vZGlmaWVkIGRtYSBiYXNlIGFkZHJlc3MuCgpUaGFua3MgYW5kIFJlZ2FyZHMsCi0g
+U2V1bmctV29vIEtpbQoKPiAKPiBCZXN0IFJlZ2FyZHMsCj4gLURhbmllbAo+IAo+Pgo+PiBSZWdh
+cmRzLAo+PiAtIFNldW5nLVdvbyBLaW0KPj4KPj4+Cj4+PiAgICAgICBpZiAod2luX2RhdGEtPnNj
+YW5fZmxhZ3MgJiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkKPj4+ICAgICAgICAgICAgICAgY3R4
+LT5pbnRlcmxhY2UgPSB0cnVlOwo+Pj4KPj4KPj4gLS0KPj4gU2V1bmctV29vIEtpbQo+PiBTYW1z
+dW5nIFNvZnR3YXJlIFImRCBDZW50ZXIKPj4gLS0KPj4KPiAKCi0tIApTZXVuZy1Xb28gS2ltClNh
+bXN1bmcgU29mdHdhcmUgUiZEIENlbnRlcgotLQoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
