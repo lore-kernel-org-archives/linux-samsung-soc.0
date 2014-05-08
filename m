@@ -1,83 +1,86 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH V3 3/3] CLK: EXYNOS: Add clk save/restore registers for 5420
-Date: Thu, 08 May 2014 16:23:11 +0530
-Message-ID: <1399546391-30571-1-git-send-email-vikas.sajjan@samsung.com>
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v5 00/15] exynos5420: clock file cleanup
+Date: Thu, 08 May 2014 16:57:49 +0530
+Message-ID: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46940 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753015AbaEHKyT (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:16419 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753208AbaEHL3H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 06:54:19 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5900IKJ4YI5M90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 19:54:18 +0900 (KST)
+	Thu, 8 May 2014 07:29:07 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, Vikas Sajjan <vikas.sajjan@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Adds clk save/restore registers for 5420
+Many changes/fixes have been identified for clock file for exynos5420.
+These include correct parents, bit fields, new clocks etc. Existing
+files needs some correction in terms of names of the clock and
+indentation. These issues are addressed in this patch series.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+This patch series is rebased on,
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git:3.15-rc4
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 60b2681..01fd917 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -101,6 +101,18 @@
- #define KPLL_CON0		0x28100
- #define SRC_KFC			0x28200
- #define DIV_KFC0		0x28500
-+#define SRC_MASK_CPERI		0x04300
-+#define SRC_MASK_TOP0		0x10300
-+#define SRC_MASK_TOP1		0x10304
-+#define SRC_MASK_TOP2		0x10308
-+#define SRC_MASK_TOP7		0x1031C
-+#define SRC_MASK_MAU		0x10334
-+#define SRC_MASK_FSYS		0x10340
-+#define SRC_MASK_PERIC0		0x10350
-+#define SRC_MASK_PERIC1		0x10354
-+#define SRC_MASK_ISP		0x10370
-+#define GATE_BUS_DISP1		0x10728
-+#define GATE_IP_PERIC		0x10950
- 
- /* list of PLLs */
- enum exynos5420_plls {
-@@ -180,11 +192,29 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
- 	DIV_KFC0,
- };
- 
-+static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
-+	{ .offset = SRC_MASK_CPERI,		.value = 0xffffffff, },
-+	{ .offset = SRC_MASK_TOP0,		.value = 0x11111111, },
-+	{ .offset = SRC_MASK_TOP1,		.value = 0x11101111, },
-+	{ .offset = SRC_MASK_TOP2,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_TOP7,		.value = 0x00111100, },
-+	{ .offset = SRC_MASK_DISP10,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_MAU,		.value = 0x10000000, },
-+	{ .offset = SRC_MASK_FSYS,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
-+	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
-+	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
-+};
-+
- static int exynos5420_clk_suspend(void)
- {
- 	samsung_clk_save(reg_base, exynos5420_save,
- 				ARRAY_SIZE(exynos5420_clk_regs));
- 
-+	samsung_clk_restore(reg_base, exynos5420_set_clksrc,
-+				ARRAY_SIZE(exynos5420_set_clksrc));
- 	return 0;
- }
- 
+This patch is also dependent on the following patch.
+clk: exynos5420: Add clock IDs needed by GPU
+    -- http://www.spinics.net/lists/arm-kernel/msg326461.html
+
+This patch series is tested on Exynos5420 based peach-pit board.
+    -- [PATCH v4 0/2] Add peach-pit board support
+
+Clock Summary before and after applying this patch series:
+----------------------------------------------------------
+http://slexy.org/view/s2KMWxI3wv
+
+As per Tomasz Figa's sugession, one more patch will be sent on
+top of this patch series to remove the unnecessary clocks
+related to GATE_BUS_* offsets.
+
+Changes since v4:
+-----------------
+Addressed review comments from Tomasz Figa related to
+CLK_SET_RATE_PARENT and CLK_IGNORE_UNUSED.
+
+Changes since v3:
+-----------------
+Addressed review comments from Tomasz Figa and Alim Akhtar
+Some of the changes includes,
+1] Adding clock IDs for all the added gate clocks.
+2] Followed bit ordering while defining new clocks.
+3] Adding SET_RATE_PARENT flag for all the clocks having
+   dividers as parents.
+
+Changes since v2:
+-----------------
+1] Addressed review comments from Gerhard Sittig and Tomasz Figa.
+
+Changes since v1:
+-----------------
+1] Addressed review comments from Tomasz Figa.
+    http://www.spinics.net/lists/devicetree/msg16759.html
+    http://www.spinics.net/lists/devicetree/msg16760.html
+
+Shaik Ameer Basha (15):
+  clk: exynos5420: Rename mux parent arrays
+  clk: exynos5420: add clocks for ISP block
+  clk: exynos5420: update clocks for GSCL and MSCL blocks
+  clk: exynos5420: fix parent clocks for mscl sysmmu
+  clk: exynos5420: update clocks for G2D and G3D blocks
+  clk: exynos5420: update clocks for DISP1 block
+  clk: exynos5420: update clocks for PERIC block
+  clk: exynos5420: update clocks for PERIS and GEN blocks
+  clk: exynos5420: update clocks for WCORE block
+  clk: exynos5420: update clocks for FSYS and FSYS2 blocks
+  clk: exynos5420: correct sysmmu-mfc parent clocks
+  clk: exynos5420: fix register offset for sclk_bpll
+  clk: exynos5420: update clocks for MAU Block
+  clk: exynos5420: add misc clocks
+  clk: exynos5420: add more registers to restore list
+
+ arch/arm/boot/dts/exynos5420.dtsi      |   14 +-
+ drivers/clk/samsung/clk-exynos5420.c   |  853 ++++++++++++++++++++------------
+ include/dt-bindings/clock/exynos5420.h |   37 +-
+ 3 files changed, 576 insertions(+), 328 deletions(-)
+
 -- 
 1.7.9.5
