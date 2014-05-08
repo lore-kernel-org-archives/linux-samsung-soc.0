@@ -1,136 +1,108 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
-Date: Thu, 08 May 2014 20:57:43 +0900
-Message-ID: <536B7137.70503@samsung.com>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
- <536B26FC.507@samsung.com> <536B35E4.10705@samsung.com>
- <CAEC9eQNAactYm=E7XU7FqM8R7wKF=1WuTXFwg8AzWJSNj+W1Xg@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V3 2/3] ARM: EXYNOS5: Add Suspend-to-RAM support for 5420
+Date: Thu, 08 May 2014 14:24:39 +0200
+Message-ID: <8537431.uXYiuaPHBe@amdc1032>
+References: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAEC9eQNAactYm=E7XU7FqM8R7wKF=1WuTXFwg8AzWJSNj+W1Xg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, airlied@redhat.com, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:23093 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753343AbaEHMYw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 May 2014 08:24:52 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5900J3N95FD900@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 21:24:51 +0900 (KST)
+In-reply-to: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-T24gMjAxNOuFhCAwNeyblCAwOOydvCAxOTo1MiwgQWpheSBrdW1hciB3cm90ZToKPiArRGF2ZQo+
-ICtUaGllcnJ5Cj4gCj4gT24gVGh1LCBNYXkgOCwgMjAxNCBhdCAxOjE0IFBNLCBJbmtpIERhZSA8
-aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+Pgo+PiBKdXN0IHJlLXNlbmRpbmcgd2l0aCB0
-ZXh0IG1vZGUuIFNvcnJ5IGZvciB0aGlzLgo+Pgo+Pgo+PiBPbiAyMDE064WEIDA17JuUIDA47J28
-IDE1OjQxLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4gT24gMDUvMDUvMjAxNCAwOTo1MiBQTSwg
-QWpheSBLdW1hciB3cm90ZToKPj4+PiBUaGlzIHBhdGNoc2V0IGlzIGJhc2VkIG9uIGV4eW5vcy1k
-cm0tbmV4dC10b2RvIGJyYW5jaCBvZiBJbmtpIERhZSdzIHRyZWUgYXQ6Cj4+Pj4gZ2l0Oi8vZ2l0
-Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcy5n
-aXQKPj4+Pgo+Pj4+IEkgaGF2ZSBqdXN0IHB1dCB1cCBSb2IncyBhbmQgU2VhbidzIGlkZWEgb2Yg
-Y2hhaW5pbmcgdXAgdGhlIGJyaWRnZXMKPj4+PiBpbiBjb2RlLCBhbmQgaGF2ZSBpbXBsZW1lbnRl
-ZCBiYXNpYyBwYW5lbCBjb250cm9scyBhcyBhIGNoYWluZWQgYnJpZGdlLgo+Pj4+IFRoaXMgd29y
-a3Mgd2VsbCB3aXRoIHB0bjM0NjAgYnJpZGdlIGNoaXAgb24gZXh5bm9zNTI1MC1zbm93IGJvYXJk
-Lgo+Pj4+Cj4+Pj4gU3RpbGwgbmVlZCB0byBtYWtlIHVzZSBvZiBzdGFuZGFyZCBsaXN0IGNhbGxz
-IGFuZCBmaWd1cmUgb3V0IHByb3BlciB3YXkKPj4+PiBvZiBkZWxldGluZyB0aGUgYnJpZGdlIGNo
-YWluLiBTbywgdGhpcyBpcyBqdXN0IGEgcm91Z2ggdmVyc2lvbi4KPj4+Cj4+PiBBcyBJIHVuZGVy
-c3RhbmQgdGhpcyBwYXRjaHNldCB0cmllcyB0byBzb2x2ZSB0d28gdGhpbmdzOgo+Pj4gMS4gSW1w
-bGVtZW50IHBhbmVsIGFzIGRybV9icmlkZ2UsIHRvIGVhc2Ugc3VwcG9ydCBmb3IgaGFyZHdhcmUg
-Y2hhaW5zOgo+Pj4gQ3J0YyAtPiBFbmNvZGVyIC0+IEJyaWRnZSAtPiBQYW5lbAo+Pj4gMi4gQWRk
-IHN1cHBvcnQgdG8gZHJtX2JyaWRnZSBjaGFpbmluZywgdG8gYWxsb3cgc29mdHdhcmUgY2hhaW5z
-Ogo+Pj4gZHJtX2NydGMgLT4gZHJtX2VuY29kZXIgLT4gZHJtX2JyaWRnZSAtPiBkcm1fYnJpZGdl
-LHBhbmVsCj4+Pgo+Pj4gSXQgaXMgZG9uZSB1c2luZyBSdXNzaWFuIGRvbGwgc2NoZW1hLCBvcHMg
-ZnJvbSB0aGUgYnJpZGdlIGNhbGxzIHRoZSBzYW1lCj4+PiBvcHMgZnJvbSB0aGUgbmV4dCBicmlk
-Z2UgYW5kIHRoZSBuZXh0IGJyaWRnZSBvcHMgY2FuIGRvIHRoZSBzYW1lLgo+Pj4KPj4+IFRoaXMg
-c2NoZW1hIG1lYW5zIHRoYXQgYWxsIHRoZSBicmlkZ2VzIGluY2x1ZGluZyB0aGUgbGFzdCBvbmUg
-YXJlIHNlZW4KPj4+IGZyb20gdGhlIGRybSBjb3JlIHBvaW50IG9mIHZpZXcgYXMgYSBvbmUgYmln
-IGRybV9icmlkZ2UuIEFkZGl0aW9uYWxseSBpbgo+Pj4gdGhpcyBwYXJ0aWN1bGFyIGNhc2UsIHRo
-ZSBmaXJzdCBicmlkZ2UgKHB0bjM0NjApIGltcGxlbWVudHMgY29ubmVjdG9yCj4+PiBzbyBpdCBp
-cyBoYXJkIHRvIGd1ZXNzIHdoYXQgaXMgdGhlIGxvY2F0aW9uIG9mIHRoZSAybmQgYnJpZGdlIGlu
-IHZpZGVvCj4+PiBzdHJlYW0gY2hhaW4sIHNvbWV0aW1lcyBpdCBpcyBhZnRlciB0aGUgY29ubmVj
-dG9yLCBzb21ldGltZXMgYmVmb3JlLgo+Pj4gQWxsIHRoaXMgaXMgcXVpdGUgY29uZnVzaW5nLgo+
-Pj4KPj4+IEJ1dCBpZiB5b3UgbG9vayBhdCB0aGUgYnJpZGdlIGZyb20gdXBzdHJlYW0gdmlkZW8g
-aW50ZXJmYWNlIHBvaW50IG9mCj4+PiB2aWV3IGl0IGlzIGp1c3QgYSBwYW5lbCwgZWRwIHBhbmVs
-IGluIGNhc2Ugb2YgcHRuMzQ2MCwgaWUgcHRuMzQ2MCBvbiBpdHMKPj4+IHZpZGVvIGlucHV0IHNp
-ZGUgYWN0cyBhcyBhIHBhbmVsLiBPbiB0aGUgb3V0cHV0IHNpZGUgaXQgZXhwZWN0cyBhIHBhbmVs
-LAo+Pj4gbHZkcyBwYW5lbCBpbiB0aGlzIGNhc2UuCj4+Pgo+Pj4gU28gd2h5IG5vdCBpbXBsZW1l
-bnQgcHRuMzQ2MCBicmlkZ2UgYXMgZHJtX3BhbmVsIHdoaWNoIGludGVybmFsbHkgdXNlcwo+Pj4g
-YW5vdGhlciBkcm1fcGFuZWwuIFdpdGggdGhpcyBhcHByb2FjaCBldmVyeXRoaW5nIGZpdHMgbXVj
-aCBiZXR0ZXIuCj4+PiBZb3UgZG8gbm90IG5lZWQgdGhvc2UgKHByZXxwb3N0KV8oZW5hYmxlfGRp
-c2FibGUpIGNhbGxzLCB5b3UgZG8gbm90IG5lZWQKPj4+IHRvIGltcGxlbWVudCBjb25uZWN0b3Ig
-aW4gdGhlIGJyaWRnZSBhbmQgeW91IGhhdmUgYSBkcml2ZXIgZm9sbG93aW5nCj4+PiBsaW51eCBk
-cml2ZXIgbW9kZWwuIEFuZCBubyBzaW5nbGUgYml0IGNoYW5nZWQgaW4gZHJtIGNvcmUuCj4+Pgo+
-Pj4gSSBoYXZlIGltcGxlbWVudGVkIHRoaXMgd2F5IERTSS9MVkRTIGJyaWRnZSwgaXQgd2FzIHNl
-bnQgYXMgUkZDIFsxXVsyXS4KPj4+IEl0IHdhcyBub3QgYWNjZXB0ZWQgYXMgSW5raSBwcmVmZXJy
-ZWQgZHJtX2JyaWRnZSBidXQgYXMgSSBzZWUgdGhlCj4+Cj4+IFllcywgaW4gYWJvdmUgZW1haWwg
-dGhyZWFkcywgSSBkaXNhZ3JlZWQgdG8gdXNpbmcgZHJtX3BhbmVsIGZyYW1ld29yawo+PiBmb3Ig
-YnJpZGdlIGRldmljZSwgZXNwZWNpYWxseSwgdG8gaW1wbGVtZW50IGNvbm5lY3Rvci9lbmNvZGVy
-IHRvIGNydGMKPj4gZHJpdmVyLgo+Pgo+PiBIb3dldmVyLCBJIHRob3VnaHQgdGhhdCBpdCdkIGJl
-IG1vcmUgZ2VuZXJpYyB3YXkgdGhhdCBsdmRzIGRyaXZlcnMgdXNlCj4+IGRyaXZlci1tb2RlbCwg
-YW5kIHRoZSB1c2Ugb2YgZHJtX3BhbmVsIGluZnJhc3RydWN0dXJlIHdvdWxkIGJlIHN1aXRhYmxl
-Cj4+IHRvIGRvaW5nIHRoaXMuCj4+Cj4+IFNvIG15IGludGVudGlvbiBpbiB0dXJuLCB3YXMgdGhh
-dCBMVkRTIGRyaXZlciB1c2VzIGludGVncmF0ZWQgZHJtX2JyaWRnZQo+PiBiYXNlZCBvbiBkcm1f
-cGFuZWwgaW5mcmFzdHJ1Y3R1cmVbMV0sIGFuZCBSRkMgcGF0Y2hbMl0gZm9yIGl0LiBUaGlzIHdh
-eQo+PiBpcyBzYW1lIGFzIHlvdXIgcHJvcG9zYWwgaW4gdGhlIHBvaW50IHRoYXQgTFZEUyBhbmQg
-UGFuZWwgZHJpdmVycyB1c2UKPj4gZHJpdmVyLW1vZGVsLiBUaGUgb25seSBkaWZmZXJlbnQgcG9p
-bnQgaXMgdGhhdCBMVkRTIGRyaXZlciBoYXMgc29tZSBvcHMKPj4gc3BlY2lmaWMgdG8gTFZEUyBk
-ZXZpY2UsIG5vdCB1c2luZyBleGlzdGluZyBvcHMgb2YgZHJtX3BhbmVsIGNvbW1vbmx5Ogo+PiB3
-ZSBtYXkgbmVlZCB0byBjb25zaWRlciB0aGUgY2hhcmFjdGVyaXN0aWMgb2YgTFZEUyBkZXZpY2Uu
-Cj4+Cj4+IFsxXTpodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2RyaS1kZXZlbC9tc2c1NTU1
-NS5odG1sCj4+IFsyXTpodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2RyaS1kZXZlbC9tc2c1
-NTY1OC5odG1sCj4+Cj4+IFRoYW5rcywKPj4gSW5raSBEYWUKPiBJIGFtIGp1c3QgY29uc29saWRh
-dGluZyB0aGUgZGlzY3Vzc2lvbiBoYXBwZW5pbmcgaGVyZS4KPiAxKSBUaGlzIHBhdGNoc2V0IHN0
-YXJ0ZWQgZnJvbSBhIGRpc2N1c3Npb24gd2hlcmVpbiBJIHRyaWVkIHRvIGNvbWJpbmUKPiBkcm1f
-cGFuZWwgd2l0aCBkcm1fYnJpZGdlLgo+ICAgICBodHRwczovL3d3dy5tYWlsLWFyY2hpdmUuY29t
-L2xpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZy9tc2cyODk0My5odG1sCj4gMikgU2Vh
-biBhbmQgUm9iIHN1Z2dlc3RlZCB0byBpbXBsZW1lbnQgYSBjaGFpbiBvZiBicmlkZ2VzIGFuZCB0
-aGVuCj4gY29uc2lkZXIgYWRkaW5nCj4gICAgIGJhc2ljIHBhbmVsIGNvbnRyb2xzIGFzIGEgYnJp
-ZGdlLgo+IDMpIEFuZHJlaidzIGlkZWEgaXMgdG8gZHJvcCB0aGUgZXhpc3RpbmcgYnJpZGdlIGlu
-ZnJhc3RydWN0dXJlIGFuZAo+IGltcGxlbWVudCBwdG4zNDYwIHVzaW5nIGRybV9wYW5lbCwKPiAg
-ICAgdGhlIHNhbWUgd2F5IGhlIGhhcyBpbXBsZW1lbnRlZAo+IGh0dHA6Ly9wZXJtYWxpbmsuZ21h
-bmUub3JnL2dtYW5lLmxpbnV4LmRyaXZlcnMuZGV2aWNldHJlZS82MTU1OS4KPiA0KSBJbmtpJ3Mg
-c3VnZ2VzdGlvbiBpcyB0byBjb21iaW5lIGRybV9icmlkZ2UsIGRybV9wYW5lbCBhbmQKPiBkcm1f
-ZW5oYW5jZSBpbnRvIGEgc2luZ2xlCj4gICAgIGRybV9od19ibG9jay4KPiAKCkFuZCBtb3JlIHRo
-aW5nLCB3ZSB3b3VsZCBuZWVkIHRvIGNvbnNpZGVyIGltYWdlIGVuaGFuY2VyIGRldmljZSBwbGFj
-ZWQKYmV0d2VlbiBjcnRjIGFuZCBjb25uZWN0b3IvZW5jb2RlciBkZXZpY2VzLiBBbmQgaXQnZCBi
-ZXR0ZXIgdG8gcmVuYW1lCmRybV9od19ibG9jayB0byBkcm1fYnJpZGdlLCBhbmQgZXhpc3Rpbmcg
-ZHJtX2JyaWRnZSByZWxldmFudCBjb2RlcwpzaG91bGQgYmUgcmVtb3ZlZC4KClRoYW5rcywKSW5r
-aSBEYWUKCj4gSSBhbSBjdXJyZW50bHkgdHJ5aW5nIHRvIGltcGxlbWVudCAoMik6Y2hhaW5pbmcg
-b2YgYnJpZGdlcywgYW5kIEkKPiB0aGluayB3ZSBoYXZlIG5vdCB5ZXQKPiByZWFjaGVkIHRvIGEg
-Y29uc2Vuc3VzLiBTbyBhZGRpbmcgZmV3IG90aGVyIHBlb3BsZSBmcm9tIGRybSBjb21tdW5pdHkK
-PiB0byBjb21tZW50Lgo+IAo+IFJlZ2FyZHMsCj4gQWpheQo+IAo+Pj4gcHJvYmxlbXMgd2l0aCBk
-cm1fYnJpZGdlcyBJIGhhdmUgZGVjaWRlIHRvIGF0dHJhY3QgYXR0ZW50aW9uIHRvIG11Y2gKPj4+
-IG1vcmUgY2xlYW5lciBzb2x1dGlvbi4KPj4+Cj4+PiBbMV06IGh0dHA6Ly9wZXJtYWxpbmsuZ21h
-bmUub3JnL2dtYW5lLmxpbnV4LmRyaXZlcnMuZGV2aWNldHJlZS82MTU1OQo+Pj4gWzJdOiBodHRw
-Oi8vcGVybWFsaW5rLmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuc2Ftc3VuZy1zb2MvMjcw
-NDQKPj4+Cj4+PiBSZWdhcmRzCj4+PiBBbmRyemVqCj4+Pgo+Pj4KPj4+Pgo+Pj4+IEFqYXkgS3Vt
-YXIgKDMpOgo+Pj4+ICAgW1JGQyBWMiAxLzNdIGRybTogaW1wbGVtZW50IGNoYWluaW5nIG9mIGRy
-bSBicmlkZ2VzCj4+Pj4gICBbUkZDIFYyIDIvM10gZHJtL2JyaWRnZTogYWRkIGEgZHVtbXkgcGFu
-ZWwgZHJpdmVyIHRvIHN1cHBvcnQgbHZkcyBicmlkZ2VzCj4+Pj4gICBbUkZDIFYyIDMvM10gZHJt
-L2JyaWRnZTogcHRuMzQ2MDogc3VwcG9ydCBicmlkZ2UgY2hhaW5pbmcKPj4+Pgo+Pj4+ICAuLi4v
-YmluZGluZ3MvZHJtL2JyaWRnZS9icmlkZ2VfcGFuZWwudHh0ICAgICAgICAgICB8ICA0NSArKysr
-Cj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAg
-IHwgICA2ICsKPj4+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9NYWtlZmlsZSAgICAgICAgICAg
-ICAgICAgICAgfCAgIDEgKwo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2JyaWRnZV9wYW5l
-bC5jICAgICAgICAgICAgICB8IDI0MCArKysrKysrKysrKysrKysrKysrKysKPj4+PiAgZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAgICAgICAgICAgfCAgMjEgKy0KPj4+
-PiAgZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmMgICAgICAgICAgICAgICAgICAgICAgICAgfCAg
-MTMgKy0KPj4+PiAgaW5jbHVkZS9kcm0vYnJpZGdlL2JyaWRnZV9wYW5lbC5oICAgICAgICAgICAg
-ICAgICAgfCAgMzcgKysrKwo+Pj4+ICBpbmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8ICAgMiArCj4+Pj4gIDggZmlsZXMgY2hhbmdlZCwgMzYwIGluc2Vy
-dGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCj4+Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZHJtL2JyaWRnZS9icmlkZ2VfcGFuZWwudHh0Cj4+
-Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2JyaWRnZV9wYW5l
-bC5jCj4+Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2RybS9icmlkZ2UvYnJpZGdlX3Bh
-bmVsLmgKPj4+Pgo+Pj4KPj4+IC0tCj4+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
-c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4+PiB0aGUg
-Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+Pj4gTW9yZSBt
-YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
-dG1sCj4+Pgo+Pgo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+
+Hi,
+
+On Thursday, May 08, 2014 04:22:48 PM Vikas Sajjan wrote:
+> Adds Suspend-to-RAM support for EXYNOS5420
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c       |  163 ++++++++++++++++++++++++++++++++++-----
+>  arch/arm/mach-exynos/regs-pmu.h |    2 +
+>  2 files changed, 146 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index a7a1b7f..87ccac7 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+
+[...]
+
+> @@ -280,33 +352,80 @@ static int exynos_pm_central_resume(void)
+>  
+>  static void exynos_pm_resume(void)
+>  {
+> +	unsigned int tmp;
+> +	if (soc_is_exynos5420()) {
+> +		/* Restore the IRAM register cpu state */
+> +		s3c_pm_do_restore(exynos5420_cpustate_save,
+> +			ARRAY_SIZE(exynos5420_cpustate_save));
+> +
+> +		regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION,
+> +				EXYNOS5420_USE_STANDBY_WFI_ALL);
+> +	}
+> +
+>  	if (exynos_pm_central_resume())
+>  		goto early_wakeup;
+>  
+> -	if (!soc_is_exynos5250())
+> +	if (!(soc_is_exynos5250() || soc_is_exynos5420()))
+>  		exynos_cpu_restore_register();
+>  
+>  	/* For release retention */
+>  
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_MAUDIO_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_GPIO_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_UART_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_MMCA_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_MMCB_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_EBIA_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_EBIB_OPTION, (1 << 28));
+> +	if (soc_is_exynos5250()) {
+
+Adding a check here for EXYNOS5250 doesn't look correct (the old code
+behavior for older EXYNOS SoCs should be preserved).
+
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_MAUDIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_GPIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_UART_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_MMCA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_MMCB_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_EBIA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_EBIB_OPTION, (1 << 28));
+> +	} else if (soc_is_exynos5420()) {
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_DRAM_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_MAUDIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_JTAG_OPTION,  (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_GPIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_UART_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCB_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCC_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_HSI_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_EBIA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_EBIB_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_SPI_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION, (1 << 28));
+> +	}
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
