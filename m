@@ -1,113 +1,58 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
-Date: Thu, 8 May 2014 17:21:22 +0800
-Message-ID: <CAGS+omB8iO2ioLcQEtxsww9kA4Yc8-8YaAkWwTy2ssLOqQvLZg@mail.gmail.com>
-References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
- <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
- <5369C13C.3080506@samsung.com>
- <CAGS+omAbuzRpNDvB6eTw67Dcv3WMdWF3yz+bU5p3j5JRourOyw@mail.gmail.com>
- <536B0900.10204@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 2/5] ARM: dts: enable fimd for exynos5250 based snow board
+Date: Thu, 8 May 2014 14:57:01 +0530
+Message-ID: <CAK9yfHxC9-y57PyJHj1W7ys8RMA8fVcWM4UT2AOfMHt3KmSbMw@mail.gmail.com>
+References: <1399529995-8656-1-git-send-email-rahul.sharma@samsung.com>
+	<1399529995-8656-3-git-send-email-rahul.sharma@samsung.com>
+	<002701cf6a8d$ef7b4540$ce71cfc0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <536B0900.10204@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:64722 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753273AbaEHJ1C (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 May 2014 05:27:02 -0400
+Received: by mail-ob0-f170.google.com with SMTP id uy5so2719598obc.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 02:27:01 -0700 (PDT)
+In-Reply-To: <002701cf6a8d$ef7b4540$ce71cfc0$%han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
-T24gVGh1LCBNYXkgOCwgMjAxNCBhdCAxMjozMyBQTSwgU2V1bmctV29vIEtpbSA8c3cwMzEyLmtp
-bUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4KPiBIZWxsbyBEYW5pZWwsCj4KPiBPbiAyMDE064WEIDA1
-7JuUIDA37J28IDIzOjE0LCBEYW5pZWwgS3VydHogd3JvdGU6Cj4gPiBPbiBXZWQsIE1heSA3LCAy
-MDE0IGF0IDE6MTQgUE0sIFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+IHdy
-b3RlOgo+ID4+IEhpIERhbmllbCwKPiA+Pgo+ID4+IE9uIDIwMTTrhYQgMDXsm5QgMDXsnbwgMDA6
-MjYsIERhbmllbCBLdXJ0eiB3cm90ZToKPiA+Pj4gTWl4ZXIgaGFyZHdhcmUgc3VwcG9ydHMgb2Zm
-c2V0dGluZyBkbWEgZnJvbSBzdGFydCBvZiBzb3VyY2UgYnVmZmVyIHVzaW5nCj4gPj4+IHRoZSBN
-WFJfR1JQX1NYWSByZWdpc3Rlci4KPiA+Pj4KPiA+Pj4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIEt1
-cnR6IDxkamt1cnR6QGNocm9taXVtLm9yZz4KPiA+Pj4gLS0tCj4gPj4+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgOCArKystLS0tLQo+ID4+PiAgMSBmaWxlIGNoYW5n
-ZWQsIDMgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPiA+Pj4KPiA+Pj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gPj4+IGluZGV4IDQ3NWViNDkuLjQwY2YzOWIgMTAw
-NjQ0Cj4gPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiA+
-Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ID4+PiBAQCAt
-NTI5LDEzICs1MjksMTEgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBt
-aXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4gPj4+Cj4gPj4+ICAgICAgIGRzdF94X29mZnNl
-dCA9IHdpbl9kYXRhLT5jcnRjX3g7Cj4gPj4+ICAgICAgIGRzdF95X29mZnNldCA9IHdpbl9kYXRh
-LT5jcnRjX3k7Cj4gPj4+ICsgICAgIHNyY194X29mZnNldCA9IHdpbl9kYXRhLT5mYl94Owo+ID4+
-PiArICAgICBzcmNfeV9vZmZzZXQgPSB3aW5fZGF0YS0+ZmJfeTsKPiA+Pj4KPiA+Pj4gICAgICAg
-LyogY29udmVydGluZyBkbWEgYWRkcmVzcyBiYXNlIGFuZCBzb3VyY2Ugb2Zmc2V0ICovCj4gPj4+
-IC0gICAgIGRtYV9hZGRyID0gd2luX2RhdGEtPmRtYV9hZGRyCj4gPj4+IC0gICAgICAgICAgICAg
-KyAod2luX2RhdGEtPmZiX3ggKiB3aW5fZGF0YS0+YnBwID4+IDMpCj4gPj4+IC0gICAgICAgICAg
-ICAgKyAod2luX2RhdGEtPmZiX3kgKiB3aW5fZGF0YS0+ZmJfd2lkdGggKiB3aW5fZGF0YS0+YnBw
-ID4+IDMpOwo+ID4+PiAtICAgICBzcmNfeF9vZmZzZXQgPSAwOwo+ID4+PiAtICAgICBzcmNfeV9v
-ZmZzZXQgPSAwOwo+ID4+PiArICAgICBkbWFfYWRkciA9IHdpbl9kYXRhLT5kbWFfYWRkcjsKPiA+
-Pgo+ID4+IEJhc2ljYWxseSwgeW91IGFyZSByaWdodCBhbmQgc291cmNlIG9mZnNldCByZWdpc3Rl
-ciBjYW4gYmUgdXNlZC4gQnV0Cj4gPj4gYmVjYXVzZSBvZiBsaW1pdGF0aW9uIG9mIHJlc29sdXRp
-b24gZm9yIG1peGVyIHVwIHRvIDE5MjB4MTA4MCwgSQo+ID4+IGNvbnNpZGVyZWQgbW9kaWZpZWQg
-c29ydWNlIGRtYSBhZGRyZXNzIHRvIHNldCBvbmUgZnJhbWUgYnVmZmVyLCB3aGljaCBpcwo+ID4+
-IGJpZ2dlciB0aGFuIDE5MjB4MTA4MCwgb24gdG8gYm90aCBmaW1kIGFuZCBoZG1pLgo+ID4KPiA+
-IEhpIFNldW5nLVdvbywKPiA+Cj4gPiBJIGRvIG5vdCBzZWUgd2h5IHRoZSBtYXhpbXVtIE1JWEVS
-IHJlc29sdXRpb24gbWF0dGVycyBmb3IgY2hvb3NpbmcKPiA+IGJldHdlZW4gb2Zmc2V0dGluZyBC
-QVNFIG9yIHVzaW5nIFNYWS4KPiA+Cj4gPiBMZXQncyBzYXkgeW91IGhhdmUgb25lIGJpZyAxOTIw
-eDE5MDggZnJhbWVidWZmZXIsIHdpdGggYSBzcGFuIG9mIDE5MjAsCj4gPiBzdGFydGluZyBhdCBk
-bWFfYWRkciAodGhlcmUgaXMgbm8gZXh0cmEgcGFkZGluZyBhdCB0aGUgZW5kIG9mIHRoZQo+ID4g
-bGluZSkuCj4gPiBMZXQncyBzYXkgeW91IHdhbnRlZCB0aGUgbWl4ZXIgdG8gc2NhbiBvdXQgMTky
-MHgxMDgwIHBpeGVscyBzdGFydGluZwo+ID4gZnJvbSAoMCwgODAwKSBpbiB0aGUgZnJhbWVidWZm
-ZXIsIGFuZCBzdGFydCBkcmF3aW5nIHRoZW0gYXQgKDAsMCkgb24KPiA+IHRoZSBzY3JlZW4uCj4g
-Pgo+ID4gV2hhdCB3ZSBjdXJyZW50bHkgZG8gaXM6Cj4gPiAgIEJBU0UgPSBkbWFfYWRkciArICg4
-MDAgKiAxMDgwICogNCkKPiA+ICAgU1BBTiA9IDE5MjAKPiA+ICAgU1hZID0gU1goMCkgfCBTWSgw
-KQo+ID4gICBXSCA9IFcoMTkyMCkgfCBIKDEwODApCj4gPiAgIERYWSA9IERYKDApIHwgRFkoMCkK
-PiA+Cj4gPiBJIGFtIHByb3Bvc2luZyB3ZSBkbzoKPiA+ICAgQkFTRSA9IGRtYV9hZGRyCj4gPiAg
-IFNQQU4gPSAxOTIwCj4gPiAgIFNYWSA9IFNYKDApIHwgU1koODAwKQo+ID4gICBXSCA9IFcoMTky
-MCkgfCBIKDEwODApCj4gPiAgIERYWSA9IERYKDApIHwgRFkoMCkKPiA+Cj4gPiBJbiBib3RoIGNh
-c2VzLCB0aGUgbWl4ZXIgcmVzb2x1dGlvbiBpcyAxOTIweDEwODAuCj4KPiBJbiBteSB0ZXN0IHRv
-IHNob3cgZWFjaCBoYWxmIG9mIGJpZyBvbmUgZnJhbWVidWZmZXIgKDM4NDAgeCAxMDgwKSB0bwo+
-IEZJTUQgZnJvbSAwIHRvIDEwNzkgYW5kIE1JWEVSIGZyb20gMTA4MCB0byAzODM5IHdpdGggZXh5
-bm9zNDIxMCBhbmQKPiBleHlub3M0NDEyLCBpdCB3YXMgZmFpbGVkIHRvIHNob3cgcHJvcGVyIGhk
-bWkgZGlzcGxheS4gQWxzbyBpdCBpcyBzYW1lCj4gZm9yIGZyYW1lYnVmZmVyICgxOTIwIHggMjE2
-MCkuIEFGQUlLLCBpdCBpcyBtYWlubHkgYmVjYXVzZSBtaXhlciBkbWEgaGFzCj4gbGltaXRhdGlv
-biBvZiBkbWEgbWVtb3J5IHNpemUuCgoKVGhhdCBpcyB1bmZvcnR1bmF0ZSwgYnV0IHRoYW5rIHlv
-dSBmb3IgeW91ciBleHBsYW5hdGlvbi4KCklzIHRoaXMgbGltaXRhdGlvbiBleHlub3M0IHNwZWNp
-ZmljLCBvciBkb2VzIGl0IGFsc28gYXBwbHkgZm9yIHRoZQpleHlub3M1IG1peGVyPwpXYXMgdGhl
-IGxpbWl0YXRpb24gcGVyaGFwcyB0aGUgbnVtYmVyIG9mIGJpdHMgaW4gdGhlIFNYWSByZWdpc3Rl
-cgpmaWVsZHMgKDwgMTEpIG9uIHRob3NlIGRldmljZXM/CkZvciA1MjUwLzU0MjAgdGhlc2UgZmll
-bGRzIGFyZSAxMSBiaXRzLCBhbmQgSSBkb24ndCBzZWUgYW55CnJlc3RyaWN0aW9ucyBhYm91dCAi
-ZG1hIG1lbW9yeSBzaXplIiBpbiB0aGUgZG9jdW1lbnRhdGlvbiB0aGF0IEkgaGF2ZS4KClRoYW5r
-cywKLURhbgoKPiBJbiB0aGlzIGNhc2UsIEkgc2V0IHJlZ2lzdGVyIGFzIGxpa2U6Cj4gICBCQVNF
-ID0gZG1hX2FkZHIgLyogMzg0MCB4IDEwODAgeCA0ICovCj4gICBTUEFOID0gMzg0MAo+ICAgU1hZ
-ID0gU1goMTkyMCkgfCBTWSgwKQo+ICAgV0ggPSBXKDE5MjApIHwgSCgxMDgwKQo+ICAgRFhZID0g
-RFgoMCkgfCBEWSgwKQo+IG9yOgo+ICAgQkFTRSA9IGRtYV9hZGRyIC8qIDE5MjAgeCAyMTYwIHgg
-NCAqLwo+ICAgU1BBTiA9IDE5MjAKPiAgIFNYWSA9IFNYKDApIHwgU1koMTA4MCkKPiAgIFdIID0g
-VygxOTIwKSB8IEgoMTA4MCkKPiAgIERYWSA9IERYKDApIHwgRFkoMCkKPiBidXQgdGhlc2UgdHdv
-IHNldHRpbmcgZGlkIG5vdCBzaG93IGhkbWkgZGlzcGxheSBhcyBJIGV4cGVjdGVkLiBTbyBJIHVz
-ZWQKPiBtb2RpZmllZCBkbWEgYWRkcmVzcy4KPgo+ID4KPiA+IE15IG1vdGl2YXRpb24gZm9yIHdh
-bnRpbmcgdG8gcHJvZ3JhbSBhbiB1bi1tb2RpZmllZCBkbWFfYWRkciBpbnRvIEJBU0UKPiA+IGlz
-IHNvIHdlIGNhbiB0aGVuIGp1c3QgY2hlY2sgQkFTRV9TIHRvIGRldGVybWluZSBmcm9tIHdoaWNo
-IGJ1ZmZlciB0aGUKPiA+IG1peGVyIGlzIGFjdGl2ZWx5IGJlaW5nIHNjYW5uZWQgb3V0IHdpdGhv
-dXQgd29ycnlpbmcgYWJvdXQgdGhlIHNvdXJjZQo+ID4gb2Zmc2V0LCBzaW5jZSB0aGUgc291cmNl
-IG9mZnNldCBjYW4gY2hhbmdlIGZvciBhIGdpdmVuIGZyYW1lYnVmZmVyCj4gPiAoZm9yIGV4YW1w
-bGUsIHdoZW4gZG9pbmcgcGFubmluZywgb3IgaWYgYW4gb3ZlcmxheSBpcyB1c2VkIGZvciBhIEhX
-Cj4gPiBjdXJzb3IpLgo+Cj4gQWN0dWFsbHksIHRoaXMgcGF0Y2ggaXMgZXhhY3RseSBzYW1lIHdp
-dGggbXkgZmlyc3QgaW1wbGVtZW50YXRpb24sIHNvIEkKPiBjb21wbGV0ZWx5IHVuZGVyc3RhbmQg
-eW91ciBtb3RpdmF0aW9uLiBBbnl3YXksIEkgd2FzIGZvY3VzIG9uIGV4dGVuZGVkCj4gZGlzcGxh
-eXMgd2l0aCBvbmUgYnVmZmVyLCBzbyBJIHdyb3RlIG1vZGlmaWVkIGRtYSBiYXNlIGFkZHJlc3Mu
-Cj4KPiBUaGFua3MgYW5kIFJlZ2FyZHMsCj4gLSBTZXVuZy1Xb28gS2ltCj4KPiA+Cj4gPiBCZXN0
-IFJlZ2FyZHMsCj4gPiAtRGFuaWVsCj4gPgo+ID4+Cj4gPj4gUmVnYXJkcywKPiA+PiAtIFNldW5n
-LVdvbyBLaW0KPiA+Pgo+ID4+Pgo+ID4+PiAgICAgICBpZiAod2luX2RhdGEtPnNjYW5fZmxhZ3Mg
-JiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkKPiA+Pj4gICAgICAgICAgICAgICBjdHgtPmludGVy
-bGFjZSA9IHRydWU7Cj4gPj4+Cj4gPj4KPiA+PiAtLQo+ID4+IFNldW5nLVdvbyBLaW0KPiA+PiBT
-YW1zdW5nIFNvZnR3YXJlIFImRCBDZW50ZXIKPiA+PiAtLQo+ID4+Cj4gPgo+Cj4gLS0KPiBTZXVu
-Zy1Xb28gS2ltCj4gU2Ftc3VuZyBTb2Z0d2FyZSBSJkQgQ2VudGVyCj4gLS0KPgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 8 May 2014 12:50, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, May 08, 2014 3:20 PM, Rahul Sharma wrote:
+>>
+>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>
+>> Enable fimd node for snow board.
+>>
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-snow.dts |    6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index 1ce1088..796954c 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -206,4 +206,10 @@
+>>                       clock-frequency = <24000000>;
+>>               };
+>>       };
+>> +
+>> +     fimd@14400000 {
+>> +             status = "okay";
+>
+> (+cc Sachin Kamat, Tomasz Figa)
+>
+> For readability, how about moving 'status' to the last entry of
+> the node? The same comment applies to other patches, too.
+
+Either at the top or bottom is fine rather than somewhere in between.
+However no need to re-spin the patch just for this change.
+
+-- 
+With warm regards,
+Sachin
