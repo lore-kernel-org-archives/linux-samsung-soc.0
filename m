@@ -1,52 +1,91 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: enable pwm backlight for snow
-Date: Thu, 08 May 2014 15:20:42 +0530
-Message-ID: <1399542642-10001-2-git-send-email-ajaykumar.rs@samsung.com>
-References: <1399542642-10001-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH] ARM: dts: enable pwm backlight on exynos5250-snow
+Date: Thu, 8 May 2014 15:24:04 +0530
+Message-ID: <CAEC9eQMxjCSwkvcSmbH7hWp9L+TmCbAZV8074zyAqQ__gLnSZw@mail.gmail.com>
+References: <1399467371-12242-1-git-send-email-ajaykumar.rs@samsung.com>
+	<536A98E7.9030007@gmail.com>
+	<CAEC9eQPeGSw0xEdmq2GkVVhC7cTGSEvkM_CHRxTw__aFrvzvbw@mail.gmail.com>
+	<536A9C82.6090704@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58755 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752845AbaEHJvm (ORCPT
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:48367 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753897AbaEHJyF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 05:51:42 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N59001B3224XP40@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 18:51:40 +0900 (KST)
-In-reply-to: <1399542642-10001-1-git-send-email-ajaykumar.rs@samsung.com>
+	Thu, 8 May 2014 05:54:05 -0400
+Received: by mail-vc0-f180.google.com with SMTP id hy4so2084255vcb.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 02:54:04 -0700 (PDT)
+In-Reply-To: <536A9C82.6090704@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ajaynumb@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>, Olof Johansson <olof@lixom.net>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olof@lixom.net>
 
-Add PWM backlight node for exynos5250 based snow board.
+Tomasz,
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- arch/arm/boot/dts/exynos5250-snow.dts |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Thu, May 8, 2014 at 2:20 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 07.05.2014 22:47, Ajay kumar wrote:
+>>
+>> Tomasz,
+>>
+>> On Thu, May 8, 2014 at 2:04 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>>
+>>> Hi Ajay,
+>>>
+>>>
+>>> On 07.05.2014 14:56, Ajay Kumar wrote:
+>>>>
+>>>>
+>>>> Add PWM backlight node for exynos5250 and enable the same on exynos5250
+>>>> based snow board.
+>>>>
+>>>> Signed-off-by: Olof Johansson <olof@lixom.net>
+>>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>>> ---
+>>>>    arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
+>>>>    arch/arm/boot/dts/exynos5250-snow.dts     |    5 +++++
+>>>>    arch/arm/boot/dts/exynos5250.dtsi         |   10 ++++++++++
+>>>>    3 files changed, 22 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> index 9a49e68..2a4680c 100644
+>>>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> @@ -351,6 +351,13 @@
+>>>>                          samsung,pin-drv = <0>;
+>>>>                  };
+>>>>
+>>>> +               backlight_pwm: backlight-pwm {
+>>>> +                       samsung,pins = "gpb2-0";
+>>>> +                       samsung,pin-function = <2>;
+>>>> +                       samsung,pin-pud = <0>;
+>>>> +                       samsung,pin-drv = <0>;
+>>>> +               };
+>>>
+>>>
+>>>
+>>> This looks like a generic PWM output function, not specific to backlight
+>>> in
+>>> any way.
+>>>
+>>> Please see patch [1] adding PWM output pin groups for Exynos5420 for
+>>> reference.
+>>>
+>>> [1]
+>>>
+>>> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29869.html
+>>
+>> Right! I just referred to the manual again, and it actually reads TOUT_0.
+>> So, I should be probably renaming this as "pwm0_out" like in the other
+>> patch?
+>
+>
+> Yes, please. You should also add remaining ones, while at it. Basically same
+> patch as [1] but for Exynos5250.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1ce1088..35e4538 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -206,4 +206,14 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 1000000 0>;
-+		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
-+		default-brightness-level = <7>;
-+		pinctrl-0 = <&pwm0_out>;
-+		pinctrl-names = "default";
-+	};
-+
- };
--- 
-1.7.9.5
+Sent "[PATCH 1/2] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5250"
+
+
+Ajay
