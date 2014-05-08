@@ -1,147 +1,44 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
-Date: Thu, 08 May 2014 16:44:36 +0900
-Message-ID: <536B35E4.10705@samsung.com>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
- <536B26FC.507@samsung.com>
+From: Francois Romieu <romieu@fr.zoreil.com>
+Subject: Re: [PATCH] net: sxgbe: Added tail point update
+Date: Thu, 8 May 2014 10:44:47 +0200
+Message-ID: <20140508084447.GA8079@electric-eye.fr.zoreil.com>
+References: <008b01cf69cc$4d304e50$e790eaf0$%an@samsung.com>
+ <CAGVrzcaic-rrbRg2CpvzpyTpt0iRtX9=QE8WLpR3Eep=8w5czQ@mail.gmail.com>
+ <002f01cf6a5b$a92e3660$fb8aa320$%an@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37990 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751991AbaEHHoi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 03:44:38 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N58009RYW6C4D00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 16:44:36 +0900 (KST)
-In-reply-to: <536B26FC.507@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <002f01cf6a5b$a92e3660$fb8aa320$%an@samsung.com>
+Sender: netdev-owner@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: 'Florian Fainelli' <f.fainelli@gmail.com>, 'netdev' <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'David Miller' <davem@davemloft.net>, "'ks.giri'" <ks.giri@samsung.com>, "'vipul.pandya'" <vipul.pandya@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, joshi@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com, Rob Clark <robdclark@gmail.com>, seanpaul@chromium.org, daniel.vetter@ffwll.ch
 
+Byungho An <bh74.an@samsung.com> :
+> Florian Fainelli wrote: 
+[...]
+> > I think that at some point you should revisit your abstraction, all
+> > the patches that I see do take a void __iomem * argument as the first
+> > function argument, you should probably use your driver private context
+> > here. The day you support a different version of the hardware, there
+> > might be other differences that need to be taken care of.
+> > 
+> I agree with you, it would be more robust for different version of the hardware and make simple function argument.
+> But most functions of this driver deal with read/write register using ioaddr.
 
-Just re-sending with text mode. Sorry for this.
+It does not imply that they should urge on ioaddr.
 
+drivers/net/ethernet/broadcom/tg3.c gets it right and there is no reason
+why sxgbe should be different.
 
-On 2014=EB=85=84 05=EC=9B=94 08=EC=9D=BC 15:41, Andrzej Hajda wrote:
-> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
->> This patchset is based on exynos-drm-next-todo branch of Inki Dae's =
-tree at:
->> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->>
->> I have just put up Rob's and Sean's idea of chaining up the bridges
->> in code, and have implemented basic panel controls as a chained brid=
-ge.
->> This works well with ptn3460 bridge chip on exynos5250-snow board.
->>
->> Still need to make use of standard list calls and figure out proper =
-way
->> of deleting the bridge chain. So, this is just a rough version.
->=20
-> As I understand this patchset tries to solve two things:
-> 1. Implement panel as drm_bridge, to ease support for hardware chains=
-:
-> Crtc -> Encoder -> Bridge -> Panel
-> 2. Add support to drm_bridge chaining, to allow software chains:
-> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
->=20
-> It is done using Russian doll schema, ops from the bridge calls the s=
-ame
-> ops from the next bridge and the next bridge ops can do the same.
->=20
-> This schema means that all the bridges including the last one are see=
-n
-> from the drm core point of view as a one big drm_bridge. Additionally=
- in
-> this particular case, the first bridge (ptn3460) implements connector
-> so it is hard to guess what is the location of the 2nd bridge in vide=
-o
-> stream chain, sometimes it is after the connector, sometimes before.
-> All this is quite confusing.
->=20
-> But if you look at the bridge from upstream video interface point of
-> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on =
-its
-> video input side acts as a panel. On the output side it expects a pan=
-el,
-> lvds panel in this case.
->=20
-> So why not implement ptn3460 bridge as drm_panel which internally use=
-s
-> another drm_panel. With this approach everything fits much better.
-> You do not need those (pre|post)_(enable|disable) calls, you do not n=
-eed
-> to implement connector in the bridge and you have a driver following
-> linux driver model. And no single bit changed in drm core.
->=20
-> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2=
-].
-> It was not accepted as Inki preferred drm_bridge but as I see the
+> As of now I think it is enough but I'll consider it later.
 
-Yes, in above email threads, I disagreed to using drm_panel framework
-for bridge device, especially, to implement connector/encoder to crtc
-driver.
+In the meantime:
+1) more use-once function pointers are added
+2) their parameter list keeps growing
 
-However, I thought that it'd be more generic way that lvds drivers use
-driver-model, and the use of drm_panel infrastructure would be suitable
-to doing this.
+Please reconsider sooner than later.
 
-So my intention in turn, was that LVDS driver uses integrated drm_bridg=
-e
-based on drm_panel infrastructure[1], and RFC patch[2] for it. This way
-is same as your proposal in the point that LVDS and Panel drivers use
-driver-model. The only different point is that LVDS driver has some ops
-specific to LVDS device, not using existing ops of drm_panel commonly:
-we may need to consider the characteristic of LVDS device.
-
-[1]:http://www.spinics.net/lists/dri-devel/msg55555.html
-[2]:http://www.spinics.net/lists/dri-devel/msg55658.html
-
-Thanks,
-Inki Dae
-
-> problems with drm_bridges I have decide to attract attention to much
-> more cleaner solution.
->=20
-> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
-> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
->=20
-> Regards
-> Andrzej
->=20
->=20
->>
->> Ajay Kumar (3):
->>   [RFC V2 1/3] drm: implement chaining of drm bridges
->>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds =
-bridges
->>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
->>
->>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
->>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
->>  drivers/gpu/drm/bridge/Makefile                    |   1 +
->>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 ++++++++++=
-+++++++++++
->>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
->>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
->>  include/drm/bridge/bridge_panel.h                  |  37 ++++
->>  include/drm/drm_crtc.h                             |   2 +
->>  8 files changed, 360 insertions(+), 5 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bri=
-dge_panel.txt
->>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
->>  create mode 100644 include/drm/bridge/bridge_panel.h
->>
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+-- 
+Ueimor
