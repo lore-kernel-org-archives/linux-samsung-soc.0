@@ -1,93 +1,109 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 3/4] irqchip: gic: Add support for per CPU bank offset
- specification in DT
-Date: Thu, 8 May 2014 13:04:11 -0500
-Message-ID: <CAL_JsqKwSuRebXdtfmrRCxhfwFOk8AMYUdeYX7SFu=ssM3=_hg@mail.gmail.com>
-References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
-	<1397832181-5153-4-git-send-email-t.figa@samsung.com>
-	<CAL_Jsq+wCDWnZ-wemMPc1tvpnK3kd=bx5fkT5GAP_QyLPjQfJQ@mail.gmail.com>
-	<536BBA3F.4020908@samsung.com>
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
+Date: Thu, 8 May 2014 14:24:58 -0400
+Message-ID: <CAF6AEGvWxCS-NX4uLjyMqc==7X9znn8PJ0AmJ6aFqqHYSBgsrQ@mail.gmail.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+ <536B26FC.507@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:33072 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751885AbaEHSEM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 14:04:12 -0400
-In-Reply-To: <536BBA3F.4020908@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <536B26FC.507@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Thu, May 8, 2014 at 12:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On 08.05.2014 19:04, Rob Herring wrote:
->> On Fri, Apr 18, 2014 at 9:43 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->>> On most platforms GIC registers are banked, so each CPU can access its
->>> registers at the same address. However there is a small number of SoCs
->>> on which the banking is not implemented and each CPU has its GIC
->>> register set at different offset from GIC base address.
->>>
->>> Originally the driver used simple maths to calculate the address, i.e.
->>> multiplying constant percpu_offset by cpu_logical_map(cpu). However this
->>> assumed the namespace of cpu_logical_map() to be from 0 to num_cpus-1,
->>> but if CPU topology is specified via DT, this changes to full ID in
->>> the same format as MPIDR register and thus breaks the assumption.
->>>
->>> This patch adds support for per CPU GIC bank offset specification
->>> through device tree to separate SoC-internal core wiring from CPU
->>> multi-processor IDs.
->>>
->>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->>> ---
->>>  Documentation/devicetree/bindings/arm/cpus.txt |  7 ++
->>>  Documentation/devicetree/bindings/arm/gic.txt  | 34 +++++++++-
->>>  drivers/irqchip/irq-gic.c                      | 94 ++++++++++++++++++--------
->>>  3 files changed, 105 insertions(+), 30 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
->>> index 333f4ae..47654e6 100644
->>> --- a/Documentation/devicetree/bindings/arm/cpus.txt
->>> +++ b/Documentation/devicetree/bindings/arm/cpus.txt
->>> @@ -209,6 +209,13 @@ nodes to be present and contain the properties described below.
->>>                 Value type: <phandle>
->>>                 Definition: Specifies the ACC[2] node associated with this CPU.
->>>
->>> +       - gic-offset
->>> +               Usage: required for systems that have non-banked GIC
->>> +                      implementation that requires each CPU to use different
->>> +                      offset to access its set of GIC registers
->>> +               Value type: <u32>
->>> +               Definition: Specifies the offset of GIC registers specific to
->>> +                           this CPU.
+On Thu, May 8, 2014 at 2:41 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
+>> This patchset is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 >>
->> What if you have 1 distributor address and a per cpu address which is
->> allowed in the gicv2 spec IIRC.
+>> I have just put up Rob's and Sean's idea of chaining up the bridges
+>> in code, and have implemented basic panel controls as a chained bridge.
+>> This works well with ptn3460 bridge chip on exynos5250-snow board.
+>>
+>> Still need to make use of standard list calls and figure out proper way
+>> of deleting the bridge chain. So, this is just a rough version.
 >
-> Hmm, I need to take a look at GIC v2 spec... but I think my proposed
-> binding would still cover this, as the implementation (if modified to
-> support this) would simply ignore the offset for distributor in this case.
-
-How does the implementation know whether to ignore the offset for the
-distributor or not?
-
->> I think I would rather see this stay contained within the gic node and
->> use reg property.
+> As I understand this patchset tries to solve two things:
+> 1. Implement panel as drm_bridge, to ease support for hardware chains:
+> Crtc -> Encoder -> Bridge -> Panel
+> 2. Add support to drm_bridge chaining, to allow software chains:
+> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
 >
-> How do we match reg entries with CPUs then? The first idea that comes to
-> my mind would be adding arm,cpu-map property that would list MPIDR
-> values of CPUs in the same order as register banks are listed in reg
-> property but I'm not sure this is a good idea.
+> It is done using Russian doll schema, ops from the bridge calls the same
+> ops from the next bridge and the next bridge ops can do the same.
+>
+> This schema means that all the bridges including the last one are seen
+> from the drm core point of view as a one big drm_bridge. Additionally in
+> this particular case, the first bridge (ptn3460) implements connector
+> so it is hard to guess what is the location of the 2nd bridge in video
+> stream chain, sometimes it is after the connector, sometimes before.
+> All this is quite confusing.
+>
+> But if you look at the bridge from upstream video interface point of
+> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on its
+> video input side acts as a panel. On the output side it expects a panel,
+> lvds panel in this case.
 
-How do you do it currently?
+tbh, this is mostly about what we call it.  Perhaps "bridge" isn't the
+best name.. I wouldn't object to changing it.
 
-The issue with putting properties in the cpu node is it does not
-scale. What if you had 10 per cpu properties on 10 different blocks.
+But my thinking was to leave in drm_panel_funcs things that are just
+needed by the connector (get_modes().. and maybe some day we need
+detect/etc).  Then leave everything else in drm_bridge_funcs.  A panel
+could (if needed) implement both interfaces.
 
-Using the MPIDR directly is a bit specific. I would perhaps just do
-something like this:
+That is basically the same as what you are proposing, but without
+renaming bridge to panel ;-)
 
-gic-cpu-map = <&CPU0 &CPU1>;
+BR,
+-R
 
-Rob
+> So why not implement ptn3460 bridge as drm_panel which internally uses
+> another drm_panel. With this approach everything fits much better.
+> You do not need those (pre|post)_(enable|disable) calls, you do not need
+> to implement connector in the bridge and you have a driver following
+> linux driver model. And no single bit changed in drm core.
+>
+> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2].
+> It was not accepted as Inki preferred drm_bridge but as I see the
+> problems with drm_bridges I have decide to attract attention to much
+> more cleaner solution.
+>
+> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
+> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
+>
+> Regards
+> Andrzej
+>
+>
+>>
+>> Ajay Kumar (3):
+>>   [RFC V2 1/3] drm: implement chaining of drm bridges
+>>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
+>>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+>>
+>>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
+>>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
+>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
+>>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 +++++++++++++++++++++
+>>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
+>>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
+>>  include/drm/bridge/bridge_panel.h                  |  37 ++++
+>>  include/drm/drm_crtc.h                             |   2 +
+>>  8 files changed, 360 insertions(+), 5 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+>>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
+>>  create mode 100644 include/drm/bridge/bridge_panel.h
+>>
+>
