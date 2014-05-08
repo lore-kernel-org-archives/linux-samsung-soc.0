@@ -1,64 +1,180 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 0/5] ARM: dts: enable display for peach-pit and snow boards
-Date: Thu, 08 May 2014 14:39:42 +0900
-Message-ID: <001e01cf6a7f$e9965c90$bcc315b0$%han@samsung.com>
-References: <1397994525-18537-1-git-send-email-rahul.sharma@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Thu, 8 May 2014 11:35:13 +0530
+Message-ID: <CAFp+6iHN-W-k6ow5YykK_QWgBJ+GgzXwPX6suWtizxwJWOiGtg@mail.gmail.com>
+References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
+	<5368F136.6070804@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51868 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750704AbaEHFjp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 01:39:45 -0400
-In-reply-to: <1397994525-18537-1-git-send-email-rahul.sharma@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <5368F136.6070804@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kishon <kishon@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <rahul.sharma@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Sunday, April 20, 2014 8:49 PM, Rahul Sharma wrote:
-> 
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
-> 
-> Add nodes for fimd and dp controller for exynos5250 based snow
-> and exynos5420 based peach-pit board.
-> 
-> This series is based on Kukjin Kims, for-next branch.
-> 
-> It is dependent on
-> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
-> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html
-> 2) Arun's patch for adding peach-pit board dts file at
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg28846.html.
+Hi Sylwester,
 
-One more thing. These patches were based against the following patches.
 
-3) Rahul Sharma's patch for hdmi support for exynos5 based dt files.
-([PATCH 0/7] ARM: dts: enable hdmi for exynos5 based peach and snow boards)
-http://www.spinics.net/lists/linux-samsung-soc/msg29011.html
+On Tue, May 6, 2014 at 7:57 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 28/04/14 08:17, Vivek Gautam wrote:
+>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>> The new driver uses the generic PHY framework and will interact
+>> with DWC3 controller present on Exynos5 series of SoCs.
+>> Thereby, removing old phy-samsung-usb3 driver and related code
+>> used untill now which was based on usb/phy framework.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> ---
+>>
+>> Changes from v6:
+>>  - Addressed review comments:
+>>    -- Sorted config entries in Kconfig and Makefile
+>>    -- Made #define to_usbdrd_phy(inst) to a static inline routine.
+>>    -- Restructured exynos5_rate_to_clk() as suggested.
+>>    -- Amended 'val' field for regmap_update_bits() in the routine
+>>       exynos5_usbdrd_phy_isol().
+>>    -- Removed sentinel entry from exynos5_usbdrd_phy_cfg[] struct.
+>>    -- Removed check for 'match' entry in probe().
+>>
+>>  .../devicetree/bindings/phy/samsung-phy.txt        |   40 ++
+>>  drivers/phy/Kconfig                                |   11 +
+>>  drivers/phy/Makefile                               |    1 +
+>>  drivers/phy/phy-exynos5-usbdrd.c                   |  627 ++++++++++++++++++++
+>>  4 files changed, 679 insertions(+)
+>>  create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> index b422e38..51efe4c 100644
+>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> @@ -114,3 +114,43 @@ Example:
+>>               compatible = "samsung,exynos-sataphy-i2c";
+>>               reg = <0x38>;
+>>       };
+>> +
+>> +Samsung Exynos5 SoC series USB DRD PHY controller
+>> +--------------------------------------------------
+>> +
+>> +Required properties:
+>> +- compatible : Should be set to one of the following supported values:
+>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+>> +- reg : Register offset and length of USB DRD PHY register set;
+>> +- clocks: Clock IDs array as required by the controller
+>> +- clock-names: names of clocks correseponding to IDs in the clock property;
+>> +            Required clocks:
+>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
+>> +            used for register access.
+>> +     - ref: PHY's reference clock (usually crystal clock), used for
+>> +            PHY operations, associated by phy name. It is used to
+>> +            determine bit values for clock settings register.
+>> +            For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
+>> +                   control pmu registers for power isolation.
+>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+>> +                   base.
+>
+> It doesn't seem right to have register offset encoded in the device tree
+> like this. I think it'd be more appropriate to associate such an offset
+> with the compatible string's value in the driver.
 
-Please check the dependency.
-Anyone does not want to waste the time, due to patch breakage.
+Ok, it makes more sense.
+Just out of curiosity, what difference would this make ?
 
-Best regards,
-Jingoo Han
+>
+> Also it might be sensible to create a new header file in include/linux/mfd/
+> syscon/ for Exynos5 SoCs and put any required PMU offset definitions there.
+> Instead having them scattered and possibly duplicated in various drivers.
+>
+>> +- #phy-cells : from the generic PHY bindings, must be 1;
+>> +
+>> +For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
+>> +compatible PHYs, the second cell in the PHY specifier identifies the
+>> +PHY id, which is interpreted as follows:
+>> +  0 - UTMI+ type phy,
+>> +  1 - PIPE3 type phy,
+>> +
+>> +Example:
+>> +     usb3_phy: usbphy@12100000 {
+>> +             compatible = "samsung,exynos5250-usbdrd-phy";
+>> +             reg = <0x12100000 0x100>;
+>> +             clocks = <&clock 286>, <&clock 1>;
+>> +             clock-names = "phy", "ref";
+>> +             samsung,pmu-syscon = <&pmu_system_controller>;
+>> +             samsung,pmu-offset = <0x704>;
+>> +             #phy-cells = <1>;
+>> +     };
+> [...]
+>> +struct usbdrd_phy_config {
+>
+> Isn't name of this data structure too generic ?
+> Perhaps rename it to exynos_usbdrd_phy_config ?
 
-> 
-> Rahul Sharma (5):
->   ARM: dts: move dp hpd line to the board file for exynos5420
->   ARM: dts: enable fimd for exynos5250 based snow board
->   ARM: dts: enable dp-controller for exynos5250 based snow board
->   ARM: dts: enable fimd for exynos5420 based peach-pit board
->   ARM: dts: enable dp-controller for exynos5420 based peach-pit board
-> 
->  arch/arm/boot/dts/exynos5250-snow.dts      |   32 +++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |   39 ++++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 -----
->  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    7 +++++
->  4 files changed, 78 insertions(+), 7 deletions(-)
-> 
-> --
-> 1.7.9.5
+Sure, will change this name, and thereby change the names of its instances.
+
+>
+>> +     u32 id;
+>> +     void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
+>> +     void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
+>> +     unsigned int (*set_refclk)(struct phy_usb_instance *inst);
+>> +};
+>> +
+>> +struct exynos5_usbdrd_phy_drvdata {
+>> +     const struct usbdrd_phy_config *phy_cfg;
+>> +};
+>> +
+> [...]
+>> +const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
+>> +     .phy_cfg                = exynos5_usbdrd_phy_cfg,
+>> +};
+>> +
+>> +const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
+>> +     .phy_cfg                = exynos5_usbdrd_phy_cfg,
+>> +};
+>> +
+>> +static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
+>> +     {
+>> +             .compatible = "samsung,exynos5250-usbdrd-phy",
+>> +             .data = &exynos5250_usbdrd_phy
+>> +     }, {
+>> +             .compatible = "samsung,exynos5420-usbdrd-phy",
+>> +             .data = &exynos5420_usbdrd_phy
+>> +     },
+>> +     { },
+>> +};
+>> +
+>> +static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+>> +{
+> [...]
+>> +     reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
+>> +                                                "samsung,pmu-syscon");
+>> +     if (IS_ERR(reg_pmu)) {
+>> +             dev_err(dev, "Failed to map PMU register (via syscon)\n");
+>
+> nit: Maybe change it to: "Failed to lookup PMU regmap\n" ?
+
+Sure, will change this.
+
+>
+>> +             return PTR_ERR(reg_pmu);
+>> +     }
+>> +
+>> +     ret = of_property_read_u32(node, "samsung,pmu-offset", &pmu_offset);
+>> +     if (ret) {
+>> +             dev_err(dev, "Missing pmu-offset for phy isolation\n");
+>> +             return ret;
+>> +     }
+>
+> Otherwise the patch looks good.
+
+Thanks for the review.
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
