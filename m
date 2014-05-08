@@ -1,44 +1,41 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/8] usb/gadget: s3c2410_udc: don't use pr_debug return value
-Date: Thu,  8 May 2014 15:52:14 +0200
-Message-ID: <1399557141-1346645-2-git-send-email-arnd@arndb.de>
-References: <1399557141-1346645-1-git-send-email-arnd@arndb.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH 0/7 v8] crypto:s5p-sss: Add Device tree and Exynos support
+Date: Thu, 8 May 2014 22:01:34 +0800
+Message-ID: <20140508140134.GC13769@gondor.apana.org.au>
+References: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1399557141-1346645-1-git-send-email-arnd@arndb.de>
+Content-Disposition: inline
+In-Reply-To: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, naveenkrishna.ch@gmail.com, cpgs@samsung.com, t.figa@samsung.com, davem@davemloft.net
 List-Id: linux-samsung-soc@vger.kernel.org
 
-pr_debug() may be defined as "do { } while (0)" in some configurations,
-which means one cannot rely on the return value to be available.
+On Mon, Apr 28, 2014 at 10:44:52AM +0000, Naveen Krishna Chatradhi wrote:
+> SSS module on Exynos4210, Exynos5250 and Exynos5420 SoCs has added
+> features to the one on S5PV210. However with minor changes the s5p-sss.c
+> driver can be reused to support SSS modules on Exynos4 and 5 SoCs.
+> 
+> This patch set
+> 1. Adds device tree support to the s5p-sss.c driver and Documentation
+> 2. Adds code to support SSS module on Exynos4 and 5 SoCs
+> 3. Adds variant struct to handle the differences in SSS modules
+> 4. Adds clk_prepare/clk_unprepare clocks to the s5p-sss.c driver
+> 
+> Note: Compatible "exynos4210-secss" should work for Exynos4412 and
+>       Exynos5260 (Exynos5260, for which ARCH code is under review)
+> I couldn't test on Exynos4412 and Exynos4210 boards, Should be able to
+> test with addition of DT node and clocks support.
+> 
+> These patches are under review at
+> https://lkml.org/lkml/2014/2/17/124
+> 
+> Naveen Krishna Chatradhi (7):
 
-In the dprintk function in this driver, we can work around the
-resulting build error trivially by returning the length that
-this function already knows and ignoring the return value of
-pr_debug.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/usb/gadget/s3c2410_udc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/gadget/s3c2410_udc.c b/drivers/usb/gadget/s3c2410_udc.c
-index dd9678f..7987aa0 100644
---- a/drivers/usb/gadget/s3c2410_udc.c
-+++ b/drivers/usb/gadget/s3c2410_udc.c
-@@ -117,7 +117,8 @@ static int dprintk(int level, const char *fmt, ...)
- 			sizeof(printk_buf)-len, fmt, args);
- 	va_end(args);
- 
--	return pr_debug("%s", printk_buf);
-+	pr_debug("%s", printk_buf);
-+	return len;
- }
- #else
- static int dprintk(int level, const char *fmt, ...)
+All applied.  Thanks!
 -- 
-1.8.3.2
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
