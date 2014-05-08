@@ -1,121 +1,223 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: dts: Add atmel trackpad node to 5250 cros
-Date: Wed, 7 May 2014 14:14:44 -0700
-Message-ID: <CAD=FV=WMq+X_EvOoa9wTJgRqS6C9K_8M1Bz88hhHpKga-M1dBA@mail.gmail.com>
-References: <1397457325-5054-1-git-send-email-arun.kk@samsung.com>
-	<53594277.50401@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [RFC v3 PATCH v6 11/16] ARM: dts: s6e3fa0: add DT bindings
+Date: Thu, 08 May 2014 09:20:15 +0900
+Message-ID: <536ACDBF.3030903@samsung.com>
+References: <1398563412-21781-1-git-send-email-yj44.cho@samsung.com>
+ <53676965.4020800@samsung.com> <536986EA.2050103@samsung.com>
+ <2334444.2bsAoZqCED@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f182.google.com ([209.85.128.182]:53792 "EHLO
-	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751913AbaEGVOq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 May 2014 17:14:46 -0400
-Received: by mail-ve0-f182.google.com with SMTP id sa20so2073224veb.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 May 2014 14:14:45 -0700 (PDT)
-In-Reply-To: <53594277.50401@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <2334444.2bsAoZqCED@avalon>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>, Benson Leung <bleung@chromium.org>
 
-Tomasz,
+Hi Laurent,
 
-On Thu, Apr 24, 2014 at 9:57 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Arun,
->
->
-> On 14.04.2014 08:35, Arun Kumar K wrote:
+Thank you for comments.
+
+On 05/08/2014 01:00 AM, Laurent Pinchart wrote:
+> On Wednesday 07 May 2014 10:05:46 YoungJun Cho wrote:
+>> Hi Andrzej
 >>
->> The newer versions of exynos5250 based Snow boards have
->> atmel trackpad. Updating relevant nodes for the same.
+>> Thank you for comments.
 >>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos5250-cros-common.dtsi |   24
->> ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
+>> On 05/05/2014 07:35 PM, Andrzej Hajda wrote:
+>>> On 04/27/2014 03:50 AM, YoungJun Cho wrote:
+>>>> This patch adds DT bindings for s6e3fa0 panel.
+>>>> The bindings describes panel resources, display timings and cpu mode
+>>>> timings.
+>>>>
+>>>> Changelog v2:
+>>>> - Adds unit address (commented by Sachin Kamat)
+>>>> Changelog v3:
+>>>> - Removes optional delay, size properties (commented by Laurent Pinchart)
+>>>> - Adds OLED detection, TE gpio properties
+>>>> Changelog v4:
+>>>> - Moves CPU timings relevant properties from FIMD DT
+>>>>
+>>>>     (commeted by Laurent Pinchart, Andrzej Hajda)
+>>>>
+>>>> Changelog v5:
+>>>> - Fixes gpio property names (commented by Andrzej Hajda)
+>>>> Changelog v6:
+>>>> - Renames CPU timings to CPU mode timings
+>>>> - Modifies CPU mode timings internal properties relevant things
+>>>>
+>>>>     (commeted by Laurent Pinchart, Andrzej Hajda)
+>>>>
+>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>>
+>>>>    .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   68
+>>>>    ++++++++++++++++++++ 1 file changed, 68 insertions(+)
+>>>>    create mode 100644
+>>>>    Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt>>
+>>>> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>>>> b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt new file
+>>>> mode 100644
+>>>> index 0000000..9f06645
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+>>>> @@ -0,0 +1,68 @@
+>>>> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
+>>>> +
+>>>> +Required properties:
+>>>> +  - compatible: "samsung,s6e3fa0"
+>>>> +  - reg: the virtual channel number of a DSI peripheral
+>>>> +  - vdd3-supply: core voltage supply
+>>>> +  - vci-supply: voltage supply for analog circuits
+>>>> +  - reset-gpios: a GPIO spec for the reset pin
+>>>> +  - det-gpios: a GPIO spec for the OLED detection pin
+>>>> +  - te-gpios: a GPIO spec for the TE pin
+>>>> +  - display-timings: timings for the connected panel as described by [1]
+>>>
+>>> This still bothers me, it forces users to provide bunch of fake
+>>> properties (four porches, two syncs and clock-frequency) just because we
+>>> need to pass somehow pixel width and height. And do we really need pixel
+>>> dimension to be passed via DT? I guess it could be:
+>>> - hardcoded into the driver,
+>>> - derived from the panel id,
+>>> - maybe read from the panel, this is the best option I guess but I am
+>>> not sure if panel provides an API for this.
 >>
->> diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
->> b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
->> index 2c1560d..658f086 100644
->> --- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
->> @@ -28,6 +28,13 @@
->>                         samsung,pin-pud = <0>;
->>                 };
+>> I have been trying to only use cpu-mode-timings without display-timings
+>> for next RFC v4.
 >>
->> +               trackpad_irq: trackpad-irq {
->> +                       samsung,pins = "gpx1-2";
->> +                       samsung,pin-function = <0>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->>                 max77686_irq: max77686-irq {
->>                         samsung,pins = "gpx3-2";
->>                         samsung,pin-function = <0>;
->> @@ -191,6 +198,9 @@
->>                 samsung,i2c-sda-delay = <100>;
->>                 samsung,i2c-max-bus-freq = <378000>;
->>
->> +               pinctrl-names = "default";
->> +               pinctrl-0 = <&i2c1_bus &trackpad_irq>;
+>> As you mentioned, the only required things in display-timings are
+>> clock-frequency, hactive and vactive.
+>> I put them into cpu-mode-timings, but strictly speaking,
+>> cpu-mode-timings is not related with display timing, it is data
+>> transmission mode switch timing.
+>> And there is no interface for this in drm (display) mode yet.
+>> So I'm not sure what is the generic method to treat them.
 >
+> If the sync-related properties are not used, they should not be specified. I
+> don't really like bundling the timing-related properties with the bus timings
+> though, I would rather make the sync-related properties optional in the
+> display timing node.
+
+Yes, I agree with you.
+So in RFC v4, I used cmdmode-display-timings instead of display-timings 
+and cpu-mode-timings.
+Please refer to http://www.spinics.net/lists/dri-devel/msg58916.html.
+
 >
-> Please add &trackpad_irq to trackpad node instead. Pinctrl properties of i2c
-> node should contain only i2c-related pins.
+> However, I'm pretty sure that your panel does have horizontal and vertical
+> blanking, and that information is needed in the display timings to compute the
 
-This was a workaround for a limitation of the i2c subsystem which need
-to be fixed before atmel support can land upstream.
+Yes, this is also right.
+However the horizontal / vertical blanking and relevant porch times are 
+calculated by command mode panel inside.
+The command mode panel has a internal graphic ram and shows(refreshes) 
+it by itself. So the only thing the user(display controller) has to do 
+is to transfer video data to update the internal graphic ram in TE 
+signal time.
 
-The problem is that there are two sources for the trackpad on this
-hardware.  They are pin compatible, so some boards may have one
-trackpad and other (mostly newer) boards may have the other.
+> frame rate accurately. The porch and sync length properties might not be
+> needed individually, but their total value is required.
 
-The i2c bus is probable, so the theory is that you can just specify
-both of trackpads and one will fail to be found.  The problem (at
-least on 3.8) was that the pinctrl subsystem held onto the pins.  :(
+Yes, the total values are required to drm display mode.
+So I did like below command mode helper function.
 
++int drm_display_mode_from_cmdmode(const struct cmdmode *cm,
++				    struct drm_display_mode *dmode)
++{
++	dmode->hdisplay = cm->hactive;
++	dmode->htotal = dmode->hsync_end = dmode->hsync_start = dmode->hdisplay;
++
++	dmode->vdisplay = cm->vactive;
++	dmode->vtotal = dmode->vsync_end = dmode->vsync_start = dmode->vdisplay;
++
++	dmode->clock = cm->pixelclock / 1000;
++
++	dmode->cs_setup = cm->cs_setup;
++	dmode->wr_setup = cm->wr_setup;
++	dmode->wr_active = cm->wr_active;
++	dmode->wr_hold = cm->wr_hold;
++
++	dmode->flags = 0;
++	drm_mode_set_name(dmode);
++
++	return 0;
++}
 
-I just tried now to see if I could reproduce this on ToT.  ...and it
-turns out that the atmel_mxt_ts doesn't support device tree upstream.
-Right at the top of mxt_probe I see:
+Please refer to http://www.spinics.net/lists/dri-devel/msg58909.html
 
-if (!pdata)
-  return -EINVAL;
+Thank you.
 
-I actually find a patch (from you!) that adds some device tree support
-at <https://patchwork.kernel.org/patch/2393631/>.  ...though
-interestingly enough our current tree somehow gets by without
-specifying all of those properties.  +Benson may be able to give more
-details?
+Best regards YJ
 
-
-Until atmel device tree support lands, though, I think this patch is stalled.
-
->> +                       reg = <0x25>;
->> +                       compatible = "atmel,atmel_mxt_tp";
->> +                       interrupts = <2 0>;
->> +                       interrupt-parent = <&gpx1>;
->> +                       wakeup-source;
->> +               };
 >
+>>>> +  - cpu-mode-timings: CPU interface timings for the connected panel,
+>>>> +      and it contains following properties.
+>>>> +        Required properties:
+>>>> +          - wr-active: clock cycles for the active period of CS enable
+>>>> in CPU +              interface.
+>>>> +        Optional properties:
+>>>> +          - cs-setup: clock cycles for the active period of address
+>>>> signal
+>>>> +              enable until chip select is enable in CPU interface.
+>>>> +              If not specified, the default value(0) will be used.
+>>>> +          - wr-setup: clock cycles for the active period of CS signal
+>>>> enable +              until write signal is enable in CPU interface.
+>>>> +              If not specified, the default value(0) will be used.
+>>>> +          - wr-hold: clock cycles for the active period of CS disable
+>>>> until +              write signal is disable in CPU interface.
+>>>> +              If not specified, the default value(0) will be used.
+>>>> +
+>>>> +Optional properties:
+>>>> +
+>>>> +The device node can contain one 'port' child node with one child
+>>>> 'endpoint' +node, according to the bindings defined in [2]. This node
+>>>> should describe +panel's video bus.
+>>>> +
+>>>> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
+>>>> +[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +	panel@0 {
+>>>> +		compatible = "samsung,s6e3fa0";
+>>>> +		reg = <0>;
+>>>> +		vdd3-supply = <&vcclcd_reg>;
+>>>> +		vci-supply = <&vlcd_reg>;
+>>>> +		reset-gpios = <&gpy7 4 0>;
+>>>> +		det-gpios = <&gpg0 6 0>;
+>>>> +		te-gpios = <&gpd1 7 0>;
+>>>> +
+>>>> +		display-timings {
+>>>> +			timing0: timing-0 {
+>>>> +				clock-frequency = <0>;
+>>>> +				hactive = <1080>;
+>>>> +				vactive = <1920>;
+>>>> +				hfront-porch = <2>;
+>>>> +				hback-porch = <2>;
+>>>> +				hsync-len = <1>;
+>>>> +				vfront-porch = <1>;
+>>>> +				vback-porch = <4>;
+>>>> +				vsync-len = <1>;
+>>>> +			};
+>>>> +		};
+>>>> +
+>>>> +		cpu-mode-timings {
+>>>> +			cs-setup = <0>;
+>>>> +			wr-setup = <0>;
+>>>> +			wr-active = <1>;
+>>>> +			wr-hold = <0>;
+>>>> +		};
+>>>> +	};
 >
-> Hmm, why are there 3 different nodes here? Could you explain what one by one
-> for what hardware they are?
-
-cyapa: the Cypress trackpad that shipped with original exynos5250-snow
-
-atmel: some newer exynos5250-snow ship with this
-
-atmel-bootloader: appears to be a hack to get around the fact that you
-can only specify one i2c address through the device tree.  I'm told
-that sometimes this device shows up at a different address.  On x86
-machines with this they use "i2c_new_probed_device" which allows you
-to pass in a list of addresses, it seems.  I'm not sure how this
-should really translate to the device tree.
-
-
--Doug
