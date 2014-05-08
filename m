@@ -1,40 +1,100 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 2/2] Documentation: DT: Exynos: Bind SRAM though DT
-Date: Thu, 08 May 2014 18:19:00 +0200
-Message-ID: <536BAE74.5060008@samsung.com>
-References: <1399522592-23618-1-git-send-email-sachin.kamat@linaro.org>
- <1399522592-23618-2-git-send-email-sachin.kamat@linaro.org>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH] [media] s5p-mfc: Don't try to resubmit VP8 bitstream
+ buffer for decode.
+Date: Thu, 08 May 2014 18:22:29 +0200
+Message-ID: <004b01cf6ad9$b5c83c80$2158b580$%debski@samsung.com>
+References: <1394180752-16348-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33947 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755024AbaEHQTD (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39019 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754600AbaEHQWS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 12:19:03 -0400
-In-reply-to: <1399522592-23618-2-git-send-email-sachin.kamat@linaro.org>
+	Thu, 8 May 2014 12:22:18 -0400
+In-reply-to: <1394180752-16348-1-git-send-email-arun.kk@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, heiko@sntech.de, arnd@arndb.de, kgene.kim@samsung.com, robh+dt@kernel.org
+To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org, arunkk.samsung@gmail.com
 
-Hi Sachin,
+Hi,
 
-On 08.05.2014 06:16, Sachin Kamat wrote:
-> Add SRAM binding documentation.
+
+> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+> Kumar K
+> Sent: Friday, March 07, 2014 9:26 AM
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> From: Pawel Osciak <posciak@chromium.org>
+> 
+> Currently, for formats that are not H264, MFC driver will check the
+> consumed stream size returned by the firmware and, based on that, will
+> try to decide whether the bitstream buffer contained more than one
+> frame. If the size of the buffer is larger than the consumed stream, it
+> assumes that there are more frames in the buffer and that the buffer
+> should be resubmitted for decode. This rarely works though and actually
+> introduces problems, because:
+> 
+> - v7 firmware will always return consumed stream size equal to whatever
+> the driver passed to it when running decode (which is the size of the
+> whole buffer), which means we will never try to resubmit, because the
+> firmware will always tell us that it consumed all the data we passed to
+> it;
+> 
+> - v6 firmware will return the number of consumed bytes, but will not
+> include the padding ("stuffing") bytes that are allowed after the frame
+> in VP8. Since there is no way of figuring out how many of those bytes
+> follow the frame without getting the frame size from IVF headers (or
+> somewhere else, but not from the stream itself), the driver tries to
+> guess that padding size is not larger than 4 bytes, which is not always
+> true;
+> 
+> The only way to make it work is to queue only one frame per buffer from
+> userspace and the check in the kernel is useless and wrong for VP8.
+> MPEG4 still seems to require it, so keep it only for that format.
+> 
+> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > ---
-> No changes since v1.
-> ---
->  .../devicetree/bindings/arm/exynos/smp-sram.txt    |   38 ++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/exynos/smp-sram.txt
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index e2aac59..66c1775 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -360,7 +360,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx
+> *ctx,
+>  								list);
+>  		ctx->consumed_stream += s5p_mfc_hw_call(dev->mfc_ops,
+>  						get_consumed_stream, dev);
+> -		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
+> +		if (ctx->codec_mode == S5P_MFC_CODEC_MPEG4_DEC &&
+>  			ctx->consumed_stream + STUFF_BYTE <
+>  			src_buf->b->v4l2_planes[0].bytesused) {
+>  			/* Run MFC again on the same buffer */
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+I expressed my doubts to this patch in my previous email.
+I think that packed PB can also be found in other codecs such as H263.
+So please change to the following if this is a workaround for VP8 only.
+(The title says that it only changes behavior of VP8 decoding, so it is
+misleading).
 
---
-Best regards,
-Tomasz
+-		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
++		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
++		    ctx->codec_mode != S5P_MFC_CODEC_VP8_DEC &&
+
+
+Did you try to revert your patch https://patchwork.linuxtv.org/patch/15448/
+and checking if this fixes the problem for VP8?
+
+> --
+> 1.7.9.5
+
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
