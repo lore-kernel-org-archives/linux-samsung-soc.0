@@ -1,68 +1,57 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v5 11/15] clk: exynos5420: correct sysmmu-mfc parent clocks
-Date: Thu, 08 May 2014 16:58:00 +0530
-Message-ID: <1399548484-20626-12-git-send-email-shaik.ameer@samsung.com>
+From: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 12/15] clk: exynos5420: fix register offset for sclk_bpll
+Date: Thu, 08 May 2014 16:58:01 +0530
+Message-ID: <1399548484-20626-13-git-send-email-shaik.ameer@samsung.com>
 References: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16594 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753261AbaEHLa3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 07:30:29 -0400
-In-reply-to: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1399548484-20626-1-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-This patch corrects the wrong parent-child relationship
-between sysmmu-mfc clocks.
+This patch fixes the wrong register offset for sclk_bpll clock.
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 9e04677..7790675 100644
+index 7790675..c7928ae 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -82,6 +82,7 @@
- #define SCLK_DIV_ISP0		0x10580
- #define SCLK_DIV_ISP1		0x10584
- #define DIV2_RATIO0		0x10590
-+#define DIV4_RATIO		0x105a0
- #define GATE_BUS_TOP		0x10700
- #define GATE_BUS_GEN		0x1073c
- #define GATE_BUS_FSYS0		0x10740
-@@ -176,6 +177,7 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
- 	SCLK_DIV_ISP0,
- 	SCLK_DIV_ISP1,
- 	DIV2_RATIO0,
-+	DIV4_RATIO,
- 	GATE_BUS_TOP,
- 	GATE_BUS_GEN,
- 	GATE_BUS_FSYS0,
-@@ -624,6 +626,9 @@ static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
- 	DIV(0, "dout_spi1", "mout_spi1", DIV_PERIC1, 24, 4),
- 	DIV(0, "dout_spi2", "mout_spi2", DIV_PERIC1, 28, 4),
- 
-+	/* Mfc Block */
-+	DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
-+
- 	/* PCM */
- 	DIV(0, "dout_pcm1", "dout_audio1", DIV_PERIC2, 16, 8),
- 	DIV(0, "dout_pcm2", "dout_audio2", DIV_PERIC2, 24, 8),
-@@ -935,8 +940,8 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
- 
- 	GATE(CLK_MFC, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
--	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
--	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
-+	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "dout_mfc_blk", GATE_IP_MFC, 1, 0, 0),
-+	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "dout_mfc_blk", GATE_IP_MFC, 2, 0, 0),
- 
- 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
+@@ -111,7 +111,6 @@
+ #define TOP_SPARE2		0x10b08
+ #define BPLL_LOCK		0x20010
+ #define BPLL_CON0		0x20110
+-#define SRC_CDREX		0x20200
+ #define KPLL_LOCK		0x28000
+ #define KPLL_CON0		0x28100
+ #define SRC_KFC			0x28200
+@@ -204,7 +203,6 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+ 	GATE_TOP_SCLK_FSYS,
+ 	GATE_TOP_SCLK_PERIC,
+ 	TOP_SPARE2,
+-	SRC_CDREX,
+ 	SRC_KFC,
+ 	DIV_KFC0,
  };
+@@ -380,7 +378,7 @@ static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+ 	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
+ 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+ 
+-	MUX(0, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
++	MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
+ 
+ 	MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
+ 	MUX_A(0, "mout_aclk400_mscl", mout_group1_p,
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
