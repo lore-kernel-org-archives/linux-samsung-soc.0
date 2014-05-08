@@ -1,45 +1,72 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v2] [media] s5p-mfc: add init buffer cmd to MFCV6
-Date: Thu, 08 May 2014 18:22:41 +0200
-Message-ID: <004c01cf6ad9$bcc0e780$3642b680$%debski@samsung.com>
-References: <1394529345-31952-1-git-send-email-arun.kk@samsung.com>
+Subject: RE: [PATCH] [media] s5p-mfc: Add IOMMU support
+Date: Thu, 08 May 2014 18:24:32 +0200
+Message-ID: <004d01cf6ad9$fec16b50$fc4441f0$%debski@samsung.com>
+References: <1398164568-6048-1-git-send-email-arun.kk@samsung.com>
+ <2748799.75z4m0MVI7@avalon>
+ <CALt3h79VnDH17s51FQQUK7O_to7pA1-KU0HW8JY2WAqOP4rBRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:33822 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753858AbaEHQWf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 12:22:35 -0400
-In-reply-to: <1394529345-31952-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CALt3h79VnDH17s51FQQUK7O_to7pA1-KU0HW8JY2WAqOP4rBRA@mail.gmail.com>
 Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
+To: 'Arun Kumar K' <arunkk.samsung@gmail.com>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>
+Cc: 'LMML' <linux-media@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, pullip.cho@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
-Hi,
+Hi Arun,
 
-> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
-> Kumar K
-> Sent: Tuesday, March 11, 2014 10:16 AM
+> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com]
+> Sent: Tuesday, April 22, 2014 2:22 PM
 > 
-> From: avnd kiran <avnd.kiran@samsung.com>
+> Hi Laurent,
 > 
-> Latest MFC v6 firmware requires tile mode and loop filter setting to be
-> done as part of Init buffer command, in sync with v7. Since there are
-> two versions of v6 firmware with different interfaces, it is
-> differenciated using the version number read back from firmware which
-> is a hexadecimal value based on the firmware date.
+> Thank you for the review.
+> 
+> On Tue, Apr 22, 2014 at 5:23 PM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > Hi Arun,
+> >
+> > Thank you for the patch.
+> >
+> > On Tuesday 22 April 2014 16:32:48 Arun Kumar K wrote:
+> >> The patch adds IOMMU support for MFC driver.
+> >
+> > I've been working on an IOMMU driver lately, which led me to think
+> > about how drivers should be interfaced with IOMMUs. Runtime IOMMU
+> > handling is performed by the DMA mapping API, but in many cases
+> > (including Exynos platforms) the
+> > arm_iommu_create_mapping() and arm_iommu_attach_device() functions
+> > still need to be called explicitly by drivers, which doesn't seem a
+> very good idea to me.
+> > Ideally IOMMU usage should be completely transparent for bus master
+> > drivers, without requiring any driver modification to use the IOMMU.
+> >
+> > What would you think about improving the Exynos IOMMU driver to
+> create
+> > the mapping and attach the device instead of having to modify all bus
+> > master drivers ? See the ipmmu_add_device() function in
+> > http://www.spinics.net/lists/linux-sh/msg30488.html for a possible
+> > implementation.
+> >
+> 
+> Yes that would be a better solution. But as far as I know, exynos
+> platforms has few more complications where multiple IOMMUs are present
+> for single IP.
+> The exynos iommu work is still under progress and KyonHo Cho will have
+> some inputs / comments on this. This seems to me a valid usecase which
+> can be considered for exynos iommu also.
 
-MFC version has two parts major and minor. Are you sure that date is 
-the only way to check if the interface has changed? Maybe the major number
-should stay the same (6) in this case, and the minor should be updates?
-Do you have contact with persons writing the firmware?
+Arun, could you tell me how did you test this?
+I think that the MFC driver should not be modified to use iommu. Dma_mapping
+should be used. On Tizenorg there is a 3.10 kernel with an iommu driver that
+works with MFC without any patches to the MFC drvier.
 
-Also, I don't see a patch with the newer firmware posted to linux-firmware.
-When it is going to be sent?
+I disagree to merging this patch, sorry. This should be done the correct way.
+
+NACK.
 
 Best wishes,
 -- 
@@ -47,167 +74,98 @@ Kamil Debski
 Samsung R&D Institute Poland
 
 > 
-> Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
-> Changes from v1
-> ---------------
-> - Check for v6 firmware date for differenciating old and new firmware
->   as per comments from Kamil and Sylwester.
-> ---
->  drivers/media/platform/s5p-mfc/regs-mfc-v6.h    |    1 +
->  drivers/media/platform/s5p-mfc/regs-mfc-v7.h    |    2 --
->  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
->  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   |    8 +++---
->  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |   30
-> ++++++++++++++++++++---
->  5 files changed, 34 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-> b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-> index 8d0b686..b47567c 100644
-> --- a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-> +++ b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-> @@ -132,6 +132,7 @@
->  #define S5P_FIMV_D_METADATA_BUFFER_ADDR_V6	0xf448
->  #define S5P_FIMV_D_METADATA_BUFFER_SIZE_V6	0xf44c
->  #define S5P_FIMV_D_NUM_MV_V6			0xf478
-> +#define S5P_FIMV_D_INIT_BUFFER_OPTIONS_V6	0xf47c
->  #define S5P_FIMV_D_CPB_BUFFER_ADDR_V6		0xf4b0
->  #define S5P_FIMV_D_CPB_BUFFER_SIZE_V6		0xf4b4
-> 
-> diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-> b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-> index ea5ec2a..82c96fa 100644
-> --- a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-> +++ b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-> @@ -18,8 +18,6 @@
->  #define S5P_FIMV_CODEC_VP8_ENC_V7	25
-> 
->  /* Additional registers for v7 */
-> -#define S5P_FIMV_D_INIT_BUFFER_OPTIONS_V7		0xf47c
-> -
->  #define S5P_FIMV_E_SOURCE_FIRST_ADDR_V7			0xf9e0
->  #define S5P_FIMV_E_SOURCE_SECOND_ADDR_V7		0xf9e4
->  #define S5P_FIMV_E_SOURCE_THIRD_ADDR_V7			0xf9e8
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> index 4d17df9..f5404a6 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> @@ -287,6 +287,7 @@ struct s5p_mfc_priv_buf {
->   * @warn_start:		hardware error code from which warnings
-start
->   * @mfc_ops:		ops structure holding HW operation function
-> pointers
->   * @mfc_cmds:		cmd structure holding HW commands function
-> pointers
-> + * @ver:		firmware sub version
->   *
->   */
->  struct s5p_mfc_dev {
-> @@ -330,6 +331,7 @@ struct s5p_mfc_dev {
->  	int warn_start;
->  	struct s5p_mfc_hw_ops *mfc_ops;
->  	struct s5p_mfc_hw_cmds *mfc_cmds;
-> +	int ver;
->  };
-> 
->  /**
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> index 2475a3c..ba1d302 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> @@ -240,7 +240,6 @@ static inline void s5p_mfc_clear_cmds(struct
-> s5p_mfc_dev *dev)
->  /* Initialize hardware */
->  int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)  {
-> -	unsigned int ver;
->  	int ret;
-> 
->  	mfc_debug_enter();
-> @@ -302,12 +301,13 @@ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)
->  		return -EIO;
->  	}
->  	if (IS_MFCV6_PLUS(dev))
-> -		ver = mfc_read(dev, S5P_FIMV_FW_VERSION_V6);
-> +		dev->ver = mfc_read(dev, S5P_FIMV_FW_VERSION_V6);
->  	else
-> -		ver = mfc_read(dev, S5P_FIMV_FW_VERSION);
-> +		dev->ver = mfc_read(dev, S5P_FIMV_FW_VERSION);
-> 
->  	mfc_debug(2, "MFC F/W version : %02xyy, %02xmm, %02xdd\n",
-> -		(ver >> 16) & 0xFF, (ver >> 8) & 0xFF, ver & 0xFF);
-> +		(dev->ver >> 16) & 0xFF, (dev->ver >> 8) & 0xFF,
-> +		dev->ver & 0xFF);
->  	s5p_mfc_clock_off();
->  	mfc_debug_leave();
->  	return 0;
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-> b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-> index 90edb19..356cfe5 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-> @@ -14,6 +14,7 @@
-> 
->  #undef DEBUG
-> 
-> +#include <linux/bcd.h>
->  #include <linux/delay.h>
->  #include <linux/mm.h>
->  #include <linux/io.h>
-> @@ -1269,6 +1270,29 @@ static int s5p_mfc_set_enc_params_vp8(struct
-> s5p_mfc_ctx *ctx)
->  	return 0;
->  }
-> 
-> +/* Check if newer v6 firmware with changed init buffer interface */
-> +static bool s5p_mfc_is_v6_new(struct s5p_mfc_dev *dev) {
-> +	unsigned long cur_fw, v6_new_fw;
-> +	unsigned int y, m, d;
-> +
-> +	if (IS_MFCV7(dev))
-> +		return false;
-> +
-> +	y = bcd2bin((dev->ver >> 16) & 0xFF) + 2000;
-> +	m = bcd2bin((dev->ver >> 8) & 0xFF);
-> +	d = bcd2bin(dev->ver & 0xFF);
-> +
-> +	cur_fw = mktime(y, m, d, 0, 0, 0);
-> +	/*
-> +	 * Firmware versions from date 29/06/2012 are coming with new
-> interface
-> +	 * for init buffer
-> +	 */
-> +	v6_new_fw = mktime(2012, 6, 29, 0, 0, 0);
-> +
-> +	return cur_fw >= v6_new_fw;
-> +}
-> +
->  /* Initialize decoding */
->  static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx *ctx)  { @@ -
-> 1296,7 +1320,7 @@ static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx
-> *ctx)
->  		WRITEL(ctx->display_delay, S5P_FIMV_D_DISPLAY_DELAY_V6);
->  	}
-> 
-> -	if (IS_MFCV7(dev)) {
-> +	if (IS_MFCV7(dev) || s5p_mfc_is_v6_new(dev)) {
->  		WRITEL(reg, S5P_FIMV_D_DEC_OPTIONS_V6);
->  		reg = 0;
->  	}
-> @@ -1311,8 +1335,8 @@ static int s5p_mfc_init_decode_v6(struct
-> s5p_mfc_ctx *ctx)
->  	if (ctx->dst_fmt->fourcc == V4L2_PIX_FMT_NV12MT_16X16)
->  		reg |= (0x1 << S5P_FIMV_D_OPT_TILE_MODE_SHIFT_V6);
-> 
-> -	if (IS_MFCV7(dev))
-> -		WRITEL(reg, S5P_FIMV_D_INIT_BUFFER_OPTIONS_V7);
-> +	if (IS_MFCV7(dev) || s5p_mfc_is_v6_new(dev))
-> +		WRITEL(reg, S5P_FIMV_D_INIT_BUFFER_OPTIONS_V6);
->  	else
->  		WRITEL(reg, S5P_FIMV_D_DEC_OPTIONS_V6);
-> 
-> --
-> 1.7.9.5
+> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> >> ---
+> >> This patch is tested on IOMMU support series [1] posted by KyonHo
+> >> Cho.
+> >> [1] https://lkml.org/lkml/2014/3/14/9
+> >> ---
+> >>  drivers/media/platform/s5p-mfc/s5p_mfc.c |   33
+> +++++++++++++++++++++++++++
+> >>  1 file changed, 33 insertions(+)
+> >>
+> >> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> >> b/drivers/media/platform/s5p-mfc/s5p_mfc.c index 89356ae..1f248ba
+> >> 100644
+> >> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> >> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> >> @@ -32,11 +32,18 @@
+> >>  #include "s5p_mfc_opr.h"
+> >>  #include "s5p_mfc_cmd.h"
+> >>  #include "s5p_mfc_pm.h"
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +#include <asm/dma-iommu.h>
+> >> +#endif
+> >>
+> >>  #define S5P_MFC_NAME         "s5p-mfc"
+> >>  #define S5P_MFC_DEC_NAME     "s5p-mfc-dec"
+> >>  #define S5P_MFC_ENC_NAME     "s5p-mfc-enc"
+> >>
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +static struct dma_iommu_mapping *mapping; #endif
+> >> +
+> >>  int debug;
+> >>  module_param(debug, int, S_IRUGO | S_IWUSR);
+> >> MODULE_PARM_DESC(debug, "Debug level - higher value produces more
+> >> verbose messages"); @@ -1013,6 +1020,23 @@ static void
+> >> *mfc_get_drv_data(struct platform_device *pdev);
+> >>
+> >>  static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)  {
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +     struct device *mdev = &dev->plat_dev->dev;
+> >> +
+> >> +     mapping = arm_iommu_create_mapping(&platform_bus_type,
+> 0x20000000,
+> >> +                     SZ_256M);
+> >> +     if (mapping == NULL) {
+> >> +             mfc_err("IOMMU mapping failed\n");
+> >> +             return -EFAULT;
+> >> +     }
+> >> +     mdev->dma_parms = devm_kzalloc(&dev->plat_dev->dev,
+> >> +                     sizeof(*mdev->dma_parms), GFP_KERNEL);
+> >> +     dma_set_max_seg_size(mdev, 0xffffffffu);
+> >> +     arm_iommu_attach_device(mdev, mapping);
+> >> +
+> >> +     dev->mem_dev_l = dev->mem_dev_r = mdev;
+> >> +     return 0;
+> >> +#else
+> >>       unsigned int mem_info[2] = { };
+> >>
+> >>       dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev, @@ -1049,6
+> >> +1073,7 @@ static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev
+> >> *dev) return -ENOMEM;
+> >>       }
+> >>       return 0;
+> >> +#endif
+> >>  }
+> >>
+> >>  /* MFC probe function */
+> >> @@ -1228,6 +1253,10 @@ err_mem_init_ctx_1:
+> >>       vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+> >>  err_res:
+> >>       s5p_mfc_final_pm(dev);
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +     if (mapping)
+> >> +             arm_iommu_release_mapping(mapping);
+> >> +#endif
+> >>
+> >>       pr_debug("%s-- with error\n", __func__);
+> >>       return ret;
+> >> @@ -1256,6 +1285,10 @@ static int s5p_mfc_remove(struct
+> >> platform_device
+> >> *pdev) put_device(dev->mem_dev_r);
+> >>       }
+> >>
+> >> +#ifdef CONFIG_EXYNOS_IOMMU
+> >> +     if (mapping)
+> >> +             arm_iommu_release_mapping(mapping);
+> >> +#endif
+> >>       s5p_mfc_final_pm(dev);
+> >>       return 0;
+> >>  }
+> >
+> > --
+> > Regards,
+> >
+> > Laurent Pinchart
+> >
