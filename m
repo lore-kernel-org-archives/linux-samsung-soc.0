@@ -1,41 +1,105 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 0/7 v8] crypto:s5p-sss: Add Device tree and Exynos support
-Date: Thu, 8 May 2014 22:01:34 +0800
-Message-ID: <20140508140134.GC13769@gondor.apana.org.au>
-References: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v5 00/15] exynos5420: clock file cleanup
+Date: Thu, 8 May 2014 20:05:13 +0530
+Message-ID: <CAOD6ATqRW2d9Kr8JWM=UG54MM4ufjqLN9kKZLt+jRohEFqXf3Q@mail.gmail.com>
+References: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com> <536B7084.7010002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1398681899-20782-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, vzapolskiy@gmail.com, naveenkrishna.ch@gmail.com, cpgs@samsung.com, t.figa@samsung.com, davem@davemloft.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f182.google.com ([209.85.160.182]:55412 "EHLO
+	mail-yk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753056AbaEHOfe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 May 2014 10:35:34 -0400
+In-Reply-To: <536B7084.7010002@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, alim.akhtar@samsung.com
 
-On Mon, Apr 28, 2014 at 10:44:52AM +0000, Naveen Krishna Chatradhi wrote:
-> SSS module on Exynos4210, Exynos5250 and Exynos5420 SoCs has added
-> features to the one on S5PV210. However with minor changes the s5p-sss.c
-> driver can be reused to support SSS modules on Exynos4 and 5 SoCs.
-> 
-> This patch set
-> 1. Adds device tree support to the s5p-sss.c driver and Documentation
-> 2. Adds code to support SSS module on Exynos4 and 5 SoCs
-> 3. Adds variant struct to handle the differences in SSS modules
-> 4. Adds clk_prepare/clk_unprepare clocks to the s5p-sss.c driver
-> 
-> Note: Compatible "exynos4210-secss" should work for Exynos4412 and
->       Exynos5260 (Exynos5260, for which ARCH code is under review)
-> I couldn't test on Exynos4412 and Exynos4210 boards, Should be able to
-> test with addition of DT node and clocks support.
-> 
-> These patches are under review at
-> https://lkml.org/lkml/2014/2/17/124
-> 
-> Naveen Krishna Chatradhi (7):
+Hi Tomasz,
 
-All applied.  Thanks!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+On Thu, May 8, 2014 at 5:24 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Shaik,
+>
+> On 08.05.2014 13:27, Shaik Ameer Basha wrote:
+>> Many changes/fixes have been identified for clock file for exynos5420.
+>> These include correct parents, bit fields, new clocks etc. Existing
+>> files needs some correction in terms of names of the clock and
+>> indentation. These issues are addressed in this patch series.
+>>
+>> This patch series is rebased on,
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git:3.15-rc4
+>>
+>> This patch is also dependent on the following patch.
+>> clk: exynos5420: Add clock IDs needed by GPU
+>>     -- http://www.spinics.net/lists/arm-kernel/msg326461.html
+>>
+>> This patch series is tested on Exynos5420 based peach-pit board.
+>>     -- [PATCH v4 0/2] Add peach-pit board support
+>>
+>> Clock Summary before and after applying this patch series:
+>> ----------------------------------------------------------
+>> http://slexy.org/view/s2KMWxI3wv
+>>
+>> As per Tomasz Figa's sugession, one more patch will be sent on
+>> top of this patch series to remove the unnecessary clocks
+>> related to GATE_BUS_* offsets.
+>>
+>> Changes since v4:
+>> -----------------
+>> Addressed review comments from Tomasz Figa related to
+>> CLK_SET_RATE_PARENT and CLK_IGNORE_UNUSED.
+>>
+>> Changes since v3:
+>> -----------------
+>> Addressed review comments from Tomasz Figa and Alim Akhtar
+>> Some of the changes includes,
+>> 1] Adding clock IDs for all the added gate clocks.
+>> 2] Followed bit ordering while defining new clocks.
+>> 3] Adding SET_RATE_PARENT flag for all the clocks having
+>>    dividers as parents.
+>>
+>> Changes since v2:
+>> -----------------
+>> 1] Addressed review comments from Gerhard Sittig and Tomasz Figa.
+>>
+>> Changes since v1:
+>> -----------------
+>> 1] Addressed review comments from Tomasz Figa.
+>>     http://www.spinics.net/lists/devicetree/msg16759.html
+>>     http://www.spinics.net/lists/devicetree/msg16760.html
+>>
+>> Shaik Ameer Basha (15):
+>>   clk: exynos5420: Rename mux parent arrays
+>>   clk: exynos5420: add clocks for ISP block
+>>   clk: exynos5420: update clocks for GSCL and MSCL blocks
+>>   clk: exynos5420: fix parent clocks for mscl sysmmu
+>>   clk: exynos5420: update clocks for G2D and G3D blocks
+>>   clk: exynos5420: update clocks for DISP1 block
+>>   clk: exynos5420: update clocks for PERIC block
+>>   clk: exynos5420: update clocks for PERIS and GEN blocks
+>>   clk: exynos5420: update clocks for WCORE block
+>>   clk: exynos5420: update clocks for FSYS and FSYS2 blocks
+>>   clk: exynos5420: correct sysmmu-mfc parent clocks
+>>   clk: exynos5420: fix register offset for sclk_bpll
+>>   clk: exynos5420: update clocks for MAU Block
+>>   clk: exynos5420: add misc clocks
+>>   clk: exynos5420: add more registers to restore list
+>>
+>>  arch/arm/boot/dts/exynos5420.dtsi      |   14 +-
+>>  drivers/clk/samsung/clk-exynos5420.c   |  853 ++++++++++++++++++++------------
+>>  include/dt-bindings/clock/exynos5420.h |   37 +-
+>>  3 files changed, 576 insertions(+), 328 deletions(-)
+>>
+>
+> Looks good. Will apply.
+
+Thanks.
+
+Regards,
+Shaik Ameer Basha
+
+>
+> Best regards,
+> Tomasz
