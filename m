@@ -1,57 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: [media] exynos4-is: Add the FIMC-IS ISP capture DMA driver
-Date: Thu, 8 May 2014 16:16:20 +0300
-Message-ID: <20140508131620.GA7606@mwanda>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-media-owner@vger.kernel.org
-To: s.nawrocki@samsung.com
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/8] usb/gadget: s3c2410_udc: don't use pr_debug return value
+Date: Thu,  8 May 2014 15:52:14 +0200
+Message-ID: <1399557141-1346645-2-git-send-email-arnd@arndb.de>
+References: <1399557141-1346645-1-git-send-email-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1399557141-1346645-1-git-send-email-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Sylwester Nawrocki,
+pr_debug() may be defined as "do { } while (0)" in some configurations,
+which means one cannot rely on the return value to be available.
 
-The patch 34947b8aebe3: "[media] exynos4-is: Add the FIMC-IS ISP
-capture DMA driver" from Dec 20, 2013, leads to the following static
-checker warning:
+In the dprintk function in this driver, we can work around the
+resulting build error trivially by returning the length that
+this function already knows and ignoring the return value of
+pr_debug.
 
-	drivers/media/platform/exynos4-is/fimc-isp-video.c:415 isp_video_try_fmt_mplane()
-	error: XXX NULL dereference inside function. '()' '0'
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ drivers/usb/gadget/s3c2410_udc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-drivers/media/platform/exynos4-is/fimc-isp-video.c
-   390  static void __isp_video_try_fmt(struct fimc_isp *isp,
-   391                                  struct v4l2_pix_format_mplane *pixm,
-   392                                  const struct fimc_fmt **fmt)
-   393  {
-   394          *fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
-   395  
-   396          pixm->colorspace = V4L2_COLORSPACE_SRGB;
-   397          pixm->field = V4L2_FIELD_NONE;
-   398          pixm->num_planes = (*fmt)->memplanes;
-   399          pixm->pixelformat = (*fmt)->fourcc;
-   400          /*
-   401           * TODO: double check with the docmentation these width/height
-   402           * constraints are correct.
-   403           */
-   404          v4l_bound_align_image(&pixm->width, FIMC_ISP_SOURCE_WIDTH_MIN,
-   405                                FIMC_ISP_SOURCE_WIDTH_MAX, 3,
-   406                                &pixm->height, FIMC_ISP_SOURCE_HEIGHT_MIN,
-   407                                FIMC_ISP_SOURCE_HEIGHT_MAX, 0, 0);
-   408  }
-   409  
-   410  static int isp_video_try_fmt_mplane(struct file *file, void *fh,
-   411                                          struct v4l2_format *f)
-   412  {
-   413          struct fimc_isp *isp = video_drvdata(file);
-   414  
-   415          __isp_video_try_fmt(isp, &f->fmt.pix_mp, NULL);
-                                                         ^^^^
-This will just NULL deref.  What was intended?
-
-   416          return 0;
-   417  }
-
-regards,
-dan carpenter
+diff --git a/drivers/usb/gadget/s3c2410_udc.c b/drivers/usb/gadget/s3c2410_udc.c
+index dd9678f..7987aa0 100644
+--- a/drivers/usb/gadget/s3c2410_udc.c
++++ b/drivers/usb/gadget/s3c2410_udc.c
+@@ -117,7 +117,8 @@ static int dprintk(int level, const char *fmt, ...)
+ 			sizeof(printk_buf)-len, fmt, args);
+ 	va_end(args);
+ 
+-	return pr_debug("%s", printk_buf);
++	pr_debug("%s", printk_buf);
++	return len;
+ }
+ #else
+ static int dprintk(int level, const char *fmt, ...)
+-- 
+1.8.3.2
