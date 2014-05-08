@@ -1,100 +1,213 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH] [media] s5p-mfc: Don't try to resubmit VP8 bitstream
- buffer for decode.
-Date: Thu, 08 May 2014 18:22:29 +0200
-Message-ID: <004b01cf6ad9$b5c83c80$2158b580$%debski@samsung.com>
-References: <1394180752-16348-1-git-send-email-arun.kk@samsung.com>
+Subject: RE: [PATCH v2] [media] s5p-mfc: add init buffer cmd to MFCV6
+Date: Thu, 08 May 2014 18:22:41 +0200
+Message-ID: <004c01cf6ad9$bcc0e780$3642b680$%debski@samsung.com>
+References: <1394529345-31952-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:39019 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754600AbaEHQWS (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:33822 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753858AbaEHQWf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 12:22:18 -0400
-In-reply-to: <1394180752-16348-1-git-send-email-arun.kk@samsung.com>
+	Thu, 8 May 2014 12:22:35 -0400
+In-reply-to: <1394529345-31952-1-git-send-email-arun.kk@samsung.com>
 Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org, arunkk.samsung@gmail.com
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
 Hi,
 
-
 > From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
 > Kumar K
-> Sent: Friday, March 07, 2014 9:26 AM
+> Sent: Tuesday, March 11, 2014 10:16 AM
 > 
-> From: Pawel Osciak <posciak@chromium.org>
+> From: avnd kiran <avnd.kiran@samsung.com>
 > 
-> Currently, for formats that are not H264, MFC driver will check the
-> consumed stream size returned by the firmware and, based on that, will
-> try to decide whether the bitstream buffer contained more than one
-> frame. If the size of the buffer is larger than the consumed stream, it
-> assumes that there are more frames in the buffer and that the buffer
-> should be resubmitted for decode. This rarely works though and actually
-> introduces problems, because:
-> 
-> - v7 firmware will always return consumed stream size equal to whatever
-> the driver passed to it when running decode (which is the size of the
-> whole buffer), which means we will never try to resubmit, because the
-> firmware will always tell us that it consumed all the data we passed to
-> it;
-> 
-> - v6 firmware will return the number of consumed bytes, but will not
-> include the padding ("stuffing") bytes that are allowed after the frame
-> in VP8. Since there is no way of figuring out how many of those bytes
-> follow the frame without getting the frame size from IVF headers (or
-> somewhere else, but not from the stream itself), the driver tries to
-> guess that padding size is not larger than 4 bytes, which is not always
-> true;
-> 
-> The only way to make it work is to queue only one frame per buffer from
-> userspace and the check in the kernel is useless and wrong for VP8.
-> MPEG4 still seems to require it, so keep it only for that format.
-> 
-> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index e2aac59..66c1775 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -360,7 +360,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx
-> *ctx,
->  								list);
->  		ctx->consumed_stream += s5p_mfc_hw_call(dev->mfc_ops,
->  						get_consumed_stream, dev);
-> -		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
-> +		if (ctx->codec_mode == S5P_MFC_CODEC_MPEG4_DEC &&
->  			ctx->consumed_stream + STUFF_BYTE <
->  			src_buf->b->v4l2_planes[0].bytesused) {
->  			/* Run MFC again on the same buffer */
+> Latest MFC v6 firmware requires tile mode and loop filter setting to be
+> done as part of Init buffer command, in sync with v7. Since there are
+> two versions of v6 firmware with different interfaces, it is
+> differenciated using the version number read back from firmware which
+> is a hexadecimal value based on the firmware date.
 
-I expressed my doubts to this patch in my previous email.
-I think that packed PB can also be found in other codecs such as H263.
-So please change to the following if this is a workaround for VP8 only.
-(The title says that it only changes behavior of VP8 decoding, so it is
-misleading).
+MFC version has two parts major and minor. Are you sure that date is 
+the only way to check if the interface has changed? Maybe the major number
+should stay the same (6) in this case, and the minor should be updates?
+Do you have contact with persons writing the firmware?
 
--		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
-+		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
-+		    ctx->codec_mode != S5P_MFC_CODEC_VP8_DEC &&
-
-
-Did you try to revert your patch https://patchwork.linuxtv.org/patch/15448/
-and checking if this fixes the problem for VP8?
-
-> --
-> 1.7.9.5
+Also, I don't see a patch with the newer firmware posted to linux-firmware.
+When it is going to be sent?
 
 Best wishes,
 -- 
 Kamil Debski
 Samsung R&D Institute Poland
+
+> 
+> Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+> Changes from v1
+> ---------------
+> - Check for v6 firmware date for differenciating old and new firmware
+>   as per comments from Kamil and Sylwester.
+> ---
+>  drivers/media/platform/s5p-mfc/regs-mfc-v6.h    |    1 +
+>  drivers/media/platform/s5p-mfc/regs-mfc-v7.h    |    2 --
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
+>  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   |    8 +++---
+>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |   30
+> ++++++++++++++++++++---
+>  5 files changed, 34 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> index 8d0b686..b47567c 100644
+> --- a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> +++ b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> @@ -132,6 +132,7 @@
+>  #define S5P_FIMV_D_METADATA_BUFFER_ADDR_V6	0xf448
+>  #define S5P_FIMV_D_METADATA_BUFFER_SIZE_V6	0xf44c
+>  #define S5P_FIMV_D_NUM_MV_V6			0xf478
+> +#define S5P_FIMV_D_INIT_BUFFER_OPTIONS_V6	0xf47c
+>  #define S5P_FIMV_D_CPB_BUFFER_ADDR_V6		0xf4b0
+>  #define S5P_FIMV_D_CPB_BUFFER_SIZE_V6		0xf4b4
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> index ea5ec2a..82c96fa 100644
+> --- a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> +++ b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> @@ -18,8 +18,6 @@
+>  #define S5P_FIMV_CODEC_VP8_ENC_V7	25
+> 
+>  /* Additional registers for v7 */
+> -#define S5P_FIMV_D_INIT_BUFFER_OPTIONS_V7		0xf47c
+> -
+>  #define S5P_FIMV_E_SOURCE_FIRST_ADDR_V7			0xf9e0
+>  #define S5P_FIMV_E_SOURCE_SECOND_ADDR_V7		0xf9e4
+>  #define S5P_FIMV_E_SOURCE_THIRD_ADDR_V7			0xf9e8
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 4d17df9..f5404a6 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -287,6 +287,7 @@ struct s5p_mfc_priv_buf {
+>   * @warn_start:		hardware error code from which warnings
+start
+>   * @mfc_ops:		ops structure holding HW operation function
+> pointers
+>   * @mfc_cmds:		cmd structure holding HW commands function
+> pointers
+> + * @ver:		firmware sub version
+>   *
+>   */
+>  struct s5p_mfc_dev {
+> @@ -330,6 +331,7 @@ struct s5p_mfc_dev {
+>  	int warn_start;
+>  	struct s5p_mfc_hw_ops *mfc_ops;
+>  	struct s5p_mfc_hw_cmds *mfc_cmds;
+> +	int ver;
+>  };
+> 
+>  /**
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> index 2475a3c..ba1d302 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> @@ -240,7 +240,6 @@ static inline void s5p_mfc_clear_cmds(struct
+> s5p_mfc_dev *dev)
+>  /* Initialize hardware */
+>  int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)  {
+> -	unsigned int ver;
+>  	int ret;
+> 
+>  	mfc_debug_enter();
+> @@ -302,12 +301,13 @@ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)
+>  		return -EIO;
+>  	}
+>  	if (IS_MFCV6_PLUS(dev))
+> -		ver = mfc_read(dev, S5P_FIMV_FW_VERSION_V6);
+> +		dev->ver = mfc_read(dev, S5P_FIMV_FW_VERSION_V6);
+>  	else
+> -		ver = mfc_read(dev, S5P_FIMV_FW_VERSION);
+> +		dev->ver = mfc_read(dev, S5P_FIMV_FW_VERSION);
+> 
+>  	mfc_debug(2, "MFC F/W version : %02xyy, %02xmm, %02xdd\n",
+> -		(ver >> 16) & 0xFF, (ver >> 8) & 0xFF, ver & 0xFF);
+> +		(dev->ver >> 16) & 0xFF, (dev->ver >> 8) & 0xFF,
+> +		dev->ver & 0xFF);
+>  	s5p_mfc_clock_off();
+>  	mfc_debug_leave();
+>  	return 0;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> index 90edb19..356cfe5 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -14,6 +14,7 @@
+> 
+>  #undef DEBUG
+> 
+> +#include <linux/bcd.h>
+>  #include <linux/delay.h>
+>  #include <linux/mm.h>
+>  #include <linux/io.h>
+> @@ -1269,6 +1270,29 @@ static int s5p_mfc_set_enc_params_vp8(struct
+> s5p_mfc_ctx *ctx)
+>  	return 0;
+>  }
+> 
+> +/* Check if newer v6 firmware with changed init buffer interface */
+> +static bool s5p_mfc_is_v6_new(struct s5p_mfc_dev *dev) {
+> +	unsigned long cur_fw, v6_new_fw;
+> +	unsigned int y, m, d;
+> +
+> +	if (IS_MFCV7(dev))
+> +		return false;
+> +
+> +	y = bcd2bin((dev->ver >> 16) & 0xFF) + 2000;
+> +	m = bcd2bin((dev->ver >> 8) & 0xFF);
+> +	d = bcd2bin(dev->ver & 0xFF);
+> +
+> +	cur_fw = mktime(y, m, d, 0, 0, 0);
+> +	/*
+> +	 * Firmware versions from date 29/06/2012 are coming with new
+> interface
+> +	 * for init buffer
+> +	 */
+> +	v6_new_fw = mktime(2012, 6, 29, 0, 0, 0);
+> +
+> +	return cur_fw >= v6_new_fw;
+> +}
+> +
+>  /* Initialize decoding */
+>  static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx *ctx)  { @@ -
+> 1296,7 +1320,7 @@ static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx
+> *ctx)
+>  		WRITEL(ctx->display_delay, S5P_FIMV_D_DISPLAY_DELAY_V6);
+>  	}
+> 
+> -	if (IS_MFCV7(dev)) {
+> +	if (IS_MFCV7(dev) || s5p_mfc_is_v6_new(dev)) {
+>  		WRITEL(reg, S5P_FIMV_D_DEC_OPTIONS_V6);
+>  		reg = 0;
+>  	}
+> @@ -1311,8 +1335,8 @@ static int s5p_mfc_init_decode_v6(struct
+> s5p_mfc_ctx *ctx)
+>  	if (ctx->dst_fmt->fourcc == V4L2_PIX_FMT_NV12MT_16X16)
+>  		reg |= (0x1 << S5P_FIMV_D_OPT_TILE_MODE_SHIFT_V6);
+> 
+> -	if (IS_MFCV7(dev))
+> -		WRITEL(reg, S5P_FIMV_D_INIT_BUFFER_OPTIONS_V7);
+> +	if (IS_MFCV7(dev) || s5p_mfc_is_v6_new(dev))
+> +		WRITEL(reg, S5P_FIMV_D_INIT_BUFFER_OPTIONS_V6);
+>  	else
+>  		WRITEL(reg, S5P_FIMV_D_DEC_OPTIONS_V6);
+> 
+> --
+> 1.7.9.5
