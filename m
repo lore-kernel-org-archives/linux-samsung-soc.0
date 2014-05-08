@@ -1,91 +1,66 @@
 From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v5 14/15] clk: exynos5420: add misc clocks
-Date: Thu, 08 May 2014 16:58:03 +0530
-Message-ID: <1399548484-20626-15-git-send-email-shaik.ameer@samsung.com>
+Subject: [PATCH v5 15/15] clk: exynos5420: add more registers to restore list
+Date: Thu, 08 May 2014 16:58:04 +0530
+Message-ID: <1399548484-20626-16-git-send-email-shaik.ameer@samsung.com>
 References: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16611 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753261AbaEHLao (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:28097 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753261AbaEHLax (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 07:30:44 -0400
+	Thu, 8 May 2014 07:30:53 -0400
 In-reply-to: <1399548484-20626-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, r.sh.open@gmail.com, alim.akhtar@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-This patch adds some missing miscellaneous clocks specific
-to exynos5420.
+This patch adds more register offsets to the list for
+preserving their values during S2R.
 
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c   |   14 +++++++++++---
- include/dt-bindings/clock/exynos5420.h |    2 ++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index c046e7a..dd9e98d 100644
+index dd9e98d..4014e86 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -273,7 +273,8 @@ PNAME(mout_group5_p) = {"mout_sclk_vpll", "mout_sclk_dpll"};
- 
- PNAME(mout_fimd1_final_p) = {"mout_fimd1", "mout_fimd1_opt"};
- PNAME(mout_sw_aclk66_p)	= {"dout_aclk66", "mout_sclk_spll"};
--PNAME(mout_user_aclk66_peric_p)	= { "fin_pll", "mout_sw_aclk66" };
-+PNAME(mout_user_aclk66_peric_p)	= { "fin_pll", "mout_sw_aclk66"};
-+PNAME(mout_user_pclk66_gpio_p) = {"mout_sw_aclk66", "ff_sw_aclk66"};
- 
- PNAME(mout_sw_aclk200_fsys_p) = {"dout_aclk200_fsys", "mout_sclk_spll"};
- PNAME(mout_sw_pclk200_fsys_p) = {"dout_pclk200_fsys", "mout_sclk_spll"};
-@@ -372,10 +373,13 @@ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_clks[] __initdata =
- };
- 
- static struct samsung_fixed_factor_clock exynos5420_fixed_factor_clks[] __initdata = {
--	FFACTOR(0, "sclk_hsic_12m", "fin_pll", 1, 2, 0),
-+	FFACTOR(0, "ff_hsic_12m", "fin_pll", 1, 2, 0),
-+	FFACTOR(0, "ff_sw_aclk66", "mout_sw_aclk66", 1, 2, 0),
- };
- 
- static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
-+	MUX(0, "mout_user_pclk66_gpio", mout_user_pclk66_gpio_p,
-+			SRC_TOP7, 4, 1),
- 	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
- 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
- 	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
-@@ -696,7 +700,7 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 			GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
- 			GATE_BUS_TOP, 8, 0, 0),
--	GATE(0, "pclk66_gpio", "mout_sw_aclk66",
-+	GATE(CLK_PCLK66_GPIO, "pclk66_gpio", "mout_user_pclk66_gpio",
- 			GATE_BUS_TOP, 9, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk66_psgen", "mout_user_aclk66_psgen",
- 			GATE_BUS_TOP, 10, CLK_IGNORE_UNUSED, 0),
-@@ -714,6 +718,10 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 			GATE_BUS_TOP, 17, 0, 0),
- 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
- 			GATE_BUS_TOP, 18, 0, 0),
-+	GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
-+			GATE_BUS_TOP, 28, 0, 0),
-+	GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
-+			GATE_BUS_TOP, 29, 0, 0),
- 
- 	GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
- 			SRC_MASK_TOP2, 24, 0, 0),
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 128fb97..7dd1cc3 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -59,6 +59,8 @@
- #define CLK_SCLK_GSCL_WB	157
- #define CLK_SCLK_HDMIPHY	158
- #define CLK_MAU_EPLL		159
-+#define CLK_SCLK_HSIC_12M	160
-+#define CLK_SCLK_MPHY_IXTAL24	161
- 
- /* gate clocks */
- #define CLK_ACLK66_PERIC	256
+@@ -27,6 +27,7 @@
+ #define DIV_CPU1		0x504
+ #define GATE_BUS_CPU		0x700
+ #define GATE_SCLK_CPU		0x800
++#define CLKOUT_CMU_CPU		0xa00
+ #define GATE_IP_G2D		0x8800
+ #define CPLL_LOCK		0x10020
+ #define DPLL_LOCK		0x10030
+@@ -39,7 +40,11 @@
+ #define CPLL_CON0		0x10120
+ #define DPLL_CON0		0x10128
+ #define EPLL_CON0		0x10130
++#define EPLL_CON1		0x10134
++#define EPLL_CON2		0x10138
+ #define RPLL_CON0		0x10140
++#define RPLL_CON1		0x10144
++#define RPLL_CON2		0x10148
+ #define IPLL_CON0		0x10150
+ #define SPLL_CON0		0x10160
+ #define VPLL_CON0		0x10170
+@@ -140,6 +145,13 @@ static unsigned long exynos5420_clk_regs[] __initdata = {
+ 	DIV_CPU1,
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
++	CLKOUT_CMU_CPU,
++	EPLL_CON0,
++	EPLL_CON1,
++	EPLL_CON2,
++	RPLL_CON0,
++	RPLL_CON1,
++	RPLL_CON2,
+ 	SRC_TOP0,
+ 	SRC_TOP1,
+ 	SRC_TOP2,
 -- 
 1.7.9.5
