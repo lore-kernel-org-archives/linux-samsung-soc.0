@@ -1,136 +1,29 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
-Date: Thu, 8 May 2014 22:07:37 +0530
-Message-ID: <CAEC9eQM0b7k3ENBsO1McFtCXeZnmWuCssvtUFsThCsrNFj1rEw@mail.gmail.com>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
-	<536B26FC.507@samsung.com>
-	<CAEC9eQM=Y=2MEffpANVQKrzv+dyemBDtR7sfGUjJCfw8ZQM55A@mail.gmail.com>
-	<536B7F9A.6080403@samsung.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH 00/22] Random ARM randconfig fixes in drivers
+Date: Thu, 8 May 2014 09:41:57 -0700
+Message-ID: <20140508164157.GA22224@roeck-us.net>
+References: <1399560433-1402630-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f173.google.com ([209.85.128.173]:41386 "EHLO
-	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752176AbaEHQhi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 12:37:38 -0400
-Received: by mail-ve0-f173.google.com with SMTP id pa12so3574123veb.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 09:37:38 -0700 (PDT)
-In-Reply-To: <536B7F9A.6080403@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1399560433-1402630-1-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org, ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, airlied@redhat.com
 
-On Thu, May 8, 2014 at 6:29 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 05/08/2014 12:26 PM, Ajay kumar wrote:
->> Hi Andrej,
->>
->> On Thu, May 8, 2014 at 12:11 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
->>>> This patchset is based on exynos-drm-next-todo branch of Inki Dae's tree at:
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->>>>
->>>> I have just put up Rob's and Sean's idea of chaining up the bridges
->>>> in code, and have implemented basic panel controls as a chained bridge.
->>>> This works well with ptn3460 bridge chip on exynos5250-snow board.
->>>>
->>>> Still need to make use of standard list calls and figure out proper way
->>>> of deleting the bridge chain. So, this is just a rough version.
->>> As I understand this patchset tries to solve two things:
->>> 1. Implement panel as drm_bridge, to ease support for hardware chains:
->>> Crtc -> Encoder -> Bridge -> Panel
->>> 2. Add support to drm_bridge chaining, to allow software chains:
->>> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
->>>
->>> It is done using Russian doll schema, ops from the bridge calls the same
->>> ops from the next bridge and the next bridge ops can do the same.
->>>
->>> This schema means that all the bridges including the last one are seen
->>> from the drm core point of view as a one big drm_bridge. Additionally in
->>> this particular case, the first bridge (ptn3460) implements connector
->>> so it is hard to guess what is the location of the 2nd bridge in video
->>> stream chain, sometimes it is after the connector, sometimes before.
->>> All this is quite confusing.
->>>
->>> But if you look at the bridge from upstream video interface point of
->>> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on its
->>> video input side acts as a panel. On the output side it expects a panel,
->>> lvds panel in this case.
->>>
->>> So why not implement ptn3460 bridge as drm_panel which internally uses
->>> another drm_panel. With this approach everything fits much better.
->>> You do not need those (pre|post)_(enable|disable) calls, you do not need
->>> to implement connector in the bridge and you have a driver following
->>> linux driver model. And no single bit changed in drm core.
->> This discussion should have ideally happened when Sean added bridge
->> into drm-core!
->
-> Yes, I agree with this :)
->
->> And, we do need (pre|post)_(enable|disable) calls for bridges, but the drm_panel
->> framework supports only enable/disable.
->
-> For true bridges pre|post can be just implemented as a part of the call,
-> for example:
->
-> bridge_enable()
-> {
->     /* pre-enable stuff */
->     panel_enable();
->     /* post-enable stuff */
-> }
->
-It should ideally be like this:
-1) panel enable - switch on the LCD unit.
-2) bridge enable - switch on the bridge.
-3) encoder->commit/dpms on - valid data starts coming out of DP/MIPI
-4) switch on the backlight unit and enable BL_EN.
+On Thu, May 08, 2014 at 04:46:51PM +0200, Arnd Bergmann wrote:
+> These are a bunch of fixes I had to do to get all randconfig
+> configurations on ARM working. Most of these are really old
+> bugs, but there are also some new ones. I don't think any of
+> them require a backport to linux-stable.
+> 
+> I have checked that they are all still required on yesterday's
+> linux-next kernel. Please apply on the appropriate trees unless
+> there are objections.
+> 
+Is this series of patches also going to fix arm:allmodconfig ?
 
-> And for your particular problem you have written:
->> The LVDS datasheet says at least 200ms delay is needed from "Valid
->> data" to "BL on".
->
-> I am not sure what exactly means 'valid data' in this case, if it is
-> after lcd_en gpio
-> why not just use schedule_delayed_work. If it should be called later I
-> guess it should
-> be possible to find a proper callback to drm_panel.
-Right. This was already discussed.
-I suggested adding pre_enable/enable/disable and post_disable for drm_panel,
-but Thierry was not ok with it.
-
-Regards,
-Ajay
-
-
->>> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2].
->>> It was not accepted as Inki preferred drm_bridge but as I see the
->>> problems with drm_bridges I have decide to attract attention to much
->>> more cleaner solution.
->>> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
->>> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
->>>
->>> Regards
->>> Andrzej
->>>
->>>
->>>> Ajay Kumar (3):
->>>>   [RFC V2 1/3] drm: implement chaining of drm bridges
->>>>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
->>>>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
->>>>
->>>>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
->>>>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
->>>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
->>>>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 +++++++++++++++++++++
->>>>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
->>>>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
->>>>  include/drm/bridge/bridge_panel.h                  |  37 ++++
->>>>  include/drm/drm_crtc.h                             |   2 +
->>>>  8 files changed, 360 insertions(+), 5 deletions(-)
->>>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
->>>>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
->>>>  create mode 100644 include/drm/bridge/bridge_panel.h
->>>>
->
+Thanks,
+Guenter
