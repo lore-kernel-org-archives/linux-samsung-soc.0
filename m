@@ -1,215 +1,58 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/4] drm/exynos/mixer: use MXR_GRP_SXY_SY
-Date: Thu, 08 May 2014 20:38:20 +0900
-Message-ID: <536B6CAC.1040805@samsung.com>
-References: <1399217181-26442-1-git-send-email-djkurtz@chromium.org>
- <1399217181-26442-3-git-send-email-djkurtz@chromium.org>
- <5369C13C.3080506@samsung.com>
- <CAGS+omAbuzRpNDvB6eTw67Dcv3WMdWF3yz+bU5p3j5JRourOyw@mail.gmail.com>
- <536B0900.10204@samsung.com>
- <CAGS+omB8iO2ioLcQEtxsww9kA4Yc8-8YaAkWwTy2ssLOqQvLZg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v3 0/2] Add resolution change event
+Date: Thu,  8 May 2014 17:19:14 +0530
+Message-ID: <1399549756-3743-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:17550 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753248AbaEHLiW (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:37192 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753270AbaEHLt0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 07:38:22 -0400
-In-reply-to: <CAGS+omB8iO2ioLcQEtxsww9kA4Yc8-8YaAkWwTy2ssLOqQvLZg@mail.gmail.com>
+	Thu, 8 May 2014 07:49:26 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <marcheu@chromium.org>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-Hi Daniel,
+This patchset adds a source_change event to the v4l2-events.
+This can be used for notifying the userspace about runtime
+format changes happening on video nodes / pads like resolution
+change in video decoder.
 
-On 2014=EB=85=84 05=EC=9B=94 08=EC=9D=BC 18:21, Daniel Kurtz wrote:
-> On Thu, May 8, 2014 at 12:33 PM, Seung-Woo Kim <sw0312.kim@samsung.co=
-m> wrote:
->>
->> Hello Daniel,
->>
->> On 2014=EB=85=84 05=EC=9B=94 07=EC=9D=BC 23:14, Daniel Kurtz wrote:
->>> On Wed, May 7, 2014 at 1:14 PM, Seung-Woo Kim <sw0312.kim@samsung.c=
-om> wrote:
->>>> Hi Daniel,
->>>>
->>>> On 2014=EB=85=84 05=EC=9B=94 05=EC=9D=BC 00:26, Daniel Kurtz wrote=
-:
->>>>> Mixer hardware supports offsetting dma from start of source buffe=
-r using
->>>>> the MXR_GRP_SXY register.
->>>>>
->>>>> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
->>>>> ---
->>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 8 +++-----
->>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/=
-drm/exynos/exynos_mixer.c
->>>>> index 475eb49..40cf39b 100644
->>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>> @@ -529,13 +529,11 @@ static void mixer_graph_buffer(struct mixer=
-_context *ctx, int win)
->>>>>
->>>>>       dst_x_offset =3D win_data->crtc_x;
->>>>>       dst_y_offset =3D win_data->crtc_y;
->>>>> +     src_x_offset =3D win_data->fb_x;
->>>>> +     src_y_offset =3D win_data->fb_y;
->>>>>
->>>>>       /* converting dma address base and source offset */
->>>>> -     dma_addr =3D win_data->dma_addr
->>>>> -             + (win_data->fb_x * win_data->bpp >> 3)
->>>>> -             + (win_data->fb_y * win_data->fb_width * win_data->=
-bpp >> 3);
->>>>> -     src_x_offset =3D 0;
->>>>> -     src_y_offset =3D 0;
->>>>> +     dma_addr =3D win_data->dma_addr;
->>>>
->>>> Basically, you are right and source offset register can be used. B=
-ut
->>>> because of limitation of resolution for mixer up to 1920x1080, I
->>>> considered modified soruce dma address to set one frame buffer, wh=
-ich is
->>>> bigger than 1920x1080, on to both fimd and hdmi.
->>>
->>> Hi Seung-Woo,
->>>
->>> I do not see why the maximum MIXER resolution matters for choosing
->>> between offsetting BASE or using SXY.
->>>
->>> Let's say you have one big 1920x1908 framebuffer, with a span of 19=
-20,
->>> starting at dma_addr (there is no extra padding at the end of the
->>> line).
->>> Let's say you wanted the mixer to scan out 1920x1080 pixels startin=
-g
->>> from (0, 800) in the framebuffer, and start drawing them at (0,0) o=
-n
->>> the screen.
->>>
->>> What we currently do is:
->>>   BASE =3D dma_addr + (800 * 1080 * 4)
->>>   SPAN =3D 1920
->>>   SXY =3D SX(0) | SY(0)
->>>   WH =3D W(1920) | H(1080)
->>>   DXY =3D DX(0) | DY(0)
->>>
->>> I am proposing we do:
->>>   BASE =3D dma_addr
->>>   SPAN =3D 1920
->>>   SXY =3D SX(0) | SY(800)
->>>   WH =3D W(1920) | H(1080)
->>>   DXY =3D DX(0) | DY(0)
->>>
->>> In both cases, the mixer resolution is 1920x1080.
->>
->> In my test to show each half of big one framebuffer (3840 x 1080) to
->> FIMD from 0 to 1079 and MIXER from 1080 to 3839 with exynos4210 and
->> exynos4412, it was failed to show proper hdmi display. Also it is sa=
-me
->> for framebuffer (1920 x 2160). AFAIK, it is mainly because mixer dma=
- has
->> limitation of dma memory size.
->=20
->=20
-> That is unfortunate, but thank you for your explanation.
->=20
-> Is this limitation exynos4 specific, or does it also apply for the
-> exynos5 mixer?
+This version includes suggestions from Hans and Laurent
+to make it more generic and to be used by all kinds of
+video devices to notify userspace about runtime parameter
+changes. The discussion can be seen here [1]
 
-It seems that exynos5260/5420 mixers also have same limitation: SX/Y
-fields is 11 bits.
+If this is accepted, I can send another series implementing
+v4l2_event_init() for zeoring the data array addressing
+compatibility issues as discussed in [1].
 
-> Was the limitation perhaps the number of bits in the SXY register
-> fields (< 11) on those devices?
-> For 5250/5420 these fields are 11 bits, and I don't see any
-> restrictions about "dma memory size" in the documentation that I have=
-=2E
->=20
+[1] https://patchwork.kernel.org/patch/4023131/
 
-So I guess that the reason Mixer controller was operated incorrectly is
-that SX/Y fields exceed maximum value (2047) by itself when he
-calculates DMA address to access the memory region: the value of SX/Y
-fields would be increased by Mixer controller internally until reaching
-width or height, and in turn the value would exceed 2047.
+Changes from v2
+---------------
+- Event can be subscribed on specific pad / port as
+  suggested by Hans.
 
-So I think it'd better to use existing codes because this patch isn't
-tested so not safe. You can add more comments enough to existing codes
-if needed.
+Changes from v1
+---------------
+- Addressed review comments from Hans and Laurent
+  https://patchwork.kernel.org/patch/4000951/
 
-In addition, it seems that Exynos5422/5430 has no such limitation but
-they are much different from old ones so we would need new drivers for =
-them.
+Arun Kumar K (1):
+  [media] v4l: Add source change event
 
-Thanks,
-Inki Dae
+Pawel Osciak (1):
+  [media] s5p-mfc: Add support for resolution change event
 
-> Thanks,
-> -Dan
->=20
->> In this case, I set register as like:
->>   BASE =3D dma_addr /* 3840 x 1080 x 4 */
->>   SPAN =3D 3840
->>   SXY =3D SX(1920) | SY(0)
->>   WH =3D W(1920) | H(1080)
->>   DXY =3D DX(0) | DY(0)
->> or:
->>   BASE =3D dma_addr /* 1920 x 2160 x 4 */
->>   SPAN =3D 1920
->>   SXY =3D SX(0) | SY(1080)
->>   WH =3D W(1920) | H(1080)
->>   DXY =3D DX(0) | DY(0)
->> but these two setting did not show hdmi display as I expected. So I =
-used
->> modified dma address.
->>
->>>
->>> My motivation for wanting to program an un-modified dma_addr into B=
-ASE
->>> is so we can then just check BASE_S to determine from which buffer =
-the
->>> mixer is actively being scanned out without worrying about the sour=
-ce
->>> offset, since the source offset can change for a given framebuffer
->>> (for example, when doing panning, or if an overlay is used for a HW
->>> cursor).
->>
->> Actually, this patch is exactly same with my first implementation, s=
-o I
->> completely understand your motivation. Anyway, I was focus on extend=
-ed
->> displays with one buffer, so I wrote modified dma base address.
->>
->> Thanks and Regards,
->> - Seung-Woo Kim
->>
->>>
->>> Best Regards,
->>> -Daniel
->>>
->>>>
->>>> Regards,
->>>> - Seung-Woo Kim
->>>>
->>>>>
->>>>>       if (win_data->scan_flags & DRM_MODE_FLAG_INTERLACE)
->>>>>               ctx->interlace =3D true;
->>>>>
->>>>
->>>> --
->>>> Seung-Woo Kim
->>>> Samsung Software R&D Center
->>>> --
->>>>
->>>
->>
->> --
->> Seung-Woo Kim
->> Samsung Software R&D Center
->> --
->>
->=20
+ Documentation/DocBook/media/v4l/vidioc-dqevent.xml |   32 +++++++++++++++++
+ .../DocBook/media/v4l/vidioc-subscribe-event.xml   |   19 +++++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |    7 ++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |    2 ++
+ drivers/media/v4l2-core/v4l2-event.c               |   36 ++++++++++++++++++++
+ include/media/v4l2-event.h                         |    4 +++
+ include/uapi/linux/videodev2.h                     |    8 +++++
+ 7 files changed, 108 insertions(+)
+
+-- 
+1.7.9.5
