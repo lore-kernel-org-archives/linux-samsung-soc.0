@@ -1,108 +1,83 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V3 2/3] ARM: EXYNOS5: Add Suspend-to-RAM support for 5420
-Date: Thu, 08 May 2014 14:24:39 +0200
-Message-ID: <8537431.uXYiuaPHBe@amdc1032>
-References: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v4 0/3] Generic Device Tree based power domain look-up
+Date: Thu, 08 May 2014 14:45:06 +0200
+Message-ID: <1399553109-6487-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23093 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753343AbaEHMYw (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28357 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752756AbaEHMsO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 08:24:52 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5900J3N95FD900@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 21:24:51 +0900 (KST)
-In-reply-to: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
+	Thu, 8 May 2014 08:48:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Philipp Zabel <philipp.zabel@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
+Up till now there was no single generic method to bind devices to their
+power domains using Device Tree. Each platform has been doing this using
+its own way, example of which are Exynos power domain bindings [1] and
+look-up code [2].
 
-Hi,
+This series is intended to change this and provide generic DT bindings for
+power domain specification and generic code performing look-up of power
+domains and binding them to devices.
 
-On Thursday, May 08, 2014 04:22:48 PM Vikas Sajjan wrote:
-> Adds Suspend-to-RAM support for EXYNOS5420
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-> ---
->  arch/arm/mach-exynos/pm.c       |  163 ++++++++++++++++++++++++++++++++++-----
->  arch/arm/mach-exynos/regs-pmu.h |    2 +
->  2 files changed, 146 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index a7a1b7f..87ccac7 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
+First two patches are the most important part of this series, as they
+introduce $subject. Patch 3 converts mach-exynos to use the new generic
+method. Further patches are adding one more user of the new code,
+mach-s3c64xx, with first 3 patches (4-6) required to clean-up its power
+domain driver a bit and last 3 patches (9-11) adding display support for
+Mini6410 board, including a node for display controller (FIMD) which is
+a power domain consumer.
 
-[...]
+The design of DT bindings and provider code is heavily inspired by
+implementation of clock providers in Common Clock Framework, while
+the code binding devices to power domains by my Exynos power domain
+implementation (now removed by this series ;)).
 
-> @@ -280,33 +352,80 @@ static int exynos_pm_central_resume(void)
->  
->  static void exynos_pm_resume(void)
->  {
-> +	unsigned int tmp;
-> +	if (soc_is_exynos5420()) {
-> +		/* Restore the IRAM register cpu state */
-> +		s3c_pm_do_restore(exynos5420_cpustate_save,
-> +			ARRAY_SIZE(exynos5420_cpustate_save));
-> +
-> +		regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION,
-> +				EXYNOS5420_USE_STANDBY_WFI_ALL);
-> +	}
-> +
->  	if (exynos_pm_central_resume())
->  		goto early_wakeup;
->  
-> -	if (!soc_is_exynos5250())
-> +	if (!(soc_is_exynos5250() || soc_is_exynos5420()))
->  		exynos_cpu_restore_register();
->  
->  	/* For release retention */
->  
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_MAUDIO_OPTION, (1 << 28));
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_GPIO_OPTION, (1 << 28));
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_UART_OPTION, (1 << 28));
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_MMCA_OPTION, (1 << 28));
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_MMCB_OPTION, (1 << 28));
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_EBIA_OPTION, (1 << 28));
-> -	regmap_write(pmu_regmap, S5P_PAD_RET_EBIB_OPTION, (1 << 28));
-> +	if (soc_is_exynos5250()) {
+Successfully tested on Exynos4210-based Trats and Exynos4412-based Trats2
+boards using MFC, 
 
-Adding a check here for EXYNOS5250 doesn't look correct (the old code
-behavior for older EXYNOS SoCs should be preserved).
+[1] Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+[2] arch/arm/mach-exynos/pm_domains.c
 
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_MAUDIO_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_GPIO_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_UART_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_MMCA_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_MMCB_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_EBIA_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, S5P_PAD_RET_EBIB_OPTION, (1 << 28));
-> +	} else if (soc_is_exynos5420()) {
-> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_DRAM_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_MAUDIO_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_JTAG_OPTION,  (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_GPIO_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_UART_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCA_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCB_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCC_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_HSI_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_EBIA_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_EBIB_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_SPI_OPTION, (1 << 28));
-> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION, (1 << 28));
-> +	}
+Changes since v3:
+(http://thread.gmane.org/gmane.linux.power-management.general/44571)
+ - rebased onto current Rafael's linux-pm bleeding-edge branch (0a112bf),
+ - renamed "power-domain" property to "power-domains" to facilitate further
+   extension to support multiple power domains per device in future.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Changes since v2:
+(http://thread.gmane.org/gmane.linux.kernel/1658926)
+ - rebased onto current Rafael's linux-pm bleeding-edge branch,
+ - dropped patches for s3c64xx for now. I will send them in separate series,
+ - do not call pm_genpd_dev_need_restore(true) in genpd_bind_domain(),
+ - fixed various stylistic issues reported in review comments.
+
+Changes since v1 (RFC):
+[https://lkml.org/lkml/2014/1/11/141]
+ - rebased onto current Rafael's linux-pm bleeding-edge branch,
+ - reordered the patches a bit (to have the generic ones first),
+ - dropped renaming of S3C64xx power domains (as suggested by Mark Brown),
+ - added support for deferred probing (as suggested by Stephen Boyd),
+ - fixed several minor issues pointed by Stephen Boyd,
+ - replaced notifiers with direct hooks in driver core to make power domain
+   support independent from specific bus type and allow error handling.
+
+Tomasz Figa (3):
+  base: power: Add generic OF-based power domain look-up
+  drivercore: Bind/unbind power domain on probe/remove
+  ARM: exynos: Move to generic power domain bindings
+
+ .../bindings/arm/exynos/power_domain.txt           |  12 +-
+ .../devicetree/bindings/power/power_domain.txt     |  51 ++++
+ arch/arm/mach-exynos/pm_domains.c                  |  81 +-----
+ drivers/base/dd.c                                  |   9 +-
+ drivers/base/power/domain.c                        | 283 +++++++++++++++++++++
+ include/linux/pm_domain.h                          |  46 ++++
+ kernel/power/Kconfig                               |   4 +
+ 7 files changed, 398 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/power_domain.txt
+
+-- 
+1.9.2
