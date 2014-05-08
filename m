@@ -1,59 +1,93 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/4] Fixes for DT CPU topology specification on Exynos
-Date: Thu, 08 May 2014 17:24:56 +0200
-Message-ID: <536BA1C8.8050806@samsung.com>
-References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH] ARM: dts: enable pwm backlight on exynos5250-snow
+Date: Thu, 08 May 2014 17:55:54 +0200
+Message-ID: <536BA90A.60406@suse.de>
+References: <1399467371-12242-1-git-send-email-ajaykumar.rs@samsung.com>	<536A98E7.9030007@gmail.com> <CAEC9eQPeGSw0xEdmq2GkVVhC7cTGSEvkM_CHRxTw__aFrvzvbw@mail.gmail.com> <536A9C82.6090704@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32018 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751945AbaEHPZB (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:58214 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751776AbaEHPz4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 11:25:01 -0400
-In-reply-to: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
+	Thu, 8 May 2014 11:55:56 -0400
+In-Reply-To: <536A9C82.6090704@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Ajay kumar <ajaynumb@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olof@lixom.net>
 
 Hi,
 
-On 18.04.2014 16:42, Tomasz Figa wrote:
-> Due to some parts of Exynos SoC support designed originally in a non-scalable
-> way, relying on 1:1 mapping between value returned by cpu_logical_map() and
-> CPU IDs as seen by PMU and GIC, trying to specify CPU topology in device tree
-> caused various boot-up issues on Exynos SoCs, ranging from CPUs other than 0
-> failing to boot to crashes due to GIC driver accessing registers out of range.
-> 
-> This series attempts to fix aforementioned issues by removing incorrect
-> assumptions from Exynos SoC core code and GIC driver and then adding CPU
-> topology data to device tree sources of Exynos4.
-> 
-> [On Exynos4210-based TRATS and Exynos4412-based TRATS2 board]
-> Tested-by: Tomasz Figa <t.figa@samsung.com>
-> 
-> Tomasz Figa (4):
->   ARM: EXYNOS: Fix definitions of S5P_ARM_CORE_* registers
->   ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
->   irqchip: gic: Add support for per CPU bank offset specification in DT
->   ARM: dts: exynos4: Add CPU topology data
-> 
->  Documentation/devicetree/bindings/arm/cpus.txt |  7 ++
->  Documentation/devicetree/bindings/arm/gic.txt  | 34 +++++++++-
->  arch/arm/boot/dts/exynos4210.dtsi              | 19 ++++++
->  arch/arm/boot/dts/exynos4212.dtsi              | 19 ++++++
->  arch/arm/boot/dts/exynos4412.dtsi              | 37 ++++++++--
->  arch/arm/mach-exynos/hotplug.c                 | 10 +--
->  arch/arm/mach-exynos/platsmp.c                 | 31 +++++----
->  arch/arm/mach-exynos/regs-pmu.h                |  4 +-
->  drivers/irqchip/irq-gic.c                      | 94 ++++++++++++++++++--------
->  9 files changed, 202 insertions(+), 53 deletions(-)
-> 
+Am 07.05.2014 22:50, schrieb Tomasz Figa:
+> On 07.05.2014 22:47, Ajay kumar wrote:
+>> On Thu, May 8, 2014 at 2:04 AM, Tomasz Figa <tomasz.figa@gmail.com>
+>> wrote:
+>>> On 07.05.2014 14:56, Ajay Kumar wrote:
+>>>>
+>>>> Add PWM backlight node for exynos5250 and enable the same on exyno=
+s5250
+>>>> based snow board.
+>>>>
+>>>> Signed-off-by: Olof Johansson <olof@lixom.net>
+>>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>>> ---
+>>>>    arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
+>>>>    arch/arm/boot/dts/exynos5250-snow.dts     |    5 +++++
+>>>>    arch/arm/boot/dts/exynos5250.dtsi         |   10 ++++++++++
+>>>>    3 files changed, 22 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> index 9a49e68..2a4680c 100644
+>>>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>> @@ -351,6 +351,13 @@
+>>>>                          samsung,pin-drv =3D <0>;
+>>>>                  };
+>>>>
+>>>> +               backlight_pwm: backlight-pwm {
+>>>> +                       samsung,pins =3D "gpb2-0";
+>>>> +                       samsung,pin-function =3D <2>;
+>>>> +                       samsung,pin-pud =3D <0>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>
+>>>
+>>> This looks like a generic PWM output function, not specific to
+>>> backlight in
+>>> any way.
+>>>
+>>> Please see patch [1] adding PWM output pin groups for Exynos5420 fo=
+r
+>>> reference.
+>>>
+>>> [1]
+>>> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg2=
+9869.html
+>>>
+>> Right! I just referred to the manual again, and it actually reads TO=
+UT_0.
+>> So, I should be probably renaming this as "pwm0_out" like in the oth=
+er
+>> patch?
+>=20
+> Yes, please. You should also add remaining ones, while at it. Basical=
+ly
+> same patch as [1] but for Exynos5250.
 
-Any comments for this series? I'm especially interested in hearing some
-opinions about patch 3/4, which extends DT bindings of ARM GIC.
+Don't we also need patches to exynos_defconfig? linux.git only has
+CONFIG_S3C24XX_PWM=3Dy but for snow I've seen github.com/linux-exynos a=
+dd:
+CONFIG_PWM=3Dy
+CONFIG_PWM_SAMSUNG=3Dy
+CONFIG_BACKLIGHT_PWM=3Dy
 
-Best regards,
-Tomasz
+Regards,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
