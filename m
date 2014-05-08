@@ -1,93 +1,127 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 0/3] Generic Device Tree based power domain look-up
-Date: Thu, 08 May 2014 14:50:44 +0200
-Message-ID: <536B7DA4.5060008@samsung.com>
-References: <1399553109-6487-1-git-send-email-t.figa@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
+Date: Thu, 08 May 2014 14:59:06 +0200
+Message-ID: <536B7F9A.6080403@samsung.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+ <536B26FC.507@samsung.com>
+ <CAEC9eQM=Y=2MEffpANVQKrzv+dyemBDtR7sfGUjJCfw8ZQM55A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23619 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754482AbaEHMus (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24051 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752551AbaEHM7L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 08:50:48 -0400
-In-reply-to: <1399553109-6487-1-git-send-email-t.figa@samsung.com>
+	Thu, 8 May 2014 08:59:11 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N59006ODAQGU700@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 May 2014 13:59:04 +0100 (BST)
+In-reply-to: <CAEC9eQM=Y=2MEffpANVQKrzv+dyemBDtR7sfGUjJCfw8ZQM55A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Philipp Zabel <philipp.zabel@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, airlied@redhat.com
 
-Sent with wrong Rafael's address, please ignore this thread. Just resent
-with correct address. Sorry for the noise.
+On 05/08/2014 12:26 PM, Ajay kumar wrote:
+> Hi Andrej,
+>
+> On Thu, May 8, 2014 at 12:11 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
+>>> This patchset is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>>>
+>>> I have just put up Rob's and Sean's idea of chaining up the bridges
+>>> in code, and have implemented basic panel controls as a chained bridge.
+>>> This works well with ptn3460 bridge chip on exynos5250-snow board.
+>>>
+>>> Still need to make use of standard list calls and figure out proper way
+>>> of deleting the bridge chain. So, this is just a rough version.
+>> As I understand this patchset tries to solve two things:
+>> 1. Implement panel as drm_bridge, to ease support for hardware chains:
+>> Crtc -> Encoder -> Bridge -> Panel
+>> 2. Add support to drm_bridge chaining, to allow software chains:
+>> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
+>>
+>> It is done using Russian doll schema, ops from the bridge calls the same
+>> ops from the next bridge and the next bridge ops can do the same.
+>>
+>> This schema means that all the bridges including the last one are seen
+>> from the drm core point of view as a one big drm_bridge. Additionally in
+>> this particular case, the first bridge (ptn3460) implements connector
+>> so it is hard to guess what is the location of the 2nd bridge in video
+>> stream chain, sometimes it is after the connector, sometimes before.
+>> All this is quite confusing.
+>>
+>> But if you look at the bridge from upstream video interface point of
+>> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on its
+>> video input side acts as a panel. On the output side it expects a panel,
+>> lvds panel in this case.
+>>
+>> So why not implement ptn3460 bridge as drm_panel which internally uses
+>> another drm_panel. With this approach everything fits much better.
+>> You do not need those (pre|post)_(enable|disable) calls, you do not need
+>> to implement connector in the bridge and you have a driver following
+>> linux driver model. And no single bit changed in drm core.
+> This discussion should have ideally happened when Sean added bridge
+> into drm-core!
 
-Best regards,
-Tomasz
+Yes, I agree with this :)
 
-On 08.05.2014 14:45, Tomasz Figa wrote:
-> Up till now there was no single generic method to bind devices to their
-> power domains using Device Tree. Each platform has been doing this using
-> its own way, example of which are Exynos power domain bindings [1] and
-> look-up code [2].
-> 
-> This series is intended to change this and provide generic DT bindings for
-> power domain specification and generic code performing look-up of power
-> domains and binding them to devices.
-> 
-> First two patches are the most important part of this series, as they
-> introduce $subject. Patch 3 converts mach-exynos to use the new generic
-> method. Further patches are adding one more user of the new code,
-> mach-s3c64xx, with first 3 patches (4-6) required to clean-up its power
-> domain driver a bit and last 3 patches (9-11) adding display support for
-> Mini6410 board, including a node for display controller (FIMD) which is
-> a power domain consumer.
-> 
-> The design of DT bindings and provider code is heavily inspired by
-> implementation of clock providers in Common Clock Framework, while
-> the code binding devices to power domains by my Exynos power domain
-> implementation (now removed by this series ;)).
-> 
-> Successfully tested on Exynos4210-based Trats and Exynos4412-based Trats2
-> boards using MFC, 
-> 
-> [1] Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> [2] arch/arm/mach-exynos/pm_domains.c
-> 
-> Changes since v3:
-> (http://thread.gmane.org/gmane.linux.power-management.general/44571)
->  - rebased onto current Rafael's linux-pm bleeding-edge branch (0a112bf),
->  - renamed "power-domain" property to "power-domains" to facilitate further
->    extension to support multiple power domains per device in future.
-> 
-> Changes since v2:
-> (http://thread.gmane.org/gmane.linux.kernel/1658926)
->  - rebased onto current Rafael's linux-pm bleeding-edge branch,
->  - dropped patches for s3c64xx for now. I will send them in separate series,
->  - do not call pm_genpd_dev_need_restore(true) in genpd_bind_domain(),
->  - fixed various stylistic issues reported in review comments.
-> 
-> Changes since v1 (RFC):
-> [https://lkml.org/lkml/2014/1/11/141]
->  - rebased onto current Rafael's linux-pm bleeding-edge branch,
->  - reordered the patches a bit (to have the generic ones first),
->  - dropped renaming of S3C64xx power domains (as suggested by Mark Brown),
->  - added support for deferred probing (as suggested by Stephen Boyd),
->  - fixed several minor issues pointed by Stephen Boyd,
->  - replaced notifiers with direct hooks in driver core to make power domain
->    support independent from specific bus type and allow error handling.
-> 
-> Tomasz Figa (3):
->   base: power: Add generic OF-based power domain look-up
->   drivercore: Bind/unbind power domain on probe/remove
->   ARM: exynos: Move to generic power domain bindings
-> 
->  .../bindings/arm/exynos/power_domain.txt           |  12 +-
->  .../devicetree/bindings/power/power_domain.txt     |  51 ++++
->  arch/arm/mach-exynos/pm_domains.c                  |  81 +-----
->  drivers/base/dd.c                                  |   9 +-
->  drivers/base/power/domain.c                        | 283 +++++++++++++++++++++
->  include/linux/pm_domain.h                          |  46 ++++
->  kernel/power/Kconfig                               |   4 +
->  7 files changed, 398 insertions(+), 88 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/power/power_domain.txt
-> 
+> And, we do need (pre|post)_(enable|disable) calls for bridges, but the drm_panel
+> framework supports only enable/disable.
+
+For true bridges pre|post can be just implemented as a part of the call,
+for example:
+
+bridge_enable()
+{
+    /* pre-enable stuff */
+    panel_enable();
+    /* post-enable stuff */
+}
+
+And for your particular problem you have written:
+> The LVDS datasheet says at least 200ms delay is needed from "Valid
+> data" to "BL on".
+
+I am not sure what exactly means 'valid data' in this case, if it is
+after lcd_en gpio
+why not just use schedule_delayed_work. If it should be called later I
+guess it should
+be possible to find a proper callback to drm_panel.
+
+Regards
+Andrzej
+
+>> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2].
+>> It was not accepted as Inki preferred drm_bridge but as I see the
+>> problems with drm_bridges I have decide to attract attention to much
+>> more cleaner solution.
+>> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
+>> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
+>>
+>> Regards
+>> Andrzej
+>>
+>>
+>>> Ajay Kumar (3):
+>>>   [RFC V2 1/3] drm: implement chaining of drm bridges
+>>>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
+>>>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+>>>
+>>>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
+>>>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
+>>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
+>>>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 +++++++++++++++++++++
+>>>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
+>>>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
+>>>  include/drm/bridge/bridge_panel.h                  |  37 ++++
+>>>  include/drm/drm_crtc.h                             |   2 +
+>>>  8 files changed, 360 insertions(+), 5 deletions(-)
+>>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+>>>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
+>>>  create mode 100644 include/drm/bridge/bridge_panel.h
+>>>
