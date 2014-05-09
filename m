@@ -1,168 +1,112 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
-Date: Fri, 09 May 2014 11:08:59 +0200
-Message-ID: <536C9B2B.2010006@samsung.com>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
- <536B26FC.507@samsung.com>
- <CAF6AEGvWxCS-NX4uLjyMqc==7X9znn8PJ0AmJ6aFqqHYSBgsrQ@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Fri, 09 May 2014 11:36:57 +0200
+Message-ID: <536CA1B9.5070605@samsung.com>
+References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
+ <5368F136.6070804@samsung.com>
+ <CAFp+6iHN-W-k6ow5YykK_QWgBJ+GgzXwPX6suWtizxwJWOiGtg@mail.gmail.com>
+ <CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAF6AEGvWxCS-NX4uLjyMqc==7X9znn8PJ0AmJ6aFqqHYSBgsrQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Rutland <Mark.Rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/08/2014 08:24 PM, Rob Clark wrote:
-> On Thu, May 8, 2014 at 2:41 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
->>> This patchset is based on exynos-drm-next-todo branch of Inki Dae's tree at:
->>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+[CCing DT maintainers]
+
+On 08.05.2014 11:03, Vivek Gautam wrote:
+> On Thu, May 8, 2014 at 11:35 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> Hi Sylwester,
+>>
+>>
+>> On Tue, May 6, 2014 at 7:57 PM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>> On 28/04/14 08:17, Vivek Gautam wrote:
+>>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>>>> The new driver uses the generic PHY framework and will interact
+>>>> with DWC3 controller present on Exynos5 series of SoCs.
+>>>> Thereby, removing old phy-samsung-usb3 driver and related code
+>>>> used untill now which was based on usb/phy framework.
+>>>>
+>>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>>> ---
+>>>>
+>>>> Changes from v6:
+>>>>  - Addressed review comments:
+>>>>    -- Sorted config entries in Kconfig and Makefile
+>>>>    -- Made #define to_usbdrd_phy(inst) to a static inline routine.
+>>>>    -- Restructured exynos5_rate_to_clk() as suggested.
+>>>>    -- Amended 'val' field for regmap_update_bits() in the routine
+>>>>       exynos5_usbdrd_phy_isol().
+>>>>    -- Removed sentinel entry from exynos5_usbdrd_phy_cfg[] struct.
+>>>>    -- Removed check for 'match' entry in probe().
+>>>>
+>>>>  .../devicetree/bindings/phy/samsung-phy.txt        |   40 ++
+>>>>  drivers/phy/Kconfig                                |   11 +
+>>>>  drivers/phy/Makefile                               |    1 +
+>>>>  drivers/phy/phy-exynos5-usbdrd.c                   |  627 ++++++++++++++++++++
+>>>>  4 files changed, 679 insertions(+)
+>>>>  create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>> index b422e38..51efe4c 100644
+>>>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>> @@ -114,3 +114,43 @@ Example:
+>>>>               compatible = "samsung,exynos-sataphy-i2c";
+>>>>               reg = <0x38>;
+>>>>       };
+>>>> +
+>>>> +Samsung Exynos5 SoC series USB DRD PHY controller
+>>>> +--------------------------------------------------
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible : Should be set to one of the following supported values:
+>>>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>>>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+>>>> +- reg : Register offset and length of USB DRD PHY register set;
+>>>> +- clocks: Clock IDs array as required by the controller
+>>>> +- clock-names: names of clocks correseponding to IDs in the clock property;
+>>>> +            Required clocks:
+>>>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
+>>>> +            used for register access.
+>>>> +     - ref: PHY's reference clock (usually crystal clock), used for
+>>>> +            PHY operations, associated by phy name. It is used to
+>>>> +            determine bit values for clock settings register.
+>>>> +            For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+>>>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
+>>>> +                   control pmu registers for power isolation.
+>>>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+>>>> +                   base.
 >>>
->>> I have just put up Rob's and Sean's idea of chaining up the bridges
->>> in code, and have implemented basic panel controls as a chained bridge.
->>> This works well with ptn3460 bridge chip on exynos5250-snow board.
->>>
->>> Still need to make use of standard list calls and figure out proper way
->>> of deleting the bridge chain. So, this is just a rough version.
+>>> It doesn't seem right to have register offset encoded in the device tree
+>>> like this. I think it'd be more appropriate to associate such an offset
+>>> with the compatible string's value in the driver.
 >>
->> As I understand this patchset tries to solve two things:
->> 1. Implement panel as drm_bridge, to ease support for hardware chains:
->> Crtc -> Encoder -> Bridge -> Panel
->> 2. Add support to drm_bridge chaining, to allow software chains:
->> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
->>
->> It is done using Russian doll schema, ops from the bridge calls the same
->> ops from the next bridge and the next bridge ops can do the same.
->>
->> This schema means that all the bridges including the last one are seen
->> from the drm core point of view as a one big drm_bridge. Additionally in
->> this particular case, the first bridge (ptn3460) implements connector
->> so it is hard to guess what is the location of the 2nd bridge in video
->> stream chain, sometimes it is after the connector, sometimes before.
->> All this is quite confusing.
->>
->> But if you look at the bridge from upstream video interface point of
->> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on its
->> video input side acts as a panel. On the output side it expects a panel,
->> lvds panel in this case.
+>> Ok, it makes more sense.
+>> Just out of curiosity, what difference would this make ?
 > 
-> tbh, this is mostly about what we call it.  Perhaps "bridge" isn't the
-> best name.. I wouldn't object to changing it.
+> Moreover, in case of Exynos5420 (and may be in future SoCs), where we
+> have 2 USB DRD PHY controllers,
+> we will need to have a way around to deal with two separate offsets in
+> the driver for one compatible string.
 > 
-> But my thinking was to leave in drm_panel_funcs things that are just
-> needed by the connector (get_modes().. and maybe some day we need
-> detect/etc).  Then leave everything else in drm_bridge_funcs.  A panel
-> could (if needed) implement both interfaces.
-> 
-> That is basically the same as what you are proposing, but without
-> renaming bridge to panel ;-)
+> Getting the offsets from DT seems a cleaner way to handle this case of
+> multi controllers.
 
-Good to hear that. However there are points which are not clear for me.
-But first lets clarify names, I will use panel and bridge words
-to describe the hardware, and drm_panel, drm_bridge to describe the
-software interfaces.
+Mark, Rob, what is your opinion on this?
 
-What bothers me:
-1. You want to leave connector related callbacks in drm_panel and
-the rest in drm_bridge. In case of ptn3460 it does not work, ptn3460
-must implement connector internally because of this limitation. I guess
-it is quite typical bridge. This problem does not exists in case
-of using drm_panel for ptn3460.
-
-2. drm_bridge is attached to the encoder, this and the callback order
-suggests the video data flow should be as below:
-drm_crtc -> drm_encoder [-> drm_bridge] -> drm_connector [-> drm_panel]
-
-ptn3460 implements drm_bridge and drm_connector so it suggests its
-drm_bridge should be the last one, so there should be no place to add
-lvds panel implemented as a drm_bridge after it, as it is done in this
-patchset.
-
-Additionally it clearly shows that there should be two categories of
-drm_bridges - non-terminal and terminal.
-
-3. drm_dev uses all-or-nothing approach, ie. it will start only when all
-its components are up. It simplifies synchronization but is quite
-fragile - the whole drm will be down due to error in some of its components.
-For this reason I prefer drm_panel as it is not real drm component
-it can be attached/detached to/from drm_connector anytime. I am not
-really sure but drm_bridge does not allow for that.
-
-Real life example to show importance of it: I have a phone with MIPI-DSI
-panel and HDMI. Due to initialization issues HDMI bridge driver
-sometimes fails during probe and the drmdev do not start. Of course this
-is development stage so I have serial console I can diagnose the
-problem, disable HDMI, fix the problem, etc...
-But what happens in case of end-user. He will see black screen - bricked
-phone. In case the bridge will be implemented using drm_panel
-he will have working phone with broken HDMI, much better.
-
-4. And the last thing, it is more about the concept/design. drm_bridge,
-drm_hw_block suggests that those interfaces describes the whole device:
-bridge, panel, whatever. In my approach I have an interface
-to describe only one video input port of the device. And drm_panel is
-in fact misleading name, drm_sink may be better. So real panel
-would implement drm_sink interface. Bridge would implement drm_sink
-interface and it will request other drm_sink interface, to interact with
-the panel which is after it.
-This approach seems to me more flexible. Beside things I have described
-above it will allow to implement also more complicated devices, dsi
-hubs, video mixers, etc.
-
-
-Regards
-Andrzej
-
-> 
-> BR,
-> -R
-> 
->> So why not implement ptn3460 bridge as drm_panel which internally uses
->> another drm_panel. With this approach everything fits much better.
->> You do not need those (pre|post)_(enable|disable) calls, you do not need
->> to implement connector in the bridge and you have a driver following
->> linux driver model. And no single bit changed in drm core.
->>
->> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2].
->> It was not accepted as Inki preferred drm_bridge but as I see the
->> problems with drm_bridges I have decide to attract attention to much
->> more cleaner solution.
->>
->> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
->> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
->>
->> Regards
->> Andrzej
->>
->>
->>>
->>> Ajay Kumar (3):
->>>   [RFC V2 1/3] drm: implement chaining of drm bridges
->>>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
->>>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
->>>
->>>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
->>>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
->>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
->>>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 +++++++++++++++++++++
->>>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
->>>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
->>>  include/drm/bridge/bridge_panel.h                  |  37 ++++
->>>  include/drm/drm_crtc.h                             |   2 +
->>>  8 files changed, 360 insertions(+), 5 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
->>>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
->>>  create mode 100644 include/drm/bridge/bridge_panel.h
->>>
->>
+Best regards,
+Tomasz
