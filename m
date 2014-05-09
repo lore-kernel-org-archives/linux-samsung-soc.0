@@ -1,175 +1,116 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH] drm/exynos: hdmi: remove unnecessary dedicated i2c drivers
-Date: Fri, 09 May 2014 19:46:59 +0900
-Message-ID: <1399632419-8251-1-git-send-email-sw0312.kim@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Fri, 9 May 2014 16:21:19 +0530
+Message-ID: <CAFp+6iEGvy71s=-Vt37TKkVDUX1wO6GZdwL=uBfPjng78yE5-A@mail.gmail.com>
+References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
+	<5368F136.6070804@samsung.com>
+	<CAFp+6iHN-W-k6ow5YykK_QWgBJ+GgzXwPX6suWtizxwJWOiGtg@mail.gmail.com>
+	<CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
+	<536CAA4F.8050404@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63628 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751945AbaEIKrX (ORCPT
+Received: from mail-qa0-f44.google.com ([209.85.216.44]:34589 "EHLO
+	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752673AbaEIKvU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 06:47:23 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5A00B0ZZAX4980@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 May 2014 19:47:21 +0900 (KST)
+	Fri, 9 May 2014 06:51:20 -0400
+In-Reply-To: <536CAA4F.8050404@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, inki.dae@samsung.com
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, sw0312.kim@samsung.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kishon <kishon@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>
 
-The i2c drivers for ddc and hdmiphy are already removed from build
-and instead, i2c clients registered via devicetree are used. So this
-patch removes the unnecessary i2c drivers.
+Hi Sylwester,
 
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_ddc.c     |   63 ------------------------------
- drivers/gpu/drm/exynos/exynos_hdmiphy.c |   65 -------------------------------
- 2 files changed, 0 insertions(+), 128 deletions(-)
- delete mode 100644 drivers/gpu/drm/exynos/exynos_ddc.c
- delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.c
 
-diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c b/drivers/gpu/drm/exynos/exynos_ddc.c
-deleted file mode 100644
-index 6a8c84e..0000000
---- a/drivers/gpu/drm/exynos/exynos_ddc.c
-+++ /dev/null
-@@ -1,63 +0,0 @@
--/*
-- * Copyright (C) 2011 Samsung Electronics Co.Ltd
-- * Authors:
-- *	Seung-Woo Kim <sw0312.kim@samsung.com>
-- *	Inki Dae <inki.dae@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- *
-- */
--
--#include <drm/drmP.h>
--
--#include <linux/kernel.h>
--#include <linux/i2c.h>
--#include <linux/of.h>
--
--#include "exynos_drm_drv.h"
--#include "exynos_hdmi.h"
--
--static int s5p_ddc_probe(struct i2c_client *client,
--			const struct i2c_device_id *dev_id)
--{
--	hdmi_attach_ddc_client(client);
--
--	dev_info(&client->adapter->dev,
--		"attached %s into i2c adapter successfully\n",
--		client->name);
--
--	return 0;
--}
--
--static int s5p_ddc_remove(struct i2c_client *client)
--{
--	dev_info(&client->adapter->dev,
--		"detached %s from i2c adapter successfully\n",
--		client->name);
--
--	return 0;
--}
--
--static struct of_device_id hdmiddc_match_types[] = {
--	{
--		.compatible = "samsung,exynos5-hdmiddc",
--	}, {
--		.compatible = "samsung,exynos4210-hdmiddc",
--	}, {
--		/* end node */
--	}
--};
--
--struct i2c_driver ddc_driver = {
--	.driver = {
--		.name = "exynos-hdmiddc",
--		.owner = THIS_MODULE,
--		.of_match_table = hdmiddc_match_types,
--	},
--	.probe		= s5p_ddc_probe,
--	.remove		= s5p_ddc_remove,
--	.command		= NULL,
--};
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-deleted file mode 100644
-index 59abb14..0000000
---- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-+++ /dev/null
-@@ -1,65 +0,0 @@
--/*
-- * Copyright (C) 2011 Samsung Electronics Co.Ltd
-- * Authors:
-- *	Seung-Woo Kim <sw0312.kim@samsung.com>
-- *	Inki Dae <inki.dae@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- *
-- */
--
--#include <drm/drmP.h>
--
--#include <linux/kernel.h>
--#include <linux/i2c.h>
--#include <linux/of.h>
--
--#include "exynos_drm_drv.h"
--#include "exynos_hdmi.h"
--
--
--static int hdmiphy_probe(struct i2c_client *client,
--	const struct i2c_device_id *id)
--{
--	hdmi_attach_hdmiphy_client(client);
--
--	dev_info(&client->adapter->dev, "attached s5p_hdmiphy "
--		"into i2c adapter successfully\n");
--
--	return 0;
--}
--
--static int hdmiphy_remove(struct i2c_client *client)
--{
--	dev_info(&client->adapter->dev, "detached s5p_hdmiphy "
--		"from i2c adapter successfully\n");
--
--	return 0;
--}
--
--static struct of_device_id hdmiphy_match_types[] = {
--	{
--		.compatible = "samsung,exynos5-hdmiphy",
--	}, {
--		.compatible = "samsung,exynos4210-hdmiphy",
--	}, {
--		.compatible = "samsung,exynos4212-hdmiphy",
--	}, {
--		/* end node */
--	}
--};
--
--struct i2c_driver hdmiphy_driver = {
--	.driver = {
--		.name	= "exynos-hdmiphy",
--		.owner	= THIS_MODULE,
--		.of_match_table = hdmiphy_match_types,
--	},
--	.probe		= hdmiphy_probe,
--	.remove		= hdmiphy_remove,
--	.command		= NULL,
--};
--EXPORT_SYMBOL(hdmiphy_driver);
+On Fri, May 9, 2014 at 3:43 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Vivek,
+>
+> On 08/05/14 11:03, Vivek Gautam wrote:
+>>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> >>> index b422e38..51efe4c 100644
+>>>>> >>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> >>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>> >>> @@ -114,3 +114,43 @@ Example:
+>>>>> >>>               compatible = "samsung,exynos-sataphy-i2c";
+>>>>> >>>               reg = <0x38>;
+>>>>> >>>       };
+>>>>> >>> +
+>>>>> >>> +Samsung Exynos5 SoC series USB DRD PHY controller
+>>>>> >>> +--------------------------------------------------
+>>>>> >>> +
+>>>>> >>> +Required properties:
+>>>>> >>> +- compatible : Should be set to one of the following supported values:
+>>>>> >>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>>>>> >>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+>>>>> >>> +- reg : Register offset and length of USB DRD PHY register set;
+>>>>> >>> +- clocks: Clock IDs array as required by the controller
+>>>>> >>> +- clock-names: names of clocks correseponding to IDs in the clock property;
+>>>>> >>> +            Required clocks:
+>>>>> >>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
+>>>>> >>> +            used for register access.
+>>>>> >>> +     - ref: PHY's reference clock (usually crystal clock), used for
+>>>>> >>> +            PHY operations, associated by phy name. It is used to
+>>>>> >>> +            determine bit values for clock settings register.
+>>>>> >>> +            For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+>>>>> >>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
+>>>>> >>> +                   control pmu registers for power isolation.
+>>>>> >>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+>>>>> >>> +                   base.
+>>>> >>
+>>>> >> It doesn't seem right to have register offset encoded in the device tree
+>>>> >> like this. I think it'd be more appropriate to associate such an offset
+>>>> >> with the compatible string's value in the driver.
+>>> >
+>>> > Ok, it makes more sense.
+>>> > Just out of curiosity, what difference would this make ?
+>>
+>> Moreover, in case of Exynos5420 (and may be in future SoCs), where we
+>> have 2 USB DRD PHY controllers,
+>> we will need to have a way around to deal with two separate offsets in
+>> the driver for one compatible string.
+>
+> It could be handled by creating a list of offsets per compatible string and
+> then adding some way to identify the PHY device instance. So I believe that's
+> not a big issue.
+
+True, we had tried to make use of 'aliases' for multiple controllers
+on Exynos5420,
+in earlier version V3 of this patch, to handle the pmu-register
+offsets in _somewhat_ similar fashion. [1]
+But then we had to drop that as per the suggestions in the mailing list.
+
+> Now you'd be encoding a list of registers offsets in the
+> device tree, without encoding bit layout of each register. It's unlikely that
+> each instance would have different bits layout, but describing individual
+> registers in DT I thought is something that we're not supposed to do.
+
+Ok, so this is information to me, i was not very much aware of this.
+Thanks for explaining it here.
+
+>
+>> Getting the offsets from DT seems a cleaner way to handle this case of
+>> multi controllers.
+>
+> I think it's easier from the driver POV, but isn't it violating the device
+> tree rules ?
+> Anyway. I'm just pointing this minor issue in the binding as it appears
+> to me. The final word of course belongs to a DT binding maintainer.
+
+Thanks Sylwester, for pointing this out here.
+Meantime, please let me know if the approach using aliases is one
+possible solution for this or not ?
+
+
+[1] [PATCH v3] phy: Add new Exynos5 USB 3.0 PHY driver
+     https://lkml.org/lkml/2014/1/21/46
+
+
+
 -- 
-1.7.4.1
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
