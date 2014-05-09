@@ -1,94 +1,63 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v12 18/31] iommu/exynos: allow having multiple System MMUs
-	for a master H/W
-Date: Fri, 09 May 2014 19:54:40 +0900
-Message-ID: <20140509195440.ae989be464cde24ade92eec2@samsung.com>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<1398584283-22846-19-git-send-email-shaik.ameer@samsung.com>
-	<5369245A.1060001@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback to the platform_data
+Date: Fri, 9 May 2014 12:56:54 +0200
+Message-ID: <201405091256.54755.arnd@arndb.de>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <1397212815-16068-19-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <5369245A.1060001-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.187]:59969 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756508AbaEIK5D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 May 2014 06:57:03 -0400
+In-Reply-To: <1397212815-16068-19-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, kgene.kim@samsung.com, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org
 
-On Tue, 06 May 2014 20:05:14 +0200, Tomasz Figa wrote:
-> On 27.04.2014 09:37, Shaik Ameer Basha wrote:
-> > From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >
-> > Some master device descriptor like fimc-is which is an abstraction
-> > of very complex H/W may have multiple System MMUs. For those devices,
-> > the design of the link between System MMU and its master H/W is needed
-> > to be reconsidered.
-> >
-> > A link structure, sysmmu_list_data is introduced that provides a link
-> > to master H/W and that has a pointer to the device descriptor of a
-> > System MMU. Given a device descriptor of a master H/W, it is possible
-> > to traverse all System MMUs that must be controlled along with the
-> > master H/W.
-> >
-> > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >   drivers/iommu/exynos-iommu.c |  545 ++++++++++++++++++++++++++----------------
-> >   1 file changed, 335 insertions(+), 210 deletions(-)
-> >
-> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> > index fefedec3..c2e6365 100755
-> > --- a/drivers/iommu/exynos-iommu.c
-> > +++ b/drivers/iommu/exynos-iommu.c
-> > @@ -117,6 +117,10 @@
-> >   #define REG_PB1_EADDR		0x058
-> >
-> >   #define has_sysmmu(dev)		(dev->archdata.iommu != NULL)
-> > +#define for_each_sysmmu_list(dev, list_data)				\
-> > +	list_for_each_entry(list_data,					\
-> > +		&((struct exynos_iommu_owner *)dev->archdata.iommu)->mmu_list, \
-> > +		entry)
+On Friday 11 April 2014, Daniel Lezcano wrote:
+> No more dependency on the arch code. The platform_data field is used to set the
+> PM callback as the other cpuidle drivers.
 > 
-> Sorry, NAK.
-> 
-> Please don't add this kind of complexity and business logic to low level 
-> code. We want the configuration functions to be simple, easy to read, 
-> maintain and extend.
-> 
-> The proper way to do it is to let the IOMMUs be grouped together on 
-> IOMMU subsystem level, so that each IOMMU consumer driver would see just 
-> one IOMMU, but then IOMMU driver callbacks would handle just particular 
-> instances of the IOMMU IP blocks, without any loops, lists and other 
-> crazy code...
-> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-It is done in IOMMU driver internally.
-IOMMU consumer driver(IOMMU client device driver?) sees IOMMU domain
-but IOMMU itself. How to handle IOMMUs of the client device is just
-in charge of IOMMU driver according to the hardwired bus topology.
+This has just shown up in linux-next and broken randconfig builds.
 
-If a master and IOMMU device should be 1:1 relationship as you contend,
-the master device driver should be responsible for express the bus
-topology in its business logic. I think it is not good as I told earlier.
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index fe8dac8..d22f0e4 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -221,8 +221,9 @@ void exynos_restart(enum reboot_mode mode, const char *cmd)
+>  }
+>  
+>  static struct platform_device exynos_cpuidle = {
+> -       .name           = "exynos_cpuidle",
+> -       .id             = -1,
+> +       .name              = "exynos_cpuidle",
+> +       .dev.platform_data = exynos_enter_aftr,
+> +       .id                = -1,
+>  };
+>  
 
-IOMMU group is different from the grouping System MMUs in Exynos IOMMU driver.
-IOMMU group is invented to group several IOMMUs on different bus with different
-masters to assign the same IOMMU domain.
-It is useful for user level virtualization but for expressing bus topology.
-Exynos IOMMU driver just groups System MMUs that have the same master device.
-Even though Exynos IOMMU driver implements IOMMU group which is already
-implemented by 20/31 patch, such looping is still required.
+This is wrong on many levels, can we please do this properly?
 
-However, I will consider other elegant way of interation of multiple System MMUs.
+* The exynos_enter_aftr function is compiled conditionally, so you can't just
+  reference it from generic code, or you get a link error.
+* 'static struct platform_device ...' has been deprecated for at least a decade,
+  stop doing that. For any platform devices that get registered, there is
+  platform_device_register_simple().
+* There shouldn't need to be a platform_device to start with, this should all
+  come from DT. We can't do this on arm64 anyway, so any code that may be
+  shared between arm32 and arm64 should have proper abstractions.
 
-Regards,
+Daniel, you should really know better than this. Why are you still adding
+code to drivers/cpuidle that uses legacy platform devices rather than DT
+probing?
 
-KyongHo
+	Arnd
