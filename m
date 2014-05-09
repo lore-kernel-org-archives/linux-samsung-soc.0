@@ -1,140 +1,151 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCHv4 7/7] ARM: dts: Add device tree sources for Exynos3250
-Date: Fri, 09 May 2014 07:02:45 +0200
-Message-ID: <536C6175.5000302@gmail.com>
-References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com> <1398388572-30239-8-git-send-email-cw00.choi@samsung.com> <535B0324.50705@gmail.com> <536C2A1C.6030807@samsung.com>
+Subject: Re: [PATCH 1/3] [media] s5p-mfc: Add variants to access mfc registers
+Date: Fri, 09 May 2014 07:20:30 +0200
+Message-ID: <536C659E.5030601@gmail.com>
+References: <1398257864-12097-1-git-send-email-arun.kk@samsung.com> <1398257864-12097-2-git-send-email-arun.kk@samsung.com> <005a01cf6ada$f24a15b0$d6de4110$%debski@samsung.com> <CACHYQ-rmcPbH0hk564qVYc2A7e=zvQ=En=+QCY3uUSU5AXYjWQ@mail.gmail.com> <536C5E53.8030007@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:33107 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136AbaEIFC6 (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:38966 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932065AbaEIFUl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 01:02:58 -0400
-In-Reply-To: <536C2A1C.6030807@samsung.com>
+	Fri, 9 May 2014 01:20:41 -0400
+In-Reply-To: <536C5E53.8030007@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+To: Arun Kumar K <arunkk.samsung@gmail.com>, Pawel Osciak <posciak@chromium.org>, Kamil Debski <k.debski@samsung.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kiran Avnd <avnd.kiran@samsung.com>
 
-Hi Chanwoo,
+Hi Arun, Pawe=C5=82,
 
-On 09.05.2014 03:06, Chanwoo Choi wrote:
-> On 04/26/2014 09:51 AM, Tomasz Figa wrote:
->> On 25.04.2014 03:16, Chanwoo Choi wrote:
-
-[snip]
-
->>> +    cpus {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +
->>> +        cpu@0 {
->>> +            device_type = "cpu";
->>> +            compatible = "arm,cortex-a7";
->>> +            reg = <0>;
->>> +            clock-frequency = <1000000000>;
->>> +        };
+On 09.05.2014 06:49, Arun Kumar K wrote:
+> Hi Kamil,
+>
+> On 05/09/14 06:30, Pawel Osciak wrote:
+>> Hi Kamil,
 >>
->> Why only one CPU? I believe Exynos3250 is dual core.
->
-> I'll add cpu1 information.
->
->> Also are physical IDs of the cores really 0 and 1? On Exynos4210 for example they are 0x900 and 0x901, while on Exynos4212 they are 0xa00 and 0xa01. Please check this.
->
-> The 'reg' property means only hardware id(hwid) of CPU.
-> You can check it on arm_dt_init_cpu_maps() in arch/arm/kernel/devtree.c.h.
-> or Documentation/devicetree/bindings/arm/cpus.txt.
->
-
-Well, as described in Documentation/devicetree/bindings/arm/cpus.txt, on 
-32-bit ARM v7 or later CPUs the "reg" property should be equal to the 
-lower 24-bits of MPIDR value of given CPU, which in addition to core ID 
-includes also cluster ID, which can be non-zero, even on single cluster 
-SoCs (like it is on Exynos4210 and 4x12).
-
->>> +    };
->>> +
->>> +    fixed-rate-clocks {
->>> +        compatible = "simple-bus";
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
-
-[snip]
-
->>> +    cmu: clock-controller@10030000 {
->>> +        compatible = "samsung,exynos3250-cmu";
->>> +        reg = <0x10030000 0x20000>;
->>> +        #clock-cells = <1>;
->>> +    };
->>> +
->>> +    rtc@10070000 {
+>> On Fri, May 9, 2014 at 1:31 AM, Kamil Debski <k.debski@samsung.com> =
+wrote:
+>>>
+>>> Hi Arun,
+>>>
+>>> I think that this driver is getting too complicated now.
+>>>
+>>> First there are separate files for MFC versions, but in addition th=
+ere are
+>>> many
+>>> IF_MFCVx in there.
 >>
->> Please add label to the node, so it can be referenced from board dts files added later (using the method I explained above).
->
-> OK, I'll add lable as following:
->
-> 	rtc_0: rtc@10070000 {
-
-There is no need to suffix the RTC with _0, as there is just one RTC in 
-the SoC. So in this case rtc: rtc@10070000 will be enough.
-
->
+>> The intention of this patch is to actually get rid of IF_MFCVx
+>> conditionals wherever possible.
 >>
->>> +        compatible = "samsung,s3c6410-rtc";
->>> +        reg = <0x10070000 0x100>;
->>> +        interrupts = <0 73 0>, <0 74 0>;
->>> +        status = "disabled";
->>> +    };
-
-[snip]
-
->>> +    adc: adc@126C0000 {
->>> +        compatible = "samsung,exynos-adc-v3";
->>> +        reg = <0x126C0000 0x100>, <0x10020718 0x4>;
->>> +        interrupts = <0 137 0>;
->>> +        clock-names = "adc", "sclk_tsadc";
->>> +        clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
->>> +        #io-channel-cells = <1>;
->>> +        io-channel-ranges;
->>> +        status = "disabled";
->>> +    };
->>> +
->>> +    serial@13800000 {
+>>>
+>>> I am curious how many additional lines it would take to
+>>> add s5p_mfc_cmd_v8.* and s5p_mfc_opr_v8.*.
+>>>
+>>> I get the point that this approach may result in less lines added, =
+but
+>>> having a callback specific for version use register pointers specif=
+ic for
+>>> another version makes the code look unreadable and difficult to mai=
+ntain.
 >>
->> Please add label.
->
-> OK, I'll add lable as following:
->
-> 	serial_0: serial@13800000 {
->
-
-OK. In this case there are multiple instances of serial controller 
-available so the _0 suffix is fine.
-
+>> Could you please give an example of how this reduces readability?
+>> I personally feel this patch makes things much more readable (see be=
+low).
 >>
->>> +        compatible = "samsung,exynos4210-uart";
->>> +        reg = <0x13800000 0x100>;
->>> +        interrupts = <0 109 0>;
->>> +        clocks = <&cmu CLK_UART0>, <&cmu CLK_SCLK_UART0>;
->>> +        clock-names = "uart", "clk_uart_baud0";
->>> +        status = "disabled";
->>> +    };
->>> +
->>> +    serial@13810000 {
+>> On the other hand, if we continued without the current method, we
+>> would have to sprinkle
+>> IF_MFCVx macros all around actual functions/operations, instead of
+>> just containing this
+>> to the regs structure, and the only difference in each path would be
+>> register name defines.
+>> I don't feel this would be a better direction to be honest.
+>>
+>> Compare, new, after this patch:
+>>
+>>> +     WRITEL(y_addr, mfc_regs->e_source_first_plane_addr);
+>>> +     WRITEL(c_addr, mfc_regs->e_source_second_plane_addr);
+>>
+>> vs previously, before this patch:
+>>
+>>> -     if (IS_MFCV7(dev)) {
+>>> -             WRITEL(y_addr, S5P_FIMV_E_SOURCE_FIRST_ADDR_V7);
+>>> -             WRITEL(c_addr, S5P_FIMV_E_SOURCE_SECOND_ADDR_V7);
+>>> -     } else {
+>>> -             WRITEL(y_addr, S5P_FIMV_E_SOURCE_LUMA_ADDR_V6);
+>>> -             WRITEL(c_addr, S5P_FIMV_E_SOURCE_CHROMA_ADDR_V6);
+>>> -     }
+>>
+>> And of course adding V8 more would make it even worse with yet anoth=
+er
+>> else if case.
+>>
+>>
+>>> Please give your opinion on another way to add support for v8.
+>>> s5p_mfc_cmd_v8.* and s5p_mfc_opr_v8.* ?
+>>
+>> If we add v7 and v8 files, a majority of their code will look like t=
+his:
+>>
+>> s5p_mfc_opr_v6.c:
+>> (...)
+>> void foo_v6(args)
+>> {
+>>     foofun(REGISTER_A_V6);
+>>     barfun(REGISTER_B_V6);
+>> }
+>> (...)
+>>
+>> s5p_mfc_opr_v7.c:
+>> (...)
+>> void foo_v7(args)
+>> {
+>>     foofun(REGISTER_A_V7);
+>>     barfun(REGISTER_B_V7);
+>> }
+>> (...)
+>>
+>> s5p_mfc_opr_v8.c:
+>> (...)
+>> void foo_v8(args)
+>> {
+>>     foofun(REGISTER_A_V8);
+>>     barfun(REGISTER_B_V8);
+>> }
+>> (...)
+>>
+>> I'm not sure this is less error prone and less code...
+>>
 >
-> OK, I'll add lable as following:
->
-> 	serial_1: serial@13800000 {
->
+> Adding on to this, I had a discussion with the firmware team and what=
+ I
+> got to know is future firmwares are also going to keep the operation
+> sequence same as v6, but there can be more changes in register offset=
+s
+> as they accomodate more features. So if we go with opr_v8.c, we _migh=
+t_
+> need opr_v9.c also with hardly any change in the code except register
+> offset modifications.
 
-OK.
+If register offsets make for most of the differences between particular=
+=20
+MFC versions, then probably having the register pointers used instead o=
+f=20
+base + OFFSET could be useful. Unfortunately we don't have much=20
+information about the newer variants, so it's hard to say.
 
->
-> Thanks for your review.
-
-You're welcome. Thanks for addressing my comments.
+Btw. I wonder why the firmware team couldn't simply add new registers a=
+t=20
+the end of the address space, without breaking software compatibility=20
+with every new version, even though rest of programming model mostly=20
+stays intact, which is a pure nonsense. Couldn't you complain to the fo=
+r=20
+this if you have contact with them? Otherwise this madness will never s=
+top.
 
 Best regards,
 Tomasz
