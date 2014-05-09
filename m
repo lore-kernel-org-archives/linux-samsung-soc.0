@@ -1,80 +1,83 @@
-From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 4/4] ARM: dts: enable dp-controller for exynos5420 based
- peach-pit board
-Date: Fri, 09 May 2014 15:39:46 +0530
-Message-ID: <1399630186-22610-5-git-send-email-rahul.sharma@samsung.com>
-References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1399630186-22610-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Fri, 09 May 2014 12:13:35 +0200
+Message-ID: <536CAA4F.8050404@samsung.com>
+References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
+ <5368F136.6070804@samsung.com>
+ <CAFp+6iHN-W-k6ow5YykK_QWgBJ+GgzXwPX6suWtizxwJWOiGtg@mail.gmail.com>
+ <CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kishon <kishon@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kamil Debski <k.debski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Hi Vivek,
 
-Enable dp-controller for peach-pit board.
+On 08/05/14 11:03, Vivek Gautam wrote:
+>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>> >>> index b422e38..51efe4c 100644
+>>>> >>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>> >>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>> >>> @@ -114,3 +114,43 @@ Example:
+>>>> >>>               compatible = "samsung,exynos-sataphy-i2c";
+>>>> >>>               reg = <0x38>;
+>>>> >>>       };
+>>>> >>> +
+>>>> >>> +Samsung Exynos5 SoC series USB DRD PHY controller
+>>>> >>> +--------------------------------------------------
+>>>> >>> +
+>>>> >>> +Required properties:
+>>>> >>> +- compatible : Should be set to one of the following supported values:
+>>>> >>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>>>> >>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+>>>> >>> +- reg : Register offset and length of USB DRD PHY register set;
+>>>> >>> +- clocks: Clock IDs array as required by the controller
+>>>> >>> +- clock-names: names of clocks correseponding to IDs in the clock property;
+>>>> >>> +            Required clocks:
+>>>> >>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
+>>>> >>> +            used for register access.
+>>>> >>> +     - ref: PHY's reference clock (usually crystal clock), used for
+>>>> >>> +            PHY operations, associated by phy name. It is used to
+>>>> >>> +            determine bit values for clock settings register.
+>>>> >>> +            For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+>>>> >>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
+>>>> >>> +                   control pmu registers for power isolation.
+>>>> >>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+>>>> >>> +                   base.
+>>> >>
+>>> >> It doesn't seem right to have register offset encoded in the device tree
+>>> >> like this. I think it'd be more appropriate to associate such an offset
+>>> >> with the compatible string's value in the driver.
+>> >
+>> > Ok, it makes more sense.
+>> > Just out of curiosity, what difference would this make ?
+>
+> Moreover, in case of Exynos5420 (and may be in future SoCs), where we
+> have 2 USB DRD PHY controllers,
+> we will need to have a way around to deal with two separate offsets in
+> the driver for one compatible string.
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   36 ++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index f75da5b..0e79479 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -74,6 +74,13 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
- 	};
-+
-+	dp_hpd_gpio: dp_hpd_gpio {
-+		samsung,pins = "gpx2-6";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
- };
+It could be handled by creating a list of offsets per compatible string and
+then adding some way to identify the PHY device instance. So I believe that's
+not a big issue. Now you'd be encoding a list of registers offsets in the
+device tree, without encoding bit layout of each register. It's unlikely that
+each instance would have different bits layout, but describing individual 
+registers in DT I thought is something that we're not supposed to do.
  
- &rtc {
-@@ -150,3 +157,32 @@
- 	status = "okay";
- 	samsung,invert-vclk;
- };
-+
-+&dp {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&dp_hpd_gpio>;
-+	samsung,color-space = <0>;
-+	samsung,dynamic-range = <0>;
-+	samsung,ycbcr-coeff = <0>;
-+	samsung,color-depth = <1>;
-+	samsung,link-rate = <0x06>;
-+	samsung,lane-count = <2>;
-+	samsung,hpd-gpio = <&gpx2 6 0>;
-+
-+	display-timings {
-+		native-mode = <&timing1>;
-+
-+		timing1: timing@1 {
-+			clock-frequency = <70589280>;
-+			hactive = <1366>;
-+			vactive = <768>;
-+			hfront-porch = <40>;
-+			hback-porch = <40>;
-+			hsync-len = <32>;
-+			vback-porch = <10>;
-+			vfront-porch = <12>;
-+			vsync-len = <6>;
-+		};
-+	};
-+};
--- 
-1.7.9.5
+> Getting the offsets from DT seems a cleaner way to handle this case of
+> multi controllers.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I think it's easier from the driver POV, but isn't it violating the device
+tree rules ?
+Anyway. I'm just pointing this minor issue in the binding as it appears
+to me. The final word of course belongs to a DT binding maintainer.
+
+Regards,
+-- 
+Sylwester Nawrocki
+Samsung R&D Institute Poland
