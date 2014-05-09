@@ -1,79 +1,68 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] arm: exynos: add generic function to calculate cpu number
-Date: Fri, 09 May 2014 10:17:16 +0200
-Message-ID: <536C8F0C.9060104@samsung.com>
-References: <1398404653-14407-1-git-send-email-chander.kashyap@linaro.org>
- <CANuQgHGtTFcP1baipTwTTPw_t3JV42nn-Kh4n72_9VRZ8ZwaPA@mail.gmail.com>
- <CANuQgHGJ98s6c7Y-wJ+xFuiwqZXVziyXZzp7oYDpwU7CGzRTyg@mail.gmail.com>
+Subject: Re: [PATCH v12 4/4] usb: ehci-exynos: Change to use phy provided by
+ the generic phy framework
+Date: Fri, 09 May 2014 10:19:51 +0200
+Message-ID: <536C8FA7.2040401@samsung.com>
+References: <1399034855-9686-5-git-send-email-gautam.vivek@samsung.com>
+ <1399266148-31729-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49959 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751055AbaEIIRV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 04:17:21 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5A00A0XSCJRZ20@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 May 2014 09:17:08 +0100 (BST)
-In-reply-to: <CANuQgHGJ98s6c7Y-wJ+xFuiwqZXVziyXZzp7oYDpwU7CGzRTyg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1399266148-31729-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <k.chander@samsung.com>
 
-Hi Chander,
+Hi Vivek,
 
-On 09.05.2014 09:50, Chander Kashyap wrote:
-> On 5 May 2014 09:37, Chander Kashyap <chander.kashyap@linaro.org> wrote:
->> On 25 April 2014 11:14, Chander Kashyap <chander.kashyap@linaro.org> wrote:
->>> The address of cpu power registers in pmu is based on cpu number
->>> offsets. This function calculate the same. This is essentially
->>> required in case of multicluster SoC's e.g Exynos5420.
->>>
->>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
->>> ---
->>>  arch/arm/mach-exynos/regs-pmu.h |    9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
->>> index 4f6a256..217da2e 100644
->>> --- a/arch/arm/mach-exynos/regs-pmu.h
->>> +++ b/arch/arm/mach-exynos/regs-pmu.h
->>> @@ -313,4 +313,13 @@
->>>
->>>  #define EXYNOS5_OPTION_USE_RETENTION                           (1 << 4)
->>>
->>> +#include <asm/cputype.h>
->>> +#define MAX_CPUS_IN_CLUSTER    4
->>> +
->>> +static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
->>> +{
->>> +       return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
->>> +                + MPIDR_AFFINITY_LEVEL(mpidr, 0));
->>> +}
->>> +
->>>  #endif /* __ASM_ARCH_REGS_PMU_H */
->>> --
->>> 1.7.9.5
->>>
->>
->> Kukjin, Can you please have a look.
->>
->>
->>
->> --
->> with warm regards,
->> Chander Kashyap
-> Hi Kgene,
-> Can you take this patch if no issues with it.
+On 05.05.2014 07:02, Vivek Gautam wrote:
+> From: Kamil Debski <k.debski@samsung.com>
+> 
+> Add the phy provider, supplied by new Exynos-usb2phy using
+> Generic phy framework.
+> Keeping the support for older USB phy intact right now, in order
+> to prevent any functionality break in absence of relevant
+> device tree side change for ehci-exynos.
+> Once we move to new phy in the device nodes for ehci, we can
+> remove the support for older phys.
+> 
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> [gautam.vivek@samsung.com: Addressed review comments from mailing list]
+> [gautam.vivek@samsung.com: Kept the code for old usb-phy, and just
+> added support for new exynos5-usb2phy in generic phy framework]
+> [gautam.vivek@samsung.com: Edited the commit message]
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> 
+> Changes from v11:
+>  - Removed setting phy explicitly to error pointer.
+>  - Changed error check to '-ENOSYS' instead of '-ENXIO' in failure case of
+>    devm_of_phy_get().
+> 
+> Changes from v10:
+>  - Removed 'phy-names' property from the bindings since we don't need it.
+>  - Restructured exynos_ehci_get_phy() function to handle error codes as
+>    well as return relevant error codes effectively.
+>  - Added IS_ERR() check for PHYs in exynos_ehci_phy_enable()/disable().
+> 
+> Changes from v9:
+>  - Calling usb_phy_shutdown() when exynos_ehci_phy_enable() is failing.
+>  - Made exynos_ehci_phy_disable() return void, since its return value
+>    did not serve any purpose.
+>  - Calling clk_disable_unprepare() in exynos_ehci_resume() when
+>    exynos_ehci_phy_enable() is failed.
+> 
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   15 +++
+>  drivers/usb/host/ehci-exynos.c                     |  129 +++++++++++++++++---
+>  2 files changed, 124 insertions(+), 20 deletions(-)
 
-Is there any user for this function right now? Shouldn't this patch
-rather be included as a part of some series that adds actual users of it?
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
+--
 Best regards,
 Tomasz
