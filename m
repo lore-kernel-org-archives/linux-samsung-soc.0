@@ -1,46 +1,84 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] crypto: s5p-sss: fix multiplatform build
-Date: Fri, 09 May 2014 13:35:39 +0200
-Message-ID: <4525493.CM3akEXMYf@wuerfel>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] thermal: samsung: Only update available threshold limits
+Date: Fri, 09 May 2014 17:17:30 +0530
+Message-ID: <536CC052.3080806@linaro.org>
+References: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org> <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: rui.zhang@intel.com, eduardo.valentin@ti.com
+Cc: Amit Kachhap <amit.kachhap@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As we are preparing to enable multiplatform support on EXYNOS,
-we can no longer include mach/*.h or plat/*.h headers from device
-drivers.
+On 04/24/2014 11:48 AM, Amit Kachhap wrote:
+> On 4/14/14, Tushar Behera <tushar.behera@linaro.org> wrote:
+>> Currently the threshold limits are updated in 2 stages, once for all
+>> software trigger levels and again for hardware trip point.
+> I guess the first stage is bootloader as could not find this in this file.
+> Anyways the changes looks fine to me.
+> 
+> Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> 
 
-The s5p-sss driver was just enabled for EXYNOS when it used to
-be used only on s5pv210, and it includes two samsung platform
-specific header files for historic reasons. Fortunately, it no
-longer actually needs them, so we can remove the #includes and
-avoid the problem
+Can this the patch be merged now?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
----
-Please apply on top of the other s5p-sss patches
+>>
+>> While updating the software trigger levels, it overwrites the threshold
+>> limit for hardware trip point thereby forcing the Exynos core to issue
+>> an emergency shutdown.
+>>
+>> Updating only the required fields in threshold register fixes this issue.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> ---
+>> Based on v3.15-rc1.
+>>
+>>  drivers/thermal/samsung/exynos_tmu.c |    4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+>> b/drivers/thermal/samsung/exynos_tmu.c
+>> index 0d96a51..ffccc89 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -225,6 +225,8 @@ skip_calib_data:
+>>  			trigger_levs++;
+>>  	}
+>>
+>> +	rising_threshold = readl(data->base + reg->threshold_th0);
+>> +
+>>  	if (data->soc == SOC_ARCH_EXYNOS4210) {
+>>  		/* Write temperature code for threshold */
+>>  		threshold_code = temp_to_code(data, pdata->threshold);
+>> @@ -249,6 +251,7 @@ skip_calib_data:
+>>  				ret = threshold_code;
+>>  				goto out;
+>>  			}
+>> +			rising_threshold &= ~(0xff << 8 * i);
+>>  			rising_threshold |= threshold_code << 8 * i;
+>>  			if (pdata->threshold_falling) {
+>>  				threshold_code = temp_to_code(data,
+>> @@ -281,6 +284,7 @@ skip_calib_data:
+>>  			}
+>>  			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
+>>  				/* 1-4 level to be assigned in th0 reg */
+>> +				rising_threshold &= ~(0xff << 8 * i);
+>>  				rising_threshold |= threshold_code << 8 * i;
+>>  				writel(rising_threshold,
+>>  					data->base + reg->threshold_th0);
+>> --
+>> 1.7.9.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+>> in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 47c568e..4197ad9 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -30,9 +30,6 @@
- #include <crypto/aes.h>
- #include <crypto/ctr.h>
- 
--#include <plat/cpu.h>
--#include <mach/dma.h>
--
- #define _SBF(s, v)                      ((v) << (s))
- #define _BIT(b)                         _SBF(b, 1)
- 
+
+-- 
+Tushar Behera
