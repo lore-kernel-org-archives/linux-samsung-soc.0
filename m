@@ -1,94 +1,70 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 4/5] devfreq: exynos4: Use devm_devfreq_* function using
- device resource management
-Date: Fri, 09 May 2014 16:43:10 +0900
-Message-ID: <1399621391-27228-5-git-send-email-cw00.choi@samsung.com>
-References: <1399621391-27228-1-git-send-email-cw00.choi@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] arm: exynos: add generic function to calculate cpu number
+Date: Fri, 9 May 2014 13:20:56 +0530
+Message-ID: <CANuQgHGJ98s6c7Y-wJ+xFuiwqZXVziyXZzp7oYDpwU7CGzRTyg@mail.gmail.com>
+References: <1398404653-14407-1-git-send-email-chander.kashyap@linaro.org>
+	<CANuQgHGtTFcP1baipTwTTPw_t3JV42nn-Kh4n72_9VRZ8ZwaPA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1399621391-27228-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Cc: nm@ti.com, sreekumar.c@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-pm@vger.kernel.org, jkosina@suse.cz, rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, labbe.montjoie@gmail.com, linux-samsung-soc@vger.kernel.org, a.kesavan@samsung.com, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:57459 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751779AbaEIHu5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 May 2014 03:50:57 -0400
+Received: by mail-oa0-f47.google.com with SMTP id i7so4447206oag.34
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 May 2014 00:50:56 -0700 (PDT)
+In-Reply-To: <CANuQgHGtTFcP1baipTwTTPw_t3JV42nn-Kh4n72_9VRZ8ZwaPA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
 
-This patch uses devm_devfreq_add_device()/devm_devfreq_register_opp_notifier()
-to control automatically the resource of devfreq.
+On 5 May 2014 09:37, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+> On 25 April 2014 11:14, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+>> The address of cpu power registers in pmu is based on cpu number
+>> offsets. This function calculate the same. This is essentially
+>> required in case of multicluster SoC's e.g Exynos5420.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/regs-pmu.h |    9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+>> index 4f6a256..217da2e 100644
+>> --- a/arch/arm/mach-exynos/regs-pmu.h
+>> +++ b/arch/arm/mach-exynos/regs-pmu.h
+>> @@ -313,4 +313,13 @@
+>>
+>>  #define EXYNOS5_OPTION_USE_RETENTION                           (1 << 4)
+>>
+>> +#include <asm/cputype.h>
+>> +#define MAX_CPUS_IN_CLUSTER    4
+>> +
+>> +static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>> +{
+>> +       return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
+>> +                + MPIDR_AFFINITY_LEVEL(mpidr, 0));
+>> +}
+>> +
+>>  #endif /* __ASM_ARCH_REGS_PMU_H */
+>> --
+>> 1.7.9.5
+>>
+>
+> Kukjin, Can you please have a look.
+>
+>
+>
+> --
+> with warm regards,
+> Chander Kashyap
+Hi Kgene,
+Can you take this patch if no issues with it.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/devfreq/exynos/exynos4_bus.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
-index d257f1f..bebb0a4 100644
---- a/drivers/devfreq/exynos/exynos4_bus.c
-+++ b/drivers/devfreq/exynos/exynos4_bus.c
-@@ -979,7 +979,7 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, data);
- 
--	data->devfreq = devfreq_add_device(dev, &exynos4_devfreq_profile,
-+	data->devfreq = devm_devfreq_add_device(dev, &exynos4_devfreq_profile,
- 					   "simple_ondemand", NULL);
- 	if (IS_ERR(data->devfreq))
- 		return PTR_ERR(data->devfreq);
-@@ -991,27 +991,20 @@ static int exynos4_busfreq_probe(struct platform_device *pdev)
- 	busfreq_mon_reset(ppmu_data);
- 
- 	/* Register opp_notifier for Exynos4 busfreq */
--	err = devfreq_register_opp_notifier(dev, data->devfreq);
-+	err = devm_devfreq_register_opp_notifier(dev, data->devfreq);
- 	if (err < 0) {
- 		dev_err(dev, "Failed to register opp notifier\n");
--		goto err_notifier_opp;
-+		return err;
- 	}
- 
- 	/* Register pm_notifier for Exynos4 busfreq */
- 	err = register_pm_notifier(&data->pm_notifier);
- 	if (err) {
- 		dev_err(dev, "Failed to setup pm notifier\n");
--		goto err_notifier_pm;
-+		return err;
- 	}
- 
- 	return 0;
--
--err_notifier_pm:
--	devfreq_unregister_opp_notifier(dev, data->devfreq);
--err_notifier_opp:
--	devfreq_remove_device(data->devfreq);
--
--	return err;
- }
- 
- static int exynos4_busfreq_remove(struct platform_device *pdev)
-@@ -1020,10 +1013,6 @@ static int exynos4_busfreq_remove(struct platform_device *pdev)
- 
- 	/* Unregister all of notifier chain */
- 	unregister_pm_notifier(&data->pm_notifier);
--	devfreq_unregister_opp_notifier(data->dev, data->devfreq);
--
--	/* Remove devfreq instance */
--	devfreq_remove_device(data->devfreq);
- 
- 	return 0;
- }
 -- 
-1.8.0
+with warm regards,
+Chander Kashyap
