@@ -1,57 +1,175 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v3 0/4] ARM: dts: enable display for peach-pit and snow boards
-Date: Fri, 9 May 2014 15:45:48 +0530
-Message-ID: <CAPdUM4M52Au-D0O14ak053bqwTgNtPq7ozdzz3a+Z317SucrjQ@mail.gmail.com>
-References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH] drm/exynos: hdmi: remove unnecessary dedicated i2c drivers
+Date: Fri, 09 May 2014 19:46:59 +0900
+Message-ID: <1399632419-8251-1-git-send-email-sw0312.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:44666 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752652AbaEIKPu (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63628 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751945AbaEIKrX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 06:15:50 -0400
-In-Reply-To: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
+	Fri, 9 May 2014 06:47:23 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5A00B0ZZAX4980@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 May 2014 19:47:21 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+To: dri-devel@lists.freedesktop.org, inki.dae@samsung.com
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, sw0312.kim@samsung.com
 
-+ Jingoo Han.
+The i2c drivers for ddc and hdmiphy are already removed from build
+and instead, i2c clients registered via devicetree are used. So this
+patch removes the unnecessary i2c drivers.
 
-On 9 May 2014 15:39, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->
-> Add nodes for fimd and dp controller for exynos5250 based snow
-> and exynos5420 based peach-pit board.
->
-> This series is based on Kukjin Kims, for-next branch.
->
-> V3:
-> 1) Dropped 1 patch "ARM: dts: move dp hpd line to the board file for
->  exynos5420".
-> 2) Extra blank lines for readability.
-> 3) dp hpd gpio name change (dp_hpd -> dp_hpd_gpio)
->
-> V2:
-> 1) Rebase on Peach-pit dependent patches.
->
-> It is dependent on
-> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
-> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html [Patch is 'ACK'ed.]
-> 2) Arun's patch for adding peach-pit board dts file at
-> http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is 'ACK'ed.]
->
-> Rahul Sharma (4):
->   ARM: dts: enable fimd for exynos5250 based snow board
->   ARM: dts: enable dp-controller for exynos5250 based snow board
->   ARM: dts: enable fimd for exynos5420 based peach-pit board
->   ARM: dts: enable dp-controller for exynos5420 based peach-pit board
->
->  arch/arm/boot/dts/exynos5250-snow.dts      |   35 ++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |   41 ++++++++++++++++++++++++++++
->  2 files changed, 76 insertions(+)
->
-> --
-> 1.7.9.5
->
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_ddc.c     |   63 ------------------------------
+ drivers/gpu/drm/exynos/exynos_hdmiphy.c |   65 -------------------------------
+ 2 files changed, 0 insertions(+), 128 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_ddc.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.c
+
+diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c b/drivers/gpu/drm/exynos/exynos_ddc.c
+deleted file mode 100644
+index 6a8c84e..0000000
+--- a/drivers/gpu/drm/exynos/exynos_ddc.c
++++ /dev/null
+@@ -1,63 +0,0 @@
+-/*
+- * Copyright (C) 2011 Samsung Electronics Co.Ltd
+- * Authors:
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *	Inki Dae <inki.dae@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- */
+-
+-#include <drm/drmP.h>
+-
+-#include <linux/kernel.h>
+-#include <linux/i2c.h>
+-#include <linux/of.h>
+-
+-#include "exynos_drm_drv.h"
+-#include "exynos_hdmi.h"
+-
+-static int s5p_ddc_probe(struct i2c_client *client,
+-			const struct i2c_device_id *dev_id)
+-{
+-	hdmi_attach_ddc_client(client);
+-
+-	dev_info(&client->adapter->dev,
+-		"attached %s into i2c adapter successfully\n",
+-		client->name);
+-
+-	return 0;
+-}
+-
+-static int s5p_ddc_remove(struct i2c_client *client)
+-{
+-	dev_info(&client->adapter->dev,
+-		"detached %s from i2c adapter successfully\n",
+-		client->name);
+-
+-	return 0;
+-}
+-
+-static struct of_device_id hdmiddc_match_types[] = {
+-	{
+-		.compatible = "samsung,exynos5-hdmiddc",
+-	}, {
+-		.compatible = "samsung,exynos4210-hdmiddc",
+-	}, {
+-		/* end node */
+-	}
+-};
+-
+-struct i2c_driver ddc_driver = {
+-	.driver = {
+-		.name = "exynos-hdmiddc",
+-		.owner = THIS_MODULE,
+-		.of_match_table = hdmiddc_match_types,
+-	},
+-	.probe		= s5p_ddc_probe,
+-	.remove		= s5p_ddc_remove,
+-	.command		= NULL,
+-};
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+deleted file mode 100644
+index 59abb14..0000000
+--- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
++++ /dev/null
+@@ -1,65 +0,0 @@
+-/*
+- * Copyright (C) 2011 Samsung Electronics Co.Ltd
+- * Authors:
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *	Inki Dae <inki.dae@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- */
+-
+-#include <drm/drmP.h>
+-
+-#include <linux/kernel.h>
+-#include <linux/i2c.h>
+-#include <linux/of.h>
+-
+-#include "exynos_drm_drv.h"
+-#include "exynos_hdmi.h"
+-
+-
+-static int hdmiphy_probe(struct i2c_client *client,
+-	const struct i2c_device_id *id)
+-{
+-	hdmi_attach_hdmiphy_client(client);
+-
+-	dev_info(&client->adapter->dev, "attached s5p_hdmiphy "
+-		"into i2c adapter successfully\n");
+-
+-	return 0;
+-}
+-
+-static int hdmiphy_remove(struct i2c_client *client)
+-{
+-	dev_info(&client->adapter->dev, "detached s5p_hdmiphy "
+-		"from i2c adapter successfully\n");
+-
+-	return 0;
+-}
+-
+-static struct of_device_id hdmiphy_match_types[] = {
+-	{
+-		.compatible = "samsung,exynos5-hdmiphy",
+-	}, {
+-		.compatible = "samsung,exynos4210-hdmiphy",
+-	}, {
+-		.compatible = "samsung,exynos4212-hdmiphy",
+-	}, {
+-		/* end node */
+-	}
+-};
+-
+-struct i2c_driver hdmiphy_driver = {
+-	.driver = {
+-		.name	= "exynos-hdmiphy",
+-		.owner	= THIS_MODULE,
+-		.of_match_table = hdmiphy_match_types,
+-	},
+-	.probe		= hdmiphy_probe,
+-	.remove		= hdmiphy_remove,
+-	.command		= NULL,
+-};
+-EXPORT_SYMBOL(hdmiphy_driver);
+-- 
+1.7.4.1
