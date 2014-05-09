@@ -1,20 +1,21 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCHv4 7/7] ARM: dts: Add device tree sources for Exynos3250
-Date: Fri, 09 May 2014 15:49:58 +0900
-Message-ID: <536C7A96.3000906@samsung.com>
+Date: Fri, 09 May 2014 16:10:29 +0900
+Message-ID: <536C7F65.50503@samsung.com>
 References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
  <1398388572-30239-8-git-send-email-cw00.choi@samsung.com>
- <535B0324.50705@gmail.com> <535B9A98.3060206@gmail.com>
+ <535B0324.50705@gmail.com> <536C2A1C.6030807@samsung.com>
+ <536C6175.5000302@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9901 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750880AbaEIGuC (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:58434 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752736AbaEIHKc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 02:50:02 -0400
-In-reply-to: <535B9A98.3060206@gmail.com>
+	Fri, 9 May 2014 03:10:32 -0400
+In-reply-to: <536C6175.5000302@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
@@ -22,108 +23,69 @@ Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, lin
 
 Hi Tomasz,
 
-On 04/26/2014 08:38 PM, Tomasz Figa wrote:
-> On 26.04.2014 02:51, Tomasz Figa wrote:
->> Hi Chanwoo,
->>
->> On 25.04.2014 03:16, Chanwoo Choi wrote:
->>> From: Tomasz Figa <t.figa@samsung.com>
->>>
->>> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on
->>> Cortex-A7
->>> dual core and includes following dt nodes:
->>>
->>> - GIC interrupt controller
->>> - Pinctrl to control GPIOs
->>> - Clock controller
->>> - CPU information (Cortex-A7 dual core)
->>> - UART to support serial port
->>> - MCT (Multi Core Timer)
->>> - ADC (Analog Digital Converter)
->>> - I2C/SPI bus
->>> - Power domain
->>> - PMU (Performance Monitoring Unit)
->>> - MSHC (Mobile Storage Host Controller)
->>> - PWM (Pluse Width Modulation)
->>> - AMBA bus
->>>
->>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->>> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
->>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>> Cc: Ben Dooks <ben-linux@fluff.org>
->>> Cc: Kukjin Kim <kgene.kim@samsung.com>
->>> Cc: Rob Herring <robh+dt@kernel.org>
->>> Cc: Pawel Moll <pawel.moll@arm.com>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
->>> Cc: Kumar Gala <galak@codeaurora.org>
->>> Cc: Russell King <linux@arm.linux.org.uk>
->>> Cc: devicetree@vger.kernel.org
->>> ---
->>>   arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 477 +++++++++++++++
->>>   arch/arm/boot/dts/exynos3250.dtsi         | 405 +++++++++++++
->>>   arch/arm/boot/dts/exynos4212-tizenw.dts   | 926
->>> ++++++++++++++++++++++++++++++
->>>   3 files changed, 1808 insertions(+)
->>>   create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
->>>   create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
->>>   create mode 100644 arch/arm/boot/dts/exynos4212-tizenw.dts
->>>
->>> diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
->>> b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
->>> new file mode 100644
->>> index 0000000..976490b
->>> --- /dev/null
->>> +++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
->>> @@ -0,0 +1,477 @@
->>> +/*
->>> + * Samsung's Exynos3250 SoCs pin-mux and pin-config device tree source
->>> + *
->>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->>> + *        http://www.samsung.com
->>> + *
->>> + * Samsung's Exynos3250 SoCs pin-mux and pin-config optiosn are
->>> listed as device
->>> + * tree nodes are listed in this file.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> +*/
->>> +
->>> +/ {
->>> +    pinctrl@11400000 {
->>
->> Could you use references instead of re-specifying the whole tree
->> hierarchy in every file a node is used?
->>
->> Instead of
->>
->> / {
->>      pinctrl@11400000 {
->>
->>      };
->> };
->>
->> one may simply use
->>
->> &pinctrl_0 {
->>
->> };
->>
->> You might just need to change the location of #include
->> "exynos3250-pinctrl.dtsi" from top of exynos3250.dtsi to bottom of it.
+On 05/09/2014 02:02 PM, Tomasz Figa wrote:
+> Hi Chanwoo,
 > 
-> Oh, well, you also should move all nodes of on-SoC devices under a simple-bus node called soc. You can see the patch adding dts file for Exynos5260 for an example [1].
+> On 09.05.2014 03:06, Chanwoo Choi wrote:
+>> On 04/26/2014 09:51 AM, Tomasz Figa wrote:
+>>> On 25.04.2014 03:16, Chanwoo Choi wrote:
 > 
-> [1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29360/focus=29361
+> [snip]
+> 
+>>>> +    cpus {
+>>>> +        #address-cells = <1>;
+>>>> +        #size-cells = <0>;
+>>>> +
+>>>> +        cpu@0 {
+>>>> +            device_type = "cpu";
+>>>> +            compatible = "arm,cortex-a7";
+>>>> +            reg = <0>;
+>>>> +            clock-frequency = <1000000000>;
+>>>> +        };
+>>>
+>>> Why only one CPU? I believe Exynos3250 is dual core.
+>>
+>> I'll add cpu1 information.
+>>
+>>> Also are physical IDs of the cores really 0 and 1? On Exynos4210 for example they are 0x900 and 0x901, while on Exynos4212 they are 0xa00 and 0xa01. Please check this.
+>>
+>> The 'reg' property means only hardware id(hwid) of CPU.
+>> You can check it on arm_dt_init_cpu_maps() in arch/arm/kernel/devtree.c.h.
+>> or Documentation/devicetree/bindings/arm/cpus.txt.
+>>
+> 
+> Well, as described in Documentation/devicetree/bindings/arm/cpus.txt, on 32-bit ARM v7 or later CPUs the "reg" property should be equal to the lower 24-bits of MPIDR value of given CPU, which in addition to core ID includes also cluster ID, which can be non-zero, even on single cluster SoCs (like it is on Exynos4210 and 4x12).
 
+I checked the lower 24-bit of MPIDR value for Exynos3250 in arm_dt_init_cpu_maps().
+- the lower 24-bit of MPIDR for CPU0 is '0x0'.
 
-OK, I'll move nodes dependent on SoC under 'soc' dt node as example patch[1] except for 'amba-bus' dt node.
+> 
+>>>> +    };
+>>>> +
+>>>> +    fixed-rate-clocks {
+>>>> +        compatible = "simple-bus";
+>>>> +        #address-cells = <1>;
+>>>> +        #size-cells = <0>;
+> 
+> [snip]
+> 
+>>>> +    cmu: clock-controller@10030000 {
+>>>> +        compatible = "samsung,exynos3250-cmu";
+>>>> +        reg = <0x10030000 0x20000>;
+>>>> +        #clock-cells = <1>;
+>>>> +    };
+>>>> +
+>>>> +    rtc@10070000 {
+>>>
+>>> Please add label to the node, so it can be referenced from board dts files added later (using the method I explained above).
+>>
+>> OK, I'll add lable as following:
+>>
+>>     rtc_0: rtc@10070000 {
+> 
+> There is no need to suffix the RTC with _0, as there is just one RTC in the SoC. So in this case rtc: rtc@10070000 will be enough.
 
-Thanks,
+OK, I'll modify it without prefix('_0).
+
+Best Regards,
 Chanwoo Choi
