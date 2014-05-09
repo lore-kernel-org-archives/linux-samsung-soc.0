@@ -1,59 +1,66 @@
-From: Byungho An <bh74.an@samsung.com>
-Subject: RE: [PATCH] net: sxgbe: Added tail point update
-Date: Fri, 09 May 2014 09:48:27 +0900
-Message-ID: <002a01cf6b20$6417ca80$2c475f80$%an@samsung.com>
-References: <008b01cf69cc$4d304e50$e790eaf0$%an@samsung.com>
- <CAGVrzcaic-rrbRg2CpvzpyTpt0iRtX9=QE8WLpR3Eep=8w5czQ@mail.gmail.com>
- <002f01cf6a5b$a92e3660$fb8aa320$%an@samsung.com>
- <20140508084447.GA8079@electric-eye.fr.zoreil.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 1/9] drm/exynos: dp: support hotplug detection via GPIO
+Date: Fri, 09 May 2014 09:57:45 +0900
+Message-ID: <003f01cf6b21$b03d64a0$10b82de0$%han@samsung.com>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-2-git-send-email-ajaykumar.rs@samsung.com>
+ <001901cf5dfa$6bcda480$4368ed80$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40639 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755325AbaEIAs3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 20:48:29 -0400
-In-reply-to: <20140508084447.GA8079@electric-eye.fr.zoreil.com>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <001901cf5dfa$6bcda480$4368ed80$%han@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: 'Inki Dae' <inki.dae@samsung.com>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, 'Andrew Bresticker' <abrestic@chromium.org>, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com, 'Rahul Sharma' <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Francois Romieu' <romieu@fr.zoreil.com>
-Cc: 'Florian Fainelli' <f.fainelli@gmail.com>, 'netdev' <netdev@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'David Miller' <davem@davemloft.net>, "'ks.giri'" <ks.giri@samsung.com>, "'vipul.pandya'" <vipul.pandya@samsung.com>
 
-Francois Romieu wrote :
-> Byungho An <bh74.an@samsung.com> :
-> > Florian Fainelli wrote:
-> [...]
-> > > I think that at some point you should revisit your abstraction, all
-> > > the patches that I see do take a void __iomem * argument as the first
-> > > function argument, you should probably use your driver private context
-> > > here. The day you support a different version of the hardware, there
-> > > might be other differences that need to be taken care of.
-> > >
-> > I agree with you, it would be more robust for different version of the
-> hardware and make simple function argument.
-> > But most functions of this driver deal with read/write register using
-> ioaddr.
+On Tuesday, April 22, 2014 4:14 PM, Jingoo Han wrote:
+> On Tuesday, April 22, 2014 7:39 AM, Ajay Kumar wrote:
+> >
+> > From: Andrew Bresticker <abrestic@chromium.org>
+> >
+> > Certain bridge chips use a GPIO to indicate the cable status instead
+> > of the I_DP_HPD pin.  This adds an optional device-tree property,
+> > "samsung,hpd-gpio", to the exynos-dp controller which indicates that
+> > the specified GPIO should be used for hotplug detection.
+> > The GPIO is then set up as an edge-triggered interrupt where the
+> > rising edge indicates hotplug-in and the falling edge indicates hotplug-out.
+> >
+> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > 
-> It does not imply that they should urge on ioaddr.
-> 
-> drivers/net/ethernet/broadcom/tg3.c gets it right and there is no reason
-> why sxgbe should be different.
-> 
-I fully understood.
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-> > As of now I think it is enough but I'll consider it later.
-> 
-> In the meantime:
-> 1) more use-once function pointers are added
-> 2) their parameter list keeps growing
-> 
-> Please reconsider sooner than later.
-I'll revisit above things sooner (after this patch set).
-Thanks.
+Hi Inki Dae,
+
+Actually, this patch is NOT related to other patches for
+bridge chip support. So, would you apply this patch into
+your exynos drm git with my Acked-by?
+
+Best regards,
+Jingoo Han
+
 
 > 
-> --
-> Ueimor
+> > ---
+> > Changes since V1:
+> > 	Address reiew comments from Jingoo Han
+> >
+> >  .../devicetree/bindings/video/exynos_dp.txt        |    4 ++
+> >  drivers/gpu/drm/exynos/exynos_dp_core.c            |   32 ++++++++++++--
+> >  drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
+> >  drivers/gpu/drm/exynos/exynos_dp_reg.c             |   44 ++++++++++++++------
+> >  4 files changed, 66 insertions(+), 15 deletions(-)
+> 
+> [.....]
