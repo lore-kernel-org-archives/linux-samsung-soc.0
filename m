@@ -1,185 +1,129 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH 1/3] [media] s5p-mfc: Add variants to access mfc registers
-Date: Fri, 09 May 2014 11:01:25 +0530
-Message-ID: <536C682D.6060302@gmail.com>
-References: <1398257864-12097-1-git-send-email-arun.kk@samsung.com> <1398257864-12097-2-git-send-email-arun.kk@samsung.com> <005a01cf6ada$f24a15b0$d6de4110$%debski@samsung.com> <CACHYQ-rmcPbH0hk564qVYc2A7e=zvQ=En=+QCY3uUSU5AXYjWQ@mail.gmail.com> <536C5E53.8030007@gmail.com> <536C659E.5030601@gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 7/7] ARM: dts: Add device tree sources for Exynos3250
+Date: Fri, 09 May 2014 15:49:58 +0900
+Message-ID: <536C7A96.3000906@samsung.com>
+References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
+ <1398388572-30239-8-git-send-email-cw00.choi@samsung.com>
+ <535B0324.50705@gmail.com> <535B9A98.3060206@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:38725 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298AbaEIFbb (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:9901 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750880AbaEIGuC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 01:31:31 -0400
-In-Reply-To: <536C659E.5030601@gmail.com>
+	Fri, 9 May 2014 02:50:02 -0400
+In-reply-to: <535B9A98.3060206@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Pawel Osciak <posciak@chromium.org>, Kamil Debski <k.debski@samsung.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kiran Avnd <avnd.kiran@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
 Hi Tomasz,
 
-On 05/09/14 10:50, Tomasz Figa wrote:
-> Hi Arun, Pawe=C5=82,
->=20
-> On 09.05.2014 06:49, Arun Kumar K wrote:
->> Hi Kamil,
+On 04/26/2014 08:38 PM, Tomasz Figa wrote:
+> On 26.04.2014 02:51, Tomasz Figa wrote:
+>> Hi Chanwoo,
 >>
->> On 05/09/14 06:30, Pawel Osciak wrote:
->>> Hi Kamil,
+>> On 25.04.2014 03:16, Chanwoo Choi wrote:
+>>> From: Tomasz Figa <t.figa@samsung.com>
 >>>
->>> On Fri, May 9, 2014 at 1:31 AM, Kamil Debski <k.debski@samsung.com>=
- wrote:
->>>>
->>>> Hi Arun,
->>>>
->>>> I think that this driver is getting too complicated now.
->>>>
->>>> First there are separate files for MFC versions, but in addition t=
-here are
->>>> many
->>>> IF_MFCVx in there.
+>>> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on
+>>> Cortex-A7
+>>> dual core and includes following dt nodes:
 >>>
->>> The intention of this patch is to actually get rid of IF_MFCVx
->>> conditionals wherever possible.
+>>> - GIC interrupt controller
+>>> - Pinctrl to control GPIOs
+>>> - Clock controller
+>>> - CPU information (Cortex-A7 dual core)
+>>> - UART to support serial port
+>>> - MCT (Multi Core Timer)
+>>> - ADC (Analog Digital Converter)
+>>> - I2C/SPI bus
+>>> - Power domain
+>>> - PMU (Performance Monitoring Unit)
+>>> - MSHC (Mobile Storage Host Controller)
+>>> - PWM (Pluse Width Modulation)
+>>> - AMBA bus
 >>>
->>>>
->>>> I am curious how many additional lines it would take to
->>>> add s5p_mfc_cmd_v8.* and s5p_mfc_opr_v8.*.
->>>>
->>>> I get the point that this approach may result in less lines added,=
- but
->>>> having a callback specific for version use register pointers speci=
-fic for
->>>> another version makes the code look unreadable and difficult to ma=
-intain.
+>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
+>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> Cc: Ben Dooks <ben-linux@fluff.org>
+>>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: Pawel Moll <pawel.moll@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> Cc: Kumar Gala <galak@codeaurora.org>
+>>> Cc: Russell King <linux@arm.linux.org.uk>
+>>> Cc: devicetree@vger.kernel.org
+>>> ---
+>>>   arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 477 +++++++++++++++
+>>>   arch/arm/boot/dts/exynos3250.dtsi         | 405 +++++++++++++
+>>>   arch/arm/boot/dts/exynos4212-tizenw.dts   | 926
+>>> ++++++++++++++++++++++++++++++
+>>>   3 files changed, 1808 insertions(+)
+>>>   create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+>>>   create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
+>>>   create mode 100644 arch/arm/boot/dts/exynos4212-tizenw.dts
 >>>
->>> Could you please give an example of how this reduces readability?
->>> I personally feel this patch makes things much more readable (see b=
-elow).
->>>
->>> On the other hand, if we continued without the current method, we
->>> would have to sprinkle
->>> IF_MFCVx macros all around actual functions/operations, instead of
->>> just containing this
->>> to the regs structure, and the only difference in each path would b=
-e
->>> register name defines.
->>> I don't feel this would be a better direction to be honest.
->>>
->>> Compare, new, after this patch:
->>>
->>>> +     WRITEL(y_addr, mfc_regs->e_source_first_plane_addr);
->>>> +     WRITEL(c_addr, mfc_regs->e_source_second_plane_addr);
->>>
->>> vs previously, before this patch:
->>>
->>>> -     if (IS_MFCV7(dev)) {
->>>> -             WRITEL(y_addr, S5P_FIMV_E_SOURCE_FIRST_ADDR_V7);
->>>> -             WRITEL(c_addr, S5P_FIMV_E_SOURCE_SECOND_ADDR_V7);
->>>> -     } else {
->>>> -             WRITEL(y_addr, S5P_FIMV_E_SOURCE_LUMA_ADDR_V6);
->>>> -             WRITEL(c_addr, S5P_FIMV_E_SOURCE_CHROMA_ADDR_V6);
->>>> -     }
->>>
->>> And of course adding V8 more would make it even worse with yet anot=
-her
->>> else if case.
->>>
->>>
->>>> Please give your opinion on another way to add support for v8.
->>>> s5p_mfc_cmd_v8.* and s5p_mfc_opr_v8.* ?
->>>
->>> If we add v7 and v8 files, a majority of their code will look like =
-this:
->>>
->>> s5p_mfc_opr_v6.c:
->>> (...)
->>> void foo_v6(args)
->>> {
->>>     foofun(REGISTER_A_V6);
->>>     barfun(REGISTER_B_V6);
->>> }
->>> (...)
->>>
->>> s5p_mfc_opr_v7.c:
->>> (...)
->>> void foo_v7(args)
->>> {
->>>     foofun(REGISTER_A_V7);
->>>     barfun(REGISTER_B_V7);
->>> }
->>> (...)
->>>
->>> s5p_mfc_opr_v8.c:
->>> (...)
->>> void foo_v8(args)
->>> {
->>>     foofun(REGISTER_A_V8);
->>>     barfun(REGISTER_B_V8);
->>> }
->>> (...)
->>>
->>> I'm not sure this is less error prone and less code...
->>>
+>>> diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+>>> b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+>>> new file mode 100644
+>>> index 0000000..976490b
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+>>> @@ -0,0 +1,477 @@
+>>> +/*
+>>> + * Samsung's Exynos3250 SoCs pin-mux and pin-config device tree source
+>>> + *
+>>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>> + *        http://www.samsung.com
+>>> + *
+>>> + * Samsung's Exynos3250 SoCs pin-mux and pin-config optiosn are
+>>> listed as device
+>>> + * tree nodes are listed in this file.
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License version 2 as
+>>> + * published by the Free Software Foundation.
+>>> +*/
+>>> +
+>>> +/ {
+>>> +    pinctrl@11400000 {
 >>
->> Adding on to this, I had a discussion with the firmware team and wha=
-t I
->> got to know is future firmwares are also going to keep the operation
->> sequence same as v6, but there can be more changes in register offse=
-ts
->> as they accomodate more features. So if we go with opr_v8.c, we _mig=
-ht_
->> need opr_v9.c also with hardly any change in the code except registe=
-r
->> offset modifications.
->=20
-> If register offsets make for most of the differences between particul=
-ar=20
-> MFC versions, then probably having the register pointers used instead=
- of=20
-> base + OFFSET could be useful. Unfortunately we don't have much=20
-> information about the newer variants, so it's hard to say.
->=20
-> Btw. I wonder why the firmware team couldn't simply add new registers=
- at=20
-> the end of the address space, without breaking software compatibility=
-=20
-> with every new version, even though rest of programming model mostly=20
-> stays intact, which is a pure nonsense. Couldn't you complain to the =
-for=20
-> this if you have contact with them? Otherwise this madness will never=
- stop.
->=20
-
-I had a detailed discussion with the firmware team regarding this and
-updated them the concerns. The need to do it is because, the register
-offsets are grouped codec-wise. Like
-0x000a H264
-0x000d MPEG4
-0x000f VP8
-etc.
-
-There are some holes given for future register additions also, but
-sometimes many additional features are added to specific codecs and als=
-o
-in the common feature set which doesnt fit in the pre-defined holes. So
-as per them, the re-shuffle of registers was done in v8 so as to make i=
-t
-more clean and taking into consideration future feature requirements.
-But again it might have few changes here and there in the next version.
-Since these register offsets are not really in our control, this
-approach is best in the driver to absorb these changes without many if =
--
-else conditions. The firware team assured me that they will try to avoi=
-d
-these kind of changes as much as possible in future.
-
-Regards
-Arun
+>> Could you use references instead of re-specifying the whole tree
+>> hierarchy in every file a node is used?
+>>
+>> Instead of
+>>
+>> / {
+>>      pinctrl@11400000 {
+>>
+>>      };
+>> };
+>>
+>> one may simply use
+>>
+>> &pinctrl_0 {
+>>
+>> };
+>>
+>> You might just need to change the location of #include
+>> "exynos3250-pinctrl.dtsi" from top of exynos3250.dtsi to bottom of it.
+> 
+> Oh, well, you also should move all nodes of on-SoC devices under a simple-bus node called soc. You can see the patch adding dts file for Exynos5260 for an example [1].
+> 
+> [1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29360/focus=29361
 
 
-> Best regards,
-> Tomasz
->=20
+OK, I'll move nodes dependent on SoC under 'soc' dt node as example patch[1] except for 'amba-bus' dt node.
+
+Thanks,
+Chanwoo Choi
