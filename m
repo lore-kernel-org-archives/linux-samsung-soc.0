@@ -1,68 +1,64 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v12 4/4] usb: ehci-exynos: Change to use phy provided by
- the generic phy framework
-Date: Fri, 09 May 2014 10:19:51 +0200
-Message-ID: <536C8FA7.2040401@samsung.com>
-References: <1399034855-9686-5-git-send-email-gautam.vivek@samsung.com>
- <1399266148-31729-1-git-send-email-gautam.vivek@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v6 3/4] usb: ohci-exynos: Add facility to use phy provided
+ by the generic phy framework
+Date: Fri, 09 May 2014 10:20:08 +0200
+Message-ID: <536C8FB8.7020806@samsung.com>
+References: <5363D835.7010804@gmail.com>
+ <1399266177-31765-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1399266148-31729-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, jg1.han@samsung.com
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1399266177-31765-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Vivek,
 
 On 05.05.2014 07:02, Vivek Gautam wrote:
-> From: Kamil Debski <k.debski@samsung.com>
-> 
-> Add the phy provider, supplied by new Exynos-usb2phy using
-> Generic phy framework.
-> Keeping the support for older USB phy intact right now, in order
+> Add support to consume phy provided by Generic phy framework.
+> Keeping the support for older usb-phy intact right now, in order
 > to prevent any functionality break in absence of relevant
-> device tree side change for ehci-exynos.
-> Once we move to new phy in the device nodes for ehci, we can
+> device tree side change for ohci-exynos.
+> Once we move to new phy in the device nodes for ohci, we can
 > remove the support for older phys.
 > 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> [gautam.vivek@samsung.com: Addressed review comments from mailing list]
-> [gautam.vivek@samsung.com: Kept the code for old usb-phy, and just
-> added support for new exynos5-usb2phy in generic phy framework]
-> [gautam.vivek@samsung.com: Edited the commit message]
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Jingoo Han <jg1.han@samsung.com>
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+> Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
 > 
-> Changes from v11:
+> Changes from v5:
 >  - Removed setting phy explicitly to error pointer.
 >  - Changed error check to '-ENOSYS' instead of '-ENXIO' in failure case of
 >    devm_of_phy_get().
 > 
-> Changes from v10:
+> Changes from v4:
 >  - Removed 'phy-names' property from the bindings since we don't need it.
->  - Restructured exynos_ehci_get_phy() function to handle error codes as
+>  - Restructured exynos_ohci_get_phy() function to handle error codes as
 >    well as return relevant error codes effectively.
->  - Added IS_ERR() check for PHYs in exynos_ehci_phy_enable()/disable().
+>  - Added IS_ERR() check for PHYs in exynos_ohci_phy_enable()/disable().
 > 
-> Changes from v9:
->  - Calling usb_phy_shutdown() when exynos_ehci_phy_enable() is failing.
->  - Made exynos_ehci_phy_disable() return void, since its return value
+> Changes from v3:
+>  - Calling usb_phy_shutdown() when exynos_ohci_phy_enable() is failing.
+>  - Made exynos_ohci_phy_disable() return void, since its return value
 >    did not serve any purpose.
->  - Calling clk_disable_unprepare() in exynos_ehci_resume() when
->    exynos_ehci_phy_enable() is failed.
+>  - Calling clk_disable_unprepare() in exynos_ohci_resume() when
+>    exynos_ohci_phy_enable() is failed.
 > 
->  .../devicetree/bindings/usb/exynos-usb.txt         |   15 +++
->  drivers/usb/host/ehci-exynos.c                     |  129 +++++++++++++++++---
->  2 files changed, 124 insertions(+), 20 deletions(-)
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   16 +++
+>  drivers/usb/host/ohci-exynos.c                     |  118 +++++++++++++++++---
+>  2 files changed, 118 insertions(+), 16 deletions(-)
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 --
 Best regards,
 Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
