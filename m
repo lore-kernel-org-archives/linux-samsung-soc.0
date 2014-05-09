@@ -1,46 +1,47 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C
- controller early
-Date: Fri, 9 May 2014 17:50:00 +0530
-Message-ID: <CAHfPSqB5+mLiC07jbEpeUgW63pZVk700SkYGxToO7GRAsFm_nQ@mail.gmail.com>
-References: <1398350916-885-1-git-send-email-ch.naveen@samsung.com> <20140424162558.GB12304@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140424162558.GB12304-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v2 0/3] Add Exynos5800 support
+Date: Fri,  9 May 2014 17:55:00 +0530
+Message-ID: <1399638303-32600-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:51080 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750702AbaEIMZM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 May 2014 08:25:12 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, alim.akhtar@samsung.com, tomasz.figa@gmail.com, olof@lixom.net, arunkk.samsung@gmail.com
 
-Hello Mark,
+Exynos5800 is a derivative of Exynos5420 with higher
+clock speeds and most other IP blocks remaining the same
+except for a few.
 
-On 24 April 2014 21:55, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, Apr 24, 2014 at 08:18:36PM +0530, Naveen Krishna Chatradhi wrote:
->> This patch moves initialization code to subsys_initcall() to ensure
->> that the i2c bus is available early so the regulators can be quickly
->> probed and available for other devices on their probe() call.
->
->> Such solution has been proposed by Mark Brown to fix the problem of
->> the regulators not beeing available on the peripheral device probe():
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2010-March/011971.html
->
-> What specifically is this needed for?  We *should* be able to use
-> deferred probe for most things, but I know that not all subsystems are
-> able to yet.
-DRM related drivers like DP, FIMD, HDMI, Mixer wants to be probed ASAP
-during the boot.
-The real problem comes when, one of these drivers do a regulator_get().
+This patchset is based on Kukjin's for-next branch
+and Tomasz's samsung-next branch containing Shaik's clock
+cleanup series for 5420.
 
-If the physical supply  is not enabled/hookedup the regulator_get() call
-assumes that physical supply is present and returns a
-"dummy_regulator" (But, not an error).
+Changes from v1
+--------------
+- Rebased on Shaik's clock consolidation for 5420
+- Addressed review comments from Tomasz
 
-Because of which, Display and several other devices fails to work.
+Alim Akhtar (1):
+  clk: exynos5420: Add 5800 specific clocks
 
-I2C, I2C_TUNNEL, SPI and DMA drivers are required as subsys_initcall()
-for similar reason.
+Arun Kumar K (2):
+  ARM: dts: Add Exynos5800 dt file
+  ARM: dts: Add peach-pi board support
+
+ .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
+ arch/arm/boot/dts/Makefile                         |    3 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  144 +++++++++
+ arch/arm/boot/dts/exynos5800.dtsi                  |   24 ++
+ drivers/clk/samsung/clk-exynos5420.c               |  306 ++++++++++++++++----
+ include/dt-bindings/clock/exynos5420.h             |    4 +
+ 6 files changed, 428 insertions(+), 56 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
+ create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
 
 -- 
-Shine bright,
-(: Nav :)
+1.7.9.5
