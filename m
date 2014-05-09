@@ -1,130 +1,161 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: [PATCH] mmc: dw_mmc: Make sure we don't get stuck when we get an error
-Date: Thu, 8 May 2014 20:21:25 -0700
-Message-ID: <CAPz6YkVwT0PrcLP1MJy0vVRw811+_7PwsV_ggKxQkqrjOWeWWw@mail.gmail.com>
-References: <1395901126-6141-1-git-send-email-yuvaraj.cd@samsung.com> <CAKuRcOL_JVjOfLNspb14kRxcAXjpEwX4WkvmM+izryZbZBE4XA@mail.gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
+Date: Fri, 09 May 2014 13:27:54 +0900
+Message-ID: <536C594A.5080107@samsung.com>
+References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
+ <536C2C31.8000209@samsung.com>
+ <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:44889 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755977AbaEIDVq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20865 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750702AbaEIE15 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 23:21:46 -0400
-Received: by mail-qg0-f42.google.com with SMTP id q107so3901482qgd.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 20:21:45 -0700 (PDT)
-In-Reply-To: <CAKuRcOL_JVjOfLNspb14kRxcAXjpEwX4WkvmM+izryZbZBE4XA@mail.gmail.com>
+	Fri, 9 May 2014 00:27:57 -0400
+In-reply-to: <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>
+To: Sonny Rao <sonnyrao@chromium.org>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
 
-On Thu, May 8, 2014 at 2:42 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
-> Any comments on this patch?
->
+Hi, Sonny.
 
-I'll just add that without this fix, running the tuning loop for UHS
-modes is not reliable on dw_mmc because errors will happen and you
-will eventually hit this race and hang.  This can happen any time
-there is tuning like during boot or during resume from suspend.
+I have checked the Synopsys TRM..
 
-> On Thu, Mar 27, 2014 at 11:48 AM, Yuvaraj Kumar C D
-> <yuvaraj.cd@gmail.com> wrote:
->> From: Doug Anderson <dianders@chromium.org>
+On 05/09/2014 10:34 AM, Sonny Rao wrote:
+> On Thu, May 8, 2014 at 6:15 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>> On 05/08/2014 06:40 PM, Yuvaraj Kumar wrote:
+>>> Any comments on this patch?
+>>>
+>>> On Wed, Mar 26, 2014 at 5:16 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>> From: Sonny Rao <sonnyrao@chromium.org>
+>>>>
+>>>> This patch changes the fifo reset code to follow the reset procedure
+>>>> outlined in the documentation of Synopsys  Mobile storage host databook
+>>>> 7.2.13.
+>>>> Without this patch, we could able to see eMMC was not detected after
+>>>> multiple reboots due to driver hangs while eMMC tuning for HS200.
+>>>>
+>>>> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
+>>>> ---
+>>>>  drivers/mmc/host/dw_mmc.c |   48 ++++++++++++++++++++++++++++++++++++++++++++-
+>>>>  drivers/mmc/host/dw_mmc.h |    1 +
+>>>>  2 files changed, 48 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>>> index 32dd81d..1d77431 100644
+>>>> --- a/drivers/mmc/host/dw_mmc.c
+>>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>>> @@ -2220,7 +2220,53 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+>>>>                 host->sg = NULL;
+>>>>         }
+>>>>
+>>>> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+>>>> +       /*
+>>>> +        * The recommended method for resetting is to always reset the
+>>>> +        * controller and the fifo, but differs slightly depending on the mode.
+>>>> +        * Note that this doesn't handle the "generic DMA" (not IDMAC) case.
+>>>> +        */
 >>
->> If we happened to get a data error at just the wrong time the dw_mmc
->> driver could get into a state where it would never complete its
->> request.  That would leave the caller just hanging there.
+>> "not IDMAC" is confused..
 >>
->> We fix this two ways and both of the two fixes on their own appear to
->> fix the problems we've seen:
+> 
+> The documentation describes three different possible modes.  There's a
+> mode that doesn't use IDMAC but still does DMA.  But as far as I can
+> tell this driver doesn't support that way.  We can just remove that
+> wording if it's confusing.
+> 
+>>>> +       if (dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET)) {
+>>>> +               unsigned long timeout = jiffies + msecs_to_jiffies(500);
+>>>> +               u32 status, rint;
+>>>> +
+>>>> +               /* if using dma we wait for dma_req to clear */
+>>>> +               if (host->using_dma) {
+>>>> +                       do {
+>>>> +                               status = mci_readl(host, STATUS);
+>>>> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
+>>>> +                                       break;
+>>>> +                               cpu_relax();
+>>>> +                       } while (time_before(jiffies, timeout));
+>>>> +
+>>>> +                       if (status & SDMMC_STATUS_DMA_REQ)
+>>>> +                               dev_err(host->dev,
+>>>> +                                       "%s: Timeout waiting for dma_req to "
+>>>> +                                       "clear during reset", __func__);
+>>>> +
+>>>> +                       /* when using DMA next we reset the fifo again */
+>>>> +                       dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+>>>> +               }
+>>>> +               /*
+>>>> +                * In all cases we clear the RAWINTS register to clear any
+>>>> +                * interrupts.
+>>>> +                */
+>>>> +               rint = mci_readl(host, RINTSTS);
+>>>> +               rint = rint & (~mci_readl(host, MINTSTS));
+you use the "status or temp" instead of rint. (you can reuse the variable.)
+And can use "status &= ~mci_readl(host,MINTSTS);"
+
 >>
->> 1. Fix a race in the tasklet where the interrupt setting the data
->>    error happens _just after_ we check for it, then we get a
->>    EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
->> 2. Fix it so that if we detect that we've got an error in the "data
->>    busy" state and we're not going to do anything else we end the
->>    request and unblock anyone waiting.
+>> Just clear the RINTSTS register? why do you add these?
 >>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
->> ---
->>  drivers/mmc/host/dw_mmc.c |   47 +++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 47 insertions(+)
+> 
+> This will look at what is not masked, and only clear those bits.
+Well, i known if clear the RINTSTS register, 
+recommended to use "0xfffffff" and set the value for interrupt.
+
+> 
+>>>> +               if (rint)
+>>>> +                       mci_writel(host, RINTSTS, rint);
+>>>> +
+>>>> +       } else
+>>>> +               dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
 >>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 1d77431..4c589f1 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -1300,6 +1300,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
->>                         /* fall through */
+>> Just display the error log? I didn't understand this.
+>> If you displayed the error log, then it needs to return the error value.
 >>
->>                 case STATE_SENDING_DATA:
->> +                       /*
->> +                        * We could get a data error and never a transfer
->> +                        * complete so we'd better check for it here.
->> +                        *
->> +                        * Note that we don't really care if we also got a
->> +                        * transfer complete; stopping the DMA and sending an
->> +                        * abort won't hurt.
->> +                        */
->>                         if (test_and_clear_bit(EVENT_DATA_ERROR,
->>                                                &host->pending_events)) {
->>                                 dw_mci_stop_dma(host);
->> @@ -1313,7 +1321,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
->>                                 break;
+>>>> +
+>>>> + #ifdef CONFIG_MMC_DW_IDMAC
+>>>> +       /* It is also recommended that we reset and reprogram idmac */
+>>>> +       dw_mci_idmac_reset(host);
+>>>> + #endif
+>>>> +
+>>>> +       /* After a CTRL reset we need to have CIU set clock registers  */
+>>>> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+
+Well, why do you send the clock update command?
+I didn't see that update the value related with clock.
+
+Best Regards,
+Jaehoon Chung
+
+>>>> +
+>>>> +       return true;
+>>>>  }
+>>>>
+>>>>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
+>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>>>> index 738fa24..037e47a 100644
+>>>> --- a/drivers/mmc/host/dw_mmc.h
+>>>> +++ b/drivers/mmc/host/dw_mmc.h
+>>>> @@ -129,6 +129,7 @@
+>>>>  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
+>>>>  /* Status register defines */
+>>>>  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
+>>>> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
+>>>>  /* FIFOTH register defines */
+>>>>  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
+>>>>                                          ((r) & 0xFFF) << 16 | \
+>>>> --
+>>>> 1.7.10.4
+>>>>
+>>>
 >>
->>                         set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
->> +
->> +                       /*
->> +                        * Handle an EVENT_DATA_ERROR that might have shown up
->> +                        * before the transfer completed.  This might not have
->> +                        * been caught by the check above because the interrupt
->> +                        * could have gone off between the previous check and
->> +                        * the check for transfer complete.
->> +                        *
->> +                        * Technically this ought not be needed assuming we
->> +                        * get a DATA_COMPLETE eventually (we'll notice the
->> +                        * error and end the request), but it shouldn't hurt.
->> +                        *
->> +                        * This has the advantage of sending the stop command.
->> +                        */
->> +                       if (test_and_clear_bit(EVENT_DATA_ERROR,
->> +                                              &host->pending_events)) {
->> +                               dw_mci_stop_dma(host);
->> +                               send_stop_abort(host, data);
->> +                               state = STATE_DATA_ERROR;
->> +                               break;
->> +                       }
->>                         prev_state = state = STATE_DATA_BUSY;
->> +
->>                         /* fall through */
->>
->>                 case STATE_DATA_BUSY:
->> @@ -1336,6 +1366,23 @@ static void dw_mci_tasklet_func(unsigned long priv)
->>                                 /* stop command for open-ended transfer*/
->>                                 if (data->stop)
->>                                         send_stop_abort(host, data);
->> +                       } else {
->> +                               /*
->> +                                * If we don't have a command complete now we'll
->> +                                * never get one since we just reset everything;
->> +                                * better end the request.
->> +                                *
->> +                                * If we do have a command complete we'll fall
->> +                                * through to the SENDING_STOP command and
->> +                                * everything will be peachy keen.
->> +                                *
->> +                                * TODO: I guess we shouldn't send a stop?
->> +                                */
->> +                               if (!test_bit(EVENT_CMD_COMPLETE,
->> +                                             &host->pending_events)) {
->> +                                       dw_mci_request_end(host, mrq);
->> +                                       goto unlock;
->> +                               }
->>                         }
->>
->>                         /*
->> --
->> 1.7.10.4
->>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
