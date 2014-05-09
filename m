@@ -1,386 +1,222 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [RFC V3 2/3] drm/bridge: add a dummy panel driver to support lvds
- bridges
-Date: Fri, 09 May 2014 20:23:01 +0530
-Message-ID: <1399647182-20951-3-git-send-email-ajaykumar.rs@samsung.com>
-References: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
+Date: Fri, 9 May 2014 20:35:24 +0530
+Message-ID: <CAEC9eQO92G+1eTeYWpgDtyqFLE3J1Qti5cvjVEERL6RV5ujTbg@mail.gmail.com>
+References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
+	<536B26FC.507@samsung.com>
+	<CAF6AEGvWxCS-NX4uLjyMqc==7X9znn8PJ0AmJ6aFqqHYSBgsrQ@mail.gmail.com>
+	<536C9B2B.2010006@samsung.com>
+	<CAF6AEGsd8xViZWroUgsT5Lf_DZhbC5-V_ycR_HOtqdUH9QbA1A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51173 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756907AbaEIOyj (ORCPT
+Received: from mail-ve0-f171.google.com ([209.85.128.171]:53933 "EHLO
+	mail-ve0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755370AbaEIPFZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 10:54:39 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5B003R6AR21D10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 May 2014 23:54:38 +0900 (KST)
-In-reply-to: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
+	Fri, 9 May 2014 11:05:25 -0400
+Received: by mail-ve0-f171.google.com with SMTP id oz11so5365425veb.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 May 2014 08:05:24 -0700 (PDT)
+In-Reply-To: <CAF6AEGsd8xViZWroUgsT5Lf_DZhbC5-V_ycR_HOtqdUH9QbA1A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: robdclark@gmail.com, seanpaul@chromium.org, a.hajda@samsung.com, inki.dae@samsung.com, daniel.vetter@ffwll.ch, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-implement basic panel controls as a drm_bridge so that
-the existing bridges can make use of it.
+On Fri, May 9, 2014 at 7:29 PM, Rob Clark <robdclark@gmail.com> wrote:
+> On Fri, May 9, 2014 at 5:08 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>> On 05/08/2014 08:24 PM, Rob Clark wrote:
+>>> On Thu, May 8, 2014 at 2:41 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>> On 05/05/2014 09:52 PM, Ajay Kumar wrote:
+>>>>> This patchset is based on exynos-drm-next-todo branch of Inki Dae's tree at:
+>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>>>>>
+>>>>> I have just put up Rob's and Sean's idea of chaining up the bridges
+>>>>> in code, and have implemented basic panel controls as a chained bridge.
+>>>>> This works well with ptn3460 bridge chip on exynos5250-snow board.
+>>>>>
+>>>>> Still need to make use of standard list calls and figure out proper way
+>>>>> of deleting the bridge chain. So, this is just a rough version.
+>>>>
+>>>> As I understand this patchset tries to solve two things:
+>>>> 1. Implement panel as drm_bridge, to ease support for hardware chains:
+>>>> Crtc -> Encoder -> Bridge -> Panel
+>>>> 2. Add support to drm_bridge chaining, to allow software chains:
+>>>> drm_crtc -> drm_encoder -> drm_bridge -> drm_bridge,panel
+>>>>
+>>>> It is done using Russian doll schema, ops from the bridge calls the same
+>>>> ops from the next bridge and the next bridge ops can do the same.
+>>>>
+>>>> This schema means that all the bridges including the last one are seen
+>>>> from the drm core point of view as a one big drm_bridge. Additionally in
+>>>> this particular case, the first bridge (ptn3460) implements connector
+>>>> so it is hard to guess what is the location of the 2nd bridge in video
+>>>> stream chain, sometimes it is after the connector, sometimes before.
+>>>> All this is quite confusing.
+>>>>
+>>>> But if you look at the bridge from upstream video interface point of
+>>>> view it is just a panel, edp panel in case of ptn3460, ie ptn3460 on its
+>>>> video input side acts as a panel. On the output side it expects a panel,
+>>>> lvds panel in this case.
+>>>
+>>> tbh, this is mostly about what we call it.  Perhaps "bridge" isn't the
+>>> best name.. I wouldn't object to changing it.
+>>>
+>>> But my thinking was to leave in drm_panel_funcs things that are just
+>>> needed by the connector (get_modes().. and maybe some day we need
+>>> detect/etc).  Then leave everything else in drm_bridge_funcs.  A panel
+>>> could (if needed) implement both interfaces.
+>>>
+>>> That is basically the same as what you are proposing, but without
+>>> renaming bridge to panel ;-)
+>>
+>> Good to hear that. However there are points which are not clear for me.
+>> But first lets clarify names, I will use panel and bridge words
+>> to describe the hardware, and drm_panel, drm_bridge to describe the
+>> software interfaces.
+>>
+>> What bothers me:
+>> 1. You want to leave connector related callbacks in drm_panel and
+>> the rest in drm_bridge. In case of ptn3460 it does not work, ptn3460
+>> must implement connector internally because of this limitation. I guess
+>> it is quite typical bridge. This problem does not exists in case
+>> of using drm_panel for ptn3460.
+>>
+>> 2. drm_bridge is attached to the encoder, this and the callback order
+>> suggests the video data flow should be as below:
+>> drm_crtc -> drm_encoder [-> drm_bridge] -> drm_connector [-> drm_panel]
+>>
+>> ptn3460 implements drm_bridge and drm_connector so it suggests its
+>> drm_bridge should be the last one, so there should be no place to add
+>> lvds panel implemented as a drm_bridge after it, as it is done in this
+>> patchset.
+>>
+>> Additionally it clearly shows that there should be two categories of
+>> drm_bridges - non-terminal and terminal.
+>>
+>> 3. drm_dev uses all-or-nothing approach, ie. it will start only when all
+>> its components are up. It simplifies synchronization but is quite
+>> fragile - the whole drm will be down due to error in some of its components.
+>> For this reason I prefer drm_panel as it is not real drm component
+>> it can be attached/detached to/from drm_connector anytime. I am not
+>> really sure but drm_bridge does not allow for that.
+>
+> So I do think we need to stick to this all-or-nothing approach for
+> anything that is visible to userspace
+> (drm_{plane,crtc,encoder,connector}).  We don't currently have a way
+> to "hotplug" those so I don't see a real smooth upgrade path to add
+> that in a backwards compatible way that won't cause problems with old
+> userspace.
+>
+> But, that said, we have more flexibility with things not visible to
+> userspace (drm_{panel,bridge}).  I'm not sure how much we want to
+> allow things to be completely dynamic (we already have some hard
+> enough locking fun).  But proposals/rfcs/etc welcome.
+>
+> I guess I'm not completely familiar w/ ptn3460, but the fact that it
+> needs to implement drm_connector makes me a bit suspicious.  Seems
+> like a symptom of missing things in drm_panel_funcs.  It would be
+> better to always create the connector statically, and just have
+> _detect() -> disconnected if panel==NULL.
+This is something which only Sean can answer!
+I guess he implemented ptn3460 as connector thinking that bridge would
+be the last
+entity in the video pipeline. If that's a real problem, we can still
+move out the
+connector part.
 
-The driver assumes that it is the last entity in the bridge chain.
-
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- .../bindings/drm/bridge/bridge_panel.txt           |   45 ++++
- drivers/gpu/drm/bridge/Kconfig                     |    6 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/bridge_panel.c              |  217 ++++++++++++++++++++
- include/drm/bridge/bridge_panel.h                  |   40 ++++
- 5 files changed, 309 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
- create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
- create mode 100644 include/drm/bridge/bridge_panel.h
-
-diff --git a/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt b/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
-new file mode 100644
-index 0000000..0f916b0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
-@@ -0,0 +1,45 @@
-+Simple panel interface for chaining along with bridges
-+
-+Required properties:
-+  - compatible: "drm-bridge,panel"
-+
-+Optional properties:
-+	-lcd-en-gpio:
-+		eDP panel LCD poweron GPIO.
-+			Indicates which GPIO needs to be powered up as output
-+			to powerup/enable the switch to the LCD panel.
-+	-led-en-gpio:
-+		eDP panel LED enable GPIO.
-+			Indicates which GPIO needs to be powered up as output
-+			to enable the backlight.
-+	-panel-pre-enable-delay:
-+		delay value in ms required for panel_pre_enable process
-+			Delay in ms needed for the eDP panel LCD unit to
-+			powerup, and delay needed between panel_VCC and
-+			video_enable.
-+	-panel-enable-delay:
-+		delay value in ms required for panel_enable process
-+			Delay in ms needed for the eDP panel backlight/LED unit
-+			to powerup, and delay needed between video_enable and
-+			BL_EN.
-+	-panel-disable-delay:
-+		delay value in ms required for panel_disable process
-+			Delay in ms needed for the eDP panel backlight/LED unit
-+			powerdown, and delay needed between BL_DISABLE and
-+			video_disable.
-+	-panel-post-disable-delay:
-+		delay value in ms required for panel_post_disable process
-+			Delay in ms needed for the eDP panel LCD unit to
-+			to powerdown, and delay between video_disable and
-+			panel_VCC going down.
-+
-+Example:
-+
-+	bridge-panel {
-+		compatible = "drm-bridge,panel";
-+		led-en-gpio = <&gpx3 0 1>;
-+		panel-pre-enable-delay = <40>;
-+		panel-enable-delay = <20>;
-+		panel-disable-delay = <20>;
-+		panel-post-disable-delay = <30>;
-+	};
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 884923f..654c5ea 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -3,3 +3,9 @@ config DRM_PTN3460
- 	depends on DRM
- 	select DRM_KMS_HELPER
- 	---help---
-+
-+config DRM_BRIDGE_PANEL
-+	tristate "dummy bridge panel"
-+	depends on DRM
-+	select DRM_KMS_HELPER
-+	---help---
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index b4733e1..bf433cf 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -1,3 +1,4 @@
- ccflags-y := -Iinclude/drm
- 
- obj-$(CONFIG_DRM_PTN3460) += ptn3460.o
-+obj-$(CONFIG_DRM_BRIDGE_PANEL) += bridge_panel.o
-diff --git a/drivers/gpu/drm/bridge/bridge_panel.c b/drivers/gpu/drm/bridge/bridge_panel.c
-new file mode 100644
-index 0000000..c629e93
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/bridge_panel.c
-@@ -0,0 +1,217 @@
-+/*
-+ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/gpio.h>
-+#include <linux/delay.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include "drmP.h"
-+
-+#include "bridge/bridge_panel.h"
-+
-+struct bridge_panel {
-+	struct drm_connector	connector;
-+	struct i2c_client	*client;
-+	struct drm_encoder	*encoder;
-+	struct drm_bridge	*bridge;
-+	struct regulator	*backlight_fet;
-+	struct regulator	*lcd_fet;
-+	bool			backlight_fet_enabled;
-+	bool			lcd_fet_enabled;
-+	int			led_en_gpio;
-+	int			lcd_en_gpio;
-+	int			panel_pre_enable_delay;
-+	int			panel_enable_delay;
-+	int			panel_disable_delay;
-+	int			panel_post_disable_delay;
-+};
-+
-+static void bridge_panel_pre_enable(struct drm_bridge *bridge)
-+{
-+	struct bridge_panel *panel = bridge->driver_private;
-+
-+	if (!IS_ERR_OR_NULL(panel->lcd_fet))
-+		if (!panel->lcd_fet_enabled) {
-+			if (regulator_enable(panel->lcd_fet))
-+				DRM_ERROR("Failed to enable LCD fet\n");
-+			panel->lcd_fet_enabled = true;
-+		}
-+
-+	if (gpio_is_valid(panel->lcd_en_gpio))
-+		gpio_set_value(panel->lcd_en_gpio, 1);
-+
-+	msleep(panel->panel_pre_enable_delay);
-+}
-+
-+static void bridge_panel_enable(struct drm_bridge *bridge)
-+{
-+	struct bridge_panel *panel = bridge->driver_private;
-+
-+	if (!IS_ERR_OR_NULL(panel->backlight_fet))
-+		if (!panel->backlight_fet_enabled) {
-+			if (regulator_enable(panel->backlight_fet))
-+				DRM_ERROR("Failed to enable LED fet\n");
-+			panel->backlight_fet_enabled = true;
-+		}
-+
-+	msleep(panel->panel_enable_delay);
-+
-+	if (gpio_is_valid(panel->led_en_gpio))
-+		gpio_set_value(panel->led_en_gpio, 1);
-+}
-+
-+static void bridge_panel_disable(struct drm_bridge *bridge)
-+{
-+	struct bridge_panel *panel = bridge->driver_private;
-+
-+	if (gpio_is_valid(panel->led_en_gpio))
-+		gpio_set_value(panel->led_en_gpio, 0);
-+
-+	if (!IS_ERR_OR_NULL(panel->backlight_fet))
-+		if (panel->backlight_fet_enabled) {
-+			regulator_disable(panel->backlight_fet);
-+			panel->backlight_fet_enabled = false;
-+		}
-+
-+	msleep(panel->panel_disable_delay);
-+}
-+
-+static void bridge_panel_post_disable(struct drm_bridge *bridge)
-+{
-+	struct bridge_panel *panel = bridge->driver_private;
-+
-+	if (gpio_is_valid(panel->lcd_en_gpio))
-+		gpio_set_value(panel->lcd_en_gpio, 0);
-+
-+	if (!IS_ERR_OR_NULL(panel->lcd_fet))
-+		if (panel->lcd_fet_enabled) {
-+			regulator_disable(panel->lcd_fet);
-+			panel->lcd_fet_enabled = false;
-+		}
-+
-+	msleep(panel->panel_post_disable_delay);
-+}
-+
-+void bridge_panel_destroy(struct drm_bridge *bridge)
-+{
-+	struct bridge_panel *panel = bridge->driver_private;
-+
-+	drm_bridge_cleanup(bridge);
-+
-+	if (gpio_is_valid(panel->lcd_en_gpio))
-+		gpio_free(panel->lcd_en_gpio);
-+	if (gpio_is_valid(panel->led_en_gpio))
-+		gpio_free(panel->led_en_gpio);
-+	/* Nothing else to free, we've got devm allocated memory */
-+}
-+
-+struct drm_bridge_funcs bridge_panel_funcs = {
-+	.pre_enable = bridge_panel_pre_enable,
-+	.enable = bridge_panel_enable,
-+	.disable = bridge_panel_disable,
-+	.post_disable = bridge_panel_post_disable,
-+	.destroy = bridge_panel_destroy,
-+};
-+
-+struct drm_bridge *bridge_panel_init(struct drm_device *dev,
-+					struct drm_encoder *encoder,
-+					struct i2c_client *client,
-+					struct device_node *node)
-+{
-+	int ret;
-+	struct drm_bridge *bridge;
-+	struct bridge_panel *panel;
-+
-+	bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
-+	if (!bridge) {
-+		DRM_ERROR("Failed to allocate drm bridge\n");
-+		return NULL;
-+	}
-+
-+	panel = devm_kzalloc(dev->dev, sizeof(*panel), GFP_KERNEL);
-+	if (!panel) {
-+		DRM_ERROR("Failed to allocate bridge panel\n");
-+		return NULL;
-+	}
-+
-+	panel->client = client;
-+	panel->encoder = encoder;
-+	panel->bridge = bridge;
-+
-+	panel->lcd_en_gpio = of_get_named_gpio(node, "lcd-en-gpio", 0);
-+	panel->lcd_en_gpio = of_get_named_gpio(node, "led-en-gpio", 0);
-+
-+	of_property_read_u32(node, "panel-pre-enable-delay",
-+					&panel->panel_pre_enable_delay);
-+	of_property_read_u32(node, "panel-enable-delay",
-+					&panel->panel_enable_delay);
-+	of_property_read_u32(node, "panel-disable-delay",
-+					&panel->panel_disable_delay);
-+	of_property_read_u32(node, "panel-post-disable-delay",
-+					&panel->panel_post_disable_delay);
-+
-+	panel->lcd_fet = devm_regulator_get(dev->dev, "lcd_vdd");
-+	if (IS_ERR(panel->lcd_fet))
-+		return NULL;
-+
-+	panel->backlight_fet = devm_regulator_get(dev->dev, "vcd_led");
-+	if (IS_ERR(panel->backlight_fet))
-+		return NULL;
-+
-+	if (gpio_is_valid(panel->lcd_en_gpio)) {
-+		ret = devm_gpio_request_one(dev->dev, panel->lcd_en_gpio,
-+					GPIOF_OUT_INIT_LOW, "lcd_en_gpio");
-+		if (ret) {
-+			DRM_ERROR("failed to get lcd-en gpio [%d]\n", ret);
-+			return NULL;
-+		}
-+	} else {
-+		panel->lcd_en_gpio = -ENODEV;
-+	}
-+
-+	if (gpio_is_valid(panel->led_en_gpio)) {
-+		ret = devm_gpio_request_one(dev->dev, panel->led_en_gpio,
-+					GPIOF_OUT_INIT_LOW, "led_en_gpio");
-+		if (ret) {
-+			DRM_ERROR("failed to get led-en gpio [%d]\n", ret);
-+			return NULL;
-+		}
-+	} else {
-+		panel->led_en_gpio = -ENODEV;
-+	}
-+
-+	ret = drm_bridge_init(dev, bridge, &bridge_panel_funcs);
-+	if (ret) {
-+		DRM_ERROR("Failed to initialize bridge with drm\n");
-+		goto err;
-+	}
-+
-+	bridge->driver_private = panel;
-+
-+	if (!encoder->bridge)
-+		/* First entry in the bridge chain */
-+		encoder->bridge = bridge;
-+
-+	return bridge;
-+
-+err:
-+	if (gpio_is_valid(panel->lcd_en_gpio))
-+		gpio_free(panel->lcd_en_gpio);
-+	if (gpio_is_valid(panel->led_en_gpio))
-+		gpio_free(panel->led_en_gpio);
-+	return NULL;
-+}
-+EXPORT_SYMBOL(bridge_panel_init);
-diff --git a/include/drm/bridge/bridge_panel.h b/include/drm/bridge/bridge_panel.h
-new file mode 100644
-index 0000000..7f0d662
---- /dev/null
-+++ b/include/drm/bridge/bridge_panel.h
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DRM_BRIDGE_PANEL_H_
-+#define _DRM_BRIDGE_PANEL_H_
-+
-+struct drm_device;
-+struct drm_encoder;
-+struct i2c_client;
-+struct device_node;
-+
-+#if defined(CONFIG_DRM_BRIDGE_PANEL)
-+
-+struct drm_bridge *bridge_panel_init(struct drm_device *dev,
-+					struct drm_encoder *encoder,
-+					struct i2c_client *client,
-+					struct device_node *node);
-+#else
-+
-+static inline struct drm_bridge *bridge_panel_init(struct drm_device *dev,
-+						struct drm_encoder *encoder,
-+						struct i2c_client *client,
-+						struct device_node *node)
-+{
-+	return 0;
-+}
-+
-+#endif
-+
-+#endif
--- 
-1.7.9.5
+Regards,
+Ajay
+>> Real life example to show importance of it: I have a phone with MIPI-DSI
+>> panel and HDMI. Due to initialization issues HDMI bridge driver
+>> sometimes fails during probe and the drmdev do not start. Of course this
+>> is development stage so I have serial console I can diagnose the
+>> problem, disable HDMI, fix the problem, etc...
+>> But what happens in case of end-user. He will see black screen - bricked
+>> phone. In case the bridge will be implemented using drm_panel
+>> he will have working phone with broken HDMI, much better.
+>
+> well, tbh, I don't think an end-user will see the device if hdmi were broken ;-)
+>
+> I suppose if bridge/panel where loaded dynamically (or at least after
+> drm device and drm_{connector,encoder,etc} are created, it would help
+> a bit here.  I'd kinda hope that isn't the only benefit/reason to make
+> things more dynamic.  Especially if we allow bridges/panels to be
+> unloaded.. (just loading them dynamically doesn't seem as scary from
+> locking perspective)
+>
+>> 4. And the last thing, it is more about the concept/design. drm_bridge,
+>> drm_hw_block suggests that those interfaces describes the whole device:
+>> bridge, panel, whatever.
+>
+> hmm, I don't think this is the case.  I can easily see things like:
+>
+>   struct foo_panel {
+>     struct drm_panel base;
+>     struct drm_bridge bridge;
+>     ...
+>   }
+>
+> where a panel implementation implements both panel and bridge.  In
+> fact that is kinda what I was encouraging.
+>
+> BR,
+> -R
+>
+>> In my approach I have an interface
+>> to describe only one video input port of the device. And drm_panel is
+>> in fact misleading name, drm_sink may be better. So real panel
+>> would implement drm_sink interface. Bridge would implement drm_sink
+>> interface and it will request other drm_sink interface, to interact with
+>> the panel which is after it.
+>> This approach seems to me more flexible. Beside things I have described
+>> above it will allow to implement also more complicated devices, dsi
+>> hubs, video mixers, etc.
+>>
+>>
+>> Regards
+>> Andrzej
+>>
+>>>
+>>> BR,
+>>> -R
+>>>
+>>>> So why not implement ptn3460 bridge as drm_panel which internally uses
+>>>> another drm_panel. With this approach everything fits much better.
+>>>> You do not need those (pre|post)_(enable|disable) calls, you do not need
+>>>> to implement connector in the bridge and you have a driver following
+>>>> linux driver model. And no single bit changed in drm core.
+>>>>
+>>>> I have implemented this way DSI/LVDS bridge, it was sent as RFC [1][2].
+>>>> It was not accepted as Inki preferred drm_bridge but as I see the
+>>>> problems with drm_bridges I have decide to attract attention to much
+>>>> more cleaner solution.
+>>>>
+>>>> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
+>>>> [2]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/27044
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>>
+>>>>>
+>>>>> Ajay Kumar (3):
+>>>>>   [RFC V2 1/3] drm: implement chaining of drm bridges
+>>>>>   [RFC V2 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
+>>>>>   [RFC V2 3/3] drm/bridge: ptn3460: support bridge chaining
+>>>>>
+>>>>>  .../bindings/drm/bridge/bridge_panel.txt           |  45 ++++
+>>>>>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
+>>>>>  drivers/gpu/drm/bridge/Makefile                    |   1 +
+>>>>>  drivers/gpu/drm/bridge/bridge_panel.c              | 240 +++++++++++++++++++++
+>>>>>  drivers/gpu/drm/bridge/ptn3460.c                   |  21 +-
+>>>>>  drivers/gpu/drm/drm_crtc.c                         |  13 +-
+>>>>>  include/drm/bridge/bridge_panel.h                  |  37 ++++
+>>>>>  include/drm/drm_crtc.h                             |   2 +
+>>>>>  8 files changed, 360 insertions(+), 5 deletions(-)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+>>>>>  create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
+>>>>>  create mode 100644 include/drm/bridge/bridge_panel.h
+>>>>>
+>>>>
+>>
