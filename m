@@ -1,85 +1,126 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C
- controller early
-Date: Fri, 9 May 2014 14:51:53 +0100
-Message-ID: <20140509135153.GM12304@sirena.org.uk>
-References: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
- <20140424162558.GB12304@sirena.org.uk>
- <CAHfPSqB5+mLiC07jbEpeUgW63pZVk700SkYGxToO7GRAsFm_nQ@mail.gmail.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Fri, 9 May 2014 19:25:34 +0530
+Message-ID: <CAFp+6iFJ1aXEvss1Wwx=Y=sk5j3m57zwL5Hh3wYUorUNi96MGA@mail.gmail.com>
+References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
+	<5368F136.6070804@samsung.com>
+	<CAFp+6iHN-W-k6ow5YykK_QWgBJ+GgzXwPX6suWtizxwJWOiGtg@mail.gmail.com>
+	<CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
+	<536CAA4F.8050404@samsung.com>
+	<CAFp+6iEGvy71s=-Vt37TKkVDUX1wO6GZdwL=uBfPjng78yE5-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mpNcIJL4U0bEY9+B"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39288 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755531AbaEINwM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 09:52:12 -0400
-Content-Disposition: inline
-In-Reply-To: <CAHfPSqB5+mLiC07jbEpeUgW63pZVk700SkYGxToO7GRAsFm_nQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAFp+6iEGvy71s=-Vt37TKkVDUX1wO6GZdwL=uBfPjng78yE5-A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, robh+dt <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com
+
+On Fri, May 9, 2014 at 4:21 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi Sylwester,
+>
+>
+> On Fri, May 9, 2014 at 3:43 PM, Sylwester Nawrocki
+> <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> Hi Vivek,
+>>
+>> On 08/05/14 11:03, Vivek Gautam wrote:
+>>>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>> >>> index b422e38..51efe4c 100644
+>>>>>> >>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>> >>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>>>>> >>> @@ -114,3 +114,43 @@ Example:
+>>>>>> >>>               compatible = "samsung,exynos-sataphy-i2c";
+>>>>>> >>>               reg = <0x38>;
+>>>>>> >>>       };
+>>>>>> >>> +
+>>>>>> >>> +Samsung Exynos5 SoC series USB DRD PHY controller
+>>>>>> >>> +--------------------------------------------------
+>>>>>> >>> +
+>>>>>> >>> +Required properties:
+>>>>>> >>> +- compatible : Should be set to one of the following supported values:
+>>>>>> >>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>>>>>> >>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+>>>>>> >>> +- reg : Register offset and length of USB DRD PHY register set;
+>>>>>> >>> +- clocks: Clock IDs array as required by the controller
+>>>>>> >>> +- clock-names: names of clocks correseponding to IDs in the clock property;
+>>>>>> >>> +            Required clocks:
+>>>>>> >>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
+>>>>>> >>> +            used for register access.
+>>>>>> >>> +     - ref: PHY's reference clock (usually crystal clock), used for
+>>>>>> >>> +            PHY operations, associated by phy name. It is used to
+>>>>>> >>> +            determine bit values for clock settings register.
+>>>>>> >>> +            For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+>>>>>> >>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
+>>>>>> >>> +                   control pmu registers for power isolation.
+>>>>>> >>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
+>>>>>> >>> +                   base.
+>>>>> >>
+>>>>> >> It doesn't seem right to have register offset encoded in the device tree
+>>>>> >> like this. I think it'd be more appropriate to associate such an offset
+>>>>> >> with the compatible string's value in the driver.
+>>>> >
+>>>> > Ok, it makes more sense.
+>>>> > Just out of curiosity, what difference would this make ?
+>>>
+>>> Moreover, in case of Exynos5420 (and may be in future SoCs), where we
+>>> have 2 USB DRD PHY controllers,
+>>> we will need to have a way around to deal with two separate offsets in
+>>> the driver for one compatible string.
+>>
+>> It could be handled by creating a list of offsets per compatible string and
+>> then adding some way to identify the PHY device instance. So I believe that's
+>> not a big issue.
+>
+> True, we had tried to make use of 'aliases' for multiple controllers
+> on Exynos5420,
+> in earlier version V3 of this patch, to handle the pmu-register
+> offsets in _somewhat_ similar fashion. [1]
+> But then we had to drop that as per the suggestions in the mailing list.
+>
+>> Now you'd be encoding a list of registers offsets in the
+>> device tree, without encoding bit layout of each register. It's unlikely that
+>> each instance would have different bits layout, but describing individual
+>> registers in DT I thought is something that we're not supposed to do.
+>
+> Ok, so this is information to me, i was not very much aware of this.
+> Thanks for explaining it here.
+>
+>>
+>>> Getting the offsets from DT seems a cleaner way to handle this case of
+>>> multi controllers.
+>>
+>> I think it's easier from the driver POV, but isn't it violating the device
+>> tree rules ?
+>> Anyway. I'm just pointing this minor issue in the binding as it appears
+>> to me. The final word of course belongs to a DT binding maintainer.
+>
+> Thanks Sylwester, for pointing this out here.
+> Meantime, please let me know if the approach using aliases is one
+> possible solution for this or not ?
+
+I shall be sending v8 patch series for this, in order to use 'aliases'
+in the driver
+to get the distinction between pmu-offsets.
+So, v8 will give an alternative approach for getting pmu-offsets using
+macro definitions from a header file.
+
+Mark and Rob can suggest us which can be a better approach.
+
+>
+>
+> [1] [PATCH v3] phy: Add new Exynos5 USB 3.0 PHY driver
+>      https://lkml.org/lkml/2014/1/21/46
 
 
---mpNcIJL4U0bEY9+B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, May 09, 2014 at 05:50:00PM +0530, Naveen Krishna Ch wrote:
-> On 24 April 2014 21:55, Mark Brown <broonie@kernel.org> wrote:
-
-> >> Such solution has been proposed by Mark Brown to fix the problem of
-> >> the regulators not beeing available on the peripheral device probe():
-> >> http://lists.infradead.org/pipermail/linux-arm-kernel/2010-March/011971.html
-
-> > What specifically is this needed for?  We *should* be able to use
-> > deferred probe for most things, but I know that not all subsystems are
-> > able to yet.
-
-> DRM related drivers like DP, FIMD, HDMI, Mixer wants to be probed ASAP
-> during the boot.
-> The real problem comes when, one of these drivers do a regulator_get().
-
-> If the physical supply  is not enabled/hookedup the regulator_get() call
-> assumes that physical supply is present and returns a
-> "dummy_regulator" (But, not an error).
-
-> Because of which, Display and several other devices fails to work.
-
-These drivers are buggy, if they geniunely expect and handle a missing
-supply then they should be using regulator_get_optional() to request the
-regulator and even if they don't the use of subsys_initcall() is not
-going to fix anything here - if a dummy regulator is going to be
-returned the time things are probed won't make a difference.
-
-> I2C, I2C_TUNNEL, SPI and DMA drivers are required as subsys_initcall()
-> for similar reason.
-
-What makes you say this?  Typically those drivers don't use regulators
-at all.
-
---mpNcIJL4U0bEY9+B
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTbN12AAoJELSic+t+oim9tt4P/ianGaD5q8ymN951nJdeJi/J
-/GR9nLcBmKEbVGjFZVNI/q+zGralwSAdMj5P8Nc7MZyuY8A9PEs+GMdqopeTQtdV
-sh7oO6UhwdUDzOFxTncfRztnfpkYbeLj3O0kgLHimhi8XWgGF6nZfEHHg5/A2u85
-dNYw5jRYM6A2621K0seUOURpJWugKC2bJa4nKEigV3El5coO2eZaVbpdlS7/W7y6
-tQ/onjZWZYpHNVhRNFKHzSAuv5sU9qILp6rU0hOIW5MJAYEHNlVFWQW1OU8BS7vE
-I3Ex/Tcx3DETRcOhhL/fCYOHUqLc8CBSRO8hHNerbSf5PmE9nALRbGolW71bZy8Q
-D3KyhkcUnl3LcuL6aIcXawg4Cnkvp4s1inu77sHEj7zM1QT51VfhCqOqCvZy+OM0
-HQjF8uG3q5Tt/Xv8ECIiTE27xkxgwL0RXDY6Ybeh/3wpsbogoyAa+vaEjTMJ9NRH
-u7hn9BbzcDmptJj/vSZLDi0qyyqZ4BteSP06XlVWDNRNNPNrSmqqOBhE1LCMCF+N
-ujKUIq+OZ0WhEvo1/Z0DHjUw+FtVlt0VL0Te3FkZtUFq/ZcBQmJfJXNEDdd6EsL2
-d8WYnloP8ytNJLoBgdJ81Dn3G8LpnxTnb3PrMheOYgW59FOQ05r87IZt5ik/KKSP
-uxq+rNe8xUp0cTjXU+yw
-=u6Jv
------END PGP SIGNATURE-----
-
---mpNcIJL4U0bEY9+B--
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
