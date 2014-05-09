@@ -1,289 +1,386 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [RFC V3 3/3] drm: create and demonstrate bridge chaining using
- exynos_dp
-Date: Fri, 09 May 2014 20:23:02 +0530
-Message-ID: <1399647182-20951-4-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [RFC V3 2/3] drm/bridge: add a dummy panel driver to support lvds
+ bridges
+Date: Fri, 09 May 2014 20:23:01 +0530
+Message-ID: <1399647182-20951-3-git-send-email-ajaykumar.rs@samsung.com>
 References: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51192 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:51173 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756928AbaEIOyt (ORCPT
+	with ESMTP id S1756907AbaEIOyj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 10:54:49 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
+	Fri, 9 May 2014 10:54:39 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
  by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5B00I7LARCHR50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 May 2014 23:54:48 +0900 (KST)
+ with ESMTP id <0N5B003R6AR21D10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 May 2014 23:54:38 +0900 (KST)
 In-reply-to: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: robdclark@gmail.com, seanpaul@chromium.org, a.hajda@samsung.com, inki.dae@samsung.com, daniel.vetter@ffwll.ch, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-use drm_bridge helpers to demonstrate chaining of bridges(ptn3460 and
-bridge_panel) with exynos_dp encoder.
+implement basic panel controls as a drm_bridge so that
+the existing bridges can make use of it.
+
+The driver assumes that it is the last entity in the bridge chain.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- drivers/gpu/drm/bridge/ptn3460.c        |   60 +++++++++++++++++++++++--------
- drivers/gpu/drm/exynos/exynos_dp_core.c |   25 ++++++++-----
- include/drm/bridge/ptn3460.h            |   15 ++++----
- 3 files changed, 72 insertions(+), 28 deletions(-)
+ .../bindings/drm/bridge/bridge_panel.txt           |   45 ++++
+ drivers/gpu/drm/bridge/Kconfig                     |    6 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/bridge_panel.c              |  217 ++++++++++++++++++++
+ include/drm/bridge/bridge_panel.h                  |   40 ++++
+ 5 files changed, 309 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+ create mode 100644 drivers/gpu/drm/bridge/bridge_panel.c
+ create mode 100644 include/drm/bridge/bridge_panel.h
 
-diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-index b171901..31ab8b3 100644
---- a/drivers/gpu/drm/bridge/ptn3460.c
-+++ b/drivers/gpu/drm/bridge/ptn3460.c
-@@ -126,6 +126,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
- 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
- 	}
- 
-+	drm_next_bridge_pre_enable(bridge);
+diff --git a/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt b/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+new file mode 100644
+index 0000000..0f916b0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+@@ -0,0 +1,45 @@
++Simple panel interface for chaining along with bridges
 +
- 	/*
- 	 * There's a bug in the PTN chip where it falsely asserts hotplug before
- 	 * it is fully functional. We're forced to wait for the maximum start up
-@@ -142,6 +144,7 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
- 
- static void ptn3460_enable(struct drm_bridge *bridge)
- {
-+	drm_next_bridge_enable(bridge);
- }
- 
- static void ptn3460_disable(struct drm_bridge *bridge)
-@@ -153,6 +156,8 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 
- 	ptn_bridge->enabled = false;
- 
-+	drm_next_bridge_disable(bridge);
++Required properties:
++  - compatible: "drm-bridge,panel"
 +
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
- 
-@@ -162,6 +167,7 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 
- static void ptn3460_post_disable(struct drm_bridge *bridge)
- {
-+	drm_next_bridge_post_disable(bridge);
- }
- 
- void ptn3460_bridge_destroy(struct drm_bridge *bridge)
-@@ -173,6 +179,9 @@ void ptn3460_bridge_destroy(struct drm_bridge *bridge)
- 		gpio_free(ptn_bridge->gpio_pd_n);
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_free(ptn_bridge->gpio_rst_n);
++Optional properties:
++	-lcd-en-gpio:
++		eDP panel LCD poweron GPIO.
++			Indicates which GPIO needs to be powered up as output
++			to powerup/enable the switch to the LCD panel.
++	-led-en-gpio:
++		eDP panel LED enable GPIO.
++			Indicates which GPIO needs to be powered up as output
++			to enable the backlight.
++	-panel-pre-enable-delay:
++		delay value in ms required for panel_pre_enable process
++			Delay in ms needed for the eDP panel LCD unit to
++			powerup, and delay needed between panel_VCC and
++			video_enable.
++	-panel-enable-delay:
++		delay value in ms required for panel_enable process
++			Delay in ms needed for the eDP panel backlight/LED unit
++			to powerup, and delay needed between video_enable and
++			BL_EN.
++	-panel-disable-delay:
++		delay value in ms required for panel_disable process
++			Delay in ms needed for the eDP panel backlight/LED unit
++			powerdown, and delay needed between BL_DISABLE and
++			video_disable.
++	-panel-post-disable-delay:
++		delay value in ms required for panel_post_disable process
++			Delay in ms needed for the eDP panel LCD unit to
++			to powerdown, and delay between video_disable and
++			panel_VCC going down.
 +
-+	drm_next_bridge_destroy(bridge);
++Example:
 +
- 	/* Nothing else to free, we've got devm allocated memory */
- }
- 
-@@ -189,15 +198,28 @@ int ptn3460_get_modes(struct drm_connector *connector)
- 	struct ptn3460_bridge *ptn_bridge;
- 	u8 *edid;
- 	int ret, num_modes;
--	bool power_off;
- 
- 	ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
- 
- 	if (ptn_bridge->edid)
- 		return drm_add_edid_modes(connector, ptn_bridge->edid);
- 
--	power_off = !ptn_bridge->enabled;
--	ptn3460_pre_enable(ptn_bridge->bridge);
-+	if (!ptn_bridge->enabled) {
-+		if (gpio_is_valid(ptn_bridge->gpio_pd_n))
-+			gpio_set_value(ptn_bridge->gpio_pd_n, 1);
++	bridge-panel {
++		compatible = "drm-bridge,panel";
++		led-en-gpio = <&gpx3 0 1>;
++		panel-pre-enable-delay = <40>;
++		panel-enable-delay = <20>;
++		panel-disable-delay = <20>;
++		panel-post-disable-delay = <30>;
++	};
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 884923f..654c5ea 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -3,3 +3,9 @@ config DRM_PTN3460
+ 	depends on DRM
+ 	select DRM_KMS_HELPER
+ 	---help---
 +
-+		if (gpio_is_valid(ptn_bridge->gpio_rst_n)) {
-+			gpio_set_value(ptn_bridge->gpio_rst_n, 0);
-+			udelay(10);
-+			gpio_set_value(ptn_bridge->gpio_rst_n, 1);
++config DRM_BRIDGE_PANEL
++	tristate "dummy bridge panel"
++	depends on DRM
++	select DRM_KMS_HELPER
++	---help---
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index b4733e1..bf433cf 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -1,3 +1,4 @@
+ ccflags-y := -Iinclude/drm
+ 
+ obj-$(CONFIG_DRM_PTN3460) += ptn3460.o
++obj-$(CONFIG_DRM_BRIDGE_PANEL) += bridge_panel.o
+diff --git a/drivers/gpu/drm/bridge/bridge_panel.c b/drivers/gpu/drm/bridge/bridge_panel.c
+new file mode 100644
+index 0000000..c629e93
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/bridge_panel.c
+@@ -0,0 +1,217 @@
++/*
++ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_gpio.h>
++#include <linux/gpio.h>
++#include <linux/delay.h>
++#include <linux/regulator/consumer.h>
++
++#include "drmP.h"
++
++#include "bridge/bridge_panel.h"
++
++struct bridge_panel {
++	struct drm_connector	connector;
++	struct i2c_client	*client;
++	struct drm_encoder	*encoder;
++	struct drm_bridge	*bridge;
++	struct regulator	*backlight_fet;
++	struct regulator	*lcd_fet;
++	bool			backlight_fet_enabled;
++	bool			lcd_fet_enabled;
++	int			led_en_gpio;
++	int			lcd_en_gpio;
++	int			panel_pre_enable_delay;
++	int			panel_enable_delay;
++	int			panel_disable_delay;
++	int			panel_post_disable_delay;
++};
++
++static void bridge_panel_pre_enable(struct drm_bridge *bridge)
++{
++	struct bridge_panel *panel = bridge->driver_private;
++
++	if (!IS_ERR_OR_NULL(panel->lcd_fet))
++		if (!panel->lcd_fet_enabled) {
++			if (regulator_enable(panel->lcd_fet))
++				DRM_ERROR("Failed to enable LCD fet\n");
++			panel->lcd_fet_enabled = true;
 +		}
 +
-+		msleep(90);
++	if (gpio_is_valid(panel->lcd_en_gpio))
++		gpio_set_value(panel->lcd_en_gpio, 1);
 +
-+		ret = ptn3460_select_edid(ptn_bridge);
-+		if (ret)
-+			DRM_ERROR("Select edid failed ret=%d\n", ret);
-+	}
- 
- 	edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
- 	if (!edid) {
-@@ -219,8 +241,13 @@ int ptn3460_get_modes(struct drm_connector *connector)
- 	num_modes = drm_add_edid_modes(connector, ptn_bridge->edid);
- 
- out:
--	if (power_off)
--		ptn3460_disable(ptn_bridge->bridge);
-+	if (!ptn_bridge->enabled) {
-+		if (gpio_is_valid(ptn_bridge->gpio_rst_n))
-+			gpio_set_value(ptn_bridge->gpio_rst_n, 1);
++	msleep(panel->panel_pre_enable_delay);
++}
 +
-+		if (gpio_is_valid(ptn_bridge->gpio_pd_n))
-+			gpio_set_value(ptn_bridge->gpio_pd_n, 0);
++static void bridge_panel_enable(struct drm_bridge *bridge)
++{
++	struct bridge_panel *panel = bridge->driver_private;
++
++	if (!IS_ERR_OR_NULL(panel->backlight_fet))
++		if (!panel->backlight_fet_enabled) {
++			if (regulator_enable(panel->backlight_fet))
++				DRM_ERROR("Failed to enable LED fet\n");
++			panel->backlight_fet_enabled = true;
++		}
++
++	msleep(panel->panel_enable_delay);
++
++	if (gpio_is_valid(panel->led_en_gpio))
++		gpio_set_value(panel->led_en_gpio, 1);
++}
++
++static void bridge_panel_disable(struct drm_bridge *bridge)
++{
++	struct bridge_panel *panel = bridge->driver_private;
++
++	if (gpio_is_valid(panel->led_en_gpio))
++		gpio_set_value(panel->led_en_gpio, 0);
++
++	if (!IS_ERR_OR_NULL(panel->backlight_fet))
++		if (panel->backlight_fet_enabled) {
++			regulator_disable(panel->backlight_fet);
++			panel->backlight_fet_enabled = false;
++		}
++
++	msleep(panel->panel_disable_delay);
++}
++
++static void bridge_panel_post_disable(struct drm_bridge *bridge)
++{
++	struct bridge_panel *panel = bridge->driver_private;
++
++	if (gpio_is_valid(panel->lcd_en_gpio))
++		gpio_set_value(panel->lcd_en_gpio, 0);
++
++	if (!IS_ERR_OR_NULL(panel->lcd_fet))
++		if (panel->lcd_fet_enabled) {
++			regulator_disable(panel->lcd_fet);
++			panel->lcd_fet_enabled = false;
++		}
++
++	msleep(panel->panel_post_disable_delay);
++}
++
++void bridge_panel_destroy(struct drm_bridge *bridge)
++{
++	struct bridge_panel *panel = bridge->driver_private;
++
++	drm_bridge_cleanup(bridge);
++
++	if (gpio_is_valid(panel->lcd_en_gpio))
++		gpio_free(panel->lcd_en_gpio);
++	if (gpio_is_valid(panel->led_en_gpio))
++		gpio_free(panel->led_en_gpio);
++	/* Nothing else to free, we've got devm allocated memory */
++}
++
++struct drm_bridge_funcs bridge_panel_funcs = {
++	.pre_enable = bridge_panel_pre_enable,
++	.enable = bridge_panel_enable,
++	.disable = bridge_panel_disable,
++	.post_disable = bridge_panel_post_disable,
++	.destroy = bridge_panel_destroy,
++};
++
++struct drm_bridge *bridge_panel_init(struct drm_device *dev,
++					struct drm_encoder *encoder,
++					struct i2c_client *client,
++					struct device_node *node)
++{
++	int ret;
++	struct drm_bridge *bridge;
++	struct bridge_panel *panel;
++
++	bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
++	if (!bridge) {
++		DRM_ERROR("Failed to allocate drm bridge\n");
++		return NULL;
 +	}
- 
- 	return num_modes;
- }
-@@ -264,8 +291,10 @@ struct drm_connector_funcs ptn3460_connector_funcs = {
- 	.destroy = ptn3460_connector_destroy,
- };
- 
--int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
--		struct i2c_client *client, struct device_node *node)
-+struct drm_bridge *ptn3460_init(struct drm_device *dev,
-+				struct drm_encoder *encoder,
-+				struct i2c_client *client,
-+				struct device_node *node)
- {
- 	int ret;
- 	struct drm_bridge *bridge;
-@@ -274,13 +303,13 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 	bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
- 	if (!bridge) {
- 		DRM_ERROR("Failed to allocate drm bridge\n");
--		return -ENOMEM;
++
++	panel = devm_kzalloc(dev->dev, sizeof(*panel), GFP_KERNEL);
++	if (!panel) {
++		DRM_ERROR("Failed to allocate bridge panel\n");
 +		return NULL;
- 	}
- 
- 	ptn_bridge = devm_kzalloc(dev->dev, sizeof(*ptn_bridge), GFP_KERNEL);
- 	if (!ptn_bridge) {
- 		DRM_ERROR("Failed to allocate ptn bridge\n");
--		return -ENOMEM;
++	}
++
++	panel->client = client;
++	panel->encoder = encoder;
++	panel->bridge = bridge;
++
++	panel->lcd_en_gpio = of_get_named_gpio(node, "lcd-en-gpio", 0);
++	panel->lcd_en_gpio = of_get_named_gpio(node, "led-en-gpio", 0);
++
++	of_property_read_u32(node, "panel-pre-enable-delay",
++					&panel->panel_pre_enable_delay);
++	of_property_read_u32(node, "panel-enable-delay",
++					&panel->panel_enable_delay);
++	of_property_read_u32(node, "panel-disable-delay",
++					&panel->panel_disable_delay);
++	of_property_read_u32(node, "panel-post-disable-delay",
++					&panel->panel_post_disable_delay);
++
++	panel->lcd_fet = devm_regulator_get(dev->dev, "lcd_vdd");
++	if (IS_ERR(panel->lcd_fet))
 +		return NULL;
- 	}
- 
- 	ptn_bridge->client = client;
-@@ -292,7 +321,7 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 				GPIOF_OUT_INIT_HIGH, "PTN3460_PD_N");
- 		if (ret) {
- 			DRM_ERROR("Request powerdown-gpio failed (%d)\n", ret);
--			return ret;
++
++	panel->backlight_fet = devm_regulator_get(dev->dev, "vcd_led");
++	if (IS_ERR(panel->backlight_fet))
++		return NULL;
++
++	if (gpio_is_valid(panel->lcd_en_gpio)) {
++		ret = devm_gpio_request_one(dev->dev, panel->lcd_en_gpio,
++					GPIOF_OUT_INIT_LOW, "lcd_en_gpio");
++		if (ret) {
++			DRM_ERROR("failed to get lcd-en gpio [%d]\n", ret);
 +			return NULL;
- 		}
- 	}
- 
-@@ -307,7 +336,7 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 		if (ret) {
- 			DRM_ERROR("Request reset-gpio failed (%d)\n", ret);
- 			gpio_free(ptn_bridge->gpio_pd_n);
--			return ret;
++		}
++	} else {
++		panel->lcd_en_gpio = -ENODEV;
++	}
++
++	if (gpio_is_valid(panel->led_en_gpio)) {
++		ret = devm_gpio_request_one(dev->dev, panel->led_en_gpio,
++					GPIOF_OUT_INIT_LOW, "led_en_gpio");
++		if (ret) {
++			DRM_ERROR("failed to get led-en gpio [%d]\n", ret);
 +			return NULL;
- 		}
- 	}
- 
-@@ -325,7 +354,10 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 	}
- 
- 	bridge->driver_private = ptn_bridge;
--	encoder->bridge = bridge;
++		}
++	} else {
++		panel->led_en_gpio = -ENODEV;
++	}
++
++	ret = drm_bridge_init(dev, bridge, &bridge_panel_funcs);
++	if (ret) {
++		DRM_ERROR("Failed to initialize bridge with drm\n");
++		goto err;
++	}
++
++	bridge->driver_private = panel;
 +
 +	if (!encoder->bridge)
 +		/* First entry in the bridge chain */
 +		encoder->bridge = bridge;
- 
- 	ret = drm_connector_init(dev, &ptn_bridge->connector,
- 			&ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
-@@ -338,13 +370,13 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 	drm_sysfs_connector_add(&ptn_bridge->connector);
- 	drm_mode_connector_attach_encoder(&ptn_bridge->connector, encoder);
- 
--	return 0;
++
 +	return bridge;
- 
- err:
- 	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
- 		gpio_free(ptn_bridge->gpio_pd_n);
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_free(ptn_bridge->gpio_rst_n);
--	return ret;
++
++err:
++	if (gpio_is_valid(panel->lcd_en_gpio))
++		gpio_free(panel->lcd_en_gpio);
++	if (gpio_is_valid(panel->led_en_gpio))
++		gpio_free(panel->led_en_gpio);
 +	return NULL;
- }
- EXPORT_SYMBOL(ptn3460_init);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 1cc3981..2cc31e1 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -27,6 +27,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/bridge/ptn3460.h>
-+#include <drm/bridge/bridge_panel.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_dp_core.h"
-@@ -979,24 +980,32 @@ static bool find_bridge(const char *compat, struct bridge_init *bridge)
- 
- 	bridge->client = of_find_i2c_device_by_node(bridge->node);
- 	if (!bridge->client)
--		return false;
-+		DRM_INFO("bridge is not an i2c device\n");
- 
- 	return true;
- }
- 
--/* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-+static bool exynos_drm_attach_lcd_bridge(struct drm_device *dev,
- 		struct drm_encoder *encoder)
- {
- 	struct bridge_init bridge;
--	int ret;
-+	struct drm_bridge *bridge_chain = NULL, *next = NULL;
-+	bool connector_created = false;
- 
- 	if (find_bridge("nxp,ptn3460", &bridge)) {
--		ret = ptn3460_init(dev, encoder, bridge.client, bridge.node);
--		if (!ret)
--			return 1;
-+		bridge_chain = ptn3460_init(dev, encoder, bridge.client,
-+								bridge.node);
-+		if (bridge_chain)
-+			connector_created = true;
- 	}
--	return 0;
++}
++EXPORT_SYMBOL(bridge_panel_init);
+diff --git a/include/drm/bridge/bridge_panel.h b/include/drm/bridge/bridge_panel.h
+new file mode 100644
+index 0000000..7f0d662
+--- /dev/null
++++ b/include/drm/bridge/bridge_panel.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+	if (find_bridge("drm-bridge,panel", &bridge)) {
-+		next = bridge_panel_init(dev, encoder, bridge.client,
-+							bridge.node);
-+		drm_bridge_add_to_chain(bridge_chain, next);
-+	}
++#ifndef _DRM_BRIDGE_PANEL_H_
++#define _DRM_BRIDGE_PANEL_H_
 +
-+	return connector_created;
- }
- 
- static int exynos_dp_create_connector(struct exynos_drm_display *display,
-diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
-index ff62344..f612b9b 100644
---- a/include/drm/bridge/ptn3460.h
-+++ b/include/drm/bridge/ptn3460.h
-@@ -21,15 +21,18 @@ struct device_node;
- 
- #if defined(CONFIG_DRM_PTN3460) || defined(CONFIG_DRM_PTN3460_MODULE)
- 
--int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
--		struct i2c_client *client, struct device_node *node);
-+struct drm_bridge *ptn3460_init(struct drm_device *dev,
-+				struct drm_encoder *encoder,
-+				struct i2c_client *client,
-+				struct device_node *node);
- #else
- 
--static inline int ptn3460_init(struct drm_device *dev,
--		struct drm_encoder *encoder, struct i2c_client *client,
--		struct device_node *node)
-+static inline struct drm_bridge *ptn3460_init(struct drm_device *dev,
++struct drm_device;
++struct drm_encoder;
++struct i2c_client;
++struct device_node;
++
++#if defined(CONFIG_DRM_BRIDGE_PANEL)
++
++struct drm_bridge *bridge_panel_init(struct drm_device *dev,
++					struct drm_encoder *encoder,
++					struct i2c_client *client,
++					struct device_node *node);
++#else
++
++static inline struct drm_bridge *bridge_panel_init(struct drm_device *dev,
 +						struct drm_encoder *encoder,
 +						struct i2c_client *client,
 +						struct device_node *node)
- {
--	return 0;
-+	return NULL;
- }
- 
- #endif
++{
++	return 0;
++}
++
++#endif
++
++#endif
 -- 
 1.7.9.5
