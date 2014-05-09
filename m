@@ -1,112 +1,49 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v7 1/2] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Fri, 09 May 2014 11:36:57 +0200
-Message-ID: <536CA1B9.5070605@samsung.com>
-References: <1398665874-31238-1-git-send-email-gautam.vivek@samsung.com>
- <5368F136.6070804@samsung.com>
- <CAFp+6iHN-W-k6ow5YykK_QWgBJ+GgzXwPX6suWtizxwJWOiGtg@mail.gmail.com>
- <CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <CAFp+6iF=Z_dkd+YJm2-ODmvgZ6PCt+bUx+vSVm_5RtobVN0WfA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Rutland <Mark.Rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v3 0/4] ARM: dts: enable display for peach-pit and snow boards
+Date: Fri, 09 May 2014 15:39:42 +0530
+Message-ID: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:64229 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753254AbaEIKK2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 May 2014 06:10:28 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-[CCing DT maintainers]
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-On 08.05.2014 11:03, Vivek Gautam wrote:
-> On Thu, May 8, 2014 at 11:35 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->> Hi Sylwester,
->>
->>
->> On Tue, May 6, 2014 at 7:57 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>> On 28/04/14 08:17, Vivek Gautam wrote:
->>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
->>>> The new driver uses the generic PHY framework and will interact
->>>> with DWC3 controller present on Exynos5 series of SoCs.
->>>> Thereby, removing old phy-samsung-usb3 driver and related code
->>>> used untill now which was based on usb/phy framework.
->>>>
->>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->>>> ---
->>>>
->>>> Changes from v6:
->>>>  - Addressed review comments:
->>>>    -- Sorted config entries in Kconfig and Makefile
->>>>    -- Made #define to_usbdrd_phy(inst) to a static inline routine.
->>>>    -- Restructured exynos5_rate_to_clk() as suggested.
->>>>    -- Amended 'val' field for regmap_update_bits() in the routine
->>>>       exynos5_usbdrd_phy_isol().
->>>>    -- Removed sentinel entry from exynos5_usbdrd_phy_cfg[] struct.
->>>>    -- Removed check for 'match' entry in probe().
->>>>
->>>>  .../devicetree/bindings/phy/samsung-phy.txt        |   40 ++
->>>>  drivers/phy/Kconfig                                |   11 +
->>>>  drivers/phy/Makefile                               |    1 +
->>>>  drivers/phy/phy-exynos5-usbdrd.c                   |  627 ++++++++++++++++++++
->>>>  4 files changed, 679 insertions(+)
->>>>  create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
->>>> index b422e38..51efe4c 100644
->>>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
->>>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
->>>> @@ -114,3 +114,43 @@ Example:
->>>>               compatible = "samsung,exynos-sataphy-i2c";
->>>>               reg = <0x38>;
->>>>       };
->>>> +
->>>> +Samsung Exynos5 SoC series USB DRD PHY controller
->>>> +--------------------------------------------------
->>>> +
->>>> +Required properties:
->>>> +- compatible : Should be set to one of the following supported values:
->>>> +     - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
->>>> +     - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
->>>> +- reg : Register offset and length of USB DRD PHY register set;
->>>> +- clocks: Clock IDs array as required by the controller
->>>> +- clock-names: names of clocks correseponding to IDs in the clock property;
->>>> +            Required clocks:
->>>> +     - phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
->>>> +            used for register access.
->>>> +     - ref: PHY's reference clock (usually crystal clock), used for
->>>> +            PHY operations, associated by phy name. It is used to
->>>> +            determine bit values for clock settings register.
->>>> +            For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
->>>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
->>>> +                   control pmu registers for power isolation.
->>>> +- samsung,pmu-offset: phy power control register offset to pmu-system-controller
->>>> +                   base.
->>>
->>> It doesn't seem right to have register offset encoded in the device tree
->>> like this. I think it'd be more appropriate to associate such an offset
->>> with the compatible string's value in the driver.
->>
->> Ok, it makes more sense.
->> Just out of curiosity, what difference would this make ?
-> 
-> Moreover, in case of Exynos5420 (and may be in future SoCs), where we
-> have 2 USB DRD PHY controllers,
-> we will need to have a way around to deal with two separate offsets in
-> the driver for one compatible string.
-> 
-> Getting the offsets from DT seems a cleaner way to handle this case of
-> multi controllers.
+Add nodes for fimd and dp controller for exynos5250 based snow
+and exynos5420 based peach-pit board.
 
-Mark, Rob, what is your opinion on this?
+This series is based on Kukjin Kims, for-next branch.
 
-Best regards,
-Tomasz
+V3:
+1) Dropped 1 patch "ARM: dts: move dp hpd line to the board file for
+ exynos5420".
+2) Extra blank lines for readability.
+3) dp hpd gpio name change (dp_hpd -> dp_hpd_gpio)
+
+V2:
+1) Rebase on Peach-pit dependent patches.
+
+It is dependent on
+1) Andrew Bresticker's patch for hpd gpio addition, avilable at
+http://www.spinics.net/lists/linux-samsung-soc/msg28827.html [Patch is 'ACK'ed.]
+2) Arun's patch for adding peach-pit board dts file at
+http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is 'ACK'ed.]
+
+Rahul Sharma (4):
+  ARM: dts: enable fimd for exynos5250 based snow board
+  ARM: dts: enable dp-controller for exynos5250 based snow board
+  ARM: dts: enable fimd for exynos5420 based peach-pit board
+  ARM: dts: enable dp-controller for exynos5420 based peach-pit board
+
+ arch/arm/boot/dts/exynos5250-snow.dts      |   35 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |   41 ++++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+)
+
+-- 
+1.7.9.5
