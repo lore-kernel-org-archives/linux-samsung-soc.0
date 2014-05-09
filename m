@@ -1,91 +1,180 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv4 7/7] ARM: dts: Add device tree sources for Exynos3250
-Date: Fri, 09 May 2014 16:10:29 +0900
-Message-ID: <536C7F65.50503@samsung.com>
-References: <1398388572-30239-1-git-send-email-cw00.choi@samsung.com>
- <1398388572-30239-8-git-send-email-cw00.choi@samsung.com>
- <535B0324.50705@gmail.com> <536C2A1C.6030807@samsung.com>
- <536C6175.5000302@gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
+Date: Fri, 09 May 2014 16:32:48 +0900
+Message-ID: <536C84A0.6020403@samsung.com>
+References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
+ <536C2C31.8000209@samsung.com>
+ <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
+ <536C594A.5080107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58434 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752736AbaEIHKc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 03:10:32 -0400
-In-reply-to: <536C6175.5000302@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <536C594A.5080107@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Sonny Rao <sonnyrao@chromium.org>
+Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi Tomasz,
+Hi, Sonny.
 
-On 05/09/2014 02:02 PM, Tomasz Figa wrote:
-> Hi Chanwoo,
+You can discard the my previous some comment.
+As you mentioned, this reset sequence is recommended at Synopsys TRM.
+
+Add the minor question.
+
+On 05/09/2014 01:27 PM, Jaehoon Chung wrote:
+> Hi, Sonny.
 > 
-> On 09.05.2014 03:06, Chanwoo Choi wrote:
->> On 04/26/2014 09:51 AM, Tomasz Figa wrote:
->>> On 25.04.2014 03:16, Chanwoo Choi wrote:
+> I have checked the Synopsys TRM..
 > 
-> [snip]
-> 
->>>> +    cpus {
->>>> +        #address-cells = <1>;
->>>> +        #size-cells = <0>;
->>>> +
->>>> +        cpu@0 {
->>>> +            device_type = "cpu";
->>>> +            compatible = "arm,cortex-a7";
->>>> +            reg = <0>;
->>>> +            clock-frequency = <1000000000>;
->>>> +        };
+> On 05/09/2014 10:34 AM, Sonny Rao wrote:
+>> On Thu, May 8, 2014 at 6:15 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>> On 05/08/2014 06:40 PM, Yuvaraj Kumar wrote:
+>>>> Any comments on this patch?
+>>>>
+>>>> On Wed, Mar 26, 2014 at 5:16 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>>> From: Sonny Rao <sonnyrao@chromium.org>
+>>>>>
+>>>>> This patch changes the fifo reset code to follow the reset procedure
+>>>>> outlined in the documentation of Synopsys  Mobile storage host databook
+>>>>> 7.2.13.
+>>>>> Without this patch, we could able to see eMMC was not detected after
+>>>>> multiple reboots due to driver hangs while eMMC tuning for HS200.
+>>>>>
+>>>>> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+>>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
+>>>>> ---
+>>>>>  drivers/mmc/host/dw_mmc.c |   48 ++++++++++++++++++++++++++++++++++++++++++++-
+>>>>>  drivers/mmc/host/dw_mmc.h |    1 +
+>>>>>  2 files changed, 48 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>>>> index 32dd81d..1d77431 100644
+>>>>> --- a/drivers/mmc/host/dw_mmc.c
+>>>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>>>> @@ -2220,7 +2220,53 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+>>>>>                 host->sg = NULL;
+>>>>>         }
+>>>>>
+>>>>> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+>>>>> +       /*
+>>>>> +        * The recommended method for resetting is to always reset the
+>>>>> +        * controller and the fifo, but differs slightly depending on the mode.
+>>>>> +        * Note that this doesn't handle the "generic DMA" (not IDMAC) case.
+>>>>> +        */
 >>>
->>> Why only one CPU? I believe Exynos3250 is dual core.
->>
->> I'll add cpu1 information.
->>
->>> Also are physical IDs of the cores really 0 and 1? On Exynos4210 for example they are 0x900 and 0x901, while on Exynos4212 they are 0xa00 and 0xa01. Please check this.
->>
->> The 'reg' property means only hardware id(hwid) of CPU.
->> You can check it on arm_dt_init_cpu_maps() in arch/arm/kernel/devtree.c.h.
->> or Documentation/devicetree/bindings/arm/cpus.txt.
->>
-> 
-> Well, as described in Documentation/devicetree/bindings/arm/cpus.txt, on 32-bit ARM v7 or later CPUs the "reg" property should be equal to the lower 24-bits of MPIDR value of given CPU, which in addition to core ID includes also cluster ID, which can be non-zero, even on single cluster SoCs (like it is on Exynos4210 and 4x12).
-
-I checked the lower 24-bit of MPIDR value for Exynos3250 in arm_dt_init_cpu_maps().
-- the lower 24-bit of MPIDR for CPU0 is '0x0'.
-
-> 
->>>> +    };
->>>> +
->>>> +    fixed-rate-clocks {
->>>> +        compatible = "simple-bus";
->>>> +        #address-cells = <1>;
->>>> +        #size-cells = <0>;
-> 
-> [snip]
-> 
->>>> +    cmu: clock-controller@10030000 {
->>>> +        compatible = "samsung,exynos3250-cmu";
->>>> +        reg = <0x10030000 0x20000>;
->>>> +        #clock-cells = <1>;
->>>> +    };
->>>> +
->>>> +    rtc@10070000 {
+>>> "not IDMAC" is confused..
 >>>
->>> Please add label to the node, so it can be referenced from board dts files added later (using the method I explained above).
 >>
->> OK, I'll add lable as following:
->>
->>     rtc_0: rtc@10070000 {
-> 
-> There is no need to suffix the RTC with _0, as there is just one RTC in the SoC. So in this case rtc: rtc@10070000 will be enough.
+>> The documentation describes three different possible modes.  There's a
+>> mode that doesn't use IDMAC but still does DMA.  But as far as I can
+>> tell this driver doesn't support that way.  We can just remove that
+>> wording if it's confusing.
 
-OK, I'll modify it without prefix('_0).
+How did it know whether dma is generic DMA or not?
+
+>>
+>>>>> +       if (dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET)) {
+>>>>> +               unsigned long timeout = jiffies + msecs_to_jiffies(500);
+>>>>> +               u32 status, rint;
+>>>>> +
+>>>>> +               /* if using dma we wait for dma_req to clear */
+>>>>> +               if (host->using_dma) {
+>>>>> +                       do {
+>>>>> +                               status = mci_readl(host, STATUS);
+>>>>> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
+>>>>> +                                       break;
+>>>>> +                               cpu_relax();
+>>>>> +                       } while (time_before(jiffies, timeout));
+>>>>> +
+>>>>> +                       if (status & SDMMC_STATUS_DMA_REQ)
+>>>>> +                               dev_err(host->dev,
+>>>>> +                                       "%s: Timeout waiting for dma_req to "
+>>>>> +                                       "clear during reset", __func__);
+>>>>> +
+>>>>> +                       /* when using DMA next we reset the fifo again */
+>>>>> +                       dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+>>>>> +               }
+>>>>> +               /*
+>>>>> +                * In all cases we clear the RAWINTS register to clear any
+>>>>> +                * interrupts.
+>>>>> +                */
+>>>>> +               rint = mci_readl(host, RINTSTS);
+>>>>> +               rint = rint & (~mci_readl(host, MINTSTS));
+> you use the "status or temp" instead of rint. (you can reuse the variable.)
+> And can use "status &= ~mci_readl(host,MINTSTS);"
+> 
+>>>
+>>> Just clear the RINTSTS register? why do you add these?
+>>>
+>>
+>> This will look at what is not masked, and only clear those bits.
+> Well, i known if clear the RINTSTS register, 
+> recommended to use "0xfffffff" and set the value for interrupt.
+
+Can be used "0xfffffff"?
 
 Best Regards,
-Chanwoo Choi
+Jaehoon Chung
+> 
+>>
+>>>>> +               if (rint)
+>>>>> +                       mci_writel(host, RINTSTS, rint);
+>>>>> +
+>>>>> +       } else
+>>>>> +               dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
+>>>
+>>> Just display the error log? I didn't understand this.
+>>> If you displayed the error log, then it needs to return the error value.
+>>>
+>>>>> +
+>>>>> + #ifdef CONFIG_MMC_DW_IDMAC
+>>>>> +       /* It is also recommended that we reset and reprogram idmac */
+>>>>> +       dw_mci_idmac_reset(host);
+>>>>> + #endif
+>>>>> +
+>>>>> +       /* After a CTRL reset we need to have CIU set clock registers  */
+>>>>> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+> 
+> Well, why do you send the clock update command?
+> I didn't see that update the value related with clock.
+> 
+> Best Regards,
+> Jaehoon Chung
+> 
+>>>>> +
+>>>>> +       return true;
+>>>>>  }
+>>>>>
+>>>>>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
+>>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>>>>> index 738fa24..037e47a 100644
+>>>>> --- a/drivers/mmc/host/dw_mmc.h
+>>>>> +++ b/drivers/mmc/host/dw_mmc.h
+>>>>> @@ -129,6 +129,7 @@
+>>>>>  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
+>>>>>  /* Status register defines */
+>>>>>  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
+>>>>> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
+>>>>>  /* FIFOTH register defines */
+>>>>>  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
+>>>>>                                          ((r) & 0xFFF) << 16 | \
+>>>>> --
+>>>>> 1.7.10.4
+>>>>>
+>>>>
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
