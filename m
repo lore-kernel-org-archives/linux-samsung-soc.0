@@ -1,43 +1,80 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v3 1/4] ARM: dts: enable fimd for exynos5250 based snow board
-Date: Fri, 09 May 2014 15:39:43 +0530
-Message-ID: <1399630186-22610-2-git-send-email-rahul.sharma@samsung.com>
+From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 4/4] ARM: dts: enable dp-controller for exynos5420 based
+ peach-pit board
+Date: Fri, 09 May 2014 15:39:46 +0530
+Message-ID: <1399630186-22610-5-git-send-email-rahul.sharma@samsung.com>
 References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:64229 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753818AbaEIKKa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 06:10:30 -0400
-In-reply-to: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1399630186-22610-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+From: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Enable fimd node for snow board.
+Enable dp-controller for peach-pit board.
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+Signed-off-by: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos5250-snow.dts |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |   36 ++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1ce1088..796954c 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -206,4 +206,10 @@
- 			clock-frequency = <24000000>;
- 		};
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index f75da5b..0e79479 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -74,6 +74,13 @@
+ 		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <0>;
  	};
 +
-+	fimd@14400000 {
-+		status = "okay";
-+		samsung,invert-vclk;
++	dp_hpd_gpio: dp_hpd_gpio {
++		samsung,pins = "gpx2-6";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
 +	};
-+
  };
+ 
+ &rtc {
+@@ -150,3 +157,32 @@
+ 	status = "okay";
+ 	samsung,invert-vclk;
+ };
++
++&dp {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&dp_hpd_gpio>;
++	samsung,color-space = <0>;
++	samsung,dynamic-range = <0>;
++	samsung,ycbcr-coeff = <0>;
++	samsung,color-depth = <1>;
++	samsung,link-rate = <0x06>;
++	samsung,lane-count = <2>;
++	samsung,hpd-gpio = <&gpx2 6 0>;
++
++	display-timings {
++		native-mode = <&timing1>;
++
++		timing1: timing@1 {
++			clock-frequency = <70589280>;
++			hactive = <1366>;
++			vactive = <768>;
++			hfront-porch = <40>;
++			hback-porch = <40>;
++			hsync-len = <32>;
++			vback-porch = <10>;
++			vfront-porch = <12>;
++			vsync-len = <6>;
++		};
++	};
++};
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
