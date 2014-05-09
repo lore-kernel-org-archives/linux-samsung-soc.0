@@ -1,84 +1,46 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] thermal: samsung: Only update available threshold limits
-Date: Fri, 09 May 2014 17:17:30 +0530
-Message-ID: <536CC052.3080806@linaro.org>
-References: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org> <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 00/22] Random ARM randconfig fixes in drivers
+Date: Fri, 9 May 2014 13:48:49 +0200
+Message-ID: <201405091348.49713.arnd@arndb.de>
+References: <1399560433-1402630-1-git-send-email-arnd@arndb.de>
+ <20140508164157.GA22224@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: rui.zhang@intel.com, eduardo.valentin@ti.com
-Cc: Amit Kachhap <amit.kachhap@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140508164157.GA22224@roeck-us.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: wsa@the-dreams.de, tony@atomide.com, linux-pci@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com, linux-ide@vger.kernel.org, wim@iguana.be, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, vinod.koul@intel.com, linux-sh@vger.kernel.org, kishon@ti.com, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, plagnioj@jcrosoft.com, ohad@wizery.com, linux-watchdog@vger.kernel.org, broonie@kernel.org, bhelgaas@google.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, balbi@ti.com, josh.wu@atmel.com, netdev@vger.kernel.org, dmaengine@vger.kernel.org, dwmw2@infradead.org, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/24/2014 11:48 AM, Amit Kachhap wrote:
-> On 4/14/14, Tushar Behera <tushar.behera@linaro.org> wrote:
->> Currently the threshold limits are updated in 2 stages, once for all
->> software trigger levels and again for hardware trip point.
-> I guess the first stage is bootloader as could not find this in this file.
-> Anyways the changes looks fine to me.
-> 
-> Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> 
+On Thursday 08 May 2014, Guenter Roeck wrote:
+> On Thu, May 08, 2014 at 04:46:51PM +0200, Arnd Bergmann wrote:
+> > These are a bunch of fixes I had to do to get all randconfig
+> > configurations on ARM working. Most of these are really old
+> > bugs, but there are also some new ones. I don't think any of
+> > them require a backport to linux-stable.
+> > 
+> > I have checked that they are all still required on yesterday's
+> > linux-next kernel. Please apply on the appropriate trees unless
+> > there are objections.
+> > 
+> Is this series of patches also going to fix arm:allmodconfig ?
 
-Can this the patch be merged now?
+Possibly, I haven't checked in a while. I'm unfortunately sitting on
+about 200 other patches in the same branch, which together fix all
+build errors in any configuration I encountered.
 
->>
->> While updating the software trigger levels, it overwrites the threshold
->> limit for hardware trip point thereby forcing the Exynos core to issue
->> an emergency shutdown.
->>
->> Updating only the required fields in threshold register fixes this issue.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> ---
->> Based on v3.15-rc1.
->>
->>  drivers/thermal/samsung/exynos_tmu.c |    4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c
->> b/drivers/thermal/samsung/exynos_tmu.c
->> index 0d96a51..ffccc89 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -225,6 +225,8 @@ skip_calib_data:
->>  			trigger_levs++;
->>  	}
->>
->> +	rising_threshold = readl(data->base + reg->threshold_th0);
->> +
->>  	if (data->soc == SOC_ARCH_EXYNOS4210) {
->>  		/* Write temperature code for threshold */
->>  		threshold_code = temp_to_code(data, pdata->threshold);
->> @@ -249,6 +251,7 @@ skip_calib_data:
->>  				ret = threshold_code;
->>  				goto out;
->>  			}
->> +			rising_threshold &= ~(0xff << 8 * i);
->>  			rising_threshold |= threshold_code << 8 * i;
->>  			if (pdata->threshold_falling) {
->>  				threshold_code = temp_to_code(data,
->> @@ -281,6 +284,7 @@ skip_calib_data:
->>  			}
->>  			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
->>  				/* 1-4 level to be assigned in th0 reg */
->> +				rising_threshold &= ~(0xff << 8 * i);
->>  				rising_threshold |= threshold_code << 8 * i;
->>  				writel(rising_threshold,
->>  					data->base + reg->threshold_th0);
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+I should really do some allmodconfig/allnoconfig/allyesconfig
+builds without my series again, and prioritize sending out the
+ones required for that.
 
-
--- 
-Tushar Behera
+	Arnd
