@@ -1,125 +1,169 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Fri, 09 May 2014 10:15:29 +0900
-Message-ID: <536C2C31.8000209@samsung.com>
-References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH 1/5] ARM: dts: move dp hpd line to the board file for exynos5420
+Date: Fri, 9 May 2014 06:47:20 +0530
+Message-ID: <CAPdUM4OLN4zr3n6=QDig6wez4Rd4AT-zwGf=J_YMSLrOapWOtQ@mail.gmail.com>
+References: <1397994525-18537-1-git-send-email-rahul.sharma@samsung.com>
+	<1397994525-18537-2-git-send-email-rahul.sharma@samsung.com>
+	<001f01cf6a87$56a86740$03f935c0$%han@samsung.com>
+	<CAPdUM4N1Y_hQikf47yijMqbNrecfJQuy3C-M10J5oaUuodPmaw@mail.gmail.com>
+	<003d01cf6b1f$f5f9c9e0$e1ed5da0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48001 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753280AbaEIBPc (ORCPT
+Received: from mail-we0-f173.google.com ([74.125.82.173]:41313 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932225AbaEIBRW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 21:15:32 -0400
-In-reply-to: <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
+	Thu, 8 May 2014 21:17:22 -0400
+In-Reply-To: <003d01cf6b1f$f5f9c9e0$e1ed5da0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 05/08/2014 06:40 PM, Yuvaraj Kumar wrote:
-> Any comments on this patch?
-> 
-> On Wed, Mar 26, 2014 at 5:16 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->> From: Sonny Rao <sonnyrao@chromium.org>
+On 9 May 2014 06:15, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, May 08, 2014 6:08 PM, Rahul Sharma wrote:
+>> On 8 May 2014 12:02, Jingoo Han <jg1.han@samsung.com> wrote:
+>> > On Sunday, April 20, 2014 8:49 PM, Rahul Sharma wrote:
+>> >>
+>> >> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> >>
+>> >> Display controller HPD Gpio line is board specific. This patch
+>> >> is moving the pinctrl for hpd gpio line to the respective board
+>> >> file.
+>> >>
+>> >> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> >> ---
+>> >>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    7 -------
+>> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    7 +++++++
+>> >>  2 files changed, 7 insertions(+), 7 deletions(-)
+>> >>
+>> >> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> >> index e62c8eb..5848c42 100644
+>> >> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> >> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> >> @@ -59,13 +59,6 @@
+>> >>                       interrupt-controller;
+>> >>                       #interrupt-cells = <2>;
+>> >>               };
+>> >> -
+>> >> -             dp_hpd: dp_hpd {
+>> >> -                     samsung,pins = "gpx0-7";
+>> >> -                     samsung,pin-function = <3>;
+>> >> -                     samsung,pin-pud = <0>;
+>> >> -                     samsung,pin-drv = <0>;
+>> >> -             };
+>> >>       };
+>> >
+>> > (+cc Doug Anderson, Tomasz Figa)
+>> >
+>> > 'gpx0-7' pin is assigned for standard HPD pin. This is chip specific.
+>> > So, there should be "gpx0-7" part on chip specific dts file such as
+>> > 'exynos5420-pinctrl.dtsi'.
+>> >
+>> > However, some boards use GPIO as HPD pin, instead of 'gpx0-7' pin.
+>> > This is board specific. In my opinion, the following would look
+>> > better. In this way, this patch is not necessary.
+>> >
+>> > 1. case: Standard HPD pin is used. (smdk5420)
+>> > arch/arm/boot/dts/exynos5420-pinctrl.dts
+>> >         pinctrl@13400000 {
+>> >                 dp_hpd: dp_hpd {
+>> >                         samsung,pins = "gpx0-7";
+>> >                         samsung,pin-function = <3>;
+>> >                         samsung,pin-pud = <0>;
+>> >                         samsung,pin-drv = <0>;
+>> >                 };
+>> > arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >         dp-controller@145B0000 {
+>> >                 pinctrl-names = "default";
+>> >                 pinctrl-0 = <&dp_hpd>;
+>> >                 ...
+>> >
+>> >
+>> > 2. case: non-standard HPD pin such as GPIO is used. (peach pit)
+>> > arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> >         pinctrl@13400000 {
+>> >                 dp_hpd: dp_hpd {
+>> >                         samsung,pins = "gpx2-6";
+>> >                         samsung,pin-function = <0>;
+>> >                         samsung,pin-pud = <3>;
+>> >                         samsung,pin-drv = <0>;
+>> >                 };
+>> >         dp-controller@145B0000 {
+>> >                 pinctrl-names = "default";
+>> >                 pinctrl-0 = <&dp_hpd>;
+>> >                 ...
+>> >                 samsung,hpd-gpio = <&gpx2 6 0>;
+>> >
+>> > Even though, there is 'dp_hpd' in exynos5420-pinctrl.dts,
+>> > 'smdk5420' and 'peach pit' can use "gpx0-7" and "gpx2-6",
+>> > respectively.
+>> >
+>> > A year ago, Doug Anderson and me agreed that standard HPD pin
+>> > part should be included to 'exynos5250-pinctrl.dtsi'.
+>> > (https://lkml.org/lkml/2013/5/11/134)
+>> >
 >>
->> This patch changes the fifo reset code to follow the reset procedure
->> outlined in the documentation of Synopsys  Mobile storage host databook
->> 7.2.13.
->> Without this patch, we could able to see eMMC was not detected after
->> multiple reboots due to driver hangs while eMMC tuning for HS200.
+>> I wasn't aware of this discussion. It make sense. I will drop this patch.
+>> I need to choose some other name for this pin, say "peach_dp_hpd".
+>> Let me know if any concern.
+>
+> In my opinion, "dp_hpd_gpio" looks better as below.
+>
+> arch/arm/boot/dts/exynos5420-peach-pit.dts
+>         pinctrl@13400000 {
+>                 dp_hpd_gpio: dp_hpd_gpio {
+>                         samsung,pins = "gpx2-6";
+>                         samsung,pin-function = <0>;
+>                         samsung,pin-pud = <3>;
+>                         samsung,pin-drv = <0>;
+>                 };
+>         dp-controller@145B0000 {
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&dp_hpd_gpio>;
+>                 ...
+>                 samsung,hpd-gpio = <&gpx2 6 0>;
+
+Ok.
+
+>
+> Best regards,
+> Jingoo Han
+>
 >>
->> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
->> ---
->>  drivers/mmc/host/dw_mmc.c |   48 ++++++++++++++++++++++++++++++++++++++++++++-
->>  drivers/mmc/host/dw_mmc.h |    1 +
->>  2 files changed, 48 insertions(+), 1 deletion(-)
+>> Regards,
+>> Rahul Sharma.
 >>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 32dd81d..1d77431 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -2220,7 +2220,53 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->>                 host->sg = NULL;
->>         }
->>
->> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->> +       /*
->> +        * The recommended method for resetting is to always reset the
->> +        * controller and the fifo, but differs slightly depending on the mode.
->> +        * Note that this doesn't handle the "generic DMA" (not IDMAC) case.
->> +        */
-
-"not IDMAC" is confused..
-
->> +       if (dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET)) {
->> +               unsigned long timeout = jiffies + msecs_to_jiffies(500);
->> +               u32 status, rint;
->> +
->> +               /* if using dma we wait for dma_req to clear */
->> +               if (host->using_dma) {
->> +                       do {
->> +                               status = mci_readl(host, STATUS);
->> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
->> +                                       break;
->> +                               cpu_relax();
->> +                       } while (time_before(jiffies, timeout));
->> +
->> +                       if (status & SDMMC_STATUS_DMA_REQ)
->> +                               dev_err(host->dev,
->> +                                       "%s: Timeout waiting for dma_req to "
->> +                                       "clear during reset", __func__);
->> +
->> +                       /* when using DMA next we reset the fifo again */
->> +                       dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->> +               }
->> +               /*
->> +                * In all cases we clear the RAWINTS register to clear any
->> +                * interrupts.
->> +                */
->> +               rint = mci_readl(host, RINTSTS);
->> +               rint = rint & (~mci_readl(host, MINTSTS));
-
-Just clear the RINTSTS register? why do you add these?
-
->> +               if (rint)
->> +                       mci_writel(host, RINTSTS, rint);
->> +
->> +       } else
->> +               dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
-
-Just display the error log? I didn't understand this.
-If you displayed the error log, then it needs to return the error value.
-
->> +
->> + #ifdef CONFIG_MMC_DW_IDMAC
->> +       /* It is also recommended that we reset and reprogram idmac */
->> +       dw_mci_idmac_reset(host);
->> + #endif
->> +
->> +       /* After a CTRL reset we need to have CIU set clock registers  */
->> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
->> +
->> +       return true;
->>  }
->>
->>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
->> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
->> index 738fa24..037e47a 100644
->> --- a/drivers/mmc/host/dw_mmc.h
->> +++ b/drivers/mmc/host/dw_mmc.h
->> @@ -129,6 +129,7 @@
->>  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
->>  /* Status register defines */
->>  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
->> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
->>  /* FIFOTH register defines */
->>  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
->>                                          ((r) & 0xFFF) << 16 | \
->> --
->> 1.7.10.4
->>
-> 
+>> > Best regards,
+>> > Jingoo Han
+>> >
+>> >>
+>> >>       pinctrl@13410000 {
+>> >> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >> index 6910485..62d38c8 100644
+>> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> >> @@ -138,6 +138,13 @@
+>> >>                       samsung,pin-pud = <1>;
+>> >>                       samsung,pin-drv = <0>;
+>> >>               };
+>> >> +
+>> >> +             dp_hpd: dp_hpd {
+>> >> +                     samsung,pins = "gpx0-7";
+>> >> +                     samsung,pin-function = <3>;
+>> >> +                     samsung,pin-pud = <0>;
+>> >> +                     samsung,pin-drv = <0>;
+>> >> +             };
+>> >>       };
+>> >>
+>> >>       hdmi@14530000 {
+>> >> --
+>> >> 1.7.9.5
+>> >
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
