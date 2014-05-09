@@ -1,161 +1,112 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Fri, 09 May 2014 13:27:54 +0900
-Message-ID: <536C594A.5080107@samsung.com>
-References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
- <536C2C31.8000209@samsung.com>
- <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH] [media] s5p-mfc: Don't try to resubmit VP8 bitstream
+ buffer for decode.
+Date: Fri, 09 May 2014 10:03:52 +0530
+Message-ID: <536C5AB0.4090007@gmail.com>
+References: <1394180752-16348-1-git-send-email-arun.kk@samsung.com> <004b01cf6ad9$b5c83c80$2158b580$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20865 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750702AbaEIE15 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 00:27:57 -0400
-In-reply-to: <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <004b01cf6ad9$b5c83c80$2158b580$%debski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sonny Rao <sonnyrao@chromium.org>, Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
 
-Hi, Sonny.
+Hi Kamil,
 
-I have checked the Synopsys TRM..
-
-On 05/09/2014 10:34 AM, Sonny Rao wrote:
-> On Thu, May 8, 2014 at 6:15 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> On 05/08/2014 06:40 PM, Yuvaraj Kumar wrote:
->>> Any comments on this patch?
->>>
->>> On Wed, Mar 26, 2014 at 5:16 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->>>> From: Sonny Rao <sonnyrao@chromium.org>
->>>>
->>>> This patch changes the fifo reset code to follow the reset procedure
->>>> outlined in the documentation of Synopsys  Mobile storage host databook
->>>> 7.2.13.
->>>> Without this patch, we could able to see eMMC was not detected after
->>>> multiple reboots due to driver hangs while eMMC tuning for HS200.
->>>>
->>>> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
->>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
->>>> ---
->>>>  drivers/mmc/host/dw_mmc.c |   48 ++++++++++++++++++++++++++++++++++++++++++++-
->>>>  drivers/mmc/host/dw_mmc.h |    1 +
->>>>  2 files changed, 48 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>> index 32dd81d..1d77431 100644
->>>> --- a/drivers/mmc/host/dw_mmc.c
->>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>> @@ -2220,7 +2220,53 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->>>>                 host->sg = NULL;
->>>>         }
->>>>
->>>> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->>>> +       /*
->>>> +        * The recommended method for resetting is to always reset the
->>>> +        * controller and the fifo, but differs slightly depending on the mode.
->>>> +        * Note that this doesn't handle the "generic DMA" (not IDMAC) case.
->>>> +        */
->>
->> "not IDMAC" is confused..
->>
+On 05/08/14 21:52, Kamil Debski wrote:
+> Hi,
 > 
-> The documentation describes three different possible modes.  There's a
-> mode that doesn't use IDMAC but still does DMA.  But as far as I can
-> tell this driver doesn't support that way.  We can just remove that
-> wording if it's confusing.
 > 
->>>> +       if (dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET)) {
->>>> +               unsigned long timeout = jiffies + msecs_to_jiffies(500);
->>>> +               u32 status, rint;
->>>> +
->>>> +               /* if using dma we wait for dma_req to clear */
->>>> +               if (host->using_dma) {
->>>> +                       do {
->>>> +                               status = mci_readl(host, STATUS);
->>>> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
->>>> +                                       break;
->>>> +                               cpu_relax();
->>>> +                       } while (time_before(jiffies, timeout));
->>>> +
->>>> +                       if (status & SDMMC_STATUS_DMA_REQ)
->>>> +                               dev_err(host->dev,
->>>> +                                       "%s: Timeout waiting for dma_req to "
->>>> +                                       "clear during reset", __func__);
->>>> +
->>>> +                       /* when using DMA next we reset the fifo again */
->>>> +                       dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->>>> +               }
->>>> +               /*
->>>> +                * In all cases we clear the RAWINTS register to clear any
->>>> +                * interrupts.
->>>> +                */
->>>> +               rint = mci_readl(host, RINTSTS);
->>>> +               rint = rint & (~mci_readl(host, MINTSTS));
-you use the "status or temp" instead of rint. (you can reuse the variable.)
-And can use "status &= ~mci_readl(host,MINTSTS);"
+>> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+>> Kumar K
+>> Sent: Friday, March 07, 2014 9:26 AM
+>>
+>> From: Pawel Osciak <posciak@chromium.org>
+>>
+>> Currently, for formats that are not H264, MFC driver will check the
+>> consumed stream size returned by the firmware and, based on that, will
+>> try to decide whether the bitstream buffer contained more than one
+>> frame. If the size of the buffer is larger than the consumed stream, it
+>> assumes that there are more frames in the buffer and that the buffer
+>> should be resubmitted for decode. This rarely works though and actually
+>> introduces problems, because:
+>>
+>> - v7 firmware will always return consumed stream size equal to whatever
+>> the driver passed to it when running decode (which is the size of the
+>> whole buffer), which means we will never try to resubmit, because the
+>> firmware will always tell us that it consumed all the data we passed to
+>> it;
+>>
+>> - v6 firmware will return the number of consumed bytes, but will not
+>> include the padding ("stuffing") bytes that are allowed after the frame
+>> in VP8. Since there is no way of figuring out how many of those bytes
+>> follow the frame without getting the frame size from IVF headers (or
+>> somewhere else, but not from the stream itself), the driver tries to
+>> guess that padding size is not larger than 4 bytes, which is not always
+>> true;
+>>
+>> The only way to make it work is to queue only one frame per buffer from
+>> userspace and the check in the kernel is useless and wrong for VP8.
+>> MPEG4 still seems to require it, so keep it only for that format.
+>>
+>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>  drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> index e2aac59..66c1775 100644
+>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> @@ -360,7 +360,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx
+>> *ctx,
+>>  								list);
+>>  		ctx->consumed_stream += s5p_mfc_hw_call(dev->mfc_ops,
+>>  						get_consumed_stream, dev);
+>> -		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
+>> +		if (ctx->codec_mode == S5P_MFC_CODEC_MPEG4_DEC &&
+>>  			ctx->consumed_stream + STUFF_BYTE <
+>>  			src_buf->b->v4l2_planes[0].bytesused) {
+>>  			/* Run MFC again on the same buffer */
+> 
+> I expressed my doubts to this patch in my previous email.
+> I think that packed PB can also be found in other codecs such as H263.
+> So please change to the following if this is a workaround for VP8 only.
+> (The title says that it only changes behavior of VP8 decoding, so it is
+> misleading).
+> 
 
->>
->> Just clear the RINTSTS register? why do you add these?
->>
+Yes it is seen as affecting only VP8 decoding.
+
+> -		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
+> +		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
+> +		    ctx->codec_mode != S5P_MFC_CODEC_VP8_DEC &&
 > 
-> This will look at what is not masked, and only clear those bits.
-Well, i known if clear the RINTSTS register, 
-recommended to use "0xfffffff" and set the value for interrupt.
+
+Ok. I will change it this way.
 
 > 
->>>> +               if (rint)
->>>> +                       mci_writel(host, RINTSTS, rint);
->>>> +
->>>> +       } else
->>>> +               dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
->>
->> Just display the error log? I didn't understand this.
->> If you displayed the error log, then it needs to return the error value.
->>
->>>> +
->>>> + #ifdef CONFIG_MMC_DW_IDMAC
->>>> +       /* It is also recommended that we reset and reprogram idmac */
->>>> +       dw_mci_idmac_reset(host);
->>>> + #endif
->>>> +
->>>> +       /* After a CTRL reset we need to have CIU set clock registers  */
->>>> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+> Did you try to revert your patch https://patchwork.linuxtv.org/patch/15448/
+> and checking if this fixes the problem for VP8?
+> 
 
-Well, why do you send the clock update command?
-I didn't see that update the value related with clock.
+I am afraid it will not solve the VP8 issue as before that patch, it
+used to check for ctx->codec_mode != S5P_MFC_CODEC_H264_DEC and frame
+type is S5P_FIMV_DECODE_FRAME_P_FRAME, buffer was sent again to decode.
+This condition can be triggered in VP8 case causing erroneous behaviour.
 
-Best Regards,
-Jaehoon Chung
+So I will make the change as you suggested above.
 
->>>> +
->>>> +       return true;
->>>>  }
->>>>
->>>>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
->>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
->>>> index 738fa24..037e47a 100644
->>>> --- a/drivers/mmc/host/dw_mmc.h
->>>> +++ b/drivers/mmc/host/dw_mmc.h
->>>> @@ -129,6 +129,7 @@
->>>>  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
->>>>  /* Status register defines */
->>>>  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
->>>> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
->>>>  /* FIFOTH register defines */
->>>>  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
->>>>                                          ((r) & 0xFFF) << 16 | \
->>>> --
->>>> 1.7.10.4
->>>>
->>>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards
+Arun
+
+>> --
+>> 1.7.9.5
+> 
+> Best wishes,
 > 
