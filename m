@@ -1,56 +1,161 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH 3/3] ARM: dts: Add peach-pi board support
-Date: Thu, 8 May 2014 15:22:21 -0700
-Message-ID: <CAJAp7Og3SHC+KPO3oZKc8r4ok0PYQbj_zn1nD_F5i8wHhi-F8A@mail.gmail.com>
-References: <1399035821-25096-1-git-send-email-arun.kk@samsung.com>
-	<1399035821-25096-4-git-send-email-arun.kk@samsung.com>
-	<5363D176.80601@gmail.com>
-	<CAD=FV=XYjMg7V9=OzAy_ifwaM83QS0tiTrp5+nxvG236kkSjRQ@mail.gmail.com>
-	<53644DDB.7050503@gmail.com>
-	<CAD=FV=U_b_n=V_mEFYNPFZ1wyrgjjr5jEGrVb5TviP0Z33popg@mail.gmail.com>
-	<5367D5E1.9070709@ti.com>
-	<CAJAp7Og6Bqnbq5b=Ki5vLaVkvSXxqsKaFaxCoqbX+fRkgouh=A@mail.gmail.com>
-	<536C0254.8050108@ti.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/5] ARM: dts: move dp hpd line to the board file for
+ exynos5420
+Date: Fri, 09 May 2014 09:45:23 +0900
+Message-ID: <003d01cf6b1f$f5f9c9e0$e1ed5da0$%han@samsung.com>
+References: <1397994525-18537-1-git-send-email-rahul.sharma@samsung.com>
+ <1397994525-18537-2-git-send-email-rahul.sharma@samsung.com>
+ <001f01cf6a87$56a86740$03f935c0$%han@samsung.com>
+ <CAPdUM4N1Y_hQikf47yijMqbNrecfJQuy3C-M10J5oaUuodPmaw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:57673 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755857AbaEHWWW (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:39994 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753455AbaEIApZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 May 2014 18:22:22 -0400
-Received: by mail-oa0-f52.google.com with SMTP id eb12so3883498oac.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 May 2014 15:22:21 -0700 (PDT)
-In-Reply-To: <536C0254.8050108@ti.com>
+	Thu, 8 May 2014 20:45:25 -0400
+In-reply-to: <CAPdUM4N1Y_hQikf47yijMqbNrecfJQuy3C-M10J5oaUuodPmaw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tom Rini <trini@ti.com>
-Cc: Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olofj@google.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Arun Kumar <arunkk.samsung@gmail.com>
+To: 'Rahul Sharma' <rahul.sharma@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'sunil joshi' <joshi@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Thu, May 8, 2014 at 3:16 PM, Tom Rini <trini@ti.com> wrote:
-> On 05/08/2014 05:55 PM, Bjorn Andersson wrote:
->> On Mon, May 5, 2014 at 11:18 AM, Tom Rini <trini@ti.com> wrote:
->> [...]
->>> The problem I was raising at the ELC BoF is that today we can't just
->>> stop overwriting values in the non-zero case as many boards lie about
->>> their memory size, in non-zero ways, but no one noticed as they only
->>> tested with U-Boot which was performing the fixup.
->>
->> So, should we conclude are we stuck being bug-compatible forever?
->>
->> I was hoping to add this logic to the kernel by [1], but of course
->> this won't fly
->> based on the argument you highlighted (as was pointed out by Uwe).
->>
->> [1] https://lkml.org/lkml/2014/5/7/28
->
-> Well, device tree should always win and once passed to the kernel, be
-> correct.  If you have control of the kernel but not bootloader, like Uwe
-> says, drop the ATAG support.
+On Thursday, May 08, 2014 6:08 PM, Rahul Sharma wrote:
+> On 8 May 2014 12:02, Jingoo Han <jg1.han@samsung.com> wrote:
+> > On Sunday, April 20, 2014 8:49 PM, Rahul Sharma wrote:
+> >>
+> >> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+> >>
+> >> Display controller HPD Gpio line is board specific. This patch
+> >> is moving the pinctrl for hpd gpio line to the respective board
+> >> file.
+> >>
+> >> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> >> ---
+> >>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    7 -------
+> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    7 +++++++
+> >>  2 files changed, 7 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> >> index e62c8eb..5848c42 100644
+> >> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> >> @@ -59,13 +59,6 @@
+> >>                       interrupt-controller;
+> >>                       #interrupt-cells = <2>;
+> >>               };
+> >> -
+> >> -             dp_hpd: dp_hpd {
+> >> -                     samsung,pins = "gpx0-7";
+> >> -                     samsung,pin-function = <3>;
+> >> -                     samsung,pin-pud = <0>;
+> >> -                     samsung,pin-drv = <0>;
+> >> -             };
+> >>       };
+> >
+> > (+cc Doug Anderson, Tomasz Figa)
+> >
+> > 'gpx0-7' pin is assigned for standard HPD pin. This is chip specific.
+> > So, there should be "gpx0-7" part on chip specific dts file such as
+> > 'exynos5420-pinctrl.dtsi'.
+> >
+> > However, some boards use GPIO as HPD pin, instead of 'gpx0-7' pin.
+> > This is board specific. In my opinion, the following would look
+> > better. In this way, this patch is not necessary.
+> >
+> > 1. case: Standard HPD pin is used. (smdk5420)
+> > arch/arm/boot/dts/exynos5420-pinctrl.dts
+> >         pinctrl@13400000 {
+> >                 dp_hpd: dp_hpd {
+> >                         samsung,pins = "gpx0-7";
+> >                         samsung,pin-function = <3>;
+> >                         samsung,pin-pud = <0>;
+> >                         samsung,pin-drv = <0>;
+> >                 };
+> > arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >         dp-controller@145B0000 {
+> >                 pinctrl-names = "default";
+> >                 pinctrl-0 = <&dp_hpd>;
+> >                 ...
+> >
+> >
+> > 2. case: non-standard HPD pin such as GPIO is used. (peach pit)
+> > arch/arm/boot/dts/exynos5420-peach-pit.dts
+> >         pinctrl@13400000 {
+> >                 dp_hpd: dp_hpd {
+> >                         samsung,pins = "gpx2-6";
+> >                         samsung,pin-function = <0>;
+> >                         samsung,pin-pud = <3>;
+> >                         samsung,pin-drv = <0>;
+> >                 };
+> >         dp-controller@145B0000 {
+> >                 pinctrl-names = "default";
+> >                 pinctrl-0 = <&dp_hpd>;
+> >                 ...
+> >                 samsung,hpd-gpio = <&gpx2 6 0>;
+> >
+> > Even though, there is 'dp_hpd' in exynos5420-pinctrl.dts,
+> > 'smdk5420' and 'peach pit' can use "gpx0-7" and "gpx2-6",
+> > respectively.
+> >
+> > A year ago, Doug Anderson and me agreed that standard HPD pin
+> > part should be included to 'exynos5250-pinctrl.dtsi'.
+> > (https://lkml.org/lkml/2013/5/11/134)
+> >
+> 
+> I wasn't aware of this discussion. It make sense. I will drop this patch.
+> I need to choose some other name for this pin, say "peach_dp_hpd".
+> Let me know if any concern.
 
-Yeah, that would be all nice and dandy, except for the bootloader passing
-device specific parameters on the command line. Maybe I can recreate
-enough of the data later on to actually go with that though...
+In my opinion, "dp_hpd_gpio" looks better as below.
 
-Regards,
-Bjorn
+arch/arm/boot/dts/exynos5420-peach-pit.dts
+	pinctrl@13400000 {
+		dp_hpd_gpio: dp_hpd_gpio {
+			samsung,pins = "gpx2-6";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <3>;
+			samsung,pin-drv = <0>;
+		};
+	dp-controller@145B0000 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&dp_hpd_gpio>;
+		...
+		samsung,hpd-gpio = <&gpx2 6 0>;
+
+Best regards,
+Jingoo Han
+
+> 
+> Regards,
+> Rahul Sharma.
+> 
+> > Best regards,
+> > Jingoo Han
+> >
+> >>
+> >>       pinctrl@13410000 {
+> >> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> index 6910485..62d38c8 100644
+> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> >> @@ -138,6 +138,13 @@
+> >>                       samsung,pin-pud = <1>;
+> >>                       samsung,pin-drv = <0>;
+> >>               };
+> >> +
+> >> +             dp_hpd: dp_hpd {
+> >> +                     samsung,pins = "gpx0-7";
+> >> +                     samsung,pin-function = <3>;
+> >> +                     samsung,pin-pud = <0>;
+> >> +                     samsung,pin-drv = <0>;
+> >> +             };
+> >>       };
+> >>
+> >>       hdmi@14530000 {
+> >> --
+> >> 1.7.9.5
+> >
