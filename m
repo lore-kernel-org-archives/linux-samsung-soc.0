@@ -1,88 +1,100 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2.1 3/9] ARM: S3C24XX: enable usage of common dclk if common clock framework is enabled
-Date: Sat, 10 May 2014 01:33:01 +0200
-Message-ID: <3874492.Rok1zBObEC@phil>
-References: <2104342.rkElQpXtvM@phil> <1428172.jtv2HGWM9N@phil> <536D60B1.2070906@gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 0/4] Add framework to support clkout
+Date: Sat, 10 May 2014 12:39:52 +0900
+Message-ID: <536D9F88.9000505@samsung.com>
+References: <1399640410-30957-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:34694 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752172AbaEIX3g convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56682 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464AbaEJDVi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 19:29:36 -0400
-In-Reply-To: <536D60B1.2070906@gmail.com>
+	Fri, 9 May 2014 23:21:38 -0400
+In-reply-to: <1399640410-30957-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org
 
-Hi Tomasz,
+Hi Tushar,
 
-Am Samstag, 10. Mai 2014, 01:11:45 schrieb Tomasz Figa:
-> On 10.05.2014 01:07, Heiko St=FCbner wrote:
-> > Am Freitag, 9. Mai 2014, 19:53:21 schrieb Tomasz Figa:
-> >> On 09.05.2014 18:49, Paul Bolle wrote:
-> >>> On Wed, 2014-04-23 at 22:09 +0200, Heiko St=FCbner wrote:
-> >>>> Add platform device and select the correct implementation automa=
-tically
-> >>>> depending on wether the old samsung_clock or the common clock fr=
-amework
-> >>>> is enabled.
-> >>>>=20
-> >>>> This is only done for machines already using the old dclk
-> >>>> implementation,
-> >>>> as everybody else should move to use dt anyway.
-> >>>>=20
-> >>>> The machine-specific settings for the external clocks will have =
-to be
-> >>>> set
-> >>>> by somebody with knowledge about the specific hardware.
-> >>>>=20
-> >>>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> >>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >>>=20
-> >>> It seems this one just hit linux-next (in next-20140509).
-> >>=20
-> >> Which is bad, because:
-> >> a) it conflicts with patches already applied in samsung-clk tree,
-> >=20
-> > I remember seeing patches regarding more than one clk-samsung clock
-> > providers. Do you need any additional changes for s3c24xx from me f=
-or
-> > this?
->=20
-> Yes, that's the problem here. If you could do it, I would appreciate =
-it,
-> but if you don't have time then I can handle this. The changes needed
-> are mostly trivial - basically every common samsung_clk function gets
-> new argument to a context structure. The branch to base on would be
-> for_3.16/exynos5260 in samsung-clk tree.
->=20
-> >> b) the DT binding added by patch 4/9 has not been acked .
-> >=20
-> > I'm not 100% sure if this is necessary, as the binding is similar t=
-o most
-> > other Samsung bindings and looking through recent clock binding cha=
-nges I
-> > didn't find any that seemed to have a special dt-maintainer ack -
-> > including
-> > Exynos ones. Also if I remember correctly there was this "if we don=
-'t
-> > respond, carry on" policy around :-) .
->=20
-> Well, for me this could go as is, but rules should be followed and th=
-e
-> rules are ACK or 3 weeks and a ping without response. So we need to w=
-ait
-> at least to next Wednesday to bypass DT review.
+On 05/09/2014 10:00 PM, Tushar Behera wrote:
+> The MUX/GATE register for XCLKOUT doesn't resides within PMU domain,
+> this can be accessed through a regmap provided by syscon driver. Adding
+> another clock provider to handle regmap based handing of XCLKOUT.
+>
+> Dependency:
+> 1. [PATCH v3] mfd: syscon: Support early initialization
+> http://article.gmane.org/gmane.linux.kernel/1679446
+>
+> Also we need to find a suitable place to call early_syscon_init(), after
+> the device tree has been unflattened and before clock initialization.
+>
+> While testing, I called this before of_clk_init() in arch/arm/kernel/time.c,
+> but that place is too generic. Calling anywhere from exynos.c is not
+> working ATM.
 
-so I only remembered the abbreviated version of this :-) [without the 3=
- weeks=20
-requirement]. My guess is I should be able to adapt it to this change a=
-nd also=20
-fix the typo Paul found until then.
+IMO we do not need to, or if I am not wrong we should not change time.c.
+
+It's possible if we have exynos specific init_time with following changes.
+FYI, In my patch series for Exynos PMU [1], currently I am handling this in
+exynos_dt_machine_init. But definitely it can be handled as below and it works
+without any side effect and I have tested it. Only reason I do not adopted this
+as for Exynos PMU patch support I had other options. But if required and if
+following change is acceptable I can include this in my next version of Exynos
+PMU patch series.
+
+[1]: https://lkml.org/lkml/2014/4/30/18
 
 
-Heiko
++static void __init exynos_init_time(void)
++{
++    /* Nothing to do timer specific
++     * as early_syscon_init requires DT to be unflattened and
++     * system should be able to allocate memory we need to
++     * postpone until init_time, but it should be done before
++     * init_machine. Because before init_machine, secondary
++     * core boot starts and it uses PMU registers.
++     */
++
++    exynos_map_pmu();
++
++    of_clk_init(NULL);
++    clocksource_of_init();
++
++}
++
+  DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+      /* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+      /* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+      .smp        = smp_ops(exynos_smp_ops),
+      .map_io        = exynos_init_io,
+      .init_early    = exynos_firmware_init,
++    .init_time    = exynos_init_time,
+
+>
+> Tushar Behera (4):
+>    clk: samsung: out: Add infrastructure to register CLKOUT
+>    clk: samsung: exynos5420: Add xclkout debug clock
+>    clk: samsung: exynos5250: Add xclkout debug clock
+>    ARM: dts: Add pmu-syscon handle for Exynos5420/Exynos5250 clock
+>
+>   arch/arm/boot/dts/exynos5250.dtsi      |    1 +
+>   arch/arm/boot/dts/exynos5420.dtsi      |    1 +
+>   drivers/clk/samsung/Makefile           |    2 +-
+>   drivers/clk/samsung/clk-exynos5250.c   |   14 +++
+>   drivers/clk/samsung/clk-exynos5420.c   |   14 +++
+>   drivers/clk/samsung/clk-out.c          |  181 ++++++++++++++++++++++++++++++++
+>   drivers/clk/samsung/clk.h              |   33 ++++++
+>   include/dt-bindings/clock/exynos5250.h |    3 +
+>   include/dt-bindings/clock/exynos5420.h |    5 +-
+>   9 files changed, 252 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/clk/samsung/clk-out.c
+>
+
+
+-- 
+Best Regards,
+Pankaj Dubey
