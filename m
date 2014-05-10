@@ -1,71 +1,69 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v4 04/11] ARM: EXYNOS: Remove file path from comment section
-Date: Sat, 10 May 2014 15:56:31 +0900
-Message-ID: <1399704998-13321-5-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v4 02/11] ARM: EXYNOS: Move cpufreq and cpuidle device
+ registration to init_machine
+Date: Sat, 10 May 2014 15:56:29 +0900
+Message-ID: <1399704998-13321-3-git-send-email-pankaj.dubey@samsung.com>
 References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:25975 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752764AbaEJGiZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 10 May 2014 02:38:25 -0400
 In-reply-to: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Many files under "arm/mach-exynos" are having file path in file
-comment section which is invalid now.
-So for better code maintainability let's remove them.
+As exynos_cpuidle_init and exynos_cpufreq_init function have just one lines
+of code for registering platform devices. We can move these lines to
+exynos_dt_machine_init and delete exynos_cpuidle_init and exynos_cpufreq_init
+function. This will help in reducing lines of code in exynos.c, making it
+more cleaner.
 
+Suggested-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/headsmp.S             |    2 --
- arch/arm/mach-exynos/hotplug.c             |    3 +--
- arch/arm/mach-exynos/include/mach/memory.h |    3 +--
- arch/arm/mach-exynos/platsmp.c             |    3 +--
- 4 files changed, 3 insertions(+), 8 deletions(-)
+ arch/arm/mach-exynos/exynos.c |   19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/headsmp.S b/arch/arm/mach-exynos/headsmp.S
-index cdd9d91..698c57f 100644
---- a/arch/arm/mach-exynos/headsmp.S
-+++ b/arch/arm/mach-exynos/headsmp.S
-@@ -1,6 +1,4 @@
- /*
-- *  linux/arch/arm/mach-exynos4/headsmp.S
-- *
-  *  Cloned from linux/arch/arm/mach-realview/headsmp.S
-  *
-  *  Copyright (c) 2003 ARM Limited
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index 5eead53..73b0b5c 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -1,5 +1,4 @@
--/* linux arch/arm/mach-exynos4/hotplug.c
-- *
-+/*
-  *  Cloned from linux/arch/arm/mach-realview/hotplug.c
-  *
-  *  Copyright (C) 2002 ARM Ltd.
-diff --git a/arch/arm/mach-exynos/include/mach/memory.h b/arch/arm/mach-exynos/include/mach/memory.h
-index 2a4cdb7..e19df1f 100644
---- a/arch/arm/mach-exynos/include/mach/memory.h
-+++ b/arch/arm/mach-exynos/include/mach/memory.h
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/mach-exynos4/include/mach/memory.h
-- *
-+/*
-  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 3611241..1f63596 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/mach-exynos4/platsmp.c
-- *
-+/*
-  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index bf8a473..288e414 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -176,19 +176,6 @@ static struct platform_device exynos_cpuidle = {
+ 	.id                = -1,
+ };
+ 
+-void __init exynos_cpuidle_init(void)
+-{
+-	if (soc_is_exynos5440())
+-		return;
+-
+-	platform_device_register(&exynos_cpuidle);
+-}
+-
+-void __init exynos_cpufreq_init(void)
+-{
+-	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+-}
+-
+ static void __init exynos_init_late(void)
+ {
+ 	if (of_machine_is_compatible("samsung,exynos5440"))
+@@ -303,8 +290,10 @@ static void __init exynos_dt_machine_init(void)
+ 		}
+ 	}
+ 
+-	exynos_cpuidle_init();
+-	exynos_cpufreq_init();
++	if (!soc_is_exynos5440())
++		platform_device_register(&exynos_cpuidle);
++
++	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+ 
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
 -- 
 1.7.10.4
