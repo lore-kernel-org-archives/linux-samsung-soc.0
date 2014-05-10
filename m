@@ -1,15 +1,15 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v4 03/11] ARM: EXYNOS: Move SYSREG definition into sys-reg
- specific file.
-Date: Sat, 10 May 2014 15:56:30 +0900
-Message-ID: <1399704998-13321-4-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v4 11/11] ARM: EXYNOS: Move PMU specific definitions from
+ common.h
+Date: Sat, 10 May 2014 15:56:38 +0900
+Message-ID: <1399704998-13321-12-git-send-email-pankaj.dubey@samsung.com>
 References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25975 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:25984 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752909AbaEJGi0 (ORCPT
+	with ESMTP id S1754164AbaEJGia (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 May 2014 02:38:26 -0400
+	Sat, 10 May 2014 02:38:30 -0400
 In-reply-to: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -18,94 +18,110 @@ Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@
 
 From: Young-Gun Jang <yg1004.jang@samsung.com>
 
-While making PMU implementation to be device tree based, there are
-few register offsets related with SYSREG present in regs-pmu.h, so
-let's make a new header file "regs-sys.h" to keep all such SYSREG
-related register offsets and remove them from "regs-pmu.h"
+This patch moves PMU specific definitions into a new file
+as exynos-pmu.h. This will help in making PMU implementation
+independent of common.h header.
 
 Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/exynos.c   |    1 +
- arch/arm/mach-exynos/pm.c       |    1 +
- arch/arm/mach-exynos/regs-pmu.h |    3 ---
- arch/arm/mach-exynos/regs-sys.h |   22 ++++++++++++++++++++++
- 4 files changed, 24 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/mach-exynos/regs-sys.h
+ arch/arm/mach-exynos/common.h     |   17 -----------------
+ arch/arm/mach-exynos/exynos-pmu.h |   31 +++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/pm.c         |    1 +
+ arch/arm/mach-exynos/pmu.c        |    2 +-
+ 4 files changed, 33 insertions(+), 18 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 288e414..e4a4be0 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -31,6 +31,7 @@
- #include "common.h"
- #include "mfc.h"
- #include "regs-pmu.h"
-+#include "regs-sys.h"
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 58b2b5d..abcb074 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -37,24 +37,7 @@ extern struct smp_operations exynos_smp_ops;
  
- #define L2_AUX_VAL 0x7C470001
- #define L2_AUX_MASK 0xC200ffff
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index b380d48..f445c49 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -36,6 +36,7 @@
+ extern void exynos_cpu_die(unsigned int cpu);
  
- #include "common.h"
- #include "regs-pmu.h"
-+#include "regs-sys.h"
- 
- /**
-  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 6c1d2db..b68b5cc 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -15,7 +15,6 @@
- #include <mach/map.h>
- 
- #define S5P_PMUREG(x)				(S5P_VA_PMU + (x))
--#define S5P_SYSREG(x)				(S3C_VA_SYS + (x))
- 
- #define S5P_CENTRAL_SEQ_CONFIGURATION		S5P_PMUREG(0x0200)
- 
-@@ -178,8 +177,6 @@
- 
- /* For EXYNOS5 */
- 
--#define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
+-/* PMU(Power Management Unit) support */
 -
- #define EXYNOS5_AUTO_WDTRESET_DISABLE				S5P_PMUREG(0x0408)
- #define EXYNOS5_MASK_WDTRESET_REQUEST				S5P_PMUREG(0x040C)
+-#define PMU_TABLE_END	(-1U)
+-
+-enum sys_powerdown {
+-	SYS_AFTR,
+-	SYS_LPA,
+-	SYS_SLEEP,
+-	NUM_SYS_POWERDOWN,
+-};
+-
+ extern unsigned long l2x0_regs_phys;
+-struct exynos_pmu_conf {
+-	unsigned int offset;
+-	unsigned int val[NUM_SYS_POWERDOWN];
+-};
+-
+-extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+ extern void exynos_enter_aftr(void);
  
-diff --git a/arch/arm/mach-exynos/regs-sys.h b/arch/arm/mach-exynos/regs-sys.h
+ extern struct regmap *get_exynos_pmuregmap(void);
+diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/arch/arm/mach-exynos/exynos-pmu.h
 new file mode 100644
-index 0000000..84332b0
+index 0000000..16ff036
 --- /dev/null
-+++ b/arch/arm/mach-exynos/regs-sys.h
-@@ -0,0 +1,22 @@
++++ b/arch/arm/mach-exynos/exynos-pmu.h
+@@ -0,0 +1,31 @@
 +/*
 + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *             http://www.samsung.com
++ *		http://www.samsung.com
 + *
-+ * EXYNOS - system register definition
++ * Header for EXYNOS PMU Driver support
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+*/
++ */
 +
-+#ifndef __ASM_ARCH_REGS_SYS_H
-+#define __ASM_ARCH_REGS_SYS_H __FILE__
++#ifndef __EXYNOS_PMU_H
++#define __EXYNOS_PMU_H
 +
-+#include <mach/map.h>
++#define PMU_TABLE_END	(-1U)
 +
-+#define S5P_SYSREG(x)                          (S3C_VA_SYS + (x))
++enum sys_powerdown {
++	SYS_AFTR,
++	SYS_LPA,
++	SYS_SLEEP,
++	NUM_SYS_POWERDOWN,
++};
 +
-+/* For EXYNOS5 */
-+#define EXYNOS5_SYS_I2C_CFG                    S5P_SYSREG(0x0234)
++struct exynos_pmu_conf {
++	unsigned int offset;
++	unsigned int val[NUM_SYS_POWERDOWN];
++};
 +
-+#endif /* __ASM_ARCH_REGS_SYS_H */
++extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
++
++#endif /* __EXYNOS_PMU_H */
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index ee427d7..a7a1b7f 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -38,6 +38,7 @@
+ #include "common.h"
+ #include "regs-pmu.h"
+ #include "regs-sys.h"
++#include "exynos-pmu.h"
+ 
+ static struct regmap *pmu_regmap;
+ 
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index 6a7fa8e..50c33c9 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -16,7 +16,7 @@
+ #include <linux/slab.h>
+ #include <linux/mfd/syscon.h>
+ 
+-#include "common.h"
++#include "exynos-pmu.h"
+ #include "regs-pmu.h"
+ 
+ struct exynos_pmu_data {
 -- 
 1.7.10.4
