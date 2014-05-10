@@ -1,198 +1,354 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Fri, 9 May 2014 20:36:35 -0700
-Message-ID: <CAPz6YkUjLmWXvoCkuY8vAwLHksf0Uit6gWP-ADWBbN3NDJBo-w@mail.gmail.com>
-References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
- <536C2C31.8000209@samsung.com> <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
- <536C594A.5080107@samsung.com> <536C84A0.6020403@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH V3 2/3] ARM: EXYNOS5: Add Suspend-to-RAM support for 5420
+Date: Sat, 10 May 2014 13:31:47 +0900
+Message-ID: <536DABB3.4060809@samsung.com>
+References: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f54.google.com ([209.85.192.54]:40847 "EHLO
-	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464AbaEJDg7 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:23271 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716AbaEJEN2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 23:36:59 -0400
-Received: by mail-qg0-f54.google.com with SMTP id q108so5480277qgd.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 May 2014 20:36:58 -0700 (PDT)
-In-Reply-To: <536C84A0.6020403@samsung.com>
+	Sat, 10 May 2014 00:13:28 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5C00D93BQEJX40@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 10 May 2014 13:13:26 +0900 (KST)
+In-reply-to: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Fri, May 9, 2014 at 12:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Hi, Sonny.
->
-> You can discard the my previous some comment.
-> As you mentioned, this reset sequence is recommended at Synopsys TRM.
->
-> Add the minor question.
->
-> On 05/09/2014 01:27 PM, Jaehoon Chung wrote:
->> Hi, Sonny.
->>
->> I have checked the Synopsys TRM..
->>
->> On 05/09/2014 10:34 AM, Sonny Rao wrote:
->>> On Thu, May 8, 2014 at 6:15 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>> On 05/08/2014 06:40 PM, Yuvaraj Kumar wrote:
->>>>> Any comments on this patch?
->>>>>
->>>>> On Wed, Mar 26, 2014 at 5:16 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->>>>>> From: Sonny Rao <sonnyrao@chromium.org>
->>>>>>
->>>>>> This patch changes the fifo reset code to follow the reset procedure
->>>>>> outlined in the documentation of Synopsys  Mobile storage host databook
->>>>>> 7.2.13.
->>>>>> Without this patch, we could able to see eMMC was not detected after
->>>>>> multiple reboots due to driver hangs while eMMC tuning for HS200.
->>>>>>
->>>>>> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
->>>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
->>>>>> ---
->>>>>>  drivers/mmc/host/dw_mmc.c |   48 ++++++++++++++++++++++++++++++++++++++++++++-
->>>>>>  drivers/mmc/host/dw_mmc.h |    1 +
->>>>>>  2 files changed, 48 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>>>> index 32dd81d..1d77431 100644
->>>>>> --- a/drivers/mmc/host/dw_mmc.c
->>>>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>>>> @@ -2220,7 +2220,53 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->>>>>>                 host->sg = NULL;
->>>>>>         }
->>>>>>
->>>>>> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->>>>>> +       /*
->>>>>> +        * The recommended method for resetting is to always reset the
->>>>>> +        * controller and the fifo, but differs slightly depending on the mode.
->>>>>> +        * Note that this doesn't handle the "generic DMA" (not IDMAC) case.
->>>>>> +        */
->>>>
->>>> "not IDMAC" is confused..
->>>>
->>>
->>> The documentation describes three different possible modes.  There's a
->>> mode that doesn't use IDMAC but still does DMA.  But as far as I can
->>> tell this driver doesn't support that way.  We can just remove that
->>> wording if it's confusing.
->
-> How did it know whether dma is generic DMA or not?
->
+Hi Vikas,
 
-That's a good question.  I wasn't sure whether the driver supported it
-or not.  It looks like it definitely supports IDMAC through the
-CONFIG_MMC_DW_IDMAC flag, but I wasn't sure if it was supported the
-generic dma.  Maybe if CONFIG_MMC_DW_IDMAC isn't specified but
-host->dma_ops is not NULL then we are using the generic dma mode.
-
->>>
->>>>>> +       if (dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET)) {
->>>>>> +               unsigned long timeout = jiffies + msecs_to_jiffies(500);
->>>>>> +               u32 status, rint;
->>>>>> +
->>>>>> +               /* if using dma we wait for dma_req to clear */
->>>>>> +               if (host->using_dma) {
->>>>>> +                       do {
->>>>>> +                               status = mci_readl(host, STATUS);
->>>>>> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
->>>>>> +                                       break;
->>>>>> +                               cpu_relax();
->>>>>> +                       } while (time_before(jiffies, timeout));
->>>>>> +
->>>>>> +                       if (status & SDMMC_STATUS_DMA_REQ)
->>>>>> +                               dev_err(host->dev,
->>>>>> +                                       "%s: Timeout waiting for dma_req to "
->>>>>> +                                       "clear during reset", __func__);
->>>>>> +
->>>>>> +                       /* when using DMA next we reset the fifo again */
->>>>>> +                       dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->>>>>> +               }
->>>>>> +               /*
->>>>>> +                * In all cases we clear the RAWINTS register to clear any
->>>>>> +                * interrupts.
->>>>>> +                */
->>>>>> +               rint = mci_readl(host, RINTSTS);
->>>>>> +               rint = rint & (~mci_readl(host, MINTSTS));
->> you use the "status or temp" instead of rint. (you can reuse the variable.)
->> And can use "status &= ~mci_readl(host,MINTSTS);"
->>
->>>>
->>>> Just clear the RINTSTS register? why do you add these?
->>>>
->>>
->>> This will look at what is not masked, and only clear those bits.
->> Well, i known if clear the RINTSTS register,
->> recommended to use "0xfffffff" and set the value for interrupt.
+On 05/08/2014 07:52 PM, Vikas Sajjan wrote:
+> Adds Suspend-to-RAM support for EXYNOS5420
 >
-> Can be used "0xfffffff"?
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>   arch/arm/mach-exynos/pm.c       |  163 ++++++++++++++++++++++++++++++++++-----
+>   arch/arm/mach-exynos/regs-pmu.h |    2 +
+>   2 files changed, 146 insertions(+), 19 deletions(-)
 >
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index a7a1b7f..87ccac7 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -40,6 +40,9 @@
+>   #include "regs-sys.h"
+>   #include "exynos-pmu.h"
+>   
+> +#define EXYNOS5420_VA_CPU_STATE (S5P_VA_SYSRAM + 0x28)
+> +#define EXYNOS5420_VA_CPU_ADDR  (S5P_VA_SYSRAM_NS + 0x1C)
+> +
 
-Yeah we probably can.  We just lose information about interrupts that
-were masked, but maybe we just don't care about any of them anyway, so
-it doesn't matter.
+It will be good if we can rebase this change on top of Sachin's SYSRAM 
+patches [1]
 
-> Best Regards,
-> Jaehoon Chung
->>
->>>
->>>>>> +               if (rint)
->>>>>> +                       mci_writel(host, RINTSTS, rint);
->>>>>> +
->>>>>> +       } else
->>>>>> +               dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
->>>>
->>>> Just display the error log? I didn't understand this.
->>>> If you displayed the error log, then it needs to return the error value.
->>>>
->>>>>> +
->>>>>> + #ifdef CONFIG_MMC_DW_IDMAC
->>>>>> +       /* It is also recommended that we reset and reprogram idmac */
->>>>>> +       dw_mci_idmac_reset(host);
->>>>>> + #endif
->>>>>> +
->>>>>> +       /* After a CTRL reset we need to have CIU set clock registers  */
->>>>>> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
->>
->> Well, why do you send the clock update command?
->> I didn't see that update the value related with clock.
->>
->> Best Regards,
->> Jaehoon Chung
->>
->>>>>> +
->>>>>> +       return true;
->>>>>>  }
->>>>>>
->>>>>>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
->>>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
->>>>>> index 738fa24..037e47a 100644
->>>>>> --- a/drivers/mmc/host/dw_mmc.h
->>>>>> +++ b/drivers/mmc/host/dw_mmc.h
->>>>>> @@ -129,6 +129,7 @@
->>>>>>  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
->>>>>>  /* Status register defines */
->>>>>>  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
->>>>>> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
->>>>>>  /* FIFOTH register defines */
->>>>>>  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
->>>>>>                                          ((r) & 0xFFF) << 16 | \
->>>>>> --
->>>>>> 1.7.10.4
->>>>>>
->>>>>
->>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+[1]: http://www.spinics.net/lists/arm-kernel/msg329188.html
+
+>   static struct regmap *pmu_regmap;
+>   
+>   /**
+> @@ -65,6 +68,19 @@ static struct sleep_save exynos_core_save[] = {
+>   	SAVE_ITEM(S5P_SROM_BC3),
+>   };
+>   
+> +static struct sleep_save exynos5420_cpustate_save[] = {
+> +	SAVE_ITEM(EXYNOS5420_VA_CPU_STATE),
+> +	SAVE_ITEM(EXYNOS5420_VA_CPU_ADDR),
+> +};
+> +
+> +static struct sleep_save exynos5420_pmu_reg_save[] = {
+> +	SAVE_ITEM(S5P_PMU_SPARE3),
+> +};
+> +
+> +static struct sleep_save exynos5420_reg_save[] = {
+> +	SAVE_ITEM(EXYNOS5_SYS_DISP1_BLK_CFG),
+> +};
+> +
+>   /*
+>    * GIC wake-up support
+>    */
+> @@ -87,7 +103,7 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+>   {
+>   	const struct exynos_wkup_irq *wkup_irq;
+>   
+> -	if (soc_is_exynos5250())
+> +	if (soc_is_exynos5250() || soc_is_exynos5420())
+>   		wkup_irq = exynos5250_wkup_irq;
+>   	else
+>   		wkup_irq = exynos4_wkup_irq;
+> @@ -188,7 +204,15 @@ static int exynos_cpu_suspend(unsigned long arg)
+>   	outer_flush_all();
+>   #endif
+>   
+> -	if (soc_is_exynos5250())
+> +	/*
+> +	 * Clear IRAM register for cpu state so that primary CPU does
+> +	 * not enter low power start in U-Boot.
+> +	 * This is specific to exynos5420 SoC only.
+> +	 */
+> +	if (soc_is_exynos5420())
+> +		__raw_writel(0x0, EXYNOS5420_VA_CPU_STATE);
+> +
+> +	if (soc_is_exynos5250() || soc_is_exynos5420())
+>   		flush_cache_all();
+>   
+>   	/* issue the standby signal into the pm unit. */
+> @@ -216,6 +240,26 @@ static void exynos_pm_prepare(void)
+>   		regmap_read(pmu_regmap, EXYNOS5_JPEG_MEM_OPTION, &tmp);
+>   		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+>   		regmap_write(pmu_regmap, EXYNOS5_JPEG_MEM_OPTION, tmp);
+> +	} else if (soc_is_exynos5420()) {
+> +
+> +		unsigned i;
+> +
+> +		s3c_pm_do_save(exynos5420_reg_save,
+> +			ARRAY_SIZE(exynos5420_reg_save));
+> +
+
+Is it possible to move this code in DISP driver somewhere?
+As if you see I have already posted some patches [1] to remove i2c SYS CFG 
+register
+configuration during S2R from pm.c to i2c driver itself for Exynos5250 as 
+suggested
+by Arnd.
+
+This way we can reduce dependency of regs-sys.h in pm.c also we do not need to
+statically map sysreg register in exynos.c, and in general it will us in 
+cleaning up
+exynos code from such things as it is being discussed here [2]
+
+[1]: https://lkml.org/lkml/2014/5/6/104
+[2]: https://lkml.org/lkml/2014/5/6/71
+
+
+> +		for (i = 0; i < ARRAY_SIZE(exynos5420_pmu_reg_save); i++)
+> +			regmap_read(pmu_regmap,
+> +				(unsigned int)exynos5420_pmu_reg_save[i].reg,
+> +				(unsigned int *)&exynos5420_pmu_reg_save[i].val);
+> +		/*
+> +		 * The cpu state needs to be saved and restored so that the
+> +		 * secondary CPUs will enter low power start. Though the U-Boot
+> +		 * is setting the cpu state with low power flag, the kernel
+> +		 * needs to restore it back in case, the primary cpu fails to
+> +		 * suspend for any reason
+> +		 */
+> +		s3c_pm_do_save(exynos5420_cpustate_save,
+> +			ARRAY_SIZE(exynos5420_cpustate_save));
+>   	}
+>   
+>   	/* Set value of power down register for sleep mode */
+> @@ -226,6 +270,26 @@ static void exynos_pm_prepare(void)
+>   	/* ensure at least INFORM0 has the resume address */
+>   
+>   	regmap_write(pmu_regmap, S5P_INFORM0, virt_to_phys(exynos_cpu_resume));
+> +
+> +	if (soc_is_exynos5420()) {
+> +		regmap_read(pmu_regmap, EXYNOS5_ARM_L2_OPTION, &tmp);
+> +		tmp &= ~EXYNOS5_USE_RETENTION;
+> +		regmap_write(pmu_regmap, EXYNOS5_ARM_L2_OPTION, tmp);
+> +
+> +		regmap_read(pmu_regmap, EXYNOS5420_SFR_AXI_CGDIS1, &tmp);
+> +		tmp |= EXYNOS5420_UFS;
+> +		regmap_write(pmu_regmap, EXYNOS5420_SFR_AXI_CGDIS1, tmp);
+> +
+> +		regmap_read(pmu_regmap, EXYNOS5420_ARM_COMMON_OPTION, &tmp);
+> +		tmp &= ~EXYNOS5420_L2RSTDISABLE_VALUE;
+> +		regmap_write(pmu_regmap, EXYNOS5420_ARM_COMMON_OPTION, tmp);
+> +		regmap_read(pmu_regmap, EXYNOS5420_FSYS2_OPTION, &tmp);
+> +		tmp |= EXYNOS5420_EMULATION;
+> +		regmap_write(pmu_regmap, EXYNOS5420_FSYS2_OPTION, tmp);
+> +		regmap_read(pmu_regmap, EXYNOS5420_PSGEN_OPTION, &tmp);
+> +		tmp |= EXYNOS5420_EMULATION;
+> +		regmap_write(pmu_regmap, EXYNOS5420_PSGEN_OPTION, tmp);
+> +	}
+>   }
+>   
+>   static void exynos_pm_central_suspend(void)
+> @@ -242,12 +306,20 @@ static int exynos_pm_suspend(void)
+>   {
+>   	unsigned int tmp;
+>   
+> +	unsigned int this_cluster;
+>   	exynos_pm_central_suspend();
+>   
+>   	/* Setting SEQ_OPTION register */
+> -
+> -	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+> -	regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION, tmp);
+> +	if (soc_is_exynos5420()) {
+> +		this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
+> +		if (!this_cluster)
+> +			regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION, EXYNOS5420_ARM_USE_STANDBY_WFI0);
+> +		else
+> +			regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION, EXYNOS5420_KFC_USE_STANDBY_WFI0);
+> +	} else {
+> +		tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+> +		regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION, tmp);
+> +	}
+>   
+>   	if (!soc_is_exynos5250())
+>   		exynos_cpu_save_register();
+> @@ -280,33 +352,80 @@ static int exynos_pm_central_resume(void)
+>   
+>   static void exynos_pm_resume(void)
+>   {
+> +	unsigned int tmp;
+> +	if (soc_is_exynos5420()) {
+> +		/* Restore the IRAM register cpu state */
+> +		s3c_pm_do_restore(exynos5420_cpustate_save,
+> +			ARRAY_SIZE(exynos5420_cpustate_save));
+> +
+> +		regmap_write(pmu_regmap, S5P_CENTRAL_SEQ_OPTION,
+> +				EXYNOS5420_USE_STANDBY_WFI_ALL);
+> +	}
+> +
+>   	if (exynos_pm_central_resume())
+>   		goto early_wakeup;
+>   
+> -	if (!soc_is_exynos5250())
+> +	if (!(soc_is_exynos5250() || soc_is_exynos5420()))
+>   		exynos_cpu_restore_register();
+>   
+>   	/* For release retention */
+>   
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_MAUDIO_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_GPIO_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_UART_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_MMCA_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_MMCB_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_EBIA_OPTION, (1 << 28));
+> -	regmap_write(pmu_regmap, S5P_PAD_RET_EBIB_OPTION, (1 << 28));
+> +	if (soc_is_exynos5250()) {
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_MAUDIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_GPIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_UART_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_MMCA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_MMCB_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_EBIA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, S5P_PAD_RET_EBIB_OPTION, (1 << 28));
+> +	} else if (soc_is_exynos5420()) {
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_DRAM_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_MAUDIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_JTAG_OPTION,  (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_GPIO_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_UART_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCB_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_MMCC_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_HSI_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_EBIA_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS_PAD_RET_EBIB_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_SPI_OPTION, (1 << 28));
+> +		regmap_write(pmu_regmap, EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION, (1 << 28));
+> +	}
+>   
+> -	if (soc_is_exynos5250())
+> +	if (soc_is_exynos5250()) {
+>   		s3c_pm_do_restore(exynos5_sys_save,
+>   			ARRAY_SIZE(exynos5_sys_save));
+> +	} else if (soc_is_exynos5420()) {
+> +		unsigned int i;
+> +		s3c_pm_do_restore(exynos5420_reg_save,
+> +			ARRAY_SIZE(exynos5420_reg_save));
+> +			for (i = 0; i < ARRAY_SIZE(exynos5420_pmu_reg_save); i++)
+> +				regmap_write(pmu_regmap,
+> +					(unsigned int)exynos5420_pmu_reg_save[i].reg,
+> +					(unsigned int)exynos5420_pmu_reg_save[i].val);
+> +	}
+>   
+>   	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>   
+> -	if (!soc_is_exynos5250())
+> +	if (!soc_is_exynos5250() && !soc_is_exynos5420())
+>   		scu_enable(S5P_VA_SCU);
+>   
+>   early_wakeup:
+>   
+> +	if (soc_is_exynos5420()) {
+> +		regmap_read(pmu_regmap, EXYNOS5420_SFR_AXI_CGDIS1, &tmp);
+> +		tmp &= ~EXYNOS5420_UFS;
+> +		regmap_write(pmu_regmap, EXYNOS5420_SFR_AXI_CGDIS1, tmp);
+> +		regmap_read(pmu_regmap, EXYNOS5420_FSYS2_OPTION, &tmp);
+> +		tmp &= ~EXYNOS5420_EMULATION;
+> +		regmap_write(pmu_regmap, EXYNOS5420_FSYS2_OPTION, tmp);
+> +		regmap_read(pmu_regmap, EXYNOS5420_PSGEN_OPTION, &tmp);
+> +		tmp &= ~EXYNOS5420_EMULATION;
+> +		regmap_write(pmu_regmap, EXYNOS5420_PSGEN_OPTION, tmp);
+> +	}
+> +
+>   	/* Clear SLEEP mode set in INFORM1 */
+>   	regmap_write(pmu_regmap, S5P_INFORM1, 0x0);
+>   
+> @@ -395,7 +514,7 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+>   
+>   	case CPU_PM_EXIT:
+>   		if (cpu == 0) {
+> -			if (!soc_is_exynos5250())
+> +			if (!(soc_is_exynos5250() || soc_is_exynos5420()))
+>   				scu_enable(S5P_VA_SCU);
+>   			exynos_cpu_restore_register();
+>   			exynos_pm_central_resume();
+> @@ -421,9 +540,15 @@ void __init exynos_pm_init(void)
+>   	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+>   
+>   	/* All wakeup disable */
+> -	regmap_read(pmu_regmap, S5P_WAKEUP_MASK, &tmp);
+> -	tmp |= ((0xFF << 8) | (0x1F << 1));
+> -	regmap_write(pmu_regmap, S5P_WAKEUP_MASK, tmp);
+> +	if (soc_is_exynos5420()) {
+> +		regmap_read(pmu_regmap, S5P_WAKEUP_MASK, &tmp);
+> +		tmp |= ((0x7F << 7) | (0x1F << 1));
+> +		regmap_write(pmu_regmap, S5P_WAKEUP_MASK, tmp);
+> +	} else {
+> +		regmap_read(pmu_regmap, S5P_WAKEUP_MASK, &tmp);
+> +		tmp |= ((0xFF << 8) | (0x1F << 1));
+> +		regmap_write(pmu_regmap, S5P_WAKEUP_MASK, tmp);
+> +	}
+>   
+>   	register_syscore_ops(&exynos_pm_syscore_ops);
+>   	suspend_set_ops(&exynos_suspend_ops);
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index 39a8300..955ee07 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -35,6 +35,7 @@
+>   #define S5P_INFORM5				(0x0814)
+>   #define S5P_INFORM6				(0x0818)
+>   #define S5P_INFORM7				(0x081C)
+> +#define S5P_PMU_SPARE3				(0x090c)
+>   
+>   #define EXYNOS_IROM_DATA2			(0x0988)
+>   #define S5P_ARM_CORE0_LOWPWR			(0x1000)
+> @@ -211,6 +212,7 @@
+>   
+>   /* For EXYNOS5 */
+>   
+> +#define EXYNOS5_SYS_DISP1_BLK_CFG				S5P_SYSREG(0x0214)
+
+I think this offset should not be added here as it does not belong with PMU.
+Moreover IIRC if you have rebased these patches on my Exynos PMU patch 
+series [1],
+this change should fail to compile as "regs-pmu.h" does not have anymore
+"mach/map.h" and definition for S5P_SYSREG has been moved to a new file
+"regs-sys.h". Please check here [2]
+
+[1]: https://lkml.org/lkml/2014/5/2/612
+[2]: https://lkml.org/lkml/2014/4/30/8
+
+>   #define EXYNOS5_AUTO_WDTRESET_DISABLE				(0x0408)
+>   #define EXYNOS5_MASK_WDTRESET_REQUEST				(0x040C)
+>   
+
+
+-- 
+Best Regards,
+Pankaj Dubey
