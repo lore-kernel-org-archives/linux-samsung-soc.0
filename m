@@ -1,8 +1,7 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v4 09/11] ARM: EXYNOS: Move "mach/map.h" inclusion from
- regs-pmu.h to platsmp.c
-Date: Sat, 10 May 2014 15:56:36 +0900
-Message-ID: <1399704998-13321-10-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v4 04/11] ARM: EXYNOS: Remove file path from comment section
+Date: Sat, 10 May 2014 15:56:31 +0900
+Message-ID: <1399704998-13321-5-git-send-email-pankaj.dubey@samsung.com>
 References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
@@ -11,41 +10,62 @@ To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-k
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As we have removed static mappings from "regs-pmu.h" it does not
-need map.h anymore. But "platsmp.c" needed this and till now it
-got included indirectly. So lets move header inclusion of
-"mach/map.h" from "regs-pmu.h" to "platsmp.c".
+Many files under "arm/mach-exynos" are having file path in file
+comment section which is invalid now.
+So for better code maintainability let's remove them.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/platsmp.c  |    1 +
- arch/arm/mach-exynos/regs-pmu.h |    2 --
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/mach-exynos/headsmp.S             |    2 --
+ arch/arm/mach-exynos/hotplug.c             |    3 +--
+ arch/arm/mach-exynos/include/mach/memory.h |    3 +--
+ arch/arm/mach-exynos/platsmp.c             |    3 +--
+ 4 files changed, 3 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/headsmp.S b/arch/arm/mach-exynos/headsmp.S
+index cdd9d91..698c57f 100644
+--- a/arch/arm/mach-exynos/headsmp.S
++++ b/arch/arm/mach-exynos/headsmp.S
+@@ -1,6 +1,4 @@
+ /*
+- *  linux/arch/arm/mach-exynos4/headsmp.S
+- *
+  *  Cloned from linux/arch/arm/mach-realview/headsmp.S
+  *
+  *  Copyright (c) 2003 ARM Limited
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index 5eead53..73b0b5c 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -1,5 +1,4 @@
+-/* linux arch/arm/mach-exynos4/hotplug.c
+- *
++/*
+  *  Cloned from linux/arch/arm/mach-realview/hotplug.c
+  *
+  *  Copyright (C) 2002 ARM Ltd.
+diff --git a/arch/arm/mach-exynos/include/mach/memory.h b/arch/arm/mach-exynos/include/mach/memory.h
+index 2a4cdb7..e19df1f 100644
+--- a/arch/arm/mach-exynos/include/mach/memory.h
++++ b/arch/arm/mach-exynos/include/mach/memory.h
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/mach-exynos4/include/mach/memory.h
+- *
++/*
+  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
 diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 33eb364..d0482c2 100644
+index 3611241..1f63596 100644
 --- a/arch/arm/mach-exynos/platsmp.c
 +++ b/arch/arm/mach-exynos/platsmp.c
-@@ -27,6 +27,7 @@
- #include <asm/firmware.h>
- 
- #include <plat/cpu.h>
-+#include <mach/map.h>
- 
- #include "common.h"
- #include "regs-pmu.h"
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index a72b1bc..1d83c7e 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -12,8 +12,6 @@
- #ifndef __ASM_ARCH_REGS_PMU_H
- #define __ASM_ARCH_REGS_PMU_H __FILE__
- 
--#include <mach/map.h>
--
- #define S5P_CENTRAL_SEQ_CONFIGURATION		0x0200
- 
- #define S5P_CENTRAL_LOWPWR_CFG			(1 << 16)
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/mach-exynos4/platsmp.c
+- *
++/*
+  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
 -- 
 1.7.10.4
