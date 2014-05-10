@@ -1,127 +1,83 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v4 11/11] ARM: EXYNOS: Move PMU specific definitions from
- common.h
-Date: Sat, 10 May 2014 15:56:38 +0900
-Message-ID: <1399704998-13321-12-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v4 05/11] ARM: EXYNOS: Remove regs-pmu.h header dependency from
+ pm_domain
+Date: Sat, 10 May 2014 15:56:32 +0900
+Message-ID: <1399704998-13321-6-git-send-email-pankaj.dubey@samsung.com>
 References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25984 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754164AbaEJGia (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 May 2014 02:38:30 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Young-Gun Jang <yg1004.jang@samsung.com>
 
-This patch moves PMU specific definitions into a new file
-as exynos-pmu.h. This will help in making PMU implementation
-independent of common.h header.
+Current "pm_domain.c" file uses "S5P_INT_LOCAL_PWR_EN" definition from
+"regs-pmu.h" and hence needs to include this header file. As there is
+no other user of "S5P_INT_LOCAL_PWR_EN" definition other than pm_domain,
+to remove "regs-pmu.h" header file dependency from "pm_domain.c"  it's
+better we define this definition in "pm_domain.c" file itself and thus it
+will help in removing header file inclusion from "pm_domain.c".
+Also removing "S5P_" prefix from macro.
 
 Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/common.h     |   17 -----------------
- arch/arm/mach-exynos/exynos-pmu.h |   31 +++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/pm.c         |    1 +
- arch/arm/mach-exynos/pmu.c        |    2 +-
- 4 files changed, 33 insertions(+), 18 deletions(-)
- create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
+ arch/arm/mach-exynos/pm_domains.c |    8 ++++----
+ arch/arm/mach-exynos/regs-pmu.h   |    1 -
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 58b2b5d..abcb074 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -37,24 +37,7 @@ extern struct smp_operations exynos_smp_ops;
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index fe6570e..e45d288 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -22,7 +22,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/sched.h>
  
- extern void exynos_cpu_die(unsigned int cpu);
+-#include "regs-pmu.h"
++#define INT_LOCAL_PWR_EN	0x7
  
--/* PMU(Power Management Unit) support */
--
--#define PMU_TABLE_END	(-1U)
--
--enum sys_powerdown {
--	SYS_AFTR,
--	SYS_LPA,
--	SYS_SLEEP,
--	NUM_SYS_POWERDOWN,
--};
--
- extern unsigned long l2x0_regs_phys;
--struct exynos_pmu_conf {
--	unsigned int offset;
--	unsigned int val[NUM_SYS_POWERDOWN];
--};
--
--extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
- extern void exynos_enter_aftr(void);
+ /*
+  * Exynos specific wrapper around the generic power domain
+@@ -44,13 +44,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 	pd = container_of(domain, struct exynos_pm_domain, pd);
+ 	base = pd->base;
  
- extern struct regmap *get_exynos_pmuregmap(void);
-diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/arch/arm/mach-exynos/exynos-pmu.h
-new file mode 100644
-index 0000000..16ff036
---- /dev/null
-+++ b/arch/arm/mach-exynos/exynos-pmu.h
-@@ -0,0 +1,31 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Header for EXYNOS PMU Driver support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __EXYNOS_PMU_H
-+#define __EXYNOS_PMU_H
-+
-+#define PMU_TABLE_END	(-1U)
-+
-+enum sys_powerdown {
-+	SYS_AFTR,
-+	SYS_LPA,
-+	SYS_SLEEP,
-+	NUM_SYS_POWERDOWN,
-+};
-+
-+struct exynos_pmu_conf {
-+	unsigned int offset;
-+	unsigned int val[NUM_SYS_POWERDOWN];
-+};
-+
-+extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
-+
-+#endif /* __EXYNOS_PMU_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index ee427d7..a7a1b7f 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -38,6 +38,7 @@
- #include "common.h"
- #include "regs-pmu.h"
- #include "regs-sys.h"
-+#include "exynos-pmu.h"
+-	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
++	pwr = power_on ? INT_LOCAL_PWR_EN : 0;
+ 	__raw_writel(pwr, base);
  
- static struct regmap *pmu_regmap;
+ 	/* Wait max 1ms */
+ 	timeout = 10;
  
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 6a7fa8e..50c33c9 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -16,7 +16,7 @@
- #include <linux/slab.h>
- #include <linux/mfd/syscon.h>
+-	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)	!= pwr) {
++	while ((__raw_readl(base + 0x4) & INT_LOCAL_PWR_EN)	!= pwr) {
+ 		if (!timeout) {
+ 			op = (power_on) ? "enable" : "disable";
+ 			pr_err("Power domain %s %s failed\n", domain->name, op);
+@@ -172,7 +172,7 @@ static __init int exynos4_pm_init_power_domain(void)
  
--#include "common.h"
-+#include "exynos-pmu.h"
- #include "regs-pmu.h"
+ 		platform_set_drvdata(pdev, pd);
  
- struct exynos_pmu_data {
+-		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
++		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
+ 
+ 		pm_genpd_init(&pd->pd, NULL, !on);
+ 	}
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index b68b5cc..fd8a19d 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -116,7 +116,6 @@
+ #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
+ 
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
+-#define S5P_INT_LOCAL_PWR_EN			0x7
+ 
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
 -- 
 1.7.10.4
