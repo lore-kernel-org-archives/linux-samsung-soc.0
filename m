@@ -1,138 +1,34 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH] mmc: dw_mmc: Make sure we don't get stuck when we get an
- error
-Date: Sat, 10 May 2014 23:11:17 +0900
-Message-ID: <002001cf6c59$b5b5e680$2121b380$%jun@samsung.com>
-References: <1395901126-6141-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAKuRcOL_JVjOfLNspb14kRxcAXjpEwX4WkvmM+izryZbZBE4XA@mail.gmail.com>
- <CAPz6YkVwT0PrcLP1MJy0vVRw811+_7PwsV_ggKxQkqrjOWeWWw@mail.gmail.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiAwLzZdIHVzYjogaG9zdDogQ2xlYW51cCBmb3IgaW9y?=
+ =?UTF-8?B?ZW1hcCdpbmcgaGNkIG1lbW9yeQ==?=
+Date: Sat, 10 May 2014 18:25:56 +0400
+Message-ID: <1399731956.962771892@f256.i.mail.ru>
+References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:50608 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753850AbaEJOLT (ORCPT
+Received: from f256.i.mail.ru ([94.100.178.221]:40085 "EHLO f256.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754595AbaEJO0E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 May 2014 10:11:19 -0400
-In-reply-to: <CAPz6YkVwT0PrcLP1MJy0vVRw811+_7PwsV_ggKxQkqrjOWeWWw@mail.gmail.com>
-Content-language: ko
+	Sat, 10 May 2014 10:26:04 -0400
+In-Reply-To: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sonny Rao' <sonnyrao@chromium.org>, 'Yuvaraj Kumar' <yuvaraj.cd@gmail.com>
-Cc: 'Grant Grundler' <grundler@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <cjb@laptop.org>, 'linux-mmc' <linux-mmc@vger.kernel.org>, kgene.kim@samsung.com, 'sunil joshi' <joshi@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Doug Anderson' <dianders@chromium.org>
+To: =?UTF-8?B?Vml2ZWsgR2F1dGFt?= <gautam.vivek@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 
-On Fri, May 09, 2014, Sonny Rao wrote:
-> On Thu, May 8, 2014 at 2:42 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
-> > Any comments on this patch?
-> >
-> 
-> I'll just add that without this fix, running the tuning loop for UHS
-> modes is not reliable on dw_mmc because errors will happen and you
-> will eventually hit this race and hang.  This can happen any time
-> there is tuning like during boot or during resume from suspend.
-> 
-> > On Thu, Mar 27, 2014 at 11:48 AM, Yuvaraj Kumar C D
-> > <yuvaraj.cd@gmail.com> wrote:
-> >> From: Doug Anderson <dianders@chromium.org>
-> >>
-> >> If we happened to get a data error at just the wrong time the dw_mmc
-> >> driver could get into a state where it would never complete its
-> >> request.  That would leave the caller just hanging there.
-> >>
-> >> We fix this two ways and both of the two fixes on their own appear to
-> >> fix the problems we've seen:
-> >>
-> >> 1. Fix a race in the tasklet where the interrupt setting the data
-> >>    error happens _just after_ we check for it, then we get a
-> >>    EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
-I think repeating is not good approach to fix race.
-In your case, XFER_COMPLETE preceded data error and DTO didn't come?
-It seems strange case.
-I want to know actual error value if you can reproduce.
-
-> >> 2. Fix it so that if we detect that we've got an error in the "data
-> >>    busy" state and we're not going to do anything else we end the
-> >>    request and unblock anyone waiting.
-> >>
-> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-> >> ---
-> >>  drivers/mmc/host/dw_mmc.c |   47 +++++++++++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 47 insertions(+)
-> >>
-> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> >> index 1d77431..4c589f1 100644
-> >> --- a/drivers/mmc/host/dw_mmc.c
-> >> +++ b/drivers/mmc/host/dw_mmc.c
-> >> @@ -1300,6 +1300,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
-> >>                         /* fall through */
-> >>
-> >>                 case STATE_SENDING_DATA:
-> >> +                       /*
-> >> +                        * We could get a data error and never a transfer
-> >> +                        * complete so we'd better check for it here.
-> >> +                        *
-> >> +                        * Note that we don't really care if we also got a
-> >> +                        * transfer complete; stopping the DMA and sending an
-> >> +                        * abort won't hurt.
-> >> +                        */
-> >>                         if (test_and_clear_bit(EVENT_DATA_ERROR,
-> >>                                                &host->pending_events)) {
-> >>                                 dw_mci_stop_dma(host);
-> >> @@ -1313,7 +1321,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
-> >>                                 break;
-> >>
-> >>                         set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
-> >> +
-> >> +                       /*
-> >> +                        * Handle an EVENT_DATA_ERROR that might have shown up
-> >> +                        * before the transfer completed.  This might not have
-> >> +                        * been caught by the check above because the interrupt
-> >> +                        * could have gone off between the previous check and
-> >> +                        * the check for transfer complete.
-> >> +                        *
-> >> +                        * Technically this ought not be needed assuming we
-> >> +                        * get a DATA_COMPLETE eventually (we'll notice the
-> >> +                        * error and end the request), but it shouldn't hurt.
-> >> +                        *
-> >> +                        * This has the advantage of sending the stop command.
-> >> +                        */
-> >> +                       if (test_and_clear_bit(EVENT_DATA_ERROR,
-> >> +                                              &host->pending_events)) {
-> >> +                               dw_mci_stop_dma(host);
-> >> +                               send_stop_abort(host, data);
-> >> +                               state = STATE_DATA_ERROR;
-> >> +                               break;
-> >> +                       }
-> >>                         prev_state = state = STATE_DATA_BUSY;
-> >> +
-> >>                         /* fall through */
-> >>
-> >>                 case STATE_DATA_BUSY:
-> >> @@ -1336,6 +1366,23 @@ static void dw_mci_tasklet_func(unsigned long priv)
-> >>                                 /* stop command for open-ended transfer*/
-> >>                                 if (data->stop)
-> >>                                         send_stop_abort(host, data);
-> >> +                       } else {
-> >> +                               /*
-> >> +                                * If we don't have a command complete now we'll
-> >> +                                * never get one since we just reset everything;
-> >> +                                * better end the request.
-> >> +                                *
-> >> +                                * If we do have a command complete we'll fall
-> >> +                                * through to the SENDING_STOP command and
-> >> +                                * everything will be peachy keen.
-> >> +                                *
-> >> +                                * TODO: I guess we shouldn't send a stop?
-> >> +                                */
-> >> +                               if (!test_bit(EVENT_CMD_COMPLETE,
-> >> +                                             &host->pending_events)) {
-> >> +                                       dw_mci_request_end(host, mrq);
-> >> +                                       goto unlock;
-> >> +                               }
-Can you explain what happens above?
-What is it for?
-
-Thanks,
-Seungwon Jeon
+U2F0LCAxMCBNYXkgMjAxNCAxNzozMDowNCArMDUzMCDQvtGCIFZpdmVrIEdhdXRhbSA8Z2F1dGFt
+LnZpdmVrQHNhbXN1bmcuY29tPjoKPiBCYXNlZCBvbiAndXNiLW5leHQnIGJyYW5jaCBvZiBHcmVn
+J3MgdXNiIHRyZWUuCj4gCj4gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgQVBJIGlzIGFkdmFudGFn
+ZW91cyBvdmVyIGRldm1faW9yZW1hcCgpCj4gYW5kIHNob3VsZCB0aGVyZWZvcmUgYmUgcHJlZmVy
+cmVkIHRvIHJlcXVlc3QgYW55IGlvcmVtYXAnZWQgYWRkcmVzcwo+IGZvciBoY2QuCj4gCj4gQ2hh
+bmdlcyBmcm9tIHYxOgo+ICAtIENoYW5nZWQgdGhlIHdheSByZXR1cm5lZCBwb2ludGVyIGlzIGNo
+ZWNrZWQgZm9yIGVycm9yIHZhbHVlCj4gICAgYXMgcG9pbnRlZCBvdXQgaW4gdGhlIHJldmlldyBj
+b21tZW50IGluIHRoZSBtYWlsaW5nIGxpc3QuCgpoY2QtPnJzcmNfbGVuIGZpZWxkIGNhbiBiZSBy
+ZW1vdmVkIGVudGlyZWx5LCBzaW5jZSBJIGNhbm5vdCBmaW5kIGFueSByZWFzb24KaG93IHRoaXMg
+ZmlsZWQgY2FuIGJlIHVzZWQgaW4gdGhlIGRyaXZlcnMgbm93LgpUaGlzIGlzIG9mIGNvdXJzZSBz
+aG91bGQgYmUgaW4gYW4gYW5vdGhlciBzZXJpZXMuIFRoaXMgb25lIGxvb2tzIGdvb2QuCgotLS0K
+Cg==
