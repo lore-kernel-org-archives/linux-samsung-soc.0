@@ -1,304 +1,198 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 1/4] clk: samsung: out: Add infrastructure to register
- CLKOUT
-Date: Sat, 10 May 2014 12:51:31 +0900
-Message-ID: <536DA243.6000600@samsung.com>
-References: <1399640410-30957-1-git-send-email-tushar.behera@linaro.org>
- <1399640410-30957-2-git-send-email-tushar.behera@linaro.org>
+From: Sonny Rao <sonnyrao@chromium.org>
+Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
+Date: Fri, 9 May 2014 20:36:35 -0700
+Message-ID: <CAPz6YkUjLmWXvoCkuY8vAwLHksf0Uit6gWP-ADWBbN3NDJBo-w@mail.gmail.com>
+References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
+ <536C2C31.8000209@samsung.com> <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
+ <536C594A.5080107@samsung.com> <536C84A0.6020403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:20248 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754497AbaEJDdM (ORCPT
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:40847 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464AbaEJDg7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 May 2014 23:33:12 -0400
-In-reply-to: <1399640410-30957-2-git-send-email-tushar.behera@linaro.org>
+	Fri, 9 May 2014 23:36:59 -0400
+Received: by mail-qg0-f54.google.com with SMTP id q108so5480277qgd.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 May 2014 20:36:58 -0700 (PDT)
+In-Reply-To: <536C84A0.6020403@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, t.figa@samsung.com, kgene.kim@samsung.com, galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Grant Grundler <grundler@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
 
-On 05/09/2014 10:00 PM, Tushar Behera wrote:
-> All SoC in Exynos-series have a clock with name XCLKOUT to provide
-> debug information about various clocks available in the SoC. The register
-> controlling the MUX and GATE of this clock is provided within PMU domain.
-> Since PMU domain can't be dedicatedly mapped by every driver, the register
-> needs to be handled through a regmap handle provided by PMU syscon
-> controller. Right now, CCF doesn't allow regmap based MUX and GATE clocks,
-> hence a dedicated clock provider for XCLKOUT is added here.
+On Fri, May 9, 2014 at 12:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi, Sonny.
 >
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> CC: Tomasz Figa <t.figa@samsung.com>
-> ---
->   drivers/clk/samsung/Makefile  |    2 +-
->   drivers/clk/samsung/clk-out.c |  181 +++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/samsung/clk.h     |   33 ++++++++
->   3 files changed, 215 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/clk/samsung/clk-out.c
+> You can discard the my previous some comment.
+> As you mentioned, this reset sequence is recommended at Synopsys TRM.
 >
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 8eb4799..d23ad4f 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -2,7 +2,7 @@
->   # Samsung Clock specific Makefile
->   #
->   
-> -obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o
-> +obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-out.o
->   obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
->   obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->   obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-> diff --git a/drivers/clk/samsung/clk-out.c b/drivers/clk/samsung/clk-out.c
-> new file mode 100644
-> index 0000000..76489b6
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-out.c
-> @@ -0,0 +1,181 @@
-> +/*
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This file contains the utility functions to register the clkout clocks.
-> +*/
-> +
-> +/**
-> + * All SoC in Exynos-series have a clock with name XCLKOUT to provide
-> + * debug information about various clocks available in the SoC. The register
-> + * controlling the MUX and GATE of this clock is provided within PMU domain.
-> + * Since PMU domain can't be dedicatedly mapped every driver, the register
-> + * needs to be handled through a regmap handle provided by PMU syscon
-> + * controller. Right now, CCF doesn't allow regmap based MUX and GATE clocks,
-> + * hence a dedicated clock provider for XCLKOUT is added here.
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "clk.h"
-> +
-> +/**
-> + * struct samsung_clkout_soc_data: SoC specific register details
-> + * @reg: Offset of CLKOUT register from PMU base
+> Add the minor question.
+>
+> On 05/09/2014 01:27 PM, Jaehoon Chung wrote:
+>> Hi, Sonny.
+>>
+>> I have checked the Synopsys TRM..
+>>
+>> On 05/09/2014 10:34 AM, Sonny Rao wrote:
+>>> On Thu, May 8, 2014 at 6:15 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>> On 05/08/2014 06:40 PM, Yuvaraj Kumar wrote:
+>>>>> Any comments on this patch?
+>>>>>
+>>>>> On Wed, Mar 26, 2014 at 5:16 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>>>> From: Sonny Rao <sonnyrao@chromium.org>
+>>>>>>
+>>>>>> This patch changes the fifo reset code to follow the reset procedure
+>>>>>> outlined in the documentation of Synopsys  Mobile storage host databook
+>>>>>> 7.2.13.
+>>>>>> Without this patch, we could able to see eMMC was not detected after
+>>>>>> multiple reboots due to driver hangs while eMMC tuning for HS200.
+>>>>>>
+>>>>>> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+>>>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>
+>>>>>> ---
+>>>>>>  drivers/mmc/host/dw_mmc.c |   48 ++++++++++++++++++++++++++++++++++++++++++++-
+>>>>>>  drivers/mmc/host/dw_mmc.h |    1 +
+>>>>>>  2 files changed, 48 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>>>>> index 32dd81d..1d77431 100644
+>>>>>> --- a/drivers/mmc/host/dw_mmc.c
+>>>>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>>>>> @@ -2220,7 +2220,53 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+>>>>>>                 host->sg = NULL;
+>>>>>>         }
+>>>>>>
+>>>>>> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+>>>>>> +       /*
+>>>>>> +        * The recommended method for resetting is to always reset the
+>>>>>> +        * controller and the fifo, but differs slightly depending on the mode.
+>>>>>> +        * Note that this doesn't handle the "generic DMA" (not IDMAC) case.
+>>>>>> +        */
+>>>>
+>>>> "not IDMAC" is confused..
+>>>>
+>>>
+>>> The documentation describes three different possible modes.  There's a
+>>> mode that doesn't use IDMAC but still does DMA.  But as far as I can
+>>> tell this driver doesn't support that way.  We can just remove that
+>>> wording if it's confusing.
+>
+> How did it know whether dma is generic DMA or not?
+>
 
-how about naming this variable as "offset" instead of "reg".
+That's a good question.  I wasn't sure whether the driver supported it
+or not.  It looks like it definitely supports IDMAC through the
+CONFIG_MMC_DW_IDMAC flag, but I wasn't sure if it was supported the
+generic dma.  Maybe if CONFIG_MMC_DW_IDMAC isn't specified but
+host->dma_ops is not NULL then we are using the generic dma mode.
 
-> + * @mux_shift: Start-bit of MUX bit-field
-> + * @mux_width: Width of MUX bit-field
-> + * @enable_bit: The bit corresponding to gating of this clock
-> + */
-> +struct samsung_clkout_soc_data {
-> +	unsigned int reg;
-> +	u8 mux_shift;
-> +	u8 mux_width;
-> +	u8 enable_bit;
-> +};
-> +
-> +/**
-> + * struct samsung_clkout: Structure to store driver specific clock context
-> + * @hw: Handle to CCF clock
-> + * @soc_data: SoC specific register details
-> + * @regmap: Regmap handle of the PMU
-> + */
-> +struct samsung_clkout {
-> +	struct clk_hw hw;
-> +	const struct samsung_clkout_soc_data *soc_data;
-> +	struct regmap *regmap;
-> +};
-> +
-> +#define to_clk_out(_hw) container_of(_hw, struct samsung_clkout, hw)
-> +
-> +int samsung_clkout_enable(struct clk_hw *hw)
-> +{
-> +	struct samsung_clkout *clkout = to_clk_out(hw);
-> +	const struct samsung_clkout_soc_data *soc_data = clkout->soc_data;
-> +	unsigned int enable_mask = BIT(soc_data->enable_bit);
-> +
-> +	/* clkout is enabled if enable bit is low */
-> +	regmap_update_bits(clkout->regmap, soc_data->reg, enable_mask, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +void samsung_clkout_disable(struct clk_hw *hw)
-> +{
-> +	struct samsung_clkout *clkout = to_clk_out(hw);
-> +	const struct samsung_clkout_soc_data *soc_data = clkout->soc_data;
-> +	unsigned int enable_mask = BIT(soc_data->enable_bit);
-> +
-> +	/* clkout is gated if enable bit is high */
-> +	regmap_update_bits(clkout->regmap, soc_data->reg,
-> +			enable_mask, enable_mask);
-> +
-> +	return;
-> +}
-> +
-> +int samsung_clkout_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct samsung_clkout *clkout = to_clk_out(hw);
-> +	const struct samsung_clkout_soc_data *soc_data = clkout->soc_data;
-> +	unsigned int parent_mask = BIT(soc_data->mux_width) - 1;
-> +
-> +	regmap_update_bits(clkout->regmap, soc_data->reg,
-> +			parent_mask << soc_data->mux_shift,
-> +			index << soc_data->mux_shift);
-> +
-> +	return 0;
-> +}
-> +
-> +u8 samsung_clkout_get_parent(struct clk_hw *hw)
-> +{
-> +	struct samsung_clkout *clkout = to_clk_out(hw);
-> +	const struct samsung_clkout_soc_data *soc_data = clkout->soc_data;
-> +	unsigned int parent_mask = BIT(soc_data->mux_width) - 1;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = regmap_read(clkout->regmap, soc_data->reg, &val);
+>>>
+>>>>>> +       if (dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET)) {
+>>>>>> +               unsigned long timeout = jiffies + msecs_to_jiffies(500);
+>>>>>> +               u32 status, rint;
+>>>>>> +
+>>>>>> +               /* if using dma we wait for dma_req to clear */
+>>>>>> +               if (host->using_dma) {
+>>>>>> +                       do {
+>>>>>> +                               status = mci_readl(host, STATUS);
+>>>>>> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
+>>>>>> +                                       break;
+>>>>>> +                               cpu_relax();
+>>>>>> +                       } while (time_before(jiffies, timeout));
+>>>>>> +
+>>>>>> +                       if (status & SDMMC_STATUS_DMA_REQ)
+>>>>>> +                               dev_err(host->dev,
+>>>>>> +                                       "%s: Timeout waiting for dma_req to "
+>>>>>> +                                       "clear during reset", __func__);
+>>>>>> +
+>>>>>> +                       /* when using DMA next we reset the fifo again */
+>>>>>> +                       dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+>>>>>> +               }
+>>>>>> +               /*
+>>>>>> +                * In all cases we clear the RAWINTS register to clear any
+>>>>>> +                * interrupts.
+>>>>>> +                */
+>>>>>> +               rint = mci_readl(host, RINTSTS);
+>>>>>> +               rint = rint & (~mci_readl(host, MINTSTS));
+>> you use the "status or temp" instead of rint. (you can reuse the variable.)
+>> And can use "status &= ~mci_readl(host,MINTSTS);"
+>>
+>>>>
+>>>> Just clear the RINTSTS register? why do you add these?
+>>>>
+>>>
+>>> This will look at what is not masked, and only clear those bits.
+>> Well, i known if clear the RINTSTS register,
+>> recommended to use "0xfffffff" and set the value for interrupt.
+>
+> Can be used "0xfffffff"?
+>
 
-Do we really need to keep return value in "ret" as I can't see you are 
-using it anywhere?
+Yeah we probably can.  We just lose information about interrupts that
+were masked, but maybe we just don't care about any of them anyway, so
+it doesn't matter.
 
-> +
-> +	return (val >> soc_data->mux_shift) & parent_mask;
-> +}
-> +
-> +static const struct clk_ops samsung_clkout_clk_ops = {
-> +	.enable = samsung_clkout_enable,
-> +	.disable = samsung_clkout_disable,
-> +	.set_parent = samsung_clkout_set_parent,
-> +	.get_parent = samsung_clkout_get_parent,
-> +};
-> +
-> +static void __init _samsung_clk_register_clkout(
-> +		struct samsung_out_clock *out,
-> +		const struct samsung_clkout_soc_data *soc_data,
-> +		struct regmap *regmap)
-> +{
-> +	struct samsung_clkout *clkout;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +	int ret;
-> +
-> +	clkout = kzalloc(sizeof(*clkout), GFP_KERNEL);
-> +	if (!clkout) {
-> +		pr_err("%s: could not allocate out clk %s\n",
-> +			__func__, out->name);
-> +		return;
-> +	}
-> +
-> +	init.name = out->name;
-> +	init.parent_names = out->parent_names;
-> +	init.num_parents = out->num_parents;
-> +	init.ops = &samsung_clkout_clk_ops;
-> +
-> +	clkout->hw.init = &init;
-> +	clkout->regmap = regmap;
-> +	clkout->soc_data = soc_data;
-> +
-> +	clk = clk_register(NULL, &clkout->hw);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%s: failed to register out clock %s : %ld\n",
-> +			__func__, out->name, PTR_ERR(clk));
-> +		kfree(clkout);
-> +		return;
-> +	}
-> +
-> +	samsung_clk_add_lookup(clk, out->id);
-> +
-> +	if (!out->alias)
-> +		return;
-> +
-> +	ret = clk_register_clkdev(clk, out->alias, out->dev_name);
-> +	if (ret)
-> +		pr_err("%s: failed to register lookup for %s : %d",
-> +			__func__, out->name, ret);
-> +}
-> +
-> +/* All existing Exynos serial of SoCs have common values for this offsets. */
-typo: serial/series/
-> +static const struct samsung_clkout_soc_data exynos_clkout_soc_data = {
-> +	.reg = 0xa00,
-> +	.mux_shift = 8,
-> +	.mux_width = 5,
-> +	.enable_bit = 0,
-> +};
-> +
-> +void __init samsung_clk_register_clkout(struct device_node *np,
-> +		struct samsung_out_clock *out_clk_list, unsigned int nr_out_clk)
-> +{
-> +	int cnt;
-> +	struct regmap *reg;
-> +	const struct samsung_clkout_soc_data *priv = &exynos_clkout_soc_data;
-> +
-> +	reg = syscon_early_regmap_lookup_by_phandle(np, "samsung,pmu-syscon");
-> +	if (IS_ERR(reg)) {
-> +		pr_err("Failed to get pmu-syscon handle for clkout\n");
-> +		return;
-> +	}
-> +
-> +	for (cnt = 0; cnt < nr_out_clk; cnt++)
-> +		_samsung_clk_register_clkout(&out_clk_list[cnt], priv, reg);
-> +}
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index c7141ba..b4b2122 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -312,6 +312,37 @@ struct samsung_pll_clock {
->   	__PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,	\
->   		_lock, _con, _rtable, _alias)
->   
-> +/**
-> + * struct samsung_out_clock: information about CLKOUT clock
-> + * @id: platform specific id of the clock.
-> + * @dev_name: name of the device to which this clock belongs.
-> + * @name: name of this mux clock.
-> + * @parent_names: array of pointer to parent clock names.
-> + * @num_parents: number of parents listed in @parent_names.
-> + * @alias: optional clock alias name to be assigned to this clock.
-> + */
-> +struct samsung_out_clock {
-> +	unsigned int		id;
-> +	const char		*dev_name;
-> +	const char		*name;
-> +	const char		**parent_names;
-> +	unsigned int		num_parents;
-> +	const char		*alias;
-> +};
-> +
-> +#define __CLKOUT(_id, dname, cname, pnames, a)		\
-> +	{							\
-> +		.id		= _id,				\
-> +		.dev_name	= dname,			\
-> +		.name		= cname,			\
-> +		.parent_names	= pnames,			\
-> +		.num_parents	= ARRAY_SIZE(pnames),		\
-> +		.alias		= a,				\
-> +	}
-> +
-> +#define CLKOUT(_id, cname, pnames) \
-> +	__CLKOUT(_id, NULL, cname, pnames, NULL)
-> +
->   extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
->   				    unsigned long nr_clks);
->   extern void __init samsung_clk_of_register_fixed_ext(
-> @@ -335,6 +366,8 @@ extern void __init samsung_clk_register_gate(
->   		struct samsung_gate_clock *clk_list, unsigned int nr_clk);
->   extern void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
->   		unsigned int nr_clk, void __iomem *base);
-> +extern void __init samsung_clk_register_clkout(struct device_node *np,
-> +	struct samsung_out_clock *out_clk_list, unsigned int nr_out_clk);
->   
->   extern unsigned long _get_rate(const char *clk_name);
->   
-
-
--- 
-Best Regards,
-Pankaj Dubey
+> Best Regards,
+> Jaehoon Chung
+>>
+>>>
+>>>>>> +               if (rint)
+>>>>>> +                       mci_writel(host, RINTSTS, rint);
+>>>>>> +
+>>>>>> +       } else
+>>>>>> +               dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
+>>>>
+>>>> Just display the error log? I didn't understand this.
+>>>> If you displayed the error log, then it needs to return the error value.
+>>>>
+>>>>>> +
+>>>>>> + #ifdef CONFIG_MMC_DW_IDMAC
+>>>>>> +       /* It is also recommended that we reset and reprogram idmac */
+>>>>>> +       dw_mci_idmac_reset(host);
+>>>>>> + #endif
+>>>>>> +
+>>>>>> +       /* After a CTRL reset we need to have CIU set clock registers  */
+>>>>>> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+>>
+>> Well, why do you send the clock update command?
+>> I didn't see that update the value related with clock.
+>>
+>> Best Regards,
+>> Jaehoon Chung
+>>
+>>>>>> +
+>>>>>> +       return true;
+>>>>>>  }
+>>>>>>
+>>>>>>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
+>>>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>>>>>> index 738fa24..037e47a 100644
+>>>>>> --- a/drivers/mmc/host/dw_mmc.h
+>>>>>> +++ b/drivers/mmc/host/dw_mmc.h
+>>>>>> @@ -129,6 +129,7 @@
+>>>>>>  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
+>>>>>>  /* Status register defines */
+>>>>>>  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
+>>>>>> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
+>>>>>>  /* FIFOTH register defines */
+>>>>>>  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
+>>>>>>                                          ((r) & 0xFFF) << 16 | \
+>>>>>> --
+>>>>>> 1.7.10.4
+>>>>>>
+>>>>>
+>>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>
