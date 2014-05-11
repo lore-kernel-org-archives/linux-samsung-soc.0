@@ -1,60 +1,131 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 5/6] usb: host: ehci-tegra: Use devm_ioremap_resource
- instead of devm_ioremap
-Date: Sat, 10 May 2014 23:43:10 +0400
-Message-ID: <536E814E.4020805@cogentembedded.com>
-References: <1399715823-19839-1-git-send-email-gautam.vivek@samsung.com> <1399715823-19839-6-git-send-email-gautam.vivek@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v3 3/6] ARM: EXYNOS: Remove soc_is_exynos4/5 from exynos.c
+Date: Sat, 10 May 2014 23:52:47 -0700
+Message-ID: <CAOesGMgfHLKLG=O=4kxtpFcMn-U3zmCuYRXdUyB8Xq6FALqc8Q@mail.gmail.com>
+References: <1399706287-13919-1-git-send-email-y@samsung.com>
+	<1399706287-13919-4-git-send-email-y@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:44807 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755675AbaEJTm4 (ORCPT
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:52208 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751206AbaEKGws (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 May 2014 15:42:56 -0400
-Received: by mail-lb0-f177.google.com with SMTP id s7so6199367lbd.8
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 May 2014 12:42:54 -0700 (PDT)
-In-Reply-To: <1399715823-19839-6-git-send-email-gautam.vivek@samsung.com>
+	Sun, 11 May 2014 02:52:48 -0400
+Received: by mail-qc0-f170.google.com with SMTP id i8so6523972qcq.15
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 May 2014 23:52:47 -0700 (PDT)
+In-Reply-To: <1399706287-13919-4-git-send-email-y@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, swarren@wwwdotorg.org, kgene.kim@samsung.com, thierry.reding@gmail.com
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Pankaj Dubey <pankaj.dubey@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Hello.
-
-On 05/10/2014 01:57 PM, Vivek Gautam wrote:
-
-> Using devm_ioremap_resource() API should actually be preferred over
-> devm_ioremap(), since the former request the mem region first and then
-> gives back the ioremap'ed memory pointer.
-> devm_ioremap_resource() calls request_mem_region(), therby preventing
-> other drivers to make any overlapping call to the same region.
-
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+On Sat, May 10, 2014 at 12:18 AM,  <y@samsung.com> wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+>
+> This patch removes usage of soc_is_exynos4/5 from exynos.c.
+> For this we need to separate machine descriptors for exynos4
+> and exynos5. While doing this patch does some consolidation also.
+>
+> CC: Russell King <linux@arm.linux.org.uk>
+> CC: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->   drivers/usb/host/ehci-tegra.c |    3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>  arch/arm/mach-exynos/exynos.c            |   52 +++++++++++++++++++-----------
+>  arch/arm/plat-samsung/include/plat/cpu.h |    3 --
+>  2 files changed, 33 insertions(+), 22 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 09063ee..9902e52 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -202,20 +202,6 @@ static const struct of_device_id exynos_dt_pmu_match[] = {
+>         {},
+>  };
+>
+> -/*
+> - * exynos_map_io
+> - *
+> - * register the standard cpu IO areas
+> - */
+> -static void __init exynos_map_io(void)
+> -{
+> -       if (soc_is_exynos4())
+> -               iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+> -
+> -       if (soc_is_exynos5())
+> -               iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+> -}
+> -
+>  static void __init exynos_init_io(void)
+>  {
+>         debug_ll_io_init();
+> @@ -224,8 +210,18 @@ static void __init exynos_init_io(void)
+>
+>         /* detect cpu id and rev. */
+>         s5p_init_cpu(S5P_VA_CHIPID);
+> +}
+> +
+> +static void __init exynos5_init_io(void)
+> +{
+> +       exynos_init_io();
+> +       iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+> +}
+>
+> -       exynos_map_io();
+> +static void __init exynos4_init_io(void)
+> +{
+> +       exynos_init_io();
+> +       iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+>  }
+>
+>  struct bus_type exynos_subsys = {
+> @@ -293,11 +289,15 @@ static void __init exynos_dt_machine_init(void)
+>         of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+>  }
+>
+> -static char const *exynos_dt_compat[] __initconst = {
+> +static char const *exynos4_dt_compat[] __initconst = {
+>         "samsung,exynos4",
+>         "samsung,exynos4210",
+>         "samsung,exynos4212",
+>         "samsung,exynos4412",
+> +       NULL
+> +};
+> +
+> +static char const *exynos5_dt_compat[] __initconst = {
+>         "samsung,exynos5",
+>         "samsung,exynos5250",
+>         "samsung,exynos5420",
+> @@ -321,15 +321,29 @@ static void __init exynos_reserve(void)
+>  #endif
+>  }
+>
+> -DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+> +DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
 
-> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-> index 572634c..ccc6433 100644
-> --- a/drivers/usb/host/ehci-tegra.c
-> +++ b/drivers/usb/host/ehci-tegra.c
-> @@ -411,9 +411,8 @@ static int tegra_ehci_probe(struct platform_device *pdev)
->   	}
->   	hcd->rsrc_start = res->start;
->   	hcd->rsrc_len = resource_size(res);
-> -	hcd->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> +	hcd->regs = devm_ioremap_resource(&pdev->dev, res);
->   	if (!hcd->regs) {
+SAMSUNG EXYNOS5
 
-    This has to be changed as well as devm_ioremap_resource() returns error, 
-not NULL.
+> +       /* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+> +       /* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+> +       .smp            = smp_ops(exynos_smp_ops),
+> +       .map_io         = exynos5_init_io,
+> +       .init_early     = exynos_firmware_init,
+> +       .init_machine   = exynos_dt_machine_init,
+> +       .init_late      = exynos_init_late,
+> +       .dt_compat      = exynos5_dt_compat,
+> +       .restart        = exynos_restart,
+> +       .reserve        = exynos_reserve,
+> +MACHINE_END
+> +
+> +
+> +DT_MACHINE_START(EXYNOS4_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
 
-> -		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
->   		err = -ENOMEM;
+SAMSUNG EXYNOS4
 
-    This needs to be changed as well, to pass up the error code 
-devm_ioremap_resource() returned.
+... so you can tell the difference if you for some reason probed with
+the wrong one.
 
-WBR, Sergei
+Also, you should order these with 4 before 5.
+
+
+-Olof
