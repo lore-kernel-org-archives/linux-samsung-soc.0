@@ -1,93 +1,79 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v3 5/5] ARM: dts: enable hdmi for exynos5800 based
- peach-pi board
-Date: Mon, 12 May 2014 16:23:42 +0530
-Message-ID: <CAPdUM4PPQbbtDSZ6_qu-Ld9ku4iNz-zanRVODTvMrLknPStZWA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] ARM: dts: enable hdmi for exynos5 based peach and
+ snow boards
+Date: Mon, 12 May 2014 16:28:10 +0530
+Message-ID: <CAPdUM4M1xR1jGPxhuUi6nnAXuzA8_-9Hbgux66g+3mobhxNwyA@mail.gmail.com>
 References: <1399890248-27409-1-git-send-email-rahul.sharma@samsung.com>
-	<1399890248-27409-6-git-send-email-rahul.sharma@samsung.com>
-	<5370A7D0.5030409@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:53033 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752464AbaELKxn (ORCPT
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:63602 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752935AbaELK6L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 06:53:43 -0400
-In-Reply-To: <5370A7D0.5030409@samsung.com>
+	Mon, 12 May 2014 06:58:11 -0400
+In-Reply-To: <1399890248-27409-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 12 May 2014 16:22, Arun Kumar K <arun.kk@samsung.com> wrote:
-> Hi Rahul,
+On 12 May 2014 15:54, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
 >
-> On 05/12/14 15:54, Rahul Sharma wrote:
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> Enable hdmi for peach-pi board.
->>
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   26 ++++++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index 742655b..bbb445a 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -72,6 +72,13 @@
->>               samsung,pin-pud = <0>;
->>               samsung,pin-drv = <0>;
->>       };
->> +
->> +     hdmi_hpd_irq: hdmi-hpd-irq {
->> +             samsung,pins = "gpx3-7";
->> +             samsung,pin-function = <0>;
->> +             samsung,pin-pud = <1>;
->> +             samsung,pin-drv = <0>;
->> +     };
+> Enable hdmi for exynos5250 based snow board and exynos5420
+> based peach pit board. It also adds properties to hdmi nodes
+> for accessing hdmiphy as simple phys.
 >
-> This node is already added in 5420-pinctrl.dtsi in patch 3/5.
-> You can drop it from here.
+> V3:
+> 1) Re-spin on dependent patches.
+> 2) Added patch to enable hdmi for Peach-pi board.
+>
+> V2:
+> 1) Re-spin on dependent patches.
+> 2) Added patch to remove chip specific hdmi hpd gpio from
+> board file top SoC file.
+>
+> This series is based on Kukjin Kims, for-next branch.
+>
+> It is dependent on
+> 1) Arun's patch for adding peach-pit board dts file at
+> http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is 'ACK'ed.]
+> 2) Sachin's patch for snow board dts file at
+> https://patches.linaro.org/28325/
+> 3) DRM Hdmi driver patch which is changing the DT binding at
+> http://www.spinics.net/lists/linux-samsung-soc/msg28052.html
+> 4) Arun's patches for basic Exynos5800 support, available at
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/30667
+> [Already Applied in Kukjin's v3.16-next/soc-exynos]
 >
 
-yea correct. I will remove this pin.
+Updating the dependency:
+1) Sachin's patch for snow board dts file at
+       https://patches.linaro.org/28325/
+2) DRM Hdmi driver patch which is changing the DT binding at
+       http://www.spinics.net/lists/linux-samsung-soc/msg28052.html
 
-Regards,
-Rahul Sharma.
+All other patches are already Applied in Kukjin's for-next and
+v3.16-next/soc-exynos branches.
 
-> Regards
-> Arun
+> Rahul Sharma (5):
+>   ARM: dts: enable hdmi for exynos5250 based snow board
+>   ARM: dts: change to correct compatible string for exynos5420 hdmi
+>   ARM: dts: enable hdmi for exynos5420 based peach-pit board
+>   ARM: dts: remove chip specific hdmi hpd pin from board
+>   ARM: dts: enable hdmi for exynos5800 based peach-pi board
 >
->>  };
->>
->>  &rtc {
->> @@ -134,6 +141,25 @@
->>       };
->>  };
->>
->> +&i2c_2 {
->> +     status = "okay";
->> +     samsung,i2c-sda-delay = <100>;
->> +     samsung,i2c-max-bus-freq = <66000>;
->> +     samsung,i2c-slave-addr = <0x50>;
->> +
->> +     hdmiddc@50 {
->> +             reg = <0x50>;
->> +     };
->> +};
->> +
->> +&hdmi {
->> +     status = "okay";
->> +     hpd-gpio = <&gpx3 7 2>;
->> +     pinctrl-names = "default";
->> +     pinctrl-0 = <&hdmi_hpd_irq>;
->> +     ddc = <&i2c_2>;
->> +};
->> +
->>  /*
->>   * Use longest HW watchdog in SoC (32 seconds) since the hardware
->>   * watchdog provides no debugging information (compared to soft/hard
->>
+>  arch/arm/boot/dts/exynos5250-cros-common.dtsi |    6 +++++-
+>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |    7 +++++++
+>  arch/arm/boot/dts/exynos5250-snow.dts         |    7 +++++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts    |   19 ++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi     |    7 +++++++
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts     |    9 ---------
+>  arch/arm/boot/dts/exynos5420.dtsi             |    7 ++++++-
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts     |   26 +++++++++++++++++++++++++
+>  8 files changed, 77 insertions(+), 11 deletions(-)
+>
+> --
+> 1.7.9.5
+>
