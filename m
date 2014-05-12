@@ -1,42 +1,66 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v13 00/19] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Mon, 12 May 2014 12:07:52 +0200
-Message-ID: <5576160.rCaFbvon4G@wuerfel>
-References: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1399875304-19948-1-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v2] [media] s5p-mfc: Don't try to resubmit VP8 bitstream buffer for decode.
+Date: Mon, 12 May 2014 15:46:44 +0530
+Message-ID: <1399889804-4225-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:52909 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756217AbaELKQx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 May 2014 06:16:53 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-On Monday 12 May 2014 11:44:45 Shaik Ameer Basha wrote:
-> This is the subset of previous v12 series and includes only the fixes and
-> enhancements, leaving out the private DT bindings as discussed in the below thread.
->     -- http://www.gossamer-threads.com/lists/linux/kernel/1918178
-> 
-> This patch series includes,
-> 1] fixes for exynos-iommu driver build break
-> 2] includes several bug fixes and enhancements for the exynos-iommu driver
-> 3] code to handle multiple exynos sysmmu versions
-> 4] adding support for device tree
->         Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
+From: Pawel Osciak <posciak@chromium.org>
 
-The patches look good to me, but please add a note into the samsung,sysmmu.txt
-file explaining that the binding is incomplete and that it's possible to
-change in incompatible ways when we add support for attaching devices to
-the IOMMU through the generic IOMMU binding.
+Currently, for formats that are not H264, MFC driver will check
+the consumed stream size returned by the firmware and, based on that,
+will try to decide whether the bitstream buffer contained more than
+one frame. If the size of the buffer is larger than the consumed
+stream, it assumes that there are more frames in the buffer and that the
+buffer should be resubmitted for decode. This rarely works though and
+actually introduces problems, because:
 
-	Arnd
+- v7 firmware will always return consumed stream size equal to whatever
+the driver passed to it when running decode (which is the size of the whole
+buffer), which means we will never try to resubmit, because the firmware
+will always tell us that it consumed all the data we passed to it;
+
+- v6 firmware will return the number of consumed bytes, but will not
+include the padding ("stuffing") bytes that are allowed after the frame
+in VP8. Since there is no way of figuring out how many of those bytes
+follow the frame without getting the frame size from IVF headers (or
+somewhere else, but not from the stream itself), the driver tries to guess that
+padding size is not larger than 4 bytes, which is not always true;
+
+The only way to make it work is to queue only one frame per buffer from
+userspace and the check in the kernel is useless and wrong for VP8.
+So adding VP8 also along with H264 to disallow re-submitting of buffer
+back to hardware for decode.
+
+Signed-off-by: Pawel Osciak <posciak@chromium.org>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+Changes from v1
+- Made the condition to specifically add VP8 case only
+  suggested by Kamil.
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 0f796ad..2d7d1ae 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -382,6 +382,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx *ctx,
+ 		ctx->consumed_stream += s5p_mfc_hw_call(dev->mfc_ops,
+ 						get_consumed_stream, dev);
+ 		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
++			ctx->codec_mode != S5P_MFC_CODEC_VP8_DEC &&
+ 			ctx->consumed_stream + STUFF_BYTE <
+ 			src_buf->b->v4l2_planes[0].bytesused) {
+ 			/* Run MFC again on the same buffer */
+-- 
+1.7.9.5
