@@ -1,44 +1,86 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: enable fimd for exynos5800 based peach-pi board
-Date: Mon, 12 May 2014 12:15:20 +0530
-Message-ID: <1399877120-4634-3-git-send-email-rahul.sharma@samsung.com>
-References: <1399877120-4634-1-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH v3 0/4] ARM: dts: enable display for peach-pit and snow boards
+Date: Mon, 12 May 2014 12:25:16 +0530
+Message-ID: <CAPdUM4PjD2+HkpcDjXzov7EZWuywg6AiYd_t62yzU0qhWHZ34A@mail.gmail.com>
+References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
+	<CALt3h7-zRZp0HWE8VHUmnovfNESfu6c8f=4xScNRV1ZZcP_1vA@mail.gmail.com>
+	<CAPdUM4Pg1ERqQ0W8u3nzZzHq0q2Lrk+vKJUdLdWZd8YrhrqsOg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:24972 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751377AbaELGqE (ORCPT
+Received: from mail-wg0-f50.google.com ([74.125.82.50]:44258 "EHLO
+	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754158AbaELGzR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 02:46:04 -0400
-In-reply-to: <1399877120-4634-1-git-send-email-rahul.sharma@samsung.com>
+	Mon, 12 May 2014 02:55:17 -0400
+In-Reply-To: <CAPdUM4Pg1ERqQ0W8u3nzZzHq0q2Lrk+vKJUdLdWZd8YrhrqsOg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, jg1.han@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+Hi Arun, Jingoo Han,
 
-Enable FIMD for peach-pi board.
+On 12 May 2014 09:36, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> On 12 May 2014 09:33, Arun Kumar K <arun.kk@samsung.com> wrote:
+>> Hi Rahul,
+>>
+>> On Fri, May 9, 2014 at 3:39 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>>
+>>> Add nodes for fimd and dp controller for exynos5250 based snow
+>>> and exynos5420 based peach-pit board.
+>>>
+>>
+>> It would be great to include the display support for 5800 peach-pi board also
+>> in this series. Most of the values would remain the same except for the changes
+>> for bigger display in peach-pi.
+>>
+>
+> Sure. I will post v4 with 5800-drm patches.
+>
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
----
- arch/arm/boot/dts/exynos5800-peach-pi.dts |    5 +++++
- 1 file changed, 5 insertions(+)
+I posted these patches separately at
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg30475.html
 
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 426705a..cccacdd 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -157,6 +157,11 @@
- 	};
- };
- 
-+&fimd {
-+	status = "okay";
-+	samsung,invert-vclk;
-+};
-+
- &hsi2c_9 {
- 	status = "okay";
- 	clock-frequency = <400000>;
--- 
-1.7.9.5
+Regards,
+Rahul Sharma.
+
+>> Regards
+>> Arun
+>>
+>>> This series is based on Kukjin Kims, for-next branch.
+>>>
+>>> V3:
+>>> 1) Dropped 1 patch "ARM: dts: move dp hpd line to the board file for
+>>>  exynos5420".
+>>> 2) Extra blank lines for readability.
+>>> 3) dp hpd gpio name change (dp_hpd -> dp_hpd_gpio)
+>>>
+>>> V2:
+>>> 1) Rebase on Peach-pit dependent patches.
+>>>
+>>> It is dependent on
+>>> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
+>>> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html [Patch is 'ACK'ed.]
+>>> 2) Arun's patch for adding peach-pit board dts file at
+>>> http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is 'ACK'ed.]
+>>>
+>>> Rahul Sharma (4):
+>>>   ARM: dts: enable fimd for exynos5250 based snow board
+>>>   ARM: dts: enable dp-controller for exynos5250 based snow board
+>>>   ARM: dts: enable fimd for exynos5420 based peach-pit board
+>>>   ARM: dts: enable dp-controller for exynos5420 based peach-pit board
+>>>
+>>>  arch/arm/boot/dts/exynos5250-snow.dts      |   35 ++++++++++++++++++++++++
+>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   41 ++++++++++++++++++++++++++++
+>>>  2 files changed, 76 insertions(+)
+>>>
+>>> --
+>>> 1.7.9.5
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
