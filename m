@@ -1,17 +1,22 @@
 From: Jungseok Lee <jays.lee@samsung.com>
 Subject: [RESEND PATCH v6 7/7] arm64: KVM: Implement 4 levels of translation
- tables for
-Date: Mon, 12 May 2014 18:47:41 +0900
-Message-ID: <000701cf6dc7$379ba360$a6d2ea20$@samsung.com>
+ tables for HYP and stage2
+Date: Mon, 12 May 2014 18:56:00 +0900
+Message-ID: <000001cf6dc8$60eaa170$22bfe450$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:20624 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752319AbaELJ4G (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 May 2014 05:56:06 -0400
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
 This patch adds 4 levels of translation tables implementation for both
 HYP and stage2.
@@ -30,9 +35,13 @@ Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
 Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
 Please ignore the previous patch since it has a critical error
 on KVM_MMU_CACHE_MIN_PAGES.
+
+I'm really sorry about noise. My email client terminated unexpectedly,
+so some words are dropped :(
 ---
  arch/arm/include/asm/kvm_mmu.h   |   10 +++++
  arch/arm/kvm/arm.c               |    8 ++++
@@ -42,7 +51,7 @@ on KVM_MMU_CACHE_MIN_PAGES.
  5 files changed, 108 insertions(+), 11 deletions(-)
 
 diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 5c7aa3c..36b9835 100644
+index 5c7aa3c..d319ef6 100644
 --- a/arch/arm/include/asm/kvm_mmu.h
 +++ b/arch/arm/include/asm/kvm_mmu.h
 @@ -37,6 +37,11 @@
