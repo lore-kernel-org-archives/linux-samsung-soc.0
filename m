@@ -1,209 +1,87 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [RFC] ARM: EXYNOS: Add support for clock handling in power domain
-Date: Mon, 12 May 2014 14:09:05 +0530
-Message-ID: <1399883945-22500-1-git-send-email-arun.kk@samsung.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
+Date: Mon, 12 May 2014 10:59:43 +0200
+Message-ID: <1399885183.5016.4.camel@weser.hi.pengutronix.de>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+	 <20140424175844.GD29593@google.com>
+	 <1398421265.4657.25.camel@weser.hi.pengutronix.de>
+	 <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
+	 <1398774686.4677.12.camel@weser.hi.pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:41434 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754182AbaELIjO (ORCPT
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:53859 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751000AbaELJBI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 04:39:14 -0400
-Received: by mail-pa0-f54.google.com with SMTP id bj1so6697306pad.41
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 May 2014 01:39:13 -0700 (PDT)
+	Mon, 12 May 2014 05:01:08 -0400
+In-Reply-To: <1398774686.4677.12.camel@weser.hi.pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, kgene.kim@samsung.com, prathyush.k@samsung.com, abrestic@chromium.org, vikas.sajjan@samsung.com, sachin.kamat@linaro.org, s.nawrocki@samsung.com, arunkk.samsung@gmail.com
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Richard Zhu <r65037@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marek Vasut <marex@denx.de>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Tim Harvey <tharvey@gateworks.com>, Jingoo Han <jg1.han@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.com>, Sean Cross <xobs@kosagi.com>, linux-arm <linux-arm-kernel@lists.infradead.org>
 
-From: Prathyush K <prathyush.k@samsung.com>
+Hi Bjorn,
 
-While powering on/off a local powerdomain in exynos5 chipsets, the input
-clocks to each device gets modified. This behaviour is based on the
-SYSCLK_SYS_PWR_REG registers.
-E.g. SYSCLK_MFC_SYS_PWR_REG = 0x0, the parent of input clock to MFC
-				   (aclk333) gets modified to oscclk
-			    = 0x1, no change in clocks.
-The recommended value of SYSCLK_SYS_PWR_REG before power gating any
-domain is 0x0. So we must also restore the clocks while powering on a
-domain everytime.
+just a friendly reminder. It would be nice if you could pull those in.
 
-This patch adds the framework for getting the required mux and parent clocks
-through a power domain device node.
-Just setting the parent while powering on is not enough since according
-to the clock framework, the parent has never changed. So we set the
-parent clock as oscclk before power gating and then set back the correct
-parent clock after powering on a domain.
+Shawn already pulled the DT change and as it is a binding change this
+means PCIe on i.MX6 is broken in -next, as long as the remaining patches
+are missing.
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
-This patch is posted for getting the opinion from all on what would
-be the best possible solution to the issue at hand.
-The issue is observed with multiple IPs like MFC, GSC, G2D, MSC etc.
-where after a PD OFF-ON sequence, the parent clock gets reset to oscclk.
-I would like to get the opinion from all on what would be the right
-place to handle this. Either the clock re-parenting should be done
-by all these individual IP drivers
-OR
-power-domain driver can handle this at a common place as is being done
-in this patch.
+Regards,
+Lucas
+ 
+Am Dienstag, den 29.04.2014, 14:31 +0200 schrieb Lucas Stach:
+> Hi Bjorn,
+> 
+> Am Freitag, den 25.04.2014, 08:39 -0600 schrieb Bjorn Helgaas:
+> [...]
+> > >> >   PCI: designware: split Exynos and i.MX bindings
+> > >> >   ARM: dts: imx6: update pcie to bring in line with new binding
+> > >> >   PCI: imx6: use new clock names
+> > >> >   PCI: imx6: drop old irq mapping
+> > >> >   PCI: imx6: rip out optional (and unused) irqs
+> > >> >   PCI: designware: make MSI isr shared irq aware
+> > >> >   PCI: imx6: add support for MSI
+> > >>
+> > >> What's the status of all these?  I would normally apply patches 4-8 of this
+> > >> series through my tree, given the appropriate acks, but I haven't seen
+> > >> those yet.  And I'm not sure what dependencies there are between the
+> > >> non-PCI patches and the PCI ones.
+> > >>
+> > > It's a complete binding change, so applying one part without the other
+> > > is going to horribly break things.
+> > >
+> > > So I would at least want to see an ack for the binding change on the
+> > > i.MX side from Shawn and Richard. This will need some follow on patches,
+> > > as some boards adding PCIe using the old binding have cropped up in
+> > > linux-next, but I can do the patches on short notice if everyone agrees
+> > > to merge this patchset.
+> > >
+> > > The designware part is pretty simple and doesn't change anything for
+> > > other users than i.MX. Though I would like to see an ack from Jingoo for
+> > > those.
+> > >
+> > > I have some more stuff in the pipes regarding multiple MSI irqs, that
+> > > depend on this series and also the Keystone people are waiting for this
+> > > to be applied in order to consolidate the clock handling of the
+> > > designware core driver, so it would be nice to get this moving again.
+> > 
+> > OK, just poke me again when you're ready for me to do something with these.
+> > 
+> 
+> As both Richard and Jingoo gave their ack for the respective patches I
+> think this is good to go in and I would expect all the PCI patches to go
+> through your tree for 3.16.
+> 
+> Shawn, if you are not okay with this change, please speak up now.
+> Otherwise please pick the dts change for 3.16. I'll go over linux-next
+> and prepare the patches to fix up the boards there.
+> 
 
-One more possible change I can do is to make a exynos5250 compatible for
-the power-domain driver and get the extra clocks only for exynos5 onwards.
-But since there are no errors being reported even if these clocks are not
-provided, these changes are fully backward compatible with exynos4 also.
----
- .../bindings/arm/exynos/power_domain.txt           |   18 +++++++
- arch/arm/mach-exynos/pm_domains.c                  |   56 +++++++++++++++++++-
- 2 files changed, 73 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 5216b41..2e19a9f 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -9,6 +9,16 @@ Required Properties:
- - reg: physical base address of the controller and length of memory mapped
-     region.
- 
-+Optional Properties:
-+- clocks: List of clock handles. The parent clocks of the input clocks to the
-+  devices in this power domain are set to oscclk before power gating and
-+  restored back after powering on a domain. This is required for all domains
-+  which are powered on and off and not required for unused domains.
-+  The following clocks can be specified:
-+  - oscclk: oscillator clock.
-+  - clk(n): input clock to the devices in this power domain
-+  - pclk(n): parent clock of input clock to the devices in this power domain
-+
- Node of a device using power domains must have a samsung,power-domain property
- defined with a phandle to respective power domain.
- 
-@@ -19,6 +29,14 @@ Example:
- 		reg = <0x10023C00 0x10>;
- 	};
- 
-+	mfc_pd: power-domain@10044060 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044060 0x20>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock MOUT_SW_ACLK333>,
-+			<&clock MOUT_USER_ACLK333>;
-+		clock-names = "oscclk", "pclk0", "clk0";
-+	};
-+
- Example of the node using power domain:
- 
- 	node {
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index fe6570e..e5fe76d 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/pm_domain.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -24,6 +25,8 @@
- 
- #include "regs-pmu.h"
- 
-+#define MAX_CLK_PER_DOMAIN			4
-+
- /*
-  * Exynos specific wrapper around the generic power domain
-  */
-@@ -32,6 +35,9 @@ struct exynos_pm_domain {
- 	char const *name;
- 	bool is_off;
- 	struct generic_pm_domain pd;
-+	struct clk *oscclk;
-+	struct clk *clk[MAX_CLK_PER_DOMAIN];
-+	struct clk *pclk[MAX_CLK_PER_DOMAIN];
- };
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-@@ -44,6 +50,18 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
- 
-+	/* Set oscclk before powering off a domain*/
-+	if (!power_on) {
-+		int i;
-+		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-+			if (!pd->clk[i])
-+				break;
-+			if (clk_set_parent(pd->clk[i], pd->oscclk))
-+				pr_info("%s: error setting oscclk as parent to clock %d\n",
-+						pd->name, i);
-+		}
-+	}
-+
- 	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
- 	__raw_writel(pwr, base);
- 
-@@ -60,6 +78,19 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		cpu_relax();
- 		usleep_range(80, 100);
- 	}
-+
-+	/* Restore clocks after powering on a domain*/
-+	if (power_on) {
-+		int i;
-+		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-+			if (!pd->clk[i])
-+				break;
-+			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
-+				pr_info("%s: error setting parent to clock%d\n",
-+						pd->name, i);
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -152,9 +183,11 @@ static __init int exynos4_pm_init_power_domain(void)
- 
- 	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
- 		struct exynos_pm_domain *pd;
--		int on;
-+		int on, i;
-+		struct device *dev;
- 
- 		pdev = of_find_device_by_node(np);
-+		dev = &pdev->dev;
- 
- 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
- 		if (!pd) {
-@@ -170,6 +203,27 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->pd.power_on = exynos_pd_power_on;
- 		pd->pd.of_node = np;
- 
-+		pd->oscclk = devm_clk_get(dev, "oscclk");
-+		if (IS_ERR(pd->oscclk))
-+			goto no_clk;
-+
-+		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-+			struct clk *tmp, *tmp_parent;
-+			char clk_name[8];
-+
-+			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
-+			tmp = devm_clk_get(dev, clk_name);
-+			if (IS_ERR(tmp))
-+				break;
-+			snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
-+			tmp_parent = devm_clk_get(dev, clk_name);
-+			if (IS_ERR(tmp_parent))
-+				break;
-+			pd->clk[i] = tmp;
-+			pd->pclk[i] = tmp_parent;
-+		}
-+
-+no_clk:
- 		platform_set_drvdata(pdev, pd);
- 
- 		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
 -- 
-1.7.9.5
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
