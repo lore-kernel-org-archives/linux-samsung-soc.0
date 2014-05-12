@@ -1,32 +1,53 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 5/6] usb: host: ehci-tegra: Use devm_ioremap_resource
- instead of devm_ioremap
-Date: Mon, 12 May 2014 10:58:26 -0600
-Message-ID: <5370FDB2.40704@wwwdotorg.org>
-References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com> <1399723210-21569-6-git-send-email-gautam.vivek@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pwm: samsung: do not set manual update bit in pwm_samsung_config
+Date: Mon, 12 May 2014 19:11:40 +0200
+Message-ID: <537100CC.8070509@gmail.com>
+References: <1399906581-29298-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399723210-21569-6-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shc_work-JGs/UdohzUI@public.gmane.org
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1399906581-29298-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-pwm@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, ajaynumb@gmail.com, thierry.reding@gmail.com, abrestic@chromium.org, jg1.han@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/10/2014 06:00 AM, Vivek Gautam wrote:
-> Using devm_ioremap_resource() API should actually be preferred over
-> devm_ioremap(), since the former request the mem region first and then
-> gives back the ioremap'ed memory pointer.
-> devm_ioremap_resource() calls request_mem_region(), therby preventing
-> other drivers to make any overlapping call to the same region.
+Hi Ajay,
 
-This patch on its own works OK on Tegra. However, if a similar patch
-were to be applied to the Tegra PHY driver, then I expect that would
-break USB on Tegra. The reason is that the Tegra USB controller and PHY
-registers are interleaved a bit randomly within the same address range,
-and rather than call out which individual addresses are relevant to the
-controller and the PHY, the DT for both devices just specifies the same
-whole range, and the drivers only touch the appropriate registers within
-the range. Perhaps we should have described that as an MFD rather than
-separate DT nodes and devices, but that's not what we ended up with.
+On 12.05.2014 16:56, Ajay Kumar wrote:
+> pwm_samsung_config sets manual update bit via call to
+> pwm_samsung_enable even when the channel is already running.
+> This causes noticable flickers on display if we try to change
+> the backlight value from 0 to MAX, continiously.
+> 
+> So, we remove the call to pwm_samsung_enable from
+> pwm_samsung_config to avoid the flicker and this change doesn't
+> harm normal working since the pwm_bl core already takes care of
+> calling pwm_samsung_enable whenever needed.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  drivers/pwm/pwm-samsung.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index d66529a..ba6b650 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -335,9 +335,6 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
+>  	writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
+>  
+> -	if (test_bit(PWMF_ENABLED, &pwm->flags))
+> -		pwm_samsung_enable(chip, pwm);
+> -
+>  	chan->period_ns = period_ns;
+>  	chan->tin_ns = tin_ns;
+>  	chan->duty_ns = duty_ns;
+> 
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+Best regards,
+Tomasz
