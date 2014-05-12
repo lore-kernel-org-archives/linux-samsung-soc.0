@@ -1,66 +1,63 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v2] [media] s5p-mfc: Don't try to resubmit VP8 bitstream buffer for decode.
-Date: Mon, 12 May 2014 15:46:44 +0530
-Message-ID: <1399889804-4225-1-git-send-email-arun.kk@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v3 0/5] ARM: dts: enable hdmi for exynos5 based peach and snow
+ boards
+Date: Mon, 12 May 2014 15:54:03 +0530
+Message-ID: <1399890248-27409-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:52909 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756217AbaELKQx (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:36392 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753993AbaELKYu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 06:16:53 -0400
+	Mon, 12 May 2014 06:24:50 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, arunkk.samsung@gmail.com
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Pawel Osciak <posciak@chromium.org>
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-Currently, for formats that are not H264, MFC driver will check
-the consumed stream size returned by the firmware and, based on that,
-will try to decide whether the bitstream buffer contained more than
-one frame. If the size of the buffer is larger than the consumed
-stream, it assumes that there are more frames in the buffer and that the
-buffer should be resubmitted for decode. This rarely works though and
-actually introduces problems, because:
+Enable hdmi for exynos5250 based snow board and exynos5420
+based peach pit board. It also adds properties to hdmi nodes
+for accessing hdmiphy as simple phys.
 
-- v7 firmware will always return consumed stream size equal to whatever
-the driver passed to it when running decode (which is the size of the whole
-buffer), which means we will never try to resubmit, because the firmware
-will always tell us that it consumed all the data we passed to it;
+V3:
+1) Re-spin on dependent patches.
+2) Added patch to enable hdmi for Peach-pi board.
 
-- v6 firmware will return the number of consumed bytes, but will not
-include the padding ("stuffing") bytes that are allowed after the frame
-in VP8. Since there is no way of figuring out how many of those bytes
-follow the frame without getting the frame size from IVF headers (or
-somewhere else, but not from the stream itself), the driver tries to guess that
-padding size is not larger than 4 bytes, which is not always true;
+V2:
+1) Re-spin on dependent patches.
+2) Added patch to remove chip specific hdmi hpd gpio from
+board file top SoC file.
 
-The only way to make it work is to queue only one frame per buffer from
-userspace and the check in the kernel is useless and wrong for VP8.
-So adding VP8 also along with H264 to disallow re-submitting of buffer
-back to hardware for decode.
+This series is based on Kukjin Kims, for-next branch.
 
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
-Changes from v1
-- Made the condition to specifically add VP8 case only
-  suggested by Kamil.
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c |    1 +
- 1 file changed, 1 insertion(+)
+It is dependent on
+1) Arun's patch for adding peach-pit board dts file at
+http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is 'ACK'ed.]
+2) Sachin's patch for snow board dts file at
+https://patches.linaro.org/28325/
+3) DRM Hdmi driver patch which is changing the DT binding at
+http://www.spinics.net/lists/linux-samsung-soc/msg28052.html
+4) Arun's patches for basic Exynos5800 support, available at
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/30667
+[Already Applied in Kukjin's v3.16-next/soc-exynos]
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 0f796ad..2d7d1ae 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -382,6 +382,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx *ctx,
- 		ctx->consumed_stream += s5p_mfc_hw_call(dev->mfc_ops,
- 						get_consumed_stream, dev);
- 		if (ctx->codec_mode != S5P_MFC_CODEC_H264_DEC &&
-+			ctx->codec_mode != S5P_MFC_CODEC_VP8_DEC &&
- 			ctx->consumed_stream + STUFF_BYTE <
- 			src_buf->b->v4l2_planes[0].bytesused) {
- 			/* Run MFC again on the same buffer */
+Rahul Sharma (5):
+  ARM: dts: enable hdmi for exynos5250 based snow board
+  ARM: dts: change to correct compatible string for exynos5420 hdmi
+  ARM: dts: enable hdmi for exynos5420 based peach-pit board
+  ARM: dts: remove chip specific hdmi hpd pin from board
+  ARM: dts: enable hdmi for exynos5800 based peach-pi board
+
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi |    6 +++++-
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |    7 +++++++
+ arch/arm/boot/dts/exynos5250-snow.dts         |    7 +++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |   19 ++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi     |    7 +++++++
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |    9 ---------
+ arch/arm/boot/dts/exynos5420.dtsi             |    7 ++++++-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |   26 +++++++++++++++++++++++++
+ 8 files changed, 77 insertions(+), 11 deletions(-)
+
 -- 
 1.7.9.5
