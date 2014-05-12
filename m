@@ -1,20 +1,20 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v3 2/4] ARM: dts: enable dp-controller for exynos5250 based
- snow board
-Date: Mon, 12 May 2014 13:51:21 +0900
-Message-ID: <001601cf6d9d$d21bbd00$76533700$%han@samsung.com>
+Subject: Re: [PATCH v3 3/4] ARM: dts: enable fimd for exynos5420 based
+ peach-pit board
+Date: Mon, 12 May 2014 13:52:06 +0900
+Message-ID: <001701cf6d9d$ecacbbb0$c6063310$%han@samsung.com>
 References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
- <1399630186-22610-3-git-send-email-rahul.sharma@samsung.com>
+ <1399630186-22610-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15107 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752034AbaELEv1 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:62760 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750750AbaELEwI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 00:51:27 -0400
-In-reply-to: <1399630186-22610-3-git-send-email-rahul.sharma@samsung.com>
+	Mon, 12 May 2014 00:52:08 -0400
+In-reply-to: <1399630186-22610-4-git-send-email-rahul.sharma@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -25,7 +25,7 @@ On Friday, May 09, 2014 7:10 PM, Rahul Sharma wrote:
 > 
 > From: Rahul Sharma <Rahul.Sharma@samsung.com>
 > 
-> Enable dp-controller for snow board.
+> Enable fimd for peach-pit board.
 > 
 > Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
 
@@ -35,48 +35,21 @@ Best regards,
 Jingoo Han
 
 > ---
->  arch/arm/boot/dts/exynos5250-snow.dts |   29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index 796954c..7b10e32 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -207,6 +207,35 @@
->  		};
->  	};
-> 
-> +	dp-controller@145B0000 {
-> +		status = "okay";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&dp_hpd>;
-> +		samsung,color-space = <0>;
-> +		samsung,dynamic-range = <0>;
-> +		samsung,ycbcr-coeff = <0>;
-> +		samsung,color-depth = <1>;
-> +		samsung,link-rate = <0x0a>;
-> +		samsung,lane-count = <2>;
-> +		samsung,hpd-gpio = <&gpx0 7 0>;
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index fae33dd..f75da5b 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -145,3 +145,8 @@
+>  &watchdog {
+>  	timeout-sec = <32>;
+>  };
 > +
-> +		display-timings {
-> +			native-mode = <&timing1>;
-> +
-> +			timing1: timing@1 {
-> +				clock-frequency = <70589280>;
-> +				hactive = <1366>;
-> +				vactive = <768>;
-> +				hfront-porch = <40>;
-> +				hback-porch = <40>;
-> +				hsync-len = <32>;
-> +				vback-porch = <10>;
-> +				vfront-porch = <12>;
-> +				vsync-len = <6>;
-> +			};
-> +		};
-> +	};
-> +
->  	fimd@14400000 {
->  		status = "okay";
->  		samsung,invert-vclk;
+> +&fimd {
+> +	status = "okay";
+> +	samsung,invert-vclk;
+> +};
 > --
 > 1.7.9.5
