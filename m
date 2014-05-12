@@ -1,54 +1,52 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH] pwm: samsung: do not set manual update bit in pwm_samsung_config
-Date: Mon, 12 May 2014 20:29:09 +0530
-Message-ID: <CAEC9eQNYH5O1gTjh-X+P8ppy=N3F1PMY+ZHd-=TRhs1TajVMWA@mail.gmail.com>
-References: <1399906581-29298-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] phy: exynos-mipi-video: fix check on array index
+Date: Mon, 12 May 2014 17:07:23 +0200
+Message-ID: <5370E3AB.7090306@samsung.com>
+References: <1399899388-13101-1-git-send-email-antoine.tenart@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:60970 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932092AbaELO7K (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37464 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754881AbaELPHa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 10:59:10 -0400
-In-Reply-To: <1399906581-29298-1-git-send-email-ajaykumar.rs@samsung.com>
+	Mon, 12 May 2014 11:07:30 -0400
+In-reply-to: <1399899388-13101-1-git-send-email-antoine.tenart@free-electrons.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pwm@vger.kernel.org
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Jingoo Han <jg1.han@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: =?UTF-8?B?QW50b2luZSBUw6luYXJ0?= <antoine.tenart@free-electrons.com>
+Cc: kgene.kim@samsung.com, kishon@ti.com, sylvester.nawrocki@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is a simpler version of https://patchwork.kernel.org/patch/3113001/
+On 12/05/14 14:56, Antoine T=C3=A9nart wrote:
+> The phys array is of size EXYNOS_MIPI_PHYS_NUM. Trying to access the
+> index EXYNOS_MIPI_PHYS_NUM should return an error.
+>=20
+> Fixes: 069d2e26e9d6 "phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs"
+>=20
+> Signed-off-by: Antoine T=C3=A9nart <antoine.tenart@free-electrons.com=
+>
 
-On Mon, May 12, 2014 at 8:26 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> pwm_samsung_config sets manual update bit via call to
-> pwm_samsung_enable even when the channel is already running.
-> This causes noticable flickers on display if we try to change
-> the backlight value from 0 to MAX, continiously.
->
-> So, we remove the call to pwm_samsung_enable from
-> pwm_samsung_config to avoid the flicker and this change doesn't
-> harm normal working since the pwm_bl core already takes care of
-> calling pwm_samsung_enable whenever needed.
->
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Thanks for the fix,
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
 > ---
->  drivers/pwm/pwm-samsung.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> index d66529a..ba6b650 100644
-> --- a/drivers/pwm/pwm-samsung.c
-> +++ b/drivers/pwm/pwm-samsung.c
-> @@ -335,9 +335,6 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
->         writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
->         writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
->
-> -       if (test_bit(PWMF_ENABLED, &pwm->flags))
-> -               pwm_samsung_enable(chip, pwm);
-> -
->         chan->period_ns = period_ns;
->         chan->tin_ns = tin_ns;
->         chan->duty_ns = duty_ns;
-> --
-> 1.8.3.2
->
+>  drivers/phy/phy-exynos-mipi-video.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-ex=
+ynos-mipi-video.c
+> index 7f139326a642..ff026689358c 100644
+> --- a/drivers/phy/phy-exynos-mipi-video.c
+> +++ b/drivers/phy/phy-exynos-mipi-video.c
+> @@ -101,7 +101,7 @@ static struct phy *exynos_mipi_video_phy_xlate(st=
+ruct device *dev,
+>  {
+>  	struct exynos_mipi_video_phy *state =3D dev_get_drvdata(dev);
+> =20
+> -	if (WARN_ON(args->args[0] > EXYNOS_MIPI_PHYS_NUM))
+> +	if (WARN_ON(args->args[0] >=3D EXYNOS_MIPI_PHYS_NUM))
+>  		return ERR_PTR(-ENODEV);
+> =20
+>  	return state->phys[args->args[0]].phy;
