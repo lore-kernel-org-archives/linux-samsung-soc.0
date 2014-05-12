@@ -1,67 +1,70 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] crypto: s5p-sss: fix multiplatform build
-Date: Mon, 12 May 2014 11:31:05 +0900
-Message-ID: <000701cf6d8a$399b0990$acd11cb0$%han@samsung.com>
-References: <4525493.CM3akEXMYf@wuerfel>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH v3 0/4] ARM: dts: enable display for peach-pit and snow boards
+Date: Mon, 12 May 2014 09:33:45 +0530
+Message-ID: <CALt3h7-zRZp0HWE8VHUmnovfNESfu6c8f=4xScNRV1ZZcP_1vA@mail.gmail.com>
+References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:46299 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115AbaELCbI (ORCPT
+Received: from mail-ve0-f180.google.com ([209.85.128.180]:60414 "EHLO
+	mail-ve0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbaELEDq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 May 2014 22:31:08 -0400
-In-reply-to: <4525493.CM3akEXMYf@wuerfel>
-Content-language: ko
+	Mon, 12 May 2014 00:03:46 -0400
+In-Reply-To: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Herbert Xu' <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, "'David S. Miller'" <davem@davemloft.net>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Vladimir Zapolskiy' <vz@mleia.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, inki.dae@samsung.com, Rahul Sharma <r.sh.open@gmail.com>
 
-On Friday, May 09, 2014 8:36 PM, Arnd Bergmann wrote:
-> 
-> As we are preparing to enable multiplatform support on EXYNOS,
-> we can no longer include mach/*.h or plat/*.h headers from device
-> drivers.
-> 
-> The s5p-sss driver was just enabled for EXYNOS when it used to
-> be used only on s5pv210, and it includes two samsung platform
-> specific header files for historic reasons. Fortunately, it no
-> longer actually needs them, so we can remove the #includes and
-> avoid the problem
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: <linux-samsung-soc@vger.kernel.org>
-> Cc: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Hi Rahul,
 
-I checked that these machine specific headers are
-unnecessary. Thanks!
+On Fri, May 9, 2014 at 3:39 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>
+> Add nodes for fimd and dp controller for exynos5250 based snow
+> and exynos5420 based peach-pit board.
+>
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+It would be great to include the display support for 5800 peach-pi board also
+in this series. Most of the values would remain the same except for the changes
+for bigger display in peach-pi.
 
-Best regards,
-Jingoo Han
+Regards
+Arun
 
-> ---
-> Please apply on top of the other s5p-sss patches
-> 
-> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> index 47c568e..4197ad9 100644
-> --- a/drivers/crypto/s5p-sss.c
-> +++ b/drivers/crypto/s5p-sss.c
-> @@ -30,9 +30,6 @@
->  #include <crypto/aes.h>
->  #include <crypto/ctr.h>
-> 
-> -#include <plat/cpu.h>
-> -#include <mach/dma.h>
-> -
->  #define _SBF(s, v)                      ((v) << (s))
->  #define _BIT(b)                         _SBF(b, 1)
-> 
-> 
+> This series is based on Kukjin Kims, for-next branch.
+>
+> V3:
+> 1) Dropped 1 patch "ARM: dts: move dp hpd line to the board file for
+>  exynos5420".
+> 2) Extra blank lines for readability.
+> 3) dp hpd gpio name change (dp_hpd -> dp_hpd_gpio)
+>
+> V2:
+> 1) Rebase on Peach-pit dependent patches.
+>
+> It is dependent on
+> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
+> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html [Patch is 'ACK'ed.]
+> 2) Arun's patch for adding peach-pit board dts file at
+> http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is 'ACK'ed.]
+>
+> Rahul Sharma (4):
+>   ARM: dts: enable fimd for exynos5250 based snow board
+>   ARM: dts: enable dp-controller for exynos5250 based snow board
+>   ARM: dts: enable fimd for exynos5420 based peach-pit board
+>   ARM: dts: enable dp-controller for exynos5420 based peach-pit board
+>
+>  arch/arm/boot/dts/exynos5250-snow.dts      |   35 ++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   41 ++++++++++++++++++++++++++++
+>  2 files changed, 76 insertions(+)
+>
 > --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
