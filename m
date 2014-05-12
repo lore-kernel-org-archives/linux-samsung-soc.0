@@ -1,87 +1,103 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
-Date: Mon, 12 May 2014 10:59:43 +0200
-Message-ID: <1399885183.5016.4.camel@weser.hi.pengutronix.de>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
-	 <20140424175844.GD29593@google.com>
-	 <1398421265.4657.25.camel@weser.hi.pengutronix.de>
-	 <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
-	 <1398774686.4677.12.camel@weser.hi.pengutronix.de>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: [PATCH v6 0/7] Support 4 levels of translation tables for ARM64
+Date: Mon, 12 May 2014 18:39:05 +0900
+Message-ID: <000001cf6dc6$03ded0c0$0b9c7240$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:53859 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbaELJBI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10298 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751955AbaELJjH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 05:01:08 -0400
-In-Reply-To: <1398774686.4677.12.camel@weser.hi.pengutronix.de>
+	Mon, 12 May 2014 05:39:07 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Richard Zhu <r65037@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marek Vasut <marex@denx.de>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Tim Harvey <tharvey@gateworks.com>, Jingoo Han <jg1.han@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.com>, Sean Cross <xobs@kosagi.com>, linux-arm <linux-arm-kernel@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, Marc Zyngier <Marc.Zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, Arnd Bergmann <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
 
-Hi Bjorn,
+Hi All,
 
-just a friendly reminder. It would be nice if you could pull those in.
+This v6 patchset supports 4 levels of tranlsation tables for ARM64.
 
-Shawn already pulled the DT change and as it is a binding change this
-means PCIe on i.MX6 is broken in -next, as long as the remaining patches
-are missing.
+Firstly, the patchset introduces virtual address space size and
+translation level options as taking account into the comment from
+Catalin Marinas:
+http://www.spinics.net/linux/lists/arm-kernel/msg319552.html
 
-Regards,
-Lucas
- 
-Am Dienstag, den 29.04.2014, 14:31 +0200 schrieb Lucas Stach:
-> Hi Bjorn,
-> 
-> Am Freitag, den 25.04.2014, 08:39 -0600 schrieb Bjorn Helgaas:
-> [...]
-> > >> >   PCI: designware: split Exynos and i.MX bindings
-> > >> >   ARM: dts: imx6: update pcie to bring in line with new binding
-> > >> >   PCI: imx6: use new clock names
-> > >> >   PCI: imx6: drop old irq mapping
-> > >> >   PCI: imx6: rip out optional (and unused) irqs
-> > >> >   PCI: designware: make MSI isr shared irq aware
-> > >> >   PCI: imx6: add support for MSI
-> > >>
-> > >> What's the status of all these?  I would normally apply patches 4-8 of this
-> > >> series through my tree, given the appropriate acks, but I haven't seen
-> > >> those yet.  And I'm not sure what dependencies there are between the
-> > >> non-PCI patches and the PCI ones.
-> > >>
-> > > It's a complete binding change, so applying one part without the other
-> > > is going to horribly break things.
-> > >
-> > > So I would at least want to see an ack for the binding change on the
-> > > i.MX side from Shawn and Richard. This will need some follow on patches,
-> > > as some boards adding PCIe using the old binding have cropped up in
-> > > linux-next, but I can do the patches on short notice if everyone agrees
-> > > to merge this patchset.
-> > >
-> > > The designware part is pretty simple and doesn't change anything for
-> > > other users than i.MX. Though I would like to see an ack from Jingoo for
-> > > those.
-> > >
-> > > I have some more stuff in the pipes regarding multiple MSI irqs, that
-> > > depend on this series and also the Keystone people are waiting for this
-> > > to be applied in order to consolidate the clock handling of the
-> > > designware core driver, so it would be nice to get this moving again.
-> > 
-> > OK, just poke me again when you're ready for me to do something with these.
-> > 
-> 
-> As both Richard and Jingoo gave their ack for the respective patches I
-> think this is good to go in and I would expect all the PCI patches to go
-> through your tree for 3.16.
-> 
-> Shawn, if you are not okay with this change, please speak up now.
-> Otherwise please pick the dts change for 3.16. I'll go over linux-next
-> and prepare the patches to fix up the boards there.
-> 
+Then, it implements 4 levels of translation tables for native.
 
+A dynamic VTTBR_X configuration is added before implementing 4 levels
+for both HYP and stage2 sides.
+
+All ARMv8 and ARMv7 related changes are validated with FastModels+kvmtool and
+A15+QEMU, respectively.
+
+Changes since v1:
+- fixed unmatched data types as per Steve's comment
+- removed unnecessary #ifdef in arch/arm64/mm/* as per Steve's comment
+- revised create_pgd_entry to deal with PUD entry as per Steve's comment
+- introduced a macro for initial memblock limit as per Steve's comment
+- dropped "Fix line length exceeding 80 characters" patch as per Marc's comment
+- removed unnecessary #ifdef in arch/arm/kvm/mmu.c as per Marc's comment
+- added a macro for a number of objects of as per Marc's comment
+
+Changes since v2:
+- revised some macros in a generic way as per Marc's comment
+- added a 2 level option for kvm mmu cache allocation as per Marc's comment
+
+Changes since v3:
+- added #ifdef to decide swapper and idmap size as per Steve's comment
+- introduced Steve's create_pgd_entry
+
+Changes since v4:
+- hided translation level options from menuconfig as per Catalin's comment
+- dropped some printk changes as per Mitchel's comment
+- squashed VA_BITS related patches into a single patch
+
+Changes since v5:
+- added dynamic VTTBR_X configuration logic
+- removed a redundant logic in stage2_set_pte as per Christoffer's comment
+- added comments for create_pud_entry as per Christoffer and Steve's comment
+- fixed typos in 4 level descriptions as per Christoffer's comment
+- revised arm64 Kconfig help message as per Christoffer's comment
+- rebased on top of for-next/core branch of arm64/linux.git
+
+Jungseok Lee (7):
+  arm64: Use pr_* instead of printk
+  arm64: Introduce VA_BITS and translation level options
+  arm64: Add a description on 48-bit address space with 4KB pages
+  arm64: Add 4 levels of page tables definition with 4KB pages
+  arm64: mm: Implement 4 levels of translation tables
+  arm64: KVM: Set physical address size related factors in runtime
+  arm64: KVM: Implement 4 levels of translation tables for HYP and
+    stage2
+
+ Documentation/arm64/memory.txt                |   59 +++++++++++++---
+ arch/arm/include/asm/kvm_mmu.h                |   10 +++
+ arch/arm/kvm/arm.c                            |   90 ++++++++++++++++++++++++-
+ arch/arm/kvm/mmu.c                            |   77 ++++++++++++++++++---
+ arch/arm64/Kconfig                            |   53 ++++++++++++++-
+ arch/arm64/include/asm/kvm_arm.h              |   29 ++++----
+ arch/arm64/include/asm/kvm_mmu.h              |   12 ++++
+ arch/arm64/include/asm/memblock.h             |    6 ++
+ arch/arm64/include/asm/memory.h               |    6 +-
+ arch/arm64/include/asm/page.h                 |    6 +-
+ arch/arm64/include/asm/pgalloc.h              |   24 ++++++-
+ arch/arm64/include/asm/pgtable-4level-hwdef.h |   50 ++++++++++++++
+ arch/arm64/include/asm/pgtable-4level-types.h |   71 +++++++++++++++++++
+ arch/arm64/include/asm/pgtable-hwdef.h        |    8 ++-
+ arch/arm64/include/asm/pgtable.h              |   53 +++++++++++++--
+ arch/arm64/include/asm/tlb.h                  |   11 ++-
+ arch/arm64/kernel/head.S                      |   54 ++++++++++++---
+ arch/arm64/kernel/traps.c                     |   13 ++--
+ arch/arm64/kvm/hyp-init.S                     |   20 ++++--
+ arch/arm64/mm/fault.c                         |    1 +
+ arch/arm64/mm/mmu.c                           |   16 +++--
+ 21 files changed, 592 insertions(+), 77 deletions(-)
+ create mode 100644 arch/arm64/include/asm/pgtable-4level-hwdef.h
+ create mode 100644 arch/arm64/include/asm/pgtable-4level-types.h
 
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+1.7.10.4
