@@ -1,96 +1,42 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH V3 2/3] ARM: EXYNOS5: Add Suspend-to-RAM support for 5420
-Date: Tue, 13 May 2014 15:44:23 +0530
-Message-ID: <CAM4voa=T0Pq-evFT7o8f53QnK_Lqp6ke1rGAreSPd9JcvyFPNw@mail.gmail.com>
-References: <1399546368-30537-1-git-send-email-vikas.sajjan@samsung.com>
-	<536DABB3.4060809@samsung.com>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
+Date: Tue, 13 May 2014 11:13:33 +0100
+Message-ID: <5371F04D.7060007@imgtec.com>
+References: <1395834374-1988-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcOJYsC9OUOrYrvKg_iC5Z6dZ0mqW3-y=UXHtCr99=gQBXw@mail.gmail.com>
+ <536C2C31.8000209@samsung.com>
+ <CAPz6YkXGH96mjeePwUSRmPX4Y1YXYif+N+BRKsTwtNxtRq3xoQ@mail.gmail.com>
+ <536C594A.5080107@samsung.com> <536C84A0.6020403@samsung.com>
+ <CAPz6YkUjLmWXvoCkuY8vAwLHksf0Uit6gWP-ADWBbN3NDJBo-w@mail.gmail.com>
+ <CAPz6YkW5CfdMTW3W-zdK29RCv4q7u9rAMr6AjWip3beuhgsv5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:61856 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760550AbaEMKOY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 06:14:24 -0400
-Received: by mail-qc0-f174.google.com with SMTP id x13so117570qcv.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 03:14:24 -0700 (PDT)
-In-Reply-To: <536DABB3.4060809@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAPz6YkW5CfdMTW3W-zdK29RCv4q7u9rAMr6AjWip3beuhgsv5g@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sonny Rao <sonnyrao@chromium.org>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Grant Grundler <grundler@chromium.org>, Tomasz Figa <t.figa@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Douglas Anderson <dianders@chromium.org>, Seungwon Jeon <tgih.jun@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.org>, Chris Ball <cjb@laptop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi Pankaj,
+Hi,
 
-[...]
->>   +#define EXYNOS5420_VA_CPU_STATE (S5P_VA_SYSRAM + 0x28)
->> +#define EXYNOS5420_VA_CPU_ADDR  (S5P_VA_SYSRAM_NS + 0x1C)
->> +
->
->
-> It will be good if we can rebase this change on top of Sachin's SYSRAM
-> patches [1]
->
-> [1]: http://www.spinics.net/lists/arm-kernel/msg329188.html
-This is now merged in Kukjin's for-next. Have rebased my patches on top of it.
+On 12/05/14 22:44, Sonny Rao wrote:
+> Doug mentioned that James Hogan might have an answer.  James, are
+> there Imgtec SoCs which use dw_mmc and use DMA but don't use the
+> IDMAC?  If so, we can add that support into this reset procedure
+> patch.
 
-[...]
->> +
->> +               unsigned i;
->> +
->> +               s3c_pm_do_save(exynos5420_reg_save,
->> +                       ARRAY_SIZE(exynos5420_reg_save));
->> +
->
->
-> Is it possible to move this code in DISP driver somewhere?
-> As if you see I have already posted some patches [1] to remove i2c SYS CFG
-> register
-> configuration during S2R from pm.c to i2c driver itself for Exynos5250 as
-> suggested
-> by Arnd.
->
-> This way we can reduce dependency of regs-sys.h in pm.c also we do not need
-> to
-> statically map sysreg register in exynos.c, and in general it will us in
-> cleaning up
-> exynos code from such things as it is being discussed here [2]
->
-> [1]: https://lkml.org/lkml/2014/5/6/104
-> [2]: https://lkml.org/lkml/2014/5/6/71
-Will remove.
+Yes, the Toumaz TZ1090 SoC has the dw_mmc configured without an IDMAC,
+so it uses the IMG DMAC block instead.
 
-[...]
->>     /* For EXYNOS5 */
->>   +#define EXYNOS5_SYS_DISP1_BLK_CFG
->> S5P_SYSREG(0x0214)
->
->
-> I think this offset should not be added here as it does not belong with PMU.
-> Moreover IIRC if you have rebased these patches on my Exynos PMU patch
-> series [1],
-> this change should fail to compile as "regs-pmu.h" does not have anymore
-> "mach/map.h" and definition for S5P_SYSREG has been moved to a new file
-> "regs-sys.h". Please check here [2]
->
-> [1]: https://lkml.org/lkml/2014/5/2/612
-> [2]: https://lkml.org/lkml/2014/4/30/8
-Will remove.
->
->
->>   #define EXYNOS5_AUTO_WDTRESET_DISABLE                         (0x0408)
->>   #define EXYNOS5_MASK_WDTRESET_REQUEST                         (0x040C)
->>
->
->
->
-> --
-> Best Regards,
-> Pankaj Dubey
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Cheers
+James
