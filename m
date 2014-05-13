@@ -1,77 +1,50 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Tue, 13 May 2014 11:01:23 -0700
-Message-ID: <CAOesGMhbg5cCCrESbe16MiHe1op5AHkfX2eQGM1ApnQeA1Hdmw@mail.gmail.com>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
-	<201404222156.48432.arnd@arndb.de>
-	<065d01cf6e65$0e903dc0$2bb0b940$@samsung.com>
-	<4941260.joVvylkMMC@wuerfel>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH 0/2] PM / OPP: move cpufreq specific helpers out of OPP layer
+Date: Tue, 13 May 2014 23:59:01 +0530
+Message-ID: <CAJuA9agOJyQ_2KOoyn=ohVOeO199aVqm_YXtpUVfETQiPk+ZTw@mail.gmail.com>
+References: <1399296830-13056-1-git-send-email-nm@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f50.google.com ([209.85.192.50]:34313 "EHLO
-	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752298AbaEMSBX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 14:01:23 -0400
-Received: by mail-qg0-f50.google.com with SMTP id z60so889880qgd.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 11:01:23 -0700 (PDT)
-In-Reply-To: <4941260.joVvylkMMC@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1399296830-13056-1-git-send-email-nm@ti.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Tue, May 13, 2014 at 2:15 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 13 May 2014 13:37:33 Kukjin Kim wrote:
->> Arnd Bergmann wrote:
->> >
->> > On Tuesday 22 April 2014, Olof Johansson wrote:
->> > > I don't think there's a point in keeping this around. A
->> > > "single-platform" config is just enabling a single platform in the
->> > > config, it's not a specific option. I don't think any of the other
->> > > platforms use anything like this today.
->> >
->> > The only one doing that is shmobile, but only because they have
->> > some SoCs that are multiplatform capable and some that are not.
->> > This isn't the case for Exynos, so it should no longer be needed.
->> >
->> > When I originally created this patch 18 months ago, there were a
->> > number of drivers that broke when multiplatform got enabled.
->> > Now the cpufreq driver is the only one left, but it seems that
->> > it will make it for 3.16, and I wouldn't wait for it if it doesn't.
->> > Let's just do multiplatform-only.
->> >
->> In my position in S.LSI, I'd like to keep the current ARCH_EXYNOS4 and
->> EXYNOS5 because IMHO selecting each series would be helpful on real product,
->> multiplatform is available though. Additionally EXYNOS3 is being added.
->>
->> It's true we can support exynos-multiplatform even though above options are
->> included...
+On Mon, May 5, 2014 at 7:03 PM, Nishanth Menon <nm@ti.com> wrote:
+> CPUFreq usage of OPP should be independent of the ordering of type of
+> data storage inside OPP layer. The current operations can equally be
+> performed by generic operations.
 >
-> I think we are talking about different questions here:
+> [RFC]: https://patchwork.kernel.org/patch/4100811/
 >
-> What Olof and I mean is we don't want to have an ARCH_EXYNOS_SINGLE option
-> that is there for building EXYNOS but not allowing any other SoC.
+> Series based on: v3.15-rc1
+>
+> Nishanth Menon (2):
+>   PM / OPP: Remove cpufreq wrapper dependency on internal data
+>     organization
+>   PM / OPP: Move cpufreq specific OPP functions out of generic OPP
+>     library
+>
+>  Documentation/cpu-freq/core.txt |   29 +++++++++++
+>  Documentation/power/opp.txt     |   40 ++------------
+>  drivers/base/power/opp.c        |   91 --------------------------------
+>  drivers/cpufreq/Makefile        |    2 +
+>  drivers/cpufreq/cpufreq_opp.c   |  110 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/cpufreq.h         |   21 ++++++++
+>  include/linux/pm_opp.h          |   20 -------
+>  7 files changed, 167 insertions(+), 146 deletions(-)
+>  create mode 100644 drivers/cpufreq/cpufreq_opp.c
 
-Yes. i.e. the only way forward is multiplatform _only_. _BUT_ you can
-choose to disable all other platforms in a kernel, and thus turn it
-into a single-platform build. That's fine. What we don't want is added
-logic like the EXYNOS_SINGLE Kconfig was, just to do that.
+Works fine on Exynos.
+Tested-by: Thomas Abraham <thomas.ab@samsung.com>
 
-> What I think you mean is that you want the individual EXYNOS versions
-> to be separate Kconfig options, so you can build a kernel that supports
-> EXYNOS4 but not EXYNOS5 if you want to. This is totally fine as far
-> as I'm concerned, and it's not directly related to the first point.
-
-I'm also OK with that, but please don't make it more granular than per
-family if you can avoid it.
-
-> Note that if you enable LPAE, you will still only be able to build EXYNOS5
-> after the patch, but then you can have it in the same kernel as e.g.
-> Tegra4 and Snapdragon 600.
-
-Yep, and that's as expected.
-
-
--Olof
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
