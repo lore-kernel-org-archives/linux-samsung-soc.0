@@ -1,83 +1,126 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv5 4/5] dt-bindings: add documentation for Exynos3250 clock
- controller
-Date: Tue, 13 May 2014 22:05:07 +0900
-Message-ID: <1399986308-23744-5-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCHv5 1/5] ARM: EXYNOS: Add Exynos3250 SoC ID
+Date: Tue, 13 May 2014 22:05:04 +0900
+Message-ID: <1399986308-23744-2-git-send-email-cw00.choi@samsung.com>
 References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene.kim@samsung.com, t.figa@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: sajjan.linux@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, marc.zyngier@arm.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, olof@lixom.net, chanho61.park@samsung.com, sachin.kamat@linaro.org, linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Exynos3250 clocks are statically listed and registered using the
-Samsung specific common clock helper functions. Both device tree based
-clock lookup and clkdev based clock lookups are supported.
+This patch add Exynos3250's SoC ID. Exynos 3250 is System-On-Chip(SoC) that
+is based on the 32-bit RISC processor for Smartphone. Exynos3250 uses Cortex-A7
+dual cores and has a target speed of 1.0GHz.
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos3250-clock.txt | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+ arch/arm/mach-exynos/Kconfig  | 22 ++++++++++++++++++++++
+ arch/arm/mach-exynos/common.h | 10 ++++++++++
+ arch/arm/mach-exynos/exynos.c |  2 ++
+ 3 files changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
-new file mode 100644
-index 0000000..aadc9c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
-@@ -0,0 +1,41 @@
-+* Samsung Exynos3250 Clock Controller
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index fc8bf18..6da8a68 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -11,6 +11,17 @@ if ARCH_EXYNOS
+ 
+ menu "SAMSUNG EXYNOS SoCs Support"
+ 
++config ARCH_EXYNOS3
++	bool "SAMSUNG EXYNOS3"
++	select ARM_AMBA
++	select CLKSRC_OF
++	select HAVE_ARM_SCU if SMP
++	select HAVE_SMP
++	select PINCTRL
++	select PM_GENERIC_DOMAINS if PM_RUNTIME
++	help
++	  Samsung EXYNOS3 SoCs based systems
 +
-+The Exynos3250 clock controller generates and supplies clock to various
-+controllers within the Exynos3250 SoC.
+ config ARCH_EXYNOS4
+ 	bool "SAMSUNG EXYNOS4"
+ 	default y
+@@ -41,6 +52,17 @@ config ARCH_EXYNOS5
+ 
+ comment "EXYNOS SoCs"
+ 
++config SOC_EXYNOS3250
++	bool "SAMSUNG EXYNOS3250"
++	default y
++	depends on ARCH_EXYNOS3
++	select ARCH_HAS_BANDGAP
++	select ARM_CPU_SUSPEND if PM
++	select PINCTRL_EXYNOS
++	select SAMSUNG_DMADEV
++	help
++	  Enable EXYNOS3250 CPU support
 +
-+Required Properties:
+ config CPU_EXYNOS4210
+ 	bool "SAMSUNG EXYNOS4210"
+ 	default y
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 278b573..fb43ff4 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -15,6 +15,9 @@
+ #include <linux/reboot.h>
+ #include <linux/of.h>
+ 
++#define EXYNOS3250_SOC_ID       0xE3472000
++#define EXYNOS3_SOC_MASK        0xFFFFF000
 +
-+- compatible: should be one of the following.
-+  - "samsung,exynos3250-cmu" - controller compatible with Exynos3250 SoC.
+ #define EXYNOS4210_CPU_ID	0x43210000
+ #define EXYNOS4212_CPU_ID	0x43220000
+ #define EXYNOS4412_CPU_ID	0xE4412200
+@@ -33,6 +36,7 @@ static inline int is_samsung_##name(void)	\
+ 	return ((samsung_cpu_id & mask) == (id & mask));	\
+ }
+ 
++IS_SAMSUNG_CPU(exynos3250, EXYNOS3250_SOC_ID, EXYNOS3_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+@@ -40,6 +44,12 @@ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ 
++#if defined(CONFIG_SOC_EXYNOS3250)
++# define soc_is_exynos3250()    is_samsung_exynos3250()
++#else
++# define soc_is_exynos3250()    0
++#endif
 +
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+
-+- #clock-cells: should be 1.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume.
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/exynos3250.h header and can be used in device
-+tree sources.
-+
-+Example 1: An example of a clock controller node is listed below.
-+
-+	cmu: clock-controller@10030000 {
-+		compatible = "samsung,exynos3250-cmu";
-+		reg = <0x10030000 0x20000>;
-+		#clock-cells = <1>;
-+	};
-+
-+Example 2: UART controller node that consumes the clock generated by the clock
-+	   controller. Refer to the standard clock bindings for information
-+	   about 'clocks' and 'clock-names' property.
-+
-+	serial@13800000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x13800000 0x100>;
-+		interrupts = <0 109 0>;
-+		clocks = <&cmu CLK_UART0>, <&cmu CLK_SCLK_UART0>;
-+		clock-names = "uart", "clk_uart_baud0";
-+	};
+ #if defined(CONFIG_CPU_EXYNOS4210)
+ # define soc_is_exynos4210()	is_samsung_exynos4210()
+ #else
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 4df3452..f2b8e80 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -293,6 +293,8 @@ static void __init exynos_dt_machine_init(void)
+ }
+ 
+ static char const *exynos_dt_compat[] __initconst = {
++	"samsung,exynos3",
++	"samsung,exynos3250",
+ 	"samsung,exynos4",
+ 	"samsung,exynos4210",
+ 	"samsung,exynos4212",
 -- 
 1.8.0
