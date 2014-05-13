@@ -1,55 +1,71 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v13 00/19] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Tue, 13 May 2014 19:20:38 +0200
-Message-ID: <20140513172038.GC23770@8bytes.org>
-References: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v6 0/5] MCPM backend for Exynos5420
+Date: Tue, 13 May 2014 13:55:25 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1405131325060.980@knanqh.ubzr>
+References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([85.214.48.195]:44166 "EHLO mail.8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752110AbaEMRUo (ORCPT
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:33309 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751463AbaEMRz2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 13:20:44 -0400
-Received: from localhost (localhost [127.0.0.1])
-	by mail.8bytes.org (Postfix) with SMTP id 768A712B209
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 19:20:43 +0200 (CEST)
-Content-Disposition: inline
-In-Reply-To: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com>
+	Tue, 13 May 2014 13:55:28 -0400
+Received: by mail-qg0-f54.google.com with SMTP id q108so899390qgd.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 10:55:27 -0700 (PDT)
+In-Reply-To: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, arnd@arndb.de, t.figa@samsung.com, kgene.kim@samsung.com, pullip.cho@samsung.com, a.motakis@virtualopensystems.com, grundler@chromium.org, s.nawrocki@samsung.com, prathyush.k@samsung.com, rahul.sharma@samsung.com, sachin.kamat@linaro.org, supash.ramaswamy@linaro.org, varun.sethi@freescale.com, joshi@samsung.com, tomasz.figa@gmail.com
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, abrestic@chromium.org, thomas.ab@samsung.com, inderpal.s@samsung.com, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Dave Martin <Dave.Martin@arm.com>, t.figa@samsung.com, kesavan.abhilash@gmail.com
 
-On Mon, May 12, 2014 at 11:44:45AM +0530, Shaik Ameer Basha wrote:
-> Cho KyongHo (18):
->   iommu/exynos: fix build errors
->   iommu/exynos: change error handling when page table update is failed
->   iommu/exynos: allocate lv2 page table from own slab
->   iommu/exynos: fix L2TLB invalidation
->   iommu/exynos: remove prefetch buffer setting
->   iommu/exynos: add missing cache flush for removed page table entries
->   iommu/exynos: always enable runtime PM
->   iommu/exynos: remove dbgname from drvdata of a System MMU
->   iommu/exynos: use managed device helper functions
->   iommu/exynos: gating clocks of master H/W
->   iommu/exynos: remove custom fault handler
->   iommu/exynos: change rwlock to spinlock
->   iommu/exynos: use exynos-iommu specific typedef
->   iommu/exynos: enhanced error messages
->   documentation: iommu: add binding document of Exynos System MMU
->   iommu/exynos: support for device tree
->   iommu/exynos: turn on useful configuration options
->   iommu/exynos: apply workaround of caching fault page table entries
+On Tue, 13 May 2014, Abhilash Kesavan wrote:
+
+> This is v6 of the series adding MCPM backend support for SMP secondary boot
+> and core switching on Samsung's Exynos5420. The patches are based on the mcpm
+> support added for Exynos5420 in the Chromium kernel repository here:
+> https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.8
 > 
->  .../devicetree/bindings/iommu/samsung,sysmmu.txt   |   65 ++
->  drivers/iommu/exynos-iommu.c                       | 1035 ++++++++++++--------
->  2 files changed, 677 insertions(+), 423 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
+> The patches have been prepared on Kukjin Kim's for-next branch and tested on
+> SMDK5420 EVT1 as well as an exynos5420 based chromebook (peach-pit) using the
+> "/dev/b.L_switcher" user interface. Secondary core boot-up has also been tested
+> on both the boards.
 
-Applied, thanks. Please send another patch to update the documentation
-as requested by Arnd.
+OK... Now it is time for real testing.  :-)
+
+The /dev/b.L_switcher interface tests the switcher.  Here you really 
+want to hammer the MCPM functionalities and especially your backend code 
+as hard as possible.  I therefore recommend the following test script:
+
+---------- >8
+#!/bin/bash
+
+echo 0 >/sys/kernel/bL_switcher/active
+sleep 1
+
+pids=
+for cpu in /sys/devices/system/cpu/cpu?/online; do
+  { cpu_nr=${cpu:27:1}
+    while true; do
+      echo 1 > $cpu 2> /dev/null
+      sleep .00$RANDOM
+      val1=$(cat $cpu)
+      echo 0 > $cpu 2> /dev/null
+      sleep .00$RANDOM
+      val0=$(cat $cpu)
+      [ "$val1" = "1" -a "$val0" = "0" ] && echo -n $cpu_nr
+    done
+  } &
+  pids="$pids $!"
+done
+
+trap "kill $pids; echo" 0 15
+wait $pids
+---------- >8
+
+Leave this running for a couple hours making sure you see all CPU 
+numbers being printed.  The printing order will be random, but each CPU 
+number should continuously appear.
 
 
-	Joerg
+Nicolas
