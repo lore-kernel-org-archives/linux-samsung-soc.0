@@ -1,120 +1,142 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: [PATCHv2] mmc: dw_mmc: change to use recommended reset procedure
-Date: Mon, 12 May 2014 18:38:41 -0700
-Message-ID: <1399945121-7387-1-git-send-email-sonnyrao@chromium.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v5 1/5] ARM: EXYNOS: Add generic cpu power control
+ functions for all exynos based SoCs
+Date: Tue, 13 May 2014 11:24:22 +0900
+Message-ID: <019b01cf6e52$75e1a710$61a4f530$@samsung.com>
+References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>
+ <1399307221-8659-2-git-send-email-a.kesavan@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f74.google.com ([209.85.160.74]:38711 "EHLO
-	mail-pb0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758755AbaEMBjA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:13955 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750944AbaEMCY2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 21:39:00 -0400
-Received: by mail-pb0-f74.google.com with SMTP id rp16so92931pbb.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 May 2014 18:38:59 -0700 (PDT)
+	Mon, 12 May 2014 22:24:28 -0400
+In-reply-to: <1399307221-8659-2-git-send-email-a.kesavan@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, tgih.jun@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, t.figa@samsung.com, dianders@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Sonny Rao <sonnyrao@chromium.org>
+To: 'Abhilash Kesavan' <a.kesavan@samsung.com>, nicolas.pitre@linaro.org, Dave.Martin@arm.com, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, abrestic@chromium.org, thomas.ab@samsung.com, inderpal.s@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, grant.likely@linaro.org, robh+dt@kernel.org, will.deacon@arm.com, arnd@arndb.de, kesavan.abhilash@gmail.com, linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com, skon.hwang@samsung.com
 
-This patch changes the fifo reset code to follow the reset procedure
-outlined in the documentation of Synopsys  Mobile storage host databook
-7.2.13.
+Abhilash Kesavan wrote:
+> 
++ Jonghwan Choi, Seungkon Hwang
 
-v2: Add Generic DMA support
-    per the documentation, move interrupt clear before wait
-    make the test for DMA host->use_dma rather than host->using_dma
-    add proper return values (although it appears no caller checks)
+> From: Leela Krishna Amudala <leela.krishna@linaro.org>
+> 
+> Add generic cpu power control functions for exynos based SoCS
+> for cpu power up/down and to know the cpu status.
+> 
+> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
 
-Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- drivers/mmc/host/dw_mmc.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/dw_mmc.h |  1 +
- 2 files changed, 55 insertions(+), 1 deletion(-)
+In this case, Abhilash's signed-off-by should be added here.
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 55cd110..aff57e1 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -2325,6 +2325,7 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
- 
- static inline bool dw_mci_fifo_reset(struct dw_mci *host)
- {
-+	u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
- 	/*
- 	 * Reseting generates a block interrupt, hence setting
- 	 * the scatter-gather pointer to NULL.
-@@ -2334,7 +2335,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
- 		host->sg = NULL;
- 	}
- 
--	return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
-+	/*
-+	 * The recommended method for resetting is to always reset the
-+	 * controller and the fifo, but differs slightly depending on the mode.
-+	 * The Generic DMA mode (non IDMAC) also needs to reset DMA where IDMAC
-+	 * mode resets IDMAC at the end.
-+	 *
-+	 */
-+#ifndef CONFIG_MMC_DW_IDMAC
-+	if (host->use_dma)
-+		flags |= SDMMC_CTRL_DMA_RESET;
-+#endif
-+	if (dw_mci_ctrl_reset(host, flags)) {
-+		/*
-+		 * In all cases we clear the RAWINTS register to clear any
-+		 * interrupts.
-+		 */
-+		mci_writel(host, RINTSTS, 0xFFFFFFFF);
-+
-+		/* if using dma we wait for dma_req to clear */
-+		if (host->use_dma) {
-+			unsigned long timeout = jiffies + msecs_to_jiffies(500);
-+			u32 status;
-+			do {
-+				status = mci_readl(host, STATUS);
-+				if (!(status & SDMMC_STATUS_DMA_REQ))
-+					break;
-+				cpu_relax();
-+			} while (time_before(jiffies, timeout));
-+
-+			if (status & SDMMC_STATUS_DMA_REQ) {
-+				dev_err(host->dev,
-+					"%s: Timeout waiting for dma_req to "
-+					"clear during reset", __func__);
-+				return false;
-+			}
-+
-+			/* when using DMA next we reset the fifo again */
-+			dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
-+		}
-+	} else {
-+		dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
-+		return false;
-+	}
-+
-+#ifdef CONFIG_MMC_DW_IDMAC
-+	/* It is also recommended that we reset and reprogram idmac */
-+	dw_mci_idmac_reset(host);
-+#endif
-+
-+	/* After a CTRL reset we need to have CIU set clock registers  */
-+	mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
-+
-+	return true;
- }
- 
- static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
-diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-index 6bf24ab..2505804 100644
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -129,6 +129,7 @@
- #define SDMMC_CMD_INDX(n)		((n) & 0x1F)
- /* Status register defines */
- #define SDMMC_GET_FCNT(x)		(((x)>>17) & 0x1FFF)
-+#define SDMMC_STATUS_DMA_REQ		BIT(31)
- /* FIFOTH register defines */
- #define SDMMC_SET_FIFOTH(m, r, t)	(((m) & 0x7) << 28 | \
- 					 ((r) & 0xFFF) << 16 | \
--- 
-1.9.1.423.g4596e3a
+> ---
+>  arch/arm/mach-exynos/common.h   |    3 +++
+>  arch/arm/mach-exynos/pm.c       |   36
+++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/regs-pmu.h |    6 ++++++
+>  3 files changed, 45 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 47cbab0..a7dbb5f 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -63,5 +63,8 @@ struct exynos_pmu_conf {
+>  };
+> 
+>  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+> +extern void exynos_cpu_powerdown(int cpu);
+
+IMO, using 'xxx_power_down' would be better.
+
+> +extern void exynos_cpu_powerup(int cpu);
+> +extern int  exynos_cpu_power_state(int cpu);
+
+Hmm...is it really 'cpu' related? Or 'core' related? As I know, when the
+function is called, ARM core and L1 cache will be power_up/down except L2
+cache...But I have no strong objection to use 'cpu' here
+
+> 
+>  #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 15af0ce..6651028 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -100,6 +100,42 @@ static int exynos_irq_set_wake(struct irq_data *data,
+> unsigned int state)
+>  	return -ENOENT;
+>  }
+> 
+> +/**
+> + * exynos_cpu_powerdown : power down the specified cpu
+> + * @cpu : the cpu to power down
+> + *
+> + * Power downs the specified cpu. The sequence must be finished by a
+> + * call to cpu_do_idle()
+> + *
+> + */
+> +void exynos_cpu_powerdown(int cpu)
+> +{
+> +	__raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +}
+> +
+> +/**
+> + * exynos_cpu_powerup : power up the specified cpu
+> + * @cpu : the cpu to power up
+> + *
+> + * Power up the specified cpu
+> + */
+> +void exynos_cpu_powerup(int cpu)
+> +{
+> +	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+> +		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +}
+> +
+> +/**
+> + * exynos_cpu_power_state : returns the power state of the cpu
+> + * @cpu : the cpu to retrieve the power state from
+> + *
+> + */
+> +int exynos_cpu_power_state(int cpu)
+> +{
+> +	return (__raw_readl(EXYNOS_ARM_CORE_STATUS(cpu)) &
+> +			S5P_CORE_LOCAL_PWR_EN);
+> +}
+> +
+>  /* For Cortex-A9 Diagnostic and Power control register */
+>  static unsigned int save_arm_register[2];
+> 
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-
+> pmu.h
+> index 4f6a256..0bdfcbc 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -121,6 +121,12 @@
+> 
+>  #define S5P_CHECK_SLEEP				0x00000BAD
+> 
+> +#define EXYNOS_ARM_CORE0_CONFIGURATION		S5P_PMUREG(0x2000)
+
+This can be put in order of address.
+
+> +#define EXYNOS_ARM_CORE_CONFIGURATION(_nr)	\
+> +			(EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
+> +#define EXYNOS_ARM_CORE_STATUS(_nr)		\
+> +			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
+
+Can you please cleanup codes following definitions are used with using above
+definitions?
+
+S5P_ARM_CORE1_CONFIGURATION and S5P_ARM_CORE1_STATUS in hotplug.c and
+platsmp.c 
+
+> +
+>  /* Only for EXYNOS4210 */
+>  #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
+>  #define S5P_CMU_RESET_LCD1_LOWPWR	S5P_PMUREG(0x1174)
+> --
+> 1.7.9.5
