@@ -1,44 +1,104 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v9 0/3] Add Exynos5 USB 3.0 phy driver based on generic PHY framework
-Date: Tue, 13 May 2014 15:30:14 +0530
-Message-ID: <1399975217-3231-1-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v9 3/3] phy: exynos5-usbdrd: Add facility for VBUS supply
+Date: Tue, 13 May 2014 15:30:17 +0530
+Message-ID: <1399975217-3231-4-git-send-email-gautam.vivek@samsung.com>
+References: <1399975217-3231-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1399975217-3231-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, balbi@ti.com, sylvester.nawrocki@gmail.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Based on 'next' branch of Kishon's phy tree (linux-phy).
+Adding support to enable/disable VBUS controlled by a
+regulator, to enable vbus supply on the port.
 
-Changes from v8:
- - Moved out the bindings documentation for the PHY in a separate patch
-   to avoid checkpatch warnings.
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
+ drivers/phy/phy-exynos5-usbdrd.c |   32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Changes from v7:
- - Providing an **alternative** approach for pmu-offset;
-   instead of getting it from DT, using offset definitions from
-   a header file, and making use of it in the driver.
- - Using 'aliases' for getting channel numbers for multi-controller
-   PHY, so as to distinguish between the pmu-offsets.
- - Added a header file in syscon/ for Exynos5 SoC's pmu offset
-   definitions.
- - Addressed the review comments for nits:
-   -- Changed 'usbdrd_phy_config' structure with 'exynos5_usbdrd_phy_config'
-      and corresponding instance names.
-
-Vivek Gautam (3):
-  Documentation: Document Exynos5 USB 3.0 DRD PHY
-  phy: Add new Exynos5 USB 3.0 PHY driver
-  phy: exynos5-usbdrd: Add facility for VBUS supply
-
- .../devicetree/bindings/phy/samsung-phy.txt        |   47 ++
- drivers/phy/Kconfig                                |   11 +
- drivers/phy/Makefile                               |    1 +
- drivers/phy/phy-exynos5-usbdrd.c                   |  676 ++++++++++++++++++++
- include/linux/mfd/syscon/exynos5-pmu.h             |   44 ++
- 5 files changed, 779 insertions(+)
- create mode 100644 drivers/phy/phy-exynos5-usbdrd.c
- create mode 100644 include/linux/mfd/syscon/exynos5-pmu.h
-
+diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+index 8fcdd94..76d862b 100644
+--- a/drivers/phy/phy-exynos5-usbdrd.c
++++ b/drivers/phy/phy-exynos5-usbdrd.c
+@@ -24,6 +24,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/mfd/syscon/exynos5-pmu.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ 
+ /* Exynos USB PHY registers */
+ #define EXYNOS5_FSEL_9MHZ6		0x0
+@@ -170,6 +171,7 @@ struct exynos5_usbdrd_phy {
+ 	} phys[EXYNOS5_DRDPHYS_NUM];
+ 	u32 extrefclk;
+ 	struct clk *ref_clk;
++	struct regulator *vbus;
+ };
+ 
+ static inline
+@@ -438,6 +440,7 @@ static int exynos5_usbdrd_phy_exit(struct phy *phy)
+ 
+ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
+ {
++	int ret;
+ 	struct phy_usb_instance *inst = phy_get_drvdata(phy);
+ 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+ 
+@@ -445,10 +448,24 @@ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
+ 
+ 	clk_prepare_enable(phy_drd->ref_clk);
+ 
++	/* Enable VBUS supply */
++	if (phy_drd->vbus) {
++		ret = regulator_enable(phy_drd->vbus);
++		if (ret) {
++			dev_err(phy_drd->dev, "Failed to enable VBUS supply\n");
++			goto fail_vbus;
++		}
++	}
++
+ 	/* Power-on PHY*/
+ 	inst->phy_cfg->phy_isol(inst, 0);
+ 
+ 	return 0;
++
++fail_vbus:
++	clk_disable_unprepare(phy_drd->ref_clk);
++
++	return ret;
+ }
+ 
+ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+@@ -461,6 +478,10 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+ 	/* Power-off the PHY */
+ 	inst->phy_cfg->phy_isol(inst, 1);
+ 
++	/* Disable VBUS supply */
++	if (phy_drd->vbus)
++		regulator_disable(phy_drd->vbus);
++
+ 	clk_disable_unprepare(phy_drd->ref_clk);
+ 
+ 	return 0;
+@@ -600,6 +621,17 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+ 		break;
+ 	}
+ 
++	/* Get Vbus regulator */
++	phy_drd->vbus = devm_regulator_get(dev, "vbus");
++	if (IS_ERR(phy_drd->vbus)) {
++		ret = PTR_ERR(phy_drd->vbus);
++		if (ret == -EPROBE_DEFER)
++			return ret;
++
++		dev_warn(dev, "Failed to get VBUS supply regulator\n");
++		phy_drd->vbus = NULL;
++	}
++
+ 	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
+ 
+ 	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
 -- 
 1.7.10.4
