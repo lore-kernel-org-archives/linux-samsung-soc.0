@@ -1,74 +1,61 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: dts: Remove g2d_pd node for exynos5420
-Date: Tue, 13 May 2014 14:45:26 +0530
-Message-ID: <1399972526-20828-1-git-send-email-arun.kk@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
+Date: Tue, 13 May 2014 11:15:45 +0200
+Message-ID: <4941260.joVvylkMMC@wuerfel>
+References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org> <201404222156.48432.arnd@arndb.de> <065d01cf6e65$0e903dc0$2bb0b940$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:43651 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759947AbaEMJPg (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:49558 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759695AbaEMJQU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 05:15:36 -0400
-Received: by mail-pb0-f49.google.com with SMTP id jt11so49601pbb.36
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 02:15:35 -0700 (PDT)
+	Tue, 13 May 2014 05:16:20 -0400
+In-Reply-To: <065d01cf6e65$0e903dc0$2bb0b940$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, tushar.behera@linaro.org, shaik.ameer@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-G2D power domain also controls the CMU block of G2D.
-Since clock registers can be accessed anytime for viewing
-clk_summary, it can cause a system crash if g2d power domain
-is disabled.
+On Tuesday 13 May 2014 13:37:33 Kukjin Kim wrote:
+> Arnd Bergmann wrote:
+> > 
+> > On Tuesday 22 April 2014, Olof Johansson wrote:
+> > > I don't think there's a point in keeping this around. A
+> > > "single-platform" config is just enabling a single platform in the
+> > > config, it's not a specific option. I don't think any of the other
+> > > platforms use anything like this today.
+> > 
+> > The only one doing that is shmobile, but only because they have
+> > some SoCs that are multiplatform capable and some that are not.
+> > This isn't the case for Exynos, so it should no longer be needed.
+> > 
+> > When I originally created this patch 18 months ago, there were a
+> > number of drivers that broke when multiplatform got enabled.
+> > Now the cpufreq driver is the only one left, but it seems that
+> > it will make it for 3.16, and I wouldn't wait for it if it doesn't.
+> > Let's just do multiplatform-only.
+> > 
+> In my position in S.LSI, I'd like to keep the current ARCH_EXYNOS4 and
+> EXYNOS5 because IMHO selecting each series would be helpful on real product,
+> multiplatform is available though. Additionally EXYNOS3 is being added.
+> 
+> It's true we can support exynos-multiplatform even though above options are
+> included...
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
-Please also refer to the existing discussion on removal of
-mau_pd node.
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/29718
+I think we are talking about different questions here:
 
-This patch also fixes a similar issue of the power domian being
-linked to the CMU block. AFAIK, only MAU and G2D power domains
-has this problem in 5420.
+What Olof and I mean is we don't want to have an ARCH_EXYNOS_SINGLE option
+that is there for building EXYNOS but not allowing any other SoC.
 
-The issue is more critical now with the merging of following
-patches in Tomasz's clk tree -
-clk: samsung exynos5250/5420: Add gate clock for SSS module
-clk: exynos5420: update clocks for G2D and G3D blocks
+What I think you mean is that you want the individual EXYNOS versions
+to be separate Kconfig options, so you can build a kernel that supports
+EXYNOS4 but not EXYNOS5 if you want to. This is totally fine as far
+as I'm concerned, and it's not directly related to the first point.
 
-With these patches, I get the following crash on kernel booting -
-[8.971209] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-[8.993044] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
+Note that if you enable LPAE, you will still only be able to build EXYNOS5
+after the patch, but then you can have it in the same kernel as e.g.
+Tegra4 and Snapdragon 600.
 
-For fixing this, either g2d_pd has to be removed or we need to make all
-GATE clocks touching the GATE_IP_G2D as CLK_IGNORE_UNUSED.
-I believe removing g2d_pd is the better solution as we get almost the
-same power saving by gating off these clocks and keeping the domain ON.
----
- arch/arm/boot/dts/exynos5420.dtsi |    6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 2f6da50..47d3f17 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -242,11 +242,6 @@
- 		reg = <0x100440E0 0x20>;
- 	};
- 
--	g2d_pd: power-domain@10044100 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044100 0x20>;
--	};
--
- 	msc_pd: power-domain@10044120 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044120 0x20>;
-@@ -755,6 +750,5 @@
- 		interrupts = <0 112 0>;
- 		clocks = <&clock 471>;
- 		clock-names = "secss";
--		samsung,power-domain = <&g2d_pd>;
- 	};
- };
--- 
-1.7.9.5
+	Arnd
