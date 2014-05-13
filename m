@@ -1,237 +1,130 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v4 1/2] [media] v4l: Add source change event
-Date: Tue, 13 May 2014 10:00:28 +0200
-Message-ID: <5371D11C.2060307@xs4all.nl>
-References: <1399960743-4542-1-git-send-email-arun.kk@samsung.com> <1399960743-4542-2-git-send-email-arun.kk@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC V3 2/3] drm/bridge: add a dummy panel driver to support
+ lvds bridges
+Date: Tue, 13 May 2014 10:05:03 +0200
+Message-ID: <20140513080501.GH6754@ulmo>
+References: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1399647182-20951-3-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr13.xs4all.nl ([194.109.24.33]:2552 "EHLO
-	smtp-vbr13.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753031AbaEMIAv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 04:00:51 -0400
-In-Reply-To: <1399960743-4542-2-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0227459153=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1399647182-20951-3-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, laurent.pinchart@ideasonboard.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-Hi Arun,
 
-I've got some more comments w.r.t. the documentation:
+--===============0227459153==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dDnEQgWzhgf+8aPe"
+Content-Disposition: inline
 
-On 05/13/14 07:59, Arun Kumar K wrote:
-> This event indicates that the video device has encountered
-> a source parameter change during runtime. This can typically be a
-> resolution change detected by a video decoder OR a format change
-> detected by an HDMI connector.
-> 
-> This needs to be nofified to the userspace and the application may
-> be expected to reallocate buffers before proceeding. The application
-> can subscribe to events on a specific pad or input port which
-> it is interested in.
-> 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+
+--dDnEQgWzhgf+8aPe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, May 09, 2014 at 08:23:01PM +0530, Ajay Kumar wrote:
+> implement basic panel controls as a drm_bridge so that
+> the existing bridges can make use of it.
+>=20
+> The driver assumes that it is the last entity in the bridge chain.
+>=20
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > ---
->  Documentation/DocBook/media/v4l/vidioc-dqevent.xml |   32 +++++++++++++++++
->  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |   19 +++++++++++
->  drivers/media/v4l2-core/v4l2-event.c               |   36 ++++++++++++++++++++
->  include/media/v4l2-event.h                         |    4 +++
->  include/uapi/linux/videodev2.h                     |    8 +++++
->  5 files changed, 99 insertions(+)
-> 
-> diff --git a/Documentation/DocBook/media/v4l/vidioc-dqevent.xml b/Documentation/DocBook/media/v4l/vidioc-dqevent.xml
-> index 89891ad..6afabaa 100644
-> --- a/Documentation/DocBook/media/v4l/vidioc-dqevent.xml
-> +++ b/Documentation/DocBook/media/v4l/vidioc-dqevent.xml
-> @@ -242,6 +242,22 @@
->        </tgroup>
->      </table>
->  
-> +    <table frame="none" pgwide="1" id="v4l2-event-src-change">
-> +      <title>struct <structname>v4l2_event_src_change</structname></title>
-> +      <tgroup cols="3">
-> +	&cs-str;
-> +	<tbody valign="top">
-> +	  <row>
-> +	    <entry>__u32</entry>
-> +	    <entry><structfield>changes</structfield></entry>
-> +	    <entry>
-> +	      A bitmask that tells what has changed. See <xref linkend="src-changes-flags" />.
-> +	    </entry>
-> +	  </row>
-> +	</tbody>
-> +      </tgroup>
-> +    </table>
-> +
->      <table pgwide="1" frame="none" id="changes-flags">
->        <title>Changes</title>
->        <tgroup cols="3">
-> @@ -270,6 +286,22 @@
->  	</tbody>
->        </tgroup>
->      </table>
-> +
-> +    <table pgwide="1" frame="none" id="src-changes-flags">
-> +      <title>Source Changes</title>
-> +      <tgroup cols="3">
-> +	&cs-def;
-> +	<tbody valign="top">
-> +	  <row>
-> +	    <entry><constant>V4L2_EVENT_SRC_CH_RESOLUTION</constant></entry>
-> +	    <entry>0x0001</entry>
-> +	    <entry>This event gets triggered when a resolution change is
-> +	    detected at runtime. This can typically come from a video decoder.
+>  .../bindings/drm/bridge/bridge_panel.txt           |   45 ++++
 
-I would rewrite this as:
+Can we please stop adding files to this directory? Device tree bindings
+are supposed to be OS agnostic, but DRM is specific to Linux and should
+not be used when describing hardware.
 
-"This event gets triggered when a resolution change is detected at an input.
-This can come from an input connector or from a video decoder."
+> diff --git a/Documentation/devicetree/bindings/drm/bridge/bridge_panel.tx=
+t b/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+[...]
+> +	-led-en-gpio:
+> +		eDP panel LED enable GPIO.
+> +			Indicates which GPIO needs to be powered up as output
+> +			to enable the backlight.
 
-> +	    </entry>
-> +	  </row>
-> +	</tbody>
-> +      </tgroup>
-> +    </table>
->    </refsect1>
->    <refsect1>
->      &return-value;
-> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
-> index 5c70b61..067a0d5 100644
-> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
-> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
-> @@ -155,6 +155,25 @@
->  	    </entry>
->  	  </row>
->  	  <row>
-> +	    <entry><constant>V4L2_EVENT_SOURCE_CHANGE</constant></entry>
-> +	    <entry>5</entry>
-> +	    <entry>
-> +	      <para>This event is triggered when a source parameter change is
-> +	       detected during runtime by the video device. It can be a
-> +	       runtime resolution change triggered by a video decoder or the
-> +	       format change happening on an HDMI connector.
+Since this is used to control a backlight, then this should really be a
+separate node to describe the backlight device (and use the
+corresponding backlight driver) rather than duplicating a subset of that
+functionality.
 
-s/an HDMI/an input/
+> +	-panel-pre-enable-delay:
+> +		delay value in ms required for panel_pre_enable process
+> +			Delay in ms needed for the eDP panel LCD unit to
+> +			powerup, and delay needed between panel_VCC and
+> +			video_enable.
 
-It's valid for e.g. a composite input as well (or DVI, or VGA, etc.)
+What are panel_VCC or video_enable?
 
-> +	       This event requires that the <structfield>id</structfield>
-> +	       matches the pad / input index from which you want to receive
+> +	-panel-enable-delay:
+> +		delay value in ms required for panel_enable process
+> +			Delay in ms needed for the eDP panel backlight/LED unit
+> +			to powerup, and delay needed between video_enable and
+> +			BL_EN.
 
-This should be more explicit:
+Similarily, what does BL_EN stand for?
 
-"matches the input index (when used with a video device node) or the pad
-index (when used with a subdevice node) from which you want to receive"
+> +	bridge-panel {
+> +		compatible =3D "drm-bridge,panel";
 
-> +	       events.</para>
-> +              <para>This event has a &v4l2-event-source-change; associated
-> +	      with it. The <structfield>changes</structfield> bitfield denotes
-> +	      what has changed for the subscribed pad. If multiple events
-> +	      occured before application could dequeue them, then the changes
+Again, drm- doesn't mean anything outside of Linux (and maybe BSD),
+therefore shouldn't be used to describe hardware in device tree.
 
-s/occured/occurred/
+> diff --git a/drivers/gpu/drm/bridge/bridge_panel.c b/drivers/gpu/drm/brid=
+ge/bridge_panel.c
+[...]
 
-> +	      will have the ORed value of all the events generated.</para>
-> +	    </entry>
-> +	  </row>
-> +	  <row>
->  	    <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
->  	    <entry>0x08000000</entry>
->  	    <entry>Base event number for driver-private events.</entry>
-> diff --git a/drivers/media/v4l2-core/v4l2-event.c b/drivers/media/v4l2-core/v4l2-event.c
-> index 86dcb54..8761aab 100644
-> --- a/drivers/media/v4l2-core/v4l2-event.c
-> +++ b/drivers/media/v4l2-core/v4l2-event.c
-> @@ -318,3 +318,39 @@ int v4l2_event_subdev_unsubscribe(struct v4l2_subdev *sd, struct v4l2_fh *fh,
->  	return v4l2_event_unsubscribe(fh, sub);
->  }
->  EXPORT_SYMBOL_GPL(v4l2_event_subdev_unsubscribe);
-> +
-> +static void v4l2_event_src_replace(struct v4l2_event *old,
-> +				const struct v4l2_event *new)
-> +{
-> +	u32 old_changes = old->u.src_change.changes;
-> +
-> +	old->u.src_change = new->u.src_change;
-> +	old->u.src_change.changes |= old_changes;
-> +}
-> +
-> +static void v4l2_event_src_merge(const struct v4l2_event *old,
-> +				struct v4l2_event *new)
-> +{
-> +	new->u.src_change.changes |= old->u.src_change.changes;
-> +}
-> +
-> +static const struct v4l2_subscribed_event_ops v4l2_event_src_ch_ops = {
-> +	.replace = v4l2_event_src_replace,
-> +	.merge = v4l2_event_src_merge,
-> +};
-> +
-> +int v4l2_src_change_event_subscribe(struct v4l2_fh *fh,
-> +				const struct v4l2_event_subscription *sub)
-> +{
-> +	if (sub->type == V4L2_EVENT_SOURCE_CHANGE)
-> +		return v4l2_event_subscribe(fh, sub, 0, &v4l2_event_src_ch_ops);
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_src_change_event_subscribe);
-> +
-> +int v4l2_src_change_event_subdev_subscribe(struct v4l2_subdev *sd,
-> +		struct v4l2_fh *fh, struct v4l2_event_subscription *sub)
-> +{
-> +	return v4l2_src_change_event_subscribe(fh, sub);
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_src_change_event_subdev_subscribe);
-> diff --git a/include/media/v4l2-event.h b/include/media/v4l2-event.h
-> index be05d01..1ab9045 100644
-> --- a/include/media/v4l2-event.h
-> +++ b/include/media/v4l2-event.h
-> @@ -132,4 +132,8 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
->  void v4l2_event_unsubscribe_all(struct v4l2_fh *fh);
->  int v4l2_event_subdev_unsubscribe(struct v4l2_subdev *sd, struct v4l2_fh *fh,
->  				  struct v4l2_event_subscription *sub);
-> +int v4l2_src_change_event_subscribe(struct v4l2_fh *fh,
-> +				const struct v4l2_event_subscription *sub);
-> +int v4l2_src_change_event_subdev_subscribe(struct v4l2_subdev *sd,
-> +		struct v4l2_fh *fh, struct v4l2_event_subscription *sub);
->  #endif /* V4L2_EVENT_H */
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index ea468ee..b923d91 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -1765,6 +1765,7 @@ struct v4l2_streamparm {
->  #define V4L2_EVENT_EOS				2
->  #define V4L2_EVENT_CTRL				3
->  #define V4L2_EVENT_FRAME_SYNC			4
-> +#define V4L2_EVENT_SOURCE_CHANGE		5
->  #define V4L2_EVENT_PRIVATE_START		0x08000000
->  
->  /* Payload for V4L2_EVENT_VSYNC */
-> @@ -1796,12 +1797,19 @@ struct v4l2_event_frame_sync {
->  	__u32 frame_sequence;
->  };
->  
-> +#define V4L2_EVENT_SRC_CH_RESOLUTION		(1 << 0)
-> +
-> +struct v4l2_event_src_change {
-> +	__u32 changes;
-> +};
-> +
->  struct v4l2_event {
->  	__u32				type;
->  	union {
->  		struct v4l2_event_vsync		vsync;
->  		struct v4l2_event_ctrl		ctrl;
->  		struct v4l2_event_frame_sync	frame_sync;
-> +		struct v4l2_event_src_change	src_change;
->  		__u8				data[64];
->  	} u;
->  	__u32				pending;
-> 
+This duplicates much of the functionality that panels should provide. I
+think a better solution would be to properly integrate panels with
+bridges.
 
-Regards,
+Thierry
 
-	Hans
+--dDnEQgWzhgf+8aPe
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTcdItAAoJEN0jrNd/PrOh37UQAIyn4a3JfqfmmPAFYoX/QTHM
+7id1Nr2DAVhd+PS6tbY8Q5+5YOcw1SffSGB7aBopiyPgwn9K8CmMxMbKtKxlP0pB
+uuTV1qSB9abh+Qxp5DhrOqttvpIzcv3Ys6zb5y3gZJIdAufgAG6i1sd1kvpg1v/N
+J4FXdHCZAppmOc79kJJAKMifHub8XIekpAO/uJBlfB1Bgsj+v8q/k9aMmSFucYh4
+caipi2pkpzrcLe4jN533vkzWjVoWMB+OYZCrvaQi0iQhYPGEUTZ9jPua52oKWTGM
+sX2Xv2ZrRO5sBciBogQZgrThRxYRKtrzlze/Tp/eGNp3OMJ7Qk7EoualTTVUdS1c
+pj32f27Wl2t5kGbn7rgLyje8IROFuDP5Wt6F0FwRAuWqtvXk6zQOxlUsL1OlC15W
+VmbnzJwcvP0thvTIhic8SpuK7n3NCSFsE6PLPxNVUttLAEZu8TOGVC2AeULMVLjZ
+i6zqqPRjGC1gW6PWrDDjOJVrHCG3uHjRUKnpfQeMYugeb/T5tUbpAFLpaCUB3/BM
+Pl6KSsatGvCSNA80YMkB1BazpzGLhOyum/3nCPC0nJhx7El44CNpI7+UBaQ0JijD
+I7qTGaTD/nqa28FNT+JSqcIeFBTnY5/ZFYg8W0rh4Llbi0TrCkGQJzaTWKlDZeta
+iyz6ycERUeOM95vbPru0
+=DIBk
+-----END PGP SIGNATURE-----
+
+--dDnEQgWzhgf+8aPe--
+
+--===============0227459153==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0227459153==--
