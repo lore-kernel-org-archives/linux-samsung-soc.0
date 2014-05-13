@@ -1,104 +1,88 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v9 3/3] phy: exynos5-usbdrd: Add facility for VBUS supply
-Date: Tue, 13 May 2014 15:30:17 +0530
-Message-ID: <1399975217-3231-4-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v9 1/3] Documentation: Document Exynos5 USB 3.0 DRD PHY
+Date: Tue, 13 May 2014 15:30:15 +0530
+Message-ID: <1399975217-3231-2-git-send-email-gautam.vivek@samsung.com>
 References: <1399975217-3231-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1399975217-3231-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, balbi@ti.com, sylvester.nawrocki@gmail.com, t.figa@samsung.com, k.debski@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, k.debski@samsung.com, kgene.kim@samsung.com, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, t.figa@samsung.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, robh+dt@kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, sylvester.nawrocki@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding support to enable/disable VBUS controlled by a
-regulator, to enable vbus supply on the port.
+Add necessary binding documentation for USB 3.0 DRD PHY present on
+Exynos5 SoC series.
 
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
- drivers/phy/phy-exynos5-usbdrd.c |   32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ .../devicetree/bindings/phy/samsung-phy.txt        |   47 ++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-index 8fcdd94..76d862b 100644
---- a/drivers/phy/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/phy-exynos5-usbdrd.c
-@@ -24,6 +24,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/mfd/syscon/exynos5-pmu.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- 
- /* Exynos USB PHY registers */
- #define EXYNOS5_FSEL_9MHZ6		0x0
-@@ -170,6 +171,7 @@ struct exynos5_usbdrd_phy {
- 	} phys[EXYNOS5_DRDPHYS_NUM];
- 	u32 extrefclk;
- 	struct clk *ref_clk;
-+	struct regulator *vbus;
- };
- 
- static inline
-@@ -438,6 +440,7 @@ static int exynos5_usbdrd_phy_exit(struct phy *phy)
- 
- static int exynos5_usbdrd_phy_power_on(struct phy *phy)
- {
-+	int ret;
- 	struct phy_usb_instance *inst = phy_get_drvdata(phy);
- 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
- 
-@@ -445,10 +448,24 @@ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
- 
- 	clk_prepare_enable(phy_drd->ref_clk);
- 
-+	/* Enable VBUS supply */
-+	if (phy_drd->vbus) {
-+		ret = regulator_enable(phy_drd->vbus);
-+		if (ret) {
-+			dev_err(phy_drd->dev, "Failed to enable VBUS supply\n");
-+			goto fail_vbus;
-+		}
-+	}
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+index b422e38..2049261 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -114,3 +114,50 @@ Example:
+ 		compatible = "samsung,exynos-sataphy-i2c";
+ 		reg = <0x38>;
+ 	};
 +
- 	/* Power-on PHY*/
- 	inst->phy_cfg->phy_isol(inst, 0);
- 
- 	return 0;
++Samsung Exynos5 SoC series USB DRD PHY controller
++--------------------------------------------------
 +
-+fail_vbus:
-+	clk_disable_unprepare(phy_drd->ref_clk);
++Required properties:
++- compatible : Should be set to one of the following supported values:
++	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
++	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
++- reg : Register offset and length of USB DRD PHY register set;
++- clocks: Clock IDs array as required by the controller
++- clock-names: names of clocks correseponding to IDs in the clock property;
++	       Required clocks:
++	- phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
++	       used for register access.
++	- ref: PHY's reference clock (usually crystal clock), used for
++	       PHY operations, associated by phy name. It is used to
++	       determine bit values for clock settings register.
++	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
++- samsung,pmu-syscon: phandle for PMU system controller interface, used to
++		      control pmu registers for power isolation.
++- #phy-cells : from the generic PHY bindings, must be 1;
 +
-+	return ret;
- }
- 
- static int exynos5_usbdrd_phy_power_off(struct phy *phy)
-@@ -461,6 +478,10 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- 	/* Power-off the PHY */
- 	inst->phy_cfg->phy_isol(inst, 1);
- 
-+	/* Disable VBUS supply */
-+	if (phy_drd->vbus)
-+		regulator_disable(phy_drd->vbus);
++For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
++compatible PHYs, the second cell in the PHY specifier identifies the
++PHY id, which is interpreted as follows:
++  0 - UTMI+ type phy,
++  1 - PIPE3 type phy,
 +
- 	clk_disable_unprepare(phy_drd->ref_clk);
- 
- 	return 0;
-@@ -600,6 +621,17 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
-+	/* Get Vbus regulator */
-+	phy_drd->vbus = devm_regulator_get(dev, "vbus");
-+	if (IS_ERR(phy_drd->vbus)) {
-+		ret = PTR_ERR(phy_drd->vbus);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
++Example:
++	usbdrd_phy: usbphy@12100000 {
++		compatible = "samsung,exynos5250-usbdrd-phy";
++		reg = <0x12100000 0x100>;
++		clocks = <&clock 286>, <&clock 1>;
++		clock-names = "phy", "ref";
++		samsung,pmu-syscon = <&pmu_system_controller>;
++		#phy-cells = <1>;
++	};
 +
-+		dev_warn(dev, "Failed to get VBUS supply regulator\n");
-+		phy_drd->vbus = NULL;
-+	}
-+
- 	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
- 
- 	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
++- aliases: For SoCs like Exynos5420 having multiple USB 3.0 DRD PHY controllers,
++	   'usbdrd_phy' nodes should have numbered alias in the aliases node,
++	   in the form of usbdrdphyN, N = 0, 1... (depending on number of
++	   controllers).
++Example:
++	aliases {
++		usbdrdphy0 = &usb3_phy0;
++		usbdrdphy1 = &usb3_phy1;
++	};
 -- 
 1.7.10.4
