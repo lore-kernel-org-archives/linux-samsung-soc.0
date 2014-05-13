@@ -1,131 +1,55 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [Patch v4 5/5] mcpm: exynos: populate suspend and powered_up
- callbacks
-Date: Tue, 13 May 2014 18:14:52 +0100
-Message-ID: <20140513171452.GB10210@red-moon>
-References: <1399278444-8312-3-git-send-email-chander.kashyap@linaro.org>
- <1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
- <1399282040-8995-6-git-send-email-chander.kashyap@linaro.org>
- <20140509153206.GB5040@e102568-lin.cambridge.arm.com>
- <CANuQgHG9tGzi2rSOwREAxVu4BQoprDg9om62AybgW5v31fpbTQ@mail.gmail.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v13 00/19] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Tue, 13 May 2014 19:20:38 +0200
+Message-ID: <20140513172038.GC23770@8bytes.org>
+References: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CANuQgHG9tGzi2rSOwREAxVu4BQoprDg9om62AybgW5v31fpbTQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8bytes.org ([85.214.48.195]:44166 "EHLO mail.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752110AbaEMRUo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 May 2014 13:20:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by mail.8bytes.org (Postfix) with SMTP id 768A712B209
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 19:20:43 +0200 (CEST)
 Content-Disposition: inline
-Sender: linux-pm-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
+In-Reply-To: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, arnd@arndb.de, t.figa@samsung.com, kgene.kim@samsung.com, pullip.cho@samsung.com, a.motakis@virtualopensystems.com, grundler@chromium.org, s.nawrocki@samsung.com, prathyush.k@samsung.com, rahul.sharma@samsung.com, sachin.kamat@linaro.org, supash.ramaswamy@linaro.org, varun.sethi@freescale.com, joshi@samsung.com, tomasz.figa@gmail.com
 
-On Tue, May 13, 2014 at 12:43:31PM +0100, Chander Kashyap wrote:
-
-[...]
-
-> >> +static void exynos_suspend(u64 residency)
-> >> +{
-> >> +     unsigned int mpidr, cpunr;
-> >> +
-> >> +     mpidr = read_cpuid_mpidr();
-> >> +     cpunr = exynos_pmu_cpunr(mpidr);
-> >
-> > If I were to be picky, I would compute these values only if they
-> > are needed, ie move the computation after exynos_power_down().
+On Mon, May 12, 2014 at 11:44:45AM +0530, Shaik Ameer Basha wrote:
+> Cho KyongHo (18):
+>   iommu/exynos: fix build errors
+>   iommu/exynos: change error handling when page table update is failed
+>   iommu/exynos: allocate lv2 page table from own slab
+>   iommu/exynos: fix L2TLB invalidation
+>   iommu/exynos: remove prefetch buffer setting
+>   iommu/exynos: add missing cache flush for removed page table entries
+>   iommu/exynos: always enable runtime PM
+>   iommu/exynos: remove dbgname from drvdata of a System MMU
+>   iommu/exynos: use managed device helper functions
+>   iommu/exynos: gating clocks of master H/W
+>   iommu/exynos: remove custom fault handler
+>   iommu/exynos: change rwlock to spinlock
+>   iommu/exynos: use exynos-iommu specific typedef
+>   iommu/exynos: enhanced error messages
+>   documentation: iommu: add binding document of Exynos System MMU
+>   iommu/exynos: support for device tree
+>   iommu/exynos: turn on useful configuration options
+>   iommu/exynos: apply workaround of caching fault page table entries
 > 
-> Yes thats make sense. I will realign it.
-> 
-> >
-> > There is another quite horrible issue here. We know this code works
-> > because the processors A15/A7 hit the caches with C bit in SCTLR cleared.
-> >
-> > On processors where this is not true, this sequence would explode
-> > if power down fails (in case core is gated but L2 is still powered on,
-> > the stack is stuck in L2) since it is going to read stack data that is
-> > in L2 but can't be read.
-> >
-> > It is not related to this sequence only, but it is an issue in general
-> > and wanted to mention that on the lists for public awareness.
-> >
-> 
-> Can you please elaborate. I didn't understand.
+>  .../devicetree/bindings/iommu/samsung,sysmmu.txt   |   65 ++
+>  drivers/iommu/exynos-iommu.c                       | 1035 ++++++++++++--------
+>  2 files changed, 677 insertions(+), 423 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
 
-It is not related to this patch only. This function carries out writes to the
-stack (which might end up in eg L2) and then disables the C bit in SCTLR
-through MCPM.
+Applied, thanks. Please send another patch to update the documentation
+as requested by Arnd.
 
-A15 and A7 processors hit the cache with the C bit clear in the SCTLR
-so the processor still "hits" the stack values if the power down fails.
-On processors where caches are not hit with the C bit clear (eg A9) this code
-would fail since the stack values that sit in the caches cannot be read with
-the C bit clear in SCTLR until the SCTLR is restored, so it will have to
-be implemented in assembly with no stack usage (or better, no cacheable data
-usage).
 
-So, all I am saying is, to avoid copy'n'paste havoc and to avoid running
-this code on Exynos platforms where it must not be run as-is, please add
-a comment along the line:
-
-"This function requires the stack data to be visible through power down
-and can only be executed on processors like A15 and A7 that hit the cache
-with the C bit clear in the SCTLR register."
-
-Please let me know if that's clear.
-
-Lorenzo
-
-> 
-> > The gist of what I am saying is, please add a comment to that extent,
-> > here and it should be added in exynos_power_down() too.
-> >
-> >> +     __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 0x1c);
-> >
-> > No magic numbers please (0x1c). You can add a macro/wrapper, as TC2 does.
-> 
-> Yes i will remove it.
-> 
-> >
-> >> +     exynos_power_down();
-> >> +
-> >> +     /*
-> >> +      * Execution reaches here only if cpu did not power down.
-> >> +      * Hence roll back the changes done in exynos_power_down function.
-> >> +     */
-> >> +     exynos_cpu_powerup(cpunr);
-> >
-> > Please be aware that if this function returns MCPM will soft reboot, and
-> > the CPUidle driver will have no way to detect a state entry failure.
-> >
-> > I am just flagging this up, since fixing this behaviour is not easy, and
-> > honestly, since power down failure should be the exception not the rule,
-> > the idle stats should not be affected much.
-> >
-> > I think this is the proper way of implementing the sequence but please
-> > all keep in mind what I wrote above.
-> >
-> > Lorenzo
-> >
-> >> +}
-> >> +
-> >>  static const struct mcpm_platform_ops exynos_power_ops = {
-> >>       .power_up               = exynos_power_up,
-> >>       .power_down             = exynos_power_down,
-> >>       .power_down_finish      = exynos_power_down_finish,
-> >> +     .suspend                = exynos_suspend,
-> >> +     .powered_up             = exynos_powered_up,
-> >>  };
-> >>
-> >>  static void __init exynos_mcpm_usage_count_init(void)
-> >> --
-> >> 1.7.9.5
-> >>
-> >>
-> >
-> 
-> 
-> 
-> -- 
-> with warm regards,
-> Chander Kashyap
-> 
-
+	Joerg
